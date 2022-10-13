@@ -1,0 +1,4 @@
+node_modules
+bugs-env
+__pycache__/
+bugs/db.sqlite3
