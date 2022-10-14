@@ -10,6 +10,10 @@ class MainSocketConsumer(WebsocketConsumer):
 
     def connect(self):
         self.accept()
+        self._send_whole_world()
+        
+
+    def _send_whole_world(self):
         self.send(json.dumps({
             'type': 'whole_world',
             'world': self._world.toJSON()
