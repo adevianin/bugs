@@ -27,6 +27,8 @@ class World:
 
         self.is_running = True
 
+        self.bugs[0].plan_jump()
+
     def stop(self):
         print('world is stopped')
         
@@ -36,6 +38,9 @@ class World:
 
     def inject_world_factory(self, factory):
         self._worldFactory = factory
+
+    def inject_main_bus(self, main_event_bus):
+        self.main_event_bus = main_event_bus
 
     def _build_bugs(self, bugsJson):
         for bugJson in bugsJson:
