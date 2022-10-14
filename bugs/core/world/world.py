@@ -41,3 +41,12 @@ class World:
         for bugJson in bugsJson:
             bug = self._worldFactory.buildBug(bugJson['id'], bugJson['pos'])
             self.bugs.append(bug)
+
+    def toJSON(self):
+        bugsJson = []
+        for bug in self.bugs:
+            bugsJson.append(bug.toJSON())
+
+        return {
+            'bugs': bugsJson
+        }

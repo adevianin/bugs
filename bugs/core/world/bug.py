@@ -6,6 +6,8 @@ class Bug(Entity):
         super().__init__(id, pos)
 
     def toJSON(self):
-        return {
-            "pos": json.dumps(self.pos)
-        }
+        json = super().toJSON()
+        json.update({
+
+        })
+        return json
