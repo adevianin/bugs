@@ -1,3 +1,5 @@
+import json
+
 class WorldDataRepository():
     def __init__(self, filepath):
         self.filepath = filepath
@@ -7,7 +9,7 @@ class WorldDataRepository():
         data = f.read()
         f.close()
         
-        return data
+        return json.loads(data)
 
     def push(data):
         pass

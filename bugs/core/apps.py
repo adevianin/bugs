@@ -1,5 +1,6 @@
 from django.apps import AppConfig
-from core.world import World, WorldDataRepository, WorldFactory
+from core.repository.world_data_repository import WorldDataRepository
+from core.world import WorldFactory, WorldFacade
 from django.conf import settings
 from pyee.base import EventEmitter
 
@@ -15,9 +16,9 @@ class CoreConfig(AppConfig):
 
         world_factory = WorldFactory(main_event_bus)
 
-        world = World.get_instance()
-        world.inject_data_repository(world_data_repo)
-        world.inject_world_factory(world_factory)
-        world.inject_main_bus(main_event_bus)
+        world_facade = WorldFacade.get_instance()
+        world_facade.inject_data_repository(world_data_repo)
+        world_facade.inject_main_bus(main_event_bus)
+        world_facade.inject_world_factory(world_factory)
 
-        world.run()
+        world_facade.run()
