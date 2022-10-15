@@ -16,7 +16,6 @@ class WorldView {
     _renderBugs() {
         let bugs = this._domainFacade.world.bugs;
         bugs.forEach(bug => {
-            console.log(bug.position.x, bug.position.y, bug.size.width, bug.size.height);
             this._ctx.fillRect(bug.position.x, bug.position.y, bug.size.width, bug.size.height)
         })
     }
