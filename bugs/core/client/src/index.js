@@ -1,11 +1,7 @@
-console.log('start');
+import { initSyncLayer } from './sync';
+import { initDomainLayer } from './domain';
+import { initViewLayer } from './view';
 
-let socket = new WebSocket(`ws://${location.host}/mainsocket`);
-
-socket.onopen = function(e) {
-    console.log('connected');
-};
-
-socket.onmessage = function(event) {
-    console.log('new msg ', event.data);
-}
+let domainFacade = initDomainLayer();
+initSyncLayer(domainFacade);
+initViewLayer(domainFacade);

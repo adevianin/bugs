@@ -4,8 +4,12 @@ class Entity:
         self.main_event_bus = main_event_bus
         self.id = id
         self.pos = {
-            "x": pos['x'],
-            "y": pos['y']
+            'x': pos['x'],
+            'y': pos['y']
+        }
+        self.size = {
+            'width': 10,
+            'height': 10
         }
 
     def set_position(self, pos):
@@ -19,5 +23,9 @@ class Entity:
             'pos': {
                 'x': self.pos['x'],
                 'y': self.pos['y']
+            },
+            'size': {
+                'width': self.size['width'],
+                'height': self.size['height']
             }
         }
