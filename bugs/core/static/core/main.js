@@ -26,7 +26,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \***************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Bug\": () => (/* binding */ Bug)\n/* harmony export */ });\n/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ \"./bugs/core/client/src/domain/entity/entity.js\");\n\n\nclass Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {\n\n    updateEntity(entityJson) {\n        this.position = entityJson.pos;\n\n        console.log(this.position);\n    }\n\n}\n\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/entity/bug.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Bug\": () => (/* binding */ Bug)\n/* harmony export */ });\n/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ \"./bugs/core/client/src/domain/entity/entity.js\");\n\n\nclass Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {\n\n    updateEntity(entityJson) {\n        this.position = entityJson.pos;\n    }\n\n}\n\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/entity/bug.js?");
 
 /***/ }),
 
@@ -100,23 +100,23 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
-/***/ "./bugs/core/client/src/view/bugsView.js":
-/*!***********************************************!*\
-  !*** ./bugs/core/client/src/view/bugsView.js ***!
-  \***********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"BugsView\": () => (/* binding */ BugsView)\n/* harmony export */ });\nclass BugsView {\n    constructor(canvas, domainFacade) {\n        this._domainFacade = domainFacade;\n        this._canvas = canvas;\n        this._ctx = this._canvas.getContext('2d');\n\n        setInterval(this._renderWorld.bind(this), 100);\n    }\n\n    _renderWorld() {\n        this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);\n\n        this._renderBugs();\n    }\n\n    _renderBugs() {\n        let bugs = this._domainFacade.world.bugs;\n        bugs.forEach(bug => {\n            console.log(bug.position.x, bug.position.y, bug.size.width, bug.size.height);\n            this._ctx.fillRect(bug.position.x, bug.position.y, bug.size.width, bug.size.height)\n        })\n    }\n}\n\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/view/bugsView.js?");
-
-/***/ }),
-
 /***/ "./bugs/core/client/src/view/index.js":
 /*!********************************************!*\
   !*** ./bugs/core/client/src/view/index.js ***!
   \********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"initViewLayer\": () => (/* binding */ initViewLayer)\n/* harmony export */ });\n/* harmony import */ var _bugsView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./bugsView */ \"./bugs/core/client/src/view/bugsView.js\");\n\n\nfunction initViewLayer(domainFacade) {\n    let canvEl = document.getElementById('bugsCanvas');\n    console.log(canvEl);\n    let bugsView = new _bugsView__WEBPACK_IMPORTED_MODULE_0__.BugsView(canvEl, domainFacade);\n}\n\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/view/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"initViewLayer\": () => (/* binding */ initViewLayer)\n/* harmony export */ });\n/* harmony import */ var _worldView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./worldView */ \"./bugs/core/client/src/view/worldView.js\");\n\n\nfunction initViewLayer(domainFacade) {\n    let canvEl = document.getElementById('bugsCanvas');\n    let worldView = new _worldView__WEBPACK_IMPORTED_MODULE_0__.WorldView(canvEl, domainFacade);\n}\n\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/view/index.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/src/view/worldView.js":
+/*!************************************************!*\
+  !*** ./bugs/core/client/src/view/worldView.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"WorldView\": () => (/* binding */ WorldView)\n/* harmony export */ });\nclass WorldView {\n    constructor(canvas, domainFacade) {\n        this._domainFacade = domainFacade;\n        this._canvas = canvas;\n        this._ctx = this._canvas.getContext('2d');\n\n        setInterval(this._renderWorld.bind(this), 100);\n    }\n\n    _renderWorld() {\n        this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);\n\n        this._renderBugs();\n    }\n\n    _renderBugs() {\n        let bugs = this._domainFacade.world.bugs;\n        bugs.forEach(bug => {\n            console.log(bug.position.x, bug.position.y, bug.size.width, bug.size.height);\n            this._ctx.fillRect(bug.position.x, bug.position.y, bug.size.width, bug.size.height)\n        })\n    }\n}\n\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/view/worldView.js?");
 
 /***/ })
 

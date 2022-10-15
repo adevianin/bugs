@@ -1,4 +1,4 @@
-class BugsView {
+class WorldView {
     constructor(canvas, domainFacade) {
         this._domainFacade = domainFacade;
         this._canvas = canvas;
@@ -22,4 +22,4 @@ class BugsView {
     }
 }
 
-export { BugsView }
+export { WorldView }
