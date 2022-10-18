@@ -5,7 +5,14 @@ class World:
         self.bugs = bugs
 
     def run(self):
-        self.bugs[0].plan_jump()
+        # self.bugs[0].plan_jump()
+        bug = self.bugs[0]
+        bug.walk_to(90, 40)
+
+        bug.events.once('arrived', self.on_arrived)
+
+    def on_arrived(self):
+        print('arrived')
 
     def stop(self):
         print('world is stopped')

@@ -16,7 +16,7 @@ class WorldFactory {
     }
 
     buildBug(bugJson) {
-        return new Bug(bugJson.id, bugJson.pos, bugJson.size);
+        return new Bug(bugJson.id, bugJson.pos, bugJson.size, bugJson.walk_speed, bugJson.destination);
     }
 }
 

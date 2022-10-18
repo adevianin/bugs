@@ -1,9 +1,11 @@
+from pyee.base import EventEmitter
+
 class Entity:
 
     def __init__(self, main_event_bus, id, pos):
         self.main_event_bus = main_event_bus
         self.id = id
-        self.pos = {
+        self._pos = {
             'x': pos['x'],
             'y': pos['y']
         }
@@ -11,21 +13,25 @@ class Entity:
             'width': 10,
             'height': 10
         }
+        # TODO use di
+        self.events = EventEmitter()
 
     def set_position(self, pos):
-        self.pos['x'] = pos['x']
-        self.pos['y'] = pos['y']
-        self.main_event_bus.emit('entity_changed', self)
+        self._pos['x'] = pos['x']
+        self._pos['y'] = pos['y']
+
+    def get_position(self):
+        return self._pos
 
     def toJSON(self):
         return {
             'id': self.id,
-            'pos': {
-                'x': self.pos['x'],
-                'y': self.pos['y']
-            },
+            'pos': self.get_position(),
             'size': {
                 'width': self.size['width'],
                 'height': self.size['height']
             }
         }
+
+    def emit_change(self):
+        self.main_event_bus.emit('entity_changed', self)

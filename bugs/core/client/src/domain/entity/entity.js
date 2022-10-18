@@ -6,24 +6,22 @@ class Entity {
         this._size = size;
     }
 
-    get position() {
-        return {
-            x: this._pos.x,
-            y: this._pos.y,
-        };
-    }
-
-    set position(position) {
-        this._pos = {
-            x: position.x,
-            y: position.y
-        }
+    setPosition(x, y) {
+        console.log('set position', x ,y );
+        this._pos = { x, y }
     }
 
     get size() {
         return {
             width: this._size.width,
             height: this._size.height,
+        };
+    }
+
+    get position() {
+        return {
+            x: this._pos.x,
+            y: this._pos.y,
         };
     }
 
