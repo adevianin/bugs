@@ -21,11 +21,11 @@ class MainSocketConsumer(WebsocketConsumer):
     def _send_whole_world(self):
         self.send(json.dumps({
             'type': 'whole_world',
-            'world': self._world_facade.get_world().toJSON()
+            'world': self._world_facade.get_world().to_json()
         }))
 
     def _send_changed_entity(self, entity):
         self.send(json.dumps({
             'type': 'entity_changed',
-            'entity': entity.toJSON()
+            'entity': entity.to_json()
         }))

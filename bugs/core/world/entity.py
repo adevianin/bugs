@@ -23,7 +23,7 @@ class Entity:
     def get_position(self):
         return self._pos
 
-    def toJSON(self):
+    def to_json(self):
         return {
             'id': self.id,
             'pos': self.get_position(),

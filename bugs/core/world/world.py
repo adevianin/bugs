@@ -17,10 +17,10 @@ class World:
     def stop(self):
         print('world is stopped')
         
-    def toJSON(self):
+    def to_json(self):
         bugs_json = []
         for bug in self.bugs:
-            bugs_json.append(bug.toJSON())
+            bugs_json.append(bug.to_json())
 
         return {
             'bugs': bugs_json

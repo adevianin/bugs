@@ -45,8 +45,8 @@ class Bug(Entity):
         else:
             return super().get_position()
 
-    def toJSON(self):
-        json = super().toJSON()
+    def to_json(self):
+        json = super().to_json()
         json.update({
             'walk_speed': self._walk_speed,
             'destination': self._destination
