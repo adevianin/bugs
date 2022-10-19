@@ -4,8 +4,8 @@ import math
 import time
 
 class Bug(Entity):
-    def __init__(self, main_event_bus, id, pos):
-        super().__init__(main_event_bus, id, pos)
+    def __init__(self, events, main_event_bus, id, pos):
+        super().__init__(events, main_event_bus, id, pos)
         self._destination = None
         self._walk_speed = 5
         self._whole_time_to_walk = None

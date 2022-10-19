@@ -1,8 +1,6 @@
-from pyee.base import EventEmitter
-
 class Entity:
 
-    def __init__(self, main_event_bus, id, pos):
+    def __init__(self, events, main_event_bus, id, pos):
         self.main_event_bus = main_event_bus
         self.id = id
         self._pos = {
@@ -14,7 +12,7 @@ class Entity:
             'height': 10
         }
         # TODO use di
-        self.events = EventEmitter()
+        self.events = events
 
     def set_position(self, pos):
         self._pos['x'] = pos['x']
