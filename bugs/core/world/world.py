@@ -7,12 +7,25 @@ class World:
     def run(self):
         # self.bugs[0].plan_jump()
         bug = self.bugs[0]
-        bug.walk_to(90, 40)
+        bug.walk_path([
+            {'x': 90, 'y': 40},
+            {'x': 90, 'y': 90},
+            {'x': 150, 'y': 150},
+            {'x': 250, 'y': 150},
+        ])
 
-        bug.events.once('arrived', self.on_arrived)
+        bug = self.bugs[1]
+        bug.walk_path([
+            {'x': 90, 'y': 40},
+            {'x': 90, 'y': 90},
+            {'x': 150, 'y': 150},
+            {'x': 250, 'y': 150},
+        ])
+
+        bug.events.on('arrived', self.on_arrived)
 
     def on_arrived(self):
-        print('arrived')
+        print('arrived1')
 
     def stop(self):
         print('world is stopped')

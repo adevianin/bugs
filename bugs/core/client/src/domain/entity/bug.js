@@ -47,7 +47,7 @@ class Bug extends Entity {
             let currentX = this._calcCoordForWalkedPercent(startPosition.x, this._destination.x, walkedPercent);
             let currentY = this._calcCoordForWalkedPercent(startPosition.y, this._destination.y, walkedPercent);
             this.setPosition(currentX, currentY);
-        }, 200);
+        }, 100);
     }
 
     _clearWalking() {

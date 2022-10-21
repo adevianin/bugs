@@ -4,7 +4,7 @@ class WorldView {
         this._canvas = canvas;
         this._ctx = this._canvas.getContext('2d');
 
-        setInterval(this._renderWorld.bind(this), 200);
+        setInterval(this._renderWorld.bind(this), 100);
     }
 
     _renderWorld() {
