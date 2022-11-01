@@ -12,6 +12,9 @@ class Entity:
         }
         self.events = events
 
+    def update(self):
+        pass
+
     def set_position(self, x, y):
         self._pos = Point(x, y)
 

@@ -1,3 +1,5 @@
+from threading import Thread
+
 class WorldFacade:
     _instance = None
 
@@ -18,6 +20,9 @@ class WorldFacade:
         self._world = self._world_factory.build_world(world_json)
         self._world.run()
 
+    def stop(self):
+        self._world.stop()
+
     def get_world(self):
         return self._world
 
@@ -32,5 +37,7 @@ class WorldFacade:
 
     def inject_main_bus(self, main_event_bus):
         self.main_event_bus = main_event_bus
+
+    
 
         

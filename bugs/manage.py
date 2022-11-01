@@ -3,6 +3,8 @@
 import os
 import sys
 
+from core.world import WorldFacade
+
 
 def main():
     """Run administrative tasks."""
@@ -16,6 +18,8 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
+    
+    WorldFacade.get_instance().stop()
 
 
 if __name__ == '__main__':
