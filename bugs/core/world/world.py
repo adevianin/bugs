@@ -1,3 +1,5 @@
+from .point import Point
+
 class World:
 
     def __init__(self, bugs):
@@ -8,18 +10,18 @@ class World:
         # self.bugs[0].plan_jump()
         bug = self.bugs[0]
         bug.walk_path([
-            {'x': 90, 'y': 40},
-            {'x': 90, 'y': 90},
-            {'x': 150, 'y': 150},
-            {'x': 250, 'y': 150},
+            Point(90, 40),
+            Point(90, 90),
+            Point(150, 150),
+            Point(250, 150)
         ])
 
         bug = self.bugs[1]
         bug.walk_path([
-            {'x': 90, 'y': 40},
-            {'x': 90, 'y': 90},
-            {'x': 150, 'y': 150},
-            {'x': 250, 'y': 150},
+            Point(90, 40),
+            Point(90, 90),
+            Point(150, 150),
+            Point(250, 150)
         ])
 
         bug.events.on('arrived', self.on_arrived)

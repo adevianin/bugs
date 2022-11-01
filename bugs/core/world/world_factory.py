@@ -1,6 +1,7 @@
 from .bug import Bug
 from .world import World
 from pyee.base import EventEmitter
+from .point import Point
 
 class WorldFactory:
 
@@ -19,4 +20,5 @@ class WorldFactory:
 
     def build_bug(self, bug_json):
         events = EventEmitter()
-        return Bug(events, self.main_event_bus, bug_json['id'], bug_json['pos'])
+        pos = Point(bug_json['pos']['x'], bug_json['pos']['y'])
+        return Bug(events, self.main_event_bus, bug_json['id'], pos)

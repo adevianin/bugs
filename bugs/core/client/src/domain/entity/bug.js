@@ -33,7 +33,6 @@ class Bug extends Entity {
     }
 
     _startWalking() {
-        console.log('start walking');
         let startPosition = {
             x: this.position.x,
             y: this.position.y,
@@ -51,7 +50,6 @@ class Bug extends Entity {
     }
 
     _clearWalking() {
-        console.log('clear walking');
         this._destination = null;
         this._wholeTimeToWalk = null;
         clearInterval(this._walkingInterval);

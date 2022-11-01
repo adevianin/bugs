@@ -2,6 +2,7 @@ from .entity import Entity
 from threading import Thread
 import math
 import time
+from .point import Point
 
 class Bug(Entity):
     def __init__(self, events, main_event_bus, id, pos):
@@ -22,22 +23,16 @@ class Bug(Entity):
         return walk_thread
 
     def set_destination(self, x, y):
-        self._destination = {
-            'x': x,
-            'y': y
-        }
+        self._destination = Point(x, y)
 
     def get_position(self):
         if self.is_walking():
             time_in_walk = time.time() - self._walk_start_at
             walked_percent = ( 100 * time_in_walk ) / self._whole_time_to_walk
-            current_x = self._calc_coord_for_walked_percent(self._pos['x'], self._destination['x'], walked_percent)
-            current_y = self._calc_coord_for_walked_percent(self._pos['y'], self._destination['y'], walked_percent)
+            current_x = self._calc_coord_for_walked_percent(self._pos.x, self._destination.x, walked_percent)
+            current_y = self._calc_coord_for_walked_percent(self._pos.y, self._destination.y, walked_percent)
 
-            return {
-                'x': current_x,
-                'y': current_y
-            }
+            return Point(current_x, current_y)
         else:
             return super().get_position()
 
@@ -45,8 +40,12 @@ class Bug(Entity):
         json = super().to_json()
         json.update({
             'walk_speed': self._walk_speed,
-            'destination': self._destination
+            'destination': None if not self.is_walking() else {
+                'x': self._destination.x,
+                'y': self._destination.y,
+            }
         })
+
         return json
 
     def is_walking(self):
@@ -57,17 +56,14 @@ class Bug(Entity):
             return
 
         self.set_destination(x, y)
-        distance = math.dist([self._pos['x'], self._pos['y']], [x, y])
+        distance = math.dist([self._pos.x, self._pos.y], [x, y])
         self._whole_time_to_walk = distance / self._walk_speed
         self._walk_start_at = time.time()
         self.emit_change()
 
         time.sleep(self._whole_time_to_walk)
 
-        self.set_position({
-            'x': self._destination['x'],
-            'y': self._destination['y']
-        })
+        self.set_position(self._destination.x, self._destination.y)
         self._clear_walknig()
 
         self.events.emit('arrived')
@@ -75,7 +71,7 @@ class Bug(Entity):
 
     def _execute_walk_path(self, *points):
         for point in points:
-            self._execute_walking(point['x'], point['y'])
+            self._execute_walking(point.x, point.y)
 
     def _calc_coord_for_walked_percent(self, start_coord, end_coord, walked_percent):
         distance = abs(abs(end_coord) - abs(start_coord))

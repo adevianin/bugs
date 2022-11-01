@@ -7,7 +7,6 @@ class Entity {
     }
 
     setPosition(x, y) {
-        console.log('set position', x ,y );
         this._pos = { x, y }
     }
 
