@@ -43,9 +43,14 @@ class Bug extends Entity {
         this._walkingInterval = setInterval(() => {
             let timeInWalk = this._getNow() - this._walkStartAt;
             let walkedPercent = ( 100 * timeInWalk ) / this._wholeTimeToWalk;
-            let currentX = this._calcCoordForWalkedPercent(startPosition.x, this._destination.x, walkedPercent);
-            let currentY = this._calcCoordForWalkedPercent(startPosition.y, this._destination.y, walkedPercent);
-            this.setPosition(currentX, currentY);
+            if (walkedPercent < 100){
+                let currentX = this._calcCoordForWalkedPercent(startPosition.x, this._destination.x, walkedPercent);
+                let currentY = this._calcCoordForWalkedPercent(startPosition.y, this._destination.y, walkedPercent);
+                this.setPosition(currentX, currentY);
+            } else {
+                this.setPosition(this._destination.x, this._destination.y);
+                this._clearWalking();
+            }
         }, 100);
     }
 

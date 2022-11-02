@@ -2,12 +2,15 @@ from .entity import Entity
 import math
 import time
 from .point import Point
+from .bug_activities import BugActivitie
+import random
 
 class Bug(Entity):
     def __init__(self, events, main_event_bus, id, pos):
         super().__init__(events, main_event_bus, id, pos)
-        self._walk_speed = 10
+        self._walk_speed = 20
         self._clear_walknig()
+        self.set_activity(BugActivitie.WANDERING)
 
     def walk_to(self, x, y):
         if self.is_walking(): 
@@ -42,6 +45,35 @@ class Bug(Entity):
     def update(self):
         if self.is_walking():
             self._update_walking_position()
+
+        match self._activity:
+            case BugActivitie.WANDERING:
+                if not self.is_walking():
+                    point = self._generate_next_wandering_point()
+                    self.walk_to(point.x, point.y)
+            case BugActivitie.IDLE:
+                print('idle')
+
+
+    def set_activity(self, activity):
+        self._activity = activity
+
+    def _generate_next_wandering_point(self):
+        x = self._pos.x + random.randint(-60, 60)
+        y = self._pos.y + random.randint(-60, 60)
+
+        if (x < 0): 
+            x = 0
+        if (x > 1000):
+            x = 1000
+
+        if (y < 0): 
+            y = 0
+        if (y > 500):
+            y = 500
+
+        return Point(x, y)
+
 
     def _update_walking_position(self):
         time_in_walk = time.time() - self._walk_start_at
