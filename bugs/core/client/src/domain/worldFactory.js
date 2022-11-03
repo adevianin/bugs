@@ -1,5 +1,6 @@
 import { Bug } from './entity/bug';
 import { World } from './entity/world';
+import { Block } from './entity/block';
 
 class WorldFactory {
 
@@ -10,13 +11,23 @@ class WorldFactory {
             initedBugs.push(bug);
         });
 
-        let world = new World(initedBugs);
+        let initedBlocks = [];
+        worldJson.blocks.forEach(blockJson => {
+            let block = this.buildBlock(blockJson);
+            initedBlocks.push(block);
+        });
+
+        let world = new World(initedBugs, initedBlocks);
 
         return world;
     }
 
     buildBug(bugJson) {
         return new Bug(bugJson.id, bugJson.pos, bugJson.size, bugJson.walk_speed, bugJson.destination);
+    }
+
+    buildBlock(blockJson) {
+        return new Block(blockJson.id, blockJson.pos, blockJson.size);
     }
 }
 

@@ -4,10 +4,11 @@ import time
 
 class World:
 
-    def __init__(self, bugs):
+    def __init__(self, bugs, blocks):
         World._instance = self
         self.bugs = bugs
         self._world_loop_stop_flag = False
+        self._blocks = blocks
 
     def run(self):
         # self.bugs[0].plan_jump()
@@ -40,8 +41,13 @@ class World:
         for bug in self.bugs:
             bugs_json.append(bug.to_json())
 
+        blocks_json = []
+        for block in self._blocks:
+            blocks_json.append(block.to_json())
+
         return {
-            'bugs': bugs_json
+            'bugs': bugs_json,
+            'blocks': blocks_json
         }
 
     def _run_world_loop(self):

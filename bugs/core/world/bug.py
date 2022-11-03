@@ -4,10 +4,13 @@ import time
 from .point import Point
 from .bug_activities import BugActivitie
 import random
+from .size import Size
 
 class Bug(Entity):
     def __init__(self, events, main_event_bus, id, pos):
-        super().__init__(events, main_event_bus, id, pos)
+        super().__init__(id, pos, Size(10, 10))
+        self._events = events
+        self._main_event_bus = main_event_bus
         self._walk_speed = 20
         self._clear_walknig()
         self.set_activity(BugActivitie.WANDERING)
@@ -58,6 +61,9 @@ class Bug(Entity):
     def set_activity(self, activity):
         self._activity = activity
 
+    def emit_change(self):
+        self._main_event_bus.emit('entity_changed', self)
+
     def _generate_next_wandering_point(self):
         x = self._pos.x + random.randint(-60, 60)
         y = self._pos.y + random.randint(-60, 60)
@@ -82,7 +88,7 @@ class Bug(Entity):
             self.set_position(self._destination.x, self._destination.y)
             self._clear_walknig()
 
-            self.events.emit('arrived')
+            self._events.emit('arrived')
             self.emit_change()
         else:
             walked_percent = ( 100 * time_in_walk ) / self._whole_time_to_walk

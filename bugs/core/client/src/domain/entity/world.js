@@ -1,10 +1,15 @@
 class World {
-    constructor(bugs) {
+    constructor(bugs, blocks) {
         this._bugs = bugs;
+        this._blocks = blocks;
     }
 
     get bugs() {
         return [...this._bugs];
+    }
+
+    get blocks() {
+        return [...this._blocks];
     }
 
     updateEntity(entityJson) {
