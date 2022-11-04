@@ -20,13 +20,13 @@ class World:
         #     Point(250, 150)
         # ])
 
-        # bug = self.bugs[1]
-        # bug.walk_to(250, 150)
+        bug = self._bugs[0]
+        bug.walk_to(250, 150)
 
         # bug.events.on('arrived', self.on_arrived)
 
-        world_thread = Thread(target=self._run_world_loop)
-        world_thread.start()
+        # world_thread = Thread(target=self._run_world_loop)
+        # world_thread.start()
         print('world is runned')
 
     def stop(self):
@@ -50,29 +50,29 @@ class World:
             'blocks': blocks_json
         }
 
-    def _run_world_loop(self):
-        ips = 2
-        while not self._world_loop_stop_flag:
-            # iteration_start = time.time()
-            for bug in self._bugs:
-                bugs_in_sight = self._find_entities_in_sight(bug, self._bugs)
-                blocks_in_sight = self._find_entities_in_sight(bug, self._blocks)
-                bug.update(bugs_in_sight, blocks_in_sight)
+    # def _run_world_loop(self):
+    #     ips = 2
+    #     while not self._world_loop_stop_flag:
+    #         # iteration_start = time.time()
+    #         for bug in self._bugs:
+    #             bugs_in_sight = self._find_entities_in_sight(bug, self._bugs)
+    #             blocks_in_sight = self._find_entities_in_sight(bug, self._blocks)
+    #             bug.update(bugs_in_sight, blocks_in_sight)
 
-            # iteration_end = time.time()
-            # iteration_time = iteration_end - iteration_start
+    #         # iteration_end = time.time()
+    #         # iteration_time = iteration_end - iteration_start
 
-            # time.sleep(1/ips - iteration_time)
+    #         # time.sleep(1/ips - iteration_time)
 
-    def _find_entities_in_sight(self, bug, entities):
-        entities_in_sight = []
-        sight = bug.get_sight()
-        for entity in entities:
-            if entity is bug: continue
-            distance = bug.calc_distance_to(entity)
-            if distance <= sight:
-                entities_in_sight.append(entity)
+    # def _find_entities_in_sight(self, bug, entities):
+    #     entities_in_sight = []
+    #     sight = bug.get_sight()
+    #     for entity in entities:
+    #         if entity is bug: continue
+    #         distance = bug.calc_distance_to(entity)
+    #         if distance <= sight:
+    #             entities_in_sight.append(entity)
 
-        return entities_in_sight
+    #     return entities_in_sight
 
         

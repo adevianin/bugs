@@ -20,11 +20,12 @@ class Entity:
         return self._pos
 
     def to_json(self):
+        pos = self.get_position()
         return {
             'id': self.id,
             'pos': {
-                'x': self._pos.x,
-                'y': self._pos.y,
+                'x': pos.x,
+                'y': pos.y,
             },
             'size': {
                 'width': self._size.width,
