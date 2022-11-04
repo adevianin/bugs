@@ -19,6 +19,7 @@ class MainSocketConsumer(WebsocketConsumer):
         
 
     def _send_whole_world(self):
+        print('send whole world!!!!!!!!!!!!!!!!!!!!!!!')
         self.send(json.dumps({
             'type': 'whole_world',
             'world': self._world_facade.get_world().to_json()

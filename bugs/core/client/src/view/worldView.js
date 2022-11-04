@@ -28,7 +28,9 @@ class WorldView {
         let blocks = this._domainFacade.world.blocks;
         this._ctx.fillStyle = 'gray';
         blocks.forEach(block => {
-            this._ctx.fillRect(block.position.x, block.position.y, block.size.width, block.size.height)
+            let posX = block.position.x - block.size.width / 2;
+            let posY = block.position.y - block.size.height / 2;
+            this._ctx.fillRect(posX, posY, block.size.width, block.size.height)
         }) 
     }
 }

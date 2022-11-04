@@ -5,6 +5,7 @@ from .point import Point
 from .bug_activities import BugActivitie
 import random
 from .size import Size
+import sympy
 
 class Bug(Entity):
     def __init__(self, events, main_event_bus, id, pos):
@@ -13,6 +14,7 @@ class Bug(Entity):
         self._main_event_bus = main_event_bus
         self._walk_speed = 20
         self._clear_walknig()
+        self._sight = 100
         self.set_activity(BugActivitie.WANDERING)
 
     def walk_to(self, x, y):
@@ -45,14 +47,14 @@ class Bug(Entity):
     def is_walking(self):
         return self._destination != None
 
-    def update(self):
+    def update(self, bugs_in_sight, blocks_in_sight):
         if self.is_walking():
             self._update_walking_position()
 
         match self._activity:
             case BugActivitie.WANDERING:
                 if not self.is_walking():
-                    point = self._generate_next_wandering_point()
+                    point = self._generate_next_wandering_point(blocks_in_sight)
                     self.walk_to(point.x, point.y)
             case BugActivitie.IDLE:
                 print('idle')
@@ -64,22 +66,34 @@ class Bug(Entity):
     def emit_change(self):
         self._main_event_bus.emit('entity_changed', self)
 
-    def _generate_next_wandering_point(self):
+    def get_sight(self):
+        return self._sight
+
+    def _generate_next_wandering_point(self, blocks_in_sight):
         x = self._pos.x + random.randint(-60, 60)
         y = self._pos.y + random.randint(-60, 60)
 
-        if (x < 0): 
-            x = 0
-        if (x > 1000):
-            x = 1000
+        walking_line = sympy.Segment(sympy.Point(self._pos.x, self._pos.y), sympy.Point(x, y))
 
-        if (y < 0): 
-            y = 0
-        if (y > 500):
-            y = 500
+        walking_line_intersections = []
+        for block in blocks_in_sight:
+            walking_line_intersections += block.get_geometry().intersection(walking_line)
+
+        min_distance = None
+        nearest_point = None
+        if len(walking_line_intersections) != 0:
+            for point in walking_line_intersections:
+                distance = point.distance(sympy.Point(self._pos.x, self._pos.y))
+                if min_distance == None or distance < min_distance:
+                    min_distance = distance
+                    nearest_point = point
+            x = float(nearest_point.x)
+            y = float(nearest_point.y)
+            padding = 1
+            x = x + padding if self._pos.x > x else x - padding
+            y = y + padding if self._pos.y > y else y - padding
 
         return Point(x, y)
-
 
     def _update_walking_position(self):
         time_in_walk = time.time() - self._walk_start_at
