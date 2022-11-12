@@ -40,6 +40,12 @@ class Entity:
         other_geometry = other_entity.get_geometry()
         return float(self._geomertry.distance(other_geometry))
 
+    def do_step(self):
+        pass
+
+    def do_action(self):
+        pass
+
     def _build_geometry(self):
         half_height = self._size.height / 2
         half_width = self._size.width / 2

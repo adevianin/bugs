@@ -7,19 +7,19 @@ class Bug extends Entity {
         this._walkSpeed = walkSpeed;
         this._destination = destination;
 
-        if (this.isWalking()) {
-            this._startWalking();
-        }
+        // if (this.isWalking()) {
+        //     this._startWalking();
+        // }
     }
 
     updateEntity(entityJson) {
         this.setPosition(entityJson.pos.x, entityJson.pos.y);
 
-        if (entityJson.destination) {
-            this.setDestination(entityJson.destination.x, entityJson.destination.y);
-        } else {
-            this._clearWalking();
-        }
+        // if (entityJson.destination) {
+        //     this.setDestination(entityJson.destination.x, entityJson.destination.y);
+        // } else {
+        //     this._clearWalking();
+        // }
     }
 
     setDestination(x, y) {

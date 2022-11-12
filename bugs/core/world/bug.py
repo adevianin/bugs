@@ -13,10 +13,10 @@ class Bug(Entity):
         super().__init__(id, pos, Size(10, 10))
         self._events = events
         self._main_event_bus = main_event_bus
-        self._walk_speed = 20
+        self._distance_per_step = 20
         self._clear_walknig()
         self._sight = 100
-        self.set_activity(BugActivitie.WANDERING)
+        self._tasks = []
 
     def walk_to(self, x, y):
         if self.is_walking(): 
@@ -24,16 +24,12 @@ class Bug(Entity):
 
         self.set_destination(x, y)
         distance = self._calc_distance_to_destination()
-        self._whole_time_to_walk = distance / self._walk_speed
-        self._walk_start_at = time.time()
-        self._walk_start_pos = Point(self._pos.x, self._pos.y)
+        steps_count = distance/self._distance_per_step
+        self._steps_left = steps_count
+        self._step_x_part = (self._destination.x - self._pos.x) / steps_count
+        self._step_y_part = (self._destination.y - self._pos.y) / steps_count
 
         self.emit_change()
-        
-        walk_thread = Thread(target=self._execute_walking)
-        walk_thread.start()
-
-        return walk_thread
 
     def set_destination(self, x, y):
         self._destination = Point(x, y)
@@ -41,7 +37,7 @@ class Bug(Entity):
     def to_json(self):
         json = super().to_json()
         json.update({
-            'walk_speed': self._walk_speed,
+            # 'walk_speed': self._walk_speed,
             'destination': None if not self.is_walking() else {
                 'x': self._destination.x,
                 'y': self._destination.y,
@@ -53,9 +49,20 @@ class Bug(Entity):
     def is_walking(self):
         return self._destination != None
 
-    def get_position(self):
-        self._update_walking_position()
-        return super().get_position()
+    def do_step(self):
+        if not self.is_walking():
+            return
+
+        self._steps_left -= 1
+
+        if self._steps_left <= 0:
+            self.set_position(self._destination.x, self._destination.y)
+            self._clear_walknig()
+        else:
+            self.set_position(self._pos.x + self._step_x_part, self._pos.y + self._step_y_part)
+        
+        self.emit_change()
+        print(self.get_position())
 
     # def update(self, bugs_in_sight, blocks_in_sight):
     #     if self.is_walking():
@@ -104,18 +111,15 @@ class Bug(Entity):
 
     #     return Point(x, y)
 
-    def _update_walking_position(self):
-        if not self.is_walking():
-            return
 
-        time_in_walk = time.time() - self._walk_start_at
-        walked_percent = ( 100 * time_in_walk ) / self._whole_time_to_walk
-        if walked_percent >= 100:
-            self.set_position(self._destination.x, self._destination.y)
-        else:
-            current_x = self._calc_coord_for_walked_percent(self._walk_start_pos.x, self._destination.x, walked_percent)
-            current_y = self._calc_coord_for_walked_percent(self._walk_start_pos.y, self._destination.y, walked_percent)
-            self.set_position(current_x, current_y)
+        # time_in_walk = time.time() - self._walk_start_at
+        # walked_percent = ( 100 * time_in_walk ) / self._whole_time_to_walk
+        # if walked_percent >= 100:
+        #     self.set_position(self._destination.x, self._destination.y)
+        # else:
+        #     current_x = self._calc_coord_for_walked_percent(self._walk_start_pos.x, self._destination.x, walked_percent)
+        #     current_y = self._calc_coord_for_walked_percent(self._walk_start_pos.y, self._destination.y, walked_percent)
+        #     self.set_position(current_x, current_y)
 
     def _calc_coord_for_walked_percent(self, start_coord, end_coord, walked_percent):
         distance = abs(abs(end_coord) - abs(start_coord))
@@ -127,15 +131,15 @@ class Bug(Entity):
 
     def _clear_walknig(self):
         self._destination = None
-        self._whole_time_to_walk = None
-        self._walk_start_at = None
-        self._walk_start_pos = None
+        self._steps_left = None
+        self._step_x_part = None
+        self._step_y_part = None
 
     def _calc_distance_to_destination(self):
         return math.dist([self._pos.x, self._pos.y], [self._destination.x, self._destination.y])
 
-    def _execute_walking(self):
-        time.sleep(self._whole_time_to_walk)
-        self._update_walking_position()
-        self._clear_walknig()
-        self.emit_change()
+    # def _execute_walking(self):
+    #     time.sleep(self._whole_time_to_walk)
+    #     self._update_walking_position()
+    #     self._clear_walknig()
+    #     self.emit_change()
