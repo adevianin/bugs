@@ -1,12 +1,8 @@
 from .entity import Entity
 import math
-import time
 from .point import Point
-from .bug_activities import BugActivitie
 import random
 from .size import Size
-import sympy
-from threading import Thread
 from .task import Task
 from .task_types import TaskTypes
 
