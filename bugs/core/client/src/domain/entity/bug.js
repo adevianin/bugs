@@ -2,67 +2,43 @@ import { Entity } from './entity';
 
 class Bug extends Entity {
 
-    constructor(id, pos, size, walkSpeed, destination) {
+    constructor(id, pos, size) {
         super(id, pos, size);
-        this._walkSpeed = walkSpeed;
-        this._destination = destination;
-
-        // if (this.isWalking()) {
-        //     this._startWalking();
-        // }
+        this._flySpeed = 50;
     }
 
     updateEntity(entityJson) {
-        this.setPosition(entityJson.pos.x, entityJson.pos.y);
-
-        // if (entityJson.destination) {
-        //     this.setDestination(entityJson.destination.x, entityJson.destination.y);
-        // } else {
-        //     this._clearWalking();
-        // }
+        this.flyTo(entityJson.pos.x, entityJson.pos.y);
     }
 
-    setDestination(x, y) {
-        this._clearWalking();
-        this._destination = { x, y };
-        this._startWalking();
-    }
+    flyTo(x, y) {
+        this._clearFlying()
 
-    isWalking() {
-        return !!this._destination;
-    }
-
-    _startWalking() {
-        let startPosition = {
-            x: this.position.x,
-            y: this.position.y,
-        };
-        let distance = Math.sqrt(Math.pow(this.position.x - this._destination.x, 2)+ Math.pow(this.position.y - this._destination.y, 2));
-        this._wholeTimeToWalk = distance / this._walkSpeed;
-        this._walkStartAt = this._getNow();
-        this._walkingInterval = setInterval(() => {
-            let timeInWalk = this._getNow() - this._walkStartAt;
-            let walkedPercent = ( 100 * timeInWalk ) / this._wholeTimeToWalk;
-            if (walkedPercent < 100){
-                let currentX = this._calcCoordForWalkedPercent(startPosition.x, this._destination.x, walkedPercent);
-                let currentY = this._calcCoordForWalkedPercent(startPosition.y, this._destination.y, walkedPercent);
+        let distance = Math.sqrt(Math.pow(x - this.position.x, 2)+ Math.pow(y - this.position.y, 2));
+        this._wholeFlyTime = distance / this._flySpeed;
+        this._flyStartAt = this._getNow();
+        this._flyingInterval = setInterval(() => {
+            let timeInFly = this._getNow() - this._flyStartAt;
+            let flayedPercent = ( 100 * timeInFly ) / this._wholeFlyTime;
+            if (flayedPercent < 100) {
+                let currentX = this._calcCoordForFlyedPercent(this.position.x, x, flayedPercent);
+                let currentY = this._calcCoordForFlyedPercent(this.position.y, y, flayedPercent);
                 this.setPosition(currentX, currentY);
             } else {
-                this.setPosition(this._destination.x, this._destination.y);
-                this._clearWalking();
+                this.setPosition(x, y);
+                this._clearFlying();
             }
-        }, 100);
+        }, 100)
     }
 
-    _clearWalking() {
-        this._destination = null;
-        this._wholeTimeToWalk = null;
-        clearInterval(this._walkingInterval);
+    _clearFlying() {
+        this._wholeFlyTime = null;
+        clearInterval(this._flyingInterval);
     }
 
-    _calcCoordForWalkedPercent(startCoord, endCoord, walkedPercent) {
+    _calcCoordForFlyedPercent(startCoord, endCoord, flayedPercent) {
         let distance = Math.abs(Math.abs(endCoord) - Math.abs(startCoord));
-        let distancePassed = distance * (walkedPercent  / 100);
+        let distancePassed = distance * (flayedPercent  / 100);
         return endCoord > startCoord ? startCoord + distancePassed : startCoord - distancePassed;
     }
 

@@ -11,20 +11,6 @@ class World:
         self._blocks = blocks
 
     def run(self):
-        # self.bugs[0].plan_jump()
-        # bug = self.bugs[0]
-        # bug.walk_path([
-        #     Point(90, 40),
-        #     Point(90, 90),
-        #     Point(150, 150),
-        #     Point(250, 150)
-        # ])
-
-        bug = self._bugs[0]
-        bug.walk_to(150, 250)
-
-        # bug.events.on('arrived', self.on_arrived)
-
         world_thread = Thread(target=self._run_world_loop)
         world_thread.start()
         print('world is runned')
@@ -60,16 +46,5 @@ class World:
             iteration_time = iteration_end - iteration_start
 
             time.sleep(3 - iteration_time)
-
-    # def _find_entities_in_sight(self, bug, entities):
-    #     entities_in_sight = []
-    #     sight = bug.get_sight()
-    #     for entity in entities:
-    #         if entity is bug: continue
-    #         distance = bug.calc_distance_to(entity)
-    #         if distance <= sight:
-    #             entities_in_sight.append(entity)
-
-    #     return entities_in_sight
 
         
