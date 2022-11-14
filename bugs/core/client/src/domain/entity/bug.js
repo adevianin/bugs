@@ -4,7 +4,7 @@ class Bug extends Entity {
 
     constructor(id, pos, size) {
         super(id, pos, size);
-        this._flySpeed = 50;
+        this._flySpeed = 2;
     }
 
     updateEntity(entityJson) {

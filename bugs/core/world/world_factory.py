@@ -4,6 +4,7 @@ from pyee.base import EventEmitter
 from .point import Point
 from .block import Block
 from .size import Size
+from .map import Map
 
 class WorldFactory:
 
@@ -11,24 +12,26 @@ class WorldFactory:
         self.main_event_bus = main_event_bus
 
     def build_world(self, world_json):
-        inited_bugs = []
-        for bug_json in world_json['bugs']:
-            bug = self.build_bug(bug_json)
-            inited_bugs.append(bug)
+        map_width = world_json["map"]["size"]["width"]
+        map_height = world_json["map"]["size"]["height"]
+        map = Map(Size(map_width, map_height))
 
-        inited_blocks = []
+        for bug_json in world_json['bugs']:
+            bug = self.build_bug(bug_json, map)
+            map.add_bug(bug)
+
         for block_json in world_json['blocks']:
             block = self.build_block(block_json)
-            inited_blocks.append(block)
+            map.add_block(block)
 
-        world = World(inited_bugs, inited_blocks)
+        world = World(map)
 
         return world
 
-    def build_bug(self, bug_json):
+    def build_bug(self, bug_json, map):
         events = EventEmitter()
         pos = Point(bug_json['pos']['x'], bug_json['pos']['y'])
-        return Bug(events, self.main_event_bus, bug_json['id'], pos)
+        return Bug(map, events, self.main_event_bus, bug_json['id'], pos)
 
     def build_block(self, block_json):
         pos = Point(block_json["x"], block_json["y"])

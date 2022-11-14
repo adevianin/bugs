@@ -7,8 +7,9 @@ from .task import Task
 from .task_types import TaskTypes
 
 class Bug(Entity):
-    def __init__(self, events, main_event_bus, id, pos):
+    def __init__(self, map, events, main_event_bus, id, pos):
         super().__init__(id, pos, Size(10, 10))
+        self._map = map
         self._events = events
         self._main_event_bus = main_event_bus
         self._distance_per_step = 20
@@ -32,7 +33,6 @@ class Bug(Entity):
         self._emit_change()
 
     def _do_next_task(self):
-        print('do next task')
         if len(self._tasks) == 0:
             self._generate_tasks()
 
@@ -51,7 +51,8 @@ class Bug(Entity):
         
     
     def _do_walk_task(self, walk_task):
-        dest_point = walk_task.get_params()['destination']
+        self._validate_walk_task(walk_task)
+        dest_point = walk_task.get_param('destination')
         distance = math.dist([self._pos.x, self._pos.y], [dest_point.x, dest_point.y])
         x_distance = dest_point.x - self._pos.x 
         y_distance = dest_point.y - self._pos.y
@@ -76,10 +77,24 @@ class Bug(Entity):
         else:
             self.set_position(new_pos_x, new_pos_y)
 
+    def _validate_walk_task(self, walk_task):
+        is_validated = walk_task.get_working_data('is_validated')
+        if is_validated: 
+            return
+
+        padding = 5
+        destination = walk_task.get_param('destination')
+        intersect = self._map.get_block_intersection(self._pos, destination)
+
+        if intersect:
+            correct_x = intersect.x + padding if self._pos.x > destination.x else intersect.x - padding
+            correct_y = intersect.y + padding if self._pos.y > destination.y else intersect.y - padding
+            walk_task.set_param('destination', Point(correct_x, correct_y))
+            
+        walk_task.set_working_data('is_validated', True)
+
     def _generate_tasks(self):
-        task = Task.create(TaskTypes.WALK, {
-            'destination': Point(random.randint(0, 1000), random.randint(0, 500))
-        })
+        task = self._generate_random_walk_task()
 
         self._tasks.append(task)
 
@@ -88,3 +103,21 @@ class Bug(Entity):
 
     def _replenish_step_energy(self):
         self._step_energy = 100
+
+    def _generate_random_walk_task(self):
+        map_width = self._map.get_size().width
+        map_height = self._map.get_size().height
+        can_walk_up = self._map.get_block_intersection(self._pos, Point(self._pos.x, self._pos.y - 10)) == None
+        can_walk_down = self._map.get_block_intersection(self._pos, Point(self._pos.x, self._pos.y + 10)) == None
+        can_walk_left = self._map.get_block_intersection(self._pos, Point(self._pos.x - 10, self._pos.y)) == None
+        can_walk_right = self._map.get_block_intersection(self._pos, Point(self._pos.x + 10, self._pos.y)) == None
+        
+        x = random.randint(0 if can_walk_left else self._pos.x, map_width if can_walk_right else self._pos.x)
+        y = random.randint(0 if can_walk_up else self._pos.y, map_height if can_walk_down else self._pos.y)
+
+        task = Task.create(TaskTypes.WALK, {
+            'destination': Point(x, y)
+        })
+
+        return task
+        
