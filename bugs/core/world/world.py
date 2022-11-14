@@ -23,13 +23,9 @@ class World:
         for bug in self._map.get_bugs():
             bugs_json.append(bug.to_json())
 
-        blocks_json = []
-        for block in self._map.get_blocks():
-            blocks_json.append(block.to_json())
-
         return {
             'bugs': bugs_json,
-            'blocks': blocks_json
+            'blocks': []
         }
 
     def _run_world_loop(self):

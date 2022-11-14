@@ -14,7 +14,7 @@ class Bug(Entity):
         self._main_event_bus = main_event_bus
         self._distance_per_step = 20
         self._tasks = []
-        self._distance_per_energy = 0.5
+        self._distance_per_energy = 1
 
     # def to_json(self):
     #     json = super().to_json()
@@ -51,7 +51,6 @@ class Bug(Entity):
         
     
     def _do_walk_task(self, walk_task):
-        self._validate_walk_task(walk_task)
         dest_point = walk_task.get_param('destination')
         distance = math.dist([self._pos.x, self._pos.y], [dest_point.x, dest_point.y])
         x_distance = dest_point.x - self._pos.x 
@@ -77,22 +76,6 @@ class Bug(Entity):
         else:
             self.set_position(new_pos_x, new_pos_y)
 
-    def _validate_walk_task(self, walk_task):
-        is_validated = walk_task.get_working_data('is_validated')
-        if is_validated: 
-            return
-
-        padding = 5
-        destination = walk_task.get_param('destination')
-        intersect = self._map.get_block_intersection(self._pos, destination)
-
-        if intersect:
-            correct_x = intersect.x + padding if self._pos.x > destination.x else intersect.x - padding
-            correct_y = intersect.y + padding if self._pos.y > destination.y else intersect.y - padding
-            walk_task.set_param('destination', Point(correct_x, correct_y))
-            
-        walk_task.set_working_data('is_validated', True)
-
     def _generate_tasks(self):
         task = self._generate_random_walk_task()
 
@@ -105,15 +88,8 @@ class Bug(Entity):
         self._step_energy = 100
 
     def _generate_random_walk_task(self):
-        map_width = self._map.get_size().width
-        map_height = self._map.get_size().height
-        can_walk_up = self._map.get_block_intersection(self._pos, Point(self._pos.x, self._pos.y - 10)) == None
-        can_walk_down = self._map.get_block_intersection(self._pos, Point(self._pos.x, self._pos.y + 10)) == None
-        can_walk_left = self._map.get_block_intersection(self._pos, Point(self._pos.x - 10, self._pos.y)) == None
-        can_walk_right = self._map.get_block_intersection(self._pos, Point(self._pos.x + 10, self._pos.y)) == None
-        
-        x = random.randint(0 if can_walk_left else self._pos.x, map_width if can_walk_right else self._pos.x)
-        y = random.randint(0 if can_walk_up else self._pos.y, map_height if can_walk_down else self._pos.y)
+        x = random.randint(0, self._map.get_size().width)
+        y = random.randint(0, self._map.get_size().height)
 
         task = Task.create(TaskTypes.WALK, {
             'destination': Point(x, y)
