@@ -12,3 +12,9 @@ class Map:
 
     def get_size(self):
         return self._size
+
+    def validate_point(self, point):
+        is_x_valid = point.x >= 0 and point.x <= self._size.width
+        is_y_valid = point.y >= 0 and point.y <= self._size.height
+
+        return is_x_valid and is_y_valid

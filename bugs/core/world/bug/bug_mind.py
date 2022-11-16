@@ -24,9 +24,7 @@ class BugMind:
             self._tasks.remove(current_task)
 
     def _generate_tasks(self):
-        x = random.randint(0, self._map.get_size().width)
-        y = random.randint(0, self._map.get_size().height)
-        task = self._task_factory.build_walk_task(self._body, self._map, Point(x,y))
+        task = self._task_factory.build_search_task(self._body, self._map, 1)
 
         self._tasks.append(task)
 

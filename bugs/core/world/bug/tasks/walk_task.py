@@ -17,6 +17,7 @@ class WalkTask(BaseTask):
         y_distance = self._dest_point.y - bug_body_pos.y
         needed_energy = distance / bug_distance_per_energy
         investing_energy = needed_energy if bug_step_energy >= needed_energy else bug_step_energy
+        investing_energy = math.ceil(investing_energy)
         self._bug_body.consume_step_energy(investing_energy)
         distance_can_walk = investing_energy * bug_distance_per_energy
         percent_can_walk = (distance_can_walk * 100) / distance

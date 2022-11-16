@@ -1,4 +1,3 @@
-from .point import Point
 from threading import Thread
 import time
 
@@ -38,6 +37,6 @@ class World:
             iteration_end = time.time()
             iteration_time = iteration_end - iteration_start
             
-            time.sleep(3 - iteration_time)
+            time.sleep(2 - iteration_time)
 
         
