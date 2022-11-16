@@ -37,7 +37,7 @@ class SearchTask(BaseTask):
 
         self._visited_points.append(choosed_point)
 
-        task = self._task_factory.build_walk_task(self._bug_body, map, choosed_point)
+        task = self._task_factory.build_walk_task(self._bug_body, self._map, choosed_point)
 
         return task
 
@@ -50,7 +50,7 @@ class SearchTask(BaseTask):
 
         points = []
 
-        points_count = 4
+        points_count = 8
         delta_angle = 360 / points_count
         current_angle = 0
         for _ in range(points_count):
