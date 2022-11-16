@@ -14,7 +14,7 @@ class WorldFactory:
         map_width = world_json["map"]["size"]["width"]
         map_height = world_json["map"]["size"]["height"]
         map = Map(Size(map_width, map_height))
-        task_factory = self._build_task_factory(map)
+        task_factory = TaskFactory(map)
 
         bugs = []
         for bug_json in world_json['bugs']:
@@ -33,6 +33,3 @@ class WorldFactory:
         bug_mind = BugMind(bug_body, map, task_factory)
         bug = Bug(self.main_event_bus, bug_mind, bug_body)
         return bug
-
-    def _build_task_factory(self, map):
-        return TaskFactory(map)
