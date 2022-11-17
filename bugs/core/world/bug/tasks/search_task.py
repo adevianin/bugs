@@ -4,12 +4,11 @@ from ...point import Point
 
 class SearchTask(BaseTask):
 
-    def __init__(self, bug_body, map, searched_entity_type, task_factory):
-        super().__init__(bug_body)
+    def __init__(self, task_factory, bug_body, map, searched_entity_type):
+        super().__init__(task_factory, bug_body)
         self._map = map
         self._walk_task = None
         self._searched_entity_type = searched_entity_type
-        self._task_factory = task_factory
         self._visited_points = []
         self._search_result = []
 

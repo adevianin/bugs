@@ -1,6 +1,7 @@
 class BaseTask:
 
-    def __init__(self, bug_body):
+    def __init__(self, task_factory, bug_body):
+        self._task_factory = task_factory
         self._bug_body = bug_body
         self._is_done = False
 

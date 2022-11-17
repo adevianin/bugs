@@ -3,8 +3,8 @@ import math
 
 class WalkTask(BaseTask):
     
-    def __init__(self, bug_body, map, dest_point):
-        super().__init__(bug_body)
+    def __init__(self, task_factory, bug_body, map, dest_point):
+        super().__init__(task_factory, bug_body)
         self._map = map
         self._dest_point = dest_point
 
