@@ -3,11 +3,12 @@ import time
 
 class World:
 
-    def __init__(self, map, bugs):
+    def __init__(self, map, bugs, food_grower):
         World._instance = self
         self._map = map
         self._bugs = bugs
         self._world_loop_stop_flag = False
+        self._food_grower = food_grower
 
     def run(self):
         world_thread = Thread(target=self._run_world_loop)
@@ -23,14 +24,22 @@ class World:
         for bug in self._bugs:
             bugs_json.append(bug.to_json())
 
+        foods_json = []
+        for food in self._map.get_foods():
+            foods_json.append(food.to_json())
+
         return {
             'bugs': bugs_json,
+            'foods': foods_json,
             'blocks': []
         }
 
     def _run_world_loop(self):
         while not self._world_loop_stop_flag:
             iteration_start = time.time()
+
+            self._food_grower.do_grow_step()
+
             for bug in self._bugs:
                 bug.do_step()
 

@@ -1,15 +1,18 @@
+import { EntityTypes } from './entityTypes';
+
 class World {
-    constructor(bugs, blocks) {
+    constructor(worldFactory, bugs, foods) {
         this._bugs = bugs;
-        this._blocks = blocks;
+        this._foods = foods
+        this._worldFactory = worldFactory
     }
 
     get bugs() {
         return [...this._bugs];
     }
 
-    get blocks() {
-        return [...this._blocks];
+    get foods() {
+        return [...this._foods]
     }
 
     updateEntity(entityJson) {
@@ -17,12 +20,25 @@ class World {
         if (entity) {
             entity.updateEntity(entityJson);
         } else {
-            console.warn(`entity with id="${entityJson.id}" is not found`);
+            this._buildNewcameEntity(entityJson)
         }
     }
 
     _findEntityById(id) {
         return this._bugs.find(b => { return b.id === id });
+    }
+
+    _buildNewcameEntity(entityJson) {
+        switch(entityJson.type) {
+            case EntityTypes.BUG:
+                this._bugs.push(this._worldFactory.buildBug(entityJson));
+                break;
+            case EntityTypes.FOOD:
+                this._foods.push(this._worldFactory.buildFood(entityJson))
+                break;
+            default:
+                throw `unknown type of entity "${ entityJson.type }"`
+        }
     }
 }
 

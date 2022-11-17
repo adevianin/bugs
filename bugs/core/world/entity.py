@@ -2,10 +2,12 @@ from .point import Point
 
 class Entity:
 
-    def __init__(self, id, pos, size):
+    def __init__(self, main_event_bus, type, id, pos, size):
         self.id = id
+        self._main_event_bus = main_event_bus
         self._pos = pos
         self._size = size
+        self._type = type
 
     def update(self):
         pass
@@ -20,6 +22,7 @@ class Entity:
         pos = self.get_position()
         return {
             'id': self.id,
+            'type': self._type,
             'pos': {
                 'x': pos.x,
                 'y': pos.y,
@@ -35,5 +38,8 @@ class Entity:
 
     def do_action(self):
         pass
+
+    def emit_change(self):
+        self._main_event_bus.emit('entity_changed', self)
 
     

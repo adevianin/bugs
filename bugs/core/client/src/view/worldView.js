@@ -8,10 +8,10 @@ class WorldView {
     }
 
     _renderWorld() {
-        // this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
 
         this._renderBugs();
-        // this._renderBlocks();
+        this._renderFoods();
     }
 
     _renderBugs() {
@@ -24,15 +24,16 @@ class WorldView {
         })
     }
 
-    // _renderBlocks() {
-    //     let blocks = this._domainFacade.world.blocks;
-    //     this._ctx.fillStyle = 'gray';
-    //     blocks.forEach(block => {
-    //         let posX = block.position.x - block.size.width / 2;
-    //         let posY = block.position.y - block.size.height / 2;
-    //         this._ctx.fillRect(posX, posY, block.size.width, block.size.height)
-    //     }) 
-    // }
+    _renderFoods() {
+        let foods = this._domainFacade.world.foods
+        this._ctx.fillStyle = 'green';
+        foods.forEach(food => {
+            let posX = food.position.x - food.size.width / 2;
+            let posY = food.position.y - food.size.height / 2;
+            this._ctx.fillRect(posX, posY, food.size.width, food.size.height)
+        })
+    }
+
 }
 
 export { WorldView }

@@ -1,10 +1,10 @@
 from ..entity import Entity
 from ..size import Size
-import math
+from ..entity_types import EntityTypes
 
 class BugBody(Entity):
-    def __init__(self, id, pos):
-        super().__init__(id, pos, Size(10, 10))
+    def __init__(self, main_event_bus, id, pos):
+        super().__init__(main_event_bus, EntityTypes.BUG, id, pos, Size(10, 10))
         self._distance_per_energy = 1
         self._sight_distance = 50
 
