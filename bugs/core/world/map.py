@@ -1,5 +1,6 @@
 from .point import Point
-import random
+import random, math
+from .entity_types import EntityTypes
 
 class Map:
 
@@ -33,3 +34,24 @@ class Map:
         x = random.randint(0, self._size.width)
         y = random.randint(0, self._size.height)
         return Point(x, y)
+        
+    def search_entity_near(self, pos, max_distance, entity_type):
+        entities = []
+        match entity_type:
+            case EntityTypes.BUG:
+                entities = self._bugs
+            case EntityTypes.FOOD:
+                entities = self._foods
+        
+        result = []
+        for entity in entities:
+            entity_pos = entity.get_position()
+            distance = math.dist([entity_pos.x, entity_pos.y], [pos.x, pos.y])
+            if distance <= max_distance:
+                result.append(entity)
+
+        return result
+
+
+
+

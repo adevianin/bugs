@@ -11,17 +11,22 @@ class SearchTask(BaseTask):
         self._searched_entity_type = searched_entity_type
         self._task_factory = task_factory
         self._visited_points = []
+        self._search_result = []
 
     def do_step(self):
-        searched_item = self._look_for_searched_item()
+        searched_items = self._look_for_searched_item()
 
-        if searched_item != None:
+        if len(searched_items) > 0:
+            self._search_result = searched_items
             self.mark_as_done()
         else:
             if not self._walk_task or self._walk_task.is_done():
                 self._walk_task = self._generate_next_walk_task()
 
             self._walk_task.do_step()
+
+    def get_result(self):
+        return self._search_result
 
     def _generate_next_walk_task(self):
         points = self._generate_points_to_walk()
@@ -42,7 +47,7 @@ class SearchTask(BaseTask):
         return task
 
     def _look_for_searched_item(self):
-        return None
+        return self._map.search_entity_near(self._bug_body.get_position(), self._bug_body.get_sight_distance(), self._searched_entity_type)
 
     def _generate_points_to_walk(self):
         pos = self._bug_body.get_position()

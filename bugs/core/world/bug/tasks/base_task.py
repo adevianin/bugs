@@ -9,6 +9,9 @@ class BaseTask:
 
     def mark_as_done(self):
         self._is_done = True
+
+    def get_result(self):
+        pass
     
     def do_step(self):
         pass
