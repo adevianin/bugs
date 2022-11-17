@@ -3,6 +3,7 @@ from core.repository.world_data_repository import WorldDataRepository
 from core.world import WorldFactory, WorldFacade
 from django.conf import settings
 from pyee.base import EventEmitter
+from core.world.bug.tasks.task_factory import TaskFactory
 
 class CoreConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
@@ -14,7 +15,8 @@ class CoreConfig(AppConfig):
 
         main_event_bus = EventEmitter()
 
-        world_factory = WorldFactory(main_event_bus)
+        task_factory = TaskFactory()
+        world_factory = WorldFactory(main_event_bus, task_factory)
 
         world_facade = WorldFacade.get_instance()
         world_facade.inject_data_repository(world_data_repo)
