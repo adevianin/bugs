@@ -6,7 +6,8 @@ class BugBody(Entity):
     def __init__(self, main_event_bus, id, pos):
         super().__init__(main_event_bus, EntityTypes.BUG, id, pos, Size(10, 10))
         self._distance_per_energy = 1
-        self._sight_distance = 50
+        self._sight_distance = 150
+        self._eating_per_energy = 0.5
 
     def replenish_step_energy(self):
         self._step_energy = 100
@@ -25,3 +26,16 @@ class BugBody(Entity):
 
     def get_distance_can_walk(self):
         return self._step_energy * self._distance_per_energy
+
+    def eat(self, food_entity):
+        eaten_calories = food_entity.eat(self.get_calories_can_eat())
+        self.consume_step_energy(eaten_calories / self._eating_per_energy)
+
+    def wait_next_turn(self):
+        self._step_energy = 0
+
+    def get_eating_per_energy(self):
+        return self._eating_per_energy
+
+    def get_calories_can_eat(self):
+        return self._step_energy * self._eating_per_energy

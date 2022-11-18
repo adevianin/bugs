@@ -1,10 +1,13 @@
 import { EntityTypes } from './entityTypes';
 
 class World {
-    constructor(worldFactory, bugs, foods) {
+    constructor(mainEventBus, worldFactory, bugs, foods) {
         this._bugs = bugs;
         this._foods = foods
         this._worldFactory = worldFactory
+        this._mainEventBus = mainEventBus
+
+        this._mainEventBus.on('eaten', this._onFoodEaten.bind(this))
     }
 
     get bugs() {
@@ -25,7 +28,10 @@ class World {
     }
 
     _findEntityById(id) {
-        return this._bugs.find(b => { return b.id === id });
+        let bug = this._bugs.find(b => { return b.id === id });
+        if (bug) { return bug }
+
+        return this._foods.find(f => { return f.id === id });
     }
 
     _buildNewcameEntity(entityJson) {
@@ -38,6 +44,14 @@ class World {
                 break;
             default:
                 throw `unknown type of entity "${ entityJson.type }"`
+        }
+    }
+
+    _onFoodEaten(food) {
+        for (let i = 0; i < this._foods.length; i++) {
+            if (this._foods[i].id == food.id) {
+                this._foods.splice(i, 1)
+            }
         }
     }
 }

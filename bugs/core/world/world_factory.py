@@ -27,7 +27,7 @@ class WorldFactory:
             map.add_food(food)
 
         food_grower = FoodGrower(map, self)
-        world = World(map, bugs, food_grower)
+        world = World(self._main_event_bus, map, bugs, food_grower)
 
         return world
 

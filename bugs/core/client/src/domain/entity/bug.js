@@ -2,8 +2,8 @@ import { Entity } from './entity';
 
 class Bug extends Entity {
 
-    constructor(id, pos, size) {
-        super(id, pos, size);
+    constructor(mainEventBus, id, pos, size) {
+        super(mainEventBus, id, pos, size);
         this._flySpeed = 50;
     }
 

@@ -1,9 +1,15 @@
 import { Entity } from './entity';
 
 class Food extends Entity {
-    constructor(id, pos, size, calories) {
-        super(id, pos, size);
+    constructor(mainEventBus, id, pos, size, calories) {
+        super(mainEventBus, id, pos, size);
         this._calories = calories;
+    }
+
+    updateEntity(entityJson) {
+        if (entityJson.eaten) {
+            this._mainEventBus.emit('eaten', this)
+        }
     }
 }
 

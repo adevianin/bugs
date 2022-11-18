@@ -3,12 +3,15 @@ import time
 
 class World:
 
-    def __init__(self, map, bugs, food_grower):
+    def __init__(self, main_event_bus, map, bugs, food_grower):
         World._instance = self
         self._map = map
         self._bugs = bugs
         self._world_loop_stop_flag = False
         self._food_grower = food_grower
+        self._main_event_bus = main_event_bus
+
+        self._main_event_bus.add_listener('eaten', self._on_food_eaten)
 
     def run(self):
         world_thread = Thread(target=self._run_world_loop)
@@ -47,5 +50,8 @@ class World:
             iteration_time = iteration_end - iteration_start
             
             time.sleep(2 - iteration_time)
+
+    def _on_food_eaten(self, food_entity):
+        self._map.remove_food(food_entity)
 
         

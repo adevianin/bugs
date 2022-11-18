@@ -21,6 +21,9 @@ class Map:
     def add_food(self, food):
         self._foods.append(food)
 
+    def remove_food(self, food):
+        self._foods.remove(food)
+
     def get_foods(self):
         return self._foods
 
@@ -51,6 +54,7 @@ class Map:
                 result.append(entity)
 
         return result
+
 
 
 
