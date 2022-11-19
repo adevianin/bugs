@@ -54,7 +54,7 @@ class SearchTask(BaseTask):
 
         points = []
 
-        points_count = 8
+        points_count = 16
         delta_angle = 360 / points_count
         current_angle = 0
         for _ in range(points_count):

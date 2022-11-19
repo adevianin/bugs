@@ -3,7 +3,7 @@ class FoodGrower:
     def __init__(self, map, world_factory):
         self._map = map
         self._world_factory = world_factory
-        self._food_per_step = 0.05
+        self._food_per_step = 0.1
         self._acumulated_food = 0
         self._food_calories = 50
 
