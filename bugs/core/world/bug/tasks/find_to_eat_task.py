@@ -4,6 +4,10 @@ from ...point import Point
 
 class FindToEatTask(BaseTask):
 
+    SEARCHING_FOOD_STAGE = 1
+    WALKING_TO_FOOD_STAGE = 2
+    EATING_FOOD_STAGE = 3
+
     def __init__(self, task_factory, bug_body, map):
         super().__init__(task_factory, bug_body)
         self._map = map
@@ -11,34 +15,31 @@ class FindToEatTask(BaseTask):
         self._walk_task = None
         self._eat_task = None
         self._food = None
-        self._walked_to_food = False
+        self._task_stage = FindToEatTask.SEARCHING_FOOD_STAGE
 
     def do_step(self):
-        if not self._food:
-            self._do_search_task()
-        
-        if self._food and not self._walked_to_food:
-            self._do_walk_task()
-        
-        if self._walked_to_food:
-            self._do_eat_task()   
+        match self._task_stage:
+            case FindToEatTask.SEARCHING_FOOD_STAGE:
+                self._do_search_task()
+            case FindToEatTask.WALKING_TO_FOOD_STAGE:
+                self._do_walk_task()
+            case FindToEatTask.EATING_FOOD_STAGE:
+                self._do_eat_task()
             
     def _do_search_task(self):
         if not self._search_task:
-            print('creating search task')
             self._search_task = self._task_factory.build_search_task(self._bug_body, self._map, EntityTypes.FOOD)
 
         if self._search_task.is_done():
             foods = self._search_task.get_result()
             self._food = foods[0]
-            print('search task is done', self._food, foods)
+
+            self._task_stage = FindToEatTask.WALKING_TO_FOOD_STAGE
         else:
-            print('doing search task')
             self._search_task.do_step()
 
     def _do_walk_task(self):
         if not self._walk_task:
-            print('creating walk task', self._bug_body.get_position(), self._food.get_position())
             food_position = self._food.get_position()
             bug_position = self._bug_body.get_position()
             dist_to_food = 5
@@ -47,22 +48,19 @@ class FindToEatTask(BaseTask):
             self._walk_task = self._task_factory.build_walk_task(self._bug_body, self._map, Point(x,y))
 
         if self._walk_task.is_done():
-            self._walked_to_food = True
-            print('walk task done')
+            self._task_stage = FindToEatTask.EATING_FOOD_STAGE
         else:
-            print('doing walk task')
             self._walk_task.do_step()
 
     def _do_eat_task(self):
         if not self._eat_task:
-            print('creating eat task')
             self._eat_task = self._task_factory.build_eat_task(self._bug_body, self._food)
 
         if self._eat_task.is_done():
-            print('done eat task')
             self.mark_as_done()
         else:
-            print('doing eat task')
             self._eat_task.do_step()
+
+    
 
         
