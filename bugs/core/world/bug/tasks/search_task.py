@@ -37,24 +37,16 @@ class SearchTask(BaseTask):
     def _generate_next_walk_task(self):
         points = self._generate_points_to_walk()
 
-        print('visited_points', self._visited_points)
-        print('points', points)
-
         def dist_sum(point):
             dist_sum = 0
             for visited_point in self._visited_points:
                 dist_sum += math.dist([point.x, point.y], [visited_point.x, visited_point.y])
-            print('point= ', point, 'dist sum = ', dist_sum)
             return dist_sum
 
         points.sort(key=dist_sum, reverse=True)
-        print('sorted points ', points)
         points = points[:math.ceil(len(points)/2)]
-        print('points to choose', points    )
 
         choosed_point = random.choice(points)
-
-        print('choosed point', choosed_point)
 
         self._visited_points.append(choosed_point)
 
