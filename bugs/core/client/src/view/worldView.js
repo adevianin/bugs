@@ -10,8 +10,9 @@ class WorldView {
     _renderWorld() {
         this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
 
-        this._renderBugs();
+        this._renderTowns();
         this._renderFoods();
+        this._renderBugs();
     }
 
     _renderBugs() {
@@ -34,6 +35,16 @@ class WorldView {
             let posX = food.position.x - food.size.width / 2;
             let posY = food.position.y - food.size.height / 2;
             this._ctx.fillRect(posX, posY, food.size.width, food.size.height)
+        })
+    }
+
+    _renderTowns() {
+        let towns = this._domainFacade.world.towns;
+        towns.forEach(town => {
+            this._ctx.fillStyle = 'yellow';
+            let posX = town.position.x - town.size.width / 2;
+            let posY = town.position.y - town.size.height / 2;
+            this._ctx.fillRect(posX, posY, town.size.width, town.size.height)
         })
     }
 

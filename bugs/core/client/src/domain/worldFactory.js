@@ -1,6 +1,7 @@
 import { Bug } from './entity/bug';
 import { World } from './entity/world';
 import { Food } from './entity/food';
+import { Town } from './entity/town';
 import EventEmitter from 'events';
 
 class WorldFactory {
@@ -22,7 +23,13 @@ class WorldFactory {
             foods.push(food)
         })
 
-        let world = new World(this._mainEventBus, this, initedBugs, foods);
+        let towns = []
+        worldJson.towns.forEach(townJson => {
+            let town = this.buildTown(townJson);
+            towns.push(town)
+        })
+
+        let world = new World(this._mainEventBus, this, initedBugs, foods, towns);
 
         return world;
     }
@@ -33,6 +40,10 @@ class WorldFactory {
 
     buildFood(foodJson) {
         return new Food(this._mainEventBus, foodJson.id, foodJson.pos, foodJson.size, foodJson.calories);
+    }
+
+    buildTown(townJson) {
+        return new Town(this._mainEventBus, townJson.id, townJson.pos, townJson.size);
     }
 }
 

@@ -6,6 +6,7 @@ from .bug import Bug, BugBody, BugMind
 from .food_grower import FoodGrower
 import uuid
 from .food import Food
+from .town import Town
 
 class WorldFactory:
 
@@ -26,6 +27,10 @@ class WorldFactory:
             food = self._build_food_from_json(food_json)
             map.add_food(food)
 
+        for town_json in world_json['towns']:
+            town = self._build_town_from_json(town_json)
+            map.add_town(town)
+
         food_grower = FoodGrower(map, self)
         world = World(self._main_event_bus, map, bugs, food_grower)
 
@@ -42,6 +47,10 @@ class WorldFactory:
         id = id if id else self._generate_entity_id()
         return Food(self._main_event_bus, id, pos, calories)
 
+    def build_town(self, id, pos):
+        id = id if id else self._generate_entity_id()
+        return Town(self._main_event_bus, id, pos)
+
     def _build_bug_from_json(self, bug_json, map):
         pos = Point(bug_json['pos']['x'], bug_json['pos']['y'])
         return self.build_bug(map, bug_json['id'], pos)
@@ -49,6 +58,10 @@ class WorldFactory:
     def _build_food_from_json(self, food_json):
         pos = Point(food_json['pos']['x'], food_json['pos']['y'])
         return self.build_food(food_json['id'], pos, food_json['calories'])
+
+    def _build_town_from_json(self, town_json):
+        pos = Point(town_json['pos']['x'], town_json['pos']['y'])
+        return self.build_town(town_json['id'], pos)
 
     def _build_map(self, map_json):
         map_width = map_json["size"]["width"]

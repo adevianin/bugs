@@ -8,6 +8,7 @@ class Map:
         self._size = size
         self._bugs = []
         self._foods = []
+        self._towns = []
 
     def add_bug(self, bug):
         self._bugs.append(bug)
@@ -26,6 +27,12 @@ class Map:
 
     def get_foods(self):
         return self._foods
+
+    def get_towns(self):
+        return self._towns
+
+    def add_town(self, town):
+        self._towns.append(town)
 
     def validate_point(self, point):
         is_x_valid = point.x >= 0 and point.x <= self._size.width

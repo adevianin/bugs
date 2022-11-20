@@ -31,9 +31,14 @@ class World:
         for food in self._map.get_foods():
             foods_json.append(food.to_json())
 
+        towns_json = []
+        for town in self._map.get_towns():
+            towns_json.append(town.to_json())
+
         return {
             'bugs': bugs_json,
             'foods': foods_json,
+            'towns': towns_json,
             'blocks': []
         }
 

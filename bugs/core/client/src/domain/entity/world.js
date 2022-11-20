@@ -1,9 +1,10 @@
 import { EntityTypes } from './entityTypes';
 
 class World {
-    constructor(mainEventBus, worldFactory, bugs, foods) {
+    constructor(mainEventBus, worldFactory, bugs, foods, towns) {
         this._bugs = bugs;
         this._foods = foods
+        this._towns = towns
         this._worldFactory = worldFactory
         this._mainEventBus = mainEventBus
 
@@ -16,6 +17,10 @@ class World {
 
     get foods() {
         return [...this._foods]
+    }
+
+    get towns() {
+        return [...this._towns]
     }
 
     updateEntity(entityJson) {
