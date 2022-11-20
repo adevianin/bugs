@@ -2,9 +2,10 @@ import { Entity } from './entity';
 
 class Bug extends Entity {
 
-    constructor(mainEventBus, id, pos, size) {
+    constructor(mainEventBus, id, pos, size, sightDistance) {
         super(mainEventBus, id, pos, size);
         this._flySpeed = 50;
+        this._sightDistance = sightDistance;
     }
 
     updateEntity(entityJson) {
@@ -29,6 +30,10 @@ class Bug extends Entity {
                 this._clearFlying();
             }
         }, 100)
+    }
+
+    get sightDistance() {
+        return this._sightDistance
     }
 
     _clearFlying() {

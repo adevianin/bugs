@@ -4,6 +4,9 @@ from ...point import Point
 
 class SearchTask(BaseTask):
 
+    VISITED_POINTS_MEMORY = 3
+    POSSIBLE_WALK_POINTS_COUNT = 8
+
     def __init__(self, task_factory, bug_body, map, searched_entity_type):
         super().__init__(task_factory, bug_body)
         self._map = map
@@ -14,32 +17,49 @@ class SearchTask(BaseTask):
 
     def do_step(self):
         searched_items = self._look_for_searched_item()
+        has_found_items = len(searched_items) > 0
 
-        if len(searched_items) > 0:
+        if has_found_items:
             self._search_result = searched_items
             self.mark_as_done()
         else:
-            if not self._walk_task or self._walk_task.is_done():
-                self._walk_task = self._generate_next_walk_task()
-
-            self._walk_task.do_step()
+            self._do_search_task()
 
     def get_result(self):
         return self._search_result
 
+    def _do_search_task(self):
+        if not self._walk_task or self._walk_task.is_done():
+            self._walk_task = self._generate_next_walk_task()
+
+        self._walk_task.do_step()
+
     def _generate_next_walk_task(self):
         points = self._generate_points_to_walk()
-        points_for_choosing_best = []
-        points_for_choosing = []
-        for point in points:
-            if self._is_point_far_from_visited_points(point):
-                points_for_choosing_best.append(point)
-            else:
-                points_for_choosing.append(point)
 
-        choosed_point = random.choice(points_for_choosing_best if len(points_for_choosing_best) > 0 else points_for_choosing)
+        print('visited_points', self._visited_points)
+        print('points', points)
+
+        def dist_sum(point):
+            dist_sum = 0
+            for visited_point in self._visited_points:
+                dist_sum += math.dist([point.x, point.y], [visited_point.x, visited_point.y])
+            print('point= ', point, 'dist sum = ', dist_sum)
+            return dist_sum
+
+        points.sort(key=dist_sum, reverse=True)
+        print('sorted points ', points)
+        points = points[:math.ceil(len(points)/2)]
+        print('points to choose', points    )
+
+        choosed_point = random.choice(points)
+
+        print('choosed point', choosed_point)
 
         self._visited_points.append(choosed_point)
+
+        if len(self._visited_points) > SearchTask.VISITED_POINTS_MEMORY:
+            self._visited_points.pop(0)
 
         task = self._task_factory.build_walk_task(self._bug_body, self._map, choosed_point)
 
@@ -50,17 +70,17 @@ class SearchTask(BaseTask):
 
     def _generate_points_to_walk(self):
         pos = self._bug_body.get_position()
-        dist = self._bug_body.get_distance_can_walk()
+        dist = self._bug_body.get_max_distance_can_walk_per_step()
 
         points = []
 
-        points_count = 16
+        points_count = SearchTask.POSSIBLE_WALK_POINTS_COUNT
         delta_angle = 360 / points_count
         current_angle = 0
         for _ in range(points_count):
             angle = math.radians(current_angle)
-            x = pos.x + dist * math.cos(angle)
-            y = pos.y + dist * math.sin(angle)
+            x = int(pos.x + dist * math.cos(angle))
+            y = int(pos.y + dist * math.sin(angle))
             points.append(Point(x,y))
 
             current_angle += delta_angle
@@ -71,15 +91,5 @@ class SearchTask(BaseTask):
                 valid_points.append(point)
 
         return valid_points
-
-    def _is_point_far_from_visited_points(self, point):
-        sight_dist = self._bug_body.get_sight_distance()
-
-        for visited_point in self._visited_points:
-            dist = math.dist([point.x, point.y], [visited_point.x, visited_point.y])
-            if dist < sight_dist:
-                return False
-
-        return True
 
 

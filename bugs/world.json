@@ -1,5 +1,5 @@
 {
-    "map": { "size": {"width": 800, "height": 250 }},
+    "map": { "size": {"width": 1000, "height": 500 }},
     "bugs": [
         { "id": 1, "pos": {"x": 20, "y": 20} }
     ],

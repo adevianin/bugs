@@ -28,7 +28,7 @@ class WorldFactory {
     }
 
     buildBug(bugJson) {
-        return new Bug(this._mainEventBus, bugJson.id, bugJson.pos, bugJson.size);
+        return new Bug(this._mainEventBus, bugJson.id, bugJson.pos, bugJson.size, bugJson.sight_distance);
     }
 
     buildFood(foodJson) {
