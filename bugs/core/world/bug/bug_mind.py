@@ -24,5 +24,5 @@ class BugMind:
             self._current_task = None
 
     def _generate_tasks(self):
-        self._current_task = self._task_factory.build_find_to_eat_task(self._body, self._map)
+        self._current_task = self._task_factory.build_find_to_eat_task(self._body, self._map, self._home_town)
 

@@ -1,7 +1,7 @@
 {
     "map": { "size": {"width": 1000, "height": 500 }},
     "bugs": [
-        { "id": 1, "pos": {"x": 20, "y": 20}, "from_town": 30 }
+        { "id": 1, "pos": {"x": 650, "y": 200}, "from_town": 30 }
     ],
     "foods": [
         {"id": 20, "pos": {"x": 550, "y": 150}, "calories": 100}

@@ -8,9 +8,10 @@ class FindToEatTask(BaseTask):
     WALKING_TO_FOOD_STAGE = 2
     EATING_FOOD_STAGE = 3
 
-    def __init__(self, task_factory, bug_body, map):
+    def __init__(self, task_factory, bug_body, map, nearby_town):
         super().__init__(task_factory, bug_body)
         self._map = map
+        self._nearby_town = nearby_town
         self._search_task = None
         self._walk_task = None
         self._eat_task = None
@@ -28,7 +29,7 @@ class FindToEatTask(BaseTask):
             
     def _do_search_task(self):
         if not self._search_task:
-            self._search_task = self._task_factory.build_search_task(self._bug_body, self._map, EntityTypes.FOOD)
+            self._search_task = self._task_factory.build_search_task(self._bug_body, self._map, EntityTypes.FOOD, self._nearby_town)
 
         if self._search_task.is_done():
             foods = self._search_task.get_result()

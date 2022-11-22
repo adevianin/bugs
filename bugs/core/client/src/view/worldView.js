@@ -45,6 +45,9 @@ class WorldView {
             let posX = town.position.x - town.size.width / 2;
             let posY = town.position.y - town.size.height / 2;
             this._ctx.fillRect(posX, posY, town.size.width, town.size.height)
+            this._ctx.beginPath();
+            this._ctx.arc(town.position.x, town.position.y, 300, 0, 2 * Math.PI);
+            this._ctx.stroke();
         })
     }
 

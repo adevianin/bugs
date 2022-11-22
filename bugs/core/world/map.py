@@ -37,11 +37,16 @@ class Map:
     def get_town_by_id(self, id):
         return self._towns_map[id]
 
-    def validate_point(self, point):
+    def is_point_walkable(self, point):
         is_x_valid = point.x >= 0 and point.x <= self._size.width
         is_y_valid = point.y >= 0 and point.y <= self._size.height
 
         return is_x_valid and is_y_valid
+
+    def is_point_in_town_area(self, point, town):
+        town_area = town.get_town_area()
+        town_pos = town.get_position()
+        return math.dist([point.x, point.y], [town_pos.x, town_pos.y]) <= town_area
 
     def get_random_position(self):
         x = random.randint(0, self._size.width)

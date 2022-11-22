@@ -7,9 +7,10 @@ class SearchTask(BaseTask):
     VISITED_POINTS_MEMORY = 3
     POSSIBLE_WALK_POINTS_COUNT = 8
 
-    def __init__(self, task_factory, bug_body, map, searched_entity_type):
+    def __init__(self, task_factory, bug_body, map, searched_entity_type, nearby_town):
         super().__init__(task_factory, bug_body)
         self._map = map
+        self._nearby_town = nearby_town
         self._walk_task = None
         self._searched_entity_type = searched_entity_type
         self._visited_points = []
@@ -58,7 +59,17 @@ class SearchTask(BaseTask):
         return task
 
     def _look_for_searched_item(self):
-        return self._map.search_entity_near(self._bug_body.get_position(), self._bug_body.get_sight_distance(), self._searched_entity_type)
+        items = self._map.search_entity_near(self._bug_body.get_position(), self._bug_body.get_sight_distance(), self._searched_entity_type)
+        
+        if self._nearby_town:
+            items_in_town_area = []
+            for item in items:
+                item_pos = item.get_position()
+                if self._map.is_point_in_town_area(item_pos, self._nearby_town):
+                    items_in_town_area.append(item)
+            items = items_in_town_area
+        
+        return items
 
     def _generate_points_to_walk(self):
         pos = self._bug_body.get_position()
@@ -79,9 +90,10 @@ class SearchTask(BaseTask):
 
         valid_points = []
         for point in points:
-            if self._map.validate_point(point):
+            is_point_walkable = self._map.is_point_walkable(point)
+            is_point_nearby_home_town = self._map.is_point_in_town_area(point, self._nearby_town) if self._nearby_town else True
+            if is_point_walkable and is_point_nearby_home_town:
                 valid_points.append(point)
 
         return valid_points
-
 
