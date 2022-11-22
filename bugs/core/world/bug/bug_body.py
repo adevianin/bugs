@@ -46,11 +46,3 @@ class BugBody(Entity):
 
     def get_calories_can_eat(self):
         return self._step_energy * self._eating_per_energy
-
-    def to_json(self):
-        json = super().to_json()
-        json.update({
-            'sight_distance': self._sight_distance
-        })
-
-        return json

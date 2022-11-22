@@ -11,9 +11,16 @@ class WorldFactory {
     }
 
     buildWorld(worldJson) {
+        let towns = []
+        worldJson.towns.forEach(townJson => {
+            let town = this.buildTown(townJson);
+            towns.push(town)
+        })
+
         let initedBugs = [];
         worldJson.bugs.forEach(bugJson => {
-            let bug = this.buildBug(bugJson);
+            let town = towns.find(t => t.id == bugJson.from_town)
+            let bug = this.buildBug(bugJson, town);
             initedBugs.push(bug);
         });
 
@@ -23,19 +30,13 @@ class WorldFactory {
             foods.push(food)
         })
 
-        let towns = []
-        worldJson.towns.forEach(townJson => {
-            let town = this.buildTown(townJson);
-            towns.push(town)
-        })
-
         let world = new World(this._mainEventBus, this, initedBugs, foods, towns);
 
         return world;
     }
 
-    buildBug(bugJson) {
-        return new Bug(this._mainEventBus, bugJson.id, bugJson.pos, bugJson.size, bugJson.sight_distance);
+    buildBug(bugJson, town) {
+        return new Bug(this._mainEventBus, town, bugJson.id, bugJson.pos, bugJson.size);
     }
 
     buildFood(foodJson) {
@@ -43,7 +44,7 @@ class WorldFactory {
     }
 
     buildTown(townJson) {
-        return new Town(this._mainEventBus, townJson.id, townJson.pos, townJson.size);
+        return new Town(this._mainEventBus, townJson.id, townJson.pos, townJson.size, townJson.color);
     }
 }
 

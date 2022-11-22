@@ -1,17 +1,18 @@
-from ..point import Point
-import random
-
 class BugMind:
 
-    def __init__(self, bug_body, map, task_factory):
+    def __init__(self, bug_body, map, task_factory, home_town):
         self._current_task = None
         self._body = bug_body
         self._map = map
         self._task_factory = task_factory
+        self._home_town = home_town
 
     def do_step(self):
         while self._body.get_step_energy() > 0:
             self._do_next_task()
+
+    def get_home_town(self):
+        return self._home_town
 
     def _do_next_task(self):
         if not self._current_task:

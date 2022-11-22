@@ -10,7 +10,12 @@ class Bug:
         self._body.emit_change()
 
     def to_json(self):
-        return self._body.to_json()
+        town = self._mind.get_home_town()
+        json = self._body.to_json()
+        json.update({
+            'from_town': town.id
+        })
+        return json
 
     def get_body(self):
         return self._body

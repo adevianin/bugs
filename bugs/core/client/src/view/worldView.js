@@ -17,13 +17,13 @@ class WorldView {
 
     _renderBugs() {
         let bugs = this._domainFacade.world.bugs;
-        this._ctx.fillStyle = 'black';
         bugs.forEach(bug => {
             let posX = bug.position.x - bug.size.width / 2;
             let posY = bug.position.y - bug.size.height / 2;
+            this._ctx.fillStyle = bug.getColor()
             this._ctx.fillRect(posX, posY, bug.size.width, bug.size.height)
             this._ctx.beginPath();
-            this._ctx.arc(posX, posY, bug.sightDistance, 0, 2 * Math.PI);
+            this._ctx.arc(posX, posY, 150, 0, 2 * Math.PI);
             this._ctx.stroke();
         })
     }

@@ -2,10 +2,10 @@ import { Entity } from './entity';
 
 class Bug extends Entity {
 
-    constructor(mainEventBus, id, pos, size, sightDistance) {
+    constructor(mainEventBus, homeTown, id, pos, size) {
         super(mainEventBus, id, pos, size);
         this._flySpeed = 50;
-        this._sightDistance = sightDistance;
+        this._homeTown = homeTown;
     }
 
     updateEntity(entityJson) {
@@ -32,8 +32,8 @@ class Bug extends Entity {
         }, 100)
     }
 
-    get sightDistance() {
-        return this._sightDistance
+    getColor() {
+        return this._homeTown.getColor()
     }
 
     _clearFlying() {
