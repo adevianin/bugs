@@ -1,26 +1,26 @@
 import { EntityTypes } from './entityTypes';
 
 class World {
-    constructor(mainEventBus, worldFactory, bugs, foods, towns) {
+    constructor(mainEventBus, worldFactory, bugs, towns, foodAreas) {
         this._bugs = bugs;
-        this._foods = foods
         this._towns = towns
         this._worldFactory = worldFactory
         this._mainEventBus = mainEventBus
+        this._foodAreas = foodAreas
 
-        this._mainEventBus.on('eaten', this._onFoodEaten.bind(this))
+        // this._mainEventBus.on('eaten', this._onFoodEaten.bind(this))
     }
 
     get bugs() {
         return [...this._bugs];
     }
 
-    get foods() {
-        return [...this._foods]
-    }
-
     get towns() {
         return [...this._towns]
+    }
+
+    get foodAreas() {
+        return [...this._foodAreas]
     }
 
     updateEntity(entityJson) {
@@ -36,7 +36,7 @@ class World {
         let bug = this._bugs.find(b => { return b.id === id });
         if (bug) { return bug }
 
-        return this._foods.find(f => { return f.id === id });
+        return this._foodAreas.find(f => { return f.id === id });
     }
 
     _buildNewcameEntity(entityJson) {
@@ -52,13 +52,13 @@ class World {
         }
     }
 
-    _onFoodEaten(food) {
-        for (let i = 0; i < this._foods.length; i++) {
-            if (this._foods[i].id == food.id) {
-                this._foods.splice(i, 1)
-            }
-        }
-    }
+    // _onFoodEaten(food) {
+    //     for (let i = 0; i < this._foods.length; i++) {
+    //         if (this._foods[i].id == food.id) {
+    //             this._foods.splice(i, 1)
+    //         }
+    //     }
+    // }
 }
 
 export { World }

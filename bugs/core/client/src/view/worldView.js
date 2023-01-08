@@ -11,7 +11,7 @@ class WorldView {
         this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
 
         this._renderTowns();
-        this._renderFoods();
+        this._renderFoodAreas();
         this._renderBugs();
     }
 
@@ -21,6 +21,7 @@ class WorldView {
             let posX = bug.position.x - bug.size.width / 2;
             let posY = bug.position.y - bug.size.height / 2;
             this._ctx.fillStyle = bug.getColor()
+            this._ctx.strokeStyle = 'black'
             this._ctx.fillRect(posX, posY, bug.size.width, bug.size.height)
             this._ctx.beginPath();
             this._ctx.arc(posX, posY, 150, 0, 2 * Math.PI);
@@ -28,13 +29,21 @@ class WorldView {
         })
     }
 
-    _renderFoods() {
-        let foods = this._domainFacade.world.foods
+    _renderFoodAreas() {
+        let foodAreas = this._domainFacade.world.foodAreas
+        this._ctx.strokeStyle = 'green';
         this._ctx.fillStyle = 'green';
-        foods.forEach(food => {
-            let posX = food.position.x - food.size.width / 2;
-            let posY = food.position.y - food.size.height / 2;
-            this._ctx.fillRect(posX, posY, food.size.width, food.size.height)
+
+        foodAreas.forEach(foodArea => {
+            let posX = foodArea.position.x - foodArea.size.width / 2;
+            let posY = foodArea.position.y - foodArea.size.height / 2;
+            this._ctx.strokeRect(posX, posY, foodArea.size.width, foodArea.size.height)
+
+            foodArea.foods.forEach(food => {
+                let posX = food.pos.x - food.size.width / 2;
+                let posY = food.pos.y - food.size.height / 2;
+                this._ctx.fillRect(posX, posY, food.size.width, food.size.height);
+            })
         })
     }
 
@@ -42,6 +51,7 @@ class WorldView {
         let towns = this._domainFacade.world.towns;
         towns.forEach(town => {
             this._ctx.fillStyle = 'yellow';
+            this._ctx.strokeStyle = 'black';
             let posX = town.position.x - town.size.width / 2;
             let posY = town.position.y - town.size.height / 2;
             this._ctx.fillRect(posX, posY, town.size.width, town.size.height)

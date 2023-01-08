@@ -1,9 +1,10 @@
 import { Entity } from './entity';
+import { EntityTypes } from './entityTypes';
 
 class Bug extends Entity {
 
     constructor(mainEventBus, homeTown, id, pos, size) {
-        super(mainEventBus, id, pos, size);
+        super(mainEventBus, id, pos, size, EntityTypes.BUG);
         this._flySpeed = 50;
         this._homeTown = homeTown;
     }

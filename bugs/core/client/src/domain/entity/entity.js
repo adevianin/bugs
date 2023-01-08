@@ -1,10 +1,11 @@
 class Entity {
 
-    constructor(mainEventBus, id, pos, size) {
+    constructor(mainEventBus, id, pos, size, type) {
         this.id = id;
         this._pos = pos;
         this._size = size;
         this._mainEventBus = mainEventBus
+        this._type = type
     }
 
     setPosition(x, y) {

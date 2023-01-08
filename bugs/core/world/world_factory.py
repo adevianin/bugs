@@ -3,10 +3,10 @@ from .point import Point
 from .size import Size
 from .map import Map
 from .bug import Bug, BugBody, BugMind
-from .food_grower import FoodGrower
 import uuid
 from .food import Food
 from .town import Town
+from .food_area import FoodArea
 
 class WorldFactory:
 
@@ -29,12 +29,17 @@ class WorldFactory:
             bugs.append(bug)
             map.add_bug(bug.get_body())
 
+        food_areas = []
+        for food_area_json in world_json['food_areas']:
+            food_area = self._build_food_area_from_json(food_area_json)
+            map.add_food_area(food_area)
+            food_areas.append(food_area)
+
         for food_json in world_json['foods']:
             food = self._build_food_from_json(food_json)
             map.add_food(food)
 
-        food_grower = FoodGrower(map, self)
-        world = World(self._main_event_bus, map, bugs, food_grower)
+        world = World(self._main_event_bus, map, bugs, food_areas)
 
         return world
 
@@ -54,6 +59,9 @@ class WorldFactory:
         id = id if id else self._generate_entity_id()
         return Town(self._main_event_bus, id, pos, color)
 
+    def build_food_area(self, id, pos, size):
+        return FoodArea(self._main_event_bus, id, pos, size, self)
+
     def _build_bug_from_json(self, bug_json, map):
         pos = Point(bug_json['pos']['x'], bug_json['pos']['y'])
         return self.build_bug(map, bug_json['id'], pos, bug_json['from_town'])
@@ -65,6 +73,11 @@ class WorldFactory:
     def _build_town_from_json(self, town_json):
         pos = Point(town_json['pos']['x'], town_json['pos']['y'])
         return self.build_town(town_json['id'], pos, town_json['color'])
+
+    def _build_food_area_from_json(self, food_area_json):
+        pos = Point(food_area_json['pos']['x'], food_area_json['pos']['y'])
+        size = Size(food_area_json['size']['width'], food_area_json['size']['height'])
+        return self.build_food_area(food_area_json['id'], pos, size)
 
     def _build_map(self, map_json):
         map_width = map_json["size"]["width"]

@@ -6,6 +6,7 @@ class DomainFacade {
     }
 
     initWorld(worldJson) {
+        console.log(worldJson)
         this._world = this._worldFactory.buildWorld(worldJson);
     }
 

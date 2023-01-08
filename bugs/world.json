@@ -4,9 +4,11 @@
         { "id": 1, "pos": {"x": 650, "y": 200}, "from_town": 30 }
     ],
     "foods": [
-        {"id": 20, "pos": {"x": 550, "y": 150}, "calories": 100}
     ],
     "towns": [
         { "id": 30, "pos": {"x": 600, "y": 200 }, "color": "yellow" }
+    ],
+    "food_areas": [
+        { "id": 40, "pos": {"x": 250, "y": 150}, "size": { "width": 200, "height": 200 }}
     ]
 }

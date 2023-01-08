@@ -8,6 +8,7 @@ class Map:
         self._size = size
         self._bugs = []
         self._foods = []
+        self._food_areas = []
         self._towns_map = {}
 
     def add_bug(self, bug):
@@ -33,6 +34,9 @@ class Map:
 
     def add_town(self, town):
         self._towns_map[town.id] = town
+
+    def add_food_area(self, food_area):
+        self._food_areas.append(food_area)
 
     def get_town_by_id(self, id):
         return self._towns_map[id]

@@ -3,13 +3,13 @@ import time
 
 class World:
 
-    def __init__(self, main_event_bus, map, bugs, food_grower):
+    def __init__(self, main_event_bus, map, bugs, food_areas):
         World._instance = self
         self._map = map
         self._bugs = bugs
         self._world_loop_stop_flag = False
-        self._food_grower = food_grower
         self._main_event_bus = main_event_bus
+        self._food_areas = food_areas
 
         self._main_event_bus.add_listener('eaten', self._on_food_eaten)
 
@@ -27,26 +27,28 @@ class World:
         for bug in self._bugs:
             bugs_json.append(bug.to_json())
 
-        foods_json = []
-        for food in self._map.get_foods():
-            foods_json.append(food.to_json())
-
         towns_json = []
         for town in self._map.get_towns():
             towns_json.append(town.to_json())
 
+        food_areas_json = []
+        for food_area in self._food_areas:
+            food_areas_json.append(food_area.to_json())
+
         return {
             'bugs': bugs_json,
-            'foods': foods_json,
             'towns': towns_json,
-            'blocks': []
+            'food_areas': food_areas_json,
+            'blocks': [],
+            'foods': [],
         }
 
     def _run_world_loop(self):
         while not self._world_loop_stop_flag:
             iteration_start = time.time()
 
-            self._food_grower.do_grow_step()
+            for food_area in self._food_areas:
+                food_area.do_step()
 
             for bug in self._bugs:
                 bug.do_step()
