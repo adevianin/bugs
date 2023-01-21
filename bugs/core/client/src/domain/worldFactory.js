@@ -1,61 +1,50 @@
+import { EntityTypes } from './entity/entityTypes'
 import { Bug } from './entity/bug';
 import { World } from './entity/world';
-import { Food } from './entity/food';
 import { Town } from './entity/town';
-import { FoodArea } from './entity/food_area';
-import EventEmitter from 'events';
+import { Food } from './entity/food';
 
 class WorldFactory {
 
-    constructor(mainEventBus) {
-        this._mainEventBus = mainEventBus
-    }
-
-    buildWorld(worldJson) {
-        let towns = []
-        worldJson.towns.forEach(townJson => {
-            let town = this.buildTown(townJson);
-            towns.push(town)
-        })
-
-        let initedBugs = [];
-        worldJson.bugs.forEach(bugJson => {
-            let town = towns.find(t => t.id == bugJson.from_town)
-            let bug = this.buildBug(bugJson, town);
-            initedBugs.push(bug);
+    buildWorldFromJson(worldJson) {
+        let entities = [];
+        worldJson.entities.forEach(entityJson => {
+            let entity = this.buildEntity(entityJson);
+            entities.push(entity);
         });
 
-        let foodAreas = [];
-        worldJson.food_areas.forEach(foodAreaJson => {
-            let foodArea = this.buildFoodArea(foodAreaJson)
-            foodAreas.push(foodArea)
-        })
-
-        // let foods = []
-        // worldJson.foods.forEach(foodJson => {
-        //     let food = this.buildFood(foodJson);
-        //     foods.push(food)
-        // })
-
-        let world = new World(this._mainEventBus, this, initedBugs, towns, foodAreas);
+        let world = this.buildWorld(entities);
 
         return world;
     }
 
-    buildBug(bugJson, town) {
-        return new Bug(this._mainEventBus, town, bugJson.id, bugJson.pos, bugJson.size);
+    buildWorld(entities) {
+        return new World(entities);
     }
 
-    buildFood(foodJson) {
-        return new Food(this._mainEventBus, foodJson.id, foodJson.pos, foodJson.size, foodJson.calories);
+    buildBug(id, position) {
+        return new Bug(id, position);
     }
 
-    buildTown(townJson) {
-        return new Town(this._mainEventBus, townJson.id, townJson.pos, townJson.size, townJson.color);
+    buildTown(id, position, color) {
+        return new Town(id, position, color);
     }
 
-    buildFoodArea(foodAreaJson) {
-        return new FoodArea(this._mainEventBus, foodAreaJson.id, foodAreaJson.pos, foodAreaJson.size, foodAreaJson.foods);
+    buildFood(id, position, calories) {
+        return new Food(id, position, calories);
+    }
+
+    buildEntity(entityJson) {
+        switch(entityJson.type) {
+            case EntityTypes.BUG:
+                return this.buildBug(entityJson.id, entityJson.position);
+            case EntityTypes.TOWN:
+                return this.buildTown(entityJson.id, entityJson.position, entityJson.color);
+            case EntityTypes.FOOD:
+                return this.buildFood(entityJson.id, entityJson.position, entityJson.calories);
+            default:
+                throw 'unknown type of entity';
+        }
     }
 }
 

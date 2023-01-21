@@ -3,8 +3,7 @@
 import os
 import sys
 
-from core.world import WorldFacade
-
+from core.world.world_facade import WorldFacade
 
 def main():
     """Run administrative tasks."""

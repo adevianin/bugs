@@ -1,0 +1,25 @@
+from .base.plain_entity import PlainEntity
+from .entity_types import EntityTypes
+from core.world.utils.event_emiter import EventEmitter
+from core.world.utils.point import Point
+
+class Town(PlainEntity):
+
+    def __init__(self, event_bus: EventEmitter, id: int, position: Point, color: str):
+        super().__init__(event_bus, id, EntityTypes.TOWN, position)
+        self._color = color
+
+    @property
+    def color(self):
+        return self._color
+
+    def do_step(self):
+        pass
+
+    def to_json(self):
+        json = super().to_json()
+        json.update({
+            'color': self._color
+        })
+        
+        return json

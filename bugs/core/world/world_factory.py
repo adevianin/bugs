@@ -1,88 +1,50 @@
-from .world import World
-from .point import Point
-from .size import Size
+from .entities.bug.bug_factory import BugFactory
+from .entities.food.food_factory import FoodFactory
+from .utils.size import Size
+from .utils.point import Point
+from .utils.event_emiter import EventEmitter
 from .map import Map
-from .bug import Bug, BugBody, BugMind
-import uuid
-from .food import Food
-from .town import Town
-from .food_area import FoodArea
+from .world import World
+from .entities.town import Town
 
-class WorldFactory:
+class WorldFactory():
 
-    def __init__(self, main_event_bus, task_factory):
-        self._main_event_bus = main_event_bus
-        self._task_factory = task_factory
+    def __init__(self, event_bus: EventEmitter, bug_factory: BugFactory, food_factory: FoodFactory):
+        self._event_bus = event_bus
+        self._bug_factory = bug_factory
+        self._food_factory = food_factory
 
-    def build_world(self, world_json):
-        map = self._build_map(world_json["map"])
+    def build_world_from_json(self, world_data: dict):
+        map_data = world_data['map']
+        map = self.build_map(Size(map_data['size']['width'], map_data['size']['height']))
 
-        towns_map = {}
-        for town_json in world_json['towns']:
-            town = self._build_town_from_json(town_json)
-            towns_map[town.id] = town
-            map.add_town(town)
+        towns_data = world_data['towns']
+        for town_data in towns_data:
+            position = Point(town_data['position']['x'], town_data['position']['y'])
+            town = self.build_town(town_data['id'], position, town_data['color'])
+            map.add_entity(town)
 
-        bugs = []
-        for bug_json in world_json['bugs']:
-            bug = self._build_bug_from_json(bug_json, map)
-            bugs.append(bug)
-            map.add_bug(bug.get_body())
+        bugs_data = world_data['bugs']
+        for bug_data in bugs_data:
+            position = Point(bug_data['position']['x'], bug_data['position']['y'])
+            bug = self._bug_factory.build_bug(map, bug_data['id'], position, bug_data['from_town'])
+            map.add_entity(bug)
 
-        food_areas = []
-        for food_area_json in world_json['food_areas']:
-            food_area = self._build_food_area_from_json(food_area_json)
-            map.add_food_area(food_area)
-            food_areas.append(food_area)
+        foods_data = world_data['foods']
+        for food_data in foods_data:
+            position = Point(food_data['position']['x'], food_data['position']['y'])
+            food = self._food_factory.build_food(food_data['id'], position, food_data['calories'])
+            map.add_entity(food)
 
-        for food_json in world_json['foods']:
-            food = self._build_food_from_json(food_json)
-            map.add_food(food)
-
-        world = World(self._main_event_bus, map, bugs, food_areas)
-
+        world = self.build_world(map)
+        
         return world
+        
+    def build_world(self, map: Map) -> World:
+        return World(map)
 
-    def build_bug(self, map, id, pos, town_id):
-        id = id if id else self._generate_entity_id()
-        town = map.get_town_by_id(town_id)
-        bug_body = BugBody(self._main_event_bus, id, pos)
-        bug_mind = BugMind(bug_body, map, self._task_factory, town)
-        bug = Bug(bug_mind, bug_body)
-        return bug
+    def build_map(self, size: Size) -> Map:
+        return Map(size)
 
-    def build_food(self, id, pos, calories):
-        id = id if id else self._generate_entity_id()
-        return Food(self._main_event_bus, id, pos, calories)
-
-    def build_town(self, id, pos, color):
-        id = id if id else self._generate_entity_id()
-        return Town(self._main_event_bus, id, pos, color)
-
-    def build_food_area(self, id, pos, size):
-        return FoodArea(self._main_event_bus, id, pos, size, self)
-
-    def _build_bug_from_json(self, bug_json, map):
-        pos = Point(bug_json['pos']['x'], bug_json['pos']['y'])
-        return self.build_bug(map, bug_json['id'], pos, bug_json['from_town'])
-
-    def _build_food_from_json(self, food_json):
-        pos = Point(food_json['pos']['x'], food_json['pos']['y'])
-        return self.build_food(food_json['id'], pos, food_json['calories'])
-
-    def _build_town_from_json(self, town_json):
-        pos = Point(town_json['pos']['x'], town_json['pos']['y'])
-        return self.build_town(town_json['id'], pos, town_json['color'])
-
-    def _build_food_area_from_json(self, food_area_json):
-        pos = Point(food_area_json['pos']['x'], food_area_json['pos']['y'])
-        size = Size(food_area_json['size']['width'], food_area_json['size']['height'])
-        return self.build_food_area(food_area_json['id'], pos, size)
-
-    def _build_map(self, map_json):
-        map_width = map_json["size"]["width"]
-        map_height = map_json["size"]["height"]
-        return Map(Size(map_width, map_height))
-
-    def _generate_entity_id(self):
-        return uuid.uuid1().hex
+    def build_town(self, id: str, position: Point, color: str) -> Town:
+        return Town(self._event_bus, id, position, color)

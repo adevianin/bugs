@@ -1,6 +1,8 @@
 import json
 
-class WorldDataRepository():
+from core.world.world_data_repository_interface import iWorldDataRepository
+
+class WorldDataRepository(iWorldDataRepository):
     def __init__(self, filepath):
         self.filepath = filepath
 

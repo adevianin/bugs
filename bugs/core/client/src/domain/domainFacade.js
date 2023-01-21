@@ -7,15 +7,15 @@ class DomainFacade {
 
     initWorld(worldJson) {
         console.log(worldJson)
-        this._world = this._worldFactory.buildWorld(worldJson);
+        this._world = this._worldFactory.buildWorldFromJson(worldJson);
     }
 
     updateEntity(entityJson) {
         this._world.updateEntity(entityJson);
     }
 
-    get world() {
-        return this._world;
+    getEntities() {
+        return this._world.entities;
     }
 
 }

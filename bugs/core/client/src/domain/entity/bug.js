@@ -3,14 +3,13 @@ import { EntityTypes } from './entityTypes';
 
 class Bug extends Entity {
 
-    constructor(mainEventBus, homeTown, id, pos, size) {
-        super(mainEventBus, id, pos, size, EntityTypes.BUG);
+    constructor(id, position) {
+        super(id, position, EntityTypes.BUG);
         this._flySpeed = 50;
-        this._homeTown = homeTown;
     }
 
     updateEntity(entityJson) {
-        this.flyTo(entityJson.pos.x, entityJson.pos.y);
+        this.flyTo(entityJson.position.x, entityJson.position.y);
     }
 
     flyTo(x, y) {
@@ -34,7 +33,7 @@ class Bug extends Entity {
     }
 
     getColor() {
-        return this._homeTown.getColor()
+        // return this._homeTown.getColor()
     }
 
     _clearFlying() {

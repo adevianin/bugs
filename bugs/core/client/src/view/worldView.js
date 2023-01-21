@@ -1,3 +1,5 @@
+import { EntityTypes } from '../domain/entity/entityTypes';
+
 class WorldView {
     constructor(canvas, domainFacade) {
         this._domainFacade = domainFacade;
@@ -10,55 +12,56 @@ class WorldView {
     _renderWorld() {
         this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
 
-        this._renderTowns();
-        this._renderFoodAreas();
-        this._renderBugs();
+        let entities = this._domainFacade.getEntities();
+        entities.forEach(entity => {
+            switch (entity.type) {
+                case EntityTypes.BUG:
+                    this._renderBug(entity);
+                    break;
+                case EntityTypes.TOWN:
+                    this._renderTown(entity);
+                    break;
+                case EntityTypes.FOOD:
+                    this._renderFood(entity);
+                    break;
+            }
+        });
     }
 
-    _renderBugs() {
-        let bugs = this._domainFacade.world.bugs;
-        bugs.forEach(bug => {
-            let posX = bug.position.x - bug.size.width / 2;
-            let posY = bug.position.y - bug.size.height / 2;
-            this._ctx.fillStyle = bug.getColor()
-            this._ctx.strokeStyle = 'black'
-            this._ctx.fillRect(posX, posY, bug.size.width, bug.size.height)
-            this._ctx.beginPath();
-            this._ctx.arc(posX, posY, 150, 0, 2 * Math.PI);
-            this._ctx.stroke();
-        })
+    _renderBug(bug) {
+        let width = 10;
+        let height = 10;
+        let posX = bug.position.x - width / 2;
+        let posY = bug.position.y - height / 2;
+        this._ctx.fillStyle = 'red';
+        this._ctx.strokeStyle = 'black';
+        this._ctx.fillRect(posX, posY, width, height);
+        this._ctx.beginPath();
+        this._ctx.arc(posX, posY, 150, 0, 2 * Math.PI);
+        this._ctx.stroke();
     }
 
-    _renderFoodAreas() {
-        let foodAreas = this._domainFacade.world.foodAreas
-        this._ctx.strokeStyle = 'green';
+    _renderTown(town) {
+        let width = 40;
+        let height = 40; 
+        this._ctx.fillStyle = 'yellow';
+        this._ctx.strokeStyle = 'black';
+        let posX = town.position.x - width / 2;
+        let posY = town.position.y - height / 2;
+        this._ctx.fillRect(posX, posY, width, height)
+        this._ctx.beginPath();
+        this._ctx.arc(town.position.x, town.position.y, 300, 0, 2 * Math.PI);
+        this._ctx.stroke();
+    }
+
+    _renderFood(food) {
+        let width = 10;
+        let height = 10; 
         this._ctx.fillStyle = 'green';
-
-        foodAreas.forEach(foodArea => {
-            let posX = foodArea.position.x - foodArea.size.width / 2;
-            let posY = foodArea.position.y - foodArea.size.height / 2;
-            this._ctx.strokeRect(posX, posY, foodArea.size.width, foodArea.size.height)
-
-            foodArea.foods.forEach(food => {
-                let posX = food.pos.x - food.size.width / 2;
-                let posY = food.pos.y - food.size.height / 2;
-                this._ctx.fillRect(posX, posY, food.size.width, food.size.height);
-            })
-        })
-    }
-
-    _renderTowns() {
-        let towns = this._domainFacade.world.towns;
-        towns.forEach(town => {
-            this._ctx.fillStyle = 'yellow';
-            this._ctx.strokeStyle = 'black';
-            let posX = town.position.x - town.size.width / 2;
-            let posY = town.position.y - town.size.height / 2;
-            this._ctx.fillRect(posX, posY, town.size.width, town.size.height)
-            this._ctx.beginPath();
-            this._ctx.arc(town.position.x, town.position.y, 300, 0, 2 * Math.PI);
-            this._ctx.stroke();
-        })
+        let posX = food.position.x - width / 2;
+        let posY = food.position.y - height / 2;
+        this._ctx.fillRect(posX, posY, width, height)
+        this._ctx.beginPath();
     }
 
 }
