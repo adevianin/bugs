@@ -1,4 +1,7 @@
 node_modules
 bugs-env
+Lib
+Scripts
+pyvenv.cfg
 __pycache__/
 bugs/db.sqlite3
