@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-qv!8c)g#2br&@y#0%h557i^tlq)6+g*!4vznz8)vxy0jf3#ve1
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    '127.0.0.1'
 ]
 
 
@@ -33,7 +34,7 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'daphne',
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
