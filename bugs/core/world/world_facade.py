@@ -49,7 +49,6 @@ class WorldFacade:
     def add_listener(self, event_name: str, callback: Callable):
         self._event_bus.add_listener(event_name, callback)
 
-
-    
-
+    def remove_listener(self, event_name: str, callback: Callable):
+        self._event_bus.remove_listener(event_name, callback)
         
