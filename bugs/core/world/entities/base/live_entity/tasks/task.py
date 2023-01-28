@@ -1,5 +1,5 @@
 from abc import ABC, abstractclassmethod
-from .body import Body
+from ..body import Body
 
 class Task(ABC):
 

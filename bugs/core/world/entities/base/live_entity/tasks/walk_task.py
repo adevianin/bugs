@@ -1,5 +1,5 @@
 from .task import Task
-from .body import Body
+from ..body import Body
 from core.world.utils.point import Point
 
 class WalkTask(Task):

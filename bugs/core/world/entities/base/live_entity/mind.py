@@ -1,6 +1,6 @@
 from abc import ABC, abstractclassmethod
 from .body import Body
-from .task_factory import TaskFactory
+from .tasks.task_factory import TaskFactory
 from core.world.map import Map
 
 class Mind(ABC):

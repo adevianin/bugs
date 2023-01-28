@@ -1,5 +1,5 @@
-from core.world.entities.base.live_entity.task import Task
-from .body import BugBody
+from core.world.entities.base.live_entity.tasks.task import Task
+from ..body import BugBody
 
 class BugTask(Task):
 

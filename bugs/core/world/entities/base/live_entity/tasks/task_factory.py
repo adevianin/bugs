@@ -1,5 +1,5 @@
 from .walk_task import WalkTask
-from .body import Body
+from ..body import Body
 from core.world.utils.point import Point
 
 class TaskFactory:

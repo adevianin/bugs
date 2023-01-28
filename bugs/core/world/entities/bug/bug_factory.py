@@ -3,7 +3,7 @@ from core.world.utils.event_emiter import EventEmitter
 from .bug import Bug
 from .body import BugBody
 from .mind import BugMind
-from .task_factory import BugTaskFactory
+from .tasks.task_factory import BugTaskFactory
 from core.world.map import Map
 
 class BugFactory():

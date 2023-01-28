@@ -1,5 +1,5 @@
-from core.world.entities.base.live_entity.task_factory import TaskFactory
-from .body import BugBody
+from core.world.entities.base.live_entity import TaskFactory
+from ..body import BugBody
 
 class BugTaskFactory(TaskFactory):
 
