@@ -10,6 +10,4 @@ class BugMind(Mind):
         self._town_id = town_id
 
     def _generate_tasks(self):
-        point = self._map.generate_random_point()
-        print('new destination - ', point)
-        return self._task_factory.build_walk_task(point)
+        return self._task_factory.build_searching_walk_task()

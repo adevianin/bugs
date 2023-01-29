@@ -27,6 +27,12 @@ class Map:
         
         return Point(x, y)
 
+    def is_point_walkable(self, point: Point):
+        is_x_valid = point.x >= 0 and point.x <= self._size.width
+        is_y_valid = point.y >= 0 and point.y <= self._size.height
+
+        return is_x_valid and is_y_valid
+
     def _generate_id(self):
         ids = self._entities.keys
         last_id = 0

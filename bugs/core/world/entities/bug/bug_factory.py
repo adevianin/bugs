@@ -13,7 +13,7 @@ class BugFactory():
 
     def build_bug(self, map: Map, id: int, position: Point, town_id: int) -> Bug:
         body = BugBody(position)
-        bug_task_factory = BugTaskFactory(body)
+        bug_task_factory = BugTaskFactory(body, map)
         mind = BugMind(body, bug_task_factory, map, town_id)
         bug = Bug(self._event_bus, id, mind, body)
 

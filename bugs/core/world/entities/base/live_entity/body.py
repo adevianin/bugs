@@ -43,8 +43,6 @@ class Body(ABC):
         new_pos_x = int(self.position.x + x_shift)
         new_pos_y = int(self.position.y + y_shift)
 
-        print(new_pos_x, new_pos_y)
-
         new_distance = math.dist([new_pos_x, new_pos_y], [destination_point.x, destination_point.y])
 
         if int(new_distance) == 0:
@@ -56,6 +54,9 @@ class Body(ABC):
 
     def restore_energy(self):
         self._energy = self._max_energy
+
+    def reset_energy(self):
+        self._energy = 0
 
     def _consume_energy(self, consumed_value: int):
         if self._energy < consumed_value:
