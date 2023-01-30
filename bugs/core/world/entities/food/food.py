@@ -13,6 +13,14 @@ class Food(PlainEntity):
     def calories(self):
         return self._calories
 
+    @calories.setter
+    def calories(self, value):
+        if (value < 0):
+            raise Exception('invalid calories value')
+        self._calories = int(value)
+        if (self._calories == 0):
+            self.mark_as_deleted()
+
     def do_step(self):
         pass
 

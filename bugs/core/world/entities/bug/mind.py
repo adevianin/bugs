@@ -10,4 +10,4 @@ class BugMind(Mind):
         self._town_id = town_id
 
     def _generate_tasks(self):
-        return self._task_factory.build_searching_walk_task()
+        return self._task_factory.build_find_and_eat_task()

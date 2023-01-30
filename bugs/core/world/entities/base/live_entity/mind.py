@@ -12,8 +12,13 @@ class Mind(ABC):
         self._current_task = None
 
     def do_step(self):
+        counter = 0
         while self._body.energy > 0:
             self._do_next_task()
+            
+            counter += 1
+            if (counter > 20): 
+                raise Exception('mind blow exception')
 
     def _do_next_task(self):
         if not self._current_task:

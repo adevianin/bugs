@@ -1,5 +1,6 @@
 from core.world.utils.point import Point
 from abc import ABC
+from core.world.entities.food.food import Food
 
 import math
 
@@ -11,6 +12,7 @@ class Body(ABC):
         self._energy = 0
         self._max_energy = max_energy
         self._position = position
+        self._can_eat_calories_per_energy = 2
 
         self.restore_energy()
 
@@ -21,6 +23,10 @@ class Body(ABC):
     @position.setter
     def position(self, value):
         self._position = value
+
+    @property
+    def sight_distance(self):
+        return self._sight_distance
 
     @property
     def energy(self):
@@ -52,11 +58,26 @@ class Body(ABC):
             self.position = Point(new_pos_x, new_pos_y)
             return False
 
+    def eat(self, food: Food):
+        can_eat_calories = self._energy * self._can_eat_calories_per_energy
+        if (food.calories >= can_eat_calories):
+            food.calories -= can_eat_calories
+            self._consume_whole_energy()
+            return False
+        else:
+            needed_energy = food.calories / self._can_eat_calories_per_energy
+            self._consume_energy(needed_energy)
+            food.calories = 0
+            return True
+
     def restore_energy(self):
         self._energy = self._max_energy
 
     def reset_energy(self):
         self._energy = 0
+
+    def _consume_whole_energy(self):
+        self._consume_energy(self._energy)
 
     def _consume_energy(self, consumed_value: int):
         if self._energy < consumed_value:

@@ -9,6 +9,7 @@ class Entity(ABC):
         self._event_bus: EventEmitter = event_bus
         self._id: int = id
         self._type: EntityTypes = type
+        self._is_deleted = False
 
     @property
     def id(self):
@@ -32,6 +33,14 @@ class Entity(ABC):
     def position(self, value: Point):
         pass
 
+    @property
+    def is_deleted(self):
+        return self._is_deleted
+
+    def mark_as_deleted(self):
+        self._is_deleted = True
+        self._event_bus.emit('entity_deleted', self)
+
     @abstractmethod
     def do_step(self):
         pass
@@ -44,5 +53,3 @@ class Entity(ABC):
 
     def emit_change(self):
         self._event_bus.emit('entity_changed', self)
-
-    

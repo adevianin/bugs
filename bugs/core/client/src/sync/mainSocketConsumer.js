@@ -20,6 +20,9 @@ class MainSocketConsumer {
             case 'entity_changed':
                 this._domainFacade.updateEntity(msg.entity);
                 break;
+            case 'entity_deleted':
+                this._domainFacade.deleteEntity(msg.entity_id);
+                break;
             default: 
                 throw `unknown type of message "${ msg.type }"`
         }

@@ -1,8 +1,10 @@
 from .entities.base.entity import Entity
 from .utils.size import Size
 from .utils.point import Point
+from .entities.entity_types import EntityTypes
 from typing import List
-import random
+
+import random, math
 
 class Map:
 
@@ -14,6 +16,9 @@ class Map:
         if not entity.id:
             entity.id = self._generate_id()
         self._entities[entity.id] = entity
+
+    def delete_entity(self, id: int):
+        self._entities.pop(id)
 
     def get_entity_by_id(self, id: int) -> Entity:
         return self._entities[id]
@@ -32,6 +37,15 @@ class Map:
         is_y_valid = point.y >= 0 and point.y <= self._size.height
 
         return is_x_valid and is_y_valid
+
+    def find_entities_near(self, point: Point, max_distance: int, entity_type: EntityTypes = None):
+        found_entities = []
+        for entity in self.get_entities():
+            dist = math.dist([entity.position.x, entity.position.y], [point.x, point.y])
+            if (not entity.is_deleted and dist <= max_distance and (entity_type == None or entity.type == entity_type)):
+                found_entities.append(entity)
+
+        return found_entities
 
     def _generate_id(self):
         ids = self._entities.keys

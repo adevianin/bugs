@@ -11,9 +11,11 @@ class MainSocketConsumer(WebsocketConsumer):
         self.accept()
         self._send_whole_world()
         self._world_facade.add_listener('entity_changed', self._send_changed_entity)
+        self._world_facade.add_listener('entity_deleted', self._send_entity_deleted)
 
     def disconnect(self, code):
         self._world_facade.remove_listener('entity_changed', self._send_changed_entity)
+        self._world_facade.remove_listener('entity_deleted', self._send_entity_deleted)
         return super().disconnect(code)
 
     def _send_whole_world(self):
@@ -27,4 +29,10 @@ class MainSocketConsumer(WebsocketConsumer):
         self.send(json.dumps({
             'type': 'entity_changed',
             'entity': entity.to_json()
+        }))
+
+    def _send_entity_deleted(self, entity):
+        self.send(json.dumps({
+            'type': 'entity_deleted',
+            'entity_id': entity.id
         }))

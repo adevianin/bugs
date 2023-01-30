@@ -41,7 +41,7 @@ class WorldFactory():
         return world
         
     def build_world(self, map: Map) -> World:
-        return World(map)
+        return World(map, self._event_bus)
 
     def build_map(self, size: Size) -> Map:
         return Map(size)

@@ -14,6 +14,10 @@ class DomainFacade {
         this._world.updateEntity(entityJson);
     }
 
+    deleteEntity(entityId) {
+        this._world.deleteEntity(entityId);
+    }
+
     getEntities() {
         return this._world.entities;
     }
