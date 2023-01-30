@@ -19,7 +19,6 @@ class MainSocketConsumer(WebsocketConsumer):
         return super().disconnect(code)
 
     def _send_whole_world(self):
-        print(self._world_facade.get_world_json())
         self.send(json.dumps({
             'type': 'whole_world',
             'world': self._world_facade.get_world_json()
