@@ -12,11 +12,13 @@ class SearchingWalkTask(Task):
     VISITED_POINTS_MEMORY = 3
     WALK_DISTANCE = 40
 
-    def __init__(self, body: BugBody, map: Map):
+    def __init__(self, body: BugBody, map: Map, search_near_point: Point = None, search_radius: int = 300):
         super().__init__(body)
         self._map = map
         self._visited_points = []
         self._current_destination_point = None
+        self._search_near_point = search_near_point
+        self._search_radius = search_radius
 
     def do_step(self):
         if (not self._current_destination_point):
@@ -62,8 +64,10 @@ class SearchingWalkTask(Task):
         valid_points = []
         for point in points:
             is_point_walkable = self._map.is_point_walkable(point)
-            if is_point_walkable: 
+            is_point_in_search_area = self._is_point_inside_searching_area(point)
+            if is_point_walkable and is_point_in_search_area: 
                 valid_points.append(point)
+
 
         return valid_points
 
@@ -71,3 +75,10 @@ class SearchingWalkTask(Task):
         self._visited_points.append(visited_point)
         if len(self._visited_points) > SearchingWalkTask.VISITED_POINTS_MEMORY:
             self._visited_points.pop(0)
+
+    def _is_point_inside_searching_area(self, point: Point):
+        if (not self._search_near_point):
+            return True
+        dist_to_search_area_center = math.dist([point.x, point.y], [self._search_near_point.x, self._search_near_point.y])
+        return dist_to_search_area_center <= self._search_radius
+

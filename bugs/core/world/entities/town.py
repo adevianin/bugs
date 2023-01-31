@@ -8,10 +8,15 @@ class Town(PlainEntity):
     def __init__(self, event_bus: EventEmitter, id: int, position: Point, color: str):
         super().__init__(event_bus, id, EntityTypes.TOWN, position)
         self._color = color
+        self._area = 300
 
     @property
     def color(self):
         return self._color
+
+    @property
+    def area(self):
+        return self._area
 
     def do_step(self):
         pass

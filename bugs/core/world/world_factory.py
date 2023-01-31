@@ -27,7 +27,8 @@ class WorldFactory():
         bugs_data = world_data['bugs']
         for bug_data in bugs_data:
             position = Point(bug_data['position']['x'], bug_data['position']['y'])
-            bug = self._bug_factory.build_bug(map, bug_data['id'], position, bug_data['from_town'])
+            town = map.get_entity_by_id(bug_data['from_town'])
+            bug = self._bug_factory.build_bug(map, bug_data['id'], position, town)
             map.add_entity(bug)
 
         foods_data = world_data['foods']
