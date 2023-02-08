@@ -10,7 +10,6 @@ class SearchingWalkTask(Task):
 
     WALK_DIRECTIONS_COUNT = 8
     VISITED_POINTS_MEMORY = 3
-    WALK_DISTANCE = 40
 
     def __init__(self, body: BugBody, map: Map, search_near_point: Point = None, search_radius: int = 300):
         super().__init__(body)
@@ -47,7 +46,7 @@ class SearchingWalkTask(Task):
 
     def _generate_potential_points_to_walk(self):
         position = self._body.position
-        dist = SearchingWalkTask.WALK_DISTANCE
+        dist = self._body.calc_distance_can_walk()
         points_count = SearchingWalkTask.WALK_DIRECTIONS_COUNT
 
         points = []
@@ -55,8 +54,8 @@ class SearchingWalkTask(Task):
         current_angle = 0
         for _ in range(points_count):
             angle = math.radians(current_angle)
-            x = int(position.x + dist * math.cos(angle))
-            y = int(position.y + dist * math.sin(angle))
+            x = round(position.x + dist * math.cos(angle))
+            y = round(position.y + dist * math.sin(angle))
             points.append(Point(x,y))
 
             current_angle += delta_angle

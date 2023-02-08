@@ -39,6 +39,11 @@ class WorldView {
         this._ctx.beginPath();
         this._ctx.arc(posX, posY, 150, 0, 2 * Math.PI);
         this._ctx.stroke();
+
+        if (bug.is_food_picked) {
+            this._ctx.fillStyle = 'green';
+            this._ctx.fillRect(posX, posY - 10, width, height);
+        }
     }
 
     _renderTown(town) {

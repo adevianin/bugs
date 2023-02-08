@@ -13,11 +13,11 @@ class Mind(ABC):
 
     def do_step(self):
         counter = 0
-        while self._body.energy > 0:
+        while self._body.energy > 5: #to avoid very short and ugly steps
             self._do_next_task()
             
             counter += 1
-            if (counter > 20): 
+            if (counter > 10): 
                 raise Exception('mind blow exception')
 
     def _do_next_task(self):
@@ -31,5 +31,4 @@ class Mind(ABC):
 
     @abstractclassmethod
     def _generate_tasks(self):
-        # return self._task_factory.build_find_to_eat_task(self._body, self._map, self._home_town)
         pass

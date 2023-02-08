@@ -11,4 +11,5 @@ class BugMind(Mind):
         self._home_town = home_town
 
     def _generate_tasks(self):
-        return self._task_factory.build_searching_walk_task(self._home_town.position, self._home_town.area)
+        return self._task_factory.build_collect_food_task(self._home_town)
+        # return self._task_factory.build_searching_walk_task(self._home_town.position, self._home_town.area)
