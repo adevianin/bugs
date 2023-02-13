@@ -52,7 +52,8 @@ class World():
     def _do_step(self):
         entities = self._map.get_entities()
         for entity in entities:
-            entity.do_step()
+            if not entity.is_hidden:
+                entity.do_step()
 
         for entity in self._entities_for_delete:
             self._map.delete_entity(entity.id)
