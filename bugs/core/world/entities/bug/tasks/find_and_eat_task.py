@@ -1,4 +1,4 @@
-from core.world.entities.base.live_entity import Task
+from core.world.entities.base.live_entity.tasks.task import Task
 from ..body import BugBody
 from .find_entity_by_type_task import FindEntityByTypeTask
 from core.world.entities.food.food import Food

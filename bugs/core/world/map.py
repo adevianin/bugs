@@ -1,7 +1,7 @@
 from .entities.base.entity import Entity
 from .utils.size import Size
 from .utils.point import Point
-from .entities.entity_types import EntityTypes
+from .entities.base.entity_types import EntityTypes
 from typing import List
 
 import random, math
@@ -42,7 +42,7 @@ class Map:
         found_entities = []
         for entity in self.get_entities():
             dist = math.dist([entity.position.x, entity.position.y], [point.x, point.y])
-            if (not entity.is_deleted and dist <= max_distance and (entity_type == None or entity.type == entity_type)):
+            if (not entity.is_hidden and dist <= max_distance and (entity_type == None or entity.type == entity_type)):
                 found_entities.append(entity)
 
         return found_entities

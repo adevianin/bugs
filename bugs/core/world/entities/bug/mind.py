@@ -1,4 +1,4 @@
-from core.world.entities.base.live_entity import Mind
+from core.world.entities.base.live_entity.mind import Mind
 from .tasks.task_factory import BugTaskFactory
 from .body import BugBody
 from core.world.map import Map

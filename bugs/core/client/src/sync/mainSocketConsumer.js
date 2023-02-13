@@ -23,6 +23,9 @@ class MainSocketConsumer {
             case 'entity_deleted':
                 this._domainFacade.deleteEntity(msg.entity_id);
                 break;
+            case 'entity_action':
+                this._domainFacade.playAction(msg.action);
+                break;
             default: 
                 throw `unknown type of message "${ msg.type }"`
         }

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
-from ..entity_types import EntityTypes
+from .entity_types import EntityTypes
 
 class Entity(ABC):
 
@@ -9,7 +9,7 @@ class Entity(ABC):
         self._event_bus: EventEmitter = event_bus
         self._id: int = id
         self._type: EntityTypes = type
-        self._is_deleted = False
+        self._is_hidden = False
 
     @property
     def id(self):
@@ -34,11 +34,14 @@ class Entity(ABC):
         pass
 
     @property
-    def is_deleted(self):
-        return self._is_deleted
+    def is_hidden(self):
+        return self._is_hidden
+
+    def toggle_hidden(self, is_hidden: bool):
+        self._is_hidden = is_hidden
 
     def mark_as_deleted(self):
-        self._is_deleted = True
+        self.toggle_hidden(True)
         self._event_bus.emit('entity_deleted', self)
 
     @abstractmethod

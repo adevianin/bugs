@@ -2,6 +2,7 @@ from abc import ABC, abstractclassmethod
 from .body import Body
 from .tasks.task_factory import TaskFactory
 from core.world.map import Map
+from core.world.settings import MIN_TIME_POINTS_ACTION_COST
 
 class Mind(ABC):
 
@@ -13,7 +14,7 @@ class Mind(ABC):
 
     def do_step(self):
         counter = 0
-        while self._body.energy > 5: #to avoid very short and ugly steps
+        while self._body.time_points >= MIN_TIME_POINTS_ACTION_COST: #to avoid very short and ugly steps
             self._do_next_task()
             
             counter += 1

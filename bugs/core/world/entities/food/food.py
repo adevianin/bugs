@@ -1,5 +1,5 @@
 from ..base.plain_entity import PlainEntity
-from ..entity_types import EntityTypes
+from ..base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 

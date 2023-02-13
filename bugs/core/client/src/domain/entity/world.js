@@ -8,8 +8,13 @@ class World {
     }
 
     updateEntity(entityJson) {
-        let entity = this._findEntityById(entityJson.id);
+        let entity = this.findEntityById(entityJson.id);
         entity.updateEntity(entityJson);
+    }
+
+    playAction(action) {
+        let entity = this.findEntityById(action.entity_id);
+        entity.addAction(action);
     }
 
     deleteEntity(entityId) {
@@ -26,7 +31,7 @@ class World {
         }
     }
 
-    _findEntityById(id) {
+    findEntityById(id) {
         return this._entities.find( entity => entity.id === id);
     }
 

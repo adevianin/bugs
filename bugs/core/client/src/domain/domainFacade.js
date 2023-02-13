@@ -1,13 +1,18 @@
+import { WorldFactory } from './worldFactory';
+import { ActionFactory } from './entity/action/actionFactory';
+
 class DomainFacade {
 
-    constructor(worldFactory) {
-        this._worldFactory = worldFactory;
+    constructor() {
         this._world = null;
+        this._worldFactory = null;
+        this._actionFactory = null;
     }
 
     initWorld(worldJson) {
-        console.log(worldJson)
+        this._worldFactory = new WorldFactory();
         this._world = this._worldFactory.buildWorldFromJson(worldJson);
+        this._actionFactory = new ActionFactory(this._world);
     }
 
     updateEntity(entityJson) {
@@ -16,6 +21,11 @@ class DomainFacade {
 
     deleteEntity(entityId) {
         this._world.deleteEntity(entityId);
+    }
+
+    playAction(actionJson) {
+        let action = this._actionFactory.buildAction(actionJson);
+        this._world.playAction(action);
     }
 
     getEntities() {

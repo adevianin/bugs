@@ -7,16 +7,17 @@ import math
 
 class Body(ABC):
 
-    def __init__(self, events: EventEmitter, position: Point, max_energy: int, distance_per_energy: int, sight_distance: int):
-        self.events = events
-        self._distance_per_energy = distance_per_energy
-        self._sight_distance = sight_distance
-        self._energy = 0
-        self._max_energy = max_energy
-        self._position = position
-        self._can_eat_calories_per_energy = 2
+    TIME_POINTS_PER_TURN = 100
 
-        self.restore_energy()
+    def __init__(self, events: EventEmitter, position: Point, distance_per_time_point: int, sight_distance: int):
+        self.events = events
+        self._time_points = 0
+        self._distance_per_time_point = distance_per_time_point
+        self._can_eat_calories_per_time_point = 2
+        self._sight_distance = sight_distance
+        self._position = position
+
+        self.restore_time_points()
 
     @property
     def position(self):
@@ -32,8 +33,11 @@ class Body(ABC):
         return self._sight_distance
 
     @property
-    def energy(self):
-        return self._energy
+    def time_points(self):
+        return self._time_points
+
+    def has_enough_time_points(self):
+        return self._time_points > 0
 
     def step_to(self, destination_point: Point) -> bool:
         distance = math.dist([self.position.x, self.position.y], [destination_point.x, destination_point.y])
@@ -41,9 +45,9 @@ class Body(ABC):
             return True
         x_distance = destination_point.x - self.position.x 
         y_distance = destination_point.y - self.position.y
-        needed_energy = distance / self._distance_per_energy
-        investing_energy = round(needed_energy if self.energy >= needed_energy else self.energy)
-        distance_can_walk = investing_energy * self._distance_per_energy
+        needed_time_points = distance / self._distance_per_time_point
+        investing_time_points = round(needed_time_points if self._time_points >= needed_time_points else self._time_points)
+        distance_can_walk = investing_time_points * self._distance_per_time_point
         percent_can_walk = (distance_can_walk * 100) / distance
 
         x_shift = x_distance * percent_can_walk / 100
@@ -54,14 +58,19 @@ class Body(ABC):
 
         new_distance = math.dist([new_pos_x, new_pos_y], [destination_point.x, destination_point.y])
         
-        self._consume_energy(investing_energy)
+        self._cosume_time_points(investing_time_points)
 
-        if new_distance < 1: 
-            self.position = Point(destination_point.x, destination_point.y)
-            return True
+        is_walk_done = new_distance < 1
+        if (is_walk_done): 
+            new_position = Point(destination_point.x, destination_point.y)
         else:
-            self.position = Point(new_pos_x, new_pos_y)
-            return False
+            new_position = Point(new_pos_x, new_pos_y)
+
+        self.position = new_position
+
+        self.events.emit('walk', position=new_position, consumed_time_points=investing_time_points)
+
+        return is_walk_done
 
     def step_to_near(self, point: Point, distance: int = 10):
         x = point.x + distance if self.position.x > point.x else point.x - distance
@@ -71,33 +80,25 @@ class Body(ABC):
         return self.step_to(near_point)
 
     def eat(self, food: Food):
-        can_eat_calories = self._energy * self._can_eat_calories_per_energy
+        can_eat_calories = self._time_points * self._can_eat_calories_per_time_point
         if (food.calories >= can_eat_calories):
             food.calories -= can_eat_calories
-            self._consume_whole_energy()
+            self._cosumer_all_time_points()
             return False
         else:
-            needed_energy = food.calories / self._can_eat_calories_per_energy
-            self._consume_energy(needed_energy)
+            needed_time_points = food.calories / self._can_eat_calories_per_time_point
+            self._cosume_time_points(needed_time_points)
             food.calories = 0
             return True
 
-    def restore_energy(self):
-        self._energy = self._max_energy
-
-    def reset_energy(self):
-        self._energy = 0
+    def restore_time_points(self):
+        self._time_points = Body.TIME_POINTS_PER_TURN
 
     def calc_distance_can_walk(self):
-        return self._energy * self._distance_per_energy
+        return self._time_points * self._distance_per_time_point
 
-    def wait_next_turn(self):
-        self._consume_whole_energy()
+    def _cosume_time_points(self, tp_count):
+        self._time_points -= tp_count
 
-    def _consume_whole_energy(self):
-        self._consume_energy(self._energy)
-
-    def _consume_energy(self, consumed_value: int):
-        if self._energy < consumed_value:
-            raise Exception('not enough energy to consume')
-        self._energy = self._energy - consumed_value
+    def _cosumer_all_time_points(self):
+        self._time_points = 0

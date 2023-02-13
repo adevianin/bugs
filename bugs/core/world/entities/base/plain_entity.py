@@ -1,7 +1,7 @@
 from .entity import Entity
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
-from ..entity_types import EntityTypes
+from .entity_types import EntityTypes
  
 class PlainEntity(Entity):
 

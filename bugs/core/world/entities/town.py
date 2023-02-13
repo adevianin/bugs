@@ -1,5 +1,5 @@
 from .base.plain_entity import PlainEntity
-from .entity_types import EntityTypes
+from .base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from core.world.entities.food.food import Food
@@ -25,6 +25,7 @@ class Town(PlainEntity):
 
     def take_food(self, food: Food):
         self._stored_calories += food.calories
+        food.mark_as_deleted()
 
     def to_json(self):
         json = super().to_json()

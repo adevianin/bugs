@@ -1,6 +1,6 @@
-from core.world.entities.base.live_entity import Task
+from core.world.entities.base.live_entity.tasks.task import Task
 from ..body import BugBody
-from core.world.entities.entity_types import EntityTypes
+from core.world.entities.base.entity_types import EntityTypes
 from core.world.map import Map
 from .searching_walk_task import SearchingWalkTask
 

@@ -15,6 +15,9 @@ class World():
         
         self._event_bus.add_listener('entity_deleted', self._on_entity_marked_for_delete)
 
+    def set_step_time(self, step_time: int):
+        self._step_time = step_time
+
     def stop(self):
         self._world_loop_stop_flag = True
         print('world is stopped')
@@ -43,7 +46,8 @@ class World():
             iteration_end = time.time()
             iteration_time = iteration_end - iteration_start
             
-            time.sleep(2 - iteration_time)
+            if (self._step_time - iteration_time > 0):
+                time.sleep(self._step_time - iteration_time)
 
     def _do_step(self):
         entities = self._map.get_entities()

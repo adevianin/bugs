@@ -4,6 +4,8 @@ from .entities.bug.bug_factory import BugFactory
 from .entities.food.food_factory import FoodFactory
 from .world_factory import WorldFactory
 from .world import World
+from .entities.base.live_entity.action.action_builder import ActionBuilder
+from .settings import STEP_TIME
 
 from typing import Callable
 
@@ -33,11 +35,14 @@ class WorldFacade:
 
         self._event_bus = EventEmitter()
 
-        bug_factory = BugFactory(self._event_bus)
+        action_builder = ActionBuilder(STEP_TIME)
+
+        bug_factory = BugFactory(self._event_bus, action_builder)
         food_factory = FoodFactory(self._event_bus)
         world_factory = WorldFactory(self._event_bus, bug_factory, food_factory)
 
         self._world = world_factory.build_world_from_json(world_data)
+        self._world.set_step_time(STEP_TIME)
         self._world.run()
 
     def get_world_json(self):

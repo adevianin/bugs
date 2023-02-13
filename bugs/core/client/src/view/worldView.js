@@ -14,6 +14,10 @@ class WorldView {
 
         let entities = this._domainFacade.getEntities();
         entities.forEach(entity => {
+            if (entity.isHidden()) {
+                return;
+            }
+            
             switch (entity.type) {
                 case EntityTypes.BUG:
                     this._renderBug(entity);
@@ -40,7 +44,7 @@ class WorldView {
         this._ctx.arc(posX, posY, 150, 0, 2 * Math.PI);
         this._ctx.stroke();
 
-        if (bug.is_food_picked) {
+        if (bug.hasPickedFood()) {
             this._ctx.fillStyle = 'green';
             this._ctx.fillRect(posX, posY - 10, width, height);
         }
