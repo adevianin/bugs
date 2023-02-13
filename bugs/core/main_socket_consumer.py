@@ -11,12 +11,14 @@ class MainSocketConsumer(WebsocketConsumer):
         self.accept()
         self._send_whole_world()
         self._world_facade.add_listener('entity_changed', self._send_changed_entity)
-        self._world_facade.add_listener('entity_deleted', self._send_entity_deleted)
+        self._world_facade.add_listener('entity_died', self._send_entity_died)
+        self._world_facade.add_listener('entity_born', self._send_entity_born)
         self._world_facade.add_listener('action_occured', self._send_action)
 
     def disconnect(self, code):
         self._world_facade.remove_listener('entity_changed', self._send_changed_entity)
-        self._world_facade.remove_listener('entity_deleted', self._send_entity_deleted)
+        self._world_facade.remove_listener('entity_died', self._send_entity_died)
+        self._world_facade.remove_listener('entity_born', self._send_entity_born)
         self._world_facade.remove_listener('action_occured', self._send_action)
         return super().disconnect(code)
 
@@ -32,10 +34,16 @@ class MainSocketConsumer(WebsocketConsumer):
             'entity': entity.to_json()
         }))
 
-    def _send_entity_deleted(self, entity):
+    def _send_entity_died(self, entity):
         self.send(json.dumps({
-            'type': 'entity_deleted',
+            'type': 'entity_died',
             'entity_id': entity.id
+        }))
+
+    def _send_entity_born(self, entity):
+        self.send(json.dumps({
+            'type': 'entity_born',
+            'entity': entity.to_json()
         }))
 
     def _send_action(self, action: dict):

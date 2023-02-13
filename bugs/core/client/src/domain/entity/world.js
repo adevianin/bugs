@@ -7,6 +7,10 @@ class World {
         return [...this._entities];
     }
 
+    addEntity(entity) {
+        this._entities.push(entity);
+    }
+
     updateEntity(entityJson) {
         let entity = this.findEntityById(entityJson.id);
         entity.updateEntity(entityJson);

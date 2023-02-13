@@ -25,7 +25,7 @@ class Town(PlainEntity):
 
     def take_food(self, food: Food):
         self._stored_calories += food.calories
-        food.mark_as_deleted()
+        food.die()
 
     def to_json(self):
         json = super().to_json()

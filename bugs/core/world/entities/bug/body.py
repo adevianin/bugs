@@ -7,7 +7,7 @@ from core.world.settings import MIN_TIME_POINTS_ACTION_COST
 class BugBody(Body):
 
     def __init__(self, events: EventEmitter, position: Point):
-        super().__init__(events, position, 0.5, 150)
+        super().__init__(events, position, 0.5, 200)
         self._picked_food = None
 
     @property

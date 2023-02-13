@@ -13,7 +13,7 @@ class Map:
         self._entities = {}
 
     def add_entity(self, entity: Entity):
-        if not entity.id:
+        if not entity.id or entity.id == -1:
             entity.id = self._generate_id()
         self._entities[entity.id] = entity
 
@@ -24,7 +24,7 @@ class Map:
         return self._entities[id]
 
     def get_entities(self) -> List[Entity]:
-        return self._entities.values()
+        return list(self._entities.values())
 
     def generate_random_point(self):
         x = random.randint(0, self._size.width)
@@ -48,7 +48,7 @@ class Map:
         return found_entities
 
     def _generate_id(self):
-        ids = self._entities.keys
+        ids = self._entities.keys()
         last_id = 0
         for id in ids:
             if id > last_id:

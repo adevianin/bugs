@@ -1,8 +1,8 @@
 const EntityTypes = {
-    BUG: 1,
-    FOOD: 2,
-    TOWN: 3,
-    FOOD_AREA: 4
+    BUG: 'bug',
+    FOOD: 'food',
+    TOWN: 'town',
+    FOOD_AREA: 'food_area'
 }
 
 export {

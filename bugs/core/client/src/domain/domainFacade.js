@@ -23,6 +23,11 @@ class DomainFacade {
         this._world.deleteEntity(entityId);
     }
 
+    addNewEntity(entityJson) {
+        let entity = this._worldFactory.buildEntity(entityJson);
+        this._world.addEntity(entity);
+    }
+
     playAction(actionJson) {
         let action = this._actionFactory.buildAction(actionJson);
         this._world.playAction(action);

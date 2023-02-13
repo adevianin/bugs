@@ -3,6 +3,7 @@ import { Bug } from './entity/bug';
 import { World } from './entity/world';
 import { Town } from './entity/town';
 import { Food } from './entity/food';
+import { FoodArea } from './entity/foodArea';
 
 class WorldFactory {
 
@@ -34,6 +35,10 @@ class WorldFactory {
         return new Food(id, position, calories);
     }
 
+    buildFoodArea(id, position) {
+        return new FoodArea(id, position);
+    }
+
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case EntityTypes.BUG:
@@ -42,6 +47,8 @@ class WorldFactory {
                 return this.buildTown(entityJson.id, entityJson.position, entityJson.color);
             case EntityTypes.FOOD:
                 return this.buildFood(entityJson.id, entityJson.position, entityJson.calories);
+            case EntityTypes.FOOD_AREA:
+                return this.buildFoodArea(entityJson.id, entityJson.position);
             default:
                 throw 'unknown type of entity';
         }

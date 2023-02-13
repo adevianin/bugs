@@ -9,7 +9,7 @@ import random
 class SearchingWalkTask(Task):
 
     WALK_DIRECTIONS_COUNT = 8
-    VISITED_POINTS_MEMORY = 3
+    VISITED_POINTS_MEMORY = 5
 
     def __init__(self, body: BugBody, map: Map, search_near_point: Point = None, search_radius: int = 300):
         super().__init__(body)

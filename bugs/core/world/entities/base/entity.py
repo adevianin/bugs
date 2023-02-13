@@ -17,7 +17,7 @@ class Entity(ABC):
 
     @id.setter
     def id(self, id: int):
-        self.id = id
+        self._id = id
 
     @property
     def type(self):
@@ -40,9 +40,9 @@ class Entity(ABC):
     def toggle_hidden(self, is_hidden: bool):
         self._is_hidden = is_hidden
 
-    def mark_as_deleted(self):
+    def die(self):
         self.toggle_hidden(True)
-        self._event_bus.emit('entity_deleted', self)
+        self._event_bus.emit('entity_died', self)
 
     @abstractmethod
     def do_step(self):

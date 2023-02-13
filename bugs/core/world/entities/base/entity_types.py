@@ -1,7 +1,7 @@
-from enum import IntEnum
+from enum import StrEnum
 
-class EntityTypes(IntEnum):
-    BUG = 1
-    FOOD = 2
-    TOWN = 3
-    FOOD_AREA = 4
+class EntityTypes(StrEnum):
+    BUG = 'bug'
+    FOOD = 'food'
+    TOWN = 'town'
+    FOOD_AREA = 'food_area'

@@ -11,6 +11,7 @@
         { "id": 30, "position": {"x": 600, "y": 200 }, "color": "yellow" }
     ],
     "food_areas": [
-        { "id": 40, "pos": {"x": 250, "y": 150}, "size": { "width": 200, "height": 200 }}
-    ]
+        { "id": 40, "position": {"x": 450, "y": 150}, "size": { "width": 150, "height": 150 }, "fertility": 5 }
+    ],
+    "last_id": 40
 }

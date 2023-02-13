@@ -19,7 +19,7 @@ class Food(PlainEntity):
             raise Exception('invalid calories value')
         self._calories = int(value)
         if (self._calories == 0):
-            self.mark_as_deleted()
+            self.die()
 
     def do_step(self):
         pass

@@ -6,6 +6,7 @@ from .utils.event_emiter import EventEmitter
 from .map import Map
 from .world import World
 from .entities.town import Town
+from .entities.food.food_area import FoodArea
 
 class WorldFactory():
 
@@ -37,6 +38,13 @@ class WorldFactory():
             food = self._food_factory.build_food(food_data['id'], position, food_data['calories'])
             map.add_entity(food)
 
+        food_areas_data = world_data['food_areas']
+        for food_area_data in food_areas_data:
+            position = Point(food_area_data['position']['x'], food_area_data['position']['y'])
+            size = Size(food_area_data['size']['width'], food_area_data['size']['height'])
+            food_area = self.build_food_area(food_area_data['id'], position, size, food_area_data['fertility'])
+            map.add_entity(food_area)
+
         world = self.build_world(map)
         
         return world
@@ -47,5 +55,8 @@ class WorldFactory():
     def build_map(self, size: Size) -> Map:
         return Map(size)
 
-    def build_town(self, id: str, position: Point, color: str) -> Town:
+    def build_town(self, id: int, position: Point, color: str) -> Town:
         return Town(self._event_bus, id, position, color)
+
+    def build_food_area(self, id: int, position: Point, size: Size, fertility: int):
+        return FoodArea(self._event_bus, id, position, size, self._food_factory, fertility)

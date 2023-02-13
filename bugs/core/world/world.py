@@ -11,9 +11,9 @@ class World():
         self._map = map
         self._event_bus = event_bus
         self._world_loop_stop_flag = False
-        self._entities_for_delete = []
         
-        self._event_bus.add_listener('entity_deleted', self._on_entity_marked_for_delete)
+        self._event_bus.add_listener('entity_died', self._on_entity_died)
+        self._event_bus.add_listener('entity_born', self._on_entity_born)
 
     def set_step_time(self, step_time: int):
         self._step_time = step_time
@@ -55,10 +55,9 @@ class World():
             if not entity.is_hidden:
                 entity.do_step()
 
-        for entity in self._entities_for_delete:
-            self._map.delete_entity(entity.id)
-        self._entities_for_delete = []
+    def _on_entity_died(self, entity: Entity):
+        self._map.delete_entity(entity.id)
 
-    def _on_entity_marked_for_delete(self, entity: Entity):
-        self._entities_for_delete.append(entity)
+    def _on_entity_born(self, entity: Entity):
+        self._map.add_entity(entity)
         
