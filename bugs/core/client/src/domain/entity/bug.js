@@ -66,7 +66,6 @@ class Bug extends Entity {
     }
 
     _playFoodGiving(action) {
-        console.log(123)
         return new Promise((res) => {
             setTimeout(() => {
                 this.pickedFood = null;
