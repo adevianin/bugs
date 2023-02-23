@@ -41,7 +41,7 @@ class WorldView {
         this._ctx.strokeStyle = 'black';
         this._ctx.fillRect(posX, posY, width, height);
         this._ctx.beginPath();
-        this._ctx.arc(posX, posY, 200, 0, 2 * Math.PI);
+        this._ctx.arc(posX, posY, 100, 0, 2 * Math.PI);
         this._ctx.stroke();
 
         if (bug.hasPickedFood()) {

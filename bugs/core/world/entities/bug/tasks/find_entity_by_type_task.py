@@ -13,7 +13,7 @@ class FindEntityByTypeTask(Task):
         self._searching_walk_task = searching_walk_task
 
     def do_step(self):
-        searching_entities = self._map.find_entities_near(self._body.position, self._body.sight_distance, self._searching_entity_type)
+        searching_entities = self._map.find_entities_near(self._body.position, self._body.sight_distance, [self._searching_entity_type])
         
         if (len(searching_entities) > 0):
             self.mark_as_done(searching_entities)

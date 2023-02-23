@@ -7,6 +7,7 @@ from .tasks.task_factory import BugTaskFactory
 from core.world.map import Map
 from core.world.entities.town import Town
 from core.world.entities.base.live_entity.action.action_builder import ActionBuilder
+from core.world.entities.base.live_entity.memory import Memory
 
 class BugFactory():
 
@@ -18,7 +19,7 @@ class BugFactory():
         bug_events = EventEmitter()
         body = BugBody(bug_events, position)
         bug_task_factory = BugTaskFactory(body, map)
-        mind = BugMind(body, bug_task_factory, map, town)
+        mind = BugMind(body, bug_task_factory, map, Memory(), town)
         bug = Bug(self._event_bus, self._action_builder, id, mind, body)
 
         return bug

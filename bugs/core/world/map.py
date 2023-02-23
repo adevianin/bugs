@@ -13,8 +13,6 @@ class Map:
         self._entities = {}
 
     def add_entity(self, entity: Entity):
-        if not entity.id or entity.id == -1:
-            entity.id = self._generate_id()
         self._entities[entity.id] = entity
 
     def delete_entity(self, id: int):
@@ -38,22 +36,22 @@ class Map:
 
         return is_x_valid and is_y_valid
 
-    def find_entities_near(self, point: Point, max_distance: int, entity_type: EntityTypes = None):
+    def find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes] = None):
         found_entities = []
         for entity in self.get_entities():
             dist = math.dist([entity.position.x, entity.position.y], [point.x, point.y])
-            if (not entity.is_hidden and dist <= max_distance and (entity_type == None or entity.type == entity_type)):
+            is_type_suitable = True if entity_types == None else self._check_entity_type(entity, entity_types)
+
+            if (not entity.is_hidden and dist <= max_distance and is_type_suitable):
                 found_entities.append(entity)
 
         return found_entities
-
-    def _generate_id(self):
-        ids = self._entities.keys()
-        last_id = 0
-        for id in ids:
-            if id > last_id:
-                last_id = id
-                
-        return last_id + 1
+    
+    def _check_entity_type(self, entity: Entity, entity_types: EntityTypes):
+        for type in entity_types:
+            if (entity.type == type):
+                return True
+            
+        return False
 
 
