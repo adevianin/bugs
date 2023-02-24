@@ -18,6 +18,7 @@ class Body(ABC):
         self._position = position
 
         self.restore_time_points()
+        self._validate_walking_stats()
 
     @property
     def position(self):
@@ -102,3 +103,8 @@ class Body(ABC):
 
     def _cosumer_all_time_points(self):
         self._time_points = 0
+
+    def _validate_walking_stats(self):
+        max_can_walk = self._distance_per_time_point * Body.TIME_POINTS_PER_TURN
+        if (max_can_walk > self._sight_distance):
+            raise Exception('walking stats incorect') 
