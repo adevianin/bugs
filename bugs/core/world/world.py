@@ -4,6 +4,7 @@ import time
 from .map import Map
 from .utils.event_emiter import EventEmitter
 from .entities.base.entity import Entity
+from .settings import STEP_TIME
 
 class World():
 
@@ -14,9 +15,6 @@ class World():
         
         self._event_bus.add_listener('entity_died', self._on_entity_died)
         self._event_bus.add_listener('entity_born', self._on_entity_born)
-
-    def set_step_time(self, step_time: int):
-        self._step_time = step_time
 
     def stop(self):
         self._world_loop_stop_flag = True
@@ -46,8 +44,8 @@ class World():
             iteration_end = time.time()
             iteration_time = iteration_end - iteration_start
             
-            if (self._step_time - iteration_time > 0):
-                time.sleep(self._step_time - iteration_time)
+            if (STEP_TIME - iteration_time > 0):
+                time.sleep(STEP_TIME - iteration_time)
 
     def _do_step(self):
         entities = self._map.get_entities()

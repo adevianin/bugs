@@ -2,12 +2,11 @@ from core.world.utils.point import Point
 from abc import ABC
 from core.world.entities.food.food import Food
 from core.world.utils.event_emiter import EventEmitter
+from core.world.settings import TIME_POINTS_PER_TURN
 
 import math
 
 class Body(ABC):
-
-    TIME_POINTS_PER_TURN = 100
 
     def __init__(self, events: EventEmitter, position: Point, distance_per_time_point: int, sight_distance: int):
         self.events = events
@@ -93,7 +92,7 @@ class Body(ABC):
             return True
 
     def restore_time_points(self):
-        self._time_points = Body.TIME_POINTS_PER_TURN
+        self._time_points = TIME_POINTS_PER_TURN
 
     def calc_distance_can_walk(self):
         return self._time_points * self._distance_per_time_point
@@ -105,6 +104,7 @@ class Body(ABC):
         self._time_points = 0
 
     def _validate_walking_stats(self):
-        max_can_walk = self._distance_per_time_point * Body.TIME_POINTS_PER_TURN
+        # if stats are incorrect then searching may be with errors
+        max_can_walk = self._distance_per_time_point * TIME_POINTS_PER_TURN
         if (max_can_walk > self._sight_distance):
             raise Exception('walking stats incorect') 

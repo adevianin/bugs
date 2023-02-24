@@ -23,7 +23,6 @@ class Entity {
     addAction(action) {
         this._actionStack.push(action);
         this._handleActionsByTimeReducer();
-        console.log('action stack', JSON.parse(JSON.stringify(this._actionStack)))
         this.tryPlayNextAction();
     }
 
