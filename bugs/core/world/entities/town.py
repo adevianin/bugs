@@ -27,6 +27,10 @@ class Town(PlainEntity):
         self._stored_calories += food.calories
         food.die()
 
+    def give_calories(self, count: int):
+        self._stored_calories -= count
+        return count
+
     def to_json(self):
         json = super().to_json()
         json.update({

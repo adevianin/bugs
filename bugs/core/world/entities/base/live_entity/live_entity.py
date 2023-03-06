@@ -24,6 +24,10 @@ class LiveEntity(Entity):
     def position(self, new_position: Point):
         self._body.position = new_position
 
+    def do_step(self):
+        self._body.restore_time_points()
+        self._mind.do_step()
+
     def to_json(self):
         json = super().to_json()
 

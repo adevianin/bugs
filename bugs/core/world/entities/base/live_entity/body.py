@@ -12,9 +12,11 @@ class Body(ABC):
         self.events = events
         self._time_points = 0
         self._distance_per_time_point = distance_per_time_point
-        self._can_eat_calories_per_time_point = 2
         self._sight_distance = sight_distance
         self._position = position
+        self._max_calories = 1000
+        self._calories = self._max_calories
+        self._distance_per_calorie = 2 
 
         self.restore_time_points()
         self._validate_walking_stats()
@@ -49,6 +51,7 @@ class Body(ABC):
         investing_time_points = round(needed_time_points if self._time_points >= needed_time_points else self._time_points)
         distance_can_walk = investing_time_points * self._distance_per_time_point
         percent_can_walk = (distance_can_walk * 100) / distance
+        investing_calories = round(distance_can_walk / self._distance_per_calorie)
 
         x_shift = x_distance * percent_can_walk / 100
         y_shift = y_distance * percent_can_walk / 100
@@ -59,6 +62,7 @@ class Body(ABC):
         new_distance = math.dist([new_pos_x, new_pos_y], [destination_point.x, destination_point.y])
         
         self._cosume_time_points(investing_time_points)
+        self._consume_calories(investing_calories)
 
         is_walk_done = new_distance < 1
         if (is_walk_done): 
@@ -79,23 +83,21 @@ class Body(ABC):
 
         return self.step_to(near_point)
 
-    def eat(self, food: Food):
-        can_eat_calories = self._time_points * self._can_eat_calories_per_time_point
-        if (food.calories >= can_eat_calories):
-            food.calories -= can_eat_calories
-            self._cosumer_all_time_points()
-            return False
-        else:
-            needed_time_points = food.calories / self._can_eat_calories_per_time_point
-            self._cosume_time_points(needed_time_points)
-            food.calories = 0
-            return True
-
     def restore_time_points(self):
         self._time_points = TIME_POINTS_PER_TURN
 
     def calc_distance_can_walk(self):
         return self._time_points * self._distance_per_time_point
+    
+    def check_am_i_hungry(self):
+        return self._calories / (self._max_calories / 100) < 30
+    
+    def calc_how_much_calories_is_need(self):
+        return self._max_calories - self._calories
+    
+    def eat_calories(self, count: int):
+        print('eating calories', count)
+        self._calories += count
 
     def _cosume_time_points(self, tp_count):
         self._time_points -= tp_count
@@ -108,3 +110,7 @@ class Body(ABC):
         max_can_walk = self._distance_per_time_point * TIME_POINTS_PER_TURN
         if (max_can_walk > self._sight_distance):
             raise Exception('walking stats incorect') 
+        
+    def _consume_calories(self, amount: int):
+        self._calories -= amount
+        print('calories left', self._calories)

@@ -15,6 +15,9 @@ class Task(ABC):
         self._is_done = True
         self._results = results
 
+    def can_be_delayed(self):
+        return True
+
     @property
     def results(self):
         return self._results

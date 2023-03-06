@@ -42,6 +42,12 @@ class CollectFoodTask(Task):
         if (self._is_food_taken_by_home):
             self.mark_as_done()
 
+    def can_be_delayed(self):
+        if (self._is_pickup_food_done):
+            return False
+        else:
+            return True
+
     def _look_around_for_food(self):
         foods = self._map.find_entities_near(self._body.position, self._body.sight_distance, [EntityTypes.FOOD])
 

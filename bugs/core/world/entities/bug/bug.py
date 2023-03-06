@@ -12,11 +12,6 @@ class Bug(LiveEntity):
         self._body.events.add_listener('food_picked', self._on_food_picked)
         self._body.events.add_listener('picked_food_gave', self._on_food_gave)
 
-    def do_step(self):
-        self._body.restore_time_points()
-        self._mind.do_step()
-        # self.emit_change()
-
     def to_json(self):
         json = super().to_json()
         json.update({
