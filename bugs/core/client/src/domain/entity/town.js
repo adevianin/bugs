@@ -3,8 +3,8 @@ import { EntityTypes } from './entityTypes';
 
 class Town extends Entity {
 
-    constructor(id, position, color) {
-        super(id, position, EntityTypes.TOWN);
+    constructor(eventBus, id, position, color) {
+        super(eventBus, id, position, EntityTypes.TOWN);
         this._color = color
     }
 

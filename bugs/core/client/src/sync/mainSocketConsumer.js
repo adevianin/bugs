@@ -20,9 +20,9 @@ class MainSocketConsumer {
             case 'entity_changed':
                 this._domainFacade.updateEntity(msg.entity);
                 break;
-            case 'entity_died':
-                this._domainFacade.deleteEntity(msg.entity_id);
-                break;
+            // case 'entity_died':
+            //     this._domainFacade.deleteEntity(msg.entity_id);
+            //     break;
             case 'entity_born':
                 this._domainFacade.addNewEntity(msg.entity);
                 break;

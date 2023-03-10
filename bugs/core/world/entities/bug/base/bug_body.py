@@ -18,7 +18,7 @@ class BugBody(Body):
         if (self._time_points >= MIN_TIME_POINTS_ACTION_COST):
             self._picked_food = food
             food.toggle_hidden(True)
-            self._cosume_time_points(MIN_TIME_POINTS_ACTION_COST)
+            self._consume_time_points(MIN_TIME_POINTS_ACTION_COST)
             self.events.emit('food_picked', consumed_time_points=MIN_TIME_POINTS_ACTION_COST, food_id=food.id)
             return True
         else:

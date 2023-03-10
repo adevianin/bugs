@@ -15,6 +15,7 @@ class LiveEntity(Entity):
         self._action_builder = action_builder
 
         self._body.events.add_listener('walk', self._on_body_walk)
+        self._body.events.add_listener('eat_food', self._on_body_eats_food)
 
     @property
     def position(self):
@@ -50,4 +51,10 @@ class LiveEntity(Entity):
                 'x': position.x,
                 'y': position.y
             }
+        })
+
+    def _on_body_eats_food(self, consumed_time_points, food_id, is_food_eaten):
+        self.emit_action('eat_food', consumed_time_points, {
+            'food_id': food_id,
+            'is_food_eaten': is_food_eaten
         })

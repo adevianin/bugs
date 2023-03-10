@@ -1,6 +1,9 @@
 class World {
-    constructor(entities) {
-        this._entities = entities
+    constructor(eventBus, entities) {
+        this._eventBus = eventBus;
+        this._entities = entities;
+
+        this._eventBus.on('died', this._on_died.bind(this));
     }
 
     get entities() {
@@ -37,6 +40,10 @@ class World {
 
     findEntityById(id) {
         return this._entities.find( entity => entity.id === id);
+    }
+
+    _on_died(entity) {
+        this.deleteEntity(entity.id);
     }
 
 }

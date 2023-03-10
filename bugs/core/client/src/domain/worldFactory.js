@@ -7,6 +7,10 @@ import { FoodArea } from './entity/foodArea';
 
 class WorldFactory {
 
+    constructor(mainEventBus) {
+        this.mainEventBus = mainEventBus;
+    }
+
     buildWorldFromJson(worldJson) {
         let entities = [];
         worldJson.entities.forEach(entityJson => {
@@ -20,23 +24,23 @@ class WorldFactory {
     }
 
     buildWorld(entities) {
-        return new World(entities);
+        return new World(this.mainEventBus, entities);
     }
 
     buildBug(id, position) {
-        return new Bug(id, position);
+        return new Bug(this.mainEventBus, id, position);
     }
 
     buildTown(id, position, color) {
-        return new Town(id, position, color);
+        return new Town(this.mainEventBus, id, position, color);
     }
 
     buildFood(id, position, calories) {
-        return new Food(id, position, calories);
+        return new Food(this.mainEventBus, id, position, calories);
     }
 
     buildFoodArea(id, position) {
-        return new FoodArea(id, position);
+        return new FoodArea(this.mainEventBus, id, position);
     }
 
     buildEntity(entityJson) {

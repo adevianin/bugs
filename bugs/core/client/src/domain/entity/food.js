@@ -2,8 +2,8 @@ import { Entity } from './entity';
 import { EntityTypes } from './entityTypes';
 
 class Food extends Entity {
-    constructor(id, position, calories) {
-        super(id, position, EntityTypes.FOOD);
+    constructor(eventBus, id, position, calories) {
+        super(eventBus, id, position, EntityTypes.FOOD);
         this.calories = calories;
     }
 

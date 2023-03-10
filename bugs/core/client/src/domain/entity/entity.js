@@ -1,6 +1,7 @@
 class Entity {
 
-    constructor(id, position, type) {
+    constructor(eventBus, id, position, type) {
+        this._eventBus = eventBus;
         this.id = id;
         this._position = position;
         this.type = type;
@@ -49,6 +50,14 @@ class Entity {
 
     toggleHidden(isHidden) {
         this._isHidden = isHidden;
+    }
+
+    emit(eventName, data) {
+        this._eventBus.emit(eventName, data);
+    }
+
+    die() {
+        this.emit('died', this);
     }
 
     _handleActionsByTimeReducer() {

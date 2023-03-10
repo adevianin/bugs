@@ -16,7 +16,8 @@ class Body(ABC):
         self._position = position
         self._max_calories = 1000
         self._calories = self._max_calories
-        self._distance_per_calorie = 2 
+        self._distance_per_calorie = 2
+        self._can_eat_calories_per_time_point = 0.5
 
         self.restore_time_points()
         self._validate_walking_stats()
@@ -61,7 +62,7 @@ class Body(ABC):
 
         new_distance = math.dist([new_pos_x, new_pos_y], [destination_point.x, destination_point.y])
         
-        self._cosume_time_points(investing_time_points)
+        self._consume_time_points(investing_time_points)
         self._consume_calories(investing_calories)
 
         is_walk_done = new_distance < 1
@@ -95,10 +96,27 @@ class Body(ABC):
     def calc_how_much_calories_is_need(self):
         return self._max_calories - self._calories
     
-    def eat_calories(self, count: int):
+    def eat_calories(self, count: int) -> bool:
         self._calories += count
+        return self._calories >= self._max_calories
+    
+    def eat_food(self, food: Food) -> bool:
+        calories_i_need = self.calc_how_much_calories_is_need()
+        max_calories_can_eat = self._time_points * self._can_eat_calories_per_time_point
+        calories_to_eat = min([calories_i_need, max_calories_can_eat, food.calories])
+        investing_time_points = round(calories_to_eat / self._can_eat_calories_per_time_point)
 
-    def _cosume_time_points(self, tp_count):
+        food.calories -= calories_to_eat
+        self._calories += calories_to_eat
+        self._consume_time_points(investing_time_points)
+
+        is_food_eaten = food.calories == 0
+
+        self.events.emit('eat_food', consumed_time_points=investing_time_points, food_id=food.id, is_food_eaten=is_food_eaten)
+
+        return is_food_eaten or self.calc_how_much_calories_is_need() == 0
+
+    def _consume_time_points(self, tp_count):
         self._time_points -= tp_count
 
     def _cosumer_all_time_points(self):
@@ -112,3 +130,4 @@ class Body(ABC):
         
     def _consume_calories(self, amount: int):
         self._calories -= amount
+        print('calories left', self._calories)

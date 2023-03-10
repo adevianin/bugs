@@ -1,5 +1,6 @@
 import { WorldFactory } from './worldFactory';
 import { ActionFactory } from './entity/action/actionFactory';
+import EventEmitter from 'events';
 
 class DomainFacade {
 
@@ -10,7 +11,8 @@ class DomainFacade {
     }
 
     initWorld(worldJson) {
-        this._worldFactory = new WorldFactory();
+        let mainEventBus = new EventEmitter();
+        this._worldFactory = new WorldFactory(mainEventBus);
         this._world = this._worldFactory.buildWorldFromJson(worldJson);
         this._actionFactory = new ActionFactory(this._world);
     }

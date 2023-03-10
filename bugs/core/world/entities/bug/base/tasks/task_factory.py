@@ -10,7 +10,7 @@ from .find_entity_by_type_task import FindEntityByTypeTask
 from .collect_food_task import CollectFoodTask
 from core.world.entities.base.live_entity.memory import Memory
 from .find_food_task import FindFoodTask
-from .go_home_to_eat_task import GoHomeToEatTask
+from .feed_myself_task import FeedMyselfTask
 
 class BugTaskFactory(TaskFactory):
 
@@ -37,5 +37,6 @@ class BugTaskFactory(TaskFactory):
         searching_walk_subtask = self.build_searching_walk_task(search_near_point, search_radius)
         return FindFoodTask(self._body, self._map, memory, searching_walk_subtask)
     
-    def build_go_home_to_eat_task(self, home: Town):
-        return GoHomeToEatTask(self._body, home)
+    def build_feed_myself_task(self, home: Town, memory: Memory):
+        find_food_task = self.build_find_food_task(memory, home.position, home.area)
+        return FeedMyselfTask(self._body, home, find_food_task)

@@ -4,8 +4,8 @@ import { ACTION_TYPES } from './action/actionTypes';
 
 class Bug extends Entity {
 
-    constructor(id, position) {
-        super(id, position, EntityTypes.BUG);
+    constructor(eventBus, id, position) {
+        super(eventBus, id, position, EntityTypes.BUG);
         this.pickedFood = null;
     }
 
@@ -24,6 +24,8 @@ class Bug extends Entity {
                 return this._playFoodPickingAction(action);
             case ACTION_TYPES.FOOD_GAVE:
                 return this._playFoodGiving(action);
+            case ACTION_TYPES.EAT_FOOD:
+                return this._playEatFoodAction(action);
             default:
                 throw 'unknown type of action'
         }
@@ -59,7 +61,7 @@ class Bug extends Entity {
         return new Promise((res) => {
             setTimeout(() => {
                 this.pickedFood = action.action_data.food;
-                this.pickedFood.toggleHidden(true);
+                this.pickedFood.die();
                 res();
             }, action.time * 1000)
         });
@@ -69,6 +71,17 @@ class Bug extends Entity {
         return new Promise((res) => {
             setTimeout(() => {
                 this.pickedFood = null;
+                res();
+            }, action.time * 1000)
+        });
+    }
+
+    _playEatFoodAction(action) {
+        return new Promise((res) => {
+            setTimeout(() => {
+                if (action.action_data.is_food_eaten) {
+                    action.action_data.food.die();
+                }
                 res();
             }, action.time * 1000)
         });

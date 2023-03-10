@@ -24,12 +24,17 @@ class Town(PlainEntity):
         pass
 
     def take_food(self, food: Food):
-        self._stored_calories += food.calories
+        # self._stored_calories += food.calories
         food.die()
 
-    def give_calories(self, count: int):
-        self._stored_calories -= count
-        return count
+    def give_calories(self, count: int) -> int:
+        if (self._stored_calories >= count):
+            self._stored_calories -= count
+            return count
+        else:
+            can_give = self._stored_calories
+            self._stored_calories = 0
+            return can_give
 
     def to_json(self):
         json = super().to_json()
