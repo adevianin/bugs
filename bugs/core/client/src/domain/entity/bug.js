@@ -17,7 +17,7 @@ class Bug extends Entity {
     }
 
     playAction(action) {
-        switch (action.action_type) {
+        switch (action.type) {
             case ACTION_TYPES.WALK:
                 return this._playWalkAction(action);
             case ACTION_TYPES.FOOD_PICKED:
@@ -38,7 +38,7 @@ class Bug extends Entity {
     _playWalkAction(action) {
         let wholeWalkTime = action.time * 1000;
         let walkStartAt = Date.now();
-        let destPosition = action.action_data.position;
+        let destPosition = action.additionalData.position;
         let startPosition = this.position;
         return new Promise((res, rej) => {
             let walkInterval = setInterval(() => {
@@ -60,7 +60,7 @@ class Bug extends Entity {
     _playFoodPickingAction(action) {
         return new Promise((res) => {
             setTimeout(() => {
-                this.pickedFood = action.action_data.food;
+                this.pickedFood = action.additionalData.food;
                 this.pickedFood.die();
                 res();
             }, action.time * 1000)
@@ -79,8 +79,8 @@ class Bug extends Entity {
     _playEatFoodAction(action) {
         return new Promise((res) => {
             setTimeout(() => {
-                if (action.action_data.is_food_eaten) {
-                    action.action_data.food.die();
+                if (action.additionalData.is_food_eaten) {
+                    action.additionalData.food.die();
                 }
                 res();
             }, action.time * 1000)

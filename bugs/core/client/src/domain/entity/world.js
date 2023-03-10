@@ -20,7 +20,7 @@ class World {
     }
 
     playAction(action) {
-        let entity = this.findEntityById(action.entity_id);
+        let entity = this.findEntityById(action.entityId);
         entity.addAction(action);
     }
 
