@@ -1,5 +1,5 @@
 from core.world.entities.base.live_entity.tasks.task_factory import TaskFactory
-from ..body import BugBody
+from ..bug_body import BugBody
 from core.world.map import Map
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.point import Point

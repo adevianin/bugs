@@ -7,6 +7,7 @@ from .map import Map
 from .world import World
 from .entities.town import Town
 from .entities.food.food_area import FoodArea
+from .entities.bug.base.bug_types import BugTypes
 
 class WorldFactory():
 
@@ -29,7 +30,8 @@ class WorldFactory():
         for bug_data in bugs_data:
             position = Point(bug_data['position']['x'], bug_data['position']['y'])
             town = map.get_entity_by_id(bug_data['from_town'])
-            bug = self._bug_factory.build_bug(map, bug_data['id'], position, town)
+            bug_type = BugTypes(bug_data['type'])
+            bug = self._bug_factory.build_bug(map, bug_data['id'], bug_type, position, town)
             map.add_entity(bug)
 
         foods_data = world_data['foods']

@@ -1,5 +1,5 @@
 from core.world.entities.base.live_entity.tasks.task import Task
-from ..body import BugBody
+from ..bug_body import BugBody
 from .find_entity_by_type_task import FindEntityByTypeTask
 from core.world.entities.food.food import Food
 from core.world.utils.point import Point

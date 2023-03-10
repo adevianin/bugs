@@ -1,25 +1,13 @@
-from core.world.entities.base.live_entity.mind import Mind
-from .tasks.task_factory import BugTaskFactory
-from .body import BugBody
-from core.world.map import Map
-from core.world.entities.town import Town
-from core.world.entities.base.live_entity.memory import Memory
+from ..base.bug_mind import BugMind
 
-class BugMind(Mind):
-
-    def __init__(self, body: BugBody, task_factory: BugTaskFactory, map: Map, memory: Memory, home_town: Town):
-        super().__init__(body, task_factory, map, memory)
-        self._home_town = home_town
+class CollectorBugMind(BugMind):
 
     def _do_step_activity(self):
         if (self._body.check_am_i_hungry()):
-            print('i am hungry')
             if (self._has_tasks_to_do()):
                 if (self._get_current_task().can_be_delayed()):
-                    print('delayed task for feed my self')
                     self._register_task(self._generate_feed_myself_task(), True)
             else:
-                print('create feed task')
                 self._register_task(self._generate_feed_myself_task())
 
         if not self._has_tasks_to_do():
