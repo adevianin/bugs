@@ -31,6 +31,7 @@ class Mind(ABC):
             
     def _register_task(self, task: Task, as_first_priority: bool = False):
         if (as_first_priority):
+            self._get_current_task().delay()
             self._tasks_stack.insert(0, task)
         else:
             self._tasks_stack.append(task)

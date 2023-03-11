@@ -12,11 +12,7 @@ class CollectFoodTask(Task):
         self._find_food_task = find_food_task
         self._found_food = None
 
-        self._is_find_food_done = False
-        self._is_get_to_food_done = False
-        self._is_pickup_food_done = False
-        self._is_go_home_done = False
-        self._is_food_taken_by_home = False
+        self._reset_flags()
 
     def do_step(self):
         if (not self._is_find_food_done):
@@ -47,6 +43,10 @@ class CollectFoodTask(Task):
             return False
         else:
             return True
+        
+    def delay(self):
+        self._reset_flags()
+        self._find_food_task.restart()
 
     def _look_around_for_food(self):
         foods = self._map.find_entities_near(self._body.position, self._body.sight_distance, [EntityTypes.FOOD])
@@ -55,5 +55,12 @@ class CollectFoodTask(Task):
             return foods[0]
         else:
             return None
+        
+    def _reset_flags(self):
+        self._is_find_food_done = False
+        self._is_get_to_food_done = False
+        self._is_pickup_food_done = False
+        self._is_go_home_done = False
+        self._is_food_taken_by_home = False
         
 

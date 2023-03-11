@@ -17,6 +17,13 @@ class Task(ABC):
 
     def can_be_delayed(self):
         return True
+    
+    def delay(self):
+        pass
+
+    def restart(self):
+        self._is_done = False
+        self._results = None
 
     @property
     def results(self):

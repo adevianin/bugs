@@ -17,8 +17,7 @@ class FindFoodTask(Task):
 
         self._points_to_check = []
 
-        self._memory_read = False
-        self._points_checked = False
+        self._reset_flags()
 
     def do_step(self):
         found_food = self._look_around_for_food()
@@ -42,6 +41,10 @@ class FindFoodTask(Task):
         if (self._points_checked):
             self._random_walk_task.do_step()
             self._look_around_for_food()
+
+    def restart(self):
+        super().restart()
+        self._reset_flags()
     
     def _get_points_to_check(self):
         entities_data = self._memory.get_entities_data([EntityTypes.FOOD, EntityTypes.FOOD_AREA])
@@ -62,6 +65,9 @@ class FindFoodTask(Task):
         else:
             return False
 
-    
+    def _reset_flags(self):
+        self._memory_read = False
+        self._points_checked = False
+        
 
     
