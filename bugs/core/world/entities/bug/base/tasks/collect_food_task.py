@@ -25,6 +25,9 @@ class CollectFoodTask(Task):
             self._is_get_to_food_done = self._body.step_to_near(self._found_food.position)
 
         if (self._is_get_to_food_done and not self._is_pickup_food_done):
+            if (self._found_food.is_hidden):
+                self.restart()
+                return
             self._is_pickup_food_done = self._body.pick_up_food(self._found_food)
             
         if (self._is_pickup_food_done and not self._is_go_home_done):
@@ -45,6 +48,10 @@ class CollectFoodTask(Task):
             return True
         
     def delay(self):
+        self.restart()
+
+    def restart(self):
+        super().restart()
         self._reset_flags()
         self._find_food_task.restart()
 
