@@ -22,6 +22,13 @@ class DomainFacade {
         });
     }
 
+    logout() {
+        return this._userService.logout().then(() => {
+            this._disconnectMessagerHandler();
+            this._worldService.clear();
+        });
+    }
+
     getUserData() {
         return this._userService.getUserData();
     }
@@ -30,6 +37,10 @@ class DomainFacade {
         if (this._userService.isLoggedIn()) {
             this._messageHandlerService.connect();
         }
+    }
+
+    _disconnectMessagerHandler() {
+        this._messageHandlerService.disconnect();
     }
 
 }

@@ -11,6 +11,10 @@ class MessageHandlerService {
         return this._serverConnection.connect();
     }
 
+    disconnect() {
+        this._serverConnection.disconnect();
+    }
+
     _onMessage(msg) {
         switch(msg.type) {
             case 'whole_world':

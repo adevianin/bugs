@@ -12,6 +12,12 @@ class UserService {
             });
     }
 
+    logout() {
+        return this._userApi.logout().then(() => {
+            this._userData = null;
+        });
+    }
+
     isLoggedIn() {
         return !!this._userData;
     }

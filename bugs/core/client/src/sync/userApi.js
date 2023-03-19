@@ -10,6 +10,9 @@ class UserApi {
         });
     }
 
+    logout() {
+        return this._requester.post('users/logout');
+    }
 
 }
 

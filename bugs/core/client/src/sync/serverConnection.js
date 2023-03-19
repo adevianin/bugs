@@ -16,6 +16,10 @@ class ServerConnection {
         });
     }
 
+    disconnect() {
+        this._socket.close();
+    }
+
     _emitMessage(event) {
         this.events.emit('message', JSON.parse(event.data));
     }

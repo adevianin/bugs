@@ -1,7 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 from core.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 class UsernameUniqueCheckView(View):
     def post(self, request): 
@@ -24,7 +24,7 @@ class UserRegistrationView(View):
         except:
             return HttpResponse(status=500)
         
-class UserAuthView(View):
+class UserLoginView(View):
     def post(self, request):
         username = request.json['username']
         password = request.json['password']
@@ -38,3 +38,8 @@ class UserAuthView(View):
             })
         else:
             return HttpResponse(status=401)
+        
+class UserLogoutView(View):
+    def post(self, request):
+        logout(request)
+        return HttpResponse(status=200)

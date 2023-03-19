@@ -8,10 +8,12 @@ class AccountView {
         this._userTabEl = this._el.querySelector('[data-user-tab]');
         this._loginBtn = this._el.querySelector('[data-login-btn]');
         this._userNameEl = this._el.querySelector('[data-username]');
+        this._logoutBtn = this._el.querySelector('[data-logout-btn]');
 
         this._render();
         
         this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));
+        this._logoutBtn.addEventListener('click', this._onLogoutBtnClick.bind(this));
     }
 
     _render() {
@@ -30,7 +32,12 @@ class AccountView {
         let username = this._loginTabEl.querySelector('[data-user-name]').value;
         let password =  this._loginTabEl.querySelector('[data-password]').value;
         this._domainFacade.login(username, password).then(() => {
-            console.log('account view')
+            this._render();
+        });
+    }
+
+    _onLogoutBtnClick() {
+        this._domainFacade.logout().then(() => {
             this._render();
         });
     }

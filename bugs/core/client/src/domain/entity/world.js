@@ -37,6 +37,10 @@ class World {
         return this._entities.find( entity => entity.id === id);
     }
 
+    clear() {
+        this._entities = [];
+    }
+
     _on_died(entity) {
         this.deleteEntity(entity.id);
     }

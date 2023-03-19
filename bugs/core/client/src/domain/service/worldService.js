@@ -21,6 +21,10 @@ class WorldService {
         let entity = this._worldFactory.buildEntity(entityJson);
         this._world.addEntity(entity);
     }
+
+    clear() {
+        this._world.clear();
+    }
 }
 
 export {
