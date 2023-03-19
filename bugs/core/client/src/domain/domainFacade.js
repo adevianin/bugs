@@ -1,42 +1,35 @@
-import { WorldFactory } from './worldFactory';
-import { ActionFactory } from './entity/action/actionFactory';
-import EventEmitter from 'events';
-
 class DomainFacade {
 
-    constructor() {
-        this._world = null;
-        this._worldFactory = null;
-        this._actionFactory = null;
-    }
+    constructor(userService, messageHandlerService, worldService) {
+        this._worldService = worldService;
+        this._userService = userService;
+        this._messageHandlerService = messageHandlerService;
 
-    initWorld(worldJson) {
-        let mainEventBus = new EventEmitter();
-        this._worldFactory = new WorldFactory(mainEventBus);
-        this._world = this._worldFactory.buildWorldFromJson(worldJson);
-        this._actionFactory = new ActionFactory(this._world);
-    }
-
-    updateEntity(entityJson) {
-        this._world.updateEntity(entityJson);
-    }
-
-    deleteEntity(entityId) {
-        this._world.deleteEntity(entityId);
-    }
-
-    addNewEntity(entityJson) {
-        let entity = this._worldFactory.buildEntity(entityJson);
-        this._world.addEntity(entity);
-    }
-
-    playAction(actionJson) {
-        let action = this._actionFactory.buildAction(actionJson);
-        this._world.playAction(action);
+        this._tryConnectMessageHandler();
     }
 
     getEntities() {
-        return this._world.entities;
+        return this._worldService.getEntities();
+    }
+
+    isLoggedIn() {
+        return this._userService.isLoggedIn();
+    }
+
+    login(username, password) {
+        return this._userService.login(username, password).then(() => {
+            this._tryConnectMessageHandler();
+        });
+    }
+
+    getUserData() {
+        return this._userService.getUserData();
+    }
+
+    _tryConnectMessageHandler() {
+        if (this._userService.isLoggedIn()) {
+            this._messageHandlerService.connect();
+        }
     }
 
 }

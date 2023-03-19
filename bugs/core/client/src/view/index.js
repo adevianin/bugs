@@ -1,8 +1,7 @@
-import { WorldView } from './worldView';
+import { AppView } from './appView';
 
 function initViewLayer(domainFacade) {
-    let canvEl = document.getElementById('bugsCanvas');
-    let worldView = new WorldView(canvEl, domainFacade);
+    let app = new AppView(document, domainFacade)
 }
 
 export { initViewLayer }

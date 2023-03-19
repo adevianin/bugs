@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middlewares.convertJsonMiddleware.ConvertJSONMiddleware'
 ]
 
 ROOT_URLCONF = 'bugs.urls'
@@ -128,3 +129,5 @@ STATIC_ROOT = BASE_DIR / 'static'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ASGI_APPLICATION = 'bugs.asgi.application'
+
+AUTH_USER_MODEL = 'core.User'

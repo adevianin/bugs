@@ -11,20 +11,8 @@ class WorldFactory {
         this.mainEventBus = mainEventBus;
     }
 
-    buildWorldFromJson(worldJson) {
-        let entities = [];
-        worldJson.entities.forEach(entityJson => {
-            let entity = this.buildEntity(entityJson);
-            entities.push(entity);
-        });
-
-        let world = this.buildWorld(entities);
-
-        return world;
-    }
-
-    buildWorld(entities) {
-        return new World(this.mainEventBus, entities);
+    buildWorld() {
+        return new World(this.mainEventBus);
     }
 
     buildBug(id, position) {

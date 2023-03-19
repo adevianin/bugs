@@ -1,7 +1,7 @@
 class World {
-    constructor(eventBus, entities) {
+    constructor(eventBus) {
         this._eventBus = eventBus;
-        this._entities = entities;
+        this._entities = [];
 
         this._eventBus.on('died', this._on_died.bind(this));
     }
@@ -17,11 +17,6 @@ class World {
     updateEntity(entityJson) {
         let entity = this.findEntityById(entityJson.id);
         entity.updateEntity(entityJson);
-    }
-
-    playAction(action) {
-        let entity = this.findEntityById(action.entityId);
-        entity.addAction(action);
     }
 
     deleteEntity(entityId) {

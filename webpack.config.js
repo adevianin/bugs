@@ -7,4 +7,9 @@ module.exports = {
         filename: 'main.js',
         path: path.resolve(__dirname, 'bugs/core/static/core'),
     },
+    resolve: {
+        alias: {
+          utils: path.resolve(__dirname, './bugs/core/client/src/utils'),
+        },
+    },
 };

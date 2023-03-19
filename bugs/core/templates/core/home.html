@@ -1,9 +1,49 @@
 {% load static %}
 <html>
     <head>
+        {{ initial_data|json_script:"initial-data" }}
+        <style>
+            .hidden {
+                display: none;
+            }
+        </style>
     </head>
     <body>
-        <canvas width="1000" height="500" style="border: solid 1px" id="bugsCanvas"></canvas>
+        <canvas width="1000" height="500" style="border: solid 1px" id="worldCanvas"></canvas>
+
+        <div data-account-view>
+            <div data-login-tab>
+                login
+                <div> 
+                    <input type="text" data-user-name />
+                </div>
+                <div>
+                    <input type="text" data-password />
+                </div>
+                <div>
+                    <button data-login-btn>ok</button>
+                </div>
+            </div>
+            <div data-registration-tab>
+                registration
+                <div>
+                    <input type="text" data-user-name />
+                </div>
+                <div>
+                    <input type="text" data-password />
+                </div>
+                <div>
+                    <input type="text" data-password-confirm />
+                </div>
+                <div>
+                    <button data-ok-btn>ok</button>
+                </div>
+            </div>
+            <div data-user-tab>
+                username: <span data-username></span>
+            </div>
+        </div>
+        
     </body>
     <script src="{% static 'core/main.js' %}"></script>
 </html>
