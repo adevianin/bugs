@@ -22,10 +22,10 @@ application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": 
     # AllowedHostsOriginValidator(
-    #     AuthMiddlewareStack(
+        AuthMiddlewareStack(
             URLRouter([
                 re_path('mainsocket', core.main_socket_consumer.MainSocketConsumer.as_asgi()),
             ])
-    #     )
+        )
     # )
 })
