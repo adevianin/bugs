@@ -11,6 +11,7 @@ from typing import Callable
 
 class WorldFacade:
     _instance = None
+    WORLD_ID = 1
 
     @classmethod
     def init(cls, data_repository: iWorldDataRepository):
@@ -31,7 +32,7 @@ class WorldFacade:
         self._world: World
 
     def init_world(self):
-        world_data = self._data_repository.get()
+        world_data = self._data_repository.get(self.WORLD_ID)
 
         self._event_bus = EventEmitter()
 

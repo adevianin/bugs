@@ -9,4 +9,7 @@ class User(AbstractUser):
             'username': self.username,
         }
 
+class World(models.Model):
+    state = models.JSONField()
+
 # Create your models here.
