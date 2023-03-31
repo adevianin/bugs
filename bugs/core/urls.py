@@ -5,7 +5,6 @@ from django.conf.urls.static import static
 
 from .views.account import UsernameUniqueCheckView, UserRegistrationView, UserLoginView, UserLogoutView
 from .views.home import index
-from .views.test import test
 from .views.admin import admin_panel, world_status_check, stop_world, run_world
 
 urlpatterns = [
