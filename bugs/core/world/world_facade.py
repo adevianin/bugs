@@ -48,9 +48,15 @@ class WorldFacade:
 
     def get_world_json(self):
         return self._world.to_json()
+    
+    def run(self):
+        self._world.run()
 
     def stop(self):
         self._world.stop()
+
+    def is_world_running(self):
+        return self._world.is_world_running
 
     def add_listener(self, event_name: str, callback: Callable):
         self._event_bus.add_listener(event_name, callback)

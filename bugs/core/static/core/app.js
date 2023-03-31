@@ -10,283 +10,283 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./bugs/core/client/src/domain/domainFacade.js":
-/*!*****************************************************!*\
-  !*** ./bugs/core/client/src/domain/domainFacade.js ***!
-  \*****************************************************/
+/***/ "./bugs/core/client/app/src/domain/domainFacade.js":
+/*!*********************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/domainFacade.js ***!
+  \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"DomainFacade\": () => (/* binding */ DomainFacade)\n/* harmony export */ });\nclass DomainFacade {\r\n\r\n    constructor(userService, messageHandlerService, worldService) {\r\n        this._worldService = worldService;\r\n        this._userService = userService;\r\n        this._messageHandlerService = messageHandlerService;\r\n\r\n        this._tryConnectMessageHandler();\r\n    }\r\n\r\n    getEntities() {\r\n        return this._worldService.getEntities();\r\n    }\r\n\r\n    isLoggedIn() {\r\n        return this._userService.isLoggedIn();\r\n    }\r\n\r\n    login(username, password) {\r\n        return this._userService.login(username, password).then(() => {\r\n            this._tryConnectMessageHandler();\r\n        });\r\n    }\r\n\r\n    logout() {\r\n        return this._userService.logout().then(() => {\r\n            this._disconnectMessagerHandler();\r\n            this._worldService.clear();\r\n        });\r\n    }\r\n\r\n    getUserData() {\r\n        return this._userService.getUserData();\r\n    }\r\n\r\n    _tryConnectMessageHandler() {\r\n        if (this._userService.isLoggedIn()) {\r\n            this._messageHandlerService.connect();\r\n        }\r\n    }\r\n\r\n    _disconnectMessagerHandler() {\r\n        this._messageHandlerService.disconnect();\r\n    }\r\n\r\n}\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/domainFacade.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"DomainFacade\": () => (/* binding */ DomainFacade)\n/* harmony export */ });\nclass DomainFacade {\r\n\r\n    constructor(userService, messageHandlerService, worldService) {\r\n        this._worldService = worldService;\r\n        this._userService = userService;\r\n        this._messageHandlerService = messageHandlerService;\r\n\r\n        this._tryConnectMessageHandler();\r\n    }\r\n\r\n    getEntities() {\r\n        return this._worldService.getEntities();\r\n    }\r\n\r\n    isLoggedIn() {\r\n        return this._userService.isLoggedIn();\r\n    }\r\n\r\n    login(username, password) {\r\n        return this._userService.login(username, password).then(() => {\r\n            this._tryConnectMessageHandler();\r\n        });\r\n    }\r\n\r\n    logout() {\r\n        return this._userService.logout().then(() => {\r\n            this._disconnectMessagerHandler();\r\n            this._worldService.clear();\r\n        });\r\n    }\r\n\r\n    getUserData() {\r\n        return this._userService.getUserData();\r\n    }\r\n\r\n    _tryConnectMessageHandler() {\r\n        if (this._userService.isLoggedIn()) {\r\n            this._messageHandlerService.connect();\r\n        }\r\n    }\r\n\r\n    _disconnectMessagerHandler() {\r\n        this._messageHandlerService.disconnect();\r\n    }\r\n\r\n}\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/domainFacade.js?");
 
 /***/ }),
 
-/***/ "./bugs/core/client/src/domain/entity/action/action.js":
-/*!*************************************************************!*\
-  !*** ./bugs/core/client/src/domain/entity/action/action.js ***!
-  \*************************************************************/
+/***/ "./bugs/core/client/app/src/domain/entity/action/action.js":
+/*!*****************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/action/action.js ***!
+  \*****************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Action\": () => (/* binding */ Action)\n/* harmony export */ });\nclass Action {\r\n\r\n    constructor(entityId, actionType, time, actionData) {\r\n        this.entityId = entityId;\r\n        this.type = actionType;\r\n        this.time = time;\r\n        this.additionalData = actionData;\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/entity/action/action.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Action\": () => (/* binding */ Action)\n/* harmony export */ });\nclass Action {\r\n\r\n    constructor(entityId, actionType, time, actionData) {\r\n        this.entityId = entityId;\r\n        this.type = actionType;\r\n        this.time = time;\r\n        this.additionalData = actionData;\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/entity/action/action.js?");
 
 /***/ }),
 
-/***/ "./bugs/core/client/src/domain/entity/action/actionFactory.js":
-/*!********************************************************************!*\
-  !*** ./bugs/core/client/src/domain/entity/action/actionFactory.js ***!
-  \********************************************************************/
+/***/ "./bugs/core/client/app/src/domain/entity/action/actionFactory.js":
+/*!************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/action/actionFactory.js ***!
+  \************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ActionFactory\": () => (/* binding */ ActionFactory)\n/* harmony export */ });\n/* harmony import */ var _actionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./actionTypes */ \"./bugs/core/client/src/domain/entity/action/actionTypes.js\");\n/* harmony import */ var _action__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./action */ \"./bugs/core/client/src/domain/entity/action/action.js\");\n\r\n\r\n\r\nclass ActionFactory {\r\n\r\n    constructor(world) {\r\n        this._world = world;\r\n    }\r\n\r\n    buildAction(actionJson) {\r\n        switch (actionJson.action_type) {\r\n            case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.WALK:\r\n                return this._buildWalkAction(actionJson);\r\n            case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.FOOD_PICKED:\r\n                return this._buildFoodPickedAction(actionJson);\r\n            case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.FOOD_GAVE:\r\n                return this._buildFoodGaveAction(actionJson);\r\n            case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.EAT_FOOD:\r\n                return this._buildEatFoodAction(actionJson)\r\n        }\r\n    }\r\n\r\n    _buildWalkAction(actionJson) {\r\n        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {\r\n            position: actionJson.action_data.position\r\n        });\r\n    }\r\n\r\n    _buildFoodPickedAction(actionJson) {\r\n        let food = this._world.findEntityById(actionJson.action_data.food_id);\r\n        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {\r\n            food\r\n        });\r\n    }\r\n\r\n    _buildEatFoodAction(actionJson) {\r\n        let food = this._world.findEntityById(actionJson.action_data.food_id);\r\n        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {\r\n            food,\r\n            is_food_eaten: actionJson.action_data.is_food_eaten\r\n        });\r\n    }\r\n\r\n    _buildFoodGaveAction(actionJson) {\r\n        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time);\r\n    }\r\n\r\n    _buildAction(entityId, actionType, time, data) {\r\n        return new _action__WEBPACK_IMPORTED_MODULE_1__.Action(entityId, actionType, time, data);\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/entity/action/actionFactory.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ActionFactory\": () => (/* binding */ ActionFactory)\n/* harmony export */ });\n/* harmony import */ var _actionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./actionTypes */ \"./bugs/core/client/app/src/domain/entity/action/actionTypes.js\");\n/* harmony import */ var _action__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./action */ \"./bugs/core/client/app/src/domain/entity/action/action.js\");\n\r\n\r\n\r\nclass ActionFactory {\r\n\r\n    constructor(world) {\r\n        this._world = world;\r\n    }\r\n\r\n    buildAction(actionJson) {\r\n        switch (actionJson.action_type) {\r\n            case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.WALK:\r\n                return this._buildWalkAction(actionJson);\r\n            case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.FOOD_PICKED:\r\n                return this._buildFoodPickedAction(actionJson);\r\n            case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.FOOD_GAVE:\r\n                return this._buildFoodGaveAction(actionJson);\r\n            case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.EAT_FOOD:\r\n                return this._buildEatFoodAction(actionJson)\r\n        }\r\n    }\r\n\r\n    _buildWalkAction(actionJson) {\r\n        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {\r\n            position: actionJson.action_data.position\r\n        });\r\n    }\r\n\r\n    _buildFoodPickedAction(actionJson) {\r\n        let food = this._world.findEntityById(actionJson.action_data.food_id);\r\n        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {\r\n            food\r\n        });\r\n    }\r\n\r\n    _buildEatFoodAction(actionJson) {\r\n        let food = this._world.findEntityById(actionJson.action_data.food_id);\r\n        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {\r\n            food,\r\n            is_food_eaten: actionJson.action_data.is_food_eaten\r\n        });\r\n    }\r\n\r\n    _buildFoodGaveAction(actionJson) {\r\n        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time);\r\n    }\r\n\r\n    _buildAction(entityId, actionType, time, data) {\r\n        return new _action__WEBPACK_IMPORTED_MODULE_1__.Action(entityId, actionType, time, data);\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/entity/action/actionFactory.js?");
 
 /***/ }),
 
-/***/ "./bugs/core/client/src/domain/entity/action/actionTypes.js":
-/*!******************************************************************!*\
-  !*** ./bugs/core/client/src/domain/entity/action/actionTypes.js ***!
-  \******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ACTION_TYPES\": () => (/* binding */ ACTION_TYPES)\n/* harmony export */ });\nconst ACTION_TYPES = {\r\n    WALK: 'walk',\r\n    FOOD_PICKED: 'food_picked',\r\n    FOOD_GAVE: 'picked_food_gave',\r\n    EAT_FOOD: 'eat_food'\r\n\r\n};\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/entity/action/actionTypes.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/domain/entity/bug.js":
-/*!***************************************************!*\
-  !*** ./bugs/core/client/src/domain/entity/bug.js ***!
-  \***************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Bug\": () => (/* binding */ Bug)\n/* harmony export */ });\n/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ \"./bugs/core/client/src/domain/entity/entity.js\");\n/* harmony import */ var _entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entityTypes */ \"./bugs/core/client/src/domain/entity/entityTypes.js\");\n/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ \"./bugs/core/client/src/domain/entity/action/actionTypes.js\");\n\r\n\r\n\r\n\r\nclass Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {\r\n\r\n    constructor(eventBus, id, position) {\r\n        super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.BUG);\r\n        this.pickedFood = null;\r\n    }\r\n\r\n    updateEntity(entityJson) {\r\n    }\r\n\r\n    getColor() {\r\n        // return this._homeTown.getColor()\r\n    }\r\n\r\n    playAction(action) {\r\n        switch (action.type) {\r\n            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.WALK:\r\n                return this._playWalkAction(action);\r\n            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_PICKED:\r\n                return this._playFoodPickingAction(action);\r\n            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_GAVE:\r\n                return this._playFoodGiving(action);\r\n            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.EAT_FOOD:\r\n                return this._playEatFoodAction(action);\r\n            default:\r\n                throw 'unknown type of action'\r\n        }\r\n    }\r\n\r\n    hasPickedFood() {\r\n        return !!this.pickedFood;\r\n    }\r\n\r\n    _playWalkAction(action) {\r\n        let wholeWalkTime = action.time * 1000;\r\n        let walkStartAt = Date.now();\r\n        let destPosition = action.additionalData.position;\r\n        let startPosition = this.position;\r\n        return new Promise((res, rej) => {\r\n            let walkInterval = setInterval(() => {\r\n                let timeInWalk = Date.now() - walkStartAt;\r\n                let walkedPercent = ( 100 * timeInWalk ) / wholeWalkTime;\r\n                if (walkedPercent < 100) {\r\n                    let currentX = this._calcCoordForWalkedPercent(startPosition.x, destPosition.x, walkedPercent);\r\n                    let currentY = this._calcCoordForWalkedPercent(startPosition.y, destPosition.y, walkedPercent);\r\n                    this.setPosition(currentX, currentY);\r\n                } else {\r\n                    this.setPosition(destPosition.x, destPosition.y);\r\n                    clearInterval(walkInterval);\r\n                    res();\r\n                }\r\n            }, 100)\r\n        });\r\n    }\r\n\r\n    _playFoodPickingAction(action) {\r\n        return new Promise((res) => {\r\n            setTimeout(() => {\r\n                this.pickedFood = action.additionalData.food;\r\n                this.pickedFood.die();\r\n                res();\r\n            }, action.time * 1000)\r\n        });\r\n    }\r\n\r\n    _playFoodGiving(action) {\r\n        return new Promise((res) => {\r\n            setTimeout(() => {\r\n                this.pickedFood = null;\r\n                res();\r\n            }, action.time * 1000)\r\n        });\r\n    }\r\n\r\n    _playEatFoodAction(action) {\r\n        return new Promise((res) => {\r\n            setTimeout(() => {\r\n                if (action.additionalData.is_food_eaten) {\r\n                    action.additionalData.food.die();\r\n                }\r\n                res();\r\n            }, action.time * 1000)\r\n        });\r\n    }\r\n\r\n    _calcCoordForWalkedPercent(startCoord, endCoord, flayedPercent) {\r\n        let distance = Math.abs(Math.abs(endCoord) - Math.abs(startCoord));\r\n        let distancePassed = distance * (flayedPercent  / 100);\r\n        return endCoord > startCoord ? startCoord + distancePassed : startCoord - distancePassed;\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/entity/bug.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/domain/entity/entity.js":
-/*!******************************************************!*\
-  !*** ./bugs/core/client/src/domain/entity/entity.js ***!
-  \******************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Entity\": () => (/* binding */ Entity)\n/* harmony export */ });\nclass Entity {\r\n\r\n    constructor(eventBus, id, position, type) {\r\n        this._eventBus = eventBus;\r\n        this.id = id;\r\n        this._position = position;\r\n        this.type = type;\r\n        this._actionStack = [];\r\n        this._isPlaying = false;\r\n        this._isHidden = false;\r\n    }\r\n\r\n    setPosition(x, y) {\r\n        this._position = {x, y};\r\n    }\r\n\r\n    get position(){\r\n        return this._position;\r\n    }\r\n\r\n    updateEntity(entityJson) {\r\n    }\r\n\r\n    addAction(action) {\r\n        this._actionStack.push(action);\r\n        this._handleActionsByTimeReducer();\r\n        this.tryPlayNextAction();\r\n    }\r\n\r\n    playAction(action) {}\r\n\r\n    tryPlayNextAction() {\r\n        if (this._actionStack.length == 0 || this._isPlaying) {\r\n            return\r\n        }\r\n        let nextAction = this._actionStack[0];\r\n        this._actionStack.shift();\r\n\r\n        this._isPlaying = true;\r\n        this.playAction(nextAction)\r\n            .then(() => {\r\n                this._isPlaying = false;\r\n                this.tryPlayNextAction();\r\n            });\r\n    }\r\n\r\n    isHidden() {\r\n        return this._isHidden;\r\n    }\r\n\r\n    toggleHidden(isHidden) {\r\n        this._isHidden = isHidden;\r\n    }\r\n\r\n    emit(eventName, data) {\r\n        this._eventBus.emit(eventName, data);\r\n    }\r\n\r\n    die() {\r\n        this.emit('died', this);\r\n    }\r\n\r\n    _handleActionsByTimeReducer() {\r\n        if (this._actionStack.length <= 3) {\r\n            return;\r\n        }\r\n        let actionTimeReducer;\r\n        if (this._actionStack.length == 4) {\r\n            actionTimeReducer = 0.9;\r\n        }\r\n        if (this._actionStack.length == 5) {\r\n            actionTimeReducer = 0.7;\r\n        }\r\n        if (this._actionStack.length > 5) {\r\n            actionTimeReducer = 0.5;\r\n        }\r\n        this._actionStack.forEach(action => {\r\n            action.time *= actionTimeReducer;\r\n        });\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/entity/entity.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/domain/entity/entityTypes.js":
-/*!***********************************************************!*\
-  !*** ./bugs/core/client/src/domain/entity/entityTypes.js ***!
-  \***********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"EntityTypes\": () => (/* binding */ EntityTypes)\n/* harmony export */ });\nconst EntityTypes = {\r\n    BUG: 'bug',\r\n    FOOD: 'food',\r\n    TOWN: 'town',\r\n    FOOD_AREA: 'food_area'\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/entity/entityTypes.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/domain/entity/food.js":
-/*!****************************************************!*\
-  !*** ./bugs/core/client/src/domain/entity/food.js ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Food\": () => (/* binding */ Food)\n/* harmony export */ });\n/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ \"./bugs/core/client/src/domain/entity/entity.js\");\n/* harmony import */ var _entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entityTypes */ \"./bugs/core/client/src/domain/entity/entityTypes.js\");\n\r\n\r\n\r\nclass Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {\r\n    constructor(eventBus, id, position, calories) {\r\n        super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD);\r\n        this.calories = calories;\r\n    }\r\n\r\n    updateEntity(entityJson) {\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/entity/food.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/domain/entity/foodArea.js":
-/*!********************************************************!*\
-  !*** ./bugs/core/client/src/domain/entity/foodArea.js ***!
-  \********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"FoodArea\": () => (/* binding */ FoodArea)\n/* harmony export */ });\n/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ \"./bugs/core/client/src/domain/entity/entity.js\");\n/* harmony import */ var _entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entityTypes */ \"./bugs/core/client/src/domain/entity/entityTypes.js\");\n\r\n\r\n\r\nclass FoodArea extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {\r\n    constructor(eventBus, id, position, calories) {\r\n        super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD_AREA);\r\n    }\r\n\r\n    updateEntity(entityJson) {\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/entity/foodArea.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/domain/entity/town.js":
-/*!****************************************************!*\
-  !*** ./bugs/core/client/src/domain/entity/town.js ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Town\": () => (/* binding */ Town)\n/* harmony export */ });\n/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ \"./bugs/core/client/src/domain/entity/entity.js\");\n/* harmony import */ var _entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entityTypes */ \"./bugs/core/client/src/domain/entity/entityTypes.js\");\n\r\n\r\n\r\nclass Town extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {\r\n\r\n    constructor(eventBus, id, position, color) {\r\n        super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.TOWN);\r\n        this._color = color\r\n    }\r\n\r\n    get color() {\r\n        return this._color\r\n    }\r\n\r\n}\r\n\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/entity/town.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/domain/entity/world.js":
-/*!*****************************************************!*\
-  !*** ./bugs/core/client/src/domain/entity/world.js ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"World\": () => (/* binding */ World)\n/* harmony export */ });\nclass World {\r\n    constructor(eventBus) {\r\n        this._eventBus = eventBus;\r\n        this._entities = [];\r\n\r\n        this._eventBus.on('died', this._on_died.bind(this));\r\n    }\r\n\r\n    get entities() {\r\n        return [...this._entities];\r\n    }\r\n\r\n    addEntity(entity) {\r\n        this._entities.push(entity);\r\n    }\r\n\r\n    updateEntity(entityJson) {\r\n        let entity = this.findEntityById(entityJson.id);\r\n        entity.updateEntity(entityJson);\r\n    }\r\n\r\n    deleteEntity(entityId) {\r\n        let entityIndex = -1;\r\n        for (let i = 0; i < this._entities.length; i++)  {\r\n            if (this._entities[i].id == entityId) {\r\n                entityIndex = i;\r\n                break;\r\n            }\r\n        }\r\n\r\n        if (entityIndex != -1) {\r\n            this._entities.splice(entityIndex, 1);\r\n        }\r\n    }\r\n\r\n    findEntityById(id) {\r\n        return this._entities.find( entity => entity.id === id);\r\n    }\r\n\r\n    clear() {\r\n        this._entities = [];\r\n    }\r\n\r\n    _on_died(entity) {\r\n        this.deleteEntity(entity.id);\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/entity/world.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/domain/index.js":
-/*!**********************************************!*\
-  !*** ./bugs/core/client/src/domain/index.js ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"initDomainLayer\": () => (/* binding */ initDomainLayer)\n/* harmony export */ });\n/* harmony import */ var _domainFacade__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./domainFacade */ \"./bugs/core/client/src/domain/domainFacade.js\");\n/* harmony import */ var _service_userService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./service/userService */ \"./bugs/core/client/src/domain/service/userService.js\");\n/* harmony import */ var _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./service/messageHandlerService */ \"./bugs/core/client/src/domain/service/messageHandlerService.js\");\n/* harmony import */ var utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! utils/eventEmitter */ \"./bugs/core/client/src/utils/eventEmitter.js\");\n/* harmony import */ var _worldFactory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./worldFactory */ \"./bugs/core/client/src/domain/worldFactory.js\");\n/* harmony import */ var _entity_action_actionFactory__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/action/actionFactory */ \"./bugs/core/client/src/domain/entity/action/actionFactory.js\");\n/* harmony import */ var _service_worldService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/worldService */ \"./bugs/core/client/src/domain/service/worldService.js\");\n/* harmony import */ var _service_actionService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./service/actionService */ \"./bugs/core/client/src/domain/service/actionService.js\");\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nfunction initDomainLayer(userApi, serverConnection) {\r\n    let initialData = JSON.parse(document.getElementById('initial-data').innerText);\r\n\r\n    let mainEventBus = new utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();\r\n    let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus);\r\n    let world = worldFactory.buildWorld();\r\n    let actionFactory = new _entity_action_actionFactory__WEBPACK_IMPORTED_MODULE_5__.ActionFactory(world);\r\n\r\n    let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_6__.WorldService(world, worldFactory);\r\n    let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_1__.UserService(userApi, initialData.user);\r\n    let actionService = new _service_actionService__WEBPACK_IMPORTED_MODULE_7__.ActionService(actionFactory, world);\r\n    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, actionService);\r\n\r\n    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(userService, messageHandlerService, worldService);\r\n\r\n    return domainFacade;\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/index.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/domain/service/actionService.js":
-/*!**************************************************************!*\
-  !*** ./bugs/core/client/src/domain/service/actionService.js ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ActionService\": () => (/* binding */ ActionService)\n/* harmony export */ });\nclass ActionService {\r\n\r\n    constructor(actionFactory, world) {\r\n        this._actionFactory = actionFactory;\r\n        this._world = world;\r\n    }\r\n\r\n    playAction(actionJson) {\r\n        let action = this._actionFactory.buildAction(actionJson);\r\n        let entity = this._world.findEntityById(action.entityId);\r\n        entity.addAction(action);\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/service/actionService.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/domain/service/messageHandlerService.js":
+/***/ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js":
 /*!**********************************************************************!*\
-  !*** ./bugs/core/client/src/domain/service/messageHandlerService.js ***!
+  !*** ./bugs/core/client/app/src/domain/entity/action/actionTypes.js ***!
   \**********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"MessageHandlerService\": () => (/* binding */ MessageHandlerService)\n/* harmony export */ });\nclass MessageHandlerService {\r\n\r\n    constructor(serverConnection, worldService, actionService) {\r\n        this._serverConnection = serverConnection;\r\n        this._worldService = worldService;\r\n        this._actionService = actionService;\r\n        this._serverConnection.events.on('message', this._onMessage.bind(this));\r\n    }\r\n\r\n    connect() {\r\n        return this._serverConnection.connect();\r\n    }\r\n\r\n    disconnect() {\r\n        this._serverConnection.disconnect();\r\n    }\r\n\r\n    _onMessage(msg) {\r\n        switch(msg.type) {\r\n            case 'whole_world':\r\n                this._worldService.initWorld(msg.world);\r\n                break;\r\n            case 'entity_changed':\r\n                this._worldService.updateEntity(msg.entity);\r\n                break;\r\n            case 'entity_born':\r\n                this._worldService.addNewEntity(msg.entity);\r\n                break;\r\n            case 'entity_action':\r\n                this._actionService.playAction(msg.action);\r\n                break;\r\n            default: \r\n                throw `unknown type of message \"${ msg.type }\"`\r\n        }\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/service/messageHandlerService.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ACTION_TYPES\": () => (/* binding */ ACTION_TYPES)\n/* harmony export */ });\nconst ACTION_TYPES = {\r\n    WALK: 'walk',\r\n    FOOD_PICKED: 'food_picked',\r\n    FOOD_GAVE: 'picked_food_gave',\r\n    EAT_FOOD: 'eat_food'\r\n\r\n};\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/entity/action/actionTypes.js?");
 
 /***/ }),
 
-/***/ "./bugs/core/client/src/domain/service/userService.js":
-/*!************************************************************!*\
-  !*** ./bugs/core/client/src/domain/service/userService.js ***!
-  \************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"UserService\": () => (/* binding */ UserService)\n/* harmony export */ });\nclass UserService {\r\n    \r\n    constructor(userApi, userData) {\r\n        this._userApi = userApi;\r\n        this._userData = userData;\r\n    }\r\n\r\n    login(username, password) {\r\n        return this._userApi.login(username, password)\r\n            .then(response => {\r\n                this._userData = response.data.user;\r\n            });\r\n    }\r\n\r\n    logout() {\r\n        return this._userApi.logout().then(() => {\r\n            this._userData = null;\r\n        });\r\n    }\r\n\r\n    isLoggedIn() {\r\n        return !!this._userData;\r\n    }\r\n\r\n    getUserData() {\r\n        return this._userData;\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/service/userService.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/domain/service/worldService.js":
-/*!*************************************************************!*\
-  !*** ./bugs/core/client/src/domain/service/worldService.js ***!
-  \*************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"WorldService\": () => (/* binding */ WorldService)\n/* harmony export */ });\nclass WorldService {\r\n\r\n    constructor(world, worldFactory) {\r\n        this._world = world;\r\n        this._worldFactory = worldFactory;\r\n    }\r\n\r\n    initWorld(worldJson) {\r\n        worldJson.entities.forEach(entityJson => { this.addNewEntity(entityJson); });\r\n    }\r\n\r\n    getEntities() {\r\n        return this._world.entities;\r\n    }\r\n\r\n    updateEntity(entityJson) {\r\n        this._world.updateEntity(entityJson);\r\n    }\r\n\r\n    addNewEntity(entityJson) {\r\n        let entity = this._worldFactory.buildEntity(entityJson);\r\n        this._world.addEntity(entity);\r\n    }\r\n\r\n    clear() {\r\n        this._world.clear();\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/service/worldService.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/domain/worldFactory.js":
-/*!*****************************************************!*\
-  !*** ./bugs/core/client/src/domain/worldFactory.js ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"WorldFactory\": () => (/* binding */ WorldFactory)\n/* harmony export */ });\n/* harmony import */ var _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity/entityTypes */ \"./bugs/core/client/src/domain/entity/entityTypes.js\");\n/* harmony import */ var _entity_bug__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entity/bug */ \"./bugs/core/client/src/domain/entity/bug.js\");\n/* harmony import */ var _entity_world__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./entity/world */ \"./bugs/core/client/src/domain/entity/world.js\");\n/* harmony import */ var _entity_town__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./entity/town */ \"./bugs/core/client/src/domain/entity/town.js\");\n/* harmony import */ var _entity_food__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./entity/food */ \"./bugs/core/client/src/domain/entity/food.js\");\n/* harmony import */ var _entity_foodArea__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/foodArea */ \"./bugs/core/client/src/domain/entity/foodArea.js\");\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nclass WorldFactory {\r\n\r\n    constructor(mainEventBus) {\r\n        this.mainEventBus = mainEventBus;\r\n    }\r\n\r\n    buildWorld() {\r\n        return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this.mainEventBus);\r\n    }\r\n\r\n    buildBug(id, position) {\r\n        return new _entity_bug__WEBPACK_IMPORTED_MODULE_1__.Bug(this.mainEventBus, id, position);\r\n    }\r\n\r\n    buildTown(id, position, color) {\r\n        return new _entity_town__WEBPACK_IMPORTED_MODULE_3__.Town(this.mainEventBus, id, position, color);\r\n    }\r\n\r\n    buildFood(id, position, calories) {\r\n        return new _entity_food__WEBPACK_IMPORTED_MODULE_4__.Food(this.mainEventBus, id, position, calories);\r\n    }\r\n\r\n    buildFoodArea(id, position) {\r\n        return new _entity_foodArea__WEBPACK_IMPORTED_MODULE_5__.FoodArea(this.mainEventBus, id, position);\r\n    }\r\n\r\n    buildEntity(entityJson) {\r\n        switch(entityJson.type) {\r\n            case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.BUG:\r\n                return this.buildBug(entityJson.id, entityJson.position);\r\n            case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:\r\n                return this.buildTown(entityJson.id, entityJson.position, entityJson.color);\r\n            case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:\r\n                return this.buildFood(entityJson.id, entityJson.position, entityJson.calories);\r\n            case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_AREA:\r\n                return this.buildFoodArea(entityJson.id, entityJson.position);\r\n            default:\r\n                throw 'unknown type of entity';\r\n        }\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/domain/worldFactory.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/index.js":
-/*!***************************************!*\
-  !*** ./bugs/core/client/src/index.js ***!
-  \***************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _sync__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./sync */ \"./bugs/core/client/src/sync/index.js\");\n/* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./domain */ \"./bugs/core/client/src/domain/index.js\");\n/* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./view */ \"./bugs/core/client/src/view/index.js\");\n\r\n\r\n\r\n\r\nlet syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)();\r\nlet domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)(syncLayer.userApi, syncLayer.serverConnection);\r\n(0,_view__WEBPACK_IMPORTED_MODULE_2__.initViewLayer)(domainFacade);\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/index.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/sync/index.js":
-/*!********************************************!*\
-  !*** ./bugs/core/client/src/sync/index.js ***!
-  \********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"initSyncLayer\": () => (/* binding */ initSyncLayer)\n/* harmony export */ });\n/* harmony import */ var _requester__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./requester */ \"./bugs/core/client/src/sync/requester.js\");\n/* harmony import */ var _userApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userApi */ \"./bugs/core/client/src/sync/userApi.js\");\n/* harmony import */ var _serverConnection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./serverConnection */ \"./bugs/core/client/src/sync/serverConnection.js\");\n// import { MainSocketConsumer } from './mainSocketConsumer';\r\n\r\n\r\n\r\n\r\nfunction initSyncLayer() {\r\n    let requester = new _requester__WEBPACK_IMPORTED_MODULE_0__.Requester();\r\n\r\n    let userApi = new _userApi__WEBPACK_IMPORTED_MODULE_1__.UserApi(requester);\r\n    let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection();\r\n\r\n    return {\r\n        userApi,\r\n        serverConnection\r\n    };\r\n    // let socket = new WebSocket(`ws://${location.host}/mainsocket`);\r\n    // let socketConsumer = new MainSocketConsumer(socket, domainFacade);\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/sync/index.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/sync/requester.js":
-/*!************************************************!*\
-  !*** ./bugs/core/client/src/sync/requester.js ***!
-  \************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Requester\": () => (/* binding */ Requester)\n/* harmony export */ });\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ \"./node_modules/axios/lib/axios.js\");\n/* harmony import */ var utils_getCookie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/getCookie */ \"./bugs/core/client/src/utils/getCookie.js\");\n\r\n\r\n\r\nclass Requester {\r\n\r\n    post(url, params) {\r\n        return axios__WEBPACK_IMPORTED_MODULE_1__[\"default\"].post(url, params, { headers: {\r\n            'Content-type': 'application/json',\r\n            'X-CSRFToken': this._readCsrfToken()\r\n        }})\r\n    }\r\n\r\n    _readCsrfToken() {\r\n        return (0,utils_getCookie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('csrftoken');\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/sync/requester.js?");
-
-/***/ }),
-
-/***/ "./bugs/core/client/src/sync/serverConnection.js":
+/***/ "./bugs/core/client/app/src/domain/entity/bug.js":
 /*!*******************************************************!*\
-  !*** ./bugs/core/client/src/sync/serverConnection.js ***!
+  !*** ./bugs/core/client/app/src/domain/entity/bug.js ***!
   \*******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerConnection\": () => (/* binding */ ServerConnection)\n/* harmony export */ });\n/* harmony import */ var utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/eventEmitter */ \"./bugs/core/client/src/utils/eventEmitter.js\");\n\r\n\r\nclass ServerConnection {\r\n\r\n    constructor() {\r\n        this.events = new utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();\r\n    }\r\n\r\n    connect() {\r\n        return new Promise((res) => {\r\n            this._socket = new WebSocket(`ws://${location.host}/mainsocket`);\r\n            this._socket.onmessage = this._emitMessage.bind(this);\r\n            this._socket.onopen = () => {\r\n                res();\r\n            }\r\n        });\r\n    }\r\n\r\n    disconnect() {\r\n        this._socket.close();\r\n    }\r\n\r\n    _emitMessage(event) {\r\n        this.events.emit('message', JSON.parse(event.data));\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/sync/serverConnection.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Bug\": () => (/* binding */ Bug)\n/* harmony export */ });\n/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ \"./bugs/core/client/app/src/domain/entity/entity.js\");\n/* harmony import */ var _entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entityTypes */ \"./bugs/core/client/app/src/domain/entity/entityTypes.js\");\n/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ \"./bugs/core/client/app/src/domain/entity/action/actionTypes.js\");\n\r\n\r\n\r\n\r\nclass Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {\r\n\r\n    constructor(eventBus, id, position) {\r\n        super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.BUG);\r\n        this.pickedFood = null;\r\n    }\r\n\r\n    updateEntity(entityJson) {\r\n    }\r\n\r\n    getColor() {\r\n        // return this._homeTown.getColor()\r\n    }\r\n\r\n    playAction(action) {\r\n        switch (action.type) {\r\n            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.WALK:\r\n                return this._playWalkAction(action);\r\n            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_PICKED:\r\n                return this._playFoodPickingAction(action);\r\n            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_GAVE:\r\n                return this._playFoodGiving(action);\r\n            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.EAT_FOOD:\r\n                return this._playEatFoodAction(action);\r\n            default:\r\n                throw 'unknown type of action'\r\n        }\r\n    }\r\n\r\n    hasPickedFood() {\r\n        return !!this.pickedFood;\r\n    }\r\n\r\n    _playWalkAction(action) {\r\n        let wholeWalkTime = action.time * 1000;\r\n        let walkStartAt = Date.now();\r\n        let destPosition = action.additionalData.position;\r\n        let startPosition = this.position;\r\n        return new Promise((res, rej) => {\r\n            let walkInterval = setInterval(() => {\r\n                let timeInWalk = Date.now() - walkStartAt;\r\n                let walkedPercent = ( 100 * timeInWalk ) / wholeWalkTime;\r\n                if (walkedPercent < 100) {\r\n                    let currentX = this._calcCoordForWalkedPercent(startPosition.x, destPosition.x, walkedPercent);\r\n                    let currentY = this._calcCoordForWalkedPercent(startPosition.y, destPosition.y, walkedPercent);\r\n                    this.setPosition(currentX, currentY);\r\n                } else {\r\n                    this.setPosition(destPosition.x, destPosition.y);\r\n                    clearInterval(walkInterval);\r\n                    res();\r\n                }\r\n            }, 100)\r\n        });\r\n    }\r\n\r\n    _playFoodPickingAction(action) {\r\n        return new Promise((res) => {\r\n            setTimeout(() => {\r\n                this.pickedFood = action.additionalData.food;\r\n                this.pickedFood.die();\r\n                res();\r\n            }, action.time * 1000)\r\n        });\r\n    }\r\n\r\n    _playFoodGiving(action) {\r\n        return new Promise((res) => {\r\n            setTimeout(() => {\r\n                this.pickedFood = null;\r\n                res();\r\n            }, action.time * 1000)\r\n        });\r\n    }\r\n\r\n    _playEatFoodAction(action) {\r\n        return new Promise((res) => {\r\n            setTimeout(() => {\r\n                if (action.additionalData.is_food_eaten) {\r\n                    action.additionalData.food.die();\r\n                }\r\n                res();\r\n            }, action.time * 1000)\r\n        });\r\n    }\r\n\r\n    _calcCoordForWalkedPercent(startCoord, endCoord, flayedPercent) {\r\n        let distance = Math.abs(Math.abs(endCoord) - Math.abs(startCoord));\r\n        let distancePassed = distance * (flayedPercent  / 100);\r\n        return endCoord > startCoord ? startCoord + distancePassed : startCoord - distancePassed;\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/entity/bug.js?");
 
 /***/ }),
 
-/***/ "./bugs/core/client/src/sync/userApi.js":
-/*!**********************************************!*\
-  !*** ./bugs/core/client/src/sync/userApi.js ***!
-  \**********************************************/
+/***/ "./bugs/core/client/app/src/domain/entity/entity.js":
+/*!**********************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/entity.js ***!
+  \**********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"UserApi\": () => (/* binding */ UserApi)\n/* harmony export */ });\nclass UserApi {\r\n    \r\n    constructor(requester) {\r\n        this._requester = requester;\r\n    }\r\n\r\n    login(username, password) {\r\n        return this._requester.post('users/login', {\r\n            username, password\r\n        });\r\n    }\r\n\r\n    logout() {\r\n        return this._requester.post('users/logout');\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/sync/userApi.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Entity\": () => (/* binding */ Entity)\n/* harmony export */ });\nclass Entity {\r\n\r\n    constructor(eventBus, id, position, type) {\r\n        this._eventBus = eventBus;\r\n        this.id = id;\r\n        this._position = position;\r\n        this.type = type;\r\n        this._actionStack = [];\r\n        this._isPlaying = false;\r\n        this._isHidden = false;\r\n    }\r\n\r\n    setPosition(x, y) {\r\n        this._position = {x, y};\r\n    }\r\n\r\n    get position(){\r\n        return this._position;\r\n    }\r\n\r\n    updateEntity(entityJson) {\r\n    }\r\n\r\n    addAction(action) {\r\n        this._actionStack.push(action);\r\n        this._handleActionsByTimeReducer();\r\n        this.tryPlayNextAction();\r\n    }\r\n\r\n    playAction(action) {}\r\n\r\n    tryPlayNextAction() {\r\n        if (this._actionStack.length == 0 || this._isPlaying) {\r\n            return\r\n        }\r\n        let nextAction = this._actionStack[0];\r\n        this._actionStack.shift();\r\n\r\n        this._isPlaying = true;\r\n        this.playAction(nextAction)\r\n            .then(() => {\r\n                this._isPlaying = false;\r\n                this.tryPlayNextAction();\r\n            });\r\n    }\r\n\r\n    isHidden() {\r\n        return this._isHidden;\r\n    }\r\n\r\n    toggleHidden(isHidden) {\r\n        this._isHidden = isHidden;\r\n    }\r\n\r\n    emit(eventName, data) {\r\n        this._eventBus.emit(eventName, data);\r\n    }\r\n\r\n    die() {\r\n        this.emit('died', this);\r\n    }\r\n\r\n    _handleActionsByTimeReducer() {\r\n        if (this._actionStack.length <= 3) {\r\n            return;\r\n        }\r\n        let actionTimeReducer;\r\n        if (this._actionStack.length == 4) {\r\n            actionTimeReducer = 0.9;\r\n        }\r\n        if (this._actionStack.length == 5) {\r\n            actionTimeReducer = 0.7;\r\n        }\r\n        if (this._actionStack.length > 5) {\r\n            actionTimeReducer = 0.5;\r\n        }\r\n        this._actionStack.forEach(action => {\r\n            action.time *= actionTimeReducer;\r\n        });\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/entity/entity.js?");
 
 /***/ }),
 
-/***/ "./bugs/core/client/src/utils/eventEmitter.js":
-/*!****************************************************!*\
-  !*** ./bugs/core/client/src/utils/eventEmitter.js ***!
-  \****************************************************/
+/***/ "./bugs/core/client/app/src/domain/entity/entityTypes.js":
+/*!***************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/entityTypes.js ***!
+  \***************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"EventEmitter\": () => (/* binding */ EventEmitter)\n/* harmony export */ });\n/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! events */ \"./node_modules/events/events.js\");\n/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_0__);\n\r\n\r\nclass EventEmitter extends (events__WEBPACK_IMPORTED_MODULE_0___default()) {\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/utils/eventEmitter.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"EntityTypes\": () => (/* binding */ EntityTypes)\n/* harmony export */ });\nconst EntityTypes = {\r\n    BUG: 'bug',\r\n    FOOD: 'food',\r\n    TOWN: 'town',\r\n    FOOD_AREA: 'food_area'\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/entity/entityTypes.js?");
 
 /***/ }),
 
-/***/ "./bugs/core/client/src/utils/getCookie.js":
-/*!*************************************************!*\
-  !*** ./bugs/core/client/src/utils/getCookie.js ***!
-  \*************************************************/
+/***/ "./bugs/core/client/app/src/domain/entity/food.js":
+/*!********************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/food.js ***!
+  \********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getCookie\": () => (/* binding */ getCookie)\n/* harmony export */ });\nfunction getCookie(name) {\r\n    let cookieValue = null;\r\n    if (document.cookie && document.cookie !== '') {\r\n        const cookies = document.cookie.split(';');\r\n        for (let i = 0; i < cookies.length; i++) {\r\n            const cookie = cookies[i].trim();\r\n            if (cookie.substring(0, name.length + 1) === (name + '=')) {\r\n                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));\r\n                break;\r\n            }\r\n        }\r\n    }\r\n    return cookieValue;\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/utils/getCookie.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Food\": () => (/* binding */ Food)\n/* harmony export */ });\n/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ \"./bugs/core/client/app/src/domain/entity/entity.js\");\n/* harmony import */ var _entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entityTypes */ \"./bugs/core/client/app/src/domain/entity/entityTypes.js\");\n\r\n\r\n\r\nclass Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {\r\n    constructor(eventBus, id, position, calories) {\r\n        super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD);\r\n        this.calories = calories;\r\n    }\r\n\r\n    updateEntity(entityJson) {\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/entity/food.js?");
 
 /***/ }),
 
-/***/ "./bugs/core/client/src/view/accountView.js":
+/***/ "./bugs/core/client/app/src/domain/entity/foodArea.js":
+/*!************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/foodArea.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"FoodArea\": () => (/* binding */ FoodArea)\n/* harmony export */ });\n/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ \"./bugs/core/client/app/src/domain/entity/entity.js\");\n/* harmony import */ var _entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entityTypes */ \"./bugs/core/client/app/src/domain/entity/entityTypes.js\");\n\r\n\r\n\r\nclass FoodArea extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {\r\n    constructor(eventBus, id, position, calories) {\r\n        super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD_AREA);\r\n    }\r\n\r\n    updateEntity(entityJson) {\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/entity/foodArea.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/town.js":
+/*!********************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/town.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Town\": () => (/* binding */ Town)\n/* harmony export */ });\n/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ \"./bugs/core/client/app/src/domain/entity/entity.js\");\n/* harmony import */ var _entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entityTypes */ \"./bugs/core/client/app/src/domain/entity/entityTypes.js\");\n\r\n\r\n\r\nclass Town extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {\r\n\r\n    constructor(eventBus, id, position, color) {\r\n        super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.TOWN);\r\n        this._color = color\r\n    }\r\n\r\n    get color() {\r\n        return this._color\r\n    }\r\n\r\n}\r\n\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/entity/town.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/world.js":
+/*!*********************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/world.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"World\": () => (/* binding */ World)\n/* harmony export */ });\nclass World {\r\n    constructor(eventBus) {\r\n        this._eventBus = eventBus;\r\n        this._entities = [];\r\n\r\n        this._eventBus.on('died', this._on_died.bind(this));\r\n    }\r\n\r\n    get entities() {\r\n        return [...this._entities];\r\n    }\r\n\r\n    addEntity(entity) {\r\n        this._entities.push(entity);\r\n    }\r\n\r\n    updateEntity(entityJson) {\r\n        let entity = this.findEntityById(entityJson.id);\r\n        entity.updateEntity(entityJson);\r\n    }\r\n\r\n    deleteEntity(entityId) {\r\n        let entityIndex = -1;\r\n        for (let i = 0; i < this._entities.length; i++)  {\r\n            if (this._entities[i].id == entityId) {\r\n                entityIndex = i;\r\n                break;\r\n            }\r\n        }\r\n\r\n        if (entityIndex != -1) {\r\n            this._entities.splice(entityIndex, 1);\r\n        }\r\n    }\r\n\r\n    findEntityById(id) {\r\n        return this._entities.find( entity => entity.id === id);\r\n    }\r\n\r\n    clear() {\r\n        this._entities = [];\r\n    }\r\n\r\n    _on_died(entity) {\r\n        this.deleteEntity(entity.id);\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/entity/world.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/index.js":
 /*!**************************************************!*\
-  !*** ./bugs/core/client/src/view/accountView.js ***!
+  !*** ./bugs/core/client/app/src/domain/index.js ***!
   \**************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"AccountView\": () => (/* binding */ AccountView)\n/* harmony export */ });\nclass AccountView {\r\n\r\n    constructor(el, domainFacade) {\r\n        this._el = el\r\n        this._domainFacade = domainFacade;\r\n        this._loginTabEl = this._el.querySelector('[data-login-tab]');\r\n        this._registrationTabEl = this._el.querySelector('[data-registration-tab]');\r\n        this._userTabEl = this._el.querySelector('[data-user-tab]');\r\n        this._loginBtn = this._el.querySelector('[data-login-btn]');\r\n        this._userNameEl = this._el.querySelector('[data-username]');\r\n        this._logoutBtn = this._el.querySelector('[data-logout-btn]');\r\n\r\n        this._render();\r\n        \r\n        this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));\r\n        this._logoutBtn.addEventListener('click', this._onLogoutBtnClick.bind(this));\r\n    }\r\n\r\n    _render() {\r\n        let isLoggedIn = this._domainFacade.isLoggedIn();\r\n        this._loginTabEl.classList.toggle('hidden', isLoggedIn);\r\n        this._registrationTabEl.classList.toggle('hidden', isLoggedIn);\r\n        this._userTabEl.classList.toggle('hidden', !isLoggedIn);\r\n\r\n        if (isLoggedIn) {\r\n            let user = this._domainFacade.getUserData();\r\n            this._userNameEl.innerText = user.username;\r\n        }\r\n    }\r\n\r\n    _onLoginBtnClick() {\r\n        let username = this._loginTabEl.querySelector('[data-user-name]').value;\r\n        let password =  this._loginTabEl.querySelector('[data-password]').value;\r\n        this._domainFacade.login(username, password).then(() => {\r\n            this._render();\r\n        });\r\n    }\r\n\r\n    _onLogoutBtnClick() {\r\n        this._domainFacade.logout().then(() => {\r\n            console.log('logout')\r\n            this._render();\r\n        });\r\n    }\r\n    \r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/view/accountView.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"initDomainLayer\": () => (/* binding */ initDomainLayer)\n/* harmony export */ });\n/* harmony import */ var _domainFacade__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./domainFacade */ \"./bugs/core/client/app/src/domain/domainFacade.js\");\n/* harmony import */ var _service_userService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./service/userService */ \"./bugs/core/client/app/src/domain/service/userService.js\");\n/* harmony import */ var _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./service/messageHandlerService */ \"./bugs/core/client/app/src/domain/service/messageHandlerService.js\");\n/* harmony import */ var utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! utils/eventEmitter */ \"./bugs/core/client/utils/eventEmitter.js\");\n/* harmony import */ var _worldFactory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./worldFactory */ \"./bugs/core/client/app/src/domain/worldFactory.js\");\n/* harmony import */ var _entity_action_actionFactory__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/action/actionFactory */ \"./bugs/core/client/app/src/domain/entity/action/actionFactory.js\");\n/* harmony import */ var _service_worldService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/worldService */ \"./bugs/core/client/app/src/domain/service/worldService.js\");\n/* harmony import */ var _service_actionService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./service/actionService */ \"./bugs/core/client/app/src/domain/service/actionService.js\");\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nfunction initDomainLayer(userApi, serverConnection) {\r\n    let initialData = JSON.parse(document.getElementById('initial-data').innerText);\r\n\r\n    let mainEventBus = new utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();\r\n    let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus);\r\n    let world = worldFactory.buildWorld();\r\n    let actionFactory = new _entity_action_actionFactory__WEBPACK_IMPORTED_MODULE_5__.ActionFactory(world);\r\n\r\n    let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_6__.WorldService(world, worldFactory);\r\n    let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_1__.UserService(userApi, initialData.user);\r\n    let actionService = new _service_actionService__WEBPACK_IMPORTED_MODULE_7__.ActionService(actionFactory, world);\r\n    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, actionService);\r\n\r\n    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(userService, messageHandlerService, worldService);\r\n\r\n    return domainFacade;\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/index.js?");
 
 /***/ }),
 
-/***/ "./bugs/core/client/src/view/appView.js":
-/*!**********************************************!*\
-  !*** ./bugs/core/client/src/view/appView.js ***!
-  \**********************************************/
+/***/ "./bugs/core/client/app/src/domain/service/actionService.js":
+/*!******************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/service/actionService.js ***!
+  \******************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"AppView\": () => (/* binding */ AppView)\n/* harmony export */ });\n/* harmony import */ var _worldView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./worldView */ \"./bugs/core/client/src/view/worldView.js\");\n/* harmony import */ var _accountView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./accountView */ \"./bugs/core/client/src/view/accountView.js\");\n\r\n\r\n\r\nclass AppView {\r\n    constructor(document, domainFacade) {\r\n        this._document = document;\r\n        this._domainFacade = domainFacade;\r\n        this._initialData = this._parseInitialData();\r\n\r\n        this._render();\r\n    }\r\n\r\n    _render() {\r\n        let canvEl = this._document.getElementById('worldCanvas');\r\n        this._worldView = new _worldView__WEBPACK_IMPORTED_MODULE_0__.WorldView(canvEl, this._domainFacade);\r\n        let accountViewEl = this._document.querySelector('[data-account-view]');\r\n        this._accountView = new _accountView__WEBPACK_IMPORTED_MODULE_1__.AccountView(accountViewEl, this._domainFacade);\r\n    }\r\n\r\n    _parseInitialData() {\r\n        return JSON.parse(this._document.getElementById('initial-data').innerText);\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/view/appView.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ActionService\": () => (/* binding */ ActionService)\n/* harmony export */ });\nclass ActionService {\r\n\r\n    constructor(actionFactory, world) {\r\n        this._actionFactory = actionFactory;\r\n        this._world = world;\r\n    }\r\n\r\n    playAction(actionJson) {\r\n        let action = this._actionFactory.buildAction(actionJson);\r\n        let entity = this._world.findEntityById(action.entityId);\r\n        entity.addAction(action);\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/service/actionService.js?");
 
 /***/ }),
 
-/***/ "./bugs/core/client/src/view/index.js":
-/*!********************************************!*\
-  !*** ./bugs/core/client/src/view/index.js ***!
-  \********************************************/
+/***/ "./bugs/core/client/app/src/domain/service/messageHandlerService.js":
+/*!**************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/service/messageHandlerService.js ***!
+  \**************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"initViewLayer\": () => (/* binding */ initViewLayer)\n/* harmony export */ });\n/* harmony import */ var _appView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./appView */ \"./bugs/core/client/src/view/appView.js\");\n\r\n\r\nfunction initViewLayer(domainFacade) {\r\n    let app = new _appView__WEBPACK_IMPORTED_MODULE_0__.AppView(document, domainFacade)\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/view/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"MessageHandlerService\": () => (/* binding */ MessageHandlerService)\n/* harmony export */ });\nclass MessageHandlerService {\r\n\r\n    constructor(serverConnection, worldService, actionService) {\r\n        this._serverConnection = serverConnection;\r\n        this._worldService = worldService;\r\n        this._actionService = actionService;\r\n        this._serverConnection.events.on('message', this._onMessage.bind(this));\r\n    }\r\n\r\n    connect() {\r\n        return this._serverConnection.connect();\r\n    }\r\n\r\n    disconnect() {\r\n        this._serverConnection.disconnect();\r\n    }\r\n\r\n    _onMessage(msg) {\r\n        switch(msg.type) {\r\n            case 'whole_world':\r\n                this._worldService.initWorld(msg.world);\r\n                break;\r\n            case 'entity_changed':\r\n                this._worldService.updateEntity(msg.entity);\r\n                break;\r\n            case 'entity_born':\r\n                this._worldService.addNewEntity(msg.entity);\r\n                break;\r\n            case 'entity_action':\r\n                this._actionService.playAction(msg.action);\r\n                break;\r\n            default: \r\n                throw `unknown type of message \"${ msg.type }\"`\r\n        }\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/service/messageHandlerService.js?");
 
 /***/ }),
 
-/***/ "./bugs/core/client/src/view/worldView.js":
+/***/ "./bugs/core/client/app/src/domain/service/userService.js":
+/*!****************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/service/userService.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"UserService\": () => (/* binding */ UserService)\n/* harmony export */ });\nclass UserService {\r\n    \r\n    constructor(userApi, userData) {\r\n        this._userApi = userApi;\r\n        this._userData = userData;\r\n    }\r\n\r\n    login(username, password) {\r\n        return this._userApi.login(username, password)\r\n            .then(response => {\r\n                this._userData = response.data.user;\r\n            });\r\n    }\r\n\r\n    logout() {\r\n        return this._userApi.logout().then(() => {\r\n            this._userData = null;\r\n        });\r\n    }\r\n\r\n    isLoggedIn() {\r\n        return !!this._userData;\r\n    }\r\n\r\n    getUserData() {\r\n        return this._userData;\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/service/userService.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/service/worldService.js":
+/*!*****************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/service/worldService.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"WorldService\": () => (/* binding */ WorldService)\n/* harmony export */ });\nclass WorldService {\r\n\r\n    constructor(world, worldFactory) {\r\n        this._world = world;\r\n        this._worldFactory = worldFactory;\r\n    }\r\n\r\n    initWorld(worldJson) {\r\n        worldJson.entities.forEach(entityJson => { this.addNewEntity(entityJson); });\r\n    }\r\n\r\n    getEntities() {\r\n        return this._world.entities;\r\n    }\r\n\r\n    updateEntity(entityJson) {\r\n        this._world.updateEntity(entityJson);\r\n    }\r\n\r\n    addNewEntity(entityJson) {\r\n        let entity = this._worldFactory.buildEntity(entityJson);\r\n        this._world.addEntity(entity);\r\n    }\r\n\r\n    clear() {\r\n        this._world.clear();\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/service/worldService.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/worldFactory.js":
+/*!*********************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/worldFactory.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"WorldFactory\": () => (/* binding */ WorldFactory)\n/* harmony export */ });\n/* harmony import */ var _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity/entityTypes */ \"./bugs/core/client/app/src/domain/entity/entityTypes.js\");\n/* harmony import */ var _entity_bug__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entity/bug */ \"./bugs/core/client/app/src/domain/entity/bug.js\");\n/* harmony import */ var _entity_world__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./entity/world */ \"./bugs/core/client/app/src/domain/entity/world.js\");\n/* harmony import */ var _entity_town__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./entity/town */ \"./bugs/core/client/app/src/domain/entity/town.js\");\n/* harmony import */ var _entity_food__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./entity/food */ \"./bugs/core/client/app/src/domain/entity/food.js\");\n/* harmony import */ var _entity_foodArea__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/foodArea */ \"./bugs/core/client/app/src/domain/entity/foodArea.js\");\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nclass WorldFactory {\r\n\r\n    constructor(mainEventBus) {\r\n        this.mainEventBus = mainEventBus;\r\n    }\r\n\r\n    buildWorld() {\r\n        return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this.mainEventBus);\r\n    }\r\n\r\n    buildBug(id, position) {\r\n        return new _entity_bug__WEBPACK_IMPORTED_MODULE_1__.Bug(this.mainEventBus, id, position);\r\n    }\r\n\r\n    buildTown(id, position, color) {\r\n        return new _entity_town__WEBPACK_IMPORTED_MODULE_3__.Town(this.mainEventBus, id, position, color);\r\n    }\r\n\r\n    buildFood(id, position, calories) {\r\n        return new _entity_food__WEBPACK_IMPORTED_MODULE_4__.Food(this.mainEventBus, id, position, calories);\r\n    }\r\n\r\n    buildFoodArea(id, position) {\r\n        return new _entity_foodArea__WEBPACK_IMPORTED_MODULE_5__.FoodArea(this.mainEventBus, id, position);\r\n    }\r\n\r\n    buildEntity(entityJson) {\r\n        switch(entityJson.type) {\r\n            case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.BUG:\r\n                return this.buildBug(entityJson.id, entityJson.position);\r\n            case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:\r\n                return this.buildTown(entityJson.id, entityJson.position, entityJson.color);\r\n            case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:\r\n                return this.buildFood(entityJson.id, entityJson.position, entityJson.calories);\r\n            case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_AREA:\r\n                return this.buildFoodArea(entityJson.id, entityJson.position);\r\n            default:\r\n                throw 'unknown type of entity';\r\n        }\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/domain/worldFactory.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/index.js":
+/*!*******************************************!*\
+  !*** ./bugs/core/client/app/src/index.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _sync__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./sync */ \"./bugs/core/client/app/src/sync/index.js\");\n/* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./domain */ \"./bugs/core/client/app/src/domain/index.js\");\n/* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./view */ \"./bugs/core/client/app/src/view/index.js\");\n\r\n\r\n\r\n\r\nlet syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)();\r\nlet domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)(syncLayer.userApi, syncLayer.serverConnection);\r\n(0,_view__WEBPACK_IMPORTED_MODULE_2__.initViewLayer)(domainFacade);\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/index.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/sync/index.js":
 /*!************************************************!*\
-  !*** ./bugs/core/client/src/view/worldView.js ***!
+  !*** ./bugs/core/client/app/src/sync/index.js ***!
   \************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"WorldView\": () => (/* binding */ WorldView)\n/* harmony export */ });\n/* harmony import */ var _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/entity/entityTypes */ \"./bugs/core/client/src/domain/entity/entityTypes.js\");\n\r\n\r\nclass WorldView {\r\n    constructor(canvas, domainFacade) {\r\n        this._domainFacade = domainFacade;\r\n        this._canvas = canvas;\r\n        this._ctx = this._canvas.getContext('2d');\r\n\r\n        setInterval(this._renderWorld.bind(this), 100);\r\n    }\r\n\r\n    _renderWorld() {\r\n        this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);\r\n\r\n        let entities = this._domainFacade.getEntities();\r\n        entities.forEach(entity => {\r\n            if (entity.isHidden()) {\r\n                return;\r\n            }\r\n            \r\n            switch (entity.type) {\r\n                case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.BUG:\r\n                    this._renderBug(entity);\r\n                    break;\r\n                case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:\r\n                    this._renderTown(entity);\r\n                    break;\r\n                case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:\r\n                    this._renderFood(entity);\r\n                    break;\r\n            }\r\n        });\r\n    }\r\n\r\n    _renderBug(bug) {\r\n        let width = 10;\r\n        let height = 10;\r\n        let posX = bug.position.x - width / 2;\r\n        let posY = bug.position.y - height / 2;\r\n        this._ctx.fillStyle = 'red';\r\n        this._ctx.strokeStyle = 'black';\r\n        this._ctx.fillRect(posX, posY, width, height);\r\n        this._ctx.beginPath();\r\n        this._ctx.arc(posX, posY, 100, 0, 2 * Math.PI);\r\n        this._ctx.stroke();\r\n\r\n        if (bug.hasPickedFood()) {\r\n            this._ctx.fillStyle = 'green';\r\n            this._ctx.fillRect(posX, posY - 10, width, height);\r\n        }\r\n    }\r\n\r\n    _renderTown(town) {\r\n        let width = 40;\r\n        let height = 40; \r\n        this._ctx.fillStyle = 'yellow';\r\n        this._ctx.strokeStyle = 'black';\r\n        let posX = town.position.x - width / 2;\r\n        let posY = town.position.y - height / 2;\r\n        this._ctx.fillRect(posX, posY, width, height)\r\n        this._ctx.beginPath();\r\n        this._ctx.arc(town.position.x, town.position.y, 300, 0, 2 * Math.PI);\r\n        this._ctx.stroke();\r\n    }\r\n\r\n    _renderFood(food) {\r\n        let width = 10;\r\n        let height = 10; \r\n        this._ctx.fillStyle = 'green';\r\n        let posX = food.position.x - width / 2;\r\n        let posY = food.position.y - height / 2;\r\n        this._ctx.fillRect(posX, posY, width, height)\r\n        this._ctx.beginPath();\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/src/view/worldView.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"initSyncLayer\": () => (/* binding */ initSyncLayer)\n/* harmony export */ });\n/* harmony import */ var utils_requester__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/requester */ \"./bugs/core/client/utils/requester.js\");\n/* harmony import */ var _userApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userApi */ \"./bugs/core/client/app/src/sync/userApi.js\");\n/* harmony import */ var _serverConnection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./serverConnection */ \"./bugs/core/client/app/src/sync/serverConnection.js\");\n// import { MainSocketConsumer } from './mainSocketConsumer';\r\n\r\n\r\n\r\n\r\nfunction initSyncLayer() {\r\n    let requester = new utils_requester__WEBPACK_IMPORTED_MODULE_0__.Requester();\r\n\r\n    let userApi = new _userApi__WEBPACK_IMPORTED_MODULE_1__.UserApi(requester);\r\n    let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection();\r\n\r\n    return {\r\n        userApi,\r\n        serverConnection\r\n    };\r\n    // let socket = new WebSocket(`ws://${location.host}/mainsocket`);\r\n    // let socketConsumer = new MainSocketConsumer(socket, domainFacade);\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/sync/index.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/sync/serverConnection.js":
+/*!***********************************************************!*\
+  !*** ./bugs/core/client/app/src/sync/serverConnection.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerConnection\": () => (/* binding */ ServerConnection)\n/* harmony export */ });\n/* harmony import */ var utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/eventEmitter */ \"./bugs/core/client/utils/eventEmitter.js\");\n\r\n\r\nclass ServerConnection {\r\n\r\n    constructor() {\r\n        this.events = new utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();\r\n    }\r\n\r\n    connect() {\r\n        return new Promise((res) => {\r\n            this._socket = new WebSocket(`ws://${location.host}/mainsocket`);\r\n            this._socket.onmessage = this._emitMessage.bind(this);\r\n            this._socket.onopen = () => {\r\n                res();\r\n            }\r\n        });\r\n    }\r\n\r\n    disconnect() {\r\n        this._socket.close();\r\n    }\r\n\r\n    _emitMessage(event) {\r\n        this.events.emit('message', JSON.parse(event.data));\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/sync/serverConnection.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/sync/userApi.js":
+/*!**************************************************!*\
+  !*** ./bugs/core/client/app/src/sync/userApi.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"UserApi\": () => (/* binding */ UserApi)\n/* harmony export */ });\nclass UserApi {\r\n    \r\n    constructor(requester) {\r\n        this._requester = requester;\r\n    }\r\n\r\n    login(username, password) {\r\n        return this._requester.post('users/login', {\r\n            username, password\r\n        });\r\n    }\r\n\r\n    logout() {\r\n        return this._requester.post('users/logout');\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/sync/userApi.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/accountView.js":
+/*!******************************************************!*\
+  !*** ./bugs/core/client/app/src/view/accountView.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"AccountView\": () => (/* binding */ AccountView)\n/* harmony export */ });\nclass AccountView {\r\n\r\n    constructor(el, domainFacade) {\r\n        this._el = el\r\n        this._domainFacade = domainFacade;\r\n        this._loginTabEl = this._el.querySelector('[data-login-tab]');\r\n        this._registrationTabEl = this._el.querySelector('[data-registration-tab]');\r\n        this._userTabEl = this._el.querySelector('[data-user-tab]');\r\n        this._loginBtn = this._el.querySelector('[data-login-btn]');\r\n        this._userNameEl = this._el.querySelector('[data-username]');\r\n        this._logoutBtn = this._el.querySelector('[data-logout-btn]');\r\n        this._notCorrectCredsErrorEl = this._el.querySelector('[data-not-correct-creds-error]');\r\n\r\n        this._render();\r\n        \r\n        this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));\r\n        this._logoutBtn.addEventListener('click', this._onLogoutBtnClick.bind(this));\r\n    }\r\n\r\n    _render() {\r\n        let isLoggedIn = this._domainFacade.isLoggedIn();\r\n        this._loginTabEl.classList.toggle('hidden', isLoggedIn);\r\n        this._registrationTabEl.classList.toggle('hidden', isLoggedIn);\r\n        this._userTabEl.classList.toggle('hidden', !isLoggedIn);\r\n\r\n        this._toggleNotCorrectLoginPassError(false);\r\n\r\n        if (isLoggedIn) {\r\n            let user = this._domainFacade.getUserData();\r\n            this._userNameEl.innerText = user.username;\r\n        }\r\n    }\r\n\r\n    _onLoginBtnClick() {\r\n        let username = this._loginTabEl.querySelector('[data-user-name]').value;\r\n        let password =  this._loginTabEl.querySelector('[data-password]').value;\r\n        this._domainFacade.login(username, password)\r\n            .then(() => {\r\n                if (username == 'admin') {\r\n                    this._redirectToAdminPanel();\r\n                } else {\r\n                    this._render();\r\n                }\r\n            }).catch(() => {\r\n                this._toggleNotCorrectLoginPassError(true);\r\n            });\r\n    }\r\n\r\n    _onLogoutBtnClick() {\r\n        this._domainFacade.logout().then(() => {\r\n            this._render();\r\n        });\r\n    }\r\n\r\n    _toggleNotCorrectLoginPassError(isShowed) {\r\n        this._notCorrectCredsErrorEl.classList.toggle('hidden', !isShowed);\r\n    }\r\n\r\n    _redirectToAdminPanel() {\r\n        window.location = '/admin';\r\n    }\r\n    \r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/view/accountView.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/appView.js":
+/*!**************************************************!*\
+  !*** ./bugs/core/client/app/src/view/appView.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"AppView\": () => (/* binding */ AppView)\n/* harmony export */ });\n/* harmony import */ var _worldView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./worldView */ \"./bugs/core/client/app/src/view/worldView.js\");\n/* harmony import */ var _accountView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./accountView */ \"./bugs/core/client/app/src/view/accountView.js\");\n\r\n\r\n\r\nclass AppView {\r\n    constructor(document, domainFacade) {\r\n        this._document = document;\r\n        this._domainFacade = domainFacade;\r\n        this._initialData = this._parseInitialData();\r\n\r\n        this._render();\r\n    }\r\n\r\n    _render() {\r\n        let canvEl = this._document.getElementById('worldCanvas');\r\n        this._worldView = new _worldView__WEBPACK_IMPORTED_MODULE_0__.WorldView(canvEl, this._domainFacade);\r\n        let accountViewEl = this._document.querySelector('[data-account-view]');\r\n        this._accountView = new _accountView__WEBPACK_IMPORTED_MODULE_1__.AccountView(accountViewEl, this._domainFacade);\r\n    }\r\n\r\n    _parseInitialData() {\r\n        return JSON.parse(this._document.getElementById('initial-data').innerText);\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/view/appView.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/index.js":
+/*!************************************************!*\
+  !*** ./bugs/core/client/app/src/view/index.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"initViewLayer\": () => (/* binding */ initViewLayer)\n/* harmony export */ });\n/* harmony import */ var _appView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./appView */ \"./bugs/core/client/app/src/view/appView.js\");\n\r\n\r\nfunction initViewLayer(domainFacade) {\r\n    let app = new _appView__WEBPACK_IMPORTED_MODULE_0__.AppView(document, domainFacade)\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/view/index.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/worldView.js":
+/*!****************************************************!*\
+  !*** ./bugs/core/client/app/src/view/worldView.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"WorldView\": () => (/* binding */ WorldView)\n/* harmony export */ });\n/* harmony import */ var _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/entity/entityTypes */ \"./bugs/core/client/app/src/domain/entity/entityTypes.js\");\n\r\n\r\nclass WorldView {\r\n    constructor(canvas, domainFacade) {\r\n        this._domainFacade = domainFacade;\r\n        this._canvas = canvas;\r\n        this._ctx = this._canvas.getContext('2d');\r\n\r\n        setInterval(this._renderWorld.bind(this), 100);\r\n    }\r\n\r\n    _renderWorld() {\r\n        this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);\r\n\r\n        let entities = this._domainFacade.getEntities();\r\n        entities.forEach(entity => {\r\n            if (entity.isHidden()) {\r\n                return;\r\n            }\r\n            \r\n            switch (entity.type) {\r\n                case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.BUG:\r\n                    this._renderBug(entity);\r\n                    break;\r\n                case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:\r\n                    this._renderTown(entity);\r\n                    break;\r\n                case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:\r\n                    this._renderFood(entity);\r\n                    break;\r\n            }\r\n        });\r\n    }\r\n\r\n    _renderBug(bug) {\r\n        let width = 10;\r\n        let height = 10;\r\n        let posX = bug.position.x - width / 2;\r\n        let posY = bug.position.y - height / 2;\r\n        this._ctx.fillStyle = 'red';\r\n        this._ctx.strokeStyle = 'black';\r\n        this._ctx.fillRect(posX, posY, width, height);\r\n        this._ctx.beginPath();\r\n        this._ctx.arc(posX, posY, 100, 0, 2 * Math.PI);\r\n        this._ctx.stroke();\r\n\r\n        if (bug.hasPickedFood()) {\r\n            this._ctx.fillStyle = 'green';\r\n            this._ctx.fillRect(posX, posY - 10, width, height);\r\n        }\r\n    }\r\n\r\n    _renderTown(town) {\r\n        let width = 40;\r\n        let height = 40; \r\n        this._ctx.fillStyle = 'yellow';\r\n        this._ctx.strokeStyle = 'black';\r\n        let posX = town.position.x - width / 2;\r\n        let posY = town.position.y - height / 2;\r\n        this._ctx.fillRect(posX, posY, width, height)\r\n        this._ctx.beginPath();\r\n        this._ctx.arc(town.position.x, town.position.y, 300, 0, 2 * Math.PI);\r\n        this._ctx.stroke();\r\n    }\r\n\r\n    _renderFood(food) {\r\n        let width = 10;\r\n        let height = 10; \r\n        this._ctx.fillStyle = 'green';\r\n        let posX = food.position.x - width / 2;\r\n        let posY = food.position.y - height / 2;\r\n        this._ctx.fillRect(posX, posY, width, height)\r\n        this._ctx.beginPath();\r\n    }\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/app/src/view/worldView.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/utils/eventEmitter.js":
+/*!************************************************!*\
+  !*** ./bugs/core/client/utils/eventEmitter.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"EventEmitter\": () => (/* binding */ EventEmitter)\n/* harmony export */ });\n/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! events */ \"./node_modules/events/events.js\");\n/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_0__);\n\r\n\r\nclass EventEmitter extends (events__WEBPACK_IMPORTED_MODULE_0___default()) {\r\n\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/utils/eventEmitter.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/utils/getCookie.js":
+/*!*********************************************!*\
+  !*** ./bugs/core/client/utils/getCookie.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getCookie\": () => (/* binding */ getCookie)\n/* harmony export */ });\nfunction getCookie(name) {\r\n    let cookieValue = null;\r\n    if (document.cookie && document.cookie !== '') {\r\n        const cookies = document.cookie.split(';');\r\n        for (let i = 0; i < cookies.length; i++) {\r\n            const cookie = cookies[i].trim();\r\n            if (cookie.substring(0, name.length + 1) === (name + '=')) {\r\n                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));\r\n                break;\r\n            }\r\n        }\r\n    }\r\n    return cookieValue;\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/utils/getCookie.js?");
+
+/***/ }),
+
+/***/ "./bugs/core/client/utils/requester.js":
+/*!*********************************************!*\
+  !*** ./bugs/core/client/utils/requester.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Requester\": () => (/* binding */ Requester)\n/* harmony export */ });\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ \"./node_modules/axios/lib/axios.js\");\n/* harmony import */ var utils_getCookie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/getCookie */ \"./bugs/core/client/utils/getCookie.js\");\n\r\n\r\n\r\nclass Requester {\r\n\r\n    post(url, params) {\r\n        return axios__WEBPACK_IMPORTED_MODULE_1__[\"default\"].post(url, params, { headers: {\r\n            'Content-type': 'application/json',\r\n            'X-CSRFToken': this._readCsrfToken()\r\n        }})\r\n    }\r\n\r\n    get(url, params) {\r\n        return axios__WEBPACK_IMPORTED_MODULE_1__[\"default\"].get(url, params, { headers: {\r\n            'Content-type': 'application/json',\r\n            'X-CSRFToken': this._readCsrfToken()\r\n        }})\r\n    }\r\n\r\n    _readCsrfToken() {\r\n        return (0,utils_getCookie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('csrftoken');\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack://bugs/./bugs/core/client/utils/requester.js?");
 
 /***/ }),
 
@@ -782,7 +782,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = __webpack_require__("./bugs/core/client/src/index.js");
+/******/ 	var __webpack_exports__ = __webpack_require__("./bugs/core/client/app/src/index.js");
 /******/ 	
 /******/ })()
 ;

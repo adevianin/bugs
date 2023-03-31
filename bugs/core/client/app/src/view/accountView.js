@@ -9,6 +9,7 @@ class AccountView {
         this._loginBtn = this._el.querySelector('[data-login-btn]');
         this._userNameEl = this._el.querySelector('[data-username]');
         this._logoutBtn = this._el.querySelector('[data-logout-btn]');
+        this._notCorrectCredsErrorEl = this._el.querySelector('[data-not-correct-creds-error]');
 
         this._render();
         
@@ -22,6 +23,8 @@ class AccountView {
         this._registrationTabEl.classList.toggle('hidden', isLoggedIn);
         this._userTabEl.classList.toggle('hidden', !isLoggedIn);
 
+        this._toggleNotCorrectLoginPassError(false);
+
         if (isLoggedIn) {
             let user = this._domainFacade.getUserData();
             this._userNameEl.innerText = user.username;
@@ -31,15 +34,30 @@ class AccountView {
     _onLoginBtnClick() {
         let username = this._loginTabEl.querySelector('[data-user-name]').value;
         let password =  this._loginTabEl.querySelector('[data-password]').value;
-        this._domainFacade.login(username, password).then(() => {
-            this._render();
-        });
+        this._domainFacade.login(username, password)
+            .then(() => {
+                if (username == 'admin') {
+                    this._redirectToAdminPanel();
+                } else {
+                    this._render();
+                }
+            }).catch(() => {
+                this._toggleNotCorrectLoginPassError(true);
+            });
     }
 
     _onLogoutBtnClick() {
         this._domainFacade.logout().then(() => {
             this._render();
         });
+    }
+
+    _toggleNotCorrectLoginPassError(isShowed) {
+        this._notCorrectCredsErrorEl.classList.toggle('hidden', !isShowed);
+    }
+
+    _redirectToAdminPanel() {
+        window.location = '/admin';
     }
     
 }

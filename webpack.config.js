@@ -2,14 +2,17 @@ const path = require('path');
 
 module.exports = {
     mode: 'development',
-    entry: './bugs/core/client/src/index.js',
+    entry: {
+        app: './bugs/core/client/app/src/index.js',
+        adminApp: './bugs/core/client/adminApp/src/index.js'
+    },
     output: {
-        filename: 'main.js',
+        filename: '[name].js',
         path: path.resolve(__dirname, 'bugs/core/static/core'),
     },
     resolve: {
         alias: {
-          utils: path.resolve(__dirname, './bugs/core/client/src/utils'),
+          utils: path.resolve(__dirname, './bugs/core/client/utils'),
         },
     },
 };

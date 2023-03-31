@@ -12,18 +12,28 @@ class World():
         self._map = map
         self._event_bus = event_bus
         self._world_loop_stop_flag = False
+        self._is_world_running = False
         
         self._event_bus.add_listener('entity_died', self._on_entity_died)
         self._event_bus.add_listener('entity_born', self._on_entity_born)
 
+    @property
+    def is_world_running(self):
+        return self._is_world_running
+
     def stop(self):
+        if (not self._is_world_running): 
+            return
         self._world_loop_stop_flag = True
-        print('world is stopped')
+        self._is_world_running = False
 
     def run(self):
+        if (self._is_world_running):
+            return
         world_thread = Thread(target=self._run_world_loop)
         world_thread.start()
-        print('world is runned')
+        self._world_loop_stop_flag = False
+        self._is_world_running = True
 
     def to_json(self):
         entities_json = []

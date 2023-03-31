@@ -10,6 +10,13 @@ class Requester {
         }})
     }
 
+    get(url, params) {
+        return axios.get(url, params, { headers: {
+            'Content-type': 'application/json',
+            'X-CSRFToken': this._readCsrfToken()
+        }})
+    }
+
     _readCsrfToken() {
         return getCookie('csrftoken');
     }

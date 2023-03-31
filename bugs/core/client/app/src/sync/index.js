@@ -1,5 +1,5 @@
 // import { MainSocketConsumer } from './mainSocketConsumer';
-import { Requester } from "./requester"
+import { Requester } from "utils/requester"
 import { UserApi } from "./userApi";
 import { ServerConnection } from "./serverConnection";
 

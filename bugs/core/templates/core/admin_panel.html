@@ -1,0 +1,16 @@
+{% load static %}
+<html>
+    <body>
+        admin panel
+        <div data-world-status>
+            <div>
+                is world running: <span data-is-world-running></span>
+            </div>
+            <div>
+                <button data-run-world>run</button>
+                <button data-stop-world>stop</button>
+            </div>
+        </div>
+    </body>
+    <script src="{% static 'core/adminApp.js' %}"></script>
+</html>
