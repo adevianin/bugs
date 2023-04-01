@@ -22,11 +22,21 @@ class DomainFacade {
         });
     }
 
+    register(username, password) {
+        return this._userService.register(username, password).then(() => {
+            this._tryConnectMessageHandler();
+        });
+    }
+
     logout() {
         return this._userService.logout().then(() => {
             this._disconnectMessagerHandler();
             this._worldService.clear();
         });
+    }
+
+    checkUsernameUnique(username) {
+        return this._userService.checkUsernameUnique(username);
     }
 
     getUserData() {

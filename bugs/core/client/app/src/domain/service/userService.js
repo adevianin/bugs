@@ -7,8 +7,15 @@ class UserService {
 
     login(username, password) {
         return this._userApi.login(username, password)
-            .then(response => {
-                this._userData = response.data.user;
+            .then(userData => {
+                this._userData = userData;
+            });
+    }
+
+    register(username, password) {
+        return this._userApi.register(username, password)
+            .then(userData => {
+                this._userData = userData;
             });
     }
 
@@ -16,6 +23,10 @@ class UserService {
         return this._userApi.logout().then(() => {
             this._userData = null;
         });
+    }
+
+    checkUsernameUnique(username) {
+        return this._userApi.checkUsernameUnique(username);
     }
 
     isLoggedIn() {

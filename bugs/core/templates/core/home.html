@@ -13,36 +13,40 @@
 
         <div data-account-view>
             <div data-login-tab>
-                login
+                логін
                 <div> 
-                    <input type="text" data-user-name />
+                    <input type="text" placeholder="логін" data-user-name />
                 </div>
                 <div>
-                    <input type="text" data-password />
+                    <input type="password" placeholder="пароль" data-password />
                 </div>
                 <div data-not-correct-creds-error>логін чи пароль не вірні</div>
                 <div>
-                    <button data-login-btn>ok</button>
+                    <button data-login-btn>залогінитись</button>
                 </div>
+                <button data-switch-to-register-btn>реєструватись</button>
             </div>
             <div data-registration-tab>
-                registration
+                реєстрація
                 <div>
-                    <input type="text" data-user-name />
+                    <input type="text" placeholder="логін" data-user-name />
                 </div>
                 <div>
-                    <input type="text" data-password />
+                    <input type="password" placeholder="пароль" data-password />
                 </div>
                 <div>
-                    <input type="text" data-password-confirm />
+                    <input type="password" placeholder="підтвердження пароля" data-password-confirm />
                 </div>
+                <div data-passwords-different-error>паролі не співпадають</div>
+                <div data-username-isnt-unique>логін занятий</div>
                 <div>
-                    <button data-ok-btn>ok</button>
+                    <button data-registration-btn>зареєструватись</button>
                 </div>
+                <button data-switch-to-login-btn>логінитись</button>
             </div>
             <div data-user-tab>
-                username: <span data-username></span>
-                <button data-logout-btn>logout</button>
+                логін: <span data-username></span>
+                <button data-logout-btn>вийти</button>
             </div>
         </div>
         
