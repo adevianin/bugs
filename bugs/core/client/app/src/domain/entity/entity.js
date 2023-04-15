@@ -1,6 +1,9 @@
-class Entity {
+import { EventEmitter } from "utils/eventEmitter";
+
+class Entity extends EventEmitter {
 
     constructor(eventBus, id, position, type) {
+        super();
         this._eventBus = eventBus;
         this.id = id;
         this._position = position;
@@ -12,6 +15,7 @@ class Entity {
 
     setPosition(x, y) {
         this._position = {x, y};
+        this.emit('positionChanged');
     }
 
     get position(){
@@ -52,12 +56,13 @@ class Entity {
         this._isHidden = isHidden;
     }
 
-    emit(eventName, data) {
+    globalEmit(eventName, data) {
         this._eventBus.emit(eventName, data);
     }
 
     die() {
-        this.emit('died', this);
+        this.globalEmit('died', this);
+        this.emit('died');
     }
 
     _handleActionsByTimeReducer() {

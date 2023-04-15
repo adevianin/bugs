@@ -1,11 +1,14 @@
 class DomainFacade {
 
-    constructor(userService, messageHandlerService, worldService) {
+    constructor(mainEventBus, userService, messageHandlerService, worldService) {
+        this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._userService = userService;
         this._messageHandlerService = messageHandlerService;
+    }
 
-        this._tryConnectMessageHandler();
+    get events() {
+        return this._mainEventBus;
     }
 
     getEntities() {
@@ -41,6 +44,14 @@ class DomainFacade {
 
     getUserData() {
         return this._userService.getUserData();
+    }
+
+    start() {
+        this._tryConnectMessageHandler();
+    }
+
+    isWholeWorldInited() {
+        return this._worldService.isWholeWorldInited();
     }
 
     _tryConnectMessageHandler() {

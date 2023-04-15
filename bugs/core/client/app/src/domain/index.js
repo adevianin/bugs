@@ -7,20 +7,20 @@ import { ActionFactory } from './entity/action/actionFactory';
 import { WorldService } from './service/worldService';
 import { ActionService } from './service/actionService';
 
-function initDomainLayer(userApi, serverConnection) {
-    let initialData = JSON.parse(document.getElementById('initial-data').innerText);
-
+function initDomainLayer(userApi, serverConnection, initialData) {
     let mainEventBus = new EventEmitter();
     let worldFactory = new WorldFactory(mainEventBus);
     let world = worldFactory.buildWorld();
     let actionFactory = new ActionFactory(world);
 
-    let worldService = new WorldService(world, worldFactory);
+    let worldService = new WorldService(world, worldFactory, mainEventBus);
     let userService = new UserService(userApi, initialData.user);
     let actionService = new ActionService(actionFactory, world);
     let messageHandlerService = new MessageHandlerService(serverConnection, worldService, actionService);
 
-    let domainFacade = new DomainFacade(userService, messageHandlerService, worldService);
+    let domainFacade = new DomainFacade(mainEventBus, userService, messageHandlerService, worldService);
+
+    domainFacade.start();
 
     return domainFacade;
 }

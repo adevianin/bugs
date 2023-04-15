@@ -1,0 +1,34 @@
+import * as PIXI from 'pixi.js';
+
+class WorldSpritesheetManager {
+    
+    constructor(imageUrl, atlasUrl, requester) {
+        this._imageUrl = imageUrl;
+        this._atlasUrl = atlasUrl;
+        this._requester = requester;
+        this._spritesheet = null;
+    }
+
+    async prepareTextures() {
+        let atlas_response = await this._requester.get(this._atlasUrl);
+        let atlasData = atlas_response.data;
+        let texture = await PIXI.Assets.load(this._imageUrl);
+
+        this._spritesheet = new PIXI.Spritesheet(
+            texture,
+            atlasData
+        );
+
+        await this._spritesheet.parse();
+    }
+
+    getTexture(name) {
+        return this._spritesheet.textures[name];
+    }
+
+
+}
+
+export {
+    WorldSpritesheetManager
+}

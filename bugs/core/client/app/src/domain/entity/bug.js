@@ -53,7 +53,7 @@ class Bug extends Entity {
                     clearInterval(walkInterval);
                     res();
                 }
-            }, 100)
+            }, 50)
         });
     }
 
@@ -62,6 +62,7 @@ class Bug extends Entity {
             setTimeout(() => {
                 this.pickedFood = action.additionalData.food;
                 this.pickedFood.die();
+                this.emit('onFoodLift');
                 res();
             }, action.time * 1000)
         });
@@ -71,6 +72,7 @@ class Bug extends Entity {
         return new Promise((res) => {
             setTimeout(() => {
                 this.pickedFood = null;
+                this.emit('onFoodDrop')
                 res();
             }, action.time * 1000)
         });

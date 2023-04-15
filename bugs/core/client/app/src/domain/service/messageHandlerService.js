@@ -24,7 +24,7 @@ class MessageHandlerService {
                 this._worldService.updateEntity(msg.entity);
                 break;
             case 'entity_born':
-                this._worldService.addNewEntity(msg.entity);
+                this._worldService.giveBirthToEntity(msg.entity);
                 break;
             case 'entity_action':
                 this._actionService.playAction(msg.action);
