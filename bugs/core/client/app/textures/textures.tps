@@ -174,21 +174,13 @@
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
             <key type="filename">images/bug1.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>8,7,15,14</rect>
-                <key>scale9Paddings</key>
-                <rect>8,7,15,14</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
             <key type="filename">images/bug2.png</key>
+            <key type="filename">images/bug3.png</key>
+            <key type="filename">images/bug4.png</key>
+            <key type="filename">images/bug5.png</key>
+            <key type="filename">images/bug6.png</key>
+            <key type="filename">images/bug7.png</key>
+            <key type="filename">images/bug8.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -197,13 +189,12 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>9,7,17,14</rect>
+                <rect>8,8,16,16</rect>
                 <key>scale9Paddings</key>
-                <rect>9,7,17,14</rect>
+                <rect>8,8,16,16</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">images/bug3.png</key>
             <key type="filename">images/food.png</key>
             <key type="filename">images/town.png</key>
             <struct type="IndividualSpriteSettings">
@@ -223,7 +214,7 @@
             <key type="filename">images/grass.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0,0</point_f>
+                <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
@@ -242,12 +233,17 @@
             <struct type="SpriteSheet">
                 <key>files</key>
                 <array>
-                    <filename>images/bug1.png</filename>
-                    <filename>images/bug2.png</filename>
-                    <filename>images/bug3.png</filename>
                     <filename>images/town.png</filename>
                     <filename>images/food.png</filename>
                     <filename>images/grass.png</filename>
+                    <filename>images/bug1.png</filename>
+                    <filename>images/bug2.png</filename>
+                    <filename>images/bug3.png</filename>
+                    <filename>images/bug4.png</filename>
+                    <filename>images/bug5.png</filename>
+                    <filename>images/bug6.png</filename>
+                    <filename>images/bug7.png</filename>
+                    <filename>images/bug8.png</filename>
                 </array>
             </struct>
         </map>

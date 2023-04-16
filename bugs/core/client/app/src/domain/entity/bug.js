@@ -8,6 +8,7 @@ class Bug extends Entity {
         super(eventBus, id, position, EntityTypes.BUG);
         this.pickedFood = null;
         this._angle = 0;
+        this._setState('standing');
     }
 
     get angle() {
@@ -46,6 +47,7 @@ class Bug extends Entity {
         let destPosition = action.additionalData.position;
         let startPosition = this.position;
         this._lookAt(destPosition.x, destPosition.y);
+        this._setState('walking');
         return new Promise((res, rej) => {
             let walkInterval = setInterval(() => {
                 let timeInWalk = Date.now() - walkStartAt;
@@ -64,6 +66,7 @@ class Bug extends Entity {
     }
 
     _playFoodPickingAction(action) {
+        this._setState('standing');
         return new Promise((res) => {
             setTimeout(() => {
                 this.pickedFood = action.additionalData.food;
@@ -75,6 +78,7 @@ class Bug extends Entity {
     }
 
     _playFoodGiving(action) {
+        this._setState('standing');
         return new Promise((res) => {
             setTimeout(() => {
                 this.pickedFood = null;
@@ -85,6 +89,7 @@ class Bug extends Entity {
     }
 
     _playEatFoodAction(action) {
+        this._setState('standing');
         return new Promise((res) => {
             setTimeout(() => {
                 if (action.additionalData.is_food_eaten) {

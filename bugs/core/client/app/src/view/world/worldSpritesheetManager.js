@@ -26,6 +26,10 @@ class WorldSpritesheetManager {
         return this._spritesheet.textures[name];
     }
 
+    getAnimatedTextures(name) {
+        return this._spritesheet.animations[name];
+    }
+
 
 }
 

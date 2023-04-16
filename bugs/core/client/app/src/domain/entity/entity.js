@@ -13,6 +13,10 @@ class Entity extends EventEmitter {
         this._isHidden = false;
     }
 
+    get state() {
+        return this._state;
+    }
+
     setPosition(x, y) {
         this._position = {x, y};
         this.emit('positionChanged');
@@ -82,6 +86,14 @@ class Entity extends EventEmitter {
         this._actionStack.forEach(action => {
             action.time *= actionTimeReducer;
         });
+    }
+
+    _setState(newState) {
+        let isStateDifferent = this._state != newState;
+        this._state = newState;
+        if (isStateDifferent) {
+            this.emit('stateChanged');
+        }
     }
 
 }
