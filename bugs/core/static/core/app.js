@@ -228,6 +228,11 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     constructor(eventBus, id, position) {
         super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.BUG);
         this.pickedFood = null;
+        this._angle = 0;
+    }
+
+    get angle() {
+        return this._angle;
     }
 
     updateEntity(entityJson) {
@@ -261,6 +266,7 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         let walkStartAt = Date.now();
         let destPosition = action.additionalData.position;
         let startPosition = this.position;
+        this._lookAt(destPosition.x, destPosition.y);
         return new Promise((res, rej) => {
             let walkInterval = setInterval(() => {
                 let timeInWalk = Date.now() - walkStartAt;
@@ -314,6 +320,10 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         let distance = Math.abs(Math.abs(endCoord) - Math.abs(startCoord));
         let distancePassed = distance * (flayedPercent  / 100);
         return endCoord > startCoord ? startCoord + distancePassed : startCoord - distancePassed;
+    }
+
+    _lookAt(x, y) {
+        this._angle = (Math.atan2(y - this.position.y, x - this.position.x) * 180 / Math.PI) + 90;
     }
 
 }
@@ -1470,6 +1480,9 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
         this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(spritesheetManager.getTexture('bug1.png'));
         entityContainer.addChild(this._sprite);
+
+        this._sprite.pivot.x = 16;
+        this._sprite.pivot.y = 16;
         
         this._render();
 
@@ -1481,6 +1494,7 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     _render() {
         this._sprite.x = this._entity.position.x;
         this._sprite.y = this._entity.position.y;
+        this._sprite.angle = this._entity.angle;
         if (this._pickedFoodSprite) {
             this._pickedFoodSprite.x = this._entity.position.x;
             this._pickedFoodSprite.y = this._entity.position.y - 20;

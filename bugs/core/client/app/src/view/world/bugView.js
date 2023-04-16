@@ -8,6 +8,9 @@ class BugView extends EntityView {
 
         this._sprite = new PIXI.Sprite(spritesheetManager.getTexture('bug1.png'));
         entityContainer.addChild(this._sprite);
+
+        this._sprite.pivot.x = 16;
+        this._sprite.pivot.y = 16;
         
         this._render();
 
@@ -19,6 +22,7 @@ class BugView extends EntityView {
     _render() {
         this._sprite.x = this._entity.position.x;
         this._sprite.y = this._entity.position.y;
+        this._sprite.angle = this._entity.angle;
         if (this._pickedFoodSprite) {
             this._pickedFoodSprite.x = this._entity.position.x;
             this._pickedFoodSprite.y = this._entity.position.y - 20;

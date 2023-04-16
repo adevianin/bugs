@@ -7,6 +7,11 @@ class Bug extends Entity {
     constructor(eventBus, id, position) {
         super(eventBus, id, position, EntityTypes.BUG);
         this.pickedFood = null;
+        this._angle = 0;
+    }
+
+    get angle() {
+        return this._angle;
     }
 
     updateEntity(entityJson) {
@@ -40,6 +45,7 @@ class Bug extends Entity {
         let walkStartAt = Date.now();
         let destPosition = action.additionalData.position;
         let startPosition = this.position;
+        this._lookAt(destPosition.x, destPosition.y);
         return new Promise((res, rej) => {
             let walkInterval = setInterval(() => {
                 let timeInWalk = Date.now() - walkStartAt;
@@ -93,6 +99,10 @@ class Bug extends Entity {
         let distance = Math.abs(Math.abs(endCoord) - Math.abs(startCoord));
         let distancePassed = distance * (flayedPercent  / 100);
         return endCoord > startCoord ? startCoord + distancePassed : startCoord - distancePassed;
+    }
+
+    _lookAt(x, y) {
+        this._angle = (Math.atan2(y - this.position.y, x - this.position.x) * 180 / Math.PI) + 90;
     }
 
 }
