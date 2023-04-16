@@ -2,3 +2,12 @@
 .hidden {
     display: none;
 }
+
+.canvas_container {
+    display: flex;
+    justify-content: center;
+}
+
+.canvas_container canvas {
+    border: solid 1px
+}

@@ -1886,7 +1886,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\r\n.hidden {\r\n    display: none;\r\n}\r\n\r\n.testHidden {\r\n    display: none;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/styles/index.css"],"names":[],"mappings":";AACA;IACI,aAAa;AACjB;;AAEA;IACI,aAAa;AACjB","sourcesContent":["\r\n.hidden {\r\n    display: none;\r\n}\r\n\r\n.testHidden {\r\n    display: none;\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "\r\n.hidden {\r\n    display: none;\r\n}\r\n\r\n.canvas_container {\r\n    display: flex;\r\n    justify-content: center;\r\n}\r\n\r\n.canvas_container canvas {\r\n    border: solid 1px\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/styles/index.css"],"names":[],"mappings":";AACA;IACI,aAAa;AACjB;;AAEA;IACI,aAAa;IACb,uBAAuB;AAC3B;;AAEA;IACI;AACJ","sourcesContent":["\r\n.hidden {\r\n    display: none;\r\n}\r\n\r\n.canvas_container {\r\n    display: flex;\r\n    justify-content: center;\r\n}\r\n\r\n.canvas_container canvas {\r\n    border: solid 1px\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
