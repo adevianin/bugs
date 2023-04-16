@@ -6,8 +6,7 @@ class Camera {
         this._container = container;
         this._handler = handler;
         this._isDraging = false;
-        this._dragStartAt = {x: null, y: null};
-        this._startDragContainerPos = {x: null, y: null};
+        this._anchorPoint = {x: null, y: null};
         this._mapSize = {
             width: null,
             height: null
@@ -27,10 +26,8 @@ class Camera {
 
     _onPointerDown(e) {
         this._isDraging = true;
-        this._dragStartAt.x = e.client.x;
-        this._dragStartAt.y = e.client.y;
-        this._startDragContainerPos.x = this._container.x;
-        this._startDragContainerPos.y = this._container.y;
+        this._anchorPoint.x = e.client.x;
+        this._anchorPoint.y = e.client.y;
     }
 
     _onPointerUp(e) {
@@ -39,11 +36,14 @@ class Camera {
 
     _onPointerMove(e) {
         if (this._isDraging) {
-            let dx = e.client.x - this._dragStartAt.x;
-            let dy = e.client.y - this._dragStartAt.y;
+            let dx = e.client.x - this._anchorPoint.x;
+            let dy = e.client.y - this._anchorPoint.y;
 
-            let containerPosX = this._startDragContainerPos.x + dx;
-            let containerPosY = this._startDragContainerPos.y + dy;
+            this._anchorPoint.x = e.client.x;
+            this._anchorPoint.y = e.client.y;
+
+            let containerPosX = this._container.x + dx;
+            let containerPosY = this._container.y + dy;
 
             if (containerPosX > Camera.MAP_MARGIN) {
                 containerPosX = Camera.MAP_MARGIN;

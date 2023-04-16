@@ -5,7 +5,7 @@ class Command(BaseCommand):
     help = 'Creates test world'
 
     world_state = {
-        "map": { "size": {"width": 1000, "height": 500 }},
+        "map": { "size": {"width": 3000, "height": 3000 }},
         "bugs": [
             { "id": 1, "position": {"x": 650, "y": 200}, "from_town": 30, "type": "food_collector" }
         ],
