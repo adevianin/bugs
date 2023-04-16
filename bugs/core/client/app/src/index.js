@@ -1,3 +1,5 @@
+import './view/styles/index.css';
+
 import { initSyncLayer } from './sync';
 import { initDomainLayer } from './domain';
 import { initViewLayer } from './view';

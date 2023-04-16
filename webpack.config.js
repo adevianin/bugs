@@ -15,5 +15,13 @@ module.exports = {
         alias: {
           utils: path.resolve(__dirname, './bugs/core/client/utils'),
         },
-    }
+    },
+    module: {
+        rules: [
+            {
+                test: /\.css$/i,
+                use: ["style-loader", "css-loader"],
+            },
+        ],
+    },
 };
