@@ -32,9 +32,17 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":20,"h":20},
 	"sourceSize": {"w":20,"h":20}
 },
+"grass.png":
+{
+	"frame": {"x":0,"y":56,"w":64,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
 "town.png":
 {
-	"frame": {"x":0,"y":56,"w":40,"h":40},
+	"frame": {"x":0,"y":120,"w":40,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
@@ -48,8 +56,8 @@
 	"version": "1.1",
 	"image": "world_spritesheet.png",
 	"format": "RGBA8888",
-	"size": {"w":64,"h":96},
+	"size": {"w":64,"h":160},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:8dd768dd726a7fb4c27a6c7e07ac9366:1c347bde90128d458d2f6888b3ff83e0:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:8d5f87d304631c320bf748952c7b2c69:b201406407a174b30d4a37835c8d883e:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }

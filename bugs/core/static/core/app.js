@@ -68,6 +68,10 @@ class DomainFacade {
         return this._worldService.isWholeWorldInited();
     }
 
+    getWorldSize() {
+        return this._worldService.world.size;
+    }
+
     _tryConnectMessageHandler() {
         if (this._userService.isLoggedIn()) {
             this._messageHandlerService.connect();
@@ -560,6 +564,14 @@ class World {
         return [...this._entities];
     }
 
+    set size(size) {
+        this._size = size;
+    }
+
+    get size() {
+        return this._size;
+    }
+
     addEntity(entity) {
         this._entities.push(entity);
     }
@@ -807,6 +819,11 @@ class WorldService {
         this._worldFactory = worldFactory;
         this._mainEventBus = mainEventBus;
         this._isWholeWorldInited = false;
+        this._worldSize = null;
+    }
+
+    get world() {
+        return this._world;
     }
 
     initWorld(worldJson) {
@@ -814,6 +831,7 @@ class WorldService {
             let entity = this._worldFactory.buildEntity(entityJson);
             this._world.addEntity(entity); 
         });
+        this._world.size = worldJson.size;
         this._isWholeWorldInited = true;
         this._mainEventBus.emit('wholeWorldInited');
     }
@@ -1266,6 +1284,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _world_bugView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./world/bugView */ "./bugs/core/client/app/src/view/world/bugView.js");
 /* harmony import */ var _world_townView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./world/townView */ "./bugs/core/client/app/src/view/world/townView.js");
 /* harmony import */ var _world_foodView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./world/foodView */ "./bugs/core/client/app/src/view/world/foodView.js");
+/* harmony import */ var _world_camera__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./world/camera */ "./bugs/core/client/app/src/view/world/camera.js");
+
 
 
 
@@ -1273,6 +1293,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class WorldView {
+
+    static CANVAS_WIDTH = 1000;
+    static CANVAS_HEIGHT = 500;
+
     constructor(el, domainFacade, spritesheetManager) {
         this._domainFacade = domainFacade;
         this._spritesheetManager = spritesheetManager;
@@ -1284,9 +1308,21 @@ class WorldView {
     }
 
     async _init() {
-        this._initPixi();
-
         await this._spritesheetManager.prepareTextures();
+
+        this._app = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Application({ width: WorldView.CANVAS_WIDTH, height: WorldView.CANVAS_HEIGHT, background: 0xffffff, });
+        this._el.appendChild(this._app.view);
+
+        this._entityContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._app.stage.addChild(this._entityContainer);
+
+        this._bg = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.TilingSprite(this._spritesheetManager.getTexture('grass.png'));
+        this._entityContainer.addChild(this._bg);
+
+        this._camera = new _world_camera__WEBPACK_IMPORTED_MODULE_5__.Camera(this._entityContainer, this._bg, { 
+            width: WorldView.CANVAS_WIDTH, 
+            height: WorldView.CANVAS_HEIGHT
+        });
 
         this._domainFacade.events.on('wholeWorldInited', this._onWholeWorldInit.bind(this));
         if (this._domainFacade.isWholeWorldInited()) {
@@ -1296,15 +1332,14 @@ class WorldView {
         this._domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
     }
 
-    _initPixi() {
-        this._app = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Application({ width: 1000, height: 500, background: 0xffffff, });
-        this._el.appendChild(this._app.view);
-
-        this._entityContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._app.stage.addChild(this._entityContainer);
-    }
-
     _onWholeWorldInit() {
+        let worldSize = this._domainFacade.getWorldSize();
+
+        this._bg.width = worldSize[0];
+        this._bg.height = worldSize[1];
+
+        this._camera.setMapSize(worldSize[0], worldSize[1]);
+
         this._buildEntityViews();
     }
 
@@ -1462,6 +1497,94 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._entityContainer.removeChild(this._pickedFoodSprite);
         this._pickedFoodSprite = null;
         this._render();
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/world/camera.js":
+/*!*******************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/camera.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Camera": () => (/* binding */ Camera)
+/* harmony export */ });
+class Camera {
+
+    static MAP_MARGIN = 40;
+
+    constructor(container, handler, frameSize) {
+        this._container = container;
+        this._handler = handler;
+        this._isDraging = false;
+        this._dragStartAt = {x: null, y: null};
+        this._startDragContainerPos = {x: null, y: null};
+        this._mapSize = {
+            width: null,
+            height: null
+        };
+        this._frameSize = frameSize;
+
+        this._handler.eventMode = 'static';
+        this._handler.on('pointerdown', this._onPointerDown.bind(this));
+        this._handler.on('pointerup', this._onPointerUp.bind(this));
+        this._handler.on('pointermove', this._onPointerMove.bind(this));
+    }
+
+    setMapSize(width, height) {
+        this._mapSize.width = width;
+        this._mapSize.height = height;
+    }
+
+    _onPointerDown(e) {
+        this._isDraging = true;
+        this._dragStartAt.x = e.client.x;
+        this._dragStartAt.y = e.client.y;
+        this._startDragContainerPos.x = this._container.x;
+        this._startDragContainerPos.y = this._container.y;
+    }
+
+    _onPointerUp(e) {
+        this._isDraging = false;
+    }
+
+    _onPointerMove(e) {
+        if (this._isDraging) {
+            let dx = e.client.x - this._dragStartAt.x;
+            let dy = e.client.y - this._dragStartAt.y;
+
+            let containerPosX = this._startDragContainerPos.x + dx;
+            let containerPosY = this._startDragContainerPos.y + dy;
+
+            if (containerPosX > Camera.MAP_MARGIN) {
+                containerPosX = Camera.MAP_MARGIN;
+            }
+
+            if (containerPosY > Camera.MAP_MARGIN) {
+                containerPosY = Camera.MAP_MARGIN;
+            }
+
+            let minXPos = this._frameSize.width - this._mapSize.width - Camera.MAP_MARGIN
+            if (containerPosX < minXPos) {
+                containerPosX = minXPos;
+            }
+
+            let minPosY = this._frameSize.height - this._mapSize.height  - Camera.MAP_MARGIN;
+            if (containerPosY < minPosY) {
+                containerPosY = minPosY;
+            }
+
+            this._container.x = containerPosX;
+            this._container.y = containerPosY;
+
+            console.log(this._container.x, this._container.y);
+        }
     }
 }
 

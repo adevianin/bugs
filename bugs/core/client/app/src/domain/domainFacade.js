@@ -54,6 +54,10 @@ class DomainFacade {
         return this._worldService.isWholeWorldInited();
     }
 
+    getWorldSize() {
+        return this._worldService.world.size;
+    }
+
     _tryConnectMessageHandler() {
         if (this._userService.isLoggedIn()) {
             this._messageHandlerService.connect();

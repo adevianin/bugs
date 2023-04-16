@@ -3,8 +3,13 @@ import * as PIXI from 'pixi.js';
 import { BugView } from './world/bugView';
 import { TownView } from './world/townView';
 import { FoodView } from './world/foodView';
+import { Camera } from './world/camera';
 
 class WorldView {
+
+    static CANVAS_WIDTH = 1000;
+    static CANVAS_HEIGHT = 500;
+
     constructor(el, domainFacade, spritesheetManager) {
         this._domainFacade = domainFacade;
         this._spritesheetManager = spritesheetManager;
@@ -16,9 +21,21 @@ class WorldView {
     }
 
     async _init() {
-        this._initPixi();
-
         await this._spritesheetManager.prepareTextures();
+
+        this._app = new PIXI.Application({ width: WorldView.CANVAS_WIDTH, height: WorldView.CANVAS_HEIGHT, background: 0xffffff, });
+        this._el.appendChild(this._app.view);
+
+        this._entityContainer = new PIXI.Container();
+        this._app.stage.addChild(this._entityContainer);
+
+        this._bg = new PIXI.TilingSprite(this._spritesheetManager.getTexture('grass.png'));
+        this._entityContainer.addChild(this._bg);
+
+        this._camera = new Camera(this._entityContainer, this._bg, { 
+            width: WorldView.CANVAS_WIDTH, 
+            height: WorldView.CANVAS_HEIGHT
+        });
 
         this._domainFacade.events.on('wholeWorldInited', this._onWholeWorldInit.bind(this));
         if (this._domainFacade.isWholeWorldInited()) {
@@ -28,15 +45,14 @@ class WorldView {
         this._domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
     }
 
-    _initPixi() {
-        this._app = new PIXI.Application({ width: 1000, height: 500, background: 0xffffff, });
-        this._el.appendChild(this._app.view);
-
-        this._entityContainer = new PIXI.Container();
-        this._app.stage.addChild(this._entityContainer);
-    }
-
     _onWholeWorldInit() {
+        let worldSize = this._domainFacade.getWorldSize();
+
+        this._bg.width = worldSize[0];
+        this._bg.height = worldSize[1];
+
+        this._camera.setMapSize(worldSize[0], worldSize[1]);
+
         this._buildEntityViews();
     }
 

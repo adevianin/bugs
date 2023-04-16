@@ -10,6 +10,14 @@ class World {
         return [...this._entities];
     }
 
+    set size(size) {
+        this._size = size;
+    }
+
+    get size() {
+        return this._size;
+    }
+
     addEntity(entity) {
         this._entities.push(entity);
     }

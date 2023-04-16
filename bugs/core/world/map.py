@@ -47,6 +47,10 @@ class Map:
 
         return found_entities
     
+    @property
+    def size(self):
+        return self._size
+    
     def _check_entity_type(self, entity: Entity, entity_types: EntityTypes):
         for type in entity_types:
             if (entity.type == type):

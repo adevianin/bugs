@@ -42,7 +42,8 @@ class World():
             entities_json.append(entity.to_json())
         
         return {
-            'entities': entities_json
+            'entities': entities_json,
+            'size': self._map.size
         }
 
     def _run_world_loop(self):
