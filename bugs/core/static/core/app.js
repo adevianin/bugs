@@ -1725,6 +1725,9 @@ class PickedFoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView
         super(entity, entityContainer);
 
         let textureName = `food_${this._entity.food_type}_${this._entity.food_variety}v.png`;
+        if (entity.food_type == 'nectar') {
+            textureName = 'food_nectar_picked.png';
+        }
         this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(PickedFoodView.textureManager.getTexture(textureName));
         entityContainer.addChild(this._sprite);
         this._sprite.anchor.set(0.5);
@@ -1772,6 +1775,7 @@ class TownView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         super(entity, entityContainer);
 
         this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(TownView.textureManager.getTexture('town.png'));
+        this._sprite.anchor.set(0.5);
         entityContainer.addChild(this._sprite);
 
         this._sprite.x = this._entity.position.x;
