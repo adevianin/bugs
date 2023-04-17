@@ -492,9 +492,19 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
-    constructor(eventBus, id, position, calories) {
+    constructor(eventBus, id, position, calories, food_type, food_varity) {
         super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD);
         this.calories = calories;
+        this._food_type = food_type;
+        this._food_variety = food_varity;
+    }
+
+    get food_type() {
+        return this._food_type;
+    }
+
+    get food_variety() {
+        return this._food_variety;
     }
 
     updateEntity(entityJson) {
@@ -854,6 +864,7 @@ class WorldService {
     }
 
     initWorld(worldJson) {
+        console.log(worldJson)
         worldJson.entities.forEach(entityJson => { 
             let entity = this._worldFactory.buildEntity(entityJson);
             this._world.addEntity(entity); 
@@ -933,8 +944,8 @@ class WorldFactory {
         return new _entity_town__WEBPACK_IMPORTED_MODULE_3__.Town(this.mainEventBus, id, position, color);
     }
 
-    buildFood(id, position, calories) {
-        return new _entity_food__WEBPACK_IMPORTED_MODULE_4__.Food(this.mainEventBus, id, position, calories);
+    buildFood(id, position, calories, food_type, food_varity) {
+        return new _entity_food__WEBPACK_IMPORTED_MODULE_4__.Food(this.mainEventBus, id, position, calories, food_type, food_varity);
     }
 
     buildFoodArea(id, position) {
@@ -948,7 +959,7 @@ class WorldFactory {
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:
                 return this.buildTown(entityJson.id, entityJson.position, entityJson.color);
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
-                return this.buildFood(entityJson.id, entityJson.position, entityJson.calories);
+                return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety);
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_AREA:
                 return this.buildFoodArea(entityJson.id, entityJson.position);
             default:
@@ -1246,17 +1257,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class AppView {
-    constructor(document, domainFacade, spritesheetManager) {
+    constructor(document, domainFacade) {
         this._document = document;
         this._domainFacade = domainFacade;
-        this._spritesheetManager = spritesheetManager;
 
         this._render();
     }
 
     _render() {
         let worldEl = this._document.querySelector('[data-world]');
-        this._worldView = new _worldView__WEBPACK_IMPORTED_MODULE_0__.WorldView(worldEl, this._domainFacade, this._spritesheetManager);
+        this._worldView = new _worldView__WEBPACK_IMPORTED_MODULE_0__.WorldView(worldEl, this._domainFacade);
         let accountViewEl = this._document.querySelector('[data-account-view]');
         this._accountView = new _accountView__WEBPACK_IMPORTED_MODULE_1__.AccountView(accountViewEl, this._domainFacade);
     }
@@ -1281,6 +1291,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _appView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./appView */ "./bugs/core/client/app/src/view/appView.js");
 /* harmony import */ var utils_requester__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! utils/requester */ "./bugs/core/client/utils/requester.js");
 /* harmony import */ var _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./world/worldSpritesheetManager */ "./bugs/core/client/app/src/view/world/worldSpritesheetManager.js");
+/* harmony import */ var _world_baseView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./world/baseView */ "./bugs/core/client/app/src/view/world/baseView.js");
+
 
 
 
@@ -1288,7 +1300,8 @@ __webpack_require__.r(__webpack_exports__);
 function initViewLayer(domainFacade, initialData) {
     let requester = new utils_requester__WEBPACK_IMPORTED_MODULE_1__.Requester();
     let spritesheetManager = new _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__.WorldSpritesheetManager(initialData.urls.world_spritesheet, initialData.urls.world_spritesheet_atlas, requester);
-    let app = new _appView__WEBPACK_IMPORTED_MODULE_0__.AppView(document, domainFacade, spritesheetManager);
+    _world_baseView__WEBPACK_IMPORTED_MODULE_3__.BaseView.useTextureManager(spritesheetManager);
+    let app = new _appView__WEBPACK_IMPORTED_MODULE_0__.AppView(document, domainFacade);
 }
 
 
@@ -1312,6 +1325,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _world_townView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./world/townView */ "./bugs/core/client/app/src/view/world/townView.js");
 /* harmony import */ var _world_foodView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./world/foodView */ "./bugs/core/client/app/src/view/world/foodView.js");
 /* harmony import */ var _world_camera__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./world/camera */ "./bugs/core/client/app/src/view/world/camera.js");
+/* harmony import */ var _world_baseView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./world/baseView */ "./bugs/core/client/app/src/view/world/baseView.js");
+
 
 
 
@@ -1324,9 +1339,8 @@ class WorldView {
     static CANVAS_WIDTH = 1000;
     static CANVAS_HEIGHT = 500;
 
-    constructor(el, domainFacade, spritesheetManager) {
+    constructor(el, domainFacade) {
         this._domainFacade = domainFacade;
-        this._spritesheetManager = spritesheetManager;
         this._el = el;
         this._entityViews = [];
         this._textures = {};
@@ -1335,7 +1349,7 @@ class WorldView {
     }
 
     async _init() {
-        await this._spritesheetManager.prepareTextures();
+        await _world_baseView__WEBPACK_IMPORTED_MODULE_6__.BaseView.textureManager.prepareTextures();
 
         this._app = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Application({ width: WorldView.CANVAS_WIDTH, height: WorldView.CANVAS_HEIGHT, background: 0xffffff, });
         this._el.appendChild(this._app.view);
@@ -1343,7 +1357,7 @@ class WorldView {
         this._entityContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._app.stage.addChild(this._entityContainer);
 
-        this._bg = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.TilingSprite(this._spritesheetManager.getTexture('grass.png'));
+        this._bg = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.TilingSprite(_world_baseView__WEBPACK_IMPORTED_MODULE_6__.BaseView.textureManager.getTexture('grass.png'));
         this._entityContainer.addChild(this._bg);
 
         this._camera = new _world_camera__WEBPACK_IMPORTED_MODULE_5__.Camera(this._entityContainer, this._bg, { 
@@ -1384,89 +1398,43 @@ class WorldView {
     _buildEntityView(entity) {
         switch (entity.type) {
             case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.BUG:
-                new _world_bugView__WEBPACK_IMPORTED_MODULE_2__.BugView(entity, this._spritesheetManager, this._entityContainer);
+                new _world_bugView__WEBPACK_IMPORTED_MODULE_2__.BugView(entity, this._entityContainer);
                 break;
             case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:
-                new _world_townView__WEBPACK_IMPORTED_MODULE_3__.TownView(entity, this._spritesheetManager, this._entityContainer);
+                new _world_townView__WEBPACK_IMPORTED_MODULE_3__.TownView(entity, this._entityContainer);
                 break;
             case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
-                new _world_foodView__WEBPACK_IMPORTED_MODULE_4__.FoodView(entity, this._spritesheetManager, this._entityContainer);
+                new _world_foodView__WEBPACK_IMPORTED_MODULE_4__.FoodView(entity, this._entityContainer);
                 break;
         }
     }
 
+}
 
 
 
-    // async _loadTextures() {
-    //     return {
-    //         'bug': await PIXI.Assets.load(this._imagesData.bug)
-    //     };
-    // }
+/***/ }),
 
-    // _renderWorld() {
-    //     this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+/***/ "./bugs/core/client/app/src/view/world/baseView.js":
+/*!*********************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/baseView.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-    //     let entities = this._domainFacade.getEntities();
-    //     entities.forEach(entity => {
-    //         if (entity.isHidden()) {
-    //             return;
-    //         }
-            
-    //         switch (entity.type) {
-    //             case EntityTypes.BUG:
-    //                 this._renderBug(entity);
-    //                 break;
-    //             case EntityTypes.TOWN:
-    //                 this._renderTown(entity);
-    //                 break;
-    //             case EntityTypes.FOOD:
-    //                 this._renderFood(entity);
-    //                 break;
-    //         }
-    //     });
-    // }
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "BaseView": () => (/* binding */ BaseView)
+/* harmony export */ });
+class BaseView {
 
-    // _renderBug(bug) {
-    //     let width = 10;
-    //     let height = 10;
-    //     let posX = bug.position.x - width / 2;
-    //     let posY = bug.position.y - height / 2;
-    //     this._ctx.fillStyle = 'red';
-    //     this._ctx.strokeStyle = 'black';
-    //     this._ctx.fillRect(posX, posY, width, height);
-    //     this._ctx.beginPath();
-    //     this._ctx.arc(posX, posY, 100, 0, 2 * Math.PI);
-    //     this._ctx.stroke();
+    static textureManager;
 
-    //     if (bug.hasPickedFood()) {
-    //         this._ctx.fillStyle = 'green';
-    //         this._ctx.fillRect(posX, posY - 10, width, height);
-    //     }
-    // }
+    static useTextureManager(textureManager) {
+        BaseView.textureManager = textureManager;
+    }
 
-    // _renderTown(town) {
-    //     let width = 40;
-    //     let height = 40; 
-    //     this._ctx.fillStyle = 'yellow';
-    //     this._ctx.strokeStyle = 'black';
-    //     let posX = town.position.x - width / 2;
-    //     let posY = town.position.y - height / 2;
-    //     this._ctx.fillRect(posX, posY, width, height)
-    //     this._ctx.beginPath();
-    //     this._ctx.arc(town.position.x, town.position.y, 300, 0, 2 * Math.PI);
-    //     this._ctx.stroke();
-    // }
-
-    // _renderFood(food) {
-    //     let width = 10;
-    //     let height = 10; 
-    //     this._ctx.fillStyle = 'green';
-    //     let posX = food.position.x - width / 2;
-    //     let posY = food.position.y - height / 2;
-    //     this._ctx.fillRect(posX, posY, width, height)
-    //     this._ctx.beginPath();
-    // }
+    remove(){}
 
 }
 
@@ -1487,24 +1455,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _pickedFood__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pickedFood */ "./bugs/core/client/app/src/view/world/pickedFood.js");
+
 
 
 
 class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
-    constructor(entity, spritesheetManager, entityContainer) {
-        super(entity, spritesheetManager, entityContainer);
+    constructor(entity, entityContainer) {
+        super(entity, entityContainer);
 
         this._activeSprite = null;
 
-        this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(spritesheetManager.getTexture('bug4.png'));
-        this._standSprite.pivot.x = 16;
-        this._standSprite.pivot.y = 16;
+        this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(BugView.textureManager.getTexture('bug4.png'));
+        this._standSprite.anchor.set(0.5);
         this._entityContainer.addChild(this._standSprite);
 
-        this._walkSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.AnimatedSprite(spritesheetManager.getAnimatedTextures('bug'));
-        this._walkSprite.pivot.x = 16;
-        this._walkSprite.pivot.y = 16;
+        this._walkSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.AnimatedSprite(BugView.textureManager.getAnimatedTextures('bug'));
+        this._walkSprite.anchor.set(0.5);
         this._walkSprite.animationSpeed = 0.2;
         this._entityContainer.addChild(this._walkSprite);
 
@@ -1522,21 +1490,18 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._activeSprite.x = this._entity.position.x;
         this._activeSprite.y = this._entity.position.y;
         this._activeSprite.angle = this._entity.angle;
-        if (this._pickedFoodSprite) {
-            this._pickedFoodSprite.x = this._entity.position.x;
-            this._pickedFoodSprite.y = this._entity.position.y - 20;
+        if (this._entity.hasPickedFood()) {
+            this._entity.pickedFood.setPosition(this._entity.position.x, this._entity.position.y - 10);
         }
     }
 
     _onFoodLift() {
-        this._pickedFoodSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this._spritesheetManager.getTexture('food.png'));
-        this._entityContainer.addChild(this._pickedFoodSprite);
+        this._pickedFoodView = new _pickedFood__WEBPACK_IMPORTED_MODULE_2__.PickedFoodView(this._entity.pickedFood, this._entityContainer);
         this._render();
     }
 
     _onFoodDrop() {
-        this._entityContainer.removeChild(this._pickedFoodSprite);
-        this._pickedFoodSprite = null;
+        this._pickedFoodView.remove();
         this._render();
     }
 
@@ -1676,10 +1641,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "EntityView": () => (/* binding */ EntityView)
 /* harmony export */ });
-class EntityView {
-    constructor(entity, spritesheetManager, entityContainer) {
+/* harmony import */ var _baseView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseView */ "./bugs/core/client/app/src/view/world/baseView.js");
+
+
+class EntityView extends _baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView {
+    constructor(entity, entityContainer) {
+        super();
         this._entity = entity;
-        this._spritesheetManager = spritesheetManager;
         this._entityContainer = entityContainer;
 
         this._unbindDiedListener = this._entity.on('died', this.remove.bind(this));
@@ -1712,12 +1680,61 @@ __webpack_require__.r(__webpack_exports__);
 
 class FoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
 
-    constructor(entity, spritesheetManager, entityContainer) {
-        super(entity, spritesheetManager, entityContainer);
+    constructor(entity, entityContainer) {
+        super(entity, entityContainer);
 
-        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(spritesheetManager.getTexture('food.png'));
+        let textureName = `food_${this._entity.food_type}_${this._entity.food_variety}v.png`;
+        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(FoodView.textureManager.getTexture(textureName));
         entityContainer.addChild(this._sprite);
+        this._sprite.anchor.set(0.5);
 
+        this._sprite.x = this._entity.position.x;
+        this._sprite.y = this._entity.position.y;
+    }
+
+    remove() {
+        super.remove();
+        this._entityContainer.removeChild(this._sprite);
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/world/pickedFood.js":
+/*!***********************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/pickedFood.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "PickedFoodView": () => (/* binding */ PickedFoodView)
+/* harmony export */ });
+/* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
+
+
+class PickedFoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
+
+    constructor(entity, entityContainer) {
+        super(entity, entityContainer);
+
+        let textureName = `food_${this._entity.food_type}_${this._entity.food_variety}v.png`;
+        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(PickedFoodView.textureManager.getTexture(textureName));
+        entityContainer.addChild(this._sprite);
+        this._sprite.anchor.set(0.5);
+
+        this._render();
+
+        this._entity.on('positionChanged', this._render.bind(this));
+    }
+
+    _render() {
         this._sprite.x = this._entity.position.x;
         this._sprite.y = this._entity.position.y;
     }
@@ -1751,10 +1768,10 @@ __webpack_require__.r(__webpack_exports__);
 
 class TownView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
 
-    constructor(entity, spritesheetManager, entityContainer) {
-        super(entity, spritesheetManager, entityContainer);
+    constructor(entity, entityContainer) {
+        super(entity, entityContainer);
 
-        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(spritesheetManager.getTexture('town.png'));
+        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(TownView.textureManager.getTexture('town.png'));
         entityContainer.addChild(this._sprite);
 
         this._sprite.x = this._entity.position.x;

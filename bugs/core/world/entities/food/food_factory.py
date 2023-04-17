@@ -2,6 +2,8 @@ from core.world.entities.food.food import Food
 from core.world.utils.point import Point
 from core.world.utils.event_emiter import EventEmitter
 from core.world.id_generator import IdGenerator
+from .food_types import FoodTypes
+import random
 
 class FoodFactory():
 
@@ -9,8 +11,10 @@ class FoodFactory():
         self._event_bus = event_bus
         self._id_generator = id_generator
 
-    def build_food(self, id: int, position: Point, calories: int):
+    def build_food(self, id: int, position: Point, calories: int, type: FoodTypes, food_variety: int):
         if (id == -1):
             id = self._id_generator.generate_id()
-        return Food(self._event_bus, id, position, calories) 
+        if (food_variety == -1):
+            food_variety = random.randint(1, 3)
+        return Food(self._event_bus, id, position, calories, type, food_variety) 
 

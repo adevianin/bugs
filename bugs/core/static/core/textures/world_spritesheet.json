@@ -64,17 +64,41 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"food.png":
+"food_leaf_1v.png":
 {
-	"frame": {"x":0,"y":128,"w":20,"h":20},
+	"frame": {"x":0,"y":128,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":20,"h":20},
-	"sourceSize": {"w":20,"h":20}
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"food_leaf_2v.png":
+{
+	"frame": {"x":32,"y":128,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"food_leaf_3v.png":
+{
+	"frame": {"x":0,"y":160,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"food_leaf_4v.png":
+{
+	"frame": {"x":32,"y":160,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
 },
 "grass.png":
 {
-	"frame": {"x":0,"y":148,"w":64,"h":64},
+	"frame": {"x":0,"y":192,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
@@ -82,7 +106,7 @@
 },
 "town.png":
 {
-	"frame": {"x":0,"y":212,"w":40,"h":40},
+	"frame": {"x":0,"y":256,"w":40,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
@@ -96,8 +120,8 @@
 	"version": "1.1",
 	"image": "world_spritesheet.png",
 	"format": "RGBA8888",
-	"size": {"w":64,"h":252},
+	"size": {"w":64,"h":296},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:11133219d5e1e25fabebf3cf264e68b6:a8aabc0a08ee43a70e4a8f236e53508e:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:90e7f512387ddf9dc1622ee9277e3edd:826f27e021bf4801d3b7886aa2090c83:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }

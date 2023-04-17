@@ -1,21 +1,20 @@
 import { EntityView } from './entityView';
 import * as PIXI from 'pixi.js';
+import { PickedFoodView } from './pickedFood';
 
 class BugView extends EntityView {
 
-    constructor(entity, spritesheetManager, entityContainer) {
-        super(entity, spritesheetManager, entityContainer);
+    constructor(entity, entityContainer) {
+        super(entity, entityContainer);
 
         this._activeSprite = null;
 
-        this._standSprite = new PIXI.Sprite(spritesheetManager.getTexture('bug4.png'));
-        this._standSprite.pivot.x = 16;
-        this._standSprite.pivot.y = 16;
+        this._standSprite = new PIXI.Sprite(BugView.textureManager.getTexture('bug4.png'));
+        this._standSprite.anchor.set(0.5);
         this._entityContainer.addChild(this._standSprite);
 
-        this._walkSprite = new PIXI.AnimatedSprite(spritesheetManager.getAnimatedTextures('bug'));
-        this._walkSprite.pivot.x = 16;
-        this._walkSprite.pivot.y = 16;
+        this._walkSprite = new PIXI.AnimatedSprite(BugView.textureManager.getAnimatedTextures('bug'));
+        this._walkSprite.anchor.set(0.5);
         this._walkSprite.animationSpeed = 0.2;
         this._entityContainer.addChild(this._walkSprite);
 
@@ -33,21 +32,18 @@ class BugView extends EntityView {
         this._activeSprite.x = this._entity.position.x;
         this._activeSprite.y = this._entity.position.y;
         this._activeSprite.angle = this._entity.angle;
-        if (this._pickedFoodSprite) {
-            this._pickedFoodSprite.x = this._entity.position.x;
-            this._pickedFoodSprite.y = this._entity.position.y - 20;
+        if (this._entity.hasPickedFood()) {
+            this._entity.pickedFood.setPosition(this._entity.position.x, this._entity.position.y - 15);
         }
     }
 
     _onFoodLift() {
-        this._pickedFoodSprite = new PIXI.Sprite(this._spritesheetManager.getTexture('food.png'));
-        this._entityContainer.addChild(this._pickedFoodSprite);
+        this._pickedFoodView = new PickedFoodView(this._entity.pickedFood, this._entityContainer);
         this._render();
     }
 
     _onFoodDrop() {
-        this._entityContainer.removeChild(this._pickedFoodSprite);
-        this._pickedFoodSprite = null;
+        this._pickedFoodView.remove();
         this._render();
     }
 

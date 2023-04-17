@@ -23,8 +23,8 @@ class WorldFactory {
         return new Town(this.mainEventBus, id, position, color);
     }
 
-    buildFood(id, position, calories) {
-        return new Food(this.mainEventBus, id, position, calories);
+    buildFood(id, position, calories, food_type, food_varity) {
+        return new Food(this.mainEventBus, id, position, calories, food_type, food_varity);
     }
 
     buildFoodArea(id, position) {
@@ -38,7 +38,7 @@ class WorldFactory {
             case EntityTypes.TOWN:
                 return this.buildTown(entityJson.id, entityJson.position, entityJson.color);
             case EntityTypes.FOOD:
-                return this.buildFood(entityJson.id, entityJson.position, entityJson.calories);
+                return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety);
             case EntityTypes.FOOD_AREA:
                 return this.buildFoodArea(entityJson.id, entityJson.position);
             default:

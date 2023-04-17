@@ -8,6 +8,7 @@ from .world import World
 from .entities.town import Town
 from .entities.food.food_area import FoodArea
 from .entities.bug.base.bug_types import BugTypes
+from .entities.food.food_types import FoodTypes
 
 class WorldFactory():
 
@@ -37,14 +38,16 @@ class WorldFactory():
         foods_data = world_data['foods']
         for food_data in foods_data:
             position = Point(food_data['position']['x'], food_data['position']['y'])
-            food = self._food_factory.build_food(food_data['id'], position, food_data['calories'])
+            food_type = FoodTypes(food_data['type'])
+            food = self._food_factory.build_food(food_data['id'], position, food_data['calories'], food_type, food_data['food_variety'])
             map.add_entity(food)
 
         food_areas_data = world_data['food_areas']
         for food_area_data in food_areas_data:
             position = Point(food_area_data['position']['x'], food_area_data['position']['y'])
             size = Size(food_area_data['size']['width'], food_area_data['size']['height'])
-            food_area = self.build_food_area(food_area_data['id'], position, size, food_area_data['fertility'])
+            food_type = FoodTypes(food_area_data['food_type'])
+            food_area = self.build_food_area(food_area_data['id'], position, size, food_area_data['fertility'], food_type)
             map.add_entity(food_area)
 
         world = self.build_world(map)
@@ -60,5 +63,5 @@ class WorldFactory():
     def build_town(self, id: int, position: Point, color: str) -> Town:
         return Town(self._event_bus, id, position, color)
 
-    def build_food_area(self, id: int, position: Point, size: Size, fertility: int):
-        return FoodArea(self._event_bus, id, position, size, self._food_factory, fertility)
+    def build_food_area(self, id: int, position: Point, size: Size, fertility: int, food_type: FoodTypes):
+        return FoodArea(self._event_bus, id, position, size, self._food_factory, fertility, food_type)

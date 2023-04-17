@@ -3,10 +3,10 @@ import * as PIXI from 'pixi.js';
 
 class TownView extends EntityView { 
 
-    constructor(entity, spritesheetManager, entityContainer) {
-        super(entity, spritesheetManager, entityContainer);
+    constructor(entity, entityContainer) {
+        super(entity, entityContainer);
 
-        this._sprite = new PIXI.Sprite(spritesheetManager.getTexture('town.png'));
+        this._sprite = new PIXI.Sprite(TownView.textureManager.getTexture('town.png'));
         entityContainer.addChild(this._sprite);
 
         this._sprite.x = this._entity.position.x;
