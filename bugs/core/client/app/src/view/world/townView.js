@@ -7,6 +7,7 @@ class TownView extends EntityView {
         super(entity, entityContainer);
 
         this._sprite = new PIXI.Sprite(TownView.textureManager.getTexture('town.png'));
+        this._sprite.anchor.set(0.5);
         entityContainer.addChild(this._sprite);
 
         this._sprite.x = this._entity.position.x;
