@@ -15,6 +15,15 @@ class FoodFactory():
         if (id == -1):
             id = self._id_generator.generate_id()
         if (food_variety == -1):
-            food_variety = random.randint(1, 3)
+            food_variety = self._generate_variety(type)
         return Food(self._event_bus, id, position, calories, type, food_variety) 
+    
+    def _generate_variety(self, food_type: FoodTypes):
+        match food_type:
+            case FoodTypes.LEAF:
+                return random.randint(1, 2)
+            case FoodTypes.NECTAR:
+                return random.randint(1, 3)
+            case _:
+                raise Exception('unknown type of food')
 

@@ -17,7 +17,7 @@ class Command(BaseCommand):
             { "id": 30, "position": {"x": 600, "y": 200 }, "color": "yellow" }
         ],
         "food_areas": [
-            { "id": 40, "position": {"x": 450, "y": 150}, "size": { "width": 150, "height": 150 }, "fertility": 20, "food_type": "leaf" }
+            { "id": 40, "position": {"x": 450, "y": 150}, "size": { "width": 150, "height": 150 }, "fertility": 20, "food_type": "nectar" }
         ],
         "last_id": 40
     }
