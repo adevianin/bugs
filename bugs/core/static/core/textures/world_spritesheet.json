@@ -96,9 +96,33 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
+"food_nectar_1v.png":
+{
+	"frame": {"x":0,"y":192,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"food_nectar_2v.png":
+{
+	"frame": {"x":32,"y":192,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"food_nectar_3v.png":
+{
+	"frame": {"x":0,"y":224,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
 "grass.png":
 {
-	"frame": {"x":0,"y":192,"w":64,"h":64},
+	"frame": {"x":0,"y":256,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
@@ -106,7 +130,7 @@
 },
 "town.png":
 {
-	"frame": {"x":0,"y":256,"w":40,"h":40},
+	"frame": {"x":0,"y":320,"w":40,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
@@ -120,8 +144,8 @@
 	"version": "1.1",
 	"image": "world_spritesheet.png",
 	"format": "RGBA8888",
-	"size": {"w":64,"h":296},
+	"size": {"w":64,"h":360},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:90e7f512387ddf9dc1622ee9277e3edd:826f27e021bf4801d3b7886aa2090c83:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:8dfb91b2cb48e6a0e2a52fee2b26dd01:e72c2882aba0bf70b2f438cd23594d34:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }

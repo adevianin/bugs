@@ -1491,7 +1491,7 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._activeSprite.y = this._entity.position.y;
         this._activeSprite.angle = this._entity.angle;
         if (this._entity.hasPickedFood()) {
-            this._entity.pickedFood.setPosition(this._entity.position.x, this._entity.position.y - 10);
+            this._entity.pickedFood.setPosition(this._entity.position.x, this._entity.position.y - 15);
         }
     }
 

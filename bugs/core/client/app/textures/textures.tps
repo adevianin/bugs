@@ -199,6 +199,23 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">images/food_nectar_1v.png</key>
+            <key type="filename">images/food_nectar_2v.png</key>
+            <key type="filename">images/food_nectar_3v.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0,0</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9Paddings</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">images/grass.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -250,6 +267,9 @@
                     <filename>images/food_leaf_2v.png</filename>
                     <filename>images/food_leaf_3v.png</filename>
                     <filename>images/food_leaf_4v.png</filename>
+                    <filename>images/food_nectar_1v.png</filename>
+                    <filename>images/food_nectar_2v.png</filename>
+                    <filename>images/food_nectar_3v.png</filename>
                 </array>
             </struct>
         </map>

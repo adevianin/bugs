@@ -10,8 +10,8 @@ class Command(BaseCommand):
             { "id": 1, "position": {"x": 650, "y": 200}, "from_town": 30, "type": "food_collector" }
         ],
         "foods": [
-            {"id": 20, "position": {"x": 350, "y": 200}, "calories": 150, "type": "leaf", "food_variety": 1 },
-            {"id": 21, "position": {"x": 850, "y": 200}, "calories": 300, "type": "leaf", "food_variety": 1  }
+            {"id": 20, "position": {"x": 350, "y": 200}, "calories": 150, "type": "nectar", "food_variety": 1 },
+            {"id": 21, "position": {"x": 850, "y": 200}, "calories": 300, "type": "nectar", "food_variety": 2  }
         ],
         "towns": [
             { "id": 30, "position": {"x": 600, "y": 200 }, "color": "yellow" }

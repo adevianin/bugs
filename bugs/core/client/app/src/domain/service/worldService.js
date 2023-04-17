@@ -13,6 +13,7 @@ class WorldService {
     }
 
     initWorld(worldJson) {
+        console.log(worldJson)
         worldJson.entities.forEach(entityJson => { 
             let entity = this._worldFactory.buildEntity(entityJson);
             this._world.addEntity(entity); 
