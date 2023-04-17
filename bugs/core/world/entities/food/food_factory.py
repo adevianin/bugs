@@ -21,7 +21,7 @@ class FoodFactory():
     def _generate_variety(self, food_type: FoodTypes):
         match food_type:
             case FoodTypes.LEAF:
-                return random.randint(1, 2)
+                return random.randint(1, 4)
             case FoodTypes.NECTAR:
                 return random.randint(1, 3)
             case _:
