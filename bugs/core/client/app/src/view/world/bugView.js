@@ -6,16 +6,18 @@ class BugView extends EntityView {
     constructor(entity, spritesheetManager, entityContainer) {
         super(entity, spritesheetManager, entityContainer);
 
-        this._sprite = null;
+        this._activeSprite = null;
 
         this._standSprite = new PIXI.Sprite(spritesheetManager.getTexture('bug4.png'));
         this._standSprite.pivot.x = 16;
         this._standSprite.pivot.y = 16;
+        this._entityContainer.addChild(this._standSprite);
 
         this._walkSprite = new PIXI.AnimatedSprite(spritesheetManager.getAnimatedTextures('bug'));
         this._walkSprite.pivot.x = 16;
         this._walkSprite.pivot.y = 16;
         this._walkSprite.animationSpeed = 0.2;
+        this._entityContainer.addChild(this._walkSprite);
 
         this._activateCurrentState();
         
@@ -28,9 +30,9 @@ class BugView extends EntityView {
     }
 
     _render() {
-        this._sprite.x = this._entity.position.x;
-        this._sprite.y = this._entity.position.y;
-        this._sprite.angle = this._entity.angle;
+        this._activeSprite.x = this._entity.position.x;
+        this._activeSprite.y = this._entity.position.y;
+        this._activeSprite.angle = this._entity.angle;
         if (this._pickedFoodSprite) {
             this._pickedFoodSprite.x = this._entity.position.x;
             this._pickedFoodSprite.y = this._entity.position.y - 20;
@@ -63,21 +65,21 @@ class BugView extends EntityView {
 
     _toggleWalkingState(isEnabling) {
         if (isEnabling) {
-            this._sprite = this._walkSprite;
-            this._entityContainer.addChild(this._walkSprite);
+            this._activeSprite = this._walkSprite;
+            this._walkSprite.renderable = true;
             this._walkSprite.play();
         } else {
-            this._entityContainer.removeChild(this._walkSprite);
+            this._walkSprite.renderable = false;
             this._walkSprite.stop();
         }
     }
 
     _toggleStandingState(isEnabling) {
         if (isEnabling) {
-            this._sprite = this._standSprite;
-            this._entityContainer.addChild(this._standSprite);
+            this._activeSprite = this._standSprite;
+            this._standSprite.renderable = true;
         } else {
-            this._entityContainer.removeChild(this._standSprite);
+            this._standSprite.renderable = false;
         }
     }
 
