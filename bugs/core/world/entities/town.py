@@ -10,7 +10,7 @@ class Town(PlainEntity):
         super().__init__(event_bus, id, EntityTypes.TOWN, position)
         self._color = color
         self._area = 300
-        self._stored_calories = 0
+        self._stored_calories = 1000
 
     @property
     def color(self):
@@ -24,7 +24,7 @@ class Town(PlainEntity):
         pass
 
     def take_food(self, food: Food):
-        # self._stored_calories += food.calories
+        self._stored_calories += food.calories
         food.die()
 
     def give_calories(self, count: int) -> int:
