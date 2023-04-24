@@ -3,16 +3,21 @@ from .utils.size import Size
 from .utils.point import Point
 from .entities.base.entity_types import EntityTypes
 from typing import List
+from .utils.event_emiter import EventEmitter
 
 import random, math
 
 class Map:
 
-    def __init__(self, size: Size):
+    def __init__(self, size: Size, event_bus: EventEmitter):
         self._size = size
+        self._event_bus = event_bus
         self._entities = {}
 
     def add_entity(self, entity: Entity):
+        if entity.id == -1:
+            entity.id = self._generate_entity_id()
+            self._event_bus.emit('newborn_is_on_map', entity)
         self._entities[entity.id] = entity
 
     def delete_entity(self, id: int):
@@ -57,5 +62,12 @@ class Map:
                 return True
             
         return False
-
+    
+    def _generate_entity_id(self):
+        max_id = 0
+        for entity in self.get_entities():
+            if entity.id > max_id:
+                max_id = entity.id
+        
+        return max_id + 1
 

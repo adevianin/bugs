@@ -58,7 +58,7 @@ class WorldFactory():
         return World(map, self._event_bus)
 
     def build_map(self, size: Size) -> Map:
-        return Map(size)
+        return Map(size, self._event_bus)
 
     def build_town(self, id: int, position: Point, color: str) -> Town:
         return Town(self._event_bus, id, position, color)
