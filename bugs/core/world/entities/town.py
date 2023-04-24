@@ -6,11 +6,16 @@ from core.world.entities.food.food import Food
 
 class Town(PlainEntity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, position: Point, color: str):
+    def __init__(self, event_bus: EventEmitter, id: int, position: Point, color: str, owner_id: int):
         super().__init__(event_bus, id, EntityTypes.TOWN, position)
         self._color = color
         self._area = 300
         self._stored_calories = 1000
+        self._owner_id = owner_id
+
+    @property
+    def owner_id(self):
+        return self._owner_id
 
     @property
     def color(self):
@@ -39,7 +44,8 @@ class Town(PlainEntity):
     def to_json(self):
         json = super().to_json()
         json.update({
-            'color': self._color
+            'color': self._color,
+            'owner_id': self._owner_id
         })
         
         return json

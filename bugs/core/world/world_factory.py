@@ -24,7 +24,7 @@ class WorldFactory():
         towns_data = world_data['towns']
         for town_data in towns_data:
             position = Point(town_data['position']['x'], town_data['position']['y'])
-            town = self.build_town(town_data['id'], position, town_data['color'])
+            town = self.build_town(town_data['id'], position, town_data['color'], town_data['owner_id'])
             map.add_entity(town)
 
         bugs_data = world_data['bugs']
@@ -60,8 +60,8 @@ class WorldFactory():
     def build_map(self, size: Size) -> Map:
         return Map(size, self._event_bus)
 
-    def build_town(self, id: int, position: Point, color: str) -> Town:
-        return Town(self._event_bus, id, position, color)
+    def build_town(self, id: int, position: Point, color: str, owner_id: int) -> Town:
+        return Town(self._event_bus, id, position, color, owner_id)
 
     def build_food_area(self, id: int, position: Point, size: Size, fertility: int, food_type: FoodTypes):
         return FoodArea(self._event_bus, id, position, size, self._food_factory, fertility, food_type)

@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from core.models import World
 
+# python bugs/manage.py build_test_world
 class Command(BaseCommand):
     help = 'Creates test world'
 
@@ -15,8 +16,8 @@ class Command(BaseCommand):
             {"id": 21, "position": {"x": 850, "y": 350}, "calories": 300, "type": "leaf", "food_variety": 2  }
         ],
         "towns": [
-            { "id": 30, "position": {"x": 600, "y": 350 }, "color": "yellow" },
-            { "id": 31, "position": {"x": 1600, "y": 450 }, "color": "red" },
+            { "id": 30, "position": {"x": 600, "y": 350 }, "color": "yellow", "owner_id": 2 },
+            { "id": 31, "position": {"x": 1600, "y": 450 }, "color": "red", "owner_id": 2 },
         ],
         "food_areas": [
             { "id": 40, "position": {"x": 450, "y": 300}, "size": { "width": 150, "height": 150 }, "fertility": 30, "food_type": "leaf" },
