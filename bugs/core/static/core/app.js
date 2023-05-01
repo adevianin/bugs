@@ -1260,7 +1260,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "AppView": () => (/* binding */ AppView)
 /* harmony export */ });
-/* harmony import */ var _worldView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./worldView */ "./bugs/core/client/app/src/view/worldView.js");
+/* harmony import */ var _world_worldView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./world/worldView */ "./bugs/core/client/app/src/view/world/worldView.js");
 /* harmony import */ var _account_accountView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./account/accountView */ "./bugs/core/client/app/src/view/account/accountView.js");
 
 
@@ -1275,7 +1275,8 @@ class AppView {
 
     _render() {
         let worldEl = this._document.querySelector('[data-world]');
-        this._worldView = new _worldView__WEBPACK_IMPORTED_MODULE_0__.WorldView(worldEl, this._domainFacade);
+        this._worldView = new _world_worldView__WEBPACK_IMPORTED_MODULE_0__.WorldView(worldEl, this._domainFacade);
+
         let accountViewEl = this._document.querySelector('[data-account-view]');
         this._accountView = new _account_accountView__WEBPACK_IMPORTED_MODULE_1__.AccountView(accountViewEl, this._domainFacade);
     }
@@ -1454,115 +1455,6 @@ class TownPopup extends _base_basePopup__WEBPACK_IMPORTED_MODULE_0__.BasePopup {
     onCancel() {
         this.close();
     }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/worldView.js":
-/*!****************************************************!*\
-  !*** ./bugs/core/client/app/src/view/worldView.js ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "WorldView": () => (/* binding */ WorldView)
-/* harmony export */ });
-/* harmony import */ var _worldStyles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./worldStyles.css */ "./bugs/core/client/app/src/view/worldStyles.css");
-/* harmony import */ var _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/entity/entityTypes */ "./bugs/core/client/app/src/domain/entity/entityTypes.js");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-/* harmony import */ var _world_bugView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./world/bugView */ "./bugs/core/client/app/src/view/world/bugView.js");
-/* harmony import */ var _world_townView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./world/townView */ "./bugs/core/client/app/src/view/world/townView.js");
-/* harmony import */ var _world_foodView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./world/foodView */ "./bugs/core/client/app/src/view/world/foodView.js");
-/* harmony import */ var _world_camera__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./world/camera */ "./bugs/core/client/app/src/view/world/camera.js");
-/* harmony import */ var _world_baseView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./world/baseView */ "./bugs/core/client/app/src/view/world/baseView.js");
-
-
-
-
-
-
-
-
-
-
-class WorldView {
-
-    constructor(el, domainFacade) {
-        this._domainFacade = domainFacade;
-        this._el = el;
-        this._entityViews = [];
-        this._textures = {};
-        this._canvasWidth = window.innerWidth;
-        this._canvasHeight = window.innerHeight;
-
-        this._init();
-    }
-
-    async _init() {
-        await _world_baseView__WEBPACK_IMPORTED_MODULE_7__.BaseView.textureManager.prepareTextures();
-
-        this._app = new pixi_js__WEBPACK_IMPORTED_MODULE_2__.Application({ width: this._canvasWidth, height: this._canvasHeight, background: 0xffffff, });
-        this._el.appendChild(this._app.view);
-
-        this._entityContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_2__.Container();
-        this._app.stage.addChild(this._entityContainer);
-
-        this._bg = new pixi_js__WEBPACK_IMPORTED_MODULE_2__.TilingSprite(_world_baseView__WEBPACK_IMPORTED_MODULE_7__.BaseView.textureManager.getTexture('grass.png'));
-        this._entityContainer.addChild(this._bg);
-
-        this._camera = new _world_camera__WEBPACK_IMPORTED_MODULE_6__.Camera(this._entityContainer, this._bg, { 
-            width: this._canvasWidth, 
-            height: this._canvasHeight
-        });
-
-        this._domainFacade.events.on('wholeWorldInited', this._onWholeWorldInit.bind(this));
-        if (this._domainFacade.isWholeWorldInited()) {
-            this._onWholeWorldInit();
-        }
-
-        this._domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
-    }
-
-    _onWholeWorldInit() {
-        let worldSize = this._domainFacade.getWorldSize();
-
-        this._bg.width = worldSize[0];
-        this._bg.height = worldSize[1];
-
-        this._camera.setMapSize(worldSize[0], worldSize[1]);
-
-        this._buildEntityViews();
-    }
-
-    _onEntityBorn(entity) {
-        this._buildEntityView(entity);
-    }
-
-    _buildEntityViews() {
-        let entities = this._domainFacade.getEntities();
-        entities.forEach(entity => {
-            this._buildEntityView(entity);
-        });
-    }
-
-    _buildEntityView(entity) {
-        switch (entity.type) {
-            case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.BUG:
-                new _world_bugView__WEBPACK_IMPORTED_MODULE_3__.BugView(entity, this._entityContainer);
-                break;
-            case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.TOWN:
-                new _world_townView__WEBPACK_IMPORTED_MODULE_4__.TownView(entity, this._entityContainer);
-                break;
-            case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD:
-                new _world_foodView__WEBPACK_IMPORTED_MODULE_5__.FoodView(entity, this._entityContainer);
-                break;
-        }
-    }
-
 }
 
 
@@ -2006,6 +1898,115 @@ class WorldSpritesheetManager {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/world/worldView.js":
+/*!**********************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/worldView.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "WorldView": () => (/* binding */ WorldView)
+/* harmony export */ });
+/* harmony import */ var _worldStyles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./worldStyles.css */ "./bugs/core/client/app/src/view/world/worldStyles.css");
+/* harmony import */ var _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../domain/entity/entityTypes */ "./bugs/core/client/app/src/domain/entity/entityTypes.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _bugView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./bugView */ "./bugs/core/client/app/src/view/world/bugView.js");
+/* harmony import */ var _townView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./townView */ "./bugs/core/client/app/src/view/world/townView.js");
+/* harmony import */ var _foodView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foodView */ "./bugs/core/client/app/src/view/world/foodView.js");
+/* harmony import */ var _camera__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./camera */ "./bugs/core/client/app/src/view/world/camera.js");
+/* harmony import */ var _baseView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./baseView */ "./bugs/core/client/app/src/view/world/baseView.js");
+
+
+
+
+
+
+
+
+
+
+class WorldView {
+
+    constructor(el, domainFacade) {
+        this._domainFacade = domainFacade;
+        this._el = el;
+        this._entityViews = [];
+        this._textures = {};
+        this._canvasWidth = window.innerWidth;
+        this._canvasHeight = window.innerHeight;
+
+        this._init();
+    }
+
+    async _init() {
+        await _baseView__WEBPACK_IMPORTED_MODULE_7__.BaseView.textureManager.prepareTextures();
+
+        this._app = new pixi_js__WEBPACK_IMPORTED_MODULE_2__.Application({ width: this._canvasWidth, height: this._canvasHeight, background: 0xffffff, });
+        this._el.appendChild(this._app.view);
+
+        this._entityContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_2__.Container();
+        this._app.stage.addChild(this._entityContainer);
+
+        this._bg = new pixi_js__WEBPACK_IMPORTED_MODULE_2__.TilingSprite(_baseView__WEBPACK_IMPORTED_MODULE_7__.BaseView.textureManager.getTexture('grass.png'));
+        this._entityContainer.addChild(this._bg);
+
+        this._camera = new _camera__WEBPACK_IMPORTED_MODULE_6__.Camera(this._entityContainer, this._bg, { 
+            width: this._canvasWidth, 
+            height: this._canvasHeight
+        });
+
+        this._domainFacade.events.on('wholeWorldInited', this._onWholeWorldInit.bind(this));
+        if (this._domainFacade.isWholeWorldInited()) {
+            this._onWholeWorldInit();
+        }
+
+        this._domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
+    }
+
+    _onWholeWorldInit() {
+        let worldSize = this._domainFacade.getWorldSize();
+
+        this._bg.width = worldSize[0];
+        this._bg.height = worldSize[1];
+
+        this._camera.setMapSize(worldSize[0], worldSize[1]);
+
+        this._buildEntityViews();
+    }
+
+    _onEntityBorn(entity) {
+        this._buildEntityView(entity);
+    }
+
+    _buildEntityViews() {
+        let entities = this._domainFacade.getEntities();
+        entities.forEach(entity => {
+            this._buildEntityView(entity);
+        });
+    }
+
+    _buildEntityView(entity) {
+        switch (entity.type) {
+            case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.BUG:
+                new _bugView__WEBPACK_IMPORTED_MODULE_3__.BugView(entity, this._entityContainer);
+                break;
+            case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.TOWN:
+                new _townView__WEBPACK_IMPORTED_MODULE_4__.TownView(entity, this._entityContainer);
+                break;
+            case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD:
+                new _foodView__WEBPACK_IMPORTED_MODULE_5__.FoodView(entity, this._entityContainer);
+                break;
+        }
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/utils/eventEmitter.js":
 /*!************************************************!*\
   !*** ./bugs/core/client/utils/eventEmitter.js ***!
@@ -2160,10 +2161,10 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".popup-container {\r\n    position: ab
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/worldStyles.css":
-/*!*********************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/worldStyles.css ***!
-  \*********************************************************************************************/
+/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/world/worldStyles.css":
+/*!***************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/world/worldStyles.css ***!
+  \***************************************************************************************************/
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2171,16 +2172,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
 /* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
 // Imports
 
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".hidden {\r\n    display: none;\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n}\r\n\r\n.canvas_container {\r\n    display: flex;\r\n    justify-content: center;\r\n}\r\n\r\n.canvas_container canvas {\r\n    /* border: solid 1px */\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/worldStyles.css"],"names":[],"mappings":"AAAA;IACI,aAAa;AACjB;;AAEA;IACI,SAAS;IACT,UAAU;AACd;;AAEA;IACI,aAAa;IACb,uBAAuB;AAC3B;;AAEA;IACI,sBAAsB;AAC1B","sourcesContent":[".hidden {\r\n    display: none;\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n}\r\n\r\n.canvas_container {\r\n    display: flex;\r\n    justify-content: center;\r\n}\r\n\r\n.canvas_container canvas {\r\n    /* border: solid 1px */\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".hidden {\r\n    display: none;\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n}\r\n\r\n.canvas-container {\r\n    display: flex;\r\n    justify-content: center;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/world/worldStyles.css"],"names":[],"mappings":"AAAA;IACI,aAAa;AACjB;;AAEA;IACI,SAAS;IACT,UAAU;AACd;;AAEA;IACI,aAAa;IACb,uBAAuB;AAC3B","sourcesContent":[".hidden {\r\n    display: none;\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n}\r\n\r\n.canvas-container {\r\n    display: flex;\r\n    justify-content: center;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -4302,10 +4303,10 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/worldStyles.css":
-/*!*******************************************************!*\
-  !*** ./bugs/core/client/app/src/view/worldStyles.css ***!
-  \*******************************************************/
+/***/ "./bugs/core/client/app/src/view/world/worldStyles.css":
+/*!*************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/worldStyles.css ***!
+  \*************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4313,19 +4314,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_worldStyles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../node_modules/css-loader/dist/cjs.js!./worldStyles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/worldStyles.css");
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_worldStyles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../node_modules/css-loader/dist/cjs.js!./worldStyles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/world/worldStyles.css");
 
       
       

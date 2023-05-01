@@ -1,12 +1,12 @@
 import './worldStyles.css';
 
-import { EntityTypes } from '../domain/entity/entityTypes';
+import { EntityTypes } from '../../domain/entity/entityTypes';
 import * as PIXI from 'pixi.js';
-import { BugView } from './world/bugView';
-import { TownView } from './world/townView';
-import { FoodView } from './world/foodView';
-import { Camera } from './world/camera';
-import { BaseView } from './world/baseView';
+import { BugView } from './bugView';
+import { TownView } from './townView';
+import { FoodView } from './foodView';
+import { Camera } from './camera';
+import { BaseView } from './baseView';
 
 class WorldView {
 
