@@ -1,6 +1,6 @@
 class Camera {
 
-    static MAP_MARGIN = 40;
+    static MAP_MARGIN = 0;
 
     constructor(container, handler, frameSize) {
         this._container = container;

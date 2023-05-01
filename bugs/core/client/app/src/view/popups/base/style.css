@@ -1,0 +1,33 @@
+.popup-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.popup {
+    border: solid 1px;
+    border-color: gray;
+    min-width: 300px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.popup--header {
+    min-height: 35px;
+    background: bisque;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup--body {
+    background-color: beige;
+    min-height: 200px;
+    padding: 5px;
+}
+
+.popup--footer {
+    background-color: beige;
+    padding: 5px;
+    text-align: center;
+}

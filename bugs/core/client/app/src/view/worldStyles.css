@@ -1,6 +1,10 @@
-
 .hidden {
     display: none;
+}
+
+body {
+    margin: 0;
+    padding: 0;
 }
 
 .canvas_container {
@@ -9,5 +13,5 @@
 }
 
 .canvas_container canvas {
-    border: solid 1px
+    /* border: solid 1px */
 }

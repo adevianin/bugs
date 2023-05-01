@@ -1,3 +1,5 @@
+import './worldStyles.css';
+
 import { EntityTypes } from '../domain/entity/entityTypes';
 import * as PIXI from 'pixi.js';
 import { BugView } from './world/bugView';
@@ -8,14 +10,13 @@ import { BaseView } from './world/baseView';
 
 class WorldView {
 
-    static CANVAS_WIDTH = 1000;
-    static CANVAS_HEIGHT = 500;
-
     constructor(el, domainFacade) {
         this._domainFacade = domainFacade;
         this._el = el;
         this._entityViews = [];
         this._textures = {};
+        this._canvasWidth = window.innerWidth;
+        this._canvasHeight = window.innerHeight;
 
         this._init();
     }
@@ -23,7 +24,7 @@ class WorldView {
     async _init() {
         await BaseView.textureManager.prepareTextures();
 
-        this._app = new PIXI.Application({ width: WorldView.CANVAS_WIDTH, height: WorldView.CANVAS_HEIGHT, background: 0xffffff, });
+        this._app = new PIXI.Application({ width: this._canvasWidth, height: this._canvasHeight, background: 0xffffff, });
         this._el.appendChild(this._app.view);
 
         this._entityContainer = new PIXI.Container();
@@ -33,8 +34,8 @@ class WorldView {
         this._entityContainer.addChild(this._bg);
 
         this._camera = new Camera(this._entityContainer, this._bg, { 
-            width: WorldView.CANVAS_WIDTH, 
-            height: WorldView.CANVAS_HEIGHT
+            width: this._canvasWidth, 
+            height: this._canvasHeight
         });
 
         this._domainFacade.events.on('wholeWorldInited', this._onWholeWorldInit.bind(this));
