@@ -7,11 +7,7 @@ body {
     padding: 0;
 }
 
-.canvas_container {
+.canvas-container {
     display: flex;
     justify-content: center;
-}
-
-.canvas_container canvas {
-    /* border: solid 1px */
 }

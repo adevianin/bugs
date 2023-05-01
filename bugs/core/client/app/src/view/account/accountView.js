@@ -1,8 +1,24 @@
+import template from './template.html';
+
 class AccountView {
 
     constructor(el, domainFacade) {
         this._el = el
         this._domainFacade = domainFacade;
+
+        this._render();
+
+        this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));
+        this._logoutBtn.addEventListener('click', this._onLogoutBtnClick.bind(this));
+        this._registrationBtn.addEventListener('click', this._onRegistrationBtnClick.bind(this));
+        this._switchModeToRegisterBtn.addEventListener('click', this._onSwitchModeToRegisterClick.bind(this));
+        this._switchModeToLoginBtn.addEventListener('click', this._onSwitchModeToLoginClick.bind(this));
+
+        this._renderState();
+    }
+
+    _render() {
+        this._el.innerHTML = template;
 
         this._loginTabEl = this._el.querySelector('[data-login-tab]');
         this._userTabEl = this._el.querySelector('[data-user-tab]');
@@ -19,17 +35,9 @@ class AccountView {
         this._notCorrectCredsErrorEl = this._el.querySelector('[data-not-correct-creds-error]');
         this._passwordDifferentErrorEl = this._el.querySelector('[data-passwords-different-error]');
         this._usernameIsntUniqueErrorEl = this._el.querySelector('[data-username-isnt-unique]');
-
-        this._render();
-        
-        this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));
-        this._logoutBtn.addEventListener('click', this._onLogoutBtnClick.bind(this));
-        this._registrationBtn.addEventListener('click', this._onRegistrationBtnClick.bind(this));
-        this._switchModeToRegisterBtn.addEventListener('click', this._onSwitchModeToRegisterClick.bind(this));
-        this._switchModeToLoginBtn.addEventListener('click', this._onSwitchModeToLoginClick.bind(this));
     }
 
-    _render() {
+    _renderState() {
         let isLoggedIn = this._domainFacade.isLoggedIn();
         this._loginTabEl.classList.toggle('hidden', isLoggedIn);
         this._registrationTabEl.classList.toggle('hidden', isLoggedIn);
@@ -52,7 +60,7 @@ class AccountView {
         let password =  this._loginTabEl.querySelector('[data-password]').value;
         this._domainFacade.login(username, password)
             .then(() => {
-                this._render();
+                this._renderState();
             }).catch(() => {
                 this._toggleNotCorrectLoginPassError(true);
             });
@@ -60,7 +68,7 @@ class AccountView {
 
     _onLogoutBtnClick() {
         this._domainFacade.logout().then(() => {
-            this._render();
+            this._renderState();
         });
     }
 
@@ -78,7 +86,7 @@ class AccountView {
 
                 if (isUnique) {
                     this._domainFacade.register(username, password).then(() => {
-                        this._render();
+                        this._renderState();
                     });
                 }
             });

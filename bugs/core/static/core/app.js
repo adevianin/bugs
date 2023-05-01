@@ -1103,10 +1103,10 @@ class UserApi {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/accountView.js":
-/*!******************************************************!*\
-  !*** ./bugs/core/client/app/src/view/accountView.js ***!
-  \******************************************************/
+/***/ "./bugs/core/client/app/src/view/account/accountView.js":
+/*!**************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/account/accountView.js ***!
+  \**************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1114,11 +1114,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "AccountView": () => (/* binding */ AccountView)
 /* harmony export */ });
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./template.html */ "./bugs/core/client/app/src/view/account/template.html");
+
+
 class AccountView {
 
     constructor(el, domainFacade) {
         this._el = el
         this._domainFacade = domainFacade;
+
+        this._render();
+
+        this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));
+        this._logoutBtn.addEventListener('click', this._onLogoutBtnClick.bind(this));
+        this._registrationBtn.addEventListener('click', this._onRegistrationBtnClick.bind(this));
+        this._switchModeToRegisterBtn.addEventListener('click', this._onSwitchModeToRegisterClick.bind(this));
+        this._switchModeToLoginBtn.addEventListener('click', this._onSwitchModeToLoginClick.bind(this));
+
+        this._renderState();
+    }
+
+    _render() {
+        this._el.innerHTML = _template_html__WEBPACK_IMPORTED_MODULE_0__["default"];
 
         this._loginTabEl = this._el.querySelector('[data-login-tab]');
         this._userTabEl = this._el.querySelector('[data-user-tab]');
@@ -1135,17 +1152,9 @@ class AccountView {
         this._notCorrectCredsErrorEl = this._el.querySelector('[data-not-correct-creds-error]');
         this._passwordDifferentErrorEl = this._el.querySelector('[data-passwords-different-error]');
         this._usernameIsntUniqueErrorEl = this._el.querySelector('[data-username-isnt-unique]');
-
-        this._render();
-        
-        this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));
-        this._logoutBtn.addEventListener('click', this._onLogoutBtnClick.bind(this));
-        this._registrationBtn.addEventListener('click', this._onRegistrationBtnClick.bind(this));
-        this._switchModeToRegisterBtn.addEventListener('click', this._onSwitchModeToRegisterClick.bind(this));
-        this._switchModeToLoginBtn.addEventListener('click', this._onSwitchModeToLoginClick.bind(this));
     }
 
-    _render() {
+    _renderState() {
         let isLoggedIn = this._domainFacade.isLoggedIn();
         this._loginTabEl.classList.toggle('hidden', isLoggedIn);
         this._registrationTabEl.classList.toggle('hidden', isLoggedIn);
@@ -1168,7 +1177,7 @@ class AccountView {
         let password =  this._loginTabEl.querySelector('[data-password]').value;
         this._domainFacade.login(username, password)
             .then(() => {
-                this._render();
+                this._renderState();
             }).catch(() => {
                 this._toggleNotCorrectLoginPassError(true);
             });
@@ -1176,7 +1185,7 @@ class AccountView {
 
     _onLogoutBtnClick() {
         this._domainFacade.logout().then(() => {
-            this._render();
+            this._renderState();
         });
     }
 
@@ -1194,7 +1203,7 @@ class AccountView {
 
                 if (isUnique) {
                     this._domainFacade.register(username, password).then(() => {
-                        this._render();
+                        this._renderState();
                     });
                 }
             });
@@ -1252,7 +1261,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "AppView": () => (/* binding */ AppView)
 /* harmony export */ });
 /* harmony import */ var _worldView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./worldView */ "./bugs/core/client/app/src/view/worldView.js");
-/* harmony import */ var _accountView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./accountView */ "./bugs/core/client/app/src/view/accountView.js");
+/* harmony import */ var _account_accountView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./account/accountView */ "./bugs/core/client/app/src/view/account/accountView.js");
 
 
 
@@ -1268,7 +1277,7 @@ class AppView {
         let worldEl = this._document.querySelector('[data-world]');
         this._worldView = new _worldView__WEBPACK_IMPORTED_MODULE_0__.WorldView(worldEl, this._domainFacade);
         let accountViewEl = this._document.querySelector('[data-account-view]');
-        this._accountView = new _accountView__WEBPACK_IMPORTED_MODULE_1__.AccountView(accountViewEl, this._domainFacade);
+        this._accountView = new _account_accountView__WEBPACK_IMPORTED_MODULE_1__.AccountView(accountViewEl, this._domainFacade);
     }
 
 }
@@ -3843,6 +3852,24 @@ function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
   }
 }
 
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/account/template.html":
+/*!*************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/account/template.html ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div data-login-tab>\r\n    логін\r\n    <div> \r\n        <input type=\"text\" placeholder=\"логін\" data-user-name />\r\n    </div>\r\n    <div>\r\n        <input type=\"password\" placeholder=\"пароль\" data-password />\r\n    </div>\r\n    <div data-not-correct-creds-error>логін чи пароль не вірні</div>\r\n    <div>\r\n        <button data-login-btn>залогінитись</button>\r\n    </div>\r\n    <button data-switch-to-register-btn>реєструватись</button>\r\n</div>\r\n<div data-registration-tab>\r\n    реєстрація\r\n    <div>\r\n        <input type=\"text\" placeholder=\"логін\" data-user-name />\r\n    </div>\r\n    <div>\r\n        <input type=\"password\" placeholder=\"пароль\" data-password />\r\n    </div>\r\n    <div>\r\n        <input type=\"password\" placeholder=\"підтвердження пароля\" data-password-confirm />\r\n    </div>\r\n    <div data-passwords-different-error>паролі не співпадають</div>\r\n    <div data-username-isnt-unique>логін занятий</div>\r\n    <div>\r\n        <button data-registration-btn>зареєструватись</button>\r\n    </div>\r\n    <button data-switch-to-login-btn>логінитись</button>\r\n</div>\r\n<div data-user-tab>\r\n    логін: <span data-username></span>\r\n    <button data-logout-btn>вийти</button>\r\n</div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
 /***/ }),
 
