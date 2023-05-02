@@ -14,7 +14,7 @@ function initDomainLayer(userApi, serverConnection, initialData) {
     let actionFactory = new ActionFactory(world);
 
     let worldService = new WorldService(world, worldFactory, mainEventBus);
-    let userService = new UserService(userApi, initialData.user);
+    let userService = new UserService(userApi, initialData.user, mainEventBus);
     let actionService = new ActionService(actionFactory, world);
     let messageHandlerService = new MessageHandlerService(serverConnection, worldService, actionService);
 

@@ -1,36 +1,40 @@
-<div data-login-tab>
-    логін
-    <div> 
-        <input type="text" placeholder="логін" data-user-name />
-    </div>
-    <div>
-        <input type="password" placeholder="пароль" data-password />
-    </div>
-    <div data-not-correct-creds-error>логін чи пароль не вірні</div>
-    <div>
+<div class="account-tab" data-login-tab>
+    <span class="account--title">
+        Логін
+    </span>
+    <ul class="account--fields-list">
+        <li>
+            <input type="text" placeholder="логін" data-user-name />
+        </li>
+        <li>
+            <input type="password" placeholder="пароль" data-password />
+        </li>
+    </ul>
+    <div class="account--error" data-not-correct-creds-error>логін чи пароль не вірні</div>
+    <div class="account--buttons-container">
         <button data-login-btn>залогінитись</button>
+        <a href="#" data-switch-to-register-btn>реєструватись</a>
     </div>
-    <button data-switch-to-register-btn>реєструватись</button>
 </div>
-<div data-registration-tab>
-    реєстрація
-    <div>
-        <input type="text" placeholder="логін" data-user-name />
-    </div>
-    <div>
-        <input type="password" placeholder="пароль" data-password />
-    </div>
-    <div>
-        <input type="password" placeholder="підтвердження пароля" data-password-confirm />
-    </div>
-    <div data-passwords-different-error>паролі не співпадають</div>
-    <div data-username-isnt-unique>логін занятий</div>
-    <div>
+<div class="account-tab" data-registration-tab>
+    <span class="account--title">
+        Реєстрація
+    </span>
+    <ul class="account--fields-list">
+        <li>
+            <input type="text" placeholder="логін" data-user-name />
+        </li>
+        <li>
+            <input type="password" placeholder="пароль" data-password />
+        </li>
+        <li>
+            <input type="password" placeholder="підтвердження пароля" data-password-confirm />
+        </li>
+    </ul>
+    <div class="account--error" data-passwords-different-error>паролі не співпадають</div>
+    <div class="account--error" data-username-isnt-unique>логін занятий</div>
+    <div class="account--buttons-container">
         <button data-registration-btn>зареєструватись</button>
+        <a href="#" data-switch-to-login-btn>логінитись</a>
     </div>
-    <button data-switch-to-login-btn>логінитись</button>
-</div>
-<div data-user-tab>
-    логін: <span data-username></span>
-    <button data-logout-btn>вийти</button>
 </div>

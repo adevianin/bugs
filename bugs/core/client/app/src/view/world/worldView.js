@@ -18,7 +18,11 @@ class WorldView {
         this._canvasWidth = window.innerWidth;
         this._canvasHeight = window.innerHeight;
 
+        this._domainFacade.events.on('loginStatusChanged', this._renderLoginStatus.bind(this));
+
         this._init();
+
+        this._renderLoginStatus();
     }
 
     async _init() {
@@ -44,6 +48,10 @@ class WorldView {
         }
 
         this._domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
+    }
+
+    _toggle(isEnabled) {
+        this._el.classList.toggle('hidden', !isEnabled);
     }
 
     _onWholeWorldInit() {
@@ -80,6 +88,11 @@ class WorldView {
                 new FoodView(entity, this._entityContainer);
                 break;
         }
+    }
+
+    _renderLoginStatus() {
+        let isLoggedIn = this._domainFacade.isLoggedIn();
+        this._toggle(isLoggedIn);
     }
 
 }
