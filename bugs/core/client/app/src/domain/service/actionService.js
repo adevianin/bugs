@@ -5,7 +5,13 @@ class ActionService {
         this._world = world;
     }
 
-    playAction(actionJson) {
+    playActions(actionsJson) {
+        actionsJson.forEach(actionJson => {
+            this._playAction(actionJson);
+        });
+    }
+
+    _playAction(actionJson) {
         let action = this._actionFactory.buildAction(actionJson);
         let entity = this._world.findEntityById(action.entityId);
         entity.addAction(action);

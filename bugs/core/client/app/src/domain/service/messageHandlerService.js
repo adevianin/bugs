@@ -19,6 +19,7 @@ class MessageHandlerService {
         switch(msg.type) {
             case 'whole_world':
                 this._worldService.initWorld(msg.world);
+                this._actionService.playActions(msg.actions);
                 break;
             case 'entity_changed':
                 this._worldService.updateEntity(msg.entity);
@@ -26,8 +27,8 @@ class MessageHandlerService {
             case 'entity_born':
                 this._worldService.giveBirthToEntity(msg.entity);
                 break;
-            case 'entity_action':
-                this._actionService.playAction(msg.action);
+            case 'step_actions':
+                this._actionService.playActions(msg.actions);
                 break;
             default: 
                 throw `unknown type of message "${ msg.type }"`

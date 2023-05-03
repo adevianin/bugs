@@ -47,6 +47,12 @@ class WorldFacade:
     def get_world_json(self):
         return self._world.to_json()
     
+    def get_previous_step_world_state(self):
+        return self._world.get_prev_step_state()
+    
+    def get_previous_step_actions(self):
+        return self._world.get_prev_step_actions()
+    
     def run(self):
         self._world.run()
 
