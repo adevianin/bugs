@@ -638,6 +638,7 @@ class World {
 
     clear() {
         this._entities = [];
+        this._eventBus.emit('worldCleared');
     }
 
     _on_died(entity) {
@@ -1554,7 +1555,9 @@ class BaseView {
         BaseView.popupManager = popupManager;
     }
 
-    remove(){}
+    remove(){
+        throw 'remove method is abstract';
+    }
 
 }
 
@@ -1600,10 +1603,20 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         
         this._render();
 
-        this._entity.on('positionChanged', this._render.bind(this));
-        this._entity.on('stateChanged', this._onBugStateChanged.bind(this));
-        this._entity.on('onFoodLift', this._onFoodLift.bind(this));
-        this._entity.on('onFoodDrop', this._onFoodDrop.bind(this));
+        this._unbindPosChangedListener = this._entity.on('positionChanged', this._render.bind(this));
+        this._unbindStateChangeListener = this._entity.on('stateChanged', this._onBugStateChanged.bind(this));
+        this._unbindFoodLiftListener = this._entity.on('onFoodLift', this._onFoodLift.bind(this));
+        this._unbindFoodDropListener = this._entity.on('onFoodDrop', this._onFoodDrop.bind(this));
+    }
+
+    remove() {
+        super.remove();
+        this._entityContainer.removeChild(this._standSprite);
+        this._entityContainer.removeChild(this._walkSprite);
+        this._unbindPosChangedListener();
+        this._unbindStateChangeListener();
+        this._unbindFoodLiftListener();
+        this._unbindFoodDropListener();
     }
 
     _render() {
@@ -1782,6 +1795,35 @@ class EntityView extends _baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/world/foodArea.js":
+/*!*********************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/foodArea.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "FoodAreaView": () => (/* binding */ FoodAreaView)
+/* harmony export */ });
+/* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
+
+
+class FoodAreaView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
+
+    constructor(entity, entityContainer) {
+        super(entity, entityContainer);
+    }
+
+    remove() {
+        super.remove();
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/world/foodView.js":
 /*!*********************************************************!*\
   !*** ./bugs/core/client/app/src/view/world/foodView.js ***!
@@ -1906,6 +1948,10 @@ class TownView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._sprite.on('pointerdown', this._onClick.bind(this));
     }
 
+    remove() {
+        super.remove();
+    }
+
     _onClick() {
         TownView.popupManager.openTownPopup(this._entity);
     }
@@ -1986,6 +2032,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foodView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foodView */ "./bugs/core/client/app/src/view/world/foodView.js");
 /* harmony import */ var _camera__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./camera */ "./bugs/core/client/app/src/view/world/camera.js");
 /* harmony import */ var _baseView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./baseView */ "./bugs/core/client/app/src/view/world/baseView.js");
+/* harmony import */ var _foodArea__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./foodArea */ "./bugs/core/client/app/src/view/world/foodArea.js");
+
 
 
 
@@ -2007,6 +2055,7 @@ class WorldView {
         this._canvasHeight = window.innerHeight;
 
         this._domainFacade.events.on('loginStatusChanged', this._renderLoginStatus.bind(this));
+        this._domainFacade.events.on('worldCleared', this._onWorldCleared.bind(this));
 
         this._init();
 
@@ -2060,27 +2109,36 @@ class WorldView {
     _buildEntityViews() {
         let entities = this._domainFacade.getEntities();
         entities.forEach(entity => {
-            this._buildEntityView(entity);
+            let view = this._buildEntityView(entity);
+            this._entityViews.push(view);
         });
     }
 
     _buildEntityView(entity) {
         switch (entity.type) {
             case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.BUG:
-                new _bugView__WEBPACK_IMPORTED_MODULE_3__.BugView(entity, this._entityContainer);
-                break;
+                return new _bugView__WEBPACK_IMPORTED_MODULE_3__.BugView(entity, this._entityContainer);
             case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.TOWN:
-                new _townView__WEBPACK_IMPORTED_MODULE_4__.TownView(entity, this._entityContainer);
-                break;
+                return new _townView__WEBPACK_IMPORTED_MODULE_4__.TownView(entity, this._entityContainer);
             case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD:
-                new _foodView__WEBPACK_IMPORTED_MODULE_5__.FoodView(entity, this._entityContainer);
-                break;
+                return new _foodView__WEBPACK_IMPORTED_MODULE_5__.FoodView(entity, this._entityContainer);
+            case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD_AREA:
+                return new _foodArea__WEBPACK_IMPORTED_MODULE_8__.FoodAreaView(entity, this._entityContainer);
+            default:
+                throw 'unknown type of entity';
         }
     }
 
     _renderLoginStatus() {
         let isLoggedIn = this._domainFacade.isLoggedIn();
         this._toggle(isLoggedIn);
+    }
+
+    _onWorldCleared() {
+        this._entityViews.forEach(view => {
+            view.remove();
+        });
+        this._entityViews = [];
     }
 
 }

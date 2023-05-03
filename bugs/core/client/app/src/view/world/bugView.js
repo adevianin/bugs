@@ -22,10 +22,20 @@ class BugView extends EntityView {
         
         this._render();
 
-        this._entity.on('positionChanged', this._render.bind(this));
-        this._entity.on('stateChanged', this._onBugStateChanged.bind(this));
-        this._entity.on('onFoodLift', this._onFoodLift.bind(this));
-        this._entity.on('onFoodDrop', this._onFoodDrop.bind(this));
+        this._unbindPosChangedListener = this._entity.on('positionChanged', this._render.bind(this));
+        this._unbindStateChangeListener = this._entity.on('stateChanged', this._onBugStateChanged.bind(this));
+        this._unbindFoodLiftListener = this._entity.on('onFoodLift', this._onFoodLift.bind(this));
+        this._unbindFoodDropListener = this._entity.on('onFoodDrop', this._onFoodDrop.bind(this));
+    }
+
+    remove() {
+        super.remove();
+        this._entityContainer.removeChild(this._standSprite);
+        this._entityContainer.removeChild(this._walkSprite);
+        this._unbindPosChangedListener();
+        this._unbindStateChangeListener();
+        this._unbindFoodLiftListener();
+        this._unbindFoodDropListener();
     }
 
     _render() {

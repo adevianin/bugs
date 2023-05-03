@@ -7,6 +7,7 @@ import { TownView } from './townView';
 import { FoodView } from './foodView';
 import { Camera } from './camera';
 import { BaseView } from './baseView';
+import { FoodAreaView } from './foodArea';
 
 class WorldView {
 
@@ -19,6 +20,7 @@ class WorldView {
         this._canvasHeight = window.innerHeight;
 
         this._domainFacade.events.on('loginStatusChanged', this._renderLoginStatus.bind(this));
+        this._domainFacade.events.on('worldCleared', this._onWorldCleared.bind(this));
 
         this._init();
 
@@ -72,27 +74,36 @@ class WorldView {
     _buildEntityViews() {
         let entities = this._domainFacade.getEntities();
         entities.forEach(entity => {
-            this._buildEntityView(entity);
+            let view = this._buildEntityView(entity);
+            this._entityViews.push(view);
         });
     }
 
     _buildEntityView(entity) {
         switch (entity.type) {
             case EntityTypes.BUG:
-                new BugView(entity, this._entityContainer);
-                break;
+                return new BugView(entity, this._entityContainer);
             case EntityTypes.TOWN:
-                new TownView(entity, this._entityContainer);
-                break;
+                return new TownView(entity, this._entityContainer);
             case EntityTypes.FOOD:
-                new FoodView(entity, this._entityContainer);
-                break;
+                return new FoodView(entity, this._entityContainer);
+            case EntityTypes.FOOD_AREA:
+                return new FoodAreaView(entity, this._entityContainer);
+            default:
+                throw 'unknown type of entity';
         }
     }
 
     _renderLoginStatus() {
         let isLoggedIn = this._domainFacade.isLoggedIn();
         this._toggle(isLoggedIn);
+    }
+
+    _onWorldCleared() {
+        this._entityViews.forEach(view => {
+            view.remove();
+        });
+        this._entityViews = [];
     }
 
 }

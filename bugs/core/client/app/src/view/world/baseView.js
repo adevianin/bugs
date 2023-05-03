@@ -11,7 +11,9 @@ class BaseView {
         BaseView.popupManager = popupManager;
     }
 
-    remove(){}
+    remove(){
+        throw 'remove method is abstract';
+    }
 
 }
 

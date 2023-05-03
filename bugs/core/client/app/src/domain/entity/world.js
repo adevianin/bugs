@@ -47,6 +47,7 @@ class World {
 
     clear() {
         this._entities = [];
+        this._eventBus.emit('worldCleared');
     }
 
     _on_died(entity) {

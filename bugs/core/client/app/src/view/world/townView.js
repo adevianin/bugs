@@ -18,6 +18,10 @@ class TownView extends EntityView {
         this._sprite.on('pointerdown', this._onClick.bind(this));
     }
 
+    remove() {
+        super.remove();
+    }
+
     _onClick() {
         TownView.popupManager.openTownPopup(this._entity);
     }
