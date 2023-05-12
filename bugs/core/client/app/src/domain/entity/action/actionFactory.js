@@ -28,6 +28,10 @@ class ActionFactory {
 
     _buildFoodPickedAction(actionJson) {
         let food = this._world.findEntityById(actionJson.action_data.food_id);
+        console.log(food);
+        if (!food) {
+            throw `food not found id = ${actionJson.action_data.food_id}`
+        }
         return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {
             food
         });

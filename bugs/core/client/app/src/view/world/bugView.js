@@ -7,6 +7,26 @@ class BugView extends EntityView {
     constructor(entity, entityContainer) {
         super(entity, entityContainer);
 
+        this._render();
+
+        this._unbindPosChangedListener = this._entity.on('positionChanged', this._onBugPositionChange.bind(this));
+        this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderBugCurrentState.bind(this));
+        this._unbindFoodLiftListener = this._entity.on('foodLift', this._onFoodLift.bind(this));
+        this._unbindFoodDropListener = this._entity.on('foodDrop', this._removePickedFoodView.bind(this));
+    }
+
+    remove() {
+        super.remove();
+        this._entityContainer.removeChild(this._standSprite);
+        this._entityContainer.removeChild(this._walkSprite);
+        this._unbindPosChangedListener();
+        this._unbindStateChangeListener();
+        this._unbindFoodLiftListener();
+        this._unbindFoodDropListener();
+        this._removePickedFoodView();
+    }
+
+    _render() {
         this._activeSprite = null;
 
         this._standSprite = new PIXI.Sprite(BugView.textureManager.getTexture('bug4.png'));
@@ -18,55 +38,54 @@ class BugView extends EntityView {
         this._walkSprite.animationSpeed = 0.2;
         this._entityContainer.addChild(this._walkSprite);
 
-        this._activateCurrentState();
-        
-        this._render();
-
-        this._unbindPosChangedListener = this._entity.on('positionChanged', this._render.bind(this));
-        this._unbindStateChangeListener = this._entity.on('stateChanged', this._onBugStateChanged.bind(this));
-        this._unbindFoodLiftListener = this._entity.on('onFoodLift', this._onFoodLift.bind(this));
-        this._unbindFoodDropListener = this._entity.on('onFoodDrop', this._onFoodDrop.bind(this));
-    }
-
-    remove() {
-        super.remove();
-        this._entityContainer.removeChild(this._standSprite);
-        this._entityContainer.removeChild(this._walkSprite);
-        this._unbindPosChangedListener();
-        this._unbindStateChangeListener();
-        this._unbindFoodLiftListener();
-        this._unbindFoodDropListener();
-    }
-
-    _render() {
-        this._activeSprite.x = this._entity.position.x;
-        this._activeSprite.y = this._entity.position.y;
-        this._activeSprite.angle = this._entity.angle;
-        if (this._entity.hasPickedFood()) {
-            this._entity.pickedFood.setPosition(this._entity.position.x, this._entity.position.y - 15);
+        this._renderBugCurrentState();
+        this._renderBugPosition();
+        if (this._entity.hasPickedFood()) { 
+            this._renderPickedFoodView();
+            this._renderPickedFoodPosition();
         }
     }
 
     _onFoodLift() {
-        this._pickedFoodView = new PickedFoodView(this._entity.pickedFood, this._entityContainer);
-        this._render();
+        this._renderPickedFoodView();
+        this._renderPickedFoodPosition();
     }
 
-    _onFoodDrop() {
-        this._pickedFoodView.remove();
-        this._render();
+    _onBugPositionChange() {
+        this._renderBugPosition();
+        if (this._entity.hasPickedFood()) { 
+            this._renderPickedFoodPosition();
+        }
     }
 
-    _onBugStateChanged() {
-        this._activateCurrentState();
+    _removePickedFoodView() {
+        if (this._pickedFoodView) {
+            this._pickedFoodView.remove();
+            this._pickedFoodView = null;
+        }
     }
 
-    _activateCurrentState() {
+    _renderPickedFoodView() {
+        if (!this._pickedFoodView) {
+            this._pickedFoodView = new PickedFoodView(this._entity.pickedFood, this._entityContainer);
+        }
+    }
+
+    _renderPickedFoodPosition() {
+        this._entity.pickedFood.setPosition(this._entity.position.x, this._entity.position.y - 15);
+    }
+
+    _renderBugPosition() {
+        this._activeSprite.x = this._entity.position.x;
+        this._activeSprite.y = this._entity.position.y;
+        this._activeSprite.angle = this._entity.angle;
+    }
+
+    _renderBugCurrentState() {
         let state = this._entity.state;
 
         this._toggleStandingState(state == 'standing');
         this._toggleWalkingState(state == 'walking');
-        this._render();
     }
 
     _toggleWalkingState(isEnabling) {
@@ -88,7 +107,6 @@ class BugView extends EntityView {
             this._standSprite.renderable = false;
         }
     }
-
    
 }
 

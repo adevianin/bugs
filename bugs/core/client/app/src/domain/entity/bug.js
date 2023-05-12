@@ -4,9 +4,10 @@ import { ACTION_TYPES } from './action/actionTypes';
 
 class Bug extends Entity {
 
-    constructor(eventBus, id, position) {
+    constructor(eventBus, id, position, pickedFoodId) {
         super(eventBus, id, position, EntityTypes.BUG);
         this.pickedFood = null;
+        this.pickedFoodId = pickedFoodId;
         this._angle = 0;
         this._setState('standing');
     }
@@ -41,6 +42,21 @@ class Bug extends Entity {
         return !!this.pickedFood;
     }
 
+    pickupFood(food) {
+        console.log(`picking food id = ${food.id}`);
+        this.pickedFoodId = food.id;
+        this.pickedFood = food;
+        food.die();
+        this.emit('foodLift');
+    }
+
+    dropFood() {
+        console.log(`drop food id = ${this.pickedFood.id}`);
+        this.pickedFoodId = null;
+        this.pickedFood = null;
+        this.emit('foodDrop')
+    }
+
     _playWalkAction(action) {
         let wholeWalkTime = action.time * 1000;
         let walkStartAt = Date.now();
@@ -69,9 +85,7 @@ class Bug extends Entity {
         this._setState('standing');
         return new Promise((res) => {
             setTimeout(() => {
-                this.pickedFood = action.additionalData.food;
-                this.pickedFood.die();
-                this.emit('onFoodLift');
+                this.pickupFood(action.additionalData.food);
                 res();
             }, action.time * 1000)
         });
@@ -81,8 +95,7 @@ class Bug extends Entity {
         this._setState('standing');
         return new Promise((res) => {
             setTimeout(() => {
-                this.pickedFood = null;
-                this.emit('onFoodDrop')
+                this.dropFood();
                 res();
             }, action.time * 1000)
         });

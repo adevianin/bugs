@@ -21,7 +21,7 @@ class Bug(LiveEntity):
     def to_json(self):
         json = super().to_json()
         json.update({
-            'is_food_picked': self._body.is_food_picked
+            'picked_food_id': self._body.picked_food.id if self._body.is_food_picked else None
         })
 
         return json

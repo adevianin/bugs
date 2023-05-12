@@ -15,8 +15,8 @@ class WorldFactory {
         return new World(this.mainEventBus);
     }
 
-    buildBug(id, position) {
-        return new Bug(this.mainEventBus, id, position);
+    buildBug(id, position, pickedFoodId) {
+        return new Bug(this.mainEventBus, id, position, pickedFoodId);
     }
 
     buildTown(id, position, color) {
@@ -34,7 +34,7 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case EntityTypes.BUG:
-                return this.buildBug(entityJson.id, entityJson.position);
+                return this.buildBug(entityJson.id, entityJson.position, entityJson.picked_food_id);
             case EntityTypes.TOWN:
                 return this.buildTown(entityJson.id, entityJson.position, entityJson.color);
             case EntityTypes.FOOD:

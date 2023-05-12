@@ -1,3 +1,5 @@
+import { EntityTypes } from './entityTypes';
+
 class World {
     constructor(eventBus) {
         this._eventBus = eventBus;
@@ -16,6 +18,10 @@ class World {
 
     get size() {
         return this._size;
+    }
+
+    getBugs() {
+        return this.findEntityByType(EntityTypes.BUG);
     }
 
     addEntity(entity) {
@@ -43,6 +49,17 @@ class World {
 
     findEntityById(id) {
         return this._entities.find( entity => entity.id === id);
+    }
+
+    findEntityByType(type) {
+        let foundEntities = [];
+        this._entities.forEach(e => {
+            if (e.type == type) {
+                foundEntities.push(e);
+            }
+        });
+
+        return foundEntities;
     }
 
     clear() {

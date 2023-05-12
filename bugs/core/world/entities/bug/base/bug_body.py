@@ -13,6 +13,10 @@ class BugBody(Body):
     @property
     def is_food_picked(self):
         return self._picked_food is not None
+    
+    @property
+    def picked_food(self):
+        return self._picked_food
 
     def pick_up_food(self, food: Food):
         if (self._time_points >= MIN_TIME_POINTS_ACTION_COST):

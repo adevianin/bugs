@@ -156,6 +156,10 @@ class ActionFactory {
 
     _buildFoodPickedAction(actionJson) {
         let food = this._world.findEntityById(actionJson.action_data.food_id);
+        console.log(food);
+        if (!food) {
+            throw `food not found id = ${actionJson.action_data.food_id}`
+        }
         return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {
             food
         });
@@ -225,9 +229,10 @@ __webpack_require__.r(__webpack_exports__);
 
 class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, id, position) {
+    constructor(eventBus, id, position, pickedFoodId) {
         super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.BUG);
         this.pickedFood = null;
+        this.pickedFoodId = pickedFoodId;
         this._angle = 0;
         this._setState('standing');
     }
@@ -262,6 +267,21 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         return !!this.pickedFood;
     }
 
+    pickupFood(food) {
+        console.log(`picking food id = ${food.id}`);
+        this.pickedFoodId = food.id;
+        this.pickedFood = food;
+        food.die();
+        this.emit('foodLift');
+    }
+
+    dropFood() {
+        console.log(`drop food id = ${this.pickedFood.id}`);
+        this.pickedFoodId = null;
+        this.pickedFood = null;
+        this.emit('foodDrop')
+    }
+
     _playWalkAction(action) {
         let wholeWalkTime = action.time * 1000;
         let walkStartAt = Date.now();
@@ -290,9 +310,7 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this._setState('standing');
         return new Promise((res) => {
             setTimeout(() => {
-                this.pickedFood = action.additionalData.food;
-                this.pickedFood.die();
-                this.emit('onFoodLift');
+                this.pickupFood(action.additionalData.food);
                 res();
             }, action.time * 1000)
         });
@@ -302,8 +320,7 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this._setState('standing');
         return new Promise((res) => {
             setTimeout(() => {
-                this.pickedFood = null;
-                this.emit('onFoodDrop')
+                this.dropFood();
                 res();
             }, action.time * 1000)
         });
@@ -589,6 +606,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "World": () => (/* binding */ World)
 /* harmony export */ });
+/* harmony import */ var _entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityTypes */ "./bugs/core/client/app/src/domain/entity/entityTypes.js");
+
+
 class World {
     constructor(eventBus) {
         this._eventBus = eventBus;
@@ -607,6 +627,10 @@ class World {
 
     get size() {
         return this._size;
+    }
+
+    getBugs() {
+        return this.findEntityByType(_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.BUG);
     }
 
     addEntity(entity) {
@@ -634,6 +658,17 @@ class World {
 
     findEntityById(id) {
         return this._entities.find( entity => entity.id === id);
+    }
+
+    findEntityByType(type) {
+        let foundEntities = [];
+        this._entities.forEach(e => {
+            if (e.type == type) {
+                foundEntities.push(e);
+            }
+        });
+
+        return foundEntities;
     }
 
     clear() {
@@ -765,6 +800,7 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
+        console.log(msg)
         switch(msg.type) {
             case 'whole_world':
                 this._worldService.initWorld(msg.world);
@@ -880,12 +916,14 @@ class WorldService {
     }
 
     initWorld(worldJson) {
-        console.log(worldJson)
         worldJson.entities.forEach(entityJson => { 
             let entity = this._worldFactory.buildEntity(entityJson);
             this._world.addEntity(entity); 
         });
         this._world.size = worldJson.size;
+
+        this._runBugs();
+
         this._isWholeWorldInited = true;
         this._mainEventBus.emit('wholeWorldInited');
     }
@@ -911,6 +949,19 @@ class WorldService {
 
     isWholeWorldInited() {
         return this._isWholeWorldInited;
+    }
+
+    _runBugs() {
+        let bugs = this._world.getBugs();
+
+        //put food in bugs hands
+        bugs.forEach(bug => {
+            if (bug.pickedFoodId) {
+                let food = this._world.findEntityById(bug.pickedFoodId);
+                bug.pickupFood(food);
+            }
+        });
+        
     }
 }
 
@@ -952,8 +1003,8 @@ class WorldFactory {
         return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this.mainEventBus);
     }
 
-    buildBug(id, position) {
-        return new _entity_bug__WEBPACK_IMPORTED_MODULE_1__.Bug(this.mainEventBus, id, position);
+    buildBug(id, position, pickedFoodId) {
+        return new _entity_bug__WEBPACK_IMPORTED_MODULE_1__.Bug(this.mainEventBus, id, position, pickedFoodId);
     }
 
     buildTown(id, position, color) {
@@ -971,7 +1022,7 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.BUG:
-                return this.buildBug(entityJson.id, entityJson.position);
+                return this.buildBug(entityJson.id, entityJson.position, entityJson.picked_food_id);
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:
                 return this.buildTown(entityJson.id, entityJson.position, entityJson.color);
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
@@ -1595,6 +1646,26 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     constructor(entity, entityContainer) {
         super(entity, entityContainer);
 
+        this._render();
+
+        this._unbindPosChangedListener = this._entity.on('positionChanged', this._onBugPositionChange.bind(this));
+        this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderBugCurrentState.bind(this));
+        this._unbindFoodLiftListener = this._entity.on('foodLift', this._onFoodLift.bind(this));
+        this._unbindFoodDropListener = this._entity.on('foodDrop', this._removePickedFoodView.bind(this));
+    }
+
+    remove() {
+        super.remove();
+        this._entityContainer.removeChild(this._standSprite);
+        this._entityContainer.removeChild(this._walkSprite);
+        this._unbindPosChangedListener();
+        this._unbindStateChangeListener();
+        this._unbindFoodLiftListener();
+        this._unbindFoodDropListener();
+        this._removePickedFoodView();
+    }
+
+    _render() {
         this._activeSprite = null;
 
         this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(BugView.textureManager.getTexture('bug4.png'));
@@ -1606,55 +1677,54 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._walkSprite.animationSpeed = 0.2;
         this._entityContainer.addChild(this._walkSprite);
 
-        this._activateCurrentState();
-        
-        this._render();
-
-        this._unbindPosChangedListener = this._entity.on('positionChanged', this._render.bind(this));
-        this._unbindStateChangeListener = this._entity.on('stateChanged', this._onBugStateChanged.bind(this));
-        this._unbindFoodLiftListener = this._entity.on('onFoodLift', this._onFoodLift.bind(this));
-        this._unbindFoodDropListener = this._entity.on('onFoodDrop', this._onFoodDrop.bind(this));
-    }
-
-    remove() {
-        super.remove();
-        this._entityContainer.removeChild(this._standSprite);
-        this._entityContainer.removeChild(this._walkSprite);
-        this._unbindPosChangedListener();
-        this._unbindStateChangeListener();
-        this._unbindFoodLiftListener();
-        this._unbindFoodDropListener();
-    }
-
-    _render() {
-        this._activeSprite.x = this._entity.position.x;
-        this._activeSprite.y = this._entity.position.y;
-        this._activeSprite.angle = this._entity.angle;
-        if (this._entity.hasPickedFood()) {
-            this._entity.pickedFood.setPosition(this._entity.position.x, this._entity.position.y - 15);
+        this._renderBugCurrentState();
+        this._renderBugPosition();
+        if (this._entity.hasPickedFood()) { 
+            this._renderPickedFoodView();
+            this._renderPickedFoodPosition();
         }
     }
 
     _onFoodLift() {
-        this._pickedFoodView = new _pickedFood__WEBPACK_IMPORTED_MODULE_2__.PickedFoodView(this._entity.pickedFood, this._entityContainer);
-        this._render();
+        this._renderPickedFoodView();
+        this._renderPickedFoodPosition();
     }
 
-    _onFoodDrop() {
-        this._pickedFoodView.remove();
-        this._render();
+    _onBugPositionChange() {
+        this._renderBugPosition();
+        if (this._entity.hasPickedFood()) { 
+            this._renderPickedFoodPosition();
+        }
     }
 
-    _onBugStateChanged() {
-        this._activateCurrentState();
+    _removePickedFoodView() {
+        if (this._pickedFoodView) {
+            this._pickedFoodView.remove();
+            this._pickedFoodView = null;
+        }
     }
 
-    _activateCurrentState() {
+    _renderPickedFoodView() {
+        if (!this._pickedFoodView) {
+            this._pickedFoodView = new _pickedFood__WEBPACK_IMPORTED_MODULE_2__.PickedFoodView(this._entity.pickedFood, this._entityContainer);
+        }
+    }
+
+    _renderPickedFoodPosition() {
+        this._entity.pickedFood.setPosition(this._entity.position.x, this._entity.position.y - 15);
+    }
+
+    _renderBugPosition() {
+        this._activeSprite.x = this._entity.position.x;
+        this._activeSprite.y = this._entity.position.y;
+        this._activeSprite.angle = this._entity.angle;
+    }
+
+    _renderBugCurrentState() {
         let state = this._entity.state;
 
         this._toggleStandingState(state == 'standing');
         this._toggleWalkingState(state == 'walking');
-        this._render();
     }
 
     _toggleWalkingState(isEnabling) {
@@ -1676,7 +1746,6 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
             this._standSprite.renderable = false;
         }
     }
-
    
 }
 

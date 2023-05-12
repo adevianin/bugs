@@ -13,12 +13,14 @@ class WorldService {
     }
 
     initWorld(worldJson) {
-        console.log(worldJson)
         worldJson.entities.forEach(entityJson => { 
             let entity = this._worldFactory.buildEntity(entityJson);
             this._world.addEntity(entity); 
         });
         this._world.size = worldJson.size;
+
+        this._runBugs();
+
         this._isWholeWorldInited = true;
         this._mainEventBus.emit('wholeWorldInited');
     }
@@ -44,6 +46,19 @@ class WorldService {
 
     isWholeWorldInited() {
         return this._isWholeWorldInited;
+    }
+
+    _runBugs() {
+        let bugs = this._world.getBugs();
+
+        //put food in bugs hands
+        bugs.forEach(bug => {
+            if (bug.pickedFoodId) {
+                let food = this._world.findEntityById(bug.pickedFoodId);
+                bug.pickupFood(food);
+            }
+        });
+        
     }
 }
 
