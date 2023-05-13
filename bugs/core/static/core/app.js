@@ -144,7 +144,11 @@ class ActionFactory {
             case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.FOOD_GAVE:
                 return this._buildFoodGaveAction(actionJson);
             case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.EAT_FOOD:
-                return this._buildEatFoodAction(actionJson)
+                return this._buildEatFoodAction(actionJson);
+            case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.ENTITY_BORN:
+                return this._buildEntityBornAction(actionJson);
+            default:
+                throw `unknown type of action '${actionJson.action_type}'`
         }
     }
 
@@ -156,7 +160,6 @@ class ActionFactory {
 
     _buildFoodPickedAction(actionJson) {
         let food = this._world.findEntityById(actionJson.action_data.food_id);
-        console.log(food);
         if (!food) {
             throw `food not found id = ${actionJson.action_data.food_id}`
         }
@@ -175,6 +178,12 @@ class ActionFactory {
 
     _buildFoodGaveAction(actionJson) {
         return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time);
+    }
+
+    _buildEntityBornAction(actionJson) {
+        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {
+            entityJson: actionJson.action_data.entity
+        });
     }
 
     _buildAction(entityId, actionType, time, data) {
@@ -201,7 +210,8 @@ const ACTION_TYPES = {
     WALK: 'walk',
     FOOD_PICKED: 'food_picked',
     FOOD_GAVE: 'picked_food_gave',
-    EAT_FOOD: 'eat_food'
+    EAT_FOOD: 'eat_food',
+    ENTITY_BORN: 'entity_born'
 
 };
 
@@ -268,7 +278,6 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     pickupFood(food) {
-        console.log(`picking food id = ${food.id}`);
         this.pickedFoodId = food.id;
         this.pickedFood = food;
         food.die();
@@ -276,7 +285,6 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     dropFood() {
-        console.log(`drop food id = ${this.pickedFood.id}`);
         this.pickedFoodId = null;
         this.pickedFood = null;
         this.emit('foodDrop')
@@ -722,7 +730,7 @@ function initDomainLayer(userApi, serverConnection, initialData) {
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_6__.WorldService(world, worldFactory, mainEventBus);
     let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_1__.UserService(userApi, initialData.user, mainEventBus);
-    let actionService = new _service_actionService__WEBPACK_IMPORTED_MODULE_7__.ActionService(actionFactory, world);
+    let actionService = new _service_actionService__WEBPACK_IMPORTED_MODULE_7__.ActionService(actionFactory, worldService);
     let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, actionService);
 
     let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, userService, messageHandlerService, worldService);
@@ -749,21 +757,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class ActionService {
 
-    constructor(actionFactory, world) {
+    constructor(actionFactory, worldService) {
         this._actionFactory = actionFactory;
-        this._world = world;
+        this._worldService = worldService;
     }
 
-    playActions(actionsJson) {
+    handleActions(actionsJson) {
         actionsJson.forEach(actionJson => {
-            this._playAction(actionJson);
+            let action = this._actionFactory.buildAction(actionJson);
+            this._handleAction(action);
         });
     }
 
-    _playAction(actionJson) {
-        let action = this._actionFactory.buildAction(actionJson);
-        let entity = this._world.findEntityById(action.entityId);
-        entity.addAction(action);
+    _handleAction(action) {
+        switch(action.type) {
+            case 'entity_born':
+                this._worldService.giveBirthToEntity(action.additionalData.entityJson)
+                break;
+            default:
+                let actor = this._worldService.world.findEntityById(action.entityId);
+                actor.addAction(action);
+        }
     }
 }
 
@@ -800,20 +814,13 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        console.log(msg)
         switch(msg.type) {
             case 'whole_world':
                 this._worldService.initWorld(msg.world);
-                this._actionService.playActions(msg.actions);
-                break;
-            case 'entity_changed':
-                this._worldService.updateEntity(msg.entity);
-                break;
-            case 'entity_born':
-                this._worldService.giveBirthToEntity(msg.entity);
+                this._actionService.handleActions(msg.actions);
                 break;
             case 'step_actions':
-                this._actionService.playActions(msg.actions);
+                this._actionService.handleActions(msg.actions);
                 break;
             default: 
                 throw `unknown type of message "${ msg.type }"`
@@ -930,10 +937,6 @@ class WorldService {
 
     getEntities() {
         return this._world.entities;
-    }
-
-    updateEntity(entityJson) {
-        this._world.updateEntity(entityJson);
     }
 
     giveBirthToEntity(entityJson) {

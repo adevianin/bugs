@@ -8,14 +8,14 @@ from .collector.collector_bug_mind import CollectorBugMind
 from .base.bug_types import BugTypes
 from core.world.map import Map
 from core.world.entities.town import Town
-from core.world.entities.base.live_entity.action.action_builder import ActionBuilder
 from core.world.entities.base.live_entity.memory import Memory
+from core.world.action.action_accumulator import ActionAccumulator
 
 class BugFactory():
 
-    def __init__(self, event_bus: EventEmitter, action_builder: ActionBuilder) -> None:
+    def __init__(self, event_bus: EventEmitter, action_accumulator: ActionAccumulator) -> None:
         self._event_bus = event_bus
-        self._action_builder = action_builder
+        self._action_accumulator = action_accumulator
 
     def build_bug(self, map: Map, id: int, bug_type: BugTypes, position: Point, town: Town) -> Bug:
         match bug_type:
@@ -30,7 +30,7 @@ class BugFactory():
         body = CollectorBugBody(bug_events, position)
         bug_task_factory = BugTaskFactory(body, map)
         mind = CollectorBugMind(body, bug_task_factory, map, Memory(), town)
-        bug = CollectorBug(self._event_bus, self._action_builder, id, mind, body)
+        bug = CollectorBug(self._event_bus, self._action_accumulator, id, mind, body)
 
         return bug
 

@@ -53,6 +53,3 @@ class Entity(ABC):
             'id': self.id,
             'type': self._type,
         }
-
-    def emit_change(self):
-        self._event_bus.emit('entity_changed', self)

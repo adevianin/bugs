@@ -43,7 +43,6 @@ class Bug extends Entity {
     }
 
     pickupFood(food) {
-        console.log(`picking food id = ${food.id}`);
         this.pickedFoodId = food.id;
         this.pickedFood = food;
         food.die();
@@ -51,7 +50,6 @@ class Bug extends Entity {
     }
 
     dropFood() {
-        console.log(`drop food id = ${this.pickedFood.id}`);
         this.pickedFoodId = null;
         this.pickedFood = null;
         this.emit('foodDrop')

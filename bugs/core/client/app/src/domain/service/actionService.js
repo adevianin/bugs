@@ -1,20 +1,26 @@
 class ActionService {
 
-    constructor(actionFactory, world) {
+    constructor(actionFactory, worldService) {
         this._actionFactory = actionFactory;
-        this._world = world;
+        this._worldService = worldService;
     }
 
-    playActions(actionsJson) {
+    handleActions(actionsJson) {
         actionsJson.forEach(actionJson => {
-            this._playAction(actionJson);
+            let action = this._actionFactory.buildAction(actionJson);
+            this._handleAction(action);
         });
     }
 
-    _playAction(actionJson) {
-        let action = this._actionFactory.buildAction(actionJson);
-        let entity = this._world.findEntityById(action.entityId);
-        entity.addAction(action);
+    _handleAction(action) {
+        switch(action.type) {
+            case 'entity_born':
+                this._worldService.giveBirthToEntity(action.additionalData.entityJson)
+                break;
+            default:
+                let actor = this._worldService.world.findEntityById(action.entityId);
+                actor.addAction(action);
+        }
     }
 }
 

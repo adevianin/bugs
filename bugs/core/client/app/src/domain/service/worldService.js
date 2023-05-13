@@ -29,10 +29,6 @@ class WorldService {
         return this._world.entities;
     }
 
-    updateEntity(entityJson) {
-        this._world.updateEntity(entityJson);
-    }
-
     giveBirthToEntity(entityJson) {
         let entity = this._worldFactory.buildEntity(entityJson);
         this._world.addEntity(entity);

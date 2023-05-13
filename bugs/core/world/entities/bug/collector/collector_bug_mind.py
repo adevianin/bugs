@@ -4,13 +4,10 @@ class CollectorBugMind(BugMind):
 
     def _do_step_activity(self):
         if (self._body.check_am_i_hungry()):
-            print('i am hungry')
             if (self._has_tasks_to_do()):
                 if (self._get_current_task().can_be_delayed()):
-                    print('delayed task for feed my self')
                     self._register_task(self._generate_feed_myself_task(), True)
             else:
-                print('create feed task')
                 self._register_task(self._generate_feed_myself_task())
 
         if not self._has_tasks_to_do():

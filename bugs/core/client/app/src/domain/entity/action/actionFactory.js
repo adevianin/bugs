@@ -16,7 +16,11 @@ class ActionFactory {
             case ACTION_TYPES.FOOD_GAVE:
                 return this._buildFoodGaveAction(actionJson);
             case ACTION_TYPES.EAT_FOOD:
-                return this._buildEatFoodAction(actionJson)
+                return this._buildEatFoodAction(actionJson);
+            case ACTION_TYPES.ENTITY_BORN:
+                return this._buildEntityBornAction(actionJson);
+            default:
+                throw `unknown type of action '${actionJson.action_type}'`
         }
     }
 
@@ -28,7 +32,6 @@ class ActionFactory {
 
     _buildFoodPickedAction(actionJson) {
         let food = this._world.findEntityById(actionJson.action_data.food_id);
-        console.log(food);
         if (!food) {
             throw `food not found id = ${actionJson.action_data.food_id}`
         }
@@ -47,6 +50,12 @@ class ActionFactory {
 
     _buildFoodGaveAction(actionJson) {
         return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time);
+    }
+
+    _buildEntityBornAction(actionJson) {
+        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {
+            entityJson: actionJson.action_data.entity
+        });
     }
 
     _buildAction(entityId, actionType, time, data) {

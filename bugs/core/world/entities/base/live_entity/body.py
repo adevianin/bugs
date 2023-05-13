@@ -130,4 +130,3 @@ class Body(ABC):
         
     def _consume_calories(self, amount: int):
         self._calories -= amount
-        print('calories left', self._calories)

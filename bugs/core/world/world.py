@@ -5,24 +5,23 @@ from .map import Map
 from .utils.event_emiter import EventEmitter
 from .entities.base.entity import Entity
 from .settings import STEP_TIME
+from core.world.action.action_accumulator import ActionAccumulator
 
 class World():
 
-    def __init__(self, map: Map, event_bus: EventEmitter) -> None:
+    def __init__(self, map: Map, event_bus: EventEmitter, action_accumulator: ActionAccumulator) -> None:
         self._map = map
         self._event_bus = event_bus
+        self._action_accumulator = action_accumulator
         self._world_loop_stop_flag = False
         self._is_world_running = False
-
-        self._current_step_actions = []
-        self._previous_step_actions = []
+        self._step_counter = 0
 
         self._current_step_state = None
         self._previous_step_state = None
         
         self._event_bus.add_listener('entity_died', self._on_entity_died)
         self._event_bus.add_listener('entity_born', self._on_entity_born)
-        self._event_bus.add_listener('action_occured', self._on_action)
 
     @property
     def is_world_running(self):
@@ -57,7 +56,7 @@ class World():
         return self._previous_step_state
     
     def get_prev_step_actions(self):
-        return self._previous_step_actions
+        return self._action_accumulator.get_prev_step_actions()
 
     def _run_world_loop(self):
         while not self._world_loop_stop_flag:
@@ -72,6 +71,8 @@ class World():
                 time.sleep(STEP_TIME - iteration_time)
 
     def _do_step(self):
+        print(f'step { self._step_counter }')
+        
         self._previous_step_state = self._current_step_state
         self._current_step_state = self.to_json()
 
@@ -80,10 +81,11 @@ class World():
             if not entity.is_hidden:
                 entity.do_step()
 
-        self._previous_step_actions = self._current_step_actions
-        self._current_step_actions = []
+        self._action_accumulator.step()
 
         self._event_bus.emit('step_done')
+
+        self._step_counter += 1
 
 
     def _on_entity_died(self, entity: Entity):
@@ -91,7 +93,4 @@ class World():
 
     def _on_entity_born(self, entity: Entity):
         self._map.add_entity(entity)
-
-    def _on_action(self, action: dict):
-        self._current_step_actions.append(action)
         

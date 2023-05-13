@@ -9,13 +9,15 @@ from .entities.town import Town
 from .entities.food.food_area import FoodArea
 from .entities.bug.base.bug_types import BugTypes
 from .entities.food.food_types import FoodTypes
+from core.world.action.action_accumulator import ActionAccumulator
 
 class WorldFactory():
 
-    def __init__(self, event_bus: EventEmitter, bug_factory: BugFactory, food_factory: FoodFactory):
+    def __init__(self, event_bus: EventEmitter, bug_factory: BugFactory, food_factory: FoodFactory, action_accumulator: ActionAccumulator):
         self._event_bus = event_bus
         self._bug_factory = bug_factory
         self._food_factory = food_factory
+        self._action_accumulator = action_accumulator
 
     def build_world_from_json(self, world_data: dict):
         map_data = world_data['map']
@@ -55,10 +57,10 @@ class WorldFactory():
         return world
         
     def build_world(self, map: Map) -> World:
-        return World(map, self._event_bus)
+        return World(map, self._event_bus, self._action_accumulator)
 
     def build_map(self, size: Size) -> Map:
-        return Map(size, self._event_bus)
+        return Map(size, self._event_bus, self._action_accumulator)
 
     def build_town(self, id: int, position: Point, color: str, owner_id: int) -> Town:
         return Town(self._event_bus, id, position, color, owner_id)

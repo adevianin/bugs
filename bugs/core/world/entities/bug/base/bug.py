@@ -3,13 +3,13 @@ from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from .bug_body import BugBody
 from .bug_mind import BugMind
-from core.world.entities.base.live_entity.action.action_builder import ActionBuilder
 from .bug_types import BugTypes
+from core.world.action.action_accumulator import ActionAccumulator
 
 class Bug(LiveEntity):
 
-    def __init__(self, event_bus: EventEmitter, action_builder: ActionBuilder, id: int, bug_type: BugTypes, mind: BugMind, body: BugBody):
-        super().__init__(event_bus, action_builder, id, EntityTypes.BUG, mind, body)
+    def __init__(self, event_bus: EventEmitter, action_accumulator: ActionAccumulator, id: int, bug_type: BugTypes, mind: BugMind, body: BugBody):
+        super().__init__(event_bus, action_accumulator, id, EntityTypes.BUG, mind, body)
         self._bug_type = bug_type
         self._body.events.add_listener('food_picked', self._on_food_picked)
         self._body.events.add_listener('picked_food_gave', self._on_food_gave)
