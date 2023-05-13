@@ -4,8 +4,8 @@ from .entities.bug.bug_factory import BugFactory
 from .entities.food.food_factory import FoodFactory
 from .world_factory import WorldFactory
 from .world import World
-from .action.action_accumulator import ActionAccumulator
-from .action.action_builder import ActionBuilder
+from .step_activity.step_activity_accumulator import StepActivityAccumulator
+from .step_activity.action_builder import ActionBuilder
 
 from typing import Callable
 
@@ -37,11 +37,11 @@ class WorldFacade:
         self._event_bus = EventEmitter()
 
         action_builder = ActionBuilder()
-        action_accumulator = ActionAccumulator(action_builder)
+        activity_accumulator = StepActivityAccumulator(action_builder)
 
-        bug_factory = BugFactory(self._event_bus, action_accumulator)
+        bug_factory = BugFactory(self._event_bus, activity_accumulator)
         food_factory = FoodFactory(self._event_bus)
-        world_factory = WorldFactory(self._event_bus, bug_factory, food_factory, action_accumulator)
+        world_factory = WorldFactory(self._event_bus, bug_factory, food_factory, activity_accumulator)
 
         self._world = world_factory.build_world_from_json(world_data)
         self._world.run()
@@ -49,11 +49,8 @@ class WorldFacade:
     def get_world_json(self):
         return self._world.to_json()
     
-    def get_previous_step_world_state(self):
-        return self._world.get_prev_step_state()
-    
-    def get_previous_step_actions(self):
-        return self._world.get_prev_step_actions()
+    def get_previous_step_activity(self):
+        return self._world.get_previous_step_activity()
     
     def run(self):
         self._world.run()

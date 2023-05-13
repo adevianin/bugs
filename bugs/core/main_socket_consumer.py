@@ -17,15 +17,19 @@ class MainSocketConsumer(WebsocketConsumer):
         return super().disconnect(code)
 
     def _send_whole_world(self):
+        step_number, world_state, actions = self._world_facade.get_previous_step_activity()
         self.send(json.dumps({
             'type': 'whole_world',
-            'world': self._world_facade.get_previous_step_world_state(),
-            'actions': self._world_facade.get_previous_step_actions()
+            'world': world_state,
+            'actions': actions,
+            'step_number': step_number
         }))
 
     def _send_previous_step_actions(self):
+        step_number, world_state, actions = self._world_facade.get_previous_step_activity()
         self.send(json.dumps({
             'type': 'step_actions',
-            'actions': self._world_facade.get_previous_step_actions()
+            'actions': actions,
+            'step_number': step_number
         }))
         

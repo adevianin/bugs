@@ -4,15 +4,15 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from .mind import Mind
 from .body import Body
-from core.world.action.action_accumulator import ActionAccumulator
+from core.world.step_activity.step_activity_accumulator import StepActivityAccumulator
 
 class LiveEntity(Entity):
 
-    def __init__(self, event_bus: EventEmitter, action_accumulator: ActionAccumulator, id: int, type: EntityTypes, mind: Mind, body: Body):
+    def __init__(self, event_bus: EventEmitter, activity_accumulator: StepActivityAccumulator, id: int, type: EntityTypes, mind: Mind, body: Body):
         super().__init__(event_bus, id, type)
         self._mind = mind
         self._body = body
-        self._action_accumulator = action_accumulator
+        self._activity_accumulator = activity_accumulator
 
         self._body.events.add_listener('walk', self._on_body_walk)
         self._body.events.add_listener('eat_food', self._on_body_eats_food)
@@ -42,7 +42,7 @@ class LiveEntity(Entity):
         return json
 
     def emit_action(self, action_type: str, consumed_time_points: int, action_data: dict = None):
-        self._action_accumulator.accumulate_entity_action(self.id, action_type, consumed_time_points, action_data)
+        self._activity_accumulator.accumulate_action(self.id, action_type, consumed_time_points, action_data)
 
     def _on_body_walk(self, position, consumed_time_points):
         self.emit_action('walk', consumed_time_points, { 

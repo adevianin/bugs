@@ -814,6 +814,7 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
+        console.log(msg)
         switch(msg.type) {
             case 'whole_world':
                 this._worldService.initWorld(msg.world);

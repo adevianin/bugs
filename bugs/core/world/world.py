@@ -5,14 +5,14 @@ from .map import Map
 from .utils.event_emiter import EventEmitter
 from .entities.base.entity import Entity
 from .settings import STEP_TIME
-from core.world.action.action_accumulator import ActionAccumulator
+from core.world.step_activity.step_activity_accumulator import StepActivityAccumulator
 
 class World():
 
-    def __init__(self, map: Map, event_bus: EventEmitter, action_accumulator: ActionAccumulator) -> None:
+    def __init__(self, map: Map, event_bus: EventEmitter, activity_accumulator: StepActivityAccumulator) -> None:
         self._map = map
         self._event_bus = event_bus
-        self._action_accumulator = action_accumulator
+        self._activity_accumulator = activity_accumulator
         self._world_loop_stop_flag = False
         self._is_world_running = False
         self._step_counter = 0
@@ -52,11 +52,8 @@ class World():
             'size': self._map.size
         }
     
-    def get_prev_step_state(self):
-        return self._previous_step_state
-    
-    def get_prev_step_actions(self):
-        return self._action_accumulator.get_prev_step_actions()
+    def get_previous_step_activity(self):
+        return self._activity_accumulator.get_previous_step_activity()
 
     def _run_world_loop(self):
         while not self._world_loop_stop_flag:
@@ -71,22 +68,19 @@ class World():
                 time.sleep(STEP_TIME - iteration_time)
 
     def _do_step(self):
-        print(f'step { self._step_counter }')
-        
-        self._previous_step_state = self._current_step_state
-        self._current_step_state = self.to_json()
+        print(f'step { self._step_counter } start')
 
+        self._activity_accumulator.start_step(self._step_counter, self.to_json())
+        
         entities = self._map.get_entities()
         for entity in entities:
             if not entity.is_hidden:
                 entity.do_step()
 
-        self._action_accumulator.step()
-
-        self._event_bus.emit('step_done')
-
+        self._activity_accumulator.step_done()
         self._step_counter += 1
 
+        self._event_bus.emit('step_done')
 
     def _on_entity_died(self, entity: Entity):
         self._map.delete_entity(entity.id)

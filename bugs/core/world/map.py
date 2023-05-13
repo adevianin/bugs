@@ -4,24 +4,25 @@ from .utils.point import Point
 from .entities.base.entity_types import EntityTypes
 from typing import List
 from .utils.event_emiter import EventEmitter
-from core.world.action.action_accumulator import ActionAccumulator
+from core.world.step_activity.step_activity_accumulator import StepActivityAccumulator
 
 import random, math
 
 class Map:
 
-    def __init__(self, size: Size, event_bus: EventEmitter, action_accumulator: ActionAccumulator):
+    def __init__(self, size: Size, event_bus: EventEmitter, activity_accumulator: StepActivityAccumulator):
         self._size = size
         self._event_bus = event_bus
-        self._action_accumulator = action_accumulator
+        self._activity_accumulator = activity_accumulator
         self._entities = {}
 
     def add_entity(self, entity: Entity):
         if entity.id == -1:
             entity.id = self._generate_entity_id()
-            self._action_accumulator.accumulate_entity_action(entity.id, 'entity_born', 0, {
+            self._activity_accumulator.accumulate_action(entity.id, 'entity_born', 0, {
                 'entity': entity.to_json()
             })
+            print(f'entity born id = { entity.id }')
         self._entities[entity.id] = entity
 
     def delete_entity(self, id: int):
