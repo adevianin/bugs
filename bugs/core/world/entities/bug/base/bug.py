@@ -26,9 +26,9 @@ class Bug(LiveEntity):
         return json
 
     def _on_food_picked(self, food_id):
-        self.handle_action('food_picked', {
+        self._handle_action('bug_picked_up_food', {
             'food_id': food_id
         })
 
     def _on_food_gave(self):
-        self.handle_action('picked_food_gave')
+        self._handle_action('picked_food_gave')

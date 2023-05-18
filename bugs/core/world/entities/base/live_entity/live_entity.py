@@ -24,7 +24,7 @@ class LiveEntity(Entity):
         self._body.position = new_position
 
     def do_step(self):
-        self._body.toggle_is_busy(False)
+        super().do_step()
         self._mind.do_step()
 
     def to_json(self):
@@ -39,15 +39,16 @@ class LiveEntity(Entity):
         })
 
         return json
+    
+    def _toggle_is_busy(self, is_busy: bool):
+        self._body.toggle_is_busy(is_busy)
 
-    def handle_action(self, action_type: str, action_data: dict = None):
-        if (self._body.is_busy):
-            raise Exception('entity can do only 1 action per step')
-        self._event_bus.emit('step_action_occurred', self.id, action_type, action_data)
-        self._body.toggle_is_busy(True)
+    @property
+    def _is_busy(self):
+        return self._body.is_busy
 
     def _on_body_walk(self, position):
-        self.handle_action('walk', { 
+        self._handle_action('walk', { 
             'position': {
                 'x': position.x,
                 'y': position.y
@@ -55,7 +56,7 @@ class LiveEntity(Entity):
         })
 
     def _on_body_eats_food(self, food_id, is_food_eaten):
-        self.handle_action('eat_food', {
+        self._handle_action('eat_food', {
             'food_id': food_id,
             'is_food_eaten': is_food_eaten
         })

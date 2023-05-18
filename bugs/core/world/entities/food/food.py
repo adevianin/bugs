@@ -12,10 +12,16 @@ class Food(PlainEntity):
         self._food_type = food_type
         self._food_variety = food_variety
 
+    def do_step(self):
+        return super().do_step()
 
     @property
     def calories(self):
         return self._calories
+    
+    def pickup(self):
+        self.toggle_hidden(True)
+        self._handle_action('food_was_picked_up')
 
     @calories.setter
     def calories(self, value):
@@ -24,9 +30,6 @@ class Food(PlainEntity):
         self._calories = int(value)
         if (self._calories == 0):
             self.die()
-
-    def do_step(self):
-        pass
 
     def to_json(self):
         json = super().to_json()

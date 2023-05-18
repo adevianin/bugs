@@ -2,6 +2,7 @@ from core.world.entities.base.live_entity.body import Body
 from core.world.utils.point import Point
 from core.world.entities.food.food import Food
 from core.world.utils.event_emiter import EventEmitter
+from core.world.entities.town import Town
 
 class BugBody(Body):
 
@@ -19,13 +20,12 @@ class BugBody(Body):
 
     def pick_up_food(self, food: Food):
         self._picked_food = food
-        food.toggle_hidden(True)
+        food.pickup()
         self.events.emit('food_picked', food_id=food.id)
         return True
 
-    def give_food(self):
-        res = self._picked_food
+    def give_food(self, town: Town):
+        town.take_food(self._picked_food)
         self._picked_food = None
         self.events.emit('picked_food_gave')
-        return res
         

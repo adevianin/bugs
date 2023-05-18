@@ -11,14 +11,18 @@ class ActionFactory {
         switch (actionJson.action_type) {
             case ACTION_TYPES.WALK:
                 return this._buildWalkAction(actionJson);
-            case ACTION_TYPES.FOOD_PICKED:
-                return this._buildFoodPickedAction(actionJson);
             case ACTION_TYPES.FOOD_GAVE:
                 return this._buildFoodGaveAction(actionJson);
             case ACTION_TYPES.EAT_FOOD:
                 return this._buildEatFoodAction(actionJson);
             case ACTION_TYPES.ENTITY_BORN:
                 return this._buildEntityBornAction(actionJson);
+            case ACTION_TYPES.FOOD_WAS_PICKED_UP:
+                return this._buildFoodWasPickedUp(actionJson);
+            case ACTION_TYPES.BUG_PICKED_UP_FOOD:
+                return this._buildBugPickedUpFoodAction(actionJson);
+            case ACTION_TYPES.ENTITY_DIED:
+                return this._buildEntityDiedAction(actionJson);
             default:
                 throw `unknown type of action '${actionJson.action_type}'`
         }
@@ -30,7 +34,7 @@ class ActionFactory {
         });
     }
 
-    _buildFoodPickedAction(actionJson) {
+    _buildBugPickedUpFoodAction(actionJson) {
         let food = this._world.findEntityById(actionJson.action_data.food_id);
         if (!food) {
             throw `food not found id = ${actionJson.action_data.food_id}`
@@ -56,6 +60,14 @@ class ActionFactory {
         return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number, {
             entityJson: actionJson.action_data.entity
         });
+    }
+
+    _buildFoodWasPickedUp(actionJson) {
+        return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number);
+    }
+
+    _buildEntityDiedAction(actionJson) {
+        return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number);
     }
 
     _buildAction(actorId, actionType, stepNumber, data) {

@@ -18,9 +18,6 @@ class Bug extends Entity {
         return this._angle;
     }
 
-    updateEntity(entityJson) {
-    }
-
     getColor() {
         // return this._homeTown.getColor()
     }
@@ -29,7 +26,7 @@ class Bug extends Entity {
         switch (action.type) {
             case ACTION_TYPES.WALK:
                 return this._playWalkAction(action);
-            case ACTION_TYPES.FOOD_PICKED:
+            case ACTION_TYPES.BUG_PICKED_UP_FOOD:
                 return this._playFoodPickingAction(action);
             case ACTION_TYPES.FOOD_GAVE:
                 return this._playFoodGiving(action);
@@ -42,19 +39,6 @@ class Bug extends Entity {
 
     hasPickedFood() {
         return !!this.pickedFood;
-    }
-
-    pickupFood(food) {
-        this.pickedFoodId = food.id;
-        this.pickedFood = food;
-        food.die();
-        this.emit('foodLift');
-    }
-
-    dropFood() {
-        this.pickedFoodId = null;
-        this.pickedFood = null;
-        this.emit('foodDrop')
     }
 
     _playWalkAction(action) {
@@ -86,7 +70,7 @@ class Bug extends Entity {
         this._setState('standing');
         return new Promise((res) => {
             setTimeout(() => {
-                this.pickupFood(action.additionalData.food);
+                this._pickupFood(action.additionalData.food);
                 res();
             }, 1)
         });
@@ -96,7 +80,7 @@ class Bug extends Entity {
         this._setState('standing');
         return new Promise((res) => {
             setTimeout(() => {
-                this.dropFood();
+                this._dropFood();
                 res();
             }, 1)
         });
@@ -106,11 +90,12 @@ class Bug extends Entity {
         this._setState('standing');
         return new Promise((res) => {
             setTimeout(() => {
+                // console.log('eating');
                 if (action.additionalData.is_food_eaten) {
                     action.additionalData.food.die();
                 }
                 res();
-            }, 500)
+            }, 1)
         });
     }
 
@@ -122,6 +107,18 @@ class Bug extends Entity {
 
     _lookAt(x, y) {
         this._angle = (Math.atan2(y - this.position.y, x - this.position.x) * 180 / Math.PI) + 90;
+    }
+
+    _pickupFood(food) {
+        this.pickedFoodId = food.id;
+        this.pickedFood = food;
+        this.emit('foodPickedUp');
+    }
+
+    _dropFood() {
+        this.pickedFoodId = null;
+        this.pickedFood = null;
+        this.emit('foodDroped')
     }
 
 }

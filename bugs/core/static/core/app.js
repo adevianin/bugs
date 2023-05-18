@@ -139,14 +139,18 @@ class ActionFactory {
         switch (actionJson.action_type) {
             case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.WALK:
                 return this._buildWalkAction(actionJson);
-            case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.FOOD_PICKED:
-                return this._buildFoodPickedAction(actionJson);
             case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.FOOD_GAVE:
                 return this._buildFoodGaveAction(actionJson);
             case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.EAT_FOOD:
                 return this._buildEatFoodAction(actionJson);
             case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.ENTITY_BORN:
                 return this._buildEntityBornAction(actionJson);
+            case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.FOOD_WAS_PICKED_UP:
+                return this._buildFoodWasPickedUp(actionJson);
+            case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.BUG_PICKED_UP_FOOD:
+                return this._buildBugPickedUpFoodAction(actionJson);
+            case _actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.ENTITY_DIED:
+                return this._buildEntityDiedAction(actionJson);
             default:
                 throw `unknown type of action '${actionJson.action_type}'`
         }
@@ -158,7 +162,7 @@ class ActionFactory {
         });
     }
 
-    _buildFoodPickedAction(actionJson) {
+    _buildBugPickedUpFoodAction(actionJson) {
         let food = this._world.findEntityById(actionJson.action_data.food_id);
         if (!food) {
             throw `food not found id = ${actionJson.action_data.food_id}`
@@ -186,6 +190,14 @@ class ActionFactory {
         });
     }
 
+    _buildFoodWasPickedUp(actionJson) {
+        return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number);
+    }
+
+    _buildEntityDiedAction(actionJson) {
+        return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number);
+    }
+
     _buildAction(actorId, actionType, stepNumber, data) {
         return new _action__WEBPACK_IMPORTED_MODULE_1__.Action(actorId, actionType, stepNumber, data);
     }
@@ -208,10 +220,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 const ACTION_TYPES = {
     WALK: 'walk',
-    FOOD_PICKED: 'food_picked',
     FOOD_GAVE: 'picked_food_gave',
     EAT_FOOD: 'eat_food',
-    ENTITY_BORN: 'entity_born'
+    ENTITY_BORN: 'entity_born',
+    FOOD_WAS_PICKED_UP: 'food_was_picked_up',
+    BUG_PICKED_UP_FOOD: 'bug_picked_up_food',
+    ENTITY_DIED: 'entity_died'
 
 };
 
@@ -254,9 +268,6 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         return this._angle;
     }
 
-    updateEntity(entityJson) {
-    }
-
     getColor() {
         // return this._homeTown.getColor()
     }
@@ -265,7 +276,7 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         switch (action.type) {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.WALK:
                 return this._playWalkAction(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_PICKED:
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.BUG_PICKED_UP_FOOD:
                 return this._playFoodPickingAction(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_GAVE:
                 return this._playFoodGiving(action);
@@ -278,19 +289,6 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     hasPickedFood() {
         return !!this.pickedFood;
-    }
-
-    pickupFood(food) {
-        this.pickedFoodId = food.id;
-        this.pickedFood = food;
-        food.die();
-        this.emit('foodLift');
-    }
-
-    dropFood() {
-        this.pickedFoodId = null;
-        this.pickedFood = null;
-        this.emit('foodDrop')
     }
 
     _playWalkAction(action) {
@@ -322,7 +320,7 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this._setState('standing');
         return new Promise((res) => {
             setTimeout(() => {
-                this.pickupFood(action.additionalData.food);
+                this._pickupFood(action.additionalData.food);
                 res();
             }, 1)
         });
@@ -332,7 +330,7 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this._setState('standing');
         return new Promise((res) => {
             setTimeout(() => {
-                this.dropFood();
+                this._dropFood();
                 res();
             }, 1)
         });
@@ -342,11 +340,12 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this._setState('standing');
         return new Promise((res) => {
             setTimeout(() => {
+                // console.log('eating');
                 if (action.additionalData.is_food_eaten) {
                     action.additionalData.food.die();
                 }
                 res();
-            }, 500)
+            }, 1)
         });
     }
 
@@ -358,6 +357,18 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _lookAt(x, y) {
         this._angle = (Math.atan2(y - this.position.y, x - this.position.x) * 180 / Math.PI) + 90;
+    }
+
+    _pickupFood(food) {
+        this.pickedFoodId = food.id;
+        this.pickedFood = food;
+        this.emit('foodPickedUp');
+    }
+
+    _dropFood() {
+        this.pickedFoodId = null;
+        this.pickedFood = null;
+        this.emit('foodDroped')
     }
 
 }
@@ -441,8 +452,8 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
     }
 
     die() {
-        this.globalEmit('died', this);
-        this.emit('died');
+        this.globalEmit('died', this);//to delete entity from world
+        this.emit('died');//to delete view
     }
 
     _setState(newState) {
@@ -494,6 +505,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
 /* harmony import */ var _entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entityTypes */ "./bugs/core/client/app/src/domain/entity/entityTypes.js");
+/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+
 
 
 
@@ -513,7 +526,33 @@ class Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         return this._food_variety;
     }
 
-    updateEntity(entityJson) {
+    playAction(action) {
+        switch (action.type) {
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_WAS_PICKED_UP:
+                return this._playFoodPickedUp(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_DIED:
+                return this._playEntityDied(action);
+            default:
+                throw 'unknown type of action'
+        }
+    }
+
+    _playFoodPickedUp(action) {
+        return new Promise((res) => {
+            setTimeout(() => {
+                this.emit('food_picked_up');
+                res();
+            }, 1)
+        });
+    }
+
+    _playEntityDied(action) {
+        return new Promise((res) => {
+            setTimeout(() => {
+                this.die();
+                res();
+            }, 1)
+        });
     }
 }
 
@@ -1684,8 +1723,8 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
         this._unbindPosChangedListener = this._entity.on('positionChanged', this._onBugPositionChange.bind(this));
         this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderBugCurrentState.bind(this));
-        this._unbindFoodLiftListener = this._entity.on('foodLift', this._onFoodLift.bind(this));
-        this._unbindFoodDropListener = this._entity.on('foodDrop', this._removePickedFoodView.bind(this));
+        this._unbindFoodLiftListener = this._entity.on('foodPickedUp', this._onFoodPickedUp.bind(this));
+        this._unbindFoodDropListener = this._entity.on('foodDroped', this._removePickedFoodView.bind(this));
     }
 
     remove() {
@@ -1717,7 +1756,7 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         }
     }
 
-    _onFoodLift() {
+    _onFoodPickedUp() {
         this._renderPickedFoodView();
         this._renderPickedFoodPosition();
     }
@@ -1962,11 +2001,18 @@ class FoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
         this._sprite.x = this._entity.position.x;
         this._sprite.y = this._entity.position.y;
+
+        this._unbindFoodPickedUpListener = this._entity.on('food_picked_up', this._onFoodPickedUp.bind(this));
     }
 
     remove() {
+        this._unbindFoodPickedUpListener();
         super.remove();
         this._entityContainer.removeChild(this._sprite);
+    }
+
+    _onFoodPickedUp() {
+        this.remove();
     }
 
 }

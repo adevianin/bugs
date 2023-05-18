@@ -69,8 +69,7 @@ class World():
         
         entities = self._map.get_entities()
         for entity in entities:
-            if not entity.is_hidden:
-                entity.do_step()
+            entity.do_step()
 
         self._step_counter += 1
 

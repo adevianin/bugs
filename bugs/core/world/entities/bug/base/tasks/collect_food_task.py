@@ -39,8 +39,7 @@ class CollectFoodTask(Task):
             return
 
         if (self._is_go_home_done and not self._is_food_taken_by_home):
-            food = self._body.give_food()
-            self._town.take_food(food)
+            self._body.give_food(self._town)
             self._is_food_taken_by_home = True
 
         if (self._is_food_taken_by_home):

@@ -43,13 +43,30 @@ class Entity(ABC):
     def die(self):
         self.toggle_hidden(True)
         self._event_bus.emit('entity_died', self)
+        self._handle_action('entity_died')
 
-    @abstractmethod
     def do_step(self):
-        pass
+        self._toggle_is_busy(False)
 
     def to_json(self):
         return {
             'id': self.id,
             'type': self._type,
         }
+    
+    def _handle_action(self, action_type: str, action_data: dict = None):
+        if (self._is_busy):
+            raise Exception('entity can do only 1 action per step')
+        self._event_bus.emit('step_action_occurred', self.id, action_type, action_data)
+        self._toggle_is_busy(True)
+
+    @abstractmethod
+    def _toggle_is_busy(self, is_busy: bool):
+        pass
+    
+    @property
+    @abstractmethod
+    def _is_busy(self):
+        pass
+
+    

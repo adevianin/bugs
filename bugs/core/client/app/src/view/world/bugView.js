@@ -11,8 +11,8 @@ class BugView extends EntityView {
 
         this._unbindPosChangedListener = this._entity.on('positionChanged', this._onBugPositionChange.bind(this));
         this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderBugCurrentState.bind(this));
-        this._unbindFoodLiftListener = this._entity.on('foodLift', this._onFoodLift.bind(this));
-        this._unbindFoodDropListener = this._entity.on('foodDrop', this._removePickedFoodView.bind(this));
+        this._unbindFoodLiftListener = this._entity.on('foodPickedUp', this._onFoodPickedUp.bind(this));
+        this._unbindFoodDropListener = this._entity.on('foodDroped', this._removePickedFoodView.bind(this));
     }
 
     remove() {
@@ -44,7 +44,7 @@ class BugView extends EntityView {
         }
     }
 
-    _onFoodLift() {
+    _onFoodPickedUp() {
         this._renderPickedFoodView();
         this._renderPickedFoodPosition();
     }

@@ -8,6 +8,7 @@ class PlainEntity(Entity):
     def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes, position: Point):
         super().__init__(event_bus, id, type)
         self._position = position
+        self._is_entity_busy = False
 
     @property
     def position(self):
@@ -16,6 +17,9 @@ class PlainEntity(Entity):
     @position.setter
     def position(self, new_pos: Point):
         self._position = new_pos
+
+    def do_step(self):
+        return super().do_step()
 
     def to_json(self):
         json = super().to_json()
@@ -27,3 +31,10 @@ class PlainEntity(Entity):
         })
         
         return json
+    
+    def _toggle_is_busy(self, is_busy: bool):
+        self._is_entity_busy = is_busy
+
+    @property
+    def _is_busy(self):
+        return self._is_entity_busy
