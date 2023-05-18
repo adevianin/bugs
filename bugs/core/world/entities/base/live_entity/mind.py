@@ -3,7 +3,6 @@ from .body import Body
 from .tasks.task_factory import TaskFactory
 from .tasks.task import Task
 from core.world.map import Map
-from core.world.settings import MIN_TIME_POINTS_ACTION_COST
 from core.world.entities.base.entity_types import EntityTypes
 from .memory import Memory
 
@@ -19,15 +18,8 @@ class Mind(ABC):
         self._body.events.add_listener('walk', self._on_walk)
 
     def do_step(self):
-        counter = 0
-        while self._body.time_points >= MIN_TIME_POINTS_ACTION_COST: #to avoid very short and ugly steps
-
-            self._do_step_activity()
-            self._clear_done_tasks()
-            
-            counter += 1
-            if (counter > 10): 
-                raise Exception('mind blow exception')
+        self._do_step_activity()
+        self._clear_done_tasks()
             
     def _register_task(self, task: Task, as_first_priority: bool = False):
         if (as_first_priority):

@@ -4,12 +4,11 @@ from core.world.utils.event_emiter import EventEmitter
 from .bug_body import BugBody
 from .bug_mind import BugMind
 from .bug_types import BugTypes
-from core.world.step_activity.step_activity_accumulator import StepActivityAccumulator
 
 class Bug(LiveEntity):
 
-    def __init__(self, event_bus: EventEmitter, activity_accumulator: StepActivityAccumulator, id: int, bug_type: BugTypes, mind: BugMind, body: BugBody):
-        super().__init__(event_bus, activity_accumulator, id, EntityTypes.BUG, mind, body)
+    def __init__(self, event_bus: EventEmitter, id: int, bug_type: BugTypes, mind: BugMind, body: BugBody):
+        super().__init__(event_bus, id, EntityTypes.BUG, mind, body)
         self._bug_type = bug_type
         self._body.events.add_listener('food_picked', self._on_food_picked)
         self._body.events.add_listener('picked_food_gave', self._on_food_gave)
@@ -26,10 +25,10 @@ class Bug(LiveEntity):
 
         return json
 
-    def _on_food_picked(self, consumed_time_points, food_id):
-        self.emit_action('food_picked', consumed_time_points, {
+    def _on_food_picked(self, food_id):
+        self.handle_action('food_picked', {
             'food_id': food_id
         })
 
-    def _on_food_gave(self, consumed_time_points):
-        self.emit_action('picked_food_gave', consumed_time_points)
+    def _on_food_gave(self):
+        self.handle_action('picked_food_gave')

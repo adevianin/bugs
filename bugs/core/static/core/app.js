@@ -100,10 +100,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class Action {
 
-    constructor(entityId, actionType, time, actionData) {
-        this.entityId = entityId;
+    constructor(actorId, actionType, stepNumber, actionData) {
+        this.actorId = actorId;
         this.type = actionType;
-        this.time = time;
+        this.stepNumber = stepNumber;
         this.additionalData = actionData;
     }
 
@@ -153,7 +153,7 @@ class ActionFactory {
     }
 
     _buildWalkAction(actionJson) {
-        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {
+        return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number, {
             position: actionJson.action_data.position
         });
     }
@@ -163,31 +163,31 @@ class ActionFactory {
         if (!food) {
             throw `food not found id = ${actionJson.action_data.food_id}`
         }
-        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {
+        return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number, {
             food
         });
     }
 
     _buildEatFoodAction(actionJson) {
         let food = this._world.findEntityById(actionJson.action_data.food_id);
-        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {
+        return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number, {
             food,
             is_food_eaten: actionJson.action_data.is_food_eaten
         });
     }
 
     _buildFoodGaveAction(actionJson) {
-        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time);
+        return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number);
     }
 
     _buildEntityBornAction(actionJson) {
-        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {
+        return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number, {
             entityJson: actionJson.action_data.entity
         });
     }
 
-    _buildAction(entityId, actionType, time, data) {
-        return new _action__WEBPACK_IMPORTED_MODULE_1__.Action(entityId, actionType, time, data);
+    _buildAction(actorId, actionType, stepNumber, data) {
+        return new _action__WEBPACK_IMPORTED_MODULE_1__.Action(actorId, actionType, stepNumber, data);
     }
 }
 
@@ -233,17 +233,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
 /* harmony import */ var _entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entityTypes */ "./bugs/core/client/app/src/domain/entity/entityTypes.js");
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+/* harmony import */ var utils_distance__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! utils/distance */ "./bugs/core/client/utils/distance.js");
+
 
 
 
 
 class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, id, position, pickedFoodId) {
+    constructor(eventBus, id, position, pickedFoodId, userSpeed) {
         super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.BUG);
         this.pickedFood = null;
         this.pickedFoodId = pickedFoodId;
         this._angle = 0;
+        this._userSpeed = userSpeed;
         this._setState('standing');
     }
 
@@ -291,9 +294,10 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     _playWalkAction(action) {
-        let wholeWalkTime = action.time * 1000;
-        let walkStartAt = Date.now();
         let destPosition = action.additionalData.position;
+        let dist = (0,utils_distance__WEBPACK_IMPORTED_MODULE_3__.distance)(this.position.x, this.position.y, destPosition.x, destPosition.y);
+        let wholeWalkTime = (dist / this._userSpeed) * 1000;
+        let walkStartAt = Date.now();
         let startPosition = this.position;
         this._lookAt(destPosition.x, destPosition.y);
         this._setState('walking');
@@ -320,7 +324,7 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
             setTimeout(() => {
                 this.pickupFood(action.additionalData.food);
                 res();
-            }, action.time * 1000)
+            }, 1)
         });
     }
 
@@ -330,7 +334,7 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
             setTimeout(() => {
                 this.dropFood();
                 res();
-            }, action.time * 1000)
+            }, 1)
         });
     }
 
@@ -342,7 +346,7 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                     action.additionalData.food.die();
                 }
                 res();
-            }, action.time * 1000)
+            }, 500)
         });
     }
 
@@ -402,12 +406,8 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
         return this._position;
     }
 
-    updateEntity(entityJson) {
-    }
-
     addAction(action) {
         this._actionStack.push(action);
-        this._handleActionsByTimeReducer();
         this.tryPlayNextAction();
     }
 
@@ -419,7 +419,7 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
         }
         let nextAction = this._actionStack[0];
         this._actionStack.shift();
-
+        this.START_PLAYING_AT = new Date().getTime()
         this._isPlaying = true;
         this.playAction(nextAction)
             .then(() => {
@@ -443,25 +443,6 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
     die() {
         this.globalEmit('died', this);
         this.emit('died');
-    }
-
-    _handleActionsByTimeReducer() {
-        if (this._actionStack.length <= 3) {
-            return;
-        }
-        let actionTimeReducer;
-        if (this._actionStack.length == 4) {
-            actionTimeReducer = 0.9;
-        }
-        if (this._actionStack.length == 5) {
-            actionTimeReducer = 0.7;
-        }
-        if (this._actionStack.length > 5) {
-            actionTimeReducer = 0.5;
-        }
-        this._actionStack.forEach(action => {
-            action.time *= actionTimeReducer;
-        });
     }
 
     _setState(newState) {
@@ -730,7 +711,7 @@ function initDomainLayer(userApi, serverConnection, initialData) {
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_6__.WorldService(world, worldFactory, mainEventBus);
     let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_1__.UserService(userApi, initialData.user, mainEventBus);
-    let actionService = new _service_actionService__WEBPACK_IMPORTED_MODULE_7__.ActionService(actionFactory, worldService);
+    let actionService = new _service_actionService__WEBPACK_IMPORTED_MODULE_7__.ActionService(initialData.step_time, actionFactory, worldService);
     let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, actionService);
 
     let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, userService, messageHandlerService, worldService);
@@ -757,27 +738,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class ActionService {
 
-    constructor(actionFactory, worldService) {
+    constructor(stepTime, actionFactory, worldService) {
         this._actionFactory = actionFactory;
         this._worldService = worldService;
+        this._actionsJson = [];
+        this._currentStep = null;
+        this._stepTime = stepTime;
     }
 
-    handleActions(actionsJson) {
-        actionsJson.forEach(actionJson => {
-            let action = this._actionFactory.buildAction(actionJson);
-            this._handleAction(action);
+    handleIncomeActions(incomeActionsJson) {
+        this._actionsJson = this._actionsJson.concat(incomeActionsJson);
+    }
+
+    runStepCounter(startStep) {
+        this._currentStep = startStep;
+        setInterval(() => {
+            this._playActionsForStep(this._currentStep);
+            this._currentStep++;
+        }, this._stepTime * 1000)
+    }
+
+    _playActionsForStep(step) {
+        let stepActions = this._buildActionsForStep(step);
+        this._validateActionsForStep(stepActions);
+        this._clearActionsJsonForStep(step);
+        stepActions.forEach((action) => {
+            this._playAction(action);
         });
     }
 
-    _handleAction(action) {
+    _playAction(action) {
         switch(action.type) {
             case 'entity_born':
                 this._worldService.giveBirthToEntity(action.additionalData.entityJson)
                 break;
             default:
-                let actor = this._worldService.world.findEntityById(action.entityId);
+                let actor = this._worldService.world.findEntityById(action.actorId);
                 actor.addAction(action);
         }
+    }
+
+    _buildActionsForStep(stepNumber) {
+        let actions = [];
+        this._actionsJson.forEach(actionJson => {
+            if (actionJson.step_number == stepNumber) {
+                let action = this._actionFactory.buildAction(actionJson);
+                actions.push(action);
+            }
+        });
+
+        return actions;
+    }
+
+    _clearActionsJsonForStep(stepNumber) {
+        this._actionsJson = this._actionsJson.filter(actionJson => actionJson.step_number != stepNumber);
+    }
+
+    _validateActionsForStep(actions) {
+        actions.forEach(action => {
+            let validatingActorId = action.actorId;
+            let actionsCountWithSameActorId = 0;
+            actions.forEach((a) => {
+                if (a.actorId == validatingActorId) {
+                    actionsCountWithSameActorId++
+                }
+            });
+            if (actionsCountWithSameActorId > 1) {
+                throw 'few actions found' 
+            }
+        })
     }
 }
 
@@ -818,10 +847,11 @@ class MessageHandlerService {
         switch(msg.type) {
             case 'whole_world':
                 this._worldService.initWorld(msg.world);
-                this._actionService.handleActions(msg.actions);
+                this._actionService.handleIncomeActions(msg.actions);
+                this._actionService.runStepCounter(msg.start_step);
                 break;
             case 'step_actions':
-                this._actionService.handleActions(msg.actions);
+                this._actionService.handleIncomeActions(msg.actions);
                 break;
             default: 
                 throw `unknown type of message "${ msg.type }"`
@@ -1007,8 +1037,8 @@ class WorldFactory {
         return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this.mainEventBus);
     }
 
-    buildBug(id, position, pickedFoodId) {
-        return new _entity_bug__WEBPACK_IMPORTED_MODULE_1__.Bug(this.mainEventBus, id, position, pickedFoodId);
+    buildBug(id, position, pickedFoodId, userSpeed) {
+        return new _entity_bug__WEBPACK_IMPORTED_MODULE_1__.Bug(this.mainEventBus, id, position, pickedFoodId, userSpeed);
     }
 
     buildTown(id, position, color) {
@@ -1026,7 +1056,7 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.BUG:
-                return this.buildBug(entityJson.id, entityJson.position, entityJson.picked_food_id);
+                return this.buildBug(entityJson.id, entityJson.position, entityJson.picked_food_id, entityJson.user_speed);
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:
                 return this.buildTown(entityJson.id, entityJson.position, entityJson.color);
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
@@ -1670,8 +1700,6 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     }
 
     _render() {
-        this._activeSprite = null;
-
         this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(BugView.textureManager.getTexture('bug4.png'));
         this._standSprite.anchor.set(0.5);
         this._entityContainer.addChild(this._standSprite);
@@ -1719,9 +1747,13 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     }
 
     _renderBugPosition() {
-        this._activeSprite.x = this._entity.position.x;
-        this._activeSprite.y = this._entity.position.y;
-        this._activeSprite.angle = this._entity.angle;
+        this._standSprite.x = this._entity.position.x;
+        this._standSprite.y = this._entity.position.y;
+        this._standSprite.angle = this._entity.angle;
+
+        this._walkSprite.x = this._entity.position.x;
+        this._walkSprite.y = this._entity.position.y;
+        this._walkSprite.angle = this._entity.angle;
     }
 
     _renderBugCurrentState() {
@@ -1733,7 +1765,6 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
     _toggleWalkingState(isEnabling) {
         if (isEnabling) {
-            this._activeSprite = this._walkSprite;
             this._walkSprite.renderable = true;
             this._walkSprite.play();
         } else {
@@ -1744,7 +1775,6 @@ class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
     _toggleStandingState(isEnabling) {
         if (isEnabling) {
-            this._activeSprite = this._standSprite;
             this._standSprite.renderable = true;
         } else {
             this._standSprite.renderable = false;
@@ -2221,6 +2251,25 @@ class WorldView {
         this._entityViews = [];
     }
 
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/utils/distance.js":
+/*!********************************************!*\
+  !*** ./bugs/core/client/utils/distance.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "distance": () => (/* binding */ distance)
+/* harmony export */ });
+function distance(x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow((x1  -x2), 2) + Math.pow((y1 - y2), 2));
 }
 
 

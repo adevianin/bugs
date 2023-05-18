@@ -27,8 +27,6 @@ class BugView extends EntityView {
     }
 
     _render() {
-        this._activeSprite = null;
-
         this._standSprite = new PIXI.Sprite(BugView.textureManager.getTexture('bug4.png'));
         this._standSprite.anchor.set(0.5);
         this._entityContainer.addChild(this._standSprite);
@@ -76,9 +74,13 @@ class BugView extends EntityView {
     }
 
     _renderBugPosition() {
-        this._activeSprite.x = this._entity.position.x;
-        this._activeSprite.y = this._entity.position.y;
-        this._activeSprite.angle = this._entity.angle;
+        this._standSprite.x = this._entity.position.x;
+        this._standSprite.y = this._entity.position.y;
+        this._standSprite.angle = this._entity.angle;
+
+        this._walkSprite.x = this._entity.position.x;
+        this._walkSprite.y = this._entity.position.y;
+        this._walkSprite.angle = this._entity.angle;
     }
 
     _renderBugCurrentState() {
@@ -90,7 +92,6 @@ class BugView extends EntityView {
 
     _toggleWalkingState(isEnabling) {
         if (isEnabling) {
-            this._activeSprite = this._walkSprite;
             this._walkSprite.renderable = true;
             this._walkSprite.play();
         } else {
@@ -101,7 +102,6 @@ class BugView extends EntityView {
 
     _toggleStandingState(isEnabling) {
         if (isEnabling) {
-            this._activeSprite = this._standSprite;
             this._standSprite.renderable = true;
         } else {
             this._standSprite.renderable = false;

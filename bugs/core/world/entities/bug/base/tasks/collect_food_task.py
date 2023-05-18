@@ -20,18 +20,23 @@ class CollectFoodTask(Task):
             if(self._find_food_task.is_done()):
                 self._found_food = self._find_food_task.results
                 self._is_find_food_done = True
+            if (self._body.is_busy):
+                return
 
         if (self._is_find_food_done and not self._is_get_to_food_done):
             self._is_get_to_food_done = self._body.step_to_near(self._found_food.position)
+            return
 
         if (self._is_get_to_food_done and not self._is_pickup_food_done):
             if (self._found_food.is_hidden):
                 self.restart()
                 return
             self._is_pickup_food_done = self._body.pick_up_food(self._found_food)
+            return
             
         if (self._is_pickup_food_done and not self._is_go_home_done):
             self._is_go_home_done = self._body.step_to(self._town.position)
+            return
 
         if (self._is_go_home_done and not self._is_food_taken_by_home):
             food = self._body.give_food()

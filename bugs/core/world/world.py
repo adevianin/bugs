@@ -5,14 +5,12 @@ from .map import Map
 from .utils.event_emiter import EventEmitter
 from .entities.base.entity import Entity
 from .settings import STEP_TIME
-from core.world.step_activity.step_activity_accumulator import StepActivityAccumulator
 
 class World():
 
-    def __init__(self, map: Map, event_bus: EventEmitter, activity_accumulator: StepActivityAccumulator) -> None:
+    def __init__(self, map: Map, event_bus: EventEmitter) -> None:
         self._map = map
         self._event_bus = event_bus
-        self._activity_accumulator = activity_accumulator
         self._world_loop_stop_flag = False
         self._is_world_running = False
         self._step_counter = 0
@@ -52,9 +50,6 @@ class World():
             'size': self._map.size
         }
     
-    def get_previous_step_activity(self):
-        return self._activity_accumulator.get_previous_step_activity()
-
     def _run_world_loop(self):
         while not self._world_loop_stop_flag:
             iteration_start = time.time()
@@ -70,17 +65,14 @@ class World():
     def _do_step(self):
         print(f'step { self._step_counter } start')
 
-        self._activity_accumulator.start_step(self._step_counter, self.to_json())
+        self._event_bus.emit('step_start', self._step_counter)
         
         entities = self._map.get_entities()
         for entity in entities:
             if not entity.is_hidden:
                 entity.do_step()
 
-        self._activity_accumulator.step_done()
         self._step_counter += 1
-
-        self._event_bus.emit('step_done')
 
     def _on_entity_died(self, entity: Entity):
         self._map.delete_entity(entity.id)

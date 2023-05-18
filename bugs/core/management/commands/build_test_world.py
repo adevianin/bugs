@@ -9,7 +9,7 @@ class Command(BaseCommand):
         "map": { "size": {"width": 3000, "height": 3000 }},
         "bugs": [
             { "id": 1, "position": {"x": 650, "y": 350}, "from_town": 30, "type": "food_collector" },
-            { "id": 2, "position": {"x": 1600, "y": 500}, "from_town": 31, "type": "food_collector" },
+            # { "id": 2, "position": {"x": 1600, "y": 500}, "from_town": 31, "type": "food_collector" },
         ],
         "foods": [
             {"id": 20, "position": {"x": 350, "y": 350}, "calories": 150, "type": "leaf", "food_variety": 1 },
@@ -20,8 +20,8 @@ class Command(BaseCommand):
             { "id": 31, "position": {"x": 1600, "y": 450 }, "color": "red", "owner_id": 2 },
         ],
         "food_areas": [
-            { "id": 40, "position": {"x": 450, "y": 300}, "size": { "width": 150, "height": 150 }, "fertility": 30, "food_type": "leaf" },
-            { "id": 41, "position": {"x": 1800, "y": 400}, "size": { "width": 150, "height": 150 }, "fertility": 40, "food_type": "nectar" },
+            { "id": 40, "position": {"x": 450, "y": 300}, "size": { "width": 150, "height": 150 }, "fertility": 5, "food_type": "leaf" },
+            { "id": 41, "position": {"x": 1800, "y": 400}, "size": { "width": 150, "height": 150 }, "fertility": 5, "food_type": "nectar" },
         ],
         "last_id": 41
     }

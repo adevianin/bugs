@@ -31,13 +31,13 @@ class FindFoodTask(Task):
         if (not self._points_checked):
             if (len(self._points_to_check) > 0):
                 checking_point = self._points_to_check[0]
-                got_to_point = self._body.step_to_near(checking_point, 20)
+                got_to_point = self._body.step_to_near(checking_point)
                 if (got_to_point):
                     self._points_to_check.pop(0)
                     self._look_around_for_food()
+                return
             else:
                 self._points_checked = True
-
         if (self._points_checked):
             self._random_walk_task.do_step()
             self._look_around_for_food()

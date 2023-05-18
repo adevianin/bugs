@@ -10,26 +10,25 @@ class MainSocketConsumer(WebsocketConsumer):
     def connect(self):
         self.accept()
         self._send_whole_world()
-        self._world_facade.add_listener('step_done', self._send_previous_step_actions)
+        self._world_facade.add_listener('activity_bag_is_ready', self._on_activity_bag_is_ready)
 
     def disconnect(self, code):
-        self._world_facade.remove_listener('step_done', self._send_previous_step_actions)
+        self._world_facade.remove_listener('activity_bag_is_ready', self._on_activity_bag_is_ready)
         return super().disconnect(code)
 
     def _send_whole_world(self):
-        step_number, world_state, actions = self._world_facade.get_previous_step_activity()
+        bag_start_step, world_state, actions = self._world_facade.get_activity_bag()
         self.send(json.dumps({
             'type': 'whole_world',
             'world': world_state,
             'actions': actions,
-            'step_number': step_number
+            'start_step': bag_start_step
         }))
 
-    def _send_previous_step_actions(self):
-        step_number, world_state, actions = self._world_facade.get_previous_step_activity()
+    def _on_activity_bag_is_ready(self):
+        bag_start_step, world_state, actions = self._world_facade.get_activity_bag()
         self.send(json.dumps({
             'type': 'step_actions',
-            'actions': actions,
-            'step_number': step_number
+            'actions': actions
         }))
         

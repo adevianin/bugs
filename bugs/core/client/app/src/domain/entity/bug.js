@@ -1,14 +1,16 @@
 import { Entity } from './entity';
 import { EntityTypes } from './entityTypes';
 import { ACTION_TYPES } from './action/actionTypes';
+import { distance } from 'utils/distance';
 
 class Bug extends Entity {
 
-    constructor(eventBus, id, position, pickedFoodId) {
+    constructor(eventBus, id, position, pickedFoodId, userSpeed) {
         super(eventBus, id, position, EntityTypes.BUG);
         this.pickedFood = null;
         this.pickedFoodId = pickedFoodId;
         this._angle = 0;
+        this._userSpeed = userSpeed;
         this._setState('standing');
     }
 
@@ -56,9 +58,10 @@ class Bug extends Entity {
     }
 
     _playWalkAction(action) {
-        let wholeWalkTime = action.time * 1000;
-        let walkStartAt = Date.now();
         let destPosition = action.additionalData.position;
+        let dist = distance(this.position.x, this.position.y, destPosition.x, destPosition.y);
+        let wholeWalkTime = (dist / this._userSpeed) * 1000;
+        let walkStartAt = Date.now();
         let startPosition = this.position;
         this._lookAt(destPosition.x, destPosition.y);
         this._setState('walking');
@@ -85,7 +88,7 @@ class Bug extends Entity {
             setTimeout(() => {
                 this.pickupFood(action.additionalData.food);
                 res();
-            }, action.time * 1000)
+            }, 1)
         });
     }
 
@@ -95,7 +98,7 @@ class Bug extends Entity {
             setTimeout(() => {
                 this.dropFood();
                 res();
-            }, action.time * 1000)
+            }, 1)
         });
     }
 
@@ -107,7 +110,7 @@ class Bug extends Entity {
                     action.additionalData.food.die();
                 }
                 res();
-            }, action.time * 1000)
+            }, 500)
         });
     }
 

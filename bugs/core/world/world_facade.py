@@ -36,21 +36,22 @@ class WorldFacade:
 
         self._event_bus = EventEmitter()
 
-        action_builder = ActionBuilder()
-        activity_accumulator = StepActivityAccumulator(action_builder)
-
-        bug_factory = BugFactory(self._event_bus, activity_accumulator)
+        bug_factory = BugFactory(self._event_bus)
         food_factory = FoodFactory(self._event_bus)
-        world_factory = WorldFactory(self._event_bus, bug_factory, food_factory, activity_accumulator)
+        world_factory = WorldFactory(self._event_bus, bug_factory, food_factory)
 
         self._world = world_factory.build_world_from_json(world_data)
+
+        action_builder = ActionBuilder()
+        self._activity_accumulator = StepActivityAccumulator(self._world, self._event_bus, action_builder)
+
         self._world.run()
 
     def get_world_json(self):
         return self._world.to_json()
     
-    def get_previous_step_activity(self):
-        return self._world.get_previous_step_activity()
+    def get_activity_bag(self):
+        return self._activity_accumulator.get_activity_bag()
     
     def run(self):
         self._world.run()

@@ -21,16 +21,18 @@ class FeedMyselfTask(Task):
         return False
 
     def do_step(self):
-        if (not self._is_home_checked):
+        if (not self._is_home_checked and not self._is_at_home):
             self._is_at_home = self._body.step_to(self._home.position)
-            if (self._is_at_home):
-                needed_calories = self._body.calc_how_much_calories_is_need()
-                calories = self._home.give_calories(needed_calories)
-                self._body.eat_calories(calories)
-                self._is_home_checked = True
-                if (not self._body.check_am_i_hungry()):
-                    self.mark_as_done()
-                    return
+            return
+        
+        if (not self._is_home_checked and self._is_at_home):
+            needed_calories = self._body.calc_how_much_calories_is_need()
+            calories = self._home.give_calories(needed_calories)
+            self._body.eat_calories(calories)
+            self._is_home_checked = True
+            if (not self._body.check_am_i_hungry()):
+                self.mark_as_done()
+            return
 
         if (self._is_home_checked):
             if (not self._is_food_found):
@@ -38,9 +40,12 @@ class FeedMyselfTask(Task):
                 if (self._find_food_task.is_done()):
                     self._is_food_found = True
                     self._found_food = self._find_food_task.results
+                if (self._body.is_busy):
+                    return
 
             if (self._is_food_found and not self._is_near_food):
                 self._is_near_food = self._body.step_to_near(self._found_food.position)
+                return
                 
             if (self._is_near_food):
                 is_eatin_done = self._body.eat_food(self._found_food)

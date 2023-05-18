@@ -1,9 +1,9 @@
 class Action {
 
-    constructor(entityId, actionType, time, actionData) {
-        this.entityId = entityId;
+    constructor(actorId, actionType, stepNumber, actionData) {
+        this.actorId = actorId;
         this.type = actionType;
-        this.time = time;
+        this.stepNumber = stepNumber;
         this.additionalData = actionData;
     }
 

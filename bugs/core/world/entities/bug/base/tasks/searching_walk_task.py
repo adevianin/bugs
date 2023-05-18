@@ -46,7 +46,7 @@ class SearchingWalkTask(Task):
 
     def _generate_potential_points_to_walk(self):
         position = self._body.position
-        dist = self._body.calc_distance_can_walk()
+        dist = self._body.distance_per_step
         points_count = SearchingWalkTask.WALK_DIRECTIONS_COUNT
 
         points = []

@@ -20,10 +20,11 @@ class MessageHandlerService {
         switch(msg.type) {
             case 'whole_world':
                 this._worldService.initWorld(msg.world);
-                this._actionService.handleActions(msg.actions);
+                this._actionService.handleIncomeActions(msg.actions);
+                this._actionService.runStepCounter(msg.start_step);
                 break;
             case 'step_actions':
-                this._actionService.handleActions(msg.actions);
+                this._actionService.handleIncomeActions(msg.actions);
                 break;
             default: 
                 throw `unknown type of message "${ msg.type }"`

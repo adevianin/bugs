@@ -25,7 +25,7 @@ class ActionFactory {
     }
 
     _buildWalkAction(actionJson) {
-        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {
+        return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number, {
             position: actionJson.action_data.position
         });
     }
@@ -35,31 +35,31 @@ class ActionFactory {
         if (!food) {
             throw `food not found id = ${actionJson.action_data.food_id}`
         }
-        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {
+        return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number, {
             food
         });
     }
 
     _buildEatFoodAction(actionJson) {
         let food = this._world.findEntityById(actionJson.action_data.food_id);
-        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {
+        return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number, {
             food,
             is_food_eaten: actionJson.action_data.is_food_eaten
         });
     }
 
     _buildFoodGaveAction(actionJson) {
-        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time);
+        return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number);
     }
 
     _buildEntityBornAction(actionJson) {
-        return this._buildAction(actionJson.entity_id, actionJson.action_type, actionJson.time, {
+        return this._buildAction(actionJson.actor_id, actionJson.action_type, actionJson.step_number, {
             entityJson: actionJson.action_data.entity
         });
     }
 
-    _buildAction(entityId, actionType, time, data) {
-        return new Action(entityId, actionType, time, data);
+    _buildAction(actorId, actionType, stepNumber, data) {
+        return new Action(actorId, actionType, stepNumber, data);
     }
 }
 

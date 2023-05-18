@@ -26,12 +26,8 @@ class Entity extends EventEmitter {
         return this._position;
     }
 
-    updateEntity(entityJson) {
-    }
-
     addAction(action) {
         this._actionStack.push(action);
-        this._handleActionsByTimeReducer();
         this.tryPlayNextAction();
     }
 
@@ -43,7 +39,7 @@ class Entity extends EventEmitter {
         }
         let nextAction = this._actionStack[0];
         this._actionStack.shift();
-
+        this.START_PLAYING_AT = new Date().getTime()
         this._isPlaying = true;
         this.playAction(nextAction)
             .then(() => {
@@ -67,25 +63,6 @@ class Entity extends EventEmitter {
     die() {
         this.globalEmit('died', this);
         this.emit('died');
-    }
-
-    _handleActionsByTimeReducer() {
-        if (this._actionStack.length <= 3) {
-            return;
-        }
-        let actionTimeReducer;
-        if (this._actionStack.length == 4) {
-            actionTimeReducer = 0.9;
-        }
-        if (this._actionStack.length == 5) {
-            actionTimeReducer = 0.7;
-        }
-        if (this._actionStack.length > 5) {
-            actionTimeReducer = 0.5;
-        }
-        this._actionStack.forEach(action => {
-            action.time *= actionTimeReducer;
-        });
     }
 
     _setState(newState) {
