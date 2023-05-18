@@ -65,12 +65,13 @@ class BugView extends EntityView {
 
     _renderPickedFoodView() {
         if (!this._pickedFoodView) {
-            this._pickedFoodView = new PickedFoodView(this._entity.pickedFood, this._entityContainer);
+            let food = BugView.domainFacade.findEntityById(this._entity.pickedFoodId);
+            this._pickedFoodView = new PickedFoodView(food, this._entityContainer);
         }
     }
 
     _renderPickedFoodPosition() {
-        this._entity.pickedFood.setPosition(this._entity.position.x, this._entity.position.y - 15);
+        this._pickedFoodView.entity.setPosition(this._entity.position.x, this._entity.position.y - 15);
     }
 
     _renderBugPosition() {

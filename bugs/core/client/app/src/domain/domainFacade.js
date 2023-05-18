@@ -15,6 +15,10 @@ class DomainFacade {
         return this._worldService.getEntities();
     }
 
+    findEntityById(id) {
+        return this._worldService.world.findEntityById(id);
+    }
+
     isLoggedIn() {
         return this._userService.isLoggedIn();
     }

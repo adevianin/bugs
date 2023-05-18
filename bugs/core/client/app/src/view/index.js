@@ -13,6 +13,8 @@ function initViewLayer(domainFacade, initialData) {
     let popupManager = new PopupManager(document.querySelector('[data-popup-container]'));
     BaseView.usePopupManager(popupManager);
 
+    BaseView.useDomainFacade(domainFacade);
+
     let app = new AppView(document, domainFacade);
 }
 

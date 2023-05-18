@@ -2,6 +2,7 @@ class BaseView {
 
     static textureManager;
     static popupManager;
+    static domainFacade;
 
     static useTextureManager(textureManager) {
         BaseView.textureManager = textureManager;
@@ -9,6 +10,10 @@ class BaseView {
 
     static usePopupManager(popupManager) {
         BaseView.popupManager = popupManager;
+    }
+
+    static useDomainFacade(domainFacade) {
+        BaseView.domainFacade = domainFacade;
     }
 
     remove(){

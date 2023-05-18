@@ -9,9 +9,14 @@ class EntityView extends BaseView {
         this._unbindDiedListener = this._entity.on('died', this.remove.bind(this));
     }
 
+    get entity() {
+        return this._entity;
+    }
+
     remove() {
         this._unbindDiedListener();
     }
+    
 }
 
 export {

@@ -11,7 +11,7 @@ function initDomainLayer(userApi, serverConnection, initialData) {
     let mainEventBus = new EventEmitter();
     let worldFactory = new WorldFactory(mainEventBus);
     let world = worldFactory.buildWorld();
-    let actionFactory = new ActionFactory(world);
+    let actionFactory = new ActionFactory();
 
     let worldService = new WorldService(world, worldFactory, mainEventBus);
     let userService = new UserService(userApi, initialData.user, mainEventBus);

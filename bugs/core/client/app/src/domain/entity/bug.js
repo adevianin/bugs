@@ -7,7 +7,6 @@ class Bug extends Entity {
 
     constructor(eventBus, id, position, pickedFoodId, userSpeed) {
         super(eventBus, id, position, EntityTypes.BUG);
-        this.pickedFood = null;
         this.pickedFoodId = pickedFoodId;
         this._angle = 0;
         this._userSpeed = userSpeed;
@@ -38,7 +37,7 @@ class Bug extends Entity {
     }
 
     hasPickedFood() {
-        return !!this.pickedFood;
+        return !!this.pickedFoodId;
     }
 
     _playWalkAction(action) {
@@ -69,7 +68,8 @@ class Bug extends Entity {
     _playFoodPickingAction(action) {
         this._setState('standing');
         return new Promise((res) => {
-            this._pickupFood(action.additionalData.food);
+            this.pickedFoodId = action.additionalData.food_id;
+            this.emit('foodPickedUp');
             res();
         });
     }
@@ -77,7 +77,8 @@ class Bug extends Entity {
     _playFoodGiving(action) {
         this._setState('standing');
         return new Promise((res) => {
-            this._dropFood();
+            this.pickedFoodId = null;
+            this.emit('foodDroped')
             res();
         });
     }
@@ -95,18 +96,6 @@ class Bug extends Entity {
 
     _lookAt(x, y) {
         this._angle = (Math.atan2(y - this.position.y, x - this.position.x) * 180 / Math.PI) + 90;
-    }
-
-    _pickupFood(food) {
-        this.pickedFoodId = food.id;
-        this.pickedFood = food;
-        this.emit('foodPickedUp');
-    }
-
-    _dropFood() {
-        this.pickedFoodId = null;
-        this.pickedFood = null;
-        this.emit('foodDroped')
     }
 
 }
