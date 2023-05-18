@@ -334,15 +334,7 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _playEatFoodAction(action) {
         this._setState('standing');
-        return new Promise((res) => {
-            setTimeout(() => {
-                // console.log('eating');
-                if (action.additionalData.is_food_eaten) {
-                    action.additionalData.food.die();
-                }
-                res();
-            }, 1)
-        });
+        return Promise.resolve();
     }
 
     _calcCoordForWalkedPercent(startCoord, endCoord, flayedPercent) {
