@@ -69,20 +69,16 @@ class Bug extends Entity {
     _playFoodPickingAction(action) {
         this._setState('standing');
         return new Promise((res) => {
-            setTimeout(() => {
-                this._pickupFood(action.additionalData.food);
-                res();
-            }, 1)
+            this._pickupFood(action.additionalData.food);
+            res();
         });
     }
 
     _playFoodGiving(action) {
         this._setState('standing');
         return new Promise((res) => {
-            setTimeout(() => {
-                this._dropFood();
-                res();
-            }, 1)
+            this._dropFood();
+            res();
         });
     }
 

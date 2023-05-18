@@ -319,20 +319,16 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     _playFoodPickingAction(action) {
         this._setState('standing');
         return new Promise((res) => {
-            setTimeout(() => {
-                this._pickupFood(action.additionalData.food);
-                res();
-            }, 1)
+            this._pickupFood(action.additionalData.food);
+            res();
         });
     }
 
     _playFoodGiving(action) {
         this._setState('standing');
         return new Promise((res) => {
-            setTimeout(() => {
-                this._dropFood();
-                res();
-            }, 1)
+            this._dropFood();
+            res();
         });
     }
 
@@ -539,19 +535,15 @@ class Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _playFoodPickedUp(action) {
         return new Promise((res) => {
-            setTimeout(() => {
-                this.emit('food_picked_up');
-                res();
-            }, 1)
+            this.emit('food_picked_up');
+            res();
         });
     }
 
     _playEntityDied(action) {
         return new Promise((res) => {
-            setTimeout(() => {
-                this.die();
-                res();
-            }, 1)
+            this.die();
+            res();
         });
     }
 }

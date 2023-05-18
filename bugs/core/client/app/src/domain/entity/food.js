@@ -31,19 +31,15 @@ class Food extends Entity {
 
     _playFoodPickedUp(action) {
         return new Promise((res) => {
-            setTimeout(() => {
-                this.emit('food_picked_up');
-                res();
-            }, 1)
+            this.emit('food_picked_up');
+            res();
         });
     }
 
     _playEntityDied(action) {
         return new Promise((res) => {
-            setTimeout(() => {
-                this.die();
-                res();
-            }, 1)
+            this.die();
+            res();
         });
     }
 }
