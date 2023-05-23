@@ -19,8 +19,8 @@ class WorldFactory {
         return new Bug(this.mainEventBus, id, position, pickedFoodId, userSpeed);
     }
 
-    buildTown(id, position, color) {
-        return new Town(this.mainEventBus, id, position, color);
+    buildTown(id, position, ownerId, storedCalories) {
+        return new Town(this.mainEventBus, id, position, ownerId, storedCalories);
     }
 
     buildFood(id, position, calories, food_type, food_varity) {
@@ -36,7 +36,7 @@ class WorldFactory {
             case EntityTypes.BUG:
                 return this.buildBug(entityJson.id, entityJson.position, entityJson.picked_food_id, entityJson.user_speed);
             case EntityTypes.TOWN:
-                return this.buildTown(entityJson.id, entityJson.position, entityJson.color);
+                return this.buildTown(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories);
             case EntityTypes.FOOD:
                 return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety);
             case EntityTypes.FOOD_AREA:

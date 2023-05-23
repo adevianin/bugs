@@ -160,7 +160,8 @@ const ACTION_TYPES = {
     ENTITY_BORN: 'entity_born',
     FOOD_WAS_PICKED_UP: 'food_was_picked_up',
     BUG_PICKED_UP_FOOD: 'bug_picked_up_food',
-    ENTITY_DIED: 'entity_died'
+    ENTITY_DIED: 'entity_died',
+    TOWN_TAKING_FOOD: 'town_taking_food'
 
 };
 
@@ -510,18 +511,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
 /* harmony import */ var _entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entityTypes */ "./bugs/core/client/app/src/domain/entity/entityTypes.js");
+/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+
 
 
 
 class Town extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, id, position, color) {
+    constructor(eventBus, id, position, ownerId, storedCalories) {
         super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.TOWN);
-        this._color = color
+        this.ownerId = ownerId;
+        this.storedCalories = storedCalories;
     }
 
-    get color() {
-        return this._color
+    playAction(action) {
+        switch (action.type) {
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.TOWN_TAKING_FOOD:
+                return this._playTakingFood(action);
+            default:
+                throw 'unknown type of action'
+        }
+    }
+
+    _playTakingFood(action) {
+        this.storedCalories = action.additionalData.stored_calories;
+        this.emit('storedCaloriesChanged');
+        return Promise.resolve();
     }
 
 }
@@ -988,8 +1003,8 @@ class WorldFactory {
         return new _entity_bug__WEBPACK_IMPORTED_MODULE_1__.Bug(this.mainEventBus, id, position, pickedFoodId, userSpeed);
     }
 
-    buildTown(id, position, color) {
-        return new _entity_town__WEBPACK_IMPORTED_MODULE_3__.Town(this.mainEventBus, id, position, color);
+    buildTown(id, position, ownerId, storedCalories) {
+        return new _entity_town__WEBPACK_IMPORTED_MODULE_3__.Town(this.mainEventBus, id, position, ownerId, storedCalories);
     }
 
     buildFood(id, position, calories, food_type, food_varity) {
@@ -1005,7 +1020,7 @@ class WorldFactory {
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.BUG:
                 return this.buildBug(entityJson.id, entityJson.position, entityJson.picked_food_id, entityJson.user_speed);
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:
-                return this.buildTown(entityJson.id, entityJson.position, entityJson.color);
+                return this.buildTown(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories);
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
                 return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety);
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_AREA:
@@ -1547,24 +1562,37 @@ __webpack_require__.r(__webpack_exports__);
 
 class TownPopup extends _base_basePopup__WEBPACK_IMPORTED_MODULE_0__.BasePopup {
 
-    constructor() {
+    constructor(town) {
         super();
         this._title = 'town popup';
+        this._town = town;
+
+        this._unbindStoredCaloriesChangedListener = this._town.on('storedCaloriesChanged', this._renderCalories.bind(this))
 
         this.render();
+    }
+
+    close(){ 
+        super.close();
+        this._unbindStoredCaloriesChangedListener();
     }
 
     render() {
         super.render();
         this.bodyEl.innerHTML = _body_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._renderCalories();
     }
     
     onOk() {
-        console.log('ok');
+        console.log('ok', this._town);
     }
 
     onCancel() {
         this.close();
+    }
+
+    _renderCalories() {
+        this.bodyEl.querySelector('[data-stored-calories]').innerHTML = this._town.storedCalories;
     }
 }
 
@@ -2022,7 +2050,10 @@ class TownView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._sprite.x = this._entity.position.x;
         this._sprite.y = this._entity.position.y;
 
-        this._sprite.on('pointerdown', this._onClick.bind(this));
+        if (entity.ownerId == TownView.domainFacade.getUserData().id) {
+            this._sprite.on('pointerdown', this._onClick.bind(this));
+        }
+        
     }
 
     remove() {
@@ -4239,7 +4270,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    town popup body\r\n</div>";
+var code = "<div>\r\n    <div>їжі всередині:<span data-stored-calories></span></div>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

@@ -17,7 +17,7 @@ class Command(BaseCommand):
         ],
         "towns": [
             { "id": 30, "position": {"x": 600, "y": 350 }, "color": "yellow", "owner_id": 2 },
-            { "id": 31, "position": {"x": 1600, "y": 450 }, "color": "red", "owner_id": 2 },
+            { "id": 31, "position": {"x": 1600, "y": 450 }, "color": "red", "owner_id": 1 },
         ],
         "food_areas": [
             { "id": 40, "position": {"x": 450, "y": 300}, "size": { "width": 150, "height": 150 }, "fertility": 5, "food_type": "leaf" },

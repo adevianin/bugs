@@ -31,6 +31,9 @@ class Town(PlainEntity):
     def take_food(self, food: Food):
         self._stored_calories += food.calories
         food.die()
+        self._handle_action('town_taking_food', {
+            'stored_calories': self._stored_calories
+        })
 
     def give_calories(self, count: int) -> int:
         if (self._stored_calories >= count):
@@ -44,8 +47,8 @@ class Town(PlainEntity):
     def to_json(self):
         json = super().to_json()
         json.update({
-            'color': self._color,
-            'owner_id': self._owner_id
+            'owner_id': self._owner_id,
+            'stored_calories': self._stored_calories
         })
         
         return json

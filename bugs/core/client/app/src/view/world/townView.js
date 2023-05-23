@@ -15,7 +15,10 @@ class TownView extends EntityView {
         this._sprite.x = this._entity.position.x;
         this._sprite.y = this._entity.position.y;
 
-        this._sprite.on('pointerdown', this._onClick.bind(this));
+        if (entity.ownerId == TownView.domainFacade.getUserData().id) {
+            this._sprite.on('pointerdown', this._onClick.bind(this));
+        }
+        
     }
 
     remove() {
