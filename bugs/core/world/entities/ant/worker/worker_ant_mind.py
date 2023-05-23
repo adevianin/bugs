@@ -1,6 +1,6 @@
-from ..base.bug_mind import BugMind
+from ..base.ant_mind import AntMind
 
-class CollectorBugMind(BugMind):
+class WorkerAntMind(AntMind):
 
     def _do_step_activity(self):
         if (self._body.check_am_i_hungry()):

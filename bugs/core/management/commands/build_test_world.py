@@ -7,9 +7,9 @@ class Command(BaseCommand):
 
     world_state = {
         "map": { "size": {"width": 3000, "height": 3000 }},
-        "bugs": [
-            { "id": 1, "position": {"x": 650, "y": 350}, "from_town": 30, "type": "food_collector" },
-            # { "id": 2, "position": {"x": 1600, "y": 500}, "from_town": 31, "type": "food_collector" },
+        "ants": [
+            { "id": 1, "position": {"x": 650, "y": 350}, "from_town": 30, "type": "worker" },
+            # { "id": 2, "position": {"x": 1600, "y": 500}, "from_town": 31, "type": "worker" },
         ],
         "foods": [
             {"id": 20, "position": {"x": 350, "y": 350}, "calories": 150, "type": "leaf", "food_variety": 1 },

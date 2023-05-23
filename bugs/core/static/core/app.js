@@ -159,7 +159,7 @@ const ACTION_TYPES = {
     EAT_FOOD: 'eat_food',
     ENTITY_BORN: 'entity_born',
     FOOD_WAS_PICKED_UP: 'food_was_picked_up',
-    BUG_PICKED_UP_FOOD: 'bug_picked_up_food',
+    ANT_PICKED_UP_FOOD: 'ant_picked_up_food',
     ENTITY_DIED: 'entity_died',
     TOWN_TAKING_FOOD: 'town_taking_food'
 
@@ -169,16 +169,16 @@ const ACTION_TYPES = {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/entity/bug.js":
+/***/ "./bugs/core/client/app/src/domain/entity/ant.js":
 /*!*******************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/bug.js ***!
+  !*** ./bugs/core/client/app/src/domain/entity/ant.js ***!
   \*******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Bug": () => (/* binding */ Bug)
+/* harmony export */   "Ant": () => (/* binding */ Ant)
 /* harmony export */ });
 /* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
 /* harmony import */ var _entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entityTypes */ "./bugs/core/client/app/src/domain/entity/entityTypes.js");
@@ -189,10 +189,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
+class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     constructor(eventBus, id, position, pickedFoodId, userSpeed) {
-        super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.BUG);
+        super(eventBus, id, position, _entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT);
         this.pickedFoodId = pickedFoodId;
         this._angle = 0;
         this._userSpeed = userSpeed;
@@ -211,7 +211,7 @@ class Bug extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         switch (action.type) {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.WALK:
                 return this._playWalkAction(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.BUG_PICKED_UP_FOOD:
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_PICKED_UP_FOOD:
                 return this._playFoodPickingAction(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_GAVE:
                 return this._playFoodGiving(action);
@@ -395,7 +395,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "EntityTypes": () => (/* binding */ EntityTypes)
 /* harmony export */ });
 const EntityTypes = {
-    BUG: 'bug',
+    ANT: 'ant',
     FOOD: 'food',
     TOWN: 'town',
     FOOD_AREA: 'food_area'
@@ -580,8 +580,8 @@ class World {
         return this._size;
     }
 
-    getBugs() {
-        return this.findEntityByType(_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.BUG);
+    getAnts() {
+        return this.findEntityByType(_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT);
     }
 
     addEntity(entity) {
@@ -922,7 +922,7 @@ class WorldService {
         });
         this._world.size = worldJson.size;
 
-        this._runBugs();
+        this._runAnts();
 
         this._isWholeWorldInited = true;
         this._mainEventBus.emit('wholeWorldInited');
@@ -947,14 +947,14 @@ class WorldService {
         return this._isWholeWorldInited;
     }
 
-    _runBugs() {
-        let bugs = this._world.getBugs();
+    _runAnts() {
+        let ants = this._world.getAnts();
 
         //put food in bugs hands
-        bugs.forEach(bug => {
-            if (bug.pickedFoodId) {
-                let food = this._world.findEntityById(bug.pickedFoodId);
-                bug.pickupFood(food);
+        ants.forEach(ant => {
+            if (ant.pickedFoodId) {
+                let food = this._world.findEntityById(ant.pickedFoodId);
+                ant.pickupFood(food);
             }
         });
         
@@ -977,7 +977,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "WorldFactory": () => (/* binding */ WorldFactory)
 /* harmony export */ });
 /* harmony import */ var _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity/entityTypes */ "./bugs/core/client/app/src/domain/entity/entityTypes.js");
-/* harmony import */ var _entity_bug__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entity/bug */ "./bugs/core/client/app/src/domain/entity/bug.js");
+/* harmony import */ var _entity_ant__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entity/ant */ "./bugs/core/client/app/src/domain/entity/ant.js");
 /* harmony import */ var _entity_world__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./entity/world */ "./bugs/core/client/app/src/domain/entity/world.js");
 /* harmony import */ var _entity_town__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./entity/town */ "./bugs/core/client/app/src/domain/entity/town.js");
 /* harmony import */ var _entity_food__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./entity/food */ "./bugs/core/client/app/src/domain/entity/food.js");
@@ -999,8 +999,8 @@ class WorldFactory {
         return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this.mainEventBus);
     }
 
-    buildBug(id, position, pickedFoodId, userSpeed) {
-        return new _entity_bug__WEBPACK_IMPORTED_MODULE_1__.Bug(this.mainEventBus, id, position, pickedFoodId, userSpeed);
+    buildAnt(id, position, pickedFoodId, userSpeed) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this.mainEventBus, id, position, pickedFoodId, userSpeed);
     }
 
     buildTown(id, position, ownerId, storedCalories) {
@@ -1017,8 +1017,8 @@ class WorldFactory {
 
     buildEntity(entityJson) {
         switch(entityJson.type) {
-            case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.BUG:
-                return this.buildBug(entityJson.id, entityJson.position, entityJson.picked_food_id, entityJson.user_speed);
+            case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT:
+                return this.buildAnt(entityJson.id, entityJson.position, entityJson.picked_food_id, entityJson.user_speed);
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:
                 return this.buildTown(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories);
             case _entity_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
@@ -1584,7 +1584,7 @@ class TownPopup extends _base_basePopup__WEBPACK_IMPORTED_MODULE_0__.BasePopup {
     }
     
     onOk() {
-        console.log('ok', this._town);
+        console.log('ok');
     }
 
     onCancel() {
@@ -1594,6 +1594,137 @@ class TownPopup extends _base_basePopup__WEBPACK_IMPORTED_MODULE_0__.BasePopup {
     _renderCalories() {
         this.bodyEl.querySelector('[data-stored-calories]').innerHTML = this._town.storedCalories;
     }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/world/antView.js":
+/*!********************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/antView.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AntView": () => (/* binding */ AntView)
+/* harmony export */ });
+/* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _pickedFood__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pickedFood */ "./bugs/core/client/app/src/view/world/pickedFood.js");
+
+
+
+
+class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
+
+    constructor(entity, entityContainer) {
+        super(entity, entityContainer);
+
+        this._render();
+
+        this._unbindPosChangedListener = this._entity.on('positionChanged', this._onAntPositionChange.bind(this));
+        this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderAntCurrentState.bind(this));
+        this._unbindFoodLiftListener = this._entity.on('foodPickedUp', this._onFoodPickedUp.bind(this));
+        this._unbindFoodDropListener = this._entity.on('foodDroped', this._removePickedFoodView.bind(this));
+    }
+
+    remove() {
+        super.remove();
+        this._entityContainer.removeChild(this._standSprite);
+        this._entityContainer.removeChild(this._walkSprite);
+        this._unbindPosChangedListener();
+        this._unbindStateChangeListener();
+        this._unbindFoodLiftListener();
+        this._unbindFoodDropListener();
+        this._removePickedFoodView();
+    }
+
+    _render() {
+        this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(AntView.textureManager.getTexture('bug4.png'));
+        this._standSprite.anchor.set(0.5);
+        this._entityContainer.addChild(this._standSprite);
+
+        this._walkSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.AnimatedSprite(AntView.textureManager.getAnimatedTextures('bug'));
+        this._walkSprite.anchor.set(0.5);
+        this._walkSprite.animationSpeed = 0.2;
+        this._entityContainer.addChild(this._walkSprite);
+
+        this._renderAntCurrentState();
+        this._renderAntPosition();
+        if (this._entity.hasPickedFood()) { 
+            this._renderPickedFoodView();
+            this._renderPickedFoodPosition();
+        }
+    }
+
+    _onFoodPickedUp() {
+        this._renderPickedFoodView();
+        this._renderPickedFoodPosition();
+    }
+
+    _onAntPositionChange() {
+        this._renderAntPosition();
+        if (this._entity.hasPickedFood()) { 
+            this._renderPickedFoodPosition();
+        }
+    }
+
+    _removePickedFoodView() {
+        if (this._pickedFoodView) {
+            this._pickedFoodView.remove();
+            this._pickedFoodView = null;
+        }
+    }
+
+    _renderPickedFoodView() {
+        if (!this._pickedFoodView) {
+            let food = AntView.domainFacade.findEntityById(this._entity.pickedFoodId);
+            this._pickedFoodView = new _pickedFood__WEBPACK_IMPORTED_MODULE_2__.PickedFoodView(food, this._entityContainer);
+        }
+    }
+
+    _renderPickedFoodPosition() {
+        this._pickedFoodView.entity.setPosition(this._entity.position.x, this._entity.position.y - 15);
+    }
+
+    _renderAntPosition() {
+        this._standSprite.x = this._entity.position.x;
+        this._standSprite.y = this._entity.position.y;
+        this._standSprite.angle = this._entity.angle;
+
+        this._walkSprite.x = this._entity.position.x;
+        this._walkSprite.y = this._entity.position.y;
+        this._walkSprite.angle = this._entity.angle;
+    }
+
+    _renderAntCurrentState() {
+        let state = this._entity.state;
+
+        this._toggleStandingState(state == 'standing');
+        this._toggleWalkingState(state == 'walking');
+    }
+
+    _toggleWalkingState(isEnabling) {
+        if (isEnabling) {
+            this._walkSprite.renderable = true;
+            this._walkSprite.play();
+        } else {
+            this._walkSprite.renderable = false;
+            this._walkSprite.stop();
+        }
+    }
+
+    _toggleStandingState(isEnabling) {
+        if (isEnabling) {
+            this._standSprite.renderable = true;
+        } else {
+            this._standSprite.renderable = false;
+        }
+    }
+   
 }
 
 
@@ -1633,137 +1764,6 @@ class BaseView {
         throw 'remove method is abstract';
     }
 
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/world/bugView.js":
-/*!********************************************************!*\
-  !*** ./bugs/core/client/app/src/view/world/bugView.js ***!
-  \********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BugView": () => (/* binding */ BugView)
-/* harmony export */ });
-/* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-/* harmony import */ var _pickedFood__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pickedFood */ "./bugs/core/client/app/src/view/world/pickedFood.js");
-
-
-
-
-class BugView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
-
-    constructor(entity, entityContainer) {
-        super(entity, entityContainer);
-
-        this._render();
-
-        this._unbindPosChangedListener = this._entity.on('positionChanged', this._onBugPositionChange.bind(this));
-        this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderBugCurrentState.bind(this));
-        this._unbindFoodLiftListener = this._entity.on('foodPickedUp', this._onFoodPickedUp.bind(this));
-        this._unbindFoodDropListener = this._entity.on('foodDroped', this._removePickedFoodView.bind(this));
-    }
-
-    remove() {
-        super.remove();
-        this._entityContainer.removeChild(this._standSprite);
-        this._entityContainer.removeChild(this._walkSprite);
-        this._unbindPosChangedListener();
-        this._unbindStateChangeListener();
-        this._unbindFoodLiftListener();
-        this._unbindFoodDropListener();
-        this._removePickedFoodView();
-    }
-
-    _render() {
-        this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(BugView.textureManager.getTexture('bug4.png'));
-        this._standSprite.anchor.set(0.5);
-        this._entityContainer.addChild(this._standSprite);
-
-        this._walkSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.AnimatedSprite(BugView.textureManager.getAnimatedTextures('bug'));
-        this._walkSprite.anchor.set(0.5);
-        this._walkSprite.animationSpeed = 0.2;
-        this._entityContainer.addChild(this._walkSprite);
-
-        this._renderBugCurrentState();
-        this._renderBugPosition();
-        if (this._entity.hasPickedFood()) { 
-            this._renderPickedFoodView();
-            this._renderPickedFoodPosition();
-        }
-    }
-
-    _onFoodPickedUp() {
-        this._renderPickedFoodView();
-        this._renderPickedFoodPosition();
-    }
-
-    _onBugPositionChange() {
-        this._renderBugPosition();
-        if (this._entity.hasPickedFood()) { 
-            this._renderPickedFoodPosition();
-        }
-    }
-
-    _removePickedFoodView() {
-        if (this._pickedFoodView) {
-            this._pickedFoodView.remove();
-            this._pickedFoodView = null;
-        }
-    }
-
-    _renderPickedFoodView() {
-        if (!this._pickedFoodView) {
-            let food = BugView.domainFacade.findEntityById(this._entity.pickedFoodId);
-            this._pickedFoodView = new _pickedFood__WEBPACK_IMPORTED_MODULE_2__.PickedFoodView(food, this._entityContainer);
-        }
-    }
-
-    _renderPickedFoodPosition() {
-        this._pickedFoodView.entity.setPosition(this._entity.position.x, this._entity.position.y - 15);
-    }
-
-    _renderBugPosition() {
-        this._standSprite.x = this._entity.position.x;
-        this._standSprite.y = this._entity.position.y;
-        this._standSprite.angle = this._entity.angle;
-
-        this._walkSprite.x = this._entity.position.x;
-        this._walkSprite.y = this._entity.position.y;
-        this._walkSprite.angle = this._entity.angle;
-    }
-
-    _renderBugCurrentState() {
-        let state = this._entity.state;
-
-        this._toggleStandingState(state == 'standing');
-        this._toggleWalkingState(state == 'walking');
-    }
-
-    _toggleWalkingState(isEnabling) {
-        if (isEnabling) {
-            this._walkSprite.renderable = true;
-            this._walkSprite.play();
-        } else {
-            this._walkSprite.renderable = false;
-            this._walkSprite.stop();
-        }
-    }
-
-    _toggleStandingState(isEnabling) {
-        if (isEnabling) {
-            this._standSprite.renderable = true;
-        } else {
-            this._standSprite.renderable = false;
-        }
-    }
-   
 }
 
 
@@ -2135,7 +2135,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _worldStyles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./worldStyles.css */ "./bugs/core/client/app/src/view/world/worldStyles.css");
 /* harmony import */ var _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../domain/entity/entityTypes */ "./bugs/core/client/app/src/domain/entity/entityTypes.js");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-/* harmony import */ var _bugView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./bugView */ "./bugs/core/client/app/src/view/world/bugView.js");
+/* harmony import */ var _antView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./antView */ "./bugs/core/client/app/src/view/world/antView.js");
 /* harmony import */ var _townView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./townView */ "./bugs/core/client/app/src/view/world/townView.js");
 /* harmony import */ var _foodView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foodView */ "./bugs/core/client/app/src/view/world/foodView.js");
 /* harmony import */ var _camera__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./camera */ "./bugs/core/client/app/src/view/world/camera.js");
@@ -2224,8 +2224,8 @@ class WorldView {
 
     _buildEntityView(entity) {
         switch (entity.type) {
-            case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.BUG:
-                return new _bugView__WEBPACK_IMPORTED_MODULE_3__.BugView(entity, this._entityContainer);
+            case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT:
+                return new _antView__WEBPACK_IMPORTED_MODULE_3__.AntView(entity, this._entityContainer);
             case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.TOWN:
                 return new _townView__WEBPACK_IMPORTED_MODULE_4__.TownView(entity, this._entityContainer);
             case _domain_entity_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD:

@@ -3,10 +3,10 @@ import { EntityTypes } from './entityTypes';
 import { ACTION_TYPES } from './action/actionTypes';
 import { distance } from 'utils/distance';
 
-class Bug extends Entity {
+class Ant extends Entity {
 
     constructor(eventBus, id, position, pickedFoodId, userSpeed) {
-        super(eventBus, id, position, EntityTypes.BUG);
+        super(eventBus, id, position, EntityTypes.ANT);
         this.pickedFoodId = pickedFoodId;
         this._angle = 0;
         this._userSpeed = userSpeed;
@@ -25,7 +25,7 @@ class Bug extends Entity {
         switch (action.type) {
             case ACTION_TYPES.WALK:
                 return this._playWalkAction(action);
-            case ACTION_TYPES.BUG_PICKED_UP_FOOD:
+            case ACTION_TYPES.ANT_PICKED_UP_FOOD:
                 return this._playFoodPickingAction(action);
             case ACTION_TYPES.FOOD_GAVE:
                 return this._playFoodGiving(action);
@@ -100,4 +100,4 @@ class Bug extends Entity {
 
 }
 
-export { Bug }
+export { Ant }

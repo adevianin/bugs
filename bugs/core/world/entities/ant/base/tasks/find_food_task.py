@@ -1,5 +1,5 @@
 from core.world.entities.base.live_entity.tasks.task import Task
-from ..bug_body import BugBody
+from ..ant_body import AntBody
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.map import Map
 from .searching_walk_task import SearchingWalkTask
@@ -9,7 +9,7 @@ import math
 
 class FindFoodTask(Task):
 
-    def __init__(self, body: BugBody, map: Map, memory: Memory, random_walk_task: SearchingWalkTask):
+    def __init__(self, body: AntBody, map: Map, memory: Memory, random_walk_task: SearchingWalkTask):
         super().__init__(body)
         self._map = map
         self._memory = memory

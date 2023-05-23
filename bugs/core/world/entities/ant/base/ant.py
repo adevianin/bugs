@@ -1,21 +1,21 @@
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
-from .bug_body import BugBody
-from .bug_mind import BugMind
-from .bug_types import BugTypes
+from .ant_body import AntBody
+from .ant_mind import AntMind
+from .ant_types import AntTypes
 
-class Bug(LiveEntity):
+class Ant(LiveEntity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, bug_type: BugTypes, mind: BugMind, body: BugBody):
-        super().__init__(event_bus, id, EntityTypes.BUG, mind, body)
-        self._bug_type = bug_type
+    def __init__(self, event_bus: EventEmitter, id: int, ant_type: AntTypes, mind: AntMind, body: AntBody):
+        super().__init__(event_bus, id, EntityTypes.ANT, mind, body)
+        self._ant_type = ant_type
         self._body.events.add_listener('food_picked', self._on_food_picked)
         self._body.events.add_listener('picked_food_gave', self._on_food_gave)
 
     @property
-    def bug_type(self):
-        return self._bug_type
+    def ant_type(self):
+        return self._ant_type
 
     def to_json(self):
         json = super().to_json()
@@ -26,7 +26,7 @@ class Bug(LiveEntity):
         return json
 
     def _on_food_picked(self, food_id):
-        self._handle_action('bug_picked_up_food', {
+        self._handle_action('ant_picked_up_food', {
             'food_id': food_id
         })
 

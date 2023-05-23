@@ -1,6 +1,6 @@
 from .world_data_repository_interface import iWorldDataRepository
 from .utils.event_emiter import EventEmitter
-from .entities.bug.bug_factory import BugFactory
+from .entities.ant.ant_factory import AntFactory
 from .entities.food.food_factory import FoodFactory
 from .world_factory import WorldFactory
 from .world import World
@@ -36,9 +36,9 @@ class WorldFacade:
 
         self._event_bus = EventEmitter()
 
-        bug_factory = BugFactory(self._event_bus)
+        ant_factory = AntFactory(self._event_bus)
         food_factory = FoodFactory(self._event_bus)
-        world_factory = WorldFactory(self._event_bus, bug_factory, food_factory)
+        world_factory = WorldFactory(self._event_bus, ant_factory, food_factory)
 
         self._world = world_factory.build_world_from_json(world_data)
 

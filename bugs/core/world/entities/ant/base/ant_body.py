@@ -4,7 +4,7 @@ from core.world.entities.food.food import Food
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.town import Town
 
-class BugBody(Body):
+class AntBody(Body):
 
     def __init__(self, events: EventEmitter, position: Point):
         super().__init__(events, position, 32, 100)

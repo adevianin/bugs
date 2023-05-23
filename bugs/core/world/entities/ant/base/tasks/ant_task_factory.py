@@ -1,5 +1,5 @@
 from core.world.entities.base.live_entity.tasks.task_factory import TaskFactory
-from ..bug_body import BugBody
+from ..ant_body import AntBody
 from core.world.map import Map
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.point import Point
@@ -11,9 +11,9 @@ from core.world.entities.base.live_entity.memory import Memory
 from .find_food_task import FindFoodTask
 from .feed_myself_task import FeedMyselfTask
 
-class BugTaskFactory(TaskFactory):
+class AntTaskFactory(TaskFactory):
 
-    def __init__(self, body: BugBody, map: Map) -> None:
+    def __init__(self, body: AntBody, map: Map) -> None:
         super().__init__(body)
         self._map = map
 

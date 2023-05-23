@@ -1,5 +1,5 @@
 from core.world.entities.base.live_entity.tasks.task import Task
-from ..bug_body import BugBody
+from ..ant_body import AntBody
 from core.world.utils.point import Point
 from core.world.map import Map
 
@@ -11,7 +11,7 @@ class SearchingWalkTask(Task):
     WALK_DIRECTIONS_COUNT = 8
     VISITED_POINTS_MEMORY = 5
 
-    def __init__(self, body: BugBody, map: Map, search_near_point: Point = None, search_radius: int = 300):
+    def __init__(self, body: AntBody, map: Map, search_near_point: Point = None, search_radius: int = 300):
         super().__init__(body)
         self._map = map
         self._visited_points = []

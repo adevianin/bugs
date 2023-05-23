@@ -20,8 +20,8 @@ class World {
         return this._size;
     }
 
-    getBugs() {
-        return this.findEntityByType(EntityTypes.BUG);
+    getAnts() {
+        return this.findEntityByType(EntityTypes.ANT);
     }
 
     addEntity(entity) {

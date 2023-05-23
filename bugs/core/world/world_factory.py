@@ -1,4 +1,4 @@
-from .entities.bug.bug_factory import BugFactory
+from .entities.ant.ant_factory import AntFactory
 from .entities.food.food_factory import FoodFactory
 from .utils.size import Size
 from .utils.point import Point
@@ -7,14 +7,14 @@ from .map import Map
 from .world import World
 from .entities.town import Town
 from .entities.food.food_area import FoodArea
-from .entities.bug.base.bug_types import BugTypes
+from .entities.ant.base.ant_types import AntTypes
 from .entities.food.food_types import FoodTypes
 
 class WorldFactory():
 
-    def __init__(self, event_bus: EventEmitter, bug_factory: BugFactory, food_factory: FoodFactory):
+    def __init__(self, event_bus: EventEmitter, ant_factory: AntFactory, food_factory: FoodFactory):
         self._event_bus = event_bus
-        self._bug_factory = bug_factory
+        self._ant_factory = ant_factory
         self._food_factory = food_factory
 
     def build_world_from_json(self, world_data: dict):
@@ -27,13 +27,13 @@ class WorldFactory():
             town = self.build_town(town_data['id'], position, town_data['color'], town_data['owner_id'])
             map.add_entity(town)
 
-        bugs_data = world_data['bugs']
-        for bug_data in bugs_data:
-            position = Point(bug_data['position']['x'], bug_data['position']['y'])
-            town = map.get_entity_by_id(bug_data['from_town'])
-            bug_type = BugTypes(bug_data['type'])
-            bug = self._bug_factory.build_bug(map, bug_data['id'], bug_type, position, town)
-            map.add_entity(bug)
+        ants_data = world_data['ants']
+        for ant_data in ants_data:
+            position = Point(ant_data['position']['x'], ant_data['position']['y'])
+            town = map.get_entity_by_id(ant_data['from_town'])
+            ant_type = AntTypes(ant_data['type'])
+            ant = self._ant_factory.build_ant(map, ant_data['id'], ant_type, position, town)
+            map.add_entity(ant)
 
         foods_data = world_data['foods']
         for food_data in foods_data:

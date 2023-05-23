@@ -1,5 +1,5 @@
 import { EntityTypes } from './entity/entityTypes'
-import { Bug } from './entity/bug';
+import { Ant } from './entity/ant';
 import { World } from './entity/world';
 import { Town } from './entity/town';
 import { Food } from './entity/food';
@@ -15,8 +15,8 @@ class WorldFactory {
         return new World(this.mainEventBus);
     }
 
-    buildBug(id, position, pickedFoodId, userSpeed) {
-        return new Bug(this.mainEventBus, id, position, pickedFoodId, userSpeed);
+    buildAnt(id, position, pickedFoodId, userSpeed) {
+        return new Ant(this.mainEventBus, id, position, pickedFoodId, userSpeed);
     }
 
     buildTown(id, position, ownerId, storedCalories) {
@@ -33,8 +33,8 @@ class WorldFactory {
 
     buildEntity(entityJson) {
         switch(entityJson.type) {
-            case EntityTypes.BUG:
-                return this.buildBug(entityJson.id, entityJson.position, entityJson.picked_food_id, entityJson.user_speed);
+            case EntityTypes.ANT:
+                return this.buildAnt(entityJson.id, entityJson.position, entityJson.picked_food_id, entityJson.user_speed);
             case EntityTypes.TOWN:
                 return this.buildTown(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories);
             case EntityTypes.FOOD:

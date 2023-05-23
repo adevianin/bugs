@@ -2,15 +2,15 @@ import { EntityView } from './entityView';
 import * as PIXI from 'pixi.js';
 import { PickedFoodView } from './pickedFood';
 
-class BugView extends EntityView {
+class AntView extends EntityView {
 
     constructor(entity, entityContainer) {
         super(entity, entityContainer);
 
         this._render();
 
-        this._unbindPosChangedListener = this._entity.on('positionChanged', this._onBugPositionChange.bind(this));
-        this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderBugCurrentState.bind(this));
+        this._unbindPosChangedListener = this._entity.on('positionChanged', this._onAntPositionChange.bind(this));
+        this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderAntCurrentState.bind(this));
         this._unbindFoodLiftListener = this._entity.on('foodPickedUp', this._onFoodPickedUp.bind(this));
         this._unbindFoodDropListener = this._entity.on('foodDroped', this._removePickedFoodView.bind(this));
     }
@@ -27,17 +27,17 @@ class BugView extends EntityView {
     }
 
     _render() {
-        this._standSprite = new PIXI.Sprite(BugView.textureManager.getTexture('bug4.png'));
+        this._standSprite = new PIXI.Sprite(AntView.textureManager.getTexture('bug4.png'));
         this._standSprite.anchor.set(0.5);
         this._entityContainer.addChild(this._standSprite);
 
-        this._walkSprite = new PIXI.AnimatedSprite(BugView.textureManager.getAnimatedTextures('bug'));
+        this._walkSprite = new PIXI.AnimatedSprite(AntView.textureManager.getAnimatedTextures('bug'));
         this._walkSprite.anchor.set(0.5);
         this._walkSprite.animationSpeed = 0.2;
         this._entityContainer.addChild(this._walkSprite);
 
-        this._renderBugCurrentState();
-        this._renderBugPosition();
+        this._renderAntCurrentState();
+        this._renderAntPosition();
         if (this._entity.hasPickedFood()) { 
             this._renderPickedFoodView();
             this._renderPickedFoodPosition();
@@ -49,8 +49,8 @@ class BugView extends EntityView {
         this._renderPickedFoodPosition();
     }
 
-    _onBugPositionChange() {
-        this._renderBugPosition();
+    _onAntPositionChange() {
+        this._renderAntPosition();
         if (this._entity.hasPickedFood()) { 
             this._renderPickedFoodPosition();
         }
@@ -65,7 +65,7 @@ class BugView extends EntityView {
 
     _renderPickedFoodView() {
         if (!this._pickedFoodView) {
-            let food = BugView.domainFacade.findEntityById(this._entity.pickedFoodId);
+            let food = AntView.domainFacade.findEntityById(this._entity.pickedFoodId);
             this._pickedFoodView = new PickedFoodView(food, this._entityContainer);
         }
     }
@@ -74,7 +74,7 @@ class BugView extends EntityView {
         this._pickedFoodView.entity.setPosition(this._entity.position.x, this._entity.position.y - 15);
     }
 
-    _renderBugPosition() {
+    _renderAntPosition() {
         this._standSprite.x = this._entity.position.x;
         this._standSprite.y = this._entity.position.y;
         this._standSprite.angle = this._entity.angle;
@@ -84,7 +84,7 @@ class BugView extends EntityView {
         this._walkSprite.angle = this._entity.angle;
     }
 
-    _renderBugCurrentState() {
+    _renderAntCurrentState() {
         let state = this._entity.state;
 
         this._toggleStandingState(state == 'standing');
@@ -112,5 +112,5 @@ class BugView extends EntityView {
 }
 
 export {
-    BugView
+    AntView
 }

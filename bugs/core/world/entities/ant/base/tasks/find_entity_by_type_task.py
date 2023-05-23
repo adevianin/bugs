@@ -1,12 +1,12 @@
 from core.world.entities.base.live_entity.tasks.task import Task
-from ..bug_body import BugBody
+from ..ant_body import AntBody
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.map import Map
 from .searching_walk_task import SearchingWalkTask
 
 class FindEntityByTypeTask(Task):
 
-    def __init__(self, body: BugBody, entity_type: EntityTypes, map: Map, searching_walk_task: SearchingWalkTask):
+    def __init__(self, body: AntBody, entity_type: EntityTypes, map: Map, searching_walk_task: SearchingWalkTask):
         super().__init__(body)
         self._searching_entity_type = entity_type
         self._map = map

@@ -2,7 +2,7 @@ import './worldStyles.css';
 
 import { EntityTypes } from '../../domain/entity/entityTypes';
 import * as PIXI from 'pixi.js';
-import { BugView } from './bugView';
+import { AntView } from './antView';
 import { TownView } from './townView';
 import { FoodView } from './foodView';
 import { Camera } from './camera';
@@ -81,8 +81,8 @@ class WorldView {
 
     _buildEntityView(entity) {
         switch (entity.type) {
-            case EntityTypes.BUG:
-                return new BugView(entity, this._entityContainer);
+            case EntityTypes.ANT:
+                return new AntView(entity, this._entityContainer);
             case EntityTypes.TOWN:
                 return new TownView(entity, this._entityContainer);
             case EntityTypes.FOOD:

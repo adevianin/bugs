@@ -1,11 +1,11 @@
 from core.world.entities.base.live_entity.tasks.task import Task
-from ..bug_body import BugBody
+from ..ant_body import AntBody
 from core.world.entities.town import Town
 from .find_food_task import FindFoodTask
 
 class FeedMyselfTask(Task):
 
-    def __init__(self, body: BugBody, home: Town, find_food_task: FindFoodTask):
+    def __init__(self, body: AntBody, home: Town, find_food_task: FindFoodTask):
         super().__init__(body)
         self._home = home
         self._find_food_task = find_food_task
