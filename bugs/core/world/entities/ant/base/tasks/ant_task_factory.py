@@ -3,7 +3,7 @@ from ..ant_body import AntBody
 from core.world.map import Map
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.point import Point
-from core.world.entities.town import Town
+from core.world.entities.town.town import Town
 from .searching_walk_task import SearchingWalkTask
 from .find_entity_by_type_task import FindEntityByTypeTask
 from .collect_food_task import CollectFoodTask

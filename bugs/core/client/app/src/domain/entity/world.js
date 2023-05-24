@@ -1,4 +1,4 @@
-import { EntityTypes } from './entityTypes';
+import { EntityTypes } from "../enum/entityTypes";
 
 class World {
     constructor(eventBus) {

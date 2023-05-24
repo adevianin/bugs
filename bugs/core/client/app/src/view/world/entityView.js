@@ -1,6 +1,6 @@
-import { BaseView } from "./baseView";
+import { BaseGraphicView } from "../base/baseGraphicView";
 
-class EntityView extends BaseView {
+class EntityView extends BaseGraphicView {
     constructor(entity, entityContainer) {
         super();
         this._entity = entity;

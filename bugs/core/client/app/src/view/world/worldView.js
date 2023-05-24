@@ -1,17 +1,18 @@
 import './worldStyles.css';
 
-import { EntityTypes } from '../../domain/entity/entityTypes';
 import * as PIXI from 'pixi.js';
 import { AntView } from './antView';
 import { TownView } from './townView';
 import { FoodView } from './foodView';
 import { Camera } from './camera';
-import { BaseView } from './baseView';
 import { FoodAreaView } from './foodArea';
+import { BaseGraphicView } from '../base/baseGraphicView';
+import { EntityTypes } from '../../domain/enum/entityTypes';
 
-class WorldView {
+class WorldView extends BaseGraphicView {
 
     constructor(el, domainFacade) {
+        super();
         this._domainFacade = domainFacade;
         this._el = el;
         this._entityViews = [];
@@ -28,7 +29,7 @@ class WorldView {
     }
 
     async _init() {
-        await BaseView.textureManager.prepareTextures();
+        await WorldView.textureManager.prepareTextures();
 
         this._app = new PIXI.Application({ width: this._canvasWidth, height: this._canvasHeight, background: 0xffffff, });
         this._el.appendChild(this._app.view);
@@ -36,7 +37,7 @@ class WorldView {
         this._entityContainer = new PIXI.Container();
         this._app.stage.addChild(this._entityContainer);
 
-        this._bg = new PIXI.TilingSprite(BaseView.textureManager.getTexture('grass.png'));
+        this._bg = new PIXI.TilingSprite(WorldView.textureManager.getTexture('grass.png'));
         this._entityContainer.addChild(this._bg);
 
         this._camera = new Camera(this._entityContainer, this._bg, { 

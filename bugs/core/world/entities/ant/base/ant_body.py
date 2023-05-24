@@ -2,7 +2,7 @@ from core.world.entities.base.live_entity.body import Body
 from core.world.utils.point import Point
 from core.world.entities.food.food import Food
 from core.world.utils.event_emiter import EventEmitter
-from core.world.entities.town import Town
+from core.world.entities.town.town import Town
 
 class AntBody(Body):
 

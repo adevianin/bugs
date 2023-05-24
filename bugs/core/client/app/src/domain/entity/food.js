@@ -1,5 +1,5 @@
 import { Entity } from './entity';
-import { EntityTypes } from './entityTypes';
+import { EntityTypes } from '../enum/entityTypes';
 import { ACTION_TYPES } from './action/actionTypes';
 
 class Food extends Entity {

@@ -7,7 +7,7 @@ from .worker.worker_ant_body import WorkerAntBody
 from .worker.worker_ant_mind import WorkerAntMind
 from .base.ant_types import AntTypes
 from core.world.map import Map
-from core.world.entities.town import Town
+from core.world.entities.town.town import Town
 from core.world.entities.base.live_entity.memory import Memory
 
 class AntFactory():

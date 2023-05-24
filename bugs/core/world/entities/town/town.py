@@ -1,17 +1,20 @@
-from .base.plain_entity import PlainEntity
-from .base.entity_types import EntityTypes
+from ..base.plain_entity import PlainEntity
+from ..base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from core.world.entities.food.food import Food
+from .larva import Larva
 
 class Town(PlainEntity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, position: Point, color: str, owner_id: int):
+    def __init__(self, event_bus: EventEmitter, id: int, position: Point, color: str, owner_id: int, larvae: list[Larva], larva_places_count: int):
         super().__init__(event_bus, id, EntityTypes.TOWN, position)
         self._color = color
         self._area = 300
         self._stored_calories = 1000
         self._owner_id = owner_id
+        self._larvae = larvae
+        self._larva_places_count = larva_places_count
 
     @property
     def owner_id(self):
@@ -48,7 +51,16 @@ class Town(PlainEntity):
         json = super().to_json()
         json.update({
             'owner_id': self._owner_id,
-            'stored_calories': self._stored_calories
+            'stored_calories': self._stored_calories,
+            'larvae': self._larvae_to_json(),
+            'larva_places_count': self._larva_places_count
         })
         
         return json
+    
+    def _larvae_to_json(self):
+        larvae_json = []
+        for larva in self._larvae:
+            larvae_json.append(larva.to_json())
+        
+        return larvae_json

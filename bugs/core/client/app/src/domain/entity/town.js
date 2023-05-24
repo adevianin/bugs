@@ -1,13 +1,15 @@
 import { Entity } from './entity';
-import { EntityTypes } from './entityTypes';
+import { EntityTypes } from '../enum/entityTypes';
 import { ACTION_TYPES } from './action/actionTypes';
 
 class Town extends Entity {
 
-    constructor(eventBus, id, position, ownerId, storedCalories) {
+    constructor(eventBus, id, position, ownerId, storedCalories, larvae, larvaPlacesCount) {
         super(eventBus, id, position, EntityTypes.TOWN);
         this.ownerId = ownerId;
         this.storedCalories = storedCalories;
+        this.larvae = larvae;
+        this.larvaPlacesCount = larvaPlacesCount;
     }
 
     playAction(action) {
@@ -17,6 +19,10 @@ class Town extends Entity {
             default:
                 throw 'unknown type of action'
         }
+    }
+
+    canAddLarva() {
+        return this.larvaPlacesCount > this.larvae.length;
     }
 
     _playTakingFood(action) {

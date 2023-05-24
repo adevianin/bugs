@@ -1,19 +1,19 @@
-class BaseView {
+class BaseGraphicView {
 
     static textureManager;
     static popupManager;
     static domainFacade;
 
     static useTextureManager(textureManager) {
-        BaseView.textureManager = textureManager;
+        BaseGraphicView.textureManager = textureManager;
     }
 
     static usePopupManager(popupManager) {
-        BaseView.popupManager = popupManager;
+        BaseGraphicView.popupManager = popupManager;
     }
 
     static useDomainFacade(domainFacade) {
-        BaseView.domainFacade = domainFacade;
+        BaseGraphicView.domainFacade = domainFacade;
     }
 
     remove(){
@@ -23,5 +23,5 @@ class BaseView {
 }
 
 export {
-    BaseView
+    BaseGraphicView
 }

@@ -1,9 +1,11 @@
 import './style.css';
 import popupTemplate from './template.html';
+import { BaseHTMLView } from '../../base/baseHTMLView';
 
-class BasePopup {
+class BasePopup extends BaseHTMLView {
 
     constructor() {
+        super();
         this._title = 'popup title';
         this.el = document.createElement('div');
         this._bodyEl = null;

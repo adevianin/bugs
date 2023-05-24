@@ -1,4 +1,4 @@
-import { EntityTypes } from './entity/entityTypes'
+import { EntityTypes } from './enum/entityTypes';
 import { Ant } from './entity/ant';
 import { World } from './entity/world';
 import { Town } from './entity/town';
@@ -19,8 +19,10 @@ class WorldFactory {
         return new Ant(this.mainEventBus, id, position, pickedFoodId, userSpeed);
     }
 
-    buildTown(id, position, ownerId, storedCalories) {
-        return new Town(this.mainEventBus, id, position, ownerId, storedCalories);
+    buildTown(id, position, ownerId, storedCalories, larvaeData, larvaPlacesCount) {
+        let larvae = [];
+        larvaeData.forEach(larvaData => larvae.push(this._buildLarva(larvaData)));
+        return new Town(this.mainEventBus, id, position, ownerId, storedCalories, larvae, larvaPlacesCount);
     }
 
     buildFood(id, position, calories, food_type, food_varity) {
@@ -36,13 +38,20 @@ class WorldFactory {
             case EntityTypes.ANT:
                 return this.buildAnt(entityJson.id, entityJson.position, entityJson.picked_food_id, entityJson.user_speed);
             case EntityTypes.TOWN:
-                return this.buildTown(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories);
+                return this.buildTown(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
             case EntityTypes.FOOD:
                 return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety);
             case EntityTypes.FOOD_AREA:
                 return this.buildFoodArea(entityJson.id, entityJson.position);
             default:
                 throw 'unknown type of entity';
+        }
+    }
+
+    _buildLarva(larvaData) {
+        return {
+            progress: larvaData.progress,
+            antType: larvaData.ant_type
         }
     }
 }

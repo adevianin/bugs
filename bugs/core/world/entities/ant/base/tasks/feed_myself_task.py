@@ -1,6 +1,6 @@
 from core.world.entities.base.live_entity.tasks.task import Task
 from ..ant_body import AntBody
-from core.world.entities.town import Town
+from core.world.entities.town.town import Town
 from .find_food_task import FindFoodTask
 
 class FeedMyselfTask(Task):

@@ -1,5 +1,6 @@
 import { BasePopup } from "../base/basePopup";
 import bodyTmpl from './body.html';
+import { LarvaManager } from "./larvaManager";
 
 class TownPopup extends BasePopup {
 
@@ -22,6 +23,7 @@ class TownPopup extends BasePopup {
         super.render();
         this.bodyEl.innerHTML = bodyTmpl;
         this._renderCalories();
+        this._larvaManager = new LarvaManager(this.bodyEl.querySelector('[data-larva-manager]'), this._town);
     }
     
     onOk() {
