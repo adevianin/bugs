@@ -12,7 +12,7 @@ class Town extends Entity {
 
     playAction(action) {
         switch (action.type) {
-            case ACTION_TYPES.TOWN_TAKING_FOOD:
+            case ACTION_TYPES.TOWN_WAS_GIVEN_FOOD:
                 return this._playTakingFood(action);
             default:
                 throw 'unknown type of action'

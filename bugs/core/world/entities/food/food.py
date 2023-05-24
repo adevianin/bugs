@@ -21,7 +21,7 @@ class Food(PlainEntity):
     
     def pickup(self):
         self.toggle_hidden(True)
-        self._handle_action('food_was_picked_up')
+        self.handle_action('food_was_picked_up')
 
     @calories.setter
     def calories(self, value):

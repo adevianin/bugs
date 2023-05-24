@@ -23,13 +23,13 @@ class Ant extends Entity {
 
     playAction(action) {
         switch (action.type) {
-            case ACTION_TYPES.WALK:
+            case ACTION_TYPES.ENTITY_WALK:
                 return this._playWalkAction(action);
             case ACTION_TYPES.ANT_PICKED_UP_FOOD:
                 return this._playFoodPickingAction(action);
-            case ACTION_TYPES.FOOD_GAVE:
+            case ACTION_TYPES.ANT_GAVE_PICKED_FOOD:
                 return this._playFoodGiving(action);
-            case ACTION_TYPES.EAT_FOOD:
+            case ACTION_TYPES.ENTITY_EAT_FOOD:
                 return this._playEatFoodAction(action);
             default:
                 throw 'unknown type of action'

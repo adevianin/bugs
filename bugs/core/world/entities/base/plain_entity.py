@@ -31,10 +31,3 @@ class PlainEntity(Entity):
         })
         
         return json
-    
-    def _toggle_is_busy(self, is_busy: bool):
-        self._is_entity_busy = is_busy
-
-    @property
-    def _is_busy(self):
-        return self._is_entity_busy

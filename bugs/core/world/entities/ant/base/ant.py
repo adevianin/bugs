@@ -26,9 +26,9 @@ class Ant(LiveEntity):
         return json
 
     def _on_food_picked(self, food_id):
-        self._handle_action('ant_picked_up_food', {
+        self.handle_action('ant_picked_up_food', {
             'food_id': food_id
         })
 
     def _on_food_gave(self):
-        self._handle_action('picked_food_gave')
+        self.handle_action('ant_gave_picked_food')

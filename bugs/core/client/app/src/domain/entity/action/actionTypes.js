@@ -1,13 +1,12 @@
 const ACTION_TYPES = {
-    WALK: 'walk',
-    FOOD_GAVE: 'picked_food_gave',
-    EAT_FOOD: 'eat_food',
-    ENTITY_BORN: 'entity_born',
-    FOOD_WAS_PICKED_UP: 'food_was_picked_up',
     ANT_PICKED_UP_FOOD: 'ant_picked_up_food',
+    ANT_GAVE_PICKED_FOOD: 'ant_gave_picked_food',
+    ENTITY_EAT_FOOD: 'entity_eat_food',
     ENTITY_DIED: 'entity_died',
-    TOWN_TAKING_FOOD: 'town_taking_food'
-
+    ENTITY_BORN: 'entity_born',
+    ENTITY_WALK: 'entity_walk',
+    FOOD_WAS_PICKED_UP: 'food_was_picked_up',
+    TOWN_WAS_GIVEN_FOOD: 'town_was_given_food'
 };
 
 export {

@@ -31,7 +31,7 @@ class Town(PlainEntity):
     def take_food(self, food: Food):
         self._stored_calories += food.calories
         food.die()
-        self._handle_action('town_taking_food', {
+        self.handle_action('town_was_given_food', {
             'stored_calories': self._stored_calories
         })
 
