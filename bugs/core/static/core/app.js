@@ -1490,6 +1490,29 @@ function initViewLayer(domainFacade, initialData) {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/labels/antTypesLabels.js":
+/*!****************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/labels/antTypesLabels.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "antTypesLabels": () => (/* binding */ antTypesLabels)
+/* harmony export */ });
+/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+
+
+let antTypesLabels = {
+    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WORKER]: 'Робітник',
+    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WARIOR]: 'Воїн'
+};
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/panelView.js":
 /*!**********************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/panelView.js ***!
@@ -1647,29 +1670,6 @@ class PopupManager {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/popups/town/antTypesLabels.js":
-/*!*********************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/town/antTypesLabels.js ***!
-  \*********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "antTypesLabels": () => (/* binding */ antTypesLabels)
-/* harmony export */ });
-/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
-
-
-let antTypesLabels = {
-    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WORKER]: 'Робітник',
-    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WARIOR]: 'Воїн'
-};
-
-
-
-/***/ }),
-
 /***/ "./bugs/core/client/app/src/view/popups/town/larvaManager.js":
 /*!*******************************************************************!*\
   !*** ./bugs/core/client/app/src/view/popups/town/larvaManager.js ***!
@@ -1684,7 +1684,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _larva_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./larva.html */ "./bugs/core/client/app/src/view/popups/town/larva.html");
 /* harmony import */ var _larvaManager_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./larvaManager.html */ "./bugs/core/client/app/src/view/popups/town/larvaManager.html");
 /* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
-/* harmony import */ var _antTypesLabels__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./antTypesLabels */ "./bugs/core/client/app/src/view/popups/town/antTypesLabels.js");
+/* harmony import */ var _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../labels/antTypesLabels */ "./bugs/core/client/app/src/view/labels/antTypesLabels.js");
 
 
 
@@ -1715,7 +1715,7 @@ class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseH
         let tempEl = document.createElement('div');
         this._town.larvae.forEach(larva => {
             tempEl.innerHTML = _larva_html__WEBPACK_IMPORTED_MODULE_0__["default"];
-            tempEl.querySelector('[data-type]').innerHTML = _antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels[larva.antType];
+            tempEl.querySelector('[data-type]').innerHTML = _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels[larva.antType];
             tempEl.querySelector('[data-progress]').innerHTML = larva.progress;
             this._larvaeListEl.append(tempEl.firstChild);
         });
@@ -1727,9 +1727,9 @@ class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseH
 
     _renderLarvaTypeSelector() {
         let antTypeSelectEl = this._el.querySelector('[data-new-larva-type-select]');
-        for (let antType in _antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels) {
+        for (let antType in _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels) {
             let optionEl = document.createElement('option');
-            optionEl.innerHTML = _antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels[antType];
+            optionEl.innerHTML = _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels[antType];
             optionEl.value = antType;
             antTypeSelectEl.append(optionEl);
         }

@@ -1,7 +1,7 @@
 import larvaTmpl from './larva.html';
 import larvaManagerTmpl from './larvaManager.html';
 import { BaseHTMLView } from '../../base/baseHTMLView';
-import { antTypesLabels } from './antTypesLabels';
+import { antTypesLabels } from '../../labels/antTypesLabels';
 
 class LarvaManager extends BaseHTMLView {
 
