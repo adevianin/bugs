@@ -108,7 +108,7 @@ class Action {
         this.actorId = actorId;
         this.type = actionType;
         this.stepNumber = stepNumber;
-        this.additionalData = actionData;
+        this.actionData = actionData;
     }
 
 }
@@ -161,7 +161,8 @@ const ACTION_TYPES = {
     ENTITY_BORN: 'entity_born',
     ENTITY_WALK: 'entity_walk',
     FOOD_WAS_PICKED_UP: 'food_was_picked_up',
-    TOWN_WAS_GIVEN_FOOD: 'town_was_given_food'
+    TOWN_WAS_GIVEN_FOOD: 'town_was_given_food',
+    TOWN_LARVAE_CHANGED: 'town_larvae_changed'
 };
 
 
@@ -226,7 +227,7 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     _playWalkAction(action) {
-        let destPosition = action.additionalData.position;
+        let destPosition = action.actionData.position;
         let dist = (0,utils_distance__WEBPACK_IMPORTED_MODULE_3__.distance)(this.position.x, this.position.y, destPosition.x, destPosition.y);
         let wholeWalkTime = (dist / this._userSpeed) * 1000;
         let walkStartAt = Date.now();
@@ -253,7 +254,7 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     _playFoodPickingAction(action) {
         this._setState('standing');
         return new Promise((res) => {
-            this.pickedFoodId = action.additionalData.food_id;
+            this.pickedFoodId = action.actionData.food_id;
             this.emit('foodPickedUp');
             res();
         });
@@ -475,6 +476,33 @@ class FoodArea extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/domain/entity/larva.js":
+/*!*********************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/larva.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Larva": () => (/* binding */ Larva)
+/* harmony export */ });
+class Larva {
+
+    static fromJson(antType, progress) {
+        return new Larva(antType, progress);
+    }
+
+    constructor(antType, progress) {
+        this.antType = antType;
+        this.progress = progress;
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/entity/town.js":
 /*!********************************************************!*\
   !*** ./bugs/core/client/app/src/domain/entity/town.js ***!
@@ -489,14 +517,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
 /* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+/* harmony import */ var _larva__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./larva */ "./bugs/core/client/app/src/domain/entity/larva.js");
+
 
 
 
 
 class Town extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, id, position, ownerId, storedCalories, larvae, larvaPlacesCount) {
+    constructor(eventBus, townApi, id, position, ownerId, storedCalories, larvae, larvaPlacesCount) {
         super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.TOWN);
+        this._townApi = townApi;
         this.ownerId = ownerId;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
@@ -507,6 +538,8 @@ class Town extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         switch (action.type) {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.TOWN_WAS_GIVEN_FOOD:
                 return this._playTakingFood(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.TOWN_LARVAE_CHANGED:
+                return this._playLarvaeChanged(action);
             default:
                 throw 'unknown type of action'
         }
@@ -516,9 +549,22 @@ class Town extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         return this.larvaPlacesCount > this.larvae.length;
     }
 
+    addNewLarva(antType) {
+        this._townApi.addNewLarva(this.id, antType);
+    }
+
     _playTakingFood(action) {
-        this.storedCalories = action.additionalData.stored_calories;
+        this.storedCalories = action.actionData.stored_calories;
         this.emit('storedCaloriesChanged');
+        return Promise.resolve();
+    }
+
+    _playLarvaeChanged(action) {
+        this.larvae = [];
+        action.actionData.larvae.forEach(larvaJson => {
+            this.larvae.push(_larva__WEBPACK_IMPORTED_MODULE_3__.Larva.fromJson(larvaJson.ant_type, larvaJson.progress));
+        });
+        this.emit('larvaeChanged');
         return Promise.resolve();
     }
 
@@ -690,14 +736,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function initDomainLayer(userApi, serverConnection, initialData) {
+function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
-    let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus);
+    let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.townApi);
     let world = worldFactory.buildWorld();
     let actionFactory = new _entity_action_actionFactory__WEBPACK_IMPORTED_MODULE_5__.ActionFactory();
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_6__.WorldService(world, worldFactory, mainEventBus);
-    let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_1__.UserService(userApi, initialData.user, mainEventBus);
+    let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_1__.UserService(apis.userApi, initialData.user, mainEventBus);
     let actionService = new _service_actionService__WEBPACK_IMPORTED_MODULE_7__.ActionService(initialData.step_time, actionFactory, worldService);
     let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, actionService);
 
@@ -746,6 +792,7 @@ class ActionService {
     }
 
     _playActionsForStep(step) {
+        console.log('playing step', step)
         let stepActions = this._buildActionsForStep(step);
         this._validateActionsForStep(stepActions);
         this._clearActionsJsonForStep(step);
@@ -757,7 +804,7 @@ class ActionService {
     _playAction(action) {
         switch(action.type) {
             case 'entity_born':
-                this._worldService.giveBirthToEntity(action.additionalData.entity)
+                this._worldService.giveBirthToEntity(action.actionData.entity)
                 break;
             default:
                 let actor = this._worldService.world.findEntityById(action.actorId);
@@ -947,8 +994,6 @@ class WorldService {
         });
         this._world.size = worldJson.size;
 
-        this._runAnts();
-
         this._isWholeWorldInited = true;
         this._mainEventBus.emit('wholeWorldInited');
     }
@@ -972,18 +1017,6 @@ class WorldService {
         return this._isWholeWorldInited;
     }
 
-    _runAnts() {
-        let ants = this._world.getAnts();
-
-        //put food in bugs hands
-        ants.forEach(ant => {
-            if (ant.pickedFoodId) {
-                let food = this._world.findEntityById(ant.pickedFoodId);
-                ant.pickupFood(food);
-            }
-        });
-        
-    }
 }
 
 
@@ -1007,6 +1040,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_town__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./entity/town */ "./bugs/core/client/app/src/domain/entity/town.js");
 /* harmony import */ var _entity_food__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./entity/food */ "./bugs/core/client/app/src/domain/entity/food.js");
 /* harmony import */ var _entity_foodArea__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/foodArea */ "./bugs/core/client/app/src/domain/entity/foodArea.js");
+/* harmony import */ var _entity_larva__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entity/larva */ "./bugs/core/client/app/src/domain/entity/larva.js");
+
 
 
 
@@ -1016,30 +1051,31 @@ __webpack_require__.r(__webpack_exports__);
 
 class WorldFactory {
 
-    constructor(mainEventBus) {
-        this.mainEventBus = mainEventBus;
+    constructor(mainEventBus, townApi) {
+        this._mainEventBus = mainEventBus;
+        this._townApi = townApi;
     }
 
     buildWorld() {
-        return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this.mainEventBus);
+        return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this._mainEventBus);
     }
 
     buildAnt(id, position, pickedFoodId, userSpeed) {
-        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this.mainEventBus, id, position, pickedFoodId, userSpeed);
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, position, pickedFoodId, userSpeed);
     }
 
     buildTown(id, position, ownerId, storedCalories, larvaeData, larvaPlacesCount) {
         let larvae = [];
-        larvaeData.forEach(larvaData => larvae.push(this._buildLarva(larvaData)));
-        return new _entity_town__WEBPACK_IMPORTED_MODULE_3__.Town(this.mainEventBus, id, position, ownerId, storedCalories, larvae, larvaPlacesCount);
+        larvaeData.forEach(larvaData => larvae.push(_entity_larva__WEBPACK_IMPORTED_MODULE_6__.Larva.fromJson(larvaData.ant_type, larvaData.progress)));
+        return new _entity_town__WEBPACK_IMPORTED_MODULE_3__.Town(this._mainEventBus, this._townApi, id, position, ownerId, storedCalories, larvae, larvaPlacesCount);
     }
 
     buildFood(id, position, calories, food_type, food_varity) {
-        return new _entity_food__WEBPACK_IMPORTED_MODULE_4__.Food(this.mainEventBus, id, position, calories, food_type, food_varity);
+        return new _entity_food__WEBPACK_IMPORTED_MODULE_4__.Food(this._mainEventBus, id, position, calories, food_type, food_varity);
     }
 
     buildFoodArea(id, position) {
-        return new _entity_foodArea__WEBPACK_IMPORTED_MODULE_5__.FoodArea(this.mainEventBus, id, position);
+        return new _entity_foodArea__WEBPACK_IMPORTED_MODULE_5__.FoodArea(this._mainEventBus, id, position);
     }
 
     buildEntity(entityJson) {
@@ -1054,13 +1090,6 @@ class WorldFactory {
                 return this.buildFoodArea(entityJson.id, entityJson.position);
             default:
                 throw 'unknown type of entity';
-        }
-    }
-
-    _buildLarva(larvaData) {
-        return {
-            progress: larvaData.progress,
-            antType: larvaData.ant_type
         }
     }
 }
@@ -1083,7 +1112,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var utils_requester__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/requester */ "./bugs/core/client/utils/requester.js");
 /* harmony import */ var _userApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userApi */ "./bugs/core/client/app/src/sync/userApi.js");
 /* harmony import */ var _serverConnection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./serverConnection */ "./bugs/core/client/app/src/sync/serverConnection.js");
-// import { MainSocketConsumer } from './mainSocketConsumer';
+/* harmony import */ var _townApi__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./townApi */ "./bugs/core/client/app/src/sync/townApi.js");
+
 
 
 
@@ -1091,15 +1121,15 @@ __webpack_require__.r(__webpack_exports__);
 function initSyncLayer() {
     let requester = new utils_requester__WEBPACK_IMPORTED_MODULE_0__.Requester();
 
+    let townApi = new _townApi__WEBPACK_IMPORTED_MODULE_3__.TownApi(requester);
     let userApi = new _userApi__WEBPACK_IMPORTED_MODULE_1__.UserApi(requester);
     let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection();
 
     return {
         userApi,
+        townApi,
         serverConnection
     };
-    // let socket = new WebSocket(`ws://${location.host}/mainsocket`);
-    // let socketConsumer = new MainSocketConsumer(socket, domainFacade);
 }
 
 
@@ -1142,6 +1172,34 @@ class ServerConnection {
 
     _emitMessage(event) {
         this.events.emit('message', JSON.parse(event.data));
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/sync/townApi.js":
+/*!**************************************************!*\
+  !*** ./bugs/core/client/app/src/sync/townApi.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "TownApi": () => (/* binding */ TownApi)
+/* harmony export */ });
+class TownApi {
+
+    constructor(requester) {
+        this._requester = requester;
+    }
+
+    addNewLarva(townId, larvaType) {
+        return this._requester.post(`world/towns/${ townId }/add_larva`, {
+            larvaType
+        });
     }
 }
 
@@ -1441,6 +1499,8 @@ class BaseHTMLView {
     static useDomainFacade(domainFacade) {
         BaseHTMLView.domainFacade = domainFacade;
     }
+
+    remove() {}
 }
 
 
@@ -1698,12 +1758,22 @@ class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseH
         this._town = town;
 
         this._render();
+
+        this._el.querySelector('[data-add-new-larva-btn]').addEventListener('click', this._onAddLarvaBtnClick.bind(this));
+        this._unbindLarvaeChangedListener = this._town.on('larvaeChanged', this._onLarvaeChanged.bind(this));
+    }
+
+    remove() {
+        super.remove();
+        this._unbindLarvaeChangedListener();
     }
 
     _render() {
         this._el.innerHTML = _larvaManager_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
         this._larvaeListEl = this._el.querySelector('[data-larvae-list]');
         this._addingNewLarvaEl = this._el.querySelector('[data-adding-new-larva]');
+        this._newLarvaTypeSelectEl = this._el.querySelector('[data-new-larva-type-select]');
 
         this._renderLarvae();
         this._toggleAddingNewLarva(this._town.canAddLarva());
@@ -1726,13 +1796,22 @@ class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseH
     }
 
     _renderLarvaTypeSelector() {
-        let antTypeSelectEl = this._el.querySelector('[data-new-larva-type-select]');
         for (let antType in _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels) {
             let optionEl = document.createElement('option');
             optionEl.innerHTML = _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels[antType];
             optionEl.value = antType;
-            antTypeSelectEl.append(optionEl);
+            this._newLarvaTypeSelectEl.append(optionEl);
         }
+    }
+
+    _onAddLarvaBtnClick() {
+        let antType = this._newLarvaTypeSelectEl.value;
+        this._town.addNewLarva(antType);
+    }
+
+    _onLarvaeChanged() {
+        this._renderLarvae();
+        this._toggleAddingNewLarva(this._town.canAddLarva());
     }
 
 }
@@ -1774,6 +1853,7 @@ class TownPopup extends _base_basePopup__WEBPACK_IMPORTED_MODULE_0__.BasePopup {
     close(){ 
         super.close();
         this._unbindStoredCaloriesChangedListener();
+        this._larvaManager.remove();
     }
 
     render() {
@@ -4468,7 +4548,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "личинки:\r\n<ul data-larvae-list></ul>\r\n<div data-adding-new-larva>\r\n    <select data-new-larva-type-select></select>\r\n    <button>add</button>\r\n</div>";
+var code = "личинки:\r\n<ul data-larvae-list></ul>\r\n<div data-adding-new-larva>\r\n    <select data-new-larva-type-select></select>\r\n    <button data-add-new-larva-btn>add</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -42160,7 +42240,10 @@ __webpack_require__.r(__webpack_exports__);
 let initialData = (0,utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__.readInitialData)();
 
 let syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)();
-let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)(syncLayer.userApi, syncLayer.serverConnection, initialData);
+let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)({ 
+    userApi: syncLayer.userApi,
+    townApi: syncLayer.townApi
+}, syncLayer.serverConnection, initialData);
 (0,_view__WEBPACK_IMPORTED_MODULE_2__.initViewLayer)(domainFacade, initialData);
 
 })();

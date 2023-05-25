@@ -32,7 +32,7 @@ class ActionService {
     _playAction(action) {
         switch(action.type) {
             case 'entity_born':
-                this._worldService.giveBirthToEntity(action.additionalData.entity)
+                this._worldService.giveBirthToEntity(action.actionData.entity)
                 break;
             default:
                 let actor = this._worldService.world.findEntityById(action.actorId);

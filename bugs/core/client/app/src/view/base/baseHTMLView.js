@@ -5,6 +5,8 @@ class BaseHTMLView {
     static useDomainFacade(domainFacade) {
         BaseHTMLView.domainFacade = domainFacade;
     }
+
+    remove() {}
 }
 
 export {

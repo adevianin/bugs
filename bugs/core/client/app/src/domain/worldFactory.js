@@ -4,33 +4,35 @@ import { World } from './entity/world';
 import { Town } from './entity/town';
 import { Food } from './entity/food';
 import { FoodArea } from './entity/foodArea';
+import { Larva } from './entity/larva';
 
 class WorldFactory {
 
-    constructor(mainEventBus) {
-        this.mainEventBus = mainEventBus;
+    constructor(mainEventBus, townApi) {
+        this._mainEventBus = mainEventBus;
+        this._townApi = townApi;
     }
 
     buildWorld() {
-        return new World(this.mainEventBus);
+        return new World(this._mainEventBus);
     }
 
     buildAnt(id, position, pickedFoodId, userSpeed) {
-        return new Ant(this.mainEventBus, id, position, pickedFoodId, userSpeed);
+        return new Ant(this._mainEventBus, id, position, pickedFoodId, userSpeed);
     }
 
     buildTown(id, position, ownerId, storedCalories, larvaeData, larvaPlacesCount) {
         let larvae = [];
-        larvaeData.forEach(larvaData => larvae.push(this._buildLarva(larvaData)));
-        return new Town(this.mainEventBus, id, position, ownerId, storedCalories, larvae, larvaPlacesCount);
+        larvaeData.forEach(larvaData => larvae.push(Larva.fromJson(larvaData.ant_type, larvaData.progress)));
+        return new Town(this._mainEventBus, this._townApi, id, position, ownerId, storedCalories, larvae, larvaPlacesCount);
     }
 
     buildFood(id, position, calories, food_type, food_varity) {
-        return new Food(this.mainEventBus, id, position, calories, food_type, food_varity);
+        return new Food(this._mainEventBus, id, position, calories, food_type, food_varity);
     }
 
     buildFoodArea(id, position) {
-        return new FoodArea(this.mainEventBus, id, position);
+        return new FoodArea(this._mainEventBus, id, position);
     }
 
     buildEntity(entityJson) {
@@ -45,13 +47,6 @@ class WorldFactory {
                 return this.buildFoodArea(entityJson.id, entityJson.position);
             default:
                 throw 'unknown type of entity';
-        }
-    }
-
-    _buildLarva(larvaData) {
-        return {
-            progress: larvaData.progress,
-            antType: larvaData.ant_type
         }
     }
 }

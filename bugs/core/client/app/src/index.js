@@ -6,5 +6,8 @@ import { readInitialData } from 'utils/readInitialData';
 let initialData = readInitialData();
 
 let syncLayer = initSyncLayer();
-let domainFacade = initDomainLayer(syncLayer.userApi, syncLayer.serverConnection, initialData);
+let domainFacade = initDomainLayer({ 
+    userApi: syncLayer.userApi,
+    townApi: syncLayer.townApi
+}, syncLayer.serverConnection, initialData);
 initViewLayer(domainFacade, initialData);

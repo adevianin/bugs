@@ -22,6 +22,10 @@ class World():
         self._event_bus.add_listener('entity_born', self._on_entity_born)
 
     @property
+    def map(self):
+        return self._map
+
+    @property
     def is_world_running(self):
         return self._is_world_running
 

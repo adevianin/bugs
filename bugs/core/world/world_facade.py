@@ -6,6 +6,8 @@ from .world_factory import WorldFactory
 from .world import World
 from .step_activity.step_activity_accumulator import StepActivityAccumulator
 from .step_activity.action_builder import ActionBuilder
+from .services.town_service import TownService
+from .entities.ant.base.ant_types import AntTypes
 
 from typing import Callable
 
@@ -42,6 +44,8 @@ class WorldFacade:
 
         self._world = world_factory.build_world_from_json(world_data)
 
+        self._town_service = TownService(self._world, world_factory)
+
         action_builder = ActionBuilder()
         self._activity_accumulator = StepActivityAccumulator(self._world, self._event_bus, action_builder)
 
@@ -67,4 +71,7 @@ class WorldFacade:
 
     def remove_listener(self, event_name: str, callback: Callable):
         self._event_bus.remove_listener(event_name, callback)
+
+    def add_larva(self, town_id: int, user_id: int, larva_type_str: str):
+        self._town_service.add_larva(town_id, user_id, AntTypes(larva_type_str))
         

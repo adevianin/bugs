@@ -19,8 +19,6 @@ class WorldService {
         });
         this._world.size = worldJson.size;
 
-        this._runAnts();
-
         this._isWholeWorldInited = true;
         this._mainEventBus.emit('wholeWorldInited');
     }
@@ -44,18 +42,6 @@ class WorldService {
         return this._isWholeWorldInited;
     }
 
-    _runAnts() {
-        let ants = this._world.getAnts();
-
-        //put food in bugs hands
-        ants.forEach(ant => {
-            if (ant.pickedFoodId) {
-                let food = this._world.findEntityById(ant.pickedFoodId);
-                ant.pickupFood(food);
-            }
-        });
-        
-    }
 }
 
 export {

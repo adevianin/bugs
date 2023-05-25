@@ -11,12 +11,22 @@ class LarvaManager extends BaseHTMLView {
         this._town = town;
 
         this._render();
+
+        this._el.querySelector('[data-add-new-larva-btn]').addEventListener('click', this._onAddLarvaBtnClick.bind(this));
+        this._unbindLarvaeChangedListener = this._town.on('larvaeChanged', this._onLarvaeChanged.bind(this));
+    }
+
+    remove() {
+        super.remove();
+        this._unbindLarvaeChangedListener();
     }
 
     _render() {
         this._el.innerHTML = larvaManagerTmpl;
+
         this._larvaeListEl = this._el.querySelector('[data-larvae-list]');
         this._addingNewLarvaEl = this._el.querySelector('[data-adding-new-larva]');
+        this._newLarvaTypeSelectEl = this._el.querySelector('[data-new-larva-type-select]');
 
         this._renderLarvae();
         this._toggleAddingNewLarva(this._town.canAddLarva());
@@ -39,13 +49,22 @@ class LarvaManager extends BaseHTMLView {
     }
 
     _renderLarvaTypeSelector() {
-        let antTypeSelectEl = this._el.querySelector('[data-new-larva-type-select]');
         for (let antType in antTypesLabels) {
             let optionEl = document.createElement('option');
             optionEl.innerHTML = antTypesLabels[antType];
             optionEl.value = antType;
-            antTypeSelectEl.append(optionEl);
+            this._newLarvaTypeSelectEl.append(optionEl);
         }
+    }
+
+    _onAddLarvaBtnClick() {
+        let antType = this._newLarvaTypeSelectEl.value;
+        this._town.addNewLarva(antType);
+    }
+
+    _onLarvaeChanged() {
+        this._renderLarvae();
+        this._toggleAddingNewLarva(this._town.canAddLarva());
     }
 
 }

@@ -4,7 +4,7 @@ class Action {
         this.actorId = actorId;
         this.type = actionType;
         this.stepNumber = stepNumber;
-        this.additionalData = actionData;
+        this.actionData = actionData;
     }
 
 }

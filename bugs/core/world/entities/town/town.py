@@ -58,6 +58,12 @@ class Town(PlainEntity):
         
         return json
     
+    def add_larva(self, larva: Larva):
+        self._larvae.append(larva)
+        self.handle_action('town_larvae_changed', {
+            'larvae': self._larvae_to_json()
+        })
+    
     def _larvae_to_json(self):
         larvae_json = []
         for larva in self._larvae:

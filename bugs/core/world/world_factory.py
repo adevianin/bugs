@@ -68,10 +68,13 @@ class WorldFactory():
     def build_food_area(self, id: int, position: Point, size: Size, fertility: int, food_type: FoodTypes):
         return FoodArea(self._event_bus, id, position, size, self._food_factory, fertility, food_type)
     
+    def build_larva(self, type: AntTypes, progress: int = 0):
+        return Larva(type, progress)
+    
     def _build_larvae(self, larvae_data: list):
         larvae = []
         for larva_data in larvae_data:
-            larva = Larva(AntTypes(larva_data['type']), larva_data['progress'])
+            larva = self.build_larva(AntTypes(larva_data['type']), larva_data['progress'])
             larvae.append(larva)
 
         return larvae

@@ -4,7 +4,7 @@ from core.world.world import World
 
 class StepActivityAccumulator():
 
-    STEPS_IN_BAG = 10
+    STEPS_IN_BAG = 1
 
     def __init__(self, world: World, event_bus: EventEmitter, action_builder: ActionBuilder):
         self._world = world

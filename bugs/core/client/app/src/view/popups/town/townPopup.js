@@ -17,6 +17,7 @@ class TownPopup extends BasePopup {
     close(){ 
         super.close();
         this._unbindStoredCaloriesChangedListener();
+        this._larvaManager.remove();
     }
 
     render() {

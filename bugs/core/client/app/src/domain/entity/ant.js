@@ -41,7 +41,7 @@ class Ant extends Entity {
     }
 
     _playWalkAction(action) {
-        let destPosition = action.additionalData.position;
+        let destPosition = action.actionData.position;
         let dist = distance(this.position.x, this.position.y, destPosition.x, destPosition.y);
         let wholeWalkTime = (dist / this._userSpeed) * 1000;
         let walkStartAt = Date.now();
@@ -68,7 +68,7 @@ class Ant extends Entity {
     _playFoodPickingAction(action) {
         this._setState('standing');
         return new Promise((res) => {
-            this.pickedFoodId = action.additionalData.food_id;
+            this.pickedFoodId = action.actionData.food_id;
             this.emit('foodPickedUp');
             res();
         });
