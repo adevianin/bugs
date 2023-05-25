@@ -785,14 +785,19 @@ class ActionService {
 
     runStepCounter(startStep) {
         this._currentStep = startStep;
+
+        this._playCurrentStep();
         setInterval(() => {
-            this._playActionsForStep(this._currentStep);
-            this._currentStep++;
+            this._playCurrentStep();
         }, this._stepTime * 1000)
     }
 
+    _playCurrentStep() {
+        this._playActionsForStep(this._currentStep);
+        this._currentStep++;
+    }
+
     _playActionsForStep(step) {
-        console.log('playing step', step)
         let stepActions = this._buildActionsForStep(step);
         this._validateActionsForStep(stepActions);
         this._clearActionsJsonForStep(step);
