@@ -1,7 +1,6 @@
 from channels.generic.websocket import WebsocketConsumer
 from core.world.world_facade import WorldFacade
 from core.world.entities.action import Action
-from core.world.world import World
 import json
 
 class MainSocketConsumer(WebsocketConsumer):
@@ -11,7 +10,13 @@ class MainSocketConsumer(WebsocketConsumer):
         self._synced = False
 
     def connect(self):
-        self.accept()
+        self._user = self.scope["user"]
+
+        if self._user.is_authenticated:
+            self.accept()
+        else:
+            self.close()
+
         self._world_facade.add_listener('step_start', self._on_step_start)
         self._world_facade.add_listener('action_occurred', self._on_action)
 
