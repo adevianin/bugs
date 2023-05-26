@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from .entity_types import EntityTypes
+from core.world.entities.action import Action
 
 class Entity(ABC):
 
@@ -56,4 +57,4 @@ class Entity(ABC):
         }
     
     def handle_action(self, action_type: str, action_data: dict = None):
-        self._event_bus.emit('step_action_occurred', self.id, action_type, action_data)
+        self._event_bus.emit('action_occurred', Action.build_action(self.id, action_type, action_data))

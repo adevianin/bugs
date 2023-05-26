@@ -18,13 +18,12 @@ class MessageHandlerService {
     _onMessage(msg) {
         console.log(msg)
         switch(msg.type) {
-            case 'whole_world':
+            case 'sync_step':
                 this._worldService.initWorld(msg.world);
-                this._actionService.handleIncomeActions(msg.actions);
-                this._actionService.runStepCounter(msg.start_step);
+                this._actionService.turnOnPlayingActions();
                 break;
-            case 'step_actions':
-                this._actionService.handleIncomeActions(msg.actions);
+            case 'action':
+                this._actionService.playAction(msg.action);
                 break;
             default: 
                 throw `unknown type of message "${ msg.type }"`

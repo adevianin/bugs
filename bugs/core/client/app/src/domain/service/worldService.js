@@ -12,6 +12,10 @@ class WorldService {
         return this._world;
     }
 
+    get is_world_inited() {
+        return this._isWholeWorldInited;
+    }
+
     initWorld(worldJson) {
         worldJson.entities.forEach(entityJson => { 
             let entity = this._worldFactory.buildEntity(entityJson);

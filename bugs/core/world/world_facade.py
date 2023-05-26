@@ -4,10 +4,9 @@ from .entities.ant.ant_factory import AntFactory
 from .entities.food.food_factory import FoodFactory
 from .world_factory import WorldFactory
 from .world import World
-from .step_activity.step_activity_accumulator import StepActivityAccumulator
-from .step_activity.action_builder import ActionBuilder
 from .services.town_service import TownService
 from .entities.ant.base.ant_types import AntTypes
+from .services.synchronization_service import SynchronizationService
 
 from typing import Callable
 
@@ -45,17 +44,12 @@ class WorldFacade:
         self._world = world_factory.build_world_from_json(world_data)
 
         self._town_service = TownService(self._world, world_factory)
-
-        action_builder = ActionBuilder()
-        self._activity_accumulator = StepActivityAccumulator(self._world, self._event_bus, action_builder)
+        sync_service = SynchronizationService(self._world, self._event_bus)
 
         self._world.run()
 
     def get_world_json(self):
         return self._world.to_json()
-    
-    def get_activity_bag(self):
-        return self._activity_accumulator.get_activity_bag()
     
     def run(self):
         self._world.run()

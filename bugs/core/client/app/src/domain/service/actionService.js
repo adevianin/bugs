@@ -6,36 +6,21 @@ class ActionService {
         this._actionsJson = [];
         this._currentStep = null;
         this._stepTime = stepTime;
+        this._is_playing_actions_turned_on = false;
     }
 
-    handleIncomeActions(incomeActionsJson) {
-        this._actionsJson = this._actionsJson.concat(incomeActionsJson);
+    turnOnPlayingActions() {
+        this._is_playing_actions_turned_on = true;
     }
 
-    runStepCounter(startStep) {
-        this._currentStep = startStep;
+    playAction(actionJson) {
+        if (!this._is_playing_actions_turned_on) {
+            console.log('waiting sync step');
+            return;
+        }
 
-        this._playCurrentStep();
-        setInterval(() => {
-            this._playCurrentStep();
-        }, this._stepTime * 1000)
-    }
+        let action = this._actionFactory.buildAction(actionJson);
 
-    _playCurrentStep() {
-        this._playActionsForStep(this._currentStep);
-        this._currentStep++;
-    }
-
-    _playActionsForStep(step) {
-        let stepActions = this._buildActionsForStep(step);
-        this._validateActionsForStep(stepActions);
-        this._clearActionsJsonForStep(step);
-        stepActions.forEach((action) => {
-            this._playAction(action);
-        });
-    }
-
-    _playAction(action) {
         switch(action.type) {
             case 'entity_born':
                 this._worldService.giveBirthToEntity(action.actionData.entity)
@@ -46,36 +31,6 @@ class ActionService {
         }
     }
 
-    _buildActionsForStep(stepNumber) {
-        let actions = [];
-        this._actionsJson.forEach(actionJson => {
-            if (actionJson.step_number == stepNumber) {
-                let action = this._actionFactory.buildAction(actionJson);
-                actions.push(action);
-            }
-        });
-
-        return actions;
-    }
-
-    _clearActionsJsonForStep(stepNumber) {
-        this._actionsJson = this._actionsJson.filter(actionJson => actionJson.step_number != stepNumber);
-    }
-
-    _validateActionsForStep(actions) {
-        actions.forEach(action => {
-            let validatingActorId = action.actorId;
-            let actionsCountWithSameActorId = 0;
-            actions.forEach((a) => {
-                if (a.actorId == validatingActorId) {
-                    actionsCountWithSameActorId++
-                }
-            });
-            if (actionsCountWithSameActorId > 1) {
-                throw 'few actions found' 
-            }
-        })
-    }
 }
 
 export {
