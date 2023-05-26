@@ -1073,9 +1073,10 @@ __webpack_require__.r(__webpack_exports__);
 function initSyncLayer() {
     let requester = new utils_requester__WEBPACK_IMPORTED_MODULE_0__.Requester();
 
-    let townApi = new _townApi__WEBPACK_IMPORTED_MODULE_3__.TownApi(requester);
     let userApi = new _userApi__WEBPACK_IMPORTED_MODULE_1__.UserApi(requester);
     let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection();
+
+    let townApi = new _townApi__WEBPACK_IMPORTED_MODULE_3__.TownApi(serverConnection);
 
     return {
         userApi,
@@ -1122,6 +1123,10 @@ class ServerConnection {
         this._socket.close();
     }
 
+    send(msg) {
+        this._socket.send(JSON.stringify(msg));
+    }
+
     _emitMessage(event) {
         this.events.emit('message', JSON.parse(event.data));
     }
@@ -1144,13 +1149,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class TownApi {
 
-    constructor(requester) {
-        this._requester = requester;
+    constructor(serverConnection) {
+        this._serverConnection = serverConnection;
     }
 
     addNewLarva(townId, larvaType) {
-        return this._requester.post(`world/towns/${ townId }/add_larva`, {
-            larvaType
+        this._serverConnection.send({
+            type: 'command',
+            command: {
+                command_type: 'add_larva',
+                params: {
+                    town_id: townId,
+                    larva_type: larvaType
+                }
+            }
         });
     }
 }

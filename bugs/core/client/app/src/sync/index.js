@@ -6,9 +6,10 @@ import { TownApi } from "./townApi";
 function initSyncLayer() {
     let requester = new Requester();
 
-    let townApi = new TownApi(requester);
     let userApi = new UserApi(requester);
     let serverConnection = new ServerConnection();
+
+    let townApi = new TownApi(serverConnection);
 
     return {
         userApi,

@@ -24,6 +24,15 @@ class MainSocketConsumer(WebsocketConsumer):
         self._world_facade.remove_listener('step_start', self._on_step_start)
         self._world_facade.remove_listener('action_occurred', self._on_action)
         return super().disconnect(code)
+    
+    def receive(self, text_data=None, bytes_data=None):
+        msg = json.loads(text_data)
+
+        match msg['type']:
+            case 'command':
+                self._world_facade.handle_command(msg['command'], self._user.id)
+            case _:
+                raise Exception('unknown type of client message')
 
     def _on_step_start(self, step_number: int):
         if not self._synced:

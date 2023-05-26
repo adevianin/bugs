@@ -20,6 +20,10 @@ class ServerConnection {
         this._socket.close();
     }
 
+    send(msg) {
+        this._socket.send(JSON.stringify(msg));
+    }
+
     _emitMessage(event) {
         this.events.emit('message', JSON.parse(event.data));
     }

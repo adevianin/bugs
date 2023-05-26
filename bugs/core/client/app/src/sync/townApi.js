@@ -1,12 +1,19 @@
 class TownApi {
 
-    constructor(requester) {
-        this._requester = requester;
+    constructor(serverConnection) {
+        this._serverConnection = serverConnection;
     }
 
     addNewLarva(townId, larvaType) {
-        return this._requester.post(`world/towns/${ townId }/add_larva`, {
-            larvaType
+        this._serverConnection.send({
+            type: 'command',
+            command: {
+                command_type: 'add_larva',
+                params: {
+                    town_id: townId,
+                    larva_type: larvaType
+                }
+            }
         });
     }
 }

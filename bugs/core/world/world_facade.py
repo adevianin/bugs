@@ -6,6 +6,7 @@ from .world_factory import WorldFactory
 from .world import World
 from .services.town_service import TownService
 from .entities.ant.base.ant_types import AntTypes
+from .services.command_handler_service import CommandHandlerService
 
 from typing import Callable
 
@@ -43,6 +44,7 @@ class WorldFacade:
         self._world = world_factory.build_world_from_json(world_data)
 
         self._town_service = TownService(self._world, world_factory)
+        self._commandHandlerService = CommandHandlerService(self._town_service)
 
         self._world.run()
 
@@ -68,6 +70,5 @@ class WorldFacade:
     def remove_listener(self, event_name: str, callback: Callable):
         self._event_bus.remove_listener(event_name, callback)
 
-    def add_larva(self, town_id: int, user_id: int, larva_type_str: str):
-        self._town_service.add_larva(town_id, user_id, AntTypes(larva_type_str))
-        
+    def handle_command(self, command_json, user_id):
+        self._commandHandlerService.handleCommand(command_json, user_id)
