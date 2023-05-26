@@ -6,7 +6,6 @@ from .world_factory import WorldFactory
 from .world import World
 from .services.town_service import TownService
 from .entities.ant.base.ant_types import AntTypes
-from .services.synchronization_service import SynchronizationService
 
 from typing import Callable
 
@@ -44,9 +43,12 @@ class WorldFacade:
         self._world = world_factory.build_world_from_json(world_data)
 
         self._town_service = TownService(self._world, world_factory)
-        sync_service = SynchronizationService(self._world, self._event_bus)
 
         self._world.run()
+
+    @property
+    def world(self):
+        return self._world
 
     def get_world_json(self):
         return self._world.to_json()
