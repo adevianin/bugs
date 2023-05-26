@@ -20,7 +20,6 @@ class MessageHandlerService {
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);
-                this._actionService.turnOnPlayingActions();
                 break;
             case 'action':
                 this._actionService.playAction(msg.action);

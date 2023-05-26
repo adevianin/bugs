@@ -29,6 +29,8 @@ class MainSocketConsumer(WebsocketConsumer):
         self._synced = True
 
     def _on_action(self, action: Action):
+        if not self._synced:
+            return
         self.send(json.dumps({
             'type': 'action',
             'action': action.to_json()

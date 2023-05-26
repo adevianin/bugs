@@ -6,19 +6,9 @@ class ActionService {
         this._actionsJson = [];
         this._currentStep = null;
         this._stepTime = stepTime;
-        this._is_playing_actions_turned_on = false;
-    }
-
-    turnOnPlayingActions() {
-        this._is_playing_actions_turned_on = true;
     }
 
     playAction(actionJson) {
-        if (!this._is_playing_actions_turned_on) {
-            console.log('waiting sync step');
-            return;
-        }
-
         let action = this._actionFactory.buildAction(actionJson);
 
         switch(action.type) {
