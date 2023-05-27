@@ -62,8 +62,5 @@ class LiveEntity(Entity):
             }
         })
 
-    def _on_body_eats_food(self, food_id, is_food_eaten):
-        self.handle_action('entity_eat_food', {
-            'food_id': food_id,
-            'is_food_eaten': is_food_eaten
-        })
+    def _on_body_eats_food(self):
+        self.handle_action('entity_eat_food')

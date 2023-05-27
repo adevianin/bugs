@@ -100,7 +100,7 @@ class Body(ABC):
 
         is_food_eaten = food.calories == 0
 
-        self.events.emit('eat_food', food_id=food.id, is_food_eaten=is_food_eaten)
+        self.events.emit('eat_food')
 
         return is_food_eaten or self.calc_how_much_calories_is_need() == 0
     
