@@ -13,7 +13,7 @@ class Body(ABC):
         self._distance_per_step = distance_per_step
         self._sight_distance = sight_distance
         self._position = position
-        self._max_calories = 1000
+        self._max_calories = 80
         self._calories = self._max_calories
         self._distance_per_calorie = 2
         self._can_eat_calories_per_step = 20
@@ -40,6 +40,10 @@ class Body(ABC):
     @property
     def sight_distance(self):
         return self._sight_distance
+    
+    @property
+    def is_no_calories(self):
+        return self._calories <= 0
 
     def step_to(self, destination_point: Point, preciseMode = False) -> bool:
         distance = math.dist([self.position.x, self.position.y], [destination_point.x, destination_point.y])
@@ -116,3 +120,6 @@ class Body(ABC):
         
     def _consume_calories(self, amount: int):
         self._calories -= amount
+        print(self._calories)
+        if self._calories < 0:
+            self.events.emit('no_calories')

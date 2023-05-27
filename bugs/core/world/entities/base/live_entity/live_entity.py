@@ -26,6 +26,11 @@ class LiveEntity(Entity):
     def do_step(self):
         super().do_step()
         self._toggle_is_busy(False)
+
+        if self._body.is_no_calories:
+            self.die()
+            return
+
         self._mind.do_step()
 
     def to_json(self):

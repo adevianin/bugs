@@ -19,6 +19,7 @@ class AntView extends EntityView {
         super.remove();
         this._entityContainer.removeChild(this._standSprite);
         this._entityContainer.removeChild(this._walkSprite);
+        this._entityContainer.removeChild(this._deadSprite);
         this._unbindPosChangedListener();
         this._unbindStateChangeListener();
         this._unbindFoodLiftListener();
@@ -27,14 +28,18 @@ class AntView extends EntityView {
     }
 
     _render() {
-        this._standSprite = new PIXI.Sprite(AntView.textureManager.getTexture('bug4.png'));
+        this._standSprite = new PIXI.Sprite(AntView.textureManager.getTexture('ant_worker_4.png'));
         this._standSprite.anchor.set(0.5);
         this._entityContainer.addChild(this._standSprite);
 
-        this._walkSprite = new PIXI.AnimatedSprite(AntView.textureManager.getAnimatedTextures('bug'));
+        this._walkSprite = new PIXI.AnimatedSprite(AntView.textureManager.getAnimatedTextures('ant_worker'));
         this._walkSprite.anchor.set(0.5);
         this._walkSprite.animationSpeed = 0.2;
         this._entityContainer.addChild(this._walkSprite);
+
+        this._deadSprite = new PIXI.Sprite(AntView.textureManager.getTexture('ant_worker_dead.png'));
+        this._deadSprite.anchor.set(0.5);
+        this._entityContainer.addChild(this._deadSprite);
 
         this._renderAntCurrentState();
         this._renderAntPosition();
@@ -82,6 +87,10 @@ class AntView extends EntityView {
         this._walkSprite.x = this._entity.position.x;
         this._walkSprite.y = this._entity.position.y;
         this._walkSprite.angle = this._entity.angle;
+
+        this._deadSprite.x = this._entity.position.x;
+        this._deadSprite.y = this._entity.position.y;
+        this._deadSprite.angle = this._entity.angle;
     }
 
     _renderAntCurrentState() {
@@ -89,6 +98,7 @@ class AntView extends EntityView {
 
         this._toggleStandingState(state == 'standing');
         this._toggleWalkingState(state == 'walking');
+        this._toggleDeadState(state == 'dead');
     }
 
     _toggleWalkingState(isEnabling) {
@@ -107,6 +117,10 @@ class AntView extends EntityView {
         } else {
             this._standSprite.renderable = false;
         }
+    }
+
+    _toggleDeadState(isEnabling) {
+        this._deadSprite.renderable = isEnabling;
     }
    
 }

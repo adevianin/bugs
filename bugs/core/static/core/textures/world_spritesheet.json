@@ -1,6 +1,6 @@
 {"frames": {
 
-"bug1.png":
+"ant_worker_1.png":
 {
 	"frame": {"x":0,"y":0,"w":32,"h":32},
 	"rotated": false,
@@ -8,7 +8,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"bug2.png":
+"ant_worker_2.png":
 {
 	"frame": {"x":32,"y":0,"w":32,"h":32},
 	"rotated": false,
@@ -16,7 +16,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"bug3.png":
+"ant_worker_3.png":
 {
 	"frame": {"x":0,"y":32,"w":32,"h":32},
 	"rotated": false,
@@ -24,7 +24,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"bug4.png":
+"ant_worker_4.png":
 {
 	"frame": {"x":32,"y":32,"w":32,"h":32},
 	"rotated": false,
@@ -32,7 +32,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"bug5.png":
+"ant_worker_5.png":
 {
 	"frame": {"x":0,"y":64,"w":32,"h":32},
 	"rotated": false,
@@ -40,7 +40,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"bug6.png":
+"ant_worker_6.png":
 {
 	"frame": {"x":32,"y":64,"w":32,"h":32},
 	"rotated": false,
@@ -48,7 +48,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"bug7.png":
+"ant_worker_7.png":
 {
 	"frame": {"x":0,"y":96,"w":32,"h":32},
 	"rotated": false,
@@ -56,7 +56,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"bug8.png":
+"ant_worker_8.png":
 {
 	"frame": {"x":32,"y":96,"w":32,"h":32},
 	"rotated": false,
@@ -64,7 +64,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"food_leaf_1v.png":
+"ant_worker_dead.png":
 {
 	"frame": {"x":0,"y":128,"w":32,"h":32},
 	"rotated": false,
@@ -72,7 +72,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"food_leaf_2v.png":
+"food_leaf_1v.png":
 {
 	"frame": {"x":32,"y":128,"w":32,"h":32},
 	"rotated": false,
@@ -80,7 +80,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"food_leaf_3v.png":
+"food_leaf_2v.png":
 {
 	"frame": {"x":0,"y":160,"w":32,"h":32},
 	"rotated": false,
@@ -88,7 +88,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"food_leaf_4v.png":
+"food_leaf_3v.png":
 {
 	"frame": {"x":32,"y":160,"w":32,"h":32},
 	"rotated": false,
@@ -96,7 +96,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"food_nectar_1v.png":
+"food_leaf_4v.png":
 {
 	"frame": {"x":0,"y":192,"w":32,"h":32},
 	"rotated": false,
@@ -104,7 +104,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"food_nectar_2v.png":
+"food_nectar_1v.png":
 {
 	"frame": {"x":32,"y":192,"w":32,"h":32},
 	"rotated": false,
@@ -112,7 +112,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"food_nectar_3v.png":
+"food_nectar_2v.png":
 {
 	"frame": {"x":0,"y":224,"w":32,"h":32},
 	"rotated": false,
@@ -120,7 +120,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"food_nectar_picked.png":
+"food_nectar_3v.png":
 {
 	"frame": {"x":32,"y":224,"w":32,"h":32},
 	"rotated": false,
@@ -145,7 +145,7 @@
 	"sourceSize": {"w":40,"h":40}
 }},
 "animations": {
-	"bug": ["bug1.png","bug2.png","bug3.png","bug4.png","bug5.png","bug6.png","bug7.png","bug8.png"]
+	"ant_worker": ["ant_worker_1.png","ant_worker_2.png","ant_worker_3.png","ant_worker_4.png","ant_worker_5.png","ant_worker_6.png","ant_worker_7.png","ant_worker_8.png"]
 },
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
@@ -154,6 +154,6 @@
 	"format": "RGBA8888",
 	"size": {"w":64,"h":360},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:7f81a88e527bf831c94873c821b8e22c:d39859697fffdc45a451b12a564ae1da:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:5de7befc6c196cd659800039d7b35f4a:dc3fd33d58b38afa28e7e264eaa47f6d:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }

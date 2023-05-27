@@ -31,6 +31,8 @@ class Ant extends Entity {
                 return this._playFoodGiving(action);
             case ACTION_TYPES.ENTITY_EAT_FOOD:
                 return this._playEatFoodAction(action);
+            case ACTION_TYPES.ENTITY_DIED:
+                return this._playEntityDied(action);
             default:
                 throw 'unknown type of action'
         }
@@ -92,6 +94,16 @@ class Ant extends Entity {
         let distance = Math.abs(Math.abs(endCoord) - Math.abs(startCoord));
         let distancePassed = distance * (flayedPercent  / 100);
         return endCoord > startCoord ? startCoord + distancePassed : startCoord - distancePassed;
+    }
+
+    _playEntityDied(action) {
+        this._setState('dead');
+        return new Promise((res) => {
+            setTimeout(() => {
+                this.die();
+                res();
+            }, 5000)
+        });
     }
 
     _lookAt(x, y) {

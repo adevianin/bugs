@@ -217,6 +217,8 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playFoodGiving(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_EAT_FOOD:
                 return this._playEatFoodAction(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_DIED:
+                return this._playEntityDied(action);
             default:
                 throw 'unknown type of action'
         }
@@ -278,6 +280,16 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         let distance = Math.abs(Math.abs(endCoord) - Math.abs(startCoord));
         let distancePassed = distance * (flayedPercent  / 100);
         return endCoord > startCoord ? startCoord + distancePassed : startCoord - distancePassed;
+    }
+
+    _playEntityDied(action) {
+        this._setState('dead');
+        return new Promise((res) => {
+            setTimeout(() => {
+                this.die();
+                res();
+            }, 5000)
+        });
     }
 
     _lookAt(x, y) {
@@ -1879,6 +1891,7 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         super.remove();
         this._entityContainer.removeChild(this._standSprite);
         this._entityContainer.removeChild(this._walkSprite);
+        this._entityContainer.removeChild(this._deadSprite);
         this._unbindPosChangedListener();
         this._unbindStateChangeListener();
         this._unbindFoodLiftListener();
@@ -1887,14 +1900,18 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     }
 
     _render() {
-        this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(AntView.textureManager.getTexture('bug4.png'));
+        this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(AntView.textureManager.getTexture('ant_worker_4.png'));
         this._standSprite.anchor.set(0.5);
         this._entityContainer.addChild(this._standSprite);
 
-        this._walkSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.AnimatedSprite(AntView.textureManager.getAnimatedTextures('bug'));
+        this._walkSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.AnimatedSprite(AntView.textureManager.getAnimatedTextures('ant_worker'));
         this._walkSprite.anchor.set(0.5);
         this._walkSprite.animationSpeed = 0.2;
         this._entityContainer.addChild(this._walkSprite);
+
+        this._deadSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(AntView.textureManager.getTexture('ant_worker_dead.png'));
+        this._deadSprite.anchor.set(0.5);
+        this._entityContainer.addChild(this._deadSprite);
 
         this._renderAntCurrentState();
         this._renderAntPosition();
@@ -1942,6 +1959,10 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._walkSprite.x = this._entity.position.x;
         this._walkSprite.y = this._entity.position.y;
         this._walkSprite.angle = this._entity.angle;
+
+        this._deadSprite.x = this._entity.position.x;
+        this._deadSprite.y = this._entity.position.y;
+        this._deadSprite.angle = this._entity.angle;
     }
 
     _renderAntCurrentState() {
@@ -1949,6 +1970,7 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
         this._toggleStandingState(state == 'standing');
         this._toggleWalkingState(state == 'walking');
+        this._toggleDeadState(state == 'dead');
     }
 
     _toggleWalkingState(isEnabling) {
@@ -1967,6 +1989,10 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         } else {
             this._standSprite.renderable = false;
         }
+    }
+
+    _toggleDeadState(isEnabling) {
+        this._deadSprite.renderable = isEnabling;
     }
    
 }
