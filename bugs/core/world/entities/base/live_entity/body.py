@@ -120,6 +120,5 @@ class Body(ABC):
         
     def _consume_calories(self, amount: int):
         self._calories -= amount
-        print(self._calories)
         if self._calories < 0:
             self.events.emit('no_calories')
