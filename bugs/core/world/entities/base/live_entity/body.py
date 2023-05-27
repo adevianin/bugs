@@ -13,7 +13,7 @@ class Body(ABC):
         self._distance_per_step = distance_per_step
         self._sight_distance = sight_distance
         self._position = position
-        self._max_calories = 80
+        self._max_calories = 1000
         self._calories = self._max_calories
         self._distance_per_calorie = 2
         self._can_eat_calories_per_step = 20
