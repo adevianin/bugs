@@ -11,6 +11,7 @@ class Entity(ABC):
         self._id: int = id
         self._type: EntityTypes = type
         self._is_hidden = False
+        self._is_died = False
 
     @property
     def id(self):
@@ -37,11 +38,16 @@ class Entity(ABC):
     @property
     def is_hidden(self):
         return self._is_hidden
+    
+    @property
+    def is_died(self):
+        return self._is_died
 
     def toggle_hidden(self, is_hidden: bool):
         self._is_hidden = is_hidden
 
     def die(self):
+        self._is_died = True
         self.toggle_hidden(True)
         self._event_bus.emit('entity_died', self)
         self.handle_action('entity_died')

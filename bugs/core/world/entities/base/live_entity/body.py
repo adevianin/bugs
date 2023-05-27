@@ -92,6 +92,9 @@ class Body(ABC):
         return self._calories >= self._max_calories
     
     def eat_food(self, food: Food) -> bool:
+        if (food.is_died or food.is_hidden):
+            return True
+        
         calories_i_need = self.calc_how_much_calories_is_need()
         calories_to_eat = min([calories_i_need, self._can_eat_calories_per_step, food.calories])
 
