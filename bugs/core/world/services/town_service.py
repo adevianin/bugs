@@ -1,6 +1,7 @@
 from core.world.world import World
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.world_factory import WorldFactory
+from core.world.entities.ant.base.larva import Larva
 
 class TownService():
 
@@ -17,5 +18,5 @@ class TownService():
         if (town.owner_id != user_id):
             raise Exception('used does not own town')
         
-        larva = self._world_factory.build_larva(larva_type, 0)
+        larva = Larva.build_larva(town.position, larva_type, 0)
         town.add_larva(larva)
