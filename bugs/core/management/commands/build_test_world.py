@@ -17,16 +17,15 @@ class Command(BaseCommand):
         ],
         "towns": [
             { "id": 30, "position": {"x": 600, "y": 350 }, "color": "yellow", "owner_id": 2, "larva_places_count": 3, "larvae": [
-                { "progress": 0, "type": 'worker' },
-                { "progress": 10, "type": 'worker' },
+                { "ate_calories": 0, "type": 'worker' },
+                { "ate_calories": 10, "type": 'worker' },
             ] },
             { "id": 31, "position": {"x": 1600, "y": 450 }, "color": "red", "owner_id": 1,  "larva_places_count": 1,  "larvae": [] },
         ],
         "food_areas": [
             { "id": 40, "position": {"x": 450, "y": 300}, "size": { "width": 150, "height": 150 }, "fertility": 5, "food_type": "leaf" },
             { "id": 41, "position": {"x": 1800, "y": 400}, "size": { "width": 150, "height": 150 }, "fertility": 5, "food_type": "nectar" },
-        ],
-        "last_id": 41
+        ]
     }
 
     def handle(self, *args, **options):
