@@ -9,26 +9,30 @@ from .base.ant_types import AntTypes
 from core.world.map import Map
 from core.world.entities.town.town import Town
 from core.world.entities.base.live_entity.memory import Memory
+from .base.larva import Larva
 
 class AntFactory():
 
-    def __init__(self, event_bus: EventEmitter) -> None:
+    def __init__(self, event_bus: EventEmitter, map: Map) -> None:
         self._event_bus = event_bus
+        self._map = map
 
-    def build_ant(self, map: Map, id: int, ant_type: AntTypes, position: Point, town: Town) -> Ant:
+    def build_ant(self, id: int, ant_type: AntTypes, position: Point, town: Town) -> Ant:
         match ant_type:
             case AntTypes.WORKER:
-                return self._build_worker_ant(map, id, position, town)
+                return self._build_worker_ant(id, position, town)
             case _:
                 raise Exception('uknown type of ant')
-
+            
+    def give_birth(self, larva: Larva, town: Town):
+        return self.build_ant(-1, larva.ant_type, larva.position, town)
     
-    def _build_worker_ant(self, map: Map, id: int, position: Point, town: Town):
+    def _build_worker_ant(self,id: int, position: Point, town: Town):
         ant_events = EventEmitter()
         body = WorkerAntBody(ant_events, position)
-        ant_task_factory = AntTaskFactory(body, map)
-        mind = WorkerAntMind(body, ant_task_factory, map, Memory(), town)
-        bug = WorkerAnt(self._event_bus, id, mind, body)
+        ant_task_factory = AntTaskFactory(body, self._map)
+        mind = WorkerAntMind(body, ant_task_factory, self._map, Memory(), town)
+        ant = WorkerAnt(self._event_bus, id, mind, body)
 
-        return bug
+        return ant
 

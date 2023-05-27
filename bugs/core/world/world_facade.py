@@ -5,8 +5,11 @@ from .entities.food.food_factory import FoodFactory
 from .world_factory import WorldFactory
 from .world import World
 from .services.town_service import TownService
-from .entities.ant.base.ant_types import AntTypes
 from .services.command_handler_service import CommandHandlerService
+from .entities.town.town_factory import TownFactory
+from .map import Map
+from .utils.size import Size
+from .services.birther_service import BirtherService
 
 from typing import Callable
 
@@ -35,16 +38,21 @@ class WorldFacade:
     def init_world(self):
         world_data = self._data_repository.get(self.WORLD_ID)
 
+        map_data = world_data['map']
+        map = Map.build_map(Size(map_data['size']['width'], map_data['size']['height']))
+
         self._event_bus = EventEmitter()
-
-        ant_factory = AntFactory(self._event_bus)
+        
+        ant_factory = AntFactory(self._event_bus, map)
+        town_factory = TownFactory(self._event_bus)
         food_factory = FoodFactory(self._event_bus)
-        world_factory = WorldFactory(self._event_bus, ant_factory, food_factory)
+        world_factory = WorldFactory(self._event_bus, ant_factory, food_factory, town_factory)
 
-        self._world = world_factory.build_world_from_json(world_data)
+        self._world = world_factory.build_world_from_json(world_data, map)
 
         self._town_service = TownService(self._world, world_factory)
-        self._commandHandlerService = CommandHandlerService(self._town_service)
+        self._command_handler_service = CommandHandlerService(self._town_service)
+        birther_service = BirtherService(self._event_bus, map, ant_factory, food_factory)
 
         self._world.run()
 
@@ -71,4 +79,4 @@ class WorldFacade:
         self._event_bus.remove_listener(event_name, callback)
 
     def handle_command(self, command_json, user_id):
-        self._commandHandlerService.handleCommand(command_json, user_id)
+        self._command_handler_service.handle_command(command_json, user_id)

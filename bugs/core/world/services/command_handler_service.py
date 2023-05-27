@@ -5,7 +5,7 @@ class CommandHandlerService():
     def __init__(self, town_service: TownService):
         self._town_service = town_service
 
-    def handleCommand(self, command_json, user_id):
+    def handle_command(self, command_json, user_id):
         match command_json['command_type']:
             case 'add_larva':
                 params = command_json['params']

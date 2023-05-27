@@ -2,6 +2,7 @@ from core.world.entities.food.food import Food
 from core.world.utils.point import Point
 from core.world.utils.event_emiter import EventEmitter
 from .food_types import FoodTypes
+from .preborn_food import PrebornFood
 import random
 
 class FoodFactory():
@@ -13,6 +14,9 @@ class FoodFactory():
         if (food_variety == -1):
             food_variety = self._generate_variety(type)
         return Food(self._event_bus, id, position, calories, type, food_variety) 
+    
+    def give_birth(self, preborn_food: PrebornFood):
+        return self.build_food(-1, preborn_food.position, preborn_food.calories, preborn_food.food_type, -1)
     
     def _generate_variety(self, food_type: FoodTypes):
         match food_type:

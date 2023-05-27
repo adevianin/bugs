@@ -16,7 +16,7 @@ class Town extends Entity {
 
     playAction(action) {
         switch (action.type) {
-            case ACTION_TYPES.TOWN_WAS_GIVEN_FOOD:
+            case ACTION_TYPES.TOWN_STORED_CALORIES_CHANGED:
                 return this._playTakingFood(action);
             case ACTION_TYPES.TOWN_LARVAE_CHANGED:
                 return this._playLarvaeChanged(action);

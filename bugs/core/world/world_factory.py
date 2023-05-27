@@ -9,23 +9,21 @@ from .entities.town.town import Town
 from .entities.food.food_area import FoodArea
 from .entities.ant.base.ant_types import AntTypes
 from .entities.food.food_types import FoodTypes
-from .entities.town.larva import Larva
+from .entities.town.town_factory import TownFactory
 
 class WorldFactory():
 
-    def __init__(self, event_bus: EventEmitter, ant_factory: AntFactory, food_factory: FoodFactory):
+    def __init__(self, event_bus: EventEmitter, ant_factory: AntFactory, food_factory: FoodFactory, town_factory: TownFactory):
         self._event_bus = event_bus
         self._ant_factory = ant_factory
         self._food_factory = food_factory
+        self._town_factory = town_factory
 
-    def build_world_from_json(self, world_data: dict):
-        map_data = world_data['map']
-        map = self.build_map(Size(map_data['size']['width'], map_data['size']['height']))
-
+    def build_world_from_json(self, world_data: dict, map: Map):
         towns_data = world_data['towns']
         for town_data in towns_data:
             position = Point(town_data['position']['x'], town_data['position']['y'])
-            town = self.build_town(town_data['id'], position, town_data['color'], town_data['owner_id'], town_data['larvae'], town_data['larva_places_count'])
+            town = self._town_factory.build_town(town_data['id'], position, town_data['color'], town_data['owner_id'], town_data['larvae'], town_data['larva_places_count'])
             map.add_entity(town)
 
         ants_data = world_data['ants']
@@ -33,7 +31,7 @@ class WorldFactory():
             position = Point(ant_data['position']['x'], ant_data['position']['y'])
             town = map.get_entity_by_id(ant_data['from_town'])
             ant_type = AntTypes(ant_data['type'])
-            ant = self._ant_factory.build_ant(map, ant_data['id'], ant_type, position, town)
+            ant = self._ant_factory.build_ant(ant_data['id'], ant_type, position, town)
             map.add_entity(ant)
 
         foods_data = world_data['foods']
@@ -58,24 +56,8 @@ class WorldFactory():
     def build_world(self, map: Map) -> World:
         return World(map, self._event_bus)
 
-    def build_map(self, size: Size) -> Map:
-        return Map(size, self._event_bus)
-
-    def build_town(self, id: int, position: Point, color: str, owner_id: int, larvae: list, larva_places: int) -> Town:
-        larvae = self._build_larvae(larvae)
-        return Town(self._event_bus, id, position, color, owner_id, larvae, larva_places)
-
     def build_food_area(self, id: int, position: Point, size: Size, fertility: int, food_type: FoodTypes):
-        return FoodArea(self._event_bus, id, position, size, self._food_factory, fertility, food_type)
+        return FoodArea(self._event_bus, id, position, size, fertility, food_type)
     
-    def build_larva(self, type: AntTypes, progress: int = 0):
-        return Larva(type, progress)
     
-    def _build_larvae(self, larvae_data: list):
-        larvae = []
-        for larva_data in larvae_data:
-            larva = self.build_larva(AntTypes(larva_data['type']), larva_data['progress'])
-            larvae.append(larva)
-
-        return larvae
 

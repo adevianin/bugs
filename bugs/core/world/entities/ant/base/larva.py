@@ -1,0 +1,42 @@
+from core.world.utils.point import Point
+from core.world.entities.ant.base.ant_types import AntTypes
+from core.world.entities.base.preborn_entity import PrebornEntity
+
+class Larva(PrebornEntity):
+
+    @classmethod
+    def build_larva(cls, position: Point, ant_type: AntTypes, ate_calories: int):
+        return Larva(position, ant_type, ate_calories)
+
+    def __init__(self, position: Point, ant_type: AntTypes, ate_calories: int) -> None:
+        super().__init__(position)
+        self._ant_type = ant_type
+        self._ate_calories = ate_calories
+
+    @property
+    def ant_type(self):
+        return self._ant_type
+
+    @property
+    def is_ready_to_born(self):
+        return self.progress >= 100
+
+    @property
+    def progress(self):
+        return (100 / self._get_needed_calories()) * self._ate_calories
+
+    def feed(self, calories_count: int):
+        self._ate_calories += calories_count
+
+    def to_json(self):
+        return {
+            'ant_type': self.ant_type,
+            'progress': self.progress
+        }
+    
+    def _get_needed_calories(self):
+        match self._ant_type:
+            case AntTypes.WORKER:
+                return 100
+            case AntTypes.WARIOR:
+                return 500

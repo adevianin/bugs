@@ -3,22 +3,21 @@ from .utils.size import Size
 from .utils.point import Point
 from .entities.base.entity_types import EntityTypes
 from typing import List
-from .utils.event_emiter import EventEmitter
-from core.world.entities.action import Action
-
 import random, math
 
 class Map:
 
-    def __init__(self, size: Size, event_bus: EventEmitter):
+    @classmethod
+    def build_map(cls, size: Size):
+        return Map(size)
+
+    def __init__(self, size: Size):
         self._size = size
-        self._event_bus = event_bus
         self._entities = {}
 
     def add_entity(self, entity: Entity):
         if entity.id == -1:
             entity.id = self._generate_entity_id()
-            self._event_bus.emit('action_occurred', Action.build_action(entity.id, 'entity_born', { 'entity': entity.to_json() }))
         self._entities[entity.id] = entity
 
     def delete_entity(self, id: int):

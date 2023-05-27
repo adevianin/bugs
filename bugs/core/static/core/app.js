@@ -161,7 +161,7 @@ const ACTION_TYPES = {
     ENTITY_BORN: 'entity_born',
     ENTITY_WALK: 'entity_walk',
     FOOD_WAS_PICKED_UP: 'food_was_picked_up',
-    TOWN_WAS_GIVEN_FOOD: 'town_was_given_food',
+    TOWN_STORED_CALORIES_CHANGED: 'town_stored_calories_changed',
     TOWN_LARVAE_CHANGED: 'town_larvae_changed'
 };
 
@@ -536,7 +536,7 @@ class Town extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     playAction(action) {
         switch (action.type) {
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.TOWN_WAS_GIVEN_FOOD:
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.TOWN_STORED_CALORIES_CHANGED:
                 return this._playTakingFood(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.TOWN_LARVAE_CHANGED:
                 return this._playLarvaeChanged(action);
