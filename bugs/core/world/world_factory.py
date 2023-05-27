@@ -1,15 +1,13 @@
 from .entities.ant.ant_factory import AntFactory
 from .entities.food.food_factory import FoodFactory
+from .entities.town.town_factory import TownFactory
 from .utils.size import Size
 from .utils.point import Point
 from .utils.event_emiter import EventEmitter
 from .map import Map
 from .world import World
-from .entities.town.town import Town
-from .entities.food.food_area import FoodArea
 from .entities.ant.base.ant_types import AntTypes
 from .entities.food.food_types import FoodTypes
-from .entities.town.town_factory import TownFactory
 
 class WorldFactory():
 
@@ -46,7 +44,7 @@ class WorldFactory():
             position = Point(food_area_data['position']['x'], food_area_data['position']['y'])
             size = Size(food_area_data['size']['width'], food_area_data['size']['height'])
             food_type = FoodTypes(food_area_data['food_type'])
-            food_area = self.build_food_area(food_area_data['id'], position, size, food_area_data['fertility'], food_type)
+            food_area = self._food_factory.build_food_area(food_area_data['id'], position, size, food_area_data['fertility'], food_type)
             map.add_entity(food_area)
 
         world = self.build_world(map)
@@ -55,9 +53,3 @@ class WorldFactory():
         
     def build_world(self, map: Map) -> World:
         return World(map, self._event_bus)
-
-    def build_food_area(self, id: int, position: Point, size: Size, fertility: int, food_type: FoodTypes):
-        return FoodArea(self._event_bus, id, position, size, fertility, food_type)
-    
-    
-
