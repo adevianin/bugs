@@ -17,7 +17,7 @@ class Command(BaseCommand):
         ],
         "towns": [
             { "id": 30, "position": {"x": 600, "y": 350 }, "color": "yellow", "owner_id": 2, "larva_places_count": 3, "larvae": [
-                { "ate_calories": 0, "type": 'worker' },
+                { "ate_calories": 450, "type": 'warrior' },
                 { "ate_calories": 10, "type": 'worker' },
             ] },
             { "id": 31, "position": {"x": 1600, "y": 450 }, "color": "red", "owner_id": 1,  "larva_places_count": 1,  "larvae": [] },
