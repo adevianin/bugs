@@ -1,15 +1,15 @@
 from core.world.entities.base.live_entity.tasks.task_factory import TaskFactory
-from ..ant_body import AntBody
+from .ant_body import AntBody
 from core.world.map import Map
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.point import Point
 from core.world.entities.town.town import Town
-from .searching_walk_task import SearchingWalkTask
-from .find_entity_by_type_task import FindEntityByTypeTask
-from .collect_food_task import CollectFoodTask
+from .tasks.searching_walk_task import SearchingWalkTask
+from .tasks.find_entity_by_type_task import FindEntityByTypeTask
+from .tasks.collect_food_task import CollectFoodTask
 from core.world.entities.base.live_entity.memory import Memory
-from .find_food_task import FindFoodTask
-from .feed_myself_task import FeedMyselfTask
+from .tasks.find_food_task import FindFoodTask
+from .tasks.feed_myself_task import FeedMyselfTask
 
 class AntTaskFactory(TaskFactory):
 
