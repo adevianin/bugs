@@ -191,13 +191,18 @@ __webpack_require__.r(__webpack_exports__);
 
 class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, id, position, pickedFoodId, userSpeed) {
+    constructor(eventBus, id, antType, position, pickedFoodId, userSpeed) {
         super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT);
         this.pickedFoodId = pickedFoodId;
         this._userSpeed = userSpeed;
+        this._antType = antType;
         this._setState('standing');
 
         // window.ant = this;
+    }
+
+    get antType() {
+        return this._antType;
     }
 
     getColor() {
@@ -305,7 +310,6 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         let step = 1;
         let interval = setInterval(() => {
             this.angle += angleStepSize;
-            console.log(step, this.angle);
             if (step >= stepCount) {
                 clearInterval(interval);
             }
@@ -718,7 +722,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 const AntTypes = {
     WORKER: 'worker',
-    WARIOR: 'warior'
+    WARRIOR: 'warrior'
 }
 
 
@@ -866,7 +870,7 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        // console.log(msg)
+        console.log(msg)
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);
@@ -1051,8 +1055,8 @@ class WorldFactory {
         return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this._mainEventBus);
     }
 
-    buildAnt(id, position, pickedFoodId, userSpeed) {
-        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, position, pickedFoodId, userSpeed);
+    buildAnt(id, antType, position, pickedFoodId, userSpeed) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, antType, position, pickedFoodId, userSpeed);
     }
 
     buildTown(id, position, ownerId, storedCalories, larvaeData, larvaPlacesCount) {
@@ -1072,7 +1076,7 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT:
-                return this.buildAnt(entityJson.id, entityJson.position, entityJson.picked_food_id, entityJson.user_speed);
+                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.picked_food_id, entityJson.user_speed);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:
                 return this.buildTown(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
@@ -1569,7 +1573,7 @@ __webpack_require__.r(__webpack_exports__);
 
 let antTypesLabels = {
     [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WORKER]: 'Робітник',
-    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WARIOR]: 'Воїн'
+    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WARRIOR]: 'Воїн'
 };
 
 
@@ -1928,16 +1932,16 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     }
 
     _render() {
-        this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(AntView.textureManager.getTexture('ant_worker_4.png'));
+        this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(AntView.textureManager.getTexture(`ant_${this.entity.antType}_4.png`));
         this._standSprite.anchor.set(0.5);
         this._entityContainer.addChild(this._standSprite);
 
-        this._walkSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.AnimatedSprite(AntView.textureManager.getAnimatedTextures('ant_worker'));
+        this._walkSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.AnimatedSprite(AntView.textureManager.getAnimatedTextures(`ant_${this.entity.antType}`));
         this._walkSprite.anchor.set(0.5);
         this._walkSprite.animationSpeed = 0.2;
         this._entityContainer.addChild(this._walkSprite);
 
-        this._deadSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(AntView.textureManager.getTexture('ant_worker_dead.png'));
+        this._deadSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(AntView.textureManager.getTexture(`ant_${this.entity.antType}_dead.png`));
         this._deadSprite.anchor.set(0.5);
         this._entityContainer.addChild(this._deadSprite);
 

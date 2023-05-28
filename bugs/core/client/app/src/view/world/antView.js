@@ -29,16 +29,16 @@ class AntView extends EntityView {
     }
 
     _render() {
-        this._standSprite = new PIXI.Sprite(AntView.textureManager.getTexture('ant_worker_4.png'));
+        this._standSprite = new PIXI.Sprite(AntView.textureManager.getTexture(`ant_${this.entity.antType}_4.png`));
         this._standSprite.anchor.set(0.5);
         this._entityContainer.addChild(this._standSprite);
 
-        this._walkSprite = new PIXI.AnimatedSprite(AntView.textureManager.getAnimatedTextures('ant_worker'));
+        this._walkSprite = new PIXI.AnimatedSprite(AntView.textureManager.getAnimatedTextures(`ant_${this.entity.antType}`));
         this._walkSprite.anchor.set(0.5);
         this._walkSprite.animationSpeed = 0.2;
         this._entityContainer.addChild(this._walkSprite);
 
-        this._deadSprite = new PIXI.Sprite(AntView.textureManager.getTexture('ant_worker_dead.png'));
+        this._deadSprite = new PIXI.Sprite(AntView.textureManager.getTexture(`ant_${this.entity.antType}_dead.png`));
         this._deadSprite.anchor.set(0.5);
         this._entityContainer.addChild(this._deadSprite);
 

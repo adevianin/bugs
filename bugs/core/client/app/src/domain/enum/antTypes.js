@@ -1,6 +1,6 @@
 const AntTypes = {
     WORKER: 'worker',
-    WARIOR: 'warior'
+    WARRIOR: 'warrior'
 }
 
 export {

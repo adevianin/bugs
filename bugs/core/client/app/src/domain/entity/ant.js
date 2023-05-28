@@ -5,13 +5,18 @@ import { distance } from 'utils/distance';
 
 class Ant extends Entity {
 
-    constructor(eventBus, id, position, pickedFoodId, userSpeed) {
+    constructor(eventBus, id, antType, position, pickedFoodId, userSpeed) {
         super(eventBus, id, position, EntityTypes.ANT);
         this.pickedFoodId = pickedFoodId;
         this._userSpeed = userSpeed;
+        this._antType = antType;
         this._setState('standing');
 
         // window.ant = this;
+    }
+
+    get antType() {
+        return this._antType;
     }
 
     getColor() {
@@ -119,7 +124,6 @@ class Ant extends Entity {
         let step = 1;
         let interval = setInterval(() => {
             this.angle += angleStepSize;
-            console.log(step, this.angle);
             if (step >= stepCount) {
                 clearInterval(interval);
             }

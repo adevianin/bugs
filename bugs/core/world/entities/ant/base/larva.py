@@ -38,5 +38,5 @@ class Larva(PrebornEntity):
         match self._ant_type:
             case AntTypes.WORKER:
                 return 100
-            case AntTypes.WARIOR:
+            case AntTypes.WARRIOR:
                 return 500

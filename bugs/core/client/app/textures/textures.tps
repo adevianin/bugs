@@ -173,38 +173,34 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">images/bug1.png</key>
-            <key type="filename">images/bug2.png</key>
-            <key type="filename">images/bug3.png</key>
-            <key type="filename">images/bug4.png</key>
-            <key type="filename">images/bug5.png</key>
-            <key type="filename">images/bug6.png</key>
-            <key type="filename">images/bug7.png</key>
-            <key type="filename">images/bug8.png</key>
+            <key type="filename">images/ant_warrior_1.png</key>
+            <key type="filename">images/ant_warrior_2.png</key>
+            <key type="filename">images/ant_warrior_3.png</key>
+            <key type="filename">images/ant_warrior_4.png</key>
+            <key type="filename">images/ant_warrior_5.png</key>
+            <key type="filename">images/ant_warrior_6.png</key>
+            <key type="filename">images/ant_warrior_7.png</key>
+            <key type="filename">images/ant_warrior_8.png</key>
+            <key type="filename">images/ant_warrior_dead.png</key>
+            <key type="filename">images/ant_worker_1.png</key>
+            <key type="filename">images/ant_worker_2.png</key>
+            <key type="filename">images/ant_worker_3.png</key>
+            <key type="filename">images/ant_worker_4.png</key>
+            <key type="filename">images/ant_worker_5.png</key>
+            <key type="filename">images/ant_worker_6.png</key>
+            <key type="filename">images/ant_worker_7.png</key>
+            <key type="filename">images/ant_worker_8.png</key>
+            <key type="filename">images/ant_worker_dead.png</key>
             <key type="filename">images/food_leaf_1v.png</key>
             <key type="filename">images/food_leaf_2v.png</key>
             <key type="filename">images/food_leaf_3v.png</key>
             <key type="filename">images/food_leaf_4v.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>8,8,16,16</rect>
-                <key>scale9Paddings</key>
-                <rect>8,8,16,16</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
             <key type="filename">images/food_nectar_1v.png</key>
             <key type="filename">images/food_nectar_2v.png</key>
             <key type="filename">images/food_nectar_3v.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0,0</point_f>
+                <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
@@ -255,14 +251,6 @@
                 <array>
                     <filename>images/town.png</filename>
                     <filename>images/grass.png</filename>
-                    <filename>images/bug1.png</filename>
-                    <filename>images/bug2.png</filename>
-                    <filename>images/bug3.png</filename>
-                    <filename>images/bug4.png</filename>
-                    <filename>images/bug5.png</filename>
-                    <filename>images/bug6.png</filename>
-                    <filename>images/bug7.png</filename>
-                    <filename>images/bug8.png</filename>
                     <filename>images/food_leaf_1v.png</filename>
                     <filename>images/food_leaf_2v.png</filename>
                     <filename>images/food_leaf_3v.png</filename>
@@ -270,6 +258,24 @@
                     <filename>images/food_nectar_1v.png</filename>
                     <filename>images/food_nectar_2v.png</filename>
                     <filename>images/food_nectar_3v.png</filename>
+                    <filename>images/ant_warrior_1.png</filename>
+                    <filename>images/ant_warrior_2.png</filename>
+                    <filename>images/ant_warrior_3.png</filename>
+                    <filename>images/ant_warrior_4.png</filename>
+                    <filename>images/ant_warrior_5.png</filename>
+                    <filename>images/ant_warrior_6.png</filename>
+                    <filename>images/ant_warrior_7.png</filename>
+                    <filename>images/ant_warrior_8.png</filename>
+                    <filename>images/ant_warrior_dead.png</filename>
+                    <filename>images/ant_worker_1.png</filename>
+                    <filename>images/ant_worker_2.png</filename>
+                    <filename>images/ant_worker_3.png</filename>
+                    <filename>images/ant_worker_4.png</filename>
+                    <filename>images/ant_worker_5.png</filename>
+                    <filename>images/ant_worker_6.png</filename>
+                    <filename>images/ant_worker_7.png</filename>
+                    <filename>images/ant_worker_8.png</filename>
+                    <filename>images/ant_worker_dead.png</filename>
                 </array>
             </struct>
         </map>

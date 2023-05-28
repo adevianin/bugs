@@ -10,6 +10,9 @@ from core.world.map import Map
 from core.world.entities.town.town import Town
 from core.world.entities.base.live_entity.memory import Memory
 from .base.larva import Larva
+from .warrior.warrior_ant_body import WarriorAntBody
+from .warrior.warrior_ant_mind import WarrirorAntMind
+from .warrior.warrior_ant import WarriorAnt
 
 class AntFactory():
 
@@ -21,13 +24,24 @@ class AntFactory():
         match ant_type:
             case AntTypes.WORKER:
                 return self._build_worker_ant(id, position, town)
+            case AntTypes.WARRIOR:
+                return self._build_warrior_ant(id, position, town)
             case _:
                 raise Exception('uknown type of ant')
             
     def give_birth(self, larva: Larva, town: Town):
         return self.build_ant(-1, larva.ant_type, larva.position, town)
     
-    def _build_worker_ant(self,id: int, position: Point, town: Town):
+    def _build_warrior_ant(self, id: int, position: Point, town: Town):
+        ant_events = EventEmitter()
+        body = WarriorAntBody(ant_events, position)
+        ant_task_factory = AntTaskFactory(body, self._map)
+        mind = WarrirorAntMind(body, ant_task_factory, self._map, Memory(), town)
+        ant = WarriorAnt(self._event_bus, id, mind, body)
+
+        return ant
+    
+    def _build_worker_ant(self, id: int, position: Point, town: Town):
         ant_events = EventEmitter()
         body = WorkerAntBody(ant_events, position)
         ant_task_factory = AntTaskFactory(body, self._map)

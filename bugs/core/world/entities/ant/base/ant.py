@@ -20,7 +20,8 @@ class Ant(LiveEntity):
     def to_json(self):
         json = super().to_json()
         json.update({
-            'picked_food_id': self._body.picked_food.id if self._body.is_food_picked else None
+            'picked_food_id': self._body.picked_food.id if self._body.is_food_picked else None,
+            'ant_type': self._ant_type
         })
 
         return json

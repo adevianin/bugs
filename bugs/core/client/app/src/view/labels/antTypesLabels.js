@@ -2,7 +2,7 @@ import { AntTypes } from "../../domain/enum/antTypes";
 
 let antTypesLabels = {
     [AntTypes.WORKER]: 'Робітник',
-    [AntTypes.WARIOR]: 'Воїн'
+    [AntTypes.WARRIOR]: 'Воїн'
 };
 
 export {
