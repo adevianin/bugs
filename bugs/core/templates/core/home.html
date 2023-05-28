@@ -2,6 +2,7 @@
 <html>
     <head>
         {{ initial_data|json_script:"initial-data" }}
+        {% csrf_token %}
     </head>
     <body>
         <div class="popup-container" data-popup-container></div>
