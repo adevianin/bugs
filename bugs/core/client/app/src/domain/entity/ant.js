@@ -8,13 +8,10 @@ class Ant extends Entity {
     constructor(eventBus, id, position, pickedFoodId, userSpeed) {
         super(eventBus, id, position, EntityTypes.ANT);
         this.pickedFoodId = pickedFoodId;
-        this._angle = 0;
         this._userSpeed = userSpeed;
         this._setState('standing');
-    }
 
-    get angle() {
-        return this._angle;
+        // window.ant = this;
     }
 
     getColor() {
@@ -107,7 +104,28 @@ class Ant extends Entity {
     }
 
     _lookAt(x, y) {
-        this._angle = (Math.atan2(y - this.position.y, x - this.position.x) * 180 / Math.PI) + 90;
+        let currentAngle = this._angle;
+        let newAngle = (Math.atan2(y - this.position.y, x - this.position.x) * 180 / Math.PI) + 90;
+        let angleDistance = newAngle - currentAngle;
+
+        if (angleDistance > 180) {
+            angleDistance -= 360;
+        } else if (angleDistance < -180) {
+            angleDistance += 360;
+        }
+
+        let stepCount = 4
+        let angleStepSize = angleDistance / stepCount;
+        let step = 1;
+        let interval = setInterval(() => {
+            this.angle += angleStepSize;
+            console.log(step, this.angle);
+            if (step >= stepCount) {
+                clearInterval(interval);
+            }
+            step++;
+        }, 30);
+
     }
 
 }

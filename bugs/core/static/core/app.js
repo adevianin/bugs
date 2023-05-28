@@ -194,13 +194,10 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     constructor(eventBus, id, position, pickedFoodId, userSpeed) {
         super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT);
         this.pickedFoodId = pickedFoodId;
-        this._angle = 0;
         this._userSpeed = userSpeed;
         this._setState('standing');
-    }
 
-    get angle() {
-        return this._angle;
+        // window.ant = this;
     }
 
     getColor() {
@@ -293,7 +290,28 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     _lookAt(x, y) {
-        this._angle = (Math.atan2(y - this.position.y, x - this.position.x) * 180 / Math.PI) + 90;
+        let currentAngle = this._angle;
+        let newAngle = (Math.atan2(y - this.position.y, x - this.position.x) * 180 / Math.PI) + 90;
+        let angleDistance = newAngle - currentAngle;
+
+        if (angleDistance > 180) {
+            angleDistance -= 360;
+        } else if (angleDistance < -180) {
+            angleDistance += 360;
+        }
+
+        let stepCount = 4
+        let angleStepSize = angleDistance / stepCount;
+        let step = 1;
+        let interval = setInterval(() => {
+            this.angle += angleStepSize;
+            console.log(step, this.angle);
+            if (step >= stepCount) {
+                clearInterval(interval);
+            }
+            step++;
+        }, 30);
+
     }
 
 }
@@ -327,6 +345,7 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
         this._actionStack = [];
         this._isPlaying = false;
         this._isHidden = false;
+        this._angle = 0;
     }
 
     get state() {
@@ -342,6 +361,15 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
         return this._position;
     }
 
+    get angle() {
+        return this._angle;
+    }
+
+    set angle(value) {
+        this._angle = value;
+        this.emit('angleChanged');
+    }
+
     addAction(action) {
         this._actionStack.push(action);
         this.tryPlayNextAction();
@@ -355,7 +383,6 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
         }
         let nextAction = this._actionStack[0];
         this._actionStack.shift();
-        this.START_PLAYING_AT = new Date().getTime()
         this._isPlaying = true;
         this.playAction(nextAction)
             .then(() => {
@@ -839,7 +866,7 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        console.log(msg)
+        // console.log(msg)
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);
@@ -1882,6 +1909,7 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._render();
 
         this._unbindPosChangedListener = this._entity.on('positionChanged', this._onAntPositionChange.bind(this));
+        this._unbindPosChangedListener = this._entity.on('angleChanged', this._onAngleChange.bind(this));
         this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderAntCurrentState.bind(this));
         this._unbindFoodLiftListener = this._entity.on('foodPickedUp', this._onFoodPickedUp.bind(this));
         this._unbindFoodDropListener = this._entity.on('foodDroped', this._removePickedFoodView.bind(this));
@@ -1933,6 +1961,10 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         }
     }
 
+    _onAngleChange() {
+        this._renderAngle();
+    }
+
     _removePickedFoodView() {
         if (this._pickedFoodView) {
             this._pickedFoodView.remove();
@@ -1954,14 +1986,17 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     _renderAntPosition() {
         this._standSprite.x = this._entity.position.x;
         this._standSprite.y = this._entity.position.y;
-        this._standSprite.angle = this._entity.angle;
 
         this._walkSprite.x = this._entity.position.x;
         this._walkSprite.y = this._entity.position.y;
-        this._walkSprite.angle = this._entity.angle;
 
         this._deadSprite.x = this._entity.position.x;
         this._deadSprite.y = this._entity.position.y;
+    }
+
+    _renderAngle() {
+        this._standSprite.angle = this._entity.angle;
+        this._walkSprite.angle = this._entity.angle;
         this._deadSprite.angle = this._entity.angle;
     }
 

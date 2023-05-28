@@ -11,6 +11,7 @@ class Entity extends EventEmitter {
         this._actionStack = [];
         this._isPlaying = false;
         this._isHidden = false;
+        this._angle = 0;
     }
 
     get state() {
@@ -26,6 +27,15 @@ class Entity extends EventEmitter {
         return this._position;
     }
 
+    get angle() {
+        return this._angle;
+    }
+
+    set angle(value) {
+        this._angle = value;
+        this.emit('angleChanged');
+    }
+
     addAction(action) {
         this._actionStack.push(action);
         this.tryPlayNextAction();
@@ -39,7 +49,6 @@ class Entity extends EventEmitter {
         }
         let nextAction = this._actionStack[0];
         this._actionStack.shift();
-        this.START_PLAYING_AT = new Date().getTime()
         this._isPlaying = true;
         this.playAction(nextAction)
             .then(() => {

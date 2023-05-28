@@ -10,6 +10,7 @@ class AntView extends EntityView {
         this._render();
 
         this._unbindPosChangedListener = this._entity.on('positionChanged', this._onAntPositionChange.bind(this));
+        this._unbindPosChangedListener = this._entity.on('angleChanged', this._onAngleChange.bind(this));
         this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderAntCurrentState.bind(this));
         this._unbindFoodLiftListener = this._entity.on('foodPickedUp', this._onFoodPickedUp.bind(this));
         this._unbindFoodDropListener = this._entity.on('foodDroped', this._removePickedFoodView.bind(this));
@@ -61,6 +62,10 @@ class AntView extends EntityView {
         }
     }
 
+    _onAngleChange() {
+        this._renderAngle();
+    }
+
     _removePickedFoodView() {
         if (this._pickedFoodView) {
             this._pickedFoodView.remove();
@@ -82,14 +87,17 @@ class AntView extends EntityView {
     _renderAntPosition() {
         this._standSprite.x = this._entity.position.x;
         this._standSprite.y = this._entity.position.y;
-        this._standSprite.angle = this._entity.angle;
 
         this._walkSprite.x = this._entity.position.x;
         this._walkSprite.y = this._entity.position.y;
-        this._walkSprite.angle = this._entity.angle;
 
         this._deadSprite.x = this._entity.position.x;
         this._deadSprite.y = this._entity.position.y;
+    }
+
+    _renderAngle() {
+        this._standSprite.angle = this._entity.angle;
+        this._walkSprite.angle = this._entity.angle;
         this._deadSprite.angle = this._entity.angle;
     }
 
