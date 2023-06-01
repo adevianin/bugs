@@ -5,12 +5,13 @@ import { distance } from 'utils/distance';
 
 class Ant extends Entity {
 
-    constructor(eventBus, id, antType, position, pickedFoodId, userSpeed) {
+    constructor(eventBus, id, antType, position, pickedFoodId, userSpeed, isInTown) {
         super(eventBus, id, position, EntityTypes.ANT);
         this.pickedFoodId = pickedFoodId;
         this._userSpeed = userSpeed;
         this._antType = antType;
         this._setState('standing');
+        this._isInTown = isInTown;
 
         // window.ant = this;
     }
@@ -21,6 +22,10 @@ class Ant extends Entity {
 
     getColor() {
         // return this._homeTown.getColor()
+    }
+
+    get isInTown() {
+        return this._isInTown;
     }
 
     playAction(action) {
@@ -35,6 +40,10 @@ class Ant extends Entity {
                 return this._playEatFoodAction(action);
             case ACTION_TYPES.ENTITY_DIED:
                 return this._playEntityDied(action);
+            case ACTION_TYPES.ENTITY_GOT_IN_TOWN:
+                return this._playGotInTown(action);
+            case ACTION_TYPES.ENTITY_GOT_OUT_OF_TOWN:
+                return this._playGotOutOfTown(action);
             default:
                 throw 'unknown type of action'
         }
@@ -108,6 +117,18 @@ class Ant extends Entity {
         });
     }
 
+    _playGotInTown(action) {
+        this._setState('standing');
+        this._toggleIsInTown(true);
+        return Promise.resolve();
+    }
+
+    _playGotOutOfTown() {
+        this._setState('standing');
+        this._toggleIsInTown(false);
+        return Promise.resolve();
+    }
+
     _lookAt(x, y) {
         let currentAngle = this._angle;
         let newAngle = (Math.atan2(y - this.position.y, x - this.position.x) * 180 / Math.PI) + 90;
@@ -130,6 +151,11 @@ class Ant extends Entity {
             step++;
         }, 30);
 
+    }
+
+    _toggleIsInTown(isInTown) {
+        this._isInTown = isInTown;
+        this.emit('isInTownChanged')
     }
 
 }

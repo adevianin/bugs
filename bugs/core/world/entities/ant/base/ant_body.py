@@ -6,8 +6,8 @@ from core.world.entities.town.town import Town
 
 class AntBody(Body):
 
-    def __init__(self, events: EventEmitter, dna_profile: str, position: Point):
-        super().__init__(events, dna_profile, position, 32, 100)
+    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, located_in_town: Town):
+        super().__init__(events, dna_profile, position, 32, 100, located_in_town)
         self._picked_food = None
 
     @property

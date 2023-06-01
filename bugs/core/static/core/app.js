@@ -160,6 +160,8 @@ const ACTION_TYPES = {
     ENTITY_DIED: 'entity_died',
     ENTITY_BORN: 'entity_born',
     ENTITY_WALK: 'entity_walk',
+    ENTITY_GOT_IN_TOWN: 'entity_got_in_town',
+    ENTITY_GOT_OUT_OF_TOWN: 'entity_got_out_of_town',
     FOOD_WAS_PICKED_UP: 'food_was_picked_up',
     TOWN_STORED_CALORIES_CHANGED: 'town_stored_calories_changed',
     TOWN_LARVAE_CHANGED: 'town_larvae_changed'
@@ -191,12 +193,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, id, antType, position, pickedFoodId, userSpeed) {
+    constructor(eventBus, id, antType, position, pickedFoodId, userSpeed, isInTown) {
         super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT);
         this.pickedFoodId = pickedFoodId;
         this._userSpeed = userSpeed;
         this._antType = antType;
         this._setState('standing');
+        this._isInTown = isInTown;
 
         // window.ant = this;
     }
@@ -207,6 +210,10 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     getColor() {
         // return this._homeTown.getColor()
+    }
+
+    get isInTown() {
+        return this._isInTown;
     }
 
     playAction(action) {
@@ -221,6 +228,10 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playEatFoodAction(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_DIED:
                 return this._playEntityDied(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_IN_TOWN:
+                return this._playGotInTown(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_OUT_OF_TOWN:
+                return this._playGotOutOfTown(action);
             default:
                 throw 'unknown type of action'
         }
@@ -294,6 +305,18 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         });
     }
 
+    _playGotInTown(action) {
+        this._setState('standing');
+        this._toggleIsInTown(true);
+        return Promise.resolve();
+    }
+
+    _playGotOutOfTown() {
+        this._setState('standing');
+        this._toggleIsInTown(false);
+        return Promise.resolve();
+    }
+
     _lookAt(x, y) {
         let currentAngle = this._angle;
         let newAngle = (Math.atan2(y - this.position.y, x - this.position.x) * 180 / Math.PI) + 90;
@@ -316,6 +339,11 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
             step++;
         }, 30);
 
+    }
+
+    _toggleIsInTown(isInTown) {
+        this._isInTown = isInTown;
+        this.emit('isInTownChanged')
     }
 
 }
@@ -393,14 +421,6 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
                 this._isPlaying = false;
                 this.tryPlayNextAction();
             });
-    }
-
-    isHidden() {
-        return this._isHidden;
-    }
-
-    toggleHidden(isHidden) {
-        this._isHidden = isHidden;
     }
 
     globalEmit(eventName, data) {
@@ -1056,8 +1076,8 @@ class WorldFactory {
         return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this._mainEventBus);
     }
 
-    buildAnt(id, antType, position, pickedFoodId, userSpeed) {
-        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, antType, position, pickedFoodId, userSpeed);
+    buildAnt(id, antType, position, pickedFoodId, userSpeed, isInTown) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, antType, position, pickedFoodId, userSpeed, isInTown);
     }
 
     buildTown(id, position, ownerId, storedCalories, larvaeData, larvaPlacesCount) {
@@ -1077,7 +1097,7 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT:
-                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.picked_food_id, entityJson.user_speed);
+                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.picked_food_id, entityJson.user_speed, entityJson.is_in_town);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:
                 return this.buildTown(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
@@ -1919,33 +1939,36 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderAntCurrentState.bind(this));
         this._unbindFoodLiftListener = this._entity.on('foodPickedUp', this._onFoodPickedUp.bind(this));
         this._unbindFoodDropListener = this._entity.on('foodDroped', this._removePickedFoodView.bind(this));
+        this._unbindIsHiddenChangedListener = this._entity.on('isInTownChanged', this._renderIsInTown.bind(this));
     }
 
     remove() {
         super.remove();
-        this._entityContainer.removeChild(this._standSprite);
-        this._entityContainer.removeChild(this._walkSprite);
-        this._entityContainer.removeChild(this._deadSprite);
+        this._entityContainer.removeChild(this._antContainer);
         this._unbindPosChangedListener();
         this._unbindStateChangeListener();
         this._unbindFoodLiftListener();
         this._unbindFoodDropListener();
+        this._unbindIsHiddenChangedListener();
         this._removePickedFoodView();
     }
 
     _render() {
+        this._antContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._entityContainer.addChild(this._antContainer);
+
         this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(AntView.textureManager.getTexture(`ant_${this.entity.antType}_4.png`));
         this._standSprite.anchor.set(0.5);
-        this._entityContainer.addChild(this._standSprite);
+        this._antContainer.addChild(this._standSprite);
 
         this._walkSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.AnimatedSprite(AntView.textureManager.getAnimatedTextures(`ant_${this.entity.antType}`));
         this._walkSprite.anchor.set(0.5);
         this._walkSprite.animationSpeed = 0.2;
-        this._entityContainer.addChild(this._walkSprite);
+        this._antContainer.addChild(this._walkSprite);
 
         this._deadSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(AntView.textureManager.getTexture(`ant_${this.entity.antType}_dead.png`));
         this._deadSprite.anchor.set(0.5);
-        this._entityContainer.addChild(this._deadSprite);
+        this._antContainer.addChild(this._deadSprite);
 
         this._renderAntCurrentState();
         this._renderAntPosition();
@@ -1953,6 +1976,8 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
             this._renderPickedFoodView();
             this._renderPickedFoodPosition();
         }
+
+        this._renderIsInTown();
     }
 
     _onFoodPickedUp() {
@@ -1981,7 +2006,7 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     _renderPickedFoodView() {
         if (!this._pickedFoodView) {
             let food = AntView.domainFacade.findEntityById(this._entity.pickedFoodId);
-            this._pickedFoodView = new _pickedFood__WEBPACK_IMPORTED_MODULE_2__.PickedFoodView(food, this._entityContainer);
+            this._pickedFoodView = new _pickedFood__WEBPACK_IMPORTED_MODULE_2__.PickedFoodView(food, this._antContainer);
         }
     }
 
@@ -2012,6 +2037,10 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._toggleStandingState(state == 'standing');
         this._toggleWalkingState(state == 'walking');
         this._toggleDeadState(state == 'dead');
+    }
+
+    _renderIsInTown() {
+        this._antContainer.renderable = !this._entity.isInTown;
     }
 
     _toggleWalkingState(isEnabling) {

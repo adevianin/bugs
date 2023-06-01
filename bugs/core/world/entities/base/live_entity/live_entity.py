@@ -14,6 +14,8 @@ class LiveEntity(Entity):
 
         self._body.events.add_listener('walk', self._on_body_walk)
         self._body.events.add_listener('eat_food', self._on_body_eats_food)
+        self._body.events.add_listener('got_in_town', self._on_got_in_town)
+        self._body.events.add_listener('got_out_of_town', self._on_got_out_of_town)
 
     @property
     def position(self):
@@ -22,6 +24,9 @@ class LiveEntity(Entity):
     @position.setter
     def position(self, new_position: Point):
         self._body.position = new_position
+
+    def is_hidden(self):
+        return super().is_hidden or self._body.is_in_town
 
     def do_step(self):
         super().do_step()
@@ -41,7 +46,8 @@ class LiveEntity(Entity):
                 'x': self._body.position.x,
                 'y': self._body.position.y
             },
-            'user_speed': self._body.user_speed
+            'user_speed': self._body.user_speed,
+            'is_in_town': self._body.is_in_town
         })
 
         return json
@@ -64,8 +70,16 @@ class LiveEntity(Entity):
             'position': {
                 'x': position.x,
                 'y': position.y
-            }
+            },
+            'is_in_town': self._body.is_in_town
         })
 
     def _on_body_eats_food(self):
         self.handle_action('entity_eat_food')
+
+    def _on_got_in_town(self):
+        self.handle_action('entity_got_in_town')
+
+    def _on_got_out_of_town(self):
+        self.handle_action('entity_got_out_of_town')
+

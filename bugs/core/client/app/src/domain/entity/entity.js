@@ -57,14 +57,6 @@ class Entity extends EventEmitter {
             });
     }
 
-    isHidden() {
-        return this._isHidden;
-    }
-
-    toggleHidden(isHidden) {
-        this._isHidden = isHidden;
-    }
-
     globalEmit(eventName, data) {
         this._eventBus.emit(eventName, data);
     }

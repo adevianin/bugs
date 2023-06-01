@@ -1,4 +1,4 @@
-from core.world.entities.base.live_entity.tasks.task_factory import TaskFactory
+from core.world.entities.base.live_entity.task_factory import TaskFactory
 from .ant_body import AntBody
 from core.world.map import Map
 from core.world.entities.base.entity_types import EntityTypes
@@ -26,7 +26,8 @@ class AntTaskFactory(TaskFactory):
 
     def build_collect_food_task(self, town: Town, memory: Memory):
         find_food_task = self.build_find_food_task(memory, town.position, town.area)
-        return CollectFoodTask(self._body, town, find_food_task)
+        go_gome_task = self.build_go_in_town_task(town)
+        return CollectFoodTask(self._body, town, find_food_task, go_gome_task)
     
     def build_find_food_task(self, memory: Memory, search_near_point: Point, search_radius: int):
         searching_walk_subtask = self.build_searching_walk_task(search_near_point, search_radius)
@@ -34,4 +35,5 @@ class AntTaskFactory(TaskFactory):
     
     def build_feed_myself_task(self, home: Town, memory: Memory):
         find_food_task = self.build_find_food_task(memory, home.position, home.area)
-        return FeedMyselfTask(self._body, home, find_food_task)
+        go_gome_task = self.build_go_in_town_task(home)
+        return FeedMyselfTask(self._body, home, find_food_task, go_gome_task)

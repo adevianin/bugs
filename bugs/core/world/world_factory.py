@@ -28,8 +28,11 @@ class WorldFactory():
         for ant_data in ants_data:
             position = Point(ant_data['position']['x'], ant_data['position']['y'])
             town = map.get_entity_by_id(ant_data['from_town'])
+            located_in_town = None
+            if ant_data['located_in_town'] != None:
+                located_in_town = map.get_entity_by_id(ant_data['located_in_town'])
             ant_type = AntTypes(ant_data['type'])
-            ant = self._ant_factory.build_ant(ant_data['id'], ant_type, ant_data['dna_profile'], position, town)
+            ant = self._ant_factory.build_ant(ant_data['id'], ant_type, ant_data['dna_profile'], position, town, located_in_town)
             map.add_entity(ant)
 
         foods_data = world_data['foods']

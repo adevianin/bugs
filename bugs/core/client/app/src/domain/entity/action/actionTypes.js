@@ -5,6 +5,8 @@ const ACTION_TYPES = {
     ENTITY_DIED: 'entity_died',
     ENTITY_BORN: 'entity_born',
     ENTITY_WALK: 'entity_walk',
+    ENTITY_GOT_IN_TOWN: 'entity_got_in_town',
+    ENTITY_GOT_OUT_OF_TOWN: 'entity_got_out_of_town',
     FOOD_WAS_PICKED_UP: 'food_was_picked_up',
     TOWN_STORED_CALORIES_CHANGED: 'town_stored_calories_changed',
     TOWN_LARVAE_CHANGED: 'town_larvae_changed'

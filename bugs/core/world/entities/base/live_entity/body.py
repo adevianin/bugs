@@ -3,12 +3,13 @@ from abc import ABC
 from core.world.entities.food.food import Food
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME
+from core.world.entities.town.town import Town
 
 import math
 
 class Body(ABC):
 
-    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int):
+    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int, located_in_town: Town):
         self.events = events
         self.dna_profile = dna_profile
         self._distance_per_step = distance_per_step
@@ -20,6 +21,15 @@ class Body(ABC):
         self._can_eat_calories_per_step = 20
         self._user_speed = self._distance_per_step / STEP_TIME
         self._is_busy = False
+        self._located_inside_town = located_in_town
+
+    @property
+    def located_inside_town(self):
+        return self._located_inside_town
+    
+    @property
+    def is_in_town(self):
+        return self._located_inside_town != None
 
     @property
     def user_speed(self):
@@ -45,6 +55,14 @@ class Body(ABC):
     @property
     def is_no_calories(self):
         return self._calories <= 0
+    
+    def get_in_town(self, town: Town):
+        self._located_inside_town = town
+        self.events.emit('got_in_town')
+
+    def get_out_of_town(self):
+        self._located_inside_town = None
+        self.events.emit('got_out_of_town')
 
     def step_to(self, destination_point: Point, preciseMode = False) -> bool:
         distance = math.dist([self.position.x, self.position.y], [destination_point.x, destination_point.y])

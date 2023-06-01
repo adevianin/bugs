@@ -1,6 +1,6 @@
 from abc import ABC, abstractclassmethod
 from .body import Body
-from .tasks.task_factory import TaskFactory
+from .task_factory import TaskFactory
 from .tasks.task import Task
 from core.world.map import Map
 from core.world.entities.base.entity_types import EntityTypes

@@ -2,13 +2,15 @@ from core.world.entities.base.live_entity.tasks.task import Task
 from ..ant_body import AntBody
 from core.world.entities.town.town import Town
 from .find_food_task import FindFoodTask
+from core.world.entities.base.live_entity.tasks.go_in_town import GoInTownTask
 
 class FeedMyselfTask(Task):
 
-    def __init__(self, body: AntBody, home: Town, find_food_task: FindFoodTask):
+    def __init__(self, body: AntBody, home: Town, find_food_task: FindFoodTask, go_home_task: GoInTownTask):
         super().__init__(body)
         self._home = home
         self._find_food_task = find_food_task
+        self._go_home_task = go_home_task
 
         self._found_food = None
 
@@ -22,7 +24,8 @@ class FeedMyselfTask(Task):
 
     def do_step(self):
         if (not self._is_home_checked and not self._is_at_home):
-            self._is_at_home = self._body.step_to(self._home.position)
+            self._go_home_task.do_step()
+            self._is_at_home = self._go_home_task.is_done()
             return
         
         if (not self._is_home_checked and self._is_at_home):
@@ -30,11 +33,12 @@ class FeedMyselfTask(Task):
             calories = self._home.give_calories(needed_calories)
             self._body.eat_calories(calories)
             self._is_home_checked = True
+            self._body.get_out_of_town()
             if (not self._body.check_am_i_hungry()):
                 self.mark_as_done()
             return
 
-        if (self._is_home_checked):
+        if (self._is_home_checked and self._is_got_out_of_home):
             if (not self._is_food_found):
                 self._find_food_task.do_step()
                 if (self._find_food_task.is_done()):
