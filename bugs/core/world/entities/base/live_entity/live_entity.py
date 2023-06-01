@@ -4,6 +4,7 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from .mind import Mind
 from .body import Body
+from core.world.entities.town.town import Town
 
 class LiveEntity(Entity):
 
@@ -47,7 +48,7 @@ class LiveEntity(Entity):
                 'y': self._body.position.y
             },
             'user_speed': self._body.user_speed,
-            'is_in_town': self._body.is_in_town
+            'located_in_town_id': self._body.located_in_town_id
         })
 
         return json
@@ -70,15 +71,16 @@ class LiveEntity(Entity):
             'position': {
                 'x': position.x,
                 'y': position.y
-            },
-            'is_in_town': self._body.is_in_town
+            }
         })
 
     def _on_body_eats_food(self):
         self.handle_action('entity_eat_food')
 
-    def _on_got_in_town(self):
-        self.handle_action('entity_got_in_town')
+    def _on_got_in_town(self, town: Town):
+        self.handle_action('entity_got_in_town', {
+            'town_id': town.id
+        })
 
     def _on_got_out_of_town(self):
         self.handle_action('entity_got_out_of_town')

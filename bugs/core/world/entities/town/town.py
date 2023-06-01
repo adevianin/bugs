@@ -15,13 +15,6 @@ class Town(PlainEntity):
         self._owner_id = owner_id
         self._larvae = larvae
         self._larva_places_count = larva_places_count
-        self._queen = {
-            "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000"
-        }
-
-    @property
-    def queen(self):
-        return self._queen
 
     @property
     def owner_id(self):

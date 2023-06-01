@@ -24,12 +24,8 @@ class Body(ABC):
         self._located_inside_town = located_in_town
 
     @property
-    def located_inside_town(self):
-        return self._located_inside_town
-    
-    @property
-    def is_in_town(self):
-        return self._located_inside_town != None
+    def located_in_town_id(self):
+        return self._located_inside_town.id if self._located_inside_town else None
 
     @property
     def user_speed(self):
@@ -58,7 +54,7 @@ class Body(ABC):
     
     def get_in_town(self, town: Town):
         self._located_inside_town = town
-        self.events.emit('got_in_town')
+        self.events.emit('got_in_town', town)
 
     def get_out_of_town(self):
         self._located_inside_town = None

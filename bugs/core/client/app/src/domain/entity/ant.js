@@ -5,13 +5,13 @@ import { distance } from 'utils/distance';
 
 class Ant extends Entity {
 
-    constructor(eventBus, id, antType, position, pickedFoodId, userSpeed, isInTown) {
+    constructor(eventBus, id, antType, position, pickedFoodId, userSpeed, locatedInTownId) {
         super(eventBus, id, position, EntityTypes.ANT);
         this.pickedFoodId = pickedFoodId;
         this._userSpeed = userSpeed;
         this._antType = antType;
         this._setState('standing');
-        this._isInTown = isInTown;
+        this._locatedInTownId = locatedInTownId;
 
         // window.ant = this;
     }
@@ -25,7 +25,7 @@ class Ant extends Entity {
     }
 
     get isInTown() {
-        return this._isInTown;
+        return !!this._locatedInTownId;
     }
 
     playAction(action) {
@@ -119,13 +119,15 @@ class Ant extends Entity {
 
     _playGotInTown(action) {
         this._setState('standing');
-        this._toggleIsInTown(true);
+        this._locatedInTownId = action.actionData.town_id;
+        this.emit('isInTownChanged');
         return Promise.resolve();
     }
 
     _playGotOutOfTown() {
         this._setState('standing');
-        this._toggleIsInTown(false);
+        this._locatedInTownId = null;
+        this.emit('isInTownChanged');
         return Promise.resolve();
     }
 
@@ -155,7 +157,7 @@ class Ant extends Entity {
 
     _toggleIsInTown(isInTown) {
         this._isInTown = isInTown;
-        this.emit('isInTownChanged')
+        
     }
 
 }

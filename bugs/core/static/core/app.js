@@ -193,13 +193,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, id, antType, position, pickedFoodId, userSpeed, isInTown) {
+    constructor(eventBus, id, antType, position, pickedFoodId, userSpeed, locatedInTownId) {
         super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT);
         this.pickedFoodId = pickedFoodId;
         this._userSpeed = userSpeed;
         this._antType = antType;
         this._setState('standing');
-        this._isInTown = isInTown;
+        this._locatedInTownId = locatedInTownId;
 
         // window.ant = this;
     }
@@ -213,7 +213,7 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     get isInTown() {
-        return this._isInTown;
+        return !!this._locatedInTownId;
     }
 
     playAction(action) {
@@ -307,13 +307,15 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _playGotInTown(action) {
         this._setState('standing');
-        this._toggleIsInTown(true);
+        this._locatedInTownId = action.actionData.town_id;
+        this.emit('isInTownChanged');
         return Promise.resolve();
     }
 
     _playGotOutOfTown() {
         this._setState('standing');
-        this._toggleIsInTown(false);
+        this._locatedInTownId = null;
+        this.emit('isInTownChanged');
         return Promise.resolve();
     }
 
@@ -343,7 +345,7 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _toggleIsInTown(isInTown) {
         this._isInTown = isInTown;
-        this.emit('isInTownChanged')
+        
     }
 
 }
@@ -891,7 +893,7 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        // console.log(msg)
+        console.log(msg)
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);
@@ -1076,8 +1078,8 @@ class WorldFactory {
         return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this._mainEventBus);
     }
 
-    buildAnt(id, antType, position, pickedFoodId, userSpeed, isInTown) {
-        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, antType, position, pickedFoodId, userSpeed, isInTown);
+    buildAnt(id, antType, position, pickedFoodId, userSpeed, locatedInTownId) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, antType, position, pickedFoodId, userSpeed, locatedInTownId);
     }
 
     buildTown(id, position, ownerId, storedCalories, larvaeData, larvaPlacesCount) {
@@ -1097,7 +1099,7 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT:
-                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.picked_food_id, entityJson.user_speed, entityJson.is_in_town);
+                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.picked_food_id, entityJson.user_speed, entityJson.located_in_town_id);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:
                 return this.buildTown(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
