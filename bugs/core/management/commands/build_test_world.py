@@ -8,8 +8,9 @@ class Command(BaseCommand):
     world_state = {
         "map": { "size": {"width": 3000, "height": 3000 }},
         "ants": [
-            { "id": 1, "position": {"x": 650, "y": 350}, "from_town": 30, "type": "worker" },
-            # { "id": 2, "position": {"x": 1600, "y": 500}, "from_town": 31, "type": "worker" },
+            { "id": 1, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000", "position": {"x": 650, "y": 350}, "from_town": 30, "type": "worker" },
+            { "id": 3, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000", "position": {"x": 650, "y": 350}, "from_town": 30, "type": "queen" },
+            # { "id": 2, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf123", "position": {"x": 1600, "y": 500}, "from_town": 31, "type": "worker" },
         ],
         "foods": [
             {"id": 20, "position": {"x": 350, "y": 350}, "calories": 150, "type": "leaf", "food_variety": 1 },
@@ -17,8 +18,8 @@ class Command(BaseCommand):
         ],
         "towns": [
             { "id": 30, "position": {"x": 600, "y": 350 }, "color": "yellow", "owner_id": 2, "larva_places_count": 3, "larvae": [
-                { "ate_calories": 450, "type": 'warrior' },
-                { "ate_calories": 10, "type": 'worker' },
+                { "ate_calories": 450, "type": 'warrior', "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000", },
+                { "ate_calories": 10, "type": 'worker', "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000", },
             ] },
             { "id": 31, "position": {"x": 1600, "y": 450 }, "color": "red", "owner_id": 1,  "larva_places_count": 1,  "larvae": [] },
         ],

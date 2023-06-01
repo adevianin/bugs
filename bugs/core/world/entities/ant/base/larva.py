@@ -5,13 +5,18 @@ from core.world.entities.base.preborn_entity import PrebornEntity
 class Larva(PrebornEntity):
 
     @classmethod
-    def build_larva(cls, position: Point, ant_type: AntTypes, ate_calories: int):
-        return Larva(position, ant_type, ate_calories)
+    def build_larva(cls, position: Point, ant_type: AntTypes, dna_profile: str, ate_calories: int):
+        return Larva(position, ant_type, dna_profile, ate_calories)
 
-    def __init__(self, position: Point, ant_type: AntTypes, ate_calories: int) -> None:
+    def __init__(self, position: Point, ant_type: AntTypes, dna_profile: str, ate_calories: int) -> None:
         super().__init__(position)
         self._ant_type = ant_type
         self._ate_calories = ate_calories
+        self._dna_profile = dna_profile
+
+    @property
+    def dna_profile(self):
+        return self._dna_profile
 
     @property
     def ant_type(self):

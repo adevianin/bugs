@@ -18,5 +18,5 @@ class TownService():
         if (town.owner_id != user_id):
             raise Exception('used does not own town')
         
-        larva = Larva.build_larva(town.position, larva_type, 0)
+        larva = Larva.build_larva(town.position, larva_type, town.queen.dna_profile, 0)
         town.add_larva(larva)

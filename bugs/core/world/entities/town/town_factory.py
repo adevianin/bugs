@@ -16,7 +16,7 @@ class TownFactory():
     def _build_larvae_at(self, larvae_data: list, position: Point):
         larvae = []
         for larva_data in larvae_data:
-            larva = Larva.build_larva(position, AntTypes(larva_data['type']), larva_data['ate_calories'])
+            larva = Larva.build_larva(position, AntTypes(larva_data['type']), larva_data['dna_profile'], larva_data['ate_calories'])
             larvae.append(larva)
 
         return larvae

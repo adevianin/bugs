@@ -722,7 +722,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 const AntTypes = {
     WORKER: 'worker',
-    WARRIOR: 'warrior'
+    WARRIOR: 'warrior',
+    QUEEN: 'queen'
 }
 
 
@@ -870,7 +871,7 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        console.log(msg)
+        // console.log(msg)
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);
@@ -1573,7 +1574,8 @@ __webpack_require__.r(__webpack_exports__);
 
 let antTypesLabels = {
     [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WORKER]: 'Робітник',
-    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WARRIOR]: 'Воїн'
+    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WARRIOR]: 'Воїн',
+    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN]: 'Цариця'
 };
 
 

@@ -173,6 +173,15 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">images/ant_queen_1.png</key>
+            <key type="filename">images/ant_queen_2.png</key>
+            <key type="filename">images/ant_queen_3.png</key>
+            <key type="filename">images/ant_queen_4.png</key>
+            <key type="filename">images/ant_queen_5.png</key>
+            <key type="filename">images/ant_queen_6.png</key>
+            <key type="filename">images/ant_queen_7.png</key>
+            <key type="filename">images/ant_queen_8.png</key>
+            <key type="filename">images/ant_queen_dead.png</key>
             <key type="filename">images/ant_warrior_1.png</key>
             <key type="filename">images/ant_warrior_2.png</key>
             <key type="filename">images/ant_warrior_3.png</key>
@@ -276,6 +285,15 @@
                     <filename>images/ant_worker_7.png</filename>
                     <filename>images/ant_worker_8.png</filename>
                     <filename>images/ant_worker_dead.png</filename>
+                    <filename>images/ant_queen_1.png</filename>
+                    <filename>images/ant_queen_2.png</filename>
+                    <filename>images/ant_queen_3.png</filename>
+                    <filename>images/ant_queen_4.png</filename>
+                    <filename>images/ant_queen_5.png</filename>
+                    <filename>images/ant_queen_6.png</filename>
+                    <filename>images/ant_queen_7.png</filename>
+                    <filename>images/ant_queen_8.png</filename>
+                    <filename>images/ant_queen_dead.png</filename>
                 </array>
             </struct>
         </map>

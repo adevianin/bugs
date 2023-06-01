@@ -8,8 +8,9 @@ import math
 
 class Body(ABC):
 
-    def __init__(self, events: EventEmitter, position: Point, distance_per_step: int, sight_distance: int):
+    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int):
         self.events = events
+        self.dna_profile = dna_profile
         self._distance_per_step = distance_per_step
         self._sight_distance = sight_distance
         self._position = position
