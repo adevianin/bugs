@@ -6,5 +6,5 @@ from .queen_ant_mind import QueenAntMind
 
 class QueenAnt(Ant):
 
-    def __init__(self, event_bus: EventEmitter, id: int, mind: QueenAntMind, body: QueenAntBody):
-        super().__init__(event_bus, id, AntTypes.QUEEN, mind, body)
+    def __init__(self, event_bus: EventEmitter, id: int, owner_id: int, mind: QueenAntMind, body: QueenAntBody):
+        super().__init__(event_bus, id, AntTypes.QUEEN, owner_id, mind, body)

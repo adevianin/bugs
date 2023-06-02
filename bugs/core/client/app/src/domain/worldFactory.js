@@ -17,8 +17,8 @@ class WorldFactory {
         return new World(this._mainEventBus);
     }
 
-    buildAnt(id, antType, position, pickedFoodId, userSpeed, locatedInTownId) {
-        return new Ant(this._mainEventBus, id, antType, position, pickedFoodId, userSpeed, locatedInTownId);
+    buildAnt(id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInTownId) {
+        return new Ant(this._mainEventBus, id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInTownId);
     }
 
     buildTown(id, position, ownerId, storedCalories, larvaeData, larvaPlacesCount) {
@@ -38,7 +38,7 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case EntityTypes.ANT:
-                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.picked_food_id, entityJson.user_speed, entityJson.located_in_town_id);
+                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.owner_id, entityJson.picked_food_id, entityJson.user_speed, entityJson.located_in_town_id);
             case EntityTypes.TOWN:
                 return this.buildTown(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
             case EntityTypes.FOOD:

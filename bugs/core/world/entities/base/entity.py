@@ -6,12 +6,13 @@ from core.world.entities.action import Action
 
 class Entity(ABC):
 
-    def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes):
+    def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes, owner_id: int):
         self._event_bus: EventEmitter = event_bus
         self._id: int = id
         self._type: EntityTypes = type
         self._is_hidden = False
         self._is_died = False
+        self._owner_id = owner_id
 
     @property
     def id(self):
@@ -42,6 +43,10 @@ class Entity(ABC):
     @property
     def is_died(self):
         return self._is_died
+    
+    @property
+    def owner_id(self):
+        return self._owner_id
 
     def toggle_hidden(self, is_hidden: bool):
         self._is_hidden = is_hidden
@@ -60,6 +65,7 @@ class Entity(ABC):
         return {
             'id': self.id,
             'type': self._type,
+            'owner_id': self._owner_id
         }
     
     def handle_action(self, action_type: str, action_data: dict = None):

@@ -8,8 +8,8 @@ from core.world.entities.town.town import Town
 
 class LiveEntity(Entity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes, mind: Mind, body: Body):
-        super().__init__(event_bus, id, type)
+    def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes, owner_id: int, mind: Mind, body: Body):
+        super().__init__(event_bus, id, type, owner_id)
         self._mind = mind
         self._body = body
 

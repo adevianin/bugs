@@ -5,8 +5,8 @@ from .entity_types import EntityTypes
  
 class PlainEntity(Entity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes, position: Point):
-        super().__init__(event_bus, id, type)
+    def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes, owner_id: int, position: Point):
+        super().__init__(event_bus, id, type, owner_id)
         self._position = position
         self._is_entity_busy = False
 

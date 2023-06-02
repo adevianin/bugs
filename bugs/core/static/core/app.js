@@ -193,8 +193,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, id, antType, position, pickedFoodId, userSpeed, locatedInTownId) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT);
+    constructor(eventBus, id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInTownId) {
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, ownerId);
         this.pickedFoodId = pickedFoodId;
         this._userSpeed = userSpeed;
         this._antType = antType;
@@ -370,12 +370,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
-    constructor(eventBus, id, position, type) {
+    constructor(eventBus, id, position, type, ownerId) {
         super();
         this._eventBus = eventBus;
         this.id = id;
         this._position = position;
         this.type = type;
+        this._ownerId = ownerId;
         this._actionStack = [];
         this._isPlaying = false;
         this._isHidden = false;
@@ -402,6 +403,10 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
     set angle(value) {
         this._angle = value;
         this.emit('angleChanged');
+    }
+
+    get ownerId() {
+        return this._ownerId;
     }
 
     addAction(action) {
@@ -468,7 +473,7 @@ __webpack_require__.r(__webpack_exports__);
 
 class Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     constructor(eventBus, id, position, calories, food_type, food_varity) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD);
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD, null);
         this.calories = calories;
         this._food_type = food_type;
         this._food_variety = food_varity;
@@ -530,7 +535,7 @@ __webpack_require__.r(__webpack_exports__);
 
 class FoodArea extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     constructor(eventBus, id, position, calories) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD_AREA);
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD_AREA, null);
     }
 
     updateEntity(entityJson) {
@@ -591,9 +596,8 @@ __webpack_require__.r(__webpack_exports__);
 class Town extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     constructor(eventBus, townApi, id, position, ownerId, storedCalories, larvae, larvaPlacesCount) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.TOWN);
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.TOWN, ownerId);
         this._townApi = townApi;
-        this.ownerId = ownerId;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
         this.larvaPlacesCount = larvaPlacesCount;
@@ -1014,6 +1018,8 @@ class WorldService {
 
         this._isWholeWorldInited = true;
         this._mainEventBus.emit('wholeWorldInited');
+
+        console.log(this._world);
     }
 
     getEntities() {
@@ -1078,8 +1084,8 @@ class WorldFactory {
         return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this._mainEventBus);
     }
 
-    buildAnt(id, antType, position, pickedFoodId, userSpeed, locatedInTownId) {
-        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, antType, position, pickedFoodId, userSpeed, locatedInTownId);
+    buildAnt(id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInTownId) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInTownId);
     }
 
     buildTown(id, position, ownerId, storedCalories, larvaeData, larvaPlacesCount) {
@@ -1099,7 +1105,7 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT:
-                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.picked_food_id, entityJson.user_speed, entityJson.located_in_town_id);
+                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.owner_id, entityJson.picked_food_id, entityJson.user_speed, entityJson.located_in_town_id);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:
                 return this.buildTown(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:

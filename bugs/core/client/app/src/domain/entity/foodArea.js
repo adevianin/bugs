@@ -3,7 +3,7 @@ import { EntityTypes } from '../enum/entityTypes';
 
 class FoodArea extends Entity {
     constructor(eventBus, id, position, calories) {
-        super(eventBus, id, position, EntityTypes.FOOD_AREA);
+        super(eventBus, id, position, EntityTypes.FOOD_AREA, null);
     }
 
     updateEntity(entityJson) {

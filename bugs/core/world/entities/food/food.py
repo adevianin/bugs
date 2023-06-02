@@ -7,7 +7,7 @@ from .food_types import FoodTypes
 class Food(PlainEntity):
 
     def __init__(self, event_bus: EventEmitter, id: int, position: Point, calories: int, food_type: FoodTypes, food_variety: int):
-        super().__init__(event_bus, id, EntityTypes.FOOD, position)
+        super().__init__(event_bus, id, EntityTypes.FOOD, None, position)
         self._calories = calories
         self._food_type = food_type
         self._food_variety = food_variety

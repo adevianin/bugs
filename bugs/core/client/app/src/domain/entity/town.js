@@ -6,9 +6,8 @@ import { Larva } from './larva';
 class Town extends Entity {
 
     constructor(eventBus, townApi, id, position, ownerId, storedCalories, larvae, larvaPlacesCount) {
-        super(eventBus, id, position, EntityTypes.TOWN);
+        super(eventBus, id, position, EntityTypes.TOWN, ownerId);
         this._townApi = townApi;
-        this.ownerId = ownerId;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
         this.larvaPlacesCount = larvaPlacesCount;

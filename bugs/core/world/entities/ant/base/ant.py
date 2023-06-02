@@ -7,8 +7,8 @@ from .ant_types import AntTypes
 
 class Ant(LiveEntity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, ant_type: AntTypes, mind: AntMind, body: AntBody):
-        super().__init__(event_bus, id, EntityTypes.ANT, mind, body)
+    def __init__(self, event_bus: EventEmitter, id: int, ant_type: AntTypes, owner_id: int, mind: AntMind, body: AntBody):
+        super().__init__(event_bus, id, EntityTypes.ANT, owner_id, mind, body)
         self._ant_type = ant_type
         self._body.events.add_listener('food_picked', self._on_food_picked)
         self._body.events.add_listener('picked_food_gave', self._on_food_gave)

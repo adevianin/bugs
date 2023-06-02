@@ -2,12 +2,13 @@ import { EventEmitter } from "utils/eventEmitter";
 
 class Entity extends EventEmitter {
 
-    constructor(eventBus, id, position, type) {
+    constructor(eventBus, id, position, type, ownerId) {
         super();
         this._eventBus = eventBus;
         this.id = id;
         this._position = position;
         this.type = type;
+        this._ownerId = ownerId;
         this._actionStack = [];
         this._isPlaying = false;
         this._isHidden = false;
@@ -34,6 +35,10 @@ class Entity extends EventEmitter {
     set angle(value) {
         this._angle = value;
         this.emit('angleChanged');
+    }
+
+    get ownerId() {
+        return this._ownerId;
     }
 
     addAction(action) {

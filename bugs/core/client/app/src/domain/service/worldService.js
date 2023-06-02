@@ -25,6 +25,8 @@ class WorldService {
 
         this._isWholeWorldInited = true;
         this._mainEventBus.emit('wholeWorldInited');
+
+        console.log(this._world);
     }
 
     getEntities() {
