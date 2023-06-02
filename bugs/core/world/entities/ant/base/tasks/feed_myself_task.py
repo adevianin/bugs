@@ -38,7 +38,7 @@ class FeedMyselfTask(Task):
                 self.mark_as_done()
             return
 
-        if (self._is_home_checked and self._is_got_out_of_home):
+        if (self._is_home_checked):
             if (not self._is_food_found):
                 self._find_food_task.do_step()
                 if (self._find_food_task.is_done()):
