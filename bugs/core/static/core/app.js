@@ -76,6 +76,11 @@ class DomainFacade {
         return this._worldService.world.size;
     }
 
+    findMyQueen() {
+        let userData = this.getUserData();
+        return this._worldService.findMyQueen(userData.id);
+    }
+
     _tryConnectMessageHandler() {
         if (this._userService.isLoggedIn()) {
             this._messageHandlerService.connect();
@@ -216,6 +221,10 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         return !!this._locatedInTownId;
     }
 
+    get locatedInTownId() {
+        return this._locatedInTownId;
+    }
+
     playAction(action) {
         switch (action.type) {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_WALK:
@@ -308,14 +317,14 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     _playGotInTown(action) {
         this._setState('standing');
         this._locatedInTownId = action.actionData.town_id;
-        this.emit('isInTownChanged');
+        this.emit('locatedInTownChanged');
         return Promise.resolve();
     }
 
     _playGotOutOfTown() {
         this._setState('standing');
         this._locatedInTownId = null;
-        this.emit('isInTownChanged');
+        this.emit('locatedInTownChanged');
         return Promise.resolve();
     }
 
@@ -991,6 +1000,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "WorldService": () => (/* binding */ WorldService)
 /* harmony export */ });
+/* harmony import */ var _enum_antTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+
+
+
 class WorldService {
 
     constructor(world, worldFactory, mainEventBus) {
@@ -1018,8 +1032,6 @@ class WorldService {
 
         this._isWholeWorldInited = true;
         this._mainEventBus.emit('wholeWorldInited');
-
-        console.log(this._world);
     }
 
     getEntities() {
@@ -1039,6 +1051,12 @@ class WorldService {
 
     isWholeWorldInited() {
         return this._isWholeWorldInited;
+    }
+
+    findMyQueen(userId) {
+        return this._world.entities.find(e => { 
+            return e.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT && e.antType == _enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN && e.ownerId == userId;
+        });
     }
 
 }
@@ -1793,16 +1811,19 @@ class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseH
         super();
         this._el = el;
         this._town = town;
+        this._myQueen = LarvaManager.domainFacade.findMyQueen();
 
         this._render();
 
-        this._el.querySelector('[data-add-new-larva-btn]').addEventListener('click', this._onAddLarvaBtnClick.bind(this));
+        this._addNewLarvaBtnEl.addEventListener('click', this._onAddLarvaBtnClick.bind(this));
         this._unbindLarvaeChangedListener = this._town.on('larvaeChanged', this._onLarvaeChanged.bind(this));
+        this._unbindQueenLocatedInTownListener = this._myQueen.on('locatedInTownChanged', this._renderIsQueenInTown.bind(this));
     }
 
     remove() {
         super.remove();
         this._unbindLarvaeChangedListener();
+        this._unbindQueenLocatedInTownListener();
     }
 
     _render() {
@@ -1811,10 +1832,13 @@ class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseH
         this._larvaeListEl = this._el.querySelector('[data-larvae-list]');
         this._addingNewLarvaEl = this._el.querySelector('[data-adding-new-larva]');
         this._newLarvaTypeSelectEl = this._el.querySelector('[data-new-larva-type-select]');
+        this._addNewLarvaBtnEl = this._el.querySelector('[data-add-new-larva-btn]');
+        this._isQueenInsideIndicatorEl = this._el.querySelector('[data-is-queen-inside]');
 
         this._renderLarvae();
         this._toggleAddingNewLarva(this._town.canAddLarva());
         this._renderLarvaTypeSelector();
+        this._renderIsQueenInTown();
     }
 
     _renderLarvae() {
@@ -1839,6 +1863,18 @@ class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseH
             optionEl.value = antType;
             this._newLarvaTypeSelectEl.append(optionEl);
         }
+    }
+
+    _renderIsQueenInTown() {
+        let isQueenInTown = this._myQueen.locatedInTownId == this._town.id;
+        if (isQueenInTown) {
+            this._addNewLarvaBtnEl.removeAttribute('disabled');
+        } else {
+            this._addNewLarvaBtnEl.setAttribute('disabled', '');
+        }
+
+        this._isQueenInsideIndicatorEl.innerHTML = isQueenInTown ? '+' : '-';
+        
     }
 
     _onAddLarvaBtnClick() {
@@ -1947,7 +1983,7 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderAntCurrentState.bind(this));
         this._unbindFoodLiftListener = this._entity.on('foodPickedUp', this._onFoodPickedUp.bind(this));
         this._unbindFoodDropListener = this._entity.on('foodDroped', this._removePickedFoodView.bind(this));
-        this._unbindIsHiddenChangedListener = this._entity.on('isInTownChanged', this._renderIsInTown.bind(this));
+        this._unbindIsHiddenChangedListener = this._entity.on('locatedInTownChanged', this._renderIsInTown.bind(this));
     }
 
     remove() {
@@ -4616,7 +4652,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "личинки:\r\n<ul data-larvae-list></ul>\r\n<div data-adding-new-larva>\r\n    <select data-new-larva-type-select></select>\r\n    <button data-add-new-larva-btn>add</button>\r\n</div>";
+var code = "<div>\r\n    цариця в місті: <span data-is-queen-inside></span>\r\n</div>\r\n<div>личинки:\r\n    <ul data-larvae-list></ul>\r\n    <div data-adding-new-larva>\r\n        <select data-new-larva-type-select></select>\r\n        <button data-add-new-larva-btn>add</button>\r\n    </div>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

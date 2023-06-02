@@ -28,6 +28,10 @@ class Ant extends Entity {
         return !!this._locatedInTownId;
     }
 
+    get locatedInTownId() {
+        return this._locatedInTownId;
+    }
+
     playAction(action) {
         switch (action.type) {
             case ACTION_TYPES.ENTITY_WALK:
@@ -120,14 +124,14 @@ class Ant extends Entity {
     _playGotInTown(action) {
         this._setState('standing');
         this._locatedInTownId = action.actionData.town_id;
-        this.emit('isInTownChanged');
+        this.emit('locatedInTownChanged');
         return Promise.resolve();
     }
 
     _playGotOutOfTown() {
         this._setState('standing');
         this._locatedInTownId = null;
-        this.emit('isInTownChanged');
+        this.emit('locatedInTownChanged');
         return Promise.resolve();
     }
 

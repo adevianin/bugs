@@ -50,7 +50,7 @@ class WorldFacade:
 
         self._world = world_factory.build_world_from_json(world_data, map)
 
-        self._town_service = TownService(self._world, world_factory)
+        self._town_service = TownService(map, world_factory)
         self._command_handler_service = CommandHandlerService(self._town_service)
         birther_service = BirtherService(self._event_bus, map, ant_factory, food_factory)
 

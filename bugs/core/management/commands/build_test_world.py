@@ -9,8 +9,10 @@ class Command(BaseCommand):
         "map": { "size": {"width": 3000, "height": 3000 }},
         "ants": [
             { "id": 1, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000", "position": {"x": 650, "y": 350}, "from_town": 30, "type": "worker", "owner_id": 2, "located_in_town": None },
-            { "id": 3, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000", "position": {"x": 650, "y": 350}, "from_town": 30, "type": "queen", "owner_id": 2, "located_in_town": 30 },
-            # { "id": 2, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf123", "position": {"x": 1600, "y": 500}, "from_town": 31, "type": "worker" },
+            { "id": 2, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000", "position": {"x": 650, "y": 350}, "from_town": 30, "type": "queen", "owner_id": 2, "located_in_town": 30 },
+
+            { "id": 3, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf123", "position": {"x": 1600, "y": 500}, "from_town": 31, "type": "worker", "owner_id": 1, "located_in_town": None },
+            { "id": 4, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf123", "position": {"x": 1600, "y": 400}, "from_town": 31, "type": "queen", "owner_id": 1, "located_in_town": None }
         ],
         "foods": [
             {"id": 20, "position": {"x": 350, "y": 350}, "calories": 150, "type": "leaf", "food_variety": 1 },

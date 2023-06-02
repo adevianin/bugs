@@ -26,6 +26,14 @@ class LiveEntity(Entity):
     def position(self, new_position: Point):
         self._body.position = new_position
 
+    @property
+    def dna_profile(self):
+        return self._body.dna_profile
+    
+    @property
+    def located_in_town_id(self):
+        return self._body.located_in_town_id
+
     def is_hidden(self):
         return super().is_hidden or self._body.is_in_town
 

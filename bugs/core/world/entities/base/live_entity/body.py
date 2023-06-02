@@ -11,7 +11,7 @@ class Body(ABC):
 
     def __init__(self, events: EventEmitter, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int, located_in_town: Town):
         self.events = events
-        self.dna_profile = dna_profile
+        self._dna_profile = dna_profile
         self._distance_per_step = distance_per_step
         self._sight_distance = sight_distance
         self._position = position
@@ -51,6 +51,10 @@ class Body(ABC):
     @property
     def is_no_calories(self):
         return self._calories <= 0
+    
+    @property
+    def dna_profile(self):
+        return self._dna_profile
     
     def get_in_town(self, town: Town):
         self._located_inside_town = town

@@ -52,6 +52,14 @@ class Map:
 
         return found_entities
     
+    def get_entities_from_town(self, town_id: int):
+        found_entities = []
+        for entity in self.get_entities():
+            if hasattr(entity, 'located_in_town_id') and entity.located_in_town_id == town_id:
+                found_entities.append(entity)
+
+        return found_entities
+    
     @property
     def size(self):
         return self._size

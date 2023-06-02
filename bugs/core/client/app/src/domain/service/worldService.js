@@ -1,3 +1,6 @@
+import { AntTypes } from "../enum/antTypes";
+import { EntityTypes } from "../enum/entityTypes";
+
 class WorldService {
 
     constructor(world, worldFactory, mainEventBus) {
@@ -44,6 +47,12 @@ class WorldService {
 
     isWholeWorldInited() {
         return this._isWholeWorldInited;
+    }
+
+    findMyQueen(userId) {
+        return this._world.entities.find(e => { 
+            return e.type == EntityTypes.ANT && e.antType == AntTypes.QUEEN && e.ownerId == userId;
+        });
     }
 
 }

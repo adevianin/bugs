@@ -9,16 +9,19 @@ class LarvaManager extends BaseHTMLView {
         super();
         this._el = el;
         this._town = town;
+        this._myQueen = LarvaManager.domainFacade.findMyQueen();
 
         this._render();
 
-        this._el.querySelector('[data-add-new-larva-btn]').addEventListener('click', this._onAddLarvaBtnClick.bind(this));
+        this._addNewLarvaBtnEl.addEventListener('click', this._onAddLarvaBtnClick.bind(this));
         this._unbindLarvaeChangedListener = this._town.on('larvaeChanged', this._onLarvaeChanged.bind(this));
+        this._unbindQueenLocatedInTownListener = this._myQueen.on('locatedInTownChanged', this._renderIsQueenInTown.bind(this));
     }
 
     remove() {
         super.remove();
         this._unbindLarvaeChangedListener();
+        this._unbindQueenLocatedInTownListener();
     }
 
     _render() {
@@ -27,10 +30,13 @@ class LarvaManager extends BaseHTMLView {
         this._larvaeListEl = this._el.querySelector('[data-larvae-list]');
         this._addingNewLarvaEl = this._el.querySelector('[data-adding-new-larva]');
         this._newLarvaTypeSelectEl = this._el.querySelector('[data-new-larva-type-select]');
+        this._addNewLarvaBtnEl = this._el.querySelector('[data-add-new-larva-btn]');
+        this._isQueenInsideIndicatorEl = this._el.querySelector('[data-is-queen-inside]');
 
         this._renderLarvae();
         this._toggleAddingNewLarva(this._town.canAddLarva());
         this._renderLarvaTypeSelector();
+        this._renderIsQueenInTown();
     }
 
     _renderLarvae() {
@@ -55,6 +61,18 @@ class LarvaManager extends BaseHTMLView {
             optionEl.value = antType;
             this._newLarvaTypeSelectEl.append(optionEl);
         }
+    }
+
+    _renderIsQueenInTown() {
+        let isQueenInTown = this._myQueen.locatedInTownId == this._town.id;
+        if (isQueenInTown) {
+            this._addNewLarvaBtnEl.removeAttribute('disabled');
+        } else {
+            this._addNewLarvaBtnEl.setAttribute('disabled', '');
+        }
+
+        this._isQueenInsideIndicatorEl.innerHTML = isQueenInTown ? '+' : '-';
+        
     }
 
     _onAddLarvaBtnClick() {

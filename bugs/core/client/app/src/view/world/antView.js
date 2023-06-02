@@ -14,7 +14,7 @@ class AntView extends EntityView {
         this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderAntCurrentState.bind(this));
         this._unbindFoodLiftListener = this._entity.on('foodPickedUp', this._onFoodPickedUp.bind(this));
         this._unbindFoodDropListener = this._entity.on('foodDroped', this._removePickedFoodView.bind(this));
-        this._unbindIsHiddenChangedListener = this._entity.on('isInTownChanged', this._renderIsInTown.bind(this));
+        this._unbindIsHiddenChangedListener = this._entity.on('locatedInTownChanged', this._renderIsInTown.bind(this));
     }
 
     remove() {

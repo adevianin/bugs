@@ -62,6 +62,11 @@ class DomainFacade {
         return this._worldService.world.size;
     }
 
+    findMyQueen() {
+        let userData = this.getUserData();
+        return this._worldService.findMyQueen(userData.id);
+    }
+
     _tryConnectMessageHandler() {
         if (this._userService.isLoggedIn()) {
             this._messageHandlerService.connect();
