@@ -40,7 +40,7 @@ class AntFactory():
                 raise Exception('uknown type of ant')
             
     def give_birth(self, larva: Larva, town: Town):
-        return self.build_ant(-1, larva.ant_type, larva.dna_profile, larva.position, town)
+        return self.build_ant(-1, town.owner_id, larva.ant_type, larva.dna_profile, larva.position, town, None)
     
     def _build_warrior_ant(self, id: int, owner_id: int, dna_profile: str, position: Point, town: Town, located_in_town: Town):
         ant_events = EventEmitter()
