@@ -9,6 +9,9 @@ class TownFactory():
     def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus
 
+    def build_new_town(self,  position: Point, owner_id: int):
+        return Town(self._event_bus, -1, position, 'red', owner_id, [], 1)
+
     def build_town(self, id: int, position: Point, color: str, owner_id: int, larvae: list, larva_places: int) -> Town:
         larvae = self._build_larvae_at(larvae, position)
         return Town(self._event_bus, id, position, color, owner_id, larvae, larva_places)

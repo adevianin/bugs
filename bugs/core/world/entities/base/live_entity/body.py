@@ -26,7 +26,11 @@ class Body(ABC):
     @property
     def located_in_town_id(self):
         return self._located_inside_town.id if self._located_inside_town else None
-
+    
+    @property
+    def is_in_town(self):
+        return self._located_inside_town != None
+    
     @property
     def user_speed(self):
         return self._user_speed
@@ -65,6 +69,10 @@ class Body(ABC):
         self.events.emit('got_out_of_town')
 
     def step_to(self, destination_point: Point, preciseMode = False) -> bool:
+        if self.is_in_town:
+            self.get_out_of_town()
+            return False
+        
         distance = math.dist([self.position.x, self.position.y], [destination_point.x, destination_point.y])
         if (distance == 0):
             return True

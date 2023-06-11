@@ -1,17 +1,19 @@
 import './styles.css'
 
 import panelTmpl from './template.html';
+import { BaseHTMLView } from '../base/baseHTMLView';
+import { OperationsPanel } from './operations/operationsPanel';
 
-class PanelView {
+class PanelView extends BaseHTMLView {
 
-    constructor(el, domainFacade) {
+    constructor(el) {
+        super();
         this._el = el;
-        this._domainFacade = domainFacade;
 
         this._render();
         this._renderState();
 
-        this._domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
+        PanelView.domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
     }
 
@@ -20,15 +22,17 @@ class PanelView {
 
         this._userNameEl = this._el.querySelector('[data-username]');
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
+
+        new OperationsPanel(this._el.querySelector('[data-operations-panel]'));
     }
 
     _renderState() {
-        let isLoggedIn = this._domainFacade.isLoggedIn();
+        let isLoggedIn = PanelView.domainFacade.isLoggedIn();
 
         this._toggle(isLoggedIn);
 
         if (isLoggedIn) {
-            let user = this._domainFacade.getUserData();
+            let user = PanelView.domainFacade.getUserData();
             this._userNameEl.innerHTML = user.username;
         }
     }
@@ -38,7 +42,7 @@ class PanelView {
     }
 
     _onUserLogoutBtnClick() {
-        this._domainFacade.logout();
+        PanelView.domainFacade.logout();
     }
 }
 

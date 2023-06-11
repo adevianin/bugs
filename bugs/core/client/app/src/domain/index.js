@@ -6,6 +6,7 @@ import { WorldFactory } from './worldFactory';
 import { ActionFactory } from './entity/action/actionFactory';
 import { WorldService } from './service/worldService';
 import { ActionService } from './service/actionService';
+import { OperationService } from './service/operationService';
 
 function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new EventEmitter();
@@ -17,8 +18,9 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let userService = new UserService(apis.userApi, initialData.user, mainEventBus);
     let actionService = new ActionService(initialData.step_time, actionFactory, worldService);
     let messageHandlerService = new MessageHandlerService(serverConnection, worldService, actionService);
+    let operationService = new OperationService(apis.operationApi);
 
-    let domainFacade = new DomainFacade(mainEventBus, userService, messageHandlerService, worldService);
+    let domainFacade = new DomainFacade(mainEventBus, userService, messageHandlerService, worldService, operationService);
 
     domainFacade.start();
 

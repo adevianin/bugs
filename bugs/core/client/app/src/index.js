@@ -8,6 +8,7 @@ let initialData = readInitialData();
 let syncLayer = initSyncLayer();
 let domainFacade = initDomainLayer({ 
     userApi: syncLayer.userApi,
-    townApi: syncLayer.townApi
+    townApi: syncLayer.townApi,
+    operationApi: syncLayer.operationApi
 }, syncLayer.serverConnection, initialData);
 initViewLayer(domainFacade, initialData);

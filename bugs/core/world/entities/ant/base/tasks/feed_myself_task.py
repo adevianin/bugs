@@ -1,4 +1,4 @@
-from core.world.entities.base.live_entity.tasks.task import Task
+from core.world.entities.task.task import Task
 from ..ant_body import AntBody
 from core.world.entities.town.town import Town
 from .find_food_task import FindFoodTask
@@ -15,7 +15,7 @@ class FeedMyselfTask(Task):
         self._found_food = None
 
         self._is_home_checked = False
-        self._is_at_home = False
+        self._is_at_home = self._body.located_in_town_id == home.id
         self._is_food_found = False
         self._is_near_food = False
 

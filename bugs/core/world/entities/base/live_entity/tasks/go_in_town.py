@@ -1,4 +1,4 @@
-from .task import Task
+from core.world.entities.task.task import Task
 from ..body import Body
 from core.world.entities.town.town import Town
 

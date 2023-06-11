@@ -4,6 +4,8 @@ from core.world.utils.event_emiter import EventEmitter
 from .ant_body import AntBody
 from .ant_mind import AntMind
 from .ant_types import AntTypes
+from core.world.utils.point import Point
+from core.world.entities.town.town import Town
 
 class Ant(LiveEntity):
 
@@ -16,6 +18,18 @@ class Ant(LiveEntity):
     @property
     def ant_type(self):
         return self._ant_type
+    
+    def prepare_for_operation(self):
+        return self._mind.prepare_for_operation()
+    
+    def leave_operation(self):
+        return self._mind.leave_operation()
+    
+    def walk_to(self, position: Point):
+        return self._mind.walk_to(position)
+    
+    def relocate_to_town(self, town: Town):
+        self._mind.relocate_to_town(town)
 
     def to_json(self):
         json = super().to_json()

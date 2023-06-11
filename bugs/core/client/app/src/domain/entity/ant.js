@@ -75,6 +75,7 @@ class Ant extends Entity {
                     this.setPosition(currentX, currentY);
                 } else {
                     this.setPosition(destPosition.x, destPosition.y);
+                    this._setState('standing');
                     clearInterval(walkInterval);
                     res();
                 }

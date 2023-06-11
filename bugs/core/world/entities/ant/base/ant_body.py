@@ -17,7 +17,7 @@ class AntBody(Body):
     @property
     def picked_food(self):
         return self._picked_food
-
+    
     def pick_up_food(self, food: Food):
         self._picked_food = food
         food.pickup()

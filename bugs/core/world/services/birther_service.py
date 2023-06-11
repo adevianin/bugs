@@ -18,6 +18,7 @@ class BirtherService():
 
         self._event_bus.add_listener('preborn_ant', self._on_preborn_ant)
         self._event_bus.add_listener('preborn_food', self._on_preborn_food)
+        self._event_bus.add_listener('preborn_town', self._on_preborn_town)
 
     def _on_preborn_ant(self, larva: Larva, town: Town):
         new_ant = self._ant_factory.give_birth(larva, town)
@@ -26,6 +27,9 @@ class BirtherService():
     def _on_preborn_food(self, preborn_food: PrebornFood):
         new_food = self._food_factory.give_birth(preborn_food)
         self._handle_born_entity(new_food)
+
+    def _on_preborn_town(self, preborn_town: Town):
+        self._handle_born_entity(preborn_town)
 
     def _handle_born_entity(self, entity: Entity):
         self._map.add_entity(entity)

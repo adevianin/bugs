@@ -1,5 +1,5 @@
 from ..warrior_ant_body import WarriorAntBody
-from core.world.entities.base.live_entity.tasks.task import Task
+from core.world.entities.task.task import Task
 from core.world.entities.ant.base.tasks.searching_walk_task import SearchingWalkTask
 
 class PatrollingTerritoryTask(Task):

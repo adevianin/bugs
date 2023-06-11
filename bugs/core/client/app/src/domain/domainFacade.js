@@ -1,10 +1,11 @@
 class DomainFacade {
 
-    constructor(mainEventBus, userService, messageHandlerService, worldService) {
+    constructor(mainEventBus, userService, messageHandlerService, worldService, operationService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._userService = userService;
         this._messageHandlerService = messageHandlerService;
+        this._operationService = operationService;
     }
 
     get events() {
@@ -65,6 +66,10 @@ class DomainFacade {
     findMyQueen() {
         let userData = this.getUserData();
         return this._worldService.findMyQueen(userData.id);
+    }
+
+    buildNewTown(position) {
+        this._operationService.buildNewTown(position);
     }
 
     _tryConnectMessageHandler() {

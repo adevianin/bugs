@@ -1,5 +1,6 @@
 from abc import ABC, abstractclassmethod
-from ..body import Body
+from ..base.live_entity.body import Body
+from typing import Callable
 
 class Task(ABC):
 
@@ -7,6 +8,7 @@ class Task(ABC):
         self._body = body
         self._is_done = False
         self._results = None
+        self._on_done_callbacks = []
 
     def is_done(self):
         return self._is_done
@@ -14,6 +16,7 @@ class Task(ABC):
     def mark_as_done(self, results = None):
         self._is_done = True
         self._results = results
+        self._do_on_done_callbacks()
 
     def can_be_delayed(self):
         return True
@@ -25,6 +28,9 @@ class Task(ABC):
         self._is_done = False
         self._results = None
 
+    def on_done(self, callback: Callable):
+        self._on_done_callbacks.append(callback)
+
     @property
     def results(self):
         return self._results
@@ -32,3 +38,7 @@ class Task(ABC):
     @abstractclassmethod
     def do_step(self):
         pass
+
+    def _do_on_done_callbacks(self):
+        for callback in self._on_done_callbacks:
+            callback(self._results)

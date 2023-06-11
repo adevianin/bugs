@@ -1,4 +1,4 @@
-from core.world.entities.base.live_entity.tasks.task import Task
+from core.world.entities.task.task import Task
 from ..ant_body import AntBody
 from core.world.entities.town.town import Town
 from .find_food_task import FindFoodTask

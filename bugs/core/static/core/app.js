@@ -14,11 +14,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class DomainFacade {
 
-    constructor(mainEventBus, userService, messageHandlerService, worldService) {
+    constructor(mainEventBus, userService, messageHandlerService, worldService, operationService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._userService = userService;
         this._messageHandlerService = messageHandlerService;
+        this._operationService = operationService;
     }
 
     get events() {
@@ -79,6 +80,10 @@ class DomainFacade {
     findMyQueen() {
         let userData = this.getUserData();
         return this._worldService.findMyQueen(userData.id);
+    }
+
+    buildNewTown(position) {
+        this._operationService.buildNewTown(position);
     }
 
     _tryConnectMessageHandler() {
@@ -268,6 +273,7 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                     this.setPosition(currentX, currentY);
                 } else {
                     this.setPosition(destPosition.x, destPosition.y);
+                    this._setState('standing');
                     clearInterval(walkInterval);
                     res();
                 }
@@ -806,6 +812,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_action_actionFactory__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/action/actionFactory */ "./bugs/core/client/app/src/domain/entity/action/actionFactory.js");
 /* harmony import */ var _service_worldService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/worldService */ "./bugs/core/client/app/src/domain/service/worldService.js");
 /* harmony import */ var _service_actionService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./service/actionService */ "./bugs/core/client/app/src/domain/service/actionService.js");
+/* harmony import */ var _service_operationService__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./service/operationService */ "./bugs/core/client/app/src/domain/service/operationService.js");
+
 
 
 
@@ -825,8 +833,9 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_1__.UserService(apis.userApi, initialData.user, mainEventBus);
     let actionService = new _service_actionService__WEBPACK_IMPORTED_MODULE_7__.ActionService(initialData.step_time, actionFactory, worldService);
     let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, actionService);
+    let operationService = new _service_operationService__WEBPACK_IMPORTED_MODULE_8__.OperationService(apis.operationApi);
 
-    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, userService, messageHandlerService, worldService);
+    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, userService, messageHandlerService, worldService, operationService);
 
     domainFacade.start();
 
@@ -919,6 +928,32 @@ class MessageHandlerService {
         }
     }
 
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/service/operationService.js":
+/*!*********************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/service/operationService.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OperationService": () => (/* binding */ OperationService)
+/* harmony export */ });
+class OperationService {
+
+    constructor(operationApi) {
+        this._operationApi = operationApi;
+    }
+
+    buildNewTown(position) {
+        this._operationApi.buildNewTown(position);
+    }
 }
 
 
@@ -1155,6 +1190,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _userApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userApi */ "./bugs/core/client/app/src/sync/userApi.js");
 /* harmony import */ var _serverConnection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./serverConnection */ "./bugs/core/client/app/src/sync/serverConnection.js");
 /* harmony import */ var _townApi__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./townApi */ "./bugs/core/client/app/src/sync/townApi.js");
+/* harmony import */ var _operationApi__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./operationApi */ "./bugs/core/client/app/src/sync/operationApi.js");
+
 
 
 
@@ -1165,14 +1202,49 @@ function initSyncLayer() {
 
     let userApi = new _userApi__WEBPACK_IMPORTED_MODULE_1__.UserApi(requester);
     let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection();
-
     let townApi = new _townApi__WEBPACK_IMPORTED_MODULE_3__.TownApi(serverConnection);
+    let operationApi = new _operationApi__WEBPACK_IMPORTED_MODULE_4__.OperationApi(serverConnection);
 
     return {
         userApi,
         townApi,
+        operationApi,
         serverConnection
     };
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/sync/operationApi.js":
+/*!*******************************************************!*\
+  !*** ./bugs/core/client/app/src/sync/operationApi.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OperationApi": () => (/* binding */ OperationApi)
+/* harmony export */ });
+class OperationApi {
+
+    constructor(serverConnection) {
+        this._serverConnection = serverConnection;
+    }
+
+    buildNewTown(position) {
+        this._serverConnection.send({
+            type: 'command',
+            command: {
+                command_type: 'build_new_town',
+                params: {
+                    position
+                }
+            }
+        });
+    }
 }
 
 
@@ -1488,7 +1560,7 @@ class AppView {
         this._accountView = new _account_accountView__WEBPACK_IMPORTED_MODULE_2__.AccountView(accountViewEl, this._domainFacade);
 
         let panelViewEl = this._document.querySelector('[data-panel]');
-        this._panelView = new _panel_panelView__WEBPACK_IMPORTED_MODULE_3__.PanelView(panelViewEl, this._domainFacade);
+        this._panelView = new _panel_panelView__WEBPACK_IMPORTED_MODULE_3__.PanelView(panelViewEl);
     }
 }
 
@@ -1628,6 +1700,51 @@ let antTypesLabels = {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/operations/operationsPanel.js":
+/*!***************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/operations/operationsPanel.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OperationsPanel": () => (/* binding */ OperationsPanel)
+/* harmony export */ });
+/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./template.html */ "./bugs/core/client/app/src/view/panel/operations/template.html");
+
+
+
+class OperationsPanel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+    
+    constructor(el) {
+        super();
+        this._el = el;
+
+        this._render();
+
+        this._addNewTownBtn.addEventListener('click', this._onAddNewTownClick.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = _template_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._addNewTownBtn = this._el.querySelector('[data-add-new-town]');
+    }
+
+    _onAddNewTownClick() {
+        OperationsPanel.domainFacade.buildNewTown({
+            x: 1000,
+            y: 500
+        })
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/panelView.js":
 /*!**********************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/panelView.js ***!
@@ -1641,20 +1758,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/panel/styles.css");
 /* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./template.html */ "./bugs/core/client/app/src/view/panel/template.html");
+/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _operations_operationsPanel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./operations/operationsPanel */ "./bugs/core/client/app/src/view/panel/operations/operationsPanel.js");
 
 
 
 
-class PanelView {
 
-    constructor(el, domainFacade) {
+
+class PanelView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
+
+    constructor(el) {
+        super();
         this._el = el;
-        this._domainFacade = domainFacade;
 
         this._render();
         this._renderState();
 
-        this._domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
+        PanelView.domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
     }
 
@@ -1663,15 +1784,17 @@ class PanelView {
 
         this._userNameEl = this._el.querySelector('[data-username]');
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
+
+        new _operations_operationsPanel__WEBPACK_IMPORTED_MODULE_3__.OperationsPanel(this._el.querySelector('[data-operations-panel]'));
     }
 
     _renderState() {
-        let isLoggedIn = this._domainFacade.isLoggedIn();
+        let isLoggedIn = PanelView.domainFacade.isLoggedIn();
 
         this._toggle(isLoggedIn);
 
         if (isLoggedIn) {
-            let user = this._domainFacade.getUserData();
+            let user = PanelView.domainFacade.getUserData();
             this._userNameEl.innerHTML = user.username;
         }
     }
@@ -1681,7 +1804,7 @@ class PanelView {
     }
 
     _onUserLogoutBtnClick() {
-        this._domainFacade.logout();
+        PanelView.domainFacade.logout();
     }
 }
 
@@ -2821,7 +2944,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".panel {\r\n    height: 50px;\r\n    background-color: beige;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,uBAAuB;AAC3B","sourcesContent":[".panel {\r\n    height: 50px;\r\n    background-color: beige;\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".panel {\r\n    height: 50px;\r\n    background-color: beige;\r\n    display: flex;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,uBAAuB;IACvB,aAAa;AACjB","sourcesContent":[".panel {\r\n    height: 50px;\r\n    background-color: beige;\r\n    display: flex;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -4568,6 +4691,24 @@ var code = "<div class=\"account-tab\" data-login-tab>\r\n    <span class=\"acco
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/operations/template.html":
+/*!**********************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/operations/template.html ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<ul>\r\n    <li><button data-add-new-town>нове місто</button></li>\r\n    <li><button>рейд</button></li>\r\n</ul>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/template.html":
 /*!***********************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/template.html ***!
@@ -4580,7 +4721,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    логін: <span data-username></span> \r\n    <button data-logout-btn>вийти</button>\r\n</div>";
+var code = "<div>\r\n    логін: <span data-username></span> \r\n    <button data-logout-btn>вийти</button>\r\n</div>\r\n<div data-operations-panel></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -42346,7 +42487,8 @@ let initialData = (0,utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__.readInit
 let syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)();
 let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)({ 
     userApi: syncLayer.userApi,
-    townApi: syncLayer.townApi
+    townApi: syncLayer.townApi,
+    operationApi: syncLayer.operationApi
 }, syncLayer.serverConnection, initialData);
 (0,_view__WEBPACK_IMPORTED_MODULE_2__.initViewLayer)(domainFacade, initialData);
 

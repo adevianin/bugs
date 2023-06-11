@@ -20,7 +20,7 @@ class AppView {
         this._accountView = new AccountView(accountViewEl, this._domainFacade);
 
         let panelViewEl = this._document.querySelector('[data-panel]');
-        this._panelView = new PanelView(panelViewEl, this._domainFacade);
+        this._panelView = new PanelView(panelViewEl);
     }
 }
 

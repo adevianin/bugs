@@ -33,7 +33,13 @@ class LiveEntity(Entity):
     @property
     def located_in_town_id(self):
         return self._body.located_in_town_id
+    
+    def get_in_town(self, town: Town):
+        self._body.get_in_town(town)
 
+    def get_out_of_town(self):
+        self._body.get_out_of_town()
+    
     def is_hidden(self):
         return super().is_hidden or self._body.is_in_town
 

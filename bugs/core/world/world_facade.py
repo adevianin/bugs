@@ -10,6 +10,7 @@ from .entities.town.town_factory import TownFactory
 from .map import Map
 from .utils.size import Size
 from .services.birther_service import BirtherService
+from .services.operation_service import OperationService
 
 from typing import Callable
 
@@ -50,8 +51,9 @@ class WorldFacade:
 
         self._world = world_factory.build_world_from_json(world_data, map)
 
+        operation_service = OperationService(map, town_factory)
         self._town_service = TownService(map, world_factory)
-        self._command_handler_service = CommandHandlerService(self._town_service)
+        self._command_handler_service = CommandHandlerService(self._town_service, operation_service)
         birther_service = BirtherService(self._event_bus, map, ant_factory, food_factory)
 
         self._world.run()

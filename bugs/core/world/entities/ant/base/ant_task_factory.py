@@ -1,4 +1,4 @@
-from core.world.entities.base.live_entity.task_factory import TaskFactory
+from core.world.entities.base.live_entity.live_entity_task_factory import LiveEntityTaskFactory
 from .ant_body import AntBody
 from core.world.map import Map
 from core.world.entities.base.entity_types import EntityTypes
@@ -10,8 +10,9 @@ from .tasks.collect_food_task import CollectFoodTask
 from core.world.entities.base.live_entity.memory import Memory
 from .tasks.find_food_task import FindFoodTask
 from .tasks.feed_myself_task import FeedMyselfTask
+from .tasks.prepare_for_opertation_task import PrepareForOperationTask
 
-class AntTaskFactory(TaskFactory):
+class AntTaskFactory(LiveEntityTaskFactory):
 
     def __init__(self, body: AntBody, map: Map) -> None:
         super().__init__(body)
@@ -37,3 +38,7 @@ class AntTaskFactory(TaskFactory):
         find_food_task = self.build_find_food_task(memory, home.position, home.area)
         go_gome_task = self.build_go_in_town_task(home)
         return FeedMyselfTask(self._body, home, find_food_task, go_gome_task)
+
+    def build_prepare_for_operation_task(self, home: Town, memory: Memory, assemble_point: Point):
+        feed_myself_task = self.build_feed_myself_task(home, memory)
+        return PrepareForOperationTask(self._body, feed_myself_task, assemble_point)

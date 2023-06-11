@@ -43,28 +43,31 @@ class AntFactory():
         return self.build_ant(-1, town.owner_id, larva.ant_type, larva.dna_profile, larva.position, town, None)
     
     def _build_warrior_ant(self, id: int, owner_id: int, dna_profile: str, position: Point, town: Town, located_in_town: Town):
-        ant_events = EventEmitter()
-        body = WarriorAntBody(ant_events, dna_profile, position, located_in_town)
+        ant_body_events = EventEmitter()
+        ant_mind_events = EventEmitter()
+        body = WarriorAntBody(ant_body_events, dna_profile, position, located_in_town)
         ant_task_factory = WarriorTaskFactory(body, self._map)
-        mind = WarrirorAntMind(body, ant_task_factory, self._map, Memory(), town)
+        mind = WarrirorAntMind(ant_mind_events, body, ant_task_factory, self._map, Memory(), town)
         ant = WarriorAnt(self._event_bus, id, owner_id, mind, body)
 
         return ant
     
     def _build_worker_ant(self, id: int, owner_id: int, dna_profile: str, position: Point, town: Town, located_in_town: Town):
-        ant_events = EventEmitter()
-        body = WorkerAntBody(ant_events, dna_profile, position, located_in_town)
+        ant_body_events = EventEmitter()
+        ant_mind_events = EventEmitter()
+        body = WorkerAntBody(ant_body_events, dna_profile, position, located_in_town)
         ant_task_factory = WorkerTaskFactory(body, self._map)
-        mind = WorkerAntMind(body, ant_task_factory, self._map, Memory(), town)
+        mind = WorkerAntMind(ant_mind_events, body, ant_task_factory, self._map, Memory(), town)
         ant = WorkerAnt(self._event_bus, id, owner_id, mind, body)
 
         return ant
     
     def _build_queen_ant(self, id: int, owner_id: int, dna_profile: str, position: Point, town: Town, located_in_town: Town):
-        ant_events = EventEmitter()
-        body = QueenAntBody(ant_events, dna_profile, position, located_in_town)
+        ant_body_events = EventEmitter()
+        ant_mind_events = EventEmitter()
+        body = QueenAntBody(ant_body_events, dna_profile, position, located_in_town)
         ant_task_factory = QueenTaskFactory(body, self._map)
-        mind = QueenAntMind(body, ant_task_factory, self._map, Memory(), town)
+        mind = QueenAntMind(ant_mind_events, body, ant_task_factory, self._map, Memory(), town)
         ant = QueenAnt(self._event_bus, id, owner_id, mind, body)
 
         return ant

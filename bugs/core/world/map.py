@@ -2,6 +2,8 @@ from .entities.base.entity import Entity
 from .utils.size import Size
 from .utils.point import Point
 from .entities.base.entity_types import EntityTypes
+from .entities.ant.base.ant_types import AntTypes
+
 from typing import List
 import random, math
 
@@ -59,6 +61,14 @@ class Map:
                 found_entities.append(entity)
 
         return found_entities
+    
+    def get_ants_owned_by(self, owner_id: int, ant_type: AntTypes = None):
+        found_ants = []
+        for entity in self.get_entities():
+            if entity.type == EntityTypes.ANT and entity.owner_id == owner_id and (ant_type == None or entity.ant_type == ant_type):
+                found_ants.append(entity)
+
+        return found_ants
     
     @property
     def size(self):

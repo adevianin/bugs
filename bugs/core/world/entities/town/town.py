@@ -56,6 +56,12 @@ class Town(PlainEntity):
         self._larvae.append(larva)
         self._emit_larvae_changed()
 
+    def build(self):
+        is_built = True
+        if (is_built): 
+            self._event_bus.emit('preborn_town', self)
+        return is_built
+
     def _feed_larvae(self):
         larvae_count = len(self._larvae)
         if larvae_count == 0:

@@ -1,4 +1,4 @@
-from core.world.entities.base.live_entity.tasks.task import Task
+from core.world.entities.task.task import Task
 from ..ant_body import AntBody
 from core.world.utils.point import Point
 from core.world.map import Map

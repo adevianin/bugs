@@ -1,39 +1,63 @@
 from abc import ABC, abstractclassmethod
 from .body import Body
-from .task_factory import TaskFactory
-from .tasks.task import Task
+from .live_entity_task_factory import LiveEntityTaskFactory
+from core.world.entities.task.task import Task
 from core.world.map import Map
 from core.world.entities.base.entity_types import EntityTypes
 from .memory import Memory
+from core.world.utils.event_emiter import EventEmitter
+from asyncio import Future
 
 class Mind(ABC):
 
-    def __init__(self, body: Body, task_factory: TaskFactory, map: Map, memory: Memory):
+    def __init__(self, events: EventEmitter, body: Body, task_factory: LiveEntityTaskFactory, map: Map, memory: Memory):
         self._body = body
         self._task_factory = task_factory
         self._map = map
         self._memory = memory
         self._tasks_stack = []
+        self._is_auto_task_generation = True
+        self.events = events
 
         self._body.events.add_listener('walk', self._on_walk)
 
     def do_step(self):
-        self._do_step_activity()
+        if self._is_auto_task_generation:
+            self._generate_tasks()
+
+        if self._has_tasks_to_do():
+            self._get_current_task().do_step()
+
         self._clear_done_tasks()
-            
-    def _register_task(self, task: Task, as_first_priority: bool = False):
-        if (as_first_priority):
-            self._get_current_task().delay()
-            self._tasks_stack.insert(0, task)
+
+    def toggle_auto_task_generation(self, is_auto: bool):
+        self._is_auto_task_generation = is_auto
+
+    def force_free(self):
+        if self._has_tasks_to_do():
+            current_task = self._get_current_task()
+            if (current_task.can_be_delayed()):
+                current_task.delay()
+                self._tasks_stack = []
+            else:
+                self._tasks_stack = [current_task]
+
+    def _generate_tasks(self):
+        if (self._body.check_am_i_hungry()):
+            self._register_task(self._generate_feed_myself_task(), True)
+
+    def _register_task(self, task: Task, asap: bool = False):
+        if asap and self._has_tasks_to_do():
+            if (self._get_current_task().can_be_delayed()):
+                self._get_current_task().delay()
+                self._tasks_stack.insert(0, task)
+            else:
+                self._tasks_stack.insert(1, task)
         else:
             self._tasks_stack.append(task)
 
     def _get_current_task(self):
         return self._tasks_stack[0]
-            
-    @abstractclassmethod
-    def _do_step_activity(self):
-        pass
 
     def _has_tasks_to_do(self):
         return len(self._tasks_stack) > 0
@@ -50,3 +74,8 @@ class Mind(ABC):
         
         for done_task in done_tasks:
             self._tasks_stack.remove(done_task)
+
+    @abstractclassmethod
+    def _generate_feed_myself_task(self):
+        pass
+
