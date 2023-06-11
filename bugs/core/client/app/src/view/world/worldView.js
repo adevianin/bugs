@@ -34,11 +34,20 @@ class WorldView extends BaseGraphicView {
         this._app = new PIXI.Application({ width: this._canvasWidth, height: this._canvasHeight, background: 0xffffff, });
         this._el.appendChild(this._app.view);
 
+        this._bg = new PIXI.TilingSprite(WorldView.textureManager.getTexture('grass.png'));
         this._entityContainer = new PIXI.Container();
+        this._antContainer = new PIXI.Container();
+        this._foodContainer = new PIXI.Container();
+        this._townContainer = new PIXI.Container();
+        this._foodAreaContainer = new PIXI.Container();
+
         this._app.stage.addChild(this._entityContainer);
 
-        this._bg = new PIXI.TilingSprite(WorldView.textureManager.getTexture('grass.png'));
         this._entityContainer.addChild(this._bg);
+        this._entityContainer.addChild(this._townContainer);
+        this._entityContainer.addChild(this._foodAreaContainer);
+        this._entityContainer.addChild(this._foodContainer);
+        this._entityContainer.addChild(this._antContainer);
 
         this._camera = new Camera(this._entityContainer, this._bg, { 
             width: this._canvasWidth, 
@@ -83,13 +92,13 @@ class WorldView extends BaseGraphicView {
     _buildEntityView(entity) {
         switch (entity.type) {
             case EntityTypes.ANT:
-                return new AntView(entity, this._entityContainer);
+                return new AntView(entity, this._antContainer);
             case EntityTypes.TOWN:
-                return new TownView(entity, this._entityContainer);
+                return new TownView(entity, this._townContainer);
             case EntityTypes.FOOD:
-                return new FoodView(entity, this._entityContainer);
+                return new FoodView(entity, this._foodContainer);
             case EntityTypes.FOOD_AREA:
-                return new FoodAreaView(entity, this._entityContainer);
+                return new FoodAreaView(entity, this._foodAreaContainer);
             default:
                 throw 'unknown type of entity';
         }

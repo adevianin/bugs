@@ -2645,11 +2645,20 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
         this._app = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Application({ width: this._canvasWidth, height: this._canvasHeight, background: 0xffffff, });
         this._el.appendChild(this._app.view);
 
+        this._bg = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.TilingSprite(WorldView.textureManager.getTexture('grass.png'));
         this._entityContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._antContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._foodContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._townContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._foodAreaContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+
         this._app.stage.addChild(this._entityContainer);
 
-        this._bg = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.TilingSprite(WorldView.textureManager.getTexture('grass.png'));
         this._entityContainer.addChild(this._bg);
+        this._entityContainer.addChild(this._townContainer);
+        this._entityContainer.addChild(this._foodAreaContainer);
+        this._entityContainer.addChild(this._foodContainer);
+        this._entityContainer.addChild(this._antContainer);
 
         this._camera = new _camera__WEBPACK_IMPORTED_MODULE_5__.Camera(this._entityContainer, this._bg, { 
             width: this._canvasWidth, 
@@ -2694,13 +2703,13 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
     _buildEntityView(entity) {
         switch (entity.type) {
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.ANT:
-                return new _antView__WEBPACK_IMPORTED_MODULE_2__.AntView(entity, this._entityContainer);
+                return new _antView__WEBPACK_IMPORTED_MODULE_2__.AntView(entity, this._antContainer);
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.TOWN:
-                return new _townView__WEBPACK_IMPORTED_MODULE_3__.TownView(entity, this._entityContainer);
+                return new _townView__WEBPACK_IMPORTED_MODULE_3__.TownView(entity, this._townContainer);
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.FOOD:
-                return new _foodView__WEBPACK_IMPORTED_MODULE_4__.FoodView(entity, this._entityContainer);
+                return new _foodView__WEBPACK_IMPORTED_MODULE_4__.FoodView(entity, this._foodContainer);
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.FOOD_AREA:
-                return new _foodArea__WEBPACK_IMPORTED_MODULE_6__.FoodAreaView(entity, this._entityContainer);
+                return new _foodArea__WEBPACK_IMPORTED_MODULE_6__.FoodAreaView(entity, this._foodAreaContainer);
             default:
                 throw 'unknown type of entity';
         }

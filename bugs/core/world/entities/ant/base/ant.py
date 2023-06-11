@@ -12,6 +12,7 @@ class Ant(LiveEntity):
     def __init__(self, event_bus: EventEmitter, id: int, ant_type: AntTypes, owner_id: int, mind: AntMind, body: AntBody):
         super().__init__(event_bus, id, EntityTypes.ANT, owner_id, mind, body)
         self._ant_type = ant_type
+        self._in_operation = False
         self._body.events.add_listener('food_picked', self._on_food_picked)
         self._body.events.add_listener('picked_food_gave', self._on_food_gave)
 
@@ -20,9 +21,13 @@ class Ant(LiveEntity):
         return self._ant_type
     
     def prepare_for_operation(self):
+        if (self._in_operation):
+            raise Exception('ant already in operation')
+        self._in_operation = True
         return self._mind.prepare_for_operation()
     
     def leave_operation(self):
+        self._in_operation = False
         return self._mind.leave_operation()
     
     def walk_to(self, position: Point):
