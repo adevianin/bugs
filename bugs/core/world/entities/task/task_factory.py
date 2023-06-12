@@ -1,5 +1,5 @@
 from ..base.live_entity.body import Body
-from core.world.entities.town.town import Town
+from core.world.entities.nest.nest import Nest
 
 class TaskFactory:
 

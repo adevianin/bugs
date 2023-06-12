@@ -1,6 +1,6 @@
 from .entities.ant.ant_factory import AntFactory
 from .entities.food.food_factory import FoodFactory
-from .entities.town.town_factory import TownFactory
+from .entities.nest.nest_factory import NestFactory
 from .utils.size import Size
 from .utils.point import Point
 from .utils.event_emiter import EventEmitter
@@ -11,28 +11,28 @@ from .entities.food.food_types import FoodTypes
 
 class WorldFactory():
 
-    def __init__(self, event_bus: EventEmitter, ant_factory: AntFactory, food_factory: FoodFactory, town_factory: TownFactory):
+    def __init__(self, event_bus: EventEmitter, ant_factory: AntFactory, food_factory: FoodFactory, nest_factory: NestFactory):
         self._event_bus = event_bus
         self._ant_factory = ant_factory
         self._food_factory = food_factory
-        self._town_factory = town_factory
+        self._nest_factory = nest_factory
 
     def build_world_from_json(self, world_data: dict, map: Map):
-        towns_data = world_data['towns']
-        for town_data in towns_data:
-            position = Point(town_data['position']['x'], town_data['position']['y'])
-            town = self._town_factory.build_town(town_data['id'], position, town_data['color'], town_data['owner_id'], town_data['larvae'], town_data['larva_places_count'])
-            map.add_entity(town)
+        nests_data = world_data['nests']
+        for nest_data in nests_data:
+            position = Point(nest_data['position']['x'], nest_data['position']['y'])
+            nest = self._nest_factory.build_nest(nest_data['id'], position, nest_data['color'], nest_data['owner_id'], nest_data['larvae'], nest_data['larva_places_count'])
+            map.add_entity(nest)
 
         ants_data = world_data['ants']
         for ant_data in ants_data:
             position = Point(ant_data['position']['x'], ant_data['position']['y'])
-            town = map.get_entity_by_id(ant_data['from_town'])
-            located_in_town = None
-            if ant_data['located_in_town'] != None:
-                located_in_town = map.get_entity_by_id(ant_data['located_in_town'])
+            nest = map.get_entity_by_id(ant_data['from_nest'])
+            located_in_nest = None
+            if ant_data['located_in_nest'] != None:
+                located_in_nest = map.get_entity_by_id(ant_data['located_in_nest'])
             ant_type = AntTypes(ant_data['type'])
-            ant = self._ant_factory.build_ant(ant_data['id'], ant_data['owner_id'], ant_type, ant_data['dna_profile'], position, town, located_in_town)
+            ant = self._ant_factory.build_ant(ant_data['id'], ant_data['owner_id'], ant_type, ant_data['dna_profile'], position, nest, located_in_nest)
             map.add_entity(ant)
 
         foods_data = world_data['foods']

@@ -5,13 +5,13 @@ import { distance } from 'utils/distance';
 
 class Ant extends Entity {
 
-    constructor(eventBus, id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInTownId) {
+    constructor(eventBus, id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInNestId) {
         super(eventBus, id, position, EntityTypes.ANT, ownerId);
         this.pickedFoodId = pickedFoodId;
         this._userSpeed = userSpeed;
         this._antType = antType;
         this._setState('standing');
-        this._locatedInTownId = locatedInTownId;
+        this._locatedInNestId = locatedInNestId;
 
         // window.ant = this;
     }
@@ -21,15 +21,15 @@ class Ant extends Entity {
     }
 
     getColor() {
-        // return this._homeTown.getColor()
+        // return this._homeNest.getColor()
     }
 
-    get isInTown() {
-        return !!this._locatedInTownId;
+    get isInNest() {
+        return !!this._locatedInNestId;
     }
 
-    get locatedInTownId() {
-        return this._locatedInTownId;
+    get locatedInNestId() {
+        return this._locatedInNestId;
     }
 
     playAction(action) {
@@ -44,10 +44,10 @@ class Ant extends Entity {
                 return this._playEatFoodAction(action);
             case ACTION_TYPES.ENTITY_DIED:
                 return this._playEntityDied(action);
-            case ACTION_TYPES.ENTITY_GOT_IN_TOWN:
-                return this._playGotInTown(action);
-            case ACTION_TYPES.ENTITY_GOT_OUT_OF_TOWN:
-                return this._playGotOutOfTown(action);
+            case ACTION_TYPES.ENTITY_GOT_IN_NEST:
+                return this._playGotInNest(action);
+            case ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
+                return this._playGotOutOfNest(action);
             default:
                 throw 'unknown type of action'
         }
@@ -122,17 +122,17 @@ class Ant extends Entity {
         });
     }
 
-    _playGotInTown(action) {
+    _playGotInNest(action) {
         this._setState('standing');
-        this._locatedInTownId = action.actionData.town_id;
-        this.emit('locatedInTownChanged');
+        this._locatedInNestId = action.actionData.nest_id;
+        this.emit('locatedInNestChanged');
         return Promise.resolve();
     }
 
-    _playGotOutOfTown() {
+    _playGotOutOfNest() {
         this._setState('standing');
-        this._locatedInTownId = null;
-        this.emit('locatedInTownChanged');
+        this._locatedInNestId = null;
+        this.emit('locatedInNestChanged');
         return Promise.resolve();
     }
 
@@ -160,8 +160,8 @@ class Ant extends Entity {
 
     }
 
-    _toggleIsInTown(isInTown) {
-        this._isInTown = isInTown;
+    _toggleIsInNest(isInNest) {
+        this._isInNest = isInNest;
         
     }
 

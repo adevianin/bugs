@@ -2,14 +2,14 @@ import { BasePopup } from "../base/basePopup";
 import bodyTmpl from './body.html';
 import { LarvaManager } from "./larvaManager";
 
-class TownPopup extends BasePopup {
+class NestPopup extends BasePopup {
 
-    constructor(town) {
+    constructor(nest) {
         super();
-        this._title = 'town popup';
-        this._town = town;
+        this._title = 'nest popup';
+        this._nest = nest;
 
-        this._unbindStoredCaloriesChangedListener = this._town.on('storedCaloriesChanged', this._renderCalories.bind(this))
+        this._unbindStoredCaloriesChangedListener = this._nest.on('storedCaloriesChanged', this._renderCalories.bind(this))
 
         this.render();
     }
@@ -24,7 +24,7 @@ class TownPopup extends BasePopup {
         super.render();
         this.bodyEl.innerHTML = bodyTmpl;
         this._renderCalories();
-        this._larvaManager = new LarvaManager(this.bodyEl.querySelector('[data-larva-manager]'), this._town);
+        this._larvaManager = new LarvaManager(this.bodyEl.querySelector('[data-larva-manager]'), this._nest);
     }
     
     onOk() {
@@ -36,10 +36,10 @@ class TownPopup extends BasePopup {
     }
 
     _renderCalories() {
-        this.bodyEl.querySelector('[data-stored-calories]').innerHTML = this._town.storedCalories;
+        this.bodyEl.querySelector('[data-stored-calories]').innerHTML = this._nest.storedCalories;
     }
 }
 
 export { 
-    TownPopup
+    NestPopup
 }

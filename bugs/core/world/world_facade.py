@@ -4,9 +4,9 @@ from .entities.ant.ant_factory import AntFactory
 from .entities.food.food_factory import FoodFactory
 from .world_factory import WorldFactory
 from .world import World
-from .services.town_service import TownService
+from .services.nest_service import NestService
 from .services.command_handler_service import CommandHandlerService
-from .entities.town.town_factory import TownFactory
+from .entities.nest.nest_factory import NestFactory
 from .map import Map
 from .utils.size import Size
 from .services.birther_service import BirtherService
@@ -45,15 +45,15 @@ class WorldFacade:
         self._event_bus = EventEmitter()
         
         ant_factory = AntFactory(self._event_bus, map)
-        town_factory = TownFactory(self._event_bus)
+        nest_factory = NestFactory(self._event_bus)
         food_factory = FoodFactory(self._event_bus)
-        world_factory = WorldFactory(self._event_bus, ant_factory, food_factory, town_factory)
+        world_factory = WorldFactory(self._event_bus, ant_factory, food_factory, nest_factory)
 
         self._world = world_factory.build_world_from_json(world_data, map)
 
-        operation_service = OperationService(map, town_factory)
-        self._town_service = TownService(map, world_factory)
-        self._command_handler_service = CommandHandlerService(self._town_service, operation_service)
+        operation_service = OperationService(map, nest_factory)
+        self._nest_service = NestService(map, world_factory)
+        self._command_handler_service = CommandHandlerService(self._nest_service, operation_service)
         birther_service = BirtherService(self._event_bus, map, ant_factory, food_factory)
 
         self._world.run()

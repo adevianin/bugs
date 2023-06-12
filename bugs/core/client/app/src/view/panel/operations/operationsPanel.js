@@ -9,17 +9,17 @@ class OperationsPanel extends BaseHTMLView {
 
         this._render();
 
-        this._addNewTownBtn.addEventListener('click', this._onAddNewTownClick.bind(this));
+        this._addNewNestBtn.addEventListener('click', this._onAddNewNestClick.bind(this));
     }
 
     _render() {
         this._el.innerHTML = tmpl;
 
-        this._addNewTownBtn = this._el.querySelector('[data-add-new-town]');
+        this._addNewNestBtn = this._el.querySelector('[data-add-new-nest]');
     }
 
-    _onAddNewTownClick() {
-        OperationsPanel.domainFacade.buildNewTown({
+    _onAddNewNestClick() {
+        OperationsPanel.domainFacade.buildNewNest({
             x: 1000,
             y: 500
         })

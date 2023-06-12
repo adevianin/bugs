@@ -82,8 +82,8 @@ class DomainFacade {
         return this._worldService.findMyQueen(userData.id);
     }
 
-    buildNewTown(position) {
-        this._operationService.buildNewTown(position);
+    buildNewNest(position) {
+        this._operationService.buildNewNest(position);
     }
 
     _tryConnectMessageHandler() {
@@ -170,11 +170,11 @@ const ACTION_TYPES = {
     ENTITY_DIED: 'entity_died',
     ENTITY_BORN: 'entity_born',
     ENTITY_WALK: 'entity_walk',
-    ENTITY_GOT_IN_TOWN: 'entity_got_in_town',
-    ENTITY_GOT_OUT_OF_TOWN: 'entity_got_out_of_town',
+    ENTITY_GOT_IN_NEST: 'entity_got_in_nest',
+    ENTITY_GOT_OUT_OF_NEST: 'entity_got_out_of_nest',
     FOOD_WAS_PICKED_UP: 'food_was_picked_up',
-    TOWN_STORED_CALORIES_CHANGED: 'town_stored_calories_changed',
-    TOWN_LARVAE_CHANGED: 'town_larvae_changed'
+    NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
+    NEST_LARVAE_CHANGED: 'nest_larvae_changed'
 };
 
 
@@ -203,13 +203,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInTownId) {
+    constructor(eventBus, id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInNestId) {
         super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, ownerId);
         this.pickedFoodId = pickedFoodId;
         this._userSpeed = userSpeed;
         this._antType = antType;
         this._setState('standing');
-        this._locatedInTownId = locatedInTownId;
+        this._locatedInNestId = locatedInNestId;
 
         // window.ant = this;
     }
@@ -219,15 +219,15 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     getColor() {
-        // return this._homeTown.getColor()
+        // return this._homeNest.getColor()
     }
 
-    get isInTown() {
-        return !!this._locatedInTownId;
+    get isInNest() {
+        return !!this._locatedInNestId;
     }
 
-    get locatedInTownId() {
-        return this._locatedInTownId;
+    get locatedInNestId() {
+        return this._locatedInNestId;
     }
 
     playAction(action) {
@@ -242,10 +242,10 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playEatFoodAction(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_DIED:
                 return this._playEntityDied(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_IN_TOWN:
-                return this._playGotInTown(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_OUT_OF_TOWN:
-                return this._playGotOutOfTown(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_IN_NEST:
+                return this._playGotInNest(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
+                return this._playGotOutOfNest(action);
             default:
                 throw 'unknown type of action'
         }
@@ -320,17 +320,17 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         });
     }
 
-    _playGotInTown(action) {
+    _playGotInNest(action) {
         this._setState('standing');
-        this._locatedInTownId = action.actionData.town_id;
-        this.emit('locatedInTownChanged');
+        this._locatedInNestId = action.actionData.nest_id;
+        this.emit('locatedInNestChanged');
         return Promise.resolve();
     }
 
-    _playGotOutOfTown() {
+    _playGotOutOfNest() {
         this._setState('standing');
-        this._locatedInTownId = null;
-        this.emit('locatedInTownChanged');
+        this._locatedInNestId = null;
+        this.emit('locatedInNestChanged');
         return Promise.resolve();
     }
 
@@ -358,8 +358,8 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     }
 
-    _toggleIsInTown(isInTown) {
-        this._isInTown = isInTown;
+    _toggleIsInNest(isInNest) {
+        this._isInNest = isInNest;
         
     }
 
@@ -588,16 +588,16 @@ class Larva {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/entity/town.js":
+/***/ "./bugs/core/client/app/src/domain/entity/nest.js":
 /*!********************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/town.js ***!
+  !*** ./bugs/core/client/app/src/domain/entity/nest.js ***!
   \********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Town": () => (/* binding */ Town)
+/* harmony export */   "Nest": () => (/* binding */ Nest)
 /* harmony export */ });
 /* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
 /* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
@@ -608,11 +608,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class Town extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
+class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, townApi, id, position, ownerId, storedCalories, larvae, larvaPlacesCount) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.TOWN, ownerId);
-        this._townApi = townApi;
+    constructor(eventBus, nestApi, id, position, ownerId, storedCalories, larvae, larvaPlacesCount) {
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST, ownerId);
+        this._nestApi = nestApi;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
         this.larvaPlacesCount = larvaPlacesCount;
@@ -620,9 +620,9 @@ class Town extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     playAction(action) {
         switch (action.type) {
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.TOWN_STORED_CALORIES_CHANGED:
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_STORED_CALORIES_CHANGED:
                 return this._playTakingFood(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.TOWN_LARVAE_CHANGED:
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_LARVAE_CHANGED:
                 return this._playLarvaeChanged(action);
             default:
                 throw 'unknown type of action'
@@ -634,7 +634,7 @@ class Town extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     addNewLarva(antType) {
-        this._townApi.addNewLarva(this.id, antType);
+        this._nestApi.addNewLarva(this.id, antType);
     }
 
     _playTakingFood(action) {
@@ -785,7 +785,7 @@ __webpack_require__.r(__webpack_exports__);
 const EntityTypes = {
     ANT: 'ant',
     FOOD: 'food',
-    TOWN: 'town',
+    NEST: 'nest',
     FOOD_AREA: 'food_area'
 }
 
@@ -825,7 +825,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
-    let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.townApi);
+    let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.nestApi);
     let world = worldFactory.buildWorld();
     let actionFactory = new _entity_action_actionFactory__WEBPACK_IMPORTED_MODULE_5__.ActionFactory();
 
@@ -951,8 +951,8 @@ class OperationService {
         this._operationApi = operationApi;
     }
 
-    buildNewTown(position) {
-        this._operationApi.buildNewTown(position);
+    buildNewNest(position) {
+        this._operationApi.buildNewNest(position);
     }
 }
 
@@ -1114,7 +1114,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
 /* harmony import */ var _entity_ant__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entity/ant */ "./bugs/core/client/app/src/domain/entity/ant.js");
 /* harmony import */ var _entity_world__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./entity/world */ "./bugs/core/client/app/src/domain/entity/world.js");
-/* harmony import */ var _entity_town__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./entity/town */ "./bugs/core/client/app/src/domain/entity/town.js");
+/* harmony import */ var _entity_nest__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./entity/nest */ "./bugs/core/client/app/src/domain/entity/nest.js");
 /* harmony import */ var _entity_food__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./entity/food */ "./bugs/core/client/app/src/domain/entity/food.js");
 /* harmony import */ var _entity_foodArea__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/foodArea */ "./bugs/core/client/app/src/domain/entity/foodArea.js");
 /* harmony import */ var _entity_larva__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entity/larva */ "./bugs/core/client/app/src/domain/entity/larva.js");
@@ -1128,23 +1128,23 @@ __webpack_require__.r(__webpack_exports__);
 
 class WorldFactory {
 
-    constructor(mainEventBus, townApi) {
+    constructor(mainEventBus, nestApi) {
         this._mainEventBus = mainEventBus;
-        this._townApi = townApi;
+        this._nestApi = nestApi;
     }
 
     buildWorld() {
         return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this._mainEventBus);
     }
 
-    buildAnt(id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInTownId) {
-        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInTownId);
+    buildAnt(id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInNestId) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInNestId);
     }
 
-    buildTown(id, position, ownerId, storedCalories, larvaeData, larvaPlacesCount) {
+    buildNest(id, position, ownerId, storedCalories, larvaeData, larvaPlacesCount) {
         let larvae = [];
         larvaeData.forEach(larvaData => larvae.push(_entity_larva__WEBPACK_IMPORTED_MODULE_6__.Larva.fromJson(larvaData.ant_type, larvaData.progress)));
-        return new _entity_town__WEBPACK_IMPORTED_MODULE_3__.Town(this._mainEventBus, this._townApi, id, position, ownerId, storedCalories, larvae, larvaPlacesCount);
+        return new _entity_nest__WEBPACK_IMPORTED_MODULE_3__.Nest(this._mainEventBus, this._nestApi, id, position, ownerId, storedCalories, larvae, larvaPlacesCount);
     }
 
     buildFood(id, position, calories, food_type, food_varity) {
@@ -1158,9 +1158,9 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT:
-                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.owner_id, entityJson.picked_food_id, entityJson.user_speed, entityJson.located_in_town_id);
-            case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TOWN:
-                return this.buildTown(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
+                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.owner_id, entityJson.picked_food_id, entityJson.user_speed, entityJson.located_in_nest_id);
+            case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
+                return this.buildNest(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
                 return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_AREA:
@@ -1189,7 +1189,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var utils_requester__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/requester */ "./bugs/core/client/utils/requester.js");
 /* harmony import */ var _userApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userApi */ "./bugs/core/client/app/src/sync/userApi.js");
 /* harmony import */ var _serverConnection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./serverConnection */ "./bugs/core/client/app/src/sync/serverConnection.js");
-/* harmony import */ var _townApi__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./townApi */ "./bugs/core/client/app/src/sync/townApi.js");
+/* harmony import */ var _nestApi__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestApi */ "./bugs/core/client/app/src/sync/nestApi.js");
 /* harmony import */ var _operationApi__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./operationApi */ "./bugs/core/client/app/src/sync/operationApi.js");
 
 
@@ -1202,15 +1202,50 @@ function initSyncLayer() {
 
     let userApi = new _userApi__WEBPACK_IMPORTED_MODULE_1__.UserApi(requester);
     let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection();
-    let townApi = new _townApi__WEBPACK_IMPORTED_MODULE_3__.TownApi(serverConnection);
+    let nestApi = new _nestApi__WEBPACK_IMPORTED_MODULE_3__.NestApi(serverConnection);
     let operationApi = new _operationApi__WEBPACK_IMPORTED_MODULE_4__.OperationApi(serverConnection);
 
     return {
         userApi,
-        townApi,
+        nestApi,
         operationApi,
         serverConnection
     };
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/sync/nestApi.js":
+/*!**************************************************!*\
+  !*** ./bugs/core/client/app/src/sync/nestApi.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NestApi": () => (/* binding */ NestApi)
+/* harmony export */ });
+class NestApi {
+
+    constructor(serverConnection) {
+        this._serverConnection = serverConnection;
+    }
+
+    addNewLarva(nestId, larvaType) {
+        this._serverConnection.send({
+            type: 'command',
+            command: {
+                command_type: 'add_larva',
+                params: {
+                    nest_id: nestId,
+                    larva_type: larvaType
+                }
+            }
+        });
+    }
 }
 
 
@@ -1234,11 +1269,11 @@ class OperationApi {
         this._serverConnection = serverConnection;
     }
 
-    buildNewTown(position) {
+    buildNewNest(position) {
         this._serverConnection.send({
             type: 'command',
             command: {
-                command_type: 'build_new_town',
+                command_type: 'build_new_nest',
                 params: {
                     position
                 }
@@ -1291,41 +1326,6 @@ class ServerConnection {
 
     _emitMessage(event) {
         this.events.emit('message', JSON.parse(event.data));
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/sync/townApi.js":
-/*!**************************************************!*\
-  !*** ./bugs/core/client/app/src/sync/townApi.js ***!
-  \**************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "TownApi": () => (/* binding */ TownApi)
-/* harmony export */ });
-class TownApi {
-
-    constructor(serverConnection) {
-        this._serverConnection = serverConnection;
-    }
-
-    addNewLarva(townId, larvaType) {
-        this._serverConnection.send({
-            type: 'command',
-            command: {
-                command_type: 'add_larva',
-                params: {
-                    town_id: townId,
-                    larva_type: larvaType
-                }
-            }
-        });
     }
 }
 
@@ -1724,17 +1724,17 @@ class OperationsPanel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
 
         this._render();
 
-        this._addNewTownBtn.addEventListener('click', this._onAddNewTownClick.bind(this));
+        this._addNewNestBtn.addEventListener('click', this._onAddNewNestClick.bind(this));
     }
 
     _render() {
         this._el.innerHTML = _template_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this._addNewTownBtn = this._el.querySelector('[data-add-new-town]');
+        this._addNewNestBtn = this._el.querySelector('[data-add-new-nest]');
     }
 
-    _onAddNewTownClick() {
-        OperationsPanel.domainFacade.buildNewTown({
+    _onAddNewNestClick() {
+        OperationsPanel.domainFacade.buildNewNest({
             x: 1000,
             y: 500
         })
@@ -1873,44 +1873,9 @@ class BasePopup extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTML
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/popups/popupManager.js":
-/*!**************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/popupManager.js ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "PopupManager": () => (/* binding */ PopupManager)
-/* harmony export */ });
-/* harmony import */ var _town_townPopup__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./town/townPopup */ "./bugs/core/client/app/src/view/popups/town/townPopup.js");
-
-
-class PopupManager {
-
-    constructor(el) {
-        this._el = el;
-    }
-
-    openTownPopup(town) {
-        let popup = new _town_townPopup__WEBPACK_IMPORTED_MODULE_0__.TownPopup(town);
-        this._showPopup(popup);
-    }
-
-    _showPopup(popup) {
-        this._el.innerHTML = '';
-        this._el.appendChild(popup.el);
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/popups/town/larvaManager.js":
+/***/ "./bugs/core/client/app/src/view/popups/nest/larvaManager.js":
 /*!*******************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/town/larvaManager.js ***!
+  !*** ./bugs/core/client/app/src/view/popups/nest/larvaManager.js ***!
   \*******************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -1919,8 +1884,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "LarvaManager": () => (/* binding */ LarvaManager)
 /* harmony export */ });
-/* harmony import */ var _larva_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./larva.html */ "./bugs/core/client/app/src/view/popups/town/larva.html");
-/* harmony import */ var _larvaManager_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./larvaManager.html */ "./bugs/core/client/app/src/view/popups/town/larvaManager.html");
+/* harmony import */ var _larva_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./larva.html */ "./bugs/core/client/app/src/view/popups/nest/larva.html");
+/* harmony import */ var _larvaManager_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./larvaManager.html */ "./bugs/core/client/app/src/view/popups/nest/larvaManager.html");
 /* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../labels/antTypesLabels */ "./bugs/core/client/app/src/view/labels/antTypesLabels.js");
 
@@ -1930,23 +1895,23 @@ __webpack_require__.r(__webpack_exports__);
 
 class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
 
-    constructor(el, town) {
+    constructor(el, nest) {
         super();
         this._el = el;
-        this._town = town;
+        this._nest = nest;
         this._myQueen = LarvaManager.domainFacade.findMyQueen();
 
         this._render();
 
         this._addNewLarvaBtnEl.addEventListener('click', this._onAddLarvaBtnClick.bind(this));
-        this._unbindLarvaeChangedListener = this._town.on('larvaeChanged', this._onLarvaeChanged.bind(this));
-        this._unbindQueenLocatedInTownListener = this._myQueen.on('locatedInTownChanged', this._renderIsQueenInTown.bind(this));
+        this._unbindLarvaeChangedListener = this._nest.on('larvaeChanged', this._onLarvaeChanged.bind(this));
+        this._unbindQueenLocatedInNestListener = this._myQueen.on('locatedInNestChanged', this._renderIsQueenInNest.bind(this));
     }
 
     remove() {
         super.remove();
         this._unbindLarvaeChangedListener();
-        this._unbindQueenLocatedInTownListener();
+        this._unbindQueenLocatedInNestListener();
     }
 
     _render() {
@@ -1959,15 +1924,15 @@ class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseH
         this._isQueenInsideIndicatorEl = this._el.querySelector('[data-is-queen-inside]');
 
         this._renderLarvae();
-        this._toggleAddingNewLarva(this._town.canAddLarva());
+        this._toggleAddingNewLarva(this._nest.canAddLarva());
         this._renderLarvaTypeSelector();
-        this._renderIsQueenInTown();
+        this._renderIsQueenInNest();
     }
 
     _renderLarvae() {
         this._larvaeListEl.innerHTML = '';
         let tempEl = document.createElement('div');
-        this._town.larvae.forEach(larva => {
+        this._nest.larvae.forEach(larva => {
             tempEl.innerHTML = _larva_html__WEBPACK_IMPORTED_MODULE_0__["default"];
             tempEl.querySelector('[data-type]').innerHTML = _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels[larva.antType];
             tempEl.querySelector('[data-progress]').innerHTML = larva.progress;
@@ -1988,26 +1953,26 @@ class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseH
         }
     }
 
-    _renderIsQueenInTown() {
-        let isQueenInTown = this._myQueen.locatedInTownId == this._town.id;
-        if (isQueenInTown) {
+    _renderIsQueenInNest() {
+        let isQueenInNest = this._myQueen.locatedInNestId == this._nest.id;
+        if (isQueenInNest) {
             this._addNewLarvaBtnEl.removeAttribute('disabled');
         } else {
             this._addNewLarvaBtnEl.setAttribute('disabled', '');
         }
 
-        this._isQueenInsideIndicatorEl.innerHTML = isQueenInTown ? '+' : '-';
+        this._isQueenInsideIndicatorEl.innerHTML = isQueenInNest ? '+' : '-';
         
     }
 
     _onAddLarvaBtnClick() {
         let antType = this._newLarvaTypeSelectEl.value;
-        this._town.addNewLarva(antType);
+        this._nest.addNewLarva(antType);
     }
 
     _onLarvaeChanged() {
         this._renderLarvae();
-        this._toggleAddingNewLarva(this._town.canAddLarva());
+        this._toggleAddingNewLarva(this._nest.canAddLarva());
     }
 
 }
@@ -2016,32 +1981,32 @@ class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseH
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/popups/town/townPopup.js":
+/***/ "./bugs/core/client/app/src/view/popups/nest/nestPopup.js":
 /*!****************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/town/townPopup.js ***!
+  !*** ./bugs/core/client/app/src/view/popups/nest/nestPopup.js ***!
   \****************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "TownPopup": () => (/* binding */ TownPopup)
+/* harmony export */   "NestPopup": () => (/* binding */ NestPopup)
 /* harmony export */ });
 /* harmony import */ var _base_basePopup__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/basePopup */ "./bugs/core/client/app/src/view/popups/base/basePopup.js");
-/* harmony import */ var _body_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./body.html */ "./bugs/core/client/app/src/view/popups/town/body.html");
-/* harmony import */ var _larvaManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./larvaManager */ "./bugs/core/client/app/src/view/popups/town/larvaManager.js");
+/* harmony import */ var _body_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./body.html */ "./bugs/core/client/app/src/view/popups/nest/body.html");
+/* harmony import */ var _larvaManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./larvaManager */ "./bugs/core/client/app/src/view/popups/nest/larvaManager.js");
 
 
 
 
-class TownPopup extends _base_basePopup__WEBPACK_IMPORTED_MODULE_0__.BasePopup {
+class NestPopup extends _base_basePopup__WEBPACK_IMPORTED_MODULE_0__.BasePopup {
 
-    constructor(town) {
+    constructor(nest) {
         super();
-        this._title = 'town popup';
-        this._town = town;
+        this._title = 'nest popup';
+        this._nest = nest;
 
-        this._unbindStoredCaloriesChangedListener = this._town.on('storedCaloriesChanged', this._renderCalories.bind(this))
+        this._unbindStoredCaloriesChangedListener = this._nest.on('storedCaloriesChanged', this._renderCalories.bind(this))
 
         this.render();
     }
@@ -2056,7 +2021,7 @@ class TownPopup extends _base_basePopup__WEBPACK_IMPORTED_MODULE_0__.BasePopup {
         super.render();
         this.bodyEl.innerHTML = _body_html__WEBPACK_IMPORTED_MODULE_1__["default"];
         this._renderCalories();
-        this._larvaManager = new _larvaManager__WEBPACK_IMPORTED_MODULE_2__.LarvaManager(this.bodyEl.querySelector('[data-larva-manager]'), this._town);
+        this._larvaManager = new _larvaManager__WEBPACK_IMPORTED_MODULE_2__.LarvaManager(this.bodyEl.querySelector('[data-larva-manager]'), this._nest);
     }
     
     onOk() {
@@ -2068,7 +2033,42 @@ class TownPopup extends _base_basePopup__WEBPACK_IMPORTED_MODULE_0__.BasePopup {
     }
 
     _renderCalories() {
-        this.bodyEl.querySelector('[data-stored-calories]').innerHTML = this._town.storedCalories;
+        this.bodyEl.querySelector('[data-stored-calories]').innerHTML = this._nest.storedCalories;
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/popups/popupManager.js":
+/*!**************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/popups/popupManager.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "PopupManager": () => (/* binding */ PopupManager)
+/* harmony export */ });
+/* harmony import */ var _nest_nestPopup__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./nest/nestPopup */ "./bugs/core/client/app/src/view/popups/nest/nestPopup.js");
+
+
+class PopupManager {
+
+    constructor(el) {
+        this._el = el;
+    }
+
+    openNestPopup(nest) {
+        let popup = new _nest_nestPopup__WEBPACK_IMPORTED_MODULE_0__.NestPopup(nest);
+        this._showPopup(popup);
+    }
+
+    _showPopup(popup) {
+        this._el.innerHTML = '';
+        this._el.appendChild(popup.el);
     }
 }
 
@@ -2106,7 +2106,7 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderAntCurrentState.bind(this));
         this._unbindFoodLiftListener = this._entity.on('foodPickedUp', this._onFoodPickedUp.bind(this));
         this._unbindFoodDropListener = this._entity.on('foodDroped', this._removePickedFoodView.bind(this));
-        this._unbindIsHiddenChangedListener = this._entity.on('locatedInTownChanged', this._renderIsInTown.bind(this));
+        this._unbindIsHiddenChangedListener = this._entity.on('locatedInNestChanged', this._renderIsInNest.bind(this));
     }
 
     remove() {
@@ -2144,7 +2144,7 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
             this._renderPickedFoodPosition();
         }
 
-        this._renderIsInTown();
+        this._renderIsInNest();
     }
 
     _onFoodPickedUp() {
@@ -2206,8 +2206,8 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._toggleDeadState(state == 'dead');
     }
 
-    _renderIsInTown() {
-        this._antContainer.renderable = !this._entity.isInTown;
+    _renderIsInNest() {
+        this._antContainer.renderable = !this._entity.isInNest;
     }
 
     _toggleWalkingState(isEnabling) {
@@ -2438,6 +2438,56 @@ class FoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/world/nestView.js":
+/*!*********************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/nestView.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NestView": () => (/* binding */ NestView)
+/* harmony export */ });
+/* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
+
+
+class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
+
+    constructor(entity, entityContainer) {
+        super(entity, entityContainer);
+
+        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(NestView.textureManager.getTexture('town.png'));
+        this._sprite.anchor.set(0.5);
+        entityContainer.addChild(this._sprite);
+
+        this._sprite.eventMode = 'static';
+
+        this._sprite.x = this._entity.position.x;
+        this._sprite.y = this._entity.position.y;
+
+        if (entity.ownerId == NestView.domainFacade.getUserData().id) {
+            this._sprite.on('pointerdown', this._onClick.bind(this));
+        }
+        
+    }
+
+    remove() {
+        super.remove();
+    }
+
+    _onClick() {
+        NestView.popupManager.openNestPopup(this._entity);
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/world/pickedFood.js":
 /*!***********************************************************!*\
   !*** ./bugs/core/client/app/src/view/world/pickedFood.js ***!
@@ -2480,56 +2530,6 @@ class PickedFoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView
     remove() {
         super.remove();
         this._entityContainer.removeChild(this._sprite);
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/world/townView.js":
-/*!*********************************************************!*\
-  !*** ./bugs/core/client/app/src/view/world/townView.js ***!
-  \*********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "TownView": () => (/* binding */ TownView)
-/* harmony export */ });
-/* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-
-
-
-class TownView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
-
-    constructor(entity, entityContainer) {
-        super(entity, entityContainer);
-
-        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(TownView.textureManager.getTexture('town.png'));
-        this._sprite.anchor.set(0.5);
-        entityContainer.addChild(this._sprite);
-
-        this._sprite.eventMode = 'static';
-
-        this._sprite.x = this._entity.position.x;
-        this._sprite.y = this._entity.position.y;
-
-        if (entity.ownerId == TownView.domainFacade.getUserData().id) {
-            this._sprite.on('pointerdown', this._onClick.bind(this));
-        }
-        
-    }
-
-    remove() {
-        super.remove();
-    }
-
-    _onClick() {
-        TownView.popupManager.openTownPopup(this._entity);
     }
 
 }
@@ -2603,7 +2603,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _worldStyles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./worldStyles.css */ "./bugs/core/client/app/src/view/world/worldStyles.css");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 /* harmony import */ var _antView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./antView */ "./bugs/core/client/app/src/view/world/antView.js");
-/* harmony import */ var _townView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./townView */ "./bugs/core/client/app/src/view/world/townView.js");
+/* harmony import */ var _nestView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestView */ "./bugs/core/client/app/src/view/world/nestView.js");
 /* harmony import */ var _foodView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foodView */ "./bugs/core/client/app/src/view/world/foodView.js");
 /* harmony import */ var _camera__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./camera */ "./bugs/core/client/app/src/view/world/camera.js");
 /* harmony import */ var _foodArea__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foodArea */ "./bugs/core/client/app/src/view/world/foodArea.js");
@@ -2649,13 +2649,13 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
         this._entityContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._antContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._foodContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._townContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._nestContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._foodAreaContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
 
         this._app.stage.addChild(this._entityContainer);
 
         this._entityContainer.addChild(this._bg);
-        this._entityContainer.addChild(this._townContainer);
+        this._entityContainer.addChild(this._nestContainer);
         this._entityContainer.addChild(this._foodAreaContainer);
         this._entityContainer.addChild(this._foodContainer);
         this._entityContainer.addChild(this._antContainer);
@@ -2704,8 +2704,8 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
         switch (entity.type) {
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.ANT:
                 return new _antView__WEBPACK_IMPORTED_MODULE_2__.AntView(entity, this._antContainer);
-            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.TOWN:
-                return new _townView__WEBPACK_IMPORTED_MODULE_3__.TownView(entity, this._townContainer);
+            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.NEST:
+                return new _nestView__WEBPACK_IMPORTED_MODULE_3__.NestView(entity, this._nestContainer);
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.FOOD:
                 return new _foodView__WEBPACK_IMPORTED_MODULE_4__.FoodView(entity, this._foodContainer);
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.FOOD_AREA:
@@ -4712,7 +4712,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<ul>\r\n    <li><button data-add-new-town>нове місто</button></li>\r\n    <li><button>рейд</button></li>\r\n</ul>";
+var code = "<ul>\r\n    <li><button data-add-new-nest>нове місто</button></li>\r\n    <li><button>рейд</button></li>\r\n</ul>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -4754,9 +4754,9 @@ var code = "<div class=\"popup--header\" data-popup-header>\r\n    <span data-ti
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/popups/town/body.html":
+/***/ "./bugs/core/client/app/src/view/popups/nest/body.html":
 /*!*************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/town/body.html ***!
+  !*** ./bugs/core/client/app/src/view/popups/nest/body.html ***!
   \*************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -4772,9 +4772,9 @@ var code = "<div>\r\n    <div>їжі всередині:<span data-stored-calori
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/popups/town/larva.html":
+/***/ "./bugs/core/client/app/src/view/popups/nest/larva.html":
 /*!**************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/town/larva.html ***!
+  !*** ./bugs/core/client/app/src/view/popups/nest/larva.html ***!
   \**************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -4790,9 +4790,9 @@ var code = "<li>\r\n    <div>тип: <span data-type></span></div>\r\n    <div>�
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/popups/town/larvaManager.html":
+/***/ "./bugs/core/client/app/src/view/popups/nest/larvaManager.html":
 /*!*********************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/town/larvaManager.html ***!
+  !*** ./bugs/core/client/app/src/view/popups/nest/larvaManager.html ***!
   \*********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -42496,7 +42496,7 @@ let initialData = (0,utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__.readInit
 let syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)();
 let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)({ 
     userApi: syncLayer.userApi,
-    townApi: syncLayer.townApi,
+    nestApi: syncLayer.nestApi,
     operationApi: syncLayer.operationApi
 }, syncLayer.serverConnection, initialData);
 (0,_view__WEBPACK_IMPORTED_MODULE_2__.initViewLayer)(domainFacade, initialData);

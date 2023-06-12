@@ -4,8 +4,8 @@ class OperationService {
         this._operationApi = operationApi;
     }
 
-    buildNewTown(position) {
-        this._operationApi.buildNewTown(position);
+    buildNewNest(position) {
+        this._operationApi.buildNewNest(position);
     }
 }
 

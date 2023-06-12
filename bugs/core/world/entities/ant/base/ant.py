@@ -5,7 +5,7 @@ from .ant_body import AntBody
 from .ant_mind import AntMind
 from .ant_types import AntTypes
 from core.world.utils.point import Point
-from core.world.entities.town.town import Town
+from core.world.entities.nest.nest import Nest
 
 class Ant(LiveEntity):
 
@@ -33,8 +33,8 @@ class Ant(LiveEntity):
     def walk_to(self, position: Point):
         return self._mind.walk_to(position)
     
-    def relocate_to_town(self, town: Town):
-        self._mind.relocate_to_town(town)
+    def relocate_to_nest(self, nest: Nest):
+        self._mind.relocate_to_nest(nest)
 
     def to_json(self):
         json = super().to_json()

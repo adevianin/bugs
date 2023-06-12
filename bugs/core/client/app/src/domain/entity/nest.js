@@ -3,11 +3,11 @@ import { EntityTypes } from '../enum/entityTypes';
 import { ACTION_TYPES } from './action/actionTypes';
 import { Larva } from './larva';
 
-class Town extends Entity {
+class Nest extends Entity {
 
-    constructor(eventBus, townApi, id, position, ownerId, storedCalories, larvae, larvaPlacesCount) {
-        super(eventBus, id, position, EntityTypes.TOWN, ownerId);
-        this._townApi = townApi;
+    constructor(eventBus, nestApi, id, position, ownerId, storedCalories, larvae, larvaPlacesCount) {
+        super(eventBus, id, position, EntityTypes.NEST, ownerId);
+        this._nestApi = nestApi;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
         this.larvaPlacesCount = larvaPlacesCount;
@@ -15,9 +15,9 @@ class Town extends Entity {
 
     playAction(action) {
         switch (action.type) {
-            case ACTION_TYPES.TOWN_STORED_CALORIES_CHANGED:
+            case ACTION_TYPES.NEST_STORED_CALORIES_CHANGED:
                 return this._playTakingFood(action);
-            case ACTION_TYPES.TOWN_LARVAE_CHANGED:
+            case ACTION_TYPES.NEST_LARVAE_CHANGED:
                 return this._playLarvaeChanged(action);
             default:
                 throw 'unknown type of action'
@@ -29,7 +29,7 @@ class Town extends Entity {
     }
 
     addNewLarva(antType) {
-        this._townApi.addNewLarva(this.id, antType);
+        this._nestApi.addNewLarva(this.id, antType);
     }
 
     _playTakingFood(action) {
@@ -50,5 +50,5 @@ class Town extends Entity {
 }
 
 export {
-    Town
+    Nest
 }

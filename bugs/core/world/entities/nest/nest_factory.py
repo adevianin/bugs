@@ -1,20 +1,20 @@
 from core.world.utils.point import Point
-from .town import Town
+from .nest import Nest
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.larva import Larva
 from core.world.utils.event_emiter import EventEmitter
 
-class TownFactory():
+class NestFactory():
 
     def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus
 
-    def build_new_town(self,  position: Point, owner_id: int):
-        return Town(self._event_bus, -1, position, 'red', owner_id, [], 1)
+    def build_new_nest(self,  position: Point, owner_id: int):
+        return Nest(self._event_bus, -1, position, 'red', owner_id, [], 1)
 
-    def build_town(self, id: int, position: Point, color: str, owner_id: int, larvae: list, larva_places: int) -> Town:
+    def build_nest(self, id: int, position: Point, color: str, owner_id: int, larvae: list, larva_places: int) -> Nest:
         larvae = self._build_larvae_at(larvae, position)
-        return Town(self._event_bus, id, position, color, owner_id, larvae, larva_places)
+        return Nest(self._event_bus, id, position, color, owner_id, larvae, larva_places)
     
     def _build_larvae_at(self, larvae_data: list, position: Point):
         larvae = []

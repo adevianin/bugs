@@ -4,11 +4,11 @@ class OperationApi {
         this._serverConnection = serverConnection;
     }
 
-    buildNewTown(position) {
+    buildNewNest(position) {
         this._serverConnection.send({
             type: 'command',
             command: {
-                command_type: 'build_new_town',
+                command_type: 'build_new_nest',
                 params: {
                     position
                 }

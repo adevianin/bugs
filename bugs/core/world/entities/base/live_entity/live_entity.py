@@ -4,7 +4,7 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from .mind import Mind
 from .body import Body
-from core.world.entities.town.town import Town
+from core.world.entities.nest.nest import Nest
 
 class LiveEntity(Entity):
 
@@ -15,8 +15,8 @@ class LiveEntity(Entity):
 
         self._body.events.add_listener('walk', self._on_body_walk)
         self._body.events.add_listener('eat_food', self._on_body_eats_food)
-        self._body.events.add_listener('got_in_town', self._on_got_in_town)
-        self._body.events.add_listener('got_out_of_town', self._on_got_out_of_town)
+        self._body.events.add_listener('got_in_nest', self._on_got_in_nest)
+        self._body.events.add_listener('got_out_of_nest', self._on_got_out_of_nest)
 
     @property
     def position(self):
@@ -31,17 +31,17 @@ class LiveEntity(Entity):
         return self._body.dna_profile
     
     @property
-    def located_in_town_id(self):
-        return self._body.located_in_town_id
+    def located_in_nest_id(self):
+        return self._body.located_in_nest_id
     
-    def get_in_town(self, town: Town):
-        self._body.get_in_town(town)
+    def get_in_nest(self, nest: Nest):
+        self._body.get_in_nest(nest)
 
-    def get_out_of_town(self):
-        self._body.get_out_of_town()
+    def get_out_of_nest(self):
+        self._body.get_out_of_nest()
     
     def is_hidden(self):
-        return super().is_hidden or self._body.is_in_town
+        return super().is_hidden or self._body.is_in_nest
 
     def do_step(self):
         super().do_step()
@@ -62,7 +62,7 @@ class LiveEntity(Entity):
                 'y': self._body.position.y
             },
             'user_speed': self._body.user_speed,
-            'located_in_town_id': self._body.located_in_town_id
+            'located_in_nest_id': self._body.located_in_nest_id
         })
 
         return json
@@ -91,11 +91,11 @@ class LiveEntity(Entity):
     def _on_body_eats_food(self):
         self.handle_action('entity_eat_food')
 
-    def _on_got_in_town(self, town: Town):
-        self.handle_action('entity_got_in_town', {
-            'town_id': town.id
+    def _on_got_in_nest(self, nest: Nest):
+        self.handle_action('entity_got_in_nest', {
+            'nest_id': nest.id
         })
 
-    def _on_got_out_of_town(self):
-        self.handle_action('entity_got_out_of_town')
+    def _on_got_out_of_nest(self):
+        self.handle_action('entity_got_out_of_nest')
 

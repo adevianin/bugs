@@ -1,7 +1,7 @@
 const EntityTypes = {
     ANT: 'ant',
     FOOD: 'food',
-    TOWN: 'town',
+    NEST: 'nest',
     FOOD_AREA: 'food_area'
 }
 

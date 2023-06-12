@@ -1,15 +1,15 @@
 from core.world.entities.task.task import Task
 from ..ant_body import AntBody
-from core.world.entities.town.town import Town
+from core.world.entities.nest.nest import Nest
 from .find_food_task import FindFoodTask
 from core.world.entities.base.entity_types import EntityTypes
-from core.world.entities.base.live_entity.tasks.go_in_town import GoInTownTask
+from core.world.entities.base.live_entity.tasks.go_in_nest import GoInNestTask
 
 class CollectFoodTask(Task):
 
-    def __init__(self, body: AntBody, town: Town, find_food_task: FindFoodTask, go_home_task: GoInTownTask):
+    def __init__(self, body: AntBody, nest: Nest, find_food_task: FindFoodTask, go_home_task: GoInNestTask):
         super().__init__(body)
-        self._town = town
+        self._nest = nest
         self._find_food_task = find_food_task
         self._go_home_task = go_home_task
         self._found_food = None
@@ -42,16 +42,16 @@ class CollectFoodTask(Task):
             return
 
         if (self._is_go_home_done and not self._is_food_taken_by_home):
-            self._body.give_food(self._town)
+            self._body.give_food(self._nest)
             self._is_food_taken_by_home = True
             return
         
-        if (self._is_food_taken_by_home and not self._is_got_out_of_town):
-            self._body.get_out_of_town()
-            self._is_got_out_of_town = True
+        if (self._is_food_taken_by_home and not self._is_got_out_of_nest):
+            self._body.get_out_of_nest()
+            self._is_got_out_of_nest = True
             return
 
-        if (self._is_got_out_of_town):
+        if (self._is_got_out_of_nest):
             self.mark_as_done()
 
     def can_be_delayed(self):
@@ -83,6 +83,6 @@ class CollectFoodTask(Task):
         self._is_pickup_food_done = False
         self._is_go_home_done = False
         self._is_food_taken_by_home = False
-        self._is_got_out_of_town = False
+        self._is_got_out_of_nest = False
         
 

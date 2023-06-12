@@ -5,23 +5,23 @@ import { antTypesLabels } from '../../labels/antTypesLabels';
 
 class LarvaManager extends BaseHTMLView {
 
-    constructor(el, town) {
+    constructor(el, nest) {
         super();
         this._el = el;
-        this._town = town;
+        this._nest = nest;
         this._myQueen = LarvaManager.domainFacade.findMyQueen();
 
         this._render();
 
         this._addNewLarvaBtnEl.addEventListener('click', this._onAddLarvaBtnClick.bind(this));
-        this._unbindLarvaeChangedListener = this._town.on('larvaeChanged', this._onLarvaeChanged.bind(this));
-        this._unbindQueenLocatedInTownListener = this._myQueen.on('locatedInTownChanged', this._renderIsQueenInTown.bind(this));
+        this._unbindLarvaeChangedListener = this._nest.on('larvaeChanged', this._onLarvaeChanged.bind(this));
+        this._unbindQueenLocatedInNestListener = this._myQueen.on('locatedInNestChanged', this._renderIsQueenInNest.bind(this));
     }
 
     remove() {
         super.remove();
         this._unbindLarvaeChangedListener();
-        this._unbindQueenLocatedInTownListener();
+        this._unbindQueenLocatedInNestListener();
     }
 
     _render() {
@@ -34,15 +34,15 @@ class LarvaManager extends BaseHTMLView {
         this._isQueenInsideIndicatorEl = this._el.querySelector('[data-is-queen-inside]');
 
         this._renderLarvae();
-        this._toggleAddingNewLarva(this._town.canAddLarva());
+        this._toggleAddingNewLarva(this._nest.canAddLarva());
         this._renderLarvaTypeSelector();
-        this._renderIsQueenInTown();
+        this._renderIsQueenInNest();
     }
 
     _renderLarvae() {
         this._larvaeListEl.innerHTML = '';
         let tempEl = document.createElement('div');
-        this._town.larvae.forEach(larva => {
+        this._nest.larvae.forEach(larva => {
             tempEl.innerHTML = larvaTmpl;
             tempEl.querySelector('[data-type]').innerHTML = antTypesLabels[larva.antType];
             tempEl.querySelector('[data-progress]').innerHTML = larva.progress;
@@ -63,26 +63,26 @@ class LarvaManager extends BaseHTMLView {
         }
     }
 
-    _renderIsQueenInTown() {
-        let isQueenInTown = this._myQueen.locatedInTownId == this._town.id;
-        if (isQueenInTown) {
+    _renderIsQueenInNest() {
+        let isQueenInNest = this._myQueen.locatedInNestId == this._nest.id;
+        if (isQueenInNest) {
             this._addNewLarvaBtnEl.removeAttribute('disabled');
         } else {
             this._addNewLarvaBtnEl.setAttribute('disabled', '');
         }
 
-        this._isQueenInsideIndicatorEl.innerHTML = isQueenInTown ? '+' : '-';
+        this._isQueenInsideIndicatorEl.innerHTML = isQueenInNest ? '+' : '-';
         
     }
 
     _onAddLarvaBtnClick() {
         let antType = this._newLarvaTypeSelectEl.value;
-        this._town.addNewLarva(antType);
+        this._nest.addNewLarva(antType);
     }
 
     _onLarvaeChanged() {
         this._renderLarvae();
-        this._toggleAddingNewLarva(this._town.canAddLarva());
+        this._toggleAddingNewLarva(this._nest.canAddLarva());
     }
 
 }

@@ -1,12 +1,12 @@
 import { EntityView } from './entityView';
 import * as PIXI from 'pixi.js';
 
-class TownView extends EntityView { 
+class NestView extends EntityView { 
 
     constructor(entity, entityContainer) {
         super(entity, entityContainer);
 
-        this._sprite = new PIXI.Sprite(TownView.textureManager.getTexture('town.png'));
+        this._sprite = new PIXI.Sprite(NestView.textureManager.getTexture('town.png'));
         this._sprite.anchor.set(0.5);
         entityContainer.addChild(this._sprite);
 
@@ -15,7 +15,7 @@ class TownView extends EntityView {
         this._sprite.x = this._entity.position.x;
         this._sprite.y = this._entity.position.y;
 
-        if (entity.ownerId == TownView.domainFacade.getUserData().id) {
+        if (entity.ownerId == NestView.domainFacade.getUserData().id) {
             this._sprite.on('pointerdown', this._onClick.bind(this));
         }
         
@@ -26,11 +26,11 @@ class TownView extends EntityView {
     }
 
     _onClick() {
-        TownView.popupManager.openTownPopup(this._entity);
+        NestView.popupManager.openNestPopup(this._entity);
     }
 
 }
 
 export {
-    TownView
+    NestView
 }

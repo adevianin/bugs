@@ -3,7 +3,7 @@ from .ant_body import AntBody
 from core.world.map import Map
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.point import Point
-from core.world.entities.town.town import Town
+from core.world.entities.nest.nest import Nest
 from .tasks.searching_walk_task import SearchingWalkTask
 from .tasks.find_entity_by_type_task import FindEntityByTypeTask
 from .tasks.collect_food_task import CollectFoodTask
@@ -25,20 +25,20 @@ class AntTaskFactory(LiveEntityTaskFactory):
         searching_walk_subtask = self.build_searching_walk_task(search_near_point, search_radius)
         return FindEntityByTypeTask(self._body, entity_type, self._map, searching_walk_subtask)
 
-    def build_collect_food_task(self, town: Town, memory: Memory):
-        find_food_task = self.build_find_food_task(memory, town.position, town.area)
-        go_gome_task = self.build_go_in_town_task(town)
-        return CollectFoodTask(self._body, town, find_food_task, go_gome_task)
+    def build_collect_food_task(self, nest: Nest, memory: Memory):
+        find_food_task = self.build_find_food_task(memory, nest.position, nest.area)
+        go_gome_task = self.build_go_in_nest_task(nest)
+        return CollectFoodTask(self._body, nest, find_food_task, go_gome_task)
     
     def build_find_food_task(self, memory: Memory, search_near_point: Point, search_radius: int):
         searching_walk_subtask = self.build_searching_walk_task(search_near_point, search_radius)
         return FindFoodTask(self._body, self._map, memory, searching_walk_subtask)
     
-    def build_feed_myself_task(self, home: Town, memory: Memory):
+    def build_feed_myself_task(self, home: Nest, memory: Memory):
         find_food_task = self.build_find_food_task(memory, home.position, home.area)
-        go_gome_task = self.build_go_in_town_task(home)
+        go_gome_task = self.build_go_in_nest_task(home)
         return FeedMyselfTask(self._body, home, find_food_task, go_gome_task)
 
-    def build_prepare_for_operation_task(self, home: Town, memory: Memory, assemble_point: Point):
+    def build_prepare_for_operation_task(self, home: Nest, memory: Memory, assemble_point: Point):
         feed_myself_task = self.build_feed_myself_task(home, memory)
         return PrepareForOperationTask(self._body, feed_myself_task, assemble_point)

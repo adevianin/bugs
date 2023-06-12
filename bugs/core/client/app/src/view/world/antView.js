@@ -14,7 +14,7 @@ class AntView extends EntityView {
         this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderAntCurrentState.bind(this));
         this._unbindFoodLiftListener = this._entity.on('foodPickedUp', this._onFoodPickedUp.bind(this));
         this._unbindFoodDropListener = this._entity.on('foodDroped', this._removePickedFoodView.bind(this));
-        this._unbindIsHiddenChangedListener = this._entity.on('locatedInTownChanged', this._renderIsInTown.bind(this));
+        this._unbindIsHiddenChangedListener = this._entity.on('locatedInNestChanged', this._renderIsInNest.bind(this));
     }
 
     remove() {
@@ -52,7 +52,7 @@ class AntView extends EntityView {
             this._renderPickedFoodPosition();
         }
 
-        this._renderIsInTown();
+        this._renderIsInNest();
     }
 
     _onFoodPickedUp() {
@@ -114,8 +114,8 @@ class AntView extends EntityView {
         this._toggleDeadState(state == 'dead');
     }
 
-    _renderIsInTown() {
-        this._antContainer.renderable = !this._entity.isInTown;
+    _renderIsInNest() {
+        this._antContainer.renderable = !this._entity.isInNest;
     }
 
     _toggleWalkingState(isEnabling) {

@@ -10,7 +10,7 @@ import { OperationService } from './service/operationService';
 
 function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new EventEmitter();
-    let worldFactory = new WorldFactory(mainEventBus, apis.townApi);
+    let worldFactory = new WorldFactory(mainEventBus, apis.nestApi);
     let world = worldFactory.buildWorld();
     let actionFactory = new ActionFactory();
 

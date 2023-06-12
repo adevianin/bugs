@@ -1,7 +1,7 @@
 from core.world.utils.event_emiter import EventEmitter
 from core.world.map import Map
 from core.world.entities.ant.ant_factory import AntFactory
-from core.world.entities.town.town import Town
+from core.world.entities.nest.nest import Nest
 from core.world.entities.base.entity import Entity
 from core.world.entities.action import Action
 from core.world.entities.ant.base.larva import Larva
@@ -18,18 +18,18 @@ class BirtherService():
 
         self._event_bus.add_listener('preborn_ant', self._on_preborn_ant)
         self._event_bus.add_listener('preborn_food', self._on_preborn_food)
-        self._event_bus.add_listener('preborn_town', self._on_preborn_town)
+        self._event_bus.add_listener('preborn_nest', self._on_preborn_nest)
 
-    def _on_preborn_ant(self, larva: Larva, town: Town):
-        new_ant = self._ant_factory.give_birth(larva, town)
+    def _on_preborn_ant(self, larva: Larva, nest: Nest):
+        new_ant = self._ant_factory.give_birth(larva, nest)
         self._handle_born_entity(new_ant)
 
     def _on_preborn_food(self, preborn_food: PrebornFood):
         new_food = self._food_factory.give_birth(preborn_food)
         self._handle_born_entity(new_food)
 
-    def _on_preborn_town(self, preborn_town: Town):
-        self._handle_born_entity(preborn_town)
+    def _on_preborn_nest(self, preborn_nest: Nest):
+        self._handle_born_entity(preborn_nest)
 
     def _handle_born_entity(self, entity: Entity):
         self._map.add_entity(entity)

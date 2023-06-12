@@ -3,13 +3,13 @@ from abc import ABC
 from core.world.entities.food.food import Food
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME
-from core.world.entities.town.town import Town
+from core.world.entities.nest.nest import Nest
 
 import math
 
 class Body(ABC):
 
-    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int, located_in_town: Town):
+    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int, located_in_nest: Nest):
         self.events = events
         self._dna_profile = dna_profile
         self._distance_per_step = distance_per_step
@@ -21,15 +21,15 @@ class Body(ABC):
         self._can_eat_calories_per_step = 20
         self._user_speed = self._distance_per_step / STEP_TIME
         self._is_busy = False
-        self._located_inside_town = located_in_town
+        self._located_inside_nest = located_in_nest
 
     @property
-    def located_in_town_id(self):
-        return self._located_inside_town.id if self._located_inside_town else None
+    def located_in_nest_id(self):
+        return self._located_inside_nest.id if self._located_inside_nest else None
     
     @property
-    def is_in_town(self):
-        return self._located_inside_town != None
+    def is_in_nest(self):
+        return self._located_inside_nest != None
     
     @property
     def user_speed(self):
@@ -60,17 +60,17 @@ class Body(ABC):
     def dna_profile(self):
         return self._dna_profile
     
-    def get_in_town(self, town: Town):
-        self._located_inside_town = town
-        self.events.emit('got_in_town', town)
+    def get_in_nest(self, nest: Nest):
+        self._located_inside_nest = nest
+        self.events.emit('got_in_nest', nest)
 
-    def get_out_of_town(self):
-        self._located_inside_town = None
-        self.events.emit('got_out_of_town')
+    def get_out_of_nest(self):
+        self._located_inside_nest = None
+        self.events.emit('got_out_of_nest')
 
     def step_to(self, destination_point: Point, preciseMode = False) -> bool:
-        if self.is_in_town:
-            self.get_out_of_town()
+        if self.is_in_nest:
+            self.get_out_of_nest()
             return False
         
         distance = math.dist([self.position.x, self.position.y], [destination_point.x, destination_point.y])

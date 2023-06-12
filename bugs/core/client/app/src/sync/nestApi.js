@@ -1,16 +1,16 @@
-class TownApi {
+class NestApi {
 
     constructor(serverConnection) {
         this._serverConnection = serverConnection;
     }
 
-    addNewLarva(townId, larvaType) {
+    addNewLarva(nestId, larvaType) {
         this._serverConnection.send({
             type: 'command',
             command: {
                 command_type: 'add_larva',
                 params: {
-                    town_id: townId,
+                    nest_id: nestId,
                     larva_type: larvaType
                 }
             }
@@ -19,5 +19,5 @@ class TownApi {
 }
 
 export {
-    TownApi
+    NestApi
 }

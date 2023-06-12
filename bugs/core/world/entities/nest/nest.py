@@ -5,10 +5,10 @@ from core.world.utils.point import Point
 from core.world.entities.food.food import Food
 from core.world.entities.ant.base.larva import Larva
 
-class Town(PlainEntity):
+class Nest(PlainEntity):
 
     def __init__(self, event_bus: EventEmitter, id: int, position: Point, color: str, owner_id: int, larvae: list[Larva], larva_places_count: int):
-        super().__init__(event_bus, id, EntityTypes.TOWN, owner_id, position)
+        super().__init__(event_bus, id, EntityTypes.NEST, owner_id, position)
         self._color = color
         self._area = 300
         self._stored_calories = 1000
@@ -59,7 +59,7 @@ class Town(PlainEntity):
     def build(self):
         is_built = True
         if (is_built): 
-            self._event_bus.emit('preborn_town', self)
+            self._event_bus.emit('preborn_nest', self)
         return is_built
 
     def _feed_larvae(self):
@@ -83,12 +83,12 @@ class Town(PlainEntity):
         self._emit_larvae_changed()
 
     def _emit_stored_calories_changed(self):
-        self.handle_action('town_stored_calories_changed', {
+        self.handle_action('nest_stored_calories_changed', {
             'stored_calories': self._stored_calories
         })
 
     def _emit_larvae_changed(self):
-        self.handle_action('town_larvae_changed', {
+        self.handle_action('nest_larvae_changed', {
             'larvae': self._larvae_to_json()
         })
     

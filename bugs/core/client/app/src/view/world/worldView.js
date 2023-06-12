@@ -2,7 +2,7 @@ import './worldStyles.css';
 
 import * as PIXI from 'pixi.js';
 import { AntView } from './antView';
-import { TownView } from './townView';
+import { NestView } from './nestView';
 import { FoodView } from './foodView';
 import { Camera } from './camera';
 import { FoodAreaView } from './foodArea';
@@ -38,13 +38,13 @@ class WorldView extends BaseGraphicView {
         this._entityContainer = new PIXI.Container();
         this._antContainer = new PIXI.Container();
         this._foodContainer = new PIXI.Container();
-        this._townContainer = new PIXI.Container();
+        this._nestContainer = new PIXI.Container();
         this._foodAreaContainer = new PIXI.Container();
 
         this._app.stage.addChild(this._entityContainer);
 
         this._entityContainer.addChild(this._bg);
-        this._entityContainer.addChild(this._townContainer);
+        this._entityContainer.addChild(this._nestContainer);
         this._entityContainer.addChild(this._foodAreaContainer);
         this._entityContainer.addChild(this._foodContainer);
         this._entityContainer.addChild(this._antContainer);
@@ -93,8 +93,8 @@ class WorldView extends BaseGraphicView {
         switch (entity.type) {
             case EntityTypes.ANT:
                 return new AntView(entity, this._antContainer);
-            case EntityTypes.TOWN:
-                return new TownView(entity, this._townContainer);
+            case EntityTypes.NEST:
+                return new NestView(entity, this._nestContainer);
             case EntityTypes.FOOD:
                 return new FoodView(entity, this._foodContainer);
             case EntityTypes.FOOD_AREA:

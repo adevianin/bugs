@@ -1,4 +1,4 @@
-import { TownPopup } from './town/townPopup';
+import { NestPopup } from './nest/nestPopup';
 
 class PopupManager {
 
@@ -6,8 +6,8 @@ class PopupManager {
         this._el = el;
     }
 
-    openTownPopup(town) {
-        let popup = new TownPopup(town);
+    openNestPopup(nest) {
+        let popup = new NestPopup(nest);
         this._showPopup(popup);
     }
 

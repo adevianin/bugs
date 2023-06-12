@@ -3,5 +3,5 @@ from enum import StrEnum
 class EntityTypes(StrEnum):
     ANT = 'ant'
     FOOD = 'food'
-    TOWN = 'town'
+    NEST = 'nest'
     FOOD_AREA = 'food_area'

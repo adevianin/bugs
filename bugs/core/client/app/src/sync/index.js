@@ -1,7 +1,7 @@
 import { Requester } from "utils/requester"
 import { UserApi } from "./userApi";
 import { ServerConnection } from "./serverConnection";
-import { TownApi } from "./townApi";
+import { NestApi } from "./nestApi";
 import { OperationApi } from "./operationApi";
 
 function initSyncLayer() {
@@ -9,12 +9,12 @@ function initSyncLayer() {
 
     let userApi = new UserApi(requester);
     let serverConnection = new ServerConnection();
-    let townApi = new TownApi(serverConnection);
+    let nestApi = new NestApi(serverConnection);
     let operationApi = new OperationApi(serverConnection);
 
     return {
         userApi,
-        townApi,
+        nestApi,
         operationApi,
         serverConnection
     };

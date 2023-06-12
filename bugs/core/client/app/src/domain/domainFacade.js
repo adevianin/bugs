@@ -68,8 +68,8 @@ class DomainFacade {
         return this._worldService.findMyQueen(userData.id);
     }
 
-    buildNewTown(position) {
-        this._operationService.buildNewTown(position);
+    buildNewNest(position) {
+        this._operationService.buildNewNest(position);
     }
 
     _tryConnectMessageHandler() {
