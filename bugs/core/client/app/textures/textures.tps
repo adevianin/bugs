@@ -236,7 +236,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">images/town.png</key>
+            <key type="filename">images/nest.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -245,9 +245,9 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>8,7,16,14</rect>
+                <rect>10,10,20,20</rect>
                 <key>scale9Paddings</key>
-                <rect>8,7,16,14</rect>
+                <rect>10,10,20,20</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -258,7 +258,6 @@
             <struct type="SpriteSheet">
                 <key>files</key>
                 <array>
-                    <filename>images/town.png</filename>
                     <filename>images/grass.png</filename>
                     <filename>images/food_leaf_1v.png</filename>
                     <filename>images/food_leaf_2v.png</filename>
@@ -294,6 +293,7 @@
                     <filename>images/ant_queen_7.png</filename>
                     <filename>images/ant_queen_8.png</filename>
                     <filename>images/ant_queen_dead.png</filename>
+                    <filename>images/nest.png</filename>
                 </array>
             </struct>
         </map>

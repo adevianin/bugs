@@ -6,7 +6,7 @@ class NestView extends EntityView {
     constructor(entity, entityContainer) {
         super(entity, entityContainer);
 
-        this._sprite = new PIXI.Sprite(NestView.textureManager.getTexture('town.png'));
+        this._sprite = new PIXI.Sprite(NestView.textureManager.getTexture('nest.png'));
         this._sprite.anchor.set(0.5);
         entityContainer.addChild(this._sprite);
 

@@ -280,7 +280,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
-"town.png":
+"nest.png":
 {
 	"frame": {"x":0,"y":608,"w":40,"h":40},
 	"rotated": false,
@@ -300,6 +300,6 @@
 	"format": "RGBA8888",
 	"size": {"w":64,"h":648},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:211f62c67e20e5885421655d98487310:2bf359c9feba0c53ea4596d2b67cd00c:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:d9a13ae348790caba83c205244611b9c:2bf359c9feba0c53ea4596d2b67cd00c:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }
