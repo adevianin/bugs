@@ -6,7 +6,9 @@ class BaseHTMLView {
         BaseHTMLView.domainFacade = domainFacade;
     }
 
-    remove() {}
+    remove() {
+        throw 'remove method is abstract';
+    }
 }
 
 export {
