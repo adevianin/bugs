@@ -1,6 +1,9 @@
+import './operationsTab.css';
+
 import { BaseHTMLView } from "../../../base/baseHTMLView"
 import operationTabTmpl from './operationTabTmpl.html';
 import { NewNestOperationCreator } from "./operationCreators/newNest/newNestOperationCreator";
+import { OperationsList } from "./operationsList/operationsList"; 
 
 class OperationsTab extends BaseHTMLView {
     
@@ -15,11 +18,14 @@ class OperationsTab extends BaseHTMLView {
     }
 
     _render() {
+        this._el.classList.add('operation-tab');
         this._el.innerHTML = operationTabTmpl;
 
         this._addNewNestBtn = this._el.querySelector('[data-add-new-nest]');
-        this._operationsListEl = this._el.querySelector('[data-operations-list]');
+        this._newOperationListEl = this._el.querySelector('[data-new-operation-list]');
         this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
+
+        new OperationsList(this._el.querySelector('[data-operations-list]'));
 
         this._toggleOperationCreating(false);
     }
@@ -38,7 +44,7 @@ class OperationsTab extends BaseHTMLView {
     }
 
     _toggleOperationCreating(isCreating) {
-        this._operationsListEl.classList.toggle('hidden', isCreating);
+        this._newOperationListEl.classList.toggle('hidden', isCreating);
         this._cancelOperationCreatingBtn.classList.toggle('hidden', !isCreating);
     }
 }

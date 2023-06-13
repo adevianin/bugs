@@ -9,6 +9,11 @@
     height: 200px
 }
 
-.panel--tab-switcher {
+.panel__tab-switcher {
     padding: 5px
+}
+
+.panel__tab-container {
+    padding: 5px;
+    flex-grow: 1;
 }

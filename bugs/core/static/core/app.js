@@ -1818,7 +1818,7 @@ class NewNestOperationCreator extends _operationCreator__WEBPACK_IMPORTED_MODULE
 
     _onOk() {
         NewNestOperationCreator.domainFacade.buildNewNest({
-            x: 1500,
+            x: 1200,
             y: 600 
         })
         this._onDone();
@@ -1856,6 +1856,38 @@ class OperationCreator extends view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsList/operationsList.js":
+/*!*************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsList/operationsList.js ***!
+  \*************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OperationsList": () => (/* binding */ OperationsList)
+/* harmony export */ });
+/* harmony import */ var view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+
+
+class OperationsList extends view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+
+        this._render();
+    }
+
+    _render() {
+        this._el.innerHTML = 'operations list'
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.js":
 /*!*********************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.js ***!
@@ -1867,14 +1899,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "OperationsTab": () => (/* binding */ OperationsTab)
 /* harmony export */ });
-/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
-/* harmony import */ var _operationTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationTabTmpl.html");
-/* harmony import */ var _operationCreators_newNest_newNestOperationCreator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./operationCreators/newNest/newNestOperationCreator */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/newNest/newNestOperationCreator.js");
+/* harmony import */ var _operationsTab_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./operationsTab.css */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css");
+/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _operationTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./operationTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationTabTmpl.html");
+/* harmony import */ var _operationCreators_newNest_newNestOperationCreator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./operationCreators/newNest/newNestOperationCreator */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/newNest/newNestOperationCreator.js");
+/* harmony import */ var _operationsList_operationsList__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./operationsList/operationsList */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsList/operationsList.js");
 
 
 
 
-class OperationsTab extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+ 
+
+class OperationsTab extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
     
     constructor(el) {
         super(el);
@@ -1887,11 +1924,14 @@ class OperationsTab extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
     }
 
     _render() {
-        this._el.innerHTML = _operationTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.classList.add('operation-tab');
+        this._el.innerHTML = _operationTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
 
         this._addNewNestBtn = this._el.querySelector('[data-add-new-nest]');
-        this._operationsListEl = this._el.querySelector('[data-operations-list]');
+        this._newOperationListEl = this._el.querySelector('[data-new-operation-list]');
         this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
+
+        new _operationsList_operationsList__WEBPACK_IMPORTED_MODULE_4__.OperationsList(this._el.querySelector('[data-operations-list]'));
 
         this._toggleOperationCreating(false);
     }
@@ -1906,11 +1946,11 @@ class OperationsTab extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
         this._toggleOperationCreating(true);
         let el = document.createElement('div');
         this._el.querySelector('[data-operation-creator-placeholder]').appendChild(el);
-        this._operationCreator = new _operationCreators_newNest_newNestOperationCreator__WEBPACK_IMPORTED_MODULE_2__.NewNestOperationCreator(el, this._stopOperationCreating.bind(this));
+        this._operationCreator = new _operationCreators_newNest_newNestOperationCreator__WEBPACK_IMPORTED_MODULE_3__.NewNestOperationCreator(el, this._stopOperationCreating.bind(this));
     }
 
     _toggleOperationCreating(isCreating) {
-        this._operationsListEl.classList.toggle('hidden', isCreating);
+        this._newOperationListEl.classList.toggle('hidden', isCreating);
         this._cancelOperationCreatingBtn.classList.toggle('hidden', !isCreating);
     }
 }
@@ -3101,7 +3141,34 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}\r\n\r\n.panel--tab-switcher {\r\n    padding: 5px\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,aAAa;IACb,gBAAgB;IAChB,YAAY;AAChB;;AAEA;IACI;AACJ;;AAEA;IACI;AACJ","sourcesContent":[".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}\r\n\r\n.panel--tab-switcher {\r\n    padding: 5px\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}\r\n\r\n.panel__tab-switcher {\r\n    padding: 5px\r\n}\r\n\r\n.panel__tab-container {\r\n    padding: 5px;\r\n    flex-grow: 1;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,aAAa;IACb,gBAAgB;IAChB,YAAY;AAChB;;AAEA;IACI;AACJ;;AAEA;IACI;AACJ;;AAEA;IACI,YAAY;IACZ,YAAY;AAChB","sourcesContent":[".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}\r\n\r\n.panel__tab-switcher {\r\n    padding: 5px\r\n}\r\n\r\n.panel__tab-container {\r\n    padding: 5px;\r\n    flex-grow: 1;\r\n}"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css":
+/*!************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css ***!
+  \************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".operation-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.operation-tab__new-operation-list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.operation-tab__operations-list-container {\r\n    padding: 5px;\r\n    width: 150px;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css"],"names":[],"mappings":"AAAA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,UAAU;IACV,SAAS;IACT,qBAAqB;AACzB;;AAEA;IACI,YAAY;IACZ,YAAY;AAChB","sourcesContent":[".operation-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.operation-tab__new-operation-list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.operation-tab__operations-list-container {\r\n    padding: 5px;\r\n    width: 150px;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -4860,7 +4927,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-tab-switcher>\r\n    <div>\r\n        <label>\r\n            <input type=\"radio\" name=\"panelTabSwitcher\" value=\"user\" checked />\r\n            користувач\r\n        </label>\r\n    </div>\r\n    <div>\r\n        <label>\r\n            <input type=\"radio\" name=\"panelTabSwitcher\" value=\"operations\" />\r\n            операції\r\n        </label>\r\n    </div>\r\n</div>\r\n<div class=\"panel--tab-switcher\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n</div>";
+var code = "<div class=\"panel__tab-switcher\" data-tab-switcher>\r\n    <div>\r\n        <label>\r\n            <input type=\"radio\" name=\"panelTabSwitcher\" value=\"user\" checked />\r\n            користувач\r\n        </label>\r\n    </div>\r\n    <div>\r\n        <label>\r\n            <input type=\"radio\" name=\"panelTabSwitcher\" value=\"operations\" />\r\n            операції\r\n        </label>\r\n    </div>\r\n</div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -4878,7 +4945,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "створюємо нове місто\r\n<button data-ok-btn>ok</button>";
+var code = "створюємо нове гніздо\r\n<button data-ok-btn>ok</button>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -4896,7 +4963,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<ul data-operations-list>\r\n    <li><button data-add-new-nest>нове місто</button></li>\r\n    <li><button>рейд</button></li>\r\n</ul>\r\n<button data-cancel-operation-creating>назад</button>\r\n<div data-operation-creator-placeholder></div>";
+var code = "<div class=\"operation-tab__operations-list-container\" data-operations-list></div>\r\n<button data-cancel-operation-creating>назад</button>\r\n<div data-new-operation-list>\r\n    створити операцію:\r\n    <ul class=\"operation-tab__new-operation-list\">\r\n        <li><button data-add-new-nest>нове гніздо</button></li>\r\n        <li><button>рейд</button></li>\r\n    </ul>\r\n</div>\r\n<div data-operation-creator-placeholder></div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -5491,6 +5558,61 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
        /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css":
+/*!**********************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_operationsTab_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../../node_modules/css-loader/dist/cjs.js!./operationsTab.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_operationsTab_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_operationsTab_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_operationsTab_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_operationsTab_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),

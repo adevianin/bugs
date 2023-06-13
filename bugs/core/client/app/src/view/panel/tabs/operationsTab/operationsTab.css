@@ -1,0 +1,15 @@
+.operation-tab {
+    display: flex;
+    flex-direction: row;
+}
+
+.operation-tab__new-operation-list {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+.operation-tab__operations-list-container {
+    padding: 5px;
+    width: 150px;
+}
