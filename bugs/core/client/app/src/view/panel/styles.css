@@ -10,7 +10,9 @@
 }
 
 .panel__tab-switcher {
-    padding: 5px
+    padding: 5px;
+    width: 150px;
+    border-right: solid 1px;
 }
 
 .panel__tab-container {
