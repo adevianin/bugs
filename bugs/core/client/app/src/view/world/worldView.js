@@ -17,21 +17,19 @@ class WorldView extends BaseGraphicView {
         this._el = el;
         this._entityViews = [];
         this._textures = {};
-        this._canvasWidth = window.innerWidth;
-        this._canvasHeight = window.innerHeight;
+        this._canvasWidth = el.offsetWidth;
+        this._canvasHeight = el.offsetHeight;
 
-        this._domainFacade.events.on('loginStatusChanged', this._renderLoginStatus.bind(this));
         this._domainFacade.events.on('worldCleared', this._onWorldCleared.bind(this));
 
         this._init();
-
-        this._renderLoginStatus();
     }
 
     async _init() {
         await WorldView.textureManager.prepareTextures();
 
-        this._app = new PIXI.Application({ width: this._canvasWidth, height: this._canvasHeight, background: 0xffffff, });
+        this._app = new PIXI.Application();
+        this._app.resizeTo = this._el;
         this._el.appendChild(this._app.view);
 
         this._bg = new PIXI.TilingSprite(WorldView.textureManager.getTexture('grass.png'));
@@ -60,10 +58,6 @@ class WorldView extends BaseGraphicView {
         }
 
         this._domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
-    }
-
-    _toggle(isEnabled) {
-        this._el.classList.toggle('hidden', !isEnabled);
     }
 
     _onWholeWorldInit() {
@@ -102,11 +96,6 @@ class WorldView extends BaseGraphicView {
             default:
                 throw 'unknown type of entity';
         }
-    }
-
-    _renderLoginStatus() {
-        let isLoggedIn = this._domainFacade.isLoggedIn();
-        this._toggle(isLoggedIn);
     }
 
     _onWorldCleared() {

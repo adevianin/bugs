@@ -1549,10 +1549,14 @@ class AppView {
         this._document = document;
         this._domainFacade = domainFacade;
 
+        this._domainFacade.events.on('loginStatusChanged', this._renderLoginStatus.bind(this));
+
         this._render();
     }
 
     _render() {
+        this._renderLoginStatus();
+
         let worldEl = this._document.querySelector('[data-world]');
         this._worldView = new _world_worldView__WEBPACK_IMPORTED_MODULE_1__.WorldView(worldEl, this._domainFacade);
 
@@ -1561,6 +1565,11 @@ class AppView {
 
         let panelViewEl = this._document.querySelector('[data-panel]');
         this._panelView = new _panel_panelView__WEBPACK_IMPORTED_MODULE_3__.PanelView(panelViewEl);
+    }
+
+    _renderLoginStatus() {
+        let isLoggedin = this._domainFacade.isLoggedIn();
+        this._document.querySelector('[data-game-container]').classList.toggle('hidden', !isLoggedin);
     }
 }
 
@@ -1791,16 +1800,10 @@ class PanelView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTML
     _renderState() {
         let isLoggedIn = PanelView.domainFacade.isLoggedIn();
 
-        this._toggle(isLoggedIn);
-
         if (isLoggedIn) {
             let user = PanelView.domainFacade.getUserData();
             this._userNameEl.innerHTML = user.username;
         }
-    }
-
-    _toggle(isEnabled) {
-        this._el.classList.toggle('hidden', !isEnabled);
     }
 
     _onUserLogoutBtnClick() {
@@ -2628,21 +2631,19 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
         this._el = el;
         this._entityViews = [];
         this._textures = {};
-        this._canvasWidth = window.innerWidth;
-        this._canvasHeight = window.innerHeight;
+        this._canvasWidth = el.offsetWidth;
+        this._canvasHeight = el.offsetHeight;
 
-        this._domainFacade.events.on('loginStatusChanged', this._renderLoginStatus.bind(this));
         this._domainFacade.events.on('worldCleared', this._onWorldCleared.bind(this));
 
         this._init();
-
-        this._renderLoginStatus();
     }
 
     async _init() {
         await WorldView.textureManager.prepareTextures();
 
-        this._app = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Application({ width: this._canvasWidth, height: this._canvasHeight, background: 0xffffff, });
+        this._app = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Application();
+        this._app.resizeTo = this._el;
         this._el.appendChild(this._app.view);
 
         this._bg = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.TilingSprite(WorldView.textureManager.getTexture('grass.png'));
@@ -2671,10 +2672,6 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
         }
 
         this._domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
-    }
-
-    _toggle(isEnabled) {
-        this._el.classList.toggle('hidden', !isEnabled);
     }
 
     _onWholeWorldInit() {
@@ -2713,11 +2710,6 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
             default:
                 throw 'unknown type of entity';
         }
-    }
-
-    _renderLoginStatus() {
-        let isLoggedIn = this._domainFacade.isLoggedIn();
-        this._toggle(isLoggedIn);
     }
 
     _onWorldCleared() {
@@ -2926,7 +2918,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".hidden {\r\n    display: none !important\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/appStyles.css"],"names":[],"mappings":"AAAA;IACI;AACJ;;AAEA;IACI,SAAS;IACT,UAAU;AACd","sourcesContent":[".hidden {\r\n    display: none !important\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".hidden {\r\n    display: none !important\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n    overflow: hidden;\r\n}\r\n\r\n.game-container {\r\n    height: 100%;\r\n    display: flex;\r\n    flex-direction: column;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/appStyles.css"],"names":[],"mappings":"AAAA;IACI;AACJ;;AAEA;IACI,SAAS;IACT,UAAU;IACV,gBAAgB;AACpB;;AAEA;IACI,YAAY;IACZ,aAAa;IACb,sBAAsB;AAC1B","sourcesContent":[".hidden {\r\n    display: none !important\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n    overflow: hidden;\r\n}\r\n\r\n.game-container {\r\n    height: 100%;\r\n    display: flex;\r\n    flex-direction: column;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -2953,7 +2945,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".panel {\r\n    height: 50px;\r\n    background-color: beige;\r\n    display: flex;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,uBAAuB;IACvB,aAAa;AACjB","sourcesContent":[".panel {\r\n    height: 50px;\r\n    background-color: beige;\r\n    display: flex;\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,aAAa;IACb,gBAAgB;IAChB,YAAY;AAChB;;AAEA;IACI;AACJ","sourcesContent":[".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -3007,7 +2999,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".canvas-container {\r\n    display: flex;\r\n    justify-content: center;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/world/worldStyles.css"],"names":[],"mappings":"AAAA;IACI,aAAa;IACb,uBAAuB;AAC3B","sourcesContent":[".canvas-container {\r\n    display: flex;\r\n    justify-content: center;\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".canvas-container {\r\n    flex-grow: 1;\r\n    overflow: hidden;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/world/worldStyles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,gBAAgB;AACpB","sourcesContent":[".canvas-container {\r\n    flex-grow: 1;\r\n    overflow: hidden;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

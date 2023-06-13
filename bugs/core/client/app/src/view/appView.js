@@ -9,10 +9,14 @@ class AppView {
         this._document = document;
         this._domainFacade = domainFacade;
 
+        this._domainFacade.events.on('loginStatusChanged', this._renderLoginStatus.bind(this));
+
         this._render();
     }
 
     _render() {
+        this._renderLoginStatus();
+
         let worldEl = this._document.querySelector('[data-world]');
         this._worldView = new WorldView(worldEl, this._domainFacade);
 
@@ -21,6 +25,11 @@ class AppView {
 
         let panelViewEl = this._document.querySelector('[data-panel]');
         this._panelView = new PanelView(panelViewEl);
+    }
+
+    _renderLoginStatus() {
+        let isLoggedin = this._domainFacade.isLoggedIn();
+        this._document.querySelector('[data-game-container]').classList.toggle('hidden', !isLoggedin);
     }
 }
 

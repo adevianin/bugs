@@ -29,16 +29,10 @@ class PanelView extends BaseHTMLView {
     _renderState() {
         let isLoggedIn = PanelView.domainFacade.isLoggedIn();
 
-        this._toggle(isLoggedIn);
-
         if (isLoggedIn) {
             let user = PanelView.domainFacade.getUserData();
             this._userNameEl.innerHTML = user.username;
         }
-    }
-
-    _toggle(isEnabled) {
-        this._el.classList.toggle('hidden', !isEnabled);
     }
 
     _onUserLogoutBtnClick() {

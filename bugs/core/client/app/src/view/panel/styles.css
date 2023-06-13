@@ -1,5 +1,10 @@
 .panel {
-    height: 50px;
     background-color: beige;
     display: flex;
+    overflow: hidden;
+    height: 100%;
+}
+
+.panel-container {
+    height: 200px
 }
