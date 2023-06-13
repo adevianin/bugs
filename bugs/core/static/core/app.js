@@ -1537,7 +1537,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _appStyles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./appStyles.css */ "./bugs/core/client/app/src/view/appStyles.css");
 /* harmony import */ var _world_worldView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./world/worldView */ "./bugs/core/client/app/src/view/world/worldView.js");
 /* harmony import */ var _account_accountView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./account/accountView */ "./bugs/core/client/app/src/view/account/accountView.js");
-/* harmony import */ var _panel_panelView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./panel/panelView */ "./bugs/core/client/app/src/view/panel/panelView.js");
+/* harmony import */ var _panel_panel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./panel/panel */ "./bugs/core/client/app/src/view/panel/panel.js");
 
 
 
@@ -1564,7 +1564,7 @@ class AppView {
         this._accountView = new _account_accountView__WEBPACK_IMPORTED_MODULE_2__.AccountView(accountViewEl, this._domainFacade);
 
         let panelViewEl = this._document.querySelector('[data-panel]');
-        this._panelView = new _panel_panelView__WEBPACK_IMPORTED_MODULE_3__.PanelView(panelViewEl);
+        this._panel = new _panel_panel__WEBPACK_IMPORTED_MODULE_3__.Panel(panelViewEl);
     }
 
     _renderLoginStatus() {
@@ -1709,23 +1709,85 @@ let antTypesLabels = {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/operations/operationsPanel.js":
-/*!***************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/operations/operationsPanel.js ***!
-  \***************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/panel.js":
+/*!******************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/panel.js ***!
+  \******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "OperationsPanel": () => (/* binding */ OperationsPanel)
+/* harmony export */   "Panel": () => (/* binding */ Panel)
 /* harmony export */ });
-/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./template.html */ "./bugs/core/client/app/src/view/panel/operations/template.html");
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/panel/styles.css");
+/* harmony import */ var _panelTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./panelTmpl.html */ "./bugs/core/client/app/src/view/panel/panelTmpl.html");
+/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _tabs_userTab_userTab__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./tabs/userTab/userTab */ "./bugs/core/client/app/src/view/panel/tabs/userTab/userTab.js");
+/* harmony import */ var _tabs_operationsTab_operationsTab__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tabs/operationsTab/operationsTab */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.js");
 
 
 
-class OperationsPanel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+
+
+
+class Panel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
+
+    constructor(el) {
+        super();
+        this._el = el;
+
+        this._render();
+
+        this._el.querySelector('[data-tab-switcher]').addEventListener('change', this._switchTabToSelected.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = _panelTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._userTab = new _tabs_userTab_userTab__WEBPACK_IMPORTED_MODULE_3__.UserTab(this._el.querySelector('[data-user-tab]'));
+        this._operationsTab = new _tabs_operationsTab_operationsTab__WEBPACK_IMPORTED_MODULE_4__.OperationsTab(this._el.querySelector('[data-operations-tab]'));
+
+        this._switchTabToSelected();
+    }
+
+    _switchTabToSelected() {
+        let tabName = this._getTabSwitcherValue();
+        
+        this._userTab.toggle(tabName == 'user');
+        this._operationsTab.toggle(tabName == 'operations');
+    }
+
+    _getTabSwitcherValue() {
+        let inputs = this._el.querySelectorAll('[data-tab-switcher] input');
+        let checkedInputEl = Array.from(inputs).find(input => input.checked);
+        return checkedInputEl.value;
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.js":
+/*!*********************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.js ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OperationsTab": () => (/* binding */ OperationsTab)
+/* harmony export */ });
+/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _operationTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationTabTmpl.html");
+
+
+
+class OperationsTab extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
     
     constructor(el) {
         super();
@@ -1736,8 +1798,12 @@ class OperationsPanel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._addNewNestBtn.addEventListener('click', this._onAddNewNestClick.bind(this));
     }
 
+    toggle(isEnabled) {
+        this._el.classList.toggle('hidden', !isEnabled);
+    }
+
     _render() {
-        this._el.innerHTML = _template_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.innerHTML = _operationTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._addNewNestBtn = this._el.querySelector('[data-add-new-nest]');
     }
@@ -1754,61 +1820,60 @@ class OperationsPanel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/panelView.js":
-/*!**********************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/panelView.js ***!
-  \**********************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/tabs/userTab/userTab.js":
+/*!*********************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/userTab/userTab.js ***!
+  \*********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "PanelView": () => (/* binding */ PanelView)
+/* harmony export */   "UserTab": () => (/* binding */ UserTab)
 /* harmony export */ });
-/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/panel/styles.css");
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./template.html */ "./bugs/core/client/app/src/view/panel/template.html");
-/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
-/* harmony import */ var _operations_operationsPanel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./operations/operationsPanel */ "./bugs/core/client/app/src/view/panel/operations/operationsPanel.js");
+/* harmony import */ var view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _userTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/userTab/userTabTmpl.html");
 
 
 
-
-
-
-class PanelView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
+class UserTab extends view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
     constructor(el) {
         super();
         this._el = el;
 
         this._render();
-        this._renderState();
 
-        PanelView.domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
+        UserTab.domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
     }
 
+    toggle(isEnabled) {
+        this._el.classList.toggle('hidden', !isEnabled);
+    }
+
     _render() {
-        this._el.innerHTML = _template_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.innerHTML = _userTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._userNameEl = this._el.querySelector('[data-username]');
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
 
-        new _operations_operationsPanel__WEBPACK_IMPORTED_MODULE_3__.OperationsPanel(this._el.querySelector('[data-operations-panel]'));
+        this._renderState();
     }
 
     _renderState() {
-        let isLoggedIn = PanelView.domainFacade.isLoggedIn();
+        let isLoggedIn = UserTab.domainFacade.isLoggedIn();
 
         if (isLoggedIn) {
-            let user = PanelView.domainFacade.getUserData();
+            let user = UserTab.domainFacade.getUserData();
             this._userNameEl.innerHTML = user.username;
         }
     }
 
     _onUserLogoutBtnClick() {
-        PanelView.domainFacade.logout();
+        UserTab.domainFacade.logout();
     }
+
 }
 
 
@@ -2945,7 +3010,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,aAAa;IACb,gBAAgB;IAChB,YAAY;AAChB;;AAEA;IACI;AACJ","sourcesContent":[".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}\r\n\r\n.panel--tab-switcher {\r\n    padding: 5px\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,aAAa;IACb,gBAAgB;IAChB,YAAY;AAChB;;AAEA;IACI;AACJ;;AAEA;IACI;AACJ","sourcesContent":[".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}\r\n\r\n.panel--tab-switcher {\r\n    padding: 5px\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -4692,10 +4757,28 @@ var code = "<div class=\"account-tab\" data-login-tab>\r\n    <span class=\"acco
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/operations/template.html":
-/*!**********************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/operations/template.html ***!
-  \**********************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/panelTmpl.html":
+/*!************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/panelTmpl.html ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div data-tab-switcher>\r\n    <div>\r\n        <label>\r\n            <input type=\"radio\" name=\"panelTabSwitcher\" value=\"user\" checked />\r\n            користувач\r\n        </label>\r\n    </div>\r\n    <div>\r\n        <label>\r\n            <input type=\"radio\" name=\"panelTabSwitcher\" value=\"operations\" />\r\n            операції\r\n        </label>\r\n    </div>\r\n</div>\r\n<div class=\"panel--tab-switcher\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n</div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationTabTmpl.html":
+/*!**************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationTabTmpl.html ***!
+  \**************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4710,10 +4793,10 @@ var code = "<ul>\r\n    <li><button data-add-new-nest>нове місто</butto
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/template.html":
-/*!***********************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/template.html ***!
-  \***********************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/tabs/userTab/userTabTmpl.html":
+/*!***************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/userTab/userTabTmpl.html ***!
+  \***************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4722,7 +4805,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    логін: <span data-username></span> \r\n    <button data-logout-btn>вийти</button>\r\n</div>\r\n<div data-operations-panel></div>";
+var code = "<div>\r\n    логін: <span data-username></span> \r\n    <button data-logout-btn>вийти</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

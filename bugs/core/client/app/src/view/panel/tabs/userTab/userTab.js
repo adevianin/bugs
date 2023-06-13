@@ -1,0 +1,46 @@
+import { BaseHTMLView } from 'view/base/baseHTMLView';
+import userTabTmpl from './userTabTmpl.html';
+
+class UserTab extends BaseHTMLView {
+
+    constructor(el) {
+        super();
+        this._el = el;
+
+        this._render();
+
+        UserTab.domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
+        this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
+    }
+
+    toggle(isEnabled) {
+        this._el.classList.toggle('hidden', !isEnabled);
+    }
+
+    _render() {
+        this._el.innerHTML = userTabTmpl;
+
+        this._userNameEl = this._el.querySelector('[data-username]');
+        this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
+
+        this._renderState();
+    }
+
+    _renderState() {
+        let isLoggedIn = UserTab.domainFacade.isLoggedIn();
+
+        if (isLoggedIn) {
+            let user = UserTab.domainFacade.getUserData();
+            this._userNameEl.innerHTML = user.username;
+        }
+    }
+
+    _onUserLogoutBtnClick() {
+        UserTab.domainFacade.logout();
+    }
+
+}
+
+export {
+    UserTab
+}

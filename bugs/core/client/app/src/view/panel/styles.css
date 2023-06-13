@@ -8,3 +8,7 @@
 .panel-container {
     height: 200px
 }
+
+.panel--tab-switcher {
+    padding: 5px
+}

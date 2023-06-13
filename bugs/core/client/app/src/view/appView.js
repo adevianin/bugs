@@ -2,7 +2,7 @@ import './appStyles.css';
 
 import { WorldView } from './world/worldView';
 import { AccountView } from './account/accountView';
-import { PanelView } from './panel/panelView';
+import { Panel } from './panel/panel';
 
 class AppView {
     constructor(document, domainFacade) {
@@ -24,7 +24,7 @@ class AppView {
         this._accountView = new AccountView(accountViewEl, this._domainFacade);
 
         let panelViewEl = this._document.querySelector('[data-panel]');
-        this._panelView = new PanelView(panelViewEl);
+        this._panel = new Panel(panelViewEl);
     }
 
     _renderLoginStatus() {

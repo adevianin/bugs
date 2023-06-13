@@ -1,7 +1,7 @@
-import { BaseHTMLView } from "../../base/baseHTMLView"
-import tmpl from './template.html';
+import { BaseHTMLView } from "../../../base/baseHTMLView"
+import operationTabTmpl from './operationTabTmpl.html';
 
-class OperationsPanel extends BaseHTMLView {
+class OperationsTab extends BaseHTMLView {
     
     constructor(el) {
         super();
@@ -12,8 +12,12 @@ class OperationsPanel extends BaseHTMLView {
         this._addNewNestBtn.addEventListener('click', this._onAddNewNestClick.bind(this));
     }
 
+    toggle(isEnabled) {
+        this._el.classList.toggle('hidden', !isEnabled);
+    }
+
     _render() {
-        this._el.innerHTML = tmpl;
+        this._el.innerHTML = operationTabTmpl;
 
         this._addNewNestBtn = this._el.querySelector('[data-add-new-nest]');
     }
@@ -27,5 +31,5 @@ class OperationsPanel extends BaseHTMLView {
 }
 
 export {
-    OperationsPanel
+    OperationsTab
 }
