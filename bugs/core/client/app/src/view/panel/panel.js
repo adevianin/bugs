@@ -8,8 +8,7 @@ import { OperationsTab } from './tabs/operationsTab/operationsTab';
 class Panel extends BaseHTMLView {
 
     constructor(el) {
-        super();
-        this._el = el;
+        super(el);
 
         this._render();
 

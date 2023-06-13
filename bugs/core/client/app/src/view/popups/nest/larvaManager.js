@@ -6,8 +6,7 @@ import { antTypesLabels } from '../../labels/antTypesLabels';
 class LarvaManager extends BaseHTMLView {
 
     constructor(el, nest) {
-        super();
-        this._el = el;
+        super(el);
         this._nest = nest;
         this._myQueen = LarvaManager.domainFacade.findMyQueen();
 
@@ -19,7 +18,6 @@ class LarvaManager extends BaseHTMLView {
     }
 
     remove() {
-        super.remove();
         this._unbindLarvaeChangedListener();
         this._unbindQueenLocatedInNestListener();
     }

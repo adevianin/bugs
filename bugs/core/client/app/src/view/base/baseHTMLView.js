@@ -6,8 +6,20 @@ class BaseHTMLView {
         BaseHTMLView.domainFacade = domainFacade;
     }
 
+    constructor(el) {
+        this._el = el;
+    }
+
+    get el() {
+        return this._el;
+    }
+
+    toggle(isEnabled) {
+        this._el.classList.toggle('hidden', !isEnabled);
+    }
+
     remove() {
-        throw 'remove method is abstract';
+        this._el.remove();
     }
 }
 

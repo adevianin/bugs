@@ -4,17 +4,12 @@ import userTabTmpl from './userTabTmpl.html';
 class UserTab extends BaseHTMLView {
 
     constructor(el) {
-        super();
-        this._el = el;
+        super(el);
 
         this._render();
 
         UserTab.domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
-    }
-
-    toggle(isEnabled) {
-        this._el.classList.toggle('hidden', !isEnabled);
     }
 
     _render() {

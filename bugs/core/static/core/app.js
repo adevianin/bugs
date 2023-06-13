@@ -915,7 +915,7 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        console.log(msg)
+        // console.log(msg)
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);
@@ -1635,7 +1635,21 @@ class BaseHTMLView {
         BaseHTMLView.domainFacade = domainFacade;
     }
 
-    remove() {}
+    constructor(el) {
+        this._el = el;
+    }
+
+    get el() {
+        return this._el;
+    }
+
+    toggle(isEnabled) {
+        this._el.classList.toggle('hidden', !isEnabled);
+    }
+
+    remove() {
+        this._el.remove();
+    }
 }
 
 
@@ -1735,8 +1749,7 @@ __webpack_require__.r(__webpack_exports__);
 class Panel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
 
     constructor(el) {
-        super();
-        this._el = el;
+        super(el);
 
         this._render();
 
@@ -1771,6 +1784,78 @@ class Panel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/newNest/newNestOperationCreator.js":
+/*!*********************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/newNest/newNestOperationCreator.js ***!
+  \*********************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NewNestOperationCreator": () => (/* binding */ NewNestOperationCreator)
+/* harmony export */ });
+/* harmony import */ var _newNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./newNestOperationCreatorTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/newNest/newNestOperationCreatorTmpl.html");
+/* harmony import */ var _operationCreator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../operationCreator */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/operationCreator.js");
+
+
+
+class NewNestOperationCreator extends _operationCreator__WEBPACK_IMPORTED_MODULE_1__.OperationCreator {
+
+    constructor(el, onDone) {
+        super(el, onDone);
+
+        this._render();
+
+        this._okBtnEl.addEventListener('click', this._onOk.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = _newNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_0__["default"];
+
+        this._okBtnEl = this._el.querySelector('[data-ok-btn]');
+    }
+
+    _onOk() {
+        NewNestOperationCreator.domainFacade.buildNewNest({
+            x: 1500,
+            y: 600 
+        })
+        this._onDone();
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/operationCreator.js":
+/*!******************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/operationCreator.js ***!
+  \******************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OperationCreator": () => (/* binding */ OperationCreator)
+/* harmony export */ });
+/* harmony import */ var view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+
+
+class OperationCreator extends view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, onDone) {
+        super(el);
+        this._onDone = onDone;
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.js":
 /*!*********************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.js ***!
@@ -1784,35 +1869,49 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _operationTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationTabTmpl.html");
+/* harmony import */ var _operationCreators_newNest_newNestOperationCreator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./operationCreators/newNest/newNestOperationCreator */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/newNest/newNestOperationCreator.js");
+
 
 
 
 class OperationsTab extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
     
     constructor(el) {
-        super();
-        this._el = el;
+        super(el);
+        this._operationCreator = null;
 
         this._render();
 
         this._addNewNestBtn.addEventListener('click', this._onAddNewNestClick.bind(this));
-    }
-
-    toggle(isEnabled) {
-        this._el.classList.toggle('hidden', !isEnabled);
+        this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
     }
 
     _render() {
         this._el.innerHTML = _operationTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._addNewNestBtn = this._el.querySelector('[data-add-new-nest]');
+        this._operationsListEl = this._el.querySelector('[data-operations-list]');
+        this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
+
+        this._toggleOperationCreating(false);
+    }
+
+    _stopOperationCreating() {
+        this._operationCreator.remove();
+        this._operationCreator = null;
+        this._toggleOperationCreating(false);
     }
 
     _onAddNewNestClick() {
-        OperationsPanel.domainFacade.buildNewNest({
-            x: 1000,
-            y: 500
-        })
+        this._toggleOperationCreating(true);
+        let el = document.createElement('div');
+        this._el.querySelector('[data-operation-creator-placeholder]').appendChild(el);
+        this._operationCreator = new _operationCreators_newNest_newNestOperationCreator__WEBPACK_IMPORTED_MODULE_2__.NewNestOperationCreator(el, this._stopOperationCreating.bind(this));
+    }
+
+    _toggleOperationCreating(isCreating) {
+        this._operationsListEl.classList.toggle('hidden', isCreating);
+        this._cancelOperationCreatingBtn.classList.toggle('hidden', !isCreating);
     }
 }
 
@@ -1839,17 +1938,12 @@ __webpack_require__.r(__webpack_exports__);
 class UserTab extends view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
     constructor(el) {
-        super();
-        this._el = el;
+        super(el);
 
         this._render();
 
         UserTab.domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
-    }
-
-    toggle(isEnabled) {
-        this._el.classList.toggle('hidden', !isEnabled);
     }
 
     _render() {
@@ -1901,32 +1995,31 @@ __webpack_require__.r(__webpack_exports__);
 class BasePopup extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
 
     constructor() {
-        super();
+        super(document.createElement('div'));
         this._title = 'popup title';
-        this.el = document.createElement('div');
         this._bodyEl = null;
     }
 
     render() {
-        this.el.classList.add('popup');
-        this.el.innerHTML = _template_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.classList.add('popup');
+        this._el.innerHTML = _template_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this.el.querySelector('[data-title]').innerHTML = this._title;
+        this._el.querySelector('[data-title]').innerHTML = this._title;
 
-        this.el.querySelector('[data-ok-btn]').addEventListener('click', this.onOk.bind(this));
-        this.el.querySelector('[data-cancel-btn]').addEventListener('click', this.onCancel.bind(this));
+        this._el.querySelector('[data-ok-btn]').addEventListener('click', this.onOk.bind(this));
+        this._el.querySelector('[data-cancel-btn]').addEventListener('click', this.onCancel.bind(this));
     }
 
     get bodyEl() {
         if (!this._bodyEl) {
-            this._bodyEl = this.el.querySelector('[data-popup-body]');
+            this._bodyEl = this._el.querySelector('[data-popup-body]');
         }
 
         return this._bodyEl;
     }
 
     close() {
-        this.el.remove();
+        this.remove();
     }
 
     onOk() {
@@ -1964,8 +2057,7 @@ __webpack_require__.r(__webpack_exports__);
 class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
 
     constructor(el, nest) {
-        super();
-        this._el = el;
+        super(el);
         this._nest = nest;
         this._myQueen = LarvaManager.domainFacade.findMyQueen();
 
@@ -1977,7 +2069,6 @@ class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseH
     }
 
     remove() {
-        super.remove();
         this._unbindLarvaeChangedListener();
         this._unbindQueenLocatedInNestListener();
     }
@@ -4775,6 +4866,24 @@ var code = "<div data-tab-switcher>\r\n    <div>\r\n        <label>\r\n         
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/newNest/newNestOperationCreatorTmpl.html":
+/*!***************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/newNest/newNestOperationCreatorTmpl.html ***!
+  \***************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "створюємо нове місто\r\n<button data-ok-btn>ok</button>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationTabTmpl.html":
 /*!**************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationTabTmpl.html ***!
@@ -4787,7 +4896,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<ul>\r\n    <li><button data-add-new-nest>нове місто</button></li>\r\n    <li><button>рейд</button></li>\r\n</ul>";
+var code = "<ul data-operations-list>\r\n    <li><button data-add-new-nest>нове місто</button></li>\r\n    <li><button>рейд</button></li>\r\n</ul>\r\n<button data-cancel-operation-creating>назад</button>\r\n<div data-operation-creator-placeholder></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
