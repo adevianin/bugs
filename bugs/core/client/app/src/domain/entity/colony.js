@@ -1,8 +1,8 @@
 class Colony {
 
-    constructor(id, owner_id) {
+    constructor(id, onwerId) {
         this._id = id;
-        this._owner_id = owner_id
+        this._onwerId = onwerId
     }
 
     get id() {
@@ -10,7 +10,7 @@ class Colony {
     }
 
     get ownerId() {
-        return this._owner_id;
+        return this._onwerId;
     }
 }
 
