@@ -1,13 +1,13 @@
 from core.world.utils.point import Point
 from core.world.entities.colony.operation.build_new_nest_operation import BuildNewNestOperation
-from core.world.map import Map
+from core.world.world import World
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.nest.nest_factory import NestFactory
 
-class OperationService():
+class ColonyService():
 
-    def __init__(self, map: Map, nest_factory: NestFactory):
-        self._map = map
+    def __init__(self, world: World, nest_factory: NestFactory):
+        self._world = world
         self._nest_factory = nest_factory
 
     def build_new_nest(self, user_id: int,  position: Point):

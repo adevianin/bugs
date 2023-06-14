@@ -56,9 +56,7 @@ class WorldFactory():
         colonies_data = world_data['colonies']
         colonies = []
         for colony_data in colonies_data:
-            nests = map.get_nests_from_colony(colony_data['id'])
-            ants = map.get_ants_from_colony(colony_data['id'])
-            colony = self._colony_factory.build_colony(colony_data['id'], colony_data['owner_id'], nests, ants)
+            colony = self._colony_factory.build_colony(colony_data['id'], colony_data['owner_id'])
             colonies.append(colony)
 
         world = self.build_world(map, colonies)

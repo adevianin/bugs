@@ -5,13 +5,13 @@ from .entities.food.food_factory import FoodFactory
 from .world_factory import WorldFactory
 from .world import World
 from .services.nest_service import NestService
-from .services.command_handler_service import CommandHandlerService
 from .entities.nest.nest_factory import NestFactory
 from .map import Map
 from .utils.size import Size
 from .services.birther_service import BirtherService
-from .services.operation_service import OperationService
+from .services.colony_service import ColonyService
 from .entities.colony.colony_factory import ColonyFactory
+from core.world.utils.point import Point
 
 from typing import Callable
 
@@ -53,9 +53,8 @@ class WorldFacade:
 
         self._world = world_factory.build_world_from_json(world_data, map)
 
-        operation_service = OperationService(map, nest_factory)
-        self._nest_service = NestService(map, self._world, world_factory)
-        self._command_handler_service = CommandHandlerService(self._nest_service, operation_service)
+        operation_service = ColonyService(self._world, nest_factory)
+        self._nest_service = NestService(self._world)
         birther_service = BirtherService(self._event_bus, map, ant_factory, food_factory)
 
         self._world.run()
@@ -83,4 +82,12 @@ class WorldFacade:
         self._event_bus.remove_listener(event_name, callback)
 
     def handle_command(self, command_json, user_id):
-        self._command_handler_service.handle_command(command_json, user_id)
+        params = command_json['params']
+        match command_json['command_type']:
+            case 'add_larva':
+                self._nest_service.add_larva(params['nest_id'], user_id, params['larva_type'])
+            case 'build_new_nest':
+                self._operation_service.build_new_nest(user_id, Point(params['position']['x'], params['position']['y']))
+            case _:
+                raise Exception('unknown type of command')
+        
