@@ -7,8 +7,8 @@ from core.world.entities.nest.nest import Nest
 
 class QueenAnt(Ant):
 
-    def __init__(self, event_bus: EventEmitter, id: int, owner_id: int, mind: QueenAntMind, body: QueenAntBody):
-        super().__init__(event_bus, id, AntTypes.QUEEN, owner_id, mind, body)
+    def __init__(self, event_bus: EventEmitter, id: int, from_colony: int, mind: QueenAntMind, body: QueenAntBody):
+        super().__init__(event_bus, id, AntTypes.QUEEN, from_colony, mind, body)
 
     def build_new_nest(self, new_nest: Nest):
         return self._mind.build_new_nest(new_nest)

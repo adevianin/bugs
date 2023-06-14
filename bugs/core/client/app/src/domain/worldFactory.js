@@ -5,6 +5,7 @@ import { Nest } from './entity/nest';
 import { Food } from './entity/food';
 import { FoodArea } from './entity/foodArea';
 import { Larva } from './entity/larva';
+import { Colony } from './entity/colony';
 
 class WorldFactory {
 
@@ -17,14 +18,14 @@ class WorldFactory {
         return new World(this._mainEventBus);
     }
 
-    buildAnt(id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInNestId) {
-        return new Ant(this._mainEventBus, id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInNestId);
+    buildAnt(id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId) {
+        return new Ant(this._mainEventBus, id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId);
     }
 
-    buildNest(id, position, ownerId, storedCalories, larvaeData, larvaPlacesCount) {
+    buildNest(id, position, fromColony, storedCalories, larvaeData, larvaPlacesCount) {
         let larvae = [];
         larvaeData.forEach(larvaData => larvae.push(Larva.fromJson(larvaData.ant_type, larvaData.progress)));
-        return new Nest(this._mainEventBus, this._nestApi, id, position, ownerId, storedCalories, larvae, larvaPlacesCount);
+        return new Nest(this._mainEventBus, this._nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount);
     }
 
     buildFood(id, position, calories, food_type, food_varity) {
@@ -38,9 +39,9 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case EntityTypes.ANT:
-                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.owner_id, entityJson.picked_food_id, entityJson.user_speed, entityJson.located_in_nest_id);
+                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.from_colony, entityJson.picked_food_id, entityJson.user_speed, entityJson.located_in_nest_id);
             case EntityTypes.NEST:
-                return this.buildNest(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
+                return this.buildNest(entityJson.id, entityJson.position, entityJson.from_colony, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
             case EntityTypes.FOOD:
                 return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety);
             case EntityTypes.FOOD_AREA:
@@ -48,6 +49,10 @@ class WorldFactory {
             default:
                 throw 'unknown type of entity';
         }
+    }
+
+    buildColony(id, owner_id) {
+        return new Colony(id, owner_id);
     }
 }
 

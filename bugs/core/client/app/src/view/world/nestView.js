@@ -15,7 +15,7 @@ class NestView extends EntityView {
         this._sprite.x = this._entity.position.x;
         this._sprite.y = this._entity.position.y;
 
-        if (entity.ownerId == NestView.domainFacade.getUserData().id) {
+        if (NestView.domainFacade.isNestMine(entity)) {
             this._sprite.on('pointerdown', this._onClick.bind(this));
         }
         

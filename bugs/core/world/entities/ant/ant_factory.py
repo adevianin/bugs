@@ -28,47 +28,47 @@ class AntFactory():
         self._event_bus = event_bus
         self._map = map
 
-    def build_ant(self, id: int, owner_id: int, ant_type: AntTypes, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest) -> Ant:
+    def build_ant(self, id: int, from_colony: int, ant_type: AntTypes, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest) -> Ant:
         match ant_type:
             case AntTypes.WORKER:
-                return self._build_worker_ant(id, owner_id, dna_profile, position, nest, located_in_nest)
+                return self._build_worker_ant(id, from_colony, dna_profile, position, nest, located_in_nest)
             case AntTypes.WARRIOR:
-                return self._build_warrior_ant(id, owner_id, dna_profile, position, nest, located_in_nest)
+                return self._build_warrior_ant(id, from_colony, dna_profile, position, nest, located_in_nest)
             case AntTypes.QUEEN:
-                return self._build_queen_ant(id, owner_id, dna_profile, position, nest, located_in_nest)
+                return self._build_queen_ant(id, from_colony, dna_profile, position, nest, located_in_nest)
             case _:
                 raise Exception('uknown type of ant')
             
     def give_birth(self, larva: Larva, nest: Nest):
-        return self.build_ant(-1, nest.owner_id, larva.ant_type, larva.dna_profile, larva.position, nest, None)
+        return self.build_ant(-1, nest.from_colony, larva.ant_type, larva.dna_profile, larva.position, nest, None)
     
-    def _build_warrior_ant(self, id: int, owner_id: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest):
+    def _build_warrior_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest):
         ant_body_events = EventEmitter()
         ant_mind_events = EventEmitter()
         body = WarriorAntBody(ant_body_events, dna_profile, position, located_in_nest)
         ant_task_factory = WarriorTaskFactory(body, self._map)
         mind = WarrirorAntMind(ant_mind_events, body, ant_task_factory, self._map, Memory(), nest)
-        ant = WarriorAnt(self._event_bus, id, owner_id, mind, body)
+        ant = WarriorAnt(self._event_bus, id, from_colony, mind, body)
 
         return ant
     
-    def _build_worker_ant(self, id: int, owner_id: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest):
+    def _build_worker_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest):
         ant_body_events = EventEmitter()
         ant_mind_events = EventEmitter()
         body = WorkerAntBody(ant_body_events, dna_profile, position, located_in_nest)
         ant_task_factory = WorkerTaskFactory(body, self._map)
         mind = WorkerAntMind(ant_mind_events, body, ant_task_factory, self._map, Memory(), nest)
-        ant = WorkerAnt(self._event_bus, id, owner_id, mind, body)
+        ant = WorkerAnt(self._event_bus, id, from_colony, mind, body)
 
         return ant
     
-    def _build_queen_ant(self, id: int, owner_id: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest):
+    def _build_queen_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest):
         ant_body_events = EventEmitter()
         ant_mind_events = EventEmitter()
         body = QueenAntBody(ant_body_events, dna_profile, position, located_in_nest)
         ant_task_factory = QueenTaskFactory(body, self._map)
         mind = QueenAntMind(ant_mind_events, body, ant_task_factory, self._map, Memory(), nest)
-        ant = QueenAnt(self._event_bus, id, owner_id, mind, body)
+        ant = QueenAnt(self._event_bus, id, from_colony, mind, body)
 
         return ant
 

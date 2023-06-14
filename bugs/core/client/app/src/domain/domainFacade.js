@@ -13,7 +13,7 @@ class DomainFacade {
     }
 
     getEntities() {
-        return this._worldService.getEntities();
+        return this._worldService.world.entities;
     }
 
     findEntityById(id) {
@@ -65,7 +65,13 @@ class DomainFacade {
 
     findMyQueen() {
         let userData = this.getUserData();
-        return this._worldService.findMyQueen(userData.id);
+        return this._worldService.world.findQueenByOwnerId(userData.id);
+    }
+
+    isNestMine(nest) {
+        let userData = this.getUserData();
+        let myColony = this._worldService.world.findColonyByOwnerId(userData.id);
+        return nest.fromColony == myColony.id;
     }
 
     buildNewNest(position) {

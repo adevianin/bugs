@@ -1,9 +1,11 @@
 import { EntityTypes } from "../enum/entityTypes";
+import { AntTypes } from "../enum/antTypes";
 
 class World {
     constructor(eventBus) {
         this._eventBus = eventBus;
         this._entities = [];
+        this._colonies = [];
 
         this._eventBus.on('died', this._on_died.bind(this));
     }
@@ -28,9 +30,8 @@ class World {
         this._entities.push(entity);
     }
 
-    updateEntity(entityJson) {
-        let entity = this.findEntityById(entityJson.id);
-        entity.updateEntity(entityJson);
+    addColony(colony) {
+        this._colonies.push(colony);
     }
 
     deleteEntity(entityId) {
@@ -48,22 +49,35 @@ class World {
     }
 
     findEntityById(id) {
-        return this._entities.find( entity => entity.id === id);
+        return this._entities.find( entity => entity.id == id);
+    }
+
+    findColonyByOwnerId(ownerId) {
+        return this._colonies.find(colony => colony.ownerId == ownerId);
+    }
+
+    findAntsFromColony(colonyId) {
+        return this._entities.filter(e => e.type == EntityTypes.ANT && e.fromColony == colonyId);
+    }
+
+    findNestsFromColony(colonyId) {
+        return this._entities.filter(e => e.type == EntityTypes.NEST && e.fromColony == colonyId);
+    }
+
+    findQueenByOwnerId(ownerId) {
+        let colony = this.findColonyByOwnerId(ownerId);
+        let colonyAnts = this.findAntsFromColony(colony.id);
+
+        return colonyAnts.find(a => a.antType == AntTypes.QUEEN);
     }
 
     findEntityByType(type) {
-        let foundEntities = [];
-        this._entities.forEach(e => {
-            if (e.type == type) {
-                foundEntities.push(e);
-            }
-        });
-
-        return foundEntities;
+        return this._entities.filter(e => e.type == type);
     }
 
     clear() {
         this._entities = [];
+        this._colonies = [];
         this._eventBus.emit('worldCleared');
     }
 

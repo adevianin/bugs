@@ -5,8 +5,8 @@ import { distance } from 'utils/distance';
 
 class Ant extends Entity {
 
-    constructor(eventBus, id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInNestId) {
-        super(eventBus, id, position, EntityTypes.ANT, ownerId);
+    constructor(eventBus, id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId) {
+        super(eventBus, id, position, EntityTypes.ANT, fromColony);
         this.pickedFoodId = pickedFoodId;
         this._userSpeed = userSpeed;
         this._antType = antType;

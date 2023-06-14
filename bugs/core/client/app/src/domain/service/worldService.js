@@ -24,14 +24,16 @@ class WorldService {
             let entity = this._worldFactory.buildEntity(entityJson);
             this._world.addEntity(entity); 
         });
+
+        worldJson.colonies.forEach(colonyJson => {
+            let colony = this._worldFactory.buildColony(colonyJson.id, colonyJson.owner_id);
+            this._world.addColony(colony);
+        });
+        
         this._world.size = worldJson.size;
 
         this._isWholeWorldInited = true;
         this._mainEventBus.emit('wholeWorldInited');
-    }
-
-    getEntities() {
-        return this._world.entities;
     }
 
     giveBirthToEntity(entityJson) {
@@ -47,12 +49,6 @@ class WorldService {
 
     isWholeWorldInited() {
         return this._isWholeWorldInited;
-    }
-
-    findMyQueen(userId) {
-        return this._world.entities.find(e => { 
-            return e.type == EntityTypes.ANT && e.antType == AntTypes.QUEEN && e.ownerId == userId;
-        });
     }
 
 }

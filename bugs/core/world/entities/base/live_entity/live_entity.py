@@ -8,8 +8,8 @@ from core.world.entities.nest.nest import Nest
 
 class LiveEntity(Entity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes, owner_id: int, mind: Mind, body: Body):
-        super().__init__(event_bus, id, type, owner_id)
+    def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes, from_colony: int, mind: Mind, body: Body):
+        super().__init__(event_bus, id, type, from_colony)
         self._mind = mind
         self._body = body
 

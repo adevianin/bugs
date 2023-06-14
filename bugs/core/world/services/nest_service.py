@@ -4,33 +4,26 @@ from core.world.entities.base.entity_types import EntityTypes
 from core.world.world_factory import WorldFactory
 from core.world.entities.ant.base.larva import Larva
 from core.world.entities.nest.nest import Nest
+from core.world.world import World
 
 class NestService():
 
-    def __init__(self, map: Map, world_factory: WorldFactory):
+    def __init__(self, map: Map, world: World, world_factory: WorldFactory):
         self._map = map
+        self._world = world
         self._world_factory = world_factory
 
     def add_larva(self, nest_id: int, user_id: int, larva_type: AntTypes):
-        nest = self._map.get_entity_by_id(nest_id)
-        queen = self._find_queen_in_nest(nest)
-
-        if (not queen):
-            raise Exception('queen is not in nest')
+        colony = self._world.get_colony_owned_by_user(user_id)
+        nest = colony.get_nest_by_id(nest_id)
 
         if (not nest):
-            raise Exception(f'nest id = {nest_id} is not found')
-        
-        if (nest.owner_id != user_id):
-            raise Exception('used does not own nest')
-        
+            raise Exception(f'nest id = {nest_id} is not found in users colony')
+
+        queen = colony.get_queen()
+
+        if (queen.located_in_nest_id != nest_id):
+            raise Exception('queen is not in nest')
+
         larva = Larva.build_larva(nest.position, larva_type, queen.dna_profile, 0)
         nest.add_larva(larva)
-
-    def _find_queen_in_nest(self, nest: Nest):
-        entities = self._map.get_entities_from_nest(nest.id)
-        for entity in entities:
-            if entity.type == EntityTypes.ANT and entity.ant_type == AntTypes.QUEEN:
-                return entity
-        
-        return None

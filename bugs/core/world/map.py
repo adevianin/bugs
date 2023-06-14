@@ -62,13 +62,21 @@ class Map:
 
         return found_entities
     
-    def get_ants_owned_by(self, owner_id: int, ant_type: AntTypes = None):
+    def get_ants_from_colony(self, colony_id: int, ant_type: AntTypes = None):
         found_ants = []
         for entity in self.get_entities():
-            if entity.type == EntityTypes.ANT and entity.owner_id == owner_id and (ant_type == None or entity.ant_type == ant_type):
+            if entity.type == EntityTypes.ANT and entity.from_colony == colony_id and (ant_type == None or entity.ant_type == ant_type):
                 found_ants.append(entity)
 
         return found_ants
+    
+    def get_nests_from_colony(self, colony_id: int):
+        found_nests = []
+        for entity in self.get_entities():
+            if entity.type == EntityTypes.NEST and entity.from_colony == colony_id:
+                found_nests.append(entity)
+
+        return found_nests
     
     @property
     def size(self):

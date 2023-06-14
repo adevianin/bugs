@@ -7,8 +7,8 @@ from core.world.entities.ant.base.larva import Larva
 
 class Nest(PlainEntity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, position: Point, color: str, owner_id: int, larvae: list[Larva], larva_places_count: int):
-        super().__init__(event_bus, id, EntityTypes.NEST, owner_id, position)
+    def __init__(self, event_bus: EventEmitter, id: int, position: Point, color: str, from_colony: int, larvae: list[Larva], larva_places_count: int):
+        super().__init__(event_bus, id, EntityTypes.NEST, from_colony, position)
         self._color = color
         self._area = 300
         self._stored_calories = 1000

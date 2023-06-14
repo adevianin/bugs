@@ -27,7 +27,7 @@ class DomainFacade {
     }
 
     getEntities() {
-        return this._worldService.getEntities();
+        return this._worldService.world.entities;
     }
 
     findEntityById(id) {
@@ -79,7 +79,13 @@ class DomainFacade {
 
     findMyQueen() {
         let userData = this.getUserData();
-        return this._worldService.findMyQueen(userData.id);
+        return this._worldService.world.findQueenByOwnerId(userData.id);
+    }
+
+    isNestMine(nest) {
+        let userData = this.getUserData();
+        let myColony = this._worldService.world.findColonyByOwnerId(userData.id);
+        return nest.fromColony == myColony.id;
     }
 
     buildNewNest(position) {
@@ -203,8 +209,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInNestId) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, ownerId);
+    constructor(eventBus, id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId) {
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony);
         this.pickedFoodId = pickedFoodId;
         this._userSpeed = userSpeed;
         this._antType = antType;
@@ -369,6 +375,37 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/domain/entity/colony.js":
+/*!**********************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/colony.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Colony": () => (/* binding */ Colony)
+/* harmony export */ });
+class Colony {
+
+    constructor(id, owner_id) {
+        this._id = id;
+        this._owner_id = owner_id
+    }
+
+    get id() {
+        return this._id;
+    }
+
+    get ownerId() {
+        return this._owner_id;
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/entity/entity.js":
 /*!**********************************************************!*\
   !*** ./bugs/core/client/app/src/domain/entity/entity.js ***!
@@ -385,13 +422,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
-    constructor(eventBus, id, position, type, ownerId) {
+    constructor(eventBus, id, position, type, fromColony) {
         super();
         this._eventBus = eventBus;
         this.id = id;
         this._position = position;
         this.type = type;
-        this._ownerId = ownerId;
+        this._fromColony = fromColony;
         this._actionStack = [];
         this._isPlaying = false;
         this._isHidden = false;
@@ -420,8 +457,8 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
         this.emit('angleChanged');
     }
 
-    get ownerId() {
-        return this._ownerId;
+    get fromColony() {
+        return this._fromColony;
     }
 
     addAction(action) {
@@ -610,8 +647,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, nestApi, id, position, ownerId, storedCalories, larvae, larvaPlacesCount) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST, ownerId);
+    constructor(eventBus, nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount) {
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST, fromColony);
         this._nestApi = nestApi;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
@@ -671,12 +708,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "World": () => (/* binding */ World)
 /* harmony export */ });
 /* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+/* harmony import */ var _enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+
 
 
 class World {
     constructor(eventBus) {
         this._eventBus = eventBus;
         this._entities = [];
+        this._colonies = [];
 
         this._eventBus.on('died', this._on_died.bind(this));
     }
@@ -701,9 +741,8 @@ class World {
         this._entities.push(entity);
     }
 
-    updateEntity(entityJson) {
-        let entity = this.findEntityById(entityJson.id);
-        entity.updateEntity(entityJson);
+    addColony(colony) {
+        this._colonies.push(colony);
     }
 
     deleteEntity(entityId) {
@@ -721,22 +760,35 @@ class World {
     }
 
     findEntityById(id) {
-        return this._entities.find( entity => entity.id === id);
+        return this._entities.find( entity => entity.id == id);
+    }
+
+    findColonyByOwnerId(ownerId) {
+        return this._colonies.find(colony => colony.ownerId == ownerId);
+    }
+
+    findAntsFromColony(colonyId) {
+        return this._entities.filter(e => e.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT && e.fromColony == colonyId);
+    }
+
+    findNestsFromColony(colonyId) {
+        return this._entities.filter(e => e.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST && e.fromColony == colonyId);
+    }
+
+    findQueenByOwnerId(ownerId) {
+        let colony = this.findColonyByOwnerId(ownerId);
+        let colonyAnts = this.findAntsFromColony(colony.id);
+
+        return colonyAnts.find(a => a.antType == _enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN);
     }
 
     findEntityByType(type) {
-        let foundEntities = [];
-        this._entities.forEach(e => {
-            if (e.type == type) {
-                foundEntities.push(e);
-            }
-        });
-
-        return foundEntities;
+        return this._entities.filter(e => e.type == type);
     }
 
     clear() {
         this._entities = [];
+        this._colonies = [];
         this._eventBus.emit('worldCleared');
     }
 
@@ -915,7 +967,7 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        // console.log(msg)
+        console.log(msg)
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);
@@ -1063,14 +1115,16 @@ class WorldService {
             let entity = this._worldFactory.buildEntity(entityJson);
             this._world.addEntity(entity); 
         });
+
+        worldJson.colonies.forEach(colonyJson => {
+            let colony = this._worldFactory.buildColony(colonyJson.id, colonyJson.owner_id);
+            this._world.addColony(colony);
+        });
+        
         this._world.size = worldJson.size;
 
         this._isWholeWorldInited = true;
         this._mainEventBus.emit('wholeWorldInited');
-    }
-
-    getEntities() {
-        return this._world.entities;
     }
 
     giveBirthToEntity(entityJson) {
@@ -1086,12 +1140,6 @@ class WorldService {
 
     isWholeWorldInited() {
         return this._isWholeWorldInited;
-    }
-
-    findMyQueen(userId) {
-        return this._world.entities.find(e => { 
-            return e.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT && e.antType == _enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN && e.ownerId == userId;
-        });
     }
 
 }
@@ -1118,6 +1166,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_food__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./entity/food */ "./bugs/core/client/app/src/domain/entity/food.js");
 /* harmony import */ var _entity_foodArea__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/foodArea */ "./bugs/core/client/app/src/domain/entity/foodArea.js");
 /* harmony import */ var _entity_larva__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entity/larva */ "./bugs/core/client/app/src/domain/entity/larva.js");
+/* harmony import */ var _entity_colony__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entity/colony */ "./bugs/core/client/app/src/domain/entity/colony.js");
+
 
 
 
@@ -1137,14 +1187,14 @@ class WorldFactory {
         return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this._mainEventBus);
     }
 
-    buildAnt(id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInNestId) {
-        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, antType, position, ownerId, pickedFoodId, userSpeed, locatedInNestId);
+    buildAnt(id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId);
     }
 
-    buildNest(id, position, ownerId, storedCalories, larvaeData, larvaPlacesCount) {
+    buildNest(id, position, fromColony, storedCalories, larvaeData, larvaPlacesCount) {
         let larvae = [];
         larvaeData.forEach(larvaData => larvae.push(_entity_larva__WEBPACK_IMPORTED_MODULE_6__.Larva.fromJson(larvaData.ant_type, larvaData.progress)));
-        return new _entity_nest__WEBPACK_IMPORTED_MODULE_3__.Nest(this._mainEventBus, this._nestApi, id, position, ownerId, storedCalories, larvae, larvaPlacesCount);
+        return new _entity_nest__WEBPACK_IMPORTED_MODULE_3__.Nest(this._mainEventBus, this._nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount);
     }
 
     buildFood(id, position, calories, food_type, food_varity) {
@@ -1158,9 +1208,9 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT:
-                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.owner_id, entityJson.picked_food_id, entityJson.user_speed, entityJson.located_in_nest_id);
+                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.from_colony, entityJson.picked_food_id, entityJson.user_speed, entityJson.located_in_nest_id);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
-                return this.buildNest(entityJson.id, entityJson.position, entityJson.owner_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
+                return this.buildNest(entityJson.id, entityJson.position, entityJson.from_colony, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
                 return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_AREA:
@@ -1168,6 +1218,10 @@ class WorldFactory {
             default:
                 throw 'unknown type of entity';
         }
+    }
+
+    buildColony(id, owner_id) {
+        return new _entity_colony__WEBPACK_IMPORTED_MODULE_7__.Colony(id, owner_id);
     }
 }
 
@@ -2667,7 +2721,7 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._sprite.x = this._entity.position.x;
         this._sprite.y = this._entity.position.y;
 
-        if (entity.ownerId == NestView.domainFacade.getUserData().id) {
+        if (NestView.domainFacade.isNestMine(entity)) {
             this._sprite.on('pointerdown', this._onClick.bind(this));
         }
         

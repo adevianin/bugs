@@ -11,6 +11,7 @@ from .map import Map
 from .utils.size import Size
 from .services.birther_service import BirtherService
 from .services.operation_service import OperationService
+from .entities.colony.colony_factory import ColonyFactory
 
 from typing import Callable
 
@@ -47,12 +48,13 @@ class WorldFacade:
         ant_factory = AntFactory(self._event_bus, map)
         nest_factory = NestFactory(self._event_bus)
         food_factory = FoodFactory(self._event_bus)
-        world_factory = WorldFactory(self._event_bus, ant_factory, food_factory, nest_factory)
+        colony_factory = ColonyFactory(self._event_bus)
+        world_factory = WorldFactory(self._event_bus, ant_factory, food_factory, nest_factory, colony_factory)
 
         self._world = world_factory.build_world_from_json(world_data, map)
 
         operation_service = OperationService(map, nest_factory)
-        self._nest_service = NestService(map, world_factory)
+        self._nest_service = NestService(map, self._world, world_factory)
         self._command_handler_service = CommandHandlerService(self._nest_service, operation_service)
         birther_service = BirtherService(self._event_bus, map, ant_factory, food_factory)
 

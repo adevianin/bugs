@@ -9,8 +9,8 @@ from core.world.entities.nest.nest import Nest
 
 class Ant(LiveEntity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, ant_type: AntTypes, owner_id: int, mind: AntMind, body: AntBody):
-        super().__init__(event_bus, id, EntityTypes.ANT, owner_id, mind, body)
+    def __init__(self, event_bus: EventEmitter, id: int, ant_type: AntTypes, from_colony: int, mind: AntMind, body: AntBody):
+        super().__init__(event_bus, id, EntityTypes.ANT, from_colony, mind, body)
         self._ant_type = ant_type
         self._in_operation = False
         self._body.events.add_listener('food_picked', self._on_food_picked)

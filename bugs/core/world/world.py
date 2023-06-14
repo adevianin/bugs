@@ -5,12 +5,14 @@ from .map import Map
 from .utils.event_emiter import EventEmitter
 from .entities.base.entity import Entity
 from .settings import STEP_TIME
+from .entities.colony.colony import Colony
 
 class World():
 
-    def __init__(self, map: Map, event_bus: EventEmitter) -> None:
+    def __init__(self, map: Map, event_bus: EventEmitter, colonies: list[Colony]) -> None:
         self._map = map
         self._event_bus = event_bus
+        self._colonies = colonies
         self._world_loop_stop_flag = False
         self._is_world_running = False
         self._step_counter = 0
@@ -28,6 +30,13 @@ class World():
     @property
     def is_world_running(self):
         return self._is_world_running
+    
+    def get_colony_owned_by_user(self, user_id: int):
+        for colony in self._colonies:
+            if colony.owner_id == user_id:
+                return colony
+            
+        return None
 
     def stop(self):
         if (not self._is_world_running): 
@@ -48,9 +57,14 @@ class World():
         entities = self._map.get_entities()
         for entity in entities:
             entities_json.append(entity.to_json())
+
+        colonies_json = []
+        for colony in self._colonies:
+            colonies_json.append(colony.to_json())
         
         return {
             'entities': entities_json,
+            'colonies': colonies_json,
             'size': self._map.size
         }
     

@@ -1,5 +1,5 @@
 from core.world.utils.point import Point
-from core.world.entities.operation.build_new_nest_operation import BuildNewNestOperation
+from core.world.entities.colony.operation.build_new_nest_operation import BuildNewNestOperation
 from core.world.map import Map
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.nest.nest_factory import NestFactory
