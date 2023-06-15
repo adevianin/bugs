@@ -68,6 +68,21 @@ class World():
             'size': self._map.size
         }
     
+    # def to_user_json(self, user_id: int):
+    #     entities_json = []
+    #     entities = self._map.get_entities()
+    #     for entity in entities:
+    #         entities_json.append(entity.to_json())
+
+    #     my_colony = next(colony for colony in self._colonies if colony.owner_id == user_id)
+        
+    #     return {
+    #         'entities': entities_json,
+    #         'my_colony': my_colony.to_json(),
+    #         'size': self._map.size
+    #     }
+
+    
     def _run_world_loop(self):
         while not self._world_loop_stop_flag:
             iteration_start = time.time()

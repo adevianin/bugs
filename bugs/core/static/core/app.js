@@ -14,12 +14,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class DomainFacade {
 
-    constructor(mainEventBus, userService, messageHandlerService, worldService, operationService) {
+    constructor(mainEventBus, userService, messageHandlerService, worldService, colonyService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._userService = userService;
         this._messageHandlerService = messageHandlerService;
-        this._operationService = operationService;
+        this._colonyService = colonyService;
     }
 
     get events() {
@@ -82,6 +82,11 @@ class DomainFacade {
         return this._worldService.world.findQueenByOwnerId(userData.id);
     }
 
+    findMyColony() {
+        let userData = this.getUserData();
+        return this._worldService.world.findColonyByOwnerId(userData.id);
+    }
+
     isNestMine(nest) {
         let userData = this.getUserData();
         let myColony = this._worldService.world.findColonyByOwnerId(userData.id);
@@ -89,7 +94,7 @@ class DomainFacade {
     }
 
     buildNewNest(position) {
-        this._operationService.buildNewNest(position);
+        this._colonyService.buildNewNest(position);
     }
 
     _tryConnectMessageHandler() {
@@ -386,11 +391,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Colony": () => (/* binding */ Colony)
 /* harmony export */ });
-class Colony {
+/* harmony import */ var utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
 
-    constructor(id, owner_id) {
+
+class Colony extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+
+    constructor(id, onwerId, operations) {
+        super();
         this._id = id;
-        this._owner_id = owner_id
+        this._onwerId = onwerId;
+        this._operations = operations;
     }
 
     get id() {
@@ -398,7 +408,16 @@ class Colony {
     }
 
     get ownerId() {
-        return this._owner_id;
+        return this._onwerId;
+    }
+
+    get operations() {
+        return this._operations;
+    }
+
+    setOperations(operations) {
+        this._operations = operations;
+        this.emit('operationsChanged');
     }
 }
 
@@ -763,6 +782,10 @@ class World {
         return this._entities.find( entity => entity.id == id);
     }
 
+    findColonyById(id) {
+        return this._colonies.find( colony => colony.id == id);
+    }
+
     findColonyByOwnerId(ownerId) {
         return this._colonies.find(colony => colony.ownerId == ownerId);
     }
@@ -864,7 +887,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_action_actionFactory__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/action/actionFactory */ "./bugs/core/client/app/src/domain/entity/action/actionFactory.js");
 /* harmony import */ var _service_worldService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/worldService */ "./bugs/core/client/app/src/domain/service/worldService.js");
 /* harmony import */ var _service_actionService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./service/actionService */ "./bugs/core/client/app/src/domain/service/actionService.js");
-/* harmony import */ var _service_operationService__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./service/operationService */ "./bugs/core/client/app/src/domain/service/operationService.js");
+/* harmony import */ var _service_colonyService__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./service/colonyService */ "./bugs/core/client/app/src/domain/service/colonyService.js");
 
 
 
@@ -884,10 +907,10 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_6__.WorldService(world, worldFactory, mainEventBus);
     let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_1__.UserService(apis.userApi, initialData.user, mainEventBus);
     let actionService = new _service_actionService__WEBPACK_IMPORTED_MODULE_7__.ActionService(initialData.step_time, actionFactory, worldService);
-    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, actionService);
-    let operationService = new _service_operationService__WEBPACK_IMPORTED_MODULE_8__.OperationService(apis.operationApi);
+    let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_8__.ColonyService(apis.colonyApi);
+    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, actionService, colonyService);
 
-    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, userService, messageHandlerService, worldService, operationService);
+    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, userService, messageHandlerService, worldService, colonyService);
 
     domainFacade.start();
 
@@ -938,6 +961,36 @@ class ActionService {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/domain/service/colonyService.js":
+/*!******************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/service/colonyService.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ColonyService": () => (/* binding */ ColonyService)
+/* harmony export */ });
+class ColonyService {
+
+    constructor(colonyApi) {
+        this._colonyApi = colonyApi;
+    }
+
+    buildNewNest(position) {
+        this._colonyApi.buildNewNest(position);
+    }
+
+    updateMyColony(colonyJson) {
+        console.log('new colony', colonyJson);
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/service/messageHandlerService.js":
 /*!**************************************************************************!*\
   !*** ./bugs/core/client/app/src/domain/service/messageHandlerService.js ***!
@@ -951,10 +1004,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class MessageHandlerService {
 
-    constructor(serverConnection, worldService, actionService) {
+    constructor(serverConnection, worldService, actionService, colonyService) {
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._actionService = actionService;
+        this._colonyService = colonyService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
@@ -967,7 +1021,7 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        console.log(msg)
+        // console.log(msg)
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);
@@ -975,37 +1029,14 @@ class MessageHandlerService {
             case 'action':
                 this._actionService.playAction(msg.action);
                 break;
+            case 'colony_changes':
+                this._worldService.updateColony(msg.colony);
+                break;
             default: 
                 throw `unknown type of message "${ msg.type }"`
         }
     }
 
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/domain/service/operationService.js":
-/*!*********************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/service/operationService.js ***!
-  \*********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "OperationService": () => (/* binding */ OperationService)
-/* harmony export */ });
-class OperationService {
-
-    constructor(operationApi) {
-        this._operationApi = operationApi;
-    }
-
-    buildNewNest(position) {
-        this._operationApi.buildNewNest(position);
-    }
 }
 
 
@@ -1115,15 +1146,16 @@ class WorldService {
             let entity = this._worldFactory.buildEntity(entityJson);
             this._world.addEntity(entity); 
         });
-
+        
         worldJson.colonies.forEach(colonyJson => {
-            let colony = this._worldFactory.buildColony(colonyJson.id, colonyJson.owner_id);
+            let colony = this._worldFactory.buildColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
             this._world.addColony(colony);
         });
         
         this._world.size = worldJson.size;
 
         this._isWholeWorldInited = true;
+
         this._mainEventBus.emit('wholeWorldInited');
     }
 
@@ -1131,6 +1163,11 @@ class WorldService {
         let entity = this._worldFactory.buildEntity(entityJson);
         this._world.addEntity(entity);
         this._mainEventBus.emit('entityBorn', entity);
+    }
+
+    updateColony(colonyJson) {
+        let colony = this._world.findColonyById(colonyJson.id);
+        colony.setOperations(colonyJson.operations);
     }
 
     clear() {
@@ -1220,8 +1257,42 @@ class WorldFactory {
         }
     }
 
-    buildColony(id, owner_id) {
-        return new _entity_colony__WEBPACK_IMPORTED_MODULE_7__.Colony(id, owner_id);
+    buildColony(id, owner_id, operations) {
+        return new _entity_colony__WEBPACK_IMPORTED_MODULE_7__.Colony(id, owner_id, operations);
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/sync/colonyApi.js":
+/*!****************************************************!*\
+  !*** ./bugs/core/client/app/src/sync/colonyApi.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ColonyApi": () => (/* binding */ ColonyApi)
+/* harmony export */ });
+class ColonyApi {
+
+    constructor(serverConnection) {
+        this._serverConnection = serverConnection;
+    }
+
+    buildNewNest(position) {
+        this._serverConnection.send({
+            type: 'command',
+            command: {
+                command_type: 'build_new_nest',
+                params: {
+                    position
+                }
+            }
+        });
     }
 }
 
@@ -1244,7 +1315,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _userApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userApi */ "./bugs/core/client/app/src/sync/userApi.js");
 /* harmony import */ var _serverConnection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./serverConnection */ "./bugs/core/client/app/src/sync/serverConnection.js");
 /* harmony import */ var _nestApi__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestApi */ "./bugs/core/client/app/src/sync/nestApi.js");
-/* harmony import */ var _operationApi__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./operationApi */ "./bugs/core/client/app/src/sync/operationApi.js");
+/* harmony import */ var _colonyApi__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./colonyApi */ "./bugs/core/client/app/src/sync/colonyApi.js");
 
 
 
@@ -1257,12 +1328,12 @@ function initSyncLayer() {
     let userApi = new _userApi__WEBPACK_IMPORTED_MODULE_1__.UserApi(requester);
     let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection();
     let nestApi = new _nestApi__WEBPACK_IMPORTED_MODULE_3__.NestApi(serverConnection);
-    let operationApi = new _operationApi__WEBPACK_IMPORTED_MODULE_4__.OperationApi(serverConnection);
+    let colonyApi = new _colonyApi__WEBPACK_IMPORTED_MODULE_4__.ColonyApi(serverConnection);
 
     return {
         userApi,
         nestApi,
-        operationApi,
+        colonyApi,
         serverConnection
     };
 }
@@ -1296,40 +1367,6 @@ class NestApi {
                 params: {
                     nest_id: nestId,
                     larva_type: larvaType
-                }
-            }
-        });
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/sync/operationApi.js":
-/*!*******************************************************!*\
-  !*** ./bugs/core/client/app/src/sync/operationApi.js ***!
-  \*******************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "OperationApi": () => (/* binding */ OperationApi)
-/* harmony export */ });
-class OperationApi {
-
-    constructor(serverConnection) {
-        this._serverConnection = serverConnection;
-    }
-
-    buildNewNest(position) {
-        this._serverConnection.send({
-            type: 'command',
-            command: {
-                command_type: 'build_new_nest',
-                params: {
-                    position
                 }
             }
         });
@@ -1805,18 +1842,27 @@ class Panel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView
     constructor(el) {
         super(el);
 
-        this._render();
-
-        this._el.querySelector('[data-tab-switcher]').addEventListener('change', this._switchTabToSelected.bind(this));
+        Panel.domainFacade.events.on('worldCleared', this._removeTabViews.bind(this));
+        Panel.domainFacade.events.on('wholeWorldInited', this._buildTabViews.bind(this));
+        if (Panel.domainFacade.isWholeWorldInited()) {
+            this._buildTabViews();
+        }
     }
 
-    _render() {
+    _buildTabViews() {
         this._el.innerHTML = _panelTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._el.querySelector('[data-tab-switcher]').addEventListener('change', this._switchTabToSelected.bind(this));
 
         this._userTab = new _tabs_userTab_userTab__WEBPACK_IMPORTED_MODULE_3__.UserTab(this._el.querySelector('[data-user-tab]'));
         this._operationsTab = new _tabs_operationsTab_operationsTab__WEBPACK_IMPORTED_MODULE_4__.OperationsTab(this._el.querySelector('[data-operations-tab]'));
 
         this._switchTabToSelected();
+    }
+
+    _removeTabViews() {
+        this._userTab.remove();
+        this._operationsTab.remove();
     }
 
     _switchTabToSelected() {
@@ -1926,14 +1972,17 @@ __webpack_require__.r(__webpack_exports__);
 
 class OperationsList extends view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    constructor(el) {
+    constructor(el, myColony) {
         super(el);
+        this._myColony = myColony;
+
+        this._myColony.on('operationsChanged', this._render.bind(this));
 
         this._render();
     }
 
     _render() {
-        this._el.innerHTML = 'operations list'
+        this._el.innerHTML = JSON.stringify(this._myColony.operations);
     }
 
 }
@@ -1970,6 +2019,7 @@ class OperationsTab extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.Base
     constructor(el) {
         super(el);
         this._operationCreator = null;
+        this._myColony = OperationsTab.domainFacade.findMyColony();
 
         this._render();
 
@@ -1985,7 +2035,7 @@ class OperationsTab extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.Base
         this._newOperationListEl = this._el.querySelector('[data-new-operation-list]');
         this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
 
-        new _operationsList_operationsList__WEBPACK_IMPORTED_MODULE_4__.OperationsList(this._el.querySelector('[data-operations-list]'));
+        new _operationsList_operationsList__WEBPACK_IMPORTED_MODULE_4__.OperationsList(this._el.querySelector('[data-operations-list]'), this._myColony);
 
         this._toggleOperationCreating(false);
     }
@@ -42857,7 +42907,7 @@ let syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)();
 let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)({ 
     userApi: syncLayer.userApi,
     nestApi: syncLayer.nestApi,
-    operationApi: syncLayer.operationApi
+    colonyApi: syncLayer.colonyApi
 }, syncLayer.serverConnection, initialData);
 (0,_view__WEBPACK_IMPORTED_MODULE_2__.initViewLayer)(domainFacade, initialData);
 

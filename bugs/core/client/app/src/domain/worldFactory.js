@@ -51,8 +51,8 @@ class WorldFactory {
         }
     }
 
-    buildColony(id, owner_id) {
-        return new Colony(id, owner_id);
+    buildColony(id, owner_id, operations) {
+        return new Colony(id, owner_id, operations);
     }
 }
 

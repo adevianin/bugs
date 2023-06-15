@@ -1,9 +1,10 @@
 class MessageHandlerService {
 
-    constructor(serverConnection, worldService, actionService) {
+    constructor(serverConnection, worldService, actionService, colonyService) {
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._actionService = actionService;
+        this._colonyService = colonyService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
@@ -23,6 +24,9 @@ class MessageHandlerService {
                 break;
             case 'action':
                 this._actionService.playAction(msg.action);
+                break;
+            case 'colony_changes':
+                this._worldService.updateColony(msg.colony);
                 break;
             default: 
                 throw `unknown type of message "${ msg.type }"`

@@ -10,18 +10,27 @@ class Panel extends BaseHTMLView {
     constructor(el) {
         super(el);
 
-        this._render();
-
-        this._el.querySelector('[data-tab-switcher]').addEventListener('change', this._switchTabToSelected.bind(this));
+        Panel.domainFacade.events.on('worldCleared', this._removeTabViews.bind(this));
+        Panel.domainFacade.events.on('wholeWorldInited', this._buildTabViews.bind(this));
+        if (Panel.domainFacade.isWholeWorldInited()) {
+            this._buildTabViews();
+        }
     }
 
-    _render() {
+    _buildTabViews() {
         this._el.innerHTML = panelTmpl;
+
+        this._el.querySelector('[data-tab-switcher]').addEventListener('change', this._switchTabToSelected.bind(this));
 
         this._userTab = new UserTab(this._el.querySelector('[data-user-tab]'));
         this._operationsTab = new OperationsTab(this._el.querySelector('[data-operations-tab]'));
 
         this._switchTabToSelected();
+    }
+
+    _removeTabViews() {
+        this._userTab.remove();
+        this._operationsTab.remove();
     }
 
     _switchTabToSelected() {

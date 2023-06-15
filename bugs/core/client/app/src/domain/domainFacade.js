@@ -1,11 +1,11 @@
 class DomainFacade {
 
-    constructor(mainEventBus, userService, messageHandlerService, worldService, operationService) {
+    constructor(mainEventBus, userService, messageHandlerService, worldService, colonyService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._userService = userService;
         this._messageHandlerService = messageHandlerService;
-        this._operationService = operationService;
+        this._colonyService = colonyService;
     }
 
     get events() {
@@ -68,6 +68,11 @@ class DomainFacade {
         return this._worldService.world.findQueenByOwnerId(userData.id);
     }
 
+    findMyColony() {
+        let userData = this.getUserData();
+        return this._worldService.world.findColonyByOwnerId(userData.id);
+    }
+
     isNestMine(nest) {
         let userData = this.getUserData();
         let myColony = this._worldService.world.findColonyByOwnerId(userData.id);
@@ -75,7 +80,7 @@ class DomainFacade {
     }
 
     buildNewNest(position) {
-        this._operationService.buildNewNest(position);
+        this._colonyService.buildNewNest(position);
     }
 
     _tryConnectMessageHandler() {

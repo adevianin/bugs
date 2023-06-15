@@ -10,6 +10,7 @@ class OperationsTab extends BaseHTMLView {
     constructor(el) {
         super(el);
         this._operationCreator = null;
+        this._myColony = OperationsTab.domainFacade.findMyColony();
 
         this._render();
 
@@ -25,7 +26,7 @@ class OperationsTab extends BaseHTMLView {
         this._newOperationListEl = this._el.querySelector('[data-new-operation-list]');
         this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
 
-        new OperationsList(this._el.querySelector('[data-operations-list]'));
+        new OperationsList(this._el.querySelector('[data-operations-list]'), this._myColony);
 
         this._toggleOperationCreating(false);
     }

@@ -1,4 +1,4 @@
-class OperationApi {
+class ColonyApi {
 
     constructor(serverConnection) {
         this._serverConnection = serverConnection;
@@ -18,5 +18,5 @@ class OperationApi {
 }
 
 export {
-    OperationApi
+    ColonyApi
 }

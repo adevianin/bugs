@@ -3,24 +3,21 @@ from core.world.entities.task.task_group import TaskGroup
 from core.world.entities.nest.nest import Nest
 from .operation import Operation
 from core.world.entities.ant.base.ant_types import AntTypes
+from core.world.utils.event_emiter import EventEmitter
 
 class BuildNewNestOperation(Operation):
-
-    @classmethod
-    def build_build_new_nest_operation(cls, building_site: Point, new_nest: Nest):
-        return BuildNewNestOperation(building_site, new_nest)
-
-    def __init__(self, building_site: Point, new_nest: Nest):
-        super().__init__()
+    
+    def __init__(self, events: EventEmitter, building_site: Point, new_nest: Nest):
+        super().__init__(events)
         self._building_site = building_site
         self._new_nest = new_nest
         self._open_vacancies(AntTypes.WORKER, 1)
         self._open_vacancies(AntTypes.QUEEN, 1)
 
-    def start_operation(self):
+    def _start_operation(self):
         self._worker = self._get_hired_ants(AntTypes.WORKER)[0]
         self._queen = self._get_hired_ants(AntTypes.QUEEN)[0]
-        
+
         (self._preparation_step()
             .on_done(self._walk_to_building_site_step)
             .on_done(self._building_nest_step)
@@ -49,4 +46,4 @@ class BuildNewNestOperation(Operation):
         self._worker.relocate_to_nest(self._new_nest)
         self._queen.leave_operation()
         self._worker.leave_operation()
-
+        self._mark_as_done()

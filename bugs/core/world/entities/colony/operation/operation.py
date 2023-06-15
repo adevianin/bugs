@@ -1,17 +1,25 @@
 from abc import ABC, abstractmethod
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.ant import Ant
+from core.world.utils.event_emiter import EventEmitter
 
 class Operation(ABC):
 
-    def __init__(self):
+    def __init__(self, events: EventEmitter):
+        self.events = events
+        self.id = 0
         self._vacancies = {}
         self._hired = {}
         self._is_hiring = True
+        self._is_done = False
 
     @property
     def is_hiring(self):
         return self._is_hiring
+    
+    @property
+    def is_done(self):
+        return self._is_done
 
     def _open_vacancies(self, ant_type: AntTypes, count: int):
         self._vacancies[ant_type] = count
@@ -26,7 +34,9 @@ class Operation(ABC):
         self._is_hiring = len(self.get_hiring_ant_types()) > 0
 
         if not self._is_hiring:
-            self.start_operation()
+            self._start_operation()
+        
+        self.events.emit('change')
 
     def get_hiring_ant_types(self):
         hiring_ant_type = []
@@ -38,5 +48,15 @@ class Operation(ABC):
         return hiring_ant_type
     
     @abstractmethod
-    def start_operation(self):
+    def _start_operation(self):
         pass
+
+    def _mark_as_done(self):
+        self._is_done = True
+        self.events.emit('change')
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'is_hiring': self.is_hiring
+        }

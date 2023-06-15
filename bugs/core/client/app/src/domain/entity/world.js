@@ -52,6 +52,10 @@ class World {
         return this._entities.find( entity => entity.id == id);
     }
 
+    findColonyById(id) {
+        return this._colonies.find( colony => colony.id == id);
+    }
+
     findColonyByOwnerId(ownerId) {
         return this._colonies.find(colony => colony.ownerId == ownerId);
     }

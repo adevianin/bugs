@@ -1,8 +1,12 @@
-class Colony {
+import { EventEmitter } from "utils/eventEmitter";
 
-    constructor(id, onwerId) {
+class Colony extends EventEmitter {
+
+    constructor(id, onwerId, operations) {
+        super();
         this._id = id;
-        this._onwerId = onwerId
+        this._onwerId = onwerId;
+        this._operations = operations;
     }
 
     get id() {
@@ -11,6 +15,15 @@ class Colony {
 
     get ownerId() {
         return this._onwerId;
+    }
+
+    get operations() {
+        return this._operations;
+    }
+
+    setOperations(operations) {
+        this._operations = operations;
+        this.emit('operationsChanged');
     }
 }
 

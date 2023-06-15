@@ -10,6 +10,7 @@ class Colony:
         self._owner_id = owner_id
         self._map = map
         self._operations = []
+        self._has_changes = False
 
         event_bus.add_listener('step_start', self._on_start_step)
 
@@ -26,15 +27,29 @@ class Colony:
         return self._map.get_ants_from_colony(self._id)
     
     def add_operation(self, operation: Operation):
+        operation.id = self._generate_operation_id()
         self._operations.append(operation)
+
+        operation.events.add_listener('change', self._on_operation_change)
     
     def to_json(self):
+        operations_json = []
+        for operation in self._operations:
+            operations_json.append(operation.to_json())
+
         return {
             'id': self._id,
-            'owner_id': self._owner_id
+            'owner_id': self._owner_id,
+            'operations': operations_json
         }
     
     def _on_start_step(self, step_number: int):
+        self._clean_done_operations()
+        self._hire_for_operations()
+        if self._has_changes:
+            self._emit_colony_change()
+
+    def _hire_for_operations(self):
         if len(self._operations) == 0:
             return
         for operation in self._operations:
@@ -51,3 +66,32 @@ class Colony:
                 if ant_answer:
                     ant.join_operation()
                     operation.hire_ant(ant)
+
+    def _generate_operation_id(self):
+        last_used_id = 0
+        for operation in self._operations:
+            if operation.id > last_used_id:
+                last_used_id = operation.id
+
+        return last_used_id + 1
+    
+    def _clean_done_operations(self):
+        done_operations = []
+        for operation in self._operations:
+            if operation.is_done:
+                done_operations.append(operation)
+        
+        for operation in done_operations:
+            self._remove_operation(operation)
+    
+    def _remove_operation(self, operation: Operation):
+        operation.events.remove_listener('change', self._on_operation_change)
+        self._operations.remove(operation)
+
+    def _on_operation_change(self):
+        self._has_changes = True
+
+    def _emit_colony_change(self):
+        self._event_bus.emit(f'colony:{self.id}:changed')
+        self._has_changes = False
+

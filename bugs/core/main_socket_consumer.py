@@ -17,12 +17,16 @@ class MainSocketConsumer(WebsocketConsumer):
         else:
             self.close()
 
+        self._my_colony = self._world_facade.get_my_colony(self._user.id)
+
         self._world_facade.add_listener('step_start', self._on_step_start)
         self._world_facade.add_listener('action_occurred', self._on_action)
+        self._world_facade.add_listener(f'colony:{ self._my_colony.id }:changed', self._on_my_colony_changed)
 
     def disconnect(self, code):
         self._world_facade.remove_listener('step_start', self._on_step_start)
         self._world_facade.remove_listener('action_occurred', self._on_action)
+        self._world_facade.remove_listener(f'colony:{ self._my_colony.id }:changed', self._on_my_colony_changed)
         return super().disconnect(code)
     
     def receive(self, text_data=None, bytes_data=None):
@@ -47,5 +51,12 @@ class MainSocketConsumer(WebsocketConsumer):
             self.send(json.dumps({
                 'type': 'action',
                 'action': action.to_json()
+            }))
+    
+    def _on_my_colony_changed(self):
+        if self._synced:
+            self.send(json.dumps({
+                'type': 'colony_changes',
+                'colony': self._my_colony.to_json()
             }))
         

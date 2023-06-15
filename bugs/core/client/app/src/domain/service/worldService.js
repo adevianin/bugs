@@ -24,15 +24,16 @@ class WorldService {
             let entity = this._worldFactory.buildEntity(entityJson);
             this._world.addEntity(entity); 
         });
-
+        
         worldJson.colonies.forEach(colonyJson => {
-            let colony = this._worldFactory.buildColony(colonyJson.id, colonyJson.owner_id);
+            let colony = this._worldFactory.buildColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
             this._world.addColony(colony);
         });
         
         this._world.size = worldJson.size;
 
         this._isWholeWorldInited = true;
+
         this._mainEventBus.emit('wholeWorldInited');
     }
 
@@ -40,6 +41,11 @@ class WorldService {
         let entity = this._worldFactory.buildEntity(entityJson);
         this._world.addEntity(entity);
         this._mainEventBus.emit('entityBorn', entity);
+    }
+
+    updateColony(colonyJson) {
+        let colony = this._world.findColonyById(colonyJson.id);
+        colony.setOperations(colonyJson.operations);
     }
 
     clear() {
