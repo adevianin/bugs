@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
@@ -20,10 +21,16 @@ class Ant(LiveEntity):
     def ant_type(self):
         return self._ant_type
     
-    def prepare_for_operation(self):
+    @property
+    def is_in_operation(self):
+        return self._in_operation
+    
+    def join_operation(self):
         if (self._in_operation):
             raise Exception('ant already in operation')
         self._in_operation = True
+    
+    def prepare_for_operation(self):
         return self._mind.prepare_for_operation()
     
     def leave_operation(self):
@@ -44,6 +51,10 @@ class Ant(LiveEntity):
         })
 
         return json
+    
+    def ask_participation(self):
+        print('asking', self.id)
+        return True
 
     def _on_food_picked(self, food_id):
         self.handle_action('ant_picked_up_food', {

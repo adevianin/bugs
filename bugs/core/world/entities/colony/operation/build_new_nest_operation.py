@@ -1,22 +1,26 @@
-from core.world.entities.ant.queen.queen_ant import QueenAnt
-from core.world.entities.ant.worker.worker_ant import WorkerAnt
 from core.world.utils.point import Point
 from core.world.entities.task.task_group import TaskGroup
 from core.world.entities.nest.nest import Nest
+from .operation import Operation
+from core.world.entities.ant.base.ant_types import AntTypes
 
-class BuildNewNestOperation():
+class BuildNewNestOperation(Operation):
 
     @classmethod
-    def build_build_new_nest_operation(cls, building_site: Point, queen: QueenAnt, worker: WorkerAnt, new_nest: Nest):
-        return BuildNewNestOperation(building_site, queen, worker, new_nest)
+    def build_build_new_nest_operation(cls, building_site: Point, new_nest: Nest):
+        return BuildNewNestOperation(building_site, new_nest)
 
-    def __init__(self, building_site: Point, queen: QueenAnt, worker: WorkerAnt, new_nest: Nest):
+    def __init__(self, building_site: Point, new_nest: Nest):
+        super().__init__()
         self._building_site = building_site
-        self._queen = queen
-        self._worker = worker
         self._new_nest = new_nest
+        self._open_vacancies(AntTypes.WORKER, 1)
+        self._open_vacancies(AntTypes.QUEEN, 1)
 
     def start_operation(self):
+        self._worker = self._get_hired_ants(AntTypes.WORKER)[0]
+        self._queen = self._get_hired_ants(AntTypes.QUEEN)[0]
+        
         (self._preparation_step()
             .on_done(self._walk_to_building_site_step)
             .on_done(self._building_nest_step)

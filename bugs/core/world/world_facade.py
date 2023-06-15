@@ -48,12 +48,12 @@ class WorldFacade:
         ant_factory = AntFactory(self._event_bus, map)
         nest_factory = NestFactory(self._event_bus)
         food_factory = FoodFactory(self._event_bus)
-        colony_factory = ColonyFactory(self._event_bus)
+        colony_factory = ColonyFactory(self._event_bus, map)
         world_factory = WorldFactory(self._event_bus, ant_factory, food_factory, nest_factory, colony_factory)
 
         self._world = world_factory.build_world_from_json(world_data, map)
 
-        operation_service = ColonyService(self._world, nest_factory)
+        self._colony_service = ColonyService(self._world, nest_factory)
         self._nest_service = NestService(self._world)
         birther_service = BirtherService(self._event_bus, map, ant_factory, food_factory)
 
@@ -87,7 +87,7 @@ class WorldFacade:
             case 'add_larva':
                 self._nest_service.add_larva(params['nest_id'], user_id, params['larva_type'])
             case 'build_new_nest':
-                self._operation_service.build_new_nest(user_id, Point(params['position']['x'], params['position']['y']))
+                self._colony_service.build_new_nest(user_id, Point(params['position']['x'], params['position']['y']))
             case _:
                 raise Exception('unknown type of command')
         
