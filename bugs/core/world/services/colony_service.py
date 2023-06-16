@@ -1,5 +1,5 @@
 from core.world.utils.point import Point
-from core.world.world import World
+from core.world.entities.world.world import World
 from core.world.entities.nest.nest_factory import NestFactory
 from core.world.entities.colony.operation.operation_factory import OperationFactory
 

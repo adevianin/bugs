@@ -2,7 +2,7 @@ from core.world.utils.point import Point
 from core.world.utils.event_emiter import EventEmitter
 from .base.ant import Ant
 from .base.ant_types import AntTypes
-from core.world.map import Map
+from core.world.entities.map import Map
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.live_entity.memory import Memory
 from .base.larva import Larva

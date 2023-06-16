@@ -2,7 +2,7 @@ from abc import ABC, abstractclassmethod
 from .body import Body
 from .live_entity_task_factory import LiveEntityTaskFactory
 from core.world.entities.task.task import Task
-from core.world.map import Map
+from core.world.entities.map import Map
 from core.world.entities.base.entity_types import EntityTypes
 from .memory import Memory
 from core.world.utils.event_emiter import EventEmitter

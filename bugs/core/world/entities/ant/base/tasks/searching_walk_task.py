@@ -1,7 +1,7 @@
 from core.world.entities.task.task import Task
 from ..ant_body import AntBody
 from core.world.utils.point import Point
-from core.world.map import Map
+from core.world.entities.map import Map
 
 import math
 import random

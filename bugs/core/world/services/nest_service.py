@@ -1,6 +1,6 @@
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.larva import Larva
-from core.world.world import World
+from core.world.entities.world.world import World
 
 class NestService():
 

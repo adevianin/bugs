@@ -1,11 +1,11 @@
 from threading import Thread
 import time
 
-from .map import Map
-from .utils.event_emiter import EventEmitter
-from .entities.base.entity import Entity
-from .settings import STEP_TIME
-from .entities.colony.colony import Colony
+from core.world.entities.map import Map
+from core.world.utils.event_emiter import EventEmitter
+from core.world.entities.base.entity import Entity
+from core.world.settings import STEP_TIME
+from core.world.entities.colony.colony import Colony
 
 class World():
 

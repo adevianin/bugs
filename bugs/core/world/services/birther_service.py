@@ -1,5 +1,5 @@
 from core.world.utils.event_emiter import EventEmitter
-from core.world.map import Map
+from core.world.entities.map import Map
 from core.world.entities.ant.ant_factory import AntFactory
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.entity import Entity

@@ -1,7 +1,7 @@
 from core.world.entities.task.task import Task
 from ..ant_body import AntBody
 from core.world.entities.base.entity_types import EntityTypes
-from core.world.map import Map
+from core.world.entities.map import Map
 from .searching_walk_task import SearchingWalkTask
 from core.world.entities.base.live_entity.memory import Memory
 

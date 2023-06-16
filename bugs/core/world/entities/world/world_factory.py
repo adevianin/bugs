@@ -1,15 +1,15 @@
-from .entities.ant.ant_factory import AntFactory
-from .entities.food.food_factory import FoodFactory
-from .entities.nest.nest_factory import NestFactory
-from .utils.size import Size
-from .utils.point import Point
-from .utils.event_emiter import EventEmitter
-from .map import Map
+from core.world.entities.ant.ant_factory import AntFactory
+from core.world.entities.food.food_factory import FoodFactory
+from core.world.entities.nest.nest_factory import NestFactory
+from core.world.utils.size import Size
+from core.world.utils.point import Point
+from core.world.utils.event_emiter import EventEmitter
+from core.world.entities.map import Map
 from .world import World
-from .entities.ant.base.ant_types import AntTypes
-from .entities.food.food_types import FoodTypes
-from .entities.colony.colony_factory import ColonyFactory
-from .entities.colony.colony import Colony
+from core.world.entities.ant.base.ant_types import AntTypes
+from core.world.entities.food.food_types import FoodTypes
+from core.world.entities.colony.colony_factory import ColonyFactory
+from core.world.entities.colony.colony import Colony
 
 class WorldFactory():
 

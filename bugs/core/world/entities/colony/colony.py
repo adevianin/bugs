@@ -1,6 +1,6 @@
 from core.world.utils.event_emiter import EventEmitter
 from .operation.operation import Operation
-from core.world.map import Map
+from core.world.entities.map import Map
 
 class Colony:
 

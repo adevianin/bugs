@@ -2,11 +2,11 @@ from .world_data_repository_interface import iWorldDataRepository
 from .utils.event_emiter import EventEmitter
 from .entities.ant.ant_factory import AntFactory
 from .entities.food.food_factory import FoodFactory
-from .world_factory import WorldFactory
-from .world import World
+from .entities.world.world_factory import WorldFactory
+from .entities.world.world import World
 from .services.nest_service import NestService
 from .entities.nest.nest_factory import NestFactory
-from .map import Map
+from .entities.map import Map
 from .utils.size import Size
 from .services.birther_service import BirtherService
 from .services.colony_service import ColonyService

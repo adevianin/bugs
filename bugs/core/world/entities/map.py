@@ -1,8 +1,8 @@
-from .entities.base.entity import Entity
-from .utils.size import Size
-from .utils.point import Point
-from .entities.base.entity_types import EntityTypes
-from .entities.ant.base.ant_types import AntTypes
+from core.world.entities.base.entity import Entity
+from core.world.utils.size import Size
+from core.world.utils.point import Point
+from core.world.entities.base.entity_types import EntityTypes
+from core.world.entities.ant.base.ant_types import AntTypes
 
 from typing import List
 import random, math

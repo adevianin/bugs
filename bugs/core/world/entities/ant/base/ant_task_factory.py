@@ -1,6 +1,6 @@
 from core.world.entities.base.live_entity.live_entity_task_factory import LiveEntityTaskFactory
 from .ant_body import AntBody
-from core.world.map import Map
+from core.world.entities.map import Map
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.point import Point
 from core.world.entities.nest.nest import Nest
