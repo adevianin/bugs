@@ -8,7 +8,7 @@ class LarvaManager extends BaseHTMLView {
     constructor(el, nest) {
         super(el);
         this._nest = nest;
-        this._myQueen = LarvaManager.domainFacade.findMyQueen();
+        this._myQueen = this.$domainFacade.findMyQueen();
 
         this._render();
 

@@ -1,14 +1,14 @@
 import './styles.css';
 
 import template from './template.html';
+import { BaseHTMLView } from '../base/baseHTMLView';
 
-class AccountView {
+class AccountView extends BaseHTMLView {
 
-    constructor(el, domainFacade) {
-        this._el = el
-        this._domainFacade = domainFacade;
+    constructor(el) {
+        super(el);
 
-        this._domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
+        this.$domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
 
         this._render();
         this._renderState();
@@ -40,7 +40,7 @@ class AccountView {
     }
 
     _renderState() {
-        let isLoggedIn = this._domainFacade.isLoggedIn();
+        let isLoggedIn = this.$domainFacade.isLoggedIn();
 
         if (isLoggedIn) {
             this._toggle(false);
@@ -53,7 +53,7 @@ class AccountView {
     _onLoginBtnClick() {
         let username = this._loginTabEl.querySelector('[data-user-name]').value;
         let password =  this._loginTabEl.querySelector('[data-password]').value;
-        this._domainFacade.login(username, password)
+        this.$domainFacade.login(username, password)
             .catch(() => {
                 this._toggleNotCorrectLoginPassError(true);
             });
@@ -71,12 +71,12 @@ class AccountView {
         let isPasswordSame = password == passwordConfirm;
         this._toggleDifferentPasswordsError(!isPasswordSame);
 
-        this._domainFacade.checkUsernameUnique(username)
+        this.$domainFacade.checkUsernameUnique(username)
             .then((isUnique) => {
                 this._toggleUsernameIsntUniqueError(!isUnique);
 
                 if (isUnique && isPasswordSame) {
-                    this._domainFacade.register(username, password);
+                    this.$domainFacade.register(username, password);
                 }
             });
     }

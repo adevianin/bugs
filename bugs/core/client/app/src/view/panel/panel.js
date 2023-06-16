@@ -10,9 +10,9 @@ class Panel extends BaseHTMLView {
     constructor(el) {
         super(el);
 
-        Panel.domainFacade.events.on('worldCleared', this._removeTabViews.bind(this));
-        Panel.domainFacade.events.on('wholeWorldInited', this._buildTabViews.bind(this));
-        if (Panel.domainFacade.isWholeWorldInited()) {
+        this.$domainFacade.events.on('worldCleared', this._removeTabViews.bind(this));
+        this.$domainFacade.events.on('wholeWorldInited', this._buildTabViews.bind(this));
+        if (this.$domainFacade.isWholeWorldInited()) {
             this._buildTabViews();
         }
     }

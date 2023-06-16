@@ -11,28 +11,24 @@ import { EntityTypes } from '../../domain/enum/entityTypes';
 
 class WorldView extends BaseGraphicView {
 
-    constructor(el, domainFacade) {
+    constructor(el) {
         super();
-        this._domainFacade = domainFacade;
         this._el = el;
         this._entityViews = [];
         this._textures = {};
-        this._canvasWidth = el.offsetWidth;
-        this._canvasHeight = el.offsetHeight;
 
-        this._domainFacade.events.on('worldCleared', this._onWorldCleared.bind(this));
+        this.$domainFacade.events.on('worldCleared', this._onWorldCleared.bind(this));
 
         this._init();
     }
 
     async _init() {
-        await WorldView.textureManager.prepareTextures();
+        await this.$textureManager.prepareTextures();
 
-        this._app = new PIXI.Application();
-        this._app.resizeTo = this._el;
+        this._app = new PIXI.Application({ resizeTo: this._el });
         this._el.appendChild(this._app.view);
 
-        this._bg = new PIXI.TilingSprite(WorldView.textureManager.getTexture('grass.png'));
+        this._bg = new PIXI.TilingSprite(this.$textureManager.getTexture('grass.png'));
         this._entityContainer = new PIXI.Container();
         this._antContainer = new PIXI.Container();
         this._foodContainer = new PIXI.Container();
@@ -47,21 +43,18 @@ class WorldView extends BaseGraphicView {
         this._entityContainer.addChild(this._foodContainer);
         this._entityContainer.addChild(this._antContainer);
 
-        this._camera = new Camera(this._entityContainer, this._bg, { 
-            width: this._canvasWidth, 
-            height: this._canvasHeight
-        });
+        this._camera = new Camera(this._entityContainer, this._bg, this._app.view);
 
-        this._domainFacade.events.on('wholeWorldInited', this._onWholeWorldInit.bind(this));
-        if (this._domainFacade.isWholeWorldInited()) {
+        this.$domainFacade.events.on('wholeWorldInited', this._onWholeWorldInit.bind(this));
+        if (this.$domainFacade.isWholeWorldInited()) {
             this._onWholeWorldInit();
         }
 
-        this._domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
+        this.$domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
     }
 
     _onWholeWorldInit() {
-        let worldSize = this._domainFacade.getWorldSize();
+        let worldSize = this.$domainFacade.getWorldSize();
 
         this._bg.width = worldSize[0];
         this._bg.height = worldSize[1];
@@ -76,26 +69,32 @@ class WorldView extends BaseGraphicView {
     }
 
     _buildEntityViews() {
-        let entities = this._domainFacade.getEntities();
+        let entities = this.$domainFacade.getEntities();
         entities.forEach(entity => {
-            let view = this._buildEntityView(entity);
-            this._entityViews.push(view);
+            this._buildEntityView(entity);
         });
     }
 
     _buildEntityView(entity) {
+        let view = null;
         switch (entity.type) {
             case EntityTypes.ANT:
-                return new AntView(entity, this._antContainer);
+                view = new AntView(entity, this._antContainer);
+                break;
             case EntityTypes.NEST:
-                return new NestView(entity, this._nestContainer);
+                view = new NestView(entity, this._nestContainer);
+                break;
             case EntityTypes.FOOD:
-                return new FoodView(entity, this._foodContainer);
+                view = new FoodView(entity, this._foodContainer);
+                break;
             case EntityTypes.FOOD_AREA:
-                return new FoodAreaView(entity, this._foodAreaContainer);
+                view = new FoodAreaView(entity, this._foodAreaContainer);
+                break;
             default:
                 throw 'unknown type of entity';
         }
+
+        this._entityViews.push(view);
     }
 
     _onWorldCleared() {

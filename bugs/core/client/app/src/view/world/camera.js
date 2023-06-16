@@ -1,8 +1,8 @@
 class Camera {
 
-    static MAP_MARGIN = 0;
+    static MAP_MARGIN = 20;
 
-    constructor(container, handler, frameSize) {
+    constructor(container, handler, canvasEl) {
         this._container = container;
         this._handler = handler;
         this._isDraging = false;
@@ -11,7 +11,7 @@ class Camera {
             width: null,
             height: null
         };
-        this._frameSize = frameSize;
+        this._canvasEl = canvasEl;
 
         this._handler.eventMode = 'static';
         this._handler.on('pointerdown', this._onPointerDown.bind(this));
@@ -53,12 +53,12 @@ class Camera {
                 containerPosY = Camera.MAP_MARGIN;
             }
 
-            let minXPos = this._frameSize.width - this._mapSize.width - Camera.MAP_MARGIN
+            let minXPos = this._canvasEl.offsetWidth - this._mapSize.width - Camera.MAP_MARGIN
             if (containerPosX < minXPos) {
                 containerPosX = minXPos;
             }
 
-            let minPosY = this._frameSize.height - this._mapSize.height  - Camera.MAP_MARGIN;
+            let minPosY = this._canvasEl.offsetHeight - this._mapSize.height  - Camera.MAP_MARGIN;
             if (containerPosY < minPosY) {
                 containerPosY = minPosY;
             }

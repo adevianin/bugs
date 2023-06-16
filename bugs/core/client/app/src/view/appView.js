@@ -18,10 +18,10 @@ class AppView {
         this._renderLoginStatus();
 
         let worldEl = this._document.querySelector('[data-world]');
-        this._worldView = new WorldView(worldEl, this._domainFacade);
+        this._worldView = new WorldView(worldEl);
 
         let accountViewEl = this._document.querySelector('[data-account-view]');
-        this._accountView = new AccountView(accountViewEl, this._domainFacade);
+        this._accountView = new AccountView(accountViewEl);
 
         let panelViewEl = this._document.querySelector('[data-panel]');
         this._panel = new Panel(panelViewEl);

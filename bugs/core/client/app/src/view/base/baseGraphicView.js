@@ -16,6 +16,14 @@ class BaseGraphicView {
         BaseGraphicView.domainFacade = domainFacade;
     }
 
+    get $domainFacade() {
+        return BaseGraphicView.domainFacade;
+    }
+
+    get $textureManager() {
+        return BaseGraphicView.textureManager;
+    }
+
     remove(){
         throw 'remove method is abstract';
     }

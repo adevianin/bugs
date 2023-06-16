@@ -14,6 +14,10 @@ class BaseHTMLView {
         return this._el;
     }
 
+    get $domainFacade() {
+        return BaseHTMLView.domainFacade;
+    }
+
     toggle(isEnabled) {
         this._el.classList.toggle('hidden', !isEnabled);
     }

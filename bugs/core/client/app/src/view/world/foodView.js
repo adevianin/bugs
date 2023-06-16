@@ -7,7 +7,7 @@ class FoodView extends EntityView {
         super(entity, entityContainer);
 
         let textureName = `food_${this._entity.food_type}_${this._entity.food_variety}v.png`;
-        this._sprite = new PIXI.Sprite(FoodView.textureManager.getTexture(textureName));
+        this._sprite = new PIXI.Sprite(this.$textureManager.getTexture(textureName));
         entityContainer.addChild(this._sprite);
         this._sprite.anchor.set(0.5);
 

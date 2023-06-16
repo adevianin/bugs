@@ -1488,17 +1488,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/account/styles.css");
 /* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./template.html */ "./bugs/core/client/app/src/view/account/template.html");
+/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 
 
 
 
-class AccountView {
 
-    constructor(el, domainFacade) {
-        this._el = el
-        this._domainFacade = domainFacade;
+class AccountView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
 
-        this._domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
+    constructor(el) {
+        super(el);
+
+        this.$domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
 
         this._render();
         this._renderState();
@@ -1530,7 +1531,7 @@ class AccountView {
     }
 
     _renderState() {
-        let isLoggedIn = this._domainFacade.isLoggedIn();
+        let isLoggedIn = this.$domainFacade.isLoggedIn();
 
         if (isLoggedIn) {
             this._toggle(false);
@@ -1543,7 +1544,7 @@ class AccountView {
     _onLoginBtnClick() {
         let username = this._loginTabEl.querySelector('[data-user-name]').value;
         let password =  this._loginTabEl.querySelector('[data-password]').value;
-        this._domainFacade.login(username, password)
+        this.$domainFacade.login(username, password)
             .catch(() => {
                 this._toggleNotCorrectLoginPassError(true);
             });
@@ -1561,12 +1562,12 @@ class AccountView {
         let isPasswordSame = password == passwordConfirm;
         this._toggleDifferentPasswordsError(!isPasswordSame);
 
-        this._domainFacade.checkUsernameUnique(username)
+        this.$domainFacade.checkUsernameUnique(username)
             .then((isUnique) => {
                 this._toggleUsernameIsntUniqueError(!isUnique);
 
                 if (isUnique && isPasswordSame) {
-                    this._domainFacade.register(username, password);
+                    this.$domainFacade.register(username, password);
                 }
             });
     }
@@ -1649,7 +1650,7 @@ class AppView {
         this._renderLoginStatus();
 
         let worldEl = this._document.querySelector('[data-world]');
-        this._worldView = new _world_worldView__WEBPACK_IMPORTED_MODULE_1__.WorldView(worldEl, this._domainFacade);
+        this._worldView = new _world_worldView__WEBPACK_IMPORTED_MODULE_1__.WorldView(worldEl);
 
         let accountViewEl = this._document.querySelector('[data-account-view]');
         this._accountView = new _account_accountView__WEBPACK_IMPORTED_MODULE_2__.AccountView(accountViewEl, this._domainFacade);
@@ -1697,6 +1698,14 @@ class BaseGraphicView {
         BaseGraphicView.domainFacade = domainFacade;
     }
 
+    get $domainFacade() {
+        return BaseGraphicView.domainFacade;
+    }
+
+    get $textureManager() {
+        return BaseGraphicView.textureManager;
+    }
+
     remove(){
         throw 'remove method is abstract';
     }
@@ -1732,6 +1741,10 @@ class BaseHTMLView {
 
     get el() {
         return this._el;
+    }
+
+    get $domainFacade() {
+        return BaseHTMLView.domainFacade;
     }
 
     toggle(isEnabled) {
@@ -1842,9 +1855,9 @@ class Panel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView
     constructor(el) {
         super(el);
 
-        Panel.domainFacade.events.on('worldCleared', this._removeTabViews.bind(this));
-        Panel.domainFacade.events.on('wholeWorldInited', this._buildTabViews.bind(this));
-        if (Panel.domainFacade.isWholeWorldInited()) {
+        this.$domainFacade.events.on('worldCleared', this._removeTabViews.bind(this));
+        this.$domainFacade.events.on('wholeWorldInited', this._buildTabViews.bind(this));
+        if (this.$domainFacade.isWholeWorldInited()) {
             this._buildTabViews();
         }
     }
@@ -2203,7 +2216,7 @@ class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseH
     constructor(el, nest) {
         super(el);
         this._nest = nest;
-        this._myQueen = LarvaManager.domainFacade.findMyQueen();
+        this._myQueen = this.$domainFacade.findMyQueen();
 
         this._render();
 
@@ -2427,16 +2440,16 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._antContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._entityContainer.addChild(this._antContainer);
 
-        this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(AntView.textureManager.getTexture(`ant_${this.entity.antType}_4.png`));
+        this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_4.png`));
         this._standSprite.anchor.set(0.5);
         this._antContainer.addChild(this._standSprite);
 
-        this._walkSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.AnimatedSprite(AntView.textureManager.getAnimatedTextures(`ant_${this.entity.antType}`));
+        this._walkSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.AnimatedSprite(this.$textureManager.getAnimatedTextures(`ant_${this.entity.antType}`));
         this._walkSprite.anchor.set(0.5);
         this._walkSprite.animationSpeed = 0.2;
         this._antContainer.addChild(this._walkSprite);
 
-        this._deadSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(AntView.textureManager.getTexture(`ant_${this.entity.antType}_dead.png`));
+        this._deadSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_dead.png`));
         this._deadSprite.anchor.set(0.5);
         this._antContainer.addChild(this._deadSprite);
 
@@ -2554,9 +2567,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class Camera {
 
-    static MAP_MARGIN = 0;
+    static MAP_MARGIN = 20;
 
-    constructor(container, handler, frameSize) {
+    constructor(container, handler, canvasEl) {
         this._container = container;
         this._handler = handler;
         this._isDraging = false;
@@ -2565,7 +2578,7 @@ class Camera {
             width: null,
             height: null
         };
-        this._frameSize = frameSize;
+        this._canvasEl = canvasEl;
 
         this._handler.eventMode = 'static';
         this._handler.on('pointerdown', this._onPointerDown.bind(this));
@@ -2607,12 +2620,12 @@ class Camera {
                 containerPosY = Camera.MAP_MARGIN;
             }
 
-            let minXPos = this._frameSize.width - this._mapSize.width - Camera.MAP_MARGIN
+            let minXPos = this._canvasEl.offsetWidth - this._mapSize.width - Camera.MAP_MARGIN
             if (containerPosX < minXPos) {
                 containerPosX = minXPos;
             }
 
-            let minPosY = this._frameSize.height - this._mapSize.height  - Camera.MAP_MARGIN;
+            let minPosY = this._canvasEl.offsetHeight - this._mapSize.height  - Camera.MAP_MARGIN;
             if (containerPosY < minPosY) {
                 containerPosY = minPosY;
             }
@@ -2715,7 +2728,7 @@ class FoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         super(entity, entityContainer);
 
         let textureName = `food_${this._entity.food_type}_${this._entity.food_variety}v.png`;
-        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(FoodView.textureManager.getTexture(textureName));
+        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(textureName));
         entityContainer.addChild(this._sprite);
         this._sprite.anchor.set(0.5);
 
@@ -2762,7 +2775,7 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     constructor(entity, entityContainer) {
         super(entity, entityContainer);
 
-        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(NestView.textureManager.getTexture('nest.png'));
+        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture('nest.png'));
         this._sprite.anchor.set(0.5);
         entityContainer.addChild(this._sprite);
 
@@ -2771,7 +2784,7 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._sprite.x = this._entity.position.x;
         this._sprite.y = this._entity.position.y;
 
-        if (NestView.domainFacade.isNestMine(entity)) {
+        if (this.$domainFacade.isNestMine(entity)) {
             this._sprite.on('pointerdown', this._onClick.bind(this));
         }
         
@@ -2816,7 +2829,7 @@ class PickedFoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView
         if (entity.food_type == 'nectar') {
             textureName = 'food_nectar_picked.png';
         }
-        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(PickedFoodView.textureManager.getTexture(textureName));
+        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(textureName));
         entityContainer.addChild(this._sprite);
         this._sprite.anchor.set(0.5);
 
@@ -2925,28 +2938,24 @@ __webpack_require__.r(__webpack_exports__);
 
 class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseGraphicView {
 
-    constructor(el, domainFacade) {
+    constructor(el) {
         super();
-        this._domainFacade = domainFacade;
         this._el = el;
         this._entityViews = [];
         this._textures = {};
-        this._canvasWidth = el.offsetWidth;
-        this._canvasHeight = el.offsetHeight;
 
-        this._domainFacade.events.on('worldCleared', this._onWorldCleared.bind(this));
+        this.$domainFacade.events.on('worldCleared', this._onWorldCleared.bind(this));
 
         this._init();
     }
 
     async _init() {
-        await WorldView.textureManager.prepareTextures();
+        await this.$textureManager.prepareTextures();
 
-        this._app = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Application();
-        this._app.resizeTo = this._el;
+        this._app = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Application({ resizeTo: this._el });
         this._el.appendChild(this._app.view);
 
-        this._bg = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.TilingSprite(WorldView.textureManager.getTexture('grass.png'));
+        this._bg = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.TilingSprite(this.$textureManager.getTexture('grass.png'));
         this._entityContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._antContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._foodContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
@@ -2961,21 +2970,18 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
         this._entityContainer.addChild(this._foodContainer);
         this._entityContainer.addChild(this._antContainer);
 
-        this._camera = new _camera__WEBPACK_IMPORTED_MODULE_5__.Camera(this._entityContainer, this._bg, { 
-            width: this._canvasWidth, 
-            height: this._canvasHeight
-        });
+        this._camera = new _camera__WEBPACK_IMPORTED_MODULE_5__.Camera(this._entityContainer, this._bg, this._app.view);
 
-        this._domainFacade.events.on('wholeWorldInited', this._onWholeWorldInit.bind(this));
-        if (this._domainFacade.isWholeWorldInited()) {
+        this.$domainFacade.events.on('wholeWorldInited', this._onWholeWorldInit.bind(this));
+        if (this.$domainFacade.isWholeWorldInited()) {
             this._onWholeWorldInit();
         }
 
-        this._domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
+        this.$domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
     }
 
     _onWholeWorldInit() {
-        let worldSize = this._domainFacade.getWorldSize();
+        let worldSize = this.$domainFacade.getWorldSize();
 
         this._bg.width = worldSize[0];
         this._bg.height = worldSize[1];
@@ -2990,26 +2996,32 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
     }
 
     _buildEntityViews() {
-        let entities = this._domainFacade.getEntities();
+        let entities = this.$domainFacade.getEntities();
         entities.forEach(entity => {
-            let view = this._buildEntityView(entity);
-            this._entityViews.push(view);
+            this._buildEntityView(entity);
         });
     }
 
     _buildEntityView(entity) {
+        let view = null;
         switch (entity.type) {
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.ANT:
-                return new _antView__WEBPACK_IMPORTED_MODULE_2__.AntView(entity, this._antContainer);
+                view = new _antView__WEBPACK_IMPORTED_MODULE_2__.AntView(entity, this._antContainer);
+                break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.NEST:
-                return new _nestView__WEBPACK_IMPORTED_MODULE_3__.NestView(entity, this._nestContainer);
+                view = new _nestView__WEBPACK_IMPORTED_MODULE_3__.NestView(entity, this._nestContainer);
+                break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.FOOD:
-                return new _foodView__WEBPACK_IMPORTED_MODULE_4__.FoodView(entity, this._foodContainer);
+                view = new _foodView__WEBPACK_IMPORTED_MODULE_4__.FoodView(entity, this._foodContainer);
+                break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.FOOD_AREA:
-                return new _foodArea__WEBPACK_IMPORTED_MODULE_6__.FoodAreaView(entity, this._foodAreaContainer);
+                view = new _foodArea__WEBPACK_IMPORTED_MODULE_6__.FoodAreaView(entity, this._foodAreaContainer);
+                break;
             default:
                 throw 'unknown type of entity';
         }
+
+        this._entityViews.push(view);
     }
 
     _onWorldCleared() {

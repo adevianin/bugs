@@ -10,7 +10,7 @@ class PickedFoodView extends EntityView {
         if (entity.food_type == 'nectar') {
             textureName = 'food_nectar_picked.png';
         }
-        this._sprite = new PIXI.Sprite(PickedFoodView.textureManager.getTexture(textureName));
+        this._sprite = new PIXI.Sprite(this.$textureManager.getTexture(textureName));
         entityContainer.addChild(this._sprite);
         this._sprite.anchor.set(0.5);
 
