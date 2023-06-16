@@ -10,6 +10,10 @@ class ColonyService():
         self._operation_factory = operation_factory
         self._nest_factory = nest_factory
 
+    def stop_operation(self, user_id: int, operation_id: int):
+        colony = self._world.get_colony_owned_by_user(user_id)
+        colony.stop_operation(operation_id)
+
     def build_new_nest(self, user_id: int, position: Point):
         colony = self._world.get_colony_owned_by_user(user_id)
         new_nest = self._nest_factory.build_new_nest(position, user_id)

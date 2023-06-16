@@ -31,6 +31,11 @@ class Colony:
         self._operations.append(operation)
 
         operation.events.add_listener('change', self._on_operation_change)
+
+    def stop_operation(self, operation_id: int):
+        operation = next(filter(lambda op: op.id == operation_id, self._operations), None)
+        if operation:
+            operation.stop_operation()
     
     def to_json(self):
         operations_json = []

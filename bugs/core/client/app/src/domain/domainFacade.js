@@ -83,6 +83,10 @@ class DomainFacade {
         this._colonyService.buildNewNest(position);
     }
 
+    stopMyColonyOperation(operationId) {
+        this._colonyService.stopMyColonyOperation(operationId);
+    }
+
     _tryConnectMessageHandler() {
         if (this._userService.isLoggedIn()) {
             this._messageHandlerService.connect();

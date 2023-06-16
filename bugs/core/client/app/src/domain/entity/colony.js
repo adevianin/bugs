@@ -25,6 +25,7 @@ class Colony extends EventEmitter {
         this._operations = operations;
         this.emit('operationsChanged');
     }
+
 }
 
 export {

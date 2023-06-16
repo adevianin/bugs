@@ -11,6 +11,7 @@ class BuildNewNestOperation(Operation):
         super().__init__(events)
         self._building_site = building_site
         self._new_nest = new_nest
+        self._name = 'новий мурашник'
         self._open_vacancies(AntTypes.WORKER, 1)
         self._open_vacancies(AntTypes.QUEEN, 1)
 

@@ -97,6 +97,10 @@ class DomainFacade {
         this._colonyService.buildNewNest(position);
     }
 
+    stopMyColonyOperation(operationId) {
+        this._colonyService.stopMyColonyOperation(operationId);
+    }
+
     _tryConnectMessageHandler() {
         if (this._userService.isLoggedIn()) {
             this._messageHandlerService.connect();
@@ -419,6 +423,7 @@ class Colony extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
         this._operations = operations;
         this.emit('operationsChanged');
     }
+
 }
 
 
@@ -978,13 +983,14 @@ class ColonyService {
         this._colonyApi = colonyApi;
     }
 
+    stopMyColonyOperation(operationId) {
+        this._colonyApi.stopMyColonyOperation(operationId);
+    }
+
     buildNewNest(position) {
         this._colonyApi.buildNewNest(position);
     }
 
-    updateMyColony(colonyJson) {
-        console.log('new colony', colonyJson);
-    }
 }
 
 
@@ -1281,6 +1287,18 @@ class ColonyApi {
 
     constructor(serverConnection) {
         this._serverConnection = serverConnection;
+    }
+
+    stopMyColonyOperation(operationId) {
+        this._serverConnection.send({
+            type: 'command',
+            command: {
+                command_type: 'stop_operation',
+                params: {
+                    operation_id: operationId
+                }
+            }
+        });
     }
 
     buildNewNest(position) {
@@ -1653,7 +1671,7 @@ class AppView {
         this._worldView = new _world_worldView__WEBPACK_IMPORTED_MODULE_1__.WorldView(worldEl);
 
         let accountViewEl = this._document.querySelector('[data-account-view]');
-        this._accountView = new _account_accountView__WEBPACK_IMPORTED_MODULE_2__.AccountView(accountViewEl, this._domainFacade);
+        this._accountView = new _account_accountView__WEBPACK_IMPORTED_MODULE_2__.AccountView(accountViewEl);
 
         let panelViewEl = this._document.querySelector('[data-panel]');
         this._panel = new _panel_panel__WEBPACK_IMPORTED_MODULE_3__.Panel(panelViewEl);
@@ -1981,6 +1999,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "OperationsList": () => (/* binding */ OperationsList)
 /* harmony export */ });
 /* harmony import */ var view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _operationTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsList/operationTmpl.html");
+
 
 
 class OperationsList extends view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
@@ -1995,7 +2015,26 @@ class OperationsList extends view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
     }
 
     _render() {
-        this._el.innerHTML = JSON.stringify(this._myColony.operations);
+        this._el.innerHTML = '';
+
+        this._myColony.operations.forEach(operation => {
+            this._renderOperation(operation);
+        });
+    }
+
+    _renderOperation(operation) {
+        let liEl = document.createElement('li');
+        liEl.innerHTML = _operationTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        liEl.querySelector('[data-name]').innerHTML = operation.name;
+        liEl.querySelector('[data-status]').innerHTML = operation.status;
+        liEl.querySelector('[data-stop-btn]').addEventListener('click', () => {
+            this._stopOperation(operation);
+        });
+        this._el.appendChild(liEl);
+    }
+
+    _stopOperation(operation) {
+        this.$domainFacade.stopMyColonyOperation(operation.id);
     }
 
 }
@@ -5079,7 +5118,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"operation-tab__operations-list-container\" data-operations-list></div>\r\n<button data-cancel-operation-creating>назад</button>\r\n<div data-new-operation-list>\r\n    створити операцію:\r\n    <ul class=\"operation-tab__new-operation-list\">\r\n        <li><button data-add-new-nest>нове гніздо</button></li>\r\n        <li><button>рейд</button></li>\r\n    </ul>\r\n</div>\r\n<div data-operation-creator-placeholder></div>\r\n";
+var code = "<div>\r\n    список операцій:\r\n    <ul class=\"operation-tab__operations-list-container\" data-operations-list></ul>\r\n</div>\r\n<button data-cancel-operation-creating>назад</button>\r\n<div data-new-operation-list>\r\n    створити операцію:\r\n    <ul class=\"operation-tab__new-operation-list\">\r\n        <li><button data-add-new-nest>нове гніздо</button></li>\r\n        <li><button>рейд</button></li>\r\n    </ul>\r\n</div>\r\n<div data-operation-creator-placeholder></div>\r\n";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsList/operationTmpl.html":
+/*!**************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsList/operationTmpl.html ***!
+  \**************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<span data-name></span>\r\n<span data-status></span>\r\n<button data-stop-btn>X</button>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.ant import Ant
 from core.world.utils.event_emiter import EventEmitter
+from .operation_statuses import OperationStatuses
 
 class Operation(ABC):
 
@@ -12,6 +13,7 @@ class Operation(ABC):
         self._hired = {}
         self._is_hiring = True
         self._is_done = False
+        self._name = 'operation name'
 
     @property
     def is_hiring(self):
@@ -20,15 +22,34 @@ class Operation(ABC):
     @property
     def is_done(self):
         return self._is_done
+    
+    @property
+    def _status(self):
+        if self._is_hiring:
+            return OperationStatuses.HIRING
+        else:
+            return OperationStatuses.INPROGRESS
+        
+    @property
+    def name(self):
+        return self._name
 
     def _open_vacancies(self, ant_type: AntTypes, count: int):
         self._vacancies[ant_type] = count
         self._hired[ant_type] = []
 
-    def _get_hired_ants(self, ant_type: AntTypes):
-        return self._hired[ant_type]
+    def _get_hired_ants(self, ant_type: AntTypes = None):
+        if (ant_type):
+            return self._hired[ant_type]
+        else:
+            hired_ants = []
+            for ant_type in self._hired.keys():
+                hired_ants.extend(self._hired[ant_type])
+            return hired_ants
 
     def hire_ant(self, ant: Ant):
+        if (not self._is_hiring):
+            raise Exception('operation is not hiring')
         self._hired[ant.ant_type].append(ant)
 
         self._is_hiring = len(self.get_hiring_ant_types()) > 0
@@ -47,6 +68,15 @@ class Operation(ABC):
                 hiring_ant_type.append(ant_type)
         return hiring_ant_type
     
+    def stop_operation(self):
+        self._is_hiring = False
+        
+        ants = self._get_hired_ants()
+        for ant in ants:
+            ant.leave_operation()
+
+        self._mark_as_done()
+    
     @abstractmethod
     def _start_operation(self):
         pass
@@ -58,5 +88,6 @@ class Operation(ABC):
     def to_json(self):
         return {
             'id': self.id,
-            'is_hiring': self.is_hiring
+            'name': self.name,
+            'status': self._status,
         }

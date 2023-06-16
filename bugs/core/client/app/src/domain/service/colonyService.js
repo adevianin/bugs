@@ -4,13 +4,14 @@ class ColonyService {
         this._colonyApi = colonyApi;
     }
 
+    stopMyColonyOperation(operationId) {
+        this._colonyApi.stopMyColonyOperation(operationId);
+    }
+
     buildNewNest(position) {
         this._colonyApi.buildNewNest(position);
     }
 
-    updateMyColony(colonyJson) {
-        console.log('new colony', colonyJson);
-    }
 }
 
 export {

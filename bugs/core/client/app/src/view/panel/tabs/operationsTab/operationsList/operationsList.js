@@ -1,4 +1,5 @@
 import { BaseHTMLView } from "view/base/baseHTMLView";
+import operationTmpl from './operationTmpl.html';
 
 class OperationsList extends BaseHTMLView {
 
@@ -12,7 +13,26 @@ class OperationsList extends BaseHTMLView {
     }
 
     _render() {
-        this._el.innerHTML = JSON.stringify(this._myColony.operations);
+        this._el.innerHTML = '';
+
+        this._myColony.operations.forEach(operation => {
+            this._renderOperation(operation);
+        });
+    }
+
+    _renderOperation(operation) {
+        let liEl = document.createElement('li');
+        liEl.innerHTML = operationTmpl;
+        liEl.querySelector('[data-name]').innerHTML = operation.name;
+        liEl.querySelector('[data-status]').innerHTML = operation.status;
+        liEl.querySelector('[data-stop-btn]').addEventListener('click', () => {
+            this._stopOperation(operation);
+        });
+        this._el.appendChild(liEl);
+    }
+
+    _stopOperation(operation) {
+        this.$domainFacade.stopMyColonyOperation(operation.id);
     }
 
 }
