@@ -18,11 +18,13 @@ class NewNestOperationCreator extends OperationCreator {
     }
 
     _onOk() {
-        NewNestOperationCreator.domainFacade.buildNewNest({
-            x: 1200,
-            y: 600 
-        })
-        this._onDone();
+        this.$eventBus.emit('placeNewNestMarker', (point) => {
+            NewNestOperationCreator.domainFacade.buildNewNest({
+                x: point.x,
+                y: point.y 
+            })
+            this._onDone();
+        });
     }
 
 }

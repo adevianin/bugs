@@ -280,9 +280,17 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
+"marker_point.png":
+{
+	"frame": {"x":0,"y":608,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
 "nest.png":
 {
-	"frame": {"x":0,"y":608,"w":40,"h":40},
+	"frame": {"x":0,"y":640,"w":40,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
@@ -298,8 +306,8 @@
 	"version": "1.1",
 	"image": "world_spritesheet.png",
 	"format": "RGBA8888",
-	"size": {"w":64,"h":648},
+	"size": {"w":64,"h":680},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:d9a13ae348790caba83c205244611b9c:2bf359c9feba0c53ea4596d2b67cd00c:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:d6ea87e07922f806383ea875b6ce253f:a2d67e0e9009d886c4e1f42bcb523091:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }

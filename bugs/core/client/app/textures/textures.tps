@@ -207,6 +207,7 @@
             <key type="filename">images/food_nectar_1v.png</key>
             <key type="filename">images/food_nectar_2v.png</key>
             <key type="filename">images/food_nectar_3v.png</key>
+            <key type="filename">images/marker_point.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -294,6 +295,7 @@
                     <filename>images/ant_queen_8.png</filename>
                     <filename>images/ant_queen_dead.png</filename>
                     <filename>images/nest.png</filename>
+                    <filename>images/marker_point.png</filename>
                 </array>
             </struct>
         </map>

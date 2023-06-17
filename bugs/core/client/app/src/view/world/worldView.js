@@ -8,6 +8,7 @@ import { Camera } from './camera';
 import { FoodAreaView } from './foodArea';
 import { BaseGraphicView } from '../base/baseGraphicView';
 import { EntityTypes } from '../../domain/enum/entityTypes';
+import { MarkerManagerView } from './markerManager/markerManagerView';
 
 class WorldView extends BaseGraphicView {
 
@@ -34,6 +35,7 @@ class WorldView extends BaseGraphicView {
         this._foodContainer = new PIXI.Container();
         this._nestContainer = new PIXI.Container();
         this._foodAreaContainer = new PIXI.Container();
+        this._markersContainer = new PIXI.Container();
 
         this._app.stage.addChild(this._entityContainer);
 
@@ -42,6 +44,7 @@ class WorldView extends BaseGraphicView {
         this._entityContainer.addChild(this._foodAreaContainer);
         this._entityContainer.addChild(this._foodContainer);
         this._entityContainer.addChild(this._antContainer);
+        this._entityContainer.addChild(this._markersContainer);
 
         this._camera = new Camera(this._entityContainer, this._bg, this._app.view);
 
@@ -54,14 +57,9 @@ class WorldView extends BaseGraphicView {
     }
 
     _onWholeWorldInit() {
-        let worldSize = this.$domainFacade.getWorldSize();
-
-        this._bg.width = worldSize[0];
-        this._bg.height = worldSize[1];
-
-        this._camera.setMapSize(worldSize[0], worldSize[1]);
-
+        this._setUpCamera();
         this._buildEntityViews();
+        this._markerManager = new MarkerManagerView(this._markersContainer);
     }
 
     _onEntityBorn(entity) {
@@ -97,11 +95,21 @@ class WorldView extends BaseGraphicView {
         this._entityViews.push(view);
     }
 
+    _setUpCamera() {
+        let worldSize = this.$domainFacade.getWorldSize();
+
+        this._bg.width = worldSize[0];
+        this._bg.height = worldSize[1];
+
+        this._camera.setMapSize(worldSize[0], worldSize[1]);
+    }
+
     _onWorldCleared() {
         this._entityViews.forEach(view => {
             view.remove();
         });
         this._entityViews = [];
+        this._markerManager.remove();
     }
 
 }

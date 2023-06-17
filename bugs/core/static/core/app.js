@@ -1703,6 +1703,7 @@ class BaseGraphicView {
     static textureManager;
     static popupManager;
     static domainFacade;
+    static eventBus;
 
     static useTextureManager(textureManager) {
         BaseGraphicView.textureManager = textureManager;
@@ -1716,12 +1717,20 @@ class BaseGraphicView {
         BaseGraphicView.domainFacade = domainFacade;
     }
 
+    static useEventBus(eventBus) {
+        BaseGraphicView.eventBus = eventBus;
+    }
+
     get $domainFacade() {
         return BaseGraphicView.domainFacade;
     }
 
     get $textureManager() {
         return BaseGraphicView.textureManager;
+    }
+
+    get $eventBus() {
+        return BaseGraphicView.eventBus;
     }
 
     remove(){
@@ -1748,9 +1757,14 @@ __webpack_require__.r(__webpack_exports__);
 class BaseHTMLView {
 
     static domainFacade;
+    static eventBus;
 
     static useDomainFacade(domainFacade) {
         BaseHTMLView.domainFacade = domainFacade;
+    }
+
+    static useEventBus(eventBus) {
+        BaseHTMLView.eventBus = eventBus;
     }
 
     constructor(el) {
@@ -1763,6 +1777,10 @@ class BaseHTMLView {
 
     get $domainFacade() {
         return BaseHTMLView.domainFacade;
+    }
+
+    get $eventBus() {
+        return BaseHTMLView.eventBus;
     }
 
     toggle(isEnabled) {
@@ -1795,6 +1813,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
 /* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _popups_popupManager__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./popups/popupManager */ "./bugs/core/client/app/src/view/popups/popupManager.js");
+/* harmony import */ var utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! utils/eventEmitter.js */ "./bugs/core/client/utils/eventEmitter.js");
+
 
 
 
@@ -1804,6 +1824,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function initViewLayer(domainFacade, initialData) {
     let requester = new utils_requester__WEBPACK_IMPORTED_MODULE_1__.Requester();
+    let eventBus = new utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__.EventEmitter();
 
     let spritesheetManager = new _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__.WorldSpritesheetManager(initialData.urls.world_spritesheet, initialData.urls.world_spritesheet_atlas, requester);
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useTextureManager(spritesheetManager);
@@ -1813,6 +1834,9 @@ function initViewLayer(domainFacade, initialData) {
 
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useDomainFacade(domainFacade);
     _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.useDomainFacade(domainFacade);
+
+    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useEventBus(eventBus);
+    _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.useEventBus(eventBus);
 
     let app = new _appView__WEBPACK_IMPORTED_MODULE_0__.AppView(document, domainFacade);
 }
@@ -1948,11 +1972,13 @@ class NewNestOperationCreator extends _operationCreator__WEBPACK_IMPORTED_MODULE
     }
 
     _onOk() {
-        NewNestOperationCreator.domainFacade.buildNewNest({
-            x: 1200,
-            y: 600 
-        })
-        this._onDone();
+        this.$eventBus.emit('placeNewNestMarker', (point) => {
+            NewNestOperationCreator.domainFacade.buildNewNest({
+                x: point.x,
+                y: point.y 
+            })
+            this._onDone();
+        });
     }
 
 }
@@ -2096,6 +2122,7 @@ class OperationsTab extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.Base
         this._operationCreator.remove();
         this._operationCreator = null;
         this._toggleOperationCreating(false);
+        this.$eventBus.emit('cancelAnyMarkerPlacer');
     }
 
     _onAddNewNestClick() {
@@ -2793,6 +2820,110 @@ class FoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/world/markerManager/markerManagerView.js":
+/*!********************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/markerManager/markerManagerView.js ***!
+  \********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "MarkerManagerView": () => (/* binding */ MarkerManagerView)
+/* harmony export */ });
+/* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _markerPlacers_newNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./markerPlacers/newNestMarkerPlacerView */ "./bugs/core/client/app/src/view/world/markerManager/markerPlacers/newNestMarkerPlacerView.js");
+
+
+
+
+class MarkerManagerView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
+
+    constructor(markersContainer) {
+        super();
+        this._markersContainer = markersContainer;
+        this._currentMarkerPlacer = null;
+
+        this._render();
+
+        this.$eventBus.on('placeNewNestMarker', this._onPlaceNewNestMarkerRequest.bind(this));
+        this.$eventBus.on('cancelAnyMarkerPlacer', this._onMarkerPlacerCancel.bind(this));
+    }
+
+    _render() {
+        
+    }
+
+    _onPlaceNewNestMarkerRequest(callback) {
+        let newMarkerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._markersContainer.addChild(newMarkerContainer);
+        this._currentMarkerPlacer = new _markerPlacers_newNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_2__.NewNestMarkerPlacerView(newMarkerContainer, callback);
+    }
+
+    _onMarkerPlacerCancel() {
+        if (this._currentMarkerPlacer) {
+            this._currentMarkerPlacer.remove();
+            this._currentMarkerPlacer = null;
+        }
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/world/markerManager/markerPlacers/newNestMarkerPlacerView.js":
+/*!****************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/markerManager/markerPlacers/newNestMarkerPlacerView.js ***!
+  \****************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NewNestMarkerPlacerView": () => (/* binding */ NewNestMarkerPlacerView)
+/* harmony export */ });
+/* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
+
+
+class NewNestMarkerPlacerView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
+
+    constructor(markerContainer, callback) {
+        super();
+        this._markerContainer = markerContainer;
+        this._callback = callback;
+
+        this._render();
+
+        this._markerContainer.on('pointerdown', this._onClick.bind(this));
+    }
+
+    _render() {
+        //todo render nest areas
+        this._markerContainer.eventMode = 'static'; 
+        let worldSize = this.$domainFacade.getWorldSize();
+        this._markerContainer.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Rectangle(0, 0, worldSize[0], worldSize[1]);
+    }
+
+    _onClick(e) {
+        //check nest area click
+        let point = this._markerContainer.toLocal(e.client);
+        this._callback({x: point.x, y: point.y});
+        this.remove();
+    }
+
+    remove() {
+        this._markerContainer.destroy();
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/world/nestView.js":
 /*!*********************************************************!*\
   !*** ./bugs/core/client/app/src/view/world/nestView.js ***!
@@ -2964,6 +3095,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _foodArea__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foodArea */ "./bugs/core/client/app/src/view/world/foodArea.js");
 /* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
 /* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../domain/enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+/* harmony import */ var _markerManager_markerManagerView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./markerManager/markerManagerView */ "./bugs/core/client/app/src/view/world/markerManager/markerManagerView.js");
+
 
 
 
@@ -3000,6 +3133,7 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
         this._foodContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._nestContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._foodAreaContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._markersContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
 
         this._app.stage.addChild(this._entityContainer);
 
@@ -3008,6 +3142,7 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
         this._entityContainer.addChild(this._foodAreaContainer);
         this._entityContainer.addChild(this._foodContainer);
         this._entityContainer.addChild(this._antContainer);
+        this._entityContainer.addChild(this._markersContainer);
 
         this._camera = new _camera__WEBPACK_IMPORTED_MODULE_5__.Camera(this._entityContainer, this._bg, this._app.view);
 
@@ -3020,14 +3155,9 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
     }
 
     _onWholeWorldInit() {
-        let worldSize = this.$domainFacade.getWorldSize();
-
-        this._bg.width = worldSize[0];
-        this._bg.height = worldSize[1];
-
-        this._camera.setMapSize(worldSize[0], worldSize[1]);
-
+        this._setUpCamera();
         this._buildEntityViews();
+        this._markerManager = new _markerManager_markerManagerView__WEBPACK_IMPORTED_MODULE_9__.MarkerManagerView(this._markersContainer);
     }
 
     _onEntityBorn(entity) {
@@ -3063,11 +3193,21 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
         this._entityViews.push(view);
     }
 
+    _setUpCamera() {
+        let worldSize = this.$domainFacade.getWorldSize();
+
+        this._bg.width = worldSize[0];
+        this._bg.height = worldSize[1];
+
+        this._camera.setMapSize(worldSize[0], worldSize[1]);
+    }
+
     _onWorldCleared() {
         this._entityViews.forEach(view => {
             view.remove();
         });
         this._entityViews = [];
+        this._markerManager.remove();
     }
 
 }

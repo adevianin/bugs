@@ -1,9 +1,14 @@
 class BaseHTMLView {
 
     static domainFacade;
+    static eventBus;
 
     static useDomainFacade(domainFacade) {
         BaseHTMLView.domainFacade = domainFacade;
+    }
+
+    static useEventBus(eventBus) {
+        BaseHTMLView.eventBus = eventBus;
     }
 
     constructor(el) {
@@ -16,6 +21,10 @@ class BaseHTMLView {
 
     get $domainFacade() {
         return BaseHTMLView.domainFacade;
+    }
+
+    get $eventBus() {
+        return BaseHTMLView.eventBus;
     }
 
     toggle(isEnabled) {

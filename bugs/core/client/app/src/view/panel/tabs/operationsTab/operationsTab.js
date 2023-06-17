@@ -35,6 +35,7 @@ class OperationsTab extends BaseHTMLView {
         this._operationCreator.remove();
         this._operationCreator = null;
         this._toggleOperationCreating(false);
+        this.$eventBus.emit('cancelAnyMarkerPlacer');
     }
 
     _onAddNewNestClick() {
