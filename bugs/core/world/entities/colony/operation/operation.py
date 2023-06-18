@@ -3,6 +3,8 @@ from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.ant import Ant
 from core.world.utils.event_emiter import EventEmitter
 from .operation_statuses import OperationStatuses
+from core.world.utils.point import Point
+from .marker_types import MarkerTypes
 
 class Operation(ABC):
 
@@ -14,6 +16,7 @@ class Operation(ABC):
         self._is_hiring = True
         self._is_done = False
         self._name = 'operation name'
+        self._markers = []
 
     @property
     def is_hiring(self):
@@ -85,9 +88,16 @@ class Operation(ABC):
         self._is_done = True
         self.events.emit('change')
 
+    def _add_pointer_marker(self, point: Point):
+        self._markers.append({
+            'type': MarkerTypes.POINTER,
+            'point': point
+        })
+
     def to_json(self):
         return {
             'id': self.id,
             'name': self.name,
             'status': self._status,
+            'markers': self._markers
         }

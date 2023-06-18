@@ -14,6 +14,15 @@ class BuildNewNestOperation(Operation):
         self._name = 'новий мурашник'
         self._open_vacancies(AntTypes.WORKER, 1)
         self._open_vacancies(AntTypes.QUEEN, 1)
+        self._add_pointer_marker(self._building_site)
+
+    # def to_json(self):
+    #     json = super().to_json()
+    #     json.update({
+    #         'markers': self._pointer_marker_to_json(self._building_site)
+    #     })
+
+    #     return json
 
     def _start_operation(self):
         self._worker = self._get_hired_ants(AntTypes.WORKER)[0]

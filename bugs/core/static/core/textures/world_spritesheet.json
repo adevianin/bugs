@@ -280,7 +280,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
-"marker_point.png":
+"marker_pointer.png":
 {
 	"frame": {"x":0,"y":608,"w":32,"h":32},
 	"rotated": false,
@@ -308,6 +308,6 @@
 	"format": "RGBA8888",
 	"size": {"w":64,"h":680},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:d6ea87e07922f806383ea875b6ce253f:a2d67e0e9009d886c4e1f42bcb523091:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:a7f8321ea7a1983982855ca012abdee2:a2d67e0e9009d886c4e1f42bcb523091:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }

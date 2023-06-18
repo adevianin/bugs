@@ -12,3 +12,4 @@ class QueenAnt(Ant):
 
     def build_new_nest(self, new_nest: Nest):
         return self._mind.build_new_nest(new_nest)
+    

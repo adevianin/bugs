@@ -18,7 +18,7 @@ class NewNestOperationCreator extends OperationCreator {
     }
 
     _onOk() {
-        this.$eventBus.emit('placeNewNestMarker', (point) => {
+        this.$eventBus.emit('placeNewNestMarkerRequest', (point) => {
             NewNestOperationCreator.domainFacade.buildNewNest({
                 x: point.x,
                 y: point.y 

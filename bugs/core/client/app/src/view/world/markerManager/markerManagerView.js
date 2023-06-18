@@ -1,27 +1,30 @@
 import { BaseGraphicView } from "../../base/baseGraphicView";
 import * as PIXI from 'pixi.js';
 import { NewNestMarkerPlacerView } from "./markerPlacers/newNestMarkerPlacerView";
+import { MarkersList } from "./markersList/markersList";
 
 class MarkerManagerView extends BaseGraphicView {
 
-    constructor(markersContainer) {
+    constructor(markersManagerContainer) {
         super();
-        this._markersContainer = markersContainer;
+        this._markersManagerContainer = markersManagerContainer;
         this._currentMarkerPlacer = null;
 
         this._render();
 
-        this.$eventBus.on('placeNewNestMarker', this._onPlaceNewNestMarkerRequest.bind(this));
-        this.$eventBus.on('cancelAnyMarkerPlacer', this._onMarkerPlacerCancel.bind(this));
+        this.$eventBus.on('placeNewNestMarkerRequest', this._onPlaceNewNestMarkerRequest.bind(this));
+        this.$eventBus.on('cancelAnyMarkerPlacerRequest', this._onMarkerPlacerCancel.bind(this));
     }
 
     _render() {
-        
+        let container = new PIXI.Container();
+        this._markersManagerContainer.addChild(container);
+        this._markersList = new MarkersList(container);
     }
 
     _onPlaceNewNestMarkerRequest(callback) {
         let newMarkerContainer = new PIXI.Container();
-        this._markersContainer.addChild(newMarkerContainer);
+        this._markersManagerContainer.addChild(newMarkerContainer);
         this._currentMarkerPlacer = new NewNestMarkerPlacerView(newMarkerContainer, callback);
     }
 

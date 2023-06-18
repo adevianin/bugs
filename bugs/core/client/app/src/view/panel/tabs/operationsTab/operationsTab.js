@@ -10,12 +10,17 @@ class OperationsTab extends BaseHTMLView {
     constructor(el) {
         super(el);
         this._operationCreator = null;
-        this._myColony = OperationsTab.domainFacade.findMyColony();
+        this._myColony = this.$domainFacade.findMyColony();
 
         this._render();
 
         this._addNewNestBtn.addEventListener('click', this._onAddNewNestClick.bind(this));
         this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
+    }
+
+    toggle(isEnabled) {
+        super.toggle(isEnabled);
+        this.$eventBus.emit('operationsViewActivationChanged', isEnabled);
     }
 
     _render() {
@@ -35,7 +40,7 @@ class OperationsTab extends BaseHTMLView {
         this._operationCreator.remove();
         this._operationCreator = null;
         this._toggleOperationCreating(false);
-        this.$eventBus.emit('cancelAnyMarkerPlacer');
+        this.$eventBus.emit('cancelAnyMarkerPlacerRequest');
     }
 
     _onAddNewNestClick() {

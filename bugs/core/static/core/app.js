@@ -1972,7 +1972,7 @@ class NewNestOperationCreator extends _operationCreator__WEBPACK_IMPORTED_MODULE
     }
 
     _onOk() {
-        this.$eventBus.emit('placeNewNestMarker', (point) => {
+        this.$eventBus.emit('placeNewNestMarkerRequest', (point) => {
             NewNestOperationCreator.domainFacade.buildNewNest({
                 x: point.x,
                 y: point.y 
@@ -2097,12 +2097,17 @@ class OperationsTab extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.Base
     constructor(el) {
         super(el);
         this._operationCreator = null;
-        this._myColony = OperationsTab.domainFacade.findMyColony();
+        this._myColony = this.$domainFacade.findMyColony();
 
         this._render();
 
         this._addNewNestBtn.addEventListener('click', this._onAddNewNestClick.bind(this));
         this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
+    }
+
+    toggle(isEnabled) {
+        super.toggle(isEnabled);
+        this.$eventBus.emit('operationsViewActivationChanged', isEnabled);
     }
 
     _render() {
@@ -2122,7 +2127,7 @@ class OperationsTab extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.Base
         this._operationCreator.remove();
         this._operationCreator = null;
         this._toggleOperationCreating(false);
-        this.$eventBus.emit('cancelAnyMarkerPlacer');
+        this.$eventBus.emit('cancelAnyMarkerPlacerRequest');
     }
 
     _onAddNewNestClick() {
@@ -2834,30 +2839,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 /* harmony import */ var _markerPlacers_newNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./markerPlacers/newNestMarkerPlacerView */ "./bugs/core/client/app/src/view/world/markerManager/markerPlacers/newNestMarkerPlacerView.js");
+/* harmony import */ var _markersList_markersList__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./markersList/markersList */ "./bugs/core/client/app/src/view/world/markerManager/markersList/markersList.js");
+
 
 
 
 
 class MarkerManagerView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
 
-    constructor(markersContainer) {
+    constructor(markersManagerContainer) {
         super();
-        this._markersContainer = markersContainer;
+        this._markersManagerContainer = markersManagerContainer;
         this._currentMarkerPlacer = null;
 
         this._render();
 
-        this.$eventBus.on('placeNewNestMarker', this._onPlaceNewNestMarkerRequest.bind(this));
-        this.$eventBus.on('cancelAnyMarkerPlacer', this._onMarkerPlacerCancel.bind(this));
+        this.$eventBus.on('placeNewNestMarkerRequest', this._onPlaceNewNestMarkerRequest.bind(this));
+        this.$eventBus.on('cancelAnyMarkerPlacerRequest', this._onMarkerPlacerCancel.bind(this));
     }
 
     _render() {
-        
+        let container = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._markersManagerContainer.addChild(container);
+        this._markersList = new _markersList_markersList__WEBPACK_IMPORTED_MODULE_3__.MarkersList(container);
     }
 
     _onPlaceNewNestMarkerRequest(callback) {
         let newMarkerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._markersContainer.addChild(newMarkerContainer);
+        this._markersManagerContainer.addChild(newMarkerContainer);
         this._currentMarkerPlacer = new _markerPlacers_newNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_2__.NewNestMarkerPlacerView(newMarkerContainer, callback);
     }
 
@@ -2918,6 +2927,62 @@ class NewNestMarkerPlacerView extends _base_baseGraphicView__WEBPACK_IMPORTED_MO
     remove() {
         this._markerContainer.destroy();
     }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/world/markerManager/markersList/markersList.js":
+/*!**************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/markerManager/markersList/markersList.js ***!
+  \**************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "MarkersList": () => (/* binding */ MarkersList)
+/* harmony export */ });
+/* harmony import */ var view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! view/base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
+
+
+class MarkersList extends view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
+
+    constructor(container) {
+        super();
+        this._container = container;
+        this._myColony = this.$domainFacade.findMyColony();
+
+        this._renderMarkers();
+
+        this._myColony.on('operationsChanged', this._renderMarkers.bind(this));
+        this.$eventBus.on('operationsViewActivationChanged', this._onOperationsViewActivationChanged.bind(this));
+    }
+
+    _renderMarkers() {
+        this._container.removeChildren();
+        this._myColony.operations.forEach(operation => {
+            operation.markers.forEach(marker => {
+                this._renderMarker(marker);
+            });
+        });
+    }
+
+    _renderMarker(marker) {
+        let sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`marker_${marker.type}.png`));
+        sprite.anchor.set(0.5, 1);
+        sprite.x = marker.point[0];
+        sprite.y = marker.point[1];
+        this._container.addChild(sprite);
+    }
+
+    _onOperationsViewActivationChanged(isEnabled) {
+        this._container.renderable = isEnabled;
+    }
+
 }
 
 
