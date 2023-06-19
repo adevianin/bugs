@@ -17,6 +17,7 @@ class Operation(ABC):
         self._is_done = False
         self._name = 'operation name'
         self._markers = []
+        self._flags = {}
 
     @property
     def is_hiring(self):

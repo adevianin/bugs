@@ -14,20 +14,20 @@ class AntMind(Mind):
         super().__init__(events, body, thought_factory, map, memory)
         self._home_nest = home_nest
 
-    def prepare_for_operation(self):
+    def prepare_for_operation(self, sayback: str):
         self.toggle_auto_thought_generation(False)
         self.force_free()
-        thought = self._thought_factory.build_prepare_for_operation_thought(self._home_nest, self._memory, self._calc_assemble_point())
+        thought = self._thought_factory.build_prepare_for_operation_thought(self._home_nest, self._memory, self._calc_assemble_point(), sayback)
         self._register_thought(thought, True)
 
         return thought
     
     def leave_operation(self):
-        self.force_free()
+        # self.force_free()
         self.toggle_auto_thought_generation(True)
     
-    def walk_to(self, position: Point):
-        thought = self._thought_factory.build_walk_to_thought(position)
+    def walk_to(self, position: Point, sayback: str):
+        thought = self._thought_factory.build_walk_to_thought(position, sayback)
         self._register_thought(thought, True)
 
         return thought

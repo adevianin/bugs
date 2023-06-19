@@ -4,11 +4,12 @@ from typing import Callable
 
 class Thought(ABC):
 
-    def __init__(self, body: Body):
+    def __init__(self, body: Body, sayback: str = None):
         self._body = body
         self._is_done = False
         self._results = None
         self._on_done_callbacks = []
+        self._sayback = sayback
 
     def is_done(self):
         return self._is_done
@@ -34,6 +35,10 @@ class Thought(ABC):
     @property
     def results(self):
         return self._results
+    
+    @property
+    def sayback(self):
+        return self._sayback
 
     @abstractclassmethod
     def do_step(self):

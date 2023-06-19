@@ -6,5 +6,5 @@ from .warrior_ant_mind import WarrirorAntMind
 
 class WarriorAnt(Ant):
 
-    def __init__(self, event_bus: EventEmitter, id: int, from_colony: int, mind: WarrirorAntMind, body: WarriorAntBody):
-        super().__init__(event_bus, id, AntTypes.WARRIOR, from_colony, mind, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony: int, mind: WarrirorAntMind, body: WarriorAntBody):
+        super().__init__(event_bus, events, id, AntTypes.WARRIOR, from_colony, mind, body)

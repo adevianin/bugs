@@ -3,10 +3,9 @@ from core.world.entities.nest.nest import Nest
 
 class QueenAntMind(AntMind):
 
-    def build_new_nest(self, new_nest: Nest):
-        thought = self._thought_factory.build_build_new_nest_thought(new_nest)
+    def build_new_nest(self, new_nest: Nest, sayback: str):
+        thought = self._thought_factory.build_build_new_nest_thought(new_nest, sayback)
         self._register_thought(thought)
-        return thought
 
     def _generate_thoughts(self):
         super()._generate_thoughts()

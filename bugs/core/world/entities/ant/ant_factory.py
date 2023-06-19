@@ -45,32 +45,29 @@ class AntFactory():
         return self.build_ant(self._id_generator.generate_id(), nest.from_colony, larva.ant_type, larva.dna_profile, larva.position, nest, None)
     
     def _build_warrior_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest):
-        ant_body_events = EventEmitter()
-        ant_mind_events = EventEmitter()
-        body = WarriorAntBody(ant_body_events, dna_profile, position, located_in_nest)
+        events = EventEmitter()
+        body = WarriorAntBody(events, dna_profile, position, located_in_nest)
         ant_thought_factory = WarriorThoughtFactory(body, self._map)
-        mind = WarrirorAntMind(ant_mind_events, body, ant_thought_factory, self._map, Memory(), nest)
-        ant = WarriorAnt(self._event_bus, id, from_colony, mind, body)
+        mind = WarrirorAntMind(events, body, ant_thought_factory, self._map, Memory(), nest)
+        ant = WarriorAnt(self._event_bus, events, id, from_colony, mind, body)
 
         return ant
     
     def _build_worker_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest):
-        ant_body_events = EventEmitter()
-        ant_mind_events = EventEmitter()
-        body = WorkerAntBody(ant_body_events, dna_profile, position, located_in_nest)
+        events = EventEmitter()
+        body = WorkerAntBody(events, dna_profile, position, located_in_nest)
         ant_thought_factory = WorkerThoughtFactory(body, self._map)
-        mind = WorkerAntMind(ant_mind_events, body, ant_thought_factory, self._map, Memory(), nest)
-        ant = WorkerAnt(self._event_bus, id, from_colony, mind, body)
+        mind = WorkerAntMind(events, body, ant_thought_factory, self._map, Memory(), nest)
+        ant = WorkerAnt(self._event_bus, events, id, from_colony, mind, body)
 
         return ant
     
     def _build_queen_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest):
-        ant_body_events = EventEmitter()
-        ant_mind_events = EventEmitter()
-        body = QueenAntBody(ant_body_events, dna_profile, position, located_in_nest)
+        events = EventEmitter()
+        body = QueenAntBody(events, dna_profile, position, located_in_nest)
         ant_thought_factory = QueenThoughtFactory(body, self._map)
-        mind = QueenAntMind(ant_mind_events, body, ant_thought_factory, self._map, Memory(), nest)
-        ant = QueenAnt(self._event_bus, id, from_colony, mind, body)
+        mind = QueenAntMind(events, body, ant_thought_factory, self._map, Memory(), nest)
+        ant = QueenAnt(self._event_bus, events, id, from_colony, mind, body)
 
         return ant
 

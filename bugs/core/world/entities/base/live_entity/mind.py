@@ -28,7 +28,7 @@ class Mind(ABC):
         if self._has_thoughts_to_do():
             self._get_current_thought().do_step()
 
-        self._clear_done_thoughts()
+        self._handle_done_thoughts()
 
     def toggle_auto_thought_generation(self, is_auto: bool):
         self._is_auto_thought_generation = is_auto
@@ -66,14 +66,19 @@ class Mind(ABC):
         near_entities = self._map.find_entities_near(self._body.position, self._body.sight_distance, [EntityTypes.FOOD, EntityTypes.FOOD_AREA])
         self._memory.remember_entities_at(self._body.position, self._body.sight_distance, near_entities)
 
-    def _clear_done_thoughts(self):
+    def _handle_done_thoughts(self):
         done_thoughts = []
         for thought in self._thoughts_stack:
             if (thought.is_done()):
                 done_thoughts.append(thought)
         
         for done_thought in done_thoughts:
+            if done_thought.sayback:
+                self._say(done_thought.sayback)
             self._thoughts_stack.remove(done_thought)
+
+    def _say(self, phrase: str):
+        self.events.emit(f'say:{phrase}')
 
     @abstractclassmethod
     def _generate_feed_myself_thought(self):

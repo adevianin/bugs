@@ -52,12 +52,12 @@ class WorldFacade:
         nest_factory = NestFactory(self._event_bus, self._id_generator)
         food_factory = FoodFactory(self._event_bus, self._id_generator)
         colony_factory = ColonyFactory(self._event_bus, map)
-        operation_factory = OperationFactory()
+        operation_factory = OperationFactory(nest_factory)
         world_factory = WorldFactory(self._event_bus, ant_factory, food_factory, nest_factory, colony_factory)
 
         self._world = world_factory.build_world_from_json(world_data, map)
 
-        self._colony_service = ColonyService(self._world, operation_factory, nest_factory)
+        self._colony_service = ColonyService(self._world, operation_factory)
         self._nest_service = NestService(self._world)
         birther_service = BirtherService(self._event_bus, map, ant_factory, food_factory)
 

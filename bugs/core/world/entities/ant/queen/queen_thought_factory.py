@@ -4,5 +4,5 @@ from .thoughts.build_nest_thought import BuildNestThought
 
 class QueenThoughtFactory(AntThoughtFactory):
 
-    def build_build_new_nest_thought(self, new_nest: Nest):
-        return BuildNestThought(self._body, new_nest)
+    def build_build_new_nest_thought(self, new_nest: Nest, sayback: str):
+        return BuildNestThought(self._body, new_nest, sayback)

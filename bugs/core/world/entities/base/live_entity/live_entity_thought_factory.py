@@ -9,6 +9,6 @@ class LiveEntityThoughtFactory(ThoughtFactory):
     def build_go_in_nest_thought(self, nest: Nest):
         return GoInNestThought(self._body, nest)
     
-    def build_walk_to_thought(self, position: Point):
-        return WalkToThought(self._body, position)
+    def build_walk_to_thought(self, position: Point, sayback: str = None):
+        return WalkToThought(self._body, position, sayback)
 

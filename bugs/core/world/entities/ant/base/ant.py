@@ -10,8 +10,9 @@ from core.world.entities.nest.nest import Nest
 
 class Ant(LiveEntity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, ant_type: AntTypes, from_colony: int, mind: AntMind, body: AntBody):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ant_type: AntTypes, from_colony: int, mind: AntMind, body: AntBody):
         super().__init__(event_bus, id, EntityTypes.ANT, from_colony, mind, body)
+        self.events = events
         self._ant_type = ant_type
         self._in_operation = False
         self._body.events.add_listener('food_picked', self._on_food_picked)
@@ -29,16 +30,16 @@ class Ant(LiveEntity):
         if (self._in_operation):
             raise Exception('ant already in operation')
         self._in_operation = True
-    
-    def prepare_for_operation(self):
-        return self._mind.prepare_for_operation()
-    
+
     def leave_operation(self):
         self._in_operation = False
-        return self._mind.leave_operation()
+        self._mind.leave_operation()
     
-    def walk_to(self, position: Point):
-        return self._mind.walk_to(position)
+    def prepare_for_operation(self, sayback: str):
+        self._mind.prepare_for_operation(sayback)
+    
+    def walk_to(self, position: Point, sayback: str):
+        self._mind.walk_to(position, sayback)
     
     def relocate_to_nest(self, nest: Nest):
         self._mind.relocate_to_nest(nest)

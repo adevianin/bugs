@@ -39,6 +39,6 @@ class AntThoughtFactory(LiveEntityThoughtFactory):
         go_gome_thought = self.build_go_in_nest_thought(home)
         return FeedMyselfThought(self._body, home, find_food_thought, go_gome_thought)
 
-    def build_prepare_for_operation_thought(self, home: Nest, memory: Memory, assemble_point: Point):
+    def build_prepare_for_operation_thought(self, home: Nest, memory: Memory, assemble_point: Point, sayback: str):
         feed_myself_thought = self.build_feed_myself_thought(home, memory)
-        return PrepareForOperationThought(self._body, feed_myself_thought, assemble_point)
+        return PrepareForOperationThought(self._body, feed_myself_thought, assemble_point, sayback)

@@ -5,10 +5,9 @@ from core.world.entities.colony.operation.operation_factory import OperationFact
 
 class ColonyService():
 
-    def __init__(self, world: World, operation_factory: OperationFactory, nest_factory: NestFactory):
+    def __init__(self, world: World, operation_factory: OperationFactory):
         self._world = world
         self._operation_factory = operation_factory
-        self._nest_factory = nest_factory
 
     def stop_operation(self, user_id: int, operation_id: int):
         colony = self._world.get_colony_owned_by_user(user_id)
@@ -16,9 +15,6 @@ class ColonyService():
 
     def build_new_nest(self, user_id: int, position: Point):
         colony = self._world.get_colony_owned_by_user(user_id)
-        new_nest = self._nest_factory.build_new_nest(position, user_id)
-
-        operation = self._operation_factory.build_build_new_nest_operation(position, new_nest)
-
+        operation = self._operation_factory.build_build_new_nest_operation(position)
         colony.add_operation(operation)
         
