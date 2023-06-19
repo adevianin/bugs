@@ -6,6 +6,10 @@ class IdGenerator():
         self._last_used_id = last_used_id
         self._lock = threading.Lock()
 
+    @property
+    def last_used_id(self):
+        return self._last_used_id
+
     def generate_id(self):
         with self._lock:
             self._last_used_id += 1

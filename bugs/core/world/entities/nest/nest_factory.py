@@ -11,12 +11,12 @@ class NestFactory():
         self._event_bus = event_bus
         self._id_generator = id_generator
 
-    def build_new_nest(self,  position: Point, from_colony: int):
-        return Nest(self._event_bus, self._id_generator.generate_id(), position, 'red', from_colony, [], 1)
+    def build_new_nest(self, position: Point, from_colony: int):
+        return Nest(self._event_bus, self._id_generator.generate_id(), position, from_colony, [], 1)
 
     def build_nest(self, id: int, position: Point, color: str, from_colony: int, larvae: list, larva_places: int) -> Nest:
         larvae = self._build_larvae_at(larvae, position)
-        return Nest(self._event_bus, id, position, color, from_colony, larvae, larva_places)
+        return Nest(self._event_bus, id, position, from_colony, larvae, larva_places)
     
     def _build_larvae_at(self, larvae_data: list, position: Point):
         larvae = []

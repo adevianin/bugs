@@ -102,3 +102,16 @@ class Operation(ABC):
             'status': self._status,
             'markers': self._markers
         }
+    
+    def to_full_json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'status': self._status,
+            'markers': self._markers,
+            'vacancies': self._vacancies,
+            'hired': {},
+            'is_hiring': self._is_hiring,
+            'name': self._name,
+            'flags': self._flags
+        }

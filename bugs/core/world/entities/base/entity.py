@@ -68,5 +68,12 @@ class Entity(ABC):
             'from_colony': self._from_colony
         }
     
+    def to_full_json(self):
+        return {
+            'id': self.id,
+            'type': self._type,
+            'from_colony': self._from_colony
+        }
+    
     def handle_action(self, action_type: str, action_data: dict = None):
         self._event_bus.emit('action_occurred', Action.build_action(self.id, action_type, action_data))

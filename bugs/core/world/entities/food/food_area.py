@@ -26,6 +26,16 @@ class FoodArea(PlainEntity):
                 self._calories = 0
                 self._event_bus.emit('preborn_food', preborn_food)
 
+    def to_full_json(self):
+        json = super().to_full_json()
+        json.update({
+            'size': self._size,
+            'fertility': self._fertility,
+            'food_type': self._food_type
+        })
+
+        return json
+
     def _generate_spawn_point(self):
         half_width = self._size.width / 2
         half_height = self._size.height / 2

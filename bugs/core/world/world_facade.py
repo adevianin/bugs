@@ -96,4 +96,12 @@ class WorldFacade:
                 self._colony_service.stop_operation(user_id, params['operation_id'])
             case _:
                 raise Exception('unknown type of command')
+            
+    def to_full_json(self):
+        world_json = self.world.to_full_json()
+        world_json.update({
+            'last_used_id': self._id_generator.last_used_id
+        })
+        
+        return world_json
         

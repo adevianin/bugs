@@ -7,9 +7,8 @@ from core.world.entities.ant.base.larva import Larva
 
 class Nest(PlainEntity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, position: Point, color: str, from_colony: int, larvae: list[Larva], larva_places_count: int):
+    def __init__(self, event_bus: EventEmitter, id: int, position: Point, from_colony: int, larvae: list[Larva], larva_places_count: int):
         super().__init__(event_bus, id, EntityTypes.NEST, from_colony, position)
-        self._color = color
         self._area = 300
         self._stored_calories = 1000
         self._larvae = larvae
@@ -47,6 +46,21 @@ class Nest(PlainEntity):
         json.update({
             'stored_calories': self._stored_calories,
             'larvae': self._larvae_to_public_json(),
+            'larva_places_count': self._larva_places_count
+        })
+        
+        return json
+    
+    def to_full_json(self):
+        json = super().to_full_json()
+
+        larvae_json = []
+        for larva in self._larvae:
+            larvae_json.append(larva.to_full_json())
+        
+        json.update({
+            'stored_calories': self._stored_calories,
+            'larvae': larvae_json,
             'larva_places_count': self._larva_places_count
         })
         

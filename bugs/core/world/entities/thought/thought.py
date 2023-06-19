@@ -3,12 +3,13 @@ from ..base.live_entity.body import Body
 
 class Thought(ABC):
 
-    def __init__(self, body: Body, sayback: str = None):
+    def __init__(self, body: Body, type: str = '', flags: dict = {}, sayback: str = None):
+        self._type = type
         self._body = body
         self._is_done = False
         self._results = None
         self._sayback = sayback
-        self._flags = {}
+        self._flags = flags
 
     def is_done(self):
         return self._is_done
@@ -38,3 +39,10 @@ class Thought(ABC):
     @abstractclassmethod
     def do_step(self):
         pass
+
+    def to_json(self):
+        return {
+            'type': self._type,
+            'sayback': self._sayback,
+            'flags': self._flags
+        }

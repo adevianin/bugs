@@ -49,6 +49,17 @@ class Colony:
             'operations': operations_json
         }
     
+    def to_full_json(self):
+        operations_json = []
+        for operation in self._operations:
+            operations_json.append(operation.to_full_json())
+
+        return {
+            'id': self._id,
+            'owner_id': self._owner_id,
+            'operations': operations_json
+        }
+    
     def _on_start_step(self, step_number: int):
         self._clean_done_operations()
         self._hire_for_operations()

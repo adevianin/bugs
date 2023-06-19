@@ -76,9 +76,24 @@ class Map:
 
         return found_nests
     
+    def get_entities_by_type(self, entity_type: EntityTypes):
+        found_entities = []
+        for entity in self.get_entities():
+            if entity.type == entity_type:
+                found_entities.append(entity)
+        return found_entities
+    
     @property
     def size(self):
         return self._size
+    
+    def to_full_json(self):
+        return {
+            'size': {
+                'width': self._size.width, 
+                'height': self._size.height
+            }
+        }
     
     def _check_entity_type(self, entity: Entity, entity_types: EntityTypes):
         for type in entity_types:

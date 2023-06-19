@@ -39,6 +39,13 @@ class Larva(PrebornEntity):
             'progress': self.progress
         }
     
+    def to_full_json(self):
+        return {
+            'ant_type': self.ant_type,
+            'progress': self.progress,
+            'dna_profile': self._dna_profile
+        }
+    
     def _get_needed_calories(self):
         match self._ant_type:
             case AntTypes.WORKER:

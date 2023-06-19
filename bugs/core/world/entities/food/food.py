@@ -40,3 +40,13 @@ class Food(PlainEntity):
         })
         
         return json
+    
+    def to_full_json(self):
+        json = super().to_full_json()
+        json.update({
+            'calories': self._calories,
+            'food_type': self._food_type,
+            'food_variety': self._food_variety
+        })
+
+        return json
