@@ -33,7 +33,7 @@ class Larva(PrebornEntity):
     def feed(self, calories_count: int):
         self._ate_calories += calories_count
 
-    def to_json(self):
+    def to_public_json(self):
         return {
             'ant_type': self.ant_type,
             'progress': self.progress

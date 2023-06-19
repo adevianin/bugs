@@ -61,7 +61,7 @@ class Entity(ABC):
     def do_step(self):
         pass
 
-    def to_json(self):
+    def to_public_json(self):
         return {
             'id': self.id,
             'type': self._type,

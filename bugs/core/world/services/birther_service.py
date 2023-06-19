@@ -33,4 +33,4 @@ class BirtherService():
 
     def _handle_born_entity(self, entity: Entity):
         self._map.add_entity(entity)
-        self._event_bus.emit('action_occurred', Action.build_action(entity.id, 'entity_born', { 'entity': entity.to_json() }))
+        self._event_bus.emit('action_occurred', Action.build_action(entity.id, 'entity_born', { 'entity': entity.to_public_json() }))

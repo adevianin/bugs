@@ -9,7 +9,7 @@ class Action():
         self._action_type = action_type
         self._action_data = action_data
 
-    def to_json(self):
+    def to_public_json(self):
         return {
             'actor_id': self._actor_id,
             'action_type': self._action_type,

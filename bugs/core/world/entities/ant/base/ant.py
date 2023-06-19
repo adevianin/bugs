@@ -44,8 +44,8 @@ class Ant(LiveEntity):
     def relocate_to_nest(self, nest: Nest):
         self._mind.relocate_to_nest(nest)
 
-    def to_json(self):
-        json = super().to_json()
+    def to_public_json(self):
+        json = super().to_public_json()
         json.update({
             'picked_food_id': self._body.picked_food.id if self._body.is_food_picked else None,
             'ant_type': self._ant_type

@@ -31,8 +31,8 @@ class Food(PlainEntity):
         if (self._calories == 0):
             self.die()
 
-    def to_json(self):
-        json = super().to_json()
+    def to_public_json(self):
+        json = super().to_public_json()
         json.update({
             'calories': self._calories,
             'food_type': self._food_type,

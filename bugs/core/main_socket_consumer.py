@@ -42,7 +42,7 @@ class MainSocketConsumer(WebsocketConsumer):
         if not self._synced:
             self.send(json.dumps({
                 'type': 'sync_step',
-                'world': self._world_facade.world.to_json()
+                'world': self._world_facade.world.to_public_json()
             }))
             self._synced = True
 
@@ -50,13 +50,13 @@ class MainSocketConsumer(WebsocketConsumer):
         if self._synced:
             self.send(json.dumps({
                 'type': 'action',
-                'action': action.to_json()
+                'action': action.to_public_json()
             }))
     
     def _on_my_colony_changed(self):
         if self._synced:
             self.send(json.dumps({
                 'type': 'colony_changes',
-                'colony': self._my_colony.to_json()
+                'colony': self._my_colony.to_public_json()
             }))
         

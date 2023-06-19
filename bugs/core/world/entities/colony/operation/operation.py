@@ -95,7 +95,7 @@ class Operation(ABC):
             'point': point
         })
 
-    def to_json(self):
+    def to_public_json(self):
         return {
             'id': self.id,
             'name': self.name,

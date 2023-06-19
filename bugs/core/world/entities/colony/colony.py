@@ -38,10 +38,10 @@ class Colony:
         if operation:
             operation.stop_operation()
     
-    def to_json(self):
+    def to_public_json(self):
         operations_json = []
         for operation in self._operations:
-            operations_json.append(operation.to_json())
+            operations_json.append(operation.to_public_json())
 
         return {
             'id': self._id,

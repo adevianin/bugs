@@ -42,11 +42,11 @@ class Nest(PlainEntity):
             self._emit_stored_calories_changed()
             return can_give
 
-    def to_json(self):
-        json = super().to_json()
+    def to_public_json(self):
+        json = super().to_public_json()
         json.update({
             'stored_calories': self._stored_calories,
-            'larvae': self._larvae_to_json(),
+            'larvae': self._larvae_to_public_json(),
             'larva_places_count': self._larva_places_count
         })
         
@@ -89,12 +89,12 @@ class Nest(PlainEntity):
 
     def _emit_larvae_changed(self):
         self.handle_action('nest_larvae_changed', {
-            'larvae': self._larvae_to_json()
+            'larvae': self._larvae_to_public_json()
         })
     
-    def _larvae_to_json(self):
+    def _larvae_to_public_json(self):
         larvae_json = []
         for larva in self._larvae:
-            larvae_json.append(larva.to_json())
+            larvae_json.append(larva.to_public_json())
         
         return larvae_json

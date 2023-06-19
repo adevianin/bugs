@@ -52,15 +52,15 @@ class World():
         self._world_loop_stop_flag = False
         self._is_world_running = True
 
-    def to_json(self):
+    def to_public_json(self):
         entities_json = []
         entities = self._map.get_entities()
         for entity in entities:
-            entities_json.append(entity.to_json())
+            entities_json.append(entity.to_public_json())
 
         colonies_json = []
         for colony in self._colonies:
-            colonies_json.append(colony.to_json())
+            colonies_json.append(colony.to_public_json())
         
         return {
             'entities': entities_json,
@@ -72,13 +72,13 @@ class World():
     #     entities_json = []
     #     entities = self._map.get_entities()
     #     for entity in entities:
-    #         entities_json.append(entity.to_json())
+    #         entities_json.append(entity.to_public_json())
 
     #     my_colony = next(colony for colony in self._colonies if colony.owner_id == user_id)
         
     #     return {
     #         'entities': entities_json,
-    #         'my_colony': my_colony.to_json(),
+    #         'my_colony': my_colony.to_public_json(),
     #         'size': self._map.size
     #     }
 
