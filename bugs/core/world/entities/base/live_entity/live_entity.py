@@ -70,10 +70,7 @@ class LiveEntity(Entity):
     def to_full_json(self):
         json = super().to_full_json()
         json.update({
-            'position': {
-                'x': self._body.position.x,
-                'y': self._body.position.y
-            },
+            'position': self._body.position,
             'located_in_nest_id': self._body.located_in_nest_id
         })
 

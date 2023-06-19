@@ -35,10 +35,7 @@ class PlainEntity(Entity):
     def to_full_json(self):
         json = super().to_full_json()
         json.update({
-            'position': {
-                'x': self._position.x,
-                'y': self._position.y
-            }
+            'position': self._position
         })
         
         return json
