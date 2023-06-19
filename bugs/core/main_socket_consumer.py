@@ -17,7 +17,6 @@ class MainSocketConsumer(WebsocketConsumer):
         else:
             self.close()
 
-        self.test()
         self._my_colony = self._world_facade.get_my_colony(self._user.id)
 
         self._world_facade.add_listener('step_start', self._on_step_start)
@@ -60,10 +59,3 @@ class MainSocketConsumer(WebsocketConsumer):
                 'type': 'colony_changes',
                 'colony': self._my_colony.to_public_json()
             }))
-
-    def test(self):
-        self.send(json.dumps({
-            'type': 'test',
-            'content': self._world_facade.to_full_json()
-        }))
-        

@@ -8,5 +8,8 @@ class ColonyFactory():
         self._event_bus = event_bus
         self._map = map
 
+    def build_colony_from_json(self, colony_json):
+        return self.build_colony(colony_json['id'], colony_json['owner_id'])
+
     def build_colony(self, id: int, owner_id: int):
         return Colony(id, self._event_bus, owner_id, self._map)

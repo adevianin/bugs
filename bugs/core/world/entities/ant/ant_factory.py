@@ -30,6 +30,15 @@ class AntFactory():
         self._id_generator = id_generator
         self._map = map
 
+    def build_ant_from_json(self, ant_json: dict):
+        position = Point(ant_json['position'][0], ant_json['position'][1])
+        nest = self._map.get_entity_by_id(ant_json['from_nest'])
+        located_in_nest = None
+        if ant_json['located_in_nest_id'] != None:
+            located_in_nest = self._map.get_entity_by_id(ant_json['located_in_nest_id'])
+        ant_type = AntTypes(ant_json['ant_type'])
+        return self.build_ant(ant_json['id'], ant_json['from_colony'], ant_type, ant_json['dna_profile'], position, nest, located_in_nest)
+
     def build_ant(self, id: int, from_colony: int, ant_type: AntTypes, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest) -> Ant:
         match ant_type:
             case AntTypes.WORKER:
