@@ -1,16 +1,16 @@
-from core.world.entities.task.task import Task
+from core.world.entities.thought.thought import Thought
 from ..ant_body import AntBody
 from core.world.entities.nest.nest import Nest
-from .find_food_task import FindFoodTask
-from core.world.entities.base.live_entity.tasks.go_in_nest import GoInNestTask
+from .find_food_thought import FindFoodThought
+from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 
-class FeedMyselfTask(Task):
+class FeedMyselfThought(Thought):
 
-    def __init__(self, body: AntBody, home: Nest, find_food_task: FindFoodTask, go_home_task: GoInNestTask):
+    def __init__(self, body: AntBody, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought):
         super().__init__(body)
         self._home = home
-        self._find_food_task = find_food_task
-        self._go_home_task = go_home_task
+        self._find_food_thought = find_food_thought
+        self._go_home_thought = go_home_thought
 
         self._found_food = None
 
@@ -24,8 +24,8 @@ class FeedMyselfTask(Task):
 
     def do_step(self):
         if (not self._is_home_checked and not self._is_at_home):
-            self._go_home_task.do_step()
-            self._is_at_home = self._go_home_task.is_done()
+            self._go_home_thought.do_step()
+            self._is_at_home = self._go_home_thought.is_done()
             return
         
         if (not self._is_home_checked and self._is_at_home):
@@ -40,10 +40,10 @@ class FeedMyselfTask(Task):
 
         if (self._is_home_checked):
             if (not self._is_food_found):
-                self._find_food_task.do_step()
-                if (self._find_food_task.is_done()):
+                self._find_food_thought.do_step()
+                if (self._find_food_thought.is_done()):
                     self._is_food_found = True
-                    self._found_food = self._find_food_task.results
+                    self._found_food = self._find_food_thought.results
                 if (self._body.is_busy):
                     return
 

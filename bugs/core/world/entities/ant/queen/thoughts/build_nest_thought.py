@@ -1,8 +1,8 @@
-from core.world.entities.task.task import Task
+from core.world.entities.thought.thought import Thought
 from ..queen_ant_body import QueenAntBody
 from core.world.entities.nest.nest import Nest
 
-class BuildNestTask(Task):
+class BuildNestThought(Thought):
 
     def __init__(self, body: QueenAntBody, new_nest: Nest):
         super().__init__(body)

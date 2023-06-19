@@ -11,17 +11,17 @@ from core.world.id_generator import IdGenerator
 from .worker.worker_ant_body import WorkerAntBody
 from .worker.worker_ant_mind import WorkerAntMind
 from .worker.worker_ant import WorkerAnt
-from .worker.worker_task_factory import WorkerTaskFactory
+from .worker.worker_thought_factory import WorkerThoughtFactory
 
 from .warrior.warrior_ant_body import WarriorAntBody
 from .warrior.warrior_ant_mind import WarrirorAntMind
 from .warrior.warrior_ant import WarriorAnt
-from .warrior.warrior_task_factory import WarriorTaskFactory
+from .warrior.warrior_thought_factory import WarriorThoughtFactory
 
 from .queen.queen_ant_body import QueenAntBody
 from .queen.queen_ant_mind import QueenAntMind
 from .queen.queen_ant import QueenAnt
-from .queen.queen_task_factory import QueenTaskFactory
+from .queen.queen_thought_factory import QueenThoughtFactory
 
 class AntFactory():
 
@@ -48,8 +48,8 @@ class AntFactory():
         ant_body_events = EventEmitter()
         ant_mind_events = EventEmitter()
         body = WarriorAntBody(ant_body_events, dna_profile, position, located_in_nest)
-        ant_task_factory = WarriorTaskFactory(body, self._map)
-        mind = WarrirorAntMind(ant_mind_events, body, ant_task_factory, self._map, Memory(), nest)
+        ant_thought_factory = WarriorThoughtFactory(body, self._map)
+        mind = WarrirorAntMind(ant_mind_events, body, ant_thought_factory, self._map, Memory(), nest)
         ant = WarriorAnt(self._event_bus, id, from_colony, mind, body)
 
         return ant
@@ -58,8 +58,8 @@ class AntFactory():
         ant_body_events = EventEmitter()
         ant_mind_events = EventEmitter()
         body = WorkerAntBody(ant_body_events, dna_profile, position, located_in_nest)
-        ant_task_factory = WorkerTaskFactory(body, self._map)
-        mind = WorkerAntMind(ant_mind_events, body, ant_task_factory, self._map, Memory(), nest)
+        ant_thought_factory = WorkerThoughtFactory(body, self._map)
+        mind = WorkerAntMind(ant_mind_events, body, ant_thought_factory, self._map, Memory(), nest)
         ant = WorkerAnt(self._event_bus, id, from_colony, mind, body)
 
         return ant
@@ -68,8 +68,8 @@ class AntFactory():
         ant_body_events = EventEmitter()
         ant_mind_events = EventEmitter()
         body = QueenAntBody(ant_body_events, dna_profile, position, located_in_nest)
-        ant_task_factory = QueenTaskFactory(body, self._map)
-        mind = QueenAntMind(ant_mind_events, body, ant_task_factory, self._map, Memory(), nest)
+        ant_thought_factory = QueenThoughtFactory(body, self._map)
+        mind = QueenAntMind(ant_mind_events, body, ant_thought_factory, self._map, Memory(), nest)
         ant = QueenAnt(self._event_bus, id, from_colony, mind, body)
 
         return ant

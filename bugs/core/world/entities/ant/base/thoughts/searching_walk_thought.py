@@ -1,4 +1,4 @@
-from core.world.entities.task.task import Task
+from core.world.entities.thought.thought import Thought
 from ..ant_body import AntBody
 from core.world.utils.point import Point
 from core.world.entities.map import Map
@@ -6,7 +6,7 @@ from core.world.entities.map import Map
 import math
 import random
 
-class SearchingWalkTask(Task):
+class SearchingWalkThought(Thought):
 
     WALK_DIRECTIONS_COUNT = 8
     VISITED_POINTS_MEMORY = 5
@@ -47,7 +47,7 @@ class SearchingWalkTask(Task):
     def _generate_potential_points_to_walk(self):
         position = self._body.position
         dist = self._body.distance_per_step
-        points_count = SearchingWalkTask.WALK_DIRECTIONS_COUNT
+        points_count = SearchingWalkThought.WALK_DIRECTIONS_COUNT
 
         points = []
         delta_angle = 360 / points_count
@@ -72,7 +72,7 @@ class SearchingWalkTask(Task):
 
     def add_visited_point(self, visited_point: Point):
         self._visited_points.append(visited_point)
-        if len(self._visited_points) > SearchingWalkTask.VISITED_POINTS_MEMORY:
+        if len(self._visited_points) > SearchingWalkThought.VISITED_POINTS_MEMORY:
             self._visited_points.pop(0)
 
     def _is_point_inside_searching_area(self, point: Point):

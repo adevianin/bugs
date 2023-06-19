@@ -1,13 +1,13 @@
 from ..ant_body import AntBody
-from core.world.entities.task.task import Task
-from .feed_myself_task import FeedMyselfTask
+from core.world.entities.thought.thought import Thought
+from .feed_myself_thought import FeedMyselfThought
 from core.world.utils.point import Point
 
-class PrepareForOperationTask(Task):
+class PrepareForOperationThought(Thought):
 
-    def __init__(self, body: AntBody, feed_myself_task: FeedMyselfTask, assemble_point: Point):
+    def __init__(self, body: AntBody, feed_myself_thought: FeedMyselfThought, assemble_point: Point):
         super().__init__(body)
-        self._feed_myself_task = feed_myself_task
+        self._feed_myself_thought = feed_myself_thought
         self._assemble_point = assemble_point
 
         self._is_ate_well = False
@@ -15,8 +15,8 @@ class PrepareForOperationTask(Task):
 
     def do_step(self):
         if not self._is_ate_well:
-            self._feed_myself_task.do_step()
-            if self._feed_myself_task.is_done():
+            self._feed_myself_thought.do_step()
+            if self._feed_myself_thought.is_done():
                 self._is_ate_well = True
                 return
 

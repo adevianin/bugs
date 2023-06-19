@@ -1,8 +1,8 @@
-from core.world.entities.task.task import Task
+from core.world.entities.thought.thought import Thought
 from ..body import Body
 from core.world.utils.point import Point
 
-class WalkToTask(Task):
+class WalkToThought(Thought):
 
     def __init__(self, body: Body, position: Point):
         super().__init__(body)

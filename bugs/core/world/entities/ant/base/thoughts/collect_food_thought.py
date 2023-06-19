@@ -1,26 +1,26 @@
-from core.world.entities.task.task import Task
+from core.world.entities.thought.thought import Thought
 from ..ant_body import AntBody
 from core.world.entities.nest.nest import Nest
-from .find_food_task import FindFoodTask
+from .find_food_thought import FindFoodThought
 from core.world.entities.base.entity_types import EntityTypes
-from core.world.entities.base.live_entity.tasks.go_in_nest import GoInNestTask
+from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 
-class CollectFoodTask(Task):
+class CollectFoodThought(Thought):
 
-    def __init__(self, body: AntBody, nest: Nest, find_food_task: FindFoodTask, go_home_task: GoInNestTask):
+    def __init__(self, body: AntBody, nest: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought):
         super().__init__(body)
         self._nest = nest
-        self._find_food_task = find_food_task
-        self._go_home_task = go_home_task
+        self._find_food_thought = find_food_thought
+        self._go_home_thought = go_home_thought
         self._found_food = None
 
         self._reset_flags()
 
     def do_step(self):
         if (not self._is_find_food_done):
-            self._find_food_task.do_step()
-            if(self._find_food_task.is_done()):
-                self._found_food = self._find_food_task.results
+            self._find_food_thought.do_step()
+            if(self._find_food_thought.is_done()):
+                self._found_food = self._find_food_thought.results
                 self._is_find_food_done = True
             if (self._body.is_busy):
                 return
@@ -37,8 +37,8 @@ class CollectFoodTask(Task):
             return
             
         if (self._is_pickup_food_done and not self._is_go_home_done):
-            self._go_home_task.do_step()
-            self._is_go_home_done = self._go_home_task.is_done()
+            self._go_home_thought.do_step()
+            self._is_go_home_done = self._go_home_thought.is_done()
             return
 
         if (self._is_go_home_done and not self._is_food_taken_by_home):
@@ -66,8 +66,8 @@ class CollectFoodTask(Task):
     def restart(self):
         super().restart()
         self._reset_flags()
-        self._find_food_task.restart()
-        self._go_home_task.restart()
+        self._find_food_thought.restart()
+        self._go_home_thought.restart()
 
     def _look_around_for_food(self):
         foods = self._map.find_entities_near(self._body.position, self._body.sight_distance, [EntityTypes.FOOD])

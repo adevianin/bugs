@@ -2,7 +2,7 @@ from abc import ABC, abstractclassmethod
 from ..base.live_entity.body import Body
 from typing import Callable
 
-class Task(ABC):
+class Thought(ABC):
 
     def __init__(self, body: Body):
         self._body = body

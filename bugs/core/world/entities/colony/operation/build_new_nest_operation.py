@@ -1,5 +1,5 @@
 from core.world.utils.point import Point
-from core.world.entities.task.task_group import TaskGroup
+from core.world.entities.thought.thought_group import ThoughtGroup
 from core.world.entities.nest.nest import Nest
 from .operation import Operation
 from core.world.entities.ant.base.ant_types import AntTypes
@@ -34,21 +34,21 @@ class BuildNewNestOperation(Operation):
             .on_done(self._relocate_step))
 
     def _preparation_step(self):
-        worker_task = self._worker.prepare_for_operation()
-        queen_task = self._queen.prepare_for_operation()
+        worker_thought = self._worker.prepare_for_operation()
+        queen_thought = self._queen.prepare_for_operation()
 
-        return TaskGroup.build_tasks_group([worker_task, queen_task])
+        return ThoughtGroup.build_thoughts_group([worker_thought, queen_thought])
     
     def _walk_to_building_site_step(self):
-        worker_task = self._worker.walk_to(self._building_site)
-        queen_task = self._queen.walk_to(self._building_site)
+        worker_thought = self._worker.walk_to(self._building_site)
+        queen_thought = self._queen.walk_to(self._building_site)
 
-        return TaskGroup.build_tasks_group([worker_task, queen_task])
+        return ThoughtGroup.build_thoughts_group([worker_thought, queen_thought])
     
     def _building_nest_step(self):
-        queen_build_nest_task = self._queen.build_new_nest(self._new_nest)
+        queen_build_nest_thought = self._queen.build_new_nest(self._new_nest)
 
-        return TaskGroup.build_tasks_group([queen_build_nest_task])
+        return ThoughtGroup.build_thoughts_group([queen_build_nest_thought])
 
     def _relocate_step(self):
         self._queen.relocate_to_nest(self._new_nest)
