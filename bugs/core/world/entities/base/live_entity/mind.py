@@ -42,6 +42,9 @@ class Mind(ABC):
             else:
                 self._thoughts_stack = [current_thought]
 
+    def set_thoughts(self, thoughts: list[Thought]):
+        self._thoughts_stack = thoughts
+
     def _generate_thoughts(self):
         if (self._body.check_am_i_hungry()):
             self._register_thought(self._generate_feed_myself_thought(), True)
