@@ -18,8 +18,6 @@ class Map:
         self._entities = {}
 
     def add_entity(self, entity: Entity):
-        if entity.id == -1:
-            entity.id = self._generate_entity_id()
         self._entities[entity.id] = entity
 
     def delete_entity(self, id: int):
@@ -89,11 +87,3 @@ class Map:
             
         return False
     
-    def _generate_entity_id(self):
-        max_id = 0
-        for entity in self.get_entities():
-            if entity.id > max_id:
-                max_id = entity.id
-        
-        return max_id + 1
-

@@ -13,6 +13,7 @@ from .services.colony_service import ColonyService
 from .entities.colony.colony_factory import ColonyFactory
 from core.world.utils.point import Point
 from core.world.entities.colony.operation.operation_factory import OperationFactory
+from .id_generator import IdGenerator
 
 from typing import Callable
 
@@ -44,11 +45,12 @@ class WorldFacade:
         map_data = world_data['map']
         map = Map.build_map(Size(map_data['size']['width'], map_data['size']['height']))
 
+        self._id_generator = IdGenerator(world_data['last_used_id'])
         self._event_bus = EventEmitter()
         
-        ant_factory = AntFactory(self._event_bus, map)
-        nest_factory = NestFactory(self._event_bus)
-        food_factory = FoodFactory(self._event_bus)
+        ant_factory = AntFactory(self._event_bus, self._id_generator, map)
+        nest_factory = NestFactory(self._event_bus, self._id_generator)
+        food_factory = FoodFactory(self._event_bus, self._id_generator)
         colony_factory = ColonyFactory(self._event_bus, map)
         operation_factory = OperationFactory()
         world_factory = WorldFactory(self._event_bus, ant_factory, food_factory, nest_factory, colony_factory)

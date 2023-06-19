@@ -6,6 +6,7 @@ from core.world.entities.map import Map
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.live_entity.memory import Memory
 from .base.larva import Larva
+from core.world.id_generator import IdGenerator
 
 from .worker.worker_ant_body import WorkerAntBody
 from .worker.worker_ant_mind import WorkerAntMind
@@ -24,8 +25,9 @@ from .queen.queen_task_factory import QueenTaskFactory
 
 class AntFactory():
 
-    def __init__(self, event_bus: EventEmitter, map: Map) -> None:
+    def __init__(self, event_bus: EventEmitter, id_generator: IdGenerator, map: Map) -> None:
         self._event_bus = event_bus
+        self._id_generator = id_generator
         self._map = map
 
     def build_ant(self, id: int, from_colony: int, ant_type: AntTypes, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest) -> Ant:
@@ -40,7 +42,7 @@ class AntFactory():
                 raise Exception('uknown type of ant')
             
     def give_birth(self, larva: Larva, nest: Nest):
-        return self.build_ant(-1, nest.from_colony, larva.ant_type, larva.dna_profile, larva.position, nest, None)
+        return self.build_ant(self._id_generator.generate_id(), nest.from_colony, larva.ant_type, larva.dna_profile, larva.position, nest, None)
     
     def _build_warrior_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest):
         ant_body_events = EventEmitter()

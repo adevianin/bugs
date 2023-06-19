@@ -32,7 +32,8 @@ class Command(BaseCommand):
         "food_areas": [
             { "id": 40, "position": {"x": 450, "y": 300}, "size": { "width": 150, "height": 150 }, "fertility": 5, "food_type": "leaf" },
             { "id": 41, "position": {"x": 1800, "y": 400}, "size": { "width": 150, "height": 150 }, "fertility": 5, "food_type": "nectar" },
-        ]
+        ],
+        "last_used_id": 41
     }
 
     def handle(self, *args, **options):
