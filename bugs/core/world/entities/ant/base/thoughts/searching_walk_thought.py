@@ -11,8 +11,8 @@ class SearchingWalkThought(Thought):
     WALK_DIRECTIONS_COUNT = 8
     VISITED_POINTS_MEMORY = 5
 
-    def __init__(self, body: AntBody, map: Map, search_near_point: Point = None, search_radius: int = 300):
-        super().__init__(body, map)
+    def __init__(self, body: AntBody, map: Map, search_near_point: Point, search_radius: int, flags: dict, sayback: str):
+        super().__init__(body, map, 'searching_walk', flags, sayback)
         self._visited_points = []
         self._current_destination_point = None
         self._search_near_point = search_near_point
@@ -79,4 +79,13 @@ class SearchingWalkThought(Thought):
             return True
         dist_to_search_area_center = math.dist([point.x, point.y], [self._search_near_point.x, self._search_near_point.y])
         return dist_to_search_area_center <= self._search_radius
+    
+    def to_full_json(self):
+        json = super().to_full_json()
+        json.update({
+            'search_near_point': self._search_near_point,
+            'search_radius': self._search_radius
+        })
+
+        return json
 

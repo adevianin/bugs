@@ -6,6 +6,7 @@ from core.world.entities.nest.nest import Nest
 
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.base.live_entity.thoughts.walk_to_thought import WalkToThought
+from core.world.entities.ant.base.thoughts.searching_walk_thought import SearchingWalkThought
 
 class ThoughtFactory:
 
@@ -20,6 +21,9 @@ class ThoughtFactory:
             case 'walk_to':
                 position = Point(thought_json['position'][0], thought_json['position'][1])
                 return self.build_walk_to_thought(body=body, position=position, flags=thought_json['flags'], sayback=thought_json['sayback'])
+            case 'searching_walk':
+                search_near_point = Point(thought_json['search_near_point'][0], thought_json['search_near_point'][1])
+                return self.build_searching_walk_thought(body=body, search_near_point=search_near_point, search_radius=thought_json['search_radius'], flags=thought_json['flags'], sayback=thought_json['sayback'])
 
     def build_go_in_nest_thought(self, body: Body, nest: Nest, flags: dict = None, sayback: str = None):
         return GoInNestThought(body=body, map=self._map, flags=flags, sayback=sayback, nest=nest)
@@ -27,8 +31,8 @@ class ThoughtFactory:
     def build_walk_to_thought(self, body: Body, position: Point, flags: dict = None, sayback: str = None):
         return WalkToThought(body=body, map=self._map, flags=flags, sayback=sayback, position=position)
     
-    # def build_searching_walk_thought(self, search_near_point: Point, search_radius: int) -> SearchingWalkThought:
-    #     return SearchingWalkThought(self._body, self._map, search_near_point, search_radius)
+    def build_searching_walk_thought(self, body: Body, search_near_point: Point, search_radius: int, flags: dict = None, sayback: str = None):
+        return SearchingWalkThought(body=body, map=self._map, search_near_point=search_near_point, search_radius=search_radius, flags=flags, sayback=sayback)
 
     # def build_find_entity_by_type_thought(self, entity_type: EntityTypes, search_near_point: Point, search_radius: int) -> FindEntityByTypeThought:
     #     searching_walk_subthought = self.build_searching_walk_thought(search_near_point, search_radius)
