@@ -84,7 +84,8 @@ class LiveEntity(Entity):
         json = super().to_full_json()
         json.update({
             'position': self._body.position,
-            'located_in_nest_id': self._body.located_in_nest_id
+            'located_in_nest_id': self._body.located_in_nest_id,
+            'memory': self._mind.memory.data
         })
 
         return json
@@ -97,7 +98,7 @@ class LiveEntity(Entity):
     
     def set_thoughts(self, thoughts):
         self._mind.set_thoughts(thoughts)
-    
+
     def _toggle_is_busy(self, is_busy: bool):
         self._body.toggle_is_busy(is_busy)
 

@@ -5,26 +5,37 @@ from core.world.utils.point import Point
 
 class PrepareForOperationThought(Thought):
 
-    def __init__(self, body: AntBody, map, feed_myself_thought: FeedMyselfThought, assemble_point: Point, sayback: str):
-        super().__init__(body, map, 'prepare_for_operation', {}, sayback)
+    def __init__(self, body: AntBody, map, feed_myself_thought: FeedMyselfThought, assemble_point: Point, flags: dict = None, sayback: str = None):
+        super().__init__(body, map, 'prepare_for_operation', flags, sayback)
         self._feed_myself_thought = feed_myself_thought
         self._assemble_point = assemble_point
 
-        self._is_ate_well = False
-        self._is_at_assemble_point = False
-
     def do_step(self):
-        if not self._is_ate_well:
+        if not self._flags['is_ate_well']:
             self._feed_myself_thought.do_step()
             if self._feed_myself_thought.is_done():
-                self._is_ate_well = True
+                self._flags['is_ate_well'] = True
                 return
 
-        if self._is_ate_well and not self._is_at_assemble_point:
-            self._is_at_assemble_point = self._body.step_to(self._assemble_point)
+        if self._flags['is_ate_well'] and not self._flags['is_at_assemble_point']:
+            self._flags['is_at_assemble_point'] = self._body.step_to(self._assemble_point)
 
-        if self._is_at_assemble_point:
+        if self._flags['is_at_assemble_point']:
             self.mark_as_done()
+
+    def to_full_json(self):
+        json = super().to_full_json()
+        json.update({
+            'feed_myself_thought': self._feed_myself_thought.to_full_json(),
+            'assemble_point': self._assemble_point
+        })
+        return json
+    
+    def _reset_flags(self):
+        self._flags = {
+            'is_ate_well': False,
+            'is_at_assemble_point': False
+        }
 
 
 

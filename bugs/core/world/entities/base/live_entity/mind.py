@@ -23,6 +23,10 @@ class Mind(ABC):
     @property
     def thoughts(self):
         return self._thoughts_stack
+    
+    @property
+    def memory(self):
+        return self._memory
 
     def do_step(self):
         if self._is_auto_thought_generation:

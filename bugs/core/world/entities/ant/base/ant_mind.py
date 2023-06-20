@@ -17,7 +17,7 @@ class AntMind(Mind):
     def prepare_for_operation(self, sayback: str):
         self.toggle_auto_thought_generation(False)
         self.force_free()
-        thought = self._thought_factory.build_prepare_for_operation_thought(self.home_nest, self._memory, self._calc_assemble_point(), sayback)
+        thought = self._thought_factory.build_prepare_for_operation_full_thought(body=self._body, home=self.home_nest, memory=self._memory, assemble_point=self._calc_assemble_point(), sayback=sayback)
         self._register_thought(thought, True)
 
         return thought
@@ -27,7 +27,7 @@ class AntMind(Mind):
         self.toggle_auto_thought_generation(True)
     
     def walk_to(self, position: Point, sayback: str):
-        thought = self._thought_factory.build_walk_to_thought(position, sayback)
+        thought = self._thought_factory.build_walk_to_thought(body=self._body, position=position, sayback=sayback)
         self._register_thought(thought, True)
 
         return thought
@@ -41,7 +41,7 @@ class AntMind(Mind):
     def _generate_thoughts(self):
         super()._generate_thoughts()
         if not self._has_thoughts_to_do() and self._am_i_far_away_from_home():
-            go_home_thought = self._thought_factory.build_go_in_nest_thought(self.home_nest)
+            go_home_thought = self._thought_factory.build_go_in_nest_thought(body=self._body, nest=self.home_nest)
             self._register_thought(go_home_thought)
 
     def _am_i_far_away_from_home(self):

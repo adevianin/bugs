@@ -6,138 +6,157 @@ class Command(BaseCommand):
     help = 'Creates savable world'
 
     world_state = {
-        "map": {
-            "size": {
-                "width": 3000,
-                "height": 3000
+        "map":{
+            "size":{
+                "width":3000,
+                "height":3000
             }
         },
-        "ants": [
+        "ants":[
             {
-                "id": 1,
-                "type": "ant",
-                "from_colony": 2,
-                "position": [650, 750],
-                "located_in_nest_id": None,
-                "picked_food_id": None,
-                "ant_type": "worker",
-                "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000",
-                "from_nest": 30,
-                "thoughts": []
+                "id":1,
+                "type":"ant",
+                "from_colony":2,
+                "position":[
+                    900,
+                    500
+                ],
+                "located_in_nest_id":None,
+                "picked_food_id":None,
+                "ant_type":"worker",
+                "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
+                "from_nest":30,
+                "thoughts":[
+                ],
+                "memory": []
             },
             {
-                "id": 2,
-                "type": "ant",
-                "from_colony": 2,
-                "position": [650, 350],
-                "located_in_nest_id": 30,
-                "picked_food_id": None,
-                "ant_type": "queen",
-                "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000",
-                "from_nest": 30,
-                "thoughts": []
+                "id":2,
+                "type":"ant",
+                "from_colony":2,
+                "position":[
+                    650,
+                    350
+                ],
+                "located_in_nest_id":30,
+                "picked_food_id":None,
+                "ant_type":"queen",
+                "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
+                "from_nest":30,
+                "thoughts":[
+                    
+                ],
+                "memory": []
             }
-            # {
-            #     "id": 3,
-            #     "type": "ant",
-            #     "from_colony": 1,
-            #     "position": [1600, 500],
-            #     "located_in_nest_id": None,
-            #     "picked_food_id": None,
-            #     "ant_type": "worker",
-            #     "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf123",
-            #     "from_nest": 31,
-            #     "thoughts": []
-            # },
-            # {
-            #     "id": 4,
-            #     "type": "ant",
-            #     "from_colony": 1,
-            #     "position": [1600, 400],
-            #     "located_in_nest_id": None,
-            #     "picked_food_id": None,
-            #     "ant_type": "queen",
-            #     "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf123",
-            #     "from_nest": 31,
-            #     "thoughts": []
-            # }
         ],
-        "foods": [
+        "foods":[
             {
-                "id": 20,
-                "type": "food",
-                "from_colony": None,
-                "position": [350, 350],
-                "calories": 150,
-                "food_type": "leaf",
-                "food_variety": 1
+                "id":20,
+                "type":"food",
+                "from_colony":None,
+                "position":[
+                    350,
+                    350
+                ],
+                "calories":150,
+                "food_type":"leaf",
+                "food_variety":1
             },
             {
-                "id": 21,
-                "type": "food",
-                "from_colony": None,
-                "position": [850, 350],
-                "calories": 300,
-                "food_type": "leaf",
-                "food_variety": 2
+                "id":21,
+                "type":"food",
+                "from_colony":None,
+                "position":[
+                    850,
+                    350
+                ],
+                "calories":300,
+                "food_type":"leaf",
+                "food_variety":2
             }
         ],
-        "food_areas": [
+        "food_areas":[
             {
-                "id": 40,
-                "type": "food_area",
-                "from_colony": None,
-                "position": [450, 300],
-                "size": [150, 150],
-                "fertility": 5,
-                "food_type": "leaf"
+                "id":40,
+                "type":"food_area",
+                "from_colony":None,
+                "position":[
+                    450,
+                    300
+                ],
+                "size":[
+                    150,
+                    150
+                ],
+                "fertility":5,
+                "food_type":"leaf"
             },
             {
-                "id": 41,
-                "type": "food_area",
-                "from_colony": None,
-                "position": [1800, 400],
-                "size": [150, 150],
-                "fertility": 5,
-                "food_type": "nectar"
+                "id":41,
+                "type":"food_area",
+                "from_colony":None,
+                "position":[
+                    1800,
+                    400
+                ],
+                "size":[
+                    150,
+                    150
+                ],
+                "fertility":5,
+                "food_type":"nectar"
             }
         ],
-        "nests": [
+        "nests":[
             {
-                "id": 30,
-                "area": 300,
-                "type": "nest",
-                "from_colony": 2,
-                "position": [600, 350],
-                "stored_calories": 1000,
-                "larvae": [],
-                "larva_places_count": 3
+                "id":30,
+                "type":"nest",
+                "from_colony":2,
+                "position":[
+                    600,
+                    350
+                ],
+                "stored_calories":1000,
+                "larvae":[
+                    
+                ],
+                "larva_places_count":3,
+                "area":300
             },
             {
-                "id": 31,
-                "area": 300,
-                "type": "nest",
-                "from_colony": 1,
-                "position": [1600, 450],
-                "stored_calories": 1000,
-                "larvae": [],
-                "larva_places_count": 1
+                "id":31,
+                "type":"nest",
+                "from_colony":1,
+                "position":[
+                    1600,
+                    450
+                ],
+                "stored_calories":1000,
+                "larvae":[
+                    
+                ],
+                "larva_places_count":1,
+                "area":300
             }
         ],
-        "colonies": [
+        "colonies":[
             {
-                "id": 1,
-                "owner_id": 1,
-                "operations": []
+                "id":1,
+                "owner_id":1,
+                "operations":[
+                    
+                ]
             },
             {
-                "id": 2,
-                "owner_id": 2,
-                "operations": []
+                "id":2,
+                "owner_id":2,
+                "operations":[
+                    
+                ]
             }
         ],
-        "last_used_id": 41
-    }
+        "last_used_id":41
+        }
 
     def handle(self, *args, **options):
         world, created = World.objects.update_or_create(id=1, defaults={

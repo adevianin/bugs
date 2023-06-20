@@ -8,8 +8,23 @@ import math
 
 class Memory():
 
-    def __init__(self):
-        self._data = []
+    @classmethod
+    def build_from_json(cls, datas_json):
+        datas = []
+        for data_json in datas_json:
+            datas.append({
+                'id': data_json['id'],
+                'position': Point(data_json['position'][0], data_json['position'][1]),
+                'type': data_json['type']
+            })
+        return Memory(datas)
+
+    def __init__(self, data = []):
+        self._data = data
+
+    @property
+    def data(self):
+        return self._data
 
     def remember_entities_at(self, point: Point, area_radius: int, entities: List[Entity]):
         self._clear_memories_for_area(point, area_radius)
@@ -27,7 +42,8 @@ class Memory():
                 result.append(entity_data)
 
         return result
-
+        
+    
     def _clear_memories_for_area(self, point: Point, area_radius: int):
         memories_to_delete = []
         for entity_data in self._data:

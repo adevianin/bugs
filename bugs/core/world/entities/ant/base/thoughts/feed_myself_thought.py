@@ -1,59 +1,76 @@
 from core.world.entities.thought.thought import Thought
 from ..ant_body import AntBody
 from core.world.entities.nest.nest import Nest
+from core.world.entities.food.food import Food
 from .find_food_thought import FindFoodThought
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 
 class FeedMyselfThought(Thought):
 
-    def __init__(self, body: AntBody, map, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought):
-        super().__init__(body, map)
+    def __init__(self, body: AntBody, map, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
+        super().__init__(body, map, 'feed_myself', flags, sayback)
         self._home = home
         self._find_food_thought = find_food_thought
         self._go_home_thought = go_home_thought
 
-        self._found_food = None
-
-        self._is_home_checked = False
-        self._is_at_home = self._body.located_in_nest_id == home.id
-        self._is_food_found = False
-        self._is_near_food = False
+        self._found_food = found_food
 
     def can_be_delayed(self):
         return False
 
     def do_step(self):
-        if (not self._is_home_checked and not self._is_at_home):
+        if (not self._flags['is_home_checked'] and not self._check_is_at_home()):
             self._go_home_thought.do_step()
-            self._is_at_home = self._go_home_thought.is_done()
             return
         
-        if (not self._is_home_checked and self._is_at_home):
+        if (not self._flags['is_home_checked'] and self._check_is_at_home()):
             needed_calories = self._body.calc_how_much_calories_is_need()
             calories = self._home.give_calories(needed_calories)
             self._body.eat_calories(calories)
-            self._is_home_checked = True
+            self._flags['is_home_checked'] = True
             self._body.get_out_of_nest()
             if (not self._body.check_am_i_hungry()):
                 self.mark_as_done()
             return
 
-        if (self._is_home_checked):
-            if (not self._is_food_found):
+        if (self._flags['is_home_checked']):
+            if (not self._flags['is_food_found']):
                 self._find_food_thought.do_step()
                 if (self._find_food_thought.is_done()):
-                    self._is_food_found = True
+                    self._flags['is_food_found'] = True
                     self._found_food = self._find_food_thought.results
                 if (self._body.is_busy):
                     return
 
-            if (self._is_food_found and not self._is_near_food):
-                self._is_near_food = self._body.step_to_near(self._found_food.position)
+            if (self._flags['is_food_found'] and not self._flags['is_near_food']):
+                self._flags['is_near_food'] = self._body.step_to_near(self._found_food.position)
                 return
                 
-            if (self._is_near_food):
+            if (self._flags['is_near_food']):
                 is_eatin_done = self._body.eat_food(self._found_food)
                 if (is_eatin_done):
                     self.mark_as_done() 
+
+    def to_full_json(self):
+        json = super().to_full_json()
+        json.update({
+            'home_id': self._home.id,
+            'found_food_id': self._found_food.id if self._found_food else None,
+            'find_food_thought': self._find_food_thought.to_full_json(),
+            'go_home_thought': self._go_home_thought.to_full_json()
+        })
+
+        return json
+    
+    def _check_is_at_home(self):
+        return self._body.located_in_nest_id == self._home.id
+
+    def _reset_flags(self):
+        self._flags = {
+            'is_home_checked': False,
+            'is_at_home': False,
+            'is_food_found': False,
+            'is_near_food': False
+        }
 
             

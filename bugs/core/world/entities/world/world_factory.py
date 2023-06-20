@@ -53,7 +53,7 @@ class WorldFactory():
             thoughts_json = ant_json['thoughts']
             thoughts = []
             for thought_json in thoughts_json:
-                thought = self._thought_factory.build_thougth_from_json(ant.body, thought_json)
+                thought = self._thought_factory.build_thougth_from_json(ant.body, ant.mind.memory, thought_json)
                 thoughts.append(thought)
             ant.set_thoughts(thoughts)
 

@@ -4,7 +4,7 @@ from core.world.entities.nest.nest import Nest
 class QueenAntMind(AntMind):
 
     def build_new_nest(self, new_nest: Nest, sayback: str):
-        thought = self._thought_factory.build_build_new_nest_thought(new_nest, sayback)
+        thought = self._thought_factory.build_build_new_nest_thought(body=self._body, new_nest=new_nest, sayback=sayback)
         self._register_thought(thought)
 
     def _generate_thoughts(self):

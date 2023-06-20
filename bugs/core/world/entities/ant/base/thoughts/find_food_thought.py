@@ -9,25 +9,23 @@ import math
 
 class FindFoodThought(Thought):
 
-    def __init__(self, body: AntBody, map: Map, memory: Memory, random_walk_thought: SearchingWalkThought):
-        super().__init__(body, map)
+    def __init__(self, body: AntBody, map: Map, memory: Memory, random_walk_thought: SearchingWalkThought, flags: dict = None, sayback: str = None):
+        super().__init__(body, map, 'find_food', flags, sayback)
         self._memory = memory
         self._random_walk_thought = random_walk_thought
 
         self._points_to_check = []
-
-        self._reset_flags()
 
     def do_step(self):
         found_food = self._look_around_for_food()
         if (found_food):
             return
         
-        if (not self._memory_read):
+        if (not self._flags['memory_read']):
             self._points_to_check = self._get_points_to_check()
-            self._memory_read = True
+            self._flags['memory_read'] = True
 
-        if (not self._points_checked):
+        if (not self._flags['points_checked']):
             if (len(self._points_to_check) > 0):
                 checking_point = self._points_to_check[0]
                 got_to_point = self._body.step_to_near(checking_point)
@@ -36,14 +34,21 @@ class FindFoodThought(Thought):
                     self._look_around_for_food()
                 return
             else:
-                self._points_checked = True
-        if (self._points_checked):
+                self._flags['points_checked'] = True
+        if (self._flags['points_checked']):
             self._random_walk_thought.do_step()
             self._look_around_for_food()
 
     def restart(self):
         super().restart()
         self._reset_flags()
+
+    def to_full_json(self):
+        json = super().to_full_json()
+        json.update({
+            'searching_walk': self._random_walk_thought.to_full_json()
+        })
+        return json
     
     def _get_points_to_check(self):
         entities_data = self._memory.get_entities_data([EntityTypes.FOOD, EntityTypes.FOOD_AREA])
@@ -51,7 +56,7 @@ class FindFoodThought(Thought):
         for entity_data in entities_data:
             positions.append(entity_data['position'])
 
-        positions.sort(key=lambda position: math.dist([position.x, position.y], [self._body.position.x, self._body.position.y]))
+        positions.sort(key=lambda position: math.dist([position[0], position[1]], [self._body.position.x, self._body.position.y]))
 
         return positions
 
@@ -65,8 +70,10 @@ class FindFoodThought(Thought):
             return False
 
     def _reset_flags(self):
-        self._memory_read = False
-        self._points_checked = False
+        self._flags = {
+            'memory_read': False,
+            'points_checked': False
+        }
         
 
     
