@@ -1,9 +1,11 @@
 from core.world.entities.base.live_entity.body import Body
 from core.world.entities.map import Map
+from core.world.utils.point import Point
 
 from core.world.entities.nest.nest import Nest
 
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
+from core.world.entities.base.live_entity.thoughts.walk_to_thought import WalkToThought
 
 class ThoughtFactory:
 
@@ -15,12 +17,15 @@ class ThoughtFactory:
             case 'go_in_nest':
                 nest = self._map.get_entity_by_id(thought_json['nest_id'])
                 return self.build_go_in_nest_thought(body=body, nest=nest, flags=thought_json['flags'], sayback=thought_json['sayback'])
+            case 'walk_to':
+                position = Point(thought_json['position'][0], thought_json['position'][1])
+                return self.build_walk_to_thought(body=body, position=position, flags=thought_json['flags'], sayback=thought_json['sayback'])
 
     def build_go_in_nest_thought(self, body: Body, nest: Nest, flags: dict = None, sayback: str = None):
         return GoInNestThought(body=body, map=self._map, flags=flags, sayback=sayback, nest=nest)
     
-    # def build_walk_to_thought(self, position: Point, sayback: str = None):
-    #     return WalkToThought(body=self._body, map=self._map, flags={}, position=position, sayback=sayback)
+    def build_walk_to_thought(self, body: Body, position: Point, flags: dict = None, sayback: str = None):
+        return WalkToThought(body=body, map=self._map, flags=flags, sayback=sayback, position=position)
     
     # def build_searching_walk_thought(self, search_near_point: Point, search_radius: int) -> SearchingWalkThought:
     #     return SearchingWalkThought(self._body, self._map, search_near_point, search_radius)

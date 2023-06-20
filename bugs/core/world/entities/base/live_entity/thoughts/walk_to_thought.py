@@ -4,7 +4,7 @@ from core.world.utils.point import Point
 
 class WalkToThought(Thought):
 
-    def __init__(self, body: Body, map, flags: dict, position: Point, sayback: str = None):
+    def __init__(self, body: Body, map, position: Point, flags: dict = None, sayback: str = None):
         super().__init__(body, map, 'walk_to', flags, sayback)
         self._position = position
 
@@ -13,9 +13,10 @@ class WalkToThought(Thought):
         if is_done:
             self.mark_as_done()
 
-    def to_json(self):
-        json = super().to_json()
+    def to_full_json(self):
+        json = super().to_full_json()
         json.update({
             'position': self._position
         })
+        return json
     
