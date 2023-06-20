@@ -63,6 +63,10 @@ class WorldFacade:
 
         self._world.run()
 
+    def save_world(self):
+        json = self.to_full_json()
+        self._data_repository.push(self.WORLD_ID, json)
+
     @property
     def world(self):
         return self._world

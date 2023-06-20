@@ -1,14 +1,48 @@
 {% load static %}
 <html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                padding: 20px;
+            }
+            
+            .admin-panel {
+                background-color: #f1f1f1;
+                padding: 20px;
+                border-radius: 5px;
+                margin-bottom: 20px;
+            }
+            
+            .status-section {
+                margin-bottom: 10px;
+            }
+            
+            .status-label {
+                font-weight: bold;
+            }
+            
+            .button-section {
+                margin-top: 10px;
+            }
+            
+            .button-section button {
+                margin-right: 10px;
+            }
+        </style>
+    </head>
     <body>
-        admin panel
-        <div data-world-status>
-            <div>
-                is world running: <span data-is-world-running></span>
+        <div class="admin-panel" data-world-status>
+            <div class="status-section">
+                <span class="status-label">Is world running:</span>
+                <span data-is-world-running></span>
             </div>
-            <div>
-                <button data-run-world>run</button>
-                <button data-stop-world>stop</button>
+            <div class="button-section">
+                <button data-run-world>Run</button>
+                <button data-stop-world>Stop</button>
+            </div>
+            <div class="button-section">
+                <button data-save-world>Save World</button>
             </div>
         </div>
     </body>

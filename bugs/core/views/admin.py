@@ -35,3 +35,12 @@ def run_world(request):
     return JsonResponse({
         'status': worldFacade.is_world_running()
     }) 
+
+@user_passes_test(is_superuser)
+@require_POST
+def save_world(request):
+    worldFacade = WorldFacade.get_instance()
+    worldFacade.save_world()
+    return JsonResponse({
+        'status': 'saved'
+    }) 
