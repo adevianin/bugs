@@ -7,8 +7,8 @@ from .thoughts.walk_to_thought import WalkToThought
 class LiveEntityThoughtFactory(ThoughtFactory):
 
     def build_go_in_nest_thought(self, nest: Nest):
-        return GoInNestThought(self._body, nest)
+        return GoInNestThought(self._body, self._map, nest)
     
     def build_walk_to_thought(self, position: Point, sayback: str = None):
-        return WalkToThought(self._body, position, sayback)
+        return WalkToThought(body=self._body, map=self._map, flags={}, position=position, sayback=sayback)
 

@@ -17,7 +17,7 @@ class NestFactory():
         return Nest(self._event_bus, nest_json['id'], position, nest_json['from_colony'], larvae, nest_json['larva_places_count'], nest_json['stored_calories'], nest_json['area'])
 
     def build_new_nest(self, position: Point, from_colony: int):
-        return Nest(self._event_bus, self._id_generator.generate_id(), position, from_colony, [], 1)
+        return Nest(event_bus=self._event_bus, id=self._id_generator.generate_id(), position=position, from_colony=from_colony, larvae=[], larva_places_count=3, stored_calories=0, area=300)
     
     def _build_larvae_from_json(self, larvae_json: list, position: Point):
         larvae = []

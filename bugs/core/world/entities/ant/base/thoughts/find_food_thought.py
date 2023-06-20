@@ -10,8 +10,7 @@ import math
 class FindFoodThought(Thought):
 
     def __init__(self, body: AntBody, map: Map, memory: Memory, random_walk_thought: SearchingWalkThought):
-        super().__init__(body)
-        self._map = map
+        super().__init__(body, map)
         self._memory = memory
         self._random_walk_thought = random_walk_thought
 

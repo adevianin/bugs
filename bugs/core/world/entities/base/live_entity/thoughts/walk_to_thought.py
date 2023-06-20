@@ -4,8 +4,8 @@ from core.world.utils.point import Point
 
 class WalkToThought(Thought):
 
-    def __init__(self, body: Body, flags: dict, position: Point, sayback: str = None):
-        super().__init__(body, 'walk_to', flags, sayback)
+    def __init__(self, body: Body, map, flags: dict, position: Point, sayback: str = None):
+        super().__init__(body, map, 'walk_to', flags, sayback)
         self._position = position
 
     def do_step(self):

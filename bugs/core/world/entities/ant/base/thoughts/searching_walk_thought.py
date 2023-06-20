@@ -12,8 +12,7 @@ class SearchingWalkThought(Thought):
     VISITED_POINTS_MEMORY = 5
 
     def __init__(self, body: AntBody, map: Map, search_near_point: Point = None, search_radius: int = 300):
-        super().__init__(body)
-        self._map = map
+        super().__init__(body, map)
         self._visited_points = []
         self._current_destination_point = None
         self._search_near_point = search_near_point

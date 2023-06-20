@@ -4,8 +4,8 @@ from core.world.entities.nest.nest import Nest
 
 class GoInNestThought(Thought):
 
-    def __init__(self, body: Body, nest: Nest):
-        super().__init__(body)
+    def __init__(self, body: Body, map, nest: Nest):
+        super().__init__(body, map)
         self._nest = nest
 
         self._reset_flags()

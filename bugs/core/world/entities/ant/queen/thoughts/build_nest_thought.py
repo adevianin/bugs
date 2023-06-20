@@ -5,7 +5,7 @@ from core.world.entities.nest.nest import Nest
 class BuildNestThought(Thought):
 
     def __init__(self, body: QueenAntBody, new_nest: Nest, sayback: str):
-        super().__init__(body, sayback)
+        super().__init__(body=body, map=map, type='build_new_nest', flags={}, sayback=sayback)
         self._new_nest = new_nest
 
     def do_step(self):

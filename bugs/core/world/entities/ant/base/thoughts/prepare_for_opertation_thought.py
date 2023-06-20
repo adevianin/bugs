@@ -5,8 +5,8 @@ from core.world.utils.point import Point
 
 class PrepareForOperationThought(Thought):
 
-    def __init__(self, body: AntBody, feed_myself_thought: FeedMyselfThought, assemble_point: Point, sayback: str):
-        super().__init__(body, sayback)
+    def __init__(self, body: AntBody, map, feed_myself_thought: FeedMyselfThought, assemble_point: Point, sayback: str):
+        super().__init__(body, map, 'prepare_for_operation', {}, sayback)
         self._feed_myself_thought = feed_myself_thought
         self._assemble_point = assemble_point
 

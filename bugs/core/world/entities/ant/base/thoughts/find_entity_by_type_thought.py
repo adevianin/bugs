@@ -6,10 +6,9 @@ from .searching_walk_thought import SearchingWalkThought
 
 class FindEntityByTypeThought(Thought):
 
-    def __init__(self, body: AntBody, entity_type: EntityTypes, map: Map, searching_walk_thought: SearchingWalkThought):
-        super().__init__(body)
+    def __init__(self, body: AntBody, map: Map, entity_type: EntityTypes, searching_walk_thought: SearchingWalkThought):
+        super().__init__(body, map)
         self._searching_entity_type = entity_type
-        self._map = map
         self._searching_walk_thought = searching_walk_thought
 
     def do_step(self):

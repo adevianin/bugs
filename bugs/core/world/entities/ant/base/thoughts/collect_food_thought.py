@@ -7,8 +7,8 @@ from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestTho
 
 class CollectFoodThought(Thought):
 
-    def __init__(self, body: AntBody, nest: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought):
-        super().__init__(body)
+    def __init__(self, body: AntBody, map, nest: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought):
+        super().__init__(body, map)
         self._nest = nest
         self._find_food_thought = find_food_thought
         self._go_home_thought = go_home_thought

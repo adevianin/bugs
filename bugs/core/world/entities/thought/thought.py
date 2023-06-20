@@ -1,11 +1,13 @@
 from abc import ABC, abstractclassmethod
 from ..base.live_entity.body import Body
+from core.world.entities.map import Map
 
 class Thought(ABC):
 
-    def __init__(self, body: Body, type: str = '', flags: dict = {}, sayback: str = None):
+    def __init__(self, body: Body, map: Map, type: str = '', flags: dict = {}, sayback: str = None):
         self._type = type
         self._body = body
+        self._map = map
         self._is_done = False
         self._results = None
         self._sayback = sayback
@@ -40,7 +42,7 @@ class Thought(ABC):
     def do_step(self):
         pass
 
-    def to_json(self):
+    def to_full_json(self):
         return {
             'type': self._type,
             'sayback': self._sayback,
