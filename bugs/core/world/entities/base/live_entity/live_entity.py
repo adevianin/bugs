@@ -5,6 +5,7 @@ from core.world.utils.point import Point
 from .mind import Mind
 from .body import Body
 from core.world.entities.nest.nest import Nest
+from core.world.entities.thought.thought import Thought
 
 class LiveEntity(Entity):
 
@@ -34,6 +35,18 @@ class LiveEntity(Entity):
     def located_in_nest_id(self):
         return self._body.located_in_nest_id
     
+    @property
+    def is_busy(self):
+        return self._body.is_busy
+    
+    @property
+    def mind(self):
+        return self._mind
+    
+    @property
+    def body(self):
+        return self._body
+    
     def get_in_nest(self, nest: Nest):
         self._body.get_in_nest(nest)
 
@@ -42,7 +55,7 @@ class LiveEntity(Entity):
     
     def is_hidden(self):
         return super().is_hidden or self._body.is_in_nest
-
+    
     def do_step(self):
         super().do_step()
         self._toggle_is_busy(False)
@@ -81,10 +94,6 @@ class LiveEntity(Entity):
             raise Exception('live entity can do only 1 action per step')
         super().handle_action(action_type, action_data)
         self._toggle_is_busy(True)
-    
-    @property
-    def is_busy(self):
-        return self._body.is_busy
     
     def set_thoughts(self, thoughts):
         self._mind.set_thoughts(thoughts)

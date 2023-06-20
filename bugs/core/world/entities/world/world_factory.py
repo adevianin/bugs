@@ -6,20 +6,19 @@ from core.world.utils.point import Point
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.map import Map
 from .world import World
-from core.world.entities.ant.base.ant_types import AntTypes
-from core.world.entities.food.food_types import FoodTypes
 from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.colony.colony import Colony
-from core.world.entities.base.entity_types import EntityTypes
+from core.world.entities.thought.thought_factory import ThoughtFactory
 
 class WorldFactory():
 
-    def __init__(self, event_bus: EventEmitter, ant_factory: AntFactory, food_factory: FoodFactory, nest_factory: NestFactory, colony_factory: ColonyFactory):
+    def __init__(self, event_bus: EventEmitter, ant_factory: AntFactory, food_factory: FoodFactory, nest_factory: NestFactory, colony_factory: ColonyFactory, thought_factory: ThoughtFactory):
         self._event_bus = event_bus
         self._ant_factory = ant_factory
         self._food_factory = food_factory
         self._nest_factory = nest_factory
         self._colony_factory = colony_factory
+        self._thought_factory = thought_factory
 
     def build_world_from_json(self, world_data: dict, map: Map):
         nests_data = world_data['nests']
@@ -47,6 +46,16 @@ class WorldFactory():
         for colony_json in colonies_json:
             colony = self._colony_factory.build_colony_from_json(colony_json)
             colonies.append(colony)
+
+        ants_json = world_data['ants']
+        for ant_json in ants_json:
+            ant = map.get_entity_by_id(ant_json['id'])
+            thoughts_json = ant_json['thoughts']
+            thoughts = []
+            for thought_json in thoughts_json:
+                thought = self._thought_factory.build_thougth_from_json(ant.body, thought_json)
+                thoughts.append(thought)
+            ant.set_thoughts(thoughts)
 
         world = self.build_world(map, colonies)
         

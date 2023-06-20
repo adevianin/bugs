@@ -36,31 +36,31 @@ class Command(BaseCommand):
                 "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000",
                 "from_nest": 30,
                 "thoughts": []
-            },
-            {
-                "id": 3,
-                "type": "ant",
-                "from_colony": 1,
-                "position": [1600, 500],
-                "located_in_nest_id": None,
-                "picked_food_id": None,
-                "ant_type": "worker",
-                "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf123",
-                "from_nest": 31,
-                "thoughts": []
-            },
-            {
-                "id": 4,
-                "type": "ant",
-                "from_colony": 1,
-                "position": [1600, 400],
-                "located_in_nest_id": None,
-                "picked_food_id": None,
-                "ant_type": "queen",
-                "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf123",
-                "from_nest": 31,
-                "thoughts": []
             }
+            # {
+            #     "id": 3,
+            #     "type": "ant",
+            #     "from_colony": 1,
+            #     "position": [1600, 500],
+            #     "located_in_nest_id": None,
+            #     "picked_food_id": None,
+            #     "ant_type": "worker",
+            #     "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf123",
+            #     "from_nest": 31,
+            #     "thoughts": []
+            # },
+            # {
+            #     "id": 4,
+            #     "type": "ant",
+            #     "from_colony": 1,
+            #     "position": [1600, 400],
+            #     "located_in_nest_id": None,
+            #     "picked_food_id": None,
+            #     "ant_type": "queen",
+            #     "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf123",
+            #     "from_nest": 31,
+            #     "thoughts": []
+            # }
         ],
         "foods": [
             {

@@ -7,28 +7,27 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.base.live_entity.memory import Memory
 from .base.larva import Larva
 from core.world.id_generator import IdGenerator
+from core.world.entities.thought.thought_factory import ThoughtFactory
 
 from .worker.worker_ant_body import WorkerAntBody
 from .worker.worker_ant_mind import WorkerAntMind
 from .worker.worker_ant import WorkerAnt
-from .worker.worker_thought_factory import WorkerThoughtFactory
 
 from .warrior.warrior_ant_body import WarriorAntBody
 from .warrior.warrior_ant_mind import WarrirorAntMind
 from .warrior.warrior_ant import WarriorAnt
-from .warrior.warrior_thought_factory import WarriorThoughtFactory
 
 from .queen.queen_ant_body import QueenAntBody
 from .queen.queen_ant_mind import QueenAntMind
 from .queen.queen_ant import QueenAnt
-from .queen.queen_thought_factory import QueenThoughtFactory
 
 class AntFactory():
 
-    def __init__(self, event_bus: EventEmitter, id_generator: IdGenerator, map: Map) -> None:
+    def __init__(self, event_bus: EventEmitter, id_generator: IdGenerator, map: Map, thought_factory: ThoughtFactory) -> None:
         self._event_bus = event_bus
         self._id_generator = id_generator
         self._map = map
+        self._thought_factory = thought_factory
 
     def build_ant_from_json(self, ant_json: dict):
         position = Point(ant_json['position'][0], ant_json['position'][1])
@@ -56,8 +55,7 @@ class AntFactory():
     def _build_warrior_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest):
         events = EventEmitter()
         body = WarriorAntBody(events, dna_profile, position, located_in_nest)
-        ant_thought_factory = WarriorThoughtFactory(body, self._map)
-        mind = WarrirorAntMind(events, body, ant_thought_factory, self._map, Memory(), nest)
+        mind = WarrirorAntMind(events, body, self._thought_factory, self._map, Memory(), nest)
         ant = WarriorAnt(self._event_bus, events, id, from_colony, mind, body)
 
         return ant
@@ -65,8 +63,7 @@ class AntFactory():
     def _build_worker_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest):
         events = EventEmitter()
         body = WorkerAntBody(events, dna_profile, position, located_in_nest)
-        ant_thought_factory = WorkerThoughtFactory(body, self._map)
-        mind = WorkerAntMind(events, body, ant_thought_factory, self._map, Memory(), nest)
+        mind = WorkerAntMind(events, body, self._thought_factory, self._map, Memory(), nest)
         ant = WorkerAnt(self._event_bus, events, id, from_colony, mind, body)
 
         return ant
@@ -74,8 +71,7 @@ class AntFactory():
     def _build_queen_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest):
         events = EventEmitter()
         body = QueenAntBody(events, dna_profile, position, located_in_nest)
-        ant_thought_factory = QueenThoughtFactory(body, self._map)
-        mind = QueenAntMind(events, body, ant_thought_factory, self._map, Memory(), nest)
+        mind = QueenAntMind(events, body, self._thought_factory, self._map, Memory(), nest)
         ant = QueenAnt(self._event_bus, events, id, from_colony, mind, body)
 
         return ant

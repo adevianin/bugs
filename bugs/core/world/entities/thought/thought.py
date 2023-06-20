@@ -4,14 +4,17 @@ from core.world.entities.map import Map
 
 class Thought(ABC):
 
-    def __init__(self, body: Body, map: Map, type: str = '', flags: dict = {}, sayback: str = None):
+    def __init__(self, body: Body, map: Map, type: str, flags: dict, sayback: str):
         self._type = type
         self._body = body
         self._map = map
         self._is_done = False
         self._results = None
         self._sayback = sayback
-        self._flags = flags
+
+        self._reset_flags()
+        if flags:
+            self._flags.update(flags)
 
     def is_done(self):
         return self._is_done
@@ -41,6 +44,9 @@ class Thought(ABC):
     @abstractclassmethod
     def do_step(self):
         pass
+
+    def _reset_flags(self):
+        self._flags = {}
 
     def to_full_json(self):
         return {

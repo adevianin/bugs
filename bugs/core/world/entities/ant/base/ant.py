@@ -54,12 +54,17 @@ class Ant(LiveEntity):
     
     def to_full_json(self):
         json = super().to_full_json()
+
+        thoughts_json = []
+        for thought in self._mind.thoughts:
+            thoughts_json.append(thought.to_full_json())
+
         json.update({
             'picked_food_id': self._body.picked_food.id if self._body.is_food_picked else None,
             'ant_type': self._ant_type,
             'dna_profile': self._body.dna_profile,
             'from_nest': self._mind.home_nest.id,
-            'thoughts': []
+            'thoughts': thoughts_json
         })
 
         return json

@@ -1,16 +1,15 @@
 from abc import ABC, abstractclassmethod
 from .body import Body
-from .live_entity_thought_factory import LiveEntityThoughtFactory
+from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.entities.thought.thought import Thought
 from core.world.entities.map import Map
 from core.world.entities.base.entity_types import EntityTypes
 from .memory import Memory
 from core.world.utils.event_emiter import EventEmitter
-from asyncio import Future
 
 class Mind(ABC):
 
-    def __init__(self, events: EventEmitter, body: Body, thought_factory: LiveEntityThoughtFactory, map: Map, memory: Memory):
+    def __init__(self, events: EventEmitter, body: Body, thought_factory: ThoughtFactory, map: Map, memory: Memory):
         self._body = body
         self._thought_factory = thought_factory
         self._map = map
@@ -20,6 +19,10 @@ class Mind(ABC):
         self.events = events
 
         self._body.events.add_listener('walk', self._on_walk)
+
+    @property
+    def thoughts(self):
+        return self._thoughts_stack
 
     def do_step(self):
         if self._is_auto_thought_generation:

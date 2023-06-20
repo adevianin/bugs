@@ -1,5 +1,5 @@
 from core.world.entities.base.live_entity.mind import Mind
-from .ant_thought_factory import AntThoughtFactory
+from core.world.entities.thought.thought_factory import ThoughtFactory
 from .ant_body import AntBody
 from core.world.entities.map import Map
 from core.world.entities.nest.nest import Nest
@@ -10,7 +10,7 @@ import math
 
 class AntMind(Mind):
 
-    def __init__(self, events: EventEmitter, body: AntBody, thought_factory: AntThoughtFactory, map: Map, memory: Memory, home_nest: Nest):
+    def __init__(self, events: EventEmitter, body: AntBody, thought_factory: ThoughtFactory, map: Map, memory: Memory, home_nest: Nest):
         super().__init__(events, body, thought_factory, map, memory)
         self.home_nest = home_nest
 

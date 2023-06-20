@@ -14,6 +14,7 @@ from .entities.colony.colony_factory import ColonyFactory
 from core.world.utils.point import Point
 from core.world.entities.colony.operation.operation_factory import OperationFactory
 from .id_generator import IdGenerator
+from .entities.thought.thought_factory import ThoughtFactory
 
 from typing import Callable
 
@@ -48,12 +49,13 @@ class WorldFacade:
         self._id_generator = IdGenerator(world_data['last_used_id'])
         self._event_bus = EventEmitter()
         
-        ant_factory = AntFactory(self._event_bus, self._id_generator, map)
+        thought_factory = ThoughtFactory(map)
+        ant_factory = AntFactory(self._event_bus, self._id_generator, map, thought_factory)
         nest_factory = NestFactory(self._event_bus, self._id_generator)
         food_factory = FoodFactory(self._event_bus, self._id_generator)
         colony_factory = ColonyFactory(self._event_bus, map)
         operation_factory = OperationFactory(nest_factory)
-        world_factory = WorldFactory(self._event_bus, ant_factory, food_factory, nest_factory, colony_factory)
+        world_factory = WorldFactory(self._event_bus, ant_factory, food_factory, nest_factory, colony_factory, thought_factory)
 
         self._world = world_factory.build_world_from_json(world_data, map)
 
