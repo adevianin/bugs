@@ -6,6 +6,7 @@ from .mind import Mind
 from .body import Body
 from core.world.entities.nest.nest import Nest
 from core.world.entities.thought.thought import Thought
+from typing import List
 
 class LiveEntity(Entity):
 
@@ -96,8 +97,8 @@ class LiveEntity(Entity):
         super().handle_action(action_type, action_data)
         self._toggle_is_busy(True)
     
-    def set_thoughts(self, thoughts):
-        self._mind.set_thoughts(thoughts)
+    def set_entities_in_sight(self, entities: List[Entity]):
+        self._mind.world_interactor.set_nearby_entities(entities)
 
     def _toggle_is_busy(self, is_busy: bool):
         self._body.toggle_is_busy(is_busy)

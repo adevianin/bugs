@@ -57,6 +57,9 @@ class Entity(ABC):
         self._event_bus.emit('entity_died', self)
         self.handle_action('entity_died')
 
+    def born(self):
+        self.handle_action('entity_born', { 'entity': self.to_public_json() })
+
     @abstractmethod
     def do_step(self):
         pass

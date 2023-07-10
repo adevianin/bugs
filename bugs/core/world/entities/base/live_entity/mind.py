@@ -2,23 +2,22 @@ from abc import ABC, abstractclassmethod
 from .body import Body
 from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.entities.thought.thought import Thought
-from core.world.entities.map import Map
-from core.world.entities.base.entity_types import EntityTypes
 from .memory import Memory
 from core.world.utils.event_emiter import EventEmitter
+from core.world.entities.base.live_entity.world_interactor import WorldInteractor
+from typing import List
+from core.world.entities.base.entity import Entity
 
 class Mind(ABC):
 
-    def __init__(self, events: EventEmitter, body: Body, thought_factory: ThoughtFactory, map: Map, memory: Memory):
+    def __init__(self, events: EventEmitter, body: Body, thought_factory: ThoughtFactory, world_interactor: WorldInteractor, memory: Memory):
         self._body = body
         self._thought_factory = thought_factory
-        self._map = map
+        self._world_interactor = world_interactor
         self._memory = memory
         self._thoughts_stack = []
         self._is_auto_thought_generation = True
         self.events = events
-
-        self._body.events.add_listener('walk', self._on_walk)
 
     @property
     def thoughts(self):
@@ -27,7 +26,7 @@ class Mind(ABC):
     @property
     def memory(self):
         return self._memory
-
+    
     def do_step(self):
         if self._is_auto_thought_generation:
             self._generate_thoughts()
@@ -50,13 +49,19 @@ class Mind(ABC):
                 self._thoughts_stack = [current_thought]
 
     def set_thoughts(self, thoughts: list[Thought]):
-        self._thoughts_stack = thoughts
+        for thought in thoughts:
+            self._register_thought(thought)
+
+    def set_entities_in_sight(self, entities: List[Entity]):
+        self._world_interactor.set_nearby_entities(entities)
 
     def _generate_thoughts(self):
         if (self._body.check_am_i_hungry()):
             self._register_thought(self._generate_feed_myself_thought(), True)
 
     def _register_thought(self, thought: Thought, asap: bool = False):
+        thought.set_mind_parts(self._body, self._memory, self._world_interactor)
+        
         if asap and self._has_thoughts_to_do():
             if (self._get_current_thought().can_be_delayed()):
                 self._get_current_thought().delay()
@@ -72,9 +77,9 @@ class Mind(ABC):
     def _has_thoughts_to_do(self):
         return len(self._thoughts_stack) > 0
 
-    def _on_walk(self, **kwargs):
-        near_entities = self._map.find_entities_near(self._body.position, self._body.sight_distance, [EntityTypes.FOOD, EntityTypes.FOOD_AREA])
-        self._memory.remember_entities_at(self._body.position, self._body.sight_distance, near_entities)
+    # def _on_walk(self, **kwargs):
+    #     near_entities = self._map.find_entities_near(self._body.position, self._body.sight_distance, [EntityTypes.FOOD, EntityTypes.FOOD_AREA])
+    #     self._memory.remember_entities_at(self._body.position, self._body.sight_distance, near_entities)
 
     def _handle_done_thoughts(self):
         done_thoughts = []

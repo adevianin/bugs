@@ -8,8 +8,11 @@ class CoreConfig(AppConfig):
 
     def ready(self):
         if 'runserver' in sys.argv:
-            from core.repository.world_data_repository import WorldDataRepository
-            from core.world.world_facade import WorldFacade
+            from core.data.init_layer import init_data_layer
+            from core.world.init_layer import init_domain_layer
 
-            world_facade = WorldFacade.init(WorldDataRepository())
-            world_facade.init_world()
+            world_facade = init_domain_layer()
+            world_repository = init_data_layer(**world_facade.fabrics)
+
+            world_facade.init_world(world_repository)
+            

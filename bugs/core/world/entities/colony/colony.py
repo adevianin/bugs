@@ -1,14 +1,14 @@
 from core.world.utils.event_emiter import EventEmitter
 from .operation.operation import Operation
-from core.world.entities.map import Map
+from .colony_ants_collection import ColonyAntsCollection
 
 class Colony:
 
-    def __init__(self, id: int, event_bus: EventEmitter, owner_id: int, map: Map):
+    def __init__(self, id: int, event_bus: EventEmitter, owner_id: int, colony_ants_collection: ColonyAntsCollection):
         self._id = id
         self._event_bus = event_bus
         self._owner_id = owner_id
-        self._map = map
+        self._colony_ants_collection = colony_ants_collection
         self._operations = []
         self._has_changes = False
 
@@ -21,10 +21,6 @@ class Colony:
     @property
     def owner_id(self):
         return self._owner_id
-    
-    @property
-    def _my_ants(self):
-        return self._map.get_ants_from_colony(self._id)
     
     def add_operation(self, operation: Operation):
         operation.id = self._generate_operation_id()
@@ -74,7 +70,7 @@ class Colony:
                 self._hire_for_operation(operation)
 
     def _hire_for_operation(self, operation: Operation):
-        for ant in self._my_ants:
+        for ant in self._colony_ants_collection.ants:
             if not operation.is_hiring:
                 return
             hiring_types = operation.get_hiring_ant_types()

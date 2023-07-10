@@ -1,9 +1,6 @@
-import json
-
-from core.world.world_data_repository_interface import iWorldDataRepository
 from core.models import World
 
-class WorldDataRepository(iWorldDataRepository):
+class WorldDataRepository():
     
     def get(self, world_id: int):
         world = World.objects.get(id=world_id)

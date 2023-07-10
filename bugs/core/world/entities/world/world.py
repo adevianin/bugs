@@ -7,10 +7,12 @@ from core.world.entities.base.entity import Entity
 from core.world.settings import STEP_TIME
 from core.world.entities.colony.colony import Colony
 from core.world.entities.base.entity_types import EntityTypes
+from core.world.entities.base.entity_collection import EntityCollection
 
 class World():
 
-    def __init__(self, map: Map, event_bus: EventEmitter, colonies: list[Colony]) -> None:
+    def __init__(self, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: list[Colony]):
+        self._entities_collection = entities_collection
         self._map = map
         self._event_bus = event_bus
         self._colonies = colonies
@@ -21,9 +23,6 @@ class World():
         self._current_step_state = None
         self._previous_step_state = None
         
-        self._event_bus.add_listener('entity_died', self._on_entity_died)
-        self._event_bus.add_listener('entity_born', self._on_entity_born)
-
     @property
     def map(self):
         return self._map
@@ -38,7 +37,7 @@ class World():
                 return colony
             
         return None
-
+    
     def stop(self):
         if (not self._is_world_running): 
             return
@@ -55,7 +54,7 @@ class World():
 
     def to_public_json(self):
         entities_json = []
-        entities = self._map.get_entities()
+        entities = self._entities_collection.get_entities()
         for entity in entities:
             entities_json.append(entity.to_public_json())
 
@@ -118,17 +117,12 @@ class World():
     def _do_step(self):
         print(f'step { self._step_counter } start')
 
+        self._map.handle_intractions()
+
         self._event_bus.emit('step_start', self._step_counter)
         
-        entities = self._map.get_entities()
+        entities = self._entities_collection.get_entities()
         for entity in entities:
             entity.do_step()
 
         self._step_counter += 1
-
-    def _on_entity_died(self, entity: Entity):
-        self._map.delete_entity(entity.id)
-
-    def _on_entity_born(self, entity: Entity):
-        self._map.add_entity(entity)
-        

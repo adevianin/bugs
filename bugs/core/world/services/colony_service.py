@@ -4,9 +4,11 @@ from core.world.entities.colony.operation.operation_factory import OperationFact
 
 class ColonyService():
 
-    def __init__(self, world: World, operation_factory: OperationFactory):
-        self._world = world
+    def __init__(self, operation_factory: OperationFactory):
         self._operation_factory = operation_factory
+
+    def set_world(self, world: World):
+        self._world = world
 
     def stop_operation(self, user_id: int, operation_id: int):
         colony = self._world.get_colony_owned_by_user(user_id)

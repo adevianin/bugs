@@ -1,7 +1,5 @@
 from core.world.entities.thought.thought import Thought
-from ..ant_body import AntBody
 from core.world.utils.point import Point
-from core.world.entities.map import Map
 
 import math
 import random
@@ -11,8 +9,8 @@ class SearchingWalkThought(Thought):
     WALK_DIRECTIONS_COUNT = 8
     VISITED_POINTS_MEMORY = 5
 
-    def __init__(self, body: AntBody, map: Map, search_near_point: Point, search_radius: int, flags: dict, sayback: str):
-        super().__init__(body, map, 'searching_walk', flags, sayback)
+    def __init__(self, search_near_point: Point, search_radius: int, flags: dict, sayback: str):
+        super().__init__('searching_walk', flags, sayback)
         self._visited_points = []
         self._current_destination_point = None
         self._search_near_point = search_near_point
@@ -61,11 +59,8 @@ class SearchingWalkThought(Thought):
 
         valid_points = []
         for point in points:
-            is_point_walkable = self._map.is_point_walkable(point)
-            is_point_in_search_area = self._is_point_inside_searching_area(point)
-            if is_point_walkable and is_point_in_search_area: 
+            if self._is_point_inside_searching_area(point): 
                 valid_points.append(point)
-
 
         return valid_points
 

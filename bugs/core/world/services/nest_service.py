@@ -4,7 +4,10 @@ from core.world.entities.world.world import World
 
 class NestService():
 
-    def __init__(self, world: World):
+    def __init__(self):
+        pass
+
+    def set_world(self, world: World):
         self._world = world
 
     def add_larva(self, nest_id: int, user_id: int, larva_type: AntTypes):

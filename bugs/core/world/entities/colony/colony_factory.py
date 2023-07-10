@@ -1,15 +1,14 @@
 from core.world.utils.event_emiter import EventEmitter
 from .colony import Colony
-from core.world.entities.map import Map
+from core.world.entities.base.entity_collection import EntityCollection
+from .colony_ants_collection import ColonyAntsCollection
 
 class ColonyFactory():
 
-    def __init__(self, event_bus: EventEmitter, map: Map):
+    def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus
-        self._map = map
 
-    def build_colony_from_json(self, colony_json):
-        return self.build_colony(colony_json['id'], colony_json['owner_id'])
-
-    def build_colony(self, id: int, owner_id: int):
-        return Colony(id, self._event_bus, owner_id, self._map)
+    def build_colony(self, id: int, owner_id: int, entities_collection: EntityCollection):
+        ants_collection = ColonyAntsCollection.build_colony_ants_collection(entities_collection, id)
+        return Colony(id, self._event_bus, owner_id, ants_collection)
+    

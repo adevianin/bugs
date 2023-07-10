@@ -8,17 +8,6 @@ import math
 
 class Memory():
 
-    @classmethod
-    def build_from_json(cls, datas_json):
-        datas = []
-        for data_json in datas_json:
-            datas.append({
-                'id': data_json['id'],
-                'position': Point(data_json['position'][0], data_json['position'][1]),
-                'type': data_json['type']
-            })
-        return Memory(datas)
-
     def __init__(self, data = []):
         self._data = data
 

@@ -1,20 +1,16 @@
-from .world_data_repository_interface import iWorldDataRepository
 from .utils.event_emiter import EventEmitter
 from .entities.ant.ant_factory import AntFactory
 from .entities.food.food_factory import FoodFactory
 from .entities.world.world_factory import WorldFactory
-from .entities.world.world import World
 from .services.nest_service import NestService
 from .entities.nest.nest_factory import NestFactory
-from .entities.map import Map
-from .utils.size import Size
 from .services.birther_service import BirtherService
 from .services.colony_service import ColonyService
 from .entities.colony.colony_factory import ColonyFactory
 from core.world.utils.point import Point
 from core.world.entities.colony.operation.operation_factory import OperationFactory
-from .id_generator import IdGenerator
 from .entities.thought.thought_factory import ThoughtFactory
+from core.world.world_repository_interface import iWorldRepository
 
 from typing import Callable
 
@@ -23,45 +19,58 @@ class WorldFacade:
     WORLD_ID = 1
 
     @classmethod
-    def init(cls, data_repository: iWorldDataRepository):
-        WorldFacade._instance = WorldFacade(data_repository)
-        return WorldFacade._instance
+    def init(cls):
+        world_facade = WorldFacade()
+        WorldFacade._instance = world_facade
+        return world_facade
 
     @classmethod
     def get_instance(cls):
         return WorldFacade._instance
 
-    def __init__(self, data_repository: iWorldDataRepository):
+    def __init__(self):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
             WorldFacade._instance = self
         
-        self._data_repository = data_repository
-        self._world: World
+        self._init_commons()
+        self._init_fabrics()
+        self._init_services()
 
-    def init_world(self):
-        world_data = self._data_repository.get(self.WORLD_ID)
-
-        map_data = world_data['map']
-        map = Map.build_map(Size(map_data['size']['width'], map_data['size']['height']))
-
-        self._id_generator = IdGenerator(world_data['last_used_id'])
+    def _init_commons(self):
         self._event_bus = EventEmitter()
-        
-        thought_factory = ThoughtFactory(map)
-        ant_factory = AntFactory(self._event_bus, self._id_generator, map, thought_factory)
-        nest_factory = NestFactory(self._event_bus, self._id_generator)
-        food_factory = FoodFactory(self._event_bus, self._id_generator)
-        colony_factory = ColonyFactory(self._event_bus, map)
-        operation_factory = OperationFactory(nest_factory)
-        world_factory = WorldFactory(self._event_bus, ant_factory, food_factory, nest_factory, colony_factory, thought_factory)
 
-        self._world = world_factory.build_world_from_json(world_data, map)
+    def _init_fabrics(self):
+        self._thought_factory = ThoughtFactory()
+        self._ant_factory = AntFactory(self._event_bus, self._thought_factory)
+        self._nest_factory = NestFactory(self._event_bus)
+        self._food_factory = FoodFactory(self._event_bus)
+        self._colony_factory = ColonyFactory(self._event_bus)
+        self._operation_factory = OperationFactory(self._nest_factory)
+        self._world_factory = WorldFactory(self._event_bus)
 
-        self._colony_service = ColonyService(self._world, operation_factory)
-        self._nest_service = NestService(self._world)
-        birther_service = BirtherService(self._event_bus, map, ant_factory, food_factory)
+        self.fabrics = {
+            'thought_factory': self._thought_factory,
+            'ant_factory': self._ant_factory,
+            'nest_factory': self._nest_factory,
+            'food_factory': self._food_factory,
+            'colony_factory': self._colony_factory,
+            'operation_factory': self._operation_factory,
+            'world_factory': self._world_factory
+        }
+
+    def _init_services(self):
+        self._colony_service = ColonyService(self._operation_factory)
+        self._nest_service = NestService()
+        self._birther_service = BirtherService(self._event_bus, self._ant_factory, self._food_factory)
+
+    def init_world(self, world_repository: iWorldRepository):
+        self._world = world_repository.get(self.WORLD_ID)
+
+        self._colony_service.set_world(self._world)
+        self._nest_service.set_world(self._world)
+        self._birther_service.set_world(self._world)
 
         self._world.run()
 

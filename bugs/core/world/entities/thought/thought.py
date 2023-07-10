@@ -1,13 +1,15 @@
 from abc import ABC, abstractclassmethod
 from ..base.live_entity.body import Body
-from core.world.entities.map import Map
+from core.world.entities.base.live_entity.memory import Memory
+from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 
 class Thought(ABC):
 
-    def __init__(self, body: Body, map: Map, type: str, flags: dict, sayback: str):
+    def __init__(self, type: str, flags: dict, sayback: str):
+        self.body = None
+        self.memory = None
+        self.world_interactor = None
         self._type = type
-        self._body = body
-        self._map = map
         self._is_done = False
         self._results = None
         self._sayback = sayback
@@ -15,6 +17,11 @@ class Thought(ABC):
         self._reset_flags()
         if flags:
             self._flags.update(flags)
+
+    def set_mind_parts(self, body: Body, memory: Memory, world_interactor: WorldInteractor):
+        self._body = body
+        self._memory = memory
+        self._world_interator = world_interactor
 
     def is_done(self):
         return self._is_done

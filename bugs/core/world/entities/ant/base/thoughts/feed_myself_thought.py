@@ -1,14 +1,16 @@
 from core.world.entities.thought.thought import Thought
-from ..ant_body import AntBody
 from core.world.entities.nest.nest import Nest
 from core.world.entities.food.food import Food
 from .find_food_thought import FindFoodThought
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
+from core.world.entities.base.live_entity.body import Body
+from core.world.entities.base.live_entity.memory import Memory
+from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 
 class FeedMyselfThought(Thought):
 
-    def __init__(self, body: AntBody, map, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
-        super().__init__(body, map, 'feed_myself', flags, sayback)
+    def __init__(self, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
+        super().__init__('feed_myself', flags, sayback)
         self._home = home
         self._find_food_thought = find_food_thought
         self._go_home_thought = go_home_thought
@@ -50,6 +52,11 @@ class FeedMyselfThought(Thought):
                 is_eatin_done = self._body.eat_food(self._found_food)
                 if (is_eatin_done):
                     self.mark_as_done() 
+
+    def set_mind_parts(self, body: Body, memory: Memory, world_interactor: WorldInteractor):
+        super().set_mind_parts(body, memory, world_interactor)
+        self._find_food_thought.set_mind_parts(body, memory, world_interactor)
+        self._go_home_thought.set_mind_parts(body, memory, world_interactor)
 
     def to_full_json(self):
         json = super().to_full_json()

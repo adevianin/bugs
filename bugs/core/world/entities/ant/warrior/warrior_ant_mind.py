@@ -9,4 +9,4 @@ class WarrirorAntMind(AntMind):
             self._register_thought(thought)
 
     def _generate_feed_myself_thought(self):
-        return self._thought_factory.build_feed_myself_thought(self.home_nest, self._memory)
+        return self._thought_factory.build_feed_myself_thought(self.home_nest)

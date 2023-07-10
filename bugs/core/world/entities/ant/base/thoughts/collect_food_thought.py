@@ -1,15 +1,16 @@
 from core.world.entities.thought.thought import Thought
-from ..ant_body import AntBody
 from core.world.entities.nest.nest import Nest
 from .find_food_thought import FindFoodThought
-from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.food.food import Food
+from core.world.entities.base.live_entity.body import Body
+from core.world.entities.base.live_entity.memory import Memory
+from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 
 class CollectFoodThought(Thought):
 
-    def __init__(self, body: AntBody, map, nest: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
-        super().__init__(body, map, 'collect_food', flags, sayback)
+    def __init__(self, nest: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
+        super().__init__('collect_food', flags, sayback)
         self._nest = nest
         self._find_food_thought = find_food_thought
         self._go_home_thought = go_home_thought
@@ -59,6 +60,11 @@ class CollectFoodThought(Thought):
         else:
             return True
         
+    def set_mind_parts(self, body: Body, memory: Memory, world_interactor: WorldInteractor):
+        super().set_mind_parts(body, memory, world_interactor)
+        self._find_food_thought.set_mind_parts(body, memory, world_interactor)
+        self._go_home_thought.set_mind_parts(body, memory, world_interactor)
+        
     def delay(self):
         self.restart()
 
@@ -79,14 +85,6 @@ class CollectFoodThought(Thought):
 
         return json
 
-    def _look_around_for_food(self):
-        foods = self._map.find_entities_near(self._body.position, self._body.sight_distance, [EntityTypes.FOOD])
-
-        if (len(foods) > 0):
-            return foods[0]
-        else:
-            return None
-        
     def _reset_flags(self):
         self._flags = {
             'is_find_food_done': False,
