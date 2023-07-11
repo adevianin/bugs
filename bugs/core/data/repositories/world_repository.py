@@ -12,10 +12,12 @@ from core.world.utils.size import Size
 from core.world.entities.world.world import World
 from core.world.entities.world.world_factory import WorldFactory
 from core.world.id_generator import IdGenerator
+from core.data.serializers.world_serializer import WorldSerializer
+
 
 class WorldRepository(iWorldRepository):
 
-    def __init__(self, world_data_repository: WorldDataRepository, nest_factory: JsonNestFactory, ant_factory: JsonAntFactory, food_factory: JsonFoodFactory, colony_factory: JsonColonyFactory, thought_factory: JsonThoughtFactory, world_factory: WorldFactory):
+    def __init__(self, world_data_repository: WorldDataRepository, nest_factory: JsonNestFactory, ant_factory: JsonAntFactory, food_factory: JsonFoodFactory, colony_factory: JsonColonyFactory, thought_factory: JsonThoughtFactory, world_factory: WorldFactory, world_serializer: WorldSerializer):
         self._world_data_repository = world_data_repository
         self._json_nest_factory = nest_factory
         self._json_ant_factory = ant_factory
@@ -23,6 +25,7 @@ class WorldRepository(iWorldRepository):
         self._json_colony_factory = colony_factory
         self._json_thought_factory = thought_factory
         self._world_factory = world_factory
+        self._world_serializer = world_serializer
 
     def get(self, world_id: int) -> World:
         world_data = self._world_data_repository.get(world_id)
@@ -75,4 +78,5 @@ class WorldRepository(iWorldRepository):
         return world
 
     def push(self, world: World):
-        pass
+        world_json = self._world_serializer.serialize(world)
+        print(world_json)

@@ -81,16 +81,6 @@ class LiveEntity(Entity):
 
         return json
     
-    def to_full_json(self):
-        json = super().to_full_json()
-        json.update({
-            'position': self._body.position,
-            'located_in_nest_id': self._body.located_in_nest_id,
-            'memory': self._mind.memory.data
-        })
-
-        return json
-    
     def handle_action(self, action_type: str, action_data: dict = None):
         if (self.is_busy):
             raise Exception('live entity can do only 1 action per step')

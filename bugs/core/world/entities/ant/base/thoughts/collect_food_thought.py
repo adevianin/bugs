@@ -6,15 +6,32 @@ from core.world.entities.food.food import Food
 from core.world.entities.base.live_entity.body import Body
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
+from core.world.entities.thought.thought_types import ThoughtTypes
 
 class CollectFoodThought(Thought):
 
     def __init__(self, nest: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
-        super().__init__('collect_food', flags, sayback)
+        super().__init__(ThoughtTypes.COLLECT_FOOD, flags, sayback)
         self._nest = nest
         self._find_food_thought = find_food_thought
         self._go_home_thought = go_home_thought
         self._found_food = found_food
+
+    @property
+    def nest_id(self):
+        return self._nest.id
+    
+    @property
+    def find_food_thought(self):
+        return self._find_food_thought
+    
+    @property
+    def go_home_thought(self):
+        return self._go_home_thought
+    
+    @property
+    def found_food_id(self):
+        return self._found_food.id if self._found_food else None,
 
     def do_step(self):
         if (not self._flags['is_find_food_done']):
@@ -73,17 +90,6 @@ class CollectFoodThought(Thought):
         self._reset_flags()
         self._find_food_thought.restart()
         self._go_home_thought.restart()
-
-    def to_full_json(self):
-        json = super().to_full_json()
-        json.update({
-            'find_food_thought': self._find_food_thought.to_full_json(),
-            'go_home_thought': self._go_home_thought.to_full_json(),
-            'found_food_id': self._found_food.id if self._found_food else None,
-            'nest_id': self._nest.id
-        })
-
-        return json
 
     def _reset_flags(self):
         self._flags = {

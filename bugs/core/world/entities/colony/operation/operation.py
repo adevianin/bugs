@@ -5,12 +5,14 @@ from core.world.utils.event_emiter import EventEmitter
 from .operation_statuses import OperationStatuses
 from core.world.utils.point import Point
 from .marker_types import MarkerTypes
+from .operation_types import OperationTypes
 
 class Operation(ABC):
 
-    def __init__(self, events: EventEmitter):
+    def __init__(self, events: EventEmitter, type: OperationTypes):
         self.events = events
         self.id = 0
+        self._type = type
         self._vacancies = {}
         self._hired = {}
         self._is_hiring = True
@@ -28,7 +30,7 @@ class Operation(ABC):
         return self._is_done
     
     @property
-    def _status(self):
+    def status(self):
         if self._is_hiring:
             return OperationStatuses.HIRING
         else:
@@ -37,6 +39,26 @@ class Operation(ABC):
     @property
     def name(self):
         return self._name
+    
+    @property
+    def type(self):
+        return self._type
+    
+    @property
+    def markers(self):
+        return self._markers
+    
+    @property
+    def vacancies(self):
+        return self._vacancies
+    
+    @property
+    def is_hiring(self):
+        return self._is_hiring
+    
+    @property
+    def flags(self):
+        return self._flags
 
     def _open_vacancies(self, ant_type: AntTypes, count: int):
         self._vacancies[ant_type] = count
@@ -99,19 +121,7 @@ class Operation(ABC):
         return {
             'id': self.id,
             'name': self.name,
-            'status': self._status,
+            'status': self.status,
             'markers': self._markers
         }
     
-    def to_full_json(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'status': self._status,
-            'markers': self._markers,
-            'vacancies': self._vacancies,
-            'hired': {},
-            'is_hiring': self._is_hiring,
-            'name': self._name,
-            'flags': self._flags
-        }

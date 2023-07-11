@@ -4,16 +4,21 @@ from .searching_walk_thought import SearchingWalkThought
 from core.world.entities.base.live_entity.body import Body
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
+from core.world.entities.thought.thought_types import ThoughtTypes
 
 import math
 
 class FindFoodThought(Thought):
 
     def __init__(self, random_walk_thought: SearchingWalkThought, flags: dict = None, sayback: str = None):
-        super().__init__('find_food', flags, sayback)
+        super().__init__(ThoughtTypes.FIND_FOOD, flags, sayback)
         self._random_walk_thought = random_walk_thought
 
         self._points_to_check = []
+
+    @property
+    def searching_walk_thought(self):
+        return self._random_walk_thought
 
     def do_step(self):
         found_food = self._look_around_for_food()
@@ -46,13 +51,6 @@ class FindFoodThought(Thought):
         super().set_mind_parts(body, memory, world_interactor)
         self._random_walk_thought.set_mind_parts(body, memory, world_interactor)
 
-    def to_full_json(self):
-        json = super().to_full_json()
-        json.update({
-            'searching_walk': self._random_walk_thought.to_full_json()
-        })
-        return json
-    
     def _get_points_to_check(self):
         entities_data = self._memory.get_entities_data([EntityTypes.FOOD, EntityTypes.FOOD_AREA])
         positions = []

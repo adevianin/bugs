@@ -1,5 +1,6 @@
 from core.world.entities.thought.thought import Thought
 from core.world.utils.point import Point
+from core.world.entities.thought.thought_types import ThoughtTypes
 
 import math
 import random
@@ -10,11 +11,19 @@ class SearchingWalkThought(Thought):
     VISITED_POINTS_MEMORY = 5
 
     def __init__(self, search_near_point: Point, search_radius: int, flags: dict, sayback: str):
-        super().__init__('searching_walk', flags, sayback)
+        super().__init__(ThoughtTypes.SEARCHING_WALK, flags, sayback)
         self._visited_points = []
         self._current_destination_point = None
         self._search_near_point = search_near_point
         self._search_radius = search_radius
+
+    @property
+    def searching_near_point(self):
+        return self._search_near_point
+    
+    @property
+    def searching_radius(self):
+        return self._search_radius
 
     def do_step(self):
         if (not self._current_destination_point):
@@ -75,12 +84,3 @@ class SearchingWalkThought(Thought):
         dist_to_search_area_center = math.dist([point.x, point.y], [self._search_near_point.x, self._search_near_point.y])
         return dist_to_search_area_center <= self._search_radius
     
-    def to_full_json(self):
-        json = super().to_full_json()
-        json.update({
-            'search_near_point': self._search_near_point,
-            'search_radius': self._search_radius
-        })
-
-        return json
-

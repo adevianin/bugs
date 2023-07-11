@@ -18,6 +18,10 @@ class AntBody(Body):
     def picked_food(self):
         return self._picked_food
     
+    @property
+    def picked_food_id(self):
+        return self._picked_food.id if self.is_food_picked else None
+    
     def pick_up_food(self, food: Food):
         self._picked_food = food
         food.pickup()

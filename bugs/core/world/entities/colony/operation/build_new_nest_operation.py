@@ -3,11 +3,12 @@ from core.world.entities.nest.nest_factory import NestFactory
 from .operation import Operation
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.utils.event_emiter import EventEmitter
+from .operation_types import OperationTypes
 
 class BuildNewNestOperation(Operation):
     
     def __init__(self, events: EventEmitter, building_site: Point, nest_factory: NestFactory):
-        super().__init__(events)
+        super().__init__(events, OperationTypes.BUILD_NEW_NEST)
         self._building_site = building_site
         self._nest_factory = nest_factory
         self._name = 'новий мурашник'

@@ -1,15 +1,8 @@
 from .utils.event_emiter import EventEmitter
-from .entities.ant.ant_factory import AntFactory
-from .entities.food.food_factory import FoodFactory
-from .entities.world.world_factory import WorldFactory
 from .services.nest_service import NestService
-from .entities.nest.nest_factory import NestFactory
 from .services.birther_service import BirtherService
 from .services.colony_service import ColonyService
-from .entities.colony.colony_factory import ColonyFactory
 from core.world.utils.point import Point
-from core.world.entities.colony.operation.operation_factory import OperationFactory
-from .entities.thought.thought_factory import ThoughtFactory
 from core.world.world_repository_interface import iWorldRepository
 
 from typing import Callable
@@ -51,8 +44,7 @@ class WorldFacade:
         self._world.run()
 
     def save_world(self):
-        json = self.to_full_json()
-        self._data_repository.push(self.WORLD_ID, json)
+        self._world_repository.push(self._world)
 
     @property
     def world(self):
@@ -88,11 +80,3 @@ class WorldFacade:
             case _:
                 raise Exception('unknown type of command')
             
-    def to_full_json(self):
-        world_json = self.world.to_full_json()
-        world_json.update({
-            'last_used_id': self._id_generator.last_used_id
-        })
-        
-        return world_json
-        

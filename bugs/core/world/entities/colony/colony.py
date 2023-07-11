@@ -22,6 +22,10 @@ class Colony:
     def owner_id(self):
         return self._owner_id
     
+    @property
+    def operations(self):
+        return self._operations
+    
     def add_operation(self, operation: Operation):
         operation.id = self._generate_operation_id()
         self._operations.append(operation)
@@ -38,17 +42,6 @@ class Colony:
         operations_json = []
         for operation in self._operations:
             operations_json.append(operation.to_public_json())
-
-        return {
-            'id': self._id,
-            'owner_id': self._owner_id,
-            'operations': operations_json
-        }
-    
-    def to_full_json(self):
-        operations_json = []
-        for operation in self._operations:
-            operations_json.append(operation.to_full_json())
 
         return {
             'id': self._id,

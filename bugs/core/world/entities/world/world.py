@@ -3,7 +3,6 @@ import time
 
 from core.world.entities.map import Map
 from core.world.utils.event_emiter import EventEmitter
-from core.world.entities.base.entity import Entity
 from core.world.settings import STEP_TIME
 from core.world.entities.colony.colony import Colony
 from core.world.entities.base.entity_types import EntityTypes
@@ -30,6 +29,10 @@ class World():
     @property
     def is_world_running(self):
         return self._is_world_running
+    
+    @property
+    def colonies(self):
+        return self._colonies
     
     def get_colony_owned_by_user(self, user_id: int):
         for colony in self._colonies:
@@ -66,40 +69,6 @@ class World():
             'entities': entities_json,
             'colonies': colonies_json,
             'size': self._map.size
-        }
-    
-    def to_full_json(self):
-        ants = self.map.get_entities_by_type(EntityTypes.ANT)
-        ants_json = []
-        for ant in ants:
-            ants_json.append(ant.to_full_json())
-
-        foods = self.map.get_entities_by_type(EntityTypes.FOOD)
-        foods_json = []
-        for food in foods:
-            foods_json.append(food.to_full_json())
-
-        nests = self.map.get_entities_by_type(EntityTypes.NEST)
-        nests_json = []
-        for nest in nests:
-            nests_json.append(nest.to_full_json())
-
-        food_areas = self.map.get_entities_by_type(EntityTypes.FOOD_AREA)
-        food_areas_json = []
-        for food_area in food_areas:
-            food_areas_json.append(food_area.to_full_json())
-
-        colonies_json = []
-        for colony in self._colonies:
-            colonies_json.append(colony.to_full_json())
-
-        return {
-            'map': self._map.to_full_json(),
-            'ants': ants_json,
-            'foods': foods_json,
-            'food_areas': food_areas_json,
-            'nests': nests_json,
-            'colonies': colonies_json
         }
     
     def _run_world_loop(self):

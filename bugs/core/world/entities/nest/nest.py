@@ -17,6 +17,18 @@ class Nest(PlainEntity):
     @property
     def area(self):
         return self._area
+    
+    @property
+    def stored_calories(self):
+        return self._stored_calories
+    
+    @property
+    def larvae(self):
+        return self._larvae
+    
+    @property
+    def larva_places_count(self):
+        return self._larva_places_count
 
     def do_step(self):
         self._feed_larvae()
@@ -43,22 +55,6 @@ class Nest(PlainEntity):
             'stored_calories': self._stored_calories,
             'larvae': self._larvae_to_public_json(),
             'larva_places_count': self._larva_places_count
-        })
-        
-        return json
-    
-    def to_full_json(self):
-        json = super().to_full_json()
-
-        larvae_json = []
-        for larva in self._larvae:
-            larvae_json.append(larva.to_full_json())
-        
-        json.update({
-            'stored_calories': self._stored_calories,
-            'larvae': larvae_json,
-            'larva_places_count': self._larva_places_count,
-            'area': self._area
         })
         
         return json

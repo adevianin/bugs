@@ -2,10 +2,11 @@ from abc import ABC, abstractclassmethod
 from ..base.live_entity.body import Body
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
+from .thought_types import ThoughtTypes
 
 class Thought(ABC):
 
-    def __init__(self, type: str, flags: dict, sayback: str):
+    def __init__(self, type: ThoughtTypes, flags: dict, sayback: str):
         self.body = None
         self.memory = None
         self.world_interactor = None
@@ -47,6 +48,14 @@ class Thought(ABC):
     @property
     def sayback(self):
         return self._sayback
+    
+    @property
+    def type(self):
+        return self._type
+    
+    @property
+    def flags(self):
+        return self._flags
 
     @abstractclassmethod
     def do_step(self):
@@ -54,10 +63,3 @@ class Thought(ABC):
 
     def _reset_flags(self):
         self._flags = {}
-
-    def to_full_json(self):
-        return {
-            'type': self._type,
-            'sayback': self._sayback,
-            'flags': self._flags
-        }

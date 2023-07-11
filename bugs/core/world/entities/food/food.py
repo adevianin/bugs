@@ -19,6 +19,14 @@ class Food(PlainEntity):
     def calories(self):
         return self._calories
     
+    @property
+    def food_type(self):
+        return self._food_type
+    
+    @property
+    def food_variety(self):
+        return self._food_variety
+    
     def pickup(self):
         self.toggle_hidden(True)
         self.handle_action('food_was_picked_up')
@@ -39,14 +47,4 @@ class Food(PlainEntity):
             'food_variety': self._food_variety
         })
         
-        return json
-    
-    def to_full_json(self):
-        json = super().to_full_json()
-        json.update({
-            'calories': self._calories,
-            'food_type': self._food_type,
-            'food_variety': self._food_variety
-        })
-
         return json

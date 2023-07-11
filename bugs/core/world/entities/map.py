@@ -21,6 +21,10 @@ class Map:
         self._entities_collection = entities_collection
         self._id_generator = id_generator
 
+    @property
+    def last_used_id(self):
+        return self._id_generator.last_used_id
+
     def get_entity_by_id(self, id: int):
         return self._entities_collection.get_entity_by_id(id)
     
@@ -113,14 +117,6 @@ class Map:
     @property
     def size(self):
         return self._size
-    
-    def to_full_json(self):
-        return {
-            'size': {
-                'width': self._size.width, 
-                'height': self._size.height
-            }
-        }
     
     def _check_entity_type(self, entity: Entity, entity_types: EntityTypes):
         for type in entity_types:

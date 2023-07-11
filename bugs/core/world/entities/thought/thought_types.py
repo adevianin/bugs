@@ -1,0 +1,11 @@
+from enum import StrEnum
+
+class ThoughtTypes(StrEnum):
+    GO_IN_NEST = 'go_in_nest'
+    WALK_TO = 'walk_to'
+    SEARCHING_WALK = 'searching_walk'
+    FIND_FOOD = 'find_food'
+    COLLECT_FOOD = 'collect_food'
+    FEED_MYSELF = 'feed_myself'
+    PREPARE_FOR_OPERATION = 'prepare_for_operation'
+    BUILD_NEW_NEST = 'build_new_nest'

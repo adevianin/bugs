@@ -6,16 +6,33 @@ from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestTho
 from core.world.entities.base.live_entity.body import Body
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
+from core.world.entities.thought.thought_types import ThoughtTypes
 
 class FeedMyselfThought(Thought):
 
     def __init__(self, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
-        super().__init__('feed_myself', flags, sayback)
+        super().__init__(ThoughtTypes.FEED_MYSELF, flags, sayback)
         self._home = home
         self._find_food_thought = find_food_thought
         self._go_home_thought = go_home_thought
 
         self._found_food = found_food
+
+    @property
+    def home_id(self):
+        return self._home.id
+    
+    @property
+    def found_food_id(self):
+        return self._found_food.id if self._found_food else None,
+
+    @property
+    def find_food_thought(self):
+        return self._find_food_thought
+    
+    @property
+    def go_home_thought(self):
+        return self._go_home_thought
 
     def can_be_delayed(self):
         return False
@@ -57,17 +74,6 @@ class FeedMyselfThought(Thought):
         super().set_mind_parts(body, memory, world_interactor)
         self._find_food_thought.set_mind_parts(body, memory, world_interactor)
         self._go_home_thought.set_mind_parts(body, memory, world_interactor)
-
-    def to_full_json(self):
-        json = super().to_full_json()
-        json.update({
-            'home_id': self._home.id,
-            'found_food_id': self._found_food.id if self._found_food else None,
-            'find_food_thought': self._find_food_thought.to_full_json(),
-            'go_home_thought': self._go_home_thought.to_full_json()
-        })
-
-        return json
     
     def _check_is_at_home(self):
         return self._body.located_in_nest_id == self._home.id
