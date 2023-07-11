@@ -7,6 +7,8 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from typing import List
 from core.world.entities.base.entity import Entity
+from core.world.entities.nest.nest import Nest
+from core.world.utils.point import Point
 
 class Mind(ABC):
 
@@ -26,6 +28,14 @@ class Mind(ABC):
     @property
     def memory(self):
         return self._memory
+    
+    def go_in_nest(self, nest: Nest, sayback: str = None):
+        thought = self._thought_factory.build_go_in_nest_thought(nest=nest, sayback=sayback)
+        self._register_thought(thought)
+
+    def walk_to(self, position: Point, sayback: str = None):
+        thought = self._thought_factory.build_walk_to_thought(position=position, sayback=sayback)
+        self._register_thought(thought)
     
     def do_step(self):
         if self._is_auto_thought_generation:
@@ -76,10 +86,6 @@ class Mind(ABC):
 
     def _has_thoughts_to_do(self):
         return len(self._thoughts_stack) > 0
-
-    # def _on_walk(self, **kwargs):
-    #     near_entities = self._map.find_entities_near(self._body.position, self._body.sight_distance, [EntityTypes.FOOD, EntityTypes.FOOD_AREA])
-    #     self._memory.remember_entities_at(self._body.position, self._body.sight_distance, near_entities)
 
     def _handle_done_thoughts(self):
         done_thoughts = []

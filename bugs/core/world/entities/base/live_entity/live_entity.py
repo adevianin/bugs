@@ -15,6 +15,8 @@ class LiveEntity(Entity):
         self._mind = mind
         self._body = body
 
+        self._mind.teest = self
+
         self._body.events.add_listener('walk', self._on_body_walk)
         self._body.events.add_listener('eat_food', self._on_body_eats_food)
         self._body.events.add_listener('got_in_nest', self._on_got_in_nest)
@@ -47,6 +49,12 @@ class LiveEntity(Entity):
     @property
     def body(self):
         return self._body
+    
+    def go_in_nest(self, nest: Nest, sayback: str = None):
+        self._mind.go_in_nest(nest=nest, sayback=sayback)
+
+    def walk_to(self, position: Point, sayback: str = None):
+        self._mind.walk_to(position=position, sayback=sayback)
     
     def get_in_nest(self, nest: Nest):
         self._body.get_in_nest(nest)

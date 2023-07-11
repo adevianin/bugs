@@ -18,8 +18,8 @@ class Command(BaseCommand):
                 "type":"ant",
                 "from_colony":2,
                 "position":[
-                    900,
-                    500
+                    600,
+                    400
                 ],
                 "located_in_nest_id":None,
                 "picked_food_id":None,

@@ -25,6 +25,15 @@ class Ant(LiveEntity):
     def is_in_operation(self):
         return self._in_operation
     
+    def feed_myself(self, sayback: str = None):
+        self._mind.feed_myself(sayback)
+    
+    def collect_food(self, sayback: str = None):
+        self._mind.collect_food(sayback)
+    
+    def prepare_for_operation(self, sayback: str = None):
+        self._mind.prepare_for_operation(sayback)
+
     def join_operation(self):
         if (self._in_operation):
             raise Exception('ant already in operation')
@@ -33,12 +42,6 @@ class Ant(LiveEntity):
     def leave_operation(self):
         self._in_operation = False
         self._mind.leave_operation()
-    
-    def prepare_for_operation(self, sayback: str):
-        self._mind.prepare_for_operation(sayback)
-    
-    def walk_to(self, position: Point, sayback: str):
-        self._mind.walk_to(position, sayback)
     
     def relocate_to_nest(self, nest: Nest):
         self._mind.relocate_to_nest(nest)
