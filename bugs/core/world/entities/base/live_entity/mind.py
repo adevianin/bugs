@@ -67,7 +67,7 @@ class Mind(ABC):
 
     def _generate_thoughts(self):
         if (self._body.check_am_i_hungry()):
-            self._register_thought(self._generate_feed_myself_thought(), True)
+            self._generate_feed_myself_thought()
 
     def _register_thought(self, thought: Thought, asap: bool = False):
         thought.set_mind_parts(self._body, self._memory, self._world_interactor)

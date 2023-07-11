@@ -15,4 +15,4 @@ class WorkerAntMind(AntMind):
         #     print(1)
 
     def _generate_feed_myself_thought(self):
-        return self.feed_myself()
+        self.feed_myself(asap=True)

@@ -14,12 +14,12 @@ class AntMind(Mind):
         super().__init__(events, body, thought_factory, world_interactor, memory)
         self.home_nest = home_nest
 
-    def feed_myself(self, sayback: str = None):
+    def feed_myself(self, sayback: str = None, asap: bool = False):
         searching_walk_thought = self._thought_factory.build_searching_walk_thought(self.home_nest.position, self.home_nest.area)
         find_food_thought = self._thought_factory.build_find_food_thought(searching_walk_thought)
         go_home_thought = self._thought_factory.build_go_in_nest_thought(self.home_nest)
         thought = self._thought_factory.build_feed_myself_thought(home=self.home_nest, find_food_thought=find_food_thought, go_home_thought=go_home_thought, sayback=sayback)
-        self._register_thought(thought)
+        self._register_thought(thought, asap)
 
     def collect_food(self, sayback: str = None):
         searching_walk_thought = self._thought_factory.build_searching_walk_thought(self.home_nest.position, self.home_nest.area)
