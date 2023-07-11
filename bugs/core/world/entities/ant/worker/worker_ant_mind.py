@@ -16,4 +16,4 @@ class WorkerAntMind(AntMind):
         #     print(1)
 
     def _generate_feed_myself_thought(self):
-        return self._thought_factory.build_feed_myself_thought(self.home_nest)
+        return self._thought_factory.build_feed_myself_full_thought(self.home_nest)

@@ -31,7 +31,7 @@ class CollectFoodThought(Thought):
     
     @property
     def found_food_id(self):
-        return self._found_food.id if self._found_food else None,
+        return self._found_food.id if self._found_food else None
 
     def do_step(self):
         if (not self._flags['is_find_food_done']):
@@ -47,7 +47,7 @@ class CollectFoodThought(Thought):
             return
 
         if (self._flags['is_get_to_food_done'] and not self._flags['is_pickup_food_done']):
-            if (self._found_food.is_hidden):
+            if (self._found_food.is_picked):
                 self.restart()
                 return
             self._flags['is_pickup_food_done'] = self._body.pick_up_food(self._found_food)

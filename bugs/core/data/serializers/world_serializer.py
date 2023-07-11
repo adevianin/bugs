@@ -5,7 +5,6 @@ from .ant_serializer import AntSerializer
 from .food_serializer import FoodSerializer
 from .food_area_serializer import FoodAreaSerializer
 from .colony_serializer import ColonySerializer
-import json
 
 class WorldSerializer():
 
@@ -17,7 +16,7 @@ class WorldSerializer():
         self._colony_serializer = colony_serializer
 
     def serialize(self, world: World):
-        world_json = {
+        json = {
             'nests': [],
             'ants': [],
             'foods': [],
@@ -34,22 +33,22 @@ class WorldSerializer():
 
         nests = world.map.get_entities_by_type(EntityTypes.NEST)
         for nest in nests:
-            world_json['nests'].append(self._nest_serializer.serialize(nest))
+            json['nests'].append(self._nest_serializer.serialize(nest))
 
         ants = world.map.get_entities_by_type(EntityTypes.ANT)
         for ant in ants:
-            world_json['ants'].append(self._ant_serializer.serialize(ant))
+            json['ants'].append(self._ant_serializer.serialize(ant))
 
         foods = world.map.get_entities_by_type(EntityTypes.FOOD)
         for food in foods:
-            world_json['foods'].append(self._food_serializer.serialize(food))
+            json['foods'].append(self._food_serializer.serialize(food))
 
         food_areas = world.map.get_entities_by_type(EntityTypes.FOOD_AREA)
         for food_area in food_areas:
-            world_json['food_areas'].append(self._food_area_serializer.serialize(food_area))
+            json['food_areas'].append(self._food_area_serializer.serialize(food_area))
 
         colonies = world.colonies
         for colony in colonies:
-            world_json['colonies'].append(self._colony_serializer.serialize(colony))
+            json['colonies'].append(self._colony_serializer.serialize(colony))
 
-        return json.dumps(world_json)
+        return json

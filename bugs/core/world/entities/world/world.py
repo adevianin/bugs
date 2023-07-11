@@ -10,7 +10,8 @@ from core.world.entities.base.entity_collection import EntityCollection
 
 class World():
 
-    def __init__(self, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: list[Colony]):
+    def __init__(self, id: int, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: list[Colony]):
+        self.id = id
         self._entities_collection = entities_collection
         self._map = map
         self._event_bus = event_bus

@@ -43,7 +43,7 @@ class ThoughtFactory:
     def build_collect_food_thought(self, nest: Nest, find_food_thought: FindFoodThought, go_gome_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
         return CollectFoodThought(nest=nest, find_food_thought=find_food_thought, go_home_thought=go_gome_thought, found_food=found_food, flags=flags, sayback=sayback)
     
-    def build_feed_myself_full_thought(self, home: Nest, ):
+    def build_feed_myself_full_thought(self, home: Nest):
         find_food_thought = self.build_find_food_full_thought(search_near_point=home.position, search_radius=home.area)
         go_home_thought = self.build_go_in_nest_thought(nest=home)
         return self.build_feed_myself_thought(home=home, find_food_thought=find_food_thought, go_home_thought=go_home_thought)

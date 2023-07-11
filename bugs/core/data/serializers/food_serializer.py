@@ -8,7 +8,8 @@ class FoodSerializer(PlainEntitySerializer):
         json.update({
             'calories': food.calories,
             'food_type': food.food_type,
-            'food_variety': food.food_variety
+            'food_variety': food.food_variety,
+            'is_picked': food.is_picked
         })
 
         return json

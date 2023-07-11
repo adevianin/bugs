@@ -60,7 +60,8 @@ class Command(BaseCommand):
                 ],
                 "calories":150,
                 "food_type":"leaf",
-                "food_variety":1
+                "food_variety":1,
+                "is_picked": False
             },
             {
                 "id":21,
@@ -72,7 +73,8 @@ class Command(BaseCommand):
                 ],
                 "calories":300,
                 "food_type":"leaf",
-                "food_variety":2
+                "food_variety":2,
+                "is_picked": False
             }
         ],
         "food_areas":[

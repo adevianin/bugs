@@ -28,8 +28,8 @@ class WorldFactory {
         return new Nest(this._mainEventBus, this._nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount);
     }
 
-    buildFood(id, position, calories, food_type, food_varity) {
-        return new Food(this._mainEventBus, id, position, calories, food_type, food_varity);
+    buildFood(id, position, calories, food_type, food_varity, is_picked) {
+        return new Food(this._mainEventBus, id, position, calories, food_type, food_varity, is_picked);
     }
 
     buildFoodArea(id, position) {
@@ -43,7 +43,7 @@ class WorldFactory {
             case EntityTypes.NEST:
                 return this.buildNest(entityJson.id, entityJson.position, entityJson.from_colony, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
             case EntityTypes.FOOD:
-                return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety);
+                return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety, entityJson.is_picked);
             case EntityTypes.FOOD_AREA:
                 return this.buildFoodArea(entityJson.id, entityJson.position);
             default:

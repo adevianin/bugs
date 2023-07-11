@@ -12,10 +12,10 @@ class FoodFactory():
     def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus
 
-    def build_food(self, id: int, position: Point, calories: int, type: FoodTypes, food_variety: int):
+    def build_food(self, id: int, position: Point, calories: int, type: FoodTypes, food_variety: int, is_picked: bool):
         if (food_variety == -1):
             food_variety = self._generate_variety(type)
-        return Food(self._event_bus, id, position, calories, type, food_variety) 
+        return Food(self._event_bus, id, position, calories, type, food_variety, is_picked) 
     
     def build_food_area(self, id: int, position: Point, size: Size, fertility: int, food_type: FoodTypes):
         return FoodArea(self._event_bus, id, position, size, fertility, food_type)

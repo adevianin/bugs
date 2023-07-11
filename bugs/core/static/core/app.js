@@ -548,11 +548,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
-    constructor(eventBus, id, position, calories, food_type, food_varity) {
+    constructor(eventBus, id, position, calories, food_type, food_varity, is_picked) {
         super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD, null);
         this.calories = calories;
         this._food_type = food_type;
         this._food_variety = food_varity;
+        this._is_picked = is_picked;
     }
 
     get food_type() {
@@ -561,6 +562,10 @@ class Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     get food_variety() {
         return this._food_variety;
+    }
+
+    get is_picked() {
+        return this._is_picked;
     }
 
     playAction(action) {
@@ -576,6 +581,7 @@ class Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _playFoodPickedUp(action) {
         return new Promise((res) => {
+            this._is_picked = true;
             this.emit('food_picked_up');
             res();
         });
@@ -1027,7 +1033,7 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        // console.log(msg)
+        console.log(msg)
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);
@@ -1243,8 +1249,8 @@ class WorldFactory {
         return new _entity_nest__WEBPACK_IMPORTED_MODULE_3__.Nest(this._mainEventBus, this._nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount);
     }
 
-    buildFood(id, position, calories, food_type, food_varity) {
-        return new _entity_food__WEBPACK_IMPORTED_MODULE_4__.Food(this._mainEventBus, id, position, calories, food_type, food_varity);
+    buildFood(id, position, calories, food_type, food_varity, is_picked) {
+        return new _entity_food__WEBPACK_IMPORTED_MODULE_4__.Food(this._mainEventBus, id, position, calories, food_type, food_varity, is_picked);
     }
 
     buildFoodArea(id, position) {
@@ -1258,7 +1264,7 @@ class WorldFactory {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
                 return this.buildNest(entityJson.id, entityJson.position, entityJson.from_colony, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
-                return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety);
+                return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety, entityJson.is_picked);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_AREA:
                 return this.buildFoodArea(entityJson.id, entityJson.position);
             default:
@@ -2801,15 +2807,21 @@ class FoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     constructor(entity, entityContainer) {
         super(entity, entityContainer);
 
+        this.render(entityContainer);
+
+        this._unbindFoodPickedUpListener = this._entity.on('food_picked_up', this._onFoodPickedUp.bind(this));
+    }
+
+    render(entityContainer) {
         let textureName = `food_${this._entity.food_type}_${this._entity.food_variety}v.png`;
         this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(textureName));
-        entityContainer.addChild(this._sprite);
+        if (!this._entity.is_picked) {
+            entityContainer.addChild(this._sprite);
+        }
         this._sprite.anchor.set(0.5);
 
         this._sprite.x = this._entity.position.x;
         this._sprite.y = this._entity.position.y;
-
-        this._unbindFoodPickedUpListener = this._entity.on('food_picked_up', this._onFoodPickedUp.bind(this));
     }
 
     remove() {

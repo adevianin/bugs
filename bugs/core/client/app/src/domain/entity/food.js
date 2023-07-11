@@ -3,11 +3,12 @@ import { EntityTypes } from '../enum/entityTypes';
 import { ACTION_TYPES } from './action/actionTypes';
 
 class Food extends Entity {
-    constructor(eventBus, id, position, calories, food_type, food_varity) {
+    constructor(eventBus, id, position, calories, food_type, food_varity, is_picked) {
         super(eventBus, id, position, EntityTypes.FOOD, null);
         this.calories = calories;
         this._food_type = food_type;
         this._food_variety = food_varity;
+        this._is_picked = is_picked;
     }
 
     get food_type() {
@@ -16,6 +17,10 @@ class Food extends Entity {
 
     get food_variety() {
         return this._food_variety;
+    }
+
+    get is_picked() {
+        return this._is_picked;
     }
 
     playAction(action) {
@@ -31,6 +36,7 @@ class Food extends Entity {
 
     _playFoodPickedUp(action) {
         return new Promise((res) => {
+            this._is_picked = true;
             this.emit('food_picked_up');
             res();
         });

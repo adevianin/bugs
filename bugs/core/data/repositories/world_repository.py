@@ -37,11 +37,6 @@ class WorldRepository(iWorldRepository):
             nest = self._json_nest_factory.build_nest_from_json(nest_data)
             entities_collection.add_entity(nest)
 
-        ants_json = world_data['ants']
-        for ant_json in ants_json:
-            ant = self._json_ant_factory.build_ant_from_json(ant_json, entities_collection)
-            entities_collection.add_entity(ant)
-
         foods_json = world_data['foods']
         for food_json in foods_json:
             food = self._json_food_factory.build_food_from_json(food_json)
@@ -52,11 +47,10 @@ class WorldRepository(iWorldRepository):
             food_area = self._json_food_factory.build_food_area_from_json(food_area_json)
             entities_collection.add_entity(food_area)
 
-        colonies_json = world_data['colonies']
-        colonies = []
-        for colony_json in colonies_json:
-            colony = self._json_colony_factory.build_colony_from_json(colony_json, entities_collection)
-            colonies.append(colony)
+        ants_json = world_data['ants']
+        for ant_json in ants_json:
+            ant = self._json_ant_factory.build_ant_from_json(ant_json, entities_collection)
+            entities_collection.add_entity(ant)
 
         ants_json = world_data['ants']
         for ant_json in ants_json:
@@ -68,15 +62,21 @@ class WorldRepository(iWorldRepository):
                 thoughts.append(thought)
             ant.mind.set_thoughts(thoughts)
 
+        colonies_json = world_data['colonies']
+        colonies = []
+        for colony_json in colonies_json:
+            colony = self._json_colony_factory.build_colony_from_json(colony_json, entities_collection)
+            colonies.append(colony)
+
         id_generator = IdGenerator(world_data['last_used_id'])
 
         map_data = world_data['map']
         map = Map.build_map(Size(map_data['size']['width'], map_data['size']['height']), entities_collection, id_generator)
 
-        world = self._world_factory.build_world(entities_collection, map, colonies)
+        world = self._world_factory.build_world(world_id, entities_collection, map, colonies)
 
         return world
 
     def push(self, world: World):
         world_json = self._world_serializer.serialize(world)
-        print(world_json)
+        self._world_data_repository.push(world.id, world_json)

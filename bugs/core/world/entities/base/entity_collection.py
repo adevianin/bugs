@@ -1,10 +1,7 @@
-from .entity_collection_interface import iEntityCollection
 from typing import List
 from .entity import Entity
-from core.world.entities.ant.base.ant_types import AntTypes
-from core.world.entities.base.entity_types import EntityTypes
 
-class EntityCollection(iEntityCollection):
+class EntityCollection():
 
     @classmethod
     def build_entity_collection(cls):

@@ -18,5 +18,9 @@ class JsonAntFactory():
             located_in_nest = entities_collection.get_entity_by_id(ant_json['located_in_nest_id'])
         ant_type = AntTypes(ant_json['ant_type'])
         memory = self._json_memory_factory.build_memory_from_json(ant_json['memory'])
+
+        picked_food = None
+        if ant_json['picked_food_id'] != None:
+            picked_food = entities_collection.get_entity_by_id(ant_json['picked_food_id'])
         
-        return self._ant_factory.build_ant(ant_json['id'], ant_json['from_colony'], ant_type, ant_json['dna_profile'], position, nest, located_in_nest, memory)
+        return self._ant_factory.build_ant(ant_json['id'], ant_json['from_colony'], ant_type, ant_json['dna_profile'], position, nest, located_in_nest, memory, picked_food)

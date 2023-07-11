@@ -6,11 +6,12 @@ from .food_types import FoodTypes
 
 class Food(PlainEntity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, position: Point, calories: int, food_type: FoodTypes, food_variety: int):
+    def __init__(self, event_bus: EventEmitter, id: int, position: Point, calories: int, food_type: FoodTypes, food_variety: int, is_picked: bool):
         super().__init__(event_bus, id, EntityTypes.FOOD, None, position)
         self._calories = calories
         self._food_type = food_type
         self._food_variety = food_variety
+        self._is_picked = is_picked
 
     def do_step(self):
         return super().do_step()
@@ -27,8 +28,12 @@ class Food(PlainEntity):
     def food_variety(self):
         return self._food_variety
     
+    @property
+    def is_picked(self):
+        return self._is_picked
+    
     def pickup(self):
-        self.toggle_hidden(True)
+        self._is_picked = True
         self.handle_action('food_was_picked_up')
 
     @calories.setter
@@ -44,7 +49,8 @@ class Food(PlainEntity):
         json.update({
             'calories': self._calories,
             'food_type': self._food_type,
-            'food_variety': self._food_variety
+            'food_variety': self._food_variety,
+            'is_picked': self._is_picked
         })
         
         return json

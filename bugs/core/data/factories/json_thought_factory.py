@@ -20,22 +20,22 @@ class JsonThoughtFactory():
                 search_near_point = Point(thought_json['search_near_point'][0], thought_json['search_near_point'][1])
                 return self._thought_factory.build_searching_walk_thought(search_near_point=search_near_point, search_radius=thought_json['search_radius'], flags=thought_json['flags'], sayback=thought_json['sayback'])
             case ThoughtTypes.FIND_FOOD:
-                searching_walk_subthought = self.build_thougth_from_json(thought_json['searching_walk'])
+                searching_walk_subthought = self.build_thougth_from_json(thought_json['searching_walk'], entities_collection)
                 return self._thought_factory.build_find_food_thought(searching_walk_subthought=searching_walk_subthought, flags=thought_json['flags'], sayback=thought_json['sayback'])
             case ThoughtTypes.COLLECT_FOOD:
                 nest = entities_collection.get_entity_by_id(thought_json['nest_id'])
-                find_food_thought = self.build_thougth_from_json(thought_json['find_food_thought'])
-                go_home_thought = self.build_thougth_from_json(thought_json['go_home_thought'])
+                find_food_thought = self.build_thougth_from_json(thought_json['find_food_thought'], entities_collection)
+                go_home_thought = self.build_thougth_from_json(thought_json['go_home_thought'], entities_collection)
                 found_food = entities_collection.get_entity_by_id(thought_json['found_food_id']) if thought_json['found_food_id'] else None
                 return self._thought_factory.build_collect_food_thought(nest=nest, find_food_thought=find_food_thought, go_gome_thought=go_home_thought, found_food=found_food, flags=thought_json['flags'], sayback=thought_json['sayback'])
             case ThoughtTypes.FEED_MYSELF:
                 home = entities_collection.get_entity_by_id(thought_json['home_id'])
                 found_food = entities_collection.get_entity_by_id(thought_json['found_food_id']) if thought_json['found_food_id'] else None
-                find_food_thought = self.build_thougth_from_json(thought_json['find_food_thought'])
-                go_home_thought = self.build_thougth_from_json(thought_json['go_home_thought'])
+                find_food_thought = self.build_thougth_from_json(thought_json['find_food_thought'], entities_collection)
+                go_home_thought = self.build_thougth_from_json(thought_json['go_home_thought'], entities_collection)
                 return self._thought_factory.build_feed_myself_thought(home=home, find_food_thought=find_food_thought, go_home_thought=go_home_thought, found_food=found_food, flags=thought_json['flags'], sayback=thought_json['sayback'])
             case ThoughtTypes.PREPARE_FOR_OPERATION:
-                feed_myself_thought = self.build_thougth_from_json(thought_json['feed_myself_thought'])
+                feed_myself_thought = self.build_thougth_from_json(thought_json['feed_myself_thought'], entities_collection)
                 assemble_point = Point(thought_json['assemble_point'][0], thought_json['assemble_point'][1])
                 return self._thought_factory.build_prepare_for_operation_thought(feed_myself_thought=feed_myself_thought, assemble_point=assemble_point, flags=thought_json['flags'], sayback=thought_json['sayback'])
 
