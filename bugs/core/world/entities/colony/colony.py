@@ -1,16 +1,20 @@
 from core.world.utils.event_emiter import EventEmitter
 from .operation.operation import Operation
 from .colony_ants_collection import ColonyAntsCollection
+from typing import List
 
 class Colony:
 
-    def __init__(self, id: int, event_bus: EventEmitter, owner_id: int, colony_ants_collection: ColonyAntsCollection):
+    def __init__(self, id: int, event_bus: EventEmitter, owner_id: int, colony_ants_collection: ColonyAntsCollection, operations: List[Operation] = []):
         self._id = id
         self._event_bus = event_bus
         self._owner_id = owner_id
         self._colony_ants_collection = colony_ants_collection
-        self._operations = []
+        self._operations = operations
         self._has_changes = False
+
+        for operation in self._operations:
+            self._listen_operation(operation)
 
         event_bus.add_listener('step_start', self._on_start_step)
 
@@ -30,7 +34,7 @@ class Colony:
         operation.id = self._generate_operation_id()
         self._operations.append(operation)
 
-        operation.events.add_listener('change', self._on_operation_change)
+        self._listen_operation(operation)
         self._emit_colony_change()
 
     def stop_operation(self, operation_id: int):
@@ -48,6 +52,9 @@ class Colony:
             'owner_id': self._owner_id,
             'operations': operations_json
         }
+    
+    def _listen_operation(self, operation: Operation):
+        operation.events.add_listener('change', self._on_operation_change)
     
     def _on_start_step(self, step_number: int):
         self._clean_done_operations()

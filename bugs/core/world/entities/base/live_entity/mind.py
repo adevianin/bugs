@@ -12,13 +12,13 @@ from core.world.utils.point import Point
 
 class Mind(ABC):
 
-    def __init__(self, events: EventEmitter, body: Body, thought_factory: ThoughtFactory, world_interactor: WorldInteractor, memory: Memory):
+    def __init__(self, events: EventEmitter, body: Body, thought_factory: ThoughtFactory, world_interactor: WorldInteractor, memory: Memory, is_auto_thought_generation: bool):
         self._body = body
         self._thought_factory = thought_factory
         self._world_interactor = world_interactor
         self._memory = memory
         self._thoughts_stack = []
-        self._is_auto_thought_generation = True
+        self._is_auto_thought_generation = is_auto_thought_generation
         self.events = events
 
     @property
@@ -28,6 +28,10 @@ class Mind(ABC):
     @property
     def memory(self):
         return self._memory
+    
+    @property
+    def is_auto_thought_generation(self):
+        return self._is_auto_thought_generation
     
     def go_in_nest(self, nest: Nest, sayback: str = None):
         thought = self._thought_factory.build_go_in_nest_thought(nest=nest, sayback=sayback)

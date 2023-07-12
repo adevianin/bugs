@@ -19,7 +19,8 @@ class AntSerializer(LiveEntitySerializer):
             'ant_type': entity.ant_type,
             'dna_profile': entity.body.dna_profile,
             'from_nest': entity.mind.home_nest.id,
-            'thoughts': thoughts_json
+            'thoughts': thoughts_json,
+            'is_auto_thought_generation': entity.mind.is_auto_thought_generation
         })
 
         return json

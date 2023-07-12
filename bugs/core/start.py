@@ -15,6 +15,7 @@ from core.data.serializers.food_serializer import FoodSerializer
 from core.data.serializers.food_area_serializer import FoodAreaSerializer
 from core.data.serializers.colony_serializer import ColonySerializer
 from core.data.serializers.operation_serializer import OperationSerializer
+from core.data.factories.json_operation_factory import JsonOperationFactory
 
 
 from core.world.utils.event_emiter import EventEmitter
@@ -66,7 +67,8 @@ def start():
     json_memory_factory = JsonMemoryFactory()
     json_ant_factory = JsonAntFactory(ant_factory, json_memory_factory)
     json_food_factory = JsonFoodFactory(food_factory)
-    json_colony_factory = JsonColonyFactory(colony_factory)
+    json_operation_factory = JsonOperationFactory(operation_factory)
+    json_colony_factory = JsonColonyFactory(colony_factory, json_operation_factory)
     json_thought_factory = JsonThoughtFactory(thought_factory)
     world_repository = WorldRepository(world_data_repository, json_nest_factory, json_ant_factory, json_food_factory, json_colony_factory, json_thought_factory, world_factory, world_serializer)
 

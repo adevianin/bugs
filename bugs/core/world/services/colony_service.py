@@ -16,6 +16,6 @@ class ColonyService():
 
     def build_new_nest(self, user_id: int, position: Point):
         colony = self._world.get_colony_owned_by_user(user_id)
-        operation = self._operation_factory.build_build_new_nest_operation(position)
+        operation = self._operation_factory.build_build_new_nest_operation(building_site=position)
         colony.add_operation(operation)
         

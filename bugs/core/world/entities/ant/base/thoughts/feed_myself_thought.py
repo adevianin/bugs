@@ -24,7 +24,7 @@ class FeedMyselfThought(Thought):
     
     @property
     def found_food_id(self):
-        return self._found_food.id if self._found_food else None,
+        return self._found_food.id if self._found_food else None
 
     @property
     def find_food_thought(self):

@@ -12,19 +12,15 @@ class OperationSerializer():
     def _serialize_operation(self, operation: Operation):
         return {
             'id': operation.id,
-            'name': operation.name,
-            'status': operation.status,
-            'markers': operation.markers,
-            'vacancies': operation.vacancies,
-            'hired': {},
-            'is_hiring': operation.is_hiring,
-            'name': operation.name,
-            'flags': operation.flags
+            'hired': [ant.id for ant in operation.get_hired_ants()],
+            'flags': operation.flags,
+            'type': operation.type
         }
 
     def _serialize_build_new_nest(self, operation: BuildNewNestOperation):
         json = self._serialize_operation(operation)
         json.update({
+            'building_site': operation.building_site
         })
 
         return json
