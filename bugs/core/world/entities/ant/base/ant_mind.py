@@ -15,27 +15,17 @@ class AntMind(Mind):
         self.home_nest = home_nest
 
     def feed_myself(self, sayback: str = None, asap: bool = False):
-        searching_walk_thought = self._thought_factory.build_searching_walk_thought(self.home_nest.position, self.home_nest.area)
-        find_food_thought = self._thought_factory.build_find_food_thought(searching_walk_thought)
-        go_home_thought = self._thought_factory.build_go_in_nest_thought(self.home_nest)
-        thought = self._thought_factory.build_feed_myself_thought(home=self.home_nest, find_food_thought=find_food_thought, go_home_thought=go_home_thought, sayback=sayback)
+        thought = self._thought_factory.build_feed_myself_full(home_nest=self.home_nest, sayback=sayback)
         self._register_thought(thought, asap)
 
     def collect_food(self, sayback: str = None):
-        searching_walk_thought = self._thought_factory.build_searching_walk_thought(self.home_nest.position, self.home_nest.area)
-        find_food_thought = self._thought_factory.build_find_food_thought(searching_walk_thought)
-        go_home_thought = self._thought_factory.build_go_in_nest_thought(self.home_nest)
-        thought = self._thought_factory.build_collect_food_thought(self.home_nest, find_food_thought, go_home_thought, sayback=sayback)
+        thought = self._thought_factory.build_collect_food_full(home_nest=self.home_nest, sayback=sayback)
         self._register_thought(thought)
 
     def prepare_for_operation(self, sayback: str = None):
         self.toggle_auto_thought_generation(False)
         self.force_free()
-        searching_walk_thought = self._thought_factory.build_searching_walk_thought(self.home_nest.position, self.home_nest.area)
-        find_food_thought = self._thought_factory.build_find_food_thought(searching_walk_thought)
-        go_home_thought = self._thought_factory.build_go_in_nest_thought(self.home_nest)
-        feed_myself_thought = self._thought_factory.build_feed_myself_thought(home=self.home_nest, find_food_thought=find_food_thought, go_home_thought=go_home_thought, sayback=sayback)
-        thought = self._thought_factory.build_prepare_for_operation_thought(feed_myself_thought=feed_myself_thought, assemble_point=self._calc_assemble_point(), sayback=sayback)
+        thought = self._thought_factory.build_prepare_for_operation_full(home_nest=self.home_nest, assemble_point=self._calc_assemble_point(), sayback=sayback)
         self._register_thought(thought, True)
     
     def leave_operation(self):

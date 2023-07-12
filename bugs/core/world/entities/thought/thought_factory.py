@@ -37,5 +37,21 @@ class ThoughtFactory:
     
     def build_build_new_nest_thought(self, new_nest: Nest, flags: dict = None, sayback: str = None):
         return BuildNestThought(new_nest=new_nest, sayback=sayback)
+    
+    def build_feed_myself_full(self, home_nest: Nest, sayback: str = None):
+        searching_walk_thought = self.build_searching_walk_thought(home_nest.position, home_nest.area)
+        find_food_thought = self.build_find_food_thought(searching_walk_thought)
+        go_home_thought = self.build_go_in_nest_thought(home_nest)
+        return self.build_feed_myself_thought(home=home_nest, find_food_thought=find_food_thought, go_home_thought=go_home_thought, sayback=sayback)
+    
+    def build_collect_food_full(self, home_nest: Nest, sayback: str = None):
+        searching_walk_thought = self.build_searching_walk_thought(home_nest.position, home_nest.area)
+        find_food_thought = self.build_find_food_thought(searching_walk_thought)
+        go_home_thought = self.build_go_in_nest_thought(home_nest)
+        return self.build_collect_food_thought(home_nest, find_food_thought, go_home_thought, sayback=sayback)
+    
+    def build_prepare_for_operation_full(self, home_nest: Nest, assemble_point: Point, sayback: str = None):
+        feed_myself_thought = self.build_feed_myself_full(home_nest=home_nest)
+        return self.build_prepare_for_operation_thought(feed_myself_thought=feed_myself_thought, assemble_point=assemble_point, sayback=sayback)
 
     
