@@ -7,8 +7,8 @@ class WorldInteractor():
     def set_nearby_entities(self, entities: List[Entity]):
         self._nearby_entities = entities
 
-    def get_nearby_entities(self, types: EntityTypes = []):
-        if (len(types) == 0): 
+    def get_nearby_entities(self, types: EntityTypes = None):
+        if (not types): 
             return self._nearby_entities
         else:
             res = []

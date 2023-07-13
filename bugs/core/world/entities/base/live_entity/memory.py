@@ -8,8 +8,8 @@ import math
 
 class Memory():
 
-    def __init__(self, data = []):
-        self._data = data
+    def __init__(self, data = None):
+        self._data = data or []
 
     @property
     def data(self):
