@@ -15,7 +15,7 @@ class Operation(ABC):
         self.id = id
         self._type = type
         self._vacancies = {}
-        self._hired_ants = hired_ants
+        self._hired_ants = hired_ants or []
         self._is_done = False
         self._name = 'operation name'
         self._markers = []

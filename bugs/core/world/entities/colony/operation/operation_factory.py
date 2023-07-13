@@ -10,5 +10,5 @@ class OperationFactory():
     def __init__(self, nest_factory: NestFactory):
         self._nest_factory = nest_factory
 
-    def build_build_new_nest_operation(self, building_site: Point, id: int = None, hired_ants: List[Ant] = [], flags: dict = {}):
+    def build_build_new_nest_operation(self, building_site: Point, id: int, hired_ants: List[Ant], flags: dict):
         return BuildNewNestOperation(EventEmitter(), id, hired_ants, flags, building_site, self._nest_factory)

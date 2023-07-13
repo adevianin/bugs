@@ -10,10 +10,13 @@ from typing import List
 
 class LiveEntity(Entity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes, from_colony: int, mind: Mind, body: Body, is_in_operation: bool):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, from_colony: int, mind: Mind, body: Body, is_in_operation: bool):
         super().__init__(event_bus, id, type, from_colony)
         self._mind = mind
         self._body = body
+        self._events = events
+
+        self._say_listener_unsubsribers = []
 
         self._in_operation = is_in_operation
 
@@ -61,6 +64,7 @@ class LiveEntity(Entity):
 
     def leave_operation(self):
         self._in_operation = False
+        self._unsubscribe_all_say_listeners()
         self._mind.leave_operation()
 
     def ask_participation(self):
@@ -116,6 +120,18 @@ class LiveEntity(Entity):
     
     def set_entities_in_sight(self, entities: List[Entity]):
         self._mind.world_interactor.set_nearby_entities(entities)
+
+    def on_saying(self, phrase: str, callback):
+        self._events.add_listener(f'say:{phrase}', callback)
+        def unsubscribe():
+            self._events.remove_listener(f'say:{phrase}', callback)
+
+        self._say_listener_unsubsribers.append(unsubscribe)
+
+    def _unsubscribe_all_say_listeners(self):
+        for unsubscribe in self._say_listener_unsubsribers:
+            unsubscribe()
+        self._say_listener_unsubsribers = []
 
     def _toggle_is_busy(self, is_busy: bool):
         self._body.toggle_is_busy(is_busy)
