@@ -23,14 +23,9 @@ class AntMind(Mind):
         self._register_thought(thought)
 
     def prepare_for_operation(self, sayback: str = None):
-        self.toggle_auto_thought_generation(False)
-        self.force_free()
+        super().prepare_for_operation()
         thought = self._thought_factory.build_prepare_for_operation_full(home_nest=self.home_nest, assemble_point=self._calc_assemble_point(), sayback=sayback)
         self._register_thought(thought, True)
-    
-    def leave_operation(self):
-        # self.force_free()
-        self.toggle_auto_thought_generation(True)
     
     def relocate_to_nest(self, nest: Nest):
         self.home_nest = nest

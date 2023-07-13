@@ -40,16 +40,15 @@ class Mind(ABC):
     def walk_to(self, position: Point, sayback: str = None):
         thought = self._thought_factory.build_walk_to_thought(position=position, sayback=sayback)
         self._register_thought(thought)
+
+    def prepare_for_operation(self, sayback: str = None):
+        self.toggle_auto_thought_generation(False)
+        self.force_free()
     
-    def do_step(self):
-        if self._is_auto_thought_generation:
-            self._generate_thoughts()
-
-        if self._has_thoughts_to_do():
-            self._get_current_thought().do_step()
-
-        self._handle_done_thoughts()
-
+    def leave_operation(self):
+        # self.force_free()
+        self.toggle_auto_thought_generation(True)
+    
     def toggle_auto_thought_generation(self, is_auto: bool):
         self._is_auto_thought_generation = is_auto
 
@@ -61,6 +60,15 @@ class Mind(ABC):
                 self._thoughts_stack = []
             else:
                 self._thoughts_stack = [current_thought]
+
+    def do_step(self):
+        if self._is_auto_thought_generation:
+            self._generate_thoughts()
+
+        if self._has_thoughts_to_do():
+            self._get_current_thought().do_step()
+
+        self._handle_done_thoughts()
 
     def set_thoughts(self, thoughts: list[Thought]):
         for thought in thoughts:

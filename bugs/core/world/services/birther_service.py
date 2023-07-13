@@ -24,7 +24,7 @@ class BirtherService():
         self._world = world
 
     def _on_preborn_ant(self, larva: Larva, nest: Nest):
-        new_ant = self._ant_factory.build_ant(None, nest.from_colony, larva.ant_type, larva.dna_profile, larva.position, nest, None, None, None)
+        new_ant = self._ant_factory.build_ant(None, nest.from_colony, larva.ant_type, larva.dna_profile, larva.position, nest, None, None, None, True, False)
         self._world.map.give_birth_entity(new_ant)
 
     def _on_preborn_food(self, preborn_food: PrebornFood):

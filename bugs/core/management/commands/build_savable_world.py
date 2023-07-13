@@ -28,7 +28,9 @@ class Command(BaseCommand):
                 "from_nest":30,
                 "thoughts":[
                 ],
-                "memory": []
+                "memory": [],
+                "is_auto_thought_generation": True,
+                "is_in_operation": False
             },
             {
                 "id":2,
@@ -46,7 +48,9 @@ class Command(BaseCommand):
                 "thoughts":[
                     
                 ],
-                "memory": []
+                "memory": [],
+                "is_auto_thought_generation": True,
+                "is_in_operation": False
             }
         ],
         "foods":[

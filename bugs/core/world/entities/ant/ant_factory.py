@@ -26,44 +26,44 @@ class AntFactory():
         self._event_bus = event_bus
         self._thought_factory = thought_factory
 
-    def build_ant(self, id: int, from_colony: int, ant_type: AntTypes, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest, memory: Memory, picked_food: Food, is_auto_thought_generation: bool) -> Ant:
+    def build_ant(self, id: int, from_colony: int, ant_type: AntTypes, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest, memory: Memory, picked_food: Food, is_auto_thought_generation: bool, is_in_operation: bool) -> Ant:
         match ant_type:
             case AntTypes.WORKER:
-                return self._build_worker_ant(id, from_colony, dna_profile, position, nest, located_in_nest, memory, is_auto_thought_generation, picked_food)
+                return self._build_worker_ant(id, from_colony, dna_profile, position, nest, located_in_nest, memory, is_auto_thought_generation, picked_food, is_in_operation)
             case AntTypes.WARRIOR:
-                return self._build_warrior_ant(id, from_colony, dna_profile, position, nest, located_in_nest, memory, is_auto_thought_generation, picked_food)
+                return self._build_warrior_ant(id, from_colony, dna_profile, position, nest, located_in_nest, memory, is_auto_thought_generation, picked_food, is_in_operation)
             case AntTypes.QUEEN:
-                return self._build_queen_ant(id, from_colony, dna_profile, position, nest, located_in_nest, memory, is_auto_thought_generation, picked_food)
+                return self._build_queen_ant(id, from_colony, dna_profile, position, nest, located_in_nest, memory, is_auto_thought_generation, picked_food, is_in_operation)
             case _:
                 raise Exception('uknown type of ant')
             
-    def _build_warrior_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest, memory: Memory, is_auto_thought_generation: bool, picked_food: Food):
+    def _build_warrior_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest, memory: Memory, is_auto_thought_generation: bool, picked_food: Food, is_in_operation: bool):
         events = EventEmitter()
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
         body = WarriorAntBody(events, dna_profile, position, located_in_nest, picked_food)
         mind = WarrirorAntMind(events, body, self._thought_factory, world_interactor, memory, is_auto_thought_generation, nest)
-        ant = WarriorAnt(self._event_bus, events, id, from_colony, mind, body)
+        ant = WarriorAnt(self._event_bus, events, id, from_colony, mind, body, is_in_operation)
 
         return ant
     
-    def _build_worker_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest, memory: Memory, is_auto_thought_generation: bool, picked_food: Food):
+    def _build_worker_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest, memory: Memory, is_auto_thought_generation: bool, picked_food: Food, is_in_operation: bool):
         events = EventEmitter()
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
         body = WorkerAntBody(events, dna_profile, position, located_in_nest, picked_food)
         mind = WorkerAntMind(events, body, self._thought_factory, world_interactor, memory, is_auto_thought_generation, nest)
-        ant = WorkerAnt(self._event_bus, events, id, from_colony, mind, body)
+        ant = WorkerAnt(self._event_bus, events, id, from_colony, mind, body, is_in_operation)
 
         return ant
     
-    def _build_queen_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest, memory: Memory, is_auto_thought_generation: bool, picked_food: Food):
+    def _build_queen_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, nest: Nest, located_in_nest: Nest, memory: Memory, is_auto_thought_generation: bool, picked_food: Food, is_in_operation: bool):
         events = EventEmitter()
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
         body = QueenAntBody(events, dna_profile, position, located_in_nest, picked_food)
         mind = QueenAntMind(events, body, self._thought_factory, world_interactor, memory, is_auto_thought_generation, nest)
-        ant = QueenAnt(self._event_bus, events, id, from_colony, mind, body)
+        ant = QueenAnt(self._event_bus, events, id, from_colony, mind, body, is_in_operation)
 
         return ant
     

@@ -22,5 +22,11 @@ class JsonAntFactory():
         picked_food = None
         if ant_json['picked_food_id'] != None:
             picked_food = entities_collection.get_entity_by_id(ant_json['picked_food_id'])
+
+        id=ant_json['id']
+        from_colony=ant_json['from_colony']
+        dna_profile=ant_json['dna_profile']
+        is_auto_thought_generation=ant_json['is_auto_thought_generation']
+        is_in_operation = ant_json['is_in_operation']
         
-        return self._ant_factory.build_ant(id=ant_json['id'], from_colony=ant_json['from_colony'], ant_type=ant_type, dna_profile=ant_json['dna_profile'], position=position, nest=nest, located_in_nest=located_in_nest, memory=memory, is_auto_thought_generation=ant_json['is_auto_thought_generation'], picked_food=picked_food)
+        return self._ant_factory.build_ant(id=id, from_colony=from_colony, ant_type=ant_type, dna_profile=dna_profile, position=position, nest=nest, located_in_nest=located_in_nest, memory=memory, is_auto_thought_generation=is_auto_thought_generation, picked_food=picked_food, is_in_operation=is_in_operation)

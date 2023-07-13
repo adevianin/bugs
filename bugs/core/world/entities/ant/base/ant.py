@@ -9,11 +9,11 @@ from core.world.entities.nest.nest import Nest
 
 class Ant(LiveEntity):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ant_type: AntTypes, from_colony: int, mind: AntMind, body: AntBody):
-        super().__init__(event_bus, id, EntityTypes.ANT, from_colony, mind, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ant_type: AntTypes, from_colony: int, mind: AntMind, body: AntBody, is_in_operation: bool):
+        super().__init__(event_bus, id, EntityTypes.ANT, from_colony, mind, body, is_in_operation)
         self.events = events
         self._ant_type = ant_type
-        self._in_operation = False
+        
         self._body.events.add_listener('food_picked', self._on_food_picked)
         self._body.events.add_listener('picked_food_gave', self._on_food_gave)
 
@@ -21,27 +21,11 @@ class Ant(LiveEntity):
     def ant_type(self):
         return self._ant_type
     
-    @property
-    def is_in_operation(self):
-        return self._in_operation
-    
     def feed_myself(self, sayback: str = None):
         self._mind.feed_myself(sayback)
     
     def collect_food(self, sayback: str = None):
         self._mind.collect_food(sayback)
-    
-    def prepare_for_operation(self, sayback: str = None):
-        self._mind.prepare_for_operation(sayback)
-
-    def join_operation(self):
-        if (self._in_operation):
-            raise Exception('ant already in operation')
-        self._in_operation = True
-
-    def leave_operation(self):
-        self._in_operation = False
-        self._mind.leave_operation()
     
     def relocate_to_nest(self, nest: Nest):
         self._mind.relocate_to_nest(nest)
@@ -55,10 +39,6 @@ class Ant(LiveEntity):
 
         return json
     
-    def ask_participation(self):
-        print('asking', self.id)
-        return True
-
     def _on_food_picked(self, food_id):
         self.handle_action('ant_picked_up_food', {
             'food_id': food_id

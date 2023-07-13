@@ -35,12 +35,6 @@ class BuildNewNestOperation(Operation):
         self._worker = self.get_hired_ants(AntTypes.WORKER)[0]
         self._queen = self.get_hired_ants(AntTypes.QUEEN)[0]
 
-        self._listen_saybacks()
-
-    def _start_operation(self):
-        self._preparation_step()
-
-    def _listen_saybacks(self):
         self._queen.events.once('say:prepared', self._on_queen_prepared)
         self._worker.events.once('say:prepared', self._on_worker_prepared)
 
@@ -48,6 +42,9 @@ class BuildNewNestOperation(Operation):
         self._worker.events.once('say:arrived_to_building_site', self._on_worker_arrived_to_building_site)
 
         self._queen.events.once('say:nest_is_built', self._on_queen_built_nest)
+
+    def _start_operation(self):
+        self._preparation_step()
 
     def _preparation_step(self):
         self._worker.prepare_for_operation('prepared')

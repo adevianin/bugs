@@ -10,12 +10,12 @@ from typing import List
 
 class LiveEntity(Entity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes, from_colony: int, mind: Mind, body: Body):
+    def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes, from_colony: int, mind: Mind, body: Body, is_in_operation: bool):
         super().__init__(event_bus, id, type, from_colony)
         self._mind = mind
         self._body = body
 
-        self._mind.teest = self
+        self._in_operation = is_in_operation
 
         self._body.events.add_listener('walk', self._on_body_walk)
         self._body.events.add_listener('eat_food', self._on_body_eats_food)
@@ -49,6 +49,25 @@ class LiveEntity(Entity):
     @property
     def body(self):
         return self._body
+    
+    @property
+    def is_in_operation(self):
+        return self._in_operation
+    
+    def join_operation(self):
+        if (self._in_operation):
+            raise Exception('already in operation')
+        self._in_operation = True
+
+    def leave_operation(self):
+        self._in_operation = False
+        self._mind.leave_operation()
+
+    def ask_participation(self):
+        return True
+    
+    def prepare_for_operation(self, sayback: str = None):
+        self._mind.prepare_for_operation(sayback)
     
     def go_in_nest(self, nest: Nest, sayback: str = None):
         self._mind.go_in_nest(nest=nest, sayback=sayback)
