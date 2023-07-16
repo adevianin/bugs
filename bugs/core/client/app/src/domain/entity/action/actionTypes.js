@@ -9,7 +9,8 @@ const ACTION_TYPES = {
     ENTITY_GOT_OUT_OF_NEST: 'entity_got_out_of_nest',
     FOOD_WAS_PICKED_UP: 'food_was_picked_up',
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
-    NEST_LARVAE_CHANGED: 'nest_larvae_changed'
+    NEST_LARVAE_CHANGED: 'nest_larvae_changed',
+    NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed'
 };
 
 export {

@@ -9,6 +9,9 @@ from core.world.entities.nest.nest import Nest
 
 class Ant(LiveEntity):
 
+    _mind: AntMind
+    _body: AntBody
+
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ant_type: AntTypes, from_colony: int, mind: AntMind, body: AntBody, is_in_operation: bool):
         super().__init__(event_bus, events, id, EntityTypes.ANT, from_colony, mind, body, is_in_operation)
         self._ant_type = ant_type
@@ -28,6 +31,12 @@ class Ant(LiveEntity):
     
     def relocate_to_nest(self, nest: Nest):
         self._mind.relocate_to_nest(nest)
+
+    def found_nest(self, building_site: Point, sayback: str):
+        self._mind.found_nest(building_site=building_site, from_colony_id=self.from_colony, sayback=sayback)
+
+    def build_nest(self, nest: Nest, sayback: str = None):
+        self._mind.build_nest(nest=nest, sayback=sayback)
 
     def to_public_json(self):
         json = super().to_public_json()

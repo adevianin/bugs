@@ -7,6 +7,8 @@ from core.world.entities.ant.base.thoughts.find_food_thought import FindFoodThou
 from core.world.entities.ant.base.thoughts.collect_food_thought import CollectFoodThought
 from core.world.entities.ant.base.thoughts.feed_myself_thought import FeedMyselfThought
 from core.world.entities.ant.base.thoughts.prepare_for_opertation_thought import PrepareForOperationThought
+from core.world.entities.ant.base.thoughts.found_nest_thought import FoundNestThought
+from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestThought
 
 class ThoughtSerializer():
 
@@ -26,6 +28,12 @@ class ThoughtSerializer():
                 return self._serialize_feed_myself(thought)
             case ThoughtTypes.PREPARE_FOR_OPERATION:
                 return self._serialize_prepare_for_operation(thought)
+            case ThoughtTypes.FOUND_NEST:
+                return self._serialize_found_nest(thought)
+            case ThoughtTypes.BUILD_NEST:
+                return self._serialize_build_nest(thought)
+            case _:
+                raise Exception('unknown type of thought')
 
     def _serialize_thought(self, thought: Thought):
         return {
@@ -100,6 +108,24 @@ class ThoughtSerializer():
         json.update({
             'feed_myself_thought': feed_myself_thought_json,
             'assemble_point': thought.assemble_point
+        })
+
+        return json
+    
+    def _serialize_found_nest(self, thought: FoundNestThought):
+        json = self._serialize_thought(thought)
+        json.update({
+            'from_colony_id': thought.from_colony_id,
+            'building_site': thought.building_site,
+            'found_nest_id': thought.found_nest_id
+        })
+
+        return json
+    
+    def _serialize_build_nest(self, thought: BuildNestThought):
+        json = self._serialize_thought(thought)
+        json.update({
+            'building_nest_id': thought.building_nest_id
         })
 
         return json

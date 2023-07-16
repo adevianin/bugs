@@ -12,6 +12,7 @@ class Command(BaseCommand):
                 "height":3000
             }
         },
+        "last_used_id":41,
         "ants":[
             {
                 "id":1,
@@ -127,7 +128,8 @@ class Command(BaseCommand):
                     
                 ],
                 "larva_places_count":3,
-                "area":300
+                "area":300,
+                "build_progress": 100
             },
             {
                 "id":31,
@@ -142,7 +144,8 @@ class Command(BaseCommand):
                     
                 ],
                 "larva_places_count":1,
-                "area":300
+                "area":300,
+                "build_progress": 100
             }
         ],
         "colonies":[
@@ -161,8 +164,7 @@ class Command(BaseCommand):
                 ]
             }
         ],
-        "last_used_id":41
-        }
+    }
 
     def handle(self, *args, **options):
         world, created = World.objects.update_or_create(id=1, defaults={

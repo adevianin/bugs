@@ -16,7 +16,7 @@ from core.data.serializers.food_area_serializer import FoodAreaSerializer
 from core.data.serializers.colony_serializer import ColonySerializer
 from core.data.serializers.operation_serializer import OperationSerializer
 from core.data.factories.json_operation_factory import JsonOperationFactory
-
+from core.data.factories.json_map_factory import JsonMapFactory
 
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.ant.ant_factory import AntFactory
@@ -24,33 +24,34 @@ from core.world.entities.food.food_factory import FoodFactory
 from core.world.entities.world.world_factory import WorldFactory
 from core.world.services.nest_service import NestService
 from core.world.entities.nest.nest_factory import NestFactory
-from core.world.services.birther_service import BirtherService
 from core.world.services.colony_service import ColonyService
 from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.colony.operation.operation_factory import OperationFactory
 from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.world_facade import WorldFacade
-from core.world.entities.thought.thought_factory import ThoughtFactory
-from core.world.entities.ant.ant_factory import AntFactory
-from core.world.entities.nest.nest_factory import NestFactory
-from core.world.entities.food.food_factory import FoodFactory
-from core.world.entities.colony.colony_factory import ColonyFactory
-from core.world.entities.colony.operation.operation_factory import OperationFactory
-from core.world.entities.world.world_factory import WorldFactory
+from core.world.entities.map.map_factory import MapFactory
+from core.world.entities.birthers.ant_birther import AntBirther
+from core.world.entities.birthers.food_birther import FoodBirther
+from core.world.entities.birthers.nest_birther import NestBirther
 
 def start():
     event_bus = EventEmitter()
 
-    thought_factory = ThoughtFactory()
+    thought_factory = ThoughtFactory(event_bus)
     ant_factory = AntFactory(event_bus, thought_factory)
     nest_factory = NestFactory(event_bus)
     food_factory = FoodFactory(event_bus)
     colony_factory = ColonyFactory(event_bus)
     operation_factory = OperationFactory(nest_factory)
+    map_factory = MapFactory(event_bus)
     world_factory = WorldFactory(event_bus)
+    
     colony_service = ColonyService(operation_factory)
     nest_service = NestService()
-    birther_service = BirtherService(event_bus, ant_factory, food_factory)
+
+    ant_birther = AntBirther(event_bus, ant_factory)
+    food_birther = FoodBirther(event_bus, food_factory)
+    nest_birther = NestBirther(event_bus, nest_factory)
 
     larva_serializer = LarvaSerializer()
     nest_serializer = NestSerializer(larva_serializer)
@@ -68,11 +69,20 @@ def start():
     json_ant_factory = JsonAntFactory(ant_factory, json_memory_factory)
     json_food_factory = JsonFoodFactory(food_factory)
     json_operation_factory = JsonOperationFactory(operation_factory)
+    json_map_factory = JsonMapFactory(map_factory)
     json_colony_factory = JsonColonyFactory(colony_factory, json_operation_factory)
     json_thought_factory = JsonThoughtFactory(thought_factory)
-    world_repository = WorldRepository(world_data_repository, json_nest_factory, json_ant_factory, json_food_factory, json_colony_factory, json_thought_factory, world_factory, world_serializer)
+    world_repository = WorldRepository(world_data_repository, json_nest_factory, json_ant_factory, json_food_factory, json_colony_factory, json_thought_factory, json_map_factory, world_factory, world_serializer)
 
-    world_facade = WorldFacade.init(event_bus, world_repository, colony_service, nest_service, birther_service)
+    world_facade = WorldFacade.init(event_bus, world_repository, colony_service, nest_service)
 
     world_facade.init_world()
 
+    ant_birther.set_map(world_facade.world.map)
+    food_birther.set_map(world_facade.world.map)
+    nest_birther.set_map(world_facade.world.map)
+
+    colony_service.set_world(world_facade.world)
+    nest_service.set_world(world_facade.world)
+
+    world_facade.world.run()

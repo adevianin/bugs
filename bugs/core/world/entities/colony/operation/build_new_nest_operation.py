@@ -6,6 +6,8 @@ from core.world.utils.event_emiter import EventEmitter
 from .operation_types import OperationTypes
 from typing import List
 from core.world.entities.ant.base.ant import Ant
+from core.world.entities.ant.queen.queen_ant import QueenAnt
+from core.world.entities.nest.nest import Nest
 
 class BuildNewNestOperation(Operation):
     
@@ -33,7 +35,7 @@ class BuildNewNestOperation(Operation):
 
     def _init_staff_connection(self):
         self._worker = self.get_hired_ants(AntTypes.WORKER)[0]
-        self._queen = self.get_hired_ants(AntTypes.QUEEN)[0]
+        self._queen: QueenAnt = self.get_hired_ants(AntTypes.QUEEN)[0]
 
         self._queen.on_saying('prepared', self._on_queen_prepared)
         self._worker.on_saying('prepared', self._on_worker_prepared)
@@ -41,7 +43,9 @@ class BuildNewNestOperation(Operation):
         self._queen.on_saying('arrived_to_building_site', self._on_queen_arrived_to_building_site)
         self._worker.on_saying('arrived_to_building_site', self._on_worker_arrived_to_building_site)
 
-        self._queen.on_saying('nest_is_built', self._on_queen_built_nest)
+        self._queen.on_saying('nest_is_found', self._on_queen_found_nest)
+
+        self._worker.on_saying('nest_is_built', self._on_nest_built)
 
     def _start_operation(self):
         self._preparation_step()
@@ -79,16 +83,23 @@ class BuildNewNestOperation(Operation):
             self._building_nest_step()
     
     def _building_nest_step(self):
-        self._new_nest = self._nest_factory.build_new_nest(self._building_site, self._queen.from_colony)
-        self._queen.build_new_nest(self._new_nest, 'nest_is_built')
+        self._queen.found_nest(self._building_site, sayback='nest_is_found')
 
-    def _on_queen_built_nest(self):
-        self._relocate_step()
+    def _on_queen_found_nest(self, results):
+        self._new_nest = results['nest']
+        self._build_nest_step()
 
-    def _relocate_step(self):
-        self._queen.relocate_to_nest(self._new_nest)
-        self._queen.get_in_nest(self._new_nest)
-        self._worker.relocate_to_nest(self._new_nest)
+    def _build_nest_step(self):
+        self._worker.build_nest(self._new_nest, 'nest_is_built')
+        self._queen.build_nest(self._new_nest)
+
+    def _on_nest_built(self, nest: Nest):
+        self._relocate_step(nest)
+
+    def _relocate_step(self, nest: Nest):
+        self._queen.relocate_to_nest(nest)
+        self._queen.get_in_nest(nest)
+        self._worker.relocate_to_nest(nest)
         self._queen.leave_operation()
         self._worker.leave_operation()
         self._mark_as_done()

@@ -1,8 +1,7 @@
 from core.world.utils.point import Point
 from core.world.entities.food.food import Food
-
 from core.world.entities.nest.nest import Nest
-
+from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.base.live_entity.thoughts.walk_to_thought import WalkToThought
 from core.world.entities.ant.base.thoughts.searching_walk_thought import SearchingWalkThought
@@ -10,9 +9,13 @@ from core.world.entities.ant.base.thoughts.find_food_thought import FindFoodThou
 from core.world.entities.ant.base.thoughts.collect_food_thought import CollectFoodThought
 from core.world.entities.ant.base.thoughts.feed_myself_thought import FeedMyselfThought
 from core.world.entities.ant.base.thoughts.prepare_for_opertation_thought import PrepareForOperationThought
-from core.world.entities.ant.queen.thoughts.build_nest_thought import BuildNestThought
+from core.world.entities.ant.base.thoughts.found_nest_thought import FoundNestThought
+from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestThought
 
 class ThoughtFactory:
+
+    def __init__(self, event_bus: EventEmitter):
+        self._event_bus = event_bus
 
     def build_go_in_nest_thought(self, nest: Nest, flags: dict = None, sayback: str = None):
         return GoInNestThought(flags=flags, sayback=sayback, nest=nest)
@@ -35,8 +38,11 @@ class ThoughtFactory:
     def build_prepare_for_operation_thought(self, feed_myself_thought: FeedMyselfThought, assemble_point: Point, flags: dict = None, sayback: str = None):
         return PrepareForOperationThought(feed_myself_thought=feed_myself_thought, assemble_point=assemble_point, flags=flags, sayback=sayback)
     
-    def build_build_new_nest_thought(self, new_nest: Nest, flags: dict = None, sayback: str = None):
-        return BuildNestThought(new_nest=new_nest, sayback=sayback)
+    def build_found_nest_thought(self, building_site: Point, from_colony_id: int, found_nest: Nest = None, flags: dict = None, sayback: str = None):
+        return FoundNestThought(event_bus=self._event_bus, building_site=building_site, from_colony_id=from_colony_id, found_nest=found_nest, flags=flags, sayback=sayback)
+    
+    def build_build_nest_thought(self, building_nest: Nest, flags: dict = None, sayback: str = None):
+        return BuildNestThought(building_nest=building_nest, flags=flags, sayback=sayback)
     
     def build_feed_myself_full(self, home_nest: Nest, sayback: str = None):
         searching_walk_thought = self.build_searching_walk_thought(home_nest.position, home_nest.area)

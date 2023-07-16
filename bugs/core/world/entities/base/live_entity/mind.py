@@ -100,18 +100,22 @@ class Mind(ABC):
         return len(self._thoughts_stack) > 0
 
     def _handle_done_thoughts(self):
-        done_thoughts = []
+        done_thoughts: List[Thought] = [] 
         for thought in self._thoughts_stack:
             if (thought.is_done()):
                 done_thoughts.append(thought)
         
         for done_thought in done_thoughts:
             if done_thought.sayback:
-                self._say(done_thought.sayback)
+                self._say(done_thought.sayback, done_thought.results)
             self._thoughts_stack.remove(done_thought)
 
-    def _say(self, phrase: str):
-        self.events.emit(f'say:{phrase}')
+    def _say(self, phrase: str, results: dict):
+        event_name = f'say:{phrase}'
+        if (results):
+            self.events.emit(event_name, results)
+        else:
+            self.events.emit(event_name)
 
     @abstractclassmethod
     def _generate_feed_myself_thought(self):

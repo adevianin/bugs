@@ -1,27 +1,33 @@
 from threading import Thread
 import time
 
-from core.world.entities.map import Map
+from core.world.entities.map.map import Map
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME
 from core.world.entities.colony.colony import Colony
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.base.entity_collection import EntityCollection
+from core.world.id_generator import IdGenerator
 
 class World():
 
-    def __init__(self, id: int, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: list[Colony]):
+    def __init__(self, id: int, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: list[Colony], id_generator: IdGenerator):
         self.id = id
         self._entities_collection = entities_collection
         self._map = map
         self._event_bus = event_bus
         self._colonies = colonies
+        self._id_generator = id_generator
         self._world_loop_stop_flag = False
         self._is_world_running = False
         self._step_counter = 0
 
         self._current_step_state = None
         self._previous_step_state = None
+
+    @property
+    def last_used_id(self):
+        return self._id_generator.last_used_id
         
     @property
     def map(self):

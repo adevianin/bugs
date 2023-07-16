@@ -1,6 +1,5 @@
 from .utils.event_emiter import EventEmitter
 from .services.nest_service import NestService
-from .services.birther_service import BirtherService
 from .services.colony_service import ColonyService
 from core.world.utils.point import Point
 from core.world.world_repository_interface import iWorldRepository
@@ -12,8 +11,8 @@ class WorldFacade:
     WORLD_ID = 1
 
     @classmethod
-    def init(cls, event_bus: EventEmitter,  world_repository: iWorldRepository, colony_service: ColonyService, nest_service: NestService, birther_service: BirtherService):
-        world_facade = WorldFacade(event_bus, world_repository, colony_service, nest_service, birther_service)
+    def init(cls, event_bus: EventEmitter,  world_repository: iWorldRepository, colony_service: ColonyService, nest_service: NestService):
+        world_facade = WorldFacade(event_bus, world_repository, colony_service, nest_service)
         WorldFacade._instance = world_facade
         return world_facade
 
@@ -21,7 +20,7 @@ class WorldFacade:
     def get_instance(cls):
         return WorldFacade._instance
 
-    def __init__(self, event_bus: EventEmitter, world_repository: iWorldRepository, colony_service: ColonyService, nest_service: NestService, birther_service: BirtherService):
+    def __init__(self, event_bus: EventEmitter, world_repository: iWorldRepository, colony_service: ColonyService, nest_service: NestService):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
@@ -32,16 +31,9 @@ class WorldFacade:
 
         self._colony_service = colony_service
         self._nest_service = nest_service
-        self._birther_service = birther_service
         
     def init_world(self):
         self._world = self._world_repository.get(self.WORLD_ID)
-
-        self._colony_service.set_world(self._world)
-        self._nest_service.set_world(self._world)
-        self._birther_service.set_world(self._world)
-
-        self._world.run()
 
     def save_world(self):
         self._world_repository.push(self._world)

@@ -29,6 +29,14 @@ class AntMind(Mind):
     
     def relocate_to_nest(self, nest: Nest):
         self.home_nest = nest
+
+    def found_nest(self, building_site: Point, from_colony_id: int, sayback: str):
+        thought = self._thought_factory.build_found_nest_thought(building_site=building_site, from_colony_id=from_colony_id, sayback=sayback)
+        self._register_thought(thought)
+
+    def build_nest(self, nest: Nest, sayback: str):
+        thought = self._thought_factory.build_build_nest_thought(building_nest=nest, sayback=sayback)
+        self._register_thought(thought)
     
     def _calc_assemble_point(self):
         return Point(self.home_nest.position.x, self.home_nest.position.y + 40)

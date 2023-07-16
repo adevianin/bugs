@@ -189,7 +189,8 @@ const ACTION_TYPES = {
     ENTITY_GOT_OUT_OF_NEST: 'entity_got_out_of_nest',
     FOOD_WAS_PICKED_UP: 'food_was_picked_up',
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
-    NEST_LARVAE_CHANGED: 'nest_larvae_changed'
+    NEST_LARVAE_CHANGED: 'nest_larvae_changed',
+    NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed'
 };
 
 
@@ -677,12 +678,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount) {
+    constructor(eventBus, nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt) {
         super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST, fromColony);
         this._nestApi = nestApi;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
         this.larvaPlacesCount = larvaPlacesCount;
+        this.isBuilt = isBuilt
     }
 
     playAction(action) {
@@ -691,6 +693,8 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playTakingFood(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_LARVAE_CHANGED:
                 return this._playLarvaeChanged(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
+                return this._playBuildStatusChanged(action);
             default:
                 throw 'unknown type of action'
         }
@@ -716,6 +720,12 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
             this.larvae.push(_larva__WEBPACK_IMPORTED_MODULE_3__.Larva.fromJson(larvaJson.ant_type, larvaJson.progress));
         });
         this.emit('larvaeChanged');
+        return Promise.resolve();
+    }
+
+    _playBuildStatusChanged(action) {
+        this.isBuilt = action.actionData.is_built;
+        this.emit('buildStatusChanged');
         return Promise.resolve();
     }
 
@@ -1243,10 +1253,10 @@ class WorldFactory {
         return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId);
     }
 
-    buildNest(id, position, fromColony, storedCalories, larvaeData, larvaPlacesCount) {
+    buildNest(id, position, fromColony, storedCalories, larvaeData, larvaPlacesCount, isBuilt) {
         let larvae = [];
         larvaeData.forEach(larvaData => larvae.push(_entity_larva__WEBPACK_IMPORTED_MODULE_6__.Larva.fromJson(larvaData.ant_type, larvaData.progress)));
-        return new _entity_nest__WEBPACK_IMPORTED_MODULE_3__.Nest(this._mainEventBus, this._nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount);
+        return new _entity_nest__WEBPACK_IMPORTED_MODULE_3__.Nest(this._mainEventBus, this._nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt);
     }
 
     buildFood(id, position, calories, food_type, food_varity, is_picked) {
@@ -1262,7 +1272,7 @@ class WorldFactory {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT:
                 return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.from_colony, entityJson.picked_food_id, entityJson.user_speed, entityJson.located_in_nest_id);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
-                return this.buildNest(entityJson.id, entityJson.position, entityJson.from_colony, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count);
+                return this.buildNest(entityJson.id, entityJson.position, entityJson.from_colony, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count, entityJson.is_built);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
                 return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety, entityJson.is_picked);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_AREA:
@@ -3025,23 +3035,38 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     constructor(entity, entityContainer) {
         super(entity, entityContainer);
 
-        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture('nest.png'));
-        this._sprite.anchor.set(0.5);
-        entityContainer.addChild(this._sprite);
+        this._built_nest_sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture('nest.png'));
+        this._built_nest_sprite.anchor.set(0.5);
+        entityContainer.addChild(this._built_nest_sprite);
+        this._built_nest_sprite.eventMode = 'static';
+        this._built_nest_sprite.x = this._entity.position.x;
+        this._built_nest_sprite.y = this._entity.position.y;
 
-        this._sprite.eventMode = 'static';
-
-        this._sprite.x = this._entity.position.x;
-        this._sprite.y = this._entity.position.y;
+        this._building_nest_sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture('nest_building.png'));
+        this._building_nest_sprite.anchor.set(0.5);
+        entityContainer.addChild(this._building_nest_sprite);
+        this._building_nest_sprite.eventMode = 'static';
+        this._building_nest_sprite.x = this._entity.position.x;
+        this._building_nest_sprite.y = this._entity.position.y;
 
         if (this.$domainFacade.isNestMine(entity)) {
-            this._sprite.on('pointerdown', this._onClick.bind(this));
+            this._built_nest_sprite.on('pointerdown', this._onClick.bind(this));
         }
-        
+
+        this._unbindBuildStatusChangedListener = this.entity.on('buildStatusChanged', this._renderBuildState.bind(this));
+
+        this._renderBuildState();
     }
 
     remove() {
+        this._unbindBuildStatusChangedListener();
         super.remove();
+    }
+
+    _renderBuildState() {
+        console.log(1);
+        this._building_nest_sprite.renderable = !this.entity.isBuilt;
+        this._built_nest_sprite.renderable = this.entity.isBuilt;
     }
 
     _onClick() {

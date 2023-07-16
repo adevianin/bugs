@@ -28,7 +28,7 @@ class WorldSerializer():
                     'height': world.map.size.height
                 }
             },
-            'last_used_id': world.map.last_used_id
+            'last_used_id': world.last_used_id
         }
 
         nests = world.map.get_entities_by_type(EntityTypes.NEST)

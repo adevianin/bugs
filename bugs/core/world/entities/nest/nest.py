@@ -7,12 +7,13 @@ from core.world.entities.ant.base.larva import Larva
 
 class Nest(PlainEntity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, position: Point, from_colony: int, larvae: list[Larva], larva_places_count: int, stored_calories: int, area: int):
+    def __init__(self, event_bus: EventEmitter, id: int, position: Point, from_colony: int, larvae: list[Larva], larva_places_count: int, stored_calories: int, area: int, build_progress: int):
         super().__init__(event_bus, id, EntityTypes.NEST, from_colony, position)
         self._area = area
         self._stored_calories = stored_calories
         self._larvae = larvae
         self._larva_places_count = larva_places_count
+        self._build_progress = build_progress
 
     @property
     def area(self):
@@ -29,6 +30,14 @@ class Nest(PlainEntity):
     @property
     def larva_places_count(self):
         return self._larva_places_count
+    
+    @property
+    def build_progress(self):
+        return self._build_progress
+    
+    @property
+    def is_built(self):
+        return self._build_progress == 100
 
     def do_step(self):
         self._feed_larvae()
@@ -54,7 +63,8 @@ class Nest(PlainEntity):
         json.update({
             'stored_calories': self._stored_calories,
             'larvae': self._larvae_to_public_json(),
-            'larva_places_count': self._larva_places_count
+            'larva_places_count': self._larva_places_count,
+            'is_built': self.is_built
         })
         
         return json
@@ -64,10 +74,16 @@ class Nest(PlainEntity):
         self._emit_larvae_changed()
 
     def build(self):
-        is_built = True
-        if (is_built): 
-            self._event_bus.emit('preborn_nest', self)
-        return is_built
+        is_build_before = self.is_built
+        build_step = 5
+        if not self.is_built:
+            if self._build_progress + build_step > 100:
+                self._build_progress = 100
+            else:
+                self._build_progress += build_step
+
+        if is_build_before != self.is_built:
+            self._emit_building_status_changed()
 
     def _feed_larvae(self):
         larvae_count = len(self._larvae)
@@ -85,7 +101,7 @@ class Nest(PlainEntity):
 
         for larva in larvae_ready_to_born:
             self._larvae.remove(larva)
-            self._event_bus.emit('preborn_ant', larva, self)
+            self._event_bus.emit('ant_birth_request', larva, self)
         
         self._emit_larvae_changed()
 
@@ -97,6 +113,11 @@ class Nest(PlainEntity):
     def _emit_larvae_changed(self):
         self.handle_action('nest_larvae_changed', {
             'larvae': self._larvae_to_public_json()
+        })
+
+    def _emit_building_status_changed(self):
+        self.handle_action('nest_build_status_changed', {
+            'is_built': self.is_built
         })
     
     def _larvae_to_public_json(self):

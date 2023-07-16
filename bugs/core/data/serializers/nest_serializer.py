@@ -14,7 +14,8 @@ class NestSerializer(PlainEntitySerializer):
             'stored_calories': entity.stored_calories,
             'larvae':  self._larva_serializer.serialize_larvae(entity.larvae),
             'larva_places_count': entity.larva_places_count,
-            'area': entity.area
+            'area': entity.area,
+            'build_progress': entity.build_progress
         })
 
         return json

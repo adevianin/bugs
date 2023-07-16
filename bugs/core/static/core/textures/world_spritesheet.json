@@ -295,6 +295,14 @@
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
 	"sourceSize": {"w":40,"h":40}
+},
+"nest_building.png":
+{
+	"frame": {"x":0,"y":680,"w":40,"h":40},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
+	"sourceSize": {"w":40,"h":40}
 }},
 "animations": {
 	"ant_queen": ["ant_queen_1.png","ant_queen_2.png","ant_queen_3.png","ant_queen_4.png","ant_queen_5.png","ant_queen_6.png","ant_queen_7.png","ant_queen_8.png"],
@@ -306,8 +314,8 @@
 	"version": "1.1",
 	"image": "world_spritesheet.png",
 	"format": "RGBA8888",
-	"size": {"w":64,"h":680},
+	"size": {"w":64,"h":720},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:a7f8321ea7a1983982855ca012abdee2:a2d67e0e9009d886c4e1f42bcb523091:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:1bb6b0a5034542d55fc58eafba7aca02:1c9a3fb0bd5181aaa81d7309b585a58f:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }

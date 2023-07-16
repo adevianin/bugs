@@ -8,4 +8,5 @@ class ThoughtTypes(StrEnum):
     COLLECT_FOOD = 'collect_food'
     FEED_MYSELF = 'feed_myself'
     PREPARE_FOR_OPERATION = 'prepare_for_operation'
-    BUILD_NEW_NEST = 'build_new_nest'
+    FOUND_NEST = 'found_nest'
+    BUILD_NEST = 'build_nest'

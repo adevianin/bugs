@@ -36,7 +36,7 @@ class FoodArea(PlainEntity):
                 spawn_point = self._generate_spawn_point()
                 preborn_food = PrebornFood.build_preborn_food(spawn_point, self._calories, self._food_type)
                 self._calories = 0
-                self._event_bus.emit('preborn_food', preborn_food)
+                self._event_bus.emit('food_birth_request', preborn_food)
 
     def _generate_spawn_point(self):
         half_width = self._size.width / 2

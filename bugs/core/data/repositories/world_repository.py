@@ -7,23 +7,25 @@ from core.data.factories.json_ant_factory import JsonAntFactory
 from core.data.factories.json_food_factory import JsonFoodFactory
 from core.data.factories.json_colony_factory import JsonColonyFactory
 from core.data.factories.json_thought_factory import JsonThoughtFactory
-from core.world.entities.map import Map
+from core.world.entities.map.map import Map
 from core.world.utils.size import Size
 from core.world.entities.world.world import World
 from core.world.entities.world.world_factory import WorldFactory
 from core.world.id_generator import IdGenerator
 from core.data.serializers.world_serializer import WorldSerializer
+from core.data.factories.json_map_factory import JsonMapFactory
 
 
 class WorldRepository(iWorldRepository):
 
-    def __init__(self, world_data_repository: WorldDataRepository, nest_factory: JsonNestFactory, ant_factory: JsonAntFactory, food_factory: JsonFoodFactory, colony_factory: JsonColonyFactory, thought_factory: JsonThoughtFactory, world_factory: WorldFactory, world_serializer: WorldSerializer):
+    def __init__(self, world_data_repository: WorldDataRepository, nest_factory: JsonNestFactory, ant_factory: JsonAntFactory, food_factory: JsonFoodFactory, colony_factory: JsonColonyFactory, thought_factory: JsonThoughtFactory, json_map_factory: JsonMapFactory, world_factory: WorldFactory, world_serializer: WorldSerializer):
         self._world_data_repository = world_data_repository
         self._json_nest_factory = nest_factory
         self._json_ant_factory = ant_factory
         self._json_food_factory = food_factory
         self._json_colony_factory = colony_factory
         self._json_thought_factory = thought_factory
+        self._json_map_factory = json_map_factory
         self._world_factory = world_factory
         self._world_serializer = world_serializer
 
@@ -68,12 +70,9 @@ class WorldRepository(iWorldRepository):
             colony = self._json_colony_factory.build_colony_from_json(colony_json, entities_collection)
             colonies.append(colony)
 
-        id_generator = IdGenerator(world_data['last_used_id'])
-
-        map_data = world_data['map']
-        map = Map.build_map(Size(map_data['size']['width'], map_data['size']['height']), entities_collection, id_generator)
-
-        world = self._world_factory.build_world(world_id, entities_collection, map, colonies)
+        id_generator = IdGenerator.build_id_generator(world_data['last_used_id'])
+        map = self._json_map_factory.build_map_from_json(world_data['map'], id_generator, entities_collection)
+        world = self._world_factory.build_world(world_id, entities_collection, map, colonies, id_generator)
 
         return world
 

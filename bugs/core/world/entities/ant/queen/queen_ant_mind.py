@@ -1,11 +1,9 @@
 from ..base.ant_mind import AntMind
 from core.world.entities.nest.nest import Nest
+from core.world.utils.point import Point
+
 
 class QueenAntMind(AntMind):
-
-    def build_new_nest(self, new_nest: Nest, sayback: str):
-        thought = self._thought_factory.build_build_new_nest_thought(new_nest=new_nest, sayback=sayback)
-        self._register_thought(thought)
 
     def _generate_thoughts(self):
         super()._generate_thoughts()

@@ -5,12 +5,13 @@ import { Larva } from './larva';
 
 class Nest extends Entity {
 
-    constructor(eventBus, nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount) {
+    constructor(eventBus, nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt) {
         super(eventBus, id, position, EntityTypes.NEST, fromColony);
         this._nestApi = nestApi;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
         this.larvaPlacesCount = larvaPlacesCount;
+        this.isBuilt = isBuilt
     }
 
     playAction(action) {
@@ -19,6 +20,8 @@ class Nest extends Entity {
                 return this._playTakingFood(action);
             case ACTION_TYPES.NEST_LARVAE_CHANGED:
                 return this._playLarvaeChanged(action);
+            case ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
+                return this._playBuildStatusChanged(action);
             default:
                 throw 'unknown type of action'
         }
@@ -44,6 +47,12 @@ class Nest extends Entity {
             this.larvae.push(Larva.fromJson(larvaJson.ant_type, larvaJson.progress));
         });
         this.emit('larvaeChanged');
+        return Promise.resolve();
+    }
+
+    _playBuildStatusChanged(action) {
+        this.isBuilt = action.actionData.is_built;
+        this.emit('buildStatusChanged');
         return Promise.resolve();
     }
 

@@ -238,6 +238,7 @@
                 <false/>
             </struct>
             <key type="filename">images/nest.png</key>
+            <key type="filename">images/nest_building.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -296,6 +297,7 @@
                     <filename>images/ant_queen_dead.png</filename>
                     <filename>images/nest.png</filename>
                     <filename>images/marker_pointer.png</filename>
+                    <filename>images/nest_building.png</filename>
                 </array>
             </struct>
         </map>

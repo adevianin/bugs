@@ -22,6 +22,10 @@ class AntBody(Body):
     def picked_food_id(self):
         return self._picked_food.id if self.is_food_picked else None
     
+    def build_nest(self, nest: Nest):
+        nest.build()
+        self._consume_calories(10)
+    
     def pick_up_food(self, food: Food):
         self._picked_food = food
         food.pickup()

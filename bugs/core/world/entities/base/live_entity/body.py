@@ -60,6 +60,10 @@ class Body(ABC):
     def dna_profile(self):
         return self._dna_profile
     
+    @property
+    def is_busy(self):
+        return self._is_busy
+    
     def get_in_nest(self, nest: Nest):
         self._located_inside_nest = nest
         self.events.emit('got_in_nest', nest)
@@ -141,10 +145,6 @@ class Body(ABC):
     def toggle_is_busy(self, is_busy: bool):
         self._is_busy = is_busy
     
-    @property
-    def is_busy(self):
-        return self._is_busy
-        
     def _consume_calories(self, amount: int):
         self._calories -= amount
         if self._calories < 0:
