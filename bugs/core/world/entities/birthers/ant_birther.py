@@ -16,6 +16,6 @@ class AntBirther():
         self._map = map
 
     def _on_ant_birth_request(self, larva: Larva, nest: Nest):
-        new_ant = self._ant_factory.build_ant(None, nest.from_colony, larva.ant_type, larva.dna_profile, larva.position, nest, None, None, None, True, False)
+        new_ant = self._ant_factory.build_ant(None, nest.from_colony, larva.ant_type, larva.dna_profile, nest.position, nest, None, None, None, True, False)
         self._map.add_new_entity(new_ant)
         new_ant.born()

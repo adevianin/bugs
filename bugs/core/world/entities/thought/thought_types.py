@@ -10,3 +10,4 @@ class ThoughtTypes(StrEnum):
     PREPARE_FOR_OPERATION = 'prepare_for_operation'
     FOUND_NEST = 'found_nest'
     BUILD_NEST = 'build_nest'
+    PATROLLING_TERRITORY = 'patrolling_territory'

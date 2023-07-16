@@ -8,7 +8,7 @@ class LarvaSerializer():
         json = {}
         json.update({
             'ant_type': larva.ant_type,
-            'progress': larva.progress,
+            'ate_calories': larva.ate_calories,
             'dna_profile': larva.dna_profile
         })
 

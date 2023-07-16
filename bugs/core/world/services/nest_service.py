@@ -10,7 +10,7 @@ class NestService():
     def set_world(self, world: World):
         self._world = world
 
-    def add_larva(self, nest_id: int, user_id: int, larva_type: AntTypes):
+    def add_larva(self, nest_id: int, user_id: int, ant_type: AntTypes):
         colony = self._world.get_colony_owned_by_user(user_id)
         nest = self._world.map.get_entity_by_id(nest_id)
 
@@ -23,5 +23,5 @@ class NestService():
         if (queen.located_in_nest_id != nest_id):
             raise Exception('queen is not in nest')
 
-        larva = Larva.build_larva(nest.position, larva_type, queen.dna_profile, 0)
+        larva = Larva.build_larva(ant_type, queen.dna_profile, 0)
         nest.add_larva(larva)
