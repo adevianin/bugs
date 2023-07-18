@@ -8,6 +8,7 @@ from typing import List
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.nest.nest import Nest
+from .marker_types import MarkerTypes
 
 class BuildNewNestOperation(Operation):
     
@@ -18,7 +19,7 @@ class BuildNewNestOperation(Operation):
         self._name = 'новий мурашник'
         self._open_vacancies(AntTypes.WORKER, 1)
         self._open_vacancies(AntTypes.QUEEN, 1)
-        self._add_pointer_marker(self._building_site)
+        self._add_marker(MarkerTypes.POINTER, self._building_site)
 
     @property
     def building_site(self):

@@ -12,6 +12,10 @@ class ColonyService {
         this._colonyApi.buildNewNest(position);
     }
 
+    destroyNestOperation(nest) {
+        this._colonyApi.destroyNestOperation(nest);
+    }
+
 }
 
 export {

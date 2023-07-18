@@ -67,6 +67,8 @@ class WorldFacade:
                 self._nest_service.add_larva(params['nest_id'], user_id, params['larva_type'])
             case 'build_new_nest':
                 self._colony_service.build_new_nest(user_id, Point(params['position']['x'], params['position']['y']))
+            case 'destroy_nest':
+                self._colony_service.destroy_nest_operation(user_id, params['nest_id'])
             case 'stop_operation':
                 self._colony_service.stop_operation(user_id, params['operation_id'])
             case _:

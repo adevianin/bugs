@@ -17,7 +17,7 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        console.log(msg)
+        // console.log(msg)
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);

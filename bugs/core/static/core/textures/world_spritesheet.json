@@ -280,9 +280,17 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
-"marker_pointer.png":
+"marker_cross.png":
 {
 	"frame": {"x":0,"y":608,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"marker_pointer.png":
+{
+	"frame": {"x":32,"y":608,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -316,6 +324,6 @@
 	"format": "RGBA8888",
 	"size": {"w":64,"h":720},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:1bb6b0a5034542d55fc58eafba7aca02:1c9a3fb0bd5181aaa81d7309b585a58f:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:533ab15fe7e71a9371104e8b39d20ef5:7b611620ac2502be578992fe03bc5869:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }

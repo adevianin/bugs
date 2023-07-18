@@ -1,5 +1,6 @@
 import { AntTypes } from "../enum/antTypes";
 import { EntityTypes } from "../enum/entityTypes";
+import { distance } from 'utils/distance';
 
 class WorldService {
 
@@ -55,6 +56,23 @@ class WorldService {
 
     isWholeWorldInited() {
         return this._isWholeWorldInited;
+    }
+
+    findNearestNestForOffensiveOperation(point, excludeColonyId) {
+        let nests = this._world.getNests();
+        let nearestNest = null;
+        let smallestDistance = null;
+        let maxDist = 100;
+
+        nests.forEach(nest => {
+            let dist = distance(point.x, point.y, nest.position.x, nest.position.y);
+            if (nest.fromColony != excludeColonyId && dist <= maxDist && (!smallestDistance || dist < smallestDistance)) {
+                smallestDistance = dist;
+                nearestNest = nest;
+            }
+        });
+
+        return nearestNest;
     }
 
 }

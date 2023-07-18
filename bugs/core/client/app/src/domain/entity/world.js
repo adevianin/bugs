@@ -26,6 +26,10 @@ class World {
         return this.findEntityByType(EntityTypes.ANT);
     }
 
+    getNests() {
+        return this.findEntityByType(EntityTypes.NEST);
+    }
+
     addEntity(entity) {
         this._entities.push(entity);
     }

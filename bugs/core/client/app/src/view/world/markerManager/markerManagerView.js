@@ -1,6 +1,7 @@
 import { BaseGraphicView } from "../../base/baseGraphicView";
 import * as PIXI from 'pixi.js';
 import { NewNestMarkerPlacerView } from "./markerPlacers/newNestMarkerPlacerView";
+import { DestroyNestMarkerPlacerView } from "./markerPlacers/destroyNestMarkerPlacerView";
 import { MarkersList } from "./markersList/markersList";
 
 class MarkerManagerView extends BaseGraphicView {
@@ -13,6 +14,7 @@ class MarkerManagerView extends BaseGraphicView {
         this._render();
 
         this.$eventBus.on('placeNewNestMarkerRequest', this._onPlaceNewNestMarkerRequest.bind(this));
+        this.$eventBus.on('placeDestroyNestMarkerRequest', this._onPlaceDestroyNestMarkerRequest.bind(this));
         this.$eventBus.on('cancelAnyMarkerPlacerRequest', this._onMarkerPlacerCancel.bind(this));
     }
 
@@ -26,6 +28,12 @@ class MarkerManagerView extends BaseGraphicView {
         let newMarkerContainer = new PIXI.Container();
         this._markersManagerContainer.addChild(newMarkerContainer);
         this._currentMarkerPlacer = new NewNestMarkerPlacerView(newMarkerContainer, callback);
+    }
+
+    _onPlaceDestroyNestMarkerRequest(callback) {
+        let newMarkerContainer = new PIXI.Container();
+        this._markersManagerContainer.addChild(newMarkerContainer);
+        this._currentMarkerPlacer = new DestroyNestMarkerPlacerView(newMarkerContainer, callback);
     }
 
     _onMarkerPlacerCancel() {

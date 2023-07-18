@@ -8,16 +8,16 @@ class NewNestOperationCreator extends OperationCreator {
 
         this._render();
 
-        this._okBtnEl.addEventListener('click', this._onOk.bind(this));
+        this._chooseBuildingSiteBtnEl.addEventListener('click', this._chooseBuildingSiteBtnClick.bind(this));
     }
 
     _render() {
         this._el.innerHTML = newNestOperationCreatorTmpl;
 
-        this._okBtnEl = this._el.querySelector('[data-ok-btn]');
+        this._chooseBuildingSiteBtnEl = this._el.querySelector('[data-choose-building-site-btn]');
     }
 
-    _onOk() {
+    _chooseBuildingSiteBtnClick() {
         this.$eventBus.emit('placeNewNestMarkerRequest', (point) => {
             NewNestOperationCreator.domainFacade.buildNewNest({
                 x: point.x,

@@ -133,6 +133,12 @@ class Operation(ABC):
             'point': point
         })
 
+    def _add_marker(self, type: MarkerTypes, point: Point):
+        self._markers.append({
+            'type': type,
+            'point': point
+        })
+
     def _reset_flags(self):
         self._flags = {
             'is_first_step_started': False

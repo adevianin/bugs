@@ -83,8 +83,18 @@ class DomainFacade {
         this._colonyService.buildNewNest(position);
     }
 
+    destroyNestOperation(nest) {
+        this._colonyService.destroyNestOperation(nest);
+    }
+
     stopMyColonyOperation(operationId) {
         this._colonyService.stopMyColonyOperation(operationId);
+    }
+
+    findNearestNestForOffensiveOperation(point) {
+        let userData = this.getUserData();
+        let myColony = this._worldService.world.findColonyByOwnerId(userData.id);
+        return this._worldService.findNearestNestForOffensiveOperation(point, myColony.id);
     }
 
     _tryConnectMessageHandler() {

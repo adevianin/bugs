@@ -27,6 +27,18 @@ class ColonyApi {
             }
         });
     }
+
+    destroyNestOperation(nest) {
+        this._serverConnection.send({
+            type: 'command',
+            command: {
+                command_type: 'destroy_nest',
+                params: {
+                    nest_id: nest.id
+                }
+            }
+        });
+    }
 }
 
 export {
