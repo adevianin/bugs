@@ -20,14 +20,10 @@ class Operation(ABC):
         self._name = 'operation name'
         self._markers = []
         self._total_hiring_ants_count = 0
-        self._flags = {}
+        self._flags = flags or {}
 
-        self._reset_flags()
-        if flags:
-            self._flags.update(flags)
-
-        if self.status == OperationStatuses.INPROGRESS:
-            self._init_staff_connection()
+        if (self._read_flag('is_operation_started')):
+            self._init_staff()
 
     @property
     def is_hiring(self):
@@ -75,18 +71,6 @@ class Operation(ABC):
         else:
             return self._hired_ants
         
-    def count_hired_ants(self, ant_type: AntTypes):
-        count = 0
-        for ant in self._hired_ants:
-            if ant.ant_type == ant_type:
-                count += 1
-
-        return count
-    
-    def _open_vacancies(self, ant_type: AntTypes, count: int):
-        self._vacancies[ant_type] = count
-        self._total_hiring_ants_count += count
-
     def hire_ant(self, ant: Ant):
         if (not self.is_hiring):
             raise Exception('operation is not hiring')
@@ -94,8 +78,7 @@ class Operation(ABC):
         self._hired_ants.append(ant)
 
         if not self.is_hiring:
-            self._init_staff_connection()
-            self._start_operation()
+            self._on_hired_all()
         
         self.events.emit('change')
 
@@ -103,7 +86,7 @@ class Operation(ABC):
         hiring_ant_type = []
         for ant_type in self._vacancies.keys():
             needed_count = self._vacancies[ant_type]
-            hired_count = self.count_hired_ants(ant_type)
+            hired_count = self._count_hired_ants(ant_type)
             if (needed_count > hired_count):
                 hiring_ant_type.append(ant_type)
         return hiring_ant_type
@@ -115,13 +98,37 @@ class Operation(ABC):
 
         self._mark_as_done()
 
-    @abstractmethod
-    def _init_staff_connection(self):
-        pass
+    def _on_hired_all(self):
+        self._init_staff()
+        self._start_operation()
 
     @abstractmethod
-    def _start_operation(self):
+    def _init_staff(self):
         pass
+
+    def _read_flag(self, flag_name: str):
+        if flag_name in self._flags:
+            return self._flags[flag_name]
+        else: 
+            return False
+        
+    def _write_flag(self, flag_name: str, value: bool):
+        self._flags[flag_name] = value
+
+    def _count_hired_ants(self, ant_type: AntTypes):
+        count = 0
+        for ant in self._hired_ants:
+            if ant.ant_type == ant_type:
+                count += 1
+
+        return count
+    
+    def _open_vacancies(self, ant_type: AntTypes, count: int):
+        self._vacancies[ant_type] = count
+        self._total_hiring_ants_count += count
+
+    def _start_operation(self):
+        self._write_flag('is_operation_started', True)
 
     def _mark_as_done(self):
         self._is_done = True
@@ -141,7 +148,7 @@ class Operation(ABC):
 
     def _reset_flags(self):
         self._flags = {
-            'is_first_step_started': False
+            'is_operation_started': False
         }
 
     def to_public_json(self):

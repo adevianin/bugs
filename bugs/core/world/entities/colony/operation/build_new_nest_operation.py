@@ -25,16 +25,7 @@ class BuildNewNestOperation(Operation):
     def building_site(self):
         return self._building_site
     
-    def _reset_flags(self):
-        self._flags.update({
-            'is_queen_prepared': False,
-            'is_worker_prepared': False,
-            'is_queen_arrived_to_building_site': False,
-            'is_worker_arrived_to_building_site': False,
-            'is_nest_built': False
-        })
-
-    def _init_staff_connection(self):
+    def _init_staff(self):
         self._worker = self.get_hired_ants(AntTypes.WORKER)[0]
         self._queen: QueenAnt = self.get_hired_ants(AntTypes.QUEEN)[0]
 
@@ -49,6 +40,7 @@ class BuildNewNestOperation(Operation):
         self._worker.on_saying('nest_is_built', self._on_nest_built)
 
     def _start_operation(self):
+        super()._start_operation()
         self._preparation_step()
 
     def _preparation_step(self):
@@ -56,15 +48,15 @@ class BuildNewNestOperation(Operation):
         self._queen.prepare_for_operation('prepared')
 
     def _on_queen_prepared(self):
-        self._flags['is_queen_prepared'] = True
+        self._write_flag('is_queen_prepared', True)
         self._try_start_walk_to_building_site_step()
     
     def _on_worker_prepared(self):
-        self._flags['is_worker_prepared'] = True
+        self._write_flag('is_worker_prepared', True)
         self._try_start_walk_to_building_site_step()
 
     def _try_start_walk_to_building_site_step(self):
-        if (self._flags['is_queen_prepared'] and self._flags['is_worker_prepared']):
+        if (self._read_flag('is_queen_prepared') and self._read_flag('is_worker_prepared')):
             self._walk_to_building_site_step()
 
     def _walk_to_building_site_step(self):
@@ -72,15 +64,15 @@ class BuildNewNestOperation(Operation):
         self._queen.walk_to(self._building_site, 'arrived_to_building_site')
 
     def _on_queen_arrived_to_building_site(self):
-        self._flags['is_queen_arrived_to_building_site'] = True
+        self._write_flag('is_queen_arrived_to_building_site', True)
         self._try_start_building_nest_step()
 
     def _on_worker_arrived_to_building_site(self):
-        self._flags['is_worker_arrived_to_building_site'] = True
+        self._write_flag('is_worker_arrived_to_building_site', True)
         self._try_start_building_nest_step()
 
     def _try_start_building_nest_step(self):
-        if (self._flags['is_queen_arrived_to_building_site'] and self._flags['is_worker_arrived_to_building_site']):
+        if (self._read_flag('is_queen_arrived_to_building_site') and self._read_flag('is_worker_arrived_to_building_site')):
             self._building_nest_step()
     
     def _building_nest_step(self):
