@@ -28,6 +28,8 @@ class JsonThoughtFactory():
                 return self._build_found_nest_thought(thought_json, entities_collection)
             case ThoughtTypes.BUILD_NEST:
                 return self._build_build_nest_thought(thought_json, entities_collection)
+            case ThoughtTypes.PATROLLING_TERRITORY:
+                return self._build_patrolling_territory(thought_json, entities_collection)
             case _:
                 raise Exception('unknown type of thought')
             
@@ -76,3 +78,7 @@ class JsonThoughtFactory():
     def _build_build_nest_thought(self, thought_json, entities_collection: EntityCollection):
         building_nest = entities_collection.get_entity_by_id(thought_json['building_nest_id'])
         return self._thought_factory.build_build_nest_thought(building_nest=building_nest, flags=thought_json['flags'], sayback=thought_json['sayback'])
+    
+    def _build_patrolling_territory(self, thought_json, entities_collection: EntityCollection):
+        searching_walk_thought = self.build_thougth_from_json(thought_json['searching_walk_thought'], entities_collection)
+        return self._thought_factory.build_patroling_teritory(searching_walk_thought=searching_walk_thought, flags=thought_json['flags'], sayback=thought_json['sayback'])

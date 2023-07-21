@@ -9,6 +9,7 @@ from core.world.entities.ant.base.thoughts.feed_myself_thought import FeedMyself
 from core.world.entities.ant.base.thoughts.prepare_for_opertation_thought import PrepareForOperationThought
 from core.world.entities.ant.base.thoughts.found_nest_thought import FoundNestThought
 from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestThought
+from core.world.entities.ant.warrior.thoughts.patrolling_territory_thought import PatrollingTerritoryThought
 
 class ThoughtSerializer():
 
@@ -32,6 +33,8 @@ class ThoughtSerializer():
                 return self._serialize_found_nest(thought)
             case ThoughtTypes.BUILD_NEST:
                 return self._serialize_build_nest(thought)
+            case ThoughtTypes.PATROLLING_TERRITORY:
+                return self._serialize_patrolling_territory(thought)
             case _:
                 raise Exception('unknown type of thought')
 
@@ -126,6 +129,15 @@ class ThoughtSerializer():
         json = self._serialize_thought(thought)
         json.update({
             'building_nest_id': thought.building_nest_id
+        })
+
+        return json
+    
+    def _serialize_patrolling_territory(self, thought: PatrollingTerritoryThought):
+        json = self._serialize_thought(thought)
+        searching_walk_thought_json = self.serialize(thought.searching_walk_thought)
+        json.update({
+            'searching_walk_thought': searching_walk_thought_json
         })
 
         return json
