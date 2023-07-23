@@ -58,7 +58,7 @@ class Thought(ABC):
         return self._flags
 
     @abstractclassmethod
-    def do_step(self):
+    def do_step(self) -> bool:
         pass
 
     def _reset_flags(self):

@@ -54,12 +54,12 @@ class FeedMyselfThought(Thought):
 
         if (self._flags['is_home_checked']):
             if (not self._flags['is_food_found']):
-                self._find_food_thought.do_step()
+                is_doing_action = self._find_food_thought.do_step()
                 if (self._find_food_thought.is_done()):
                     self._flags['is_food_found'] = True
                     self._found_food = self._find_food_thought.results
-                if (self._body.is_busy):
-                    return
+                if (is_doing_action):
+                    return True
 
             if (self._flags['is_food_found'] and not self._flags['is_near_food']):
                 self._flags['is_near_food'] = self._body.step_to_near(self._found_food.position)

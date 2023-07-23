@@ -24,6 +24,7 @@ class LiveEntity(Entity):
         self._body.events.add_listener('eat_food', self._on_body_eats_food)
         self._body.events.add_listener('got_in_nest', self._on_got_in_nest)
         self._body.events.add_listener('got_out_of_nest', self._on_got_out_of_nest)
+        self._body.events.add_listener('zero_hp', self._on_zero_hp)
 
     @property
     def position(self):
@@ -40,10 +41,6 @@ class LiveEntity(Entity):
     @property
     def located_in_nest_id(self):
         return self._body.located_in_nest_id
-    
-    @property
-    def is_busy(self):
-        return self._body.is_busy
     
     @property
     def mind(self):
@@ -98,11 +95,6 @@ class LiveEntity(Entity):
     
     def do_step(self):
         super().do_step()
-        self._toggle_is_busy(False)
-
-        if self._body.is_no_calories:
-            self.die()
-            return
 
         self._mind.do_step()
 
@@ -120,12 +112,6 @@ class LiveEntity(Entity):
 
         return json
     
-    def handle_action(self, action_type: str, action_data: dict = None):
-        if (self.is_busy):
-            raise Exception('live entity can do only 1 action per step')
-        super().handle_action(action_type, action_data)
-        self._toggle_is_busy(True)
-    
     def set_entities_in_sight(self, entities: List[Entity]):
         self._mind.world_interactor.set_nearby_entities(entities)
 
@@ -140,9 +126,6 @@ class LiveEntity(Entity):
         for unsubscribe in self._say_listener_unsubsribers:
             unsubscribe()
         self._say_listener_unsubsribers = []
-
-    def _toggle_is_busy(self, is_busy: bool):
-        self._body.toggle_is_busy(is_busy)
 
     def _on_body_walk(self, position):
         self.handle_action('entity_walk', { 
@@ -162,4 +145,7 @@ class LiveEntity(Entity):
 
     def _on_got_out_of_nest(self):
         self.handle_action('entity_got_out_of_nest')
+
+    def _on_zero_hp(self):
+        self._handle_dieing()
 

@@ -20,7 +20,6 @@ class Body(ABC):
         self._distance_per_calorie = 2
         self._can_eat_calories_per_step = 20
         self._user_speed = self._distance_per_step / STEP_TIME
-        self._is_busy = False
         self._located_inside_nest = located_in_nest
         self._hp = hp
 
@@ -62,16 +61,14 @@ class Body(ABC):
         return self._dna_profile
     
     @property
-    def is_busy(self):
-        return self._is_busy
-    
-    @property
     def hp(self):
         return self._hp
 
     @hp.setter
     def hp(self, hp: int):
         self._hp = hp
+        if self._hp <= 0:
+            self.events.emit('zero_hp')
     
     def get_in_nest(self, nest: Nest):
         self._located_inside_nest = nest
@@ -151,10 +148,7 @@ class Body(ABC):
 
         return is_food_eaten or self.calc_how_much_calories_is_need() == 0
     
-    def toggle_is_busy(self, is_busy: bool):
-        self._is_busy = is_busy
-    
     def _consume_calories(self, amount: int):
         self._calories -= amount
         if self._calories < 0:
-            self.events.emit('no_calories')
+            self.hp = 0

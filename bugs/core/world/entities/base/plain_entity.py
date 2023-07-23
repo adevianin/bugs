@@ -26,6 +26,8 @@ class PlainEntity(Entity):
     @hp.setter
     def hp(self, hp: int):
         self._hp = hp
+        if (self._hp <= 0):
+            self._handle_dieing()
 
     def do_step(self):
         return super().do_step()

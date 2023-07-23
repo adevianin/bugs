@@ -35,6 +35,8 @@ class SearchingWalkThought(Thought):
             self.add_visited_point(self._current_destination_point)
             self._current_destination_point = None
 
+        return True
+
     def _generate_point_to_walk(self):
         points = self._generate_potential_points_to_walk()
 

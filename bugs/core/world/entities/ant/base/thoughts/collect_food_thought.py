@@ -35,12 +35,12 @@ class CollectFoodThought(Thought):
 
     def do_step(self):
         if (not self._flags['is_find_food_done']):
-            self._find_food_thought.do_step()
+            is_doing_action = self._find_food_thought.do_step()
             if(self._find_food_thought.is_done()):
                 self._found_food = self._find_food_thought.results
                 self._flags['is_find_food_done'] = True
-            if (self._body.is_busy):
-                return
+            if (is_doing_action):
+                return True
 
         if (self._flags['is_find_food_done'] and not self._flags['is_get_to_food_done']):
             self._flags['is_get_to_food_done'] = self._body.step_to_near(self._found_food.position)

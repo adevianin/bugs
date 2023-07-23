@@ -23,7 +23,7 @@ class FindFoodThought(Thought):
     def do_step(self):
         found_food = self._look_around_for_food()
         if (found_food):
-            return
+            return False
         
         if (not self._flags['memory_read']):
             self._points_to_check = self._get_points_to_check()
@@ -36,12 +36,13 @@ class FindFoodThought(Thought):
                 if (got_to_point):
                     self._points_to_check.pop(0)
                     self._look_around_for_food()
-                return
+                return True
             else:
                 self._flags['points_checked'] = True
         if (self._flags['points_checked']):
-            self._random_walk_thought.do_step()
+            is_doing_action = self._random_walk_thought.do_step()
             self._look_around_for_food()
+            return is_doing_action
 
     def restart(self):
         super().restart()
