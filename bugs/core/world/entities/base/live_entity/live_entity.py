@@ -90,9 +90,6 @@ class LiveEntity(Entity):
     def get_out_of_nest(self):
         self._body.get_out_of_nest()
     
-    def is_hidden(self):
-        return super().is_hidden or self._body.is_in_nest
-    
     def do_step(self):
         super().do_step()
 

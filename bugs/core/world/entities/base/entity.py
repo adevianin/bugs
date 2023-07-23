@@ -10,7 +10,6 @@ class Entity(ABC):
         self._event_bus: EventEmitter = event_bus
         self._id: int = id
         self._type: EntityTypes = type
-        self._is_hidden = False
         self._from_colony = from_colony
 
     @property
@@ -36,10 +35,6 @@ class Entity(ABC):
         pass
 
     @property
-    def is_hidden(self):
-        return self._is_hidden
-    
-    @property
     def is_died(self):
         return self.hp == 0
     
@@ -57,8 +52,11 @@ class Entity(ABC):
     def from_colony(self):
         return self._from_colony
 
-    def toggle_hidden(self, is_hidden: bool):
-        self._is_hidden = is_hidden
+    def born(self):
+        self._handle_action('entity_born', { 'entity': self.to_public_json() })
+
+    def die(self):
+        self.hp = 0
 
     @abstractmethod
     def do_step(self):
@@ -74,14 +72,7 @@ class Entity(ABC):
     def _handle_action(self, action_type: str, action_data: dict = None):
         self._event_bus.emit('action_occurred', Action.build_action(self.id, action_type, action_data))
 
-    def born(self):
-        self._handle_action('entity_born', { 'entity': self.to_public_json() })
-
-    def die(self):
-        self.hp = 0
-
     def _handle_dieing(self):
-        self.toggle_hidden(True)
         self._event_bus.emit('entity_died', self)
         self._handle_action('entity_died')
 

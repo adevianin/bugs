@@ -69,7 +69,7 @@ class Map:
             is_type_suitable = True if entity_types == None else self._check_entity_type(entity, entity_types)
             is_excluded = False if exclude_entity_id == None else exclude_entity_id == entity.id
 
-            if (not entity.is_hidden and dist <= max_distance and is_type_suitable and not is_excluded):
+            if (not entity.is_died and dist <= max_distance and is_type_suitable and not is_excluded):
                 found_entities.append(entity)
 
         return found_entities
