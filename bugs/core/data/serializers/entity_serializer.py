@@ -7,7 +7,8 @@ class EntitySerializer():
         json.update({
             'id': entity.id,
             'type': entity.type,
-            'from_colony': entity.from_colony
+            'from_colony': entity.from_colony,
+            'hp': entity.hp
         })
 
         return json

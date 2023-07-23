@@ -9,8 +9,8 @@ import random
 
 class FoodArea(PlainEntity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, position: Point, size: Size, fertility: int, food_type: FoodTypes):
-        super().__init__(event_bus, id, EntityTypes.FOOD_AREA, None, position)
+    def __init__(self, event_bus: EventEmitter, id: int, position: Point, hp: int, size: Size, fertility: int, food_type: FoodTypes):
+        super().__init__(event_bus, id, EntityTypes.FOOD_AREA, None, hp, position)
         self._size = size
         self._fertility = fertility
         self._calories = 0

@@ -18,6 +18,7 @@ class Command(BaseCommand):
                 "id":1,
                 "type":"ant",
                 "from_colony":2,
+                "hp": 100,
                 "position":[
                     600,
                     400
@@ -37,6 +38,7 @@ class Command(BaseCommand):
                 "id":2,
                 "type":"ant",
                 "from_colony":2,
+                "hp": 100,
                 "position":[
                     650,
                     350
@@ -59,6 +61,7 @@ class Command(BaseCommand):
                 "id":20,
                 "type":"food",
                 "from_colony":None,
+                "hp": 100,
                 "position":[
                     350,
                     350
@@ -72,6 +75,7 @@ class Command(BaseCommand):
                 "id":21,
                 "type":"food",
                 "from_colony":None,
+                "hp": 100,
                 "position":[
                     850,
                     350
@@ -87,6 +91,7 @@ class Command(BaseCommand):
                 "id":40,
                 "type":"food_area",
                 "from_colony":None,
+                "hp": 100,
                 "position":[
                     450,
                     300
@@ -102,6 +107,7 @@ class Command(BaseCommand):
                 "id":41,
                 "type":"food_area",
                 "from_colony":None,
+                "hp": 100,
                 "position":[
                     1800,
                     400
@@ -119,13 +125,28 @@ class Command(BaseCommand):
                 "id":30,
                 "type":"nest",
                 "from_colony":2,
+                "hp": 100,
                 "position":[
                     600,
                     350
                 ],
                 "stored_calories":1000,
                 "larvae":[
-                    
+                    {
+                        "ant_type":"warrior",
+                        "ate_calories":440.0,
+                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
+                    },
+                    {
+                        "ant_type":"warrior",
+                        "ate_calories":440.0,
+                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
+                    },
+                    {
+                        "ant_type":"warrior",
+                        "ate_calories":440.0,
+                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
+                    }
                 ],
                 "larva_places_count":3,
                 "area":300,
@@ -135,13 +156,18 @@ class Command(BaseCommand):
                 "id":31,
                 "type":"nest",
                 "from_colony":1,
+                "hp": 100,
                 "position":[
                     1600,
                     450
                 ],
                 "stored_calories":1000,
                 "larvae":[
-                    
+                    {
+                        "ant_type":"warrior",
+                        "ate_calories":440.0,
+                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    }
                 ],
                 "larva_places_count":1,
                 "area":300,

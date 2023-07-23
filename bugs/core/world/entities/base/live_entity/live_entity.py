@@ -57,6 +57,14 @@ class LiveEntity(Entity):
     def is_in_operation(self):
         return self._in_operation
     
+    @property
+    def hp(self):
+        return self._body.hp
+
+    @hp.setter
+    def hp(self, hp: int):
+        self._body.hp = hp
+    
     def join_operation(self):
         if (self._in_operation):
             raise Exception('already in operation')

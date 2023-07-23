@@ -5,10 +5,11 @@ from .entity_types import EntityTypes
  
 class PlainEntity(Entity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes, from_colony: int, position: Point):
+    def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes, from_colony: int, hp: int, position: Point):
         super().__init__(event_bus, id, type, from_colony)
         self._position = position
         self._is_entity_busy = False
+        self._hp = hp
 
     @property
     def position(self):
@@ -17,6 +18,14 @@ class PlainEntity(Entity):
     @position.setter
     def position(self, new_pos: Point):
         self._position = new_pos
+
+    @property
+    def hp(self):
+        return self._hp
+
+    @hp.setter
+    def hp(self, hp: int):
+        self._hp = hp
 
     def do_step(self):
         return super().do_step()

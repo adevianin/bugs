@@ -11,7 +11,6 @@ class Entity(ABC):
         self._id: int = id
         self._type: EntityTypes = type
         self._is_hidden = False
-        self._is_died = False
         self._from_colony = from_colony
 
     @property
@@ -42,7 +41,17 @@ class Entity(ABC):
     
     @property
     def is_died(self):
-        return self._is_died
+        return self.hp == 0
+    
+    @property
+    @abstractmethod
+    def hp(self):
+        pass
+
+    @hp.setter
+    @abstractmethod
+    def hp(self, value: int):
+        pass
     
     @property
     def from_colony(self):
@@ -52,7 +61,7 @@ class Entity(ABC):
         self._is_hidden = is_hidden
 
     def die(self):
-        self._is_died = True
+        self.hp = 0
         self.toggle_hidden(True)
         self._event_bus.emit('entity_died', self)
         self.handle_action('entity_died')

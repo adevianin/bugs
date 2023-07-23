@@ -11,7 +11,7 @@ class JsonNestFactory():
     def build_nest_from_json(self, nest_json: dict):
         position = Point(nest_json['position'][0], nest_json['position'][1])
         larvae = self._build_larvae_from_json(nest_json['larvae'])
-        return self._nest_factory.build_nest(nest_json['id'], position, nest_json['from_colony'], larvae, nest_json['larva_places_count'], nest_json['stored_calories'], nest_json['area'], nest_json['build_progress'])
+        return self._nest_factory.build_nest(nest_json['id'], position, nest_json['from_colony'], nest_json['hp'], larvae, nest_json['larva_places_count'], nest_json['stored_calories'], nest_json['area'], nest_json['build_progress'])
     
     def _build_larvae_from_json(self, larvae_json: list):
         larvae = []

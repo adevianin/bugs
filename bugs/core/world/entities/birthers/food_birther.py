@@ -16,6 +16,6 @@ class FoodBirther():
         self._map = map
 
     def _on_food_birth_request(self, preborn_food: PrebornFood):
-        new_food = self._food_factory.build_food(None, preborn_food.position, preborn_food.calories, preborn_food.food_type, -1, False)
+        new_food = self._food_factory.build_food(None, preborn_food.position, 100, preborn_food.calories, preborn_food.food_type, -1, False)
         self._map.add_new_entity(new_food)
         new_food.born()

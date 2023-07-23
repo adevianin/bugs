@@ -9,7 +9,7 @@ import math
 
 class Body(ABC):
 
-    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int, located_in_nest: Nest):
+    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int, located_in_nest: Nest, hp: int):
         self.events = events
         self._dna_profile = dna_profile
         self._distance_per_step = distance_per_step
@@ -22,6 +22,7 @@ class Body(ABC):
         self._user_speed = self._distance_per_step / STEP_TIME
         self._is_busy = False
         self._located_inside_nest = located_in_nest
+        self._hp = hp
 
     @property
     def located_in_nest_id(self):
@@ -63,6 +64,14 @@ class Body(ABC):
     @property
     def is_busy(self):
         return self._is_busy
+    
+    @property
+    def hp(self):
+        return self._hp
+
+    @hp.setter
+    def hp(self, hp: int):
+        self._hp = hp
     
     def get_in_nest(self, nest: Nest):
         self._located_inside_nest = nest

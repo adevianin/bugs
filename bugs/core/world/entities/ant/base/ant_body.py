@@ -6,8 +6,8 @@ from core.world.entities.nest.nest import Nest
 
 class AntBody(Body):
 
-    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, located_in_nest: Nest, picked_food: Food):
-        super().__init__(events, dna_profile, position, 32, 100, located_in_nest)
+    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, hp: int, located_in_nest: Nest, picked_food: Food):
+        super().__init__(events, dna_profile, position, 32, 100, located_in_nest, hp)
         self._picked_food = picked_food
 
     @property
