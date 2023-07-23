@@ -7,6 +7,8 @@ from core.world.entities.base.live_entity.live_entity import LiveEntity
 from core.world.entities.base.entity_collection import EntityCollection
 from core.world.id_generator import IdGenerator
 from core.world.utils.event_emiter import EventEmitter
+from core.world.entities.ant.base.ant import Ant
+from core.world.entities.nest.nest import Nest
 
 from typing import List
 import random, math
@@ -35,14 +37,22 @@ class Map:
     def get_entity_by_id(self, id: int):
         return self._entities_collection.get_entity_by_id(id)
     
-    def get_ants_from_colony(self, colony_id: int, ant_type: AntTypes = None):
+    def get_nests_from_colony(self, colony_id: int, filter: callable = None) -> List[Nest]:
+        found_entities = []
+        for entity in self._entities_collection.get_entities():
+            if entity.type == EntityTypes.NEST and entity.from_colony == colony_id and (filter == None or filter(entity)):
+                found_entities.append(entity)
+
+        return found_entities
+    
+    def get_ants_from_colony(self, colony_id: int, filter: callable = None) -> List[Ant]:
         found_ants = []
         for entity in self._entities_collection.get_entities():
-            if entity.type == EntityTypes.ANT and entity.from_colony == colony_id and (ant_type == None or entity.ant_type == ant_type):
+            if entity.type == EntityTypes.ANT and entity.from_colony == colony_id and (filter == None or filter(entity)):
                 found_ants.append(entity)
 
         return found_ants
-
+    
     def get_entities_by_type(self, entity_type: EntityTypes):
         found_entities = []
         for entity in self._entities_collection.get_entities():

@@ -101,8 +101,7 @@ class Body(ABC):
 
         self._consume_calories(investing_calories)
 
-        new_distance = math.dist([new_pos_x, new_pos_y], [destination_point.x, destination_point.y])
-        is_walk_done = new_distance < 1 if preciseMode else new_distance <= self._distance_per_step / 2
+        is_walk_done = self._are_points_near(Point(new_pos_x, new_pos_y), Point(destination_point.x, destination_point.y), preciseMode)
 
         if preciseMode and is_walk_done:
             new_position = Point(destination_point.x, destination_point.y)
@@ -147,6 +146,13 @@ class Body(ABC):
         self.events.emit('eat_food')
 
         return is_food_eaten or self.calc_how_much_calories_is_need() == 0
+    
+    def is_near_to(self, point: Point, is_precise_mode: bool = False):
+        return self._are_points_near(self.position, point, is_precise_mode)
+    
+    def _are_points_near(self, point1: Point, point2: Point, is_precise_mode: bool = False):
+        dist = math.dist([point1.x, point1.y], [point2.x, point2.y])
+        return dist < 1 if is_precise_mode else dist <= self._distance_per_step / 2
     
     def _consume_calories(self, amount: int):
         self._calories -= amount

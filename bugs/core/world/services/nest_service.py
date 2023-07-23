@@ -1,6 +1,8 @@
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.larva import Larva
 from core.world.entities.world.world import World
+from core.world.entities.ant.base.ant import Ant
+from typing import Callable
 
 class NestService():
 
@@ -17,7 +19,8 @@ class NestService():
         if (not nest or nest.from_colony != colony.id):
             raise Exception(f'nest id = {nest_id} is not found in users colony')
 
-        queen_ants = self._world.map.get_ants_from_colony(colony.id, AntTypes.QUEEN)
+        queen_filter: Callable[[Ant], bool] = lambda ant: ant.ant_type ==  AntTypes.QUEEN
+        queen_ants = self._world.map.get_ants_from_colony(colony.id, queen_filter)
         queen = queen_ants[0]
 
         if (queen.located_in_nest_id != nest_id):

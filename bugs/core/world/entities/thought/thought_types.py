@@ -11,3 +11,4 @@ class ThoughtTypes(StrEnum):
     FOUND_NEST = 'found_nest'
     BUILD_NEST = 'build_nest'
     PATROLLING_TERRITORY = 'patrolling_territory'
+    ATTACK_NEST = 'attack_nest'

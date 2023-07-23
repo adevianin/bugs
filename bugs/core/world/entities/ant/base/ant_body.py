@@ -36,4 +36,7 @@ class AntBody(Body):
         nest.take_food(self._picked_food)
         self._picked_food = None
         self.events.emit('picked_food_gave')
+
+    def damage_nest(self, nest: Nest):
+        nest.damage(10)
         

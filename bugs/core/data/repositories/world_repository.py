@@ -64,14 +64,15 @@ class WorldRepository(iWorldRepository):
                 thoughts.append(thought)
             ant.mind.set_thoughts(thoughts)
 
+        id_generator = IdGenerator.build_id_generator(world_data['last_used_id'])
+        map = self._json_map_factory.build_map_from_json(world_data['map'], id_generator, entities_collection)
+
         colonies_json = world_data['colonies']
         colonies = []
         for colony_json in colonies_json:
-            colony = self._json_colony_factory.build_colony_from_json(colony_json, entities_collection)
+            colony = self._json_colony_factory.build_colony_from_json(colony_json, entities_collection, map)
             colonies.append(colony)
-
-        id_generator = IdGenerator.build_id_generator(world_data['last_used_id'])
-        map = self._json_map_factory.build_map_from_json(world_data['map'], id_generator, entities_collection)
+        
         world = self._world_factory.build_world(world_id, entities_collection, map, colonies, id_generator)
 
         return world

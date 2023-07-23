@@ -1,4 +1,5 @@
 from typing import List
+from functools import partial
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.colony.operation.operation_types import OperationTypes
 from core.world.utils.event_emiter import EventEmitter
@@ -6,6 +7,7 @@ from .operation import Operation
 from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.ant_types import AntTypes
 from .marker_types import MarkerTypes
+from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
 
 class DestroyNestOperation(Operation):
 
@@ -16,8 +18,44 @@ class DestroyNestOperation(Operation):
         self._open_vacancies(AntTypes.WARRIOR, 2)
         self._add_marker(MarkerTypes.CROSS, nest.position)
 
-    def _init_staff_connection(self):
-        pass
-
+    @property
+    def _warriors(self) -> List[WarriorAnt]:
+        return self.get_hired_ants(AntTypes.WARRIOR)
+    
+    def _init_staff(self):
+        super()._init_staff()
+        for ant in self._warriors:
+            ant.on_saying('prepared', partial(self._on_warrior_prepared, ant))
+            ant.on_saying('nest_destroyed', self._on_nest_destroyed)
+    
     def _start_operation(self):
-        pass
+        super()._start_operation()
+        self._prepare_step()
+    
+    def _prepare_step(self):
+        for ant in self._warriors:
+            ant.prepare_for_operation('prepared')
+
+    def _on_warrior_prepared(self, ant: WarriorAnt):
+        self._write_flag(f'warrior_{ant.id}_prepared', True)
+        if self._check_are_all_warriors_prepared():
+            self._attack_step()
+
+    def _check_are_all_warriors_prepared(self):
+        for ant in self._warriors:
+            if not self._read_flag(f'warrior_{ant.id}_prepared'):
+                return False
+        return True
+    
+    def _attack_step(self):
+        for ant in self._warriors:
+            ant.attack_nest(nest=self._nest, sayback='nest_destroyed')
+
+    def _on_nest_destroyed(self):
+        for ant in self._warriors:
+            ant.leave_operation()
+        self._mark_as_done()
+    
+    
+
+    

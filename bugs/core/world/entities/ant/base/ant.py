@@ -23,6 +23,10 @@ class Ant(LiveEntity):
     def ant_type(self):
         return self._ant_type
     
+    @property
+    def home_nest(self):
+        return self._mind.home_nest
+    
     def feed_myself(self, sayback: str = None):
         self._mind.feed_myself(sayback)
     
@@ -37,6 +41,9 @@ class Ant(LiveEntity):
 
     def build_nest(self, nest: Nest, sayback: str = None):
         self._mind.build_nest(nest=nest, sayback=sayback)
+
+    def attack_nest(self, nest: Nest, sayback: str = None):
+        self._mind.attack_nest(nest=nest, sayback=sayback)
 
     def to_public_json(self):
         json = super().to_public_json()

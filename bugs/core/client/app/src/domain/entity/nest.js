@@ -11,7 +11,8 @@ class Nest extends Entity {
         this.storedCalories = storedCalories;
         this.larvae = larvae;
         this.larvaPlacesCount = larvaPlacesCount;
-        this.isBuilt = isBuilt
+
+        this._setIsBuilt(isBuilt)
     }
 
     playAction(action) {
@@ -22,6 +23,8 @@ class Nest extends Entity {
                 return this._playLarvaeChanged(action);
             case ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
                 return this._playBuildStatusChanged(action);
+            case ACTION_TYPES.ENTITY_DIED:
+                return this._playNestDestroyed(action);
             default:
                 throw 'unknown type of action'
         }
@@ -51,9 +54,22 @@ class Nest extends Entity {
     }
 
     _playBuildStatusChanged(action) {
-        this.isBuilt = action.actionData.is_built;
-        this.emit('buildStatusChanged');
+        this._setIsBuilt(action.actionData.is_built)
         return Promise.resolve();
+    }
+
+    _playNestDestroyed(action) {
+        this._setState('destroyed');
+        return new Promise((res) => {
+            setTimeout(() => {
+                this.die();
+                res();
+            }, 5000)
+        });
+    }
+
+    _setIsBuilt(isBuilt) {
+        this._setState(isBuilt ? 'built' : 'building');
     }
 
 }

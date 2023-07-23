@@ -1,15 +1,19 @@
 from core.world.utils.event_emiter import EventEmitter
 from .operation.operation import Operation
-from .colony_ants_collection import ColonyAntsCollection
-from typing import List
+from core.world.entities.base.entity import Entity
+from core.world.entities.base.entity_types import EntityTypes
+from typing import List, Callable
+from core.world.entities.nest.nest import Nest
+from core.world.entities.map.map import Map
+from core.world.entities.ant.base.ant import Ant
 
 class Colony:
 
-    def __init__(self, id: int, event_bus: EventEmitter, owner_id: int, colony_ants_collection: ColonyAntsCollection, operations: List[Operation] = None):
+    def __init__(self, id: int, event_bus: EventEmitter, owner_id: int, map: Map, operations: List[Operation] = None):
         self._id = id
         self._event_bus = event_bus
         self._owner_id = owner_id
-        self._colony_ants_collection = colony_ants_collection
+        self._map = map
         self._operations = operations or []
         self._has_changes = False
 
@@ -17,6 +21,7 @@ class Colony:
             self._listen_operation(operation)
 
         event_bus.add_listener('step_start', self._on_start_step)
+        event_bus.add_listener('entity_died', self._on_entity_died)
 
     @property
     def id(self):
@@ -70,7 +75,7 @@ class Colony:
                 self._hire_for_operation(operation)
 
     def _hire_for_operation(self, operation: Operation):
-        for ant in self._colony_ants_collection.ants:
+        for ant in self._map.get_ants_from_colony(self._id):
             if not operation.is_hiring:
                 return
             hiring_types = operation.get_hiring_ant_types()
@@ -107,4 +112,23 @@ class Colony:
     def _emit_colony_change(self):
         self._event_bus.emit(f'colony:{self.id}:changed')
         self._has_changes = False
+
+    def _on_entity_died(self, entity: Entity):
+        if entity.type == EntityTypes.NEST and entity.from_colony == self._id:
+            self._on_colony_nest_destroyed(entity)
+
+    def _on_colony_nest_destroyed(self, destroyed_nest: Nest):
+        remaining_nests_filter: Callable[[Nest], bool] = lambda entity: entity.id != destroyed_nest.id
+        remaining_nests = self._map.get_nests_from_colony(self.id, remaining_nests_filter)
+        ants_from_destoyed_nest_filter: Callable[[Ant], bool] = lambda ant: ant.home_nest.id == destroyed_nest.id
+        ants_from_destroyed_nest = self._map.get_ants_from_colony(self.id, ants_from_destoyed_nest_filter)
+        
+        if (len(remaining_nests) > 0):
+            relocate_nest = remaining_nests[0]
+            for ant in ants_from_destroyed_nest:
+                ant.relocate_to_nest(relocate_nest)
+        else:
+            for ant in ants_from_destroyed_nest:
+                ant.die()
+        
 

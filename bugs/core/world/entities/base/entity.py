@@ -51,6 +51,11 @@ class Entity(ABC):
     @property
     def from_colony(self):
         return self._from_colony
+    
+    def damage(self, damage: int):
+        if not self.is_died:
+            self.hp -= damage if self.hp > damage else self.hp
+        return self.is_died
 
     def born(self):
         self._handle_action('entity_born', { 'entity': self.to_public_json() })

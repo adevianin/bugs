@@ -12,6 +12,7 @@ from core.world.entities.ant.base.thoughts.prepare_for_opertation_thought import
 from core.world.entities.ant.base.thoughts.found_nest_thought import FoundNestThought
 from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestThought
 from core.world.entities.ant.warrior.thoughts.patrolling_territory_thought import PatrollingTerritoryThought
+from core.world.entities.ant.base.thoughts.attack_nest import AttackNestThought
 
 class ThoughtFactory:
 
@@ -47,6 +48,9 @@ class ThoughtFactory:
     
     def build_patroling_teritory(self, searching_walk_thought: SearchingWalkThought, flags: dict = None, sayback: str = None):
         return PatrollingTerritoryThought(search_walk_thought=searching_walk_thought, flags=flags, sayback=sayback)
+    
+    def build_attack_nest_thought(self, nest: Nest, flags: dict = None, sayback: str = None):
+        return AttackNestThought(nest=nest, flags=flags, sayback=sayback)
     
     def build_feed_myself_full(self, home_nest: Nest, sayback: str = None):
         searching_walk_thought = self.build_searching_walk_thought(home_nest.position, home_nest.area)

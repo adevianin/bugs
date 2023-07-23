@@ -37,6 +37,10 @@ class AntMind(Mind):
     def build_nest(self, nest: Nest, sayback: str):
         thought = self._thought_factory.build_build_nest_thought(building_nest=nest, sayback=sayback)
         self._register_thought(thought)
+
+    def attack_nest(self, nest: Nest, sayback: str):
+        thought = self._thought_factory.build_attack_nest_thought(nest=nest, sayback=sayback)
+        self._register_thought(thought)
     
     def _calc_assemble_point(self):
         return Point(self.home_nest.position.x, self.home_nest.position.y + 40)

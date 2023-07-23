@@ -694,7 +694,8 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this.storedCalories = storedCalories;
         this.larvae = larvae;
         this.larvaPlacesCount = larvaPlacesCount;
-        this.isBuilt = isBuilt
+
+        this._setIsBuilt(isBuilt)
     }
 
     playAction(action) {
@@ -705,6 +706,8 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playLarvaeChanged(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
                 return this._playBuildStatusChanged(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_DIED:
+                return this._playNestDestroyed(action);
             default:
                 throw 'unknown type of action'
         }
@@ -734,9 +737,22 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     _playBuildStatusChanged(action) {
-        this.isBuilt = action.actionData.is_built;
-        this.emit('buildStatusChanged');
+        this._setIsBuilt(action.actionData.is_built)
         return Promise.resolve();
+    }
+
+    _playNestDestroyed(action) {
+        this._setState('destroyed');
+        return new Promise((res) => {
+            setTimeout(() => {
+                this.die();
+                res();
+            }, 5000)
+        });
+    }
+
+    _setIsBuilt(isBuilt) {
+        this._setState(isBuilt ? 'built' : 'building');
     }
 
 }
@@ -3202,38 +3218,54 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     constructor(entity, entityContainer) {
         super(entity, entityContainer);
 
-        this._built_nest_sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture('nest.png'));
-        this._built_nest_sprite.anchor.set(0.5);
-        entityContainer.addChild(this._built_nest_sprite);
-        this._built_nest_sprite.eventMode = 'static';
-        this._built_nest_sprite.x = this._entity.position.x;
-        this._built_nest_sprite.y = this._entity.position.y;
+        this._render();
 
-        this._building_nest_sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture('nest_building.png'));
-        this._building_nest_sprite.anchor.set(0.5);
-        entityContainer.addChild(this._building_nest_sprite);
-        this._building_nest_sprite.eventMode = 'static';
-        this._building_nest_sprite.x = this._entity.position.x;
-        this._building_nest_sprite.y = this._entity.position.y;
+        this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderState.bind(this));
+    }
 
-        if (this.$domainFacade.isNestMine(entity)) {
-            this._built_nest_sprite.on('pointerdown', this._onClick.bind(this));
+    _render() {
+        this._nestContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._entityContainer.addChild(this._nestContainer);
+
+        this._builtNestSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture('nest.png'));
+        this._builtNestSprite.anchor.set(0.5);
+        this._builtNestSprite.eventMode = 'static';
+        this._builtNestSprite.x = this._entity.position.x;
+        this._builtNestSprite.y = this._entity.position.y;
+        this._nestContainer.addChild(this._builtNestSprite);
+
+        this._buildingNestSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture('nest_building.png'));
+        this._buildingNestSprite.anchor.set(0.5);
+        this._buildingNestSprite.eventMode = 'static';
+        this._buildingNestSprite.x = this._entity.position.x;
+        this._buildingNestSprite.y = this._entity.position.y;
+        this._nestContainer.addChild(this._buildingNestSprite);
+
+        this._destroyedNestSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture('nest_destroyed.png'));
+        this._destroyedNestSprite.anchor.set(0.5);
+        this._destroyedNestSprite.x = this._entity.position.x;
+        this._destroyedNestSprite.y = this._entity.position.y;
+        this._nestContainer.addChild(this._destroyedNestSprite);
+
+        if (this.$domainFacade.isNestMine(this._entity)) {
+            this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
         }
 
-        this._unbindBuildStatusChangedListener = this.entity.on('buildStatusChanged', this._renderBuildState.bind(this));
-
-        this._renderBuildState();
+        this._renderState();
     }
 
     remove() {
-        this._unbindBuildStatusChangedListener();
+        this._unbindStateChangeListener();
+        this._entityContainer.removeChild(this._nestContainer);
         super.remove();
     }
 
-    _renderBuildState() {
-        console.log(1);
-        this._building_nest_sprite.renderable = !this.entity.isBuilt;
-        this._built_nest_sprite.renderable = this.entity.isBuilt;
+    _renderState() {
+        let state = this._entity.state;
+
+        this._builtNestSprite.renderable = state == 'built';
+        this._buildingNestSprite.renderable = state == 'building';
+        this._destroyedNestSprite.renderable = state == 'destroyed';
     }
 
     _onClick() {
