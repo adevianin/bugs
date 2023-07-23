@@ -71,11 +71,11 @@ class Entity(ABC):
             'from_colony': self._from_colony
         }
     
-    def handle_action(self, action_type: str, action_data: dict = None):
+    def _handle_action(self, action_type: str, action_data: dict = None):
         self._event_bus.emit('action_occurred', Action.build_action(self.id, action_type, action_data))
 
     def born(self):
-        self.handle_action('entity_born', { 'entity': self.to_public_json() })
+        self._handle_action('entity_born', { 'entity': self.to_public_json() })
 
     def die(self):
         self.hp = 0
@@ -83,6 +83,6 @@ class Entity(ABC):
     def _handle_dieing(self):
         self.toggle_hidden(True)
         self._event_bus.emit('entity_died', self)
-        self.handle_action('entity_died')
+        self._handle_action('entity_died')
 
     

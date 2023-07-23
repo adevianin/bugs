@@ -106,17 +106,17 @@ class Nest(PlainEntity):
         self._emit_larvae_changed()
 
     def _emit_stored_calories_changed(self):
-        self.handle_action('nest_stored_calories_changed', {
+        self._handle_action('nest_stored_calories_changed', {
             'stored_calories': self._stored_calories
         })
 
     def _emit_larvae_changed(self):
-        self.handle_action('nest_larvae_changed', {
+        self._handle_action('nest_larvae_changed', {
             'larvae': self._larvae_to_public_json()
         })
 
     def _emit_building_status_changed(self):
-        self.handle_action('nest_build_status_changed', {
+        self._handle_action('nest_build_status_changed', {
             'is_built': self.is_built
         })
     

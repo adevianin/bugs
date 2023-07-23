@@ -128,7 +128,7 @@ class LiveEntity(Entity):
         self._say_listener_unsubsribers = []
 
     def _on_body_walk(self, position):
-        self.handle_action('entity_walk', { 
+        self._handle_action('entity_walk', { 
             'position': {
                 'x': position.x,
                 'y': position.y
@@ -136,15 +136,15 @@ class LiveEntity(Entity):
         })
 
     def _on_body_eats_food(self):
-        self.handle_action('entity_eat_food')
+        self._handle_action('entity_eat_food')
 
     def _on_got_in_nest(self, nest: Nest):
-        self.handle_action('entity_got_in_nest', {
+        self._handle_action('entity_got_in_nest', {
             'nest_id': nest.id
         })
 
     def _on_got_out_of_nest(self):
-        self.handle_action('entity_got_out_of_nest')
+        self._handle_action('entity_got_out_of_nest')
 
     def _on_zero_hp(self):
         self._handle_dieing()
