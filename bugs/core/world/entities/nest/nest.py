@@ -7,8 +7,8 @@ from core.world.entities.ant.base.larva import Larva
 
 class Nest(PlainEntity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, position: Point, from_colony: int, hp: int, larvae: list[Larva], larva_places_count: int, stored_calories: int, area: int, build_progress: int):
-        super().__init__(event_bus, id, EntityTypes.NEST, from_colony, hp, position)
+    def __init__(self, events: EventEmitter, id: int, position: Point, from_colony: int, hp: int, larvae: list[Larva], larva_places_count: int, stored_calories: int, area: int, build_progress: int):
+        super().__init__(events, id, EntityTypes.NEST, from_colony, hp, position)
         self._area = area
         self._stored_calories = stored_calories
         self._larvae = larvae
@@ -101,22 +101,26 @@ class Nest(PlainEntity):
 
         for larva in larvae_ready_to_born:
             self._larvae.remove(larva)
-            self._event_bus.emit('ant_birth_request', larva, self)
+            self.events.emit('birth_request', {
+                'entity_type': EntityTypes.ANT,
+                'nest': self,
+                'larva': larva
+            })
         
         self._emit_larvae_changed()
 
     def _emit_stored_calories_changed(self):
-        self._handle_action('nest_stored_calories_changed', {
+        self._emit_action('nest_stored_calories_changed', {
             'stored_calories': self._stored_calories
         })
 
     def _emit_larvae_changed(self):
-        self._handle_action('nest_larvae_changed', {
+        self._emit_action('nest_larvae_changed', {
             'larvae': self._larvae_to_public_json()
         })
 
     def _emit_building_status_changed(self):
-        self._handle_action('nest_build_status_changed', {
+        self._emit_action('nest_build_status_changed', {
             'is_built': self.is_built
         })
     

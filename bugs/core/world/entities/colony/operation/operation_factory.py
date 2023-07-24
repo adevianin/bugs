@@ -9,11 +9,8 @@ from core.world.entities.nest.nest import Nest
 
 class OperationFactory():
 
-    def __init__(self, nest_factory: NestFactory):
-        self._nest_factory = nest_factory
-
     def build_build_new_nest_operation(self, building_site: Point, id: int = None, hired_ants: List[Ant] = None, flags: dict = None):
-        return BuildNewNestOperation(EventEmitter(), id, hired_ants, flags, building_site, self._nest_factory)
+        return BuildNewNestOperation(EventEmitter(), id, hired_ants, flags, building_site)
     
     def build_destroy_nest_operation(self, nest: Nest, id: int = None, hired_ants: List[Ant] = None, flags: dict = None):
         return DestroyNestOperation(EventEmitter(), id, hired_ants, flags, nest)

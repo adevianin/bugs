@@ -12,8 +12,8 @@ class Ant(LiveEntity):
     _mind: AntMind
     _body: AntBody
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ant_type: AntTypes, from_colony: int, mind: AntMind, body: AntBody, is_in_operation: bool):
-        super().__init__(event_bus, events, id, EntityTypes.ANT, from_colony, mind, body, is_in_operation)
+    def __init__(self, events: EventEmitter, id: int, ant_type: AntTypes, from_colony: int, mind: AntMind, body: AntBody, is_in_operation: bool):
+        super().__init__(events, id, EntityTypes.ANT, from_colony, mind, body, is_in_operation)
         self._ant_type = ant_type
         
         self._body.events.add_listener('food_picked', self._on_food_picked)
@@ -55,9 +55,9 @@ class Ant(LiveEntity):
         return json
     
     def _on_food_picked(self, food_id):
-        self._handle_action('ant_picked_up_food', {
+        self._emit_action('ant_picked_up_food', {
             'food_id': food_id
         })
 
     def _on_food_gave(self):
-        self._handle_action('ant_gave_picked_food')
+        self._emit_action('ant_gave_picked_food')

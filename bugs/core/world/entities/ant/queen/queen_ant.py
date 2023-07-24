@@ -10,5 +10,5 @@ class QueenAnt(Ant):
     _mind: QueenAntMind
     _body: QueenAntBody
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony: int, mind: QueenAntMind, body: QueenAntBody, is_in_operation: bool):
-        super().__init__(event_bus, events, id, AntTypes.QUEEN, from_colony, mind, body, is_in_operation)
+    def __init__(self, events: EventEmitter, id: int, from_colony: int, mind: QueenAntMind, body: QueenAntBody, is_in_operation: bool):
+        super().__init__(events, id, AntTypes.QUEEN, from_colony, mind, body, is_in_operation)

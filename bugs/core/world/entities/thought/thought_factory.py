@@ -16,9 +16,6 @@ from core.world.entities.ant.base.thoughts.attack_nest import AttackNestThought
 
 class ThoughtFactory:
 
-    def __init__(self, event_bus: EventEmitter):
-        self._event_bus = event_bus
-
     def build_go_in_nest_thought(self, nest: Nest, flags: dict = None, sayback: str = None):
         return GoInNestThought(flags=flags, sayback=sayback, nest=nest)
     
@@ -41,7 +38,7 @@ class ThoughtFactory:
         return PrepareForOperationThought(feed_myself_thought=feed_myself_thought, assemble_point=assemble_point, flags=flags, sayback=sayback)
     
     def build_found_nest_thought(self, building_site: Point, from_colony_id: int, found_nest: Nest = None, flags: dict = None, sayback: str = None):
-        return FoundNestThought(event_bus=self._event_bus, building_site=building_site, from_colony_id=from_colony_id, found_nest=found_nest, flags=flags, sayback=sayback)
+        return FoundNestThought(building_site=building_site, from_colony_id=from_colony_id, found_nest=found_nest, flags=flags, sayback=sayback)
     
     def build_build_nest_thought(self, building_nest: Nest, flags: dict = None, sayback: str = None):
         return BuildNestThought(building_nest=building_nest, flags=flags, sayback=sayback)

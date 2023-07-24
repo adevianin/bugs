@@ -30,28 +30,21 @@ from core.world.entities.colony.operation.operation_factory import OperationFact
 from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.world_facade import WorldFacade
 from core.world.entities.map.map_factory import MapFactory
-from core.world.entities.birthers.ant_birther import AntBirther
-from core.world.entities.birthers.food_birther import FoodBirther
-from core.world.entities.birthers.nest_birther import NestBirther
 
 def start():
     event_bus = EventEmitter()
 
-    thought_factory = ThoughtFactory(event_bus)
-    ant_factory = AntFactory(event_bus, thought_factory)
-    nest_factory = NestFactory(event_bus)
-    food_factory = FoodFactory(event_bus)
+    thought_factory = ThoughtFactory()
+    ant_factory = AntFactory(thought_factory)
+    nest_factory = NestFactory()
+    food_factory = FoodFactory()
     colony_factory = ColonyFactory(event_bus)
-    operation_factory = OperationFactory(nest_factory)
-    map_factory = MapFactory(event_bus)
+    operation_factory = OperationFactory()
+    map_factory = MapFactory(event_bus, ant_factory, food_factory, nest_factory)
     world_factory = WorldFactory(event_bus)
     
     colony_service = ColonyService(operation_factory)
     nest_service = NestService()
-
-    ant_birther = AntBirther(event_bus, ant_factory)
-    food_birther = FoodBirther(event_bus, food_factory)
-    nest_birther = NestBirther(event_bus, nest_factory)
 
     larva_serializer = LarvaSerializer()
     nest_serializer = NestSerializer(larva_serializer)
@@ -77,10 +70,6 @@ def start():
     world_facade = WorldFacade.init(event_bus, world_repository, colony_service, nest_service)
 
     world_facade.init_world()
-
-    ant_birther.set_map(world_facade.world.map)
-    food_birther.set_map(world_facade.world.map)
-    nest_birther.set_map(world_facade.world.map)
 
     colony_service.set_world(world_facade.world)
     nest_service.set_world(world_facade.world)

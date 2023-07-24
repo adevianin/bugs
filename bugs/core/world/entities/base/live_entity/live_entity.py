@@ -10,8 +10,8 @@ from typing import List
 
 class LiveEntity(Entity):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, from_colony: int, mind: Mind, body: Body, is_in_operation: bool):
-        super().__init__(event_bus, id, type, from_colony)
+    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony: int, mind: Mind, body: Body, is_in_operation: bool):
+        super().__init__(events, id, type, from_colony)
         self._mind = mind
         self._body = body
         self._events = events
@@ -125,7 +125,7 @@ class LiveEntity(Entity):
         self._say_listener_unsubsribers = []
 
     def _on_body_walk(self, position):
-        self._handle_action('entity_walk', { 
+        self._emit_action('entity_walk', { 
             'position': {
                 'x': position.x,
                 'y': position.y
@@ -133,15 +133,15 @@ class LiveEntity(Entity):
         })
 
     def _on_body_eats_food(self):
-        self._handle_action('entity_eat_food')
+        self._emit_action('entity_eat_food')
 
     def _on_got_in_nest(self, nest: Nest):
-        self._handle_action('entity_got_in_nest', {
+        self._emit_action('entity_got_in_nest', {
             'nest_id': nest.id
         })
 
     def _on_got_out_of_nest(self):
-        self._handle_action('entity_got_out_of_nest')
+        self._emit_action('entity_got_out_of_nest')
 
     def _on_zero_hp(self):
         self._handle_dieing()

@@ -1,14 +1,15 @@
 from core.world.entities.thought.thought import Thought
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.utils.point import Point
-from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.nest.nest import Nest
+from core.world.entities.ant.base.ant_body import AntBody
 
 class FoundNestThought(Thought):
 
-    def __init__(self, event_bus: EventEmitter, building_site: Point, from_colony_id: int, found_nest: Nest, flags: dict, sayback: str):
+    _body: AntBody
+
+    def __init__(self, building_site: Point, from_colony_id: int, found_nest: Nest, flags: dict, sayback: str):
         super().__init__(type=ThoughtTypes.FOUND_NEST, flags=flags, sayback=sayback)
-        self._event_bus = event_bus
         self._from_colony_id = from_colony_id
         self._building_site = building_site
         self._found_nest = found_nest
@@ -34,4 +35,4 @@ class FoundNestThought(Thought):
                 'nest': self._found_nest
             })
         else:
-            self._event_bus.emit('nest_birth_request', self._building_site, self._from_colony_id, on_nest_born)
+            self._body.found_nest(self._building_site, self._from_colony_id, on_nest_born)

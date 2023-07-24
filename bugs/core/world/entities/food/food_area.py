@@ -9,8 +9,8 @@ import random
 
 class FoodArea(PlainEntity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, position: Point, hp: int, size: Size, fertility: int, food_type: FoodTypes):
-        super().__init__(event_bus, id, EntityTypes.FOOD_AREA, None, hp, position)
+    def __init__(self, events: EventEmitter, id: int, position: Point, hp: int, size: Size, fertility: int, food_type: FoodTypes):
+        super().__init__(events, id, EntityTypes.FOOD_AREA, None, hp, position)
         self._size = size
         self._fertility = fertility
         self._calories = 0
@@ -36,7 +36,10 @@ class FoodArea(PlainEntity):
                 spawn_point = self._generate_spawn_point()
                 preborn_food = PrebornFood.build_preborn_food(spawn_point, self._calories, self._food_type)
                 self._calories = 0
-                self._event_bus.emit('food_birth_request', preborn_food)
+                self.events.emit('birth_request', {
+                    'entity_type': EntityTypes.FOOD,
+                    'preborn_food': preborn_food
+                })
 
     def _generate_spawn_point(self):
         half_width = self._size.width / 2

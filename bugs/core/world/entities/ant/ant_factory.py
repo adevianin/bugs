@@ -7,6 +7,7 @@ from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.entities.food.food import Food
+from core.world.entities.ant.base.larva import Larva
 
 from .worker.worker_ant_body import WorkerAntBody
 from .worker.worker_ant_mind import WorkerAntMind
@@ -22,9 +23,11 @@ from .queen.queen_ant import QueenAnt
 
 class AntFactory():
 
-    def __init__(self, event_bus: EventEmitter, thought_factory: ThoughtFactory):
-        self._event_bus = event_bus
+    def __init__(self, thought_factory: ThoughtFactory):
         self._thought_factory = thought_factory
+
+    def build_new_ant(self, larva: Larva, nest: Nest):
+        return self.build_ant(None, nest.from_colony, larva.ant_type, larva.dna_profile, nest.position, 100, nest, None, None, None, True, False)
 
     def build_ant(self, id: int, from_colony: int, ant_type: AntTypes, dna_profile: str, position: Point, hp: int, nest: Nest, located_in_nest: Nest, memory: Memory, picked_food: Food, is_auto_thought_generation: bool, is_in_operation: bool) -> Ant:
         match ant_type:
@@ -43,7 +46,7 @@ class AntFactory():
         memory = memory if memory else Memory()
         body = WarriorAntBody(events, dna_profile, position, hp, located_in_nest, picked_food)
         mind = WarrirorAntMind(events, body, self._thought_factory, world_interactor, memory, is_auto_thought_generation, nest)
-        ant = WarriorAnt(self._event_bus, events, id, from_colony, mind, body, is_in_operation)
+        ant = WarriorAnt(events, id, from_colony, mind, body, is_in_operation)
 
         return ant
     
@@ -53,7 +56,7 @@ class AntFactory():
         memory = memory if memory else Memory()
         body = WorkerAntBody(events, dna_profile, position, hp, located_in_nest, picked_food)
         mind = WorkerAntMind(events, body, self._thought_factory, world_interactor, memory, is_auto_thought_generation, nest)
-        ant = WorkerAnt(self._event_bus, events, id, from_colony, mind, body, is_in_operation)
+        ant = WorkerAnt(events, id, from_colony, mind, body, is_in_operation)
 
         return ant
     
@@ -63,7 +66,7 @@ class AntFactory():
         memory = memory if memory else Memory()
         body = QueenAntBody(events, dna_profile, position, hp, located_in_nest, picked_food)
         mind = QueenAntMind(events, body, self._thought_factory, world_interactor, memory, is_auto_thought_generation, nest)
-        ant = QueenAnt(self._event_bus, events, id, from_colony, mind, body, is_in_operation)
+        ant = QueenAnt(events, id, from_colony, mind, body, is_in_operation)
 
         return ant
     

@@ -1,5 +1,4 @@
 from core.world.utils.point import Point
-from core.world.entities.nest.nest_factory import NestFactory
 from .operation import Operation
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.utils.event_emiter import EventEmitter
@@ -12,10 +11,9 @@ from .marker_types import MarkerTypes
 
 class BuildNewNestOperation(Operation):
     
-    def __init__(self, events: EventEmitter, id: int, hired_ants: List[Ant], flags: dict, building_site: Point, nest_factory: NestFactory):
+    def __init__(self, events: EventEmitter, id: int, hired_ants: List[Ant], flags: dict, building_site: Point):
         super().__init__(events, id, OperationTypes.BUILD_NEW_NEST, hired_ants, flags)
         self._building_site = building_site
-        self._nest_factory = nest_factory
         self._name = 'новий мурашник'
         self._open_vacancies(AntTypes.WORKER, 1)
         self._open_vacancies(AntTypes.QUEEN, 1)

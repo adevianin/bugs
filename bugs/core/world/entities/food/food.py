@@ -6,8 +6,8 @@ from .food_types import FoodTypes
 
 class Food(PlainEntity):
 
-    def __init__(self, event_bus: EventEmitter, id: int, position: Point, hp: int, calories: int, food_type: FoodTypes, food_variety: int, is_picked: bool):
-        super().__init__(event_bus, id, EntityTypes.FOOD, None, hp, position)
+    def __init__(self, events: EventEmitter, id: int, position: Point, hp: int, calories: int, food_type: FoodTypes, food_variety: int, is_picked: bool):
+        super().__init__(events, id, EntityTypes.FOOD, None, hp, position)
         self._calories = calories
         self._food_type = food_type
         self._food_variety = food_variety
@@ -34,7 +34,7 @@ class Food(PlainEntity):
     
     def pickup(self):
         self._is_picked = True
-        self._handle_action('food_was_picked_up')
+        self._emit_action('food_was_picked_up')
 
     @calories.setter
     def calories(self, value):

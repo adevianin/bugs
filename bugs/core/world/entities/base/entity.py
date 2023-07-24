@@ -6,8 +6,8 @@ from core.world.entities.action import Action
 
 class Entity(ABC):
 
-    def __init__(self, event_bus: EventEmitter, id: int, type: EntityTypes, from_colony: int):
-        self._event_bus: EventEmitter = event_bus
+    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony: int):
+        self.events = events
         self._id: int = id
         self._type: EntityTypes = type
         self._from_colony = from_colony
@@ -58,7 +58,7 @@ class Entity(ABC):
         return self.is_died
 
     def born(self):
-        self._handle_action('entity_born', { 'entity': self.to_public_json() })
+        self._emit_action('entity_born', { 'entity': self.to_public_json() })
 
     def die(self):
         self.hp = 0
@@ -74,11 +74,10 @@ class Entity(ABC):
             'from_colony': self._from_colony
         }
     
-    def _handle_action(self, action_type: str, action_data: dict = None):
-        self._event_bus.emit('action_occurred', Action.build_action(self.id, action_type, action_data))
+    def _emit_action(self, action_type: str, action_data: dict = None):
+        self.events.emit('action_occurred', Action.build_action(self.id, action_type, action_data))
 
     def _handle_dieing(self):
-        self._event_bus.emit('entity_died', self)
-        self._handle_action('entity_died')
-
-    
+        self._emit_action('entity_died')
+        self.events.emit('died')
+        self.events.emit('ready_to_remove')

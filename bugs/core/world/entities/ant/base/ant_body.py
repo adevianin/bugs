@@ -3,6 +3,7 @@ from core.world.utils.point import Point
 from core.world.entities.food.food import Food
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.nest.nest import Nest
+from core.world.entities.base.entity_types import EntityTypes
 
 class AntBody(Body):
 
@@ -36,6 +37,14 @@ class AntBody(Body):
         nest.take_food(self._picked_food)
         self._picked_food = None
         self.events.emit('picked_food_gave')
+
+    def found_nest(self, position: Point, colony_id: int, callback):
+        self.events.emit('birth_request', {
+            'entity_type': EntityTypes.NEST,
+            'position': position,
+            'colony_id': colony_id,
+            'callback': callback
+        })
 
     def damage_nest(self, nest: Nest):
         nest.damage(10)

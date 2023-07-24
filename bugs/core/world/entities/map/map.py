@@ -9,30 +9,37 @@ from core.world.id_generator import IdGenerator
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.nest.nest import Nest
+from core.world.entities.action import Action
+from core.world.entities.ant.ant_factory import AntFactory
+from core.world.entities.food.food_factory import FoodFactory
+from core.world.entities.nest.nest_factory import NestFactory
 
 from typing import List
 import random, math
+from functools import partial
 
 class Map:
 
-    def __init__(self, event_bus: EventEmitter, size: Size, entities_collection: EntityCollection, id_generator: IdGenerator):
+    def __init__(self, event_bus: EventEmitter, size: Size, entities_collection: EntityCollection, id_generator: IdGenerator, ant_factory: AntFactory, food_factory: FoodFactory, nest_factory: NestFactory):
         self._event_bus = event_bus
         self._size = size
         self._entities_collection = entities_collection
         self._id_generator = id_generator
+        self._ant_factory = ant_factory
+        self._food_factory = food_factory
+        self._nest_factory = nest_factory
 
-        self._event_bus.add_listener('entity_died', self._on_entity_died)
+        for entity in self._entities_collection.get_entities():
+            self._listen_entity(entity)
 
     @property
     def size(self):
         return self._size
     
-    def add_new_entity(self, entity: Entity):
+    def _add_new_entity(self, entity: Entity):
         entity.id = self._id_generator.generate_id()
         self._entities_collection.add_entity(entity)
-
-    def delete_entity(self, entity: Entity):
-        self._entities_collection.delete_entity(entity.id)
+        self._listen_entity(entity)
 
     def get_entity_by_id(self, id: int):
         return self._entities_collection.get_entity_by_id(id)
@@ -65,9 +72,36 @@ class Map:
         for ant in ants:
             entities_in_sight = self._find_entities_in_sight(ant)
             ant.mind.set_entities_in_sight(entities_in_sight)
-    
+
+    def _listen_entity(self, entity: Entity):
+        entity.events.once('ready_to_remove', partial(self._on_entity_died, entity))
+        entity.events.add_listener('action_occurred', self._on_entity_action_occured)
+        entity.events.add_listener('birth_request', self._on_entity_birth_request)
+
     def _on_entity_died(self, entity: Entity):
-        self.delete_entity(entity)
+        self._entities_collection.delete_entity(entity.id)
+        entity.events.remove_all_listeners()
+
+    def _on_entity_action_occured(self, action: Action):
+        self._event_bus.emit('action_occurred', action)
+
+    def _on_entity_birth_request(self, request: dict):
+        new_entity: Entity = None
+        match(request['entity_type']):
+            case EntityTypes.ANT:
+                new_entity = self._ant_factory.build_new_ant(request['larva'], request['nest'])
+            case EntityTypes.FOOD:
+                new_entity = self._food_factory.build_new_food(request['preborn_food'])
+            case EntityTypes.NEST:
+                new_entity = self._nest_factory.build_new_nest(request['position'], request['colony_id'])
+            case _:
+                raise Exception('cant birth current entity type')
+
+        self._add_new_entity(new_entity)
+        new_entity.born()
+
+        if 'callback' in request:
+            request['callback'](new_entity)
 
     def _find_entities_in_sight(self, entity: LiveEntity):
         return self._find_entities_near(point=entity.position, max_distance=entity.body.sight_distance, exclude_entity_id=entity.id)

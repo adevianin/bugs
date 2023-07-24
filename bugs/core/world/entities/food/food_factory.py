@@ -9,16 +9,18 @@ import random
 
 class FoodFactory():
 
-    def __init__(self, event_bus: EventEmitter):
-        self._event_bus = event_bus
+    def build_new_food(self, preborn_food: PrebornFood):
+        return self.build_food(None, preborn_food.position, 100, preborn_food.calories, preborn_food.food_type, -1, False)
 
     def build_food(self, id: int, position: Point, hp: int, calories: int, type: FoodTypes, food_variety: int, is_picked: bool):
         if (food_variety == -1):
             food_variety = self._generate_variety(type)
-        return Food(self._event_bus, id, position, hp, calories, type, food_variety, is_picked) 
+        events = EventEmitter()
+        return Food(events, id, position, hp, calories, type, food_variety, is_picked) 
     
     def build_food_area(self, id: int, position: Point, hp: int, size: Size, fertility: int, food_type: FoodTypes):
-        return FoodArea(self._event_bus, id, position, hp, size, fertility, food_type)
+        events = EventEmitter()
+        return FoodArea(events, id, position, hp, size, fertility, food_type)
     
     def _generate_variety(self, food_type: FoodTypes):
         match food_type:
