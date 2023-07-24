@@ -40,6 +40,8 @@ class Ant extends Entity {
                 return this._playFoodPickingAction(action);
             case ACTION_TYPES.ANT_GAVE_PICKED_FOOD:
                 return this._playFoodGiving(action);
+            case ACTION_TYPES.ANT_DROPPED_PICKED_FOOD:
+                return this._playFoodDrop(action);
             case ACTION_TYPES.ENTITY_EAT_FOOD:
                 return this._playEatFoodAction(action);
             case ACTION_TYPES.ENTITY_DIED:
@@ -93,6 +95,15 @@ class Ant extends Entity {
     }
 
     _playFoodGiving(action) {
+        this._setState('standing');
+        return new Promise((res) => {
+            this.pickedFoodId = null;
+            this.emit('foodDroped')
+            res();
+        });
+    }
+
+    _playFoodDrop(action) {
         this._setState('standing');
         return new Promise((res) => {
             this.pickedFoodId = null;

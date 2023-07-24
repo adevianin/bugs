@@ -191,6 +191,7 @@ __webpack_require__.r(__webpack_exports__);
 const ACTION_TYPES = {
     ANT_PICKED_UP_FOOD: 'ant_picked_up_food',
     ANT_GAVE_PICKED_FOOD: 'ant_gave_picked_food',
+    ANT_DROPPED_PICKED_FOOD: 'ant_dropped_picked_food',
     ENTITY_EAT_FOOD: 'entity_eat_food',
     ENTITY_DIED: 'entity_died',
     ENTITY_BORN: 'entity_born',
@@ -198,6 +199,7 @@ const ACTION_TYPES = {
     ENTITY_GOT_IN_NEST: 'entity_got_in_nest',
     ENTITY_GOT_OUT_OF_NEST: 'entity_got_out_of_nest',
     FOOD_WAS_PICKED_UP: 'food_was_picked_up',
+    FOOD_WAS_DROPPED: 'food_was_dropped',
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
     NEST_LARVAE_CHANGED: 'nest_larvae_changed',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed'
@@ -264,6 +266,8 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playFoodPickingAction(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_GAVE_PICKED_FOOD:
                 return this._playFoodGiving(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_DROPPED_PICKED_FOOD:
+                return this._playFoodDrop(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_EAT_FOOD:
                 return this._playEatFoodAction(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_DIED:
@@ -317,6 +321,15 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     _playFoodGiving(action) {
+        this._setState('standing');
+        return new Promise((res) => {
+            this.pickedFoodId = null;
+            this.emit('foodDroped')
+            res();
+        });
+    }
+
+    _playFoodDrop(action) {
         this._setState('standing');
         return new Promise((res) => {
             this.pickedFoodId = null;
@@ -579,10 +592,17 @@ class Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         return this._is_picked;
     }
 
+    set is_picked(value) {
+        this._is_picked = value;
+        this.emit('isPickedChanged');
+    }
+
     playAction(action) {
         switch (action.type) {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_WAS_PICKED_UP:
                 return this._playFoodPickedUp(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_WAS_DROPPED:
+                return this._playFoodDrop(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_DIED:
                 return this._playEntityDied(action);
             default:
@@ -592,8 +612,16 @@ class Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _playFoodPickedUp(action) {
         return new Promise((res) => {
-            this._is_picked = true;
-            this.emit('food_picked_up');
+            this.is_picked = true;
+            res();
+        });
+    }
+    
+    _playFoodDrop(action) {
+        return new Promise((res) => {
+            this.is_picked = false;
+            let pos = action.actionData.position;
+            this.setPosition(pos.x, pos.y);
             res();
         });
     }
@@ -1087,9 +1115,6 @@ class MessageHandlerService {
                 break;
             case 'colony_changes':
                 this._worldService.updateColony(msg.colony);
-                break;
-            case 'test':
-                console.log(msg);
                 break;
             default: 
                 throw `unknown type of message "${ msg.type }"`
@@ -2700,12 +2725,19 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     _renderPickedFoodView() {
         if (!this._pickedFoodView) {
             let food = AntView.domainFacade.findEntityById(this._entity.pickedFoodId);
-            this._pickedFoodView = new _pickedFood__WEBPACK_IMPORTED_MODULE_2__.PickedFoodView(food, this._antContainer);
+            this._pickedFoodView = new _pickedFood__WEBPACK_IMPORTED_MODULE_2__.PickedFoodView(food, this._calcPickedFoodViewPosition(), this._antContainer);
         }
     }
 
     _renderPickedFoodPosition() {
-        this._pickedFoodView.entity.setPosition(this._entity.position.x, this._entity.position.y - 15);
+        this._pickedFoodView.setPosition(this._calcPickedFoodViewPosition());
+    }
+
+    _calcPickedFoodViewPosition() {
+        return {
+            x: this._entity.position.x, 
+            y: this._entity.position.y - 15
+        }
     }
 
     _renderAntPosition() {
@@ -2938,31 +2970,36 @@ class FoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     constructor(entity, entityContainer) {
         super(entity, entityContainer);
 
-        this.render(entityContainer);
+        this._render(entityContainer);
 
-        this._unbindFoodPickedUpListener = this._entity.on('food_picked_up', this._onFoodPickedUp.bind(this));
+        this._unbindFoodPickedUpListener = this._entity.on('isPickedChanged', this._renderIsPicked.bind(this));
+        this._unbindPosChangedListener = this._entity.on('positionChanged', this._renderPosition.bind(this));
     }
 
-    render(entityContainer) {
+    _render(entityContainer) {
         let textureName = `food_${this._entity.food_type}_${this._entity.food_variety}v.png`;
         this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(textureName));
-        if (!this._entity.is_picked) {
-            entityContainer.addChild(this._sprite);
-        }
         this._sprite.anchor.set(0.5);
-
-        this._sprite.x = this._entity.position.x;
-        this._sprite.y = this._entity.position.y;
+        entityContainer.addChild(this._sprite);
+        
+        this._renderPosition();
+        this._renderIsPicked();
     }
 
     remove() {
         this._unbindFoodPickedUpListener();
+        this._unbindPosChangedListener();
         super.remove();
         this._entityContainer.removeChild(this._sprite);
     }
 
-    _onFoodPickedUp() {
-        this.remove();
+    _renderIsPicked() {
+        this._sprite.renderable = !this._entity.is_picked;
+    }
+
+    _renderPosition() {
+        this._sprite.x = this._entity.position.x;
+        this._sprite.y = this._entity.position.y;
     }
 
 }
@@ -3296,25 +3333,35 @@ __webpack_require__.r(__webpack_exports__);
 
 class PickedFoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
 
-    constructor(entity, entityContainer) {
+    constructor(entity, position, entityContainer) {
         super(entity, entityContainer);
+        this._position = position;
 
         let textureName = `food_${this._entity.food_type}_${this._entity.food_variety}v.png`;
         if (entity.food_type == 'nectar') {
             textureName = 'food_nectar_picked.png';
         }
         this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(textureName));
-        entityContainer.addChild(this._sprite);
         this._sprite.anchor.set(0.5);
+        entityContainer.addChild(this._sprite);
 
         this._render();
 
         this._entity.on('positionChanged', this._render.bind(this));
     }
 
+    setPosition(position) {
+        this._position = position;
+        this._renderPosition();
+    }
+
     _render() {
-        this._sprite.x = this._entity.position.x;
-        this._sprite.y = this._entity.position.y;
+        this._renderPosition();
+    }
+
+    _renderPosition() {
+        this._sprite.x = this._position.x;
+        this._sprite.y = this._position.y;
     }
 
     remove() {

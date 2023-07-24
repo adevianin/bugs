@@ -37,6 +37,9 @@ class Thought(ABC):
     def delay(self):
         pass
 
+    def cancel(self):
+        pass
+
     def restart(self):
         self._is_done = False
         self._results = None

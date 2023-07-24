@@ -28,9 +28,6 @@ class MessageHandlerService {
             case 'colony_changes':
                 this._worldService.updateColony(msg.colony);
                 break;
-            case 'test':
-                console.log(msg);
-                break;
             default: 
                 throw `unknown type of message "${ msg.type }"`
         }

@@ -36,6 +36,16 @@ class Food(PlainEntity):
         self._is_picked = True
         self._emit_action('food_was_picked_up')
 
+    def drop(self, position: Point):
+        self._is_picked = False
+        self.position = position
+        self._emit_action('food_was_dropped', {
+            'position': {
+                'x': self.position.x,
+                'y': self.position.y
+            }
+        })
+
     @calories.setter
     def calories(self, value):
         if (value < 0):

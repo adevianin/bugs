@@ -18,6 +18,7 @@ class Ant(LiveEntity):
         
         self._body.events.add_listener('food_picked', self._on_food_picked)
         self._body.events.add_listener('picked_food_gave', self._on_food_gave)
+        self._body.events.add_listener('picked_food_dropped', self._on_food_dropped)
 
     @property
     def ant_type(self):
@@ -61,3 +62,6 @@ class Ant(LiveEntity):
 
     def _on_food_gave(self):
         self._emit_action('ant_gave_picked_food')
+
+    def _on_food_dropped(self):
+        self._emit_action('ant_dropped_picked_food')

@@ -26,4 +26,5 @@ class PatrollingTerritoryThought(Thought):
         self._searching_walk_thought.set_mind_parts(body=body, memory=memory, world_interactor=world_interactor)
 
     def _look_for_enemies(self):
-        print('looking for enemies')
+        pass
+        # print('looking for enemies')

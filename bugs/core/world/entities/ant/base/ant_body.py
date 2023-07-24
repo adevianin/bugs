@@ -8,7 +8,7 @@ from core.world.entities.base.entity_types import EntityTypes
 class AntBody(Body):
 
     def __init__(self, events: EventEmitter, dna_profile: str, position: Point, hp: int, located_in_nest: Nest, picked_food: Food):
-        super().__init__(events, dna_profile, position, 32, 100, located_in_nest, hp)
+        super().__init__(events, dna_profile, position, 32, 200, located_in_nest, hp)
         self._picked_food = picked_food
 
     @property
@@ -37,6 +37,11 @@ class AntBody(Body):
         nest.take_food(self._picked_food)
         self._picked_food = None
         self.events.emit('picked_food_gave')
+
+    def drop_picked_food(self):
+        self._picked_food.drop(Point(self.position.x, self.position.y))
+        self._picked_food = None
+        self.events.emit('picked_food_dropped')
 
     def found_nest(self, position: Point, colony_id: int, callback):
         self.events.emit('birth_request', {

@@ -3,12 +3,14 @@ from core.world.entities.nest.nest import Nest
 from .find_food_thought import FindFoodThought
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.food.food import Food
-from core.world.entities.base.live_entity.body import Body
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.thought.thought_types import ThoughtTypes
+from core.world.entities.ant.base.ant_body import AntBody
 
 class CollectFoodThought(Thought):
+
+    _body: AntBody
 
     def __init__(self, nest: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
         super().__init__(ThoughtTypes.COLLECT_FOOD, flags, sayback)
@@ -16,6 +18,8 @@ class CollectFoodThought(Thought):
         self._find_food_thought = find_food_thought
         self._go_home_thought = go_home_thought
         self._found_food = found_food
+
+        self._nest.events.once('died', self._on_nest_died)
 
     @property
     def nest_id(self):
@@ -77,7 +81,7 @@ class CollectFoodThought(Thought):
         else:
             return True
         
-    def set_mind_parts(self, body: Body, memory: Memory, world_interactor: WorldInteractor):
+    def set_mind_parts(self, body: AntBody, memory: Memory, world_interactor: WorldInteractor):
         super().set_mind_parts(body, memory, world_interactor)
         self._find_food_thought.set_mind_parts(body, memory, world_interactor)
         self._go_home_thought.set_mind_parts(body, memory, world_interactor)
@@ -90,6 +94,16 @@ class CollectFoodThought(Thought):
         self._reset_flags()
         self._find_food_thought.restart()
         self._go_home_thought.restart()
+
+    def cancel(self):
+        super().cancel()
+        if self._body.is_food_picked:
+            self._body.drop_picked_food()
+
+        self.mark_as_done()
+
+    def _on_nest_died(self):
+        self.cancel()
 
     def _reset_flags(self):
         self._flags = {

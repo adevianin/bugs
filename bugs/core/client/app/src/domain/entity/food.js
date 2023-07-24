@@ -23,10 +23,17 @@ class Food extends Entity {
         return this._is_picked;
     }
 
+    set is_picked(value) {
+        this._is_picked = value;
+        this.emit('isPickedChanged');
+    }
+
     playAction(action) {
         switch (action.type) {
             case ACTION_TYPES.FOOD_WAS_PICKED_UP:
                 return this._playFoodPickedUp(action);
+            case ACTION_TYPES.FOOD_WAS_DROPPED:
+                return this._playFoodDrop(action);
             case ACTION_TYPES.ENTITY_DIED:
                 return this._playEntityDied(action);
             default:
@@ -36,8 +43,16 @@ class Food extends Entity {
 
     _playFoodPickedUp(action) {
         return new Promise((res) => {
-            this._is_picked = true;
-            this.emit('food_picked_up');
+            this.is_picked = true;
+            res();
+        });
+    }
+    
+    _playFoodDrop(action) {
+        return new Promise((res) => {
+            this.is_picked = false;
+            let pos = action.actionData.position;
+            this.setPosition(pos.x, pos.y);
             res();
         });
     }

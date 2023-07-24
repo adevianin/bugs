@@ -81,12 +81,19 @@ class AntView extends EntityView {
     _renderPickedFoodView() {
         if (!this._pickedFoodView) {
             let food = AntView.domainFacade.findEntityById(this._entity.pickedFoodId);
-            this._pickedFoodView = new PickedFoodView(food, this._antContainer);
+            this._pickedFoodView = new PickedFoodView(food, this._calcPickedFoodViewPosition(), this._antContainer);
         }
     }
 
     _renderPickedFoodPosition() {
-        this._pickedFoodView.entity.setPosition(this._entity.position.x, this._entity.position.y - 15);
+        this._pickedFoodView.setPosition(this._calcPickedFoodViewPosition());
+    }
+
+    _calcPickedFoodViewPosition() {
+        return {
+            x: this._entity.position.x, 
+            y: this._entity.position.y - 15
+        }
     }
 
     _renderAntPosition() {
