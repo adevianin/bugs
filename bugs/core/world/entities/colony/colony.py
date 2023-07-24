@@ -21,7 +21,7 @@ class Colony:
             self._listen_operation(operation)
 
         event_bus.add_listener('step_start', self._on_start_step)
-        event_bus.add_listener('entity_died', self._on_entity_died)
+        self._map.events.add_listener('entity_died', self._on_entity_died)
 
     @property
     def id(self):
