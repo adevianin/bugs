@@ -9,8 +9,8 @@ import random
 
 class FoodFactory():
 
-    def build_new_food(self, preborn_food: PrebornFood):
-        return self.build_food(None, preborn_food.position, 100, preborn_food.calories, preborn_food.food_type, -1, False)
+    def build_new_food(self, id: int, preborn_food: PrebornFood):
+        return self.build_food(id, preborn_food.position, 100, preborn_food.calories, preborn_food.food_type, -1, False)
 
     def build_food(self, id: int, position: Point, hp: int, calories: int, type: FoodTypes, food_variety: int, is_picked: bool):
         if (food_variety == -1):

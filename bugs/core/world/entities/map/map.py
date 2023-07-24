@@ -20,8 +20,9 @@ from functools import partial
 
 class Map:
 
-    def __init__(self, event_bus: EventEmitter, size: Size, entities_collection: EntityCollection, id_generator: IdGenerator, ant_factory: AntFactory, food_factory: FoodFactory, nest_factory: NestFactory):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, size: Size, entities_collection: EntityCollection, id_generator: IdGenerator, ant_factory: AntFactory, food_factory: FoodFactory, nest_factory: NestFactory):
         self._event_bus = event_bus
+        self.events = events
         self._size = size
         self._entities_collection = entities_collection
         self._id_generator = id_generator
@@ -36,11 +37,6 @@ class Map:
     def size(self):
         return self._size
     
-    def _add_new_entity(self, entity: Entity):
-        entity.id = self._id_generator.generate_id()
-        self._entities_collection.add_entity(entity)
-        self._listen_entity(entity)
-
     def get_entity_by_id(self, id: int):
         return self._entities_collection.get_entity_by_id(id)
     
@@ -68,17 +64,18 @@ class Map:
         return found_entities
     
     def handle_intractions(self):
-        ants = self.get_entities_by_type(EntityTypes.ANT)
+        ants: List[Ant] = self.get_entities_by_type(EntityTypes.ANT)
         for ant in ants:
             entities_in_sight = self._find_entities_in_sight(ant)
             ant.mind.set_entities_in_sight(entities_in_sight)
 
     def _listen_entity(self, entity: Entity):
-        entity.events.once('ready_to_remove', partial(self._on_entity_died, entity))
+        entity.events.once('ready_to_remove', partial(self._on_entity_ready_to_remove, entity))
+        entity.events.once('died', partial(self._on_entity_died, entity))
         entity.events.add_listener('action_occurred', self._on_entity_action_occured)
         entity.events.add_listener('birth_request', self._on_entity_birth_request)
 
-    def _on_entity_died(self, entity: Entity):
+    def _on_entity_ready_to_remove(self, entity: Entity):
         self._entities_collection.delete_entity(entity.id)
         entity.events.remove_all_listeners()
 
@@ -87,21 +84,30 @@ class Map:
 
     def _on_entity_birth_request(self, request: dict):
         new_entity: Entity = None
+        id = self._id_generator.generate_id()
+        
         match(request['entity_type']):
             case EntityTypes.ANT:
-                new_entity = self._ant_factory.build_new_ant(request['larva'], request['nest'])
+                new_entity = self._ant_factory.build_new_ant(id, request['larva'], request['nest'])
             case EntityTypes.FOOD:
-                new_entity = self._food_factory.build_new_food(request['preborn_food'])
+                new_entity = self._food_factory.build_new_food(id, request['preborn_food'])
             case EntityTypes.NEST:
-                new_entity = self._nest_factory.build_new_nest(request['position'], request['colony_id'])
+                new_entity = self._nest_factory.build_new_nest(id, request['position'], request['colony_id'])
             case _:
                 raise Exception('cant birth current entity type')
 
-        self._add_new_entity(new_entity)
+        self._entities_collection.add_entity(new_entity)
+        self._listen_entity(new_entity)
+
         new_entity.born()
 
         if 'callback' in request:
             request['callback'](new_entity)
+
+        self.events.emit('entity_born', new_entity)
+    
+    def _on_entity_died(self, entity: Entity):
+        self.events.emit('entity_died', entity)
 
     def _find_entities_in_sight(self, entity: LiveEntity):
         return self._find_entities_near(point=entity.position, max_distance=entity.body.sight_distance, exclude_entity_id=entity.id)

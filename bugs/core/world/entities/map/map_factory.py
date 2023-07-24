@@ -16,4 +16,5 @@ class MapFactory():
         self._nest_factory = nest_factory
 
     def build_map(self, size: Size, id_generator: IdGenerator, entities_collection: EntityCollection):
-        return Map(self._event_bus, size, entities_collection, id_generator, self._ant_factory, self._food_factory, self._nest_factory)
+        events = EventEmitter()
+        return Map(self._event_bus, events, size, entities_collection, id_generator, self._ant_factory, self._food_factory, self._nest_factory)
