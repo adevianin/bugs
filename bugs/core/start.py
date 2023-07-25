@@ -17,6 +17,7 @@ from core.data.serializers.colony_serializer import ColonySerializer
 from core.data.serializers.operation_serializer import OperationSerializer
 from core.data.factories.json_operation_factory import JsonOperationFactory
 from core.data.factories.json_map_factory import JsonMapFactory
+from core.data.serializers.colony_relations_table_serializer import ColonyRelationsTableSerializer
 
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.ant.ant_factory import AntFactory
@@ -54,7 +55,8 @@ def start():
     food_area_serializer = FoodAreaSerializer()
     operation_serializer = OperationSerializer()
     colony_serializer = ColonySerializer(operation_serializer)
-    world_serializer = WorldSerializer(nest_serializer, ant_serializer, food_serializer, food_area_serializer, colony_serializer)
+    colony_relations_table_serializer = ColonyRelationsTableSerializer()
+    world_serializer = WorldSerializer(nest_serializer, ant_serializer, food_serializer, food_area_serializer, colony_serializer, colony_relations_table_serializer)
 
     world_data_repository = WorldDataRepository()
     json_nest_factory = JsonNestFactory(nest_factory)

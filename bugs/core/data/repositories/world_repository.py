@@ -14,7 +14,7 @@ from core.world.entities.world.world_factory import WorldFactory
 from core.world.id_generator import IdGenerator
 from core.data.serializers.world_serializer import WorldSerializer
 from core.data.factories.json_map_factory import JsonMapFactory
-
+from core.world.entities.colony.colony_relations_table import ColonyRelationsTable
 
 class WorldRepository(iWorldRepository):
 
@@ -66,14 +66,15 @@ class WorldRepository(iWorldRepository):
 
         id_generator = IdGenerator.build_id_generator(world_data['last_used_id'])
         map = self._json_map_factory.build_map_from_json(world_data['map'], id_generator, entities_collection)
+        colony_relations_table = ColonyRelationsTable.build_colony_relations_table(world_data['colonies_relations'])
 
         colonies_json = world_data['colonies']
         colonies = []
         for colony_json in colonies_json:
-            colony = self._json_colony_factory.build_colony_from_json(colony_json, entities_collection, map)
+            colony = self._json_colony_factory.build_colony_from_json(colony_json, entities_collection, map, colony_relations_table)
             colonies.append(colony)
         
-        world = self._world_factory.build_world(world_id, entities_collection, map, colonies, id_generator)
+        world = self._world_factory.build_world(world_id, entities_collection, map, colonies, id_generator, colony_relations_table)
 
         return world
 

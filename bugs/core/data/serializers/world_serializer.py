@@ -5,15 +5,17 @@ from .ant_serializer import AntSerializer
 from .food_serializer import FoodSerializer
 from .food_area_serializer import FoodAreaSerializer
 from .colony_serializer import ColonySerializer
+from .colony_relations_table_serializer import ColonyRelationsTableSerializer
 
 class WorldSerializer():
 
-    def __init__(self, nest_serializer: NestSerializer, ant_serializer: AntSerializer, food_serializer: FoodSerializer, food_area_serializer: FoodAreaSerializer, colony_serializer: ColonySerializer):
+    def __init__(self, nest_serializer: NestSerializer, ant_serializer: AntSerializer, food_serializer: FoodSerializer, food_area_serializer: FoodAreaSerializer, colony_serializer: ColonySerializer, colony_relations_table_serializer: ColonyRelationsTableSerializer):
         self._nest_serializer = nest_serializer
         self._ant_serializer = ant_serializer
         self._food_serializer = food_serializer
         self._food_area_serializer = food_area_serializer
         self._colony_serializer = colony_serializer
+        self._colony_relations_table_serializer: ColonyRelationsTableSerializer = colony_relations_table_serializer
 
     def serialize(self, world: World):
         json = {
@@ -50,5 +52,7 @@ class WorldSerializer():
         colonies = world.colonies
         for colony in colonies:
             json['colonies'].append(self._colony_serializer.serialize(colony))
+
+        json['colonies_relations'] = self._colony_relations_table_serializer.serialize(world.colony_relations_table)
 
         return json

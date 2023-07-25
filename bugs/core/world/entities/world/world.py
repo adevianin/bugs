@@ -5,13 +5,13 @@ from core.world.entities.map.map import Map
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME
 from core.world.entities.colony.colony import Colony
-from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.base.entity_collection import EntityCollection
 from core.world.id_generator import IdGenerator
+from core.world.entities.colony.colony_relations_table import ColonyRelationsTable
 
 class World():
 
-    def __init__(self, id: int, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: list[Colony], id_generator: IdGenerator):
+    def __init__(self, id: int, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: list[Colony], id_generator: IdGenerator, colony_relations_table: ColonyRelationsTable):
         self.id = id
         self._entities_collection = entities_collection
         self._map = map
@@ -21,6 +21,9 @@ class World():
         self._world_loop_stop_flag = False
         self._is_world_running = False
         self._step_counter = 0
+        self._colony_relations_table = colony_relations_table
+
+        self._colony_relations_table.get_relation_value(4, 5)
 
         self._current_step_state = None
         self._previous_step_state = None
@@ -40,6 +43,10 @@ class World():
     @property
     def colonies(self):
         return self._colonies
+    
+    @property
+    def colony_relations_table(self):
+        return self._colony_relations_table
     
     def get_colony_owned_by_user(self, user_id: int):
         for colony in self._colonies:

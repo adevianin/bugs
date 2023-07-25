@@ -6,22 +6,28 @@ from typing import List, Callable
 from core.world.entities.nest.nest import Nest
 from core.world.entities.map.map import Map
 from core.world.entities.ant.base.ant import Ant
+from .relation_tester import RelationTester
 
 class Colony:
 
-    def __init__(self, id: int, event_bus: EventEmitter, owner_id: int, map: Map, operations: List[Operation] = None):
+    def __init__(self, id: int, event_bus: EventEmitter, owner_id: int, map: Map, operations: List[Operation], relation_tester: RelationTester):
         self._id = id
         self._event_bus = event_bus
         self._owner_id = owner_id
         self._map = map
         self._operations = operations or []
         self._has_changes = False
+        self._relation_tester = relation_tester
 
         for operation in self._operations:
             self._listen_operation(operation)
 
+        for ant in self.get_my_ants():
+            self._handle_my_ant(ant)
+
         event_bus.add_listener('step_start', self._on_start_step)
         self._map.events.add_listener('entity_died', self._on_entity_died)
+        self._map.events.add_listener('entity_born', self._on_entity_born)
 
     @property
     def id(self):
@@ -34,6 +40,9 @@ class Colony:
     @property
     def operations(self):
         return self._operations
+    
+    def get_my_ants(self):
+        return self._map.get_ants_from_colony(self.id)
     
     def add_operation(self, operation: Operation):
         operation.id = self._generate_operation_id()
@@ -58,6 +67,9 @@ class Colony:
             'operations': operations_json
         }
     
+    def _handle_my_ant(self, ant: Ant):
+        ant.body.inject_relation_tester(self._relation_tester)
+    
     def _listen_operation(self, operation: Operation):
         operation.events.add_listener('change', self._on_operation_change)
     
@@ -75,7 +87,7 @@ class Colony:
                 self._hire_for_operation(operation)
 
     def _hire_for_operation(self, operation: Operation):
-        for ant in self._map.get_ants_from_colony(self._id):
+        for ant in self.get_my_ants():
             if not operation.is_hiring:
                 return
             hiring_types = operation.get_hiring_ant_types()
@@ -114,8 +126,18 @@ class Colony:
         self._has_changes = False
 
     def _on_entity_died(self, entity: Entity):
-        if entity.type == EntityTypes.NEST and entity.from_colony == self._id:
-            self._on_colony_nest_destroyed(entity)
+        is_mine = entity.from_colony == self._id
+        if is_mine:
+
+            if entity.type == EntityTypes.NEST:
+                self._on_colony_nest_destroyed(entity)
+
+    def _on_entity_born(self, entity: Entity):
+        is_mine = entity.from_colony == self._id
+        if is_mine:
+
+            if entity.type == EntityTypes.ANT:
+                self._handle_my_ant(entity)
 
     def _on_colony_nest_destroyed(self, destroyed_nest: Nest):
         remaining_nests_filter: Callable[[Nest], bool] = lambda entity: entity.id != destroyed_nest.id

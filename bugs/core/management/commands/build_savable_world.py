@@ -190,6 +190,9 @@ class Command(BaseCommand):
                 ]
             }
         ],
+        "colonies_relations": [
+            { "colony_ids": [1, 2], "value": -1 }
+        ]
     }
 
     def handle(self, *args, **options):
