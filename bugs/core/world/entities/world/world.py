@@ -23,8 +23,6 @@ class World():
         self._step_counter = 0
         self._colony_relations_table = colony_relations_table
 
-        self._colony_relations_table.get_relation_value(4, 5)
-
         self._current_step_state = None
         self._previous_step_state = None
 
