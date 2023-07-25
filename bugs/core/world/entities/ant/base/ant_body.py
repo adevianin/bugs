@@ -4,11 +4,14 @@ from core.world.entities.food.food import Food
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.entity_types import EntityTypes
+from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 
 class AntBody(Body):
 
-    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, hp: int, located_in_nest: Nest, picked_food: Food):
-        super().__init__(events, dna_profile, position, 32, 200, located_in_nest, hp)
+    _world_interactor: WorldInteractor
+
+    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, hp: int, located_in_nest: Nest, picked_food: Food, world_interactor: WorldInteractor):
+        super().__init__(events, dna_profile, position, 32, 200, located_in_nest, hp, world_interactor)
         self._picked_food = picked_food
 
     @property
@@ -22,6 +25,9 @@ class AntBody(Body):
     @property
     def picked_food_id(self):
         return self._picked_food.id if self.is_food_picked else None
+    
+    def look_around_for_food(self):
+        return self._world_interactor.get_nearby_entities([EntityTypes.FOOD])
     
     def build_nest(self, nest: Nest):
         nest.build()

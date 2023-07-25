@@ -4,18 +4,15 @@ from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.entities.thought.thought import Thought
 from .memory import Memory
 from core.world.utils.event_emiter import EventEmitter
-from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from typing import List
-from core.world.entities.base.entity import Entity
 from core.world.entities.nest.nest import Nest
 from core.world.utils.point import Point
 
 class Mind(ABC):
 
-    def __init__(self, events: EventEmitter, body: Body, thought_factory: ThoughtFactory, world_interactor: WorldInteractor, memory: Memory, is_auto_thought_generation: bool):
+    def __init__(self, events: EventEmitter, body: Body, thought_factory: ThoughtFactory, memory: Memory, is_auto_thought_generation: bool):
         self._body = body
         self._thought_factory = thought_factory
-        self._world_interactor = world_interactor
         self._memory = memory
         self._thoughts_stack = []
         self._is_auto_thought_generation = is_auto_thought_generation
@@ -74,15 +71,12 @@ class Mind(ABC):
         for thought in thoughts:
             self._register_thought(thought)
 
-    def set_entities_in_sight(self, entities: List[Entity]):
-        self._world_interactor.set_nearby_entities(entities)
-
     def _generate_thoughts(self):
         if (self._body.check_am_i_hungry()):
             self._generate_feed_myself_thought()
 
     def _register_thought(self, thought: Thought, asap: bool = False):
-        thought.set_mind_parts(self._body, self._memory, self._world_interactor)
+        thought.set_mind_parts(self._body, self._memory)
         
         if asap and self._has_thoughts_to_do():
             if (self._get_current_thought().can_be_delayed()):

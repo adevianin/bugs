@@ -4,7 +4,6 @@ from .find_food_thought import FindFoodThought
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.food.food import Food
 from core.world.entities.base.live_entity.memory import Memory
-from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.ant.base.ant_body import AntBody
 
@@ -81,10 +80,10 @@ class CollectFoodThought(Thought):
         else:
             return True
         
-    def set_mind_parts(self, body: AntBody, memory: Memory, world_interactor: WorldInteractor):
-        super().set_mind_parts(body, memory, world_interactor)
-        self._find_food_thought.set_mind_parts(body, memory, world_interactor)
-        self._go_home_thought.set_mind_parts(body, memory, world_interactor)
+    def set_mind_parts(self, body: AntBody, memory: Memory):
+        super().set_mind_parts(body, memory)
+        self._find_food_thought.set_mind_parts(body, memory)
+        self._go_home_thought.set_mind_parts(body, memory)
         
     def delay(self):
         self.restart()

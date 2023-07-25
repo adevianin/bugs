@@ -4,12 +4,13 @@ from core.world.entities.food.food import Food
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME
 from core.world.entities.nest.nest import Nest
+from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 
 import math
 
 class Body(ABC):
 
-    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int, located_in_nest: Nest, hp: int):
+    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int, located_in_nest: Nest, hp: int, world_interactor: WorldInteractor):
         self.events = events
         self._dna_profile = dna_profile
         self._distance_per_step = distance_per_step
@@ -22,6 +23,11 @@ class Body(ABC):
         self._user_speed = self._distance_per_step / STEP_TIME
         self._located_inside_nest = located_in_nest
         self._hp = hp
+        self._world_interactor = world_interactor
+
+    @property
+    def world_interactor(self):
+        return self._world_interactor
 
     @property
     def located_in_nest_id(self):
@@ -69,7 +75,7 @@ class Body(ABC):
         self._hp = hp
         if self._hp <= 0:
             self.events.emit('zero_hp')
-    
+
     def get_in_nest(self, nest: Nest):
         self._located_inside_nest = nest
         self.events.emit('got_in_nest', nest)

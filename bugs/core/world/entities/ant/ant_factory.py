@@ -44,8 +44,8 @@ class AntFactory():
         events = EventEmitter()
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
-        body = WarriorAntBody(events, dna_profile, position, hp, located_in_nest, picked_food)
-        mind = WarrirorAntMind(events, body, self._thought_factory, world_interactor, memory, is_auto_thought_generation, nest)
+        body = WarriorAntBody(events, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
+        mind = WarrirorAntMind(events, body, self._thought_factory, memory, is_auto_thought_generation, nest)
         ant = WarriorAnt(events, id, from_colony, mind, body, is_in_operation)
 
         return ant
@@ -54,8 +54,8 @@ class AntFactory():
         events = EventEmitter()
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
-        body = WorkerAntBody(events, dna_profile, position, hp, located_in_nest, picked_food)
-        mind = WorkerAntMind(events, body, self._thought_factory, world_interactor, memory, is_auto_thought_generation, nest)
+        body = WorkerAntBody(events, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
+        mind = WorkerAntMind(events, body, self._thought_factory, memory, is_auto_thought_generation, nest)
         ant = WorkerAnt(events, id, from_colony, mind, body, is_in_operation)
 
         return ant
@@ -64,8 +64,8 @@ class AntFactory():
         events = EventEmitter()
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
-        body = QueenAntBody(events, dna_profile, position, hp, located_in_nest, picked_food)
-        mind = QueenAntMind(events, body, self._thought_factory, world_interactor, memory, is_auto_thought_generation, nest)
+        body = QueenAntBody(events, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
+        mind = QueenAntMind(events, body, self._thought_factory, memory, is_auto_thought_generation, nest)
         ant = QueenAnt(events, id, from_colony, mind, body, is_in_operation)
 
         return ant

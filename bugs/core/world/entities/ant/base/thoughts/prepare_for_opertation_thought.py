@@ -34,9 +34,9 @@ class PrepareForOperationThought(Thought):
         if self._flags['is_at_assemble_point']:
             self.mark_as_done()
 
-    def set_mind_parts(self, body: Body, memory: Memory, world_interactor: WorldInteractor):
-        super().set_mind_parts(body, memory, world_interactor)
-        self._feed_myself_thought.set_mind_parts(body, memory, world_interactor)
+    def set_mind_parts(self, body: Body, memory: Memory):
+        super().set_mind_parts(body, memory)
+        self._feed_myself_thought.set_mind_parts(body, memory)
     
     def _reset_flags(self):
         self._flags = {

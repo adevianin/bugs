@@ -9,7 +9,6 @@ class Thought(ABC):
     def __init__(self, type: ThoughtTypes, flags: dict, sayback: str):
         self.body = None
         self.memory = None
-        self.world_interactor = None
         self._type = type
         self._is_done = False
         self._results = None
@@ -19,10 +18,9 @@ class Thought(ABC):
         if flags:
             self._flags.update(flags)
 
-    def set_mind_parts(self, body: Body, memory: Memory, world_interactor: WorldInteractor):
+    def set_mind_parts(self, body: Body, memory: Memory):
         self._body = body
         self._memory = memory
-        self._world_interator = world_interactor
 
     def is_done(self):
         return self._is_done

@@ -5,7 +5,6 @@ from .find_food_thought import FindFoodThought
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.base.live_entity.body import Body
 from core.world.entities.base.live_entity.memory import Memory
-from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.thought.thought_types import ThoughtTypes
 
 class FeedMyselfThought(Thought):
@@ -70,10 +69,10 @@ class FeedMyselfThought(Thought):
                 if (is_eatin_done):
                     self.mark_as_done() 
 
-    def set_mind_parts(self, body: Body, memory: Memory, world_interactor: WorldInteractor):
-        super().set_mind_parts(body, memory, world_interactor)
-        self._find_food_thought.set_mind_parts(body, memory, world_interactor)
-        self._go_home_thought.set_mind_parts(body, memory, world_interactor)
+    def set_mind_parts(self, body: Body, memory: Memory):
+        super().set_mind_parts(body, memory)
+        self._find_food_thought.set_mind_parts(body, memory)
+        self._go_home_thought.set_mind_parts(body, memory)
     
     def _check_is_at_home(self):
         return self._body.located_in_nest_id == self._home.id

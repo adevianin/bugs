@@ -10,8 +10,8 @@ import math
 
 class AntMind(Mind):
 
-    def __init__(self, events: EventEmitter, body: AntBody, thought_factory: ThoughtFactory, world_interactor: WorldInteractor, memory: Memory, is_auto_thought_generation: bool, home_nest: Nest):
-        super().__init__(events, body, thought_factory, world_interactor, memory, is_auto_thought_generation)
+    def __init__(self, events: EventEmitter, body: AntBody, thought_factory: ThoughtFactory, memory: Memory, is_auto_thought_generation: bool, home_nest: Nest):
+        super().__init__(events, body, thought_factory, memory, is_auto_thought_generation)
         self.home_nest = home_nest
 
     def feed_myself(self, sayback: str = None, asap: bool = False):

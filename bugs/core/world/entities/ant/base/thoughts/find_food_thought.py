@@ -1,14 +1,15 @@
 from core.world.entities.thought.thought import Thought
 from core.world.entities.base.entity_types import EntityTypes
 from .searching_walk_thought import SearchingWalkThought
-from core.world.entities.base.live_entity.body import Body
 from core.world.entities.base.live_entity.memory import Memory
-from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.thought.thought_types import ThoughtTypes
+from core.world.entities.ant.base.ant_body import AntBody
 
 import math
 
 class FindFoodThought(Thought):
+
+    _body: AntBody
 
     def __init__(self, random_walk_thought: SearchingWalkThought, flags: dict = None, sayback: str = None):
         super().__init__(ThoughtTypes.FIND_FOOD, flags, sayback)
@@ -48,9 +49,9 @@ class FindFoodThought(Thought):
         super().restart()
         self._reset_flags()
 
-    def set_mind_parts(self, body: Body, memory: Memory, world_interactor: WorldInteractor):
-        super().set_mind_parts(body, memory, world_interactor)
-        self._random_walk_thought.set_mind_parts(body, memory, world_interactor)
+    def set_mind_parts(self, body: AntBody, memory: Memory):
+        super().set_mind_parts(body, memory)
+        self._random_walk_thought.set_mind_parts(body, memory)
 
     def _get_points_to_check(self):
         entities_data = self._memory.get_entities_data([EntityTypes.FOOD, EntityTypes.FOOD_AREA])
@@ -63,7 +64,7 @@ class FindFoodThought(Thought):
         return positions
 
     def _look_around_for_food(self):
-        foods = self._world_interator.get_nearby_entities([EntityTypes.FOOD])
+        foods = self._body.look_around_for_food()
 
         if (len(foods) > 0):
             self.mark_as_done(foods[0])

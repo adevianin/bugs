@@ -67,7 +67,7 @@ class Map:
         ants: List[Ant] = self.get_entities_by_type(EntityTypes.ANT)
         for ant in ants:
             entities_in_sight = self._find_entities_in_sight(ant)
-            ant.mind.set_entities_in_sight(entities_in_sight)
+            ant.body.world_interactor.set_nearby_entities(entities_in_sight)
 
     def _listen_entity(self, entity: Entity):
         entity.events.once('ready_to_remove', partial(self._on_entity_ready_to_remove, entity))
