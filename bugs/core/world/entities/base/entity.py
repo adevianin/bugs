@@ -3,9 +3,8 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from .entity_types import EntityTypes
 from core.world.entities.action import Action
-from .enemy_interface import iEnemy
 
-class Entity(iEnemy):
+class Entity(ABC):
 
     def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony: int):
         self.events = events

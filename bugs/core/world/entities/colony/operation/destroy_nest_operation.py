@@ -17,6 +17,7 @@ class DestroyNestOperation(Operation):
         self._name = 'знищення мурашника'
         self._open_vacancies(AntTypes.WARRIOR, 2)
         self._add_marker(MarkerTypes.CROSS, nest.position)
+        self._enemies = []
 
     @property
     def _warriors(self) -> List[WarriorAnt]:
@@ -26,6 +27,7 @@ class DestroyNestOperation(Operation):
         super()._init_staff()
         for ant in self._warriors:
             ant.on_saying('prepared', partial(self._on_warrior_prepared, ant))
+            ant.on_saying('i_see_enemies', self._on_warrior_sees_enemies)
             ant.on_saying('nest_destroyed', self._on_nest_destroyed)
     
     def _start_operation(self):
@@ -40,6 +42,11 @@ class DestroyNestOperation(Operation):
         self._write_flag(f'warrior_{ant.id}_prepared', True)
         if self._check_are_all_warriors_prepared():
             self._attack_step()
+
+    def _on_warrior_sees_enemies(self, enemies: List[Ant]):
+        for enemy in enemies:
+            if (enemy not in self._enemies):
+                self._enemies.append(enemy)
 
     def _check_are_all_warriors_prepared(self):
         for ant in self._warriors:

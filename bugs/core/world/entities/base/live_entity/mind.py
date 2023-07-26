@@ -101,15 +101,8 @@ class Mind(ABC):
         
         for done_thought in done_thoughts:
             if done_thought.sayback:
-                self._say(done_thought.sayback, done_thought.results)
+                self._body.say(done_thought.sayback, done_thought.results)
             self._thoughts_stack.remove(done_thought)
-
-    def _say(self, phrase: str, results: dict):
-        event_name = f'say:{phrase}'
-        if (results):
-            self.events.emit(event_name, results)
-        else:
-            self.events.emit(event_name)
 
     @abstractclassmethod
     def _generate_feed_myself_thought(self):

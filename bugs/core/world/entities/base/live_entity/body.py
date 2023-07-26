@@ -76,6 +76,13 @@ class Body(ABC):
         if self._hp <= 0:
             self.events.emit('zero_hp')
 
+    def say(self, phrase: str, data: dict):
+        event_name = f'say:{phrase}'
+        if (data):
+            self.events.emit(event_name, data)
+        else:
+            self.events.emit(event_name)
+
     def get_in_nest(self, nest: Nest):
         self._located_inside_nest = nest
         self.events.emit('got_in_nest', nest)

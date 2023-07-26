@@ -16,7 +16,10 @@ class AttackNestThought(Thought):
         return self._nest
 
     def do_step(self):
-        # enemies = self._body.look_around_for_enemies()
+        enemies = self._body.look_around_for_enemies()
+
+        if len(enemies) > 0:
+            self._body.say('i_see_enemies', enemies)
 
         is_near_nest = self._body.is_near_to(self._nest.position)
 
