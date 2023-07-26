@@ -5,6 +5,7 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
+from core.world.entities.base.enemy_interface import iEnemy
 
 import math
 
@@ -159,6 +160,9 @@ class Body(ABC):
         self.events.emit('eat_food')
 
         return is_food_eaten or self.calc_how_much_calories_is_need() == 0
+    
+    def damage_enemy(self, enemy: iEnemy):
+        enemy.damage(20)
     
     def is_near_to(self, point: Point, is_precise_mode: bool = False):
         return self._are_points_near(self.position, point, is_precise_mode)

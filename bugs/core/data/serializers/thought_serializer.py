@@ -10,6 +10,8 @@ from core.world.entities.ant.base.thoughts.prepare_for_opertation_thought import
 from core.world.entities.ant.base.thoughts.found_nest_thought import FoundNestThought
 from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestThought
 from core.world.entities.ant.warrior.thoughts.patrolling_territory_thought import PatrollingTerritoryThought
+from core.world.entities.base.live_entity.thoughts.fight_enemy_thought import FightEnemyThought
+from core.world.entities.ant.base.thoughts.attack_nest import AttackNestThought
 
 class ThoughtSerializer():
 
@@ -35,6 +37,10 @@ class ThoughtSerializer():
                 return self._serialize_build_nest(thought)
             case ThoughtTypes.PATROLLING_TERRITORY:
                 return self._serialize_patrolling_territory(thought)
+            case ThoughtTypes.ATTACK_NEST:
+                return self._serialize_attack_nest(thought)
+            case ThoughtTypes.FIGHT_ENEMY:
+                return self._serialize_fight_enemy(thought)
             case _:
                 raise Exception('unknown type of thought')
 
@@ -138,6 +144,22 @@ class ThoughtSerializer():
         searching_walk_thought_json = self.serialize(thought.searching_walk_thought)
         json.update({
             'searching_walk_thought': searching_walk_thought_json
+        })
+
+        return json
+    
+    def _serialize_attack_nest(self, thought: AttackNestThought):
+        json = self._serialize_thought(thought)
+        json.update({
+            'nest_id': thought.nest_id
+        })
+
+        return json
+    
+    def _serialize_fight_enemy(self, thought: FightEnemyThought):
+        json = self._serialize_thought(thought)
+        json.update({
+            'enemy_id': thought.enemy_id
         })
 
         return json

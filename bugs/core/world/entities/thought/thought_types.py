@@ -12,3 +12,4 @@ class ThoughtTypes(StrEnum):
     BUILD_NEST = 'build_nest'
     PATROLLING_TERRITORY = 'patrolling_territory'
     ATTACK_NEST = 'attack_nest'
+    FIGHT_ENEMY = 'fight_enemy'

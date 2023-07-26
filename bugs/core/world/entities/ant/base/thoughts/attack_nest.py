@@ -12,9 +12,9 @@ class AttackNestThought(Thought):
         self._nest = nest
 
     @property
-    def attacking_nest_id(self):
-        return self._nest
-
+    def nest_id(self):
+        return self._nest.id
+    
     def do_step(self):
         enemies = self._body.look_around_for_enemies()
 

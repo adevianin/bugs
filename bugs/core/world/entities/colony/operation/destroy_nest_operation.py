@@ -8,6 +8,7 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.ant_types import AntTypes
 from .marker_types import MarkerTypes
 from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
+from core.world.entities.base.enemy_interface import iEnemy
 
 class DestroyNestOperation(Operation):
 
@@ -17,7 +18,10 @@ class DestroyNestOperation(Operation):
         self._name = 'знищення мурашника'
         self._open_vacancies(AntTypes.WARRIOR, 2)
         self._add_marker(MarkerTypes.CROSS, nest.position)
-        self._enemies = []
+
+    @property
+    def nest_id(self):
+        return self._nest.id
 
     @property
     def _warriors(self) -> List[WarriorAnt]:
@@ -27,7 +31,7 @@ class DestroyNestOperation(Operation):
         super()._init_staff()
         for ant in self._warriors:
             ant.on_saying('prepared', partial(self._on_warrior_prepared, ant))
-            ant.on_saying('i_see_enemies', self._on_warrior_sees_enemies)
+            ant.on_saying('i_see_enemies', partial(self._on_warrior_sees_enemies, ant))
             ant.on_saying('nest_destroyed', self._on_nest_destroyed)
     
     def _start_operation(self):
@@ -43,10 +47,9 @@ class DestroyNestOperation(Operation):
         if self._check_are_all_warriors_prepared():
             self._attack_step()
 
-    def _on_warrior_sees_enemies(self, enemies: List[Ant]):
-        for enemy in enemies:
-            if (enemy not in self._enemies):
-                self._enemies.append(enemy)
+    def _on_warrior_sees_enemies(self, ant: Ant, enemies: List[iEnemy]):
+        first_enemy = enemies[0]
+        ant.fight_enemy(first_enemy)
 
     def _check_are_all_warriors_prepared(self):
         for ant in self._warriors:

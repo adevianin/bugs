@@ -1,7 +1,7 @@
 from core.world.utils.point import Point
 from core.world.entities.food.food import Food
 from core.world.entities.nest.nest import Nest
-from core.world.utils.event_emiter import EventEmitter
+from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.base.live_entity.thoughts.walk_to_thought import WalkToThought
 from core.world.entities.ant.base.thoughts.searching_walk_thought import SearchingWalkThought
@@ -13,6 +13,7 @@ from core.world.entities.ant.base.thoughts.found_nest_thought import FoundNestTh
 from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestThought
 from core.world.entities.ant.warrior.thoughts.patrolling_territory_thought import PatrollingTerritoryThought
 from core.world.entities.ant.base.thoughts.attack_nest import AttackNestThought
+from core.world.entities.base.live_entity.thoughts.fight_enemy_thought import FightEnemyThought
 
 class ThoughtFactory:
 
@@ -48,6 +49,9 @@ class ThoughtFactory:
     
     def build_attack_nest_thought(self, nest: Nest, flags: dict = None, sayback: str = None):
         return AttackNestThought(nest=nest, flags=flags, sayback=sayback)
+    
+    def build_fight_enemy_thought(self, enemy: iEnemy, flags: dict = None, sayback: str = None):
+        return FightEnemyThought(enemy=enemy, flags=flags, sayback=sayback)
     
     def build_feed_myself_full(self, home_nest: Nest, sayback: str = None):
         searching_walk_thought = self.build_searching_walk_thought(home_nest.position, home_nest.area)

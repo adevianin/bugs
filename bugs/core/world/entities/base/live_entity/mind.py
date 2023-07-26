@@ -7,6 +7,7 @@ from core.world.utils.event_emiter import EventEmitter
 from typing import List
 from core.world.entities.nest.nest import Nest
 from core.world.utils.point import Point
+from core.world.entities.base.enemy_interface import iEnemy
 
 class Mind(ABC):
 
@@ -41,6 +42,10 @@ class Mind(ABC):
     def prepare_for_operation(self, sayback: str = None):
         self.toggle_auto_thought_generation(False)
         self.force_free()
+
+    def fight_enemy(self, enemy: iEnemy, asap: bool = True, sayback: str = None):
+        thought = self._thought_factory.build_fight_enemy_thought(enemy=enemy, sayback=sayback)
+        self._register_thought(thought, asap)
     
     def leave_operation(self):
         # self.force_free()
@@ -72,6 +77,7 @@ class Mind(ABC):
             self._register_thought(thought)
 
     def _generate_thoughts(self):
+        # todo check is enemy near
         if (self._body.check_am_i_hungry()):
             self._generate_feed_myself_thought()
 
@@ -87,7 +93,7 @@ class Mind(ABC):
         else:
             self._thoughts_stack.append(thought)
 
-    def _get_current_thought(self):
+    def _get_current_thought(self) -> Thought:
         return self._thoughts_stack[0]
 
     def _has_thoughts_to_do(self):

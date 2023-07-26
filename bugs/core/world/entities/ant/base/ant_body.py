@@ -7,6 +7,7 @@ from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.colony.relation_tester import RelationTester
 from core.world.entities.base.entity import Entity
+from core.world.entities.base.enemy_interface import iEnemy
 
 from typing import Callable, List
 
@@ -36,7 +37,7 @@ class AntBody(Body):
     def look_around_for_food(self):
         return self._world_interactor.get_nearby_entities([EntityTypes.FOOD])
     
-    def look_around_for_enemies(self) -> List[Entity]:
+    def look_around_for_enemies(self) -> List[iEnemy]:
         enemies_filter: Callable[[Entity], bool] = lambda entity: self._relation_tester.is_enemy(entity)
         return self._world_interactor.get_nearby_entities([EntityTypes.ANT], enemies_filter)
     

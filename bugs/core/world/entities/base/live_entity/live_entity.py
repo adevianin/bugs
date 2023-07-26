@@ -5,10 +5,10 @@ from core.world.utils.point import Point
 from .mind import Mind
 from .body import Body
 from core.world.entities.nest.nest import Nest
-from core.world.entities.thought.thought import Thought
+from core.world.entities.base.enemy_interface import iEnemy
 from typing import List
 
-class LiveEntity(Entity):
+class LiveEntity(Entity, iEnemy):
 
     def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony: int, mind: Mind, body: Body, is_in_operation: bool):
         super().__init__(events, id, type, from_colony)
@@ -83,6 +83,9 @@ class LiveEntity(Entity):
 
     def walk_to(self, position: Point, sayback: str = None):
         self._mind.walk_to(position=position, sayback=sayback)
+
+    def fight_enemy(self, enemy: iEnemy, sayback: str = None):
+        self._mind.fight_enemy(enemy=enemy, sayback=sayback)
     
     def get_in_nest(self, nest: Nest):
         self._body.get_in_nest(nest)
