@@ -11,7 +11,7 @@ from core.world.entities.ant.base.thoughts.feed_myself_thought import FeedMyself
 from core.world.entities.ant.base.thoughts.prepare_for_opertation_thought import PrepareForOperationThought
 from core.world.entities.ant.base.thoughts.found_nest_thought import FoundNestThought
 from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestThought
-from core.world.entities.ant.warrior.thoughts.patrolling_territory_thought import PatrollingTerritoryThought
+from core.world.entities.ant.warrior.thoughts.defend_territory_thought import DefendTerritoryThought
 from core.world.entities.ant.base.thoughts.attack_nest import AttackNestThought
 from core.world.entities.base.live_entity.thoughts.fight_enemy_thought import FightEnemyThought
 
@@ -44,8 +44,8 @@ class ThoughtFactory:
     def build_build_nest_thought(self, building_nest: Nest, flags: dict = None, sayback: str = None):
         return BuildNestThought(building_nest=building_nest, flags=flags, sayback=sayback)
     
-    def build_patroling_teritory(self, searching_walk_thought: SearchingWalkThought, flags: dict = None, sayback: str = None):
-        return PatrollingTerritoryThought(search_walk_thought=searching_walk_thought, flags=flags, sayback=sayback)
+    def build_defend_teritory(self, fight_enemy_thought: FightEnemyThought, searching_walk_thought: SearchingWalkThought, flags: dict = None, sayback: str = None):
+        return DefendTerritoryThought(fight_enemy_thought=fight_enemy_thought, search_walk_thought=searching_walk_thought, flags=flags, sayback=sayback)
     
     def build_attack_nest_thought(self, nest: Nest, flags: dict = None, sayback: str = None):
         return AttackNestThought(nest=nest, flags=flags, sayback=sayback)
@@ -69,8 +69,9 @@ class ThoughtFactory:
         feed_myself_thought = self.build_feed_myself_full(home_nest=home_nest)
         return self.build_prepare_for_operation_thought(feed_myself_thought=feed_myself_thought, assemble_point=assemble_point, sayback=sayback)
     
-    def build_patrolling_nest_territory_full(self, nest: Nest, sayback: str = None):
+    def build_defend_nest_territory_full(self, nest: Nest, sayback: str = None):
         searching_walk_thought = self.build_searching_walk_thought(nest.position, nest.area)
-        return self.build_patroling_teritory(searching_walk_thought=searching_walk_thought, sayback=sayback)
+        fight_enemy_thought = self.build_fight_enemy_thought(None)
+        return self.build_defend_teritory(fight_enemy_thought=fight_enemy_thought, searching_walk_thought=searching_walk_thought, sayback=sayback)
 
     

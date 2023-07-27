@@ -9,7 +9,7 @@ from core.world.entities.ant.base.thoughts.feed_myself_thought import FeedMyself
 from core.world.entities.ant.base.thoughts.prepare_for_opertation_thought import PrepareForOperationThought
 from core.world.entities.ant.base.thoughts.found_nest_thought import FoundNestThought
 from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestThought
-from core.world.entities.ant.warrior.thoughts.patrolling_territory_thought import PatrollingTerritoryThought
+from core.world.entities.ant.warrior.thoughts.defend_territory_thought import DefendTerritoryThought
 from core.world.entities.base.live_entity.thoughts.fight_enemy_thought import FightEnemyThought
 from core.world.entities.ant.base.thoughts.attack_nest import AttackNestThought
 
@@ -35,8 +35,8 @@ class ThoughtSerializer():
                 return self._serialize_found_nest(thought)
             case ThoughtTypes.BUILD_NEST:
                 return self._serialize_build_nest(thought)
-            case ThoughtTypes.PATROLLING_TERRITORY:
-                return self._serialize_patrolling_territory(thought)
+            case ThoughtTypes.DEFEND_TERRITORY:
+                return self._serialize_defend_territory(thought)
             case ThoughtTypes.ATTACK_NEST:
                 return self._serialize_attack_nest(thought)
             case ThoughtTypes.FIGHT_ENEMY:
@@ -139,11 +139,13 @@ class ThoughtSerializer():
 
         return json
     
-    def _serialize_patrolling_territory(self, thought: PatrollingTerritoryThought):
+    def _serialize_defend_territory(self, thought: DefendTerritoryThought):
         json = self._serialize_thought(thought)
         searching_walk_thought_json = self.serialize(thought.searching_walk_thought)
+        fight_enemy_thought_json = self.serialize(thought.fight_enemy_thought)
         json.update({
-            'searching_walk_thought': searching_walk_thought_json
+            'searching_walk_thought': searching_walk_thought_json,
+            'fight_enemy_thought': fight_enemy_thought_json
         })
 
         return json

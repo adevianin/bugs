@@ -4,13 +4,16 @@ from core.world.entities.base.enemy_interface import iEnemy
 
 class FightEnemyThought(Thought):
 
-    def __init__(self, flags, sayback: str, enemy: iEnemy):
+    def __init__(self, flags, sayback: str, enemy: iEnemy = None):
         super().__init__(type=ThoughtTypes.FIGHT_ENEMY, flags=flags, sayback=sayback)
         self._enemy = enemy
 
     @property
     def enemy_id(self):
-        return self._enemy.id
+        return self._enemy.id if self._enemy else None
+    
+    def set_enemy(self, enemy: iEnemy):
+        self._enemy = enemy
 
     def do_step(self):
         if self._enemy.is_died:
@@ -23,6 +26,6 @@ class FightEnemyThought(Thought):
             if self._enemy.is_died:
                 self.mark_as_done()
         else:
-            self._body.step_to(self._enemy.position)
+            self._body.step_to_near(self._enemy.position)
 
         
