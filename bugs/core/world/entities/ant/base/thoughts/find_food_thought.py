@@ -26,11 +26,11 @@ class FindFoodThought(Thought):
         if (found_food):
             return False
         
-        if (not self._flags['memory_read']):
+        if (not self._read_flag('memory_read')):
             self._points_to_check = self._get_points_to_check()
-            self._flags['memory_read'] = True
+            self._write_flag('memory_read', True)
 
-        if (not self._flags['points_checked']):
+        if (not self._read_flag('points_checked')):
             if (len(self._points_to_check) > 0):
                 checking_point = self._points_to_check[0]
                 got_to_point = self._body.step_to_near(checking_point)
@@ -39,15 +39,14 @@ class FindFoodThought(Thought):
                     self._look_around_for_food()
                 return True
             else:
-                self._flags['points_checked'] = True
-        if (self._flags['points_checked']):
+                self._write_flag('points_checked', True)
+        if (self._read_flag('points_checked')):
             is_doing_action = self._random_walk_thought.do_step()
             self._look_around_for_food()
             return is_doing_action
 
     def restart(self):
         super().restart()
-        self._reset_flags()
 
     def set_mind_parts(self, body: AntBody, memory: Memory):
         super().set_mind_parts(body, memory)
@@ -71,12 +70,3 @@ class FindFoodThought(Thought):
             return True
         else:
             return False
-
-    def _reset_flags(self):
-        self._flags = {
-            'memory_read': False,
-            'points_checked': False
-        }
-        
-
-    

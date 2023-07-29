@@ -22,28 +22,19 @@ class PrepareForOperationThought(Thought):
         return self._assemble_point
 
     def do_step(self):
-        if not self._flags['is_ate_well']:
+        if not self._read_flag('is_ate_well'):
             self._feed_myself_thought.do_step()
-            if self._feed_myself_thought.is_done():
-                self._flags['is_ate_well'] = True
+            if self._feed_myself_thought.is_done:
+                self._write_flag('is_ate_well', True)
                 return
 
-        if self._flags['is_ate_well'] and not self._flags['is_at_assemble_point']:
-            self._flags['is_at_assemble_point'] = self._body.step_to(self._assemble_point)
+        if self._read_flag('is_ate_well') and not self._read_flag('is_at_assemble_point'):
+            self._write_flag('is_at_assemble_point', self._body.step_to(self._assemble_point))
 
-        if self._flags['is_at_assemble_point']:
+        if self._read_flag('is_at_assemble_point'):
             self.mark_as_done()
 
     def set_mind_parts(self, body: Body, memory: Memory):
         super().set_mind_parts(body, memory)
         self._feed_myself_thought.set_mind_parts(body, memory)
     
-    def _reset_flags(self):
-        self._flags = {
-            'is_ate_well': False,
-            'is_at_assemble_point': False
-        }
-
-
-
-

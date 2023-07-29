@@ -146,11 +146,6 @@ class Operation(ABC):
             'point': point
         })
 
-    def _reset_flags(self):
-        self._flags = {
-            'is_operation_started': False
-        }
-
     def to_public_json(self):
         return {
             'id': self.id,

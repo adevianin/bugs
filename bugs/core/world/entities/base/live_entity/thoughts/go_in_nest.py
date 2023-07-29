@@ -13,17 +13,9 @@ class GoInNestThought(Thought):
         return self._nest.id
 
     def do_step(self):
-        if self._flags['is_near_nest']:
+        if self._read_flag('is_near_nest'):
             self._body.get_in_nest(self._nest)
             self.mark_as_done()
         else:
-            self._flags['is_near_nest'] = self._body.step_to(self._nest.position)
-
-    def restart(self):
-        self._reset_flags()
-        return super().restart()
-
-    def _reset_flags(self):
-        self._flags = {
-            'is_near_nest': False
-        }
+            self._write_flag('is_near_nest', self._body.step_to(self._nest.position))
+    

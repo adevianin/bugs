@@ -40,29 +40,16 @@ class Mind(ABC):
         self._register_thought(thought)
 
     def prepare_for_operation(self, sayback: str = None):
-        self.toggle_auto_thought_generation(False)
-        self.force_free()
+        self._toggle_auto_thought_generation(False)
+        self._free_mind()
 
     def fight_enemy(self, enemy: iEnemy, asap: bool = True, sayback: str = None):
         thought = self._thought_factory.build_fight_enemy_thought(enemy=enemy, sayback=sayback)
         self._register_thought(thought, asap)
     
     def leave_operation(self):
-        # self.force_free()
-        self.toggle_auto_thought_generation(True)
+        self._toggle_auto_thought_generation(True)
     
-    def toggle_auto_thought_generation(self, is_auto: bool):
-        self._is_auto_thought_generation = is_auto
-
-    def force_free(self):
-        if self._has_thoughts_to_do():
-            current_thought = self._get_current_thought()
-            if (current_thought.can_be_delayed()):
-                current_thought.delay()
-                self._thoughts_stack = []
-            else:
-                self._thoughts_stack = [current_thought]
-
     def do_step(self):
         if self._is_auto_thought_generation:
             self._generate_thoughts()
@@ -75,6 +62,18 @@ class Mind(ABC):
     def set_thoughts(self, thoughts: list[Thought]):
         for thought in thoughts:
             self._register_thought(thought)
+
+    def _toggle_auto_thought_generation(self, is_auto: bool):
+        self._is_auto_thought_generation = is_auto
+
+    def _free_mind(self):
+        if self._has_thoughts_to_do():
+            current_thought = self._get_current_thought()
+            if (current_thought.can_be_delayed()):
+                current_thought.delay()
+                self._thoughts_stack = []
+            else:
+                self._thoughts_stack = [current_thought]
 
     def _generate_thoughts(self):
         # todo check is enemy near
@@ -96,17 +95,17 @@ class Mind(ABC):
     def _get_current_thought(self) -> Thought:
         return self._thoughts_stack[0]
 
-    def _has_thoughts_to_do(self):
+    def _has_thoughts_to_do(self) -> bool:
         return len(self._thoughts_stack) > 0
 
     def _handle_done_thoughts(self):
         done_thoughts: List[Thought] = [] 
         for thought in self._thoughts_stack:
-            if (thought.is_done()):
+            if (thought.is_done or thought.is_canceled):
                 done_thoughts.append(thought)
         
         for done_thought in done_thoughts:
-            if done_thought.sayback:
+            if done_thought.is_done and done_thought.sayback:
                 self._body.say(done_thought.sayback, done_thought.results)
             self._thoughts_stack.remove(done_thought)
 

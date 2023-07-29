@@ -23,17 +23,17 @@ class DefendTerritoryThought(Thought):
         return self._fight_enemy_thought
 
     def do_step(self):
-        if (not self._flags['is_fighting_enemy']):
+        if (not self._read_flag('is_fighting_enemy')):
             enemies = self._body.look_around_for_enemies()
             is_enemy_near = len(enemies) > 0
             if (is_enemy_near):
-                self._flags['is_fighting_enemy'] = True
+                self._write_flag('is_fighting_enemy', True)
                 self._fight_enemy_thought.restart()
                 self._fight_enemy_thought.set_enemy(enemy=enemies[0])
         
-        if (self._flags['is_fighting_enemy']):
+        if (self._read_flag('is_fighting_enemy')):
             self._fight_enemy_thought.do_step()
-            self._flags['is_fighting_enemy'] = not self._fight_enemy_thought.is_done()
+            self._write_flag('is_fighting_enemy', not self._fight_enemy_thought.is_done)
         else:
             self._searching_walk_thought.do_step()
 
@@ -41,8 +41,3 @@ class DefendTerritoryThought(Thought):
         super().set_mind_parts(body, memory)
         self._searching_walk_thought.set_mind_parts(body=body, memory=memory)
         self._fight_enemy_thought.set_mind_parts(body=body, memory=memory)
-
-    def _reset_flags(self):
-        self._flags = {
-            'is_fighting_enemy': False
-        }

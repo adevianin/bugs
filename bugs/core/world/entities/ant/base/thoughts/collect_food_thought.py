@@ -37,45 +37,45 @@ class CollectFoodThought(Thought):
         return self._found_food.id if self._found_food else None
 
     def do_step(self):
-        if (not self._flags['is_find_food_done']):
+        if (not self._read_flag('is_find_food_done')):
             is_doing_action = self._find_food_thought.do_step()
-            if(self._find_food_thought.is_done()):
+            if(self._find_food_thought.is_done):
                 self._found_food = self._find_food_thought.results
-                self._flags['is_find_food_done'] = True
+                self._write_flag('is_find_food_done', True)
             if (is_doing_action):
                 return True
 
-        if (self._flags['is_find_food_done'] and not self._flags['is_get_to_food_done']):
-            self._flags['is_get_to_food_done'] = self._body.step_to_near(self._found_food.position)
+        if (self._read_flag('is_find_food_done') and not self._read_flag('is_get_to_food_done')):
+            self._write_flag('is_get_to_food_done', self._body.step_to_near(self._found_food.position))
             return
 
-        if (self._flags['is_get_to_food_done'] and not self._flags['is_pickup_food_done']):
+        if (self._read_flag('is_get_to_food_done') and not self._read_flag('is_pickup_food_done')):
             if (self._found_food.is_picked):
                 self.restart()
                 return
-            self._flags['is_pickup_food_done'] = self._body.pick_up_food(self._found_food)
+            self._write_flag('is_pickup_food_done', self._body.pick_up_food(self._found_food))
             return
             
-        if (self._flags['is_pickup_food_done'] and not self._flags['is_go_home_done']):
+        if (self._read_flag('is_pickup_food_done') and not self._read_flag('is_go_home_done')):
             self._go_home_thought.do_step()
-            self._flags['is_go_home_done'] = self._go_home_thought.is_done()
-            return
-
-        if (self._flags['is_go_home_done'] and not self._flags['is_food_taken_by_home']):
-            self._body.give_food(self._nest)
-            self._flags['is_food_taken_by_home'] = True
+            self._write_flag('is_go_home_done', self._go_home_thought.is_done)
             return
         
-        if (self._flags['is_food_taken_by_home'] and not self._flags['is_got_out_of_nest']):
+        if (self._read_flag('is_go_home_done') and not self._read_flag('is_food_taken_by_home')):
+            self._body.give_food(self._nest)
+            self._write_flag('is_food_taken_by_home', True)
+            return
+        
+        if (self._read_flag('is_food_taken_by_home') and not self._read_flag('is_got_out_of_nest')):
             self._body.get_out_of_nest()
-            self._flags['is_got_out_of_nest'] = True
+            self._write_flag('is_got_out_of_nest', True)
             return
 
-        if (self._flags['is_got_out_of_nest']):
+        if (self._read_flag('is_got_out_of_nest')):
             self.mark_as_done()
 
     def can_be_delayed(self):
-        if (self._flags['is_pickup_food_done']):
+        if (self._read_flag('is_pickup_food_done')):
             return False
         else:
             return True
@@ -90,7 +90,6 @@ class CollectFoodThought(Thought):
 
     def restart(self):
         super().restart()
-        self._reset_flags()
         self._find_food_thought.restart()
         self._go_home_thought.restart()
 
@@ -103,15 +102,3 @@ class CollectFoodThought(Thought):
 
     def _on_nest_died(self):
         self.cancel()
-
-    def _reset_flags(self):
-        self._flags = {
-            'is_find_food_done': False,
-            'is_get_to_food_done': False,
-            'is_pickup_food_done': False,
-            'is_go_home_done': False,
-            'is_food_taken_by_home': False,
-            'is_got_out_of_nest': False
-        }
-        
-

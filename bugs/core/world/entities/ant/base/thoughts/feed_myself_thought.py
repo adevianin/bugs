@@ -37,34 +37,34 @@ class FeedMyselfThought(Thought):
         return False
 
     def do_step(self):
-        if (not self._flags['is_home_checked'] and not self._check_is_at_home()):
+        if (not self._read_flag('is_home_checked') and not self._check_is_at_home()):
             self._go_home_thought.do_step()
             return
         
-        if (not self._flags['is_home_checked'] and self._check_is_at_home()):
+        if (not self._read_flag('is_home_checked') and self._check_is_at_home()):
             needed_calories = self._body.calc_how_much_calories_is_need()
             calories = self._home.give_calories(needed_calories)
             self._body.eat_calories(calories)
-            self._flags['is_home_checked'] = True
+            self._write_flag('is_home_checked', True)
             self._body.get_out_of_nest()
             if (not self._body.check_am_i_hungry()):
                 self.mark_as_done()
             return
 
-        if (self._flags['is_home_checked']):
-            if (not self._flags['is_food_found']):
+        if (self._read_flag('is_home_checked')):
+            if (not self._read_flag('is_food_found')):
                 is_doing_action = self._find_food_thought.do_step()
-                if (self._find_food_thought.is_done()):
-                    self._flags['is_food_found'] = True
+                if (self._find_food_thought.is_done):
+                    self._write_flag('is_food_found', True)
                     self._found_food = self._find_food_thought.results
                 if (is_doing_action):
                     return True
 
-            if (self._flags['is_food_found'] and not self._flags['is_near_food']):
-                self._flags['is_near_food'] = self._body.step_to_near(self._found_food.position)
+            if (self._read_flag('is_food_found') and not self._read_flag('is_near_food')):
+                self._write_flag('is_near_food', self._body.step_to_near(self._found_food.position))
                 return
                 
-            if (self._flags['is_near_food']):
+            if (self._read_flag('is_near_food')):
                 is_eatin_done = self._body.eat_food(self._found_food)
                 if (is_eatin_done):
                     self.mark_as_done() 
@@ -76,13 +76,3 @@ class FeedMyselfThought(Thought):
     
     def _check_is_at_home(self):
         return self._body.located_in_nest_id == self._home.id
-
-    def _reset_flags(self):
-        self._flags = {
-            'is_home_checked': False,
-            'is_at_home': False,
-            'is_food_found': False,
-            'is_near_food': False
-        }
-
-            
