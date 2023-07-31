@@ -17,14 +17,14 @@ class FightEnemyThought(Thought):
 
     def do_step(self):
         if self._enemy.is_died:
-            self.mark_as_done()
+            self.done()
 
         is_near_to_enemy = self._body.is_near_to(self._enemy.position)
 
         if is_near_to_enemy:
             self._body.damage_enemy(self._enemy)
             if self._enemy.is_died:
-                self.mark_as_done()
+                self.done()
         else:
             self._body.step_to_near(self._enemy.position)
 

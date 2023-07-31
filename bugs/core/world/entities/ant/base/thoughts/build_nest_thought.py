@@ -17,6 +17,6 @@ class BuildNestThought(Thought):
 
     def do_step(self):
         if (self._building_nest.is_built):
-            self.mark_as_done(self._building_nest)
+            self.done(self._building_nest)
         else:
             self._body.build_nest(self._building_nest)

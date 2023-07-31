@@ -15,7 +15,7 @@ class Mind(ABC):
         self._body = body
         self._thought_factory = thought_factory
         self._memory = memory
-        self._thoughts_stack = []
+        self._thoughts_stack: List[Thought] = []
         self._is_auto_thought_generation = is_auto_thought_generation
         self.events = events
 
@@ -68,12 +68,10 @@ class Mind(ABC):
 
     def _free_mind(self):
         if self._has_thoughts_to_do():
-            current_thought = self._get_current_thought()
-            if (current_thought.can_be_delayed()):
-                current_thought.delay()
-                self._thoughts_stack = []
-            else:
-                self._thoughts_stack = [current_thought]
+            for thought in self._thoughts_stack:
+                thought.cancel()
+
+        self._handle_done_thoughts()
 
     def _generate_thoughts(self):
         # todo check is enemy near

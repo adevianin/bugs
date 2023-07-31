@@ -31,7 +31,7 @@ class FoundNestThought(Thought):
             self._found_nest = nest
 
         if self._found_nest:
-            self.mark_as_done({
+            self.done({
                 'nest': self._found_nest
             })
         else:

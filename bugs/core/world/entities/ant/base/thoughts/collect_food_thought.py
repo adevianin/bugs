@@ -14,8 +14,8 @@ class CollectFoodThought(Thought):
     def __init__(self, nest: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
         super().__init__(ThoughtTypes.COLLECT_FOOD, flags, sayback)
         self._nest = nest
-        self._find_food_thought = find_food_thought
-        self._go_home_thought = go_home_thought
+        self._nested_thoughts['find_food_thought'] = find_food_thought
+        self._nested_thoughts['go_home_thought'] = go_home_thought
         self._found_food = found_food
 
         self._nest.events.once('died', self._on_nest_died)
@@ -25,12 +25,12 @@ class CollectFoodThought(Thought):
         return self._nest.id
     
     @property
-    def find_food_thought(self):
-        return self._find_food_thought
+    def find_food_thought(self) -> FindFoodThought:
+        return self._nested_thoughts['find_food_thought']
     
     @property
-    def go_home_thought(self):
-        return self._go_home_thought
+    def go_home_thought(self) -> GoInNestThought:
+        return self._nested_thoughts['go_home_thought']
     
     @property
     def found_food_id(self):
@@ -38,9 +38,9 @@ class CollectFoodThought(Thought):
 
     def do_step(self):
         if (not self._read_flag('is_find_food_done')):
-            is_doing_action = self._find_food_thought.do_step()
-            if(self._find_food_thought.is_done):
-                self._found_food = self._find_food_thought.results
+            is_doing_action = self.find_food_thought.do_step()
+            if(self.find_food_thought.is_done):
+                self._found_food = self.find_food_thought.results
                 self._write_flag('is_find_food_done', True)
             if (is_doing_action):
                 return True
@@ -57,8 +57,8 @@ class CollectFoodThought(Thought):
             return
             
         if (self._read_flag('is_pickup_food_done') and not self._read_flag('is_go_home_done')):
-            self._go_home_thought.do_step()
-            self._write_flag('is_go_home_done', self._go_home_thought.is_done)
+            self.go_home_thought.do_step()
+            self._write_flag('is_go_home_done', self.go_home_thought.is_done)
             return
         
         if (self._read_flag('is_go_home_done') and not self._read_flag('is_food_taken_by_home')):
@@ -72,7 +72,7 @@ class CollectFoodThought(Thought):
             return
 
         if (self._read_flag('is_got_out_of_nest')):
-            self.mark_as_done()
+            self.done()
 
     def can_be_delayed(self):
         if (self._read_flag('is_pickup_food_done')):
@@ -80,25 +80,13 @@ class CollectFoodThought(Thought):
         else:
             return True
         
-    def set_mind_parts(self, body: AntBody, memory: Memory):
-        super().set_mind_parts(body, memory)
-        self._find_food_thought.set_mind_parts(body, memory)
-        self._go_home_thought.set_mind_parts(body, memory)
-        
     def delay(self):
         self.restart()
-
-    def restart(self):
-        super().restart()
-        self._find_food_thought.restart()
-        self._go_home_thought.restart()
 
     def cancel(self):
         super().cancel()
         if self._body.is_food_picked:
             self._body.drop_picked_food()
-
-        self.mark_as_done()
 
     def _on_nest_died(self):
         self.cancel()

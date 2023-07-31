@@ -12,8 +12,8 @@ class FeedMyselfThought(Thought):
     def __init__(self, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
         super().__init__(ThoughtTypes.FEED_MYSELF, flags, sayback)
         self._home = home
-        self._find_food_thought = find_food_thought
-        self._go_home_thought = go_home_thought
+        self._nested_thoughts['find_food_thought'] = find_food_thought
+        self._nested_thoughts['go_home_thought'] = go_home_thought
 
         self._found_food = found_food
 
@@ -26,19 +26,19 @@ class FeedMyselfThought(Thought):
         return self._found_food.id if self._found_food else None
 
     @property
-    def find_food_thought(self):
-        return self._find_food_thought
+    def find_food_thought(self) -> FindFoodThought:
+        return self._nested_thoughts['find_food_thought']
     
     @property
-    def go_home_thought(self):
-        return self._go_home_thought
+    def go_home_thought(self) -> GoInNestThought:
+        return self._nested_thoughts['go_home_thought']
 
     def can_be_delayed(self):
         return False
 
     def do_step(self):
         if (not self._read_flag('is_home_checked') and not self._check_is_at_home()):
-            self._go_home_thought.do_step()
+            self.go_home_thought.do_step()
             return
         
         if (not self._read_flag('is_home_checked') and self._check_is_at_home()):
@@ -48,15 +48,15 @@ class FeedMyselfThought(Thought):
             self._write_flag('is_home_checked', True)
             self._body.get_out_of_nest()
             if (not self._body.check_am_i_hungry()):
-                self.mark_as_done()
+                self.done()
             return
 
         if (self._read_flag('is_home_checked')):
             if (not self._read_flag('is_food_found')):
-                is_doing_action = self._find_food_thought.do_step()
-                if (self._find_food_thought.is_done):
+                is_doing_action = self.find_food_thought.do_step()
+                if (self.find_food_thought.is_done):
                     self._write_flag('is_food_found', True)
-                    self._found_food = self._find_food_thought.results
+                    self._found_food = self.find_food_thought.results
                 if (is_doing_action):
                     return True
 
@@ -67,12 +67,7 @@ class FeedMyselfThought(Thought):
             if (self._read_flag('is_near_food')):
                 is_eatin_done = self._body.eat_food(self._found_food)
                 if (is_eatin_done):
-                    self.mark_as_done() 
+                    self.done() 
 
-    def set_mind_parts(self, body: Body, memory: Memory):
-        super().set_mind_parts(body, memory)
-        self._find_food_thought.set_mind_parts(body, memory)
-        self._go_home_thought.set_mind_parts(body, memory)
-    
     def _check_is_at_home(self):
         return self._body.located_in_nest_id == self._home.id

@@ -15,5 +15,5 @@ class WalkToThought(Thought):
     def do_step(self):
         is_done = self._body.step_to(self._position)
         if is_done:
-            self.mark_as_done()
+            self.done()
     

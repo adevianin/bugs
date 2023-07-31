@@ -63,6 +63,18 @@ class Map:
                 found_entities.append(entity)
         return found_entities
     
+    def find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes] = None, exclude_entity_id: int = None) -> List[Entity]:
+        found_entities = []
+        for entity in self._entities_collection.get_entities():
+            dist = math.dist([entity.position.x, entity.position.y], [point.x, point.y])
+            is_type_suitable = True if entity_types == None else self._check_entity_type(entity, entity_types)
+            is_excluded = False if exclude_entity_id == None else exclude_entity_id == entity.id
+
+            if (not entity.is_died and dist <= max_distance and is_type_suitable and not is_excluded):
+                found_entities.append(entity)
+
+        return found_entities
+    
     def handle_intractions(self):
         ants: List[Ant] = self.get_entities_by_type(EntityTypes.ANT)
         for ant in ants:
@@ -110,20 +122,8 @@ class Map:
         self.events.emit('entity_died', entity)
 
     def _find_entities_in_sight(self, entity: LiveEntity):
-        return self._find_entities_near(point=entity.position, max_distance=entity.body.sight_distance, exclude_entity_id=entity.id)
+        return self.find_entities_near(point=entity.position, max_distance=entity.body.sight_distance, exclude_entity_id=entity.id)
 
-    def _find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes] = None, exclude_entity_id: int = None):
-        found_entities = []
-        for entity in self._entities_collection.get_entities():
-            dist = math.dist([entity.position.x, entity.position.y], [point.x, point.y])
-            is_type_suitable = True if entity_types == None else self._check_entity_type(entity, entity_types)
-            is_excluded = False if exclude_entity_id == None else exclude_entity_id == entity.id
-
-            if (not entity.is_died and dist <= max_distance and is_type_suitable and not is_excluded):
-                found_entities.append(entity)
-
-        return found_entities
-    
     def _check_entity_type(self, entity: Entity, entity_types: EntityTypes):
         for type in entity_types:
             if (entity.type == type):

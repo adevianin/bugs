@@ -31,8 +31,11 @@ class AntBody(Body):
     def picked_food_id(self):
         return self._picked_food.id if self.is_food_picked else None
     
-    def inject_relation_tester(self, relation_tester: RelationTester):
+    def set_relation_tester(self, relation_tester: RelationTester):
         self._relation_tester = relation_tester
+
+    def set_colony_communicator(self, colony_communicator: EventEmitter):
+        self._colony_communicator = colony_communicator
     
     def look_around_for_food(self):
         return self._world_interactor.get_nearby_entities([EntityTypes.FOOD])
@@ -71,4 +74,6 @@ class AntBody(Body):
 
     def damage_nest(self, nest: Nest):
         nest.damage(10)
-        
+
+    def on_colony_signal(self, signale_name: str, callback: Callable):
+        self._colony_communicator.add_listener(signale_name, callback)

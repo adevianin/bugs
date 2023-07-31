@@ -10,7 +10,7 @@ from .relation_tester import RelationTester
 
 class Colony:
 
-    def __init__(self, id: int, event_bus: EventEmitter, owner_id: int, map: Map, operations: List[Operation], relation_tester: RelationTester):
+    def __init__(self, id: int, event_bus: EventEmitter, owner_id: int, map: Map, operations: List[Operation], relation_tester: RelationTester, colony_communicator: EventEmitter):
         self._id = id
         self._event_bus = event_bus
         self._owner_id = owner_id
@@ -18,6 +18,7 @@ class Colony:
         self._operations = operations or []
         self._has_changes = False
         self._relation_tester = relation_tester
+        self._colony_communicator = colony_communicator
 
         for operation in self._operations:
             self._listen_operation(operation)
@@ -44,6 +45,9 @@ class Colony:
     def get_my_ants(self):
         return self._map.get_ants_from_colony(self.id)
     
+    def get_my_nests(self):
+        return self._map.get_nests_from_colony(self.id)
+    
     def add_operation(self, operation: Operation):
         operation.id = self._generate_operation_id()
         self._operations.append(operation)
@@ -68,12 +72,14 @@ class Colony:
         }
     
     def _handle_my_ant(self, ant: Ant):
-        ant.body.inject_relation_tester(self._relation_tester)
+        ant.body.set_relation_tester(self._relation_tester)
+        ant.body.set_colony_communicator(self._colony_communicator)
     
     def _listen_operation(self, operation: Operation):
         operation.events.add_listener('change', self._on_operation_change)
     
     def _on_start_step(self, step_number: int):
+        self._check_enemies_in_colony_area()
         self._clean_done_operations()
         self._hire_for_operations()
         if self._has_changes:
@@ -152,5 +158,18 @@ class Colony:
         else:
             for ant in ants_from_destroyed_nest:
                 ant.die()
+
+    def _check_enemies_in_colony_area(self):
+        my_nests = self.get_my_nests()
+        for nest in my_nests:
+            entities = self._map.find_entities_near(nest.position, nest.area)
+            enemies_positions = []
+            for entity in entities:
+                if self._relation_tester.is_enemy(entity):
+                    enemies_positions.append(entity.position)
+
+            if len(enemies_positions) > 0:
+                self._colony_communicator.emit('enemy_spotted', nest, enemies_positions)
+
         
 

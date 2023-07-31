@@ -12,8 +12,9 @@ class ColonyFactory():
         self._event_bus = event_bus
 
     def build_colony(self, id: int, owner_id: int, map: Map, operations: List[Operation], colony_relations_table: ColonyRelationsTable):
+        colony_communicator = EventEmitter()
         relation_tester = self.build_relation_tester(colony_relations_table, id)
-        return Colony(id, self._event_bus, owner_id, map, operations, relation_tester)
+        return Colony(id, self._event_bus, owner_id, map, operations, relation_tester, colony_communicator)
     
     def build_relation_tester(self, colony_relations_table: ColonyRelationsTable, colony_id: int):
         return RelationTester(colony_relations_table, colony_id)

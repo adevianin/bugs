@@ -15,7 +15,7 @@ class GoInNestThought(Thought):
     def do_step(self):
         if self._read_flag('is_near_nest'):
             self._body.get_in_nest(self._nest)
-            self.mark_as_done()
+            self.done()
         else:
             self._write_flag('is_near_nest', self._body.step_to(self._nest.position))
     
