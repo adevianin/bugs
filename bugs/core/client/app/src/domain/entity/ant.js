@@ -5,15 +5,13 @@ import { distance } from 'utils/distance';
 
 class Ant extends Entity {
 
-    constructor(eventBus, id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId) {
-        super(eventBus, id, position, EntityTypes.ANT, fromColony);
+    constructor(eventBus, id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId, hp, maxHp) {
+        super(eventBus, id, position, EntityTypes.ANT, fromColony, hp, maxHp);
         this.pickedFoodId = pickedFoodId;
         this._userSpeed = userSpeed;
         this._antType = antType;
         this._setState('standing');
         this._locatedInNestId = locatedInNestId;
-
-        // window.ant = this;
     }
 
     get antType() {
@@ -33,6 +31,10 @@ class Ant extends Entity {
     }
 
     playAction(action) {
+        let promise = super.playAction(action)
+        if (promise) {
+            return promise
+        }
         switch (action.type) {
             case ACTION_TYPES.ENTITY_WALK:
                 return this._playWalkAction(action);
@@ -50,8 +52,6 @@ class Ant extends Entity {
                 return this._playGotInNest(action);
             case ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
                 return this._playGotOutOfNest(action);
-            default:
-                throw 'unknown type of action'
         }
     }
 

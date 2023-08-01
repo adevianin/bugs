@@ -24,7 +24,7 @@ class LiveEntity(Entity, iEnemy):
         self._body.events.add_listener('eat_food', self._on_body_eats_food)
         self._body.events.add_listener('got_in_nest', self._on_got_in_nest)
         self._body.events.add_listener('got_out_of_nest', self._on_got_out_of_nest)
-        self._body.events.add_listener('zero_hp', self._on_zero_hp)
+        self._body.events.add_listener('hp_changed', self._on_hp_changed)
 
     @property
     def position(self):
@@ -146,6 +146,8 @@ class LiveEntity(Entity, iEnemy):
     def _on_got_out_of_nest(self):
         self._emit_action('entity_got_out_of_nest')
 
-    def _on_zero_hp(self):
-        self._handle_dieing()
+    def _on_hp_changed(self):
+        self._emit_action('entity_hp_change', { 'hp': self.hp })
+        if self.hp <= 0:
+            self._handle_dieing()
 

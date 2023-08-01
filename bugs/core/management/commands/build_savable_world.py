@@ -38,7 +38,7 @@ class Command(BaseCommand):
                 "id":2,
                 "type":"ant",
                 "from_colony":2,
-                "hp": 100,
+                "hp": 300,
                 "position":[
                     650,
                     350

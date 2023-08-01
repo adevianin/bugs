@@ -198,11 +198,12 @@ const ACTION_TYPES = {
     ENTITY_WALK: 'entity_walk',
     ENTITY_GOT_IN_NEST: 'entity_got_in_nest',
     ENTITY_GOT_OUT_OF_NEST: 'entity_got_out_of_nest',
+    ENTITY_HP_CHANGE: 'entity_hp_change',
     FOOD_WAS_PICKED_UP: 'food_was_picked_up',
     FOOD_WAS_DROPPED: 'food_was_dropped',
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
     NEST_LARVAE_CHANGED: 'nest_larvae_changed',
-    NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed'
+    NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
 };
 
 
@@ -231,15 +232,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony);
+    constructor(eventBus, id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId, hp, maxHp) {
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony, hp, maxHp);
         this.pickedFoodId = pickedFoodId;
         this._userSpeed = userSpeed;
         this._antType = antType;
         this._setState('standing');
         this._locatedInNestId = locatedInNestId;
-
-        // window.ant = this;
     }
 
     get antType() {
@@ -259,6 +258,10 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     playAction(action) {
+        let promise = super.playAction(action)
+        if (promise) {
+            return promise
+        }
         switch (action.type) {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_WALK:
                 return this._playWalkAction(action);
@@ -276,8 +279,6 @@ class Ant extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playGotInNest(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
                 return this._playGotOutOfNest(action);
-            default:
-                throw 'unknown type of action'
         }
     }
 
@@ -466,11 +467,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Entity": () => (/* binding */ Entity)
 /* harmony export */ });
 /* harmony import */ var utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+
 
 
 class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
-    constructor(eventBus, id, position, type, fromColony) {
+    constructor(eventBus, id, position, type, fromColony, hp, maxHp) {
         super();
         this._eventBus = eventBus;
         this.id = id;
@@ -481,6 +484,8 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
         this._isPlaying = false;
         this._isHidden = false;
         this._angle = 0;
+        this._hp = hp;
+        this._maxHp = maxHp;
     }
 
     get state() {
@@ -509,12 +514,32 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
         return this._fromColony;
     }
 
+    get hp() {
+        return this._hp;
+    }
+
+    set hp(value) {
+        this._hp = value;
+        this.emit('hpChanged');
+    }
+
+    get maxHp() {
+        return this._maxHp
+    }
+
     addAction(action) {
         this._actionStack.push(action);
         this.tryPlayNextAction();
     }
 
-    playAction(action) {}
+    playAction(action) {
+        switch (action.type) {
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_1__.ACTION_TYPES.ENTITY_HP_CHANGE:
+                return this._playHpChange(action);
+        }
+
+        return null;
+    }
 
     tryPlayNextAction() {
         if (this._actionStack.length == 0 || this._isPlaying) {
@@ -547,6 +572,11 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
         }
     }
 
+    _playHpChange(action) {
+        this.hp = action.actionData.hp;
+        return Promise.resolve();
+    }
+
 }
 
 
@@ -572,8 +602,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
-    constructor(eventBus, id, position, calories, food_type, food_varity, is_picked) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD, null);
+    constructor(eventBus, id, position, calories, food_type, food_varity, is_picked, hp, maxHp) {
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD, null, hp, maxHp);
         this.calories = calories;
         this._food_type = food_type;
         this._food_variety = food_varity;
@@ -655,8 +685,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class FoodArea extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
-    constructor(eventBus, id, position, calories) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD_AREA, null);
+    constructor(eventBus, id, position, hp, maxHp) {
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD_AREA, null, hp, maxHp);
     }
 
     updateEntity(entityJson) {
@@ -716,8 +746,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST, fromColony);
+    constructor(eventBus, nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp) {
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST, fromColony, hp, maxHp);
         this._nestApi = nestApi;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
@@ -727,6 +757,10 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     playAction(action) {
+        let promise = super.playAction(action)
+        if (promise) {
+            return promise
+        }
         switch (action.type) {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_STORED_CALORIES_CHANGED:
                 return this._playTakingFood(action);
@@ -736,8 +770,6 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playBuildStatusChanged(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_DIED:
                 return this._playNestDestroyed(action);
-            default:
-                throw 'unknown type of action'
         }
     }
 
@@ -1105,7 +1137,7 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        // console.log(msg)
+        console.log(msg)
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);
@@ -1327,14 +1359,14 @@ class WorldFactory {
         return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this._mainEventBus);
     }
 
-    buildAnt(id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId) {
-        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId);
+    buildAnt(id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId, hp, maxHp) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, antType, position, fromColony, pickedFoodId, userSpeed, locatedInNestId, hp, maxHp);
     }
 
-    buildNest(id, position, fromColony, storedCalories, larvaeData, larvaPlacesCount, isBuilt) {
+    buildNest(id, position, fromColony, storedCalories, larvaeData, larvaPlacesCount, isBuilt, hp, maxHp) {
         let larvae = [];
         larvaeData.forEach(larvaData => larvae.push(_entity_larva__WEBPACK_IMPORTED_MODULE_6__.Larva.fromJson(larvaData.ant_type, larvaData.progress)));
-        return new _entity_nest__WEBPACK_IMPORTED_MODULE_3__.Nest(this._mainEventBus, this._nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt);
+        return new _entity_nest__WEBPACK_IMPORTED_MODULE_3__.Nest(this._mainEventBus, this._nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp);
     }
 
     buildFood(id, position, calories, food_type, food_varity, is_picked) {
@@ -1348,9 +1380,9 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT:
-                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.from_colony, entityJson.picked_food_id, entityJson.user_speed, entityJson.located_in_nest_id);
+                return this.buildAnt(entityJson.id, entityJson.ant_type, entityJson.position, entityJson.from_colony, entityJson.picked_food_id, entityJson.user_speed, entityJson.located_in_nest_id, entityJson.hp, entityJson.max_hp);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
-                return this.buildNest(entityJson.id, entityJson.position, entityJson.from_colony, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count, entityJson.is_built);
+                return this.buildNest(entityJson.id, entityJson.position, entityJson.from_colony, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count, entityJson.is_built, entityJson.hp, entityJson.max_hp);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
                 return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety, entityJson.is_picked);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_AREA:
@@ -2642,6 +2674,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 /* harmony import */ var _pickedFood__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pickedFood */ "./bugs/core/client/app/src/view/world/pickedFood.js");
+/* harmony import */ var _hpLine__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./hpLine */ "./bugs/core/client/app/src/view/world/hpLine.js");
+
 
 
 
@@ -2654,7 +2688,7 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._render();
 
         this._unbindPosChangedListener = this._entity.on('positionChanged', this._onAntPositionChange.bind(this));
-        this._unbindPosChangedListener = this._entity.on('angleChanged', this._onAngleChange.bind(this));
+        this._unbindAngleChangedListener = this._entity.on('angleChanged', this._onAngleChange.bind(this));
         this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderAntCurrentState.bind(this));
         this._unbindFoodLiftListener = this._entity.on('foodPickedUp', this._onFoodPickedUp.bind(this));
         this._unbindFoodDropListener = this._entity.on('foodDroped', this._removePickedFoodView.bind(this));
@@ -2665,50 +2699,53 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         super.remove();
         this._entityContainer.removeChild(this._antContainer);
         this._unbindPosChangedListener();
+        this._unbindAngleChangedListener();
         this._unbindStateChangeListener();
         this._unbindFoodLiftListener();
         this._unbindFoodDropListener();
         this._unbindIsHiddenChangedListener();
         this._removePickedFoodView();
+        this._removeHpLineView();
     }
 
     _render() {
         this._antContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._bodyContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._antContainer.addChild(this._bodyContainer);
         this._entityContainer.addChild(this._antContainer);
 
         this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_4.png`));
-        this._standSprite.anchor.set(0.5);
-        this._antContainer.addChild(this._standSprite);
+        // this._standSprite.anchor.set(0.5);
+        this._bodyContainer.addChild(this._standSprite);
 
         this._walkSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.AnimatedSprite(this.$textureManager.getAnimatedTextures(`ant_${this.entity.antType}`));
-        this._walkSprite.anchor.set(0.5);
+        // this._walkSprite.anchor.set(0.5);
         this._walkSprite.animationSpeed = 0.2;
-        this._antContainer.addChild(this._walkSprite);
+        this._bodyContainer.addChild(this._walkSprite);
 
         this._deadSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_dead.png`));
-        this._deadSprite.anchor.set(0.5);
-        this._antContainer.addChild(this._deadSprite);
+        // this._deadSprite.anchor.set(0.5);
+        this._bodyContainer.addChild(this._deadSprite);
+
+        this._bodyContainer.pivot.x = this._bodyContainer.width / 2;
+        this._bodyContainer.pivot.y = this._bodyContainer.height / 2;
 
         this._renderAntCurrentState();
         this._renderAntPosition();
         if (this._entity.hasPickedFood()) { 
             this._renderPickedFoodView();
-            this._renderPickedFoodPosition();
         }
+        this._renderHpLineView();
 
         this._renderIsInNest();
     }
 
     _onFoodPickedUp() {
         this._renderPickedFoodView();
-        this._renderPickedFoodPosition();
     }
 
     _onAntPositionChange() {
         this._renderAntPosition();
-        if (this._entity.hasPickedFood()) { 
-            this._renderPickedFoodPosition();
-        }
     }
 
     _onAngleChange() {
@@ -2725,36 +2762,17 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     _renderPickedFoodView() {
         if (!this._pickedFoodView) {
             let food = AntView.domainFacade.findEntityById(this._entity.pickedFoodId);
-            this._pickedFoodView = new _pickedFood__WEBPACK_IMPORTED_MODULE_2__.PickedFoodView(food, this._calcPickedFoodViewPosition(), this._antContainer);
-        }
-    }
-
-    _renderPickedFoodPosition() {
-        this._pickedFoodView.setPosition(this._calcPickedFoodViewPosition());
-    }
-
-    _calcPickedFoodViewPosition() {
-        return {
-            x: this._entity.position.x, 
-            y: this._entity.position.y - 15
+            this._pickedFoodView = new _pickedFood__WEBPACK_IMPORTED_MODULE_2__.PickedFoodView(food, { x: 0, y: -15 }, this._antContainer);
         }
     }
 
     _renderAntPosition() {
-        this._standSprite.x = this._entity.position.x;
-        this._standSprite.y = this._entity.position.y;
-
-        this._walkSprite.x = this._entity.position.x;
-        this._walkSprite.y = this._entity.position.y;
-
-        this._deadSprite.x = this._entity.position.x;
-        this._deadSprite.y = this._entity.position.y;
+        this._antContainer.x = this._entity.position.x;
+        this._antContainer.y = this._entity.position.y;
     }
 
     _renderAngle() {
-        this._standSprite.angle = this._entity.angle;
-        this._walkSprite.angle = this._entity.angle;
-        this._deadSprite.angle = this._entity.angle;
+        this._bodyContainer.angle = this._entity.angle
     }
 
     _renderAntCurrentState() {
@@ -2767,6 +2785,14 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
     _renderIsInNest() {
         this._antContainer.renderable = !this._entity.isInNest;
+    }
+
+    _renderHpLineView() {
+        this._hpLineView = new _hpLine__WEBPACK_IMPORTED_MODULE_3__.HpLineView(this._entity, this._antContainer);
+    }
+
+    _removeHpLineView() {
+        this._hpLineView.remove();
     }
 
     _toggleWalkingState(isEnabling) {
@@ -3000,6 +3026,68 @@ class FoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     _renderPosition() {
         this._sprite.x = this._entity.position.x;
         this._sprite.y = this._entity.position.y;
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/world/hpLine.js":
+/*!*******************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/hpLine.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "HpLineView": () => (/* binding */ HpLineView)
+/* harmony export */ });
+/* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
+
+
+class HpLineView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
+    constructor(entity, container) {
+        super();
+        this._container = container;
+        this._entity = entity;
+
+        this._unbindHpChangeListener = this._entity.on('hpChanged', this._renderHpValue.bind(this));
+
+        this._render();
+    }
+
+    remove() {
+        this._unbindHpChangeListener();
+    }
+
+    _render() {
+        this._hpLine = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Graphics();
+        this._hpLine.x = -16;
+        this._hpLine.y = -20;
+        this._container.addChild(this._hpLine);
+
+        this._renderHpValue();
+    }
+
+    _renderHpValue() {
+        let hpLineMaxWidth = 30;
+        let hpInPercent = (this._entity.hp * 100) / this._entity.maxHp;
+        let lineWidth = (hpLineMaxWidth / 100) * hpInPercent;
+        let color = 0x00ff00;
+        if (hpInPercent < 60) {
+            color = 0xffff00;
+        }
+        if (hpInPercent < 30) {
+            color = 0xff0000;
+        }
+        this._hpLine.clear();
+        this._hpLine.beginFill(color);
+        this._hpLine.drawRect(0, 0, lineWidth, 5);
     }
 
 }

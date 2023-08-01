@@ -3,8 +3,8 @@ import { EntityTypes } from '../enum/entityTypes';
 import { ACTION_TYPES } from './action/actionTypes';
 
 class Food extends Entity {
-    constructor(eventBus, id, position, calories, food_type, food_varity, is_picked) {
-        super(eventBus, id, position, EntityTypes.FOOD, null);
+    constructor(eventBus, id, position, calories, food_type, food_varity, is_picked, hp, maxHp) {
+        super(eventBus, id, position, EntityTypes.FOOD, null, hp, maxHp);
         this.calories = calories;
         this._food_type = food_type;
         this._food_variety = food_varity;

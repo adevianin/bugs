@@ -5,8 +5,8 @@ import { Larva } from './larva';
 
 class Nest extends Entity {
 
-    constructor(eventBus, nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt) {
-        super(eventBus, id, position, EntityTypes.NEST, fromColony);
+    constructor(eventBus, nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp) {
+        super(eventBus, id, position, EntityTypes.NEST, fromColony, hp, maxHp);
         this._nestApi = nestApi;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
@@ -16,6 +16,10 @@ class Nest extends Entity {
     }
 
     playAction(action) {
+        let promise = super.playAction(action)
+        if (promise) {
+            return promise
+        }
         switch (action.type) {
             case ACTION_TYPES.NEST_STORED_CALORIES_CHANGED:
                 return this._playTakingFood(action);
@@ -25,8 +29,6 @@ class Nest extends Entity {
                 return this._playBuildStatusChanged(action);
             case ACTION_TYPES.ENTITY_DIED:
                 return this._playNestDestroyed(action);
-            default:
-                throw 'unknown type of action'
         }
     }
 

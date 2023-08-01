@@ -27,7 +27,7 @@ class AntFactory():
         self._thought_factory = thought_factory
 
     def build_new_ant(self, id: int, larva: Larva, nest: Nest):
-        return self.build_ant(id, nest.from_colony, larva.ant_type, larva.dna_profile, nest.position, 100, nest, None, None, None, True, False)
+        return self.build_ant(id, nest.from_colony, larva.ant_type, larva.dna_profile, nest.position, None, nest, None, None, None, True, False)
 
     def build_ant(self, id: int, from_colony: int, ant_type: AntTypes, dna_profile: str, position: Point, hp: int, nest: Nest, located_in_nest: Nest, memory: Memory, picked_food: Food, is_auto_thought_generation: bool, is_in_operation: bool) -> Ant:
         match ant_type:
@@ -44,6 +44,7 @@ class AntFactory():
         events = EventEmitter()
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
+        hp = hp if hp else WarriorAnt.MAX_HP
         body = WarriorAntBody(events, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
         mind = WarrirorAntMind(events, body, self._thought_factory, memory, is_auto_thought_generation, nest)
         ant = WarriorAnt(events, id, from_colony, mind, body, is_in_operation)
@@ -54,6 +55,7 @@ class AntFactory():
         events = EventEmitter()
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
+        hp = hp if hp else WorkerAnt.MAX_HP
         body = WorkerAntBody(events, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
         mind = WorkerAntMind(events, body, self._thought_factory, memory, is_auto_thought_generation, nest)
         ant = WorkerAnt(events, id, from_colony, mind, body, is_in_operation)
@@ -64,6 +66,7 @@ class AntFactory():
         events = EventEmitter()
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
+        hp = hp if hp else QueenAnt.MAX_HP
         body = QueenAntBody(events, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
         mind = QueenAntMind(events, body, self._thought_factory, memory, is_auto_thought_generation, nest)
         ant = QueenAnt(events, id, from_colony, mind, body, is_in_operation)

@@ -7,6 +7,8 @@ from core.world.entities.ant.base.larva import Larva
 
 class Nest(PlainEntity):
 
+    MAX_HP = 1000
+
     def __init__(self, events: EventEmitter, id: int, position: Point, from_colony: int, hp: int, larvae: list[Larva], larva_places_count: int, stored_calories: int, area: int, build_progress: int):
         super().__init__(events, id, EntityTypes.NEST, from_colony, hp, position)
         self._area = area

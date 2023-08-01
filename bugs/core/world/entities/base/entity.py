@@ -6,6 +6,8 @@ from core.world.entities.action import Action
 
 class Entity(ABC):
 
+    MAX_HP = 100
+
     def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony: int):
         self.events = events
         self._id: int = id
@@ -51,6 +53,7 @@ class Entity(ABC):
     def damage(self, damage: int):
         if not self.is_died:
             self.hp -= damage if self.hp > damage else self.hp
+
         return self.is_died
 
     def born(self):
@@ -67,7 +70,9 @@ class Entity(ABC):
         return {
             'id': self.id,
             'type': self._type,
-            'from_colony': self._from_colony
+            'from_colony': self._from_colony,
+            'hp': self.hp,
+            'max_hp': self.MAX_HP
         }
     
     def _emit_action(self, action_type: str, action_data: dict = None):

@@ -74,8 +74,7 @@ class Body(ABC):
     @hp.setter
     def hp(self, hp: int):
         self._hp = hp
-        if self._hp <= 0:
-            self.events.emit('zero_hp')
+        self.events.emit('hp_changed')
 
     def say(self, phrase: str, data: dict):
         event_name = f'say:{phrase}'

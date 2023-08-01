@@ -1,8 +1,9 @@
 import { EventEmitter } from "utils/eventEmitter";
+import { ACTION_TYPES } from './action/actionTypes';
 
 class Entity extends EventEmitter {
 
-    constructor(eventBus, id, position, type, fromColony) {
+    constructor(eventBus, id, position, type, fromColony, hp, maxHp) {
         super();
         this._eventBus = eventBus;
         this.id = id;
@@ -13,6 +14,8 @@ class Entity extends EventEmitter {
         this._isPlaying = false;
         this._isHidden = false;
         this._angle = 0;
+        this._hp = hp;
+        this._maxHp = maxHp;
     }
 
     get state() {
@@ -41,12 +44,32 @@ class Entity extends EventEmitter {
         return this._fromColony;
     }
 
+    get hp() {
+        return this._hp;
+    }
+
+    set hp(value) {
+        this._hp = value;
+        this.emit('hpChanged');
+    }
+
+    get maxHp() {
+        return this._maxHp
+    }
+
     addAction(action) {
         this._actionStack.push(action);
         this.tryPlayNextAction();
     }
 
-    playAction(action) {}
+    playAction(action) {
+        switch (action.type) {
+            case ACTION_TYPES.ENTITY_HP_CHANGE:
+                return this._playHpChange(action);
+        }
+
+        return null;
+    }
 
     tryPlayNextAction() {
         if (this._actionStack.length == 0 || this._isPlaying) {
@@ -77,6 +100,11 @@ class Entity extends EventEmitter {
         if (isStateDifferent) {
             this.emit('stateChanged');
         }
+    }
+
+    _playHpChange(action) {
+        this.hp = action.actionData.hp;
+        return Promise.resolve();
     }
 
 }
