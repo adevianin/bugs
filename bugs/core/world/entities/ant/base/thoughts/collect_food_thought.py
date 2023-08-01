@@ -64,6 +64,7 @@ class CollectFoodThought(Thought):
         if (self._read_flag('is_go_home_done') and not self._read_flag('is_food_taken_by_home')):
             self._body.give_food(self._nest)
             self._write_flag('is_food_taken_by_home', True)
+            self._found_food = None
             return
         
         if (self._read_flag('is_food_taken_by_home') and not self._read_flag('is_got_out_of_nest')):
