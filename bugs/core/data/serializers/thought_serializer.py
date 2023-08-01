@@ -145,7 +145,9 @@ class ThoughtSerializer():
         fight_enemy_thought_json = self.serialize(thought.fight_enemy_thought)
         json.update({
             'searching_walk_thought': searching_walk_thought_json,
-            'fight_enemy_thought': fight_enemy_thought_json
+            'fight_enemy_thought': fight_enemy_thought_json,
+            'defending_nest_id': thought.defending_nest_id,
+            'point_to_check': thought.point_to_check
         })
 
         return json
