@@ -122,7 +122,7 @@ class AntView extends EntityView {
     }
 
     _renderHpLineView() {
-        this._hpLineView = new HpLineView(this._entity, this._uiContainer);
+        this._hpLineView = new HpLineView(this._entity, { x: 0, y: -4 }, 30, this._uiContainer);
     }
 
     _removeHpLineView() {

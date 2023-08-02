@@ -29,6 +29,10 @@ class Food extends Entity {
     }
 
     playAction(action) {
+        let promise = super.playAction(action)
+        if (promise) {
+            return promise
+        }
         switch (action.type) {
             case ACTION_TYPES.FOOD_WAS_PICKED_UP:
                 return this._playFoodPickedUp(action);
@@ -36,8 +40,6 @@ class Food extends Entity {
                 return this._playFoodDrop(action);
             case ACTION_TYPES.ENTITY_DIED:
                 return this._playEntityDied(action);
-            default:
-                throw 'unknown type of action'
         }
     }
 

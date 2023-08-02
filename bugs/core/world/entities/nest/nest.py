@@ -79,8 +79,9 @@ class Nest(PlainEntity):
         is_build_before = self.is_built
         build_step = 5
         if not self.is_built:
-            if self._build_progress + build_step > 100:
+            if self._build_progress + build_step >= 100:
                 self._build_progress = 100
+                self.hp = self.MAX_HP
             else:
                 self._build_progress += build_step
 

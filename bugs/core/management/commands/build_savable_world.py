@@ -125,7 +125,7 @@ class Command(BaseCommand):
                 "id":30,
                 "type":"nest",
                 "from_colony":2,
-                "hp": 100,
+                "hp": 1000,
                 "position":[
                     600,
                     350
@@ -156,7 +156,7 @@ class Command(BaseCommand):
                 "id":31,
                 "type":"nest",
                 "from_colony":1,
-                "hp": 100,
+                "hp": 1000,
                 "position":[
                     1600,
                     450

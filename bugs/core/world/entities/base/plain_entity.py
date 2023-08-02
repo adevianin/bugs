@@ -26,6 +26,7 @@ class PlainEntity(Entity):
     @hp.setter
     def hp(self, hp: int):
         self._hp = hp
+        self._emit_action('entity_hp_change', { 'hp': self.hp })
         if (self._hp <= 0):
             self._handle_dieing()
 
@@ -38,7 +39,7 @@ class PlainEntity(Entity):
             'position': {
                 'x': self._position.x,
                 'y': self._position.y
-            }
+            },
         })
         
         return json

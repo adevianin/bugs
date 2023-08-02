@@ -1,5 +1,6 @@
 import { EntityView } from './entityView';
 import * as PIXI from 'pixi.js';
+import { HpLineView } from './hpLine';
 
 class NestView extends EntityView { 
 
@@ -13,39 +14,47 @@ class NestView extends EntityView {
 
     _render() {
         this._nestContainer = new PIXI.Container();
+        this._bodyContainer = new PIXI.Container();
+        this._uiContainer = new PIXI.Container();
+        this._nestContainer.addChild(this._bodyContainer);
+        this._nestContainer.addChild(this._uiContainer);
         this._entityContainer.addChild(this._nestContainer);
 
         this._builtNestSprite = new PIXI.Sprite(this.$textureManager.getTexture('nest.png'));
-        this._builtNestSprite.anchor.set(0.5);
         this._builtNestSprite.eventMode = 'static';
-        this._builtNestSprite.x = this._entity.position.x;
-        this._builtNestSprite.y = this._entity.position.y;
-        this._nestContainer.addChild(this._builtNestSprite);
+        this._bodyContainer.addChild(this._builtNestSprite);
 
         this._buildingNestSprite = new PIXI.Sprite(this.$textureManager.getTexture('nest_building.png'));
-        this._buildingNestSprite.anchor.set(0.5);
-        this._buildingNestSprite.eventMode = 'static';
-        this._buildingNestSprite.x = this._entity.position.x;
-        this._buildingNestSprite.y = this._entity.position.y;
-        this._nestContainer.addChild(this._buildingNestSprite);
+        this._bodyContainer.addChild(this._buildingNestSprite);
 
         this._destroyedNestSprite = new PIXI.Sprite(this.$textureManager.getTexture('nest_destroyed.png'));
-        this._destroyedNestSprite.anchor.set(0.5);
-        this._destroyedNestSprite.x = this._entity.position.x;
-        this._destroyedNestSprite.y = this._entity.position.y;
-        this._nestContainer.addChild(this._destroyedNestSprite);
+        this._bodyContainer.addChild(this._destroyedNestSprite);
+
+        let nestHalfWidth = this._builtNestSprite.width / 2;
+        let nestHalfHeight = this._builtNestSprite.height / 2;
+
+        this._bodyContainer.pivot.x = nestHalfWidth;
+        this._bodyContainer.pivot.y = nestHalfHeight;
+        this._uiContainer.pivot.x = nestHalfWidth;
+        this._uiContainer.pivot.y = nestHalfHeight;
+
+        this._nestContainer.x = this._entity.position.x;
+        this._nestContainer.y = this._entity.position.y;
 
         if (this.$domainFacade.isNestMine(this._entity)) {
             this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
         }
 
         this._renderState();
+
+        this._hpLineView = new HpLineView(this._entity, { x: 0, y: -8 }, this._builtNestSprite.width, this._uiContainer);
     }
 
     remove() {
+        super.remove();
         this._unbindStateChangeListener();
         this._entityContainer.removeChild(this._nestContainer);
-        super.remove();
+        this._hpLineView.remove();
     }
 
     _renderState() {

@@ -628,6 +628,10 @@ class Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     playAction(action) {
+        let promise = super.playAction(action)
+        if (promise) {
+            return promise
+        }
         switch (action.type) {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_WAS_PICKED_UP:
                 return this._playFoodPickedUp(action);
@@ -635,8 +639,6 @@ class Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playFoodDrop(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_DIED:
                 return this._playEntityDied(action);
-            default:
-                throw 'unknown type of action'
         }
     }
 
@@ -2799,7 +2801,7 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     }
 
     _renderHpLineView() {
-        this._hpLineView = new _hpLine__WEBPACK_IMPORTED_MODULE_3__.HpLineView(this._entity, this._uiContainer);
+        this._hpLineView = new _hpLine__WEBPACK_IMPORTED_MODULE_3__.HpLineView(this._entity, { x: 0, y: -4 }, 30, this._uiContainer);
     }
 
     _removeHpLineView() {
@@ -3062,10 +3064,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class HpLineView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
-    constructor(entity, container) {
+    constructor(entity, position, width, container) {
         super();
         this._container = container;
         this._entity = entity;
+        this._position = position;
+        this._width = width;
 
         this._unbindHpChangeListener = this._entity.on('hpChanged', this._renderHpValue.bind(this));
 
@@ -3078,14 +3082,15 @@ class HpLineView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.Base
 
     _render() {
         this._hpLine = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Graphics();
-        this._hpLine.y = -4;
+        this._hpLine.y = this._position.y;
+        this._hpLine.x = this._position.x;
         this._container.addChild(this._hpLine);
 
         this._renderHpValue();
     }
 
     _renderHpValue() {
-        let hpLineMaxWidth = 30;
+        let hpLineMaxWidth = this._width;
         let hpInPercent = (this._entity.hp * 100) / this._entity.maxHp;
         let lineWidth = (hpLineMaxWidth / 100) * hpInPercent;
         let color = 0x00ff00;
@@ -3345,6 +3350,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _hpLine__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./hpLine */ "./bugs/core/client/app/src/view/world/hpLine.js");
+
 
 
 
@@ -3360,39 +3367,47 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
     _render() {
         this._nestContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._bodyContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._uiContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._nestContainer.addChild(this._bodyContainer);
+        this._nestContainer.addChild(this._uiContainer);
         this._entityContainer.addChild(this._nestContainer);
 
         this._builtNestSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture('nest.png'));
-        this._builtNestSprite.anchor.set(0.5);
         this._builtNestSprite.eventMode = 'static';
-        this._builtNestSprite.x = this._entity.position.x;
-        this._builtNestSprite.y = this._entity.position.y;
-        this._nestContainer.addChild(this._builtNestSprite);
+        this._bodyContainer.addChild(this._builtNestSprite);
 
         this._buildingNestSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture('nest_building.png'));
-        this._buildingNestSprite.anchor.set(0.5);
-        this._buildingNestSprite.eventMode = 'static';
-        this._buildingNestSprite.x = this._entity.position.x;
-        this._buildingNestSprite.y = this._entity.position.y;
-        this._nestContainer.addChild(this._buildingNestSprite);
+        this._bodyContainer.addChild(this._buildingNestSprite);
 
         this._destroyedNestSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture('nest_destroyed.png'));
-        this._destroyedNestSprite.anchor.set(0.5);
-        this._destroyedNestSprite.x = this._entity.position.x;
-        this._destroyedNestSprite.y = this._entity.position.y;
-        this._nestContainer.addChild(this._destroyedNestSprite);
+        this._bodyContainer.addChild(this._destroyedNestSprite);
+
+        let nestHalfWidth = this._builtNestSprite.width / 2;
+        let nestHalfHeight = this._builtNestSprite.height / 2;
+
+        this._bodyContainer.pivot.x = nestHalfWidth;
+        this._bodyContainer.pivot.y = nestHalfHeight;
+        this._uiContainer.pivot.x = nestHalfWidth;
+        this._uiContainer.pivot.y = nestHalfHeight;
+
+        this._nestContainer.x = this._entity.position.x;
+        this._nestContainer.y = this._entity.position.y;
 
         if (this.$domainFacade.isNestMine(this._entity)) {
             this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
         }
 
         this._renderState();
+
+        this._hpLineView = new _hpLine__WEBPACK_IMPORTED_MODULE_2__.HpLineView(this._entity, { x: 0, y: -8 }, this._builtNestSprite.width, this._uiContainer);
     }
 
     remove() {
+        super.remove();
         this._unbindStateChangeListener();
         this._entityContainer.removeChild(this._nestContainer);
-        super.remove();
+        this._hpLineView.remove();
     }
 
     _renderState() {
