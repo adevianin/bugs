@@ -7,6 +7,7 @@ from core.world.utils.point import Point
 from .marker_types import MarkerTypes
 from .operation_types import OperationTypes
 from typing import List
+from functools import partial
 
 class Operation(ABC):
 
@@ -27,8 +28,9 @@ class Operation(ABC):
 
     @property
     def is_hiring(self):
-        hired_count = len(self._hired_ants)
-        return hired_count == 0 or hired_count < self._total_hiring_ants_count
+        is_all_vacancies_taken = len(self._hired_ants) >= self._total_hiring_ants_count
+        is_hiring_stopped = is_all_vacancies_taken or self._read_flag('is_operation_started')
+        return not is_hiring_stopped
     
     @property
     def is_done(self):
@@ -102,9 +104,10 @@ class Operation(ABC):
         self._init_staff()
         self._start_operation()
 
-    @abstractmethod
     def _init_staff(self):
-        pass
+        ants = self.get_hired_ants()
+        for ant in ants:
+            ant.events.add_listener('died', partial(self._on_hired_ant_died, ant))
 
     def _read_flag(self, flag_name: str):
         if flag_name in self._flags:
@@ -153,4 +156,10 @@ class Operation(ABC):
             'status': self.status,
             'markers': self._markers
         }
+    
+    def _on_hired_ant_died(self, ant: Ant):
+        ant.leave_operation()
+        self._hired_ants.remove(ant)
+        if len(self._hired_ants) == 0:
+            self.stop_operation()
     

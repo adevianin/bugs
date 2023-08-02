@@ -2,11 +2,13 @@ from core.world.utils.event_emiter import EventEmitter
 from .operation.operation import Operation
 from core.world.entities.base.entity import Entity
 from core.world.entities.base.entity_types import EntityTypes
+from core.world.entities.ant.base.ant_types import AntTypes
 from typing import List, Callable
 from core.world.entities.nest.nest import Nest
 from core.world.entities.map.map import Map
 from core.world.entities.ant.base.ant import Ant
 from .relation_tester import RelationTester
+from core.world.entities.base.enemy_interface import iEnemy
 
 class Colony:
 
@@ -162,14 +164,20 @@ class Colony:
     def _check_enemies_in_colony_area(self):
         my_nests = self.get_my_nests()
         for nest in my_nests:
-            entities = self._map.find_entities_near(nest.position, nest.area)
-            enemies_positions = []
-            for entity in entities:
-                if self._relation_tester.is_enemy(entity):
-                    enemies_positions.append(entity.position)
+            enemies_filter: Callable[[Entity], bool] = lambda entity: self._relation_tester.is_enemy(entity)
+            enemies: List[iEnemy] = self._map.find_entities_near(point=nest.position, max_distance=nest.area, filter=enemies_filter)
+            defenders_filter: Callable[[Entity], bool] = lambda entity: entity.type == EntityTypes.ANT and entity.from_colony == self.id
+            defenders: List[Ant] = self._map.find_entities_near(point=nest.position, max_distance=nest.area, filter=defenders_filter)
 
-            if len(enemies_positions) > 0:
+            enemies_count = len(enemies)
+            defenders_count = len(defenders)
+            enemies_positions = [enemy.position for enemy in enemies]
+
+            if enemies_count > 0:
                 self._colony_communicator.emit('enemy_spotted', nest, enemies_positions)
+
+            if enemies_count > defenders_count:
+                self._colony_communicator.emit('reinforcement_needed', nest, enemies_positions)
 
         
 

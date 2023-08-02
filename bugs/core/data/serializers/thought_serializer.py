@@ -147,15 +147,19 @@ class ThoughtSerializer():
             'searching_walk_thought': searching_walk_thought_json,
             'fight_enemy_thought': fight_enemy_thought_json,
             'defending_nest_id': thought.defending_nest_id,
-            'point_to_check': thought.point_to_check
+            'point_to_check': thought.point_to_check,
+            'reinforcing_nest_id': thought.reinforcing_nest_id,
+            'point_to_reinforce': thought.point_to_reinforce
         })
 
         return json
     
     def _serialize_attack_nest(self, thought: AttackNestThought):
         json = self._serialize_thought(thought)
+        fight_enemy_thought_json = self.serialize(thought.fight_enemy_thought)
         json.update({
-            'nest_id': thought.nest_id
+            'nest_id': thought.nest_id,
+            'fight_enemy_thought': fight_enemy_thought_json
         })
 
         return json

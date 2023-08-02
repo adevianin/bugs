@@ -6,6 +6,7 @@ from core.world.settings import STEP_TIME
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.base.enemy_interface import iEnemy
+from typing import List
 
 import math
 
@@ -166,11 +167,23 @@ class Body(ABC):
     def is_near_to(self, point: Point, is_precise_mode: bool = False):
         return self._are_points_near(self.position, point, is_precise_mode)
     
+    def calc_nearest_point(self, points: List[Point]):
+        nearest_dist = None
+        nearest_point = None
+        for point in points:
+            dist = self.position.dist(point)
+            if nearest_dist == None or dist < nearest_dist:
+                nearest_dist = dist
+                nearest_point = point
+
+        return nearest_point
+    
     def _are_points_near(self, point1: Point, point2: Point, is_precise_mode: bool = False):
         dist = math.dist([point1.x, point1.y], [point2.x, point2.y])
         return dist < 1 if is_precise_mode else dist <= self._distance_per_step / 2
     
     def _consume_calories(self, amount: int):
-        self._calories -= amount
-        if self._calories < 0:
-            self.hp = 0
+        pass
+        # self._calories -= amount
+        # if self._calories < 0:
+        #     self.hp = 0

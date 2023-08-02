@@ -39,7 +39,7 @@ class AntMind(Mind):
         self._register_thought(thought)
 
     def attack_nest(self, nest: Nest, sayback: str):
-        thought = self._thought_factory.build_attack_nest_thought(nest=nest, sayback=sayback)
+        thought = self._thought_factory.build_attack_nest_thought_full(nest=nest, sayback=sayback)
         self._register_thought(thought)
     
     def _calc_assemble_point(self):

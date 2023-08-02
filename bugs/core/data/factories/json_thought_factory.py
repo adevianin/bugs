@@ -88,11 +88,14 @@ class JsonThoughtFactory():
         fight_enemy_thought = self.build_thougth_from_json(thought_json['fight_enemy_thought'], entities_collection)
         defending_nest = entities_collection.get_entity_by_id(thought_json['defending_nest_id'])
         point_to_check = Point.from_json(thought_json['point_to_check']) if thought_json['point_to_check'] else None
-        return self._thought_factory.build_defend_teritory(fight_enemy_thought=fight_enemy_thought, searching_walk_thought=searching_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, flags=thought_json['flags'], sayback=thought_json['sayback'])
+        reinforcing_nest = entities_collection.get_entity_by_id(thought_json['reinforcing_nest_id']) if thought_json['reinforcing_nest_id'] else None
+        point_to_reinforce = Point.from_json(thought_json['point_to_reinforce']) if thought_json['point_to_reinforce'] else None
+        return self._thought_factory.build_defend_teritory(fight_enemy_thought=fight_enemy_thought, searching_walk_thought=searching_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, reinforcing_nest=reinforcing_nest, point_to_reinforce=point_to_reinforce, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_attack_nest_thought(self, thought_json, entities_collection: EntityCollection):
         nest = entities_collection.get_entity_by_id(thought_json['nest_id'])
-        return self._thought_factory.build_attack_nest_thought(nest=nest, flags=thought_json['flags'], sayback=thought_json['sayback'])
+        fight_enemy_thought = self.build_thougth_from_json(thought_json['fight_enemy_thought'], entities_collection)
+        return self._thought_factory.build_attack_nest_thought(fight_enemy_thought=fight_enemy_thought, nest=nest, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_fight_enemy_thought(self, thought_json, entities_collection: EntityCollection):
         enemy = entities_collection.get_entity_by_id(thought_json['enemy_id']) if thought_json['enemy_id'] else None

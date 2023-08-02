@@ -44,11 +44,11 @@ class ThoughtFactory:
     def build_build_nest_thought(self, building_nest: Nest, flags: dict = None, sayback: str = None):
         return BuildNestThought(building_nest=building_nest, flags=flags, sayback=sayback)
     
-    def build_defend_teritory(self, fight_enemy_thought: FightEnemyThought, searching_walk_thought: SearchingWalkThought, defending_nest: Nest, point_to_check: Point = None, flags: dict = None, sayback: str = None):
-        return DefendTerritoryThought(fight_enemy_thought=fight_enemy_thought, search_walk_thought=searching_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, flags=flags, sayback=sayback)
+    def build_defend_teritory(self, fight_enemy_thought: FightEnemyThought, searching_walk_thought: SearchingWalkThought, defending_nest: Nest, point_to_check: Point = None, reinforcing_nest: Nest = None, point_to_reinforce: Point = None, flags: dict = None, sayback: str = None):
+        return DefendTerritoryThought(fight_enemy_thought=fight_enemy_thought, search_walk_thought=searching_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, reinforcing_nest=reinforcing_nest, point_to_reinforce=point_to_reinforce, flags=flags, sayback=sayback)
     
-    def build_attack_nest_thought(self, nest: Nest, flags: dict = None, sayback: str = None):
-        return AttackNestThought(nest=nest, flags=flags, sayback=sayback)
+    def build_attack_nest_thought(self, fight_enemy_thought: FightEnemyThought, nest: Nest, flags: dict = None, sayback: str = None):
+        return AttackNestThought( fight_enemy_thought=fight_enemy_thought, nest=nest, flags=flags, sayback=sayback)
     
     def build_fight_enemy_thought(self, enemy: iEnemy, flags: dict = None, sayback: str = None):
         return FightEnemyThought(enemy=enemy, flags=flags, sayback=sayback)
@@ -73,5 +73,9 @@ class ThoughtFactory:
         searching_walk_thought = self.build_searching_walk_thought(nest.position, nest.area)
         fight_enemy_thought = self.build_fight_enemy_thought(None)
         return self.build_defend_teritory(fight_enemy_thought=fight_enemy_thought, searching_walk_thought=searching_walk_thought, defending_nest=nest, sayback=sayback)
+    
+    def build_attack_nest_thought_full(self, nest: Nest, sayback: str = None):
+        fight_enemy_thought = self.build_fight_enemy_thought(None)
+        return self.build_attack_nest_thought(fight_enemy_thought=fight_enemy_thought, nest=nest, sayback=sayback)
 
     

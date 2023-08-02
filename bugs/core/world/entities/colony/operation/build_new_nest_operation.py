@@ -24,6 +24,8 @@ class BuildNewNestOperation(Operation):
         return self._building_site
     
     def _init_staff(self):
+        super()._init_staff()
+        
         self._worker = self.get_hired_ants(AntTypes.WORKER)[0]
         self._queen: QueenAnt = self.get_hired_ants(AntTypes.QUEEN)[0]
 

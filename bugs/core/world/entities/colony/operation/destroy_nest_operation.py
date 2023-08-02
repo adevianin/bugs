@@ -31,7 +31,6 @@ class DestroyNestOperation(Operation):
         super()._init_staff()
         for ant in self._warriors:
             ant.on_saying('prepared', partial(self._on_warrior_prepared, ant))
-            ant.on_saying('i_see_enemies', partial(self._on_warrior_sees_enemies, ant))
             ant.on_saying('nest_destroyed', self._on_nest_destroyed)
     
     def _start_operation(self):
@@ -46,10 +45,6 @@ class DestroyNestOperation(Operation):
         self._write_flag(f'warrior_{ant.id}_prepared', True)
         if self._check_are_all_warriors_prepared():
             self._attack_step()
-
-    def _on_warrior_sees_enemies(self, ant: Ant, enemies: List[iEnemy]):
-        first_enemy = enemies[0]
-        ant.fight_enemy(first_enemy)
 
     def _check_are_all_warriors_prepared(self):
         for ant in self._warriors:

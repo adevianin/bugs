@@ -156,13 +156,39 @@ class Command(BaseCommand):
                 "id":31,
                 "type":"nest",
                 "from_colony":1,
-                "hp": 1000,
+                "hp": 700,
                 "position":[
                     1600,
                     450
                 ],
                 "stored_calories":1000,
                 "larvae":[
+                    {
+                        "ant_type":"warrior",
+                        "ate_calories":440.0,
+                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    }
+                ],
+                "larva_places_count":1,
+                "area":300,
+                "build_progress": 100
+            },
+            {
+                "id":32,
+                "type":"nest",
+                "from_colony":1,
+                "hp": 1000,
+                "position":[
+                    2150,
+                    450
+                ],
+                "stored_calories":1000,
+                "larvae":[
+                    {
+                        "ant_type":"warrior",
+                        "ate_calories":440.0,
+                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    },
                     {
                         "ant_type":"warrior",
                         "ate_calories":440.0,

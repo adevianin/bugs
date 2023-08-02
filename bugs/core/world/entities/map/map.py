@@ -14,7 +14,7 @@ from core.world.entities.ant.ant_factory import AntFactory
 from core.world.entities.food.food_factory import FoodFactory
 from core.world.entities.nest.nest_factory import NestFactory
 
-from typing import List
+from typing import List, Callable
 import random, math
 from functools import partial
 
@@ -63,14 +63,14 @@ class Map:
                 found_entities.append(entity)
         return found_entities
     
-    def find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes] = None, exclude_entity_id: int = None) -> List[Entity]:
+    def find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes] = None, exclude_entity_id: int = None, filter: Callable[[Entity], bool] = None) -> List[Entity]:
         found_entities = []
         for entity in self._entities_collection.get_entities():
             dist = math.dist([entity.position.x, entity.position.y], [point.x, point.y])
             is_type_suitable = True if entity_types == None else self._check_entity_type(entity, entity_types)
             is_excluded = False if exclude_entity_id == None else exclude_entity_id == entity.id
 
-            if (not entity.is_died and dist <= max_distance and is_type_suitable and not is_excluded):
+            if (not entity.is_died and dist <= max_distance and is_type_suitable and not is_excluded and (filter == None or filter(entity))):
                 found_entities.append(entity)
 
         return found_entities
