@@ -34,7 +34,11 @@ class AntView extends EntityView {
     _render() {
         this._antContainer = new PIXI.Container();
         this._bodyContainer = new PIXI.Container();
+        this._uiContainer = new PIXI.Container();
+        this._pickedItemContainer = new PIXI.Container();
         this._antContainer.addChild(this._bodyContainer);
+        this._antContainer.addChild(this._pickedItemContainer);
+        this._antContainer.addChild(this._uiContainer);
         this._entityContainer.addChild(this._antContainer);
 
         this._standSprite = new PIXI.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_4.png`));
@@ -50,8 +54,15 @@ class AntView extends EntityView {
         // this._deadSprite.anchor.set(0.5);
         this._bodyContainer.addChild(this._deadSprite);
 
-        this._bodyContainer.pivot.x = this._bodyContainer.width / 2;
-        this._bodyContainer.pivot.y = this._bodyContainer.height / 2;
+        let halfAntWidth = this._standSprite.width / 2;
+        let halfAntHeight = this._standSprite.height / 2;
+
+        this._bodyContainer.pivot.x = halfAntWidth;
+        this._bodyContainer.pivot.y = halfAntHeight;
+        this._uiContainer.pivot.x = halfAntWidth;
+        this._uiContainer.pivot.y = halfAntHeight;
+        this._pickedItemContainer.pivot.x = halfAntWidth;
+        this._pickedItemContainer.pivot.y = halfAntHeight;
 
         this._renderAntCurrentState();
         this._renderAntPosition();
@@ -85,7 +96,7 @@ class AntView extends EntityView {
     _renderPickedFoodView() {
         if (!this._pickedFoodView) {
             let food = AntView.domainFacade.findEntityById(this._entity.pickedFoodId);
-            this._pickedFoodView = new PickedFoodView(food, { x: 0, y: -15 }, this._antContainer);
+            this._pickedFoodView = new PickedFoodView(food, this._pickedItemContainer);
         }
     }
 
@@ -111,7 +122,7 @@ class AntView extends EntityView {
     }
 
     _renderHpLineView() {
-        this._hpLineView = new HpLineView(this._entity, this._antContainer);
+        this._hpLineView = new HpLineView(this._entity, this._uiContainer);
     }
 
     _removeHpLineView() {

@@ -18,8 +18,7 @@ class HpLineView extends BaseGraphicView {
 
     _render() {
         this._hpLine = new PIXI.Graphics();
-        this._hpLine.x = -16;
-        this._hpLine.y = -20;
+        this._hpLine.y = -4;
         this._container.addChild(this._hpLine);
 
         this._renderHpValue();

@@ -2711,7 +2711,11 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     _render() {
         this._antContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._bodyContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._uiContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._pickedItemContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._antContainer.addChild(this._bodyContainer);
+        this._antContainer.addChild(this._pickedItemContainer);
+        this._antContainer.addChild(this._uiContainer);
         this._entityContainer.addChild(this._antContainer);
 
         this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_4.png`));
@@ -2727,8 +2731,15 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         // this._deadSprite.anchor.set(0.5);
         this._bodyContainer.addChild(this._deadSprite);
 
-        this._bodyContainer.pivot.x = this._bodyContainer.width / 2;
-        this._bodyContainer.pivot.y = this._bodyContainer.height / 2;
+        let halfAntWidth = this._standSprite.width / 2;
+        let halfAntHeight = this._standSprite.height / 2;
+
+        this._bodyContainer.pivot.x = halfAntWidth;
+        this._bodyContainer.pivot.y = halfAntHeight;
+        this._uiContainer.pivot.x = halfAntWidth;
+        this._uiContainer.pivot.y = halfAntHeight;
+        this._pickedItemContainer.pivot.x = halfAntWidth;
+        this._pickedItemContainer.pivot.y = halfAntHeight;
 
         this._renderAntCurrentState();
         this._renderAntPosition();
@@ -2762,7 +2773,7 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     _renderPickedFoodView() {
         if (!this._pickedFoodView) {
             let food = AntView.domainFacade.findEntityById(this._entity.pickedFoodId);
-            this._pickedFoodView = new _pickedFood__WEBPACK_IMPORTED_MODULE_2__.PickedFoodView(food, { x: 0, y: -15 }, this._antContainer);
+            this._pickedFoodView = new _pickedFood__WEBPACK_IMPORTED_MODULE_2__.PickedFoodView(food, this._pickedItemContainer);
         }
     }
 
@@ -2788,7 +2799,7 @@ class AntView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     }
 
     _renderHpLineView() {
-        this._hpLineView = new _hpLine__WEBPACK_IMPORTED_MODULE_3__.HpLineView(this._entity, this._antContainer);
+        this._hpLineView = new _hpLine__WEBPACK_IMPORTED_MODULE_3__.HpLineView(this._entity, this._uiContainer);
     }
 
     _removeHpLineView() {
@@ -3067,8 +3078,7 @@ class HpLineView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.Base
 
     _render() {
         this._hpLine = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Graphics();
-        this._hpLine.x = -16;
-        this._hpLine.y = -20;
+        this._hpLine.y = -4;
         this._container.addChild(this._hpLine);
 
         this._renderHpValue();
@@ -3421,16 +3431,14 @@ __webpack_require__.r(__webpack_exports__);
 
 class PickedFoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
 
-    constructor(entity, position, entityContainer) {
+    constructor(entity, entityContainer) {
         super(entity, entityContainer);
-        this._position = position;
 
         let textureName = `food_${this._entity.food_type}_${this._entity.food_variety}v.png`;
         if (entity.food_type == 'nectar') {
             textureName = 'food_nectar_picked.png';
         }
         this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(textureName));
-        this._sprite.anchor.set(0.5);
         entityContainer.addChild(this._sprite);
 
         this._render();
@@ -3438,18 +3446,9 @@ class PickedFoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView
         this._entity.on('positionChanged', this._render.bind(this));
     }
 
-    setPosition(position) {
-        this._position = position;
-        this._renderPosition();
-    }
-
     _render() {
-        this._renderPosition();
-    }
-
-    _renderPosition() {
-        this._sprite.x = this._position.x;
-        this._sprite.y = this._position.y;
+        this._sprite.x = 0;
+        this._sprite.y = -14;
     }
 
     remove() {
