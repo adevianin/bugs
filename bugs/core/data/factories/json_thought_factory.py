@@ -34,6 +34,8 @@ class JsonThoughtFactory():
                 return self._build_attack_nest_thought(thought_json, entities_collection)
             case ThoughtTypes.FIGHT_ENEMY:
                 return self._build_fight_enemy_thought(thought_json, entities_collection)
+            case ThoughtTypes.FIGHT_NEAR_ENEMIES:
+                return self._build_fight_near_enemies(thought_json, entities_collection)
             case _:
                 raise Exception('unknown type of thought')
             
@@ -85,18 +87,22 @@ class JsonThoughtFactory():
     
     def _build_defend_territory(self, thought_json, entities_collection: EntityCollection):
         searching_walk_thought = self.build_thougth_from_json(thought_json['searching_walk_thought'], entities_collection)
-        fight_enemy_thought = self.build_thougth_from_json(thought_json['fight_enemy_thought'], entities_collection)
+        fight_near_enemies_thought = self.build_thougth_from_json(thought_json['fight_near_enemies_thought'], entities_collection)
         defending_nest = entities_collection.get_entity_by_id(thought_json['defending_nest_id'])
         point_to_check = Point.from_json(thought_json['point_to_check']) if thought_json['point_to_check'] else None
         reinforcing_nest = entities_collection.get_entity_by_id(thought_json['reinforcing_nest_id']) if thought_json['reinforcing_nest_id'] else None
         point_to_reinforce = Point.from_json(thought_json['point_to_reinforce']) if thought_json['point_to_reinforce'] else None
-        return self._thought_factory.build_defend_teritory(fight_enemy_thought=fight_enemy_thought, searching_walk_thought=searching_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, reinforcing_nest=reinforcing_nest, point_to_reinforce=point_to_reinforce, flags=thought_json['flags'], sayback=thought_json['sayback'])
+        return self._thought_factory.build_defend_teritory(fight_near_enemies_thought=fight_near_enemies_thought, searching_walk_thought=searching_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, reinforcing_nest=reinforcing_nest, point_to_reinforce=point_to_reinforce, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_attack_nest_thought(self, thought_json, entities_collection: EntityCollection):
         nest = entities_collection.get_entity_by_id(thought_json['nest_id'])
-        fight_enemy_thought = self.build_thougth_from_json(thought_json['fight_enemy_thought'], entities_collection)
-        return self._thought_factory.build_attack_nest_thought(fight_enemy_thought=fight_enemy_thought, nest=nest, flags=thought_json['flags'], sayback=thought_json['sayback'])
+        fight_near_enemies_thought = self.build_thougth_from_json(thought_json['fight_near_enemies_thought'], entities_collection)
+        return self._thought_factory.build_attack_nest_thought(fight_near_enemies_thought=fight_near_enemies_thought, nest=nest, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_fight_enemy_thought(self, thought_json, entities_collection: EntityCollection):
         enemy = entities_collection.get_entity_by_id(thought_json['enemy_id']) if thought_json['enemy_id'] else None
         return self._thought_factory.build_fight_enemy_thought(enemy, flags=thought_json['flags'], sayback=thought_json['sayback'])
+    
+    def _build_fight_near_enemies(self, thought_json, entities_collection: EntityCollection):
+        fight_enemy_thought = self.build_thougth_from_json(thought_json['fight_enemy_thought'], entities_collection)
+        return self._thought_factory.build_fight_near_enemies_thought(fight_enemy_thought=fight_enemy_thought, flags=thought_json['flags'], sayback=thought_json['sayback'])

@@ -1,5 +1,5 @@
 from core.world.utils.point import Point
-from abc import ABC
+from abc import ABC,abstractmethod
 from core.world.entities.food.food import Food
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME
@@ -178,6 +178,10 @@ class Body(ABC):
 
         return nearest_point
     
+    @abstractmethod
+    def look_around_for_enemies(self):
+        pass
+
     def _are_points_near(self, point1: Point, point2: Point, is_precise_mode: bool = False):
         dist = math.dist([point1.x, point1.y], [point2.x, point2.y])
         return dist < 1 if is_precise_mode else dist <= self._distance_per_step / 2

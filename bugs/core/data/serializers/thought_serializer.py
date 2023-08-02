@@ -12,6 +12,7 @@ from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestTh
 from core.world.entities.ant.warrior.thoughts.defend_territory_thought import DefendTerritoryThought
 from core.world.entities.base.live_entity.thoughts.fight_enemy_thought import FightEnemyThought
 from core.world.entities.ant.base.thoughts.attack_nest import AttackNestThought
+from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
 
 class ThoughtSerializer():
 
@@ -41,6 +42,8 @@ class ThoughtSerializer():
                 return self._serialize_attack_nest(thought)
             case ThoughtTypes.FIGHT_ENEMY:
                 return self._serialize_fight_enemy(thought)
+            case ThoughtTypes.FIGHT_NEAR_ENEMIES:
+                return self._serialize_fight_near_enemies(thought)
             case _:
                 raise Exception('unknown type of thought')
 
@@ -142,10 +145,10 @@ class ThoughtSerializer():
     def _serialize_defend_territory(self, thought: DefendTerritoryThought):
         json = self._serialize_thought(thought)
         searching_walk_thought_json = self.serialize(thought.searching_walk_thought)
-        fight_enemy_thought_json = self.serialize(thought.fight_enemy_thought)
+        fight_near_enemies_thought_json = self.serialize(thought.fight_near_enemies_thought)
         json.update({
             'searching_walk_thought': searching_walk_thought_json,
-            'fight_enemy_thought': fight_enemy_thought_json,
+            'fight_near_enemies_thought': fight_near_enemies_thought_json,
             'defending_nest_id': thought.defending_nest_id,
             'point_to_check': thought.point_to_check,
             'reinforcing_nest_id': thought.reinforcing_nest_id,
@@ -156,9 +159,18 @@ class ThoughtSerializer():
     
     def _serialize_attack_nest(self, thought: AttackNestThought):
         json = self._serialize_thought(thought)
-        fight_enemy_thought_json = self.serialize(thought.fight_enemy_thought)
+        fight_near_enemies_thought_json = self.serialize(thought.fight_near_enemies_thought)
         json.update({
             'nest_id': thought.nest_id,
+            'fight_near_enemies_thought': fight_near_enemies_thought_json
+        })
+
+        return json
+    
+    def _serialize_fight_near_enemies(self, thought: FightNearEnemiesThought):
+        json = self._serialize_thought(thought)
+        fight_enemy_thought_json = self.serialize(thought.fight_enemy_thought)
+        json.update({
             'fight_enemy_thought': fight_enemy_thought_json
         })
 

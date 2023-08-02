@@ -13,3 +13,4 @@ class ThoughtTypes(StrEnum):
     DEFEND_TERRITORY = 'defend_territory'
     ATTACK_NEST = 'attack_nest'
     FIGHT_ENEMY = 'fight_enemy'
+    FIGHT_NEAR_ENEMIES = 'fight_near_enemies'
