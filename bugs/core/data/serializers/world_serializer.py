@@ -33,19 +33,19 @@ class WorldSerializer():
             'last_used_id': world.last_used_id
         }
 
-        nests = world.map.get_entities_by_type(EntityTypes.NEST)
+        nests = world.map.get_entities(entity_types=[EntityTypes.NEST])
         for nest in nests:
             json['nests'].append(self._nest_serializer.serialize(nest))
 
-        ants = world.map.get_entities_by_type(EntityTypes.ANT)
+        ants = world.map.get_entities(entity_types=[EntityTypes.ANT])
         for ant in ants:
             json['ants'].append(self._ant_serializer.serialize(ant))
 
-        foods = world.map.get_entities_by_type(EntityTypes.FOOD)
+        foods = world.map.get_entities(entity_types=[EntityTypes.FOOD])
         for food in foods:
             json['foods'].append(self._food_serializer.serialize(food))
 
-        food_areas = world.map.get_entities_by_type(EntityTypes.FOOD_AREA)
+        food_areas = world.map.get_entities(entity_types=[EntityTypes.FOOD_AREA])
         for food_area in food_areas:
             json['food_areas'].append(self._food_area_serializer.serialize(food_area))
 

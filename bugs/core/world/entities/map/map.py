@@ -37,46 +37,29 @@ class Map:
     def size(self):
         return self._size
     
-    def get_entity_by_id(self, id: int):
+    def get_entity_by_id(self, id: int) -> Entity:
         return self._entities_collection.get_entity_by_id(id)
     
-    def get_nests_from_colony(self, colony_id: int, filter: callable = None) -> List[Nest]:
+    def get_entities(self, from_colony_id: int = None, entity_types: List[EntityTypes] = None, filter: Callable[[Entity], bool] = None) -> List[Entity]:
         found_entities = []
         for entity in self._entities_collection.get_entities():
-            if entity.type == EntityTypes.NEST and entity.from_colony == colony_id and (filter == None or filter(entity)):
-                found_entities.append(entity)
-
-        return found_entities
-    
-    def get_ants_from_colony(self, colony_id: int, filter: callable = None) -> List[Ant]:
-        found_ants = []
-        for entity in self._entities_collection.get_entities():
-            if entity.type == EntityTypes.ANT and entity.from_colony == colony_id and (filter == None or filter(entity)):
-                found_ants.append(entity)
-
-        return found_ants
-    
-    def get_entities_by_type(self, entity_type: EntityTypes):
-        found_entities = []
-        for entity in self._entities_collection.get_entities():
-            if entity.type == entity_type:
+            if (not from_colony_id or entity.from_colony == from_colony_id) and (not entity_types or entity.type in entity_types) and (not filter or filter(entity)):
                 found_entities.append(entity)
         return found_entities
     
-    def find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes] = None, exclude_entity_id: int = None, filter: Callable[[Entity], bool] = None) -> List[Entity]:
+    def find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes] = None, filter: Callable[[Entity], bool] = None) -> List[Entity]:
         found_entities = []
         for entity in self._entities_collection.get_entities():
             dist = math.dist([entity.position.x, entity.position.y], [point.x, point.y])
-            is_type_suitable = True if entity_types == None else self._check_entity_type(entity, entity_types)
-            is_excluded = False if exclude_entity_id == None else exclude_entity_id == entity.id
+            is_type_suitable = not entity_types or entity.type in entity_types
 
-            if (not entity.is_died and dist <= max_distance and is_type_suitable and not is_excluded and (filter == None or filter(entity))):
+            if (not entity.is_died and dist <= max_distance and is_type_suitable and (not filter or filter(entity))):
                 found_entities.append(entity)
 
         return found_entities
     
     def handle_intractions(self):
-        ants: List[Ant] = self.get_entities_by_type(EntityTypes.ANT)
+        ants: List[Ant] = self.get_entities(entity_types=[EntityTypes.ANT])
         for ant in ants:
             entities_in_sight = self._find_entities_in_sight(ant)
             ant.body.world_interactor.set_nearby_entities(entities_in_sight)
@@ -122,12 +105,4 @@ class Map:
         self.events.emit('entity_died', entity)
 
     def _find_entities_in_sight(self, entity: LiveEntity):
-        return self.find_entities_near(point=entity.position, max_distance=entity.body.sight_distance, exclude_entity_id=entity.id)
-
-    def _check_entity_type(self, entity: Entity, entity_types: EntityTypes):
-        for type in entity_types:
-            if (entity.type == type):
-                return True
-            
-        return False
-    
+        return self.find_entities_near(point=entity.position, max_distance=entity.body.sight_distance, filter=lambda checking_entity: entity.id != checking_entity.id)

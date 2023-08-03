@@ -45,10 +45,10 @@ class Colony:
         return self._operations
     
     def get_my_ants(self):
-        return self._map.get_ants_from_colony(self.id)
+        return self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.ANT])
     
     def get_my_nests(self):
-        return self._map.get_nests_from_colony(self.id)
+        return self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.NEST])
     
     def add_operation(self, operation: Operation):
         operation.id = self._generate_operation_id()
@@ -149,9 +149,9 @@ class Colony:
 
     def _on_colony_nest_destroyed(self, destroyed_nest: Nest):
         remaining_nests_filter: Callable[[Nest], bool] = lambda entity: entity.id != destroyed_nest.id
-        remaining_nests = self._map.get_nests_from_colony(self.id, remaining_nests_filter)
+        remaining_nests = self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.NEST], filter=remaining_nests_filter)
         ants_from_destoyed_nest_filter: Callable[[Ant], bool] = lambda ant: ant.home_nest.id == destroyed_nest.id
-        ants_from_destroyed_nest = self._map.get_ants_from_colony(self.id, ants_from_destoyed_nest_filter)
+        ants_from_destroyed_nest: List[Ant] = self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.ANT], filter=ants_from_destoyed_nest_filter)
         
         if (len(remaining_nests) > 0):
             relocate_nest = remaining_nests[0]
@@ -166,8 +166,8 @@ class Colony:
         for nest in my_nests:
             enemies_filter: Callable[[Entity], bool] = lambda entity: self._relation_tester.is_enemy(entity)
             enemies: List[iEnemy] = self._map.find_entities_near(point=nest.position, max_distance=nest.area, filter=enemies_filter)
-            defenders_filter: Callable[[Entity], bool] = lambda entity: entity.type == EntityTypes.ANT and entity.from_colony == self.id
-            defenders: List[Ant] = self._map.find_entities_near(point=nest.position, max_distance=nest.area, filter=defenders_filter)
+            defenders_filter: Callable[[Ant], bool] = lambda entity: entity.ant_type == AntTypes.WARRIOR and entity.from_colony == self.id
+            defenders: List[Ant] = self._map.find_entities_near(point=nest.position, max_distance=nest.area, entity_types=[EntityTypes.ANT], filter=defenders_filter)
 
             enemies_count = len(enemies)
             defenders_count = len(defenders)

@@ -21,6 +21,8 @@ class DefendTerritoryThought(Thought):
         self._reinforcing_nest = reinforcing_nest
         self._point_to_reinforce = point_to_reinforce
 
+        self._defending_nest.events.once('died', self._on_defending_nest_died)
+
     @property
     def searching_walk_thought(self) -> SearchingWalkThought:
         return self._nested_thoughts['searching_walk_thought']
@@ -94,4 +96,7 @@ class DefendTerritoryThought(Thought):
             if not self._read_flag('is_reinforcing') or self._reinforcing_nest.id == nest.id:
                 self._point_to_reinforce = self._body.calc_nearest_point(positions)
                 self._reinforcing_nest = nest
+
+    def _on_defending_nest_died(self):
+        self.cancel()
         
