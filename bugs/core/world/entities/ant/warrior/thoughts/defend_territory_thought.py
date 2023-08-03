@@ -82,15 +82,19 @@ class DefendTerritoryThought(Thought):
     def set_mind_parts(self, body: WarriorAntBody, memory: Memory):
         super().set_mind_parts(body, memory)
 
-        self._body.on_colony_signal('enemy_spotted', self._on_enemy_spotted)
-        self._body.on_colony_signal('reinforcement_needed', self._on_reinforcement_request)
+        self._body.events.add_listener('colony_signal:enemy_spotted', self._on_enemy_spotted_signal)
+        self._body.events.add_listener('colony_signal:reinforcement_needed', self._on_reinforcement_needed_signal)
 
-    def _on_enemy_spotted(self, nest: Nest, positions: List[Point]):
+    def _on_enemy_spotted_signal(self, signal: dict):
+        nest: Nest = signal['nest']
+        positions: List[Point] = signal['enemies_positions']
         if nest.id == self._defending_nest.id:
             self._write_flag('has_point_to_check', True)
             self._point_to_check = self._body.calc_nearest_point(positions)
 
-    def _on_reinforcement_request(self, nest: Nest, positions: List[Point]):
+    def _on_reinforcement_needed_signal(self, signal: dict):
+        nest: Nest = signal['nest']
+        positions: List[Point] = signal['enemies_positions']
         if nest.id != self._defending_nest.id:
             self._write_flag('has_reinforce_request', True)
             if not self._read_flag('is_reinforcing') or self._reinforcing_nest.id == nest.id:

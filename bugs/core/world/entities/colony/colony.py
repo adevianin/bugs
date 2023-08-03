@@ -9,10 +9,11 @@ from core.world.entities.map.map import Map
 from core.world.entities.ant.base.ant import Ant
 from .relation_tester import RelationTester
 from core.world.entities.base.enemy_interface import iEnemy
+from core.world.utils.point import Point
 
 class Colony:
 
-    def __init__(self, id: int, event_bus: EventEmitter, owner_id: int, map: Map, operations: List[Operation], relation_tester: RelationTester, colony_communicator: EventEmitter):
+    def __init__(self, id: int, event_bus: EventEmitter, owner_id: int, map: Map, operations: List[Operation], relation_tester: RelationTester):
         self._id = id
         self._event_bus = event_bus
         self._owner_id = owner_id
@@ -20,7 +21,6 @@ class Colony:
         self._operations = operations or []
         self._has_changes = False
         self._relation_tester = relation_tester
-        self._colony_communicator = colony_communicator
 
         for operation in self._operations:
             self._listen_operation(operation)
@@ -44,10 +44,10 @@ class Colony:
     def operations(self):
         return self._operations
     
-    def get_my_ants(self):
+    def get_my_ants(self) -> List[Ant]:
         return self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.ANT])
     
-    def get_my_nests(self):
+    def get_my_nests(self) -> List[Nest]:
         return self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.NEST])
     
     def add_operation(self, operation: Operation):
@@ -75,7 +75,6 @@ class Colony:
     
     def _handle_my_ant(self, ant: Ant):
         ant.body.set_relation_tester(self._relation_tester)
-        ant.body.set_colony_communicator(self._colony_communicator)
     
     def _listen_operation(self, operation: Operation):
         operation.events.add_listener('change', self._on_operation_change)
@@ -174,10 +173,24 @@ class Colony:
             enemies_positions = [enemy.position for enemy in enemies]
 
             if enemies_count > 0:
-                self._colony_communicator.emit('enemy_spotted', nest, enemies_positions)
+                self._send_signal_to_ants({
+                    'type': 'enemy_spotted',
+                    'nest': nest,
+                    'enemies_positions': enemies_positions
+                })
 
             if enemies_count > defenders_count:
-                self._colony_communicator.emit('reinforcement_needed', nest, enemies_positions)
+                self._send_signal_to_ants({
+                    'type': 'reinforcement_needed',
+                    'nest': nest,
+                    'enemies_positions': enemies_positions
+                })
+
+    def _send_signal_to_ants(self, signal: dict):
+        my_ants = self.get_my_ants()
+        for ant in my_ants:
+            ant.body.receive_colony_signal(signal)
+
 
         
 
