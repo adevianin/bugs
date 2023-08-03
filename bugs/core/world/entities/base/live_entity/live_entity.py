@@ -13,16 +13,15 @@ class LiveEntity(Entity, iEnemy):
     def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony: int, mind: Mind, body: Body):
         super().__init__(events, id, type, from_colony)
         self._mind: Mind = mind
-        self._body = body
-        self._events = events
+        self._body: Body = body
+        self.events = events
 
-        self._say_listener_unsubsribers = []
-
-        self._body.events.add_listener('walk', self._on_body_walk)
-        self._body.events.add_listener('eat_food', self._on_body_eats_food)
-        self._body.events.add_listener('got_in_nest', self._on_got_in_nest)
-        self._body.events.add_listener('got_out_of_nest', self._on_got_out_of_nest)
-        self._body.events.add_listener('hp_changed', self._on_hp_changed)
+        self.events.add_listener('walk', self._on_body_walk)
+        self.events.add_listener('eat_food', self._on_body_eats_food)
+        self.events.add_listener('got_in_nest', self._on_got_in_nest)
+        self.events.add_listener('got_out_of_nest', self._on_got_out_of_nest)
+        self.events.add_listener('hp_changed', self._on_hp_changed)
+        self.events.add_listener('died', self._on_died)
 
     @property
     def position(self):
@@ -55,16 +54,6 @@ class LiveEntity(Entity, iEnemy):
     @hp.setter
     def hp(self, hp: int):
         self._body.hp = hp
-    
-    def join_operation(self):
-        self._mind.join_operation()
-
-    def leave_operation(self):
-        self._unsubscribe_all_say_listeners()
-        self._mind.leave_operation()
-
-    def ask_participation(self):
-        return True
     
     def prepare_for_operation(self, sayback: str = None):
         self._mind.prepare_for_operation(sayback)
@@ -106,17 +95,14 @@ class LiveEntity(Entity, iEnemy):
     def set_entities_in_sight(self, entities: List[Entity]):
         self._mind.world_interactor.set_nearby_entities(entities)
 
-    def on_saying(self, phrase: str, callback):
-        self._events.add_listener(f'say:{phrase}', callback)
-        def unsubscribe():
-            self._events.remove_listener(f'say:{phrase}', callback)
+    def join_operation(self):
+        self._mind.join_operation()
 
-        self._say_listener_unsubsribers.append(unsubscribe)
+    def leave_operation(self):
+        self._mind.leave_operation()
 
-    def _unsubscribe_all_say_listeners(self):
-        for unsubscribe in self._say_listener_unsubsribers:
-            unsubscribe()
-        self._say_listener_unsubsribers = []
+    def ask_participation(self):
+        return True
 
     def _on_body_walk(self, position):
         self._emit_action('entity_walk', { 
@@ -142,7 +128,6 @@ class LiveEntity(Entity, iEnemy):
         if self.hp <= 0:
             self._handle_dieing()
 
-    def _handle_dieing(self):
-        print('free dead mind')
+    def _on_died(self):
         self._mind._free_mind()
-        super()._handle_dieing()
+        self._body.sayer.remove_all_listeners()

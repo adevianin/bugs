@@ -30,8 +30,8 @@ class DestroyNestOperation(Operation):
     def _init_staff(self):
         super()._init_staff()
         for ant in self._warriors:
-            ant.on_saying('prepared', partial(self._on_warrior_prepared, ant))
-            ant.on_saying('nest_destroyed', self._on_nest_destroyed)
+            ant.body.sayer.add_listener('prepared', partial(self._on_warrior_prepared, ant))
+            ant.body.sayer.add_listener('nest_destroyed', self._on_nest_destroyed)
     
     def _start_operation(self):
         super()._start_operation()

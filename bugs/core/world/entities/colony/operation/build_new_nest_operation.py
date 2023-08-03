@@ -29,15 +29,15 @@ class BuildNewNestOperation(Operation):
         self._worker = self.get_hired_ants(AntTypes.WORKER)[0]
         self._queen: QueenAnt = self.get_hired_ants(AntTypes.QUEEN)[0]
 
-        self._queen.on_saying('prepared', self._on_queen_prepared)
-        self._worker.on_saying('prepared', self._on_worker_prepared)
+        self._queen.body.sayer.add_listener('prepared', self._on_queen_prepared)
+        self._worker.body.sayer.add_listener('prepared', self._on_worker_prepared)
 
-        self._queen.on_saying('arrived_to_building_site', self._on_queen_arrived_to_building_site)
-        self._worker.on_saying('arrived_to_building_site', self._on_worker_arrived_to_building_site)
+        self._queen.body.sayer.add_listener('arrived_to_building_site', self._on_queen_arrived_to_building_site)
+        self._worker.body.sayer.add_listener('arrived_to_building_site', self._on_worker_arrived_to_building_site)
 
-        self._queen.on_saying('nest_is_found', self._on_queen_found_nest)
+        self._queen.body.sayer.add_listener('nest_is_found', self._on_queen_found_nest)
 
-        self._worker.on_saying('nest_is_built', self._on_nest_built)
+        self._worker.body.sayer.add_listener('nest_is_built', self._on_nest_built)
 
     def _start_operation(self):
         super()._start_operation()

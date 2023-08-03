@@ -15,8 +15,8 @@ class AntBody(Body):
 
     _world_interactor: WorldInteractor
 
-    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, hp: int, located_in_nest: Nest, picked_food: Food, world_interactor: WorldInteractor):
-        super().__init__(events, dna_profile, position, 32, 200, located_in_nest, hp, world_interactor)
+    def __init__(self, events: EventEmitter, sayer: EventEmitter, dna_profile: str, position: Point, hp: int, located_in_nest: Nest, picked_food: Food, world_interactor: WorldInteractor):
+        super().__init__(events, sayer, dna_profile, position, 32, 200, located_in_nest, hp, world_interactor)
         self._picked_food = picked_food
 
     @property

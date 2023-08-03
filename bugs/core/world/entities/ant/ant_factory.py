@@ -42,10 +42,11 @@ class AntFactory():
             
     def _build_warrior_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, hp: int, nest: Nest, located_in_nest: Nest, memory: Memory, is_auto_thought_generation: bool, picked_food: Food, is_in_operation: bool):
         events = EventEmitter()
+        sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
         hp = hp if hp else WarriorAnt.MAX_HP
-        body = WarriorAntBody(events, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
+        body = WarriorAntBody(events, sayer, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
         mind = WarrirorAntMind(events, body, self._thought_factory, memory, is_auto_thought_generation, nest, is_in_operation)
         ant = WarriorAnt(events, id, from_colony, mind, body)
 
@@ -53,10 +54,11 @@ class AntFactory():
     
     def _build_worker_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, hp: int, nest: Nest, located_in_nest: Nest, memory: Memory, is_auto_thought_generation: bool, picked_food: Food, is_in_operation: bool):
         events = EventEmitter()
+        sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
         hp = hp if hp else WorkerAnt.MAX_HP
-        body = WorkerAntBody(events, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
+        body = WorkerAntBody(events, sayer, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
         mind = WorkerAntMind(events, body, self._thought_factory, memory, is_auto_thought_generation, nest, is_in_operation)
         ant = WorkerAnt(events, id, from_colony, mind, body)
 
@@ -64,10 +66,11 @@ class AntFactory():
     
     def _build_queen_ant(self, id: int, from_colony: int, dna_profile: str, position: Point, hp: int, nest: Nest, located_in_nest: Nest, memory: Memory, is_auto_thought_generation: bool, picked_food: Food, is_in_operation: bool):
         events = EventEmitter()
+        sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
         hp = hp if hp else QueenAnt.MAX_HP
-        body = QueenAntBody(events, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
+        body = QueenAntBody(events, sayer, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
         mind = QueenAntMind(events, body, self._thought_factory, memory, is_auto_thought_generation, nest, is_in_operation)
         ant = QueenAnt(events, id, from_colony, mind, body)
 

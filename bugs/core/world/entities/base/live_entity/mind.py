@@ -60,6 +60,7 @@ class Mind(ABC):
     
     def leave_operation(self):
         self._is_in_opearetion = False
+        self._body.sayer.remove_all_listeners()
         self._toggle_auto_thought_generation(True)
     
     def do_step(self):

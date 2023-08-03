@@ -12,8 +12,9 @@ import math
 
 class Body(ABC):
 
-    def __init__(self, events: EventEmitter, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int, located_in_nest: Nest, hp: int, world_interactor: WorldInteractor):
+    def __init__(self, events: EventEmitter, sayer: EventEmitter, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int, located_in_nest: Nest, hp: int, world_interactor: WorldInteractor):
         self.events = events
+        self.sayer = sayer
         self._dna_profile = dna_profile
         self._distance_per_step = distance_per_step
         self._sight_distance = sight_distance
@@ -78,11 +79,10 @@ class Body(ABC):
         self.events.emit('hp_changed')
 
     def say(self, phrase: str, data: dict):
-        event_name = f'say:{phrase}'
         if (data):
-            self.events.emit(event_name, data)
+            self.sayer.emit(phrase, data)
         else:
-            self.events.emit(event_name)
+            self.sayer.emit(phrase)
 
     def get_in_nest(self, nest: Nest):
         self._located_inside_nest = nest
