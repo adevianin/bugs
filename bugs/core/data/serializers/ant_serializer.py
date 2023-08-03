@@ -21,7 +21,7 @@ class AntSerializer(LiveEntitySerializer):
             'from_nest': entity.mind.home_nest.id,
             'thoughts': thoughts_json,
             'is_auto_thought_generation': entity.mind.is_auto_thought_generation,
-            'is_in_operation': entity.is_in_operation
+            'is_in_operation': entity.mind.is_in_opearetion
         })
 
         return json

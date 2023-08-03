@@ -40,6 +40,9 @@ class SearchingWalkThought(Thought):
     def _generate_point_to_walk(self):
         points = self._generate_potential_points_to_walk()
 
+        if len(points) == 0:
+            return self._search_near_point
+
         def dist_sum(point):
             dist_sum = 0
             for visited_point in self._visited_points:

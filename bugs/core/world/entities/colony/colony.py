@@ -98,7 +98,7 @@ class Colony:
             if not operation.is_hiring:
                 return
             hiring_types = operation.get_hiring_ant_types()
-            if not ant.is_in_operation and ant.ant_type in hiring_types:
+            if not ant.mind.is_in_opearetion and ant.ant_type in hiring_types:
                 ant_answer = ant.ask_participation()
                 if ant_answer:
                     ant.join_operation()
@@ -172,6 +172,12 @@ class Colony:
             defenders_count = len(defenders)
             enemies_positions = [enemy.position for enemy in enemies]
 
+            if enemies_count == 0:
+                self._send_signal_to_ants({
+                    'type': 'no_enemies',
+                    'nest': nest,
+                })
+
             if enemies_count > 0:
                 self._send_signal_to_ants({
                     'type': 'enemy_spotted',
@@ -181,7 +187,14 @@ class Colony:
 
             if enemies_count > defenders_count:
                 self._send_signal_to_ants({
-                    'type': 'reinforcement_needed',
+                    'type': 'workers_reinforcement_needed',
+                    'nest': nest,
+                    'enemies_positions': enemies_positions
+                })
+
+            if enemies_count > defenders_count:
+                self._send_signal_to_ants({
+                    'type': 'warrirors_reinforcement_needed',
                     'nest': nest,
                     'enemies_positions': enemies_positions
                 })

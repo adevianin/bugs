@@ -13,6 +13,7 @@ from core.world.entities.ant.warrior.thoughts.defend_territory_thought import De
 from core.world.entities.base.live_entity.thoughts.fight_enemy_thought import FightEnemyThought
 from core.world.entities.ant.base.thoughts.attack_nest_thought import AttackNestThought
 from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
+from core.world.entities.ant.base.thoughts.reinforce_nest_defence_thought import ReinforceNestDefenceThought
 
 class ThoughtSerializer():
 
@@ -44,6 +45,8 @@ class ThoughtSerializer():
                 return self._serialize_fight_enemy(thought)
             case ThoughtTypes.FIGHT_NEAR_ENEMIES:
                 return self._serialize_fight_near_enemies(thought)
+            case ThoughtTypes.REINFORCE_NEST_DEFENCE:
+                return self._serialize_reinforce_nest_defence(thought)
             case _:
                 raise Exception('unknown type of thought')
 
@@ -150,9 +153,7 @@ class ThoughtSerializer():
             'searching_walk_thought': searching_walk_thought_json,
             'fight_near_enemies_thought': fight_near_enemies_thought_json,
             'defending_nest_id': thought.defending_nest_id,
-            'point_to_check': thought.point_to_check,
-            'reinforcing_nest_id': thought.reinforcing_nest_id,
-            'point_to_reinforce': thought.point_to_reinforce
+            'point_to_check': thought.point_to_check
         })
 
         return json
@@ -180,6 +181,19 @@ class ThoughtSerializer():
         json = self._serialize_thought(thought)
         json.update({
             'enemy_id': thought.enemy_id
+        })
+
+        return json
+    
+    def _serialize_reinforce_nest_defence(self, thought: ReinforceNestDefenceThought):
+        json = self._serialize_thought(thought)
+        searching_walk_thought_json = self.serialize(thought.searching_walk_thought)
+        fight_near_enemies_thought_json = self.serialize(thought.fight_near_enemies_thought)
+        json.update({
+            'searching_walk_thought': searching_walk_thought_json,
+            'fight_near_enemies_thought': fight_near_enemies_thought_json,
+            'defending_nest_id': thought.defending_nest_id,
+            'point_to_check': thought.point_to_check
         })
 
         return json

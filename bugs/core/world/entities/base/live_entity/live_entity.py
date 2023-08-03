@@ -10,15 +10,13 @@ from typing import List
 
 class LiveEntity(Entity, iEnemy):
 
-    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony: int, mind: Mind, body: Body, is_in_operation: bool):
+    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony: int, mind: Mind, body: Body):
         super().__init__(events, id, type, from_colony)
-        self._mind = mind
+        self._mind: Mind = mind
         self._body = body
         self._events = events
 
         self._say_listener_unsubsribers = []
-
-        self._in_operation = is_in_operation
 
         self._body.events.add_listener('walk', self._on_body_walk)
         self._body.events.add_listener('eat_food', self._on_body_eats_food)
@@ -51,10 +49,6 @@ class LiveEntity(Entity, iEnemy):
         return self._body
     
     @property
-    def is_in_operation(self):
-        return self._in_operation
-    
-    @property
     def hp(self):
         return self._body.hp
 
@@ -63,12 +57,9 @@ class LiveEntity(Entity, iEnemy):
         self._body.hp = hp
     
     def join_operation(self):
-        if (self._in_operation):
-            raise Exception('already in operation')
-        self._in_operation = True
+        self._mind.join_operation()
 
     def leave_operation(self):
-        self._in_operation = False
         self._unsubscribe_all_say_listeners()
         self._mind.leave_operation()
 
@@ -151,3 +142,7 @@ class LiveEntity(Entity, iEnemy):
         if self.hp <= 0:
             self._handle_dieing()
 
+    def _handle_dieing(self):
+        print('free dead mind')
+        self._mind._free_mind()
+        super()._handle_dieing()

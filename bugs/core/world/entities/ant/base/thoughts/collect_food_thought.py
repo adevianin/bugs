@@ -18,7 +18,7 @@ class CollectFoodThought(Thought):
         self._nested_thoughts['go_home_thought'] = go_home_thought
         self._found_food = found_food
 
-        self._nest.events.once('died', self._on_nest_died)
+        self._nest.events.add_listener('died', self._on_nest_died)
 
     @property
     def nest_id(self):
@@ -91,3 +91,6 @@ class CollectFoodThought(Thought):
 
     def _on_nest_died(self):
         self.cancel()
+
+    def _on_stop_thinking(self):
+        self._nest.events.remove_listener('died', self._on_nest_died)

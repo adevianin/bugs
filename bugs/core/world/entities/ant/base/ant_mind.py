@@ -10,8 +10,8 @@ import math
 
 class AntMind(Mind):
 
-    def __init__(self, events: EventEmitter, body: AntBody, thought_factory: ThoughtFactory, memory: Memory, is_auto_thought_generation: bool, home_nest: Nest):
-        super().__init__(events, body, thought_factory, memory, is_auto_thought_generation)
+    def __init__(self, events: EventEmitter, body: AntBody, thought_factory: ThoughtFactory, memory: Memory, is_auto_thought_generation: bool, home_nest: Nest, is_in_operation: bool):
+        super().__init__(events, body, thought_factory, memory, is_auto_thought_generation, is_in_operation)
         self.home_nest = home_nest
 
     def feed_myself(self, sayback: str = None, asap: bool = False):
@@ -41,6 +41,10 @@ class AntMind(Mind):
     def attack_nest(self, nest: Nest, sayback: str):
         thought = self._thought_factory.build_attack_nest_thought_full(nest=nest, sayback=sayback)
         self._register_thought(thought)
+
+    def reinforce_nest(self, nest: Nest, point_to_check: Point, asap: bool = True, sayback: str = None):
+        thought = self._thought_factory.build_reinforce_nest_defence_thought_full(nest=nest, point_to_check=point_to_check, sayback=sayback)
+        self._register_thought(thought=thought, asap=asap)
     
     def _calc_assemble_point(self):
         return Point(self.home_nest.position.x, self.home_nest.position.y + 40)

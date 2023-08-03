@@ -8,16 +8,18 @@ from typing import List
 from core.world.entities.nest.nest import Nest
 from core.world.utils.point import Point
 from core.world.entities.base.enemy_interface import iEnemy
+from core.world.entities.thought.thought_types import ThoughtTypes
 
 class Mind(ABC):
 
-    def __init__(self, events: EventEmitter, body: Body, thought_factory: ThoughtFactory, memory: Memory, is_auto_thought_generation: bool):
+    def __init__(self, events: EventEmitter, body: Body, thought_factory: ThoughtFactory, memory: Memory, is_auto_thought_generation: bool, is_in_operation: bool):
         self._body = body
         self._thought_factory = thought_factory
         self._memory = memory
         self._thoughts_stack: List[Thought] = []
         self._is_auto_thought_generation = is_auto_thought_generation
         self.events = events
+        self._is_in_opearetion = is_in_operation
 
     @property
     def thoughts(self):
@@ -30,6 +32,10 @@ class Mind(ABC):
     @property
     def is_auto_thought_generation(self):
         return self._is_auto_thought_generation
+    
+    @property
+    def is_in_opearetion(self):
+        return self._is_in_opearetion
     
     def go_in_nest(self, nest: Nest, sayback: str = None):
         thought = self._thought_factory.build_go_in_nest_thought(nest=nest, sayback=sayback)
@@ -46,8 +52,14 @@ class Mind(ABC):
     def fight_enemy(self, enemy: iEnemy, asap: bool = True, sayback: str = None):
         thought = self._thought_factory.build_fight_enemy_thought(enemy=enemy, sayback=sayback)
         self._register_thought(thought, asap)
+
+    def join_operation(self):
+        if (self._is_in_opearetion):
+            raise Exception('already in operation')
+        self._is_in_opearetion = True
     
     def leave_operation(self):
+        self._is_in_opearetion = False
         self._toggle_auto_thought_generation(True)
     
     def do_step(self):
@@ -82,11 +94,12 @@ class Mind(ABC):
         thought.set_mind_parts(self._body, self._memory)
         
         if asap and self._has_thoughts_to_do():
-            if (self._get_current_thought().can_be_delayed()):
-                self._get_current_thought().delay()
-                self._thoughts_stack.insert(0, thought)
+            current_thought = self._get_current_thought()
+            if (current_thought.can_be_delayed()):
+                current_thought.delay()
             else:
-                self._thoughts_stack.insert(1, thought)
+                current_thought.cancel()
+            self._thoughts_stack.insert(0, thought)
         else:
             self._thoughts_stack.append(thought)
 
@@ -110,4 +123,11 @@ class Mind(ABC):
     @abstractclassmethod
     def _generate_feed_myself_thought(self):
         pass
+
+    def _am_i_think_thought_type(self, thought_type: ThoughtTypes):
+        if self._has_thoughts_to_do():
+            current_thought = self._get_current_thought()
+            return current_thought.type == thought_type
+        else:
+            return False
 

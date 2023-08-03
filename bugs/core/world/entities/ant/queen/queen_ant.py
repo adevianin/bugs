@@ -11,5 +11,5 @@ class QueenAnt(Ant):
 
     MAX_HP = 300
 
-    def __init__(self, events: EventEmitter, id: int, from_colony: int, mind: QueenAntMind, body: QueenAntBody, is_in_operation: bool):
-        super().__init__(events, id, AntTypes.QUEEN, from_colony, mind, body, is_in_operation)
+    def __init__(self, events: EventEmitter, id: int, from_colony: int, mind: QueenAntMind, body: QueenAntBody):
+        super().__init__(events, id, AntTypes.QUEEN, from_colony, mind, body)
