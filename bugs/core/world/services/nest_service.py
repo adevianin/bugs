@@ -29,5 +29,5 @@ class NestService():
         
         queen = queen_ants[0]
 
-        larva = Larva.build_larva(ant_type, queen.dna_profile, 0)
+        larva = Larva.build_larva(ant_type, queen.body.dna_profile, 0)
         nest.add_larva(larva)

@@ -6,7 +6,6 @@ from .mind import Mind
 from .body import Body
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.enemy_interface import iEnemy
-from typing import List
 
 class LiveEntity(Entity, iEnemy):
 
@@ -14,7 +13,7 @@ class LiveEntity(Entity, iEnemy):
         super().__init__(events, id, type, from_colony)
         self._mind: Mind = mind
         self._body: Body = body
-        self.events = events
+        self.events: EventEmitter = events
 
         self.events.add_listener('walk', self._on_body_walk)
         self.events.add_listener('eat_food', self._on_body_eats_food)
@@ -31,10 +30,6 @@ class LiveEntity(Entity, iEnemy):
     def position(self, new_position: Point):
         self._body.position = new_position
 
-    @property
-    def dna_profile(self):
-        return self._body.dna_profile
-    
     @property
     def located_in_nest_id(self):
         return self._body.located_in_nest_id
@@ -78,6 +73,15 @@ class LiveEntity(Entity, iEnemy):
 
         self._mind.do_step()
 
+    def join_operation(self):
+        self._mind.join_operation()
+
+    def leave_operation(self):
+        self._mind.leave_operation()
+
+    def ask_participation(self):
+        return True
+    
     def to_public_json(self):
         json = super().to_public_json()
 
@@ -91,18 +95,6 @@ class LiveEntity(Entity, iEnemy):
         })
 
         return json
-    
-    def set_entities_in_sight(self, entities: List[Entity]):
-        self._mind.world_interactor.set_nearby_entities(entities)
-
-    def join_operation(self):
-        self._mind.join_operation()
-
-    def leave_operation(self):
-        self._mind.leave_operation()
-
-    def ask_participation(self):
-        return True
 
     def _on_body_walk(self, position):
         self._emit_action('entity_walk', { 
