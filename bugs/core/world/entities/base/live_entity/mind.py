@@ -2,7 +2,6 @@ from abc import ABC, abstractclassmethod
 from .body import Body
 from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.entities.thought.thought import Thought
-from .memory import Memory
 from core.world.utils.event_emiter import EventEmitter
 from typing import List
 from core.world.entities.nest.nest import Nest
@@ -12,10 +11,9 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 
 class Mind(ABC):
 
-    def __init__(self, events: EventEmitter, body: Body, thought_factory: ThoughtFactory, memory: Memory, is_auto_thought_generation: bool, is_in_operation: bool):
+    def __init__(self, events: EventEmitter, body: Body, thought_factory: ThoughtFactory, is_auto_thought_generation: bool, is_in_operation: bool):
         self._body = body
         self._thought_factory = thought_factory
-        self._memory = memory
         self._thoughts_stack: List[Thought] = []
         self._is_auto_thought_generation = is_auto_thought_generation
         self.events = events
@@ -26,10 +24,6 @@ class Mind(ABC):
         return self._thoughts_stack
     
     @property
-    def memory(self):
-        return self._memory
-    
-    @property
     def is_auto_thought_generation(self):
         return self._is_auto_thought_generation
     
@@ -38,11 +32,11 @@ class Mind(ABC):
         return self._is_in_opearetion
     
     def go_in_nest(self, nest: Nest, sayback: str = None):
-        thought = self._thought_factory.build_go_in_nest_thought(nest=nest, sayback=sayback)
+        thought = self._thought_factory.build_go_in_nest_thought(body=self._body, nest=nest, sayback=sayback)
         self._register_thought(thought)
 
     def walk_to(self, position: Point, sayback: str = None):
-        thought = self._thought_factory.build_walk_to_thought(position=position, sayback=sayback)
+        thought = self._thought_factory.build_walk_to_thought(body=self._body, position=position, sayback=sayback)
         self._register_thought(thought)
 
     def prepare_for_operation(self, sayback: str = None):
@@ -50,7 +44,7 @@ class Mind(ABC):
         self._free_mind()
 
     def fight_enemy(self, enemy: iEnemy, asap: bool = True, sayback: str = None):
-        thought = self._thought_factory.build_fight_enemy_thought(enemy=enemy, sayback=sayback)
+        thought = self._thought_factory.build_fight_enemy_thought(body=self._body, enemy=enemy, sayback=sayback)
         self._register_thought(thought, asap)
 
     def join_operation(self):
@@ -92,8 +86,6 @@ class Mind(ABC):
             self._generate_feed_myself_thought()
 
     def _register_thought(self, thought: Thought, asap: bool = False):
-        thought.set_mind_parts(self._body, self._memory)
-        
         if asap and self._has_thoughts_to_do():
             current_thought = self._get_current_thought()
             if (current_thought.can_be_delayed()):

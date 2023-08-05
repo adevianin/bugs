@@ -1,11 +1,14 @@
+from core.world.entities.base.live_entity.body import Body
 from core.world.entities.thought.thought import Thought
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.base.enemy_interface import iEnemy
 
 class FightEnemyThought(Thought):
 
-    def __init__(self, flags, sayback: str, enemy: iEnemy = None):
-        super().__init__(type=ThoughtTypes.FIGHT_ENEMY, flags=flags, sayback=sayback)
+    _body: Body
+
+    def __init__(self, body: Body, flags, sayback: str, enemy: iEnemy = None):
+        super().__init__(body=body, type=ThoughtTypes.FIGHT_ENEMY, flags=flags, sayback=sayback)
         self._enemy = enemy
 
     @property

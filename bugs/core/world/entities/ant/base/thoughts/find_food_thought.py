@@ -1,7 +1,6 @@
 from core.world.entities.thought.thought import Thought
 from core.world.entities.base.entity_types import EntityTypes
 from .searching_walk_thought import SearchingWalkThought
-from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.ant.base.ant_body import AntBody
 
@@ -11,8 +10,8 @@ class FindFoodThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, random_walk_thought: SearchingWalkThought, flags: dict = None, sayback: str = None):
-        super().__init__(ThoughtTypes.FIND_FOOD, flags, sayback)
+    def __init__(self, body: AntBody, random_walk_thought: SearchingWalkThought, flags: dict = None, sayback: str = None):
+        super().__init__(body=body, type=ThoughtTypes.FIND_FOOD, flags=flags, sayback=sayback)
         self._nested_thoughts['random_walk_thought'] = random_walk_thought
 
         self._points_to_check = []
@@ -46,7 +45,7 @@ class FindFoodThought(Thought):
             return is_doing_action
 
     def _get_points_to_check(self):
-        entities_data = self._memory.get_entities_data([EntityTypes.FOOD, EntityTypes.FOOD_AREA])
+        entities_data = self._body.memory.get_entities_data([EntityTypes.FOOD, EntityTypes.FOOD_AREA])
         positions = []
         for entity_data in entities_data:
             positions.append(entity_data['position'])

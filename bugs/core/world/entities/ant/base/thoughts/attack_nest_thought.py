@@ -8,8 +8,8 @@ class AttackNestThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, nest: Nest, fight_near_enemies_thought: FightNearEnemiesThought, flags: dict, sayback: str):
-        super().__init__(type=ThoughtTypes.ATTACK_NEST, flags=flags, sayback=sayback)
+    def __init__(self, body: AntBody, nest: Nest, fight_near_enemies_thought: FightNearEnemiesThought, flags: dict, sayback: str):
+        super().__init__(body=body, type=ThoughtTypes.ATTACK_NEST, flags=flags, sayback=sayback)
         self._nested_thoughts['fight_near_enemies_thought'] = fight_near_enemies_thought
         self._nest = nest
 

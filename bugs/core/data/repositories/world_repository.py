@@ -15,6 +15,7 @@ from core.world.id_generator import IdGenerator
 from core.data.serializers.world_serializer import WorldSerializer
 from core.data.factories.json_map_factory import JsonMapFactory
 from core.world.entities.colony.colony_relations_table import ColonyRelationsTable
+from core.world.entities.ant.base.ant import Ant
 
 class WorldRepository(iWorldRepository):
 
@@ -54,6 +55,16 @@ class WorldRepository(iWorldRepository):
             ant = self._json_ant_factory.build_ant_from_json(ant_json, entities_collection)
             entities_collection.add_entity(ant)
 
+        ants_json = world_data['ants']
+        for ant_json in ants_json:
+            ant: Ant = entities_collection.get_entity_by_id(ant_json['id'])
+            thoughts_json = ant_json['thoughts']
+            thoughts = []
+            for thought_json in thoughts_json:
+                thought = self._json_thought_factory.build_thougth_from_json(ant.body, thought_json, entities_collection)
+                thoughts.append(thought)
+            ant.mind.set_thoughts(thoughts)
+
         id_generator = IdGenerator.build_id_generator(world_data['last_used_id'])
         map = self._json_map_factory.build_map_from_json(world_data['map'], id_generator, entities_collection)
         colony_relations_table = ColonyRelationsTable.build_colony_relations_table(world_data['colonies_relations'])
@@ -64,16 +75,6 @@ class WorldRepository(iWorldRepository):
             colony = self._json_colony_factory.build_colony_from_json(colony_json, entities_collection, map, colony_relations_table)
             colonies.append(colony)
 
-        ants_json = world_data['ants']
-        for ant_json in ants_json:
-            ant = entities_collection.get_entity_by_id(ant_json['id'])
-            thoughts_json = ant_json['thoughts']
-            thoughts = []
-            for thought_json in thoughts_json:
-                thought = self._json_thought_factory.build_thougth_from_json(thought_json, entities_collection)
-                thoughts.append(thought)
-            ant.mind.set_thoughts(thoughts)
-        
         world = self._world_factory.build_world(world_id, entities_collection, map, colonies, id_generator, colony_relations_table)
 
         return world

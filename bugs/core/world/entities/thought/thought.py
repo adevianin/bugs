@@ -1,14 +1,12 @@
 from abc import ABC, abstractclassmethod
 from ..base.live_entity.body import Body
-from core.world.entities.base.live_entity.memory import Memory
 from .thought_types import ThoughtTypes
 from typing import Callable
 
 class Thought(ABC):
 
-    def __init__(self, type: ThoughtTypes, flags: dict, sayback: str):
-        self.body = None
-        self.memory = None
+    def __init__(self, body: Body, type: ThoughtTypes, flags: dict, sayback: str):
+        self._body = body
         self._type = type
         self._is_done = False
         self._is_canceled = False
@@ -41,11 +39,6 @@ class Thought(ABC):
     def flags(self):
         return self._flags
     
-    def set_mind_parts(self, body: Body, memory: Memory):
-        self._body = body
-        self._memory = memory
-        self._iterate_nested_thoughts(lambda thought: thought.set_mind_parts(body=body, memory=memory))
-
     def done(self, results = None):
         self._is_done = True
         self._results = results

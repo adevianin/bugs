@@ -7,8 +7,8 @@ class FightNearEnemiesThought(Thought):
 
     _body: Body
 
-    def __init__(self, fight_enemy_thought: FightEnemyThought, flags, sayback: str):
-        super().__init__(type=ThoughtTypes.FIGHT_NEAR_ENEMIES, flags=flags, sayback=sayback)
+    def __init__(self, body: Body, fight_enemy_thought: FightEnemyThought, flags, sayback: str):
+        super().__init__(body=body, type=ThoughtTypes.FIGHT_NEAR_ENEMIES, flags=flags, sayback=sayback)
         self._nested_thoughts['fight_enemy_thought'] = fight_enemy_thought
 
     @property

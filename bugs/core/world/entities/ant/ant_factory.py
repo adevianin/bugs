@@ -46,8 +46,8 @@ class AntFactory():
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
         hp = hp if hp else WarriorAnt.MAX_HP
-        body = WarriorAntBody(events, sayer, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
-        mind = WarrirorAntMind(events, body, self._thought_factory, memory, is_auto_thought_generation, nest, is_in_operation)
+        body = WarriorAntBody(events, sayer, memory, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
+        mind = WarrirorAntMind(events, body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
         ant = WarriorAnt(events, id, from_colony, mind, body)
 
         return ant
@@ -58,8 +58,8 @@ class AntFactory():
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
         hp = hp if hp else WorkerAnt.MAX_HP
-        body = WorkerAntBody(events, sayer, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
-        mind = WorkerAntMind(events, body, self._thought_factory, memory, is_auto_thought_generation, nest, is_in_operation)
+        body = WorkerAntBody(events, sayer, memory, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
+        mind = WorkerAntMind(events, body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
         ant = WorkerAnt(events, id, from_colony, mind, body)
 
         return ant
@@ -70,8 +70,8 @@ class AntFactory():
         world_interactor = WorldInteractor()
         memory = memory if memory else Memory()
         hp = hp if hp else QueenAnt.MAX_HP
-        body = QueenAntBody(events, sayer, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
-        mind = QueenAntMind(events, body, self._thought_factory, memory, is_auto_thought_generation, nest, is_in_operation)
+        body = QueenAntBody(events, sayer, memory, dna_profile, position, hp, located_in_nest, picked_food, world_interactor)
+        mind = QueenAntMind(events, body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
         ant = QueenAnt(events, id, from_colony, mind, body)
 
         return ant

@@ -8,8 +8,8 @@ class FoundNestThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, building_site: Point, from_colony_id: int, found_nest: Nest, flags: dict, sayback: str):
-        super().__init__(type=ThoughtTypes.FOUND_NEST, flags=flags, sayback=sayback)
+    def __init__(self, body: AntBody, building_site: Point, from_colony_id: int, found_nest: Nest, flags: dict, sayback: str):
+        super().__init__(body=body, type=ThoughtTypes.FOUND_NEST, flags=flags, sayback=sayback)
         self._from_colony_id = from_colony_id
         self._building_site = building_site
         self._found_nest = found_nest

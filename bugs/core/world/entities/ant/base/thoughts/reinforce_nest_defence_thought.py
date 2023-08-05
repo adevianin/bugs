@@ -1,5 +1,4 @@
 from core.world.entities.ant.base.ant_body import AntBody
-from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.thought.thought import Thought
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.ant.base.thoughts.searching_walk_thought import SearchingWalkThought
@@ -12,14 +11,16 @@ class ReinforceNestDefenceThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, fight_near_enemies_thought: FightNearEnemiesThought, searching_walk_thought: SearchingWalkThought, defending_nest: Nest, point_to_check: Point = None, flags: dict = None, sayback: str = None):
-        super().__init__(type=ThoughtTypes.REINFORCE_NEST_DEFENCE, flags=flags, sayback=sayback)
+    def __init__(self, body: AntBody, fight_near_enemies_thought: FightNearEnemiesThought, searching_walk_thought: SearchingWalkThought, defending_nest: Nest, point_to_check: Point = None, flags: dict = None, sayback: str = None):
+        super().__init__(body=body, type=ThoughtTypes.REINFORCE_NEST_DEFENCE, flags=flags, sayback=sayback)
         self._nested_thoughts['searching_walk_thought'] = searching_walk_thought
         self._nested_thoughts['fight_near_enemies_thought'] = fight_near_enemies_thought
         self._point_to_check = point_to_check
         self._defending_nest = defending_nest
 
         self._defending_nest.events.add_listener('died', self._on_defending_nest_died)
+        self._body.events.add_listener('colony_signal:enemy_spotted', self._on_enemy_spotted_signal)
+        self._body.events.add_listener('colony_signal:no_enemies', self._on_no_enemies_signal)
 
     @property
     def searching_walk_thought(self) -> SearchingWalkThought:
@@ -49,12 +50,6 @@ class ReinforceNestDefenceThought(Thought):
             return
         
         self.searching_walk_thought.do_step()
-
-    def set_mind_parts(self, body: AntBody, memory: Memory):
-        super().set_mind_parts(body, memory)
-
-        self._body.events.add_listener('colony_signal:enemy_spotted', self._on_enemy_spotted_signal)
-        self._body.events.add_listener('colony_signal:no_enemies', self._on_no_enemies_signal)
 
     def _on_enemy_spotted_signal(self, signal: dict):
         nest: Nest = signal['nest']

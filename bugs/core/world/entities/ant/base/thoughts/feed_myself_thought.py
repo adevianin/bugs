@@ -1,16 +1,15 @@
+from core.world.entities.base.live_entity.body import Body
 from core.world.entities.thought.thought import Thought
 from core.world.entities.nest.nest import Nest
 from core.world.entities.food.food import Food
 from .find_food_thought import FindFoodThought
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
-from core.world.entities.base.live_entity.body import Body
-from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.thought.thought_types import ThoughtTypes
 
 class FeedMyselfThought(Thought):
 
-    def __init__(self, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
-        super().__init__(ThoughtTypes.FEED_MYSELF, flags, sayback)
+    def __init__(self, body: Body, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
+        super().__init__(body=body, type=ThoughtTypes.FEED_MYSELF, flags=flags, sayback=sayback)
         self._home = home
         self._nested_thoughts['find_food_thought'] = find_food_thought
         self._nested_thoughts['go_home_thought'] = go_home_thought

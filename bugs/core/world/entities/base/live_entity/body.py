@@ -6,15 +6,17 @@ from core.world.settings import STEP_TIME
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.base.enemy_interface import iEnemy
+from core.world.entities.base.live_entity.memory import Memory
 from typing import List
 
 import math
 
 class Body(ABC):
 
-    def __init__(self, events: EventEmitter, sayer: EventEmitter, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int, located_in_nest: Nest, hp: int, world_interactor: WorldInteractor):
+    def __init__(self, events: EventEmitter, sayer: EventEmitter, memory: Memory, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int, located_in_nest: Nest, hp: int, world_interactor: WorldInteractor):
         self.events = events
         self.sayer = sayer
+        self.memory = memory
         self._dna_profile = dna_profile
         self._distance_per_step = distance_per_step
         self._sight_distance = sight_distance

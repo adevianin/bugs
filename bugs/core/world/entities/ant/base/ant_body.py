@@ -8,6 +8,7 @@ from core.world.entities.base.live_entity.world_interactor import WorldInteracto
 from core.world.entities.colony.relation_tester import RelationTester
 from core.world.entities.base.entity import Entity
 from core.world.entities.base.enemy_interface import iEnemy
+from core.world.entities.base.live_entity.memory import Memory
 
 from typing import Callable, List
 
@@ -15,8 +16,8 @@ class AntBody(Body):
 
     _world_interactor: WorldInteractor
 
-    def __init__(self, events: EventEmitter, sayer: EventEmitter, dna_profile: str, position: Point, hp: int, located_in_nest: Nest, picked_food: Food, world_interactor: WorldInteractor):
-        super().__init__(events, sayer, dna_profile, position, 32, 200, located_in_nest, hp, world_interactor)
+    def __init__(self, events: EventEmitter, sayer: EventEmitter, memory: Memory, dna_profile: str, position: Point, hp: int, located_in_nest: Nest, picked_food: Food, world_interactor: WorldInteractor):
+        super().__init__(events, sayer, memory, dna_profile, position, 32, 200, located_in_nest, hp, world_interactor)
         self._picked_food = picked_food
 
     @property

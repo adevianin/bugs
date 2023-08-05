@@ -1,3 +1,4 @@
+from core.world.entities.base.live_entity.body import Body
 from core.world.entities.thought.thought import Thought
 from core.world.utils.point import Point
 from core.world.entities.thought.thought_types import ThoughtTypes
@@ -10,8 +11,8 @@ class SearchingWalkThought(Thought):
     WALK_DIRECTIONS_COUNT = 8
     VISITED_POINTS_MEMORY = 5
 
-    def __init__(self, search_near_point: Point, search_radius: int, flags: dict, sayback: str):
-        super().__init__(ThoughtTypes.SEARCHING_WALK, flags, sayback)
+    def __init__(self, body: Body, search_near_point: Point, search_radius: int, flags: dict, sayback: str):
+        super().__init__(body=body, type=ThoughtTypes.SEARCHING_WALK, flags=flags, sayback=sayback)
         self._visited_points = []
         self._current_destination_point = None
         self._search_near_point = search_near_point

@@ -3,47 +3,46 @@ from core.world.entities.thought.thought_factory import ThoughtFactory
 from .ant_body import AntBody
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.nest.nest import Nest
-from core.world.entities.base.live_entity.memory import Memory
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 import math
 
 class AntMind(Mind):
 
-    def __init__(self, events: EventEmitter, body: AntBody, thought_factory: ThoughtFactory, memory: Memory, is_auto_thought_generation: bool, home_nest: Nest, is_in_operation: bool):
-        super().__init__(events, body, thought_factory, memory, is_auto_thought_generation, is_in_operation)
+    def __init__(self, events: EventEmitter, body: AntBody, thought_factory: ThoughtFactory, is_auto_thought_generation: bool, home_nest: Nest, is_in_operation: bool):
+        super().__init__(events, body, thought_factory, is_auto_thought_generation, is_in_operation)
         self.home_nest = home_nest
 
     def feed_myself(self, sayback: str = None, asap: bool = False):
-        thought = self._thought_factory.build_feed_myself_full(home_nest=self.home_nest, sayback=sayback)
+        thought = self._thought_factory.build_feed_myself_full(body=self._body, home_nest=self.home_nest, sayback=sayback)
         self._register_thought(thought, asap)
 
     def collect_food(self, sayback: str = None):
-        thought = self._thought_factory.build_collect_food_full(home_nest=self.home_nest, sayback=sayback)
+        thought = self._thought_factory.build_collect_food_full(body=self._body, home_nest=self.home_nest, sayback=sayback)
         self._register_thought(thought)
 
     def prepare_for_operation(self, sayback: str = None):
         super().prepare_for_operation()
-        thought = self._thought_factory.build_prepare_for_operation_full(home_nest=self.home_nest, assemble_point=self._calc_assemble_point(), sayback=sayback)
+        thought = self._thought_factory.build_prepare_for_operation_full(body=self._body, home_nest=self.home_nest, assemble_point=self._calc_assemble_point(), sayback=sayback)
         self._register_thought(thought, True)
     
     def relocate_to_nest(self, nest: Nest):
         self.home_nest = nest
 
     def found_nest(self, building_site: Point, from_colony_id: int, sayback: str):
-        thought = self._thought_factory.build_found_nest_thought(building_site=building_site, from_colony_id=from_colony_id, sayback=sayback)
+        thought = self._thought_factory.build_found_nest_thought(body=self._body, building_site=building_site, from_colony_id=from_colony_id, sayback=sayback)
         self._register_thought(thought)
 
     def build_nest(self, nest: Nest, sayback: str):
-        thought = self._thought_factory.build_build_nest_thought(building_nest=nest, sayback=sayback)
+        thought = self._thought_factory.build_build_nest_thought(body=self._body, building_nest=nest, sayback=sayback)
         self._register_thought(thought)
 
     def attack_nest(self, nest: Nest, sayback: str):
-        thought = self._thought_factory.build_attack_nest_thought_full(nest=nest, sayback=sayback)
+        thought = self._thought_factory.build_attack_nest_thought_full(body=self._body, nest=nest, sayback=sayback)
         self._register_thought(thought)
 
     def reinforce_nest(self, nest: Nest, point_to_check: Point, asap: bool = True, sayback: str = None):
-        thought = self._thought_factory.build_reinforce_nest_defence_thought_full(nest=nest, point_to_check=point_to_check, sayback=sayback)
+        thought = self._thought_factory.build_reinforce_nest_defence_thought_full(body=self._body, nest=nest, point_to_check=point_to_check, sayback=sayback)
         self._register_thought(thought=thought, asap=asap)
     
     def _calc_assemble_point(self):

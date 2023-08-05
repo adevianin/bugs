@@ -3,7 +3,6 @@ from core.world.entities.nest.nest import Nest
 from .find_food_thought import FindFoodThought
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.food.food import Food
-from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.ant.base.ant_body import AntBody
 
@@ -11,8 +10,8 @@ class CollectFoodThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, nest: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
-        super().__init__(ThoughtTypes.COLLECT_FOOD, flags, sayback)
+    def __init__(self, body: AntBody, nest: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
+        super().__init__(body=body, type=ThoughtTypes.COLLECT_FOOD, flags=flags, sayback=sayback)
         self._nest = nest
         self._nested_thoughts['find_food_thought'] = find_food_thought
         self._nested_thoughts['go_home_thought'] = go_home_thought
