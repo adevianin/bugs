@@ -59,7 +59,7 @@ class DestroyNestOperation(Operation):
     def _on_nest_destroyed(self):
         for ant in self._warriors:
             ant.leave_operation()
-        self._mark_as_done()
+        self.done()
     
     
 

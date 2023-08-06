@@ -63,4 +63,4 @@ class BuildNewNestOperation(Operation):
         self._new_nest.add_larva(Larva.build_larva(AntTypes.WORKER, self._queen.body.dna_profile, 0))
 
         self._queen.leave_operation()
-        self._mark_as_done()
+        self.done()

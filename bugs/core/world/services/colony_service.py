@@ -10,9 +10,9 @@ class ColonyService():
     def set_world(self, world: World):
         self._world = world
 
-    def stop_operation(self, user_id: int, operation_id: int):
+    def cancel_operation(self, user_id: int, operation_id: int):
         colony = self._world.get_colony_owned_by_user(user_id)
-        colony.stop_operation(operation_id)
+        colony.cancel_operation(operation_id)
 
     def build_new_nest(self, user_id: int, position: Point):
         colony = self._world.get_colony_owned_by_user(user_id)

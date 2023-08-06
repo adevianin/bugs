@@ -55,6 +55,7 @@ class Mind(ABC):
     def leave_operation(self):
         self._is_in_opearetion = False
         self._body.sayer.remove_all_listeners()
+        self._free_mind()
         self.toggle_auto_thought_generation(True)
     
     def do_step(self):
@@ -77,8 +78,6 @@ class Mind(ABC):
         if self._has_thoughts_to_do():
             for thought in self._thoughts_stack:
                 thought.cancel()
-
-        self._handle_done_thoughts()
 
     def _generate_thoughts(self):
         # todo check is enemy near

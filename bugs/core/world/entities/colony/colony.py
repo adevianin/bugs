@@ -58,10 +58,10 @@ class Colony:
         self._listen_operation(operation)
         self._emit_operation_change()
 
-    def stop_operation(self, operation_id: int):
+    def cancel_operation(self, operation_id: int):
         operation = next(filter(lambda op: op.id == operation_id, self._operations), None)
         if operation:
-            operation.stop_operation()
+            operation.cancel()
 
     def born(self):
         self._emit_action('colony_born', { 'colony': self.to_public_json() })
@@ -115,7 +115,7 @@ class Colony:
     def _clean_done_operations(self):
         done_operations = []
         for operation in self._operations:
-            if operation.is_done:
+            if operation.is_done or operation.is_canceled:
                 done_operations.append(operation)
         
         for operation in done_operations:

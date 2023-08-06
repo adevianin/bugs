@@ -18,6 +18,7 @@ class Operation(ABC):
         self._vacancies = {}
         self._hired_ants = hired_ants or []
         self._is_done = False
+        self._is_canceled = False
         self._name = 'operation name'
         self._markers = []
         self._total_hiring_ants_count = 0
@@ -35,6 +36,10 @@ class Operation(ABC):
     @property
     def is_done(self):
         return self._is_done
+    
+    @property
+    def is_canceled(self):
+        return self._is_canceled
     
     @property
     def status(self):
@@ -93,12 +98,17 @@ class Operation(ABC):
                 hiring_ant_type.append(ant_type)
         return hiring_ant_type
     
-    def stop_operation(self):
+    def done(self):
+        self._is_done = True
+        self.events.emit('change')
+    
+    def cancel(self):
+        self._is_canceled = True
         ants = self.get_hired_ants()
         for ant in ants:
             ant.leave_operation()
-
-        self._mark_as_done()
+        
+        self.events.emit('change')
 
     def _on_hired_all(self):
         self._init_staff()
@@ -133,10 +143,6 @@ class Operation(ABC):
     def _start_operation(self):
         self._write_flag('is_operation_started', True)
 
-    def _mark_as_done(self):
-        self._is_done = True
-        self.events.emit('change')
-
     def _add_pointer_marker(self, point: Point):
         self._markers.append({
             'type': MarkerTypes.POINTER,
@@ -161,5 +167,5 @@ class Operation(ABC):
         ant.leave_operation()
         self._hired_ants.remove(ant)
         if len(self._hired_ants) == 0:
-            self.stop_operation()
+            self.cancel()
     

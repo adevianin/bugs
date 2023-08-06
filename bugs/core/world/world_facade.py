@@ -76,7 +76,7 @@ class WorldFacade:
             case 'destroy_nest':
                 self._colony_service.destroy_nest_operation(user_id, params['nest_id'])
             case 'stop_operation':
-                self._colony_service.stop_operation(user_id, params['operation_id'])
+                self._colony_service.cancel_operation(user_id, params['operation_id'])
             case _:
                 raise Exception('unknown type of command')
             
