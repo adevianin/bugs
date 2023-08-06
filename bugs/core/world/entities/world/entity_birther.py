@@ -9,7 +9,7 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.food.preborn_food import PrebornFood
 from core.world.entities.ant.base.larva import Larva
 
-class Birther():
+class EntityBirther():
 
     def __init__(self, id_generator: IdGenerator, map: Map, ant_factory: AntFactory, food_factory: FoodFactory, nest_factory: NestFactory):
         self._id_generator = id_generator

@@ -8,7 +8,7 @@ from core.world.entities.colony.colony_relations_table import ColonyRelationsTab
 from core.world.entities.ant.ant_factory import AntFactory
 from core.world.entities.food.food_factory import FoodFactory
 from core.world.entities.nest.nest_factory import NestFactory
-from core.world.entities.world.birther import Birther
+from core.world.entities.world.entity_birther import EntityBirther
 from typing import List
 
 class WorldFactory():
@@ -21,6 +21,6 @@ class WorldFactory():
 
     def build_world(self, id: int, last_used_id: int, entities_collection: EntityCollection, map: Map, colonies: List[Colony], colony_relations_table: ColonyRelationsTable) -> World:
         id_generator = IdGenerator.build_id_generator(last_used_id)
-        birther = Birther(id_generator, map, self._ant_factory, self._food_factory, self._nest_factory)
-        return World(id, entities_collection, map, self._event_bus, colonies, id_generator, colony_relations_table, birther)
+        entity_birther = EntityBirther(id_generator, map, self._ant_factory, self._food_factory, self._nest_factory)
+        return World(id, entities_collection, map, self._event_bus, colonies, id_generator, colony_relations_table, entity_birther)
     
