@@ -27,6 +27,12 @@ class Map:
     def size(self):
         return self._size
     
+    def generate_random_point(self):
+        return Point(200, 100)
+        x = random.randint(0, self._size.width)
+        y = random.randint(0, self._size.height)
+        return Point(x, y)
+    
     def add_new_entity(self, new_entity: Entity):
         self._entities_collection.add_entity(new_entity)
         self._listen_entity(new_entity)

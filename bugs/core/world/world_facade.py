@@ -1,6 +1,7 @@
 from .utils.event_emiter import EventEmitter
 from .services.nest_service import NestService
 from .services.colony_service import ColonyService
+from .services.user_service import UserService
 from core.world.utils.point import Point
 from core.world.world_repository_interface import iWorldRepository
 
@@ -11,16 +12,16 @@ class WorldFacade:
     WORLD_ID = 1
 
     @classmethod
-    def init(cls, event_bus: EventEmitter,  world_repository: iWorldRepository, colony_service: ColonyService, nest_service: NestService):
-        world_facade = WorldFacade(event_bus, world_repository, colony_service, nest_service)
+    def init(cls, event_bus: EventEmitter,  world_repository: iWorldRepository, colony_service: ColonyService, nest_service: NestService, user_service: UserService):
+        world_facade = WorldFacade(event_bus, world_repository, colony_service, nest_service, user_service)
         WorldFacade._instance = world_facade
         return world_facade
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls) -> 'WorldFacade':
         return WorldFacade._instance
 
-    def __init__(self, event_bus: EventEmitter, world_repository: iWorldRepository, colony_service: ColonyService, nest_service: NestService):
+    def __init__(self, event_bus: EventEmitter, world_repository: iWorldRepository, colony_service: ColonyService, nest_service: NestService, user_service: UserService):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
@@ -31,6 +32,7 @@ class WorldFacade:
 
         self._colony_service = colony_service
         self._nest_service = nest_service
+        self._user_service = user_service
         
     def init_world(self):
         self._world = self._world_repository.get(self.WORLD_ID)
@@ -60,10 +62,14 @@ class WorldFacade:
     def get_my_colony(self, user_id: int):
         return self._world.get_colony_owned_by_user(user_id)
     
+    def build_user_starter_pack(self, user_id: int):
+        self._user_service.build_user_starter_pack(user_id)
+    
     def handle_command(self, command_json, user_id):
         params = command_json['params']
         match command_json['command_type']:
             case 'add_larva':
+                self.build_user_starter_pack(10)
                 self._nest_service.add_larva(params['nest_id'], user_id, params['larva_type'])
             case 'build_new_nest':
                 self._colony_service.build_new_nest(user_id, Point(params['position']['x'], params['position']['y']))

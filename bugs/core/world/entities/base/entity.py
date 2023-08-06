@@ -76,7 +76,7 @@ class Entity(ABC):
         }
     
     def _emit_action(self, action_type: str, action_data: dict = None):
-        self.events.emit('action_occurred', Action.build_action(self.id, action_type, action_data))
+        self.events.emit('action_occurred', Action.build_action(self.id, action_type, 'entity', action_data))
 
     def _handle_dieing(self):
         self._emit_action('entity_died')

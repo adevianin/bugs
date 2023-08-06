@@ -16,8 +16,8 @@ function initDomainLayer(apis, serverConnection, initialData) {
 
     let worldService = new WorldService(world, worldFactory, mainEventBus);
     let userService = new UserService(apis.userApi, initialData.user, mainEventBus);
-    let actionService = new ActionService(initialData.step_time, actionFactory, worldService);
-    let colonyService = new ColonyService(apis.colonyApi);
+    let colonyService = new ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
+    let actionService = new ActionService(initialData.step_time, actionFactory, worldService, colonyService);
     let messageHandlerService = new MessageHandlerService(serverConnection, worldService, actionService, colonyService);
 
     let domainFacade = new DomainFacade(mainEventBus, userService, messageHandlerService, worldService, colonyService);

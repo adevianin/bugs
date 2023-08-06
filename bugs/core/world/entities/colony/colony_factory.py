@@ -11,7 +11,10 @@ class ColonyFactory():
     def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus
 
-    def build_colony(self, id: int, owner_id: int, map: Map, operations: List[Operation], colony_relations_table: ColonyRelationsTable):
+    def build_new_colony(self, id: int, owner_id: int, map: Map, colony_relations_table: ColonyRelationsTable) -> Colony:
+        return self.build_colony(id=id, owner_id=owner_id, map=map, operations=[], colony_relations_table=colony_relations_table)
+
+    def build_colony(self, id: int, owner_id: int, map: Map, operations: List[Operation], colony_relations_table: ColonyRelationsTable) -> Colony:
         relation_tester = self.build_relation_tester(colony_relations_table, id)
         return Colony(id, self._event_bus, owner_id, map, operations, relation_tester)
     

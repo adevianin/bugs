@@ -40,7 +40,7 @@ class Mind(ABC):
         self._register_thought(thought)
 
     def prepare_for_operation(self, sayback: str = None):
-        self._toggle_auto_thought_generation(False)
+        self.toggle_auto_thought_generation(False)
         self._free_mind()
 
     def fight_enemy(self, enemy: iEnemy, asap: bool = True, sayback: str = None):
@@ -55,7 +55,7 @@ class Mind(ABC):
     def leave_operation(self):
         self._is_in_opearetion = False
         self._body.sayer.remove_all_listeners()
-        self._toggle_auto_thought_generation(True)
+        self.toggle_auto_thought_generation(True)
     
     def do_step(self):
         if self._is_auto_thought_generation:
@@ -70,7 +70,7 @@ class Mind(ABC):
         for thought in thoughts:
             self._register_thought(thought)
 
-    def _toggle_auto_thought_generation(self, is_auto: bool):
+    def toggle_auto_thought_generation(self, is_auto: bool):
         self._is_auto_thought_generation = is_auto
 
     def _free_mind(self):

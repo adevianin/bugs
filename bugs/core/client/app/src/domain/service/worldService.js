@@ -44,11 +44,6 @@ class WorldService {
         this._mainEventBus.emit('entityBorn', entity);
     }
 
-    updateColony(colonyJson) {
-        let colony = this._world.findColonyById(colonyJson.id);
-        colony.setOperations(colonyJson.operations);
-    }
-
     clear() {
         this._world.clear();
         this._isWholeWorldInited = false;

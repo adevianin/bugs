@@ -18,8 +18,13 @@ class EntityBirther():
         self._food_factory = food_factory
         self._nest_factory = nest_factory
 
+        self._map.events.add_listener('entity_born', lambda entity: self._listen_entity(entity))
+
         for entity in self._map.get_entities():
-            entity.events.add_listener('birth_request', self._on_entity_birth_request)
+            self._listen_entity(entity)
+
+    def _listen_entity(self, entity: Entity):
+        entity.events.add_listener('birth_request', self._on_entity_birth_request)
 
     def _on_entity_birth_request(self, request: dict):
         new_entity: Entity = None

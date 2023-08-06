@@ -49,6 +49,10 @@ class Nest(PlainEntity):
         food.die()
         self._emit_stored_calories_changed()
 
+    def take_calories(self, caloris_count: int):
+        self._stored_calories += caloris_count
+        self._emit_stored_calories_changed()
+
     def give_calories(self, count: int) -> int:
         if (self._stored_calories >= count):
             self._stored_calories -= count

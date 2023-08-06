@@ -48,6 +48,12 @@ class World():
     def colony_relations_table(self):
         return self._colony_relations_table
     
+    def generate_id(self):
+        return self._id_generator.generate_id()
+    
+    def add_new_colony(self, colony: Colony):
+        self._colonies.append(colony)
+    
     def get_colony_owned_by_user(self, user_id: int):
         for colony in self._colonies:
             if colony.owner_id == user_id:

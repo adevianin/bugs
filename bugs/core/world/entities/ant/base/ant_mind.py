@@ -51,7 +51,7 @@ class AntMind(Mind):
     def _generate_thoughts(self):
         super()._generate_thoughts()
         if not self._has_thoughts_to_do() and self._am_i_far_away_from_home():
-            go_home_thought = self._thought_factory.build_go_in_nest_thought(nest=self.home_nest)
+            go_home_thought = self._thought_factory.build_go_in_nest_thought(body=self._body, nest=self.home_nest)
             self._register_thought(go_home_thought)
 
     def _am_i_far_away_from_home(self):

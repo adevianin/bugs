@@ -139,10 +139,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class Action {
 
-    constructor(actorId, actionType, stepNumber, actionData) {
+    constructor(actorId, actorType, actionType, actionData) {
         this.actorId = actorId;
         this.type = actionType;
-        this.stepNumber = stepNumber;
+        this.actorType = actorType;
         this.actionData = actionData;
     }
 
@@ -169,7 +169,7 @@ __webpack_require__.r(__webpack_exports__);
 class ActionFactory {
 
     buildAction(actionJson) {
-        return new _action__WEBPACK_IMPORTED_MODULE_0__.Action(actionJson.actor_id, actionJson.action_type, actionJson.step_number, actionJson.action_data);
+        return new _action__WEBPACK_IMPORTED_MODULE_0__.Action(actionJson.actor_id, actionJson.actor_type, actionJson.action_type, actionJson.action_data);
     }
 }
 
@@ -1019,8 +1019,8 @@ function initDomainLayer(apis, serverConnection, initialData) {
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_6__.WorldService(world, worldFactory, mainEventBus);
     let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_1__.UserService(apis.userApi, initialData.user, mainEventBus);
-    let actionService = new _service_actionService__WEBPACK_IMPORTED_MODULE_7__.ActionService(initialData.step_time, actionFactory, worldService);
-    let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_8__.ColonyService(apis.colonyApi);
+    let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_8__.ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
+    let actionService = new _service_actionService__WEBPACK_IMPORTED_MODULE_7__.ActionService(initialData.step_time, actionFactory, worldService, colonyService);
     let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, actionService, colonyService);
 
     let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, userService, messageHandlerService, worldService, colonyService);
@@ -1047,9 +1047,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class ActionService {
 
-    constructor(stepTime, actionFactory, worldService) {
+    constructor(stepTime, actionFactory, worldService, colonyService) {
         this._actionFactory = actionFactory;
         this._worldService = worldService;
+        this._colonyService = colonyService;
         this._actionsJson = [];
         this._currentStep = null;
         this._stepTime = stepTime;
@@ -1058,13 +1059,39 @@ class ActionService {
     playAction(actionJson) {
         let action = this._actionFactory.buildAction(actionJson);
 
+        switch(action.actorType) {
+            case 'entity':
+                this._playEntityAction(action);
+                break;
+            case 'colony':
+                this._playColonyAction(action);
+                break;
+        }
+    }
+
+    _playEntityAction(action) {
         switch(action.type) {
             case 'entity_born':
+                console.log('entity born');
                 this._worldService.giveBirthToEntity(action.actionData.entity)
                 break;
             default:
                 let actor = this._worldService.world.findEntityById(action.actorId);
                 actor.addAction(action);
+        }
+    }
+
+    _playColonyAction(action) {
+        switch(action.type) {
+            case 'colony_born':
+                this._colonyService.giveBirthToColony(action.actionData.colony);
+                break;
+            case 'operations_change':
+                let colony = this._worldService.world.findColonyById(action.actorId);
+                colony.setOperations(action.actionData.operations);
+                break;
+            default:
+                throw 'unknown type of colony action'
         }
     }
 
@@ -1087,8 +1114,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class ColonyService {
 
-    constructor(colonyApi) {
+    constructor(colonyApi, world, worldFactory, mainEventBus) {
+        this._mainEventBus = mainEventBus;
         this._colonyApi = colonyApi;
+        this._world = world;
+        this._worldFactory = worldFactory;
+    }
+
+    giveBirthToColony(colonyJson) {
+        let colony = this._worldFactory.buildColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
+        this._world.addColony(colony);
+        this._mainEventBus.emit('colonyBorn', colony);
     }
 
     stopMyColonyOperation(operationId) {
@@ -1139,16 +1175,13 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        console.log(msg)
+        // console.log(msg)
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);
                 break;
             case 'action':
                 this._actionService.playAction(msg.action);
-                break;
-            case 'colony_changes':
-                this._worldService.updateColony(msg.colony);
                 break;
             default: 
                 throw `unknown type of message "${ msg.type }"`
@@ -1283,11 +1316,6 @@ class WorldService {
         let entity = this._worldFactory.buildEntity(entityJson);
         this._world.addEntity(entity);
         this._mainEventBus.emit('entityBorn', entity);
-    }
-
-    updateColony(colonyJson) {
-        let colony = this._world.findColonyById(colonyJson.id);
-        colony.setOperations(colonyJson.operations);
     }
 
     clear() {

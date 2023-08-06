@@ -12,7 +12,7 @@ class JsonAntFactory():
 
     def build_ant_from_json(self, ant_json: dict, entities_collection: EntityCollection):
         position = Point(ant_json['position'][0], ant_json['position'][1])
-        nest = entities_collection.get_entity_by_id(ant_json['from_nest'])
+        nest = entities_collection.get_entity_by_id(ant_json['from_nest']) if ant_json['from_nest'] else None
         located_in_nest = None
         if ant_json['located_in_nest_id'] != None:
             located_in_nest = entities_collection.get_entity_by_id(ant_json['located_in_nest_id'])

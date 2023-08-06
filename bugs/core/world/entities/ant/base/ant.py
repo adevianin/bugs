@@ -27,6 +27,10 @@ class Ant(LiveEntity):
         return self._ant_type
     
     @property
+    def home_nest_id(self):
+        return self._mind.home_nest.id if self._mind.home_nest else None
+    
+    @property
     def home_nest(self):
         return self._mind.home_nest
     

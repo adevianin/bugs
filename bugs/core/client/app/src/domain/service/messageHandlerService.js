@@ -17,16 +17,13 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        console.log(msg)
+        // console.log(msg)
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);
                 break;
             case 'action':
                 this._actionService.playAction(msg.action);
-                break;
-            case 'colony_changes':
-                this._worldService.updateColony(msg.colony);
                 break;
             default: 
                 throw `unknown type of message "${ msg.type }"`

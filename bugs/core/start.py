@@ -31,6 +31,7 @@ from core.world.entities.colony.operation.operation_factory import OperationFact
 from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.world_facade import WorldFacade
 from core.world.entities.map.map_factory import MapFactory
+from core.world.services.user_service import UserService
 
 def start():
     event_bus = EventEmitter()
@@ -46,6 +47,7 @@ def start():
     
     colony_service = ColonyService(operation_factory)
     nest_service = NestService()
+    user_service = UserService(colony_factory, ant_factory)
 
     larva_serializer = LarvaSerializer()
     nest_serializer = NestSerializer(larva_serializer)
@@ -69,11 +71,12 @@ def start():
     json_thought_factory = JsonThoughtFactory(thought_factory)
     world_repository = WorldRepository(world_data_repository, json_nest_factory, json_ant_factory, json_food_factory, json_colony_factory, json_thought_factory, json_map_factory, world_factory, world_serializer)
 
-    world_facade = WorldFacade.init(event_bus, world_repository, colony_service, nest_service)
+    world_facade = WorldFacade.init(event_bus, world_repository, colony_service, nest_service, user_service)
 
     world_facade.init_world()
 
     colony_service.set_world(world_facade.world)
     nest_service.set_world(world_facade.world)
+    user_service.set_world(world_facade.world)
 
     world_facade.world.run()

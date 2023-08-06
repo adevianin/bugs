@@ -10,6 +10,7 @@ from core.world.entities.ant.base.ant import Ant
 from .relation_tester import RelationTester
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.utils.point import Point
+from core.world.entities.action import Action
 
 class Colony:
 
@@ -18,8 +19,8 @@ class Colony:
         self._event_bus = event_bus
         self._owner_id = owner_id
         self._map = map
-        self._operations = operations or []
-        self._has_changes = False
+        self._operations: List[Operation] = operations or []
+        self._operation_has_changes = False
         self._relation_tester = relation_tester
 
         for operation in self._operations:
@@ -35,7 +36,7 @@ class Colony:
     @property
     def id(self):
         return self._id
-
+    
     @property
     def owner_id(self):
         return self._owner_id
@@ -55,22 +56,21 @@ class Colony:
         self._operations.append(operation)
 
         self._listen_operation(operation)
-        self._emit_colony_change()
+        self._emit_operation_change()
 
     def stop_operation(self, operation_id: int):
         operation = next(filter(lambda op: op.id == operation_id, self._operations), None)
         if operation:
             operation.stop_operation()
+
+    def born(self):
+        self._emit_action('colony_born', { 'colony': self.to_public_json() })
     
     def to_public_json(self):
-        operations_json = []
-        for operation in self._operations:
-            operations_json.append(operation.to_public_json())
-
         return {
             'id': self._id,
             'owner_id': self._owner_id,
-            'operations': operations_json
+            'operations': [operation.to_public_json() for operation in self._operations]
         }
     
     def _handle_my_ant(self, ant: Ant):
@@ -83,8 +83,8 @@ class Colony:
         self._check_enemies_in_colony_area()
         self._clean_done_operations()
         self._hire_for_operations()
-        if self._has_changes:
-            self._emit_colony_change()
+        if self._operation_has_changes:
+            self._emit_operation_change()
 
     def _hire_for_operations(self):
         if len(self._operations) == 0:
@@ -126,11 +126,11 @@ class Colony:
         self._operations.remove(operation)
 
     def _on_operation_change(self):
-        self._has_changes = True
+        self._operation_has_changes = True
 
-    def _emit_colony_change(self):
-        self._event_bus.emit(f'colony:{self.id}:changed')
-        self._has_changes = False
+    def _emit_operation_change(self):
+        self._emit_action('operations_change', {'operations': [operation.to_public_json() for operation in self._operations]})
+        self._operation_has_changes = False
 
     def _on_entity_died(self, entity: Entity):
         is_mine = entity.from_colony == self._id
@@ -204,6 +204,5 @@ class Colony:
         for ant in my_ants:
             ant.body.receive_colony_signal(signal)
 
-
-        
-
+    def _emit_action(self, action_type: str, action_data: dict = None):
+        self._event_bus.emit('action_occurred', Action.build_action(self.id, action_type, 'colony', action_data))

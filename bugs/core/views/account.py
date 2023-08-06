@@ -2,6 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from core.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.http import require_POST
+from core.world.world_facade import WorldFacade
 
 @require_POST 
 def check_username(request):
@@ -20,6 +21,7 @@ def user_register(request):
 
     try:
         user = User.objects.create_user(username, password=password)
+        WorldFacade.get_instance().build_user_starter_pack(user_id=user.id)
         login(request, user)
         
         return JsonResponse({
