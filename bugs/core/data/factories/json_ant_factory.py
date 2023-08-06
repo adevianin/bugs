@@ -31,4 +31,4 @@ class JsonAntFactory():
 
         hp = ant_json['hp']
         
-        return self._ant_factory.build_ant(id=id, from_colony=from_colony, ant_type=ant_type, dna_profile=dna_profile, position=position, hp=hp, nest=nest, located_in_nest=located_in_nest, memory=memory, is_auto_thought_generation=is_auto_thought_generation, picked_food=picked_food, is_in_operation=is_in_operation)
+        return self._ant_factory.build_ant(id=id, from_colony=from_colony, ant_type=ant_type, dna_profile=dna_profile, position=position, hp=hp, home_nest=nest, located_in_nest=located_in_nest, memory=memory, is_auto_thought_generation=is_auto_thought_generation, picked_food=picked_food, is_in_operation=is_in_operation)

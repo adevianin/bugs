@@ -3,14 +3,13 @@ from core.world.utils.point import Point
 from core.world.utils.size import Size
 from core.world.utils.event_emiter import EventEmitter
 from .food_types import FoodTypes
-from .preborn_food import PrebornFood
 from .food_area import FoodArea
 import random
 
 class FoodFactory():
 
-    def build_new_food(self, id: int, preborn_food: PrebornFood):
-        return self.build_food(id, preborn_food.position, 100, preborn_food.calories, preborn_food.food_type, -1, False)
+    def build_new_food(self, id: int, position: Point, calories: int, type: FoodTypes):
+        return self.build_food(id, position, 100, calories, type, -1, False)
 
     def build_food(self, id: int, position: Point, hp: int, calories: int, type: FoodTypes, food_variety: int, is_picked: bool):
         if (food_variety == -1):
