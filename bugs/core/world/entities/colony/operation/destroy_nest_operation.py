@@ -57,8 +57,6 @@ class DestroyNestOperation(Operation):
             ant.attack_nest(nest=self._nest, sayback='nest_destroyed')
 
     def _on_nest_destroyed(self):
-        for ant in self._warriors:
-            ant.leave_operation()
         self.done()
     
     

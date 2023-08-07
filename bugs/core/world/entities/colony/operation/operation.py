@@ -100,10 +100,16 @@ class Operation(ABC):
     
     def done(self):
         self._is_done = True
+
+        ants = self.get_hired_ants()
+        for ant in ants:
+            ant.leave_operation()
+
         self.events.emit('change')
     
     def cancel(self):
         self._is_canceled = True
+
         ants = self.get_hired_ants()
         for ant in ants:
             ant.leave_operation()
