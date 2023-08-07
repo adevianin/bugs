@@ -80,7 +80,7 @@ class LiveEntity(Entity, iEnemy):
         self._mind.leave_operation()
 
     def ask_participation(self):
-        return True
+        return self._mind.ask_participation()
     
     def to_public_json(self):
         json = super().to_public_json()

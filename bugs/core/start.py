@@ -5,7 +5,6 @@ from core.data.factories.json_ant_factory import JsonAntFactory
 from core.data.factories.json_food_factory import JsonFoodFactory
 from core.data.factories.json_colony_factory import JsonColonyFactory
 from core.data.factories.json_thought_factory import JsonThoughtFactory
-from core.data.factories.json_memory_factory import JsonMemoryFactory
 from core.data.serializers.larva_serializer import LarvaSerializer
 from core.data.serializers.nest_serializer import NestSerializer
 from core.data.serializers.world_serializer import WorldSerializer
@@ -62,8 +61,7 @@ def start():
 
     world_data_repository = WorldDataRepository()
     json_nest_factory = JsonNestFactory(nest_factory)
-    json_memory_factory = JsonMemoryFactory()
-    json_ant_factory = JsonAntFactory(ant_factory, json_memory_factory)
+    json_ant_factory = JsonAntFactory(ant_factory)
     json_food_factory = JsonFoodFactory(food_factory)
     json_operation_factory = JsonOperationFactory(operation_factory)
     json_map_factory = JsonMapFactory(map_factory)

@@ -1,3 +1,4 @@
+from core.world.entities.nest.nest import Nest
 from ..base.ant import Ant
 from ..base.ant_types import AntTypes
 from core.world.utils.event_emiter import EventEmitter
@@ -13,3 +14,11 @@ class QueenAnt(Ant):
 
     def __init__(self, events: EventEmitter, id: int, from_colony: int, mind: QueenAntMind, body: QueenAntBody):
         super().__init__(events, id, AntTypes.QUEEN, from_colony, mind, body)
+
+    def ask_participation(self):
+        once_relocated = self._body.memory.read('once_relocated')
+        return not once_relocated
+
+    def relocate_to_nest(self, nest: Nest):
+        super().relocate_to_nest(nest)
+        self._body.memory.remember('once_relocated', True)

@@ -31,6 +31,9 @@ class Mind(ABC):
     def is_in_opearetion(self):
         return self._is_in_opearetion
     
+    def ask_participation(self):
+        return True
+    
     def go_in_nest(self, nest: Nest, sayback: str = None):
         thought = self._thought_factory.build_go_in_nest_thought(body=self._body, nest=nest, sayback=sayback)
         self._register_thought(thought)
