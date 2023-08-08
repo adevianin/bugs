@@ -62,6 +62,8 @@ class Mind(ABC):
         self.toggle_auto_thought_generation(True)
     
     def do_step(self):
+        self._body.memory.treat_records()
+
         if self._is_auto_thought_generation:
             self._generate_thoughts()
 

@@ -21,4 +21,4 @@ class QueenAnt(Ant):
 
     def relocate_to_nest(self, nest: Nest):
         super().relocate_to_nest(nest)
-        self._body.memory.remember('once_relocated', True)
+        self._body.memory.save('once_relocated', True)

@@ -32,8 +32,8 @@ class ThoughtFactory:
     def build_find_food_thought(self, body: Body, searching_walk_subthought: SearchingWalkThought, flags: dict = None, sayback: str = None):
         return FindFoodThought(body=body, random_walk_thought=searching_walk_subthought, flags=flags, sayback=sayback)
     
-    def build_collect_food_thought(self, body: Body, nest: Nest, find_food_thought: FindFoodThought, go_gome_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
-        return CollectFoodThought(body=body, nest=nest, find_food_thought=find_food_thought, go_home_thought=go_gome_thought, found_food=found_food, flags=flags, sayback=sayback)
+    def build_collect_food_thought(self, body: Body, nest: Nest, searching_walk_thought: SearchingWalkThought, go_gome_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
+        return CollectFoodThought(body=body, nest=nest, searching_walk_thought=searching_walk_thought, go_home_thought=go_gome_thought, found_food=found_food, flags=flags, sayback=sayback)
     
     def build_feed_myself_thought(self, body: Body, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
         return FeedMyselfThought(body=body, home=home, find_food_thought=find_food_thought, go_home_thought=go_home_thought, found_food=found_food, flags=flags, sayback=sayback)
@@ -70,9 +70,8 @@ class ThoughtFactory:
     
     def build_collect_food_full(self, body: Body, home_nest: Nest, sayback: str = None):
         searching_walk_thought = self.build_searching_walk_thought(body, home_nest.position, home_nest.area)
-        find_food_thought = self.build_find_food_thought(body, searching_walk_thought)
         go_home_thought = self.build_go_in_nest_thought(body, home_nest)
-        return self.build_collect_food_thought(body, home_nest, find_food_thought, go_home_thought, sayback=sayback)
+        return self.build_collect_food_thought(body, home_nest, searching_walk_thought, go_home_thought, sayback=sayback)
     
     def build_prepare_for_operation_full(self, body: Body, home_nest: Nest, assemble_point: Point, sayback: str = None):
         feed_myself_thought = self.build_feed_myself_full(body=body, home_nest=home_nest)

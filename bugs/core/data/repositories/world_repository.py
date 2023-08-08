@@ -11,7 +11,6 @@ from core.world.entities.map.map import Map
 from core.world.utils.size import Size
 from core.world.entities.world.world import World
 from core.world.entities.world.world_factory import WorldFactory
-from core.world.id_generator import IdGenerator
 from core.data.serializers.world_serializer import WorldSerializer
 from core.data.factories.json_map_factory import JsonMapFactory
 from core.world.entities.colony.colony_relations_table import ColonyRelationsTable
@@ -48,6 +47,11 @@ class WorldRepository(iWorldRepository):
         food_areas_json = world_data['food_areas']
         for food_area_json in food_areas_json:
             food_area = self._json_food_factory.build_food_area_from_json(food_area_json)
+            entities_collection.add_entity(food_area)
+
+        food_sources_json = world_data['food_sources']
+        for food_source_json in food_sources_json:
+            food_area = self._json_food_factory.build_food_source_from_json(food_source_json)
             entities_collection.add_entity(food_area)
 
         ants_json = world_data['ants']

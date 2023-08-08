@@ -699,6 +699,33 @@ class FoodArea extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/domain/entity/foodSource.js":
+/*!**************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/foodSource.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "FoodSource": () => (/* binding */ FoodSource)
+/* harmony export */ });
+/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
+/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+
+
+
+class FoodSource extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
+    constructor(eventBus, id, position, foodType) {
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD_SOURCE, null, null, null);
+        this.foodType = foodType;
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/entity/larva.js":
 /*!*********************************************************!*\
   !*** ./bugs/core/client/app/src/domain/entity/larva.js ***!
@@ -974,7 +1001,8 @@ const EntityTypes = {
     ANT: 'ant',
     FOOD: 'food',
     NEST: 'nest',
-    FOOD_AREA: 'food_area'
+    FOOD_AREA: 'food_area',
+    FOOD_SOURCE: 'food_source'
 }
 
 
@@ -1369,6 +1397,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_foodArea__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/foodArea */ "./bugs/core/client/app/src/domain/entity/foodArea.js");
 /* harmony import */ var _entity_larva__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entity/larva */ "./bugs/core/client/app/src/domain/entity/larva.js");
 /* harmony import */ var _entity_colony__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entity/colony */ "./bugs/core/client/app/src/domain/entity/colony.js");
+/* harmony import */ var _entity_foodSource__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entity/foodSource */ "./bugs/core/client/app/src/domain/entity/foodSource.js");
+
 
 
 
@@ -1407,6 +1437,10 @@ class WorldFactory {
         return new _entity_foodArea__WEBPACK_IMPORTED_MODULE_5__.FoodArea(this._mainEventBus, id, position);
     }
 
+    buildFoodSource(id, position, foodType) {
+        return new _entity_foodSource__WEBPACK_IMPORTED_MODULE_8__.FoodSource(this._mainEventBus, id, position, foodType);
+    }
+
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT:
@@ -1417,6 +1451,8 @@ class WorldFactory {
                 return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety, entityJson.is_picked);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_AREA:
                 return this.buildFoodArea(entityJson.id, entityJson.position);
+            case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_SOURCE:
+                return this.buildFoodSource(entityJson.id, entityJson.position, entityJson.food_type);
             default:
                 throw 'unknown type of entity';
         }
@@ -3016,6 +3052,51 @@ class FoodAreaView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/world/foodSourceView.js":
+/*!***************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/foodSourceView.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "FoodSourceView": () => (/* binding */ FoodSourceView)
+/* harmony export */ });
+/* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
+
+
+class FoodSourceView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
+
+    constructor(entity, entityContainer) {
+        super(entity, entityContainer);
+
+        this._render();
+    }
+
+    _render() {
+        this._foodSourceContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._entityContainer.addChild(this._foodSourceContainer);
+        
+        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`food_source_${this._entity.foodType}.png`));
+        this._sprite.anchor.set(0.5, 1);
+        this._foodSourceContainer.addChild(this._sprite);
+
+        this._foodSourceContainer.x = this._entity.position.x;
+        this._foodSourceContainer.y = this._entity.position.y;
+    }
+
+    remove() {
+        super.remove();
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/world/foodView.js":
 /*!*********************************************************!*\
   !*** ./bugs/core/client/app/src/view/world/foodView.js ***!
@@ -3577,6 +3658,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
 /* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../domain/enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
 /* harmony import */ var _markerManager_markerManagerView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./markerManager/markerManagerView */ "./bugs/core/client/app/src/view/world/markerManager/markerManagerView.js");
+/* harmony import */ var _foodSourceView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./foodSourceView */ "./bugs/core/client/app/src/view/world/foodSourceView.js");
+
 
 
 
@@ -3614,6 +3697,7 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
         this._foodContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._nestContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._foodAreaContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._foodSourceContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._markersContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
 
         this._app.stage.addChild(this._entityContainer);
@@ -3623,6 +3707,7 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
         this._entityContainer.addChild(this._foodAreaContainer);
         this._entityContainer.addChild(this._foodContainer);
         this._entityContainer.addChild(this._antContainer);
+        this._entityContainer.addChild(this._foodSourceContainer);
         this._entityContainer.addChild(this._markersContainer);
 
         this._camera = new _camera__WEBPACK_IMPORTED_MODULE_5__.Camera(this._entityContainer, this._bg, this._app.view);
@@ -3666,6 +3751,9 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.FOOD_AREA:
                 view = new _foodArea__WEBPACK_IMPORTED_MODULE_6__.FoodAreaView(entity, this._foodAreaContainer);
+                break;
+            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.FOOD_SOURCE:
+                view = new _foodSourceView__WEBPACK_IMPORTED_MODULE_10__.FoodSourceView(entity, this._foodSourceContainer);
                 break;
             default:
                 throw 'unknown type of entity';

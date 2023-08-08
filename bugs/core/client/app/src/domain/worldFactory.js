@@ -6,6 +6,7 @@ import { Food } from './entity/food';
 import { FoodArea } from './entity/foodArea';
 import { Larva } from './entity/larva';
 import { Colony } from './entity/colony';
+import { FoodSource } from './entity/foodSource';
 
 class WorldFactory {
 
@@ -36,6 +37,10 @@ class WorldFactory {
         return new FoodArea(this._mainEventBus, id, position);
     }
 
+    buildFoodSource(id, position, foodType) {
+        return new FoodSource(this._mainEventBus, id, position, foodType);
+    }
+
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case EntityTypes.ANT:
@@ -46,6 +51,8 @@ class WorldFactory {
                 return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety, entityJson.is_picked);
             case EntityTypes.FOOD_AREA:
                 return this.buildFoodArea(entityJson.id, entityJson.position);
+            case EntityTypes.FOOD_SOURCE:
+                return this.buildFoodSource(entityJson.id, entityJson.position, entityJson.food_type);
             default:
                 throw 'unknown type of entity';
         }

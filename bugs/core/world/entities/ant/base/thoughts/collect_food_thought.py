@@ -1,21 +1,26 @@
 from core.world.entities.thought.thought import Thought
 from core.world.entities.nest.nest import Nest
-from .find_food_thought import FindFoodThought
+from .searching_walk_thought import SearchingWalkThought
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.food.food import Food
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.ant.base.ant_body import AntBody
+from core.world.utils.point import Point
+from core.world.entities.base.entity_types import EntityTypes
+from core.world.entities.food.food_source import FoodSource
 
 class CollectFoodThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, nest: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
+    def __init__(self, body: AntBody, nest: Nest, searching_walk_thought: SearchingWalkThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
         super().__init__(body=body, type=ThoughtTypes.COLLECT_FOOD, flags=flags, sayback=sayback)
         self._nest = nest
-        self._nested_thoughts['find_food_thought'] = find_food_thought
+        self._nested_thoughts['searching_walk_thought'] = searching_walk_thought
         self._nested_thoughts['go_home_thought'] = go_home_thought
         self._found_food = found_food
+        self._food_source_position = None
+        self._got_food = None
 
         self._nest.events.add_listener('died', self._on_nest_died)
 
@@ -24,8 +29,8 @@ class CollectFoodThought(Thought):
         return self._nest.id
     
     @property
-    def find_food_thought(self) -> FindFoodThought:
-        return self._nested_thoughts['find_food_thought']
+    def searching_walk_thought(self) -> SearchingWalkThought:
+        return self._nested_thoughts['searching_walk_thought']
     
     @property
     def go_home_thought(self) -> GoInNestThought:
@@ -36,26 +41,47 @@ class CollectFoodThought(Thought):
         return self._found_food.id if self._found_food else None
 
     def do_step(self):
-        if (not self._read_flag('is_find_food_done')):
-            is_doing_action = self.find_food_thought.do_step()
-            if(self.find_food_thought.is_done):
-                self._found_food = self.find_food_thought.results
-                self._write_flag('is_find_food_done', True)
-            if (is_doing_action):
-                return True
+        if not self._read_flag('am_i_got_food') and not self._read_flag('am_i_know_where_food_source'):
+            found_food_source_position_data = self._body.memory.read('found_food_source_position')
+            empty_food_source_position_data = self._body.memory.read('empty_food_source_position')
 
-        if (self._read_flag('is_find_food_done') and not self._read_flag('is_get_to_food_done')):
-            self._write_flag('is_get_to_food_done', self._body.step_to_near(self._found_food.position))
+            if found_food_source_position_data and found_food_source_position_data != empty_food_source_position_data:
+                self._food_source_position = Point(found_food_source_position_data[0], found_food_source_position_data[1])
+                self._write_flag('am_i_know_where_food_source', True)
+
+        if not self._read_flag('am_i_got_food') and self._read_flag('am_i_know_where_food_source') and not self._read_flag('am_i_near_food_source_position'):
+            is_walk_done = self._body.step_to(self._food_source_position)
+            if (is_walk_done):
+                self._write_flag('am_i_near_food_source_position', True)
             return
-
-        if (self._read_flag('is_get_to_food_done') and not self._read_flag('is_pickup_food_done')):
-            if (self._found_food.is_picked):
-                self.restart()
+        
+        if not self._read_flag('am_i_got_food') and self._read_flag('am_i_near_food_source_position'):
+            food_sources = self._body.look_around(types_list=[EntityTypes.FOOD_SOURCE])
+            if (len(food_sources) == 0):
+                self._clear_knowledge_about_food_source()
                 return
-            self._write_flag('is_pickup_food_done', self._body.pick_up_food(self._found_food))
+
+            food_source: FoodSource = food_sources[0]
+            def on_got_food(food: Food):
+                self._got_food = food
+                self._body.pick_up_food(food)
+                self._write_flag('am_i_got_food', True)
+            is_food_in_source = food_source.take_some_food(on_got_food)
+
+            if not is_food_in_source:
+                self._clear_knowledge_about_food_source()
+                self._body.memory.save('empty_food_source_position', [food_source.position.x, food_source.position.y], 20)
             return
-            
-        if (self._read_flag('is_pickup_food_done') and not self._read_flag('is_go_home_done')):
+
+        if not self._read_flag('am_i_got_food'):
+            self.searching_walk_thought.do_step()
+            food_sources = self._body.look_around(types_list=[EntityTypes.FOOD_SOURCE])
+            if len(food_sources) > 0:
+                food_source = food_sources[0]
+                self._body.memory.save('found_food_source_position', [food_source.position.x, food_source.position.y])
+            return
+
+        if self._read_flag('am_i_got_food') and not self._read_flag('is_go_home_done'):
             self.go_home_thought.do_step()
             self._write_flag('is_go_home_done', self.go_home_thought.is_done)
             return
@@ -73,6 +99,12 @@ class CollectFoodThought(Thought):
 
         if (self._read_flag('is_got_out_of_nest')):
             self.done()
+
+    def _clear_knowledge_about_food_source(self):
+        self._body.memory.save('found_food_source_position', None)
+        self._write_flag('am_i_know_where_food_source', False)
+        self._write_flag('am_i_near_food_source_position', False)
+
 
     def can_be_delayed(self):
         if (self._read_flag('is_pickup_food_done')):

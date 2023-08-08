@@ -9,7 +9,7 @@ class LiveEntitySerializer(EntitySerializer):
         json.update({
             'position': entity.position,
             'located_in_nest_id': entity.located_in_nest_id,
-            'memory': entity.body.memory.data
+            'memory': entity.body.memory.records
         })
 
         return json

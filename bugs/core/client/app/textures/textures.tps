@@ -200,6 +200,8 @@
             <key type="filename">images/ant_worker_7.png</key>
             <key type="filename">images/ant_worker_8.png</key>
             <key type="filename">images/ant_worker_dead.png</key>
+            <key type="filename">images/food_honeydew_1v.png</key>
+            <key type="filename">images/food_honeydew_picked.png</key>
             <key type="filename">images/food_leaf_1v.png</key>
             <key type="filename">images/food_leaf_2v.png</key>
             <key type="filename">images/food_leaf_3v.png</key>
@@ -220,6 +222,21 @@
                 <rect>8,8,16,16</rect>
                 <key>scale9Paddings</key>
                 <rect>8,8,16,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">images/food_source_honeydew.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>23,28,45,55</rect>
+                <key>scale9Paddings</key>
+                <rect>23,28,45,55</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -302,6 +319,9 @@
                     <filename>images/nest_building.png</filename>
                     <filename>images/marker_cross.png</filename>
                     <filename>images/nest_destroyed.png</filename>
+                    <filename>images/food_honeydew_1v.png</filename>
+                    <filename>images/food_honeydew_picked.png</filename>
+                    <filename>images/food_source_honeydew.png</filename>
                 </array>
             </struct>
         </map>

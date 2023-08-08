@@ -10,3 +10,6 @@ class Point(namedtuple('Point', ['x', 'y'])):
     
     def dist(self, another_point: 'Point'):
         return math.dist([self.x, self.y], [another_point.x, another_point.y])
+    
+    def is_same(self, another_point: 'Point'):
+        return self.x == another_point.x and self.y == another_point.y
