@@ -6,16 +6,18 @@ from .food_serializer import FoodSerializer
 from .food_area_serializer import FoodAreaSerializer
 from .colony_serializer import ColonySerializer
 from .colony_relations_table_serializer import ColonyRelationsTableSerializer
+from .food_source_serializer import FoodSourceSerializer
 
 class WorldSerializer():
 
-    def __init__(self, nest_serializer: NestSerializer, ant_serializer: AntSerializer, food_serializer: FoodSerializer, food_area_serializer: FoodAreaSerializer, colony_serializer: ColonySerializer, colony_relations_table_serializer: ColonyRelationsTableSerializer):
+    def __init__(self, nest_serializer: NestSerializer, ant_serializer: AntSerializer, food_serializer: FoodSerializer, food_area_serializer: FoodAreaSerializer, colony_serializer: ColonySerializer, colony_relations_table_serializer: ColonyRelationsTableSerializer, food_source_serializer: FoodSourceSerializer):
         self._nest_serializer = nest_serializer
         self._ant_serializer = ant_serializer
         self._food_serializer = food_serializer
         self._food_area_serializer = food_area_serializer
         self._colony_serializer = colony_serializer
         self._colony_relations_table_serializer: ColonyRelationsTableSerializer = colony_relations_table_serializer
+        self._food_source_serializer = food_source_serializer
 
     def serialize(self, world: World):
         json = {
@@ -23,6 +25,7 @@ class WorldSerializer():
             'ants': [],
             'foods': [],
             'food_areas': [],
+            'food_sources': [],
             'colonies': [],
             'map': {
                 'size': {
@@ -48,6 +51,10 @@ class WorldSerializer():
         food_areas = world.map.get_entities(entity_types=[EntityTypes.FOOD_AREA])
         for food_area in food_areas:
             json['food_areas'].append(self._food_area_serializer.serialize(food_area))
+
+        food_sources = world.map.get_entities(entity_types=[EntityTypes.FOOD_SOURCE])
+        for food_source in food_sources:
+            json['food_sources'].append(self._food_source_serializer.serialize(food_source))
 
         colonies = world.colonies
         for colony in colonies:

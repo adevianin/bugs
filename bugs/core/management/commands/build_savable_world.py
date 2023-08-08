@@ -20,7 +20,7 @@ class Command(BaseCommand):
                 "from_colony":2,
                 "hp": 100,
                 "position":[
-                    400,
+                    610,
                     350
                 ],
                 "located_in_nest_id":None,
@@ -217,7 +217,7 @@ class Command(BaseCommand):
                 "from_colony": None,
                 "hp": 100,
                 "position":[
-                    899,
+                    800,
                     350
                 ],
                 "fertility":5,

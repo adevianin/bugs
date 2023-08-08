@@ -60,10 +60,10 @@ class JsonThoughtFactory():
     
     def _build_collect_food_thought(self, body: Body, thought_json, entities_collection: EntityCollection):
         nest = entities_collection.get_entity_by_id(thought_json['nest_id'])
-        find_food_thought = self.build_thougth_from_json(body, thought_json['find_food_thought'], entities_collection)
+        searching_walk_thought = self.build_thougth_from_json(body, thought_json['searching_walk_thought'], entities_collection)
         go_home_thought = self.build_thougth_from_json(body, thought_json['go_home_thought'], entities_collection)
         found_food = entities_collection.get_entity_by_id(thought_json['found_food_id']) if thought_json['found_food_id'] else None
-        return self._thought_factory.build_collect_food_thought(body=body, nest=nest, find_food_thought=find_food_thought, go_gome_thought=go_home_thought, found_food=found_food, flags=thought_json['flags'], sayback=thought_json['sayback'])
+        return self._thought_factory.build_collect_food_thought(body=body, nest=nest, searching_walk_thought=searching_walk_thought, go_gome_thought=go_home_thought, found_food=found_food, flags=thought_json['flags'], sayback=thought_json['sayback'])
 
     def _build_feed_myself_thought(self, body: Body, thought_json, entities_collection: EntityCollection):
         home = entities_collection.get_entity_by_id(thought_json['home_id'])

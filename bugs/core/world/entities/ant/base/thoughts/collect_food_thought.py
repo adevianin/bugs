@@ -20,7 +20,6 @@ class CollectFoodThought(Thought):
         self._nested_thoughts['go_home_thought'] = go_home_thought
         self._found_food = found_food
         self._food_source_position = None
-        self._got_food = None
 
         self._nest.events.add_listener('died', self._on_nest_died)
 
@@ -63,7 +62,6 @@ class CollectFoodThought(Thought):
 
             food_source: FoodSource = food_sources[0]
             def on_got_food(food: Food):
-                self._got_food = food
                 self._body.pick_up_food(food)
                 self._write_flag('am_i_got_food', True)
             is_food_in_source = food_source.take_some_food(on_got_food)
