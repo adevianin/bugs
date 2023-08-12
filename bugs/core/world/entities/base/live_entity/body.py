@@ -149,9 +149,10 @@ class Body(ABC):
     def damage_enemy(self, enemy: iEnemy):
         enemy.damage(20)
     
-    def is_near_to(self, point: Point, is_precise_mode: bool = False):
-        return self._are_points_near(self.position, point, is_precise_mode)
-    
+    def is_near_to_attack(self, point: Point):
+        dist = self.position.dist(point)
+        return dist <= self._distance_per_step / 2
+
     def calc_nearest_point(self, points: List[Point]):
         nearest_dist = None
         nearest_point = None
@@ -170,10 +171,6 @@ class Body(ABC):
     def look_around_for_enemies(self):
         pass
 
-    def _are_points_near(self, point1: Point, point2: Point, is_precise_mode: bool = False):
-        dist = math.dist([point1.x, point1.y], [point2.x, point2.y])
-        return dist < 1 if is_precise_mode else dist <= self._distance_per_step / 2
-    
     def _consume_calories(self, amount: int):
         pass
         # self._calories -= amount

@@ -22,7 +22,7 @@ class FightEnemyThought(Thought):
         if self._enemy.is_died:
             self.done()
 
-        is_near_to_enemy = self._body.is_near_to(self._enemy.position)
+        is_near_to_enemy = self._body.is_near_to_attack(self._enemy.position)
 
         if is_near_to_enemy:
             self._body.damage_enemy(self._enemy)
