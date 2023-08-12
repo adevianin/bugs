@@ -8,11 +8,13 @@ from .marker_types import MarkerTypes
 from .operation_types import OperationTypes
 from typing import List
 from functools import partial
+from core.world.entities.colony.formation.formation_factory import FormationFactory
 
 class Operation(ABC):
 
-    def __init__(self, events: EventEmitter, id: int, type: OperationTypes, hired_ants: List[Ant], flags: dict):
+    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, type: OperationTypes, hired_ants: List[Ant], flags: dict):
         self.events = events
+        self._formation_factory = formation_factory
         self.id = id
         self._type = type
         self._vacancies = {}

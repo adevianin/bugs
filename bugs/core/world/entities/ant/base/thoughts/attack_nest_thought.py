@@ -33,7 +33,10 @@ class AttackNestThought(Thought):
             if self._nest.is_died:
                 self.done()
         else:
-            self._body.step_to(self._nest.position)
+            if (self._body.has_formation):
+                self._body.step_in_formation()
+            else:
+                self._body.step_to(self._nest.position)
 
         return True
 

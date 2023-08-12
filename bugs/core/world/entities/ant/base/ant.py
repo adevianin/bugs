@@ -6,6 +6,7 @@ from .ant_mind import AntMind
 from .ant_types import AntTypes
 from core.world.utils.point import Point
 from core.world.entities.nest.nest import Nest
+from core.world.entities.colony.formation.formation import Formation
 
 class Ant(LiveEntity):
 
@@ -52,6 +53,9 @@ class Ant(LiveEntity):
     def attack_nest(self, nest: Nest, sayback: str = None):
         self._mind.attack_nest(nest=nest, sayback=sayback)
 
+    def set_formation(self, formation: Formation):
+        self._body.set_formation(formation)
+
     def to_public_json(self):
         json = super().to_public_json()
         json.update({
@@ -60,6 +64,14 @@ class Ant(LiveEntity):
         })
 
         return json
+    
+    def leave_operation(self):
+        super().leave_operation()
+        self._body.remove_formation()
+
+    def _on_died(self):
+        super()._on_died()
+        self._body.remove_formation()
     
     def _on_food_picked(self, food_id):
         self._emit_action('ant_picked_up_food', {
@@ -71,3 +83,5 @@ class Ant(LiveEntity):
 
     def _on_food_dropped(self):
         self._emit_action('ant_dropped_picked_food')
+
+    

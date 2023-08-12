@@ -9,11 +9,12 @@ from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.nest.nest import Nest
 from .marker_types import MarkerTypes
 from core.world.entities.ant.base.larva import Larva
+from core.world.entities.colony.formation.formation_factory import FormationFactory
 
 class BuildNewNestOperation(Operation):
     
-    def __init__(self, events: EventEmitter, id: int, hired_ants: List[Ant], flags: dict, building_site: Point):
-        super().__init__(events, id, OperationTypes.BUILD_NEW_NEST, hired_ants, flags)
+    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, hired_ants: List[Ant], flags: dict, building_site: Point):
+        super().__init__(events, formation_factory, id, OperationTypes.BUILD_NEW_NEST, hired_ants, flags)
         self._building_site = building_site
         self._name = 'новий мурашник'
         self._open_vacancies(AntTypes.QUEEN, 1)

@@ -32,16 +32,18 @@ from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.world_facade import WorldFacade
 from core.world.entities.map.map_factory import MapFactory
 from core.world.services.user_service import UserService
+from core.world.entities.colony.formation.formation_factory import FormationFactory
 
 def start():
     event_bus = EventEmitter()
 
+    formation_factory = FormationFactory(event_bus)
     thought_factory = ThoughtFactory()
     ant_factory = AntFactory(thought_factory)
     nest_factory = NestFactory()
     food_factory = FoodFactory()
     colony_factory = ColonyFactory(event_bus)
-    operation_factory = OperationFactory()
+    operation_factory = OperationFactory(formation_factory)
     map_factory = MapFactory(event_bus)
     world_factory = WorldFactory(event_bus, ant_factory, food_factory, nest_factory)
     

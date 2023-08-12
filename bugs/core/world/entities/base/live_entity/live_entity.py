@@ -123,3 +123,5 @@ class LiveEntity(Entity, iEnemy):
     def _on_died(self):
         self._mind._free_mind()
         self._body.sayer.remove_all_listeners()
+
+    

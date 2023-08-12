@@ -1,8 +1,42 @@
 from collections import namedtuple
-from typing import List
+from typing import List, Tuple
 import math
 
 class Point(namedtuple('Point', ['x', 'y'])):
+
+    @classmethod
+    def do_step_on_path(cls, start_point: 'Point', dest_point: 'Point', step_size: int) -> Tuple['Point', int, bool]:
+        distance = start_point.dist(dest_point)
+        if distance <= step_size:
+            passed_dist = distance
+            is_walk_done = True
+            return dest_point, passed_dist, is_walk_done
+        else:
+            x_distance = dest_point.x - start_point.x 
+            y_distance = dest_point.y - start_point.y
+            path_percent_to_walk = (step_size * 100) / distance
+
+            x_shift = x_distance * path_percent_to_walk / 100
+            y_shift = y_distance * path_percent_to_walk / 100
+
+            new_pos = Point(start_point.x + x_shift, start_point.y + y_shift)
+            is_walk_done = new_pos.is_equal(dest_point)
+            if is_walk_done:
+                new_pos = dest_point
+            passed_dist = step_size
+
+            return new_pos, passed_dist, is_walk_done
+
+    @classmethod
+    def calculate_angle_to_x_axis(cls, point1: 'Point', point2: 'Point'):
+        delta_x = point2.x - point1.x
+        delta_y = point2.y - point1.y
+        angle_radians = math.atan2(delta_y, delta_x)
+        angle_degrees = math.degrees(angle_radians)
+        if angle_degrees < 0:
+            angle_degrees += 360
+
+        return angle_degrees
 
     @classmethod
     def from_json(cls, point_json:  List[int]):
@@ -13,3 +47,20 @@ class Point(namedtuple('Point', ['x', 'y'])):
     
     def is_same(self, another_point: 'Point'):
         return self.x == another_point.x and self.y == another_point.y
+    
+    def is_equal(self, another_point: 'Point', accurancy: int = 1):
+        dist = self.dist(another_point)
+        return dist <= accurancy
+    
+    def rotate(self, angle_degrees, center: 'Point'):
+        angle_radians = math.radians(angle_degrees)
+        x = self.x - center.x
+        y = self.y - center.y
+        
+        new_x = x * math.cos(angle_radians) - y * math.sin(angle_radians)
+        new_y = x * math.sin(angle_radians) + y * math.cos(angle_radians)
+        
+        new_x += center[0]
+        new_y += center[1]
+        
+        return Point(new_x, new_y)

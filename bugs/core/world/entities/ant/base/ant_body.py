@@ -9,6 +9,7 @@ from core.world.entities.colony.relation_tester import RelationTester
 from core.world.entities.base.entity import Entity
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.base.live_entity.memory import Memory
+from core.world.entities.colony.formation.formation import Formation
 
 from typing import Callable, List
 
@@ -19,6 +20,7 @@ class AntBody(Body):
     def __init__(self, events: EventEmitter, sayer: EventEmitter, memory: Memory, dna_profile: str, position: Point, hp: int, located_in_nest: Nest, picked_food: Food, world_interactor: WorldInteractor):
         super().__init__(events, sayer, memory, dna_profile, position, 32, 200, located_in_nest, hp, world_interactor)
         self._picked_food = picked_food
+        self._formation = None
 
     @property
     def is_food_picked(self):
@@ -31,6 +33,32 @@ class AntBody(Body):
     @property
     def picked_food_id(self):
         return self._picked_food.id if self.is_food_picked else None
+    
+    @property
+    def has_formation(self):
+        return self._formation != None
+    
+    @property
+    def formation(self):
+        return self._formation
+    
+    def set_formation(self, formation: Formation):
+        self._formation = formation
+        unit_number = self._formation.register_unit(self.position)
+        self.memory.save('formation_unit_number', unit_number)
+        self._formation.events.add_listener('reached_destination', self.remove_formation)
+
+    def remove_formation(self):
+        if self.has_formation:
+            self._formation.events.remove_listener('reached_destination', self.remove_formation)
+            self.formation.remove_unit(self.memory.read('formation_unit_number'))
+            self.memory.clear('formation_unit_number')
+            self._formation = None
+
+    def step_in_formation(self):
+        unit_number = self.memory.read('formation_unit_number')
+        position = self._formation.get_position_for_unit(unit_number)
+        return self.step_to(position)
     
     def set_relation_tester(self, relation_tester: RelationTester):
         self._relation_tester = relation_tester
@@ -45,7 +73,7 @@ class AntBody(Body):
     def build_nest(self, nest: Nest):
         nest.build()
         self._consume_calories(10)
-    
+
     def pick_up_food(self, food: Food):
         self._picked_food = food
         food.pickup()
@@ -75,3 +103,11 @@ class AntBody(Body):
 
     def receive_colony_signal(self, signal: dict):
         self.events.emit(f'colony_signal:{ signal["type"] }', signal)
+
+    def _on_position_changed(self):
+        super()._on_position_changed()
+        if self.has_formation:
+            self._tell_position_to_formation()
+
+    def _tell_position_to_formation(self):
+        self._formation.unit_changed_position(self.position, self.memory.read('formation_unit_number'))

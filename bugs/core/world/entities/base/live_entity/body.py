@@ -59,6 +59,7 @@ class Body(ABC):
     def position(self, value):
         self._position = value
         self.events.emit('position_changed')
+        self._on_position_changed()
 
     @property
     def sight_distance(self):
@@ -95,48 +96,29 @@ class Body(ABC):
         self._located_inside_nest = None
         self.events.emit('got_out_of_nest')
 
-    def step_to(self, destination_point: Point, preciseMode = False) -> bool:
+    def step_to(self, destination_point: Point) -> bool:
         if self.is_in_nest:
             self.get_out_of_nest()
             return False
-        
-        distance = math.dist([self.position.x, self.position.y], [destination_point.x, destination_point.y])
-        if (distance == 0):
+
+        new_position, passed_dist, is_walk_done = Point.do_step_on_path(self.position, destination_point, self._distance_per_step)
+
+        if (passed_dist == 0):
             return True
-        x_distance = destination_point.x - self.position.x 
-        y_distance = destination_point.y - self.position.y
 
-        walking_distance = min([self._distance_per_step, distance]) if preciseMode else self._distance_per_step
-        percent_can_walk = (walking_distance * 100) / distance
-        investing_calories = round(walking_distance / self._distance_per_calorie)
-
-        x_shift = x_distance * percent_can_walk / 100
-        y_shift = y_distance * percent_can_walk / 100
-
-        new_pos_x = self.position.x + x_shift
-        new_pos_y = self.position.y + y_shift
-
+        investing_calories = round(passed_dist / self._distance_per_calorie)
         self._consume_calories(investing_calories)
-
-        is_walk_done = self._are_points_near(Point(new_pos_x, new_pos_y), Point(destination_point.x, destination_point.y), preciseMode)
-
-        if preciseMode and is_walk_done:
-            new_position = Point(destination_point.x, destination_point.y)
-        else:
-            new_position = Point(new_pos_x, new_pos_y)
-
         self.position = new_position
-
+        
         self.events.emit('walk', position=new_position)
-
         return is_walk_done
 
-    def step_to_near(self, point: Point, distance: int = 10, preciseMode = False):
+    def step_to_near(self, point: Point, distance: int = 10):
         x = point.x + distance if self.position.x > point.x else point.x - distance
         y = point.y + distance if self.position.y > point.y else point.y - distance
         near_point = Point(x, y)
 
-        return self.step_to(near_point, preciseMode)
+        return self.step_to(near_point)
     
     def check_am_i_hungry(self):
         return self._calories / (self._max_calories / 100) < 30
@@ -197,3 +179,7 @@ class Body(ABC):
         # self._calories -= amount
         # if self._calories < 0:
         #     self.hp = 0
+
+    @abstractmethod
+    def _on_position_changed(self):
+        pass

@@ -9,6 +9,8 @@ import math
 
 class AntMind(Mind):
 
+    _body: AntBody
+
     def __init__(self, events: EventEmitter, body: AntBody, thought_factory: ThoughtFactory, is_auto_thought_generation: bool, home_nest: Nest, is_in_operation: bool):
         super().__init__(events, body, thought_factory, is_auto_thought_generation, is_in_operation)
         self.home_nest = home_nest

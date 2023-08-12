@@ -17,7 +17,8 @@ class Memory():
             return None
         
     def clear(self, record_name: str):
-        del self._records[record_name]
+        if record_name in self._records:
+            del self._records[record_name]
 
     def treat_records(self):
         record_names = self._records.keys()
