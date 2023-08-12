@@ -7,16 +7,14 @@ class Formation(ABC):
     UNIT_WIDTH = 32
     UNIT_HEIGHT = 32
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, position: Point, dest_point: Point, unit_step_size: int):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, dest_point: Point, unit_step_size: int):
         self.events = events
         self._event_bus = event_bus
-        self._position = position
+        self._position = None
         self._dest_point = dest_point
         self._unit_step_size = unit_step_size
         self._units: Dict[int, Dict] = {}
         self._is_formation_reach_destination = False
-
-        self._x_axis_angle = self._calc_x_axis_angle()
 
         self._event_bus.add_listener('step_start', self._on_step_start)
 
@@ -29,6 +27,9 @@ class Formation(ABC):
         pass
 
     def register_unit(self, current_unit_position: Point):
+        if self._position == None:
+            self._change_position(current_unit_position)
+            
         unit_number = len(self._units)
         self._units[unit_number] = {
             'current_position': current_unit_position,

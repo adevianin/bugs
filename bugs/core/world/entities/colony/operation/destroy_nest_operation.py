@@ -14,8 +14,8 @@ from core.world.utils.point import Point
 class DestroyNestOperation(Operation):
 
     def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, hired_ants: List[Ant], flags: dict, nest: Nest):
-        super().__init__(events, formation_factory, id, OperationTypes.DESTROY_NEST, hired_ants, flags)
         self._nest = nest
+        super().__init__(events, formation_factory, id, OperationTypes.DESTROY_NEST, hired_ants, flags)
         self._name = 'знищення мурашника'
         self._open_vacancies(AntTypes.WARRIOR, 5)
         self._add_marker(MarkerTypes.CROSS, nest.position)
@@ -30,7 +30,7 @@ class DestroyNestOperation(Operation):
     
     def _init_staff(self):
         super()._init_staff()
-        formation = self._build_attack_formation()
+        formation = self._formation_factory.build_attack_formation(self._nest.position, self._hired_ants[0].body.distance_per_step)
         for ant in self._warriors:
             ant.set_formation(formation)
             ant.body.sayer.add_listener('prepared', partial(self._on_warrior_prepared, ant))
@@ -61,11 +61,4 @@ class DestroyNestOperation(Operation):
 
     def _on_nest_destroyed(self):
         self.done()
-
-    def _build_attack_formation(self):
-        gather_point = Point(850, 150)
-        return self._formation_factory.build_attack_formation(gather_point, self._nest.position, self._hired_ants[0].body.distance_per_step)
-    
-    
-
     
