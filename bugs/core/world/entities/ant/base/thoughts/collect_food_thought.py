@@ -40,15 +40,14 @@ class CollectFoodThought(Thought):
         return self._found_food.id if self._found_food else None
 
     def do_step(self):
-        if not self._read_flag('am_i_got_food') and not self._read_flag('am_i_know_where_food_source'):
+        if not self._read_flag('am_i_got_food') and self._food_source_position == None:
             found_food_source_position_data = self._body.memory.read('found_food_source_position')
             empty_food_source_position_data = self._body.memory.read('empty_food_source_position')
 
             if found_food_source_position_data and found_food_source_position_data != empty_food_source_position_data:
                 self._food_source_position = Point(found_food_source_position_data[0], found_food_source_position_data[1])
-                self._write_flag('am_i_know_where_food_source', True)
 
-        if not self._read_flag('am_i_got_food') and self._read_flag('am_i_know_where_food_source') and not self._read_flag('am_i_near_food_source_position'):
+        if not self._read_flag('am_i_got_food') and self._food_source_position and not self._read_flag('am_i_near_food_source_position'):
             is_walk_done = self._body.step_to(self._food_source_position)
             if (is_walk_done):
                 self._write_flag('am_i_near_food_source_position', True)
