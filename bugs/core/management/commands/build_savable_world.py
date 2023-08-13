@@ -262,6 +262,7 @@ class Command(BaseCommand):
             {
                 "id":1,
                 "owner_id":1,
+                "member_type": "ant",
                 "operations":[
                     
                 ]
@@ -269,6 +270,7 @@ class Command(BaseCommand):
             {
                 "id":2,
                 "owner_id":2,
+                "member_type": "ant",
                 "operations":[
                     
                 ]

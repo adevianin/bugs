@@ -7,8 +7,10 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.base.live_entity.memory import Memory
-from core.world.entities.base.entity_types import EntityTypes
+from core.world.entities.base.entity_types import EntityTypes, EntityTypesPack
+from core.world.entities.colony.relation_tester import RelationTester
 from typing import List, Callable
+from core.world.entities.base.entity import Entity
 
 import math
 
@@ -148,6 +150,9 @@ class Body(ABC):
     
     def damage_enemy(self, enemy: iEnemy):
         enemy.damage(20)
+
+    def damage_nest(self, nest: Nest):
+        nest.damage(10)
     
     def is_near_to_attack(self, point: Point):
         dist = self.position.dist(point)
@@ -167,9 +172,15 @@ class Body(ABC):
     def look_around(self, types_list: List[EntityTypes] = None, filter: Callable = None):
         return self._world_interactor.get_nearby_entities(types_list, filter)
     
-    @abstractmethod
-    def look_around_for_enemies(self):
-        pass
+    def set_relation_tester(self, relation_tester: RelationTester):
+        self._relation_tester = relation_tester
+
+    def look_around_for_enemies(self) -> List[iEnemy]:
+        enemies_filter: Callable[[Entity], bool] = lambda entity: self._relation_tester.is_enemy(entity)
+        return self._world_interactor.get_nearby_entities(EntityTypesPack.LIVE_ENTITIES, enemies_filter)
+    
+    def receive_colony_signal(self, signal: dict):
+        self.events.emit(f'colony_signal:{ signal["type"] }', signal)
 
     def _consume_calories(self, amount: int):
         pass

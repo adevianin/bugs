@@ -5,13 +5,10 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
-from core.world.entities.colony.relation_tester import RelationTester
 from core.world.entities.base.entity import Entity
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.colony.formation.formation import Formation
-
-from typing import Callable, List
 
 class AntBody(Body):
 
@@ -60,15 +57,8 @@ class AntBody(Body):
         position = self._formation.get_position_for_unit(unit_number)
         return self.step_to(position)
     
-    def set_relation_tester(self, relation_tester: RelationTester):
-        self._relation_tester = relation_tester
-
     def look_around_for_food(self):
         return self._world_interactor.get_nearby_entities([EntityTypes.FOOD])
-    
-    def look_around_for_enemies(self) -> List[iEnemy]:
-        enemies_filter: Callable[[Entity], bool] = lambda entity: self._relation_tester.is_enemy(entity)
-        return self._world_interactor.get_nearby_entities([EntityTypes.ANT], enemies_filter)
     
     def build_nest(self, nest: Nest):
         nest.build()
@@ -97,12 +87,6 @@ class AntBody(Body):
             'colony_id': colony_id,
             'callback': callback
         })
-
-    def damage_nest(self, nest: Nest):
-        nest.damage(10)
-
-    def receive_colony_signal(self, signal: dict):
-        self.events.emit(f'colony_signal:{ signal["type"] }', signal)
 
     def _on_position_changed(self):
         super()._on_position_changed()

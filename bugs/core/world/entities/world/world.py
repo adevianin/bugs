@@ -9,6 +9,9 @@ from core.world.entities.base.entity_collection import EntityCollection
 from core.world.id_generator import IdGenerator
 from core.world.entities.colony.colony_relations_table import ColonyRelationsTable
 from core.world.entities.world.entity_birther import EntityBirther
+from core.world.entities.base.entity_types import EntityTypes
+
+from typing import List
 
 class World():
 
@@ -17,7 +20,7 @@ class World():
         self._entities_collection = entities_collection
         self._map = map
         self._event_bus = event_bus
-        self._colonies = colonies
+        self._colonies: List[Colony] = colonies
         self._id_generator = id_generator
         self._world_loop_stop_flag = False
         self._is_world_running = False
@@ -56,7 +59,7 @@ class World():
     
     def get_colony_owned_by_user(self, user_id: int):
         for colony in self._colonies:
-            if colony.owner_id == user_id:
+            if colony.member_type == EntityTypes.ANT and colony.owner_id == user_id:
                 return colony
             
         return None

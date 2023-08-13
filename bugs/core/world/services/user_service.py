@@ -15,7 +15,7 @@ class UserService():
 
     def build_user_starter_pack(self, user_id: int):
         colony_id = self._world.generate_id()
-        colony = self._colony_factory.build_new_colony(id=colony_id, owner_id=user_id, map=self._world.map, colony_relations_table=self._world.colony_relations_table)
+        colony = self._colony_factory.build_new_ant_colony(id=colony_id, owner_id=user_id, map=self._world.map, colony_relations_table=self._world.colony_relations_table)
         self._world.add_new_colony(colony)
         colony.born()
 

@@ -6,3 +6,6 @@ class EntityTypes(StrEnum):
     NEST = 'nest'
     FOOD_AREA = 'food_area'
     FOOD_SOURCE = 'food_source'
+
+class EntityTypesPack():
+    LIVE_ENTITIES = [EntityTypes.ANT]
