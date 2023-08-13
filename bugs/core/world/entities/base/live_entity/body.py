@@ -14,22 +14,21 @@ from core.world.entities.base.entity import Entity
 
 class Body(ABC):
 
+    DISTANCE_PER_SEP = 32
+    SIGHT_DISTANCE = 100
+
     _world_interactor: WorldInteractor
 
-    def __init__(self, events: EventEmitter, sayer: EventEmitter, memory: Memory, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int, located_in_nest: Nest, hp: int, world_interactor: WorldInteractor):
+    def __init__(self, events: EventEmitter, memory: Memory, dna_profile: str, position: Point, hp: int, world_interactor: WorldInteractor):
         self.events = events
-        self.sayer = sayer
         self.memory = memory
         self._dna_profile = dna_profile
-        self._distance_per_step = distance_per_step
-        self._sight_distance = sight_distance
         self._position = position
         self._max_calories = 1000
         self._calories = self._max_calories
         self._distance_per_calorie = 2
         self._can_eat_calories_per_step = 20
-        self._user_speed = self._distance_per_step / STEP_TIME
-        self._located_inside_nest = located_in_nest
+        self._user_speed = self.DISTANCE_PER_SEP / STEP_TIME
         self._hp = hp
         self._world_interactor = world_interactor
 
@@ -38,14 +37,6 @@ class Body(ABC):
         return self._world_interactor
 
     @property
-    def located_in_nest_id(self):
-        return self._located_inside_nest.id if self._located_inside_nest else None
-    
-    @property
-    def is_in_nest(self):
-        return self._located_inside_nest != None
-    
-    @property
     def user_speed(self):
         return self._user_speed
 
@@ -53,20 +44,12 @@ class Body(ABC):
     def position(self):
         return self._position
     
-    @property
-    def distance_per_step(self):
-        return self._distance_per_step
-
     @position.setter
     def position(self, value):
         self._position = value
         self.events.emit('position_changed')
         self._on_position_changed()
 
-    @property
-    def sight_distance(self):
-        return self._sight_distance
-    
     @property
     def is_no_calories(self):
         return self._calories <= 0
@@ -84,26 +67,8 @@ class Body(ABC):
         self._hp = hp
         self.events.emit('hp_changed')
 
-    def say(self, phrase: str, data: dict):
-        if (data):
-            self.sayer.emit(phrase, data)
-        else:
-            self.sayer.emit(phrase)
-
-    def get_in_nest(self, nest: Nest):
-        self._located_inside_nest = nest
-        self.events.emit('got_in_nest', nest)
-
-    def get_out_of_nest(self):
-        self._located_inside_nest = None
-        self.events.emit('got_out_of_nest')
-
     def step_to(self, destination_point: Point) -> bool:
-        if self.is_in_nest:
-            self.get_out_of_nest()
-            return False
-
-        new_position, passed_dist, is_walk_done = Point.do_step_on_path(self.position, destination_point, self._distance_per_step)
+        new_position, passed_dist, is_walk_done = Point.do_step_on_path(self.position, destination_point, self.DISTANCE_PER_SEP)
 
         if (passed_dist == 0):
             return True
@@ -156,7 +121,7 @@ class Body(ABC):
     
     def is_near_to_attack(self, point: Point):
         dist = self.position.dist(point)
-        return dist <= self._distance_per_step / 2
+        return dist <= self.DISTANCE_PER_SEP / 2
 
     def calc_nearest_point(self, points: List[Point]):
         nearest_dist = None

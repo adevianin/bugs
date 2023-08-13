@@ -58,7 +58,7 @@ class SearchingWalkThought(Thought):
 
     def _generate_potential_points_to_walk(self):
         position = self._body.position
-        dist = self._body.distance_per_step
+        dist = self._body.DISTANCE_PER_SEP
         points_count = SearchingWalkThought.WALK_DIRECTIONS_COUNT
 
         points = []

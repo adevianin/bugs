@@ -209,6 +209,15 @@
             <key type="filename">images/food_nectar_1v.png</key>
             <key type="filename">images/food_nectar_2v.png</key>
             <key type="filename">images/food_nectar_3v.png</key>
+            <key type="filename">images/ground_beetle_1.png</key>
+            <key type="filename">images/ground_beetle_2.png</key>
+            <key type="filename">images/ground_beetle_3.png</key>
+            <key type="filename">images/ground_beetle_4.png</key>
+            <key type="filename">images/ground_beetle_5.png</key>
+            <key type="filename">images/ground_beetle_6.png</key>
+            <key type="filename">images/ground_beetle_7.png</key>
+            <key type="filename">images/ground_beetle_8.png</key>
+            <key type="filename">images/ground_beetle_dead.png</key>
             <key type="filename">images/marker_cross.png</key>
             <key type="filename">images/marker_pointer.png</key>
             <struct type="IndividualSpriteSettings">
@@ -322,6 +331,15 @@
                     <filename>images/food_honeydew_1v.png</filename>
                     <filename>images/food_honeydew_picked.png</filename>
                     <filename>images/food_source_honeydew.png</filename>
+                    <filename>images/ground_beetle_1.png</filename>
+                    <filename>images/ground_beetle_2.png</filename>
+                    <filename>images/ground_beetle_3.png</filename>
+                    <filename>images/ground_beetle_4.png</filename>
+                    <filename>images/ground_beetle_5.png</filename>
+                    <filename>images/ground_beetle_6.png</filename>
+                    <filename>images/ground_beetle_7.png</filename>
+                    <filename>images/ground_beetle_8.png</filename>
+                    <filename>images/ground_beetle_dead.png</filename>
                 </array>
             </struct>
         </map>

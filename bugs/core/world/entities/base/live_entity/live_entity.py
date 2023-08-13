@@ -20,7 +20,6 @@ class LiveEntity(Entity, iEnemy):
         self.events.add_listener('got_in_nest', self._on_got_in_nest)
         self.events.add_listener('got_out_of_nest', self._on_got_out_of_nest)
         self.events.add_listener('hp_changed', self._on_hp_changed)
-        self.events.add_listener('died', self._on_died)
 
     @property
     def position(self):
@@ -49,12 +48,6 @@ class LiveEntity(Entity, iEnemy):
     @hp.setter
     def hp(self, hp: int):
         self._body.hp = hp
-    
-    def prepare_for_operation(self, sayback: str = None):
-        self._mind.prepare_for_operation(sayback)
-    
-    def go_in_nest(self, nest: Nest, sayback: str = None):
-        self._mind.go_in_nest(nest=nest, sayback=sayback)
 
     def walk_to(self, position: Point, sayback: str = None):
         self._mind.walk_to(position=position, sayback=sayback)
@@ -62,26 +55,11 @@ class LiveEntity(Entity, iEnemy):
     def fight_enemy(self, enemy: iEnemy, sayback: str = None):
         self._mind.fight_enemy(enemy=enemy, sayback=sayback)
     
-    def get_in_nest(self, nest: Nest):
-        self._body.get_in_nest(nest)
-
-    def get_out_of_nest(self):
-        self._body.get_out_of_nest()
-    
     def do_step(self):
         super().do_step()
 
         self._mind.do_step()
 
-    def join_operation(self):
-        self._mind.join_operation()
-
-    def leave_operation(self):
-        self._mind.leave_operation()
-
-    def ask_participation(self):
-        return self._mind.ask_participation()
-    
     def to_public_json(self):
         json = super().to_public_json()
 
@@ -119,9 +97,3 @@ class LiveEntity(Entity, iEnemy):
         self._emit_action('entity_hp_change', { 'hp': self.hp })
         if self.hp <= 0:
             self._handle_dieing()
-
-    def _on_died(self):
-        self._mind._free_mind()
-        self._body.sayer.remove_all_listeners()
-
-    

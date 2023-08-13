@@ -1,3 +1,4 @@
+from core.world.utils.point import Point
 from core.world.entities.base.live_entity.body import Body
 from core.world.utils.point import Point
 from core.world.entities.food.food import Food
@@ -10,10 +11,23 @@ from core.world.entities.colony.formation.formation import Formation
 
 class AntBody(Body):
 
+    DISTANCE_PER_SEP = 32
+    SIGHT_DISTANCE = 200
+
     def __init__(self, events: EventEmitter, sayer: EventEmitter, memory: Memory, dna_profile: str, position: Point, hp: int, located_in_nest: Nest, picked_food: Food, world_interactor: WorldInteractor):
-        super().__init__(events, sayer, memory, dna_profile, position, 32, 200, located_in_nest, hp, world_interactor)
+        super().__init__(events, memory, dna_profile, position, hp, world_interactor)
+        self.sayer = sayer
+        self._located_inside_nest = located_in_nest
         self._picked_food = picked_food
         self._formation = None
+
+    @property
+    def located_in_nest_id(self):
+        return self._located_inside_nest.id if self._located_inside_nest else None
+    
+    @property
+    def is_in_nest(self):
+        return self._located_inside_nest != None
 
     @property
     def is_food_picked(self):
@@ -34,6 +48,20 @@ class AntBody(Body):
     @property
     def formation(self):
         return self._formation
+    
+    def get_in_nest(self, nest: Nest):
+        self._located_inside_nest = nest
+        self.events.emit('got_in_nest', nest)
+
+    def get_out_of_nest(self):
+        self._located_inside_nest = None
+        self.events.emit('got_out_of_nest')
+    
+    def say(self, phrase: str, data: dict):
+        if (data):
+            self.sayer.emit(phrase, data)
+        else:
+            self.sayer.emit(phrase)
     
     def set_formation(self, formation: Formation):
         self._formation = formation
@@ -91,3 +119,9 @@ class AntBody(Body):
 
     def _tell_position_to_formation(self):
         self._formation.unit_changed_position(self.position, self.memory.read('formation_unit_number'))
+
+    def step_to(self, destination_point: Point) -> bool:
+        if self.is_in_nest:
+            self.get_out_of_nest()
+            return False
+        return super().step_to(destination_point)

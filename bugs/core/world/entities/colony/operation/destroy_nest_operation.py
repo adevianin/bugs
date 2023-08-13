@@ -8,6 +8,7 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.ant_types import AntTypes
 from .marker_types import MarkerTypes
 from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
+from core.world.entities.ant.warrior.warrior_ant_body import WarriorAntBody
 from core.world.entities.colony.formation.formation_factory import FormationFactory
 from core.world.utils.point import Point
 
@@ -30,7 +31,7 @@ class DestroyNestOperation(Operation):
     
     def _init_staff(self):
         super()._init_staff()
-        formation = self._formation_factory.build_attack_formation(self._nest.position, self._hired_ants[0].body.distance_per_step)
+        formation = self._formation_factory.build_attack_formation(self._nest.position, WarriorAntBody.DISTANCE_PER_SEP)
         for ant in self._warriors:
             ant.set_formation(formation)
             ant.body.sayer.add_listener('prepared', partial(self._on_warrior_prepared, ant))

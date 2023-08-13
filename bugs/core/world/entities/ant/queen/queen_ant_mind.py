@@ -9,6 +9,3 @@ class QueenAntMind(AntMind):
 
     def _generate_thoughts(self):
         super()._generate_thoughts()
-
-    def _generate_feed_myself_thought(self):
-        self.feed_myself(asap=True)

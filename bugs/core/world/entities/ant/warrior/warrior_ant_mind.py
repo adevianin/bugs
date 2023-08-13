@@ -22,9 +22,6 @@ class WarrirorAntMind(AntMind):
         if not self._has_thoughts_to_do():
             self.defend_home_territory()
 
-    def _generate_feed_myself_thought(self):
-        self.feed_myself(asap=True)
-
     def _on_warriors_reinforcement_needed(self, signal: dict):
         if self._is_in_opearetion:
             return
