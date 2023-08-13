@@ -44,7 +44,7 @@ class Map:
     def get_entities(self, from_colony_id: int = None, entity_types: List[EntityTypes] = None, filter: Callable[[Entity], bool] = None) -> List[Entity]:
         found_entities = []
         for entity in self._entities_collection.get_entities():
-            if (not from_colony_id or entity.from_colony == from_colony_id) and (not entity_types or entity.type in entity_types) and (not filter or filter(entity)):
+            if (not from_colony_id or entity.from_colony_id == from_colony_id) and (not entity_types or entity.type in entity_types) and (not filter or filter(entity)):
                 found_entities.append(entity)
         return found_entities
     

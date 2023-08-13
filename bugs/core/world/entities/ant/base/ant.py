@@ -15,8 +15,8 @@ class Ant(LiveEntity):
     _body: AntBody
     body: AntBody
 
-    def __init__(self, events: EventEmitter, id: int, ant_type: AntTypes, from_colony: int, mind: AntMind, body: AntBody):
-        super().__init__(events, id, EntityTypes.ANT, from_colony, mind, body)
+    def __init__(self, events: EventEmitter, id: int, ant_type: AntTypes, from_colony_id: int, mind: AntMind, body: AntBody):
+        super().__init__(events, id, EntityTypes.ANT, from_colony_id, mind, body)
         self._ant_type = ant_type
         
         self.events.add_listener('food_picked', self._on_food_picked)
@@ -49,7 +49,7 @@ class Ant(LiveEntity):
         self._mind.relocate_to_nest(nest)
 
     def found_nest(self, building_site: Point, sayback: str):
-        self._mind.found_nest(building_site=building_site, from_colony_id=self.from_colony, sayback=sayback)
+        self._mind.found_nest(building_site=building_site, from_colony_id=self.from_colony_id, sayback=sayback)
 
     def build_nest(self, nest: Nest, sayback: str = None):
         self._mind.build_nest(nest=nest, sayback=sayback)

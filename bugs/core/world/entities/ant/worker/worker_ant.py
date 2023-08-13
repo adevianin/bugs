@@ -8,5 +8,5 @@ class WorkerAnt(Ant):
 
     MAX_HP = 100
 
-    def __init__(self, events: EventEmitter, id: int, from_colony: int, mind: WorkerAntMind, body: WorkerAntBody):
-        super().__init__(events, id, AntTypes.WORKER, from_colony, mind, body)
+    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, mind: WorkerAntMind, body: WorkerAntBody):
+        super().__init__(events, id, AntTypes.WORKER, from_colony_id, mind, body)

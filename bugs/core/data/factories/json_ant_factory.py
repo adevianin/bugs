@@ -21,7 +21,7 @@ class JsonAntFactory():
             picked_food = entities_collection.get_entity_by_id(ant_json['picked_food_id'])
 
         id=ant_json['id']
-        from_colony=ant_json['from_colony']
+        from_colony_id=ant_json['from_colony_id']
         dna_profile=ant_json['dna_profile']
         is_auto_thought_generation=ant_json['is_auto_thought_generation']
         is_in_operation = ant_json['is_in_operation']
@@ -29,4 +29,4 @@ class JsonAntFactory():
 
         hp = ant_json['hp']
         
-        return self._ant_factory.build_ant(id=id, from_colony=from_colony, ant_type=ant_type, dna_profile=dna_profile, position=position, hp=hp, home_nest=nest, located_in_nest=located_in_nest, memory_data=memory_data, is_auto_thought_generation=is_auto_thought_generation, picked_food=picked_food, is_in_operation=is_in_operation)
+        return self._ant_factory.build_ant(id=id, from_colony_id=from_colony_id, ant_type=ant_type, dna_profile=dna_profile, position=position, hp=hp, home_nest=nest, located_in_nest=located_in_nest, memory_data=memory_data, is_auto_thought_generation=is_auto_thought_generation, picked_food=picked_food, is_in_operation=is_in_operation)

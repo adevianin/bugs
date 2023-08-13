@@ -123,7 +123,7 @@ class AntColony(Colony):
         for nest in my_nests:
             enemies_filter: Callable[[Entity], bool] = lambda entity: self._relation_tester.is_enemy(entity)
             enemies: List[iEnemy] = self._map.find_entities_near(point=nest.position, max_distance=nest.area, filter=enemies_filter)
-            defenders_filter: Callable[[Ant], bool] = lambda entity: entity.ant_type == AntTypes.WARRIOR and entity.from_colony == self.id
+            defenders_filter: Callable[[Ant], bool] = lambda entity: entity.ant_type == AntTypes.WARRIOR and entity.from_colony_id == self.id
             defenders: List[Ant] = self._map.find_entities_near(point=nest.position, max_distance=nest.area, entity_types=[EntityTypes.ANT], filter=defenders_filter)
 
             enemies_count = len(enemies)

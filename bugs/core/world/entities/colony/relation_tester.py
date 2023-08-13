@@ -8,6 +8,6 @@ class RelationTester():
         self._colony_id = colony_id
 
     def is_enemy(self, entity: Entity):
-        if entity.from_colony == self._colony_id: 
+        if entity.from_colony_id == self._colony_id: 
             return False
-        return self._colony_relations_table.get_relation_value(entity.from_colony, self._colony_id) < 0
+        return self._colony_relations_table.get_relation_value(entity.from_colony_id, self._colony_id) < 0

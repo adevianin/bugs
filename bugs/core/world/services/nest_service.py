@@ -18,7 +18,7 @@ class NestService():
         colony = self._world.get_colony_owned_by_user(user_id)
         nest: Nest = self._world.map.get_entity_by_id(nest_id)
 
-        if (not nest or nest.from_colony != colony.id):
+        if (not nest or nest.from_colony_id != colony.id):
             raise Exception(f'nest id = {nest_id} is not found in users colony')
 
         queen_filter: Callable[[Ant], bool] = lambda ant: ant.ant_type ==  AntTypes.QUEEN and ant.located_in_nest_id == nest_id

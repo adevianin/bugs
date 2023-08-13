@@ -17,7 +17,7 @@ class Command(BaseCommand):
             {
                 "id":1,
                 "type":"ant",
-                "from_colony":2,
+                "from_colony_id":2,
                 "hp": 100,
                 "position":[
                     610,
@@ -37,7 +37,7 @@ class Command(BaseCommand):
             {
                 "id":2,
                 "type":"ant",
-                "from_colony":2,
+                "from_colony_id":2,
                 "hp": 300,
                 "position":[
                     650,
@@ -58,7 +58,7 @@ class Command(BaseCommand):
             {
                 "id":3,
                 "type":"ant",
-                "from_colony":2,
+                "from_colony_id":2,
                 "hp": 300,
                 "position":[
                     650,
@@ -83,7 +83,7 @@ class Command(BaseCommand):
             {
                 "id":20,
                 "type":"food",
-                "from_colony":None,
+                "from_colony_id":None,
                 "hp": 100,
                 "position":[
                     350,
@@ -97,7 +97,7 @@ class Command(BaseCommand):
             {
                 "id":21,
                 "type":"food",
-                "from_colony":None,
+                "from_colony_id":None,
                 "hp": 100,
                 "position":[
                     850,
@@ -113,7 +113,7 @@ class Command(BaseCommand):
             {
                 "id":30,
                 "type":"nest",
-                "from_colony":2,
+                "from_colony_id":2,
                 "hp": 1000,
                 "position":[
                     600,
@@ -154,7 +154,7 @@ class Command(BaseCommand):
             {
                 "id":31,
                 "type":"nest",
-                "from_colony":1,
+                "from_colony_id":1,
                 "hp": 1000,
                 "position":[
                     1600,
@@ -185,7 +185,7 @@ class Command(BaseCommand):
             {
                 "id":32,
                 "type":"nest",
-                "from_colony":1,
+                "from_colony_id":1,
                 "hp": 1000,
                 "position":[
                     2150,
@@ -213,7 +213,7 @@ class Command(BaseCommand):
             {
                 "id":40,
                 "type":"food_area",
-                "from_colony":None,
+                "from_colony_id":None,
                 "hp": 100,
                 "position":[
                     450,
@@ -229,7 +229,7 @@ class Command(BaseCommand):
             {
                 "id":41,
                 "type":"food_area",
-                "from_colony":None,
+                "from_colony_id":None,
                 "hp": 100,
                 "position":[
                     1800,
@@ -247,7 +247,7 @@ class Command(BaseCommand):
             {
                 "id":50,
                 "type":"food_source",
-                "from_colony": None,
+                "from_colony_id": None,
                 "hp": 100,
                 "position":[
                     800,

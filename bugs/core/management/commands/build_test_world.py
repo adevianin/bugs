@@ -18,27 +18,27 @@ class Command(BaseCommand):
                 "position": {"x": 650, "y": 750}, 
                 "from_nest": 30, 
                 "type": "worker", 
-                "from_colony": 2,
+                "from_colony_id": 2,
                 "located_in_nest": None,
                 "thoughts": [
                     {}
                 ]
             },
-            { "id": 2, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000", "position": {"x": 650, "y": 350}, "from_nest": 30, "type": "queen", "from_colony": 2, "located_in_nest": 30 },
+            { "id": 2, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000", "position": {"x": 650, "y": 350}, "from_nest": 30, "type": "queen", "from_colony_id": 2, "located_in_nest": 30 },
 
-            { "id": 3, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf123", "position": {"x": 1600, "y": 500}, "from_nest": 31, "type": "worker", "from_colony": 1, "located_in_nest": None },
-            { "id": 4, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf123", "position": {"x": 1600, "y": 400}, "from_nest": 31, "type": "queen", "from_colony": 1, "located_in_nest": None }
+            { "id": 3, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf123", "position": {"x": 1600, "y": 500}, "from_nest": 31, "type": "worker", "from_colony_id": 1, "located_in_nest": None },
+            { "id": 4, "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf123", "position": {"x": 1600, "y": 400}, "from_nest": 31, "type": "queen", "from_colony_id": 1, "located_in_nest": None }
         ],
         "foods": [
             {"id": 20, "position": {"x": 350, "y": 350}, "calories": 150, "type": "leaf", "food_variety": 1 },
             {"id": 21, "position": {"x": 850, "y": 350}, "calories": 300, "type": "leaf", "food_variety": 2  }
         ],
         "nests": [
-            { "id": 30, "position": {"x": 600, "y": 350 }, "color": "yellow", "from_colony": 2, "larva_places_count": 3, "larvae": [
+            { "id": 30, "position": {"x": 600, "y": 350 }, "color": "yellow", "from_colony_id": 2, "larva_places_count": 3, "larvae": [
                 # { "ate_calories": 450, "type": 'warrior', "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000", },
                 # { "ate_calories": 10, "type": 'worker', "dna_profile": "e41e2924-ad6c-431e-836b-e399366bf000", },
             ] },
-            { "id": 31, "position": {"x": 1600, "y": 450 }, "color": "red", "from_colony": 1,  "larva_places_count": 1,  "larvae": [] },
+            { "id": 31, "position": {"x": 1600, "y": 450 }, "color": "red", "from_colony_id": 1,  "larva_places_count": 1,  "larvae": [] },
         ],
         "food_areas": [
             { "id": 40, "position": {"x": 450, "y": 300}, "size": { "width": 150, "height": 150 }, "fertility": 5, "food_type": "leaf" },

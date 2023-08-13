@@ -22,6 +22,6 @@ class ColonyService():
     def destroy_nest_operation(self, user_id: int, nest_id: int):
         colony = self._world.get_colony_owned_by_user(user_id)
         nest = self._world.map.get_entity_by_id(nest_id)
-        if nest.from_colony != colony.id:
+        if nest.from_colony_id != colony.id:
             operation = self._operation_factory.build_destroy_nest_operation(nest=nest)
             colony.add_operation(operation)

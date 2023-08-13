@@ -12,8 +12,8 @@ class QueenAnt(Ant):
 
     MAX_HP = 300
 
-    def __init__(self, events: EventEmitter, id: int, from_colony: int, mind: QueenAntMind, body: QueenAntBody):
-        super().__init__(events, id, AntTypes.QUEEN, from_colony, mind, body)
+    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, mind: QueenAntMind, body: QueenAntBody):
+        super().__init__(events, id, AntTypes.QUEEN, from_colony_id, mind, body)
 
     def ask_participation(self):
         once_relocated = self._body.memory.read('once_relocated')

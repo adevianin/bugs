@@ -6,5 +6,5 @@ from core.world.entities.base.live_entity.live_entity import LiveEntity
 
 class GroundBeetle(LiveEntity):
 
-    def __init__(self, events: EventEmitter, id: int, from_colony: int, mind: Mind, body: Body):
-        super().__init__(events, id, EntityTypes.GROUND_BEETLE, from_colony, mind, body)
+    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, mind: Mind, body: Body):
+        super().__init__(events, id, EntityTypes.GROUND_BEETLE, from_colony_id, mind, body)

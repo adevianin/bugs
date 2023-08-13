@@ -9,8 +9,8 @@ from core.world.entities.base.enemy_interface import iEnemy
 
 class LiveEntity(Entity, iEnemy):
 
-    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony: int, mind: Mind, body: Body):
-        super().__init__(events, id, type, from_colony)
+    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, mind: Mind, body: Body):
+        super().__init__(events, id, type, from_colony_id)
         self._mind: Mind = mind
         self._body: Body = body
         self.events: EventEmitter = events

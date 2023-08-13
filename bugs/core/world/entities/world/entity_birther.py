@@ -34,7 +34,7 @@ class EntityBirther():
             case EntityTypes.ANT:
                 larva: Larva = request['larva']
                 nest: Nest = request['nest']
-                new_entity = self._ant_factory.build_new_ant(id, nest.from_colony, larva.ant_type, larva.dna_profile, nest.position, nest)
+                new_entity = self._ant_factory.build_new_ant(id, nest.from_colony_id, larva.ant_type, larva.dna_profile, nest.position, nest)
             case EntityTypes.FOOD:
                 preborn_food: PrebornFood = request['preborn_food']
                 new_entity = self._food_factory.build_new_food(id, preborn_food.position, preborn_food.calories, preborn_food.food_type)

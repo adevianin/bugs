@@ -8,11 +8,11 @@ class Entity(ABC):
 
     MAX_HP = 100
 
-    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony: int):
+    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int):
         self.events = events
         self._id: int = id
         self._type: EntityTypes = type
-        self._from_colony = from_colony
+        self._from_colony_id = from_colony_id
 
     @property
     def id(self):
@@ -47,8 +47,8 @@ class Entity(ABC):
         pass
     
     @property
-    def from_colony(self):
-        return self._from_colony
+    def from_colony_id(self):
+        return self._from_colony_id
     
     def damage(self, damage: int):
         if not self.is_died:
@@ -70,7 +70,7 @@ class Entity(ABC):
         return {
             'id': self.id,
             'type': self._type,
-            'from_colony': self._from_colony,
+            'from_colony_id': self._from_colony_id,
             'hp': self.hp,
             'max_hp': self.MAX_HP
         }

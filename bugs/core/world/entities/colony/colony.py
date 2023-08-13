@@ -58,12 +58,12 @@ class Colony(ABC):
         member.body.set_relation_tester(self._relation_tester)
     
     def _on_entity_died(self, entity: Entity):
-        is_mine = entity.from_colony == self._id
+        is_mine = entity.from_colony_id == self._id
         if is_mine:
             self._on_my_entity_died(entity)
 
     def _on_entity_born(self, entity: Entity):
-        is_mine = entity.from_colony == self._id
+        is_mine = entity.from_colony_id == self._id
         if is_mine:
             self._on_my_entity_born(entity)
 
