@@ -5,14 +5,10 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
-from core.world.entities.base.entity import Entity
-from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.colony.formation.formation import Formation
 
 class AntBody(Body):
-
-    _world_interactor: WorldInteractor
 
     def __init__(self, events: EventEmitter, sayer: EventEmitter, memory: Memory, dna_profile: str, position: Point, hp: int, located_in_nest: Nest, picked_food: Food, world_interactor: WorldInteractor):
         super().__init__(events, sayer, memory, dna_profile, position, 32, 200, located_in_nest, hp, world_interactor)

@@ -12,9 +12,9 @@ from core.world.entities.colony.relation_tester import RelationTester
 from typing import List, Callable
 from core.world.entities.base.entity import Entity
 
-import math
-
 class Body(ABC):
+
+    _world_interactor: WorldInteractor
 
     def __init__(self, events: EventEmitter, sayer: EventEmitter, memory: Memory, dna_profile: str, position: Point, distance_per_step: int, sight_distance: int, located_in_nest: Nest, hp: int, world_interactor: WorldInteractor):
         self.events = events
