@@ -83,22 +83,22 @@ class WorldView extends BaseGraphicView {
         let view = null;
         switch (entity.type) {
             case EntityTypes.ANT:
-                view = new AntView(entity, this._buildNewContainerIn(this._antContainer));
+                view = new AntView(entity, this._antContainer);
                 break;
             case EntityTypes.GROUND_BEETLE:
-                view = new GroundBeetleView(entity, this._buildNewContainerIn(this._groundBeetleContainer));
+                view = new GroundBeetleView(entity, this._groundBeetleContainer);
                 break;
             case EntityTypes.NEST:
-                view = new NestView(entity, this._buildNewContainerIn(this._nestContainer));
+                view = new NestView(entity, this._nestContainer);
                 break;
             case EntityTypes.FOOD:
-                view = new FoodView(entity, this._buildNewContainerIn(this._foodContainer));
+                view = new FoodView(entity, this._foodContainer);
                 break;
             case EntityTypes.FOOD_AREA:
-                view = new FoodAreaView(entity, this._buildNewContainerIn(this._foodAreaContainer));
+                view = new FoodAreaView(entity, this._foodAreaContainer);
                 break;
             case EntityTypes.FOOD_SOURCE:
-                view = new FoodSourceView(entity, this._buildNewContainerIn(this._foodSourceContainer));
+                view = new FoodSourceView(entity, this._foodSourceContainer);
                 break;
             default:
                 throw 'unknown type of entity';
@@ -122,12 +122,6 @@ class WorldView extends BaseGraphicView {
         });
         this._entityViews = [];
         this._markerManager.remove();
-    }
-
-    _buildNewContainerIn(container) {
-        let newCont = new PIXI.Container();
-        container.addChild(newCont);
-        return newCont;
     }
 
 }

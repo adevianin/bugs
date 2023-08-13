@@ -1,10 +1,13 @@
 import { BaseGraphicView } from "../base/baseGraphicView";
+import * as PIXI from 'pixi.js';
 
 class EntityView extends BaseGraphicView {
-    constructor(entity, entityContainer) {
+    constructor(entity, entitiesContainer) {
         super();
         this._entity = entity;
-        this._entityContainer = entityContainer;
+        this._parentContainer = entitiesContainer;
+        this._entityContainer = new PIXI.Container();
+        this._parentContainer.addChild(this._entityContainer);
 
         this._unbindDiedListener = this._entity.on('died', this.remove.bind(this));
     }
@@ -14,6 +17,7 @@ class EntityView extends BaseGraphicView {
     }
 
     remove() {
+        this._parentContainer.removeChild(this._entityContainer);
         this._unbindDiedListener();
     }
     

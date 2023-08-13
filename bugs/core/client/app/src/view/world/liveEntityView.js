@@ -4,8 +4,8 @@ import { HpLineView } from "./hpLine";
 
 class LiveEntityView extends EntityView {
 
-    constructor(entity, entityContainer) {
-        super(entity, entityContainer);
+    constructor(entity, entitiesContainer) {
+        super(entity, entitiesContainer);
         
         this._unbindPositionChangedListener = this._entity.on('positionChanged', this._renderPosition.bind(this));
         this._unbindAngleChangedListener = this._entity.on('angleChanged', this._renderAngle.bind(this));
@@ -15,8 +15,10 @@ class LiveEntityView extends EntityView {
     _render() {
         this._bodyContainer = new PIXI.Container();
         this._uiContainer = new PIXI.Container();
-
+        this._pickedItemContainer = new PIXI.Container();
+        
         this._entityContainer.addChild(this._bodyContainer);
+        this._entityContainer.addChild(this._pickedItemContainer);
         this._entityContainer.addChild(this._uiContainer);
 
         this._standSprite = this._buildStandSprite();
@@ -34,6 +36,8 @@ class LiveEntityView extends EntityView {
         this._bodyContainer.pivot.y = halfEntityHeight;
         this._uiContainer.pivot.x = halfEntityWidth;
         this._uiContainer.pivot.y = halfEntityHeight;
+        this._pickedItemContainer.pivot.x = halfEntityWidth;
+        this._pickedItemContainer.pivot.y = halfEntityHeight;
 
         this._hpLineView = this._buildHpLineView();
 
@@ -47,6 +51,7 @@ class LiveEntityView extends EntityView {
         this._unbindPositionChangedListener();
         this._unbindAngleChangedListener();
         this._unbindStateChangeListener();
+        this._hpLineView.remove();
     }
 
     _buildStandSprite() {
@@ -94,7 +99,6 @@ class LiveEntityView extends EntityView {
 
     _toggleStandingState(isEnabling) {
         this._standSprite.renderable = isEnabling;
-        this._standSprite.renderable = false;
     }
 
     _toggleDeadState(isEnabling) {
