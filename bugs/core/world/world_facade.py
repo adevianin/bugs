@@ -69,7 +69,6 @@ class WorldFacade:
         params = command_json['params']
         match command_json['command_type']:
             case 'add_larva':
-                self.build_user_starter_pack(10)
                 self._nest_service.add_larva(params['nest_id'], user_id, params['larva_type'])
             case 'build_new_nest':
                 self._colony_service.build_new_nest(user_id, Point(params['position']['x'], params['position']['y']))
