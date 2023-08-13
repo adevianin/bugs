@@ -15,6 +15,8 @@ class JsonColonyFactory():
         match(colony_json['member_type']):
             case EntityTypes.ANT:
                 return self._build_ant_colony(colony_json, entities_collection, map, colony_relations_table)
+            case EntityTypes.GROUND_BEETLE:
+                return self._build_ground_beetle_colony(colony_json, map, colony_relations_table)
             case _:
                 raise Exception('unknown type of colony')
     
@@ -23,3 +25,6 @@ class JsonColonyFactory():
         for operation_json in colony_json['operations']:
             operations.append(self._json_operation_factory.build_operation_from_json(operation_json, entities_collection))
         return self._colony_factory.build_ant_colony(colony_json['id'], colony_json['owner_id'], map, operations, colony_relations_table)
+    
+    def _build_ground_beetle_colony(self, colony_json, map: Map, colony_relations_table: ColonyRelationsTable):
+        return self._colony_factory.build_ground_beetle_colony(colony_json['id'], map, colony_relations_table)

@@ -5,6 +5,7 @@ from .operation.operation import Operation
 from .colony_relations_table import ColonyRelationsTable
 from .relation_tester import RelationTester
 from .ant_colony import AntColony
+from .ground_beetle_colony import GroundBeetleColony
 
 class ColonyFactory():
 
@@ -17,6 +18,10 @@ class ColonyFactory():
     def build_ant_colony(self, id: int, owner_id: int, map: Map, operations: List[Operation], colony_relations_table: ColonyRelationsTable) -> AntColony:
         relation_tester = self._build_relation_tester(colony_relations_table, id)
         return AntColony(id, self._event_bus, owner_id, map, operations, relation_tester)
+    
+    def build_ground_beetle_colony(self, id: int, map: Map, colony_relations_table: ColonyRelationsTable):
+        relation_tester = self._build_relation_tester(colony_relations_table, id)
+        return GroundBeetleColony(id, self._event_bus, map, relation_tester)
     
     def _build_relation_tester(self, colony_relations_table: ColonyRelationsTable, colony_id: int):
         return RelationTester(colony_relations_table, colony_id)

@@ -46,11 +46,9 @@ class Colony(ABC):
             'id': self._id,
         }
     
-    @abstractmethod
     def _on_my_entity_born(self, entity: Entity):
         pass
 
-    @abstractmethod
     def _on_my_entity_died(self, entity: Entity):
         pass
     

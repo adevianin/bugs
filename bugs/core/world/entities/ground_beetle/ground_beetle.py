@@ -6,5 +6,7 @@ from core.world.entities.base.live_entity.live_entity import LiveEntity
 
 class GroundBeetle(LiveEntity):
 
+    MAX_HP = 800
+
     def __init__(self, events: EventEmitter, id: int, from_colony_id: int, mind: Mind, body: Body):
         super().__init__(events, id, EntityTypes.GROUND_BEETLE, from_colony_id, mind, body)

@@ -36,6 +36,10 @@ class Ant(LiveEntity):
     def home_nest(self):
         return self._mind.home_nest
     
+    @property
+    def located_in_nest_id(self):
+        return self._body.located_in_nest_id
+    
     def prepare_for_operation(self, sayback: str = None):
         self._mind.prepare_for_operation(sayback)
     
@@ -85,7 +89,8 @@ class Ant(LiveEntity):
         json = super().to_public_json()
         json.update({
             'picked_food_id': self._body.picked_food.id if self._body.is_food_picked else None,
-            'ant_type': self._ant_type
+            'ant_type': self._ant_type,
+            'located_in_nest_id': self._body.located_in_nest_id
         })
 
         return json

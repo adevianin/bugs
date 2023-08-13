@@ -153,6 +153,5 @@ class Body(ABC):
         # if self._calories < 0:
         #     self.hp = 0
 
-    @abstractmethod
     def _on_position_changed(self):
         pass

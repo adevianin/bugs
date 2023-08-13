@@ -18,9 +18,12 @@ from core.data.factories.json_operation_factory import JsonOperationFactory
 from core.data.factories.json_map_factory import JsonMapFactory
 from core.data.serializers.colony_relations_table_serializer import ColonyRelationsTableSerializer
 from core.data.serializers.food_source_serializer import FoodSourceSerializer
+from core.data.serializers.ground_beetle_serializer import GroundBeetleSerializer
+from core.data.factories.json_ground_beetle_factory import JsonGroundBeetleFactory
 
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.ant.ant_factory import AntFactory
+from core.world.entities.ground_beetle.ground_beetle_factory import GroundBeetleFactory
 from core.world.entities.food.food_factory import FoodFactory
 from core.world.entities.world.world_factory import WorldFactory
 from core.world.services.nest_service import NestService
@@ -40,6 +43,7 @@ def start():
     formation_factory = FormationFactory(event_bus)
     thought_factory = ThoughtFactory()
     ant_factory = AntFactory(thought_factory)
+    ground_beetle_factory = GroundBeetleFactory(thought_factory)
     nest_factory = NestFactory()
     food_factory = FoodFactory()
     colony_factory = ColonyFactory(event_bus)
@@ -61,17 +65,19 @@ def start():
     colony_serializer = ColonySerializer(operation_serializer)
     colony_relations_table_serializer = ColonyRelationsTableSerializer()
     food_source_serializer = FoodSourceSerializer()
+    ground_beetle_serializer = GroundBeetleSerializer(thought_serializer)
     world_serializer = WorldSerializer(nest_serializer, ant_serializer, food_serializer, food_area_serializer, colony_serializer, colony_relations_table_serializer, food_source_serializer)
 
     world_data_repository = WorldDataRepository()
     json_nest_factory = JsonNestFactory(nest_factory)
     json_ant_factory = JsonAntFactory(ant_factory)
+    json_ground_beetle_factory = JsonGroundBeetleFactory(ground_beetle_factory)
     json_food_factory = JsonFoodFactory(food_factory)
     json_operation_factory = JsonOperationFactory(operation_factory)
     json_map_factory = JsonMapFactory(map_factory)
     json_colony_factory = JsonColonyFactory(colony_factory, json_operation_factory)
     json_thought_factory = JsonThoughtFactory(thought_factory)
-    world_repository = WorldRepository(world_data_repository, json_nest_factory, json_ant_factory, json_food_factory, json_colony_factory, json_thought_factory, json_map_factory, world_factory, world_serializer)
+    world_repository = WorldRepository(world_data_repository, json_nest_factory, json_ant_factory, json_food_factory, json_colony_factory, json_thought_factory, json_map_factory, world_factory, json_ground_beetle_factory, world_serializer)
 
     world_facade = WorldFacade.init(event_bus, world_repository, colony_service, nest_service, user_service)
 

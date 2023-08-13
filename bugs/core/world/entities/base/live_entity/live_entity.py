@@ -30,10 +30,6 @@ class LiveEntity(Entity, iEnemy):
         self._body.position = new_position
 
     @property
-    def located_in_nest_id(self):
-        return self._body.located_in_nest_id
-    
-    @property
     def mind(self):
         return self._mind
     
@@ -68,8 +64,7 @@ class LiveEntity(Entity, iEnemy):
                 'x': self._body.position.x,
                 'y': self._body.position.y
             },
-            'user_speed': self._body.user_speed,
-            'located_in_nest_id': self._body.located_in_nest_id
+            'user_speed': self._body.user_speed
         })
 
         return json

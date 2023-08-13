@@ -12,7 +12,7 @@ class Command(BaseCommand):
                 "height":3000
             }
         },
-        "last_used_id":60,
+        "last_used_id":70,
         "ants":[
             {
                 "id":1,
@@ -258,6 +258,23 @@ class Command(BaseCommand):
                 "calories": 10
             },
         ],
+        "ground_beetles": [
+            {
+                "id":60,
+                "type":"ground_beetle",
+                "from_colony_id":3,
+                "hp": 800,
+                "position":[
+                    200,
+                    200
+                ],
+                "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
+                "thoughts":[
+                ],
+                "memory": {},
+                "is_auto_thought_generation": True
+            },
+        ],
         "colonies":[
             {
                 "id":1,
@@ -274,6 +291,11 @@ class Command(BaseCommand):
                 "operations":[
                     
                 ]
+            },
+            {
+                "id":3,
+                "owner_id": None,
+                "member_type": "ground_beetle"
             }
         ],
         "colonies_relations": [
