@@ -673,6 +673,8 @@ class GroundBeetle extends _liveEntity__WEBPACK_IMPORTED_MODULE_1__.LiveEntity {
 
     constructor(eventBus, id, position, fromColony, userSpeed, hp, maxHp) {
         super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.GROUND_BEETLE, fromColony, userSpeed, hp, maxHp);
+
+        this._setState('standing');
     }
 }
 

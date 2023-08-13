@@ -7,10 +7,11 @@ from .food_area_serializer import FoodAreaSerializer
 from .colony_serializer import ColonySerializer
 from .colony_relations_table_serializer import ColonyRelationsTableSerializer
 from .food_source_serializer import FoodSourceSerializer
+from .ground_beetle_serializer import GroundBeetleSerializer
 
 class WorldSerializer():
 
-    def __init__(self, nest_serializer: NestSerializer, ant_serializer: AntSerializer, food_serializer: FoodSerializer, food_area_serializer: FoodAreaSerializer, colony_serializer: ColonySerializer, colony_relations_table_serializer: ColonyRelationsTableSerializer, food_source_serializer: FoodSourceSerializer):
+    def __init__(self, nest_serializer: NestSerializer, ant_serializer: AntSerializer, food_serializer: FoodSerializer, food_area_serializer: FoodAreaSerializer, colony_serializer: ColonySerializer, colony_relations_table_serializer: ColonyRelationsTableSerializer, food_source_serializer: FoodSourceSerializer, ground_beetle_serializer: GroundBeetleSerializer):
         self._nest_serializer = nest_serializer
         self._ant_serializer = ant_serializer
         self._food_serializer = food_serializer
@@ -18,11 +19,13 @@ class WorldSerializer():
         self._colony_serializer = colony_serializer
         self._colony_relations_table_serializer: ColonyRelationsTableSerializer = colony_relations_table_serializer
         self._food_source_serializer = food_source_serializer
+        self._ground_beetle_serializer = ground_beetle_serializer
 
     def serialize(self, world: World):
         json = {
             'nests': [],
             'ants': [],
+            'ground_beetles': [],
             'foods': [],
             'food_areas': [],
             'food_sources': [],
@@ -43,6 +46,10 @@ class WorldSerializer():
         ants = world.map.get_entities(entity_types=[EntityTypes.ANT])
         for ant in ants:
             json['ants'].append(self._ant_serializer.serialize(ant))
+
+        ground_beetles = world.map.get_entities(entity_types=[EntityTypes.GROUND_BEETLE])
+        for ground_beetle in ground_beetles:
+            json['ground_beetles'].append(self._ground_beetle_serializer.serialize(ground_beetle))
 
         foods = world.map.get_entities(entity_types=[EntityTypes.FOOD])
         for food in foods:

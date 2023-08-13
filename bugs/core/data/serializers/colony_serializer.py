@@ -2,6 +2,7 @@ from core.world.entities.colony.colony import Colony
 from .operation_serializer import OperationSerializer
 from core.world.entities.colony.ant_colony import AntColony
 from core.world.entities.base.entity_types import EntityTypes
+from core.world.entities.colony.ground_beetle_colony import GroundBeetleColony
 
 class ColonySerializer():
 
@@ -12,6 +13,8 @@ class ColonySerializer():
         match(colony.member_type):
             case EntityTypes.ANT:
                 return self._serialize_ant_colony(colony)
+            case EntityTypes.GROUND_BEETLE:
+                return self._serialize_ground_beetle_colony(colony)
             case _:
                 raise Exception('unknown type of colony')
 
@@ -28,9 +31,15 @@ class ColonySerializer():
             operations_json.append(self._operation_serializer.serialize(operation))
         
         json.update({
-            'id': colony.id,
             'owner_id': colony.owner_id,
             'operations': operations_json
         })
 
+        return json
+    
+    def _serialize_ground_beetle_colony(self, colony: GroundBeetleColony):
+        json = self._serialize_colony(colony)
+
+        json.update({
+        })
         return json

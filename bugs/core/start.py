@@ -66,7 +66,7 @@ def start():
     colony_relations_table_serializer = ColonyRelationsTableSerializer()
     food_source_serializer = FoodSourceSerializer()
     ground_beetle_serializer = GroundBeetleSerializer(thought_serializer)
-    world_serializer = WorldSerializer(nest_serializer, ant_serializer, food_serializer, food_area_serializer, colony_serializer, colony_relations_table_serializer, food_source_serializer)
+    world_serializer = WorldSerializer(nest_serializer, ant_serializer, food_serializer, food_area_serializer, colony_serializer, colony_relations_table_serializer, food_source_serializer, ground_beetle_serializer)
 
     world_data_repository = WorldDataRepository()
     json_nest_factory = JsonNestFactory(nest_factory)
