@@ -7,8 +7,6 @@ from core.data.factories.json_ant_factory import JsonAntFactory
 from core.data.factories.json_food_factory import JsonFoodFactory
 from core.data.factories.json_colony_factory import JsonColonyFactory
 from core.data.factories.json_thought_factory import JsonThoughtFactory
-from core.world.entities.map.map import Map
-from core.world.utils.size import Size
 from core.world.entities.world.world import World
 from core.world.entities.world.world_factory import WorldFactory
 from core.data.serializers.world_serializer import WorldSerializer
@@ -16,6 +14,7 @@ from core.data.factories.json_map_factory import JsonMapFactory
 from core.world.entities.colony.colony_relations_table import ColonyRelationsTable
 from core.world.entities.ant.base.ant import Ant
 from core.data.factories.json_ground_beetle_factory import JsonGroundBeetleFactory
+from core.world.entities.ground_beetle.ground_beetle import GroundBeetle
 
 class WorldRepository(iWorldRepository):
 
@@ -75,6 +74,16 @@ class WorldRepository(iWorldRepository):
                 thought = self._json_thought_factory.build_thougth_from_json(ant.body, thought_json, entities_collection)
                 thoughts.append(thought)
             ant.mind.set_thoughts(thoughts)
+
+        ground_beetles_json = world_data['ground_beetles']
+        for ground_beetle_json in ground_beetles_json:
+            ground_beetle: GroundBeetle = entities_collection.get_entity_by_id(ground_beetle_json['id'])
+            thoughts_json = ground_beetle_json['thoughts']
+            thoughts = []
+            for thought_json in thoughts_json:
+                thought = self._json_thought_factory.build_thougth_from_json(ground_beetle.body, thought_json, entities_collection)
+                thoughts.append(thought)
+            ground_beetle.mind.set_thoughts(thoughts)
 
         map = self._json_map_factory.build_map_from_json(world_data['map'], entities_collection)
         colony_relations_table = ColonyRelationsTable.build_colony_relations_table(world_data['colonies_relations'])
