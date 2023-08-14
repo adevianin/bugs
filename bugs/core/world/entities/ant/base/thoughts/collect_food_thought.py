@@ -1,6 +1,5 @@
 from core.world.entities.thought.thought import Thought
 from core.world.entities.nest.nest import Nest
-from .searching_walk_thought import SearchingWalkThought
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.food.food import Food
 from core.world.entities.thought.thought_types import ThoughtTypes
@@ -8,15 +7,16 @@ from core.world.entities.ant.base.ant_body import AntBody
 from core.world.utils.point import Point
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.food.food_source import FoodSource
+from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 
 class CollectFoodThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, nest: Nest, searching_walk_thought: SearchingWalkThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
+    def __init__(self, body: AntBody, nest: Nest, random_walk_thought: RandomWalkThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
         super().__init__(body=body, type=ThoughtTypes.COLLECT_FOOD, flags=flags, sayback=sayback)
         self._nest = nest
-        self._nested_thoughts['searching_walk_thought'] = searching_walk_thought
+        self._nested_thoughts['random_walk_thought'] = random_walk_thought
         self._nested_thoughts['go_home_thought'] = go_home_thought
         self._found_food = found_food
         self._food_source_position = None
@@ -28,8 +28,8 @@ class CollectFoodThought(Thought):
         return self._nest.id
     
     @property
-    def searching_walk_thought(self) -> SearchingWalkThought:
-        return self._nested_thoughts['searching_walk_thought']
+    def random_walk_thought(self) -> RandomWalkThought:
+        return self._nested_thoughts['random_walk_thought']
     
     @property
     def go_home_thought(self) -> GoInNestThought:
@@ -71,7 +71,7 @@ class CollectFoodThought(Thought):
             return
 
         if not self._read_flag('am_i_got_food'):
-            self.searching_walk_thought.do_step()
+            self.random_walk_thought.do_step()
             food_sources = self._body.look_around(types_list=[EntityTypes.FOOD_SOURCE])
             if len(food_sources) > 0:
                 food_source = food_sources[0]

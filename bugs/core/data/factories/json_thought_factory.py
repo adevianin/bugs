@@ -15,8 +15,6 @@ class JsonThoughtFactory():
                 return self._build_go_in_nest_thought(body, thought_json, entities_collection)
             case ThoughtTypes.WALK_TO:
                 return self._build_walk_to_thought(body, thought_json, entities_collection)
-            case ThoughtTypes.SEARCHING_WALK:
-                return self._build_searching_walk_thought(body, thought_json, entities_collection)
             case ThoughtTypes.FIND_FOOD:
                 return self._build_find_food_thought(body, thought_json, entities_collection)
             case ThoughtTypes.COLLECT_FOOD:
@@ -39,6 +37,8 @@ class JsonThoughtFactory():
                 return self._build_fight_near_enemies(body, thought_json, entities_collection)
             case ThoughtTypes.REINFORCE_NEST_DEFENCE:
                 return self._build_reinforce_nest_defence(body, thought_json, entities_collection)
+            case ThoughtTypes.RANDOM_WALK:
+                return self._build_random_walk(body, thought_json, entities_collection)
             case _:
                 raise Exception('unknown type of thought')
             
@@ -50,20 +50,16 @@ class JsonThoughtFactory():
         position = Point(thought_json['position'][0], thought_json['position'][1])
         return self._thought_factory.build_walk_to_thought(body=body, position=position, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
-    def _build_searching_walk_thought(self, body: Body, thought_json, entities_collection: EntityCollection):
-        search_near_point = Point(thought_json['search_near_point'][0], thought_json['search_near_point'][1])
-        return self._thought_factory.build_searching_walk_thought(body=body, search_near_point=search_near_point, search_radius=thought_json['search_radius'], flags=thought_json['flags'], sayback=thought_json['sayback'])
-
     def _build_find_food_thought(self, body: Body, thought_json, entities_collection: EntityCollection):
-        searching_walk_subthought = self.build_thougth_from_json(body, thought_json['searching_walk'], entities_collection)
-        return self._thought_factory.build_find_food_thought(body=body, searching_walk_subthought=searching_walk_subthought, flags=thought_json['flags'], sayback=thought_json['sayback'])
+        random_walk_thought = self.build_thougth_from_json(body, thought_json['random_walk_thought'], entities_collection)
+        return self._thought_factory.build_find_food_thought(body=body, random_walk_thought=random_walk_thought, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_collect_food_thought(self, body: Body, thought_json, entities_collection: EntityCollection):
         nest = entities_collection.get_entity_by_id(thought_json['nest_id'])
-        searching_walk_thought = self.build_thougth_from_json(body, thought_json['searching_walk_thought'], entities_collection)
+        random_walk_thought = self.build_thougth_from_json(body, thought_json['random_walk_thought'], entities_collection)
         go_home_thought = self.build_thougth_from_json(body, thought_json['go_home_thought'], entities_collection)
         found_food = entities_collection.get_entity_by_id(thought_json['found_food_id']) if thought_json['found_food_id'] else None
-        return self._thought_factory.build_collect_food_thought(body=body, nest=nest, searching_walk_thought=searching_walk_thought, go_gome_thought=go_home_thought, found_food=found_food, flags=thought_json['flags'], sayback=thought_json['sayback'])
+        return self._thought_factory.build_collect_food_thought(body=body, nest=nest, random_walk_thought=random_walk_thought, go_gome_thought=go_home_thought, found_food=found_food, flags=thought_json['flags'], sayback=thought_json['sayback'])
 
     def _build_feed_myself_thought(self, body: Body, thought_json, entities_collection: EntityCollection):
         home = entities_collection.get_entity_by_id(thought_json['home_id'])
@@ -89,11 +85,11 @@ class JsonThoughtFactory():
         return self._thought_factory.build_build_nest_thought(body=body, building_nest=building_nest, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_defend_territory(self, body: Body, thought_json, entities_collection: EntityCollection):
-        searching_walk_thought = self.build_thougth_from_json(body, thought_json['searching_walk_thought'], entities_collection)
+        random_walk_thought = self.build_thougth_from_json(body, thought_json['random_walk_thought'], entities_collection)
         fight_near_enemies_thought = self.build_thougth_from_json(body, thought_json['fight_near_enemies_thought'], entities_collection)
         defending_nest = entities_collection.get_entity_by_id(thought_json['defending_nest_id'])
         point_to_check = Point.from_json(thought_json['point_to_check']) if thought_json['point_to_check'] else None
-        return self._thought_factory.build_defend_teritory(body=body, fight_near_enemies_thought=fight_near_enemies_thought, searching_walk_thought=searching_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, flags=thought_json['flags'], sayback=thought_json['sayback'])
+        return self._thought_factory.build_defend_teritory(body=body, fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_attack_nest_thought(self, body: Body, thought_json, entities_collection: EntityCollection):
         nest = entities_collection.get_entity_by_id(thought_json['nest_id'])
@@ -109,9 +105,14 @@ class JsonThoughtFactory():
         return self._thought_factory.build_fight_near_enemies_thought(body=body, fight_enemy_thought=fight_enemy_thought, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_reinforce_nest_defence(self, body: Body, thought_json, entities_collection: EntityCollection):
-        searching_walk_thought = self.build_thougth_from_json(body, thought_json['searching_walk_thought'], entities_collection)
+        random_walk_thought = self.build_thougth_from_json(body, thought_json['random_walk_thought'], entities_collection)
         fight_near_enemies_thought = self.build_thougth_from_json(body, thought_json['fight_near_enemies_thought'], entities_collection)
         defending_nest = entities_collection.get_entity_by_id(thought_json['defending_nest_id'])
         point_to_check = Point.from_json(thought_json['point_to_check'])
-        return self._thought_factory.build_reinforce_nest_defence_thought(body=body, fight_near_enemies_thought=fight_near_enemies_thought, searching_walk_thought=searching_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, flags=thought_json['flags'], sayback=thought_json['sayback'])
+        return self._thought_factory.build_reinforce_nest_defence_thought(body=body, fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, flags=thought_json['flags'], sayback=thought_json['sayback'])
+    
+    def _build_random_walk(self, body: Body, thought_json, entities_collection: EntityCollection):
+        center = Point.from_json(thought_json['center']) if thought_json['center'] else None
+        radius = thought_json['radius'] or None
+        return self._thought_factory.build_random_walk_thought(body=body, center=center, radius=radius, flags=thought_json['flags'], sayback=thought_json['sayback'])
     

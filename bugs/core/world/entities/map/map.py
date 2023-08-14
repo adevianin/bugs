@@ -1,7 +1,7 @@
 from core.world.entities.base.entity import Entity
 from core.world.utils.size import Size
 from core.world.utils.point import Point
-from core.world.entities.base.entity_types import EntityTypes
+from core.world.entities.base.entity_types import EntityTypes, EntityTypesPack
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 from core.world.entities.base.entity_collection import EntityCollection
 from core.world.utils.event_emiter import EventEmitter
@@ -21,7 +21,7 @@ class Map:
         self._entities_collection = entities_collection
 
         for entity in self._entities_collection.get_entities():
-            self._listen_entity(entity)
+            self._handle_entity(entity)
 
     @property
     def size(self):
@@ -35,7 +35,7 @@ class Map:
     
     def add_new_entity(self, new_entity: Entity):
         self._entities_collection.add_entity(new_entity)
-        self._listen_entity(new_entity)
+        self._handle_entity(new_entity)
         self.events.emit('entity_born', new_entity)
     
     def get_entity_by_id(self, id: int) -> Entity:
@@ -60,15 +60,19 @@ class Map:
         return found_entities
     
     def handle_intractions(self):
-        ants: List[Ant] = self.get_entities(entity_types=[EntityTypes.ANT])
-        for ant in ants:
-            entities_in_sight = self._find_entities_in_sight(ant)
-            ant.body.world_interactor.set_nearby_entities(entities_in_sight)
+        live_entities: List[LiveEntity] = self.get_entities(entity_types=EntityTypesPack.LIVE_ENTITIES)
+        for live_entity in live_entities:
+            entities_in_sight = self._find_entities_in_sight(live_entity)
+            live_entity.body.world_interactor.set_nearby_entities(entities_in_sight)
 
-    def _listen_entity(self, entity: Entity):
+    def _handle_entity(self, entity: Entity):
         entity.events.once('ready_to_remove', partial(self._on_entity_ready_to_remove, entity))
         entity.events.once('died', partial(self._on_entity_died, entity))
         entity.events.add_listener('action_occurred', self._on_entity_action_occured)
+
+        if (entity.type in EntityTypesPack.LIVE_ENTITIES):
+            entity: LiveEntity = entity
+            entity.body.world_interactor.set_map_size(self._size)
 
     def _on_entity_ready_to_remove(self, entity: Entity):
         self._entities_collection.delete_entity(entity.id)

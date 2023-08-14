@@ -5,6 +5,21 @@ import math
 class Point(namedtuple('Point', ['x', 'y'])):
 
     @classmethod
+    def generate_points_around(self, point: 'Point', points_count: int, distance: int) -> List['Point']:
+        points = []
+        delta_angle = 360 / points_count
+        current_angle = 0
+        for _ in range(points_count):
+            angle = math.radians(current_angle)
+            x = round(point.x + distance * math.cos(angle))
+            y = round(point.y + distance * math.sin(angle))
+            points.append(Point(x,y))
+
+            current_angle += delta_angle
+
+        return points
+
+    @classmethod
     def do_step_on_path(cls, start_point: 'Point', dest_point: 'Point', step_size: int) -> Tuple['Point', int, bool]:
         distance = start_point.dist(dest_point)
         if distance <= step_size:

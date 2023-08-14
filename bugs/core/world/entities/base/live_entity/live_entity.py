@@ -50,6 +50,9 @@ class LiveEntity(Entity, iEnemy):
 
     def fight_enemy(self, enemy: iEnemy, sayback: str = None):
         self._mind.fight_enemy(enemy=enemy, sayback=sayback)
+
+    def random_walk(self):
+        self._mind.random_walk()
     
     def do_step(self):
         super().do_step()

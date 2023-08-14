@@ -11,4 +11,4 @@ class GroundBeetleMind(Mind):
         super().__init__(events, body, thought_factory, is_auto_thought_generation)
 
     def _generate_thoughts(self):
-        self.walk_to(Point(500, 500))
+        self.random_walk()

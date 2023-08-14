@@ -49,7 +49,7 @@ def start():
     colony_factory = ColonyFactory(event_bus)
     operation_factory = OperationFactory(formation_factory)
     map_factory = MapFactory(event_bus)
-    world_factory = WorldFactory(event_bus, ant_factory, food_factory, nest_factory)
+    world_factory = WorldFactory(event_bus, ant_factory, food_factory, nest_factory, ground_beetle_factory)
     
     colony_service = ColonyService(operation_factory)
     nest_service = NestService()

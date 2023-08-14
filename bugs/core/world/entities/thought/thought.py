@@ -1,4 +1,4 @@
-from abc import ABC, abstractclassmethod
+from abc import ABC, abstractmethod
 from ..base.live_entity.body import Body
 from .thought_types import ThoughtTypes
 from typing import Callable
@@ -62,7 +62,6 @@ class Thought(ABC):
         self._results = None
         self._iterate_nested_thoughts(lambda thought: thought.restart())
 
-    @abstractclassmethod
     def do_step(self) -> bool:
         if self._is_done or self._is_canceled:
             raise Exception('cant think thought')

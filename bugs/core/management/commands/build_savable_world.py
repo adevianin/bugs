@@ -299,7 +299,9 @@ class Command(BaseCommand):
             }
         ],
         "colonies_relations": [
-            { "colony_ids": [1, 2], "value": -1 }
+            { "colony_ids": [1, 2], "value": -1 },
+            { "colony_ids": [1, 3], "value": -1 },
+            { "colony_ids": [2, 3], "value": -1 }
         ]
     }
 

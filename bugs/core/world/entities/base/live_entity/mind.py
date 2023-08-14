@@ -33,6 +33,10 @@ class Mind(ABC):
         thought = self._thought_factory.build_fight_enemy_thought(body=self._body, enemy=enemy, sayback=sayback)
         self._register_thought(thought, asap)
 
+    def random_walk(self):
+        thought = self._thought_factory.build_random_walk_thought(self._body, center=None, radius=None)
+        self._register_thought(thought)
+
     def do_step(self):
         self._body.memory.treat_records()
 

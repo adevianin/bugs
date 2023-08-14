@@ -10,12 +10,13 @@ from core.world.id_generator import IdGenerator
 from core.world.entities.colony.colony_relations_table import ColonyRelationsTable
 from core.world.entities.world.entity_birther import EntityBirther
 from core.world.entities.base.entity_types import EntityTypes
+from core.world.entities.ground_beetle.ground_beetle_spawner import GroundBeetleSpawner
 
 from typing import List
 
 class World():
 
-    def __init__(self, id: int, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: list[Colony], id_generator: IdGenerator, colony_relations_table: ColonyRelationsTable, entity_birther: EntityBirther):
+    def __init__(self, id: int, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: list[Colony], id_generator: IdGenerator, colony_relations_table: ColonyRelationsTable, entity_birther: EntityBirther, ground_beetle_spawner: GroundBeetleSpawner):
         self.id = id
         self._entities_collection = entities_collection
         self._map = map
@@ -27,6 +28,7 @@ class World():
         self._step_counter = 0
         self._colony_relations_table = colony_relations_table
         self._entity_birther = entity_birther
+        self._ground_beetle_spawner = ground_beetle_spawner
 
         self._current_step_state = None
         self._previous_step_state = None

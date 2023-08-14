@@ -3,6 +3,7 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.utils.point import Point
+from core.world.settings import GROUND_BEETLE_COLONY_ID
 
 from core.world.entities.ground_beetle.ground_beetle import GroundBeetle
 from core.world.entities.ground_beetle.ground_beetle_mind import GroundBeetleMind
@@ -12,6 +13,9 @@ class GroundBeetleFactory():
 
     def __init__(self, thought_factory: ThoughtFactory):
         self._thought_factory = thought_factory
+
+    def build_new_ground_beetle(self, id: int, position: Point):
+        return self.build_ground_beetle(id, GROUND_BEETLE_COLONY_ID, 'ground_beetle_dna', position, GroundBeetle.MAX_HP, {}, True)
 
     def build_ground_beetle(self, id: int, from_colony_id: int, dna_profile: str, position: Point, hp: int, memory_data: dict, is_auto_thought_generation: bool):
         events = EventEmitter()
