@@ -28,6 +28,11 @@ class RandomWalkThought(Thought):
         super().do_step()
         
         point = self._generat_point_to_walk()
+
+        if not point and self._center:
+            self._body.step_to(self._center)
+            return
+        
         self._body.step_to(point)
         self._add_point_to_visited(self._body.position)
     
@@ -41,6 +46,8 @@ class RandomWalkThought(Thought):
             return dist_sum
         points.sort(key=dist_sum, reverse=True)
         points = points[:math.ceil(len(points)/2)]
+        if len(points) == 0:
+            return None
         point = random.choice(points)
         return point
     
