@@ -235,6 +235,7 @@
                 <false/>
             </struct>
             <key type="filename">images/food_source_honeydew.png</key>
+            <key type="filename">images/food_source_honeydew_dead.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -340,6 +341,7 @@
                     <filename>images/ground_beetle_7.png</filename>
                     <filename>images/ground_beetle_8.png</filename>
                     <filename>images/ground_beetle_dead.png</filename>
+                    <filename>images/food_source_honeydew_dead.png</filename>
                 </array>
             </struct>
         </map>

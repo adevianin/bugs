@@ -20,7 +20,7 @@ class GroundBeetleView extends LiveEntityView {
     }
 
     _buildDeadSprite() {
-        return new PIXI.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_dead.png`));
+        return new PIXI.Sprite(this.$textureManager.getTexture(`ground_beetle_dead.png`));
     }
     
 

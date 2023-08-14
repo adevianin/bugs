@@ -167,16 +167,16 @@ class Command(BaseCommand):
                         "ate_calories":440.0,
                         "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
                     },
-                    {
-                        "ant_type":"worker",
-                        "ate_calories":99,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    },
-                    {
-                        "ant_type":"worker",
-                        "ate_calories":99,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    },
+                    # {
+                    #     "ant_type":"worker",
+                    #     "ate_calories":99,
+                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    # },
+                    # {
+                    #     "ant_type":"worker",
+                    #     "ate_calories":99,
+                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    # },
                 ],
                 "larva_places_count":1,
                 "area":300,
@@ -299,9 +299,9 @@ class Command(BaseCommand):
             }
         ],
         "colonies_relations": [
-            { "colony_ids": [1, 2], "value": -1 },
-            { "colony_ids": [1, 3], "value": -1 },
-            { "colony_ids": [2, 3], "value": -1 }
+            # { "colony_ids": [1, 2], "value": -1 },
+            # { "colony_ids": [1, 3], "value": -1 },
+            # { "colony_ids": [2, 3], "value": -1 }
         ]
     }
 

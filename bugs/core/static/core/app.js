@@ -201,6 +201,7 @@ const ACTION_TYPES = {
     ENTITY_HP_CHANGE: 'entity_hp_change',
     FOOD_WAS_PICKED_UP: 'food_was_picked_up',
     FOOD_WAS_DROPPED: 'food_was_dropped',
+    FOOD_SOURCE_FERTILITY_CHANGED: 'food_source_fertility_changed',
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
     NEST_LARVAE_CHANGED: 'nest_larvae_changed',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
@@ -463,6 +464,8 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
         switch (action.type) {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_1__.ACTION_TYPES.ENTITY_HP_CHANGE:
                 return this._playHpChange(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_1__.ACTION_TYPES.ENTITY_DIED:
+                return this._playEntityDied(action);
         }
 
         return null;
@@ -502,6 +505,16 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
     _playHpChange(action) {
         this.hp = action.actionData.hp;
         return Promise.resolve();
+    }
+
+    _playEntityDied(action) {
+        this._setState('dead');
+        return new Promise((res) => {
+            setTimeout(() => {
+                this.die();
+                res();
+            }, 5000)
+        });
     }
 
 }
@@ -639,13 +652,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
 /* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+
 
 
 
 class FoodSource extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
-    constructor(eventBus, id, position, foodType) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD_SOURCE, null, null, null);
+    constructor(eventBus, id, position, hp, maxHp, foodType, isFertile) {
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD_SOURCE, null, hp, maxHp);
         this.foodType = foodType;
+        this._isFertile = isFertile;
+    }
+
+    set isFertile(value) {
+        this._isFertile = value;
+        this.emit('fertileChanged');
+    }
+
+    get isFertile() {
+        return this._isFertile;
+    }
+
+    playAction(action) {
+        let promise = super.playAction(action)
+        if (promise) {
+            return promise
+        }
+        switch (action.type) {
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_SOURCE_FERTILITY_CHANGED:
+                return this._playFertilityChangedAction(action);
+        }
+
+        return null;
+    }
+
+    _playFertilityChangedAction(action) {
+        return new Promise((res) => {
+            this.isFertile = action.actionData.is_fertile
+            res();
+        });
     }
 }
 
@@ -742,8 +787,6 @@ class LiveEntity extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         switch (action.type) {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_WALK:
                 return this._playWalkAction(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_DIED:
-                return this._playEntityDied(action);
         }
 
         return null;
@@ -772,16 +815,6 @@ class LiveEntity extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                     res();
                 }
             }, 50)
-        });
-    }
-
-    _playEntityDied(action) {
-        this._setState('dead');
-        return new Promise((res) => {
-            setTimeout(() => {
-                this.die();
-                res();
-            }, 5000)
         });
     }
 
@@ -1497,7 +1530,7 @@ class WorldFactory {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_AREA:
                 return this.buildFoodArea(entityJson.id, entityJson.position);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_SOURCE:
-                return this.buildFoodSource(entityJson.id, entityJson.position, entityJson.food_type);
+                return this.buildFoodSource(entityJson.id, entityJson.position, entityJson.hp, entityJson.max_hp, entityJson.food_type, entityJson.is_fertile);
             default:
                 throw 'unknown type of entity';
         }
@@ -1525,8 +1558,8 @@ class WorldFactory {
         return new _entity_foodArea__WEBPACK_IMPORTED_MODULE_5__.FoodArea(this._mainEventBus, id, position);
     }
 
-    buildFoodSource(id, position, foodType) {
-        return new _entity_foodSource__WEBPACK_IMPORTED_MODULE_8__.FoodSource(this._mainEventBus, id, position, foodType);
+    buildFoodSource(id, position, hp, maxHp, foodType, isFertile) {
+        return new _entity_foodSource__WEBPACK_IMPORTED_MODULE_8__.FoodSource(this._mainEventBus, id, position, hp, maxHp, foodType, isFertile);
     }
 
     buildColony(id, owner_id, operations) {
@@ -3057,31 +3090,52 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _hpLine__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./hpLine */ "./bugs/core/client/app/src/view/world/hpLine.js");
+
 
 
 
 class FoodSourceView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
 
-    constructor(entity, entityContainer) {
-        super(entity, entityContainer);
+    constructor(entity, entitiesContainer) {
+        super(entity, entitiesContainer);
+
+        this._unbindFertileChangeListener = this._entity.on('fertileChanged', this._renderFertile.bind(this));
 
         this._render();
     }
 
     _render() {
-        this._foodSourceContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._entityContainer.addChild(this._foodSourceContainer);
+        this._bodyContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._uiContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._entityContainer.addChild(this._bodyContainer);
+        this._entityContainer.addChild(this._uiContainer);
         
-        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`food_source_${this._entity.foodType}.png`));
-        this._sprite.anchor.set(0.5, 1);
-        this._foodSourceContainer.addChild(this._sprite);
+        this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`food_source_${this._entity.foodType}.png`));
+        this._bodyContainer.addChild(this._standSprite);
+        this._deadSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`food_source_${this._entity.foodType}_dead.png`));
+        this._bodyContainer.addChild(this._deadSprite);
 
-        this._foodSourceContainer.x = this._entity.position.x;
-        this._foodSourceContainer.y = this._entity.position.y;
+        this._entityContainer.x = this._entity.position.x;
+        this._entityContainer.y = this._entity.position.y;
+
+        this._entityContainer.pivot.x = this._standSprite.width / 2;
+        this._entityContainer.pivot.y = this._standSprite.height;
+
+        this._hpLineView = new _hpLine__WEBPACK_IMPORTED_MODULE_2__.HpLineView(this._entity, { x: 0, y: -10 }, this._standSprite.width, this._uiContainer);
+
+        this._renderFertile();
+    }
+
+    _renderFertile() {
+        this._standSprite.renderable = this._entity.isFertile;
+        this._deadSprite.renderable = !this._entity.isFertile;
     }
 
     remove() {
         super.remove();
+        this._hpLineView.remove();
+        this._unbindFertileChangeListener();
     }
 }
 
@@ -3183,7 +3237,7 @@ class GroundBeetleView extends _liveEntityView__WEBPACK_IMPORTED_MODULE_1__.Live
     }
 
     _buildDeadSprite() {
-        return new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_dead.png`));
+        return new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(this.$textureManager.getTexture(`ground_beetle_dead.png`));
     }
     
 

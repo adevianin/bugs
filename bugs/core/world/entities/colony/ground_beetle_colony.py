@@ -11,7 +11,7 @@ class GroundBeetleColony(Colony):
         super().__init__(id, EntityTypes.GROUND_BEETLE, event_bus, map, relation_tester)
 
     def _on_my_entity_born(self, entity: Entity):
-        pass
+        super()._on_my_entity_born(entity)
 
     def _on_my_entity_died(self, entity: Entity):
         pass

@@ -11,6 +11,7 @@ const ACTION_TYPES = {
     ENTITY_HP_CHANGE: 'entity_hp_change',
     FOOD_WAS_PICKED_UP: 'food_was_picked_up',
     FOOD_WAS_DROPPED: 'food_was_dropped',
+    FOOD_SOURCE_FERTILITY_CHANGED: 'food_source_fertility_changed',
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
     NEST_LARVAE_CHANGED: 'nest_larvae_changed',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',

@@ -19,17 +19,14 @@ class GroundBeetleSpawner():
             pos = self._generate_spawn_position()
             self._event_bus.emit('birth_request', {
                 'entity_type': EntityTypes.GROUND_BEETLE,
-                'position': pos,
-                'callback': self._on_ground_beetle_spawned
+                'position': pos
             })
 
-    def _on_ground_beetle_spawned(self, ground_beetle: GroundBeetle):
-        ground_beetle.random_walk()
-
     def _should_spawn(self) -> bool:
-        return random.random() < 0.01
+        return random.random() < 0.2
     
     def _generate_spawn_position(self) -> Point:
+        # return Point(800, 400)
         x = random.randint(10, 500)
         y = random.randint(10, 500)
         return Point(x, y)

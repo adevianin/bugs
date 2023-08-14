@@ -15,3 +15,4 @@ class ThoughtTypes(StrEnum):
     FIGHT_ENEMY = 'fight_enemy'
     FIGHT_NEAR_ENEMIES = 'fight_near_enemies'
     REINFORCE_NEST_DEFENCE = 'reinforce_nest_defence'
+    HUNT_FOR_APHID = 'hunt_for_aphid'

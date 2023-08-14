@@ -32,6 +32,9 @@ class AntColony(Colony):
     def operations(self):
         return self._operations
     
+    def get_my_nests(self) -> List[Nest]:
+        return self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.NEST])
+    
     def add_operation(self, operation: Operation):
         operation.id = self._generate_operation_id()
         self._operations.append(operation)
@@ -54,8 +57,6 @@ class AntColony(Colony):
     
     def _on_my_entity_born(self, entity: Entity):
         super()._on_my_entity_born(entity)
-        if entity.type == EntityTypes.ANT:
-            self._handle_my_member(entity)
     
     def _on_my_entity_died(self, entity: Entity):
         super()._on_my_entity_died(entity)

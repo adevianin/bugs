@@ -28,8 +28,32 @@ class FoodSource(PlainEntity):
     def calories(self):
         return self._calories
     
+    @property
+    def is_fertile(self):
+        return self.hp > self.MAX_HP / 3
+    
     def do_step(self):
-        self._calories += self._fertility
+        if self.is_fertile:
+            self._calories += self._fertility
+
+        is_fertile_before = self.is_fertile
+        if self.hp < self.MAX_HP:
+            self.hp += 0.05
+        if is_fertile_before != self.is_fertile:
+            self._emit_fertility_change()
+
+    def damage_fertility(self, damage: int):
+        is_fertile_before = self.is_fertile
+
+        if self.hp > damage:
+            self.hp -= damage
+        
+        if not self.is_fertile:
+            self.hp = 1
+            self._calories = 0
+
+        if is_fertile_before != self.is_fertile:
+            self._emit_fertility_change()
 
     def take_some_food(self, on_food_ready: Callable):
         min_caloric_value = min(self._fertility * 2, self._calories)
@@ -52,7 +76,11 @@ class FoodSource(PlainEntity):
     def to_public_json(self):
         json = super().to_public_json()
         json.update({
-            'food_type': self._food_type
+            'food_type': self._food_type,
+            'is_fertile': self.is_fertile
         })
         
         return json
+    
+    def _emit_fertility_change(self):
+        self._emit_action('food_source_fertility_changed', { 'is_fertile': self.is_fertile })

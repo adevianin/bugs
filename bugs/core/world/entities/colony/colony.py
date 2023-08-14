@@ -35,9 +35,6 @@ class Colony(ABC):
     def get_my_members(self) -> List[LiveEntity]:
         return self._map.get_entities(from_colony_id=self.id, entity_types=[self._member_type])
     
-    def get_my_nests(self) -> List[Nest]:
-        return self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.NEST])
-    
     def born(self):
         self._emit_action('colony_born', { 'colony': self.to_public_json() })
     
@@ -47,7 +44,8 @@ class Colony(ABC):
         }
     
     def _on_my_entity_born(self, entity: Entity):
-        pass
+        if entity.type == self.member_type:
+            self._handle_my_member(entity)
 
     def _on_my_entity_died(self, entity: Entity):
         pass

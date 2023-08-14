@@ -29,7 +29,7 @@ class WorldFactory {
             case EntityTypes.FOOD_AREA:
                 return this.buildFoodArea(entityJson.id, entityJson.position);
             case EntityTypes.FOOD_SOURCE:
-                return this.buildFoodSource(entityJson.id, entityJson.position, entityJson.food_type);
+                return this.buildFoodSource(entityJson.id, entityJson.position, entityJson.hp, entityJson.max_hp, entityJson.food_type, entityJson.is_fertile);
             default:
                 throw 'unknown type of entity';
         }
@@ -57,8 +57,8 @@ class WorldFactory {
         return new FoodArea(this._mainEventBus, id, position);
     }
 
-    buildFoodSource(id, position, foodType) {
-        return new FoodSource(this._mainEventBus, id, position, foodType);
+    buildFoodSource(id, position, hp, maxHp, foodType, isFertile) {
+        return new FoodSource(this._mainEventBus, id, position, hp, maxHp, foodType, isFertile);
     }
 
     buildColony(id, owner_id, operations) {

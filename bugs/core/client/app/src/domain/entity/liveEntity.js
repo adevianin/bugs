@@ -17,8 +17,6 @@ class LiveEntity extends Entity {
         switch (action.type) {
             case ACTION_TYPES.ENTITY_WALK:
                 return this._playWalkAction(action);
-            case ACTION_TYPES.ENTITY_DIED:
-                return this._playEntityDied(action);
         }
 
         return null;
@@ -47,16 +45,6 @@ class LiveEntity extends Entity {
                     res();
                 }
             }, 50)
-        });
-    }
-
-    _playEntityDied(action) {
-        this._setState('dead');
-        return new Promise((res) => {
-            setTimeout(() => {
-                this.die();
-                res();
-            }, 5000)
         });
     }
 

@@ -101,6 +101,7 @@ class CollectFoodThought(Thought):
         self._body.memory.save('found_food_source_position', None)
         self._write_flag('am_i_know_where_food_source', False)
         self._write_flag('am_i_near_food_source_position', False)
+        self._food_source_position = None
 
 
     def can_be_delayed(self):

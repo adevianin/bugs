@@ -66,6 +66,8 @@ class Entity extends EventEmitter {
         switch (action.type) {
             case ACTION_TYPES.ENTITY_HP_CHANGE:
                 return this._playHpChange(action);
+            case ACTION_TYPES.ENTITY_DIED:
+                return this._playEntityDied(action);
         }
 
         return null;
@@ -105,6 +107,16 @@ class Entity extends EventEmitter {
     _playHpChange(action) {
         this.hp = action.actionData.hp;
         return Promise.resolve();
+    }
+
+    _playEntityDied(action) {
+        this._setState('dead');
+        return new Promise((res) => {
+            setTimeout(() => {
+                this.die();
+                res();
+            }, 5000)
+        });
     }
 
 }

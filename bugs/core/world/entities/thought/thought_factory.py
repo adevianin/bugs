@@ -17,6 +17,8 @@ from core.world.entities.base.live_entity.thoughts.fight_enemy_thought import Fi
 from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
 from core.world.entities.ant.base.thoughts.reinforce_nest_defence_thought import ReinforceNestDefenceThought
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
+from core.world.entities.ground_beetle.thoughts.hunt_for_aphid import HuntForAphid
+from core.world.entities.food.food_source import FoodSource
 
 class ThoughtFactory:
 
@@ -62,6 +64,9 @@ class ThoughtFactory:
     def build_random_walk_thought(self, body: Body, center: Point, radius: int, flags: dict = None, sayback: str = None):
         return RandomWalkThought(body=body, center=center, radius=radius, flags=flags, sayback=sayback)
     
+    def build_hunt_for_aphid(self, body: Body, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_food_source: FoodSource, flags: dict = None, sayback: str = None):
+        return HuntForAphid(body=body, random_walk_thought=random_walk_thought, fight_near_enemies_thought=fight_near_enemies_thought, found_food_source=found_food_source, flags=flags, sayback=sayback)
+    
     def build_feed_myself_full(self, body: Body, home_nest: Nest, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(body, home_nest.position, home_nest.area)
         find_food_thought = self.build_find_food_thought(body, random_walk_thought)
@@ -79,20 +84,23 @@ class ThoughtFactory:
     
     def build_defend_nest_territory_full(self, body: Body, nest: Nest, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(body, nest.position, nest.area)
-        fight_enemy_thought = self.build_fight_enemy_thought(body, None)
-        fight_near_enemies_thought = self.build_fight_near_enemies_thought(body, fight_enemy_thought=fight_enemy_thought)
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full(body=body)
         return self.build_defend_teritory(body=body, fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, defending_nest=nest, sayback=sayback)
     
     def build_attack_nest_thought_full(self, body: Body, nest: Nest, sayback: str = None):
-        fight_enemy_thought = self.build_fight_enemy_thought(body, None)
-        fight_near_enemies_thought = self.build_fight_near_enemies_thought(body, fight_enemy_thought=fight_enemy_thought)
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full(body=body)
         return self.build_attack_nest_thought(body=body, fight_near_enemies_thought=fight_near_enemies_thought, nest=nest, sayback=sayback)
     
     def build_reinforce_nest_defence_thought_full(self, body: Body, nest: Nest, point_to_check: Point, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(body, nest.position, nest.area)
-        fight_enemy_thought = self.build_fight_enemy_thought(body, None)
-        fight_near_enemies_thought = self.build_fight_near_enemies_thought(body=body, fight_enemy_thought=fight_enemy_thought)
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full(body=body)
         return self.build_reinforce_nest_defence_thought(body=body, fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, defending_nest=nest, point_to_check=point_to_check, sayback=sayback)
 
+    def build_fight_near_enemies_thought_full(self, body: Body):
+        fight_enemy_thought = self.build_fight_enemy_thought(body, None)
+        return self.build_fight_near_enemies_thought(body=body, fight_enemy_thought=fight_enemy_thought)
 
-    
+    def build_hunt_for_aphid_thought_full(self, body: Body, sayback: str = None):
+        random_walk_thought = self.build_random_walk_thought(body, None, None)
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full(body=body)
+        return self.build_hunt_for_aphid(body=body, random_walk_thought=random_walk_thought, fight_near_enemies_thought=fight_near_enemies_thought, found_food_source=None, sayback=sayback)

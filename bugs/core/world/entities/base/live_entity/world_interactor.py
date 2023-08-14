@@ -6,6 +6,9 @@ from core.world.utils.point import Point
 
 class WorldInteractor():
 
+    def __init__(self):
+        self._nearby_entities = []
+
     def set_map_size(self, map_size: Size):
         self._map_size = map_size
 

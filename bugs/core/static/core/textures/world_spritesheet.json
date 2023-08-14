@@ -296,6 +296,14 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
 	"sourceSize": {"w":90,"h":110}
 },
+"food_source_honeydew_dead.png":
+{
+	"frame": {"x":0,"y":598,"w":90,"h":110},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
+	"sourceSize": {"w":90,"h":110}
+},
 "grass.png":
 {
 	"frame": {"x":0,"y":424,"w":64,"h":64},
@@ -427,8 +435,8 @@
 	"version": "1.1",
 	"image": "world_spritesheet.png",
 	"format": "RGBA8888",
-	"size": {"w":128,"h":598},
+	"size": {"w":128,"h":708},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:31d3a13913ae58f8fbf053311593010d:8fdab587f3ee6ca427cc894ac42bfeb8:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:3f4853a123f4d74203d0f33c97f0d331:95c8b6039b742d6b7d7d9448c3242237:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }

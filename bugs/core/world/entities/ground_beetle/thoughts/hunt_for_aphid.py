@@ -1,0 +1,63 @@
+from core.world.entities.ground_beetle.ground_beetle_body import GroundBeetleBody
+from core.world.entities.thought.thought_types import ThoughtTypes
+from core.world.entities.thought.thought import Thought
+from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
+from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
+from core.world.entities.base.entity_types import EntityTypes
+from typing import Callable, List
+from core.world.entities.food.food_source import FoodSource
+from core.world.entities.food.food_types import FoodTypes
+
+class HuntForAphid(Thought):
+
+    _body: GroundBeetleBody
+
+    def __init__(self, body: GroundBeetleBody, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_food_source: FoodSource, flags: dict, sayback: str):
+        super().__init__(body, ThoughtTypes.HUNT_FOR_APHID, flags, sayback)
+        self._nested_thoughts['random_walk_thought'] = random_walk_thought
+        self._nested_thoughts['fight_near_enemies_thought'] = fight_near_enemies_thought
+        self._found_food_source = found_food_source
+
+    @property
+    def random_walk_thought(self) -> RandomWalkThought:
+        return self._nested_thoughts['random_walk_thought']
+    
+    @property
+    def fight_near_enemies_thought(self) -> FightNearEnemiesThought:
+        return self._nested_thoughts['fight_near_enemies_thought']
+    
+    @property
+    def found_food_source_id(self) -> int:
+        return self._found_food_source.id if self._found_food_source else None
+
+    def do_step(self) -> bool:
+        super().do_step()
+
+        is_fighting = self.fight_near_enemies_thought.do_step()
+        if is_fighting:
+            return
+        
+        if not self._body.memory.read('found_aphid'):
+            filter: Callable[[FoodSource], bool] = lambda food_source: food_source.food_type == FoodTypes.HONEYDEW
+            food_sources: List[FoodSource] = self._body.look_around(types_list=[EntityTypes.FOOD_SOURCE], filter=filter)
+
+            for food_source in food_sources:
+                if food_source.is_fertile:
+                    self._found_food_source = food_source
+                    self._body.memory.save('found_aphid', True)
+                    break
+
+        if self._body.memory.read('found_aphid') and not self._body.memory.read('is_near_found_aphid'):
+            is_walk_done = self._body.step_to(self._found_food_source.position)
+            self._body.memory.save('is_near_found_aphid', is_walk_done)
+            return
+        
+        if self._body.memory.read('is_near_found_aphid') and not self._body.memory.read('is_found_aphid_eated'):
+            if self._found_food_source.is_fertile:
+                self._body.eat_aphid(self._found_food_source)
+            if not self._found_food_source.is_fertile:
+                self._body.memory.save('is_found_aphid_eated', True)
+                self.done()
+            return
+        
+        self.random_walk_thought.do_step()
