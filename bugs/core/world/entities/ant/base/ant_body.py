@@ -21,6 +21,8 @@ class AntBody(Body):
         self._picked_food = picked_food
         self._formation = None
 
+        self.events.add_listener('position_changed', self._on_position_changed)
+
     @property
     def located_in_nest_id(self):
         return self._located_inside_nest.id if self._located_inside_nest else None
@@ -113,7 +115,6 @@ class AntBody(Body):
         })
 
     def _on_position_changed(self):
-        super()._on_position_changed()
         if self.has_formation:
             self._tell_position_to_formation()
 

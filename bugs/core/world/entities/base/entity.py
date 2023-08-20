@@ -14,6 +14,8 @@ class Entity(ABC):
         self._type: EntityTypes = type
         self._from_colony_id = from_colony_id
 
+        self.events.add_listener('hp_changed', self._on_hp_changed)
+
     @property
     def id(self):
         return self._id
@@ -82,3 +84,8 @@ class Entity(ABC):
         self._emit_action('entity_died')
         self.events.emit('died')
         self.events.emit('ready_to_remove')
+
+    def _on_hp_changed(self):
+        self._emit_action('entity_hp_change', { 'hp': self.hp })
+        if self.hp <= 0:
+            self._handle_dieing()

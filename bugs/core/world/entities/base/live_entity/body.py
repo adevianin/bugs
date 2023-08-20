@@ -48,7 +48,6 @@ class Body(ABC):
     def position(self, value):
         self._position = value
         self.events.emit('position_changed')
-        self._on_position_changed()
 
     @property
     def is_no_calories(self):

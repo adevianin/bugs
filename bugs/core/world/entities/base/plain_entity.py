@@ -18,6 +18,7 @@ class PlainEntity(Entity):
     @position.setter
     def position(self, new_pos: Point):
         self._position = new_pos
+        self.events.emit('position_changed')
 
     @property
     def hp(self):
@@ -26,9 +27,7 @@ class PlainEntity(Entity):
     @hp.setter
     def hp(self, hp: int):
         self._hp = hp
-        self._emit_action('entity_hp_change', { 'hp': self.hp })
-        if (self._hp <= 0):
-            self._handle_dieing()
+        self.events.emit('hp_changed')
 
     def do_step(self):
         return super().do_step()
@@ -43,3 +42,4 @@ class PlainEntity(Entity):
         })
         
         return json
+    
