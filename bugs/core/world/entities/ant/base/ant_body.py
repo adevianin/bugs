@@ -1,24 +1,28 @@
 from core.world.utils.point import Point
 from core.world.entities.base.live_entity.body import Body
 from core.world.utils.point import Point
-from core.world.entities.food.food import Food
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.colony.formation.formation import Formation
+from core.world.entities.items.base.item_source import ItemSource
+from core.world.entities.items.base.item_types import ItemTypes
+from core.world.entities.items.base.item import Item
+
+from typing import List, Callable
 
 class AntBody(Body):
 
     DISTANCE_PER_SEP = 32
     SIGHT_DISTANCE = 200
 
-    def __init__(self, events: EventEmitter, sayer: EventEmitter, memory: Memory, dna_profile: str, position: Point, hp: int, located_in_nest: Nest, picked_food: Food, world_interactor: WorldInteractor):
+    def __init__(self, events: EventEmitter, sayer: EventEmitter, memory: Memory, dna_profile: str, position: Point, hp: int, located_in_nest: Nest, picked_item: Item, world_interactor: WorldInteractor):
         super().__init__(events, memory, dna_profile, position, hp, world_interactor)
         self.sayer = sayer
         self._located_inside_nest = located_in_nest
-        self._picked_food = picked_food
+        self._picked_item = picked_item
         self._formation = None
 
         self.events.add_listener('position_changed', self._on_position_changed)
@@ -32,16 +36,16 @@ class AntBody(Body):
         return self._located_inside_nest != None
 
     @property
-    def is_food_picked(self):
-        return self._picked_food is not None
+    def is_item_picked(self):
+        return self._picked_item is not None
     
     @property
-    def picked_food(self):
-        return self._picked_food
+    def picked_item(self):
+        return self._picked_item
     
     @property
-    def picked_food_id(self):
-        return self._picked_food.id if self.is_food_picked else None
+    def picked_item_id(self):
+        return self._picked_item.id if self.is_item_picked else None
     
     @property
     def has_formation(self):
@@ -84,27 +88,32 @@ class AntBody(Body):
         return self.step_to(position)
     
     def look_around_for_food(self):
-        return self._world_interactor.get_nearby_entities([EntityTypes.FOOD])
+        honeydew_filter: Callable[[ItemSource], bool] = lambda item_source: item_source.item_type == ItemTypes.HONEYDEW
+        return self.look_around(types_list=[EntityTypes.ITEM], filter=honeydew_filter)
+    
+    def look_around_for_food_sources(self) -> List[ItemSource]:
+        honeydew_filter: Callable[[ItemSource], bool] = lambda item_source: item_source.item_type == ItemTypes.HONEYDEW
+        return self.look_around(types_list=[EntityTypes.ITEM_SOURCE], filter=honeydew_filter)
     
     def build_nest(self, nest: Nest):
         nest.build()
         self._consume_calories(10)
 
-    def pick_up_food(self, food: Food):
-        self._picked_food = food
-        food.pickup()
-        self.events.emit('food_picked', food_id=food.id)
+    def pick_up_item(self, item: Item):
+        self._picked_item = item
+        item.pickup()
+        self.events.emit('item_picked', item_id=item.id)
         return True
 
     def give_food(self, nest: Nest):
-        nest.take_food(self._picked_food)
-        self._picked_food = None
-        self.events.emit('picked_food_gave')
+        nest.take_edible_item(self._picked_item)
+        self._picked_item = None
+        self.events.emit('picked_item_dropped')
 
-    def drop_picked_food(self):
-        self._picked_food.drop(Point(self.position.x, self.position.y))
-        self._picked_food = None
-        self.events.emit('picked_food_dropped')
+    def drop_picked_item(self):
+        self._picked_item.drop(Point(self.position.x, self.position.y))
+        self._picked_item = None
+        self.events.emit('picked_item_dropped')
 
     def found_nest(self, position: Point, colony_id: int, callback):
         self.events.emit('birth_request', {

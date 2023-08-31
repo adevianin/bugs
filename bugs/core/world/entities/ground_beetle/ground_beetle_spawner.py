@@ -23,7 +23,8 @@ class GroundBeetleSpawner():
             })
 
     def _should_spawn(self) -> bool:
-        return random.random() < 0.001
+        return False
+        # return random.random() < 0.001
     
     def _generate_spawn_position(self) -> Point:
         # return Point(800, 400)

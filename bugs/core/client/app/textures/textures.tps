@@ -200,15 +200,6 @@
             <key type="filename">images/ant_worker_7.png</key>
             <key type="filename">images/ant_worker_8.png</key>
             <key type="filename">images/ant_worker_dead.png</key>
-            <key type="filename">images/food_honeydew_1v.png</key>
-            <key type="filename">images/food_honeydew_picked.png</key>
-            <key type="filename">images/food_leaf_1v.png</key>
-            <key type="filename">images/food_leaf_2v.png</key>
-            <key type="filename">images/food_leaf_3v.png</key>
-            <key type="filename">images/food_leaf_4v.png</key>
-            <key type="filename">images/food_nectar_1v.png</key>
-            <key type="filename">images/food_nectar_2v.png</key>
-            <key type="filename">images/food_nectar_3v.png</key>
             <key type="filename">images/ground_beetle_1.png</key>
             <key type="filename">images/ground_beetle_2.png</key>
             <key type="filename">images/ground_beetle_3.png</key>
@@ -218,6 +209,14 @@
             <key type="filename">images/ground_beetle_7.png</key>
             <key type="filename">images/ground_beetle_8.png</key>
             <key type="filename">images/ground_beetle_dead.png</key>
+            <key type="filename">images/item_flower_1v.png</key>
+            <key type="filename">images/item_flower_2v.png</key>
+            <key type="filename">images/item_flower_3v.png</key>
+            <key type="filename">images/item_honeydew_1v.png</key>
+            <key type="filename">images/item_leaf_1v.png</key>
+            <key type="filename">images/item_leaf_2v.png</key>
+            <key type="filename">images/item_leaf_3v.png</key>
+            <key type="filename">images/item_leaf_4v.png</key>
             <key type="filename">images/marker_cross.png</key>
             <key type="filename">images/marker_pointer.png</key>
             <struct type="IndividualSpriteSettings">
@@ -234,22 +233,6 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">images/food_source_honeydew.png</key>
-            <key type="filename">images/food_source_honeydew_dead.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>23,28,45,55</rect>
-                <key>scale9Paddings</key>
-                <rect>23,28,45,55</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
             <key type="filename">images/grass.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -262,6 +245,22 @@
                 <rect>16,16,32,32</rect>
                 <key>scale9Paddings</key>
                 <rect>16,16,32,32</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">images/item_source_honeydew.png</key>
+            <key type="filename">images/item_source_honeydew_not_fertile.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>23,28,45,55</rect>
+                <key>scale9Paddings</key>
+                <rect>23,28,45,55</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -290,13 +289,6 @@
                 <key>files</key>
                 <array>
                     <filename>images/grass.png</filename>
-                    <filename>images/food_leaf_1v.png</filename>
-                    <filename>images/food_leaf_2v.png</filename>
-                    <filename>images/food_leaf_3v.png</filename>
-                    <filename>images/food_leaf_4v.png</filename>
-                    <filename>images/food_nectar_1v.png</filename>
-                    <filename>images/food_nectar_2v.png</filename>
-                    <filename>images/food_nectar_3v.png</filename>
                     <filename>images/ant_warrior_1.png</filename>
                     <filename>images/ant_warrior_2.png</filename>
                     <filename>images/ant_warrior_3.png</filename>
@@ -329,9 +321,6 @@
                     <filename>images/nest_building.png</filename>
                     <filename>images/marker_cross.png</filename>
                     <filename>images/nest_destroyed.png</filename>
-                    <filename>images/food_honeydew_1v.png</filename>
-                    <filename>images/food_honeydew_picked.png</filename>
-                    <filename>images/food_source_honeydew.png</filename>
                     <filename>images/ground_beetle_1.png</filename>
                     <filename>images/ground_beetle_2.png</filename>
                     <filename>images/ground_beetle_3.png</filename>
@@ -341,7 +330,16 @@
                     <filename>images/ground_beetle_7.png</filename>
                     <filename>images/ground_beetle_8.png</filename>
                     <filename>images/ground_beetle_dead.png</filename>
-                    <filename>images/food_source_honeydew_dead.png</filename>
+                    <filename>images/item_leaf_1v.png</filename>
+                    <filename>images/item_leaf_2v.png</filename>
+                    <filename>images/item_leaf_3v.png</filename>
+                    <filename>images/item_leaf_4v.png</filename>
+                    <filename>images/item_source_honeydew.png</filename>
+                    <filename>images/item_source_honeydew_not_fertile.png</filename>
+                    <filename>images/item_honeydew_1v.png</filename>
+                    <filename>images/item_flower_1v.png</filename>
+                    <filename>images/item_flower_2v.png</filename>
+                    <filename>images/item_flower_3v.png</filename>
                 </array>
             </struct>
         </map>

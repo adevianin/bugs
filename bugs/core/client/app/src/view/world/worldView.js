@@ -3,14 +3,14 @@ import './worldStyles.css';
 import * as PIXI from 'pixi.js';
 import { AntView } from './antView';
 import { NestView } from './nestView';
-import { FoodView } from './foodView';
 import { Camera } from './camera';
-import { FoodAreaView } from './foodArea';
 import { BaseGraphicView } from '../base/baseGraphicView';
 import { EntityTypes } from '../../domain/enum/entityTypes';
 import { MarkerManagerView } from './markerManager/markerManagerView';
-import { FoodSourceView } from './foodSourceView';
 import { GroundBeetleView } from './groundBeetleView';
+import { ItemView } from './itemView';
+import { ItemSourceView } from './itemSourceView';
+import { ItemAreaView } from './itemAreaView';
 
 class WorldView extends BaseGraphicView {
 
@@ -35,21 +35,21 @@ class WorldView extends BaseGraphicView {
         this._entityContainer = new PIXI.Container();
         this._antContainer = new PIXI.Container();
         this._groundBeetleContainer = new PIXI.Container();
-        this._foodContainer = new PIXI.Container();
+        this._itemContainer = new PIXI.Container();
         this._nestContainer = new PIXI.Container();
-        this._foodAreaContainer = new PIXI.Container();
-        this._foodSourceContainer = new PIXI.Container();
+        this._itemAreaContainer = new PIXI.Container();
+        this._itemSourceContainer = new PIXI.Container();
         this._markersContainer = new PIXI.Container();
 
         this._app.stage.addChild(this._entityContainer);
 
         this._entityContainer.addChild(this._bg);
         this._entityContainer.addChild(this._nestContainer);
-        this._entityContainer.addChild(this._foodAreaContainer);
-        this._entityContainer.addChild(this._foodContainer);
+        this._entityContainer.addChild(this._itemAreaContainer);
+        this._entityContainer.addChild(this._itemContainer);
         this._entityContainer.addChild(this._antContainer);
         this._entityContainer.addChild(this._groundBeetleContainer);
-        this._entityContainer.addChild(this._foodSourceContainer);
+        this._entityContainer.addChild(this._itemSourceContainer);
         this._entityContainer.addChild(this._markersContainer);
 
         this._camera = new Camera(this._entityContainer, this._bg, this._app.view);
@@ -91,14 +91,14 @@ class WorldView extends BaseGraphicView {
             case EntityTypes.NEST:
                 view = new NestView(entity, this._nestContainer);
                 break;
-            case EntityTypes.FOOD:
-                view = new FoodView(entity, this._foodContainer);
+            case EntityTypes.ITEM:
+                view = new ItemView(entity, this._itemContainer);
                 break;
-            case EntityTypes.FOOD_AREA:
-                view = new FoodAreaView(entity, this._foodAreaContainer);
+            case EntityTypes.ITEM_SOURCE:
+                view = new ItemSourceView(entity, this._itemSourceContainer);
                 break;
-            case EntityTypes.FOOD_SOURCE:
-                view = new FoodSourceView(entity, this._foodSourceContainer);
+            case EntityTypes.ITEM_AREA:
+                view = new ItemAreaView(entity, this._itemAreaContainer);
                 break;
             default:
                 throw 'unknown type of entity';

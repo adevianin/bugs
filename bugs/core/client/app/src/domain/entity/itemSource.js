@@ -1,12 +1,17 @@
-import { Entity } from './entity';
-import { EntityTypes } from '../enum/entityTypes';
-import { ACTION_TYPES } from './action/actionTypes';
+import { Entity } from "./entity"
+import { EntityTypes } from "../enum/entityTypes";
+import { ACTION_TYPES } from "./action/actionTypes";
 
-class FoodSource extends Entity {
-    constructor(eventBus, id, position, hp, maxHp, foodType, isFertile) {
-        super(eventBus, id, position, EntityTypes.FOOD_SOURCE, null, hp, maxHp);
-        this.foodType = foodType;
+class ItemSource extends Entity {
+    
+    constructor(eventBus, id, position, fromColony, hp, maxHp, itemType, isFertile) {
+        super(eventBus, id, position, EntityTypes.ITEM_SOURCE, fromColony, hp, maxHp);
+        this._itemType = itemType;
         this._isFertile = isFertile;
+    }
+
+    get itemType() {
+        return this._itemType;
     }
 
     set isFertile(value) {
@@ -24,7 +29,7 @@ class FoodSource extends Entity {
             return promise
         }
         switch (action.type) {
-            case ACTION_TYPES.FOOD_SOURCE_FERTILITY_CHANGED:
+            case ACTION_TYPES.ITEM_SOURCE_FERTILITY_CHANGED:
                 return this._playFertilityChangedAction(action);
         }
 
@@ -40,5 +45,5 @@ class FoodSource extends Entity {
 }
 
 export {
-    FoodSource
+    ItemSource
 }

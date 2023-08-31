@@ -2,33 +2,33 @@ from core.world.entities.world.world import World
 from core.world.entities.base.entity_types import EntityTypes
 from .nest_serializer import NestSerializer
 from .ant_serializer import AntSerializer
-from .food_serializer import FoodSerializer
-from .food_area_serializer import FoodAreaSerializer
 from .colony_serializer import ColonySerializer
 from .colony_relations_table_serializer import ColonyRelationsTableSerializer
-from .food_source_serializer import FoodSourceSerializer
 from .ground_beetle_serializer import GroundBeetleSerializer
+from .item_serializer import ItemSerializer
+from core.data.serializers.item_area_serializer import ItemAreaSerializer
+from core.data.serializers.item_source_serializer import ItemSourceSerializer
 
 class WorldSerializer():
 
-    def __init__(self, nest_serializer: NestSerializer, ant_serializer: AntSerializer, food_serializer: FoodSerializer, food_area_serializer: FoodAreaSerializer, colony_serializer: ColonySerializer, colony_relations_table_serializer: ColonyRelationsTableSerializer, food_source_serializer: FoodSourceSerializer, ground_beetle_serializer: GroundBeetleSerializer):
+    def __init__(self, nest_serializer: NestSerializer, ant_serializer: AntSerializer, item_serializer: ItemSerializer, item_area_serializer: ItemAreaSerializer, item_source_serializer: ItemSourceSerializer, colony_serializer: ColonySerializer, colony_relations_table_serializer: ColonyRelationsTableSerializer, ground_beetle_serializer: GroundBeetleSerializer):
         self._nest_serializer = nest_serializer
         self._ant_serializer = ant_serializer
-        self._food_serializer = food_serializer
-        self._food_area_serializer = food_area_serializer
         self._colony_serializer = colony_serializer
         self._colony_relations_table_serializer: ColonyRelationsTableSerializer = colony_relations_table_serializer
-        self._food_source_serializer = food_source_serializer
         self._ground_beetle_serializer = ground_beetle_serializer
+        self._item_serializer = item_serializer
+        self._item_area_serializer = item_area_serializer
+        self._item_source_serializer = item_source_serializer
 
     def serialize(self, world: World):
         json = {
             'nests': [],
             'ants': [],
             'ground_beetles': [],
-            'foods': [],
-            'food_areas': [],
-            'food_sources': [],
+            'items': [],
+            'item_areas': [],
+            'item_sources': [],
             'colonies': [],
             'map': {
                 'size': {
@@ -51,17 +51,17 @@ class WorldSerializer():
         for ground_beetle in ground_beetles:
             json['ground_beetles'].append(self._ground_beetle_serializer.serialize(ground_beetle))
 
-        foods = world.map.get_entities(entity_types=[EntityTypes.FOOD])
-        for food in foods:
-            json['foods'].append(self._food_serializer.serialize(food))
+        items = world.map.get_entities(entity_types=[EntityTypes.ITEM])
+        for item in items:
+            json['items'].append(self._item_serializer.serialize(item))
 
-        food_areas = world.map.get_entities(entity_types=[EntityTypes.FOOD_AREA])
-        for food_area in food_areas:
-            json['food_areas'].append(self._food_area_serializer.serialize(food_area))
+        item_areas = world.map.get_entities(entity_types=[EntityTypes.ITEM_AREA])
+        for item_area in item_areas:
+            json['item_areas'].append(self._item_area_serializer.serialize(item_area))
 
-        food_sources = world.map.get_entities(entity_types=[EntityTypes.FOOD_SOURCE])
-        for food_source in food_sources:
-            json['food_sources'].append(self._food_source_serializer.serialize(food_source))
+        item_sources = world.map.get_entities(entity_types=[EntityTypes.ITEM_SOURCE])
+        for item_source in item_sources:
+            json['item_sources'].append(self._item_source_serializer.serialize(item_source))
 
         colonies = world.colonies
         for colony in colonies:

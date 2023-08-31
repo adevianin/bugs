@@ -1,4 +1,4 @@
-from .plain_entity_serializer import PlainEntitySerializer
+from .base.plain_entity_serializer import PlainEntitySerializer
 from core.world.entities.nest.nest import Nest
 from .larva_serializer import LarvaSerializer
 

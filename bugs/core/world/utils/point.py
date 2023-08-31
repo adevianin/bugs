@@ -79,3 +79,9 @@ class Point(namedtuple('Point', ['x', 'y'])):
         new_y += center[1]
         
         return Point(new_x, new_y)
+    
+    def to_public_json(self):
+        return {
+            'x': self.x,
+            'y': self.y
+        }

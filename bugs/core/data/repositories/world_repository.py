@@ -4,7 +4,6 @@ from .world_data_repository import WorldDataRepository
 from core.world.entities.base.entity_collection import EntityCollection
 from core.data.factories.json_nest_factory import JsonNestFactory
 from core.data.factories.json_ant_factory import JsonAntFactory
-from core.data.factories.json_food_factory import JsonFoodFactory
 from core.data.factories.json_colony_factory import JsonColonyFactory
 from core.data.factories.json_thought_factory import JsonThoughtFactory
 from core.world.entities.world.world import World
@@ -15,18 +14,23 @@ from core.world.entities.colony.colony_relations_table import ColonyRelationsTab
 from core.world.entities.ant.base.ant import Ant
 from core.data.factories.json_ground_beetle_factory import JsonGroundBeetleFactory
 from core.world.entities.ground_beetle.ground_beetle import GroundBeetle
+from core.data.factories.json_item_factory import JsonItemFactory
+from core.data.factories.json_item_source_factory import JsonItemSourceFactory
+from core.data.factories.json_item_area_factory import JsonItemAreaFactory
 
 class WorldRepository(iWorldRepository):
 
-    def __init__(self, world_data_repository: WorldDataRepository, nest_factory: JsonNestFactory, ant_factory: JsonAntFactory, food_factory: JsonFoodFactory, colony_factory: JsonColonyFactory, thought_factory: JsonThoughtFactory, json_map_factory: JsonMapFactory, world_factory: WorldFactory, json_ground_beetle_factory: JsonGroundBeetleFactory, world_serializer: WorldSerializer):
+    def __init__(self, world_data_repository: WorldDataRepository, nest_factory: JsonNestFactory, ant_factory: JsonAntFactory, colony_factory: JsonColonyFactory, thought_factory: JsonThoughtFactory, json_map_factory: JsonMapFactory, world_factory: WorldFactory, json_ground_beetle_factory: JsonGroundBeetleFactory, json_item_factory: JsonItemFactory, json_item_source_factory: JsonItemSourceFactory, json_item_area_factory: JsonItemAreaFactory, world_serializer: WorldSerializer):
         self._world_data_repository = world_data_repository
         self._json_nest_factory = nest_factory
         self._json_ant_factory = ant_factory
-        self._json_food_factory = food_factory
         self._json_colony_factory = colony_factory
         self._json_thought_factory = thought_factory
         self._json_map_factory = json_map_factory
         self._json_ground_beetle_factory = json_ground_beetle_factory
+        self._json_item_factory = json_item_factory
+        self._json_item_source_factory = json_item_source_factory
+        self._json_item_area_factory = json_item_area_factory
         self._world_factory = world_factory
         self._world_serializer = world_serializer
 
@@ -40,20 +44,20 @@ class WorldRepository(iWorldRepository):
             nest = self._json_nest_factory.build_nest_from_json(nest_data)
             entities_collection.add_entity(nest)
 
-        foods_json = world_data['foods']
-        for food_json in foods_json:
-            food = self._json_food_factory.build_food_from_json(food_json)
-            entities_collection.add_entity(food)
+        items_json = world_data['items']
+        for item_json in items_json:
+            item = self._json_item_factory.build_item_from_json(item_json)
+            entities_collection.add_entity(item)
 
-        food_areas_json = world_data['food_areas']
-        for food_area_json in food_areas_json:
-            food_area = self._json_food_factory.build_food_area_from_json(food_area_json)
-            entities_collection.add_entity(food_area)
+        item_areas_json = world_data['item_areas']
+        for item_area_json in item_areas_json:
+            item_area = self._json_item_area_factory.build_item_area_from_json(item_area_json)
+            entities_collection.add_entity(item_area)
 
-        food_sources_json = world_data['food_sources']
-        for food_source_json in food_sources_json:
-            food_area = self._json_food_factory.build_food_source_from_json(food_source_json)
-            entities_collection.add_entity(food_area)
+        item_sources_json = world_data['item_sources']
+        for item_source_json in item_sources_json:
+            item_source = self._json_item_source_factory.build_item_source_from_json(item_source_json)
+            entities_collection.add_entity(item_source)
 
         ground_beetles_json = world_data['ground_beetles']
         for ground_beetle_json in ground_beetles_json:

@@ -2,7 +2,7 @@ import { EntityView } from './entityView';
 import * as PIXI from 'pixi.js';
 import { HpLineView } from './hpLine';
 
-class FoodSourceView extends EntityView { 
+class ItemSourceView extends EntityView { 
 
     constructor(entity, entitiesContainer) {
         super(entity, entitiesContainer);
@@ -18,9 +18,9 @@ class FoodSourceView extends EntityView {
         this._entityContainer.addChild(this._bodyContainer);
         this._entityContainer.addChild(this._uiContainer);
         
-        this._standSprite = new PIXI.Sprite(this.$textureManager.getTexture(`food_source_${this._entity.foodType}.png`));
+        this._standSprite = new PIXI.Sprite(this.$textureManager.getTexture(`item_source_${this._entity.itemType}.png`));
         this._bodyContainer.addChild(this._standSprite);
-        this._deadSprite = new PIXI.Sprite(this.$textureManager.getTexture(`food_source_${this._entity.foodType}_dead.png`));
+        this._deadSprite = new PIXI.Sprite(this.$textureManager.getTexture(`item_source_${this._entity.itemType}_not_fertile.png`));
         this._bodyContainer.addChild(this._deadSprite);
 
         this._entityContainer.x = this._entity.position.x;
@@ -47,5 +47,5 @@ class FoodSourceView extends EntityView {
 }
 
 export {
-    FoodSourceView
+    ItemSourceView
 }

@@ -2,12 +2,12 @@ import { EntityTypes } from './enum/entityTypes';
 import { Ant } from './entity/ant';
 import { World } from './entity/world';
 import { Nest } from './entity/nest';
-import { Food } from './entity/food';
-import { FoodArea } from './entity/foodArea';
 import { Larva } from './entity/larva';
 import { Colony } from './entity/colony';
-import { FoodSource } from './entity/foodSource';
 import { GroundBeetle } from './entity/groundBeetle';
+import { Item } from './entity/item';
+import { ItemSource } from './entity/itemSource';
+import { ItemArea } from './entity/itemArea';
 
 class WorldFactory {
 
@@ -19,46 +19,46 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case EntityTypes.ANT: 
-                return this.buildAnt(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp, entityJson.ant_type, entityJson.picked_food_id, entityJson.located_in_nest_id);
+                return this.buildAnt(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp, entityJson.ant_type, entityJson.picked_item_id, entityJson.located_in_nest_id);
             case EntityTypes.GROUND_BEETLE:
                 return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp);
             case EntityTypes.NEST:
                 return this.buildNest(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count, entityJson.is_built, entityJson.hp, entityJson.max_hp);
-            case EntityTypes.FOOD:
-                return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety, entityJson.is_picked);
-            case EntityTypes.FOOD_AREA:
-                return this.buildFoodArea(entityJson.id, entityJson.position);
-            case EntityTypes.FOOD_SOURCE:
-                return this.buildFoodSource(entityJson.id, entityJson.position, entityJson.hp, entityJson.max_hp, entityJson.food_type, entityJson.is_fertile);
+            case EntityTypes.ITEM:
+                return this.buildItem(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.item_variety, entityJson.is_picked);
+            case EntityTypes.ITEM_SOURCE:
+                return this.buildItemSource(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.is_fertile);
+            case EntityTypes.ITEM_AREA:
+                return this.buildItemArea(entityJson.id, entityJson.position, entityJson.hp, entityJson.max_hp);
             default:
                 throw 'unknown type of entity';
         }
+    }
+
+    buildItemArea(id, position, hp, maxHp) {
+        return new ItemArea(this._mainEventBus, id, position, hp, maxHp);
+    }
+
+    buildItemSource(id, position, fromColony, hp, maxHp, itemType, isFertile) {
+        return new ItemSource(this._mainEventBus, id, position, fromColony, hp, maxHp, itemType, isFertile);
+    }
+
+    buildItem(id, position, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
+        return new Item(this._mainEventBus, id, position, fromColony, hp, maxHp, itemType, itemVariety, isPicked);
     }
 
     buildWorld() {
         return new World(this._mainEventBus);
     }
 
-    buildAnt(id, position, fromColony, userSpeed, hp, maxHp, antType, pickedFoodId, locatedInNestId) {
-        return new Ant(this._mainEventBus, id, position, fromColony, userSpeed, hp, maxHp, antType, pickedFoodId, locatedInNestId);
+    buildAnt(id, position, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId) {
+        return new Ant(this._mainEventBus, id, position, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId);
     }
 
     buildNest(id, position, fromColony, storedCalories, larvaeData, larvaPlacesCount, isBuilt, hp, maxHp) {
         let larvae = [];
         larvaeData.forEach(larvaData => larvae.push(Larva.fromJson(larvaData.ant_type, larvaData.progress)));
         return new Nest(this._mainEventBus, this._nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp);
-    }
-
-    buildFood(id, position, calories, food_type, food_varity, is_picked) {
-        return new Food(this._mainEventBus, id, position, calories, food_type, food_varity, is_picked);
-    }
-
-    buildFoodArea(id, position) {
-        return new FoodArea(this._mainEventBus, id, position);
-    }
-
-    buildFoodSource(id, position, hp, maxHp, foodType, isFertile) {
-        return new FoodSource(this._mainEventBus, id, position, hp, maxHp, foodType, isFertile);
     }
 
     buildColony(id, owner_id, operations) {

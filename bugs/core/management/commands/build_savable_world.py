@@ -24,7 +24,7 @@ class Command(BaseCommand):
                     350
                 ],
                 "located_in_nest_id":None,
-                "picked_food_id":None,
+                "picked_item_id":None,
                 "ant_type":"worker",
                 "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
                 "from_nest":30,
@@ -44,7 +44,7 @@ class Command(BaseCommand):
                     350
                 ],
                 "located_in_nest_id":30,
-                "picked_food_id":None,
+                "picked_item_id":None,
                 "ant_type":"queen",
                 "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
                 "from_nest":30,
@@ -65,7 +65,7 @@ class Command(BaseCommand):
                     350
                 ],
                 "located_in_nest_id":30,
-                "picked_food_id":None,
+                "picked_item_id":None,
                 "ant_type":"warrior",
                 "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
                 "from_nest":30,
@@ -79,10 +79,10 @@ class Command(BaseCommand):
                 "is_in_operation": False
             }
         ],
-        "foods":[
+        "items": [
             {
                 "id":20,
-                "type":"food",
+                "type":"item",
                 "from_colony_id":None,
                 "hp": 100,
                 "position":[
@@ -90,24 +90,10 @@ class Command(BaseCommand):
                     350
                 ],
                 "calories":150,
-                "food_type":"leaf",
-                "food_variety":1,
+                "item_type":"leaf",
+                "item_variety":1,
                 "is_picked": False
             },
-            {
-                "id":21,
-                "type":"food",
-                "from_colony_id":None,
-                "hp": 100,
-                "position":[
-                    850,
-                    350
-                ],
-                "calories":300,
-                "food_type":"leaf",
-                "food_variety":2,
-                "is_picked": False
-            }
         ],
         "nests":[
             {
@@ -167,16 +153,16 @@ class Command(BaseCommand):
                         "ate_calories":440.0,
                         "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
                     },
-                    # {
-                    #     "ant_type":"worker",
-                    #     "ate_calories":99,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    # },
-                    # {
-                    #     "ant_type":"worker",
-                    #     "ate_calories":99,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    # },
+                    {
+                        "ant_type":"worker",
+                        "ate_calories":99,
+                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    },
+                    {
+                        "ant_type":"worker",
+                        "ate_calories":99,
+                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    },
                 ],
                 "larva_places_count":1,
                 "area":300,
@@ -209,10 +195,10 @@ class Command(BaseCommand):
                 "build_progress": 100
             },
         ],
-        "food_areas":[
+        "item_areas": [
             {
                 "id":40,
-                "type":"food_area",
+                "type":"item_area",
                 "from_colony_id":None,
                 "hp": 100,
                 "position":[
@@ -220,15 +206,16 @@ class Command(BaseCommand):
                     300
                 ],
                 "size":[
-                    150,
-                    150
+                    350,
+                    200
                 ],
                 "fertility":5,
-                "food_type":"leaf"
+                "item_type":"leaf",
+                "accumulated": 0
             },
             {
                 "id":41,
-                "type":"food_area",
+                "type":"item_area",
                 "from_colony_id":None,
                 "hp": 100,
                 "position":[
@@ -240,13 +227,14 @@ class Command(BaseCommand):
                     150
                 ],
                 "fertility":5,
-                "food_type":"nectar"
+                "item_type":"flower",
+                "accumulated": 0
             }
         ],
-        "food_sources": [
+        "item_sources": [
             {
                 "id":50,
-                "type":"food_source",
+                "type":"item_source",
                 "from_colony_id": None,
                 "hp": 100,
                 "position":[
@@ -254,8 +242,8 @@ class Command(BaseCommand):
                     350
                 ],
                 "fertility":5,
-                "food_type":"honeydew",
-                "calories": 10
+                "item_type":"honeydew",
+                "accumulated": 10
             },
         ],
         "ground_beetles": [
@@ -265,8 +253,8 @@ class Command(BaseCommand):
                 "from_colony_id":3,
                 "hp": 800,
                 "position":[
-                    200,
-                    200
+                    850,
+                    350
                 ],
                 "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
                 "thoughts":[

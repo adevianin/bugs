@@ -1,6 +1,5 @@
 from core.world.entities.base.live_entity.body import Body
 from core.world.utils.point import Point
-from core.world.entities.food.food import Food
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
@@ -18,7 +17,8 @@ from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought im
 from core.world.entities.ant.base.thoughts.reinforce_nest_defence_thought import ReinforceNestDefenceThought
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 from core.world.entities.ground_beetle.thoughts.hunt_for_aphid import HuntForAphid
-from core.world.entities.food.food_source import FoodSource
+from core.world.entities.items.base.item import Item
+from core.world.entities.items.base.item_source import ItemSource
 
 class ThoughtFactory:
 
@@ -31,10 +31,10 @@ class ThoughtFactory:
     def build_find_food_thought(self, body: Body, random_walk_thought: RandomWalkThought, flags: dict = None, sayback: str = None):
         return FindFoodThought(body=body, random_walk_thought=random_walk_thought, flags=flags, sayback=sayback)
     
-    def build_collect_food_thought(self, body: Body, nest: Nest, random_walk_thought: RandomWalkThought, go_gome_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
+    def build_collect_food_thought(self, body: Body, nest: Nest, random_walk_thought: RandomWalkThought, go_gome_thought: GoInNestThought, found_food: Item = None, flags: dict = None, sayback: str = None):
         return CollectFoodThought(body=body, nest=nest, random_walk_thought=random_walk_thought, go_home_thought=go_gome_thought, found_food=found_food, flags=flags, sayback=sayback)
     
-    def build_feed_myself_thought(self, body: Body, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
+    def build_feed_myself_thought(self, body: Body, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Item = None, flags: dict = None, sayback: str = None):
         return FeedMyselfThought(body=body, home=home, find_food_thought=find_food_thought, go_home_thought=go_home_thought, found_food=found_food, flags=flags, sayback=sayback)
 
     def build_prepare_for_operation_thought(self, body: Body, feed_myself_thought: FeedMyselfThought, assemble_point: Point, flags: dict = None, sayback: str = None):
@@ -64,7 +64,7 @@ class ThoughtFactory:
     def build_random_walk_thought(self, body: Body, center: Point, radius: int, flags: dict = None, sayback: str = None):
         return RandomWalkThought(body=body, center=center, radius=radius, flags=flags, sayback=sayback)
     
-    def build_hunt_for_aphid(self, body: Body, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_food_source: FoodSource, flags: dict = None, sayback: str = None):
+    def build_hunt_for_aphid(self, body: Body, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_food_source: ItemSource, flags: dict = None, sayback: str = None):
         return HuntForAphid(body=body, random_walk_thought=random_walk_thought, fight_near_enemies_thought=fight_near_enemies_thought, found_food_source=found_food_source, flags=flags, sayback=sayback)
     
     def build_feed_myself_full(self, body: Body, home_nest: Nest, sayback: str = None):

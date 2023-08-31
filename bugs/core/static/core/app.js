@@ -189,9 +189,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ACTION_TYPES": () => (/* binding */ ACTION_TYPES)
 /* harmony export */ });
 const ACTION_TYPES = {
-    ANT_PICKED_UP_FOOD: 'ant_picked_up_food',
-    ANT_GAVE_PICKED_FOOD: 'ant_gave_picked_food',
-    ANT_DROPPED_PICKED_FOOD: 'ant_dropped_picked_food',
+    ANT_PICKED_UP_ITEM: 'ant_picked_up_item',
+    ANT_DROPPED_PICKED_ITEM: 'ant_dropped_picked_item',
     ENTITY_EAT_FOOD: 'entity_eat_food',
     ENTITY_DIED: 'entity_died',
     ENTITY_BORN: 'entity_born',
@@ -199,9 +198,9 @@ const ACTION_TYPES = {
     ENTITY_GOT_IN_NEST: 'entity_got_in_nest',
     ENTITY_GOT_OUT_OF_NEST: 'entity_got_out_of_nest',
     ENTITY_HP_CHANGE: 'entity_hp_change',
-    FOOD_WAS_PICKED_UP: 'food_was_picked_up',
-    FOOD_WAS_DROPPED: 'food_was_dropped',
-    FOOD_SOURCE_FERTILITY_CHANGED: 'food_source_fertility_changed',
+    ITEM_WAS_PICKED_UP: 'item_was_picked_up',
+    ITEM_WAS_DROPPED: 'item_was_dropped',
+    ITEM_SOURCE_FERTILITY_CHANGED: 'item_source_fertility_changed',
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
     NEST_LARVAE_CHANGED: 'nest_larvae_changed',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
@@ -231,9 +230,9 @@ __webpack_require__.r(__webpack_exports__);
 
 class Ant extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
-    constructor(eventBus, id, position, fromColony, userSpeed, hp, maxHp, antType, pickedFoodId, locatedInNestId) {
+    constructor(eventBus, id, position, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId) {
         super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony, userSpeed, hp, maxHp);
-        this.pickedFoodId = pickedFoodId;
+        this._pickedItemId = pickedItemId;
         this._antType = antType;
         this._setState('standing');
         this._locatedInNestId = locatedInNestId;
@@ -255,20 +254,30 @@ class Ant extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         return this._locatedInNestId;
     }
 
+    get pickedItemId() {
+        return this._pickedItemId;
+    }
+
+    set pickedItemId(itemId) {
+        this._pickedItemId = itemId;
+    }
+
+    hasPickedItem() {
+        return !!this._pickedItemId;
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {
             return promise
         }
         switch (action.type) {
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_PICKED_UP_FOOD:
-                return this._playFoodPickingAction(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_GAVE_PICKED_FOOD:
-                return this._playFoodGiving(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_DROPPED_PICKED_FOOD:
-                return this._playFoodDrop(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_EAT_FOOD:
-                return this._playEatFoodAction(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_PICKED_UP_ITEM:
+                return this._playItemPickingAction(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_DROPPED_PICKED_ITEM:
+                return this._playItemDroped(action);
+            // case ACTION_TYPES.ENTITY_EAT_FOOD:
+            //     return this._playEatFoodAction(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_IN_NEST:
                 return this._playGotInNest(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
@@ -276,33 +285,20 @@ class Ant extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         }
     }
 
-    hasPickedFood() {
-        return !!this.pickedFoodId;
-    }
-
-    _playFoodPickingAction(action) {
+    _playItemPickingAction(action) {
         this._setState('standing');
         return new Promise((res) => {
-            this.pickedFoodId = action.actionData.food_id;
-            this.emit('foodPickedUp');
+            this.pickedItemId = action.actionData.item_id;
+            this.emit('itemPickedUp');
             res();
         });
     }
 
-    _playFoodGiving(action) {
+    _playItemDroped(action) {
         this._setState('standing');
         return new Promise((res) => {
-            this.pickedFoodId = null;
-            this.emit('foodDroped')
-            res();
-        });
-    }
-
-    _playFoodDrop(action) {
-        this._setState('standing');
-        return new Promise((res) => {
-            this.pickedFoodId = null;
-            this.emit('foodDroped')
+            this.pickedItemId = null;
+            this.emit('itemDroped')
             res();
         });
     }
@@ -523,181 +519,6 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/entity/food.js":
-/*!********************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/food.js ***!
-  \********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Food": () => (/* binding */ Food)
-/* harmony export */ });
-/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
-/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
-/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
-
-
-
-
-class Food extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
-    constructor(eventBus, id, position, calories, food_type, food_varity, is_picked, hp, maxHp) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD, null, hp, maxHp);
-        this.calories = calories;
-        this._food_type = food_type;
-        this._food_variety = food_varity;
-        this._is_picked = is_picked;
-    }
-
-    get food_type() {
-        return this._food_type;
-    }
-
-    get food_variety() {
-        return this._food_variety;
-    }
-
-    get is_picked() {
-        return this._is_picked;
-    }
-
-    set is_picked(value) {
-        this._is_picked = value;
-        this.emit('isPickedChanged');
-    }
-
-    playAction(action) {
-        let promise = super.playAction(action)
-        if (promise) {
-            return promise
-        }
-        switch (action.type) {
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_WAS_PICKED_UP:
-                return this._playFoodPickedUp(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_WAS_DROPPED:
-                return this._playFoodDrop(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_DIED:
-                return this._playEntityDied(action);
-        }
-    }
-
-    _playFoodPickedUp(action) {
-        return new Promise((res) => {
-            this.is_picked = true;
-            res();
-        });
-    }
-    
-    _playFoodDrop(action) {
-        return new Promise((res) => {
-            this.is_picked = false;
-            let pos = action.actionData.position;
-            this.setPosition(pos.x, pos.y);
-            res();
-        });
-    }
-
-    _playEntityDied(action) {
-        return new Promise((res) => {
-            this.die();
-            res();
-        });
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/domain/entity/foodArea.js":
-/*!************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/foodArea.js ***!
-  \************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "FoodArea": () => (/* binding */ FoodArea)
-/* harmony export */ });
-/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
-/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
-
-
-
-class FoodArea extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
-    constructor(eventBus, id, position, hp, maxHp) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD_AREA, null, hp, maxHp);
-    }
-
-    updateEntity(entityJson) {
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/domain/entity/foodSource.js":
-/*!**************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/foodSource.js ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "FoodSource": () => (/* binding */ FoodSource)
-/* harmony export */ });
-/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
-/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
-/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
-
-
-
-
-class FoodSource extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
-    constructor(eventBus, id, position, hp, maxHp, foodType, isFertile) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.FOOD_SOURCE, null, hp, maxHp);
-        this.foodType = foodType;
-        this._isFertile = isFertile;
-    }
-
-    set isFertile(value) {
-        this._isFertile = value;
-        this.emit('fertileChanged');
-    }
-
-    get isFertile() {
-        return this._isFertile;
-    }
-
-    playAction(action) {
-        let promise = super.playAction(action)
-        if (promise) {
-            return promise
-        }
-        switch (action.type) {
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.FOOD_SOURCE_FERTILITY_CHANGED:
-                return this._playFertilityChangedAction(action);
-        }
-
-        return null;
-    }
-
-    _playFertilityChangedAction(action) {
-        return new Promise((res) => {
-            this.isFertile = action.actionData.is_fertile
-            res();
-        });
-    }
-}
-
-
-
-/***/ }),
-
 /***/ "./bugs/core/client/app/src/domain/entity/groundBeetle.js":
 /*!****************************************************************!*\
   !*** ./bugs/core/client/app/src/domain/entity/groundBeetle.js ***!
@@ -720,6 +541,181 @@ class GroundBeetle extends _liveEntity__WEBPACK_IMPORTED_MODULE_1__.LiveEntity {
         super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.GROUND_BEETLE, fromColony, userSpeed, hp, maxHp);
 
         this._setState('standing');
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/item.js":
+/*!********************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/item.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Item": () => (/* binding */ Item)
+/* harmony export */ });
+/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
+/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+
+
+
+
+class Item extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
+    
+    constructor(eventBus, id, position, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ITEM, fromColony, hp, maxHp);
+        this._itemType = itemType;
+        this._itemVariety = itemVariety;
+        this._isPicked = isPicked;
+    }
+
+    get itemType() {
+        return this._itemType;
+    }
+
+    get itemVariety() {
+        return this._itemVariety;
+    }
+
+    get isPicked() {
+        return this._isPicked;
+    }
+
+    set isPicked(value) {
+        this._isPicked = value;
+        this.emit('isPickedChanged');
+    }
+
+    playAction(action) {
+        let promise = super.playAction(action)
+        if (promise) {
+            return promise
+        }
+        switch (action.type) {
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ITEM_WAS_PICKED_UP:
+                return this._playItemPickedUp(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ITEM_WAS_DROPPED:
+                return this._playItemDrop(action);
+        }
+    }
+
+    _playEntityDied(action) {
+        this._setState('dead');
+        this.die();
+        return Promise.resolve();
+    }
+
+    _playItemPickedUp(action) {
+        return new Promise((res) => {
+            this.isPicked = true;
+            res();
+        });
+    }
+    
+    _playItemDrop(action) {
+        return new Promise((res) => {
+            this.isPicked = false;
+            let pos = action.actionData.position;
+            this.setPosition(pos.x, pos.y);
+            res();
+        });
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/itemArea.js":
+/*!************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/itemArea.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ItemArea": () => (/* binding */ ItemArea)
+/* harmony export */ });
+/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
+/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+
+
+
+class ItemArea extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
+    constructor(eventBus, id, position, hp, maxHp) {
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ITEM_AREA, null, hp, maxHp);
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/itemSource.js":
+/*!**************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/itemSource.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ItemSource": () => (/* binding */ ItemSource)
+/* harmony export */ });
+/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
+/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+
+
+
+
+class ItemSource extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
+    
+    constructor(eventBus, id, position, fromColony, hp, maxHp, itemType, isFertile) {
+        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ITEM_SOURCE, fromColony, hp, maxHp);
+        this._itemType = itemType;
+        this._isFertile = isFertile;
+    }
+
+    get itemType() {
+        return this._itemType;
+    }
+
+    set isFertile(value) {
+        this._isFertile = value;
+        this.emit('fertileChanged');
+    }
+
+    get isFertile() {
+        return this._isFertile;
+    }
+
+    playAction(action) {
+        let promise = super.playAction(action)
+        if (promise) {
+            return promise
+        }
+        switch (action.type) {
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ITEM_SOURCE_FERTILITY_CHANGED:
+                return this._playFertilityChangedAction(action);
+        }
+
+        return null;
+    }
+
+    _playFertilityChangedAction(action) {
+        return new Promise((res) => {
+            this.isFertile = action.actionData.is_fertile
+            res();
+        });
     }
 }
 
@@ -1099,10 +1095,10 @@ __webpack_require__.r(__webpack_exports__);
 const EntityTypes = {
     ANT: 'ant',
     GROUND_BEETLE: 'ground_beetle',
-    FOOD: 'food',
     NEST: 'nest',
-    FOOD_AREA: 'food_area',
-    FOOD_SOURCE: 'food_source'
+    ITEM: 'item',
+    ITEM_SOURCE: 'item_source',
+    ITEM_AREA: 'item_area'
 }
 
 
@@ -1493,12 +1489,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_ant__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entity/ant */ "./bugs/core/client/app/src/domain/entity/ant.js");
 /* harmony import */ var _entity_world__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./entity/world */ "./bugs/core/client/app/src/domain/entity/world.js");
 /* harmony import */ var _entity_nest__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./entity/nest */ "./bugs/core/client/app/src/domain/entity/nest.js");
-/* harmony import */ var _entity_food__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./entity/food */ "./bugs/core/client/app/src/domain/entity/food.js");
-/* harmony import */ var _entity_foodArea__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/foodArea */ "./bugs/core/client/app/src/domain/entity/foodArea.js");
-/* harmony import */ var _entity_larva__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entity/larva */ "./bugs/core/client/app/src/domain/entity/larva.js");
-/* harmony import */ var _entity_colony__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entity/colony */ "./bugs/core/client/app/src/domain/entity/colony.js");
-/* harmony import */ var _entity_foodSource__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entity/foodSource */ "./bugs/core/client/app/src/domain/entity/foodSource.js");
-/* harmony import */ var _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entity/groundBeetle */ "./bugs/core/client/app/src/domain/entity/groundBeetle.js");
+/* harmony import */ var _entity_larva__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./entity/larva */ "./bugs/core/client/app/src/domain/entity/larva.js");
+/* harmony import */ var _entity_colony__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/colony */ "./bugs/core/client/app/src/domain/entity/colony.js");
+/* harmony import */ var _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entity/groundBeetle */ "./bugs/core/client/app/src/domain/entity/groundBeetle.js");
+/* harmony import */ var _entity_item__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entity/item */ "./bugs/core/client/app/src/domain/entity/item.js");
+/* harmony import */ var _entity_itemSource__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entity/itemSource */ "./bugs/core/client/app/src/domain/entity/itemSource.js");
+/* harmony import */ var _entity_itemArea__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entity/itemArea */ "./bugs/core/client/app/src/domain/entity/itemArea.js");
 
 
 
@@ -1520,54 +1516,54 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT: 
-                return this.buildAnt(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp, entityJson.ant_type, entityJson.picked_food_id, entityJson.located_in_nest_id);
+                return this.buildAnt(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp, entityJson.ant_type, entityJson.picked_item_id, entityJson.located_in_nest_id);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.GROUND_BEETLE:
                 return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
                 return this.buildNest(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count, entityJson.is_built, entityJson.hp, entityJson.max_hp);
-            case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD:
-                return this.buildFood(entityJson.id, entityJson.position, entityJson.calories, entityJson.food_type, entityJson.food_variety, entityJson.is_picked);
-            case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_AREA:
-                return this.buildFoodArea(entityJson.id, entityJson.position);
-            case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.FOOD_SOURCE:
-                return this.buildFoodSource(entityJson.id, entityJson.position, entityJson.hp, entityJson.max_hp, entityJson.food_type, entityJson.is_fertile);
+            case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM:
+                return this.buildItem(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.item_variety, entityJson.is_picked);
+            case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM_SOURCE:
+                return this.buildItemSource(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.is_fertile);
+            case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM_AREA:
+                return this.buildItemArea(entityJson.id, entityJson.position, entityJson.hp, entityJson.max_hp);
             default:
                 throw 'unknown type of entity';
         }
+    }
+
+    buildItemArea(id, position, hp, maxHp) {
+        return new _entity_itemArea__WEBPACK_IMPORTED_MODULE_9__.ItemArea(this._mainEventBus, id, position, hp, maxHp);
+    }
+
+    buildItemSource(id, position, fromColony, hp, maxHp, itemType, isFertile) {
+        return new _entity_itemSource__WEBPACK_IMPORTED_MODULE_8__.ItemSource(this._mainEventBus, id, position, fromColony, hp, maxHp, itemType, isFertile);
+    }
+
+    buildItem(id, position, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
+        return new _entity_item__WEBPACK_IMPORTED_MODULE_7__.Item(this._mainEventBus, id, position, fromColony, hp, maxHp, itemType, itemVariety, isPicked);
     }
 
     buildWorld() {
         return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this._mainEventBus);
     }
 
-    buildAnt(id, position, fromColony, userSpeed, hp, maxHp, antType, pickedFoodId, locatedInNestId) {
-        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, position, fromColony, userSpeed, hp, maxHp, antType, pickedFoodId, locatedInNestId);
+    buildAnt(id, position, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, position, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId);
     }
 
     buildNest(id, position, fromColony, storedCalories, larvaeData, larvaPlacesCount, isBuilt, hp, maxHp) {
         let larvae = [];
-        larvaeData.forEach(larvaData => larvae.push(_entity_larva__WEBPACK_IMPORTED_MODULE_6__.Larva.fromJson(larvaData.ant_type, larvaData.progress)));
+        larvaeData.forEach(larvaData => larvae.push(_entity_larva__WEBPACK_IMPORTED_MODULE_4__.Larva.fromJson(larvaData.ant_type, larvaData.progress)));
         return new _entity_nest__WEBPACK_IMPORTED_MODULE_3__.Nest(this._mainEventBus, this._nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp);
     }
 
-    buildFood(id, position, calories, food_type, food_varity, is_picked) {
-        return new _entity_food__WEBPACK_IMPORTED_MODULE_4__.Food(this._mainEventBus, id, position, calories, food_type, food_varity, is_picked);
-    }
-
-    buildFoodArea(id, position) {
-        return new _entity_foodArea__WEBPACK_IMPORTED_MODULE_5__.FoodArea(this._mainEventBus, id, position);
-    }
-
-    buildFoodSource(id, position, hp, maxHp, foodType, isFertile) {
-        return new _entity_foodSource__WEBPACK_IMPORTED_MODULE_8__.FoodSource(this._mainEventBus, id, position, hp, maxHp, foodType, isFertile);
-    }
-
     buildColony(id, owner_id, operations) {
-        return new _entity_colony__WEBPACK_IMPORTED_MODULE_7__.Colony(id, owner_id, operations);
+        return new _entity_colony__WEBPACK_IMPORTED_MODULE_5__.Colony(id, owner_id, operations);
     }
 
     buildGroundBeetle(id, position, fromColony, userSpeed, hp, maxHp) {
-        return new _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_9__.GroundBeetle(this._mainEventBus, id, position, fromColony, userSpeed, hp, maxHp);
+        return new _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_6__.GroundBeetle(this._mainEventBus, id, position, fromColony, userSpeed, hp, maxHp);
     }
 }
 
@@ -2846,7 +2842,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "AntView": () => (/* binding */ AntView)
 /* harmony export */ });
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-/* harmony import */ var _pickedFood__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pickedFood */ "./bugs/core/client/app/src/view/world/pickedFood.js");
+/* harmony import */ var _pickedItemView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pickedItemView */ "./bugs/core/client/app/src/view/world/pickedItemView.js");
 /* harmony import */ var _liveEntityView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./liveEntityView */ "./bugs/core/client/app/src/view/world/liveEntityView.js");
 
 
@@ -2859,24 +2855,24 @@ class AntView extends _liveEntityView__WEBPACK_IMPORTED_MODULE_2__.LiveEntityVie
 
         this._render();
 
-        this._unbindFoodLiftListener = this._entity.on('foodPickedUp', this._renderPickedFoodView.bind(this));
-        this._unbindFoodDropListener = this._entity.on('foodDroped', this._removePickedFoodView.bind(this));
+        this._unbindItemPickedUpListener = this._entity.on('itemPickedUp', this._renderPickedItemView.bind(this));
+        this._unbindItemDropListener = this._entity.on('itemDroped', this._removePickedItemView.bind(this));
         this._unbindIsHiddenChangedListener = this._entity.on('locatedInNestChanged', this._renderIsInNest.bind(this));
     }
 
     remove() {
         super.remove();
-        this._unbindFoodLiftListener();
-        this._unbindFoodDropListener();
+        this._unbindItemPickedUpListener();
+        this._unbindItemDropListener();
         this._unbindIsHiddenChangedListener();
-        this._removePickedFoodView();
+        this._removePickedItemView();
     }
 
     _render() {
         super._render();
 
-        if (this._entity.hasPickedFood()) { 
-            this._renderPickedFoodView();
+        if (this._entity.hasPickedItem()) { 
+            this._renderPickedItemView();
         }
 
         this._renderIsInNest();
@@ -2896,17 +2892,18 @@ class AntView extends _liveEntityView__WEBPACK_IMPORTED_MODULE_2__.LiveEntityVie
         return new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_dead.png`));
     }
 
-    _removePickedFoodView() {
-        if (this._pickedFoodView) {
-            this._pickedFoodView.remove();
-            this._pickedFoodView = null;
+    _removePickedItemView() {
+        if (this._pickedItemView) {
+            this._pickedItemView.remove();
+            this._pickedItemView = null;
         }
     }
 
-    _renderPickedFoodView() {
-        if (!this._pickedFoodView) {
-            let food = AntView.domainFacade.findEntityById(this._entity.pickedFoodId);
-            this._pickedFoodView = new _pickedFood__WEBPACK_IMPORTED_MODULE_1__.PickedFoodView(food, this._pickedItemContainer);
+    _renderPickedItemView() {
+        console.log('render picked item');
+        if (!this._pickedItemView) {
+            let item = AntView.domainFacade.findEntityById(this._entity.pickedItemId);
+            this._pickedItemView = new _pickedItemView__WEBPACK_IMPORTED_MODULE_1__.PickedItemView(item, this._pickedItemContainer);
         }
     }
 
@@ -3048,160 +3045,6 @@ class EntityView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.Base
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/world/foodArea.js":
-/*!*********************************************************!*\
-  !*** ./bugs/core/client/app/src/view/world/foodArea.js ***!
-  \*********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "FoodAreaView": () => (/* binding */ FoodAreaView)
-/* harmony export */ });
-/* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
-
-
-class FoodAreaView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
-
-    constructor(entity, entityContainer) {
-        super(entity, entityContainer);
-    }
-
-    remove() {
-        super.remove();
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/world/foodSourceView.js":
-/*!***************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/world/foodSourceView.js ***!
-  \***************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "FoodSourceView": () => (/* binding */ FoodSourceView)
-/* harmony export */ });
-/* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-/* harmony import */ var _hpLine__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./hpLine */ "./bugs/core/client/app/src/view/world/hpLine.js");
-
-
-
-
-class FoodSourceView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
-
-    constructor(entity, entitiesContainer) {
-        super(entity, entitiesContainer);
-
-        this._unbindFertileChangeListener = this._entity.on('fertileChanged', this._renderFertile.bind(this));
-
-        this._render();
-    }
-
-    _render() {
-        this._bodyContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._uiContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._entityContainer.addChild(this._bodyContainer);
-        this._entityContainer.addChild(this._uiContainer);
-        
-        this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`food_source_${this._entity.foodType}.png`));
-        this._bodyContainer.addChild(this._standSprite);
-        this._deadSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`food_source_${this._entity.foodType}_dead.png`));
-        this._bodyContainer.addChild(this._deadSprite);
-
-        this._entityContainer.x = this._entity.position.x;
-        this._entityContainer.y = this._entity.position.y;
-
-        this._entityContainer.pivot.x = this._standSprite.width / 2;
-        this._entityContainer.pivot.y = this._standSprite.height;
-
-        this._hpLineView = new _hpLine__WEBPACK_IMPORTED_MODULE_2__.HpLineView(this._entity, { x: 0, y: -10 }, this._standSprite.width, this._uiContainer);
-
-        this._renderFertile();
-    }
-
-    _renderFertile() {
-        this._standSprite.renderable = this._entity.isFertile;
-        this._deadSprite.renderable = !this._entity.isFertile;
-    }
-
-    remove() {
-        super.remove();
-        this._hpLineView.remove();
-        this._unbindFertileChangeListener();
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/world/foodView.js":
-/*!*********************************************************!*\
-  !*** ./bugs/core/client/app/src/view/world/foodView.js ***!
-  \*********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "FoodView": () => (/* binding */ FoodView)
-/* harmony export */ });
-/* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-
-
-
-class FoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
-
-    constructor(entity, entityContainer) {
-        super(entity, entityContainer);
-
-        this._render(entityContainer);
-
-        this._unbindFoodPickedUpListener = this._entity.on('isPickedChanged', this._renderIsPicked.bind(this));
-        this._unbindPosChangedListener = this._entity.on('positionChanged', this._renderPosition.bind(this));
-    }
-
-    _render(entityContainer) {
-        let textureName = `food_${this._entity.food_type}_${this._entity.food_variety}v.png`;
-        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(textureName));
-        this._sprite.anchor.set(0.5);
-        entityContainer.addChild(this._sprite);
-        
-        this._renderPosition();
-        this._renderIsPicked();
-    }
-
-    remove() {
-        this._unbindFoodPickedUpListener();
-        this._unbindPosChangedListener();
-        super.remove();
-        this._entityContainer.removeChild(this._sprite);
-    }
-
-    _renderIsPicked() {
-        this._sprite.renderable = !this._entity.is_picked;
-    }
-
-    _renderPosition() {
-        this._sprite.x = this._entity.position.x;
-        this._sprite.y = this._entity.position.y;
-    }
-
-}
-
-
-
-/***/ }),
-
 /***/ "./bugs/core/client/app/src/view/world/groundBeetleView.js":
 /*!*****************************************************************!*\
   !*** ./bugs/core/client/app/src/view/world/groundBeetleView.js ***!
@@ -3305,6 +3148,159 @@ class HpLineView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.Base
         this._hpLine.drawRect(0, 0, lineWidth, 5);
     }
 
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/world/itemAreaView.js":
+/*!*************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/itemAreaView.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ItemAreaView": () => (/* binding */ ItemAreaView)
+/* harmony export */ });
+/* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
+
+
+class ItemAreaView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
+
+    constructor(entity, entitiesContainer) {
+        super(entity, entitiesContainer);
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/world/itemSourceView.js":
+/*!***************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/itemSourceView.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ItemSourceView": () => (/* binding */ ItemSourceView)
+/* harmony export */ });
+/* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _hpLine__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./hpLine */ "./bugs/core/client/app/src/view/world/hpLine.js");
+
+
+
+
+class ItemSourceView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
+
+    constructor(entity, entitiesContainer) {
+        super(entity, entitiesContainer);
+
+        this._unbindFertileChangeListener = this._entity.on('fertileChanged', this._renderFertile.bind(this));
+
+        this._render();
+    }
+
+    _render() {
+        this._bodyContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._uiContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._entityContainer.addChild(this._bodyContainer);
+        this._entityContainer.addChild(this._uiContainer);
+        
+        this._standSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`item_source_${this._entity.itemType}.png`));
+        this._bodyContainer.addChild(this._standSprite);
+        this._deadSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`item_source_${this._entity.itemType}_not_fertile.png`));
+        this._bodyContainer.addChild(this._deadSprite);
+
+        this._entityContainer.x = this._entity.position.x;
+        this._entityContainer.y = this._entity.position.y;
+
+        this._entityContainer.pivot.x = this._standSprite.width / 2;
+        this._entityContainer.pivot.y = this._standSprite.height;
+
+        this._hpLineView = new _hpLine__WEBPACK_IMPORTED_MODULE_2__.HpLineView(this._entity, { x: 0, y: -10 }, this._standSprite.width, this._uiContainer);
+
+        this._renderFertile();
+    }
+
+    _renderFertile() {
+        this._standSprite.renderable = this._entity.isFertile;
+        this._deadSprite.renderable = !this._entity.isFertile;
+    }
+
+    remove() {
+        super.remove();
+        this._hpLineView.remove();
+        this._unbindFertileChangeListener();
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/world/itemView.js":
+/*!*********************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/itemView.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ItemView": () => (/* binding */ ItemView)
+/* harmony export */ });
+/* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
+
+
+class ItemView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
+
+    constructor(entity, entitiesContainer) {
+        super(entity, entitiesContainer);
+
+        this._unbindIsPickedChangeListener = this._entity.on('isPickedChanged', this._renderIsPicked.bind(this));
+        this._unbindPositionChangeListener = this._entity.on('positionChanged', this._renderPosition.bind(this));
+
+        this._render();
+    }
+
+    _render() {
+        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`item_${ this._entity.itemType }_${ this._entity.itemVariety }v.png`));
+        this._entityContainer.addChild(this._sprite);
+
+        let halfWidth = this._sprite.width / 2;
+        let halfHeight = this._sprite.height / 2;
+
+        this._entityContainer.pivot.x = halfWidth;
+        this._entityContainer.pivot.y = halfHeight;
+
+        this._renderPosition();
+        this._renderIsPicked();
+    }
+
+    _renderPosition() {
+        this._entityContainer.x = this.entity.position.x;
+        this._entityContainer.y = this.entity.position.y;
+    }
+
+    _renderIsPicked() {
+        this._sprite.renderable = !this._entity.isPicked;
+    }
+
+    remove() {
+        this._unbindIsPickedChangeListener();
+        this._unbindPositionChangeListener();
+        super.remove();
+    }
+    
 }
 
 
@@ -3754,37 +3750,32 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/world/pickedFood.js":
-/*!***********************************************************!*\
-  !*** ./bugs/core/client/app/src/view/world/pickedFood.js ***!
-  \***********************************************************/
+/***/ "./bugs/core/client/app/src/view/world/pickedItemView.js":
+/*!***************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/pickedItemView.js ***!
+  \***************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "PickedFoodView": () => (/* binding */ PickedFoodView)
+/* harmony export */   "PickedItemView": () => (/* binding */ PickedItemView)
 /* harmony export */ });
 /* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/world/entityView.js");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 
 
 
-class PickedFoodView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
+class PickedItemView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
 
     constructor(entity, entitiesContainer) {
         super(entity, entitiesContainer);
 
-        let textureName = `food_${this._entity.food_type}_${this._entity.food_variety}v.png`;
-        if (entity.food_type == 'nectar') {
-            textureName = 'food_nectar_picked.png';
-        }
+        let textureName = `item_${ this._entity.itemType }_${ this._entity.itemVariety }v.png`;
         this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(textureName));
         this._entityContainer.addChild(this._sprite);
 
         this._render();
-
-        this._entity.on('positionChanged', this._render.bind(this));
     }
 
     _render() {
@@ -3869,14 +3860,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 /* harmony import */ var _antView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./antView */ "./bugs/core/client/app/src/view/world/antView.js");
 /* harmony import */ var _nestView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestView */ "./bugs/core/client/app/src/view/world/nestView.js");
-/* harmony import */ var _foodView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foodView */ "./bugs/core/client/app/src/view/world/foodView.js");
-/* harmony import */ var _camera__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./camera */ "./bugs/core/client/app/src/view/world/camera.js");
-/* harmony import */ var _foodArea__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foodArea */ "./bugs/core/client/app/src/view/world/foodArea.js");
-/* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
-/* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../domain/enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
-/* harmony import */ var _markerManager_markerManagerView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./markerManager/markerManagerView */ "./bugs/core/client/app/src/view/world/markerManager/markerManagerView.js");
-/* harmony import */ var _foodSourceView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./foodSourceView */ "./bugs/core/client/app/src/view/world/foodSourceView.js");
-/* harmony import */ var _groundBeetleView__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./groundBeetleView */ "./bugs/core/client/app/src/view/world/groundBeetleView.js");
+/* harmony import */ var _camera__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./camera */ "./bugs/core/client/app/src/view/world/camera.js");
+/* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
+/* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../domain/enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+/* harmony import */ var _markerManager_markerManagerView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./markerManager/markerManagerView */ "./bugs/core/client/app/src/view/world/markerManager/markerManagerView.js");
+/* harmony import */ var _groundBeetleView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./groundBeetleView */ "./bugs/core/client/app/src/view/world/groundBeetleView.js");
+/* harmony import */ var _itemView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./itemView */ "./bugs/core/client/app/src/view/world/itemView.js");
+/* harmony import */ var _itemSourceView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./itemSourceView */ "./bugs/core/client/app/src/view/world/itemSourceView.js");
+/* harmony import */ var _itemAreaView__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./itemAreaView */ "./bugs/core/client/app/src/view/world/itemAreaView.js");
 
 
 
@@ -3891,7 +3882,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseGraphicView {
+class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_5__.BaseGraphicView {
 
     constructor(el) {
         super();
@@ -3914,24 +3905,24 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
         this._entityContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._antContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._groundBeetleContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._foodContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._itemContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._nestContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._foodAreaContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._foodSourceContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._itemAreaContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._itemSourceContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._markersContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
 
         this._app.stage.addChild(this._entityContainer);
 
         this._entityContainer.addChild(this._bg);
         this._entityContainer.addChild(this._nestContainer);
-        this._entityContainer.addChild(this._foodAreaContainer);
-        this._entityContainer.addChild(this._foodContainer);
+        this._entityContainer.addChild(this._itemAreaContainer);
+        this._entityContainer.addChild(this._itemContainer);
         this._entityContainer.addChild(this._antContainer);
         this._entityContainer.addChild(this._groundBeetleContainer);
-        this._entityContainer.addChild(this._foodSourceContainer);
+        this._entityContainer.addChild(this._itemSourceContainer);
         this._entityContainer.addChild(this._markersContainer);
 
-        this._camera = new _camera__WEBPACK_IMPORTED_MODULE_5__.Camera(this._entityContainer, this._bg, this._app.view);
+        this._camera = new _camera__WEBPACK_IMPORTED_MODULE_4__.Camera(this._entityContainer, this._bg, this._app.view);
 
         this.$domainFacade.events.on('wholeWorldInited', this._onWholeWorldInit.bind(this));
         if (this.$domainFacade.isWholeWorldInited()) {
@@ -3944,7 +3935,7 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
     _onWholeWorldInit() {
         this._setUpCamera();
         this._buildEntityViews();
-        this._markerManager = new _markerManager_markerManagerView__WEBPACK_IMPORTED_MODULE_9__.MarkerManagerView(this._markersContainer);
+        this._markerManager = new _markerManager_markerManagerView__WEBPACK_IMPORTED_MODULE_7__.MarkerManagerView(this._markersContainer);
     }
 
     _onEntityBorn(entity) {
@@ -3961,23 +3952,23 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_7__.BaseG
     _buildEntityView(entity) {
         let view = null;
         switch (entity.type) {
-            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.ANT:
+            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_6__.EntityTypes.ANT:
                 view = new _antView__WEBPACK_IMPORTED_MODULE_2__.AntView(entity, this._antContainer);
                 break;
-            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.GROUND_BEETLE:
-                view = new _groundBeetleView__WEBPACK_IMPORTED_MODULE_11__.GroundBeetleView(entity, this._groundBeetleContainer);
+            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_6__.EntityTypes.GROUND_BEETLE:
+                view = new _groundBeetleView__WEBPACK_IMPORTED_MODULE_8__.GroundBeetleView(entity, this._groundBeetleContainer);
                 break;
-            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.NEST:
+            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_6__.EntityTypes.NEST:
                 view = new _nestView__WEBPACK_IMPORTED_MODULE_3__.NestView(entity, this._nestContainer);
                 break;
-            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.FOOD:
-                view = new _foodView__WEBPACK_IMPORTED_MODULE_4__.FoodView(entity, this._foodContainer);
+            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_6__.EntityTypes.ITEM:
+                view = new _itemView__WEBPACK_IMPORTED_MODULE_9__.ItemView(entity, this._itemContainer);
                 break;
-            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.FOOD_AREA:
-                view = new _foodArea__WEBPACK_IMPORTED_MODULE_6__.FoodAreaView(entity, this._foodAreaContainer);
+            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_6__.EntityTypes.ITEM_SOURCE:
+                view = new _itemSourceView__WEBPACK_IMPORTED_MODULE_10__.ItemSourceView(entity, this._itemSourceContainer);
                 break;
-            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_8__.EntityTypes.FOOD_SOURCE:
-                view = new _foodSourceView__WEBPACK_IMPORTED_MODULE_10__.FoodSourceView(entity, this._foodSourceContainer);
+            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_6__.EntityTypes.ITEM_AREA:
+                view = new _itemAreaView__WEBPACK_IMPORTED_MODULE_11__.ItemAreaView(entity, this._itemAreaContainer);
                 break;
             default:
                 throw 'unknown type of entity';

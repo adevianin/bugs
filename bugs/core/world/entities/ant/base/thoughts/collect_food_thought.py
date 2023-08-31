@@ -1,19 +1,18 @@
 from core.world.entities.thought.thought import Thought
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
-from core.world.entities.food.food import Food
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.ant.base.ant_body import AntBody
 from core.world.utils.point import Point
-from core.world.entities.base.entity_types import EntityTypes
-from core.world.entities.food.food_source import FoodSource
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
+from core.world.entities.items.base.item_source import ItemSource
+from core.world.entities.items.base.edible_item import EdibleItem
 
 class CollectFoodThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, nest: Nest, random_walk_thought: RandomWalkThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
+    def __init__(self, body: AntBody, nest: Nest, random_walk_thought: RandomWalkThought, go_home_thought: GoInNestThought, found_food: EdibleItem = None, flags: dict = None, sayback: str = None):
         super().__init__(body=body, type=ThoughtTypes.COLLECT_FOOD, flags=flags, sayback=sayback)
         self._nest = nest
         self._nested_thoughts['random_walk_thought'] = random_walk_thought
@@ -54,16 +53,16 @@ class CollectFoodThought(Thought):
             return
         
         if not self._read_flag('am_i_got_food') and self._read_flag('am_i_near_food_source_position'):
-            food_sources = self._body.look_around(types_list=[EntityTypes.FOOD_SOURCE])
+            food_sources = self._body.look_around_for_food_sources()
             if (len(food_sources) == 0):
                 self._clear_knowledge_about_food_source()
                 return
 
-            food_source: FoodSource = food_sources[0]
-            def on_got_food(food: Food):
-                self._body.pick_up_food(food)
+            food_source: ItemSource = food_sources[0]
+            def on_got_food(edible_item: EdibleItem):
+                self._body.pick_up_item(edible_item)
                 self._write_flag('am_i_got_food', True)
-            is_food_in_source = food_source.take_some_food(on_got_food)
+            is_food_in_source = food_source.take_some_item(on_got_food)
 
             if not is_food_in_source:
                 self._clear_knowledge_about_food_source()
@@ -72,7 +71,7 @@ class CollectFoodThought(Thought):
 
         if not self._read_flag('am_i_got_food'):
             self.random_walk_thought.do_step()
-            food_sources = self._body.look_around(types_list=[EntityTypes.FOOD_SOURCE])
+            food_sources = self._body.look_around_for_food_sources()
             if len(food_sources) > 0:
                 food_source = food_sources[0]
                 self._body.memory.save('found_food_source_position', [food_source.position.x, food_source.position.y])
@@ -115,7 +114,7 @@ class CollectFoodThought(Thought):
 
     def cancel(self):
         super().cancel()
-        if self._body.is_food_picked:
+        if self._body.is_item_picked:
             self._body.drop_picked_food()
 
     def _on_nest_died(self):

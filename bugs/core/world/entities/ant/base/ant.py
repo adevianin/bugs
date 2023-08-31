@@ -19,9 +19,8 @@ class Ant(LiveEntity):
         super().__init__(events, id, EntityTypes.ANT, from_colony_id, mind, body)
         self._ant_type = ant_type
         
-        self.events.add_listener('food_picked', self._on_food_picked)
-        self.events.add_listener('picked_food_gave', self._on_food_gave)
-        self.events.add_listener('picked_food_dropped', self._on_food_dropped)
+        self.events.add_listener('item_picked', self._on_item_picked)
+        self.events.add_listener('picked_item_dropped', self._on_item_dropped)
         self.events.add_listener('died', self._on_died)
 
     @property
@@ -88,7 +87,7 @@ class Ant(LiveEntity):
     def to_public_json(self):
         json = super().to_public_json()
         json.update({
-            'picked_food_id': self._body.picked_food.id if self._body.is_food_picked else None,
+            'picked_item_id': self._body.picked_item_id,
             'ant_type': self._ant_type,
             'located_in_nest_id': self._body.located_in_nest_id
         })
@@ -100,15 +99,12 @@ class Ant(LiveEntity):
         self._body.remove_formation()
         self._body.sayer.remove_all_listeners()
     
-    def _on_food_picked(self, food_id):
-        self._emit_action('ant_picked_up_food', {
-            'food_id': food_id
+    def _on_item_picked(self, item_id):
+        self._emit_action('ant_picked_up_item', {
+            'item_id': item_id
         })
 
-    def _on_food_gave(self):
-        self._emit_action('ant_gave_picked_food')
-
-    def _on_food_dropped(self):
-        self._emit_action('ant_dropped_picked_food')
+    def _on_item_dropped(self):
+        self._emit_action('ant_dropped_picked_item')
 
     

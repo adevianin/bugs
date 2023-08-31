@@ -1,0 +1,16 @@
+from .base.plain_entity_serializer import PlainEntitySerializer
+from core.world.entities.items.base.item_area import ItemArea
+
+class ItemAreaSerializer(PlainEntitySerializer):
+
+    def serialize(self, item_area: ItemArea):
+        json = super().serialize(item_area)
+
+        json.update({
+            'size': item_area.size,
+            'item_type': item_area.item_type,
+            'fertility': item_area.fertility,
+            'accumulated': item_area.accumulated
+        })
+
+        return json

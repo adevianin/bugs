@@ -6,7 +6,6 @@ class PlainEntitySerializer(EntitySerializer):
     def serialize(self, entity: PlainEntity):
         json = super().serialize(entity)
         json.update({
-            'position': entity.position
         })
 
         return json

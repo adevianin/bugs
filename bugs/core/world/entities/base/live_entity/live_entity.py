@@ -16,7 +16,6 @@ class LiveEntity(Entity, iEnemy):
         self.events: EventEmitter = events
 
         self.events.add_listener('walk', self._on_body_walk)
-        self.events.add_listener('eat_food', self._on_body_eats_food)
         self.events.add_listener('got_in_nest', self._on_got_in_nest)
         self.events.add_listener('got_out_of_nest', self._on_got_out_of_nest)
 
@@ -78,9 +77,6 @@ class LiveEntity(Entity, iEnemy):
                 'y': position.y
             }
         })
-
-    def _on_body_eats_food(self):
-        self._emit_action('entity_eat_food')
 
     def _on_got_in_nest(self, nest: Nest):
         self._emit_action('entity_got_in_nest', {

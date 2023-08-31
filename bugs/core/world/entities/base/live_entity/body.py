@@ -1,6 +1,5 @@
 from core.world.utils.point import Point
-from abc import ABC,abstractmethod
-from core.world.entities.food.food import Food
+from abc import ABC
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME
 from core.world.entities.nest.nest import Nest
@@ -11,6 +10,7 @@ from core.world.entities.base.entity_types import EntityTypes, EntityTypesPack
 from core.world.entities.colony.relation_tester import RelationTester
 from typing import List, Callable
 from core.world.entities.base.entity import Entity
+from core.world.entities.items.base.edible_item import EdibleItem
 
 class Body(ABC):
 
@@ -96,7 +96,7 @@ class Body(ABC):
         self._calories += count
         return self._calories >= self._max_calories
     
-    def eat_food(self, food: Food) -> bool:
+    def eat_edible_item(self, food: EdibleItem) -> bool:
         if (food.is_died):
             return True
         

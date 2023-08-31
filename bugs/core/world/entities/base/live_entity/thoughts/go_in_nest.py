@@ -8,6 +8,7 @@ class GoInNestThought(Thought):
     def __init__(self, body: Body, flags, sayback: str, nest: Nest):
         super().__init__(body=body, type=ThoughtTypes.GO_IN_NEST, flags=flags, sayback=sayback)
         self._nest = nest
+        self._teest = 1
 
     @property
     def nest_id(self):
@@ -18,5 +19,7 @@ class GoInNestThought(Thought):
             self._body.get_in_nest(self._nest)
             self.done()
         else:
-            self._write_flag('is_near_nest', self._body.step_to(self._nest.position))
+            is_walk_done = self._body.step_to(self._nest.position)
+            self._write_flag('is_near_nest', is_walk_done)
+            test = 1
     

@@ -1,14 +1,16 @@
-from core.world.entities.base.live_entity.body import Body
+from core.world.entities.ant.base.ant_body import AntBody
 from core.world.entities.thought.thought import Thought
 from core.world.entities.nest.nest import Nest
-from core.world.entities.food.food import Food
+from core.world.entities.items.base.edible_item import EdibleItem
 from .find_food_thought import FindFoodThought
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.thought.thought_types import ThoughtTypes
 
 class FeedMyselfThought(Thought):
 
-    def __init__(self, body: Body, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Food = None, flags: dict = None, sayback: str = None):
+    _body: AntBody
+
+    def __init__(self, body: AntBody, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: EdibleItem = None, flags: dict = None, sayback: str = None):
         super().__init__(body=body, type=ThoughtTypes.FEED_MYSELF, flags=flags, sayback=sayback)
         self._home = home
         self._nested_thoughts['find_food_thought'] = find_food_thought
@@ -64,7 +66,7 @@ class FeedMyselfThought(Thought):
                 return
                 
             if (self._read_flag('is_near_food')):
-                is_eatin_done = self._body.eat_food(self._found_food)
+                is_eatin_done = self._body.eat_edible_item(self._found_food)
                 if (is_eatin_done):
                     self.done() 
 

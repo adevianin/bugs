@@ -3,16 +3,14 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.thought.thought import Thought
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
-from core.world.entities.base.entity_types import EntityTypes
 from typing import Callable, List
-from core.world.entities.food.food_source import FoodSource
-from core.world.entities.food.food_types import FoodTypes
+from core.world.entities.items.base.item_source import ItemSource
 
 class HuntForAphid(Thought):
 
     _body: GroundBeetleBody
 
-    def __init__(self, body: GroundBeetleBody, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_food_source: FoodSource, flags: dict, sayback: str):
+    def __init__(self, body: GroundBeetleBody, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_food_source: ItemSource, flags: dict, sayback: str):
         super().__init__(body, ThoughtTypes.HUNT_FOR_APHID, flags, sayback)
         self._nested_thoughts['random_walk_thought'] = random_walk_thought
         self._nested_thoughts['fight_near_enemies_thought'] = fight_near_enemies_thought
@@ -38,8 +36,7 @@ class HuntForAphid(Thought):
             return
         
         if not self._body.memory.read('found_aphid'):
-            filter: Callable[[FoodSource], bool] = lambda food_source: food_source.food_type == FoodTypes.HONEYDEW
-            food_sources: List[FoodSource] = self._body.look_around(types_list=[EntityTypes.FOOD_SOURCE], filter=filter)
+            food_sources = self._body.look_around_for_honeydew_food_sources()
 
             for food_source in food_sources:
                 if food_source.is_fertile:

@@ -1,4 +1,4 @@
-from .live_entity_serializer import LiveEntitySerializer
+from .base.live_entity_serializer import LiveEntitySerializer
 from core.world.entities.ant.base.ant import Ant
 from .thought_serializer import ThoughtSerializer
 
@@ -15,7 +15,7 @@ class AntSerializer(LiveEntitySerializer):
             thoughts_json.append(self._thought_serializer.serialize(thought))
 
         json.update({
-            'picked_food_id': ant.body.picked_food_id,
+            'picked_item_id': ant.body.picked_item_id,
             'ant_type': ant.ant_type,
             'dna_profile': ant.body.dna_profile,
             'from_nest': ant.home_nest_id,
