@@ -10,7 +10,7 @@ from core.world.entities.base.entity_types import EntityTypes, EntityTypesPack
 from core.world.entities.colony.relation_tester import RelationTester
 from typing import List, Callable
 from core.world.entities.base.entity import Entity
-from core.world.entities.items.base.edible_item import EdibleItem
+from core.world.entities.items.base.item import Item
 
 class Body(ABC):
 
@@ -96,21 +96,18 @@ class Body(ABC):
         self._calories += count
         return self._calories >= self._max_calories
     
-    def eat_edible_item(self, food: EdibleItem) -> bool:
+    def eat_edible_item(self, food: Item) -> bool:
         if (food.is_died):
             return True
         
         calories_i_need = self.calc_how_much_calories_is_need()
-        calories_to_eat = min([calories_i_need, self._can_eat_calories_per_step, food.calories])
+        calories_to_eat = min([calories_i_need, self._can_eat_calories_per_step, food.strength])
 
-        food.calories -= calories_to_eat
-        self._calories += calories_to_eat
-
-        is_food_eaten = food.calories == 0
+        self._calories += food.use(calories_to_eat)
 
         self.events.emit('eat_food')
 
-        return is_food_eaten or self.calc_how_much_calories_is_need() == 0
+        return food.is_died or self.calc_how_much_calories_is_need() == 0
     
     def damage_enemy(self, enemy: iEnemy):
         enemy.damage(20)

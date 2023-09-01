@@ -1522,7 +1522,7 @@ class WorldFactory {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
                 return this.buildNest(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count, entityJson.is_built, entityJson.hp, entityJson.max_hp);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM:
-                return this.buildItem(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.item_variety, entityJson.is_picked);
+                return this.buildItem(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.variety, entityJson.is_picked);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM_SOURCE:
                 return this.buildItemSource(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.is_fertile);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM_AREA:

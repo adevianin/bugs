@@ -9,7 +9,6 @@ from core.world.entities.ant.base.larva import Larva
 from core.world.entities.ground_beetle.ground_beetle_factory import GroundBeetleFactory
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.items.item_factory import ItemFactory
-from core.world.entities.items.base.item_types import ItemTypes
 
 class EntityBirther():
 
@@ -41,13 +40,7 @@ class EntityBirther():
                 nest: Nest = request['nest']
                 new_entity = self._ant_factory.build_new_ant(id, nest.from_colony_id, larva.ant_type, larva.dna_profile, nest.position, nest)
             case EntityTypes.ITEM:
-                match(request['item_type']):
-                    case ItemTypes.LEAF:
-                        new_entity = self._item_factory.build_leaf_item(id=id, position=request['position'], calories=request['calories'])
-                    case ItemTypes.HONEYDEW:
-                        new_entity = self._item_factory.build_honeydew_item(id=id, position=request['position'], calories=request['calories'])
-                    case ItemTypes.FLOWER:
-                        new_entity = self._item_factory.build_flower_item(id=id, position=request['position'])
+                new_entity = self._item_factory.build_new_item(id=id, item_type=request['item_type'], position=request['position'], strength=request['strength'])
             case EntityTypes.NEST:
                 new_entity = self._nest_factory.build_new_nest(id, request['position'], request['colony_id'])
             case EntityTypes.GROUND_BEETLE:

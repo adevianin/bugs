@@ -13,18 +13,18 @@ class HoneydewItemSource(ItemSource):
     def take_some_item(self, on_honeydew_ready: Callable) -> bool:
         min_caloric_value = min(self._fertility * 2, self._accumulated)
         max_caloric_value = min(self._fertility * 6, self._accumulated)
-        calories = random.randint(min_caloric_value, max_caloric_value)
+        strength = random.randint(min_caloric_value, max_caloric_value)
 
-        if calories == 0:
+        if strength == 0:
             return False
 
-        self._accumulated -= calories
+        self._accumulated -= strength
 
         self.events.emit('birth_request', {
             'entity_type': EntityTypes.ITEM,
             'item_type': ItemTypes.HONEYDEW,
             'position': self._position,
-            'calories': calories,
+            'strength': strength,
             'callback': on_honeydew_ready
         })
 

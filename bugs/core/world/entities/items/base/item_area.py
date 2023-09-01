@@ -4,7 +4,6 @@ from core.world.utils.point import Point
 from core.world.entities.base.plain_entity import PlainEntity
 from .item_types import ItemTypes
 from core.world.utils.size import Size
-from abc import abstractmethod
 
 import random
 
@@ -54,6 +53,11 @@ class ItemArea(PlainEntity):
     def _should_spawn(self) -> bool:
         return self._accumulated > 5 and random.choice([True, False, False, False])
     
-    @abstractmethod
     def _request_birth(self):
-        pass
+        self.events.emit('birth_request', {
+            'entity_type': EntityTypes.ITEM,
+            'item_type': self._item_type,
+            'position': self._generate_spawn_point(),
+            'strength': self._accumulated
+        })
+

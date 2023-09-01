@@ -4,21 +4,14 @@ from core.world.utils.point import Point
 from core.world.entities.base.plain_entity import PlainEntity
 from core.world.entities.items.base.item_types import ItemTypes
 
-import random
- 
 class Item(PlainEntity):
 
-    ITEM_VARIETIES_COUNT = 1
-
-    @classmethod
-    def generate_random_item_variety(cls):
-        return random.randint(1, cls.ITEM_VARIETIES_COUNT)
-
-    def __init__(self, events: EventEmitter, id: int, item_type: ItemTypes, position: Point, is_picked: bool, item_variety: int):
+    def __init__(self, events: EventEmitter, id: int, item_type: ItemTypes, position: Point, strength: int, variety: int, is_picked: bool):
         super().__init__(events, id, EntityTypes.ITEM, None, Item.MAX_HP, position)
         self._item_type = item_type
         self._is_picked = is_picked
-        self._item_variety = item_variety
+        self._variety = variety
+        self._strength = strength
 
     @property
     def item_type(self):
@@ -29,8 +22,22 @@ class Item(PlainEntity):
         return self._is_picked
     
     @property
-    def item_variety(self):
-        return self._item_variety
+    def variety(self):
+        return self._variety
+    
+    @property
+    def strength(self):
+        return self._strength
+    
+    def use(self, using_strength: int = None) -> int:
+        if (using_strength is None):
+            using_strength = self._strength
+        used_strength = using_strength if self._strength > using_strength else self._strength
+        self._strength -= used_strength
+        if self._strength == 0:
+            self.die()
+
+        return used_strength
     
     def pickup(self):
         self._is_picked = True
@@ -48,7 +55,7 @@ class Item(PlainEntity):
         json.update({
             'item_type': self._item_type,
             'is_picked': self._is_picked,
-            'item_variety': self._item_variety
+            'variety': self._variety
         })
         
         return json

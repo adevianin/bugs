@@ -89,9 +89,9 @@ class Command(BaseCommand):
                     350,
                     350
                 ],
-                "calories":150,
+                "strength":150,
                 "item_type":"leaf",
-                "item_variety":1,
+                "variety":1,
                 "is_picked": False
             },
         ],
@@ -210,7 +210,7 @@ class Command(BaseCommand):
                     200
                 ],
                 "fertility":5,
-                "item_type":"leaf",
+                "item_type":"honeydew",
                 "accumulated": 0
             },
             {

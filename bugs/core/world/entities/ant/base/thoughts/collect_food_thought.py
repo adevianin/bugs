@@ -6,13 +6,13 @@ from core.world.entities.ant.base.ant_body import AntBody
 from core.world.utils.point import Point
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 from core.world.entities.items.base.item_source import ItemSource
-from core.world.entities.items.base.edible_item import EdibleItem
+from core.world.entities.items.base.item import Item
 
 class CollectFoodThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, nest: Nest, random_walk_thought: RandomWalkThought, go_home_thought: GoInNestThought, found_food: EdibleItem = None, flags: dict = None, sayback: str = None):
+    def __init__(self, body: AntBody, nest: Nest, random_walk_thought: RandomWalkThought, go_home_thought: GoInNestThought, found_food: Item = None, flags: dict = None, sayback: str = None):
         super().__init__(body=body, type=ThoughtTypes.COLLECT_FOOD, flags=flags, sayback=sayback)
         self._nest = nest
         self._nested_thoughts['random_walk_thought'] = random_walk_thought
@@ -59,7 +59,7 @@ class CollectFoodThought(Thought):
                 return
 
             food_source: ItemSource = food_sources[0]
-            def on_got_food(edible_item: EdibleItem):
+            def on_got_food(edible_item: Item):
                 self._body.pick_up_item(edible_item)
                 self._write_flag('am_i_got_food', True)
             is_food_in_source = food_source.take_some_item(on_got_food)

@@ -3,7 +3,7 @@ from ..base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from core.world.entities.ant.base.larva import Larva
-from core.world.entities.items.base.edible_item import EdibleItem
+from core.world.entities.items.base.item import Item
 
 class Nest(PlainEntity):
 
@@ -44,9 +44,8 @@ class Nest(PlainEntity):
     def do_step(self):
         self._feed_larvae()
 
-    def take_edible_item(self, item: EdibleItem):
-        self._stored_calories += item.calories
-        item.die()
+    def take_edible_item(self, item: Item):
+        self._stored_calories += item.use()
         self._emit_stored_calories_changed()
 
     def take_calories(self, caloris_count: int):
