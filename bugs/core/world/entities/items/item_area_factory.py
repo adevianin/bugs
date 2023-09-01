@@ -1,8 +1,8 @@
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from core.world.utils.size import Size
-from core.world.entities.items.base.item_types import ItemTypes
-from core.world.entities.items.base.item_area import ItemArea
+from core.world.entities.items.item_types import ItemTypes
+from core.world.entities.items.item_area import ItemArea
 
 class ItemAreaFactory():
 

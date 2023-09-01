@@ -1,7 +1,7 @@
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
-from .base.item_types import ItemTypes
-from .base.item import Item
+from .item_types import ItemTypes
+from .item import Item
 
 import random
 
