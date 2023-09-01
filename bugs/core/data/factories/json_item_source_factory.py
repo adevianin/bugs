@@ -15,4 +15,6 @@ class JsonItemSourceFactory():
         item_type = ItemTypes(item_source_factory_json['item_type'])
         fertility = item_source_factory_json['fertility']
         accumulated = item_source_factory_json['accumulated']
-        return self._item_source_factory.build_item_source(id, from_colony_id, hp, position, item_type, fertility, accumulated)
+        min_item_strength = item_source_factory_json['min_item_strength']
+        max_item_strength = item_source_factory_json['max_item_strength']
+        return self._item_source_factory.build_item_source(id, from_colony_id, hp, position, item_type, fertility, accumulated, min_item_strength, max_item_strength)

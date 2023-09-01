@@ -1,14 +1,10 @@
-from .item_sources.honeydew_item_source import HoneydewItemSource
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from core.world.entities.items.base.item_types import ItemTypes
+from core.world.entities.items.base.item_source import ItemSource
 
 class ItemSourceFactory():
 
-    def build_item_source(self, id: int, from_colony_id: int, hp: int, position: Point, item_type: ItemTypes, fertility: int, accumulated: int):
+    def build_item_source(self, id: int, from_colony_id: int, hp: int, position: Point, item_type: ItemTypes, fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
         events = EventEmitter()
-        match(item_type):
-            case ItemTypes.HONEYDEW:
-                return HoneydewItemSource(events, id, from_colony_id, hp, position, item_type, fertility, accumulated)
-            case _:
-                raise Exception('unknown source item type')
+        return ItemSource(events, id, from_colony_id, hp, position, item_type, fertility, accumulated, min_item_strength, max_item_strength)

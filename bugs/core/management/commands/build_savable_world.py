@@ -243,7 +243,9 @@ class Command(BaseCommand):
                 ],
                 "fertility":5,
                 "item_type":"honeydew",
-                "accumulated": 10
+                "accumulated": 10,
+                "min_item_strength": 10,
+                "max_item_strength": 50
             },
         ],
         "ground_beetles": [

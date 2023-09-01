@@ -9,7 +9,9 @@ class ItemSourceSerializer(PlainEntitySerializer):
         json.update({
             'item_type': item_source.item_type,
             'fertility': item_source.fertility,
-            'accumulated': item_source.accumulated
+            'accumulated': item_source.accumulated,
+            'min_item_strength': item_source.min_item_strength,
+            'max_item_strength': item_source.max_item_strength
         })
 
         return json

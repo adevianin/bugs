@@ -6,16 +6,19 @@ from core.world.entities.base.plain_entity import PlainEntity
 from core.world.entities.items.base.item_types import ItemTypes
 
 from typing import Callable
+import random
 
 class ItemSource(PlainEntity):
 
     RESTORE_HP_PER_STEP = 0.05
 
-    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, hp: int, position: Point, item_type: ItemTypes, fertility: int, accumulated: int):
+    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, hp: int, position: Point, item_type: ItemTypes, fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
         super().__init__(events, id, EntityTypes.ITEM_SOURCE, from_colony_id, hp, position)
         self._item_type = item_type
         self._fertility = fertility
         self._accumulated = accumulated
+        self._max_item_strength = max_item_strength
+        self._min_item_strength = min_item_strength
 
     @property
     def item_type(self):
@@ -30,13 +33,37 @@ class ItemSource(PlainEntity):
         return self._accumulated
     
     @property
-    @abstractmethod
     def is_fertile(self):
-        pass
+        return self.hp > self.MAX_HP / 3
+    
+    @property
+    def max_item_strength(self):
+        return self._max_item_strength
+    
+    @property
+    def min_item_strength(self):
+        return self._min_item_strength
 
-    @abstractmethod
-    def take_some_item(self, on_food_ready: Callable) -> bool:
-        pass
+    def take_some_item(self, on_item_ready: Callable) -> bool:
+        min_strength = self._min_item_strength
+        max_strength = min(self._max_item_strength, self._accumulated)
+
+        if self._accumulated < min_strength:
+            return False
+
+        strength = random.randint(min_strength, max_strength)
+
+        self._accumulated -= strength
+
+        self.events.emit('birth_request', {
+            'entity_type': EntityTypes.ITEM,
+            'item_type': self._item_type,
+            'position': self._position,
+            'strength': strength,
+            'callback': on_item_ready
+        })
+
+        return True
 
     def do_step(self):
         if self.is_fertile:
