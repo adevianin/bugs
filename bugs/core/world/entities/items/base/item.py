@@ -4,14 +4,41 @@ from core.world.utils.point import Point
 from core.world.entities.base.plain_entity import PlainEntity
 from core.world.entities.items.base.item_types import ItemTypes
 
-class Item(PlainEntity):
+import random
 
-    def __init__(self, events: EventEmitter, id: int, item_type: ItemTypes, position: Point, strength: int, variety: int, is_picked: bool):
+class Item(PlainEntity):
+    
+    @classmethod
+    def generate_item_variety(cls, item_type: ItemTypes):
+        match(item_type):
+            case ItemTypes.LEAF:
+                return random.randint(1, 4)
+            case ItemTypes.FLOWER:
+                return random.randint(1, 3)
+            case ItemTypes.HONEYDEW:
+                return 1
+            case _:
+                return 1
+    
+    @classmethod
+    def generate_life_span(cls, item_type: ItemTypes):
+        match(item_type):
+            case ItemTypes.LEAF:
+                return 100
+            case ItemTypes.FLOWER:
+                return 50
+            case ItemTypes.HONEYDEW:
+                return 5
+            case _:
+                return -1
+
+    def __init__(self, events: EventEmitter, id: int, item_type: ItemTypes, position: Point, strength: int, variety: int, life_span: int, is_picked: bool):
         super().__init__(events, id, EntityTypes.ITEM, None, Item.MAX_HP, position)
         self._item_type = item_type
         self._is_picked = is_picked
         self._variety = variety
         self._strength = strength
+        self._life_span = life_span
 
     @property
     def item_type(self):
@@ -28,6 +55,16 @@ class Item(PlainEntity):
     @property
     def strength(self):
         return self._strength
+    
+    @property
+    def life_span(self):
+        return self._life_span
+    
+    def do_step(self):
+        if self._life_span != -1:
+            self._life_span -= 1
+            if self._life_span == 0:
+                self.die()
     
     def use(self, using_strength: int = None) -> int:
         if (using_strength is None):

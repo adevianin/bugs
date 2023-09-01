@@ -13,6 +13,7 @@ class JsonItemFactory():
         position = Point.from_json(item_json['position'])
         is_picked = item_json['is_picked']
         strength = item_json['strength']
+        life_span = item_json['life_span']
         variety = item_json['variety']
-        return self._item_factory.build_item(id, item_type, position, strength, variety, is_picked)
+        return self._item_factory.build_item(id, item_type, position, strength, variety, life_span, is_picked)
             

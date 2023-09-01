@@ -92,7 +92,8 @@ class Command(BaseCommand):
                 "strength":150,
                 "item_type":"leaf",
                 "variety":1,
-                "is_picked": False
+                "is_picked": False,
+                "life_span": 5
             },
         ],
         "nests":[

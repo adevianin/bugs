@@ -10,6 +10,7 @@ class ItemSerializer(EntitySerializer):
             'item_type': item.item_type,
             'is_picked': item.is_picked,
             'variety': item.variety,
+            'life_span': item.life_span,
             'strength': item.strength
         })
             
