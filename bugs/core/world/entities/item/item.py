@@ -63,7 +63,7 @@ class Item(PlainEntity):
     def do_step(self):
         if self._life_span != -1:
             self._life_span -= 1
-            if self._life_span == 0:
+            if self._life_span == 0 and not self._is_picked:
                 self.die()
     
     def use(self, using_strength: int = None) -> int:
