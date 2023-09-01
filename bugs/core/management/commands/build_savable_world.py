@@ -210,7 +210,7 @@ class Command(BaseCommand):
                     200
                 ],
                 "fertility":5,
-                "item_type":"honeydew",
+                "item_type":"leaf",
                 "accumulated": 0
             },
             {
