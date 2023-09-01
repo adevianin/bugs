@@ -26,7 +26,7 @@ class Entity(ABC):
 
     @property
     @abstractmethod
-    def position(self):
+    def position(self) -> Point:
         pass
 
     @position.setter
@@ -74,7 +74,8 @@ class Entity(ABC):
             'type': self._type,
             'from_colony_id': self._from_colony_id,
             'hp': self.hp,
-            'max_hp': self.MAX_HP
+            'max_hp': self.MAX_HP,
+            'position': self.position.to_public_json()
         }
     
     def _emit_action(self, action_type: str, action_data: dict = None):

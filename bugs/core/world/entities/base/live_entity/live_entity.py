@@ -61,21 +61,14 @@ class LiveEntity(Entity, iEnemy):
         json = super().to_public_json()
 
         json.update({
-            'position': {
-                'x': self._body.position.x,
-                'y': self._body.position.y
-            },
             'user_speed': self._body.user_speed
         })
 
         return json
 
-    def _on_body_walk(self, position):
+    def _on_body_walk(self, position: Point):
         self._emit_action('entity_walk', { 
-            'position': {
-                'x': position.x,
-                'y': position.y
-            }
+            'position': position.to_public_json()
         })
 
     def _on_got_in_nest(self, nest: Nest):

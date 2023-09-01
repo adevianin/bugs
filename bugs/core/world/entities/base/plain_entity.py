@@ -30,15 +30,3 @@ class PlainEntity(Entity):
 
     def do_step(self):
         return super().do_step()
-
-    def to_public_json(self):
-        json = super().to_public_json()
-        json.update({
-            'position': {
-                'x': self._position.x,
-                'y': self._position.y
-            },
-        })
-        
-        return json
-    
