@@ -2,7 +2,7 @@ from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from core.world.entities.base.plain_entity import PlainEntity
-from core.world.entities.items.item_types import ItemTypes
+from core.world.entities.item.item_types import ItemTypes
 
 import random
 

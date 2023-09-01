@@ -1,7 +1,7 @@
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
-from core.world.entities.items.item_types import ItemTypes
-from core.world.entities.items.item_source import ItemSource
+from core.world.entities.item.item_types import ItemTypes
+from core.world.entities.item.item_source import ItemSource
 
 class ItemSourceFactory():
 

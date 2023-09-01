@@ -6,7 +6,7 @@ from core.world.entities.base.entity_collection import EntityCollection
 from core.world.id_generator import IdGenerator
 from core.world.entities.colony.colony_relations_table import ColonyRelationsTable
 from core.world.entities.ant.ant_factory import AntFactory
-from core.world.entities.items.item_factory import ItemFactory
+from core.world.entities.item.item_factory import ItemFactory
 from core.world.entities.nest.nest_factory import NestFactory
 from core.world.entities.world.entity_birther import EntityBirther
 from core.world.entities.ground_beetle.ground_beetle_spawner import GroundBeetleSpawner

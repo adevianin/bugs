@@ -3,7 +3,7 @@ from ..base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from core.world.entities.ant.base.larva import Larva
-from core.world.entities.items.item import Item
+from core.world.entities.item.item import Item
 
 class Nest(PlainEntity):
 

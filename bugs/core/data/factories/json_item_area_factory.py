@@ -1,7 +1,7 @@
-from core.world.entities.items.item_area_factory import ItemAreaFactory
+from core.world.entities.item.item_area_factory import ItemAreaFactory
 from core.world.utils.point import Point
 from core.world.utils.size import Size
-from core.world.entities.items.item_types import ItemTypes
+from core.world.entities.item.item_types import ItemTypes
 
 class JsonItemAreaFactory():
 

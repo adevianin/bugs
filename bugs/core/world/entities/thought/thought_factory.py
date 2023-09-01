@@ -17,8 +17,8 @@ from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought im
 from core.world.entities.ant.base.thoughts.reinforce_nest_defence_thought import ReinforceNestDefenceThought
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 from core.world.entities.ground_beetle.thoughts.hunt_for_aphid import HuntForAphid
-from core.world.entities.items.item import Item
-from core.world.entities.items.item_source import ItemSource
+from core.world.entities.item.item import Item
+from core.world.entities.item.item_source import ItemSource
 
 class ThoughtFactory:
 

@@ -1,5 +1,5 @@
 from .base.plain_entity_serializer import PlainEntitySerializer
-from core.world.entities.items.item_area import ItemArea
+from core.world.entities.item.item_area import ItemArea
 
 class ItemAreaSerializer(PlainEntitySerializer):
 

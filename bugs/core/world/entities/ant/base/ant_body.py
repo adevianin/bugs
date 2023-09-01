@@ -7,9 +7,9 @@ from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.colony.formation.formation import Formation
-from core.world.entities.items.item_source import ItemSource
-from core.world.entities.items.item_types import ItemTypes
-from core.world.entities.items.item import Item
+from core.world.entities.item.item_source import ItemSource
+from core.world.entities.item.item_types import ItemTypes
+from core.world.entities.item.item import Item
 
 from typing import List, Callable
 
