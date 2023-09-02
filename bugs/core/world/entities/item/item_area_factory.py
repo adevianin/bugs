@@ -6,6 +6,6 @@ from core.world.entities.item.item_area import ItemArea
 
 class ItemAreaFactory():
 
-    def build_item_area(self, id: int, from_colony_id: int, hp: int, position: Point, size: Size, item_type: ItemTypes, fertility: int, accumulated: int):
+    def build_item_area(self, id: int, from_colony_id: int, hp: int, position: Point, angle: int, size: Size, item_type: ItemTypes, fertility: int, accumulated: int):
         events = EventEmitter()
-        return ItemArea(events, id, from_colony_id, hp, position, size, item_type, fertility, accumulated)
+        return ItemArea(events, id, from_colony_id, hp, position, angle, size, item_type, fertility, accumulated)

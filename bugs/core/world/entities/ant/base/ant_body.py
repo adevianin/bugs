@@ -18,8 +18,8 @@ class AntBody(Body):
     DISTANCE_PER_SEP = 32
     SIGHT_DISTANCE = 200
 
-    def __init__(self, events: EventEmitter, sayer: EventEmitter, memory: Memory, dna_profile: str, position: Point, hp: int, located_in_nest: Nest, picked_item: Item, world_interactor: WorldInteractor):
-        super().__init__(events, memory, dna_profile, position, hp, world_interactor)
+    def __init__(self, events: EventEmitter, sayer: EventEmitter, memory: Memory, dna_profile: str, position: Point, angle: int, hp: int, located_in_nest: Nest, picked_item: Item, world_interactor: WorldInteractor):
+        super().__init__(events, memory, dna_profile, position, angle, hp, world_interactor)
         self.sayer = sayer
         self._located_inside_nest = located_in_nest
         self._picked_item = picked_item

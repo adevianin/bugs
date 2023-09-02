@@ -39,6 +39,8 @@ class JsonThoughtFactory():
                 return self._build_reinforce_nest_defence(body, thought_json, entities_collection)
             case ThoughtTypes.RANDOM_WALK:
                 return self._build_random_walk(body, thought_json, entities_collection)
+            case ThoughtTypes.HUNT_FOR_APHID:
+                return self._build_hynt_for_aphid(body, thought_json, entities_collection)
             case _:
                 raise Exception('unknown type of thought')
             
@@ -115,4 +117,10 @@ class JsonThoughtFactory():
         center = Point.from_json(thought_json['center']) if thought_json['center'] else None
         radius = thought_json['radius'] or None
         return self._thought_factory.build_random_walk_thought(body=body, center=center, radius=radius, flags=thought_json['flags'], sayback=thought_json['sayback'])
+    
+    def _build_hynt_for_aphid(self, body: Body, thought_json, entities_collection: EntityCollection):
+        random_walk_thought = self.build_thougth_from_json(body, thought_json['random_walk_thought'], entities_collection)
+        fight_near_enemies_thought = self.build_thougth_from_json(body, thought_json['fight_near_enemies_thought'], entities_collection)
+        found_food_source = entities_collection.get_entity_by_id(thought_json['found_food_source_id']) if thought_json['found_food_source_id'] else None
+        return self._thought_factory.build_hunt_for_aphid(body=body, random_walk_thought=random_walk_thought, fight_near_enemies_thought=fight_near_enemies_thought, found_food_source=found_food_source, flags=thought_json['flags'], sayback=thought_json['sayback'])
     

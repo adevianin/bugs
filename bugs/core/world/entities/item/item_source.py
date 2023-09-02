@@ -12,8 +12,8 @@ class ItemSource(PlainEntity):
 
     RESTORE_HP_PER_STEP = 0.05
 
-    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, hp: int, position: Point, item_type: ItemTypes, fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
-        super().__init__(events, id, EntityTypes.ITEM_SOURCE, from_colony_id, hp, position)
+    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, hp: int, position: Point, angle: int, item_type: ItemTypes, fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
+        super().__init__(events, id, EntityTypes.ITEM_SOURCE, from_colony_id, hp, position, angle)
         self._item_type = item_type
         self._fertility = fertility
         self._accumulated = accumulated

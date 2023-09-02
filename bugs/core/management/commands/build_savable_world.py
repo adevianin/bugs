@@ -89,6 +89,7 @@ class Command(BaseCommand):
                     350,
                     350
                 ],
+                "angle": 0,
                 "strength":150,
                 "item_type":"leaf",
                 "variety":1,
@@ -106,6 +107,7 @@ class Command(BaseCommand):
                     600,
                     350
                 ],
+                "angle": 0,
                 "stored_calories":1000,
                 "larvae":[
                     {
@@ -147,6 +149,7 @@ class Command(BaseCommand):
                     1600,
                     450
                 ],
+                "angle": 0,
                 "stored_calories":1000,
                 "larvae":[
                     {
@@ -178,6 +181,7 @@ class Command(BaseCommand):
                     2150,
                     450
                 ],
+                "angle": 0,
                 "stored_calories":1000,
                 "larvae":[
                     {
@@ -206,6 +210,7 @@ class Command(BaseCommand):
                     450,
                     300
                 ],
+                "angle": 0,
                 "size":[
                     350,
                     200
@@ -223,6 +228,7 @@ class Command(BaseCommand):
                     1800,
                     400
                 ],
+                "angle": 0,
                 "size":[
                     150,
                     150
@@ -242,6 +248,7 @@ class Command(BaseCommand):
                     800,
                     350
                 ],
+                "angle": 0,
                 "fertility":5,
                 "item_type":"honeydew",
                 "accumulated": 10,

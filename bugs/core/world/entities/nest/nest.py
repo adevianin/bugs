@@ -9,8 +9,8 @@ class Nest(PlainEntity):
 
     MAX_HP = 1000
 
-    def __init__(self, events: EventEmitter, id: int, position: Point, from_colony_id: int, hp: int, larvae: list[Larva], larva_places_count: int, stored_calories: int, area: int, build_progress: int):
-        super().__init__(events, id, EntityTypes.NEST, from_colony_id, hp, position)
+    def __init__(self, events: EventEmitter, id: int, position: Point, angle: int, from_colony_id: int, hp: int, larvae: list[Larva], larva_places_count: int, stored_calories: int, area: int, build_progress: int):
+        super().__init__(events, id, EntityTypes.NEST, from_colony_id, hp, position, angle)
         self._area = area
         self._stored_calories = stored_calories
         self._larvae = larvae

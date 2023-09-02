@@ -13,8 +13,9 @@ class JsonItemAreaFactory():
         from_colony_id = item_area_json['from_colony_id']
         hp = item_area_json['hp']
         position = Point.from_json(item_area_json['position'])
+        angle = item_area_json['angle']
         size = Size.from_json(item_area_json['position'])
         item_type = ItemTypes(item_area_json['item_type'])
         fertility = item_area_json['fertility']
         accumulated = item_area_json['accumulated']
-        return self._item_area_factory.build_item_area(id, from_colony_id, hp, position, size, item_type, fertility, accumulated)
+        return self._item_area_factory.build_item_area(id, from_colony_id, hp, position, angle, size, item_type, fertility, accumulated)

@@ -14,6 +14,7 @@ from core.world.entities.ant.base.thoughts.attack_nest_thought import AttackNest
 from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
 from core.world.entities.ant.base.thoughts.reinforce_nest_defence_thought import ReinforceNestDefenceThought
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
+from core.world.entities.ground_beetle.thoughts.hunt_for_aphid import HuntForAphid
 
 class ThoughtSerializer():
 
@@ -47,6 +48,8 @@ class ThoughtSerializer():
                 return self._serialize_reinforce_nest_defence(thought)
             case ThoughtTypes.RANDOM_WALK:
                 return self._serialize_random_walk(thought)
+            case ThoughtTypes.HUNT_FOR_APHID:
+                return self._serialize_hunt_for_aphid(thought)
             case _:
                 raise Exception('unknown type of thought')
 
@@ -195,6 +198,18 @@ class ThoughtSerializer():
         json.update({
             'center': thought.center,
             'radius': thought.radius
+        })
+
+        return json
+    
+    def _serialize_hunt_for_aphid(self, thought: HuntForAphid):
+        json = self._serialize_thought(thought)
+        random_walk_thought_json = self.serialize(thought.random_walk_thought)
+        fight_near_enemies_thought_json = self.serialize(thought.fight_near_enemies_thought)
+        json.update({
+            'random_walk_thought': random_walk_thought_json,
+            'fight_near_enemies_thought': fight_near_enemies_thought_json,
+            'found_food_source_id': thought.found_food_source_id
         })
 
         return json

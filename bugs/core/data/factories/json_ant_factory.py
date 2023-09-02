@@ -9,7 +9,8 @@ class JsonAntFactory():
         self._ant_factory = ant_factory
 
     def build_ant_from_json(self, ant_json: dict, entities_collection: EntityCollection):
-        position = Point(ant_json['position'][0], ant_json['position'][1])
+        position = Point.from_json(ant_json['position'])
+        angle = ant_json['angle']
         nest = entities_collection.get_entity_by_id(ant_json['from_nest']) if ant_json['from_nest'] else None
         located_in_nest = None
         if ant_json['located_in_nest_id'] != None:
@@ -29,4 +30,4 @@ class JsonAntFactory():
 
         hp = ant_json['hp']
         
-        return self._ant_factory.build_ant(id=id, from_colony_id=from_colony_id, ant_type=ant_type, dna_profile=dna_profile, position=position, hp=hp, home_nest=nest, located_in_nest=located_in_nest, memory_data=memory_data, is_auto_thought_generation=is_auto_thought_generation, picked_item=picked_item, is_in_operation=is_in_operation)
+        return self._ant_factory.build_ant(id=id, from_colony_id=from_colony_id, ant_type=ant_type, dna_profile=dna_profile, position=position, angle=angle, hp=hp, home_nest=nest, located_in_nest=located_in_nest, memory_data=memory_data, is_auto_thought_generation=is_auto_thought_generation, picked_item=picked_item, is_in_operation=is_in_operation)

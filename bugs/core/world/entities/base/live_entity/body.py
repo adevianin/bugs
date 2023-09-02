@@ -21,7 +21,7 @@ class Body(ABC):
 
     _world_interactor: WorldInteractor
 
-    def __init__(self, events: EventEmitter, memory: Memory, dna_profile: str, position: Point, hp: int, world_interactor: WorldInteractor):
+    def __init__(self, events: EventEmitter, memory: Memory, dna_profile: str, position: Point, angle: int, hp: int, world_interactor: WorldInteractor):
         self.events = events
         self.memory = memory
         self._dna_profile = dna_profile
@@ -33,7 +33,7 @@ class Body(ABC):
         self._user_speed = self.DISTANCE_PER_SEP / STEP_TIME
         self._hp = hp
         self._world_interactor = world_interactor
-        self._angle = 0
+        self._angle = angle
 
     @property
     def world_interactor(self):

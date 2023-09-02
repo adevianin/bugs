@@ -7,7 +7,6 @@ class LiveEntitySerializer(EntitySerializer):
         json = super().serialize(entity)
 
         json.update({
-            'position': entity.position,
             'memory': entity.body.memory.records
         })
 

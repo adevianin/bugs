@@ -10,9 +10,9 @@ class ItemFactory():
     def build_new_item(self, id: int, item_type: ItemTypes, position: Point, strength: int) -> Item:
         variety = Item.generate_item_variety(item_type)
         life_span = Item.generate_life_span(item_type)
-        return self.build_item(id, item_type, position, strength, variety, life_span, False)
+        return self.build_item(id, item_type, position, 0, strength, variety, life_span, False)
 
-    def build_item(self, id: int, item_type: ItemTypes, position: Point, strength: int, variety: int, life_span: int, is_picked: bool) -> Item:
+    def build_item(self, id: int, item_type: ItemTypes, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool) -> Item:
         events = EventEmitter()
-        return Item(events, id, item_type, position, strength, variety, life_span, is_picked)
+        return Item(events, id, item_type, position, angle, strength, variety, life_span, is_picked)
             

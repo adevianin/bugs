@@ -5,11 +5,11 @@ from .entity_types import EntityTypes
  
 class PlainEntity(Entity):
 
-    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, hp: int, position: Point):
+    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, hp: int, position: Point, angle: int):
         super().__init__(events, id, type, from_colony_id)
         self._position = position
         self._hp = hp
-        self._angle = 0
+        self._angle = angle
 
     @property
     def position(self):

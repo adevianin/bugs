@@ -32,8 +32,8 @@ class Item(PlainEntity):
             case _:
                 return -1
 
-    def __init__(self, events: EventEmitter, id: int, item_type: ItemTypes, position: Point, strength: int, variety: int, life_span: int, is_picked: bool):
-        super().__init__(events, id, EntityTypes.ITEM, None, Item.MAX_HP, position)
+    def __init__(self, events: EventEmitter, id: int, item_type: ItemTypes, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool):
+        super().__init__(events, id, EntityTypes.ITEM, None, Item.MAX_HP, position, angle)
         self._item_type = item_type
         self._is_picked = is_picked
         self._variety = variety
