@@ -26,7 +26,7 @@ class AntFactory():
         self._thought_factory = thought_factory
 
     def build_new_ant(self, id: int, from_colony_id: int, ant_type: AntTypes, dna_profile: str, position: Point, home_nest: Nest = None):
-        return self.build_ant(id, from_colony_id, ant_type, dna_profile, position, None, home_nest, None, None, None, True, False)
+        return self.build_ant(id, from_colony_id, ant_type, dna_profile, position, 0, None, home_nest, None, None, None, True, False)
 
     def build_ant(self, id: int, from_colony_id: int, ant_type: AntTypes, dna_profile: str, position: Point, angle: int, hp: int, home_nest: Nest, located_in_nest: Nest, memory_data: dict, picked_item: Item, is_auto_thought_generation: bool, is_in_operation: bool) -> Ant:
         match ant_type:

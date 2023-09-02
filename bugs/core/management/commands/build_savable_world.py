@@ -23,6 +23,7 @@ class Command(BaseCommand):
                     610,
                     350
                 ],
+                "angle": 0,
                 "located_in_nest_id":None,
                 "picked_item_id":None,
                 "ant_type":"worker",
@@ -43,6 +44,7 @@ class Command(BaseCommand):
                     650,
                     350
                 ],
+                "angle": 0,
                 "located_in_nest_id":30,
                 "picked_item_id":None,
                 "ant_type":"queen",
@@ -64,6 +66,7 @@ class Command(BaseCommand):
                     650,
                     350
                 ],
+                "angle": 0,
                 "located_in_nest_id":30,
                 "picked_item_id":None,
                 "ant_type":"warrior",
@@ -111,19 +114,19 @@ class Command(BaseCommand):
                 "stored_calories":1000,
                 "larvae":[
                     {
-                        "ant_type":"warrior",
-                        "ate_calories":480,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
+                        "ant_type":"worker",
+                        "ate_calories":99,
+                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
                     },
                     {
-                        "ant_type":"warrior",
-                        "ate_calories":480,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
+                        "ant_type":"worker",
+                        "ate_calories":99,
+                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
                     },
                     {
-                        "ant_type":"warrior",
-                        "ate_calories":480,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
+                        "ant_type":"worker",
+                        "ate_calories":99,
+                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
                     },
                     {
                         "ant_type":"warrior",
@@ -266,6 +269,7 @@ class Command(BaseCommand):
                     850,
                     350
                 ],
+                "angle": 0,
                 "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
                 "thoughts":[
                 ],
