@@ -218,7 +218,7 @@
 },
 "grass.png":
 {
-	"frame": {"x":0,"y":224,"w":64,"h":64},
+	"frame": {"x":0,"y":424,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
@@ -226,7 +226,7 @@
 },
 "ground_beetle_1.png":
 {
-	"frame": {"x":64,"y":224,"w":32,"h":32},
+	"frame": {"x":96,"y":192,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -234,7 +234,7 @@
 },
 "ground_beetle_2.png":
 {
-	"frame": {"x":96,"y":224,"w":32,"h":32},
+	"frame": {"x":0,"y":224,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -242,7 +242,7 @@
 },
 "ground_beetle_3.png":
 {
-	"frame": {"x":0,"y":288,"w":32,"h":32},
+	"frame": {"x":32,"y":224,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -250,7 +250,7 @@
 },
 "ground_beetle_4.png":
 {
-	"frame": {"x":32,"y":288,"w":32,"h":32},
+	"frame": {"x":64,"y":224,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -258,7 +258,7 @@
 },
 "ground_beetle_5.png":
 {
-	"frame": {"x":64,"y":288,"w":32,"h":32},
+	"frame": {"x":96,"y":224,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -266,7 +266,7 @@
 },
 "ground_beetle_6.png":
 {
-	"frame": {"x":96,"y":288,"w":32,"h":32},
+	"frame": {"x":0,"y":256,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -274,7 +274,7 @@
 },
 "ground_beetle_7.png":
 {
-	"frame": {"x":0,"y":320,"w":32,"h":32},
+	"frame": {"x":32,"y":256,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -282,7 +282,7 @@
 },
 "ground_beetle_8.png":
 {
-	"frame": {"x":32,"y":320,"w":32,"h":32},
+	"frame": {"x":64,"y":256,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -290,7 +290,7 @@
 },
 "ground_beetle_dead.png":
 {
-	"frame": {"x":64,"y":320,"w":32,"h":32},
+	"frame": {"x":96,"y":256,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -298,7 +298,7 @@
 },
 "item_flower_1v.png":
 {
-	"frame": {"x":96,"y":320,"w":32,"h":32},
+	"frame": {"x":0,"y":288,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -306,7 +306,7 @@
 },
 "item_flower_2v.png":
 {
-	"frame": {"x":0,"y":352,"w":32,"h":32},
+	"frame": {"x":32,"y":288,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -314,7 +314,15 @@
 },
 "item_flower_3v.png":
 {
-	"frame": {"x":32,"y":352,"w":32,"h":32},
+	"frame": {"x":64,"y":288,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"item_ground_beetle_corpse_1v.png":
+{
+	"frame": {"x":96,"y":288,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -322,7 +330,7 @@
 },
 "item_honeydew_1v.png":
 {
-	"frame": {"x":64,"y":352,"w":32,"h":32},
+	"frame": {"x":0,"y":320,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -330,7 +338,7 @@
 },
 "item_leaf_1v.png":
 {
-	"frame": {"x":96,"y":352,"w":32,"h":32},
+	"frame": {"x":32,"y":320,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -338,7 +346,7 @@
 },
 "item_leaf_2v.png":
 {
-	"frame": {"x":0,"y":384,"w":32,"h":32},
+	"frame": {"x":64,"y":320,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -346,7 +354,7 @@
 },
 "item_leaf_3v.png":
 {
-	"frame": {"x":32,"y":384,"w":32,"h":32},
+	"frame": {"x":96,"y":320,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -354,7 +362,7 @@
 },
 "item_leaf_4v.png":
 {
-	"frame": {"x":64,"y":384,"w":32,"h":32},
+	"frame": {"x":0,"y":352,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -362,7 +370,7 @@
 },
 "item_source_honeydew.png":
 {
-	"frame": {"x":0,"y":416,"w":90,"h":110},
+	"frame": {"x":0,"y":488,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -370,7 +378,7 @@
 },
 "item_source_honeydew_not_fertile.png":
 {
-	"frame": {"x":0,"y":526,"w":90,"h":110},
+	"frame": {"x":0,"y":598,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -378,7 +386,7 @@
 },
 "marker_cross.png":
 {
-	"frame": {"x":90,"y":526,"w":32,"h":32},
+	"frame": {"x":32,"y":352,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -386,7 +394,7 @@
 },
 "marker_pointer.png":
 {
-	"frame": {"x":0,"y":636,"w":32,"h":32},
+	"frame": {"x":64,"y":352,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -394,7 +402,7 @@
 },
 "nest.png":
 {
-	"frame": {"x":32,"y":636,"w":40,"h":40},
+	"frame": {"x":0,"y":384,"w":40,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
@@ -402,7 +410,7 @@
 },
 "nest_building.png":
 {
-	"frame": {"x":72,"y":636,"w":40,"h":40},
+	"frame": {"x":40,"y":384,"w":40,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
@@ -410,7 +418,7 @@
 },
 "nest_destroyed.png":
 {
-	"frame": {"x":0,"y":676,"w":40,"h":40},
+	"frame": {"x":80,"y":384,"w":40,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
@@ -427,8 +435,8 @@
 	"version": "1.1",
 	"image": "world_spritesheet.png",
 	"format": "RGBA8888",
-	"size": {"w":128,"h":716},
+	"size": {"w":128,"h":708},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:9aa68530a702481a94477e8743fb5a61:c369c06ac907ef4dbd9cdf73e0ea2c83:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:ae33cee20e9c9adeffce1d866a438e12:eab90c5125500f686b032401479ebeb0:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }

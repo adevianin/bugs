@@ -212,6 +212,7 @@
             <key type="filename">images/item_flower_1v.png</key>
             <key type="filename">images/item_flower_2v.png</key>
             <key type="filename">images/item_flower_3v.png</key>
+            <key type="filename">images/item_ground_beetle_corpse_1v.png</key>
             <key type="filename">images/item_honeydew_1v.png</key>
             <key type="filename">images/item_leaf_1v.png</key>
             <key type="filename">images/item_leaf_2v.png</key>
@@ -340,6 +341,7 @@
                     <filename>images/item_flower_1v.png</filename>
                     <filename>images/item_flower_2v.png</filename>
                     <filename>images/item_flower_3v.png</filename>
+                    <filename>images/item_ground_beetle_corpse_1v.png</filename>
                 </array>
             </struct>
         </map>

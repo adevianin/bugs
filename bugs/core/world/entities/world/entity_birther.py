@@ -48,6 +48,9 @@ class EntityBirther():
             case _:
                 raise Exception('cant birth current entity type')
             
+        if 'preborn_callback' in request:
+            request['preborn_callback'](new_entity)
+            
         self._map.add_new_entity(new_entity)
 
         new_entity.born()

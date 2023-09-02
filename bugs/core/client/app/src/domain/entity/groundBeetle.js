@@ -8,6 +8,12 @@ class GroundBeetle extends LiveEntity {
 
         this._setState('standing');
     }
+
+    _playEntityDied(action) {
+        this._setState('dead');
+        this.die();
+        return Promise.resolve();
+    }
 }
 
 export {

@@ -569,6 +569,12 @@ class GroundBeetle extends _liveEntity__WEBPACK_IMPORTED_MODULE_1__.LiveEntity {
 
         this._setState('standing');
     }
+
+    _playEntityDied(action) {
+        this._setState('dead');
+        this.die();
+        return Promise.resolve();
+    }
 }
 
 
