@@ -13,7 +13,6 @@ class LiveEntity(Entity, iEnemy):
         super().__init__(events, id, type, from_colony_id)
         self._mind: Mind = mind
         self._body: Body = body
-        self.events: EventEmitter = events
 
         self.events.add_listener('walk', self._on_body_walk)
         self.events.add_listener('got_in_nest', self._on_got_in_nest)
