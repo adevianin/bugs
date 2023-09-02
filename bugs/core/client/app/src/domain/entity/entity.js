@@ -3,7 +3,7 @@ import { ACTION_TYPES } from './action/actionTypes';
 
 class Entity extends EventEmitter {
 
-    constructor(eventBus, id, position, type, fromColony, hp, maxHp) {
+    constructor(eventBus, id, position, angle, type, fromColony, hp, maxHp) {
         super();
         this._eventBus = eventBus;
         this.id = id;
@@ -13,7 +13,7 @@ class Entity extends EventEmitter {
         this._actionStack = [];
         this._isPlaying = false;
         this._isHidden = false;
-        this._angle = 0;
+        this._angle = angle;
         this._hp = hp;
         this._maxHp = maxHp;
     }
@@ -68,6 +68,8 @@ class Entity extends EventEmitter {
                 return this._playHpChange(action);
             case ACTION_TYPES.ENTITY_DIED:
                 return this._playEntityDied(action);
+            case ACTION_TYPES.ENTITY_ROTATED:
+                return this._playEntityRotated(action);
         }
 
         return null;
@@ -106,6 +108,30 @@ class Entity extends EventEmitter {
 
     _playHpChange(action) {
         this.hp = action.actionData.hp;
+        return Promise.resolve();
+    }
+
+    _playEntityRotated(action) {
+        let newAngle = action.actionData.angle;
+        let angleDistance = newAngle - this.angle;
+
+        if (angleDistance > 180) {
+            angleDistance -= 360;
+        } else if (angleDistance < -180) {
+            angleDistance += 360;
+        }
+
+        let stepCount = 4
+        let angleStepSize = angleDistance / stepCount;
+        let step = 1;
+        let interval = setInterval(() => {
+            this.angle += angleStepSize;
+            if (step >= stepCount) {
+                clearInterval(interval);
+            }
+            step++;
+        }, 30);
+        
         return Promise.resolve();
     }
 

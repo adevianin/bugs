@@ -4,8 +4,8 @@ import { ACTION_TYPES } from './action/actionTypes';
 
 class LiveEntity extends Entity {
 
-    constructor(eventBus, id, position, entityType, fromColony, userSpeed, hp, maxHp) {
-        super(eventBus, id, position, entityType, fromColony, hp, maxHp);
+    constructor(eventBus, id, position, angle, entityType, fromColony, userSpeed, hp, maxHp) {
+        super(eventBus, id, position, angle, entityType, fromColony, hp, maxHp);
         this._userSpeed = userSpeed;
     }
 
@@ -28,7 +28,6 @@ class LiveEntity extends Entity {
         let wholeWalkTime = (dist / this._userSpeed) * 1000;
         let walkStartAt = Date.now();
         let startPosition = this.position;
-        this._lookAt(destPosition.x, destPosition.y);
         this._setState('walking');
         return new Promise((res, rej) => {
             let walkInterval = setInterval(() => {
@@ -46,29 +45,6 @@ class LiveEntity extends Entity {
                 }
             }, 50)
         });
-    }
-
-    _lookAt(x, y) {
-        let currentAngle = this._angle;
-        let newAngle = (Math.atan2(y - this.position.y, x - this.position.x) * 180 / Math.PI) + 90;
-        let angleDistance = newAngle - currentAngle;
-
-        if (angleDistance > 180) {
-            angleDistance -= 360;
-        } else if (angleDistance < -180) {
-            angleDistance += 360;
-        }
-
-        let stepCount = 4
-        let angleStepSize = angleDistance / stepCount;
-        let step = 1;
-        let interval = setInterval(() => {
-            this.angle += angleStepSize;
-            if (step >= stepCount) {
-                clearInterval(interval);
-            }
-            step++;
-        }, 30);
     }
 
     _calcCoordForWalkedPercent(startCoord, endCoord, flayedPercent) {

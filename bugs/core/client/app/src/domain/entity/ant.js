@@ -4,8 +4,8 @@ import { ACTION_TYPES } from './action/actionTypes';
 
 class Ant extends LiveEntity {
 
-    constructor(eventBus, id, position, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId) {
-        super(eventBus, id, position, EntityTypes.ANT, fromColony, userSpeed, hp, maxHp);
+    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId) {
+        super(eventBus, id, position, angle, EntityTypes.ANT, fromColony, userSpeed, hp, maxHp);
         this._pickedItemId = pickedItemId;
         this._antType = antType;
         this._setState('standing');

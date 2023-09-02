@@ -8,6 +8,7 @@ class ItemView extends EntityView {
 
         this._unbindIsPickedChangeListener = this._entity.on('isPickedChanged', this._renderIsPicked.bind(this));
         this._unbindPositionChangeListener = this._entity.on('positionChanged', this._renderPosition.bind(this));
+        this._unbindAngleChangeListener = this._entity.on('angleChanged', this._renderAngle.bind(this));
 
         this._render();
     }
@@ -24,6 +25,7 @@ class ItemView extends EntityView {
 
         this._renderPosition();
         this._renderIsPicked();
+        this._renderAngle();
     }
 
     _renderPosition() {
@@ -33,6 +35,10 @@ class ItemView extends EntityView {
 
     _renderIsPicked() {
         this._sprite.renderable = !this._entity.isPicked;
+    }
+
+    _renderAngle() {
+        this._entityContainer.angle = this._entity.angle;
     }
 
     remove() {

@@ -8,6 +8,7 @@ const ACTION_TYPES = {
     ENTITY_GOT_IN_NEST: 'entity_got_in_nest',
     ENTITY_GOT_OUT_OF_NEST: 'entity_got_out_of_nest',
     ENTITY_HP_CHANGE: 'entity_hp_change',
+    ENTITY_ROTATED: 'entity_rotated',
     ITEM_WAS_PICKED_UP: 'item_was_picked_up',
     ITEM_WAS_DROPPED: 'item_was_dropped',
     ITEM_SOURCE_FERTILITY_CHANGED: 'item_source_fertility_changed',

@@ -198,6 +198,7 @@ const ACTION_TYPES = {
     ENTITY_GOT_IN_NEST: 'entity_got_in_nest',
     ENTITY_GOT_OUT_OF_NEST: 'entity_got_out_of_nest',
     ENTITY_HP_CHANGE: 'entity_hp_change',
+    ENTITY_ROTATED: 'entity_rotated',
     ITEM_WAS_PICKED_UP: 'item_was_picked_up',
     ITEM_WAS_DROPPED: 'item_was_dropped',
     ITEM_SOURCE_FERTILITY_CHANGED: 'item_source_fertility_changed',
@@ -230,8 +231,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class Ant extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
-    constructor(eventBus, id, position, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony, userSpeed, hp, maxHp);
+    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId) {
+        super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony, userSpeed, hp, maxHp);
         this._pickedItemId = pickedItemId;
         this._antType = antType;
         this._setState('standing');
@@ -397,7 +398,7 @@ __webpack_require__.r(__webpack_exports__);
 
 class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
-    constructor(eventBus, id, position, type, fromColony, hp, maxHp) {
+    constructor(eventBus, id, position, angle, type, fromColony, hp, maxHp) {
         super();
         this._eventBus = eventBus;
         this.id = id;
@@ -407,7 +408,7 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
         this._actionStack = [];
         this._isPlaying = false;
         this._isHidden = false;
-        this._angle = 0;
+        this._angle = angle;
         this._hp = hp;
         this._maxHp = maxHp;
     }
@@ -462,6 +463,8 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
                 return this._playHpChange(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_1__.ACTION_TYPES.ENTITY_DIED:
                 return this._playEntityDied(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_1__.ACTION_TYPES.ENTITY_ROTATED:
+                return this._playEntityRotated(action);
         }
 
         return null;
@@ -503,6 +506,30 @@ class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
         return Promise.resolve();
     }
 
+    _playEntityRotated(action) {
+        let newAngle = action.actionData.angle;
+        let angleDistance = newAngle - this.angle;
+
+        if (angleDistance > 180) {
+            angleDistance -= 360;
+        } else if (angleDistance < -180) {
+            angleDistance += 360;
+        }
+
+        let stepCount = 4
+        let angleStepSize = angleDistance / stepCount;
+        let step = 1;
+        let interval = setInterval(() => {
+            this.angle += angleStepSize;
+            if (step >= stepCount) {
+                clearInterval(interval);
+            }
+            step++;
+        }, 30);
+        
+        return Promise.resolve();
+    }
+
     _playEntityDied(action) {
         this._setState('dead');
         return new Promise((res) => {
@@ -537,8 +564,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class GroundBeetle extends _liveEntity__WEBPACK_IMPORTED_MODULE_1__.LiveEntity {
 
-    constructor(eventBus, id, position, fromColony, userSpeed, hp, maxHp) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.GROUND_BEETLE, fromColony, userSpeed, hp, maxHp);
+    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp) {
+        super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.GROUND_BEETLE, fromColony, userSpeed, hp, maxHp);
 
         this._setState('standing');
     }
@@ -568,8 +595,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class Item extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     
-    constructor(eventBus, id, position, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ITEM, fromColony, hp, maxHp);
+    constructor(eventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
+        super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ITEM, fromColony, hp, maxHp);
         this._itemType = itemType;
         this._itemVariety = itemVariety;
         this._isPicked = isPicked;
@@ -650,8 +677,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class ItemArea extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
-    constructor(eventBus, id, position, hp, maxHp) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ITEM_AREA, null, hp, maxHp);
+    constructor(eventBus, id, position, angle, hp, maxHp) {
+        super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ITEM_AREA, null, hp, maxHp);
     }
 }
 
@@ -679,8 +706,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class ItemSource extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     
-    constructor(eventBus, id, position, fromColony, hp, maxHp, itemType, isFertile) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ITEM_SOURCE, fromColony, hp, maxHp);
+    constructor(eventBus, id, position, angle, fromColony, hp, maxHp, itemType, isFertile) {
+        super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ITEM_SOURCE, fromColony, hp, maxHp);
         this._itemType = itemType;
         this._isFertile = isFertile;
     }
@@ -770,8 +797,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class LiveEntity extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, id, position, entityType, fromColony, userSpeed, hp, maxHp) {
-        super(eventBus, id, position, entityType, fromColony, hp, maxHp);
+    constructor(eventBus, id, position, angle, entityType, fromColony, userSpeed, hp, maxHp) {
+        super(eventBus, id, position, angle, entityType, fromColony, hp, maxHp);
         this._userSpeed = userSpeed;
     }
 
@@ -794,7 +821,6 @@ class LiveEntity extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         let wholeWalkTime = (dist / this._userSpeed) * 1000;
         let walkStartAt = Date.now();
         let startPosition = this.position;
-        this._lookAt(destPosition.x, destPosition.y);
         this._setState('walking');
         return new Promise((res, rej) => {
             let walkInterval = setInterval(() => {
@@ -812,29 +838,6 @@ class LiveEntity extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 }
             }, 50)
         });
-    }
-
-    _lookAt(x, y) {
-        let currentAngle = this._angle;
-        let newAngle = (Math.atan2(y - this.position.y, x - this.position.x) * 180 / Math.PI) + 90;
-        let angleDistance = newAngle - currentAngle;
-
-        if (angleDistance > 180) {
-            angleDistance -= 360;
-        } else if (angleDistance < -180) {
-            angleDistance += 360;
-        }
-
-        let stepCount = 4
-        let angleStepSize = angleDistance / stepCount;
-        let step = 1;
-        let interval = setInterval(() => {
-            this.angle += angleStepSize;
-            if (step >= stepCount) {
-                clearInterval(interval);
-            }
-            step++;
-        }, 30);
     }
 
     _calcCoordForWalkedPercent(startCoord, endCoord, flayedPercent) {
@@ -870,8 +873,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp) {
-        super(eventBus, id, position, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST, fromColony, hp, maxHp);
+    constructor(eventBus, nestApi, id, position, angle, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp) {
+        super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST, fromColony, hp, maxHp);
         this._nestApi = nestApi;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
@@ -1516,54 +1519,54 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT: 
-                return this.buildAnt(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp, entityJson.ant_type, entityJson.picked_item_id, entityJson.located_in_nest_id);
+                return this.buildAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp, entityJson.ant_type, entityJson.picked_item_id, entityJson.located_in_nest_id);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.GROUND_BEETLE:
-                return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp);
+                return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
-                return this.buildNest(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count, entityJson.is_built, entityJson.hp, entityJson.max_hp);
+                return this.buildNest(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count, entityJson.is_built, entityJson.hp, entityJson.max_hp);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM:
-                return this.buildItem(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.variety, entityJson.is_picked);
+                return this.buildItem(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.variety, entityJson.is_picked);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM_SOURCE:
-                return this.buildItemSource(entityJson.id, entityJson.position, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.is_fertile);
+                return this.buildItemSource(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.is_fertile);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM_AREA:
-                return this.buildItemArea(entityJson.id, entityJson.position, entityJson.hp, entityJson.max_hp);
+                return this.buildItemArea(entityJson.id, entityJson.position, entityJson.angle, entityJson.hp, entityJson.max_hp);
             default:
                 throw 'unknown type of entity';
         }
     }
 
-    buildItemArea(id, position, hp, maxHp) {
-        return new _entity_itemArea__WEBPACK_IMPORTED_MODULE_9__.ItemArea(this._mainEventBus, id, position, hp, maxHp);
+    buildItemArea(id, position, angle, hp, maxHp) {
+        return new _entity_itemArea__WEBPACK_IMPORTED_MODULE_9__.ItemArea(this._mainEventBus, id, position, angle, hp, maxHp);
     }
 
-    buildItemSource(id, position, fromColony, hp, maxHp, itemType, isFertile) {
-        return new _entity_itemSource__WEBPACK_IMPORTED_MODULE_8__.ItemSource(this._mainEventBus, id, position, fromColony, hp, maxHp, itemType, isFertile);
+    buildItemSource(id, position, angle, fromColony, hp, maxHp, itemType, isFertile) {
+        return new _entity_itemSource__WEBPACK_IMPORTED_MODULE_8__.ItemSource(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, isFertile);
     }
 
-    buildItem(id, position, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
-        return new _entity_item__WEBPACK_IMPORTED_MODULE_7__.Item(this._mainEventBus, id, position, fromColony, hp, maxHp, itemType, itemVariety, isPicked);
+    buildItem(id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
+        return new _entity_item__WEBPACK_IMPORTED_MODULE_7__.Item(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked);
     }
 
     buildWorld() {
         return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this._mainEventBus);
     }
 
-    buildAnt(id, position, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId) {
-        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, position, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId);
+    buildAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId);
     }
 
-    buildNest(id, position, fromColony, storedCalories, larvaeData, larvaPlacesCount, isBuilt, hp, maxHp) {
+    buildNest(id, position, angle, fromColony, storedCalories, larvaeData, larvaPlacesCount, isBuilt, hp, maxHp) {
         let larvae = [];
         larvaeData.forEach(larvaData => larvae.push(_entity_larva__WEBPACK_IMPORTED_MODULE_4__.Larva.fromJson(larvaData.ant_type, larvaData.progress)));
-        return new _entity_nest__WEBPACK_IMPORTED_MODULE_3__.Nest(this._mainEventBus, this._nestApi, id, position, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp);
+        return new _entity_nest__WEBPACK_IMPORTED_MODULE_3__.Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp);
     }
 
     buildColony(id, owner_id, operations) {
         return new _entity_colony__WEBPACK_IMPORTED_MODULE_5__.Colony(id, owner_id, operations);
     }
 
-    buildGroundBeetle(id, position, fromColony, userSpeed, hp, maxHp) {
-        return new _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_6__.GroundBeetle(this._mainEventBus, id, position, fromColony, userSpeed, hp, maxHp);
+    buildGroundBeetle(id, position, angle, fromColony, userSpeed, hp, maxHp) {
+        return new _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_6__.GroundBeetle(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp);
     }
 }
 
@@ -3268,6 +3271,7 @@ class ItemView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
         this._unbindIsPickedChangeListener = this._entity.on('isPickedChanged', this._renderIsPicked.bind(this));
         this._unbindPositionChangeListener = this._entity.on('positionChanged', this._renderPosition.bind(this));
+        this._unbindAngleChangeListener = this._entity.on('angleChanged', this._renderAngle.bind(this));
 
         this._render();
     }
@@ -3284,6 +3288,7 @@ class ItemView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
         this._renderPosition();
         this._renderIsPicked();
+        this._renderAngle();
     }
 
     _renderPosition() {
@@ -3293,6 +3298,10 @@ class ItemView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
     _renderIsPicked() {
         this._sprite.renderable = !this._entity.isPicked;
+    }
+
+    _renderAngle() {
+        this._entityContainer.angle = this._entity.angle;
     }
 
     remove() {

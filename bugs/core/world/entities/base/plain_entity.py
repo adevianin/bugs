@@ -9,6 +9,7 @@ class PlainEntity(Entity):
         super().__init__(events, id, type, from_colony_id)
         self._position = position
         self._hp = hp
+        self._angle = 0
 
     @property
     def position(self):
@@ -18,6 +19,15 @@ class PlainEntity(Entity):
     def position(self, new_pos: Point):
         self._position = new_pos
         self.events.emit('position_changed')
+
+    @property
+    def angle(self):
+        return self._angle
+
+    @angle.setter
+    def angle(self, value: int):
+        self._angle = value
+        self.events.emit('angle_changed')
 
     @property
     def hp(self):

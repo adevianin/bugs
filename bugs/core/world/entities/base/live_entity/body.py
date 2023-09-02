@@ -12,6 +12,8 @@ from typing import List, Callable
 from core.world.entities.base.entity import Entity
 from core.world.entities.item.item import Item
 
+import math
+
 class Body(ABC):
 
     DISTANCE_PER_SEP = 32
@@ -31,6 +33,7 @@ class Body(ABC):
         self._user_speed = self.DISTANCE_PER_SEP / STEP_TIME
         self._hp = hp
         self._world_interactor = world_interactor
+        self._angle = 0
 
     @property
     def world_interactor(self):
@@ -50,6 +53,15 @@ class Body(ABC):
         self.events.emit('position_changed')
 
     @property
+    def angle(self):
+        return self._angle
+    
+    @angle.setter
+    def angle(self, value):
+        self._angle = value
+        self.events.emit('angle_changed')
+
+    @property
     def is_no_calories(self):
         return self._calories <= 0
     
@@ -67,6 +79,8 @@ class Body(ABC):
         self.events.emit('hp_changed')
 
     def step_to(self, destination_point: Point) -> bool:
+        self._look_at(destination_point)
+
         new_position, passed_dist, is_walk_done = Point.do_step_on_path(self.position, destination_point, self.DISTANCE_PER_SEP)
 
         if (passed_dist == 0):
@@ -78,7 +92,7 @@ class Body(ABC):
         
         self.events.emit('walk', position=new_position)
         return is_walk_done
-
+    
     def step_to_near(self, point: Point, distance: int = 10):
         x = point.x + distance if self.position.x > point.x else point.x - distance
         y = point.y + distance if self.position.y > point.y else point.y - distance
@@ -142,6 +156,9 @@ class Body(ABC):
     
     def receive_colony_signal(self, signal: dict):
         self.events.emit(f'colony_signal:{ signal["type"] }', signal)
+
+    def _look_at(self, point: Point):
+        self.angle = (math.atan2(point.y - self.position.y, point.x - self.position.x) * 180 / math.pi) + 90
 
     def _consume_calories(self, amount: int):
         pass

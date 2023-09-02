@@ -4,8 +4,8 @@ import { ACTION_TYPES } from "./action/actionTypes";
 
 class Item extends Entity {
     
-    constructor(eventBus, id, position, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
-        super(eventBus, id, position, EntityTypes.ITEM, fromColony, hp, maxHp);
+    constructor(eventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
+        super(eventBus, id, position, angle, EntityTypes.ITEM, fromColony, hp, maxHp);
         this._itemType = itemType;
         this._itemVariety = itemVariety;
         this._isPicked = isPicked;

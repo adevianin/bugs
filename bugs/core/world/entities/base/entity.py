@@ -15,6 +15,7 @@ class Entity(ABC):
         self._from_colony_id = from_colony_id
 
         self.events.add_listener('hp_changed', self._on_hp_changed)
+        self.events.add_listener('angle_changed', self._on_angle_changed)
 
     @property
     def id(self):
@@ -32,6 +33,16 @@ class Entity(ABC):
     @position.setter
     @abstractmethod
     def position(self, value: Point):
+        pass
+
+    @property
+    @abstractmethod
+    def angle(self):
+        pass
+
+    @angle.setter
+    @abstractmethod
+    def angle(self, value: int):
         pass
 
     @property
@@ -75,7 +86,8 @@ class Entity(ABC):
             'from_colony_id': self._from_colony_id,
             'hp': self.hp,
             'max_hp': self.MAX_HP,
-            'position': self.position.to_public_json()
+            'position': self.position.to_public_json(),
+            'angle': self.angle
         }
     
     def _emit_action(self, action_type: str, action_data: dict = None):
@@ -90,3 +102,8 @@ class Entity(ABC):
         self._emit_action('entity_hp_change', { 'hp': self.hp })
         if self.hp <= 0:
             self._handle_dieing()
+
+    def _on_angle_changed(self):
+        self._emit_action('entity_rotated', {
+            'angle': self.angle
+        })

@@ -28,6 +28,14 @@ class LiveEntity(Entity, iEnemy):
         self._body.position = new_position
 
     @property
+    def angle(self):
+        return self.body.angle
+
+    @angle.setter
+    def angle(self, value: int):
+        self.body.angle = value
+
+    @property
     def mind(self):
         return self._mind
     
