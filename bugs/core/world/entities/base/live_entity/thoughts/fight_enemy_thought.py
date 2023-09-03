@@ -13,7 +13,7 @@ class FightEnemyThought(Thought):
 
     @property
     def enemy_id(self):
-        return self._enemy.id if self._enemy else None
+        return self._enemy.id if self._enemy and not self._enemy.is_died else None
     
     def set_enemy(self, enemy: iEnemy):
         self._enemy = enemy
