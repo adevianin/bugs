@@ -59,6 +59,7 @@ class Mind(ABC):
         if self._has_thoughts_to_do():
             for thought in self._thoughts_stack:
                 thought.cancel()
+        self._thoughts_stack.clear()
 
     @abstractmethod
     def _generate_thoughts(self):
@@ -76,10 +77,13 @@ class Mind(ABC):
             self._thoughts_stack.append(thought)
 
     def _get_current_thought(self) -> Thought:
-        return self._thoughts_stack[0]
+        for thought in self._thoughts_stack:
+            if not thought.is_canceled and not thought.is_done:
+                return thought
+        return None
 
     def _has_thoughts_to_do(self) -> bool:
-        return len(self._thoughts_stack) > 0
+        return self._get_current_thought() is not None
 
     def _handle_done_thoughts(self):
         done_thoughts: List[Thought] = [] 
