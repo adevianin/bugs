@@ -115,7 +115,7 @@ class CollectFoodThought(Thought):
     def cancel(self):
         super().cancel()
         if self._body.is_item_picked:
-            self._body.drop_picked_food()
+            self._body.drop_picked_item()
 
     def _on_nest_died(self):
         self.cancel()
