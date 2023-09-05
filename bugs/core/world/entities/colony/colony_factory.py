@@ -6,18 +6,20 @@ from .colony_relations_table import ColonyRelationsTable
 from .relation_tester import RelationTester
 from .ant_colony import AntColony
 from .ground_beetle_colony import GroundBeetleColony
+from core.world.entities.colony.operation.operation_factory import OperationFactory
 
 class ColonyFactory():
 
-    def __init__(self, event_bus: EventEmitter):
+    def __init__(self, event_bus: EventEmitter, operation_factory: OperationFactory):
         self._event_bus = event_bus
+        self._operation_factory = operation_factory
 
     def build_new_ant_colony(self, id: int, owner_id: int, map: Map, colony_relations_table: ColonyRelationsTable) -> AntColony:
-        return self.build_ant_colony(id=id, owner_id=owner_id, map=map, operations=[], colony_relations_table=colony_relations_table)
+        return self.build_ant_colony(id=id, owner_id=owner_id, map=map, operations=[], colony_relations_table=colony_relations_table, last_registered_entities_in_colony_area_ids=[])
 
-    def build_ant_colony(self, id: int, owner_id: int, map: Map, operations: List[Operation], colony_relations_table: ColonyRelationsTable) -> AntColony:
+    def build_ant_colony(self, id: int, owner_id: int, map: Map, operations: List[Operation], colony_relations_table: ColonyRelationsTable, last_registered_entities_in_colony_area_ids: List[int]) -> AntColony:
         relation_tester = self._build_relation_tester(colony_relations_table, id)
-        return AntColony(id, self._event_bus, owner_id, map, operations, relation_tester)
+        return AntColony(id, self._event_bus, self._operation_factory, owner_id, map, operations, relation_tester, last_registered_entities_in_colony_area_ids)
     
     def build_ground_beetle_colony(self, id: int, map: Map, colony_relations_table: ColonyRelationsTable):
         relation_tester = self._build_relation_tester(colony_relations_table, id)

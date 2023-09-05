@@ -6,6 +6,8 @@ from typing import List
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.formation.formation_factory import FormationFactory
+from core.world.entities.colony.operation.bring_item_to_nest_operation import BringItemToNestOperation
+from core.world.entities.item.item import Item
 
 class OperationFactory():
 
@@ -17,3 +19,6 @@ class OperationFactory():
     
     def build_destroy_nest_operation(self, nest: Nest, id: int = None, hired_ants: List[Ant] = None, flags: dict = None):
         return DestroyNestOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, nest)
+    
+    def build_bring_item_to_nest_operation(self, nest: Nest, item: Item, id: int = None, hired_ants: List[Ant] = None, flags: dict = None):
+        return BringItemToNestOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, nest, item)

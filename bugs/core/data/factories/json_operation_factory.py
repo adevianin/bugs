@@ -14,6 +14,8 @@ class JsonOperationFactory():
                 return self._build_build_new_nest_operation_from_json(operation_json, entities_collection)
             case OperationTypes.DESTROY_NEST:
                 return self._build_destory_nest_operation_from_json(operation_json, entities_collection)
+            case _:
+                raise Exception('unknown type of operation')
 
     def _build_build_new_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
         hired_ants = self._prepare_hired_ants(operation_json, entities_collection)

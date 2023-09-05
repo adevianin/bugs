@@ -54,7 +54,6 @@ class AntView extends LiveEntityView {
     }
 
     _renderPickedItemView() {
-        console.log('render picked item');
         if (!this._pickedItemView) {
             let item = AntView.domainFacade.findEntityById(this._entity.pickedItemId);
             this._pickedItemView = new PickedItemView(item, this._pickedItemContainer);

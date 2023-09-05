@@ -6,3 +6,5 @@ class ItemTypes(StrEnum):
     HONEYDEW = 'honeydew'
     GROUND_BEETLE_CORPSE = 'ground_beetle_corpse'
 
+class ItemTypesPack():
+    ANT_EDIBLE_ITEMS = [ItemTypes.GROUND_BEETLE_CORPSE]

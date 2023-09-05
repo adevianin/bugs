@@ -2909,7 +2909,6 @@ class AntView extends _liveEntityView__WEBPACK_IMPORTED_MODULE_2__.LiveEntityVie
     }
 
     _renderPickedItemView() {
-        console.log('render picked item');
         if (!this._pickedItemView) {
             let item = AntView.domainFacade.findEntityById(this._entity.pickedItemId);
             this._pickedItemView = new _pickedItemView__WEBPACK_IMPORTED_MODULE_1__.PickedItemView(item, this._pickedItemContainer);

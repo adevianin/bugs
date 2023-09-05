@@ -66,6 +66,12 @@ class Ant(LiveEntity):
     def get_out_of_nest(self):
         self._body.get_out_of_nest()
 
+    def pick_up_item(self, item):
+        self._body.pick_up_item(item)
+
+    def give_food(self, nest: Nest):
+        self._body.give_food(nest)
+
     def set_formation(self, formation: Formation):
         self._body.set_formation(formation)
 

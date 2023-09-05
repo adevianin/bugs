@@ -83,6 +83,9 @@ class Operation(ABC):
     def hire_ant(self, ant: Ant):
         if (not self.is_hiring):
             raise Exception('operation is not hiring')
+        
+        if not self._test_potential_member(ant):
+            return
 
         self._hired_ants.append(ant)
 
@@ -117,6 +120,9 @@ class Operation(ABC):
             ant.leave_operation()
         
         self.events.emit('change')
+
+    def _test_potential_member(self, ant: Ant):
+        return True
 
     def _on_hired_all(self):
         self._init_staff()

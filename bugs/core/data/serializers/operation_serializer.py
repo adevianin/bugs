@@ -11,6 +11,8 @@ class OperationSerializer():
                 return self._serialize_build_new_nest(operation)
             case OperationTypes.DESTROY_NEST:
                 return self._serialize_destroy_nest(operation)
+            case _:
+                raise Exception('unknown type of operation')
 
     def _serialize_operation(self, operation: Operation):
         return {
