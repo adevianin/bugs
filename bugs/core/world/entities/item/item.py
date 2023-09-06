@@ -40,7 +40,6 @@ class Item(Entity):
         self._variety = variety
         self._strength = strength
         self._life_span = life_span
-        self._is_bringing = False
 
     @property
     def item_type(self):
@@ -65,12 +64,8 @@ class Item(Entity):
     def do_step(self):
         if self._life_span != -1:
             self._life_span -= 1
-            if self._life_span == 0 and not self._is_picked and not self._is_bringing:
+            if self._life_span == 0 and not self._is_picked:
                 self.die()
-
-        if self._is_bringing:
-            self.be_bringed()
-        
     
     def use(self, using_strength: int = None) -> int:
         if (using_strength is None):
