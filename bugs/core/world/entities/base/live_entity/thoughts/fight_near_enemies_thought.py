@@ -1,13 +1,13 @@
 from core.world.entities.thought.thought import Thought
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.base.live_entity.thoughts.fight_enemy_thought import FightEnemyThought
-from core.world.entities.base.live_entity.body import Body
+from core.world.entities.base.live_entity.live_body import LiveBody
 
 class FightNearEnemiesThought(Thought):
 
-    _body: Body
+    _body: LiveBody
 
-    def __init__(self, body: Body, fight_enemy_thought: FightEnemyThought, flags, sayback: str):
+    def __init__(self, body: LiveBody, fight_enemy_thought: FightEnemyThought, flags, sayback: str):
         super().__init__(body=body, type=ThoughtTypes.FIGHT_NEAR_ENEMIES, flags=flags, sayback=sayback)
         self._nested_thoughts['fight_enemy_thought'] = fight_enemy_thought
 

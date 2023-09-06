@@ -62,7 +62,7 @@ class NestView extends EntityView {
 
         this._builtNestSprite.renderable = state == 'built';
         this._buildingNestSprite.renderable = state == 'building';
-        this._destroyedNestSprite.renderable = state == 'destroyed';
+        this._destroyedNestSprite.renderable = state == 'dead';
     }
 
     _onClick() {

@@ -1,11 +1,11 @@
 from core.world.entities.thought.thought import Thought
 from core.world.entities.nest.nest import Nest
 from core.world.entities.thought.thought_types import ThoughtTypes
-from core.world.entities.base.live_entity.body import Body
+from core.world.entities.base.live_entity.live_body import LiveBody
 
 class GoInNestThought(Thought):
 
-    def __init__(self, body: Body, flags, sayback: str, nest: Nest):
+    def __init__(self, body: LiveBody, flags, sayback: str, nest: Nest):
         super().__init__(body=body, type=ThoughtTypes.GO_IN_NEST, flags=flags, sayback=sayback)
         self._nest = nest
         self._teest = 1

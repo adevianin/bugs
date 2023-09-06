@@ -2,6 +2,7 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from .item_types import ItemTypes
 from .item import Item
+from core.world.entities.base.body import Body
 
 import random
 
@@ -14,5 +15,6 @@ class ItemFactory():
 
     def build_item(self, id: int, item_type: ItemTypes, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool) -> Item:
         events = EventEmitter()
-        return Item(events, id, item_type, position, angle, strength, variety, life_span, is_picked)
+        body = Body(events, position, angle, Body.MAX_HP)
+        return Item(events, id, body, item_type, strength, variety, life_span, is_picked)
             

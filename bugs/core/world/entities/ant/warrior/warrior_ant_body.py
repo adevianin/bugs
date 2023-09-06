@@ -1,4 +1,4 @@
 from ..base.ant_body import AntBody
 
 class WarriorAntBody(AntBody):
-    pass
+    MAX_HP = 500

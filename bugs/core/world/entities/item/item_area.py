@@ -1,16 +1,17 @@
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
-from core.world.entities.base.plain_entity import PlainEntity
 from .item_types import ItemTypes
 from core.world.utils.size import Size
+from core.world.entities.base.body import Body
+from core.world.entities.base.entity import Entity
 
 import random
 
-class ItemArea(PlainEntity):
+class ItemArea(Entity):
 
-    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, hp: int, position: Point, angle: int, size: Size, item_type: ItemTypes, fertility: int, accumulated: int):
-        super().__init__(events, id, EntityTypes.ITEM_AREA, from_colony_id, hp, position, angle)
+    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, body: Body, size: Size, item_type: ItemTypes, fertility: int, accumulated: int):
+        super().__init__(events, id, EntityTypes.ITEM_AREA, from_colony_id, body)
         self._size = size
         self._item_type = item_type
         self._fertility = fertility
@@ -41,11 +42,11 @@ class ItemArea(PlainEntity):
     def _generate_spawn_point(self):
         half_width = self._size.width / 2
         half_height = self._size.height / 2
-        minX = self.position.x - half_width if self.position.x - half_width > 0 else 0
-        maxX = self.position.x + half_width
+        minX = self._body.position.x - half_width if self._body.position.x - half_width > 0 else 0
+        maxX = self._body.position.x + half_width
         x = random.randint(minX, maxX)
-        minY = self.position.y - half_height if self.position.y - half_height > 0 else 0
-        maxY = self.position.y + half_height
+        minY = self._body.position.y - half_height if self._body.position.y - half_height > 0 else 0
+        maxY = self._body.position.y + half_height
         y = random.randint(minY, maxY)
 
         return Point(x, y)

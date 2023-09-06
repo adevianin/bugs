@@ -15,8 +15,8 @@ class Ant(LiveEntity):
     _body: AntBody
     body: AntBody
 
-    def __init__(self, events: EventEmitter, id: int, ant_type: AntTypes, from_colony_id: int, mind: AntMind, body: AntBody):
-        super().__init__(events, id, EntityTypes.ANT, from_colony_id, mind, body)
+    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, body: AntBody, ant_type: AntTypes, mind: AntMind):
+        super().__init__(events, id, EntityTypes.ANT, from_colony_id, body, mind)
         self._ant_type = ant_type
         
         self.events.add_listener('item_picked', self._on_item_picked)

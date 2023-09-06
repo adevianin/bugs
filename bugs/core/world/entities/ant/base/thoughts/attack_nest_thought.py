@@ -24,17 +24,16 @@ class AttackNestThought(Thought):
     def do_step(self):
         is_fighting = self.fight_near_enemies_thought.do_step()
         if is_fighting:
-            return
-
-        is_near_nest = self._body.is_near_to_attack(self._nest.position)
-
-        if is_near_nest:
-            self._body.damage_nest(self._nest)
-            if self._nest.is_died:
-                self.done()
+            return True
+        
+        if (self._body.has_formation):
+            self._body.step_in_formation()
         else:
-            if (self._body.has_formation):
-                self._body.step_in_formation()
+            is_near_nest = self._body.is_near_to_attack(self._nest.position)
+            if is_near_nest:
+                self._body.damage_nest(self._nest.body)
+                if self._nest.is_died:
+                    self.done()
             else:
                 self._body.step_to(self._nest.position)
 

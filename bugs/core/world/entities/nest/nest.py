@@ -1,16 +1,14 @@
-from ..base.plain_entity import PlainEntity
 from ..base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
-from core.world.utils.point import Point
 from core.world.entities.ant.base.larva import Larva
 from core.world.entities.item.item import Item
+from core.world.entities.base.body import Body
+from core.world.entities.base.entity import Entity
 
-class Nest(PlainEntity):
+class Nest(Entity):
 
-    MAX_HP = 1000
-
-    def __init__(self, events: EventEmitter, id: int, position: Point, angle: int, from_colony_id: int, hp: int, larvae: list[Larva], larva_places_count: int, stored_calories: int, area: int, build_progress: int):
-        super().__init__(events, id, EntityTypes.NEST, from_colony_id, hp, position, angle)
+    def __init__(self, events: EventEmitter, id: int, from_colony_id: int,  body: Body, larvae: list[Larva], larva_places_count: int, stored_calories: int, area: int, build_progress: int):
+        super().__init__(events, id, EntityTypes.NEST, from_colony_id, body)
         self._area = area
         self._stored_calories = stored_calories
         self._larvae = larvae
@@ -84,7 +82,7 @@ class Nest(PlainEntity):
         if not self.is_built:
             if self._build_progress + build_step >= 100:
                 self._build_progress = 100
-                self.hp = self.MAX_HP
+                self._body.hp = self._body.MAX_HP
             else:
                 self._build_progress += build_step
 

@@ -27,8 +27,6 @@ class Nest extends Entity {
                 return this._playLarvaeChanged(action);
             case ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
                 return this._playBuildStatusChanged(action);
-            case ACTION_TYPES.ENTITY_DIED:
-                return this._playNestDestroyed(action);
         }
     }
 
@@ -58,16 +56,6 @@ class Nest extends Entity {
     _playBuildStatusChanged(action) {
         this._setIsBuilt(action.actionData.is_built)
         return Promise.resolve();
-    }
-
-    _playNestDestroyed(action) {
-        this._setState('destroyed');
-        return new Promise((res) => {
-            setTimeout(() => {
-                this.die();
-                res();
-            }, 5000)
-        });
     }
 
     _setIsBuilt(isBuilt) {

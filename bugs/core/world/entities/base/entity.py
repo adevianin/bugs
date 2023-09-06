@@ -1,18 +1,18 @@
 from abc import ABC, abstractmethod
 from core.world.utils.event_emiter import EventEmitter
-from core.world.utils.point import Point
 from .entity_types import EntityTypes
 from core.world.entities.action import Action
+from core.world.entities.base.body import Body
+from core.world.utils.point import Point
 
 class Entity(ABC):
 
-    MAX_HP = 100
-
-    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int):
+    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, body: Body):
         self.events = events
         self._id: int = id
         self._type: EntityTypes = type
         self._from_colony_id = from_colony_id
+        self._body = body
 
         self.events.add_listener('hp_changed', self._on_hp_changed)
         self.events.add_listener('angle_changed', self._on_angle_changed)
@@ -24,56 +24,28 @@ class Entity(ABC):
     @property
     def type(self):
         return self._type
-
-    @property
-    @abstractmethod
-    def position(self) -> Point:
-        pass
-
-    @position.setter
-    @abstractmethod
-    def position(self, value: Point):
-        pass
-
-    @property
-    @abstractmethod
-    def angle(self):
-        pass
-
-    @angle.setter
-    @abstractmethod
-    def angle(self, value: int):
-        pass
-
-    @property
-    def is_died(self):
-        return self.hp == 0
-    
-    @property
-    @abstractmethod
-    def hp(self):
-        pass
-
-    @hp.setter
-    @abstractmethod
-    def hp(self, value: int):
-        pass
     
     @property
     def from_colony_id(self):
         return self._from_colony_id
+
+    @property
+    def body(self):
+        return self._body
     
-    def damage(self, damage: int):
-        if not self.is_died:
-            self.hp -= damage if self.hp > damage else self.hp
-
-        return self.is_died
-
+    @property
+    def position(self) -> Point:
+        return self._body.position
+    
+    @property
+    def is_died(self):
+        return self._body.is_died
+    
     def born(self):
         self._emit_action('entity_born', { 'entity': self.to_public_json() })
 
     def die(self):
-        self.hp = 0
+        self._body.hp = 0
 
     @abstractmethod
     def do_step(self):
@@ -84,10 +56,10 @@ class Entity(ABC):
             'id': self.id,
             'type': self._type,
             'from_colony_id': self._from_colony_id,
-            'hp': self.hp,
-            'max_hp': self.MAX_HP,
-            'position': self.position.to_public_json(),
-            'angle': self.angle
+            'hp': self._body.hp,
+            'max_hp': self.body.MAX_HP,
+            'position': self._body.position.to_public_json(),
+            'angle': self._body.angle
         }
     
     def _emit_action(self, action_type: str, action_data: dict = None):
@@ -99,11 +71,11 @@ class Entity(ABC):
         self.events.emit('ready_to_remove')
 
     def _on_hp_changed(self):
-        self._emit_action('entity_hp_change', { 'hp': self.hp })
-        if self.hp <= 0:
+        self._emit_action('entity_hp_change', { 'hp': self._body.hp })
+        if self._body.hp <= 0:
             self._handle_dieing()
 
     def _on_angle_changed(self):
         self._emit_action('entity_rotated', {
-            'angle': self.angle
+            'angle': self._body.angle
         })

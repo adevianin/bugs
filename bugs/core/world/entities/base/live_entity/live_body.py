@@ -1,5 +1,4 @@
 from core.world.utils.point import Point
-from abc import ABC
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME
 from core.world.entities.nest.nest import Nest
@@ -11,10 +10,11 @@ from core.world.entities.colony.relation_tester import RelationTester
 from typing import List, Callable
 from core.world.entities.base.entity import Entity
 from core.world.entities.item.item import Item
+from core.world.entities.base.body import Body
 
 import math
 
-class LiveBody(ABC):
+class LiveBody(Body):
 
     DISTANCE_PER_SEP = 32
     SIGHT_DISTANCE = 100
@@ -22,18 +22,15 @@ class LiveBody(ABC):
     _world_interactor: WorldInteractor
 
     def __init__(self, events: EventEmitter, memory: Memory, dna_profile: str, position: Point, angle: int, hp: int, world_interactor: WorldInteractor):
-        self.events = events
+        super().__init__(events, position, angle, hp)
         self.memory = memory
         self._dna_profile = dna_profile
-        self._position = position
         self._max_calories = 1000
         self._calories = self._max_calories
         self._distance_per_calorie = 2
         self._can_eat_calories_per_step = 20
         self._user_speed = self.DISTANCE_PER_SEP / STEP_TIME
-        self._hp = hp
         self._world_interactor = world_interactor
-        self._angle = angle
 
     @property
     def world_interactor(self):
@@ -44,24 +41,6 @@ class LiveBody(ABC):
         return self._user_speed
 
     @property
-    def position(self):
-        return self._position
-    
-    @position.setter
-    def position(self, value):
-        self._position = value
-        self.events.emit('position_changed')
-
-    @property
-    def angle(self):
-        return self._angle
-    
-    @angle.setter
-    def angle(self, value):
-        self._angle = value
-        self.events.emit('angle_changed')
-
-    @property
     def is_no_calories(self):
         return self._calories <= 0
     
@@ -69,15 +48,6 @@ class LiveBody(ABC):
     def dna_profile(self):
         return self._dna_profile
     
-    @property
-    def hp(self):
-        return self._hp
-
-    @hp.setter
-    def hp(self, hp: int):
-        self._hp = hp
-        self.events.emit('hp_changed')
-
     def step_to(self, destination_point: Point) -> bool:
         self._look_at(destination_point)
 
@@ -123,11 +93,11 @@ class LiveBody(ABC):
 
         return food.is_died or self.calc_how_much_calories_is_need() == 0
     
-    def damage_enemy(self, enemy: iEnemy):
-        enemy.damage(20)
+    def damage_enemy(self, enemy_body: Body):
+        enemy_body.receive_damage(20)
 
-    def damage_nest(self, nest: Nest):
-        nest.damage(10)
+    def damage_nest(self, nest_body: Body):
+        nest_body.receive_damage(10)
     
     def is_near_to_attack(self, point: Point):
         dist = self.position.dist(point)

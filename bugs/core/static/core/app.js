@@ -914,8 +914,6 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playLarvaeChanged(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
                 return this._playBuildStatusChanged(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_DIED:
-                return this._playNestDestroyed(action);
         }
     }
 
@@ -945,16 +943,6 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     _playBuildStatusChanged(action) {
         this._setIsBuilt(action.actionData.is_built)
         return Promise.resolve();
-    }
-
-    _playNestDestroyed(action) {
-        this._setState('destroyed');
-        return new Promise((res) => {
-            setTimeout(() => {
-                this.die();
-                res();
-            }, 5000)
-        });
     }
 
     _setIsBuilt(isBuilt) {
@@ -3764,7 +3752,7 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
         this._builtNestSprite.renderable = state == 'built';
         this._buildingNestSprite.renderable = state == 'building';
-        this._destroyedNestSprite.renderable = state == 'destroyed';
+        this._destroyedNestSprite.renderable = state == 'dead';
     }
 
     _onClick() {

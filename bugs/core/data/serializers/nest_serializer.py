@@ -1,8 +1,8 @@
-from .base.plain_entity_serializer import PlainEntitySerializer
+from .base.entity_serializer import EntitySerializer
 from core.world.entities.nest.nest import Nest
 from .larva_serializer import LarvaSerializer
 
-class NestSerializer(PlainEntitySerializer):
+class NestSerializer(EntitySerializer):
 
     def __init__(self, larva_serializer: LarvaSerializer):
         self._larva_serializer = larva_serializer

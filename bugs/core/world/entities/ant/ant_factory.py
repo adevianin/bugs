@@ -44,10 +44,10 @@ class AntFactory():
         sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
-        hp = hp if hp else WarriorAnt.MAX_HP
+        hp = hp if hp else WarriorAntBody.MAX_HP
         body = WarriorAntBody(events, sayer, memory, dna_profile, position, angle, hp, located_in_nest, picked_item, world_interactor)
         mind = WarrirorAntMind(events, body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
-        ant = WarriorAnt(events, id, from_colony_id, mind, body)
+        ant = WarriorAnt(events, id, from_colony_id, body, mind)
 
         return ant
     
@@ -56,10 +56,10 @@ class AntFactory():
         sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
-        hp = hp if hp else WorkerAnt.MAX_HP
+        hp = hp if hp else WorkerAntBody.MAX_HP
         body = WorkerAntBody(events, sayer, memory, dna_profile, position, angle, hp, located_in_nest, picked_item, world_interactor)
         mind = WorkerAntMind(events, body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
-        ant = WorkerAnt(events, id, from_colony_id, mind, body)
+        ant = WorkerAnt(events, id, from_colony_id, body, mind)
 
         return ant
     
@@ -68,10 +68,10 @@ class AntFactory():
         sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
-        hp = hp if hp else QueenAnt.MAX_HP
+        hp = hp if hp else QueenAntBody.MAX_HP
         body = QueenAntBody(events, sayer, memory, dna_profile, position, angle, hp, located_in_nest, picked_item, world_interactor)
         mind = QueenAntMind(events, body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
-        ant = QueenAnt(events, id, from_colony_id, mind, body)
+        ant = QueenAnt(events, id, from_colony_id, body, mind)
 
         return ant
     

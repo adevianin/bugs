@@ -1,11 +1,11 @@
-from core.world.entities.base.live_entity.body import Body
+from core.world.entities.base.live_entity.live_body import LiveBody
 from core.world.entities.thought.thought import Thought
 from core.world.utils.point import Point
 from core.world.entities.thought.thought_types import ThoughtTypes
 
 class WalkToThought(Thought):
 
-    def __init__(self, body: Body, position: Point, flags: dict = None, sayback: str = None):
+    def __init__(self, body: LiveBody, position: Point, flags: dict = None, sayback: str = None):
         super().__init__(body=body, type=ThoughtTypes.WALK_TO, flags=flags, sayback=sayback)
         self._position = position
 

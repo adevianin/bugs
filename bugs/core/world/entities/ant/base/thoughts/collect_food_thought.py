@@ -5,7 +5,7 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.ant.base.ant_body import AntBody
 from core.world.utils.point import Point
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
-from core.world.entities.item.item_source import ItemSource
+from core.world.entities.item.item_source.item_source import ItemSource
 from core.world.entities.item.item import Item
 
 class CollectFoodThought(Thought):

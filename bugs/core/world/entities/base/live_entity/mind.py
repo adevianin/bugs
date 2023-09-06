@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from .body import Body
+from .live_body import LiveBody
 from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.entities.thought.thought import Thought
 from core.world.utils.event_emiter import EventEmitter
@@ -10,7 +10,7 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 
 class Mind(ABC):
 
-    def __init__(self, events: EventEmitter, body: Body, thought_factory: ThoughtFactory, is_auto_thought_generation: bool):
+    def __init__(self, events: EventEmitter, body: LiveBody, thought_factory: ThoughtFactory, is_auto_thought_generation: bool):
         self._body = body
         self._thought_factory = thought_factory
         self._thoughts_stack: List[Thought] = []
@@ -59,7 +59,7 @@ class Mind(ABC):
         if self._has_thoughts_to_do():
             for thought in self._thoughts_stack:
                 thought.cancel()
-        self._thoughts_stack.clear()
+        # self._thoughts_stack.clear() do not clear thought stack here
 
     @abstractmethod
     def _generate_thoughts(self):

@@ -73,8 +73,8 @@ class BringItemToNestOperation(Operation):
 
     def _on_worker_on_position(self, ant: Ant):
         self._write_flag(f'worker_{ant.id}_on_position', True)
-        if self._check_are_all_workers_on_position():
-            self._bring_step()
+        # if self._check_are_all_workers_on_position():
+        #     self._bring_step()
 
     def _check_are_all_workers_on_position(self):
         for ant in self._workers:

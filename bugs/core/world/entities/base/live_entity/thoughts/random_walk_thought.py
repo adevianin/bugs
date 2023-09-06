@@ -1,4 +1,4 @@
-from core.world.entities.base.live_entity.body import Body
+from core.world.entities.base.live_entity.live_body import LiveBody
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.thought.thought import Thought
 from core.world.utils.point import Point
@@ -10,7 +10,7 @@ class RandomWalkThought(Thought):
     DIRECTIONS_COUNT = 8
     VISITED_POINTS_MEMORY = 5
 
-    def __init__(self, body: Body, center: Point, radius: int, flags: dict, sayback: str):
+    def __init__(self, body: LiveBody, center: Point, radius: int, flags: dict, sayback: str):
         super().__init__(body, ThoughtTypes.RANDOM_WALK, flags, sayback)
         self._visited_points = []
         self._center = center

@@ -1,4 +1,4 @@
-from core.world.entities.base.live_entity.body import Body
+from core.world.entities.base.live_entity.live_body import LiveBody
 from core.world.entities.thought.thought import Thought
 from .feed_myself_thought import FeedMyselfThought
 from core.world.utils.point import Point
@@ -6,7 +6,7 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 
 class PrepareForOperationThought(Thought):
 
-    def __init__(self, body: Body, feed_myself_thought: FeedMyselfThought, assemble_point: Point, flags: dict = None, sayback: str = None):
+    def __init__(self, body: LiveBody, feed_myself_thought: FeedMyselfThought, assemble_point: Point, flags: dict = None, sayback: str = None):
         super().__init__(body=body, type=ThoughtTypes.PREPARE_FOR_OPERATION, flags=flags, sayback=sayback)
         self._nested_thoughts['feed_myself_thought'] = feed_myself_thought
         self._assemble_point = assemble_point

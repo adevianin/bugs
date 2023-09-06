@@ -1,12 +1,13 @@
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
-from core.world.entities.base.plain_entity import PlainEntity
 from core.world.entities.item.item_types import ItemTypes
+from core.world.entities.base.body import Body
+from core.world.entities.base.entity import Entity
 
 import random
 
-class Item(PlainEntity):
+class Item(Entity):
     
     @classmethod
     def generate_item_variety(cls, item_type: ItemTypes):
@@ -32,8 +33,8 @@ class Item(PlainEntity):
             case _:
                 return -1
 
-    def __init__(self, events: EventEmitter, id: int, item_type: ItemTypes, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool):
-        super().__init__(events, id, EntityTypes.ITEM, None, Item.MAX_HP, position, angle)
+    def __init__(self, events: EventEmitter, id: int, body: Body, item_type: ItemTypes, strength: int, variety: int, life_span: int, is_picked: bool):
+        super().__init__(events, id, EntityTypes.ITEM, None, body)
         self._item_type = item_type
         self._is_picked = is_picked
         self._variety = variety
@@ -82,15 +83,15 @@ class Item(PlainEntity):
 
     def drop(self, position: Point):
         self._is_picked = False
-        self.position = position
+        self._body.position = position
         self._emit_action('item_was_dropped', {
             'position': self.position.to_public_json()
         })
 
     def be_bringed(self, position: Point, user_speed: int):
-        self._position = position
+        self._body.position = position
         self._emit_action('being_bringed', {
-            'new_position': self._position.to_public_json(),
+            'new_position': self._body.position.to_public_json(),
             'bring_user_speed': user_speed
         })
 

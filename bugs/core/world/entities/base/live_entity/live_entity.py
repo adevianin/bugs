@@ -3,52 +3,27 @@ from ..entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from .mind import Mind
-from .body import Body
+from .live_body import LiveBody
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.enemy_interface import iEnemy
 
 class LiveEntity(Entity, iEnemy):
 
-    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, mind: Mind, body: Body):
-        super().__init__(events, id, type, from_colony_id)
+    _body: LiveBody
+    body: LiveBody
+    mind: Mind
+
+    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, body: LiveBody, mind: Mind):
+        super().__init__(events, id, type, from_colony_id, body)
         self._mind: Mind = mind
-        self._body: Body = body
 
         self.events.add_listener('walk', self._on_body_walk)
         self.events.add_listener('got_in_nest', self._on_got_in_nest)
         self.events.add_listener('got_out_of_nest', self._on_got_out_of_nest)
 
     @property
-    def position(self):
-        return self._body.position
-
-    @position.setter
-    def position(self, new_position: Point):
-        self._body.position = new_position
-
-    @property
-    def angle(self):
-        return self.body.angle
-
-    @angle.setter
-    def angle(self, value: int):
-        self.body.angle = value
-
-    @property
     def mind(self):
         return self._mind
-    
-    @property
-    def body(self):
-        return self._body
-    
-    @property
-    def hp(self):
-        return self._body.hp
-
-    @hp.setter
-    def hp(self, hp: int):
-        self._body.hp = hp
 
     def walk_to(self, position: Point, sayback: str = None):
         self._mind.walk_to(position=position, sayback=sayback)

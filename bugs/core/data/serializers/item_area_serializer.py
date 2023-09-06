@@ -1,7 +1,7 @@
-from .base.plain_entity_serializer import PlainEntitySerializer
+from .base.entity_serializer import EntitySerializer
 from core.world.entities.item.item_area import ItemArea
 
-class ItemAreaSerializer(PlainEntitySerializer):
+class ItemAreaSerializer(EntitySerializer):
 
     def serialize(self, item_area: ItemArea):
         json = super().serialize(item_area)

@@ -17,6 +17,7 @@ class iEnemy(ABC):
     def is_died(self):
         pass
 
+    @property
     @abstractmethod
-    def damage(self, damage: int):
+    def body(self):
         pass

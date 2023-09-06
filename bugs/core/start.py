@@ -38,7 +38,7 @@ from core.world.entities.map.map_factory import MapFactory
 from core.world.services.user_service import UserService
 from core.world.entities.colony.formation.formation_factory import FormationFactory
 from core.world.entities.item.item_factory import ItemFactory
-from core.world.entities.item.item_source_factory import ItemSourceFactory
+from core.world.entities.item.item_source.item_source_factory import ItemSourceFactory
 from core.world.entities.item.item_area_factory import ItemAreaFactory
 
 def start():

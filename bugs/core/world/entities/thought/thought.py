@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
-from ..base.live_entity.body import Body
+from ..base.live_entity.live_body import LiveBody
 from .thought_types import ThoughtTypes
 from typing import Callable
 
 class Thought(ABC):
 
-    def __init__(self, body: Body, type: ThoughtTypes, flags: dict, sayback: str):
+    def __init__(self, body: LiveBody, type: ThoughtTypes, flags: dict, sayback: str):
         self._body = body
         self._type = type
         self._is_done = False
