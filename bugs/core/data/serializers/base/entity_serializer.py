@@ -8,9 +8,9 @@ class EntitySerializer():
             'id': entity.id,
             'type': entity.type,
             'from_colony_id': entity.from_colony_id,
-            'hp': entity.hp,
+            'hp': entity.body.hp,
             'position': entity.position,
-            'angle': entity.angle
+            'angle': entity.body.angle
         })
 
         return json
