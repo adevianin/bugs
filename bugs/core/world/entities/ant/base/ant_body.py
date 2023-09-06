@@ -72,18 +72,18 @@ class AntBody(LiveBody):
     def set_formation(self, formation: Formation):
         self._formation = formation
         unit_number = self._formation.register_unit(self.position)
-        self.memory.save('formation_unit_number', unit_number)
-        self._formation.events.add_listener('reached_destination', self.remove_formation)
+        self._formation_unit_number = unit_number
+        self._formation.events.add_listener('destroyed', self.remove_formation)
 
     def remove_formation(self):
         if self.has_formation:
-            self._formation.events.remove_listener('reached_destination', self.remove_formation)
-            self.formation.remove_unit(self.memory.read('formation_unit_number'))
-            self.memory.clear('formation_unit_number')
+            self._formation.events.remove_listener('destroyed', self.remove_formation)
+            self.formation.remove_unit(self._formation_unit_number)
+            self._formation_unit_number = None
             self._formation = None
 
     def step_in_formation(self):
-        unit_number = self.memory.read('formation_unit_number')
+        unit_number = self._formation_unit_number
         position = self._formation.get_position_for_unit(unit_number)
         return self.step_to(position)
     
@@ -128,7 +128,7 @@ class AntBody(LiveBody):
             self._tell_position_to_formation()
 
     def _tell_position_to_formation(self):
-        self._formation.unit_changed_position(self.position, self.memory.read('formation_unit_number'))
+        self._formation.unit_changed_position(self.position, self._formation_unit_number)
 
     def step_to(self, destination_point: Point) -> bool:
         if self.is_in_nest:

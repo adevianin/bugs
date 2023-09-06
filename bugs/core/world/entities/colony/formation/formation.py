@@ -40,7 +40,7 @@ class Formation(ABC):
 
         return unit_number
 
-    def get_position_for_unit(self, unit_number: int):
+    def get_position_for_unit(self, unit_number: int) -> Point:
         return self._units[unit_number]['formation_position']
     
     def unit_changed_position(self, position: Point, unit_number: int):
@@ -51,6 +51,7 @@ class Formation(ABC):
         unit['is_removed'] = True
 
     def destory(self):
+        self.events.emit('destroyed')
         self._event_bus.remove_listener('step_start', self._on_step_start)
         self.events.remove_all_listeners()
 

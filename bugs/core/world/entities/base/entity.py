@@ -7,6 +7,8 @@ from core.world.utils.point import Point
 
 class Entity(ABC):
 
+    _body: Body
+
     def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, body: Body):
         self.events = events
         self._id: int = id
@@ -30,7 +32,7 @@ class Entity(ABC):
         return self._from_colony_id
 
     @property
-    def body(self):
+    def body(self) -> Body:
         return self._body
     
     @property

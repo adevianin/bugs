@@ -4,11 +4,12 @@ from core.world.utils.point import Point
 from core.world.entities.item.item_types import ItemTypes
 from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
+from core.world.entities.colony.formation.formation import Formation
 
 import random
 
 class Item(Entity):
-    
+
     @classmethod
     def generate_item_variety(cls, item_type: ItemTypes):
         match(item_type):
@@ -40,6 +41,7 @@ class Item(Entity):
         self._variety = variety
         self._strength = strength
         self._life_span = life_span
+        self._is_bringing = False
 
     @property
     def item_type(self):
@@ -64,8 +66,12 @@ class Item(Entity):
     def do_step(self):
         if self._life_span != -1:
             self._life_span -= 1
-            if self._life_span == 0 and not self._is_picked:
+            if self._life_span == 0 and not self._is_picked and not self._is_bringing:
                 self.die()
+
+        if self._is_bringing:
+            self.be_bringed()
+        
     
     def use(self, using_strength: int = None) -> int:
         if (using_strength is None):
@@ -88,11 +94,23 @@ class Item(Entity):
             'position': self.position.to_public_json()
         })
 
-    def be_bringed(self, position: Point, user_speed: int):
+    def start_be_bringing(self, formation: Formation, unit_number: int, bringing_speed: int):
+        self._formation = formation
+        self._formation_unit_number = unit_number
+        self._bringing_speed = bringing_speed
+        self._is_bringing = True
+        self._formation.events.add_listener('destroyed', self.stop_be_bringing)
+
+    def stop_be_bringing(self):
+        self._is_bringing = False
+
+    def be_bringed(self):
+        position = self._formation.get_position_for_unit(self._formation_unit_number)
         self._body.position = position
+        self._formation.unit_changed_position(position, self._formation_unit_number)
         self._emit_action('being_bringed', {
             'new_position': self._body.position.to_public_json(),
-            'bring_user_speed': user_speed
+            'bring_user_speed': self._bringing_speed
         })
 
     def to_public_json(self):
