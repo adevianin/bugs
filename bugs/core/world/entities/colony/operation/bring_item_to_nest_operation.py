@@ -35,6 +35,10 @@ class BringItemToNestOperation(Operation):
     def _init_staff(self):
         super()._init_staff()
         ants = self._workers
+
+        self._item_bringer_ant = ants[0]
+        self._item_bringer_ant.events.add_listener('position_changed', self._on_item_bringer_ant_moved)
+
         self._formation = self._formation_factory.build_bring_item_formation(self._nest.position, WorkerAntBody.DISTANCE_PER_SEP, self._item)
         self._formation.events.add_listener('reached_destination', self._on_formation_reached_destination)
         
@@ -45,8 +49,11 @@ class BringItemToNestOperation(Operation):
             ant.body.sayer.add_listener('prepared', partial(self._on_worker_prepared, ant))
             ant.body.sayer.add_listener('on_position', partial(self._on_worker_on_position, ant))
 
+    def _on_item_bringer_ant_moved(self):
         if self._read_flag('is_bring_step_started'):
-            self._start_bring_item()
+            pos = self._formation.get_position_for_unit(self._item_formation_unit_number)
+            self._item.be_bringed_to(pos, self._item_bringer_ant.body.user_speed)
+            self._formation.unit_changed_position(pos, self._item_formation_unit_number)
 
     def _start_operation(self):
         super()._start_operation()
@@ -84,7 +91,6 @@ class BringItemToNestOperation(Operation):
     
     def _bring_step(self):
         self._write_flag('is_bring_step_started', True)
-        self._start_bring_item()
         ants = self._workers
         for ant in ants:
             ant.walk_in_formation()
@@ -92,7 +98,3 @@ class BringItemToNestOperation(Operation):
     def _on_formation_reached_destination(self):
         self._nest.take_edible_item(self._item)
         self.done()
-
-    def _start_bring_item(self):
-        bring_user_speed = self._workers[0].body.user_speed
-        self._item.start_be_bringing(self._formation, self._item_formation_unit_number, bring_user_speed)

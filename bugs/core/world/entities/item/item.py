@@ -4,7 +4,6 @@ from core.world.utils.point import Point
 from core.world.entities.item.item_types import ItemTypes
 from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
-from core.world.entities.colony.formation.formation import Formation
 
 import random
 
@@ -94,23 +93,11 @@ class Item(Entity):
             'position': self.position.to_public_json()
         })
 
-    def start_be_bringing(self, formation: Formation, unit_number: int, bringing_speed: int):
-        self._formation = formation
-        self._formation_unit_number = unit_number
-        self._bringing_speed = bringing_speed
-        self._is_bringing = True
-        self._formation.events.add_listener('destroyed', self.stop_be_bringing)
-
-    def stop_be_bringing(self):
-        self._is_bringing = False
-
-    def be_bringed(self):
-        position = self._formation.get_position_for_unit(self._formation_unit_number)
+    def be_bringed_to(self, position: Point, bringer_speed: int):
         self._body.position = position
-        self._formation.unit_changed_position(position, self._formation_unit_number)
         self._emit_action('being_bringed', {
             'new_position': self._body.position.to_public_json(),
-            'bring_user_speed': self._bringing_speed
+            'bring_user_speed': bringer_speed
         })
 
     def to_public_json(self):
