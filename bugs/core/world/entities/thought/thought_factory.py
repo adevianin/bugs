@@ -19,6 +19,7 @@ from core.world.entities.base.live_entity.thoughts.random_walk_thought import Ra
 from core.world.entities.ground_beetle.thoughts.hunt_for_aphid import HuntForAphid
 from core.world.entities.item.item import Item
 from core.world.entities.item.item_source import ItemSource
+from core.world.entities.ant.base.thoughts.walk_in_formation_thought import WalkInFormationThought
 
 class ThoughtFactory:
 
@@ -67,6 +68,9 @@ class ThoughtFactory:
     def build_hunt_for_aphid(self, body: Body, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_food_source: ItemSource, flags: dict = None, sayback: str = None):
         return HuntForAphid(body=body, random_walk_thought=random_walk_thought, fight_near_enemies_thought=fight_near_enemies_thought, found_food_source=found_food_source, flags=flags, sayback=sayback)
     
+    def build_walk_in_formation(self, body: Body, flags: dict = None, sayback: str = None):
+        return WalkInFormationThought(body=body, flags=flags, sayback=sayback)
+
     def build_feed_myself_full(self, body: Body, home_nest: Nest, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(body, home_nest.position, home_nest.area)
         find_food_thought = self.build_find_food_thought(body, random_walk_thought)

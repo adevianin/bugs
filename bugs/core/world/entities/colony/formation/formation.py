@@ -7,14 +7,15 @@ class Formation(ABC):
     UNIT_WIDTH = 32
     UNIT_HEIGHT = 32
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, dest_point: Point, unit_step_size: int):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, dest_point: Point, unit_step_size: int, position: Point = None, should_optimize_position_closer: bool = True):
         self.events = events
         self._event_bus = event_bus
-        self._position = None
+        self._position = position
         self._dest_point = dest_point
         self._unit_step_size = unit_step_size
         self._units: Dict[int, Dict] = {}
         self._is_formation_reach_destination = False
+        self._should_optimize_position_closer = should_optimize_position_closer
 
         self._event_bus.add_listener('step_start', self._on_step_start)
 
@@ -53,7 +54,10 @@ class Formation(ABC):
         self._event_bus.remove_listener('step_start', self._on_step_start)
         self.events.remove_all_listeners()
 
-    def _should_move_formation_position(self):
+    def _should_optimize_formation_position(self):
+        if not self._should_optimize_position_closer:
+            return False
+        
         far_away_units_count = 0
         for unit_number in self._units:
             unit = self._units[unit_number]
@@ -81,7 +85,7 @@ class Formation(ABC):
             unit = self._units[unit_number]
             if not self._check_is_unit_on_formation_position(unit) and not unit['is_removed']:
                 return False
-            
+         
         return True
     
     def _check_is_unit_on_formation_position(self, unit):
@@ -106,9 +110,10 @@ class Formation(ABC):
 
     def _do_next_step(self):
         new_pos, passed_dist, is_walk_done = Point.do_step_on_path(self._position, self._dest_point, self._unit_step_size)
+        print('change formation pos = ', new_pos)
         self._change_position(new_pos)
 
-    def _move_position_closer(self):
+    def _optimize_position(self):
         x_list = []
         y_list = []
         for unit_number in self._units:
@@ -123,13 +128,14 @@ class Formation(ABC):
         
     def _on_step_start(self, step_number):
         if self._check_are_all_units_on_positions():
+            self.events.emit('all_units_on_positions')
             if self._chek_is_formation_reached_destionation():
                 self._done()
             else:
                 self._do_next_step()
 
-        if self._should_move_formation_position():
-            self._move_position_closer()
+        if self._should_optimize_formation_position():
+            self._optimize_position()
 
 
 

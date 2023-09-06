@@ -60,6 +60,9 @@ class Ant(LiveEntity):
     def attack_nest(self, nest: Nest, sayback: str = None):
         self._mind.attack_nest(nest=nest, sayback=sayback)
 
+    def walk_in_formation(self):
+        self._mind.walk_in_formation()
+
     def get_in_nest(self, nest: Nest):
         self._body.get_in_nest(nest)
 

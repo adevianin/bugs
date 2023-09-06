@@ -110,6 +110,8 @@ class Operation(ABC):
         for ant in ants:
             ant.leave_operation()
 
+        self._on_operation_stop()
+
         self.events.emit('change')
     
     def cancel(self):
@@ -118,6 +120,8 @@ class Operation(ABC):
         ants = self.get_hired_ants()
         for ant in ants:
             ant.leave_operation()
+
+        self._on_operation_stop()
         
         self.events.emit('change')
 
@@ -182,4 +186,7 @@ class Operation(ABC):
         self._hired_ants.remove(ant)
         if len(self._hired_ants) == 0:
             self.cancel()
+
+    def _on_operation_stop(self):
+        pass
     

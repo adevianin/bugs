@@ -14,7 +14,7 @@ from core.world.entities.item.item import Item
 
 import math
 
-class Body(ABC):
+class LiveBody(ABC):
 
     DISTANCE_PER_SEP = 32
     SIGHT_DISTANCE = 100

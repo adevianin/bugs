@@ -87,6 +87,13 @@ class Item(PlainEntity):
             'position': self.position.to_public_json()
         })
 
+    def be_bringed(self, position: Point, user_speed: int):
+        self._position = position
+        self._emit_action('being_bringed', {
+            'new_position': self._position.to_public_json(),
+            'bring_user_speed': user_speed
+        })
+
     def to_public_json(self):
         json = super().to_public_json()
         json.update({

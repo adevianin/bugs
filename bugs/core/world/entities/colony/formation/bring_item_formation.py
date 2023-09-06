@@ -1,17 +1,18 @@
 from core.world.utils.point import Point
-from core.world.utils.point import Point
 from .formation import Formation
 
 class BringItemFormation(Formation):
 
     def _calc_unit_formation_position(self, unit_number):
-        row_index = int(unit_number / 2)
-        col_index = unit_number % 2
-
-        x = self._position.x - row_index * self.UNIT_WIDTH
-        y = self._position.y + col_index * self.UNIT_HEIGHT
-
-        p = Point(x, y)
-        p = p.rotate(self._x_axis_angle, self._position)
-
-        return p
+        item_width = 50
+        item_height = 40
+        
+        match(unit_number):
+            case 0: #item
+                return Point(self._position.x, self._position.y)
+            case 1:
+                return Point(self._position.x - (item_width/2) , self._position.y + item_height / 2)
+            case 2:
+                return Point(self._position.x + (item_width/2) - (self.UNIT_WIDTH / 2), self._position.y + item_height / 2)
+            case 3:
+                return Point(self._position.x + (item_width/2) - (self.UNIT_WIDTH / 2), self._position.y - item_height / 2)

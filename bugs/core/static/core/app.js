@@ -202,6 +202,7 @@ const ACTION_TYPES = {
     ITEM_WAS_PICKED_UP: 'item_was_picked_up',
     ITEM_WAS_DROPPED: 'item_was_dropped',
     ITEM_SOURCE_FERTILITY_CHANGED: 'item_source_fertility_changed',
+    ITEM_BEING_BRINGED: 'being_bringed',
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
     NEST_LARVAE_CHANGED: 'nest_larvae_changed',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
@@ -595,9 +596,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
 /* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+/* harmony import */ var utils_walker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! utils/walker */ "./bugs/core/client/utils/walker.js");
 
 
 
+ 
 
 class Item extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     
@@ -635,6 +638,8 @@ class Item extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playItemPickedUp(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ITEM_WAS_DROPPED:
                 return this._playItemDrop(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ITEM_BEING_BRINGED:
+                return this._playItemBeingBringed(action);
         }
     }
 
@@ -657,6 +662,14 @@ class Item extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
             let pos = action.actionData.position;
             this.setPosition(pos.x, pos.y);
             res();
+        });
+    }
+
+    _playItemBeingBringed(action) {
+        let newPos = action.actionData.new_position;
+        let userSpeed = action.actionData.bring_user_speed;
+        return (0,utils_walker__WEBPACK_IMPORTED_MODULE_3__.walker)(this._position, newPos, userSpeed, (x, y) => {
+            this.setPosition(x, y);
         });
     }
 
@@ -4154,6 +4167,51 @@ class Requester {
     _readCsrfToken() {
         return (0,utils_getCookie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('csrftoken');
     }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/utils/walker.js":
+/*!******************************************!*\
+  !*** ./bugs/core/client/utils/walker.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "walker": () => (/* binding */ walker)
+/* harmony export */ });
+/* harmony import */ var _distance__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./distance */ "./bugs/core/client/utils/distance.js");
+
+
+function _calcCoordForWalkedPercent(startCoord, endCoord, flayedPercent) {
+    let distance = Math.abs(Math.abs(endCoord) - Math.abs(startCoord));
+    let distancePassed = distance * (flayedPercent  / 100);
+    return endCoord > startCoord ? startCoord + distancePassed : startCoord - distancePassed;
+}
+
+function walker(startPos, destPos, userSpeed, onPosChange) {
+    let dist = (0,_distance__WEBPACK_IMPORTED_MODULE_0__.distance)(startPos.x, startPos.y, destPos.x, destPos.y);
+    let wholeWalkTime = (dist / userSpeed) * 1000;
+    let walkStartAt = Date.now();
+    return new Promise((res, rej) => {
+        let walkInterval = setInterval(() => {
+            let timeInWalk = Date.now() - walkStartAt;
+            let walkedPercent = ( 100 * timeInWalk ) / wholeWalkTime;
+            if (walkedPercent < 100) {
+                let currentX = _calcCoordForWalkedPercent(startPos.x, destPos.x, walkedPercent);
+                let currentY = _calcCoordForWalkedPercent(startPos.y, destPos.y, walkedPercent);
+                onPosChange(currentX, currentY);
+            } else {
+                onPosChange(destPos.x, destPos.y);
+                clearInterval(walkInterval);
+                res();
+            }
+        }, 50);
+    });
 }
 
 

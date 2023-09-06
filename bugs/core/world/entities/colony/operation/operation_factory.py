@@ -11,7 +11,8 @@ from core.world.entities.item.item import Item
 
 class OperationFactory():
 
-    def __init__(self, formation_factory: FormationFactory):
+    def __init__(self, event_bus: EventEmitter, formation_factory: FormationFactory):
+        self._event_bus = event_bus
         self._formation_factory = formation_factory
 
     def build_build_new_nest_operation(self, building_site: Point, id: int = None, hired_ants: List[Ant] = None, flags: dict = None):
@@ -21,4 +22,4 @@ class OperationFactory():
         return DestroyNestOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, nest)
     
     def build_bring_item_to_nest_operation(self, nest: Nest, item: Item, id: int = None, hired_ants: List[Ant] = None, flags: dict = None):
-        return BringItemToNestOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, nest, item)
+        return BringItemToNestOperation(self._event_bus, EventEmitter(), self._formation_factory, id, hired_ants, flags, nest, item)

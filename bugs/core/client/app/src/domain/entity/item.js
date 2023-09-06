@@ -1,6 +1,7 @@
 import { Entity } from "./entity"
 import { EntityTypes } from "../enum/entityTypes";
 import { ACTION_TYPES } from "./action/actionTypes";
+import { walker } from "utils/walker"; 
 
 class Item extends Entity {
     
@@ -38,6 +39,8 @@ class Item extends Entity {
                 return this._playItemPickedUp(action);
             case ACTION_TYPES.ITEM_WAS_DROPPED:
                 return this._playItemDrop(action);
+            case ACTION_TYPES.ITEM_BEING_BRINGED:
+                return this._playItemBeingBringed(action);
         }
     }
 
@@ -60,6 +63,14 @@ class Item extends Entity {
             let pos = action.actionData.position;
             this.setPosition(pos.x, pos.y);
             res();
+        });
+    }
+
+    _playItemBeingBringed(action) {
+        let newPos = action.actionData.new_position;
+        let userSpeed = action.actionData.bring_user_speed;
+        return walker(this._position, newPos, userSpeed, (x, y) => {
+            this.setPosition(x, y);
         });
     }
 
