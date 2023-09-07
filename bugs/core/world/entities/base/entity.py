@@ -61,7 +61,8 @@ class Entity(ABC):
             'hp': self._body.hp,
             'max_hp': self.body.MAX_HP,
             'position': self._body.position.to_public_json(),
-            'angle': self._body.angle
+            'angle': self._body.angle,
+            'size': self._body.SIZE.to_public_json()
         }
     
     def _emit_action(self, action_type: str, action_data: dict = None):

@@ -2,13 +2,13 @@ from abc import ABC, abstractmethod
 from core.world.utils.point import Point
 from core.world.utils.event_emiter import EventEmitter
 from typing import Dict
+from core.world.utils.size import Size
 
 class Formation(ABC):
-    UNIT_WIDTH = 32
-    UNIT_HEIGHT = 32
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, dest_point: Point, unit_step_size: int, position: Point = None, should_optimize_position_closer: bool = True):
+    def __init__(self, event_bus: EventEmitter, unit_size: Size, events: EventEmitter, dest_point: Point, unit_step_size: int, position: Point = None, should_optimize_position_closer: bool = True):
         self.events = events
+        self._unit_size = unit_size
         self._event_bus = event_bus
         self._position = position
         self._dest_point = dest_point

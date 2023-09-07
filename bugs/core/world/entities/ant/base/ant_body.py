@@ -10,6 +10,7 @@ from core.world.entities.colony.formation.formation import Formation
 from core.world.entities.item.item_sources.base.item_source import ItemSource
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.item.items.base.item import Item
+from core.world.utils.size import Size
 
 from typing import List, Callable
 
@@ -17,6 +18,7 @@ class AntBody(LiveBody):
 
     DISTANCE_PER_SEP = 32
     SIGHT_DISTANCE = 200
+    SIZE = Size(32, 32)
 
     def __init__(self, events: EventEmitter, sayer: EventEmitter, memory: Memory, dna_profile: str, position: Point, angle: int, hp: int, located_in_nest: Nest, picked_item: Item, world_interactor: WorldInteractor):
         super().__init__(events, memory, dna_profile, position, angle, hp, world_interactor)
