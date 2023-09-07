@@ -9,10 +9,14 @@ class BringItemFormation(Formation):
         
         match(unit_number):
             case 0: #item
-                return Point(self._position.x, self._position.y)
+                p = Point(self._position.x, self._position.y)
             case 1:
-                return Point(self._position.x - (item_width/2) , self._position.y + item_height / 2)
+                p = Point(self._position.x - (item_width/2) , self._position.y + item_height / 2)
             case 2:
-                return Point(self._position.x + (item_width/2) - (self.UNIT_WIDTH / 2), self._position.y + item_height / 2)
+                p = Point(self._position.x + (item_width/2) - (self.UNIT_WIDTH / 2), self._position.y + item_height / 2)
             case 3:
-                return Point(self._position.x + (item_width/2) - (self.UNIT_WIDTH / 2), self._position.y - item_height / 2)
+                p = Point(self._position.x + (item_width/2) - (self.UNIT_WIDTH / 2), self._position.y - item_height / 2)
+            
+        p = p.rotate(45, self._position)
+
+        return p

@@ -92,7 +92,7 @@ class Command(BaseCommand):
                     850,
                     450
                 ],
-                "angle": 0,
+                "angle": 45,
                 "strength":150,
                 "item_type":"ground_beetle_corpse",
                 "variety":1,
@@ -270,22 +270,22 @@ class Command(BaseCommand):
             },
         ],
         "ground_beetles": [
-            {
-                "id":60,
-                "type":"ground_beetle",
-                "from_colony_id":3,
-                "hp": 800,
-                "position":[
-                    850,
-                    450
-                ],
-                "angle": 0,
-                "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
-                "thoughts":[
-                ],
-                "memory": {},
-                "is_auto_thought_generation": True
-            },
+            # {
+            #     "id":60,
+            #     "type":"ground_beetle",
+            #     "from_colony_id":3,
+            #     "hp": 800,
+            #     "position":[
+            #         850,
+            #         450
+            #     ],
+            #     "angle": 0,
+            #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
+            #     "thoughts":[
+            #     ],
+            #     "memory": {},
+            #     "is_auto_thought_generation": True
+            # },
         ],
         "colonies":[
             {

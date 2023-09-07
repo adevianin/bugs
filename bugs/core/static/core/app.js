@@ -3921,6 +3921,7 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_5__.BaseG
         this._antContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._groundBeetleContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._itemContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._bigContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._nestContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._itemAreaContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._itemSourceContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
@@ -3934,6 +3935,7 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_5__.BaseG
         this._entityContainer.addChild(this._itemContainer);
         this._entityContainer.addChild(this._antContainer);
         this._entityContainer.addChild(this._groundBeetleContainer);
+        this._entityContainer.addChild(this._bigContainer);
         this._entityContainer.addChild(this._itemSourceContainer);
         this._entityContainer.addChild(this._markersContainer);
 
@@ -3977,7 +3979,7 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_5__.BaseG
                 view = new _nestView__WEBPACK_IMPORTED_MODULE_3__.NestView(entity, this._nestContainer);
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_6__.EntityTypes.ITEM:
-                view = new _itemView__WEBPACK_IMPORTED_MODULE_9__.ItemView(entity, this._itemContainer);
+                view = new _itemView__WEBPACK_IMPORTED_MODULE_9__.ItemView(entity, this._bigContainer);
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_6__.EntityTypes.ITEM_SOURCE:
                 view = new _itemSourceView__WEBPACK_IMPORTED_MODULE_10__.ItemSourceView(entity, this._itemSourceContainer);

@@ -36,6 +36,7 @@ class WorldView extends BaseGraphicView {
         this._antContainer = new PIXI.Container();
         this._groundBeetleContainer = new PIXI.Container();
         this._itemContainer = new PIXI.Container();
+        this._bigContainer = new PIXI.Container();
         this._nestContainer = new PIXI.Container();
         this._itemAreaContainer = new PIXI.Container();
         this._itemSourceContainer = new PIXI.Container();
@@ -49,6 +50,7 @@ class WorldView extends BaseGraphicView {
         this._entityContainer.addChild(this._itemContainer);
         this._entityContainer.addChild(this._antContainer);
         this._entityContainer.addChild(this._groundBeetleContainer);
+        this._entityContainer.addChild(this._bigContainer);
         this._entityContainer.addChild(this._itemSourceContainer);
         this._entityContainer.addChild(this._markersContainer);
 
@@ -92,7 +94,7 @@ class WorldView extends BaseGraphicView {
                 view = new NestView(entity, this._nestContainer);
                 break;
             case EntityTypes.ITEM:
-                view = new ItemView(entity, this._itemContainer);
+                view = new ItemView(entity, this._bigContainer);
                 break;
             case EntityTypes.ITEM_SOURCE:
                 view = new ItemSourceView(entity, this._itemSourceContainer);
