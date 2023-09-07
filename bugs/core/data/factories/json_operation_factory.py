@@ -1,7 +1,7 @@
-from core.world.entities.colony.operation.operation_factory import OperationFactory
+from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
 from core.world.utils.point import Point
 from core.world.entities.base.entity_collection import EntityCollection
-from core.world.entities.colony.operation.operation_types import OperationTypes
+from core.world.entities.colony.colonies.ant_colony.operation.base.operation_types import OperationTypes
 
 class JsonOperationFactory():
 

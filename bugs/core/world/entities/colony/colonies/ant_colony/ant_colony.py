@@ -1,17 +1,18 @@
 from typing import List, Callable
-from core.world.entities.colony.operation.operation import Operation
-from core.world.entities.colony.relation_tester import RelationTester
+from core.world.entities.colony.colonies.ant_colony.operation.base.operation import Operation
+from core.world.entities.colony.base.relation_tester import RelationTester
 from core.world.entities.map.map import Map
 from core.world.utils.event_emiter import EventEmitter
-from .colony import Colony
+from core.world.entities.colony.base.colony import Colony
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.base.entity import Entity
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.nest.nest import Nest
-from core.world.entities.item.items.base.item_types import ItemTypes, ItemTypesPack
-from core.world.entities.colony.operation.operation_factory import OperationFactory
+from core.world.entities.item.items.base.item_types import ItemTypesPack
+from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
+from core.world.entities.item.items.base.item import Item
 
 class AntColony(Colony):
 

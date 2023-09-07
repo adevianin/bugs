@@ -1,7 +1,7 @@
-from core.world.entities.colony.operation.operation import Operation
-from core.world.entities.colony.operation.operation_types import OperationTypes
-from core.world.entities.colony.operation.build_new_nest_operation import BuildNewNestOperation
-from core.world.entities.colony.operation.destroy_nest_operation import DestroyNestOperation
+from core.world.entities.colony.colonies.ant_colony.operation.base.operation import Operation
+from core.world.entities.colony.colonies.ant_colony.operation.base.operation_types import OperationTypes
+from core.world.entities.colony.colonies.ant_colony.operation.build_new_nest_operation import BuildNewNestOperation
+from core.world.entities.colony.colonies.ant_colony.operation.destroy_nest_operation import DestroyNestOperation
 
 class OperationSerializer():
 

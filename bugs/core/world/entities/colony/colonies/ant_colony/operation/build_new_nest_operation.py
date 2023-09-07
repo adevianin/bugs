@@ -1,15 +1,15 @@
 from core.world.utils.point import Point
-from .operation import Operation
+from core.world.entities.colony.colonies.ant_colony.operation.base.operation import Operation
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.utils.event_emiter import EventEmitter
-from .operation_types import OperationTypes
+from core.world.entities.colony.colonies.ant_colony.operation.base.operation_types import OperationTypes
 from typing import List
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.nest.nest import Nest
-from .marker_types import MarkerTypes
+from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
 from core.world.entities.ant.base.larva import Larva
-from core.world.entities.colony.formation.formation_factory import FormationFactory
+from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
 
 class BuildNewNestOperation(Operation):
     

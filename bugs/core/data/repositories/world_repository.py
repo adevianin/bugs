@@ -10,7 +10,7 @@ from core.world.entities.world.world import World
 from core.world.entities.world.world_factory import WorldFactory
 from core.data.serializers.world_serializer import WorldSerializer
 from core.data.factories.json_map_factory import JsonMapFactory
-from core.world.entities.colony.colony_relations_table import ColonyRelationsTable
+from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
 from core.world.entities.ant.base.ant import Ant
 from core.data.factories.json_ground_beetle_factory import JsonGroundBeetleFactory
 from core.world.entities.ground_beetle.ground_beetle import GroundBeetle

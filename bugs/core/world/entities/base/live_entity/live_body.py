@@ -6,7 +6,7 @@ from core.world.entities.base.live_entity.world_interactor import WorldInteracto
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.entity_types import EntityTypes, EntityTypesPack
-from core.world.entities.colony.relation_tester import RelationTester
+from core.world.entities.colony.base.relation_tester import RelationTester
 from typing import List, Callable
 from core.world.entities.base.entity import Entity
 from core.world.entities.item.items.base.item import Item

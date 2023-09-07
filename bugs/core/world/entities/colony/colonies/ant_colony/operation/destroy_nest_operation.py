@@ -1,16 +1,15 @@
 from typing import List
 from functools import partial
 from core.world.entities.ant.base.ant import Ant
-from core.world.entities.colony.operation.operation_types import OperationTypes
+from core.world.entities.colony.colonies.ant_colony.operation.base.operation_types import OperationTypes
 from core.world.utils.event_emiter import EventEmitter
-from .operation import Operation
+from core.world.entities.colony.colonies.ant_colony.operation.base.operation import Operation
 from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.ant_types import AntTypes
-from .marker_types import MarkerTypes
+from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
 from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
 from core.world.entities.ant.warrior.warrior_ant_body import WarriorAntBody
-from core.world.entities.colony.formation.formation_factory import FormationFactory
-from core.world.utils.point import Point
+from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
 
 class DestroyNestOperation(Operation):
 

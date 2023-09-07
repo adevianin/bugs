@@ -1,12 +1,12 @@
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.map.map import Map
 from typing import List
-from .operation.operation import Operation
-from .colony_relations_table import ColonyRelationsTable
-from .relation_tester import RelationTester
-from .ant_colony import AntColony
-from .ground_beetle_colony import GroundBeetleColony
-from core.world.entities.colony.operation.operation_factory import OperationFactory
+from core.world.entities.colony.colonies.ant_colony.operation.base.operation import Operation
+from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
+from core.world.entities.colony.base.relation_tester import RelationTester
+from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
+from core.world.entities.colony.colonies.ground_beetle_colony.ground_beetle_colony import GroundBeetleColony
+from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
 
 class ColonyFactory():
 

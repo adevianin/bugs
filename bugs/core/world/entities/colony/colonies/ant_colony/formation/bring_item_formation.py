@@ -1,6 +1,6 @@
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
-from .formation import Formation
+from core.world.entities.colony.colonies.ant_colony.formation.base.formation import Formation
 from core.world.entities.item.items.base.item import Item
 from core.world.utils.size import Size
 

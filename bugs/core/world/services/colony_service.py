@@ -1,6 +1,6 @@
 from core.world.utils.point import Point
 from core.world.entities.world.world import World
-from core.world.entities.colony.operation.operation_factory import OperationFactory
+from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
 
 class ColonyService():
 

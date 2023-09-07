@@ -31,12 +31,12 @@ from core.world.services.nest_service import NestService
 from core.world.entities.nest.nest_factory import NestFactory
 from core.world.services.colony_service import ColonyService
 from core.world.entities.colony.colony_factory import ColonyFactory
-from core.world.entities.colony.operation.operation_factory import OperationFactory
+from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
 from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.world_facade import WorldFacade
 from core.world.entities.map.map_factory import MapFactory
 from core.world.services.user_service import UserService
-from core.world.entities.colony.formation.formation_factory import FormationFactory
+from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
 from core.world.entities.item.items.item_factory import ItemFactory
 from core.world.entities.item.item_sources.item_source_factory import ItemSourceFactory
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory

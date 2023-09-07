@@ -1,4 +1,4 @@
-from core.world.entities.colony.colony_relations_table import ColonyRelationsTable
+from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
 
 class ColonyRelationsTableSerializer():
 

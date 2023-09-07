@@ -6,7 +6,7 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.base.live_entity.memory import Memory
-from core.world.entities.colony.formation.formation import Formation
+from core.world.entities.colony.colonies.ant_colony.formation.base.formation import Formation
 from core.world.entities.item.item_sources.base.item_source import ItemSource
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.item.items.base.item import Item

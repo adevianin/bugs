@@ -8,7 +8,7 @@ from .marker_types import MarkerTypes
 from .operation_types import OperationTypes
 from typing import List
 from functools import partial
-from core.world.entities.colony.formation.formation_factory import FormationFactory
+from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
 
 class Operation(ABC):
 

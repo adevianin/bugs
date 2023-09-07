@@ -1,8 +1,8 @@
-from core.world.entities.colony.colony import Colony
+from core.world.entities.colony.base.colony import Colony
 from .operation_serializer import OperationSerializer
-from core.world.entities.colony.ant_colony import AntColony
+from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 from core.world.entities.base.entity_types import EntityTypes
-from core.world.entities.colony.ground_beetle_colony import GroundBeetleColony
+from core.world.entities.colony.colonies.ground_beetle_colony.ground_beetle_colony import GroundBeetleColony
 
 class ColonySerializer():
 

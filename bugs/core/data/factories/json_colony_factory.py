@@ -2,7 +2,7 @@ from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.base.entity_collection import EntityCollection
 from .json_operation_factory import JsonOperationFactory
 from core.world.entities.map.map import Map
-from core.world.entities.colony.colony_relations_table import ColonyRelationsTable
+from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
 from core.world.entities.base.entity_types import EntityTypes
 
 class JsonColonyFactory():

@@ -1,6 +1,6 @@
 from core.world.utils.point import Point
 from core.world.utils.point import Point
-from .formation import Formation
+from core.world.entities.colony.colonies.ant_colony.formation.base.formation import Formation
 
 class AttackFormation(Formation):
 

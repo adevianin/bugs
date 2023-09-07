@@ -4,10 +4,10 @@ import time
 from core.world.entities.map.map import Map
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME
-from core.world.entities.colony.colony import Colony
+from core.world.entities.colony.base.colony import Colony
 from core.world.entities.base.entity_collection import EntityCollection
 from core.world.id_generator import IdGenerator
-from core.world.entities.colony.colony_relations_table import ColonyRelationsTable
+from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
 from core.world.entities.world.entity_birther import EntityBirther
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.ground_beetle.ground_beetle_spawner import GroundBeetleSpawner

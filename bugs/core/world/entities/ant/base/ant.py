@@ -6,7 +6,7 @@ from .ant_mind import AntMind
 from .ant_types import AntTypes
 from core.world.utils.point import Point
 from core.world.entities.nest.nest import Nest
-from core.world.entities.colony.formation.formation import Formation
+from core.world.entities.colony.colonies.ant_colony.formation.base.formation import Formation
 
 class Ant(LiveEntity):
 
