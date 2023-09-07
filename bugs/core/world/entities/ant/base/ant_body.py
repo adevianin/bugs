@@ -71,20 +71,20 @@ class AntBody(LiveBody):
     
     def set_formation(self, formation: Formation):
         self._formation = formation
-        unit_number = self._formation.register_unit(self.position)
-        self._formation_unit_number = unit_number
+        unit_id = self._formation.register_unit(self.position)
+        self._formation_unit_id = unit_id
         self._formation.events.add_listener('destroyed', self.remove_formation)
 
     def remove_formation(self):
         if self.has_formation:
             self._formation.events.remove_listener('destroyed', self.remove_formation)
-            self.formation.remove_unit(self._formation_unit_number)
-            self._formation_unit_number = None
+            self.formation.remove_unit(self._formation_unit_id)
+            self._formation_unit_id = None
             self._formation = None
 
     def step_in_formation(self):
-        unit_number = self._formation_unit_number
-        position = self._formation.get_position_for_unit(unit_number)
+        unit_id = self._formation_unit_id
+        position = self._formation.get_position_for_unit(unit_id)
         return self.step_to(position)
     
     def look_around_for_food(self):
@@ -128,7 +128,7 @@ class AntBody(LiveBody):
             self._tell_position_to_formation()
 
     def _tell_position_to_formation(self):
-        self._formation.unit_changed_position(self.position, self._formation_unit_number)
+        self._formation.unit_changed_position(self.position, self._formation_unit_id)
 
     def step_to(self, destination_point: Point) -> bool:
         if self.is_in_nest:

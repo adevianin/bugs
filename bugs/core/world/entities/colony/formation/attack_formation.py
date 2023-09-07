@@ -4,9 +4,9 @@ from .formation import Formation
 
 class AttackFormation(Formation):
 
-    def _calc_unit_formation_position(self, unit_number):
-        row_index = int(unit_number / 2)
-        col_index = unit_number % 2
+    def _calc_unit_formation_position(self, unit_id):
+        row_index = int(unit_id / 2)
+        col_index = unit_id % 2
 
         x = self._position.x - row_index * AttackFormation.UNIT_WIDTH
         y = self._position.y + col_index * AttackFormation.UNIT_HEIGHT
