@@ -2,7 +2,7 @@ from .attack_formation import AttackFormation
 from core.world.utils.point import Point
 from core.world.utils.event_emiter import EventEmitter
 from .bring_item_formation import BringItemFormation
-from core.world.entities.item.item import Item
+from core.world.entities.item.items.base.item import Item
 
 class FormationFactory():
 

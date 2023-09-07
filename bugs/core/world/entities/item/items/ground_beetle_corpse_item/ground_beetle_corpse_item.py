@@ -1,0 +1,9 @@
+from .ground_beetle_corpse_item_body import GroundBeetleCorpseItemBody
+from core.world.entities.item.items.base.item_types import ItemTypes
+from core.world.utils.event_emiter import EventEmitter
+from core.world.entities.item.items.base.item import Item
+
+class GroundBeetleCorpseItem(Item):
+
+    def __init__(self, events: EventEmitter, id: int, body: GroundBeetleCorpseItemBody, strength: int, variety: int, life_span: int, is_picked: bool):
+        super().__init__(events, id, body, ItemTypes.GROUND_BEETLE_CORPSE, strength, variety, life_span, is_picked)

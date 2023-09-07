@@ -9,7 +9,7 @@ from core.world.entities.ant.worker.worker_ant import WorkerAnt
 from core.world.entities.ant.worker.worker_ant_body import WorkerAntBody
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.nest.nest import Nest
-from core.world.entities.item.item import Item
+from core.world.entities.item.items.base.item import Item
 
 from typing import List
 from functools import partial

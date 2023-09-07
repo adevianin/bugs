@@ -1,7 +1,7 @@
 from ..base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.ant.base.larva import Larva
-from core.world.entities.item.item import Item
+from core.world.entities.item.items.base.item import Item
 from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
 

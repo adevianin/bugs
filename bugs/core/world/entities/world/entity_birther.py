@@ -8,7 +8,7 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.larva import Larva
 from core.world.entities.ground_beetle.ground_beetle_factory import GroundBeetleFactory
 from core.world.utils.event_emiter import EventEmitter
-from core.world.entities.item.item_factory import ItemFactory
+from core.world.entities.item.items.item_factory import ItemFactory
 
 class EntityBirther():
 

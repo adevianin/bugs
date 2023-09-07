@@ -10,8 +10,7 @@ from core.world.entities.base.entity import Entity
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.nest.nest import Nest
-from core.world.entities.item.item import Item
-from core.world.entities.item.item_types import ItemTypesPack
+from core.world.entities.item.items.base.item_types import ItemTypes, ItemTypesPack
 from core.world.entities.colony.operation.operation_factory import OperationFactory
 
 class AntColony(Colony):

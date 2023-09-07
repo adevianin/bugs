@@ -4,7 +4,7 @@ from core.world.entities.thought.thought import Thought
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
 from typing import Callable, List
-from core.world.entities.item.item_source.item_source import ItemSource
+from core.world.entities.item.item_sources.base.item_source import ItemSource
 
 class HuntForAphid(Thought):
 

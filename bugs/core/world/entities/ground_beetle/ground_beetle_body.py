@@ -3,8 +3,8 @@ from core.world.entities.base.live_entity.world_interactor import WorldInteracto
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from core.world.entities.base.live_entity.live_body import LiveBody
-from core.world.entities.item.item_source.item_source import ItemSource
-from core.world.entities.item.item_types import ItemTypes
+from core.world.entities.item.item_sources.base.item_source import ItemSource
+from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.base.entity_types import EntityTypes
 
 from typing import List, Callable

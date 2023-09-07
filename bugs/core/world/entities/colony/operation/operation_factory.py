@@ -7,7 +7,7 @@ from core.world.entities.ant.base.ant import Ant
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.formation.formation_factory import FormationFactory
 from core.world.entities.colony.operation.bring_item_to_nest_operation import BringItemToNestOperation
-from core.world.entities.item.item import Item
+from core.world.entities.item.items.base.item import Item
 
 class OperationFactory():
 

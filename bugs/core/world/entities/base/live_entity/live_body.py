@@ -9,7 +9,7 @@ from core.world.entities.base.entity_types import EntityTypes, EntityTypesPack
 from core.world.entities.colony.relation_tester import RelationTester
 from typing import List, Callable
 from core.world.entities.base.entity import Entity
-from core.world.entities.item.item import Item
+from core.world.entities.item.items.base.item import Item
 from core.world.entities.base.body import Body
 
 import math

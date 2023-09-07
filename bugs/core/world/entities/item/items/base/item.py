@@ -1,38 +1,12 @@
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
-from core.world.entities.item.item_types import ItemTypes
+from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
 from core.world.entities.colony.formation.formation import Formation
 
-import random
-
 class Item(Entity):
-
-    @classmethod
-    def generate_item_variety(cls, item_type: ItemTypes):
-        match(item_type):
-            case ItemTypes.LEAF:
-                return random.randint(1, 4)
-            case ItemTypes.FLOWER:
-                return random.randint(1, 3)
-            case ItemTypes.HONEYDEW:
-                return 1
-            case _:
-                return 1
-    
-    @classmethod
-    def generate_life_span(cls, item_type: ItemTypes):
-        match(item_type):
-            case ItemTypes.LEAF:
-                return 100
-            case ItemTypes.FLOWER:
-                return 50
-            case ItemTypes.HONEYDEW:
-                return 5
-            case _:
-                return -1
 
     def __init__(self, events: EventEmitter, id: int, body: Body, item_type: ItemTypes, strength: int, variety: int, life_span: int, is_picked: bool):
         super().__init__(events, id, EntityTypes.ITEM, None, body)

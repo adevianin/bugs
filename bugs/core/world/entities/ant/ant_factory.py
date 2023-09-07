@@ -6,7 +6,7 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.thought.thought_factory import ThoughtFactory
-from core.world.entities.item.item import Item
+from core.world.entities.item.items.base.item import Item
 
 from .worker.worker_ant_body import WorkerAntBody
 from .worker.worker_ant_mind import WorkerAntMind

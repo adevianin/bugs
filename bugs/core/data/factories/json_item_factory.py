@@ -1,5 +1,5 @@
-from core.world.entities.item.item_factory import ItemFactory
-from core.world.entities.item.item_types import ItemTypes
+from core.world.entities.item.items.item_factory import ItemFactory
+from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.utils.point import Point
 
 class JsonItemFactory():

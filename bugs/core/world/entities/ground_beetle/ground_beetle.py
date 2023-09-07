@@ -3,8 +3,8 @@ from core.world.entities.base.live_entity.live_body import LiveBody
 from core.world.entities.base.live_entity.mind import Mind
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.base.live_entity.live_entity import LiveEntity
-from core.world.entities.item.item_types import ItemTypes
-from core.world.entities.item.item import Item
+from core.world.entities.item.items.base.item_types import ItemTypes
+from core.world.entities.item.items.base.item import Item
 
 class GroundBeetle(LiveEntity):
 
