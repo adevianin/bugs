@@ -4,4 +4,4 @@ from core.world.utils.size import Size
 class GroundBeetleCorpseItemBody(ItemBody):
     LIFE_SPAN = 500
     VARIETY_COUNT = 1
-    SIZE = Size(50, 40)
+    SIZE = Size(45, 65)

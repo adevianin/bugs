@@ -218,7 +218,7 @@
 },
 "grass.png":
 {
-	"frame": {"x":50,"y":424,"w":64,"h":64},
+	"frame": {"x":45,"y":424,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
@@ -322,11 +322,11 @@
 },
 "item_ground_beetle_corpse_1v.png":
 {
-	"frame": {"x":0,"y":424,"w":50,"h":40},
+	"frame": {"x":0,"y":424,"w":45,"h":65},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":40},
-	"sourceSize": {"w":50,"h":40}
+	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":65},
+	"sourceSize": {"w":45,"h":65}
 },
 "item_honeydew_1v.png":
 {
@@ -370,7 +370,7 @@
 },
 "item_source_honeydew.png":
 {
-	"frame": {"x":0,"y":488,"w":90,"h":110},
+	"frame": {"x":0,"y":489,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -378,7 +378,7 @@
 },
 "item_source_honeydew_not_fertile.png":
 {
-	"frame": {"x":0,"y":598,"w":90,"h":110},
+	"frame": {"x":0,"y":599,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -443,8 +443,8 @@
 	"version": "1.1",
 	"image": "world_spritesheet.png",
 	"format": "RGBA8888",
-	"size": {"w":128,"h":708},
+	"size": {"w":128,"h":709},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:7c74c823ca2a58b33591336d51d23881:5e23022c1d13eec8133c9bc3be77687b:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:1b8511dcf6b7c8e346617b07936cca59:eb56d8b969dda40feb7740d04cbe1ece:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }
