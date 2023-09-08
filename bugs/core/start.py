@@ -52,7 +52,7 @@ def start():
     ant_factory = AntFactory(thought_factory)
     ground_beetle_factory = GroundBeetleFactory(thought_factory)
     nest_factory = NestFactory()
-    operation_factory = OperationFactory(event_bus, formation_factory)
+    operation_factory = OperationFactory(formation_factory)
     colony_factory = ColonyFactory(event_bus, operation_factory)
     map_factory = MapFactory(event_bus)
     world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ground_beetle_factory)

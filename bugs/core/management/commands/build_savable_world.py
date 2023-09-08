@@ -14,27 +14,27 @@ class Command(BaseCommand):
         },
         "last_used_id":70,
         "ants":[
-            {
-                "id":1,
-                "type":"ant",
-                "from_colony_id":2,
-                "hp": 100,
-                "position":[
-                    610,
-                    350
-                ],
-                "angle": 0,
-                "located_in_nest_id":None,
-                "picked_item_id":None,
-                "ant_type":"worker",
-                "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
-                "from_nest":30,
-                "thoughts":[
-                ],
-                "memory": {},
-                "is_auto_thought_generation": True,
-                "is_in_operation": False
-            },
+            # {
+            #     "id":1,
+            #     "type":"ant",
+            #     "from_colony_id":2,
+            #     "hp": 100,
+            #     "position":[
+            #         610,
+            #         350
+            #     ],
+            #     "angle": 0,
+            #     "located_in_nest_id":None,
+            #     "picked_item_id":None,
+            #     "ant_type":"worker",
+            #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
+            #     "from_nest":30,
+            #     "thoughts":[
+            #     ],
+            #     "memory": {},
+            #     "is_auto_thought_generation": True,
+            #     "is_in_operation": False
+            # },
             {
                 "id":2,
                 "type":"ant",
@@ -83,22 +83,22 @@ class Command(BaseCommand):
             }
         ],
         "items": [
-            {
-                "id":20,
-                "type":"item",
-                "from_colony_id":None,
-                "hp": 100,
-                "position":[
-                    850,
-                    450
-                ],
-                "angle": 45,
-                "strength":150,
-                "item_type":"ground_beetle_corpse",
-                "variety":1,
-                "is_picked": False,
-                "life_span": -1
-            },
+            # {
+            #     "id":20,
+            #     "type":"item",
+            #     "from_colony_id":None,
+            #     "hp": 100,
+            #     "position":[
+            #         850,
+            #         450
+            #     ],
+            #     "angle": 45,
+            #     "strength":150,
+            #     "item_type":"ground_beetle_corpse",
+            #     "variety":1,
+            #     "is_picked": False,
+            #     "life_span": -1
+            # },
         ],
         "nests":[
             {
@@ -115,17 +115,17 @@ class Command(BaseCommand):
                 "larvae":[
                     {
                         "ant_type":"worker",
-                        "ate_calories":99,
+                        "ate_calories":50,
                         "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
                     },
                     {
                         "ant_type":"worker",
-                        "ate_calories":99,
+                        "ate_calories":50,
                         "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
                     },
                     {
                         "ant_type":"worker",
-                        "ate_calories":99,
+                        "ate_calories":50,
                         "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
                     },
                     {
@@ -258,8 +258,8 @@ class Command(BaseCommand):
                 "from_colony_id": None,
                 "hp": 100,
                 "position":[
-                    800,
-                    350
+                    850,
+                    300
                 ],
                 "angle": 0,
                 "fertility":5,
@@ -270,22 +270,22 @@ class Command(BaseCommand):
             },
         ],
         "ground_beetles": [
-            # {
-            #     "id":60,
-            #     "type":"ground_beetle",
-            #     "from_colony_id":3,
-            #     "hp": 800,
-            #     "position":[
-            #         850,
-            #         450
-            #     ],
-            #     "angle": 0,
-            #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
-            #     "thoughts":[
-            #     ],
-            #     "memory": {},
-            #     "is_auto_thought_generation": True
-            # },
+            {
+                "id":60,
+                "type":"ground_beetle",
+                "from_colony_id":3,
+                "hp": 800,
+                "position":[
+                    950,
+                    450
+                ],
+                "angle": 0,
+                "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
+                "thoughts":[
+                ],
+                "memory": {},
+                "is_auto_thought_generation": True
+            },
         ],
         "colonies":[
             {

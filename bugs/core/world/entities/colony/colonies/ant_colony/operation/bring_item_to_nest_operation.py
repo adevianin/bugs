@@ -16,14 +16,21 @@ from functools import partial
 
 class BringItemToNestOperation(Operation):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, formation_factory: FormationFactory, id: int, hired_ants: List[Ant], flags: dict, nest: Nest, item: Item):
+    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, hired_ants: List[Ant], flags: dict, nest: Nest, item: Item):
+        self._nest = nest
+        self._item = item
         super().__init__(events, formation_factory, id, OperationTypes.BRING_ITEM_TO_NEST, hired_ants, flags)
-        self._event_bus = event_bus
         self._name = 'перенести в гніздо'
         self._open_vacancies(AntTypes.WORKER, 3)
         self._add_marker(MarkerTypes.EAT, item.position)
-        self._nest = nest
-        self._item = item
+
+    @property
+    def nest_id(self):
+        return self._nest.id
+
+    @property
+    def item_id(self):
+        return self._item.id
 
     @property
     def _workers(self) -> List[WorkerAnt]:

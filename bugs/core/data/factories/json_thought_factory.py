@@ -41,6 +41,8 @@ class JsonThoughtFactory():
                 return self._build_random_walk(body, thought_json, entities_collection)
             case ThoughtTypes.HUNT_FOR_APHID:
                 return self._build_hynt_for_aphid(body, thought_json, entities_collection)
+            case ThoughtTypes.WALK_IN_FORMATION:
+                return self._build_walk_in_formation(body, thought_json, entities_collection)
             case _:
                 raise Exception('unknown type of thought')
             
@@ -124,3 +126,5 @@ class JsonThoughtFactory():
         found_food_source = entities_collection.get_entity_by_id(thought_json['found_food_source_id']) if thought_json['found_food_source_id'] else None
         return self._thought_factory.build_hunt_for_aphid(body=body, random_walk_thought=random_walk_thought, fight_near_enemies_thought=fight_near_enemies_thought, found_food_source=found_food_source, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
+    def _build_walk_in_formation(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
+        return self._thought_factory.build_walk_in_formation(body=body, flags=thought_json['flags'], sayback=thought_json['sayback'] )

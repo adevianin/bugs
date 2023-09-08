@@ -14,6 +14,8 @@ class JsonOperationFactory():
                 return self._build_build_new_nest_operation_from_json(operation_json, entities_collection)
             case OperationTypes.DESTROY_NEST:
                 return self._build_destory_nest_operation_from_json(operation_json, entities_collection)
+            case OperationTypes.BRING_ITEM_TO_NEST:
+                return self._build_bring_item_to_nest_operation_from_json(operation_json, entities_collection)
             case _:
                 raise Exception('unknown type of operation')
 
@@ -26,6 +28,12 @@ class JsonOperationFactory():
         hired_ants = self._prepare_hired_ants(operation_json, entities_collection)
         nest = entities_collection.get_entity_by_id(operation_json['nest_id'])
         return self._operation_factory.build_destroy_nest_operation(nest=nest, id=operation_json['id'], hired_ants=hired_ants, flags=operation_json['flags'])
+    
+    def _build_bring_item_to_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
+        hired_ants = self._prepare_hired_ants(operation_json, entities_collection)
+        nest = entities_collection.get_entity_by_id(operation_json['nest_id'])
+        item = entities_collection.get_entity_by_id(operation_json['item_id'])
+        return self._operation_factory.build_bring_item_to_nest_operation(nest=nest, item=item, id=operation_json['id'], hired_ants=hired_ants, flags=operation_json['flags'])
 
     def _prepare_hired_ants(self, operation_json: dict, entities_collection: EntityCollection):
         hired_ants = []
