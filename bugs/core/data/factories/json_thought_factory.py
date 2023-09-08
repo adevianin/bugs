@@ -127,4 +127,5 @@ class JsonThoughtFactory():
         return self._thought_factory.build_hunt_for_aphid(body=body, random_walk_thought=random_walk_thought, fight_near_enemies_thought=fight_near_enemies_thought, found_food_source=found_food_source, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_walk_in_formation(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
-        return self._thought_factory.build_walk_in_formation(body=body, flags=thought_json['flags'], sayback=thought_json['sayback'] )
+        fight_near_enemies_thought = self.build_thougth_from_json(body, thought_json['fight_near_enemies_thought'], entities_collection) if thought_json['fight_near_enemies_thought'] else None
+        return self._thought_factory.build_walk_in_formation(body=body, fight_near_enemies_thought=fight_near_enemies_thought, flags=thought_json['flags'], sayback=thought_json['sayback'] )

@@ -4,6 +4,7 @@ from core.world.entities.ant.base.larva import Larva
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
+from core.world.entities.item.items.base.item_types import ItemTypes
 
 class Nest(Entity):
 
@@ -88,6 +89,21 @@ class Nest(Entity):
 
         if is_build_before != self.is_built:
             self._emit_building_status_changed()
+
+    def steal_food(self, on_food_ready):
+        strength = min(300, self._stored_calories)
+        if strength > 0:
+            self.events.emit('birth_request', {
+                'entity_type': EntityTypes.ITEM,
+                'item_type': ItemTypes.ANT_FOOD,
+                'position': self._body.position,
+                'strength': strength,
+                'callback': on_food_ready
+            })
+            self._stored_calories -= strength
+            return True
+        else:
+            return False
 
     def _feed_larvae(self):
         larvae_count = len(self._larvae)

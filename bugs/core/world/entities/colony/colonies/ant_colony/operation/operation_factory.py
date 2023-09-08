@@ -8,6 +8,7 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
 from core.world.entities.colony.colonies.ant_colony.operation.bring_item_to_nest_operation import BringItemToNestOperation
 from core.world.entities.item.items.base.item import Item
+from core.world.entities.colony.colonies.ant_colony.operation.pillage_nest_operation import PillageNestOperation
 
 class OperationFactory():
 
@@ -22,3 +23,6 @@ class OperationFactory():
     
     def build_bring_item_to_nest_operation(self, nest: Nest, item: Item, id: int = None, hired_ants: List[Ant] = None, flags: dict = None):
         return BringItemToNestOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, nest, item)
+    
+    def build_pillage_nest_operation(self, nest_to_pillage: Nest, nest_to_unload: Nest, id: int = None, hired_ants: List[Ant] = None, flags: dict = None):
+        return PillageNestOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, nest_to_pillage, nest_to_unload)

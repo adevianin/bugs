@@ -4,6 +4,7 @@ import { BaseHTMLView } from "../../../base/baseHTMLView"
 import operationTabTmpl from './operationTabTmpl.html';
 import { NewNestOperationCreator } from "./operationCreators/newNest/newNestOperationCreator";
 import { DestroyNestOperationCreator } from './operationCreators/destroyNest/destroyNestOperationCreator';
+import { PillageNestOperationCreator } from './operationCreators/pillageNest/pillageNestOperationCreator';
 import { OperationsList } from "./operationsList/operationsList"; 
 
 class OperationsTab extends BaseHTMLView {
@@ -17,6 +18,7 @@ class OperationsTab extends BaseHTMLView {
 
         this._addNewNestBtn.addEventListener('click', this._onAddNewNestClick.bind(this));
         this._destroyNestBtn.addEventListener('click', this._onDestroyNestClick.bind(this));
+        this._pillageNestBtn.addEventListener('click', this._onPillageNestClick.bind(this));
         this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
     }
 
@@ -31,6 +33,7 @@ class OperationsTab extends BaseHTMLView {
 
         this._addNewNestBtn = this._el.querySelector('[data-add-new-nest]');
         this._destroyNestBtn = this._el.querySelector('[data-destroy-nest]');
+        this._pillageNestBtn = this._el.querySelector('[data-pillage-nest]');
         this._newOperationListEl = this._el.querySelector('[data-new-operation-list]');
         this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
 
@@ -58,6 +61,13 @@ class OperationsTab extends BaseHTMLView {
         let el = document.createElement('div');
         this._el.querySelector('[data-operation-creator-placeholder]').appendChild(el);
         this._operationCreator = new DestroyNestOperationCreator(el, this._stopOperationCreating.bind(this));
+    }
+
+    _onPillageNestClick() {
+        this._toggleOperationCreating(true);
+        let el = document.createElement('div');
+        this._el.querySelector('[data-operation-creator-placeholder]').appendChild(el);
+        this._operationCreator = new PillageNestOperationCreator(el, this._stopOperationCreating.bind(this));
     }
 
     _toggleOperationCreating(isCreating) {

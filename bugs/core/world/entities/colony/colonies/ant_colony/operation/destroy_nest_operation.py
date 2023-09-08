@@ -31,6 +31,7 @@ class DestroyNestOperation(Operation):
     def _init_staff(self):
         super()._init_staff()
         formation = self._formation_factory.build_attack_formation(self._nest.position, WarriorAntBody.DISTANCE_PER_SEP)
+        self._register_formation(formation)
         for ant in self._warriors:
             ant.set_formation(formation)
             ant.body.sayer.add_listener('prepared', partial(self._on_warrior_prepared, ant))

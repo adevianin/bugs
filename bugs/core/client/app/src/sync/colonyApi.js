@@ -39,6 +39,19 @@ class ColonyApi {
             }
         });
     }
+
+    pillageNestOperation(pillagingNest, unloadingNest) {
+        this._serverConnection.send({
+            type: 'command',
+            command: {
+                command_type: 'pillage_nest',
+                params: {
+                    pillaging_nest_id: pillagingNest.id,
+                    unloading_nest_id: unloadingNest.id
+                }
+            }
+        });
+    }
 }
 
 export {

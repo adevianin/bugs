@@ -20,6 +20,8 @@ from core.world.entities.ground_beetle.thoughts.hunt_for_aphid import HuntForAph
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.item.item_sources.base.item_source import ItemSource
 from core.world.entities.ant.base.thoughts.walk_in_formation_thought import WalkInFormationThought
+from core.world.entities.ant.warrior.thoughts.keep_clear_territory_thought import KeepClearTerritoryThought
+from core.world.entities.base.live_entity.thoughts.wait_step_thought import WaitStepThought
 
 class ThoughtFactory:
 
@@ -68,8 +70,14 @@ class ThoughtFactory:
     def build_hunt_for_aphid(self, body: LiveBody, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_food_source: ItemSource, flags: dict = None, sayback: str = None):
         return HuntForAphid(body=body, random_walk_thought=random_walk_thought, fight_near_enemies_thought=fight_near_enemies_thought, found_food_source=found_food_source, flags=flags, sayback=sayback)
     
-    def build_walk_in_formation(self, body: LiveBody, flags: dict = None, sayback: str = None):
-        return WalkInFormationThought(body=body, flags=flags, sayback=sayback)
+    def build_walk_in_formation(self, body: LiveBody, fight_near_enemies_thought: FightNearEnemiesThought = None, flags: dict = None, sayback: str = None):
+        return WalkInFormationThought(body=body, fight_near_enemies_thought=fight_near_enemies_thought, flags=flags, sayback=sayback)
+    
+    def build_keep_clear_territory(self, body: LiveBody, fight_near_enemies_thought: FightNearEnemiesThought, random_walk_thought: RandomWalkThought, flags: dict = None, sayback: str = None):
+        return KeepClearTerritoryThought(body=body, fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, flags=flags, sayback=sayback)
+    
+    def build_wait_step(self, body: LiveBody, step_count: int, flags: dict = None, sayback: str = None):
+        return WaitStepThought(body=body, step_count=step_count, flags=flags, sayback=sayback)
 
     def build_feed_myself_full(self, body: LiveBody, home_nest: Nest, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(body, home_nest.position, home_nest.area)
@@ -108,3 +116,12 @@ class ThoughtFactory:
         random_walk_thought = self.build_random_walk_thought(body, None, None)
         fight_near_enemies_thought = self.build_fight_near_enemies_thought_full(body=body)
         return self.build_hunt_for_aphid(body=body, random_walk_thought=random_walk_thought, fight_near_enemies_thought=fight_near_enemies_thought, found_food_source=None, sayback=sayback)
+    
+    def build_keep_clear_territory_full(self, body: LiveBody, position: Point, area: int, sayback: str = None):
+        random_walk_thought = self.build_random_walk_thought(body, position, area)
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full(body=body)
+        return self.build_keep_clear_territory(body=body, fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, sayback=sayback)
+    
+    def build_walk_in_formation_full(self, body: LiveBody, is_attacking_enemies: bool, sayback: str = None):
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full(body=body) if is_attacking_enemies else None
+        return self.build_walk_in_formation(body=body, fight_near_enemies_thought=fight_near_enemies_thought, sayback=sayback)

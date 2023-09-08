@@ -57,8 +57,8 @@ class AntMind(Mind):
         thought = self._thought_factory.build_attack_nest_thought_full(body=self._body, nest=nest, sayback=sayback)
         self._register_thought(thought)
 
-    def walk_in_formation(self):
-        thought = self._thought_factory.build_walk_in_formation(body=self._body)
+    def walk_in_formation(self, is_attacking_enemies: bool = True, sayback: str = None):
+        thought = self._thought_factory.build_walk_in_formation_full(body=self._body, is_attacking_enemies=is_attacking_enemies, sayback=sayback)
         self._register_thought(thought)
 
     def reinforce_nest(self, nest: Nest, point_to_check: Point, asap: bool = True, sayback: str = None):

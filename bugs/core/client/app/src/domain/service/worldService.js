@@ -70,6 +70,23 @@ class WorldService {
         return nearestNest;
     }
 
+    findMyNearestNestForOperation(point, myColonyId) {
+        let nests = this._world.getNests();
+        let nearestNest = null;
+        let smallestDistance = null;
+        let maxDist = 100;
+
+        nests.forEach(nest => {
+            let dist = distance(point.x, point.y, nest.position.x, nest.position.y);
+            if (nest.fromColony == myColonyId && dist <= maxDist && (!smallestDistance || dist < smallestDistance)) {
+                smallestDistance = dist;
+                nearestNest = nest;
+            }
+        });
+
+        return nearestNest;
+    }
+
 }
 
 export {

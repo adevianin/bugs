@@ -220,7 +220,9 @@ class ThoughtSerializer():
     
     def _serialize_walk_in_formation_thought(self, thought: WalkInFormationThought):
         json = self._serialize_thought(thought)
+        fight_near_enemies_thought_json = self.serialize(thought.fight_near_enemies_thought) if thought.fight_near_enemies_thought else None
         json.update({
+            'fight_near_enemies_thought': fight_near_enemies_thought_json
         })
 
         return json

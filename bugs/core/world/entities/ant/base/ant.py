@@ -60,8 +60,8 @@ class Ant(LiveEntity):
     def attack_nest(self, nest: Nest, sayback: str = None):
         self._mind.attack_nest(nest=nest, sayback=sayback)
 
-    def walk_in_formation(self):
-        self._mind.walk_in_formation()
+    def walk_in_formation(self, is_attacking_enemies: bool = True, sayback: str = None):
+        self._mind.walk_in_formation(is_attacking_enemies=is_attacking_enemies, sayback=sayback)
 
     def get_in_nest(self, nest: Nest):
         self._body.get_in_nest(nest)
@@ -77,6 +77,9 @@ class Ant(LiveEntity):
 
     def set_formation(self, formation: Formation):
         self._body.set_formation(formation)
+
+    def free_mind(self):
+        self._mind.free_mind()
 
     def join_operation(self):
         if self._mind.is_in_opearetion:

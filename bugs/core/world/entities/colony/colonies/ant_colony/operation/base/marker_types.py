@@ -4,3 +4,4 @@ class MarkerTypes(StrEnum):
     POINTER = 'pointer'
     CROSS = 'cross'
     EAT = 'eat'
+    PILLAGE = 'pillage'

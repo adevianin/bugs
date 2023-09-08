@@ -17,3 +17,5 @@ class ThoughtTypes(StrEnum):
     REINFORCE_NEST_DEFENCE = 'reinforce_nest_defence'
     HUNT_FOR_APHID = 'hunt_for_aphid'
     WALK_IN_FORMATION = 'walk_in_formation'
+    KEEP_CLEAR_TERRITORY = 'keep_clear_territory'
+    WAIT_STEP = 'wait_step'

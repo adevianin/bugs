@@ -74,6 +74,8 @@ class WorldFacade:
                 self._colony_service.build_new_nest(user_id, Point(params['position']['x'], params['position']['y']))
             case 'destroy_nest':
                 self._colony_service.destroy_nest_operation(user_id, params['nest_id'])
+            case 'pillage_nest':
+                self._colony_service.pillage_nest_operation(user_id, params['pillaging_nest_id'], params['unloading_nest_id'])
             case 'stop_operation':
                 self._colony_service.cancel_operation(user_id, params['operation_id'])
             case _:

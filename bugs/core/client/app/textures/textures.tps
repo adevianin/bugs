@@ -209,6 +209,7 @@
             <key type="filename">images/ground_beetle_7.png</key>
             <key type="filename">images/ground_beetle_8.png</key>
             <key type="filename">images/ground_beetle_dead.png</key>
+            <key type="filename">images/item_ant_food_1v.png</key>
             <key type="filename">images/item_flower_1v.png</key>
             <key type="filename">images/item_flower_2v.png</key>
             <key type="filename">images/item_flower_3v.png</key>
@@ -220,6 +221,7 @@
             <key type="filename">images/item_leaf_4v.png</key>
             <key type="filename">images/marker_cross.png</key>
             <key type="filename">images/marker_eat.png</key>
+            <key type="filename">images/marker_pillage.png</key>
             <key type="filename">images/marker_pointer.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -344,6 +346,8 @@
                     <filename>images/item_flower_3v.png</filename>
                     <filename>images/item_ground_beetle_corpse_1v.png</filename>
                     <filename>images/marker_eat.png</filename>
+                    <filename>images/marker_pillage.png</filename>
+                    <filename>images/item_ant_food_1v.png</filename>
                 </array>
             </struct>
         </map>

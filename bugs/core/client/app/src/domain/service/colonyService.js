@@ -25,6 +25,10 @@ class ColonyService {
         this._colonyApi.destroyNestOperation(nest);
     }
 
+    pillageNestOperation(pillagingNest, unloadingNest) {
+        this._colonyApi.pillageNestOperation(pillagingNest, unloadingNest);
+    }
+
 }
 
 export {

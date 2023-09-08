@@ -9,6 +9,7 @@ from .operation_types import OperationTypes
 from typing import List
 from functools import partial
 from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
+from core.world.entities.colony.colonies.ant_colony.formation.base.formation import Formation
 
 class Operation(ABC):
 
@@ -25,6 +26,7 @@ class Operation(ABC):
         self._markers = []
         self._total_hiring_ants_count = 0
         self._flags = flags or {}
+        self._formations: List[Formation] = []
 
         if (self._read_flag('is_operation_started')):
             self._init_staff()
@@ -125,6 +127,9 @@ class Operation(ABC):
         
         self.events.emit('change')
 
+    def _register_formation(self, formation: Formation):
+        self._formations.append(formation)
+
     def _test_potential_member(self, ant: Ant):
         return True
 
@@ -188,5 +193,6 @@ class Operation(ABC):
             self.cancel()
 
     def _on_operation_stop(self):
-        pass
+        for formation in self._formations:
+            formation.destory()
     

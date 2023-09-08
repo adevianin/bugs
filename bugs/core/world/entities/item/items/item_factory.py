@@ -10,6 +10,9 @@ from core.world.entities.item.items.honeydew_item.honeydew_item import HoneydewI
 from core.world.entities.item.items.honeydew_item.honeydew_item_body import HoneydewItemBody
 from core.world.entities.item.items.ground_beetle_corpse_item.ground_beetle_corpse_item import GroundBeetleCorpseItem
 from core.world.entities.item.items.ground_beetle_corpse_item.ground_beetle_corpse_item_body import GroundBeetleCorpseItemBody
+from core.world.entities.item.items.ant_food.ant_food_item import AntFoodItem
+from core.world.entities.item.items.ant_food.ant_food_item_body import AntFoodItemBody
+
 
 import random
 
@@ -28,6 +31,8 @@ class ItemFactory():
                 return self._build_honeydew_item(id, position, angle, strength, variety, life_span, is_picked)
             case ItemTypes.GROUND_BEETLE_CORPSE:
                 return self._build_ground_beetle_corpse_item(id, position, angle, strength, variety, life_span, is_picked)
+            case ItemTypes.ANT_FOOD:
+                return self._build_ant_food_item(id, position, angle, strength, variety, life_span, is_picked)
 
     def _build_flower_item(self, id: int, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool):
         events = EventEmitter()
@@ -56,6 +61,13 @@ class ItemFactory():
         variety = variety or self._generate_variety(GroundBeetleCorpseItemBody.VARIETY_COUNT)
         life_span = life_span or GroundBeetleCorpseItemBody.LIFE_SPAN
         return GroundBeetleCorpseItem(events, id, body, strength, variety, life_span, is_picked)
+    
+    def _build_ant_food_item(self, id: int, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool):
+        events = EventEmitter()
+        body = AntFoodItemBody(events, position, angle, AntFoodItemBody.MAX_HP)
+        variety = variety or self._generate_variety(AntFoodItemBody.VARIETY_COUNT)
+        life_span = life_span or AntFoodItemBody.LIFE_SPAN
+        return AntFoodItem(events, id, body, strength, variety, life_span, is_picked)
     
     def _generate_variety(self, variety_count: int):
         return random.randint(1, variety_count)

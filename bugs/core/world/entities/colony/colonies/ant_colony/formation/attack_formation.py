@@ -12,6 +12,6 @@ class AttackFormation(Formation):
         y = self._position.y + col_index * self._unit_size.height
 
         p = Point(x, y)
-        p = p.rotate(self._x_axis_angle, self._position)
+        p = p.rotate(self._angle, self._position)
 
         return p

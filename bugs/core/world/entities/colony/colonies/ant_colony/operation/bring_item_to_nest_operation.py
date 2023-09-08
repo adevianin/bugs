@@ -44,6 +44,7 @@ class BringItemToNestOperation(Operation):
         ants = self._workers
 
         self._formation = self._formation_factory.build_bring_item_formation(self._nest.position, WorkerAntBody.DISTANCE_PER_SEP, self._item)
+        self._register_formation(self._formation)
         self._formation.events.add_listener('reached_destination', self._on_formation_reached_destination)
         
         self._item.set_formation(self._formation, bringing_speed=ants[0].body.user_speed, special_unit_id='item')
@@ -90,7 +91,7 @@ class BringItemToNestOperation(Operation):
         self._write_flag('is_bring_step_started', True)
         ants = self._workers
         for ant in ants:
-            ant.walk_in_formation()
+            ant.walk_in_formation(is_attacking_enemies=False)
 
     def _on_formation_reached_destination(self):
         self._nest.take_edible_item(self._item)

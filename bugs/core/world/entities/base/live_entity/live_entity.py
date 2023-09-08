@@ -33,6 +33,9 @@ class LiveEntity(Entity, iEnemy):
 
     def random_walk(self):
         self._mind.random_walk()
+
+    def wait_step(self, step_count: int = 1, sayback: str = None):
+        self._mind.wait_step(step_count=step_count, sayback=sayback)
     
     def do_step(self):
         super().do_step()

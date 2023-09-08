@@ -1,6 +1,7 @@
 from core.world.utils.point import Point
 from core.world.entities.world.world import World
 from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
+from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 
 class ColonyService():
 
@@ -24,4 +25,12 @@ class ColonyService():
         nest = self._world.map.get_entity_by_id(nest_id)
         if nest.from_colony_id != colony.id:
             operation = self._operation_factory.build_destroy_nest_operation(nest=nest)
+            colony.add_operation(operation)
+
+    def pillage_nest_operation(self, user_id: int, pillaging_nest_id: int, unload_nest_id: int):
+        colony: AntColony = self._world.get_colony_owned_by_user(user_id)
+        nest_to_pillage = self._world.map.get_entity_by_id(pillaging_nest_id)
+        nest_to_unload = self._world.map.get_entity_by_id(unload_nest_id)
+        if nest_to_pillage.from_colony_id != colony.id and nest_to_unload.from_colony_id == colony.id:
+            operation = self._operation_factory.build_pillage_nest_operation(nest_to_pillage=nest_to_pillage, nest_to_unload=nest_to_unload)
             colony.add_operation(operation)

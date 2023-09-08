@@ -37,6 +37,10 @@ class Mind(ABC):
         thought = self._thought_factory.build_random_walk_thought(self._body, center=None, radius=None)
         self._register_thought(thought)
 
+    def wait_step(self, step_count: int, sayback: str):
+        thought = self._thought_factory.build_wait_step(body=self._body, step_count=step_count, sayback=sayback)
+        self._register_thought(thought)
+
     def do_step(self):
         self._body.memory.treat_records()
 

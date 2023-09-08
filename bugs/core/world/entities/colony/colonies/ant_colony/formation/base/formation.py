@@ -10,12 +10,16 @@ class Formation(ABC):
         self.events = events
         self._unit_size = unit_size
         self._event_bus = event_bus
-        self._position = position
+        self._position = None
         self._dest_point = dest_point
         self._unit_step_size = unit_step_size
         self._units: Dict[str, Dict] = {}
         self._is_formation_reach_destination = False
         self._should_optimize_position_closer = should_optimize_position_closer
+        self._is_destoryed = False
+
+        if position:
+            self._change_position(position)
 
         self._event_bus.add_listener('step_start', self._on_step_start)
 
@@ -68,9 +72,11 @@ class Formation(ABC):
         unit['is_removed'] = True
 
     def destory(self):
-        self.events.emit('destroyed')
-        self._event_bus.remove_listener('step_start', self._on_step_start)
-        self.events.remove_all_listeners()
+        if not self._is_destoryed:
+            self.events.emit('destroyed')
+            self._event_bus.remove_listener('step_start', self._on_step_start)
+            self.events.remove_all_listeners()
+            self._is_destoryed = True
 
     def _should_optimize_formation_position(self):
         if not self._should_optimize_position_closer:
@@ -94,7 +100,7 @@ class Formation(ABC):
 
     def _change_position(self, new_pos: Point):
         self._position = new_pos
-        self._x_axis_angle = self._calc_x_axis_angle()
+        self._angle = self._calc_angle()
         self._calc_unit_formation_positions()
 
     def _calc_unit_formation_positions(self):
@@ -134,7 +140,7 @@ class Formation(ABC):
             unit = self._units[unit_id]
             unit['is_on_formation_position'] = False
 
-    def _calc_x_axis_angle(self):
+    def _calc_angle(self):
         return Point.calculate_angle_to_x_axis(self._position, self._dest_point)
 
     def _do_next_step(self):
@@ -155,6 +161,9 @@ class Formation(ABC):
         self._change_position(Point(new_x, new_y))
         
     def _on_step_start(self, step_number):
+        if len(self._units) == 0:
+            return 
+        
         if self._check_are_all_units_on_positions():
             self.events.emit('all_units_on_positions')
             if self._chek_is_formation_reached_destionation():
