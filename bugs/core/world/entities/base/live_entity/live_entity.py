@@ -6,6 +6,7 @@ from .mind import Mind
 from .live_body import LiveBody
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.enemy_interface import iEnemy
+from typing import List
 
 class LiveEntity(Entity, iEnemy):
 
@@ -28,14 +29,17 @@ class LiveEntity(Entity, iEnemy):
     def walk_to(self, position: Point, sayback: str = None):
         self._mind.walk_to(position=position, sayback=sayback)
 
-    def fight_enemy(self, enemy: iEnemy, sayback: str = None):
-        self._mind.fight_enemy(enemy=enemy, sayback=sayback)
+    def fight_enemy(self, enemy: iEnemy, asap: bool = False, sayback: str = None):
+        self._mind.fight_enemy(enemy=enemy, sayback=sayback, asap=asap)
 
     def random_walk(self):
         self._mind.random_walk()
 
     def wait_step(self, step_count: int = 1, sayback: str = None):
         self._mind.wait_step(step_count=step_count, sayback=sayback)
+
+    def look_around_for_enemies(self) -> List[iEnemy]:
+        return self._body.look_around_for_enemies()
     
     def do_step(self):
         super().do_step()

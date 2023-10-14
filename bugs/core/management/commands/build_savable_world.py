@@ -165,11 +165,11 @@ class Command(BaseCommand):
                 "angle": 0,
                 "stored_calories":1000,
                 "larvae":[
-                    # {
-                    #     "ant_type":"warrior",
-                    #     "ate_calories":440.0,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    # },
+                    {
+                        "ant_type":"warrior",
+                        "ate_calories":440.0,
+                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    },
                     {
                         "ant_type":"worker",
                         "ate_calories":99,
@@ -197,16 +197,16 @@ class Command(BaseCommand):
                 "angle": 0,
                 "stored_calories":1000,
                 "larvae":[
-                    # {
-                    #     "ant_type":"warrior",
-                    #     "ate_calories":440.0,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    # },
-                    # {
-                    #     "ant_type":"warrior",
-                    #     "ate_calories":440.0,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    # }
+                    {
+                        "ant_type":"warrior",
+                        "ate_calories":440.0,
+                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    },
+                    {
+                        "ant_type":"warrior",
+                        "ate_calories":440.0,
+                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    }
                 ],
                 "larva_places_count":1,
                 "area":300,

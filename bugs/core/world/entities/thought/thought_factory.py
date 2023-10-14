@@ -19,7 +19,6 @@ from core.world.entities.base.live_entity.thoughts.random_walk_thought import Ra
 from core.world.entities.ground_beetle.thoughts.hunt_for_aphid import HuntForAphid
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.item.item_sources.base.item_source import ItemSource
-from core.world.entities.ant.base.thoughts.walk_in_formation_thought import WalkInFormationThought
 from core.world.entities.ant.warrior.thoughts.keep_clear_territory_thought import KeepClearTerritoryThought
 from core.world.entities.base.live_entity.thoughts.wait_step_thought import WaitStepThought
 
@@ -70,9 +69,6 @@ class ThoughtFactory:
     def build_hunt_for_aphid(self, body: LiveBody, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_food_source: ItemSource, flags: dict = None, sayback: str = None):
         return HuntForAphid(body=body, random_walk_thought=random_walk_thought, fight_near_enemies_thought=fight_near_enemies_thought, found_food_source=found_food_source, flags=flags, sayback=sayback)
     
-    def build_walk_in_formation(self, body: LiveBody, fight_near_enemies_thought: FightNearEnemiesThought = None, flags: dict = None, sayback: str = None):
-        return WalkInFormationThought(body=body, fight_near_enemies_thought=fight_near_enemies_thought, flags=flags, sayback=sayback)
-    
     def build_keep_clear_territory(self, body: LiveBody, fight_near_enemies_thought: FightNearEnemiesThought, random_walk_thought: RandomWalkThought, flags: dict = None, sayback: str = None):
         return KeepClearTerritoryThought(body=body, fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, flags=flags, sayback=sayback)
     
@@ -122,6 +118,3 @@ class ThoughtFactory:
         fight_near_enemies_thought = self.build_fight_near_enemies_thought_full(body=body)
         return self.build_keep_clear_territory(body=body, fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, sayback=sayback)
     
-    def build_walk_in_formation_full(self, body: LiveBody, is_attacking_enemies: bool, sayback: str = None):
-        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full(body=body) if is_attacking_enemies else None
-        return self.build_walk_in_formation(body=body, fight_near_enemies_thought=fight_near_enemies_thought, sayback=sayback)

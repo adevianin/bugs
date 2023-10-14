@@ -1,7 +1,7 @@
 from typing import List
 from functools import partial
 from core.world.entities.ant.base.ant import Ant
-from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
+from core.world.entities.colony.colonies.ant_colony.formation.base.formation_manager import FormationManager
 from core.world.entities.colony.colonies.ant_colony.operation.base.operation_types import OperationTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.colony.colonies.ant_colony.operation.base.operation import Operation
@@ -10,15 +10,17 @@ from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
 from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
 from core.world.entities.ant.worker.worker_ant import WorkerAnt
-from core.world.entities.ant.warrior.warrior_ant_body import WarriorAntBody
 from core.world.entities.item.items.base.item import Item
+from core.world.entities.colony.colonies.ant_colony.formation.attack_formation import AttackFormation
 
 class PillageNestOperation(Operation):
     
-    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, hired_ants: List[Ant], flags: dict, nest_to_pillage: Nest, nest_to_unload: Nest):
+    def __init__(self, events: EventEmitter, formation_manager: FormationManager, id: int, hired_ants: List[Ant], flags: dict, nest_to_pillage: Nest, nest_to_unload: Nest, attack_formation: AttackFormation = None, go_home_formation: AttackFormation = None):
         self._nest_to_pillage = nest_to_pillage
         self._nest_to_unload = nest_to_unload
-        super().__init__(events, formation_factory, id, OperationTypes.PILLAGE_NEST, hired_ants, flags)
+        self._attack_formation = attack_formation
+        self._go_home_formation = go_home_formation
+        super().__init__(events, formation_manager, id, OperationTypes.PILLAGE_NEST, hired_ants, flags)
         self._name = 'грабьож мурашника'
         self._open_vacancies(AntTypes.WARRIOR, 5)
         self._open_vacancies(AntTypes.WORKER, 2)
@@ -33,6 +35,14 @@ class PillageNestOperation(Operation):
         return self._nest_to_unload.id
     
     @property
+    def attack_formation(self) -> AttackFormation:
+        return self._attack_formation
+    
+    @property
+    def go_home_formation(self) -> AttackFormation:
+        return self._go_home_formation
+    
+    @property
     def _warriors(self) -> List[WarriorAnt]:
         return self.get_hired_ants(AntTypes.WARRIOR)
     
@@ -42,18 +52,16 @@ class PillageNestOperation(Operation):
     
     def _init_staff(self):
         super()._init_staff()
-        attack_formation = self._formation_factory.build_attack_formation(self._nest_to_pillage.position, WarriorAntBody.DISTANCE_PER_SEP)
-        self._register_formation(attack_formation)
-        self._go_home_formation = self._formation_factory.build_attack_formation(self._nest_to_unload.position, WarriorAntBody.DISTANCE_PER_SEP, self._nest_to_pillage.position)
-        self._register_formation(self._go_home_formation)
 
-        attack_formation.events.add_listener('reached_destination', self._pillage_step)
+        attack_units = self._warriors + self._workers
+        
+        self._attack_formation = self._attack_formation or self._formation_manager.prepare_attack_formation(attack_units, self._nest_to_pillage.position)
+        self._attack_formation.events.add_listener('reached_destination', self._pillage_step)
+
+        self._go_home_formation = self._go_home_formation or self._formation_manager.prepare_attack_formation(attack_units, self._nest_to_unload.position)
         self._go_home_formation.events.add_listener('reached_destination', self._on_ants_got_home)
 
-        for ant in self._warriors:
-            ant.set_formation(attack_formation)
         for ant in self._workers:
-            ant.set_formation(attack_formation)
             ant.body.sayer.add_listener('worker_is_near_nest', partial(self._on_worker_near_nest, ant))
             ant.body.sayer.add_listener('worker_is_ready_for_load', partial(self._on_worker_is_ready_for_load, ant))
             ant.body.sayer.add_listener('worker_is_at_home', partial(self._on_worker_is_at_home, ant))
@@ -81,8 +89,7 @@ class PillageNestOperation(Operation):
         return True
     
     def _attack_step(self):
-        for ant in self._hired_ants:
-            ant.walk_in_formation(is_attacking_enemies=True)
+        self._attack_formation.activate()
 
     def _pillage_step(self):
         for ant in self._warriors:
@@ -112,12 +119,10 @@ class PillageNestOperation(Operation):
     def _go_home_step(self):
         for ant in self._workers:
             ant.get_out_of_nest()
-            ant.set_formation(self._go_home_formation)
-            ant.walk_in_formation(is_attacking_enemies=False)
         for ant in self._warriors:
             ant.free_mind()
-            ant.set_formation(self._go_home_formation)
-            ant.walk_in_formation(is_attacking_enemies=True)
+
+        self._go_home_formation.activate()
 
     def _on_ants_got_home(self):
         for ant in self._workers:

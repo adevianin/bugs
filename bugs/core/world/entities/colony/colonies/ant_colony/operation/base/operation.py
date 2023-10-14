@@ -8,14 +8,13 @@ from .marker_types import MarkerTypes
 from .operation_types import OperationTypes
 from typing import List
 from functools import partial
-from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
-from core.world.entities.colony.colonies.ant_colony.formation.base.formation import Formation
+from core.world.entities.colony.colonies.ant_colony.formation.base.formation_manager import FormationManager
 
 class Operation(ABC):
 
-    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, type: OperationTypes, hired_ants: List[Ant], flags: dict):
+    def __init__(self, events: EventEmitter, formation_manager: FormationManager, id: int, type: OperationTypes, hired_ants: List[Ant], flags: dict):
         self.events = events
-        self._formation_factory = formation_factory
+        self._formation_manager = formation_manager
         self.id = id
         self._type = type
         self._vacancies = {}
@@ -26,10 +25,13 @@ class Operation(ABC):
         self._markers = []
         self._total_hiring_ants_count = 0
         self._flags = flags or {}
-        self._formations: List[Formation] = []
 
         if (self._read_flag('is_operation_started')):
             self._init_staff()
+
+    @property
+    def formations(self):
+        return self._formation_manager.formations
 
     @property
     def is_hiring(self):
@@ -127,9 +129,6 @@ class Operation(ABC):
         
         self.events.emit('change')
 
-    def _register_formation(self, formation: Formation):
-        self._formations.append(formation)
-
     def _test_potential_member(self, ant: Ant):
         return True
 
@@ -193,6 +192,5 @@ class Operation(ABC):
             self.cancel()
 
     def _on_operation_stop(self):
-        for formation in self._formations:
-            formation.destory()
+        self._formation_manager.clear()
     

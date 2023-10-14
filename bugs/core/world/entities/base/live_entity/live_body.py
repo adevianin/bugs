@@ -121,7 +121,7 @@ class LiveBody(Body):
         self._relation_tester = relation_tester
 
     def look_around_for_enemies(self) -> List[iEnemy]:
-        enemies_filter: Callable[[Entity], bool] = lambda entity: self._relation_tester.is_enemy(entity)
+        enemies_filter: Callable[[Entity], bool] = lambda entity: not entity.is_died and self._relation_tester.is_enemy(entity)
         return self._world_interactor.get_nearby_entities(EntityTypesPack.LIVE_ENTITIES, enemies_filter)
     
     def receive_colony_signal(self, signal: dict):

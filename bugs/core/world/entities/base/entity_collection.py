@@ -19,6 +19,13 @@ class EntityCollection():
     def get_entity_by_id(self, id: int) -> Entity:
         return self._entities[id]
 
-    def get_entities(self) -> List[Entity]:
-        return list(self._entities.values())
+    def get_entities(self, ids: List[int] = None) -> List[Entity]:
+        if ids:
+            res = []
+            for id in ids:
+                res.append(self._entities[id])
+                
+            return res
+        else:
+            return list(self._entities.values())
     

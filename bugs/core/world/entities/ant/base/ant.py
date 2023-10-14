@@ -6,7 +6,6 @@ from .ant_mind import AntMind
 from .ant_types import AntTypes
 from core.world.utils.point import Point
 from core.world.entities.nest.nest import Nest
-from core.world.entities.colony.colonies.ant_colony.formation.base.formation import Formation
 
 class Ant(LiveEntity):
 
@@ -60,9 +59,6 @@ class Ant(LiveEntity):
     def attack_nest(self, nest: Nest, sayback: str = None):
         self._mind.attack_nest(nest=nest, sayback=sayback)
 
-    def walk_in_formation(self, is_attacking_enemies: bool = True, sayback: str = None):
-        self._mind.walk_in_formation(is_attacking_enemies=is_attacking_enemies, sayback=sayback)
-
     def get_in_nest(self, nest: Nest):
         self._body.get_in_nest(nest)
 
@@ -74,9 +70,6 @@ class Ant(LiveEntity):
 
     def give_food(self, nest: Nest):
         self._body.give_food(nest)
-
-    def set_formation(self, formation: Formation):
-        self._body.set_formation(formation)
 
     def free_mind(self):
         self._mind.free_mind()
@@ -91,7 +84,6 @@ class Ant(LiveEntity):
         self._mind.free_mind()
         self._mind.toggle_auto_thought_generation(True)
         self._body.sayer.remove_all_listeners()
-        self._body.remove_formation()
 
     def ask_participation(self):
         return self._mind.ask_participation()
@@ -108,7 +100,6 @@ class Ant(LiveEntity):
     
     def _on_died(self):
         self._mind.free_mind()
-        self._body.remove_formation()
         self._body.sayer.remove_all_listeners()
     
     def _on_item_picked(self, item_id):

@@ -1,31 +1,46 @@
+from typing import List
 from core.world.utils.event_emiter import EventEmitter
+from core.world.entities.ant.base.ant import Ant
 from core.world.utils.point import Point
-from core.world.entities.colony.colonies.ant_colony.formation.base.formation import Formation
+from .base.base_formation import BaseFormation
 from core.world.entities.item.items.base.item import Item
-from core.world.utils.size import Size
+from .base.formation_types import FormationTypes
 
-class BringItemFormation(Formation):
+class BringItemFormation(BaseFormation):
 
-    def __init__(self, event_bus: EventEmitter, unit_size: Size, events: EventEmitter, dest_point: Point, unit_step_size: int, position: Point, should_optimize_position_closer: bool, item: Item):
-        super().__init__(event_bus, unit_size, events, dest_point, unit_step_size, position, should_optimize_position_closer)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, units: List[Ant], start_point: Point, destination_point: Point, is_activated: bool, item: Item):
+        super().__init__(event_bus, events, FormationTypes.BRING_ITEM, units, start_point, destination_point, is_activated)
         self._item = item
         self._item_size = item.body.SIZE
+        self._item_bringing_speed = self._get_item_bringing_speed(units)
 
-    def _calc_unit_formation_position(self, unit_id):
+    @property
+    def item_id(self):
+        return self._item.id
+
+    def _order_units_move_on_positions(self):
+        super()._order_units_move_on_positions()
+        if not self._current_position.is_equal(self._item.position):
+            self._item.be_bringed_to(self._current_position, self._item_bringing_speed)
+
+    def _calc_unit_place_position(self, unit_place_number: int) -> Point:
         item_width = self._item_size.width
         item_height = self._item_size.height
         item_angle = self._item.body.angle
         
-        match(unit_id):
-            case 'item':
-                p = Point(self._position.x, self._position.y)
+        match(unit_place_number):
+            case 0:
+                p = Point(self._current_position.x - (item_width/2) , self._current_position.y + item_height / 2)
             case 1:
-                p = Point(self._position.x - (item_width/2) , self._position.y + item_height / 2)
+                p = Point(self._current_position.x + (item_width/2) - (self._unit_size.width / 2), self._current_position.y + item_height / 2)
             case 2:
-                p = Point(self._position.x + (item_width/2) - (self._unit_size.width / 2), self._position.y + item_height / 2)
-            case 3:
-                p = Point(self._position.x + (item_width/2) - (self._unit_size.height / 2), self._position.y - item_height / 2)
+                p = Point(self._current_position.x + (item_width/2) - (self._unit_size.height / 2), self._current_position.y - item_height / 2)
             
-        p = p.rotate(item_angle, self._position)
+        p = p.rotate(item_angle, self._current_position)
 
         return p
+    
+    def _get_item_bringing_speed(self, units: List[Ant]):
+        user_speeds = (unit.body.user_speed for unit in units)
+        user_speed = min(user_speeds)
+        return user_speed

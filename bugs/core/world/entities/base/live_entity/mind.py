@@ -29,7 +29,7 @@ class Mind(ABC):
         thought = self._thought_factory.build_walk_to_thought(body=self._body, position=position, sayback=sayback)
         self._register_thought(thought)
 
-    def fight_enemy(self, enemy: iEnemy, asap: bool = True, sayback: str = None):
+    def fight_enemy(self, enemy: iEnemy, asap: bool, sayback: str = None):
         thought = self._thought_factory.build_fight_enemy_thought(body=self._body, enemy=enemy, sayback=sayback)
         self._register_thought(thought, asap)
 

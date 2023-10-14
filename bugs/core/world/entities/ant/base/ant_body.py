@@ -6,7 +6,6 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.base.live_entity.memory import Memory
-from core.world.entities.colony.colonies.ant_colony.formation.base.formation import Formation
 from core.world.entities.item.item_sources.base.item_source import ItemSource
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.item.items.base.item import Item
@@ -25,9 +24,6 @@ class AntBody(LiveBody):
         self.sayer = sayer
         self._located_inside_nest = located_in_nest
         self._picked_item = picked_item
-        self._formation = None
-
-        self.events.add_listener('position_changed', self._on_position_changed)
 
     @property
     def located_in_nest_id(self):
@@ -49,14 +45,6 @@ class AntBody(LiveBody):
     def picked_item_id(self):
         return self._picked_item.id if self.is_item_picked else None
     
-    @property
-    def has_formation(self):
-        return self._formation != None
-    
-    @property
-    def formation(self):
-        return self._formation
-    
     def get_in_nest(self, nest: Nest):
         self._located_inside_nest = nest
         self.events.emit('got_in_nest', nest)
@@ -70,24 +58,6 @@ class AntBody(LiveBody):
             self.sayer.emit(phrase, data)
         else:
             self.sayer.emit(phrase)
-    
-    def set_formation(self, formation: Formation):
-        self._formation = formation
-        unit_id = self._formation.register_unit(self.position)
-        self._formation_unit_id = unit_id
-        self._formation.events.add_listener('destroyed', self.remove_formation)
-
-    def remove_formation(self):
-        if self.has_formation:
-            self._formation.events.remove_listener('destroyed', self.remove_formation)
-            self.formation.remove_unit(self._formation_unit_id)
-            self._formation_unit_id = None
-            self._formation = None
-
-    def step_in_formation(self):
-        unit_id = self._formation_unit_id
-        position = self._formation.get_position_for_unit(unit_id)
-        return self.step_to(position)
     
     def look_around_for_food(self):
         honeydew_filter: Callable[[ItemSource], bool] = lambda item_source: item_source.item_type == ItemTypes.HONEYDEW
@@ -124,13 +94,6 @@ class AntBody(LiveBody):
             'colony_id': colony_id,
             'callback': callback
         })
-
-    def _on_position_changed(self):
-        if self.has_formation:
-            self._tell_position_to_formation()
-
-    def _tell_position_to_formation(self):
-        self._formation.unit_changed_position(self.position, self._formation_unit_id)
 
     def step_to(self, destination_point: Point) -> bool:
         if self.is_in_nest:

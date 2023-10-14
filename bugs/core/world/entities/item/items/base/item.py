@@ -4,7 +4,6 @@ from core.world.utils.point import Point
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
-from core.world.entities.colony.colonies.ant_colony.formation.base.formation import Formation
 
 class Item(Entity):
 
@@ -63,19 +62,6 @@ class Item(Entity):
             'position': self.position.to_public_json()
         })
 
-    def set_formation(self, formation: Formation, bringing_speed: int, special_unit_id: str):
-        self._formation = formation
-        self._formation_bringing_speed = bringing_speed
-        self._formation_unit_id = self._formation.register_unit(self._body.position, is_passive_unit=True, special_unit_id=special_unit_id)
-        self._formation.events.add_listener(f'passive_unit_move_request:{self._formation_unit_id}', self._on_formation_move_request)
-        self._formation.events.add_listener('destroyed', self._remove_formation)
-
-    def _remove_formation(self):
-        self._formation.remove_unit(self._formation_unit_id)
-        self._formation.events.remove_listener(f'passive_unit_move_request:{self._formation_unit_id}', self._on_formation_move_request)
-        self._formation.events.remove_listener('destroyed', self._remove_formation)
-        self._formation = None
-
     def to_public_json(self):
         json = super().to_public_json()
         json.update({
@@ -86,12 +72,7 @@ class Item(Entity):
         
         return json
     
-    def _on_formation_move_request(self):
-        pos = self._formation.get_position_for_unit(self._formation_unit_id)
-        self._be_bringed_to(pos, self._formation_bringing_speed)
-        self._formation.unit_changed_position(pos, self._formation_unit_id)
-
-    def _be_bringed_to(self, position: Point, bringing_speed: int):
+    def be_bringed_to(self, position: Point, bringing_speed: int):
         self._body.position = position
         self._emit_action('being_bringed', {
             'new_position': self._body.position.to_public_json(),
