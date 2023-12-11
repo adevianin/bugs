@@ -5,6 +5,7 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.item.items.base.item import Item
+from core.world.entities.world.birthers.requests.item_birth_request import ItemBirthRequest
 
 class GroundBeetle(LiveEntity):
 
@@ -17,10 +18,4 @@ class GroundBeetle(LiveEntity):
         def preborn_corpse_item(item: Item):
             item.body.angle = self._body.angle
 
-        self.events.emit('birth_request', {
-            'entity_type': EntityTypes.ITEM,
-            'item_type': ItemTypes.GROUND_BEETLE_CORPSE,
-            'position': self.position,
-            'strength': 500,
-            'preborn_callback': preborn_corpse_item
-        })
+        self.events.emit('birth_request', ItemBirthRequest.build(self.position, 500, ItemTypes.GROUND_BEETLE_CORPSE, preborn_corpse_item))

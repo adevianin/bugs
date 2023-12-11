@@ -22,7 +22,7 @@ class GroundBeetleFactory():
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
         hp = hp if hp else GroundBeetleBody.MAX_HP
-        body = GroundBeetleBody(events, memory, dna_profile, position, angle, hp, world_interactor)
+        body = GroundBeetleBody(events, {}, memory, dna_profile, position, angle, hp, world_interactor)
         mind = GroundBeetleMind(events, body, self._thought_factory, is_auto_thought_generation)
 
         return GroundBeetle(events, id, from_colony_id, body, mind)

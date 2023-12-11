@@ -8,9 +8,12 @@ from core.world.entities.colony.base.colony_relations_table import ColonyRelatio
 from core.world.entities.ant.ant_factory import AntFactory
 from core.world.entities.item.items.item_factory import ItemFactory
 from core.world.entities.nest.nest_factory import NestFactory
-from core.world.entities.world.entity_birther import EntityBirther
 from core.world.entities.ground_beetle.ground_beetle_spawner import GroundBeetleSpawner
 from core.world.entities.ground_beetle.ground_beetle_factory import GroundBeetleFactory
+from core.world.entities.world.birthers.ant_birther import AntBirther
+from core.world.entities.world.birthers.item_birther import ItemBirther
+from core.world.entities.world.birthers.nest_birther import NestBirther
+from core.world.entities.world.birthers.ground_beetle_birther import GroundBeetleBirther
 from typing import List
 
 class WorldFactory():
@@ -25,6 +28,11 @@ class WorldFactory():
     def build_world(self, id: int, last_used_id: int, entities_collection: EntityCollection, map: Map, colonies: List[Colony], colony_relations_table: ColonyRelationsTable) -> World:
         id_generator = IdGenerator.build_id_generator(last_used_id)
         ground_beetle_spawner = GroundBeetleSpawner(self._event_bus, map)
-        entity_birther = EntityBirther(self._event_bus, id_generator, map, self._ant_factory, self._item_factory, self._nest_factory, self._ground_beetle_factory)
-        return World(id, entities_collection, map, self._event_bus, colonies, id_generator, colony_relations_table, entity_birther, ground_beetle_spawner)
+        birthers = {
+            'ant_birther': AntBirther(self._event_bus, id_generator, map, self._ant_factory),
+            'item_birther': ItemBirther(self._event_bus, id_generator, map, self._item_factory),
+            'nest_birther': NestBirther(self._event_bus, id_generator, map, self._nest_factory),
+            'ground_beetle_birther': GroundBeetleBirther(self._event_bus, id_generator, map, self._ground_beetle_factory)
+        }
+        return World(id, entities_collection, map, self._event_bus, colonies, id_generator, colony_relations_table, birthers, ground_beetle_spawner)
     

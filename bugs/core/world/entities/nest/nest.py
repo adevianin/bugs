@@ -5,6 +5,8 @@ from core.world.entities.item.items.base.item import Item
 from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
 from core.world.entities.item.items.base.item_types import ItemTypes
+from core.world.entities.world.birthers.requests.ant_birth_request import AntBirthRequest
+from core.world.entities.world.birthers.requests.item_birth_request import ItemBirthRequest
 
 class Nest(Entity):
 
@@ -93,13 +95,7 @@ class Nest(Entity):
     def steal_food(self, on_food_ready):
         strength = min(300, self._stored_calories)
         if strength > 0:
-            self.events.emit('birth_request', {
-                'entity_type': EntityTypes.ITEM,
-                'item_type': ItemTypes.ANT_FOOD,
-                'position': self._body.position,
-                'strength': strength,
-                'callback': on_food_ready
-            })
+            self.events.emit('birth_request', ItemBirthRequest.build(self._body.position, strength, ItemTypes.ANT_FOOD, None, on_food_ready))
             self._stored_calories -= strength
             return True
         else:
@@ -121,11 +117,7 @@ class Nest(Entity):
 
         for larva in larvae_ready_to_born:
             self._larvae.remove(larva)
-            self.events.emit('birth_request', {
-                'entity_type': EntityTypes.ANT,
-                'nest': self,
-                'larva': larva
-            })
+            self.events.emit('birth_request', AntBirthRequest.build(self._id, larva))
         
         self._emit_larvae_changed()
 

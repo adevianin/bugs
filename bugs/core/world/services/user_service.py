@@ -2,7 +2,7 @@ from core.world.entities.world.world import World
 from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.ant.ant_factory import AntFactory
 from core.world.entities.ant.base.ant_types import AntTypes
-import uuid
+from core.world.entities.base.live_entity.live_stats import LiveStats
 
 class UserService():
 
@@ -19,9 +19,10 @@ class UserService():
         self._world.add_new_colony(colony)
         colony.born()
 
+        stats = LiveStats.build(300, 20, 32, 200, 1000, 2, 20, 5)
         position = self._world.map.generate_random_point()
         queen_id = self._world.generate_id()
-        queen_ant = self._ant_factory.build_new_ant(id=queen_id, from_colony_id=colony_id, ant_type=AntTypes.QUEEN, dna_profile=uuid.uuid4(), position=position)
-        queen_ant.mind.toggle_auto_thought_generation(False)
+        queen_ant = self._ant_factory.build_new_ant(id=queen_id, from_colony_id=colony_id, stats=stats, ant_type=AntTypes.QUEEN, position=position)
+        # queen_ant.mind.toggle_auto_thought_generation(False)
         self._world.map.add_new_entity(queen_ant)
         queen_ant.born()

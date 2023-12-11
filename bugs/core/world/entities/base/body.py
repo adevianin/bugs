@@ -1,6 +1,7 @@
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from core.world.utils.size import Size
+from .stats import Stats
 
 class Body():
 
@@ -8,8 +9,9 @@ class Body():
     RESTORE_HP_PER_STEP = 1
     SIZE = Size(32, 32)
 
-    def __init__(self, events: EventEmitter, position: Point, angle: int, hp: int):
+    def __init__(self, events: EventEmitter, stats: Stats, position: Point, angle: int, hp: int):
         self.events = events
+        self.stats = stats
         self._position = position
         self._angle = angle
         self._hp = hp

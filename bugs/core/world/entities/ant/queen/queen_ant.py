@@ -8,6 +8,7 @@ from ..base.ant_types import AntTypes
 from core.world.utils.event_emiter import EventEmitter
 from .queen_ant_body import QueenAntBody
 from .queen_ant_mind import QueenAntMind
+from core.world.entities.ant.base.larva import Larva
 
 class QueenAnt(Ant):
 
@@ -24,3 +25,6 @@ class QueenAnt(Ant):
     def relocate_to_nest(self, nest: Nest):
         super().relocate_to_nest(nest)
         self._body.memory.save('once_relocated', True)
+
+    def produce_larva(self, ant_type: AntTypes) -> Larva:
+        return self._body.produce_larva(ant_type)

@@ -1,0 +1,17 @@
+from core.world.entities.nest.nest import Nest
+from core.world.entities.world.birthers.requests.nest_birth_request import NestBirthRequest
+from core.world.entities.base.entity_types import EntityTypes
+from core.world.entities.map.map import Map
+from core.world.id_generator import IdGenerator
+from core.world.utils.event_emiter import EventEmitter
+from .entity_birther import EntityBirther
+from core.world.entities.nest.nest_factory import NestFactory
+
+class NestBirther(EntityBirther):
+
+    def __init__(self, event_bus: EventEmitter, id_generator: IdGenerator, map: Map, nest_factory: NestFactory):
+        super().__init__(event_bus, EntityTypes.NEST, id_generator, map)
+        self._nest_factory = nest_factory
+
+    def _build_entity(self, id, request: NestBirthRequest) -> Nest:
+        return self._nest_factory.build_new_nest(id, request.position, request.colony_id)

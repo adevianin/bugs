@@ -15,5 +15,5 @@ class ItemSourceFactory():
 
     def _build_honeydew_item_source(self, id: int, from_colony_id: int, hp: int, position: Point, angle: int, fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
         events = EventEmitter()
-        body = HoneydewItemSourceBody(events, position, angle, hp)
+        body = HoneydewItemSourceBody(events, {}, position, angle, hp)
         return HoneydewItemSource(events, id, from_colony_id, body, fertility, accumulated, min_item_strength, max_item_strength)

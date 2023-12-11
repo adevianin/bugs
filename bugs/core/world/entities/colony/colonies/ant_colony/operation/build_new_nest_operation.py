@@ -61,6 +61,6 @@ class BuildNewNestOperation(Operation):
         self._queen.relocate_to_nest(nest)
         self._queen.get_in_nest(nest)
         self._new_nest.take_calories(500)
-        self._new_nest.add_larva(Larva.build_larva(AntTypes.WORKER, self._queen.body.dna_profile, 0))
+        # self._new_nest.add_larva(Larva.build_larva(AntTypes.WORKER, self._queen.body.dna_profile, 0))
 
         self.done()

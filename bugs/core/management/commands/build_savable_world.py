@@ -27,13 +27,23 @@ class Command(BaseCommand):
                 "located_in_nest_id":None,
                 "picked_item_id":None,
                 "ant_type":"worker",
-                "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
                 "from_nest":30,
                 "thoughts":[
                 ],
                 "memory": {},
                 "is_auto_thought_generation": True,
-                "is_in_operation": False
+                "is_in_operation": False,
+                "stats": {
+                    "type":"live_stats",
+                    "max_hp":100,
+                    "hp_regen_rate":10,
+                    "distance_per_step":32,
+                    "sight_distance":200,
+                    "max_calories":1000,
+                    "distance_per_calorie":2,
+                    "attack":10,
+                    "defence":1
+                }
             },
             {
                 "id":2,
@@ -48,14 +58,24 @@ class Command(BaseCommand):
                 "located_in_nest_id":30,
                 "picked_item_id":None,
                 "ant_type":"queen",
-                "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
                 "from_nest":30,
                 "thoughts":[
                     
                 ],
                 "memory": {},
                 "is_auto_thought_generation": True,
-                "is_in_operation": False
+                "is_in_operation": False,
+                "stats": {
+                    "type":"live_stats",
+                    "max_hp": 300,
+                    "hp_regen_rate":10,
+                    "distance_per_step":32,
+                    "sight_distance":200,
+                    "max_calories":1000,
+                    "distance_per_calorie":2,
+                    "attack":10,
+                    "defence":1
+                }
             },
             {
                 "id":3,
@@ -70,7 +90,6 @@ class Command(BaseCommand):
                 "located_in_nest_id":30,
                 "picked_item_id":None,
                 "ant_type":"warrior",
-                "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000",
                 "from_nest":30,
                 "thoughts":[
                     
@@ -79,7 +98,18 @@ class Command(BaseCommand):
                     'debashyr': { 'data': True, 'expired_in': None }
                 },
                 "is_auto_thought_generation": True,
-                "is_in_operation": False
+                "is_in_operation": False,
+                "stats": {
+                    "type":"live_stats",
+                    "max_hp": 500,
+                    "hp_regen_rate":10,
+                    "distance_per_step":32,
+                    "sight_distance":200,
+                    "max_calories":1000,
+                    "distance_per_calorie":2,
+                    "attack":20,
+                    "defence":10
+                }
             }
         ],
         "items": [
@@ -113,41 +143,41 @@ class Command(BaseCommand):
                 "angle": 0,
                 "stored_calories":1000,
                 "larvae":[
-                    {
-                        "ant_type":"worker",
-                        "ate_calories":50,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    },
-                    {
-                        "ant_type":"worker",
-                        "ate_calories":50,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    },
-                    {
-                        "ant_type":"worker",
-                        "ate_calories":50,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    },
-                    {
-                        "ant_type":"warrior",
-                        "ate_calories":480,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
-                    },
-                    {
-                        "ant_type":"warrior",
-                        "ate_calories":480,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
-                    },
-                    {
-                        "ant_type":"warrior",
-                        "ate_calories":480,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
-                    },
-                    {
-                        "ant_type":"warrior",
-                        "ate_calories":480,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
-                    }
+                    # {
+                    #     "ant_type":"worker",
+                    #     "ate_calories":50,
+                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    # },
+                    # {
+                    #     "ant_type":"worker",
+                    #     "ate_calories":50,
+                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    # },
+                    # {
+                    #     "ant_type":"worker",
+                    #     "ate_calories":50,
+                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    # },
+                    # {
+                    #     "ant_type":"warrior",
+                    #     "ate_calories":480,
+                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
+                    # },
+                    # {
+                    #     "ant_type":"warrior",
+                    #     "ate_calories":480,
+                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
+                    # },
+                    # {
+                    #     "ant_type":"warrior",
+                    #     "ate_calories":480,
+                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
+                    # },
+                    # {
+                    #     "ant_type":"warrior",
+                    #     "ate_calories":480,
+                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
+                    # }
                 ],
                 "larva_places_count":3,
                 "area":300,
@@ -165,21 +195,21 @@ class Command(BaseCommand):
                 "angle": 0,
                 "stored_calories":1000,
                 "larvae":[
-                    {
-                        "ant_type":"warrior",
-                        "ate_calories":440.0,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    },
-                    {
-                        "ant_type":"worker",
-                        "ate_calories":99,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    },
-                    {
-                        "ant_type":"worker",
-                        "ate_calories":99,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    },
+                    # {
+                    #     "ant_type":"warrior",
+                    #     "ate_calories":440.0,
+                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    # },
+                    # {
+                    #     "ant_type":"worker",
+                    #     "ate_calories":99,
+                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    # },
+                    # {
+                    #     "ant_type":"worker",
+                    #     "ate_calories":99,
+                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    # },
                 ],
                 "larva_places_count":1,
                 "area":300,
@@ -197,16 +227,16 @@ class Command(BaseCommand):
                 "angle": 0,
                 "stored_calories":1000,
                 "larvae":[
-                    {
-                        "ant_type":"warrior",
-                        "ate_calories":440.0,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    },
-                    {
-                        "ant_type":"warrior",
-                        "ate_calories":440.0,
-                        "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    }
+                    # {
+                    #     "ant_type":"warrior",
+                    #     "ate_calories":440.0,
+                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    # },
+                    # {
+                    #     "ant_type":"warrior",
+                    #     "ate_calories":440.0,
+                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    # }
                 ],
                 "larva_places_count":1,
                 "area":300,

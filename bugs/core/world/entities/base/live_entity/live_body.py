@@ -1,18 +1,18 @@
 from core.world.utils.point import Point
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME
-from core.world.entities.nest.nest import Nest
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.entity_types import EntityTypes, EntityTypesPack
 from core.world.entities.colony.base.relation_tester import RelationTester
-from typing import List, Callable
 from core.world.entities.base.entity import Entity
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.base.body import Body
+from .live_stats import LiveStats
 
 import math
+from typing import List, Callable
 
 class LiveBody(Body):
 
@@ -20,11 +20,12 @@ class LiveBody(Body):
     SIGHT_DISTANCE = 100
 
     _world_interactor: WorldInteractor
+    _stats: LiveStats
+    stats: LiveStats
 
-    def __init__(self, events: EventEmitter, memory: Memory, dna_profile: str, position: Point, angle: int, hp: int, world_interactor: WorldInteractor):
-        super().__init__(events, position, angle, hp)
+    def __init__(self, events: EventEmitter, stats: LiveStats, memory: Memory, position: Point, angle: int, hp: int, world_interactor: WorldInteractor):
+        super().__init__(events, stats, position, angle, hp)
         self.memory = memory
-        self._dna_profile = dna_profile
         self._max_calories = 1000
         self._calories = self._max_calories
         self._distance_per_calorie = 2
@@ -43,10 +44,6 @@ class LiveBody(Body):
     @property
     def is_no_calories(self):
         return self._calories <= 0
-    
-    @property
-    def dna_profile(self):
-        return self._dna_profile
     
     def step_to(self, destination_point: Point) -> bool:
         self._look_at(destination_point)

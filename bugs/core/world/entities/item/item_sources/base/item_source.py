@@ -1,9 +1,9 @@
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
-from core.world.utils.point import Point
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
+from core.world.entities.world.birthers.requests.item_birth_request import ItemBirthRequest
 
 from typing import Callable
 import random
@@ -62,13 +62,7 @@ class ItemSource(Entity):
 
         self._accumulated -= strength
 
-        self.events.emit('birth_request', {
-            'entity_type': EntityTypes.ITEM,
-            'item_type': self._item_type,
-            'position': self._body.position,
-            'strength': strength,
-            'callback': on_item_ready
-        })
+        self.events.emit('birth_request', ItemBirthRequest.build(self._body.position, strength, self._item_type, None, on_item_ready))
 
         return True
 

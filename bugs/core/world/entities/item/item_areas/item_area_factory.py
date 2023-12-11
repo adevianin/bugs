@@ -9,5 +9,5 @@ class ItemAreaFactory():
 
     def build_item_area(self, id: int, from_colony_id: int, hp: int, position: Point, angle: int, size: Size, item_type: ItemTypes, fertility: int, accumulated: int):
         events = EventEmitter()
-        body = Body(events, position, angle, hp)
+        body = Body(events, {}, position, angle, hp)
         return ItemArea(events, id, from_colony_id, body, size, item_type, fertility, accumulated)

@@ -1,10 +1,10 @@
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.base.entity_types import EntityTypes
-from core.world.entities.ant.base.larva import Larva
 from core.world.entities.world.world import World
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.nest.nest import Nest
-from typing import Callable
+from core.world.entities.ant.queen.queen_ant import QueenAnt
+from typing import Callable, List
 
 class NestService():
 
@@ -22,12 +22,11 @@ class NestService():
             raise Exception(f'nest id = {nest_id} is not found in users colony')
 
         queen_filter: Callable[[Ant], bool] = lambda ant: ant.ant_type ==  AntTypes.QUEEN and ant.located_in_nest_id == nest_id
-        queen_ants = self._world.map.get_entities(from_colony_id=colony.id, entity_types=[EntityTypes.ANT], filter=queen_filter)
+        queen_ants: List[QueenAnt] = self._world.map.get_entities(from_colony_id=colony.id, entity_types=[EntityTypes.ANT], filter=queen_filter)
 
         if (len(queen_ants) == 0): 
             raise Exception('queen is not found')
         
         queen = queen_ants[0]
 
-        larva = Larva.build_larva(ant_type, queen.body.dna_profile, 0)
-        nest.add_larva(larva)
+        nest.add_larva(queen.produce_larva(ant_type))

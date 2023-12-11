@@ -15,9 +15,6 @@ class GroundBeetleBody(LiveBody):
     DISTANCE_PER_SEP = 32
     SIGHT_DISTANCE = 200
 
-    def __init__(self, events: EventEmitter, memory: Memory, dna_profile: str, position: Point, angle: int, hp: int, world_interactor: WorldInteractor):
-        super().__init__(events, memory, dna_profile, position, angle, hp, world_interactor)
-
     def look_around_for_honeydew_food_sources(self) -> List[ItemSource]:
         honeydew_filter: Callable[[ItemSource], bool] = lambda item_source: item_source.item_type == ItemTypes.HONEYDEW
         return self.look_around(types_list=[EntityTypes.ITEM_SOURCE], filter=honeydew_filter)

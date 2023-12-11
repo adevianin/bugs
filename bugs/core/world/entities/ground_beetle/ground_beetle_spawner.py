@@ -3,6 +3,7 @@ from core.world.entities.map.map import Map
 from core.world.utils.point import Point
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.ground_beetle.ground_beetle import GroundBeetle
+from core.world.entities.world.birthers.requests.ground_beetle_birth_request import GroundBeetleBirthRequest
 
 import random
 
@@ -17,10 +18,7 @@ class GroundBeetleSpawner():
     def _on_step_start(self, step_number):
         if self._should_spawn():
             pos = self._generate_spawn_position()
-            self._event_bus.emit('birth_request', {
-                'entity_type': EntityTypes.GROUND_BEETLE,
-                'position': pos
-            })
+            self._event_bus.emit('birth_request', GroundBeetleBirthRequest.build(pos))
 
     def _should_spawn(self) -> bool:
         return False

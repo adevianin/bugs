@@ -24,6 +24,9 @@ from core.data.serializers.item_area_serializer import ItemAreaSerializer
 from core.data.serializers.item_source_serializer import ItemSourceSerializer
 from core.data.serializers.formation_serializer import FormationSerializer
 from core.data.factories.json_formation_factory import JsonFormationFactory
+from core.data.serializers.stats_serializer import StatsSerializer
+from core.data.factories.json_larva_factory import JsonLarvaFactory
+from core.data.factories.json_stats_factory import JsonStatsFactory
 
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.ant.ant_factory import AntFactory
@@ -63,7 +66,8 @@ def start():
     nest_service = NestService()
     user_service = UserService(colony_factory, ant_factory)
 
-    larva_serializer = LarvaSerializer()
+    stats_serializer = StatsSerializer()
+    larva_serializer = LarvaSerializer(stats_serializer)
     nest_serializer = NestSerializer(larva_serializer)
     thought_serializer = ThoughtSerializer()
     ant_serializer = AntSerializer(thought_serializer)
@@ -78,8 +82,10 @@ def start():
     world_serializer = WorldSerializer(nest_serializer, ant_serializer, item_serializer, item_area_serializer, item_source_serializer, colony_serializer, colony_relations_table_serializer, ground_beetle_serializer)
 
     world_data_repository = WorldDataRepository()
-    json_nest_factory = JsonNestFactory(nest_factory)
-    json_ant_factory = JsonAntFactory(ant_factory)
+    json_stats_factory = JsonStatsFactory()
+    json_larva_factory = JsonLarvaFactory(json_stats_factory)
+    json_nest_factory = JsonNestFactory(json_larva_factory, nest_factory)
+    json_ant_factory = JsonAntFactory(json_stats_factory, ant_factory)
     json_ground_beetle_factory = JsonGroundBeetleFactory(ground_beetle_factory)
     json_formation_factory = JsonFormationFactory(formation_factory)
     json_operation_factory = JsonOperationFactory(operation_factory, json_formation_factory)
