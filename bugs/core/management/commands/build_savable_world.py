@@ -75,6 +75,44 @@ class Command(BaseCommand):
                     "distance_per_calorie":2,
                     "attack":10,
                     "defence":1
+                },
+                "genes": {
+                    "worker_food_required": 100,
+                    "warrior_food_required": 500,
+                    "queen_food_required": 1000,
+                    "worker_stats": {
+                        "type":"live_stats",
+                        "max_hp": 300,
+                        "hp_regen_rate":10,
+                        "distance_per_step":32,
+                        "sight_distance":200,
+                        "max_calories":1000,
+                        "distance_per_calorie":2,
+                        "attack":10,
+                        "defence":1
+                    },
+                    "warrior_stats": {
+                        "type":"live_stats",
+                        "max_hp": 500,
+                        "hp_regen_rate":200,
+                        "distance_per_step":32,
+                        "sight_distance":200,
+                        "max_calories":1000,
+                        "distance_per_calorie":2,
+                        "attack":20,
+                        "defence":5
+                    },
+                    "queen_stats": {
+                        "type":"live_stats",
+                        "max_hp": 300,
+                        "hp_regen_rate":200,
+                        "distance_per_step":32,
+                        "sight_distance":200,
+                        "max_calories":1000,
+                        "distance_per_calorie":2,
+                        "attack":20,
+                        "defence":5
+                    },
                 }
             },
             {
@@ -300,21 +338,21 @@ class Command(BaseCommand):
             },
         ],
         "ground_beetles": [
-            {
-                "id":60,
-                "type":"ground_beetle",
-                "from_colony_id":3,
-                "hp": 800,
-                "position":[
-                    950,
-                    450
-                ],
-                "angle": 0,
-                "thoughts":[
-                ],
-                "memory": {},
-                "is_auto_thought_generation": True
-            },
+            # {
+            #     "id":60,
+            #     "type":"ground_beetle",
+            #     "from_colony_id":3,
+            #     "hp": 800,
+            #     "position":[
+            #         950,
+            #         450
+            #     ],
+            #     "angle": 0,
+            #     "thoughts":[
+            #     ],
+            #     "memory": {},
+            #     "is_auto_thought_generation": True
+            # },
         ],
         "colonies":[
             {

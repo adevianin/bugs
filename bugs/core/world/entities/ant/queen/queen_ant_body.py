@@ -16,6 +16,10 @@ class QueenAntBody(AntBody):
         super().__init__(events, stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor)
         self._genes = genes
 
+    @property
+    def genes(self) -> Genes:
+        return self._genes
+
     def produce_larva(self, ant_type: AntTypes) -> Larva:
         match(ant_type):
             case AntTypes.WORKER:

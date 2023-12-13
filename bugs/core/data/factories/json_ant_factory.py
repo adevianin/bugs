@@ -11,26 +11,51 @@ class JsonAntFactory():
         self._json_stats_factory = json_stats_factory
 
     def build_ant_from_json(self, ant_json: dict, entities_collection: EntityCollection):
-        position = Point.from_json(ant_json['position'])
-        angle = ant_json['angle']
-        nest = entities_collection.get_entity_by_id(ant_json['from_nest']) if ant_json['from_nest'] else None
-        located_in_nest = None
-        if ant_json['located_in_nest_id'] != None:
-            located_in_nest = entities_collection.get_entity_by_id(ant_json['located_in_nest_id'])
-        ant_type = AntTypes(ant_json['ant_type'])
+        type = AntTypes(ant_json['ant_type'])
 
-        stats = self._json_stats_factory.build_stats(ant_json['stats'])
+        match(type):
+            case AntTypes.WORKER:
+                return self._build_worker_ant(ant_json, entities_collection)
+            case AntTypes.WARRIOR:
+                return self._build_warrior_ant(ant_json, entities_collection)
+            case AntTypes.QUEEN:
+                return self._build_queen_ant(ant_json, entities_collection)
+            case _:
+                raise Exception('unknown type of ant')
 
-        picked_item = None
-        if ant_json['picked_item_id'] != None:
-            picked_item = entities_collection.get_entity_by_id(ant_json['picked_item_id'])
-
-        id=ant_json['id']
-        from_colony_id=ant_json['from_colony_id']
-        is_auto_thought_generation=ant_json['is_auto_thought_generation']
-        is_in_operation = ant_json['is_in_operation']
-        memory_data = ant_json['memory']
-
-        hp = ant_json['hp']
+    def _build_worker_ant(self, ant_json: dict, entities_collection: EntityCollection):
+        ant_props = self._parse_common_ant_props(ant_json, entities_collection)
+        return self._ant_factory.build_worker_ant(**ant_props)
+    
+    def _build_warrior_ant(self, ant_json: dict, entities_collection: EntityCollection):
+        ant_props = self._parse_common_ant_props(ant_json, entities_collection)
+        return self._ant_factory.build_warrior_ant(**ant_props)
+    
+    def _build_queen_ant(self, ant_json: dict, entities_collection: EntityCollection):
+        ant_props = self._parse_common_ant_props(ant_json, entities_collection)
+        ant_props.update({
+            "genes_worker_stats": self._json_stats_factory.build_stats(ant_json['genes']['worker_stats']),
+            "genes_warrior_stats": self._json_stats_factory.build_stats(ant_json['genes']['warrior_stats']),
+            "genes_queen_stats": self._json_stats_factory.build_stats(ant_json['genes']['queen_stats']),
+            "genes_worker_food_required": ant_json['genes']['worker_food_required'],
+            "genes_warrior_food_required": ant_json['genes']['warrior_food_required'],
+            "genes_queen_food_required": ant_json['genes']['queen_food_required']
+        })
         
-        return self._ant_factory.build_ant(id=id, from_colony_id=from_colony_id, stats=stats, ant_type=ant_type, position=position, angle=angle, hp=hp, home_nest=nest, located_in_nest=located_in_nest, memory_data=memory_data, is_auto_thought_generation=is_auto_thought_generation, picked_item=picked_item, is_in_operation=is_in_operation)
+        return self._ant_factory.build_queen_ant(**ant_props)
+
+    def _parse_common_ant_props(self, ant_json: dict, entities_collection: EntityCollection):   
+        return {
+            "id": ant_json['id'],
+            "from_colony_id": ant_json['from_colony_id'],
+            "position": Point.from_json(ant_json['position']),
+            "angle": ant_json['angle'],
+            "nest": entities_collection.get_entity_by_id(ant_json['from_nest']) if ant_json['from_nest'] else None,
+            "located_in_nest": entities_collection.get_entity_by_id(ant_json['located_in_nest_id']) if ant_json['located_in_nest_id'] else None,
+            "stats": self._json_stats_factory.build_stats(ant_json['stats']),
+            "picked_item": entities_collection.get_entity_by_id(ant_json['picked_item_id']) if ant_json['picked_item_id'] else None,
+            "is_auto_thought_generation": ant_json['is_auto_thought_generation'],
+            "is_in_operation": ant_json['is_in_operation'],
+            "memory_data": ant_json['memory'],
+            "hp": ant_json['hp']
+        }
