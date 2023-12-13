@@ -70,7 +70,7 @@ def start():
     larva_serializer = LarvaSerializer(stats_serializer)
     nest_serializer = NestSerializer(larva_serializer)
     thought_serializer = ThoughtSerializer()
-    ant_serializer = AntSerializer(thought_serializer)
+    ant_serializer = AntSerializer(stats_serializer, thought_serializer)
     formation_serializer = FormationSerializer()
     operation_serializer = OperationSerializer(formation_serializer)
     colony_serializer = ColonySerializer(operation_serializer)

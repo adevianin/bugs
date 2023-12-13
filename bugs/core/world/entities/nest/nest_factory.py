@@ -3,6 +3,7 @@ from .nest import Nest
 from core.world.entities.ant.base.larva import Larva
 from core.world.utils.event_emiter import EventEmitter
 from .nest_body import NestBody
+from core.world.entities.base.stats_library import StatsLibrary
 
 class NestFactory():
 
@@ -11,6 +12,7 @@ class NestFactory():
     
     def build_nest(self, id: int, position: Point, angle: int, from_colony_id: int, hp: int, larvae: list[Larva], larva_places_count: int, stored_calories: int, area: int, build_progress: int):
         events = EventEmitter()
-        body = NestBody(events, {}, position, angle, hp)
+        stats = StatsLibrary.NEST_DEFAULT
+        body = NestBody(events, stats, position, angle, hp)
         return Nest(events=events, id=id, from_colony_id=from_colony_id, body=body, larvae=larvae, larva_places_count=larva_places_count, stored_calories=stored_calories, area=area, build_progress=build_progress)
     

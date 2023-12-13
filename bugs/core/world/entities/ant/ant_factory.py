@@ -46,7 +46,6 @@ class AntFactory():
         sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
-        hp = hp if hp else WarriorAntBody.MAX_HP
         body = WarriorAntBody(events, stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor)
         mind = WarrirorAntMind(events, body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
         ant = WarriorAnt(events, id, from_colony_id, body, mind)
@@ -58,7 +57,6 @@ class AntFactory():
         sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
-        hp = hp if hp else WorkerAntBody.MAX_HP
         body = WorkerAntBody(events, stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor)
         mind = WorkerAntMind(events, body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
         ant = WorkerAnt(events, id, from_colony_id, body, mind)
@@ -70,7 +68,6 @@ class AntFactory():
         sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
-        hp = hp if hp else QueenAntBody.MAX_HP
         worker_stats = LiveStats.build(100, 10, 32, 200, 1000, 2, 10, 1)
         worker_food_required = 100
         warrior_stats = LiveStats.build(500, 20, 32, 200, 1000, 2, 20, 5)

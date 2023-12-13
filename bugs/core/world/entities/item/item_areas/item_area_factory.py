@@ -4,10 +4,11 @@ from core.world.utils.size import Size
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.item.item_areas.base.item_area import ItemArea
 from core.world.entities.base.body import Body
+from core.world.entities.base.stats_library import StatsLibrary
 
 class ItemAreaFactory():
 
     def build_item_area(self, id: int, from_colony_id: int, hp: int, position: Point, angle: int, size: Size, item_type: ItemTypes, fertility: int, accumulated: int):
         events = EventEmitter()
-        body = Body(events, {}, position, angle, hp)
+        body = Body(events, StatsLibrary.GHOST_DEFAULT, position, angle, hp)
         return ItemArea(events, id, from_colony_id, body, size, item_type, fertility, accumulated)

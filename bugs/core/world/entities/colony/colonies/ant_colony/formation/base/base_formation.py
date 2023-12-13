@@ -138,7 +138,7 @@ class BaseFormation(ABC):
         self.destroy()
 
     def _get_unit_step_size(self, units: List[Ant]):
-        step_sizes = (unit.body.DISTANCE_PER_SEP for unit in units)
+        step_sizes = (unit.body.stats.distance_per_step for unit in units)
         step_size = min(step_sizes)
         return step_size
     

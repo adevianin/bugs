@@ -85,7 +85,7 @@ class Nest(Entity):
         if not self.is_built:
             if self._build_progress + build_step >= 100:
                 self._build_progress = 100
-                self._body.hp = self._body.MAX_HP
+                self._body.hp = self._body.stats.max_hp
             else:
                 self._build_progress += build_step
 

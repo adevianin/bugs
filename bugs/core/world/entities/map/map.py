@@ -85,4 +85,4 @@ class Map:
         self.events.emit('entity_died', entity)
 
     def _find_entities_in_sight(self, entity: LiveEntity):
-        return self.find_entities_near(point=entity.position, max_distance=entity.body.SIGHT_DISTANCE, filter=lambda checking_entity: entity.id != checking_entity.id)
+        return self.find_entities_near(point=entity.position, max_distance=entity.body.stats.sight_distance, filter=lambda checking_entity: entity.id != checking_entity.id)

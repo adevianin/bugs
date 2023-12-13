@@ -3,6 +3,7 @@ from core.world.utils.point import Point
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.item.item_sources.honeydew_item_source.honeydew_item_source import HoneydewItemSource
 from core.world.entities.item.item_sources.honeydew_item_source.honeydew_item_source_body import HoneydewItemSourceBody
+from core.world.entities.base.stats_library import StatsLibrary
 
 class ItemSourceFactory():
 
@@ -15,5 +16,6 @@ class ItemSourceFactory():
 
     def _build_honeydew_item_source(self, id: int, from_colony_id: int, hp: int, position: Point, angle: int, fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
         events = EventEmitter()
-        body = HoneydewItemSourceBody(events, {}, position, angle, hp)
+        stats = StatsLibrary.ITEM_SOURCE_DEFAULT
+        body = HoneydewItemSourceBody(events, stats, position, angle, hp)
         return HoneydewItemSource(events, id, from_colony_id, body, fertility, accumulated, min_item_strength, max_item_strength)

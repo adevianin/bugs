@@ -11,7 +11,6 @@ from core.world.entities.ant.base.larva import Larva
 from .genes import Genes
 
 class QueenAntBody(AntBody):
-    MAX_HP = 300
 
     def __init__(self, events: EventEmitter, stats: LiveStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, located_in_nest: Nest, picked_item: Item, world_interactor: WorldInteractor, genes: Genes):
         super().__init__(events, stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor)

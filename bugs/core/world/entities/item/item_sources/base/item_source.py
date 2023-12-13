@@ -94,4 +94,4 @@ class ItemSource(Entity):
         self._emit_action('item_source_fertility_changed', { 'is_fertile': self.is_fertile })
 
     def _check_fertility(self) -> bool:
-        return self._body.hp > self._body.MAX_HP / 3
+        return self._body.hp > self._body.stats.max_hp / 3

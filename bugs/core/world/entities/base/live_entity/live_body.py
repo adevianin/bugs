@@ -16,9 +16,6 @@ from typing import List, Callable
 
 class LiveBody(Body):
 
-    DISTANCE_PER_SEP = 32
-    SIGHT_DISTANCE = 100
-
     _world_interactor: WorldInteractor
     _stats: LiveStats
     stats: LiveStats
@@ -30,7 +27,7 @@ class LiveBody(Body):
         self._calories = self._max_calories
         self._distance_per_calorie = 2
         self._can_eat_calories_per_step = 20
-        self._user_speed = self.DISTANCE_PER_SEP / STEP_TIME
+        self._user_speed = stats.distance_per_step / STEP_TIME
         self._world_interactor = world_interactor
 
     @property
@@ -48,7 +45,7 @@ class LiveBody(Body):
     def step_to(self, destination_point: Point) -> bool:
         self._look_at(destination_point)
 
-        new_position, passed_dist, is_walk_done = Point.do_step_on_path(self.position, destination_point, self.DISTANCE_PER_SEP)
+        new_position, passed_dist, is_walk_done = Point.do_step_on_path(self.position, destination_point, self.stats.distance_per_step)
 
         if (passed_dist == 0):
             return True
@@ -98,7 +95,7 @@ class LiveBody(Body):
     
     def is_near_to_attack(self, point: Point):
         dist = self.position.dist(point)
-        return dist <= self.DISTANCE_PER_SEP / 2
+        return dist <= self.stats.distance_per_step / 2
 
     def calc_nearest_point(self, points: List[Point]):
         nearest_dist = None

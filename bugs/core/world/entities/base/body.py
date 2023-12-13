@@ -1,20 +1,18 @@
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from core.world.utils.size import Size
-from .stats import Stats
+from .basic_stats import BasicStats
 
 class Body():
 
-    MAX_HP = 100
-    RESTORE_HP_PER_STEP = 1
     SIZE = Size(32, 32)
 
-    def __init__(self, events: EventEmitter, stats: Stats, position: Point, angle: int, hp: int):
+    def __init__(self, events: EventEmitter, stats: BasicStats, position: Point, angle: int, hp: int):
         self.events = events
         self.stats = stats
         self._position = position
         self._angle = angle
-        self._hp = hp
+        self._hp = hp or stats.max_hp
 
     @property
     def is_died(self):
@@ -54,5 +52,5 @@ class Body():
         return self.is_died
     
     def restore_hp_step(self):
-        if self.hp < self.MAX_HP:
-            self.hp += self.RESTORE_HP_PER_STEP
+        if self.hp < self.stats.max_hp:
+            self.hp += self.stats.hp_regen_rate

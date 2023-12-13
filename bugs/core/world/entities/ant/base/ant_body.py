@@ -17,8 +17,6 @@ from typing import List, Callable
 
 class AntBody(LiveBody):
 
-    DISTANCE_PER_SEP = 32
-    SIGHT_DISTANCE = 200
     SIZE = Size(32, 32)
 
     stats: LiveStats

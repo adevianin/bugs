@@ -3,5 +3,4 @@ from core.world.utils.point import Point
 from core.world.entities.base.body import Body
 
 class NestBody(Body):
-
-    MAX_HP = 1000
+    pass

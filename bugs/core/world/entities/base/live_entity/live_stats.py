@@ -1,7 +1,7 @@
-from core.world.entities.base.stats import Stats
+from core.world.entities.base.basic_stats import BasicStats
 from core.world.entities.base.stats_types import StatsTypes
 
-class LiveStats(Stats):
+class LiveStats(BasicStats):
 
     @classmethod
     def build(cls, max_hp: int, hp_regen_rate: int, distance_per_step: int, sight_distance: int, max_calories: int, distance_per_calorie: int, attack: int, defence: int):

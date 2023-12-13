@@ -1,3 +1,4 @@
+from core.world.entities.base.live_entity.live_stats import LiveStats
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.utils.event_emiter import EventEmitter
@@ -10,10 +11,6 @@ from core.world.entities.base.entity_types import EntityTypes
 from typing import List, Callable
 
 class GroundBeetleBody(LiveBody):
-
-    MAX_HP = 800
-    DISTANCE_PER_SEP = 32
-    SIGHT_DISTANCE = 200
 
     def look_around_for_honeydew_food_sources(self) -> List[ItemSource]:
         honeydew_filter: Callable[[ItemSource], bool] = lambda item_source: item_source.item_type == ItemTypes.HONEYDEW

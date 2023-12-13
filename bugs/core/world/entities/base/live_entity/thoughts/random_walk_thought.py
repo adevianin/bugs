@@ -37,7 +37,7 @@ class RandomWalkThought(Thought):
         self._add_point_to_visited(self._body.position)
     
     def _generat_point_to_walk(self):
-        points: List[Point] = Point.generate_points_around(self._body.position, self.DIRECTIONS_COUNT, self._body.DISTANCE_PER_SEP)
+        points: List[Point] = Point.generate_points_around(self._body.position, self.DIRECTIONS_COUNT, self._body.stats.distance_per_step)
         points = list(filter(self._validate_point, points))
         def dist_sum(point: Point):
             dist_sum = 0
