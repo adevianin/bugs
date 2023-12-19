@@ -1,10 +1,10 @@
 import { AppView } from './appView';
-import { Requester } from 'utils/requester';
+import { Requester } from '@utils/requester';
 import { WorldSpritesheetManager } from './world/worldSpritesheetManager';
 import { BaseGraphicView } from './base/baseGraphicView';
 import { BaseHTMLView } from './base/baseHTMLView';
 import { PopupManager } from './popups/popupManager';
-import { EventEmitter } from 'utils/eventEmitter.js';
+import { EventEmitter } from '@utils/eventEmitter.js';
 
 function initViewLayer(domainFacade, initialData) {
     let requester = new Requester();

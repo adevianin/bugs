@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getCookie } from 'utils/getCookie';
+import { getCookie } from '@utils/getCookie';
 
 class Requester {
 

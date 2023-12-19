@@ -1,6 +1,6 @@
 import { AntTypes } from "../enum/antTypes";
 import { EntityTypes } from "../enum/entityTypes";
-import { distance } from 'utils/distance';
+import { distance } from '@utils/distance';
 
 class WorldService {
 

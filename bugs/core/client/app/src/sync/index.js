@@ -1,4 +1,4 @@
-import { Requester } from "utils/requester"
+import { Requester } from "@utils/requester"
 import { UserApi } from "./userApi";
 import { ServerConnection } from "./serverConnection";
 import { NestApi } from "./nestApi";

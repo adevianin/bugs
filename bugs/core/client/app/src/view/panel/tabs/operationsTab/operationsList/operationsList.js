@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "view/base/baseHTMLView";
+import { BaseHTMLView } from "@view/base/baseHTMLView";
 import operationTmpl from './operationTmpl.html';
 
 class OperationsList extends BaseHTMLView {

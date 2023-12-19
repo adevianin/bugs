@@ -1,7 +1,7 @@
 import { DomainFacade } from './domainFacade';
 import { UserService } from './service/userService';
 import { MessageHandlerService } from './service/messageHandlerService';
-import { EventEmitter } from 'utils/eventEmitter';
+import { EventEmitter } from '@utils/eventEmitter';
 import { WorldFactory } from './worldFactory';
 import { ActionFactory } from './entity/action/actionFactory';
 import { WorldService } from './service/worldService';

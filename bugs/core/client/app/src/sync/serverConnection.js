@@ -1,4 +1,4 @@
-import { EventEmitter } from "utils/eventEmitter";
+import { EventEmitter } from "@utils/eventEmitter";
 
 class ServerConnection {
 

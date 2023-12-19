@@ -1,7 +1,7 @@
 import { initSyncLayer } from './sync';
 import { initDomainLayer } from './domain';
 import { initViewLayer } from './view';
-import { readInitialData } from 'utils/readInitialData';
+import { readInitialData } from '@utils/readInitialData';
 
 let initialData = readInitialData();
 

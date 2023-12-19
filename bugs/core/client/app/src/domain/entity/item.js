@@ -1,7 +1,7 @@
 import { Entity } from "./entity"
 import { EntityTypes } from "../enum/entityTypes";
 import { ACTION_TYPES } from "./action/actionTypes";
-import { walker } from "utils/walker"; 
+import { walker } from "@utils/walker"; 
 
 class Item extends Entity {
     

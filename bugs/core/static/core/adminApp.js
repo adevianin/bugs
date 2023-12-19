@@ -102,7 +102,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Requester": () => (/* binding */ Requester)
 /* harmony export */ });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/lib/axios.js");
-/* harmony import */ var utils_getCookie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/getCookie */ "./bugs/core/client/utils/getCookie.js");
+/* harmony import */ var _utils_getCookie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/getCookie */ "./bugs/core/client/utils/getCookie.js");
 
 
 
@@ -123,7 +123,7 @@ class Requester {
     }
 
     _readCsrfToken() {
-        return (0,utils_getCookie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('csrftoken');
+        return (0,_utils_getCookie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('csrftoken');
     }
 }
 
@@ -4212,11 +4212,11 @@ var __webpack_exports__ = {};
   \************************************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _worldStatusView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./worldStatusView */ "./bugs/core/client/adminApp/src/worldStatusView.js");
-/* harmony import */ var utils_requester__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! utils/requester */ "./bugs/core/client/utils/requester.js");
+/* harmony import */ var _utils_requester__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/requester */ "./bugs/core/client/utils/requester.js");
 
 
 
-let requester = new utils_requester__WEBPACK_IMPORTED_MODULE_1__.Requester();
+let requester = new _utils_requester__WEBPACK_IMPORTED_MODULE_1__.Requester();
 new _worldStatusView__WEBPACK_IMPORTED_MODULE_0__.WorldStatusView(requester, document.querySelector('[data-world-status]'))
 })();
 

@@ -356,10 +356,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Colony": () => (/* binding */ Colony)
 /* harmony export */ });
-/* harmony import */ var utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
 
 
-class Colony extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+class Colony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
     constructor(id, onwerId, operations) {
         super();
@@ -402,12 +402,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Entity": () => (/* binding */ Entity)
 /* harmony export */ });
-/* harmony import */ var utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
 
 
 
-class Entity extends utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+class Entity extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
     constructor(eventBus, id, position, angle, type, fromColony, hp, maxHp) {
         super();
@@ -606,7 +606,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
 /* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
-/* harmony import */ var utils_walker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! utils/walker */ "./bugs/core/client/utils/walker.js");
+/* harmony import */ var _utils_walker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @utils/walker */ "./bugs/core/client/utils/walker.js");
 
 
 
@@ -678,7 +678,7 @@ class Item extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     _playItemBeingBringed(action) {
         let newPos = action.actionData.new_position;
         let userSpeed = action.actionData.bring_user_speed;
-        return (0,utils_walker__WEBPACK_IMPORTED_MODULE_3__.walker)(this._position, newPos, userSpeed, (x, y) => {
+        return (0,_utils_walker__WEBPACK_IMPORTED_MODULE_3__.walker)(this._position, newPos, userSpeed, (x, y) => {
             this.setPosition(x, y);
         });
     }
@@ -818,7 +818,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "LiveEntity": () => (/* binding */ LiveEntity)
 /* harmony export */ });
 /* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
-/* harmony import */ var utils_distance__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! utils/distance */ "./bugs/core/client/utils/distance.js");
+/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/distance */ "./bugs/core/client/utils/distance.js");
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
 
 
@@ -846,7 +846,7 @@ class LiveEntity extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _playWalkAction(action) {
         let destPosition = action.actionData.position;
-        let dist = (0,utils_distance__WEBPACK_IMPORTED_MODULE_1__.distance)(this.position.x, this.position.y, destPosition.x, destPosition.y);
+        let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_1__.distance)(this.position.x, this.position.y, destPosition.x, destPosition.y);
         let wholeWalkTime = (dist / this._userSpeed) * 1000;
         let walkStartAt = Date.now();
         let startPosition = this.position;
@@ -1139,7 +1139,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domainFacade__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./domainFacade */ "./bugs/core/client/app/src/domain/domainFacade.js");
 /* harmony import */ var _service_userService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./service/userService */ "./bugs/core/client/app/src/domain/service/userService.js");
 /* harmony import */ var _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./service/messageHandlerService */ "./bugs/core/client/app/src/domain/service/messageHandlerService.js");
-/* harmony import */ var utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
 /* harmony import */ var _worldFactory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./worldFactory */ "./bugs/core/client/app/src/domain/worldFactory.js");
 /* harmony import */ var _entity_action_actionFactory__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/action/actionFactory */ "./bugs/core/client/app/src/domain/entity/action/actionFactory.js");
 /* harmony import */ var _service_worldService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/worldService */ "./bugs/core/client/app/src/domain/service/worldService.js");
@@ -1156,7 +1156,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function initDomainLayer(apis, serverConnection, initialData) {
-    let mainEventBus = new utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
+    let mainEventBus = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
     let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.nestApi);
     let world = worldFactory.buildWorld();
     let actionFactory = new _entity_action_actionFactory__WEBPACK_IMPORTED_MODULE_5__.ActionFactory();
@@ -1419,7 +1419,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _enum_antTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
 /* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
-/* harmony import */ var utils_distance__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! utils/distance */ "./bugs/core/client/utils/distance.js");
+/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @utils/distance */ "./bugs/core/client/utils/distance.js");
 
 
 
@@ -1482,7 +1482,7 @@ class WorldService {
         let maxDist = 100;
 
         nests.forEach(nest => {
-            let dist = (0,utils_distance__WEBPACK_IMPORTED_MODULE_2__.distance)(point.x, point.y, nest.position.x, nest.position.y);
+            let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_2__.distance)(point.x, point.y, nest.position.x, nest.position.y);
             if (nest.fromColony != excludeColonyId && dist <= maxDist && (!smallestDistance || dist < smallestDistance)) {
                 smallestDistance = dist;
                 nearestNest = nest;
@@ -1499,7 +1499,7 @@ class WorldService {
         let maxDist = 100;
 
         nests.forEach(nest => {
-            let dist = (0,utils_distance__WEBPACK_IMPORTED_MODULE_2__.distance)(point.x, point.y, nest.position.x, nest.position.y);
+            let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_2__.distance)(point.x, point.y, nest.position.x, nest.position.y);
             if (nest.fromColony == myColonyId && dist <= maxDist && (!smallestDistance || dist < smallestDistance)) {
                 smallestDistance = dist;
                 nearestNest = nest;
@@ -1694,7 +1694,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "initSyncLayer": () => (/* binding */ initSyncLayer)
 /* harmony export */ });
-/* harmony import */ var utils_requester__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/requester */ "./bugs/core/client/utils/requester.js");
+/* harmony import */ var _utils_requester__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/requester */ "./bugs/core/client/utils/requester.js");
 /* harmony import */ var _userApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userApi */ "./bugs/core/client/app/src/sync/userApi.js");
 /* harmony import */ var _serverConnection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./serverConnection */ "./bugs/core/client/app/src/sync/serverConnection.js");
 /* harmony import */ var _nestApi__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestApi */ "./bugs/core/client/app/src/sync/nestApi.js");
@@ -1706,7 +1706,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function initSyncLayer() {
-    let requester = new utils_requester__WEBPACK_IMPORTED_MODULE_0__.Requester();
+    let requester = new _utils_requester__WEBPACK_IMPORTED_MODULE_0__.Requester();
 
     let userApi = new _userApi__WEBPACK_IMPORTED_MODULE_1__.UserApi(requester);
     let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection();
@@ -1771,13 +1771,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ServerConnection": () => (/* binding */ ServerConnection)
 /* harmony export */ });
-/* harmony import */ var utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
 
 
 class ServerConnection {
 
     constructor() {
-        this.events = new utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
+        this.events = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
     }
 
     connect() {
@@ -2173,12 +2173,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "initViewLayer": () => (/* binding */ initViewLayer)
 /* harmony export */ });
 /* harmony import */ var _appView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./appView */ "./bugs/core/client/app/src/view/appView.js");
-/* harmony import */ var utils_requester__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! utils/requester */ "./bugs/core/client/utils/requester.js");
+/* harmony import */ var _utils_requester__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/requester */ "./bugs/core/client/utils/requester.js");
 /* harmony import */ var _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./world/worldSpritesheetManager */ "./bugs/core/client/app/src/view/world/worldSpritesheetManager.js");
 /* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
 /* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _popups_popupManager__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./popups/popupManager */ "./bugs/core/client/app/src/view/popups/popupManager.js");
-/* harmony import */ var utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! utils/eventEmitter.js */ "./bugs/core/client/utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @utils/eventEmitter.js */ "./bugs/core/client/utils/eventEmitter.js");
 
 
 
@@ -2188,8 +2188,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function initViewLayer(domainFacade, initialData) {
-    let requester = new utils_requester__WEBPACK_IMPORTED_MODULE_1__.Requester();
-    let eventBus = new utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__.EventEmitter();
+    let requester = new _utils_requester__WEBPACK_IMPORTED_MODULE_1__.Requester();
+    let eventBus = new _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__.EventEmitter();
 
     let spritesheetManager = new _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__.WorldSpritesheetManager(initialData.urls.world_spritesheet, initialData.urls.world_spritesheet_atlas, requester);
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useTextureManager(spritesheetManager);
@@ -2408,10 +2408,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "OperationCreator": () => (/* binding */ OperationCreator)
 /* harmony export */ });
-/* harmony import */ var view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 
 
-class OperationCreator extends view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class OperationCreator extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
     constructor(el, onDone) {
         super(el);
@@ -2495,12 +2495,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "OperationsList": () => (/* binding */ OperationsList)
 /* harmony export */ });
-/* harmony import */ var view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _operationTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsList/operationTmpl.html");
 
 
 
-class OperationsList extends view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class OperationsList extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
     constructor(el, myColony) {
         super(el);
@@ -2651,12 +2651,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "UserTab": () => (/* binding */ UserTab)
 /* harmony export */ });
-/* harmony import */ var view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _userTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/userTab/userTabTmpl.html");
 
 
 
-class UserTab extends view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class UserTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
     constructor(el) {
         super(el);
@@ -3869,12 +3869,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "MarkersList": () => (/* binding */ MarkersList)
 /* harmony export */ });
-/* harmony import */ var view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! view/base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
+/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 
 
 
-class MarkersList extends view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
+class MarkersList extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
 
     constructor(container) {
         super();
@@ -4374,7 +4374,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Requester": () => (/* binding */ Requester)
 /* harmony export */ });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/lib/axios.js");
-/* harmony import */ var utils_getCookie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/getCookie */ "./bugs/core/client/utils/getCookie.js");
+/* harmony import */ var _utils_getCookie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/getCookie */ "./bugs/core/client/utils/getCookie.js");
 
 
 
@@ -4395,7 +4395,7 @@ class Requester {
     }
 
     _readCsrfToken() {
-        return (0,utils_getCookie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('csrftoken');
+        return (0,_utils_getCookie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('csrftoken');
     }
 }
 
@@ -44226,13 +44226,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _sync__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./sync */ "./bugs/core/client/app/src/sync/index.js");
 /* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./domain */ "./bugs/core/client/app/src/domain/index.js");
 /* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./view */ "./bugs/core/client/app/src/view/index.js");
-/* harmony import */ var utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! utils/readInitialData */ "./bugs/core/client/utils/readInitialData.js");
+/* harmony import */ var _utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @utils/readInitialData */ "./bugs/core/client/utils/readInitialData.js");
 
 
 
 
 
-let initialData = (0,utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__.readInitialData)();
+let initialData = (0,_utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__.readInitialData)();
 
 let syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)();
 let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)({ 

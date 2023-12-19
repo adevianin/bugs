@@ -1,5 +1,5 @@
 import { Entity } from "./entity"
-import { distance } from 'utils/distance';
+import { distance } from '@utils/distance';
 import { ACTION_TYPES } from './action/actionTypes';
 
 class LiveEntity extends Entity {
