@@ -63,20 +63,41 @@ class DomainFacade {
         return this._worldService.world.size;
     }
 
+    findMyColonies() {
+        let userData = this.getUserData();
+        return this._worldService.world.findColoniesByOwnerId(userData.id);
+    }
+
+    getNestsFromColony(colonyId) {
+        return this._worldService.world.findNestsFromColony(colonyId);
+    }
+
+    getQueenOfColony(colonyId) {
+        return this._worldService.world.findQueenFromColony(colonyId);
+    }
+
+
+
+
+
+
+
+
+
+    // findMyColony() {
+    //     let userData = this.getUserData();
+    //     return this._worldService.world.findColonyByOwnerId(userData.id);
+    // }
+
     findMyQueen() {
         let userData = this.getUserData();
         return this._worldService.world.findQueenByOwnerId(userData.id);
     }
 
-    findMyColony() {
-        let userData = this.getUserData();
-        return this._worldService.world.findColonyByOwnerId(userData.id);
-    }
-
     isNestMine(nest) {
         let userData = this.getUserData();
-        let myColony = this._worldService.world.findColonyByOwnerId(userData.id);
-        return nest.fromColony == myColony.id;
+        let colony = this._worldService.world.findColonyById(nest.fromColony);
+        return colony.ownerId == userData.id;
     }
 
     buildNewNest(position) {

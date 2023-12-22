@@ -3,7 +3,7 @@ import { Ant } from './entity/ant';
 import { World } from './entity/world';
 import { Nest } from './entity/nest';
 import { Larva } from './entity/larva';
-import { Colony } from './entity/colony';
+import { AntColony } from './entity/antColony';
 import { GroundBeetle } from './entity/groundBeetle';
 import { Item } from './entity/item';
 import { ItemSource } from './entity/itemSource';
@@ -61,8 +61,8 @@ class WorldFactory {
         return new Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp);
     }
 
-    buildColony(id, owner_id, operations) {
-        return new Colony(id, owner_id, operations);
+    buildAntColony(id, owner_id, operations, queenId) {
+        return new AntColony(id, owner_id, operations, queenId);
     }
 
     buildGroundBeetle(id, position, angle, fromColony, userSpeed, hp, maxHp) {

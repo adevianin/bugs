@@ -6,12 +6,12 @@ class MarkersList extends BaseGraphicView {
     constructor(container) {
         super();
         this._container = container;
-        this._myColony = this.$domainFacade.findMyColony();
+        // this._myColony = this.$domainFacade.findMyColony();
 
-        this._renderMarkers();
+        // this._renderMarkers();
 
-        this._myColony.on('operationsChanged', this._renderMarkers.bind(this));
-        this.$eventBus.on('operationsViewActivationChanged', this._onOperationsViewActivationChanged.bind(this));
+        // this._myColony.on('operationsChanged', this._renderMarkers.bind(this));
+        // this.$eventBus.on('operationsViewActivationChanged', this._onOperationsViewActivationChanged.bind(this));
     }
 
     _renderMarkers() {

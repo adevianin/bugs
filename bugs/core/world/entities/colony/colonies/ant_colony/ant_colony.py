@@ -16,7 +16,7 @@ from core.world.entities.item.items.base.item import Item
 
 class AntColony(Colony):
 
-    def __init__(self, id: int, event_bus: EventEmitter, operation_factory: OperationFactory, owner_id: int, map: Map, operations: List[Operation], relation_tester: RelationTester, last_registered_entities_in_colony_area_ids: List[int]):
+    def __init__(self, id: int, event_bus: EventEmitter, operation_factory: OperationFactory, owner_id: int, map: Map, operations: List[Operation], relation_tester: RelationTester, last_registered_entities_in_colony_area_ids: List[int], queen_id: int):
         super().__init__(id, EntityTypes.ANT, event_bus, map, relation_tester)
         self._operation_factory = operation_factory
         self._operations: List[Operation] = operations or []
@@ -24,6 +24,7 @@ class AntColony(Colony):
         self._owner_id = owner_id
         self._last_registered_entities_in_colony_area_ids = last_registered_entities_in_colony_area_ids
         self._new_entities_register = []
+        self._queen_id = queen_id
 
         for operation in self._operations:
             self._listen_operation(operation)
@@ -41,6 +42,10 @@ class AntColony(Colony):
     @property
     def last_registered_entities_in_colony_area_ids(self):
         return self._last_registered_entities_in_colony_area_ids
+    
+    @property
+    def queen_id(self):
+        return self._queen_id
     
     def get_my_nests(self) -> List[Nest]:
         return self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.NEST])
@@ -61,7 +66,8 @@ class AntColony(Colony):
         json = super().to_public_json()
         json.update({
             'owner_id': self._owner_id,
-            'operations': [operation.to_public_json() for operation in self._operations]
+            'operations': [operation.to_public_json() for operation in self._operations],
+            'queen_id': self._queen_id
         })
         return json
     

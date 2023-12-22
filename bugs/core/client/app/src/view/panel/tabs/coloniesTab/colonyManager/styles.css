@@ -1,0 +1,37 @@
+.colony_manager {
+    padding: 5px;
+    width: 350px;
+}
+
+.colony-manager__nests-list {
+    list-style-type: none;
+    padding: 3px;
+    margin: 0;
+}
+
+.colony-manager__nest_item {
+    color: blue;
+    cursor: pointer;
+}
+
+.colony-manager__nest_item--selected {
+    color: red
+}
+
+.colony-manager__nest-tab {
+    display: flex;
+    flex-direction: row;
+}
+
+.colony-manager__nest-manager {
+    padding: 3px;
+}
+
+/* .colony_manager__tabs_list {
+    display: flex;
+    flex-direction: row;
+}
+
+.colony_manager__tab_button {
+    margin-left: 5px
+} */

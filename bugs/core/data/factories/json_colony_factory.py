@@ -27,7 +27,8 @@ class JsonColonyFactory():
         id = colony_json['id']
         owner_id = colony_json['owner_id']
         last_registered_entities_in_colony_area_ids = colony_json['last_registered_entities_in_colony_area_ids']
-        return self._colony_factory.build_ant_colony(id, owner_id, map, operations, colony_relations_table, last_registered_entities_in_colony_area_ids)
+        queen_id = colony_json["queen_id"]
+        return self._colony_factory.build_ant_colony(id, owner_id, map, operations, colony_relations_table, last_registered_entities_in_colony_area_ids, queen_id)
     
     def _build_ground_beetle_colony(self, colony_json, map: Map, colony_relations_table: ColonyRelationsTable):
         return self._colony_factory.build_ground_beetle_colony(colony_json['id'], map, colony_relations_table)

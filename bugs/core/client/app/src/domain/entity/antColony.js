@@ -1,12 +1,13 @@
 import { EventEmitter } from "@utils/eventEmitter";
 
-class Colony extends EventEmitter {
+class AntColony extends EventEmitter {
 
-    constructor(id, onwerId, operations) {
+    constructor(id, onwerId, operations, queenId) {
         super();
         this._id = id;
         this._onwerId = onwerId;
         this._operations = operations;
+        this._queenId = queenId
     }
 
     get id() {
@@ -21,6 +22,10 @@ class Colony extends EventEmitter {
         return this._operations;
     }
 
+    get queenId() {
+        return this._queenId;
+    }
+
     setOperations(operations) {
         this._operations = operations;
         this.emit('operationsChanged');
@@ -29,5 +34,5 @@ class Colony extends EventEmitter {
 }
 
 export {
-    Colony
+    AntColony
 }

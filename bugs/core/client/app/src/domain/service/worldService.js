@@ -26,8 +26,8 @@ class WorldService {
             this._world.addEntity(entity); 
         });
         
-        worldJson.colonies.forEach(colonyJson => {
-            let colony = this._worldFactory.buildColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
+        worldJson.ant_colonies.forEach(colonyJson => {
+            let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations, colonyJson.queen_id);
             this._world.addColony(colony);
         });
         

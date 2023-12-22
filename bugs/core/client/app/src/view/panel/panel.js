@@ -4,6 +4,8 @@ import panelTmpl from './panelTmpl.html';
 import { BaseHTMLView } from '../base/baseHTMLView';
 import { UserTab } from './tabs/userTab/userTab';
 import { OperationsTab } from './tabs/operationsTab/operationsTab';
+import { ColoniesTabView } from './tabs/coloniesTab';
+import { TabSwitcher } from '@view/base/tabSwitcher/tabSwitcher';
 
 class Panel extends BaseHTMLView {
 
@@ -15,17 +17,21 @@ class Panel extends BaseHTMLView {
         if (this.$domainFacade.isWholeWorldInited()) {
             this._buildTabViews();
         }
+        this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
     }
 
     _buildTabViews() {
         this._el.innerHTML = panelTmpl;
 
-        this._el.querySelector('[data-tab-switcher]').addEventListener('change', this._switchTabToSelected.bind(this));
-
         this._userTab = new UserTab(this._el.querySelector('[data-user-tab]'));
         this._operationsTab = new OperationsTab(this._el.querySelector('[data-operations-tab]'));
+        this._coloniesTab = new ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));
 
-        this._switchTabToSelected();
+        this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+            { name: 'user', label: 'Користувач', tab: this._userTab },
+            { name: 'operations', label: 'Операції', tab: this._operationsTab },
+            { name: 'colonies', label: 'Колонії', tab: this._coloniesTab }
+        ]);
     }
 
     _removeTabViews() {
@@ -33,17 +39,9 @@ class Panel extends BaseHTMLView {
         this._operationsTab.remove();
     }
 
-    _switchTabToSelected() {
-        let tabName = this._getTabSwitcherValue();
-        
-        this._userTab.toggle(tabName == 'user');
-        this._operationsTab.toggle(tabName == 'operations');
-    }
-
-    _getTabSwitcherValue() {
-        let inputs = this._el.querySelectorAll('[data-tab-switcher] input');
-        let checkedInputEl = Array.from(inputs).find(input => input.checked);
-        return checkedInputEl.value;
+    _onNestManageRequest(nest) {
+        this._tabSwitcher.activateTab('colonies');
+        this._coloniesTab.showNestManagerFor(nest);
     }
 
 }

@@ -12,14 +12,15 @@ class OperationsTab extends BaseHTMLView {
     constructor(el) {
         super(el);
         this._operationCreator = null;
-        this._myColony = this.$domainFacade.findMyColony();
+        this._el.innerHTML =  'операції'
+        // this._myColony = this.$domainFacade.findMyColony();
 
-        this._render();
+        // this._render();
 
-        this._addNewNestBtn.addEventListener('click', this._onAddNewNestClick.bind(this));
-        this._destroyNestBtn.addEventListener('click', this._onDestroyNestClick.bind(this));
-        this._pillageNestBtn.addEventListener('click', this._onPillageNestClick.bind(this));
-        this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
+        // this._addNewNestBtn.addEventListener('click', this._onAddNewNestClick.bind(this));
+        // this._destroyNestBtn.addEventListener('click', this._onDestroyNestClick.bind(this));
+        // this._pillageNestBtn.addEventListener('click', this._onPillageNestClick.bind(this));
+        // this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
     }
 
     toggle(isEnabled) {

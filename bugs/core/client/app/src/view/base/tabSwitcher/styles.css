@@ -1,0 +1,20 @@
+.tab-switcher {
+    padding: 5px;
+    display: flex;
+}
+
+.tab-switcher--horizontal {
+    flex-direction: row;
+}
+
+.tab-switcher--vertical {
+    flex-direction: column;
+}
+
+.tab-switcher__activator {
+    margin: 1px;
+}
+
+.tab-switcher__activator--active {
+    border: solid 4px;
+}

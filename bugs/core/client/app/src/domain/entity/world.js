@@ -60,6 +60,10 @@ class World {
         return this._colonies.find( colony => colony.id == id);
     }
 
+    findColoniesByOwnerId(ownerId) {
+        return this._colonies.filter(colony => colony.ownerId == ownerId);
+    }
+
     findColonyByOwnerId(ownerId) {
         return this._colonies.find(colony => colony.ownerId == ownerId);
     }
@@ -72,11 +76,14 @@ class World {
         return this._entities.filter(e => e.type == EntityTypes.NEST && e.fromColony == colonyId);
     }
 
-    findQueenByOwnerId(ownerId) {
-        let colony = this.findColonyByOwnerId(ownerId);
-        let colonyAnts = this.findAntsFromColony(colony.id);
+    findQueenFromColony(colonyId) {
+        let colony = this.findColonyById(colonyId);
+        let queen = null;
+        if (colony.queenId) {
+            queen = this.findEntityById(colony.queenId);
+        }
 
-        return colonyAnts.find(a => a.antType == AntTypes.QUEEN);
+        return queen;
     }
 
     findEntityByType(type) {

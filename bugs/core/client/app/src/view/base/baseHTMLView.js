@@ -1,3 +1,5 @@
+import { EventEmitter } from "@utils/eventEmitter";
+
 class BaseHTMLView {
 
     static domainFacade;
@@ -13,6 +15,7 @@ class BaseHTMLView {
 
     constructor(el) {
         this._el = el;
+        this.events = new EventEmitter();
     }
 
     get el() {
@@ -33,6 +36,7 @@ class BaseHTMLView {
 
     remove() {
         this._el.remove();
+        this.events.removeAllListeners();
     }
 }
 

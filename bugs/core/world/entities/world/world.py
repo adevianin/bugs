@@ -18,7 +18,7 @@ from typing import List
 
 class World():
 
-    def __init__(self, id: int, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: list[Colony], id_generator: IdGenerator, colony_relations_table: ColonyRelationsTable, birthers, ground_beetle_spawner: GroundBeetleSpawner):
+    def __init__(self, id: int, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: List[Colony], id_generator: IdGenerator, colony_relations_table: ColonyRelationsTable, birthers, ground_beetle_spawner: GroundBeetleSpawner):
         self.id = id
         self._entities_collection = entities_collection
         self._map = map
@@ -60,6 +60,13 @@ class World():
     
     def add_new_colony(self, colony: Colony):
         self._colonies.append(colony)
+
+    def get_colony_by_id(self, colony_id: int) -> Colony:
+        for colony in self._colonies:
+            if colony.id == colony_id:
+                return colony
+        
+        return None
     
     def get_colony_owned_by_user(self, user_id: int):
         for colony in self._colonies:
@@ -90,11 +97,12 @@ class World():
 
         colonies_json = []
         for colony in self._colonies:
-            colonies_json.append(colony.to_public_json())
+            if colony.member_type == EntityTypes.ANT:
+                colonies_json.append(colony.to_public_json())
         
         return {
             'entities': entities_json,
-            'colonies': colonies_json,
+            'ant_colonies': colonies_json,
             'size': self._map.size
         }
     

@@ -66,7 +66,7 @@ class NestView extends EntityView {
     }
 
     _onClick() {
-        NestView.popupManager.openNestPopup(this._entity);
+        this.$eventBus.emit('nestManageRequest', this._entity);
     }
 
 }

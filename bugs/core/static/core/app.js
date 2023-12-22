@@ -77,20 +77,41 @@ class DomainFacade {
         return this._worldService.world.size;
     }
 
+    findMyColonies() {
+        let userData = this.getUserData();
+        return this._worldService.world.findColoniesByOwnerId(userData.id);
+    }
+
+    getNestsFromColony(colonyId) {
+        return this._worldService.world.findNestsFromColony(colonyId);
+    }
+
+    getQueenOfColony(colonyId) {
+        return this._worldService.world.findQueenFromColony(colonyId);
+    }
+
+
+
+
+
+
+
+
+
+    // findMyColony() {
+    //     let userData = this.getUserData();
+    //     return this._worldService.world.findColonyByOwnerId(userData.id);
+    // }
+
     findMyQueen() {
         let userData = this.getUserData();
         return this._worldService.world.findQueenByOwnerId(userData.id);
     }
 
-    findMyColony() {
-        let userData = this.getUserData();
-        return this._worldService.world.findColonyByOwnerId(userData.id);
-    }
-
     isNestMine(nest) {
         let userData = this.getUserData();
-        let myColony = this._worldService.world.findColonyByOwnerId(userData.id);
-        return nest.fromColony == myColony.id;
+        let colony = this._worldService.world.findColonyById(nest.fromColony);
+        return colony.ownerId == userData.id;
     }
 
     buildNewNest(position) {
@@ -345,27 +366,28 @@ class Ant extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/entity/colony.js":
-/*!**********************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/colony.js ***!
-  \**********************************************************/
+/***/ "./bugs/core/client/app/src/domain/entity/antColony.js":
+/*!*************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/antColony.js ***!
+  \*************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Colony": () => (/* binding */ Colony)
+/* harmony export */   "AntColony": () => (/* binding */ AntColony)
 /* harmony export */ });
 /* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
 
 
-class Colony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+class AntColony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
-    constructor(id, onwerId, operations) {
+    constructor(id, onwerId, operations, queenId) {
         super();
         this._id = id;
         this._onwerId = onwerId;
         this._operations = operations;
+        this._queenId = queenId
     }
 
     get id() {
@@ -378,6 +400,10 @@ class Colony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
 
     get operations() {
         return this._operations;
+    }
+
+    get queenId() {
+        return this._queenId;
     }
 
     setOperations(operations) {
@@ -1041,6 +1067,10 @@ class World {
         return this._colonies.find( colony => colony.id == id);
     }
 
+    findColoniesByOwnerId(ownerId) {
+        return this._colonies.filter(colony => colony.ownerId == ownerId);
+    }
+
     findColonyByOwnerId(ownerId) {
         return this._colonies.find(colony => colony.ownerId == ownerId);
     }
@@ -1053,11 +1083,14 @@ class World {
         return this._entities.filter(e => e.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST && e.fromColony == colonyId);
     }
 
-    findQueenByOwnerId(ownerId) {
-        let colony = this.findColonyByOwnerId(ownerId);
-        let colonyAnts = this.findAntsFromColony(colony.id);
+    findQueenFromColony(colonyId) {
+        let colony = this.findColonyById(colonyId);
+        let queen = null;
+        if (colony.queenId) {
+            queen = this.findEntityById(colony.queenId);
+        }
 
-        return colonyAnts.find(a => a.antType == _enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN);
+        return queen;
     }
 
     findEntityByType(type) {
@@ -1448,8 +1481,8 @@ class WorldService {
             this._world.addEntity(entity); 
         });
         
-        worldJson.colonies.forEach(colonyJson => {
-            let colony = this._worldFactory.buildColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
+        worldJson.ant_colonies.forEach(colonyJson => {
+            let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations, colonyJson.queen_id);
             this._world.addColony(colony);
         });
         
@@ -1531,7 +1564,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_world__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./entity/world */ "./bugs/core/client/app/src/domain/entity/world.js");
 /* harmony import */ var _entity_nest__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./entity/nest */ "./bugs/core/client/app/src/domain/entity/nest.js");
 /* harmony import */ var _entity_larva__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./entity/larva */ "./bugs/core/client/app/src/domain/entity/larva.js");
-/* harmony import */ var _entity_colony__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/colony */ "./bugs/core/client/app/src/domain/entity/colony.js");
+/* harmony import */ var _entity_antColony__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/antColony */ "./bugs/core/client/app/src/domain/entity/antColony.js");
 /* harmony import */ var _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entity/groundBeetle */ "./bugs/core/client/app/src/domain/entity/groundBeetle.js");
 /* harmony import */ var _entity_item__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entity/item */ "./bugs/core/client/app/src/domain/entity/item.js");
 /* harmony import */ var _entity_itemSource__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entity/itemSource */ "./bugs/core/client/app/src/domain/entity/itemSource.js");
@@ -1599,8 +1632,8 @@ class WorldFactory {
         return new _entity_nest__WEBPACK_IMPORTED_MODULE_3__.Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp);
     }
 
-    buildColony(id, owner_id, operations) {
-        return new _entity_colony__WEBPACK_IMPORTED_MODULE_5__.Colony(id, owner_id, operations);
+    buildAntColony(id, owner_id, operations, queenId) {
+        return new _entity_antColony__WEBPACK_IMPORTED_MODULE_5__.AntColony(id, owner_id, operations, queenId);
     }
 
     buildGroundBeetle(id, position, angle, fromColony, userSpeed, hp, maxHp) {
@@ -2119,6 +2152,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "BaseHTMLView": () => (/* binding */ BaseHTMLView)
 /* harmony export */ });
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+
+
 class BaseHTMLView {
 
     static domainFacade;
@@ -2134,6 +2170,7 @@ class BaseHTMLView {
 
     constructor(el) {
         this._el = el;
+        this.events = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
     }
 
     get el() {
@@ -2154,7 +2191,88 @@ class BaseHTMLView {
 
     remove() {
         this._el.remove();
+        this.events.removeAllListeners();
     }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/base/tabSwitcher/index.js":
+/*!*****************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/base/tabSwitcher/index.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "TabSwitcher": () => (/* reexport safe */ _tabSwitcher__WEBPACK_IMPORTED_MODULE_0__.TabSwitcher)
+/* harmony export */ });
+/* harmony import */ var _tabSwitcher__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./tabSwitcher */ "./bugs/core/client/app/src/view/base/tabSwitcher/tabSwitcher.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/base/tabSwitcher/tabSwitcher.js":
+/*!***********************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/base/tabSwitcher/tabSwitcher.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "TabSwitcher": () => (/* binding */ TabSwitcher)
+/* harmony export */ });
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/base/tabSwitcher/styles.css");
+/* harmony import */ var _baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+
+
+
+
+class TabSwitcher extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+
+    //tabsData - [{ name: 'user', label: 'Користувач', tab: this._userTab }]
+    constructor(el, tabsData) {
+        super(el);
+        this._tabsData = tabsData;
+        
+        this._render();
+
+        this.activateTab(this._tabsData[0].name);
+    }
+
+    _render() {
+        this._tabsData.forEach(tabData => {
+            let btn = document.createElement('button');
+            btn.setAttribute('data-tab-activator', tabData.name);
+            btn.innerHTML = tabData.label;
+            btn.classList.add('tab-switcher__activator');
+            this._el.append(btn);
+            btn.addEventListener('click', this._onTabActivatorClick.bind(this));
+        });
+    }
+
+    activateTab(activatingTabName) {
+        this._tabsData.forEach(tabData => {
+            tabData.tab.toggle(tabData.name == activatingTabName);
+        });
+        this._el.querySelectorAll('[data-tab-activator]').forEach(btn => {
+            let activatorTabName = btn.getAttribute('data-tab-activator');
+            btn.classList.toggle('tab-switcher__activator--active', activatorTabName == activatingTabName);
+        });
+    }
+
+    _onTabActivatorClick(event) {
+        let btn = event.target;
+        let tabName = btn.getAttribute('data-tab-activator');
+        this.activateTab(tabName);
+    }
+
 }
 
 
@@ -2250,6 +2368,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _tabs_userTab_userTab__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./tabs/userTab/userTab */ "./bugs/core/client/app/src/view/panel/tabs/userTab/userTab.js");
 /* harmony import */ var _tabs_operationsTab_operationsTab__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tabs/operationsTab/operationsTab */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.js");
+/* harmony import */ var _tabs_coloniesTab__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./tabs/coloniesTab */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/index.js");
+/* harmony import */ var _view_base_tabSwitcher_tabSwitcher__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @view/base/tabSwitcher/tabSwitcher */ "./bugs/core/client/app/src/view/base/tabSwitcher/tabSwitcher.js");
+
+
 
 
 
@@ -2267,17 +2389,21 @@ class Panel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView
         if (this.$domainFacade.isWholeWorldInited()) {
             this._buildTabViews();
         }
+        this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
     }
 
     _buildTabViews() {
         this._el.innerHTML = _panelTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this._el.querySelector('[data-tab-switcher]').addEventListener('change', this._switchTabToSelected.bind(this));
-
         this._userTab = new _tabs_userTab_userTab__WEBPACK_IMPORTED_MODULE_3__.UserTab(this._el.querySelector('[data-user-tab]'));
         this._operationsTab = new _tabs_operationsTab_operationsTab__WEBPACK_IMPORTED_MODULE_4__.OperationsTab(this._el.querySelector('[data-operations-tab]'));
+        this._coloniesTab = new _tabs_coloniesTab__WEBPACK_IMPORTED_MODULE_5__.ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));
 
-        this._switchTabToSelected();
+        this._tabSwitcher = new _view_base_tabSwitcher_tabSwitcher__WEBPACK_IMPORTED_MODULE_6__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+            { name: 'user', label: 'Користувач', tab: this._userTab },
+            { name: 'operations', label: 'Операції', tab: this._operationsTab },
+            { name: 'colonies', label: 'Колонії', tab: this._coloniesTab }
+        ]);
     }
 
     _removeTabViews() {
@@ -2285,20 +2411,840 @@ class Panel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView
         this._operationsTab.remove();
     }
 
-    _switchTabToSelected() {
-        let tabName = this._getTabSwitcherValue();
-        
-        this._userTab.toggle(tabName == 'user');
-        this._operationsTab.toggle(tabName == 'operations');
-    }
-
-    _getTabSwitcherValue() {
-        let inputs = this._el.querySelectorAll('[data-tab-switcher] input');
-        let checkedInputEl = Array.from(inputs).find(input => input.checked);
-        return checkedInputEl.value;
+    _onNestManageRequest(nest) {
+        this._tabSwitcher.activateTab('colonies');
+        this._coloniesTab.showNestManagerFor(nest);
     }
 
 }
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/coloniesListView.js":
+/*!***********************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/coloniesListView.js ***!
+  \***********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ColoniesListView": () => (/* binding */ ColoniesListView)
+/* harmony export */ });
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/styles.css");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _colonyView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./colonyView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/colonyView.js");
+
+
+
+
+class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+        this._colonies = this.$domainFacade.findMyColonies();
+        this._selectColony(this._colonies[0]);
+        
+        this._renderColonies();
+        this._renderSelectedColony();
+    }
+
+    get selectedColony() {
+        return this._selectedColony;
+    }
+
+    selectColony(colonyId) {
+        let colony = this._colonies.find(colony => colony.id == colonyId);
+        this._selectColony(colony);
+        this._renderSelectedColony();
+    }
+
+    _renderSelectedColony() {
+        for (let colonyId in this._colonyViews) {
+            this._colonyViews[colonyId].toggleSelect(this._selectedColony.id == colonyId);
+        }
+    }
+
+    _renderColonies() {
+        this._clearColonyViews();
+        this._colonies.forEach(colony => {
+            let liEl = document.createElement('li');
+            let colonyView = new _colonyView__WEBPACK_IMPORTED_MODULE_2__.ColonyView(liEl, colony);
+            colonyView.events.addListener('click', () => this._onColonyViewClick(colony))
+            this._colonyViews[colony.id] = colonyView;
+            this._el.append(liEl);
+        });
+    }
+
+    _clearColonyViews() {
+        for (let colonyId in this._colonyViews) {
+            this._colonyViews[colonyId].remove();
+        }
+        this._colonyViews = {};
+    }
+
+    _selectColony(colony) {
+        this._selectedColony = colony;
+        this.events.emit('selectedColonyChanged');
+    }
+
+    _onColonyViewClick(clickedColony) {
+        this._selectColony(clickedColony);
+        this._renderSelectedColony();
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/colonyView.js":
+/*!*****************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/colonyView.js ***!
+  \*****************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ColonyView": () => (/* binding */ ColonyView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _colony_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./colony.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/colony.html");
+
+
+
+class ColonyView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, colony) {
+        super(el)
+        this._colony = colony;
+
+        this._render();
+
+        this._el.addEventListener('click', this._onClick.bind(this));
+    }
+
+    toggleSelect(isSelected) {
+        this._colonyEl.classList.toggle('colonies-list__colony--selected', isSelected);
+    }
+
+    _render() {
+        this._el.innerHTML = _colony_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.querySelector('[data-colony-id]').innerHTML = this._colony.id;
+        this._colonyEl = this._el.querySelector('[data-colony]');
+    }
+
+    _onClick() {
+        this.events.emit('click');
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/index.js":
+/*!************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/index.js ***!
+  \************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ColoniesListView": () => (/* reexport safe */ _coloniesListView__WEBPACK_IMPORTED_MODULE_0__.ColoniesListView)
+/* harmony export */ });
+/* harmony import */ var _coloniesListView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./coloniesListView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/coloniesListView.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesTabView.js":
+/*!*********************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesTabView.js ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ColoniesTabView": () => (/* binding */ ColoniesTabView)
+/* harmony export */ });
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/styles.css");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _coloniesTab_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./coloniesTab.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesTab.html");
+/* harmony import */ var _coloniesList__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./coloniesList */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/index.js");
+/* harmony import */ var _colonyManager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./colonyManager */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/index.js");
+
+
+
+
+
+
+class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+        
+        this._render();
+
+        this._coloniesList.events.addListener('selectedColonyChanged', this._manageSelectedColony.bind(this));
+    }
+
+    showNestManagerFor(nest){
+        this._coloniesList.selectColony(nest.fromColony);
+        this._colonyManager.showNestManagerFor(nest);
+    }
+
+    _render() {
+        this._el.innerHTML = _coloniesTab_html__WEBPACK_IMPORTED_MODULE_2__["default"];
+
+        this._coloniesList = new _coloniesList__WEBPACK_IMPORTED_MODULE_3__.ColoniesListView(this._el.querySelector('[data-colonies-list]'));
+        this._colonyManager = new _colonyManager__WEBPACK_IMPORTED_MODULE_4__.ColonyManager(this._el.querySelector('[data-colony-manager]'));
+        this._manageSelectedColony();
+    }
+
+    _manageSelectedColony() {
+        this._colonyManager.manageColony(this._coloniesList.selectedColony);
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsTab.js":
+/*!***********************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsTab.js ***!
+  \***********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AntsTab": () => (/* binding */ AntsTab)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _antsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antsTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsTabTmpl.html");
+
+
+
+class AntsTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el)
+
+        this._render();
+    }
+
+    _render() {
+        this._el.innerHTML = _antsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/index.js":
+/*!*********************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/index.js ***!
+  \*********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AntsTab": () => (/* reexport safe */ _antsTab__WEBPACK_IMPORTED_MODULE_0__.AntsTab)
+/* harmony export */ });
+/* harmony import */ var _antsTab__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./antsTab */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsTab.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/colonyManager.js":
+/*!*********************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/colonyManager.js ***!
+  \*********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ColonyManager": () => (/* binding */ ColonyManager)
+/* harmony export */ });
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/styles.css");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _colonyManagerTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./colonyManagerTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/colonyManagerTmpl.html");
+/* harmony import */ var _nestsTab__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestsTab */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/index.js");
+/* harmony import */ var _antsTab__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./antsTab */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/index.js");
+/* harmony import */ var _operationsTab__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./operationsTab */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/index.js");
+/* harmony import */ var _view_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @view/base/tabSwitcher */ "./bugs/core/client/app/src/view/base/tabSwitcher/index.js");
+
+
+
+
+
+
+
+
+class ColonyManager extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+
+        this._render();
+    }
+
+    manageColony(colony){
+        this._colony = colony;
+        this._colonyNameEl.innerHTML = `colony: ${this._colony.id}`;
+        this._nestsTab.manageColony(colony);
+    }
+
+    showNestManagerFor(nest) {
+        this._tabSwitcher.activateTab('nests');
+        this._nestsTab.showNestManagerFor(nest);
+    }
+
+    _render() {
+        this._el.innerHTML = _colonyManagerTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
+        this._colonyNameEl = this._el.querySelector('[data-colony-name]');
+        this._antsTab = new _antsTab__WEBPACK_IMPORTED_MODULE_4__.AntsTab(this._el.querySelector('[data-ants-tab]'));
+        this._operationsTab = new _operationsTab__WEBPACK_IMPORTED_MODULE_5__.OperationsTab(this._el.querySelector('[data-operations-tab]'));
+        this._nestsTab = new _nestsTab__WEBPACK_IMPORTED_MODULE_3__.NestsTabView(this._el.querySelector('[data-nests-tab]'));
+
+        this._tabSwitcher = new _view_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_6__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+            { name: 'ants', label: 'мурахи', tab: this._antsTab },
+            { name: 'operations', label: 'операції', tab: this._operationsTab },
+            { name: 'nests', label: 'гнізда', tab: this._nestsTab }
+        ]);
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/index.js":
+/*!*************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/index.js ***!
+  \*************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ColonyManager": () => (/* reexport safe */ _colonyManager__WEBPACK_IMPORTED_MODULE_0__.ColonyManager)
+/* harmony export */ });
+/* harmony import */ var _colonyManager__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./colonyManager */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/colonyManager.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/index.js":
+/*!**********************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/index.js ***!
+  \**********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NestsTabView": () => (/* reexport safe */ _nestsTabView__WEBPACK_IMPORTED_MODULE_0__.NestsTabView)
+/* harmony export */ });
+/* harmony import */ var _nestsTabView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./nestsTabView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsTabView.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/index.js":
+/*!**********************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/index.js ***!
+  \**********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NestManagerView": () => (/* reexport safe */ _nestManagerView__WEBPACK_IMPORTED_MODULE_0__.NestManagerView)
+/* harmony export */ });
+/* harmony import */ var _nestManagerView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./nestManagerView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/nestManagerView.js");
+  
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaManager.js":
+/*!*****************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaManager.js ***!
+  \*****************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "LarvaManager": () => (/* binding */ LarvaManager)
+/* harmony export */ });
+/* harmony import */ var _larva_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./larva.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larva.html");
+/* harmony import */ var _larvaManager_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./larvaManager.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaManager.html");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./bugs/core/client/app/src/view/labels/antTypesLabels.js");
+
+
+
+
+
+class LarvaManager extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+
+        this._render();
+
+        this._addNewLarvaBtnEl.addEventListener('click', this._onAddLarvaBtnClick.bind(this));
+    }
+
+    manageNest(nest) {
+        if (this._nest) {
+            this._stopListenNest();
+        }
+
+        this._nest = nest;
+        this._listenNest();
+
+        this._renderLarvae();
+        this._toggleAddingNewLarva(this._nest.canAddLarva());
+    }
+
+    _listenNest() {
+        this._unbindLarvaeChangedListener = this._nest.on('larvaeChanged', this._onLarvaeChanged.bind(this));
+    }
+
+    _stopListenNest() {
+        this._unbindLarvaeChangedListener();
+    }
+
+    _render() {
+        this._el.innerHTML = _larvaManager_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._larvaeListEl = this._el.querySelector('[data-larvae-list]');
+        this._addingNewLarvaEl = this._el.querySelector('[data-adding-new-larva]');
+        this._newLarvaTypeSelectEl = this._el.querySelector('[data-new-larva-type-select]');
+        this._addNewLarvaBtnEl = this._el.querySelector('[data-add-new-larva-btn]');
+        this._isQueenInsideIndicatorEl = this._el.querySelector('[data-is-queen-inside]');
+
+        this._renderLarvaTypeSelector();
+    }
+
+    _renderLarvae() {
+        this._larvaeListEl.innerHTML = '';
+        let tempEl = document.createElement('div');
+        this._nest.larvae.forEach(larva => {
+            tempEl.innerHTML = _larva_html__WEBPACK_IMPORTED_MODULE_0__["default"];
+            tempEl.querySelector('[data-type]').innerHTML = _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels[larva.antType];
+            tempEl.querySelector('[data-progress]').innerHTML = larva.progress;
+            this._larvaeListEl.append(tempEl.firstChild);
+        });
+    }
+
+    _toggleAddingNewLarva(isEnabled) {
+        this._addingNewLarvaEl.classList.toggle('hidden', !isEnabled);
+    }
+
+    _renderLarvaTypeSelector() {
+        for (let antType in _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels) {
+            let optionEl = document.createElement('option');
+            optionEl.innerHTML = _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels[antType];
+            optionEl.value = antType;
+            this._newLarvaTypeSelectEl.append(optionEl);
+        }
+    }
+
+    _onAddLarvaBtnClick() {
+        let antType = this._newLarvaTypeSelectEl.value;
+        this._nest.addNewLarva(antType);
+    }
+
+    _onLarvaeChanged() {
+        this._renderLarvae();
+        this._toggleAddingNewLarva(this._nest.canAddLarva());
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/nestManagerView.js":
+/*!********************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/nestManagerView.js ***!
+  \********************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NestManagerView": () => (/* binding */ NestManagerView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _nestManagerTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nestManagerTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/nestManagerTmpl.html");
+/* harmony import */ var _larvaManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./larvaManager */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaManager.js");
+
+
+
+
+class NestManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+        this._nest = null;
+
+        this._render();
+    }
+
+    manageNest(nest) {
+        if (this._nest) {
+            this._stopListenNest();
+        }
+        if (this._queen) {
+            this._stopListenQueen();
+        }
+
+        this._nest = nest;
+        this._listenNest();
+        
+        this._queen = this.$domainFacade.getQueenOfColony(nest.fromColony);
+        this._listenQueen();
+
+        this._larvaManager.manageNest(nest);
+
+        this._renderCalories();
+        this._renderIsQueenInsideNest();
+    }
+
+    _listenNest() {
+        this._unbindStoredCaloriesChangedListener = this._nest.on('storedCaloriesChanged', this._renderCalories.bind(this))
+    }
+
+    _listenQueen() {
+        if (this._queen) {
+            this._unbindQueenLocatedInNestListener = this._queen.on('locatedInNestChanged', this._renderIsQueenInsideNest.bind(this));
+        }
+    }
+
+    _stopListenQueen() {
+        if (this._queen) {
+            this._unbindQueenLocatedInNestListener();
+        }
+    }
+
+    _stopListenNest() {
+        this._unbindStoredCaloriesChangedListener();
+    }
+
+    _render() {
+        this._el.innerHTML = _nestManagerTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._storedCaloriesEl = this._el.querySelector('[data-stored-calories]');
+        this._isQueenInsideIndicatorEl = this._el.querySelector('[data-is-queen-inside]');
+        this._larvaManager = new _larvaManager__WEBPACK_IMPORTED_MODULE_2__.LarvaManager(this._el.querySelector('[data-larva-manager]'));
+    }
+
+    _renderCalories() {
+        this._storedCaloriesEl.innerHTML = this._nest.storedCalories;
+    }
+
+    _renderIsQueenInsideNest() {
+        let isQueenInNest = this._queen && this._queen.locatedInNestId == this._nest.id;
+        this._isQueenInsideIndicatorEl.innerHTML = isQueenInNest ? '+' : '-';
+        this._larvaManager.toggle(isQueenInNest);
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/index.js":
+/*!********************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/index.js ***!
+  \********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NestsListView": () => (/* reexport safe */ _nestsListView__WEBPACK_IMPORTED_MODULE_0__.NestsListView)
+/* harmony export */ });
+/* harmony import */ var _nestsListView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./nestsListView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/nestsListView.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/nestView.js":
+/*!***********************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/nestView.js ***!
+  \***********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NestView": () => (/* binding */ NestView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _nestTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nestTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/nestTmpl.html");
+
+
+
+class NestView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, nest) {
+        super(el);
+        this._nest = nest;
+
+        this._render();
+
+        this._el.addEventListener('click', this._onClick.bind(this));
+    } 
+
+    toggleSelected(isSelected) {
+        this._el.classList.toggle('colony-manager__nest_item--selected', isSelected);
+    }
+
+    _render() {
+        this._el.innerHTML = _nestTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.classList.add('colony-manager__nest_item');
+
+        this._el.querySelector('[data-nest-name]').innerHTML = this._nest.id;
+    }
+
+    _onClick() {
+        this.events.emit('click');
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/nestsListView.js":
+/*!****************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/nestsListView.js ***!
+  \****************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NestsListView": () => (/* binding */ NestsListView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _nestView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nestView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/nestView.js");
+
+
+
+class NestsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+        this._nestViews = {};
+    }
+
+    manageColony(colony) {
+        this._colony = colony;
+        this._nests = this.$domainFacade.getNestsFromColony(colony.id);
+        this._selectNest(this._nests[0]);
+        this._renderNests();
+        this._renderSelectedNest();
+    }
+
+    get selectedNest() {
+        return this._selectedNest;
+    }
+
+    selectNest(nest) {
+        this._selectNest(nest);
+        this._renderSelectedNest();
+    }
+
+    _selectNest(nest) {
+        this._selectedNest = nest;
+        this.events.emit('selectedNestChanged');
+    }
+
+    _renderNests() {
+        this._clearNestViews();
+        for (let nest of this._nests) {
+            let el = document.createElement('li');
+            let view = new _nestView__WEBPACK_IMPORTED_MODULE_1__.NestView(el, nest);
+            view.events.addListener('click', () => this._onNestClick(nest));
+            this._nestViews[nest.id] = view;
+            this._el.append(el);
+        }
+    }
+
+    _renderSelectedNest() {
+        for (let nestId in this._nestViews) {
+            this._nestViews[nestId].toggleSelected(this._selectedNest.id == nestId);
+        }
+    }
+
+    _clearNestViews() {
+        for (let nestId in this._nestViews) {
+            this._nestViews[nestId].remove();
+        }
+        this._nestViews = {};
+    }
+
+    _onNestClick(nest) {
+        this._selectNest(nest);
+        this._renderSelectedNest();
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsTabView.js":
+/*!*****************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsTabView.js ***!
+  \*****************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NestsTabView": () => (/* binding */ NestsTabView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _nestsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nestsTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsTabTmpl.html");
+/* harmony import */ var _nestsList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./nestsList */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/index.js");
+/* harmony import */ var _nestManager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestManager */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/index.js");
+
+
+
+
+
+class NestsTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el)
+
+        this._render();
+
+        this._nestsList.events.addListener('selectedNestChanged', this._manageSelectedNest.bind(this));
+    }
+
+    manageColony(colony) {
+        this._nestsList.manageColony(colony);
+        this._manageSelectedNest();
+    }
+
+    showNestManagerFor(nest) {
+        this._nestsList.selectNest(nest);
+    }
+
+    _render() {
+        this._el.innerHTML = _nestsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._nestsList = new _nestsList__WEBPACK_IMPORTED_MODULE_2__.NestsListView(this._el.querySelector('[data-nests-list]'));
+        this._nestManager = new _nestManager__WEBPACK_IMPORTED_MODULE_3__.NestManagerView(this._el.querySelector('[data-nest-manager]'));
+    }
+
+    _manageSelectedNest() {
+        this._nestManager.manageNest(this._nestsList.selectedNest);
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/index.js":
+/*!***************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/index.js ***!
+  \***************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OperationsTab": () => (/* reexport safe */ _operationsTab__WEBPACK_IMPORTED_MODULE_0__.OperationsTab)
+/* harmony export */ });
+/* harmony import */ var _operationsTab__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./operationsTab */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsTab.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsTab.js":
+/*!***********************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsTab.js ***!
+  \***********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OperationsTab": () => (/* binding */ OperationsTab)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _operationsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationsTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsTabTmpl.html");
+
+
+
+class OperationsTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el)
+
+        this._render();
+    }
+
+    _render() {
+        this._el.innerHTML = _operationsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/index.js":
+/*!***********************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/index.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ColoniesTabView": () => (/* reexport safe */ _coloniesTabView__WEBPACK_IMPORTED_MODULE_0__.ColoniesTabView)
+/* harmony export */ });
+/* harmony import */ var _coloniesTabView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./coloniesTabView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesTabView.js");
+
 
 
 
@@ -2572,14 +3518,15 @@ class OperationsTab extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.Base
     constructor(el) {
         super(el);
         this._operationCreator = null;
-        this._myColony = this.$domainFacade.findMyColony();
+        this._el.innerHTML =  'операції'
+        // this._myColony = this.$domainFacade.findMyColony();
 
-        this._render();
+        // this._render();
 
-        this._addNewNestBtn.addEventListener('click', this._onAddNewNestClick.bind(this));
-        this._destroyNestBtn.addEventListener('click', this._onDestroyNestClick.bind(this));
-        this._pillageNestBtn.addEventListener('click', this._onPillageNestClick.bind(this));
-        this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
+        // this._addNewNestBtn.addEventListener('click', this._onAddNewNestClick.bind(this));
+        // this._destroyNestBtn.addEventListener('click', this._onDestroyNestClick.bind(this));
+        // this._pillageNestBtn.addEventListener('click', this._onPillageNestClick.bind(this));
+        // this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
     }
 
     toggle(isEnabled) {
@@ -2695,232 +3642,6 @@ class UserTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/popups/base/basePopup.js":
-/*!****************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/base/basePopup.js ***!
-  \****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BasePopup": () => (/* binding */ BasePopup)
-/* harmony export */ });
-/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./bugs/core/client/app/src/view/popups/base/style.css");
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./template.html */ "./bugs/core/client/app/src/view/popups/base/template.html");
-/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
-
-
-
-
-class BasePopup extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
-
-    constructor() {
-        super(document.createElement('div'));
-        this._title = 'popup title';
-        this._bodyEl = null;
-    }
-
-    render() {
-        this._el.classList.add('popup');
-        this._el.innerHTML = _template_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-
-        this._el.querySelector('[data-title]').innerHTML = this._title;
-
-        this._el.querySelector('[data-ok-btn]').addEventListener('click', this.onOk.bind(this));
-        this._el.querySelector('[data-cancel-btn]').addEventListener('click', this.onCancel.bind(this));
-    }
-
-    get bodyEl() {
-        if (!this._bodyEl) {
-            this._bodyEl = this._el.querySelector('[data-popup-body]');
-        }
-
-        return this._bodyEl;
-    }
-
-    close() {
-        this.remove();
-    }
-
-    onOk() {
-    }
-
-    onCancel() {
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/popups/nest/larvaManager.js":
-/*!*******************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/nest/larvaManager.js ***!
-  \*******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "LarvaManager": () => (/* binding */ LarvaManager)
-/* harmony export */ });
-/* harmony import */ var _larva_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./larva.html */ "./bugs/core/client/app/src/view/popups/nest/larva.html");
-/* harmony import */ var _larvaManager_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./larvaManager.html */ "./bugs/core/client/app/src/view/popups/nest/larvaManager.html");
-/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
-/* harmony import */ var _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../labels/antTypesLabels */ "./bugs/core/client/app/src/view/labels/antTypesLabels.js");
-
-
-
-
-
-class LarvaManager extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
-
-    constructor(el, nest) {
-        super(el);
-        this._nest = nest;
-        this._myQueen = this.$domainFacade.findMyQueen();
-
-        this._render();
-
-        this._addNewLarvaBtnEl.addEventListener('click', this._onAddLarvaBtnClick.bind(this));
-        this._unbindLarvaeChangedListener = this._nest.on('larvaeChanged', this._onLarvaeChanged.bind(this));
-        this._unbindQueenLocatedInNestListener = this._myQueen.on('locatedInNestChanged', this._renderIsQueenInNest.bind(this));
-    }
-
-    remove() {
-        this._unbindLarvaeChangedListener();
-        this._unbindQueenLocatedInNestListener();
-    }
-
-    _render() {
-        this._el.innerHTML = _larvaManager_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-
-        this._larvaeListEl = this._el.querySelector('[data-larvae-list]');
-        this._addingNewLarvaEl = this._el.querySelector('[data-adding-new-larva]');
-        this._newLarvaTypeSelectEl = this._el.querySelector('[data-new-larva-type-select]');
-        this._addNewLarvaBtnEl = this._el.querySelector('[data-add-new-larva-btn]');
-        this._isQueenInsideIndicatorEl = this._el.querySelector('[data-is-queen-inside]');
-
-        this._renderLarvae();
-        this._toggleAddingNewLarva(this._nest.canAddLarva());
-        this._renderLarvaTypeSelector();
-        this._renderIsQueenInNest();
-    }
-
-    _renderLarvae() {
-        this._larvaeListEl.innerHTML = '';
-        let tempEl = document.createElement('div');
-        this._nest.larvae.forEach(larva => {
-            tempEl.innerHTML = _larva_html__WEBPACK_IMPORTED_MODULE_0__["default"];
-            tempEl.querySelector('[data-type]').innerHTML = _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels[larva.antType];
-            tempEl.querySelector('[data-progress]').innerHTML = larva.progress;
-            this._larvaeListEl.append(tempEl.firstChild);
-        });
-    }
-
-    _toggleAddingNewLarva(isEnabled) {
-        this._addingNewLarvaEl.classList.toggle('hidden', !isEnabled);
-    }
-
-    _renderLarvaTypeSelector() {
-        for (let antType in _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels) {
-            let optionEl = document.createElement('option');
-            optionEl.innerHTML = _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels[antType];
-            optionEl.value = antType;
-            this._newLarvaTypeSelectEl.append(optionEl);
-        }
-    }
-
-    _renderIsQueenInNest() {
-        let isQueenInNest = this._myQueen.locatedInNestId == this._nest.id;
-        if (isQueenInNest) {
-            this._addNewLarvaBtnEl.removeAttribute('disabled');
-        } else {
-            this._addNewLarvaBtnEl.setAttribute('disabled', '');
-        }
-
-        this._isQueenInsideIndicatorEl.innerHTML = isQueenInNest ? '+' : '-';
-        
-    }
-
-    _onAddLarvaBtnClick() {
-        let antType = this._newLarvaTypeSelectEl.value;
-        this._nest.addNewLarva(antType);
-    }
-
-    _onLarvaeChanged() {
-        this._renderLarvae();
-        this._toggleAddingNewLarva(this._nest.canAddLarva());
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/popups/nest/nestPopup.js":
-/*!****************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/nest/nestPopup.js ***!
-  \****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "NestPopup": () => (/* binding */ NestPopup)
-/* harmony export */ });
-/* harmony import */ var _base_basePopup__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/basePopup */ "./bugs/core/client/app/src/view/popups/base/basePopup.js");
-/* harmony import */ var _body_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./body.html */ "./bugs/core/client/app/src/view/popups/nest/body.html");
-/* harmony import */ var _larvaManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./larvaManager */ "./bugs/core/client/app/src/view/popups/nest/larvaManager.js");
-
-
-
-
-class NestPopup extends _base_basePopup__WEBPACK_IMPORTED_MODULE_0__.BasePopup {
-
-    constructor(nest) {
-        super();
-        this._title = 'nest popup';
-        this._nest = nest;
-
-        this._unbindStoredCaloriesChangedListener = this._nest.on('storedCaloriesChanged', this._renderCalories.bind(this))
-
-        this.render();
-    }
-
-    close(){ 
-        super.close();
-        this._unbindStoredCaloriesChangedListener();
-        this._larvaManager.remove();
-    }
-
-    render() {
-        super.render();
-        this.bodyEl.innerHTML = _body_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        this._renderCalories();
-        this._larvaManager = new _larvaManager__WEBPACK_IMPORTED_MODULE_2__.LarvaManager(this.bodyEl.querySelector('[data-larva-manager]'), this._nest);
-    }
-    
-    onOk() {
-        console.log('ok');
-    }
-
-    onCancel() {
-        this.close();
-    }
-
-    _renderCalories() {
-        this.bodyEl.querySelector('[data-stored-calories]').innerHTML = this._nest.storedCalories;
-    }
-}
-
-
-
-/***/ }),
-
 /***/ "./bugs/core/client/app/src/view/popups/popupManager.js":
 /*!**************************************************************!*\
   !*** ./bugs/core/client/app/src/view/popups/popupManager.js ***!
@@ -2932,19 +3653,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "PopupManager": () => (/* binding */ PopupManager)
 /* harmony export */ });
-/* harmony import */ var _nest_nestPopup__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./nest/nestPopup */ "./bugs/core/client/app/src/view/popups/nest/nestPopup.js");
-
-
 class PopupManager {
 
     constructor(el) {
         this._el = el;
     }
 
-    openNestPopup(nest) {
-        let popup = new _nest_nestPopup__WEBPACK_IMPORTED_MODULE_0__.NestPopup(nest);
-        this._showPopup(popup);
-    }
+    // openNestPopup(nest) {
+    //     let popup = new NestPopup(nest);
+    //     this._showPopup(popup);
+    // }
 
     _showPopup(popup) {
         this._el.innerHTML = '';
@@ -3879,12 +4597,12 @@ class MarkersList extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0_
     constructor(container) {
         super();
         this._container = container;
-        this._myColony = this.$domainFacade.findMyColony();
+        // this._myColony = this.$domainFacade.findMyColony();
 
-        this._renderMarkers();
+        // this._renderMarkers();
 
-        this._myColony.on('operationsChanged', this._renderMarkers.bind(this));
-        this.$eventBus.on('operationsViewActivationChanged', this._onOperationsViewActivationChanged.bind(this));
+        // this._myColony.on('operationsChanged', this._renderMarkers.bind(this));
+        // this.$eventBus.on('operationsViewActivationChanged', this._onOperationsViewActivationChanged.bind(this));
     }
 
     _renderMarkers() {
@@ -3996,7 +4714,7 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     }
 
     _onClick() {
-        NestView.popupManager.openNestPopup(this._entity);
+        this.$eventBus.emit('nestManageRequest', this._entity);
     }
 
 }
@@ -4502,6 +5220,33 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".hidden {\r\n    display: none !import
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/base/tabSwitcher/styles.css":
+/*!*********************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/base/tabSwitcher/styles.css ***!
+  \*********************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".tab-switcher {\r\n    padding: 5px;\r\n    display: flex;\r\n}\r\n\r\n.tab-switcher--horizontal {\r\n    flex-direction: row;\r\n}\r\n\r\n.tab-switcher--vertical {\r\n    flex-direction: column;\r\n}\r\n\r\n.tab-switcher__activator {\r\n    margin: 1px;\r\n}\r\n\r\n.tab-switcher__activator--active {\r\n    border: solid 4px;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/base/tabSwitcher/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,aAAa;AACjB;;AAEA;IACI,mBAAmB;AACvB;;AAEA;IACI,sBAAsB;AAC1B;;AAEA;IACI,WAAW;AACf;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".tab-switcher {\r\n    padding: 5px;\r\n    display: flex;\r\n}\r\n\r\n.tab-switcher--horizontal {\r\n    flex-direction: row;\r\n}\r\n\r\n.tab-switcher--vertical {\r\n    flex-direction: column;\r\n}\r\n\r\n.tab-switcher__activator {\r\n    margin: 1px;\r\n}\r\n\r\n.tab-switcher__activator--active {\r\n    border: solid 4px;\r\n}"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/styles.css":
 /*!**********************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/styles.css ***!
@@ -4522,7 +5267,88 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}\r\n\r\n.panel__tab-switcher {\r\n    padding: 5px;\r\n    width: 150px;\r\n    border-right: solid 1px;\r\n}\r\n\r\n.panel__tab-container {\r\n    padding: 5px;\r\n    flex-grow: 1;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,aAAa;IACb,gBAAgB;IAChB,YAAY;AAChB;;AAEA;IACI;AACJ;;AAEA;IACI,YAAY;IACZ,YAAY;IACZ,uBAAuB;AAC3B;;AAEA;IACI,YAAY;IACZ,YAAY;AAChB","sourcesContent":[".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}\r\n\r\n.panel__tab-switcher {\r\n    padding: 5px;\r\n    width: 150px;\r\n    border-right: solid 1px;\r\n}\r\n\r\n.panel__tab-container {\r\n    padding: 5px;\r\n    flex-grow: 1;\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}\r\n\r\n.panel__tab-container {\r\n    padding: 5px;\r\n    flex-grow: 1;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,aAAa;IACb,gBAAgB;IAChB,YAAY;AAChB;;AAEA;IACI;AACJ;;AAEA;IACI,YAAY;IACZ,YAAY;AAChB","sourcesContent":[".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}\r\n\r\n.panel__tab-container {\r\n    padding: 5px;\r\n    flex-grow: 1;\r\n}"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/styles.css":
+/*!****************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/styles.css ***!
+  \****************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".colonies-list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.colonies-list__colony {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colonies-list__colony--selected {\r\n    color: red\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/styles.css"],"names":[],"mappings":"AAAA;IACI,UAAU;IACV,SAAS;IACT,qBAAqB;AACzB;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ","sourcesContent":[".colonies-list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.colonies-list__colony {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colonies-list__colony--selected {\r\n    color: red\r\n}"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/styles.css":
+/*!*****************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/styles.css ***!
+  \*****************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n/* .colony_manager__tabs_list {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony_manager__tab_button {\r\n    margin-left: 5px\r\n} */", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,YAAY;AAChB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,YAAY;AAChB;;AAEA;;;;;;;GAOG","sourcesContent":[".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n/* .colony_manager__tabs_list {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony_manager__tab_button {\r\n    margin-left: 5px\r\n} */"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/coloniesTab/styles.css":
+/*!***************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/coloniesTab/styles.css ***!
+  \***************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".colonies-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/coloniesTab/styles.css"],"names":[],"mappings":"AAAA;IACI,aAAa;IACb,mBAAmB;AACvB","sourcesContent":[".colonies-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -4550,33 +5376,6 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, ".operation-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.operation-tab__new-operation-list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.operation-tab__operations-list-container {\r\n    padding: 5px;\r\n    width: 150px;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css"],"names":[],"mappings":"AAAA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,UAAU;IACV,SAAS;IACT,qBAAqB;AACzB;;AAEA;IACI,YAAY;IACZ,YAAY;AAChB","sourcesContent":[".operation-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.operation-tab__new-operation-list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.operation-tab__operations-list-container {\r\n    padding: 5px;\r\n    width: 150px;\r\n}"],"sourceRoot":""}]);
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/popups/base/style.css":
-/*!***************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/popups/base/style.css ***!
-  \***************************************************************************************************/
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-// Imports
-
-
-var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-// Module
-___CSS_LOADER_EXPORT___.push([module.id, ".popup-container {\r\n    position: absolute;\r\n    top: 20px;\r\n    left: 20px;\r\n}\r\n\r\n.popup {\r\n    border: solid 1px;\r\n    border-color: gray;\r\n    min-width: 300px;\r\n    border-radius: 5px;\r\n    overflow: hidden;\r\n}\r\n\r\n.popup--header {\r\n    min-height: 35px;\r\n    background: bisque;\r\n    display: flex;\r\n    justify-content: center;\r\n    align-items: center;\r\n}\r\n\r\n.popup--body {\r\n    background-color: beige;\r\n    min-height: 200px;\r\n    padding: 5px;\r\n}\r\n\r\n.popup--footer {\r\n    background-color: beige;\r\n    padding: 5px;\r\n    text-align: center;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/popups/base/style.css"],"names":[],"mappings":"AAAA;IACI,kBAAkB;IAClB,SAAS;IACT,UAAU;AACd;;AAEA;IACI,iBAAiB;IACjB,kBAAkB;IAClB,gBAAgB;IAChB,kBAAkB;IAClB,gBAAgB;AACpB;;AAEA;IACI,gBAAgB;IAChB,kBAAkB;IAClB,aAAa;IACb,uBAAuB;IACvB,mBAAmB;AACvB;;AAEA;IACI,uBAAuB;IACvB,iBAAiB;IACjB,YAAY;AAChB;;AAEA;IACI,uBAAuB;IACvB,YAAY;IACZ,kBAAkB;AACtB","sourcesContent":[".popup-container {\r\n    position: absolute;\r\n    top: 20px;\r\n    left: 20px;\r\n}\r\n\r\n.popup {\r\n    border: solid 1px;\r\n    border-color: gray;\r\n    min-width: 300px;\r\n    border-radius: 5px;\r\n    overflow: hidden;\r\n}\r\n\r\n.popup--header {\r\n    min-height: 35px;\r\n    background: bisque;\r\n    display: flex;\r\n    justify-content: center;\r\n    align-items: center;\r\n}\r\n\r\n.popup--body {\r\n    background-color: beige;\r\n    min-height: 200px;\r\n    padding: 5px;\r\n}\r\n\r\n.popup--footer {\r\n    background-color: beige;\r\n    padding: 5px;\r\n    text-align: center;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -6308,7 +7107,187 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"panel__tab-switcher\" data-tab-switcher>\r\n    <div>\r\n        <label>\r\n            <input type=\"radio\" name=\"panelTabSwitcher\" value=\"user\" checked />\r\n            користувач\r\n        </label>\r\n    </div>\r\n    <div>\r\n        <label>\r\n            <input type=\"radio\" name=\"panelTabSwitcher\" value=\"operations\" />\r\n            операції\r\n        </label>\r\n    </div>\r\n</div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n</div>";
+var code = "<div class=\"tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div data-colonies-tab class=\"colonies-tab\"></div>\r\n</div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/colony.html":
+/*!***************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/colony.html ***!
+  \***************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<span class=\"colonies-list__colony\" data-colony>colony <span data-colony-id></span></span>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesTab.html":
+/*!*******************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesTab.html ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<ul data-colonies-list class=\"colonies-list\"></ul>\r\n<div data-colony-manager class=\"colony_manager\" ></div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsTabTmpl.html":
+/*!*****************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsTabTmpl.html ***!
+  \*****************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "ants tab";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/colonyManagerTmpl.html":
+/*!***************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/colonyManagerTmpl.html ***!
+  \***************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div><span data-colony-name></span></div>\r\n<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switcher></div>\r\n<div>\r\n    <div data-ants-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div class=\"colony-manager__nest-tab\" data-nests-tab></div>\r\n</div>\r\n";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larva.html":
+/*!************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larva.html ***!
+  \************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<li>\r\n    <div>тип: <span data-type></span></div>\r\n    <div>прогрес: <span data-progress></span></div>\r\n</li>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaManager.html":
+/*!*******************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaManager.html ***!
+  \*******************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div>личинки:\r\n    <ul data-larvae-list></ul>\r\n    <div data-adding-new-larva>\r\n        <select data-new-larva-type-select></select>\r\n        <button data-add-new-larva-btn>add</button>\r\n    </div>\r\n</div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/nestManagerTmpl.html":
+/*!**********************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/nestManagerTmpl.html ***!
+  \**********************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div>\r\n    їжі всередині:<span data-stored-calories></span>\r\n</div>\r\n<div>\r\n    цариця в місті: <span data-is-queen-inside></span>\r\n</div>\r\n<div data-larva-manager></div>\r\n";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/nestTmpl.html":
+/*!*************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/nestTmpl.html ***!
+  \*************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<span>nest: <span data-nest-name></span></span>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsTabTmpl.html":
+/*!*******************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsTabTmpl.html ***!
+  \*******************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<ul class=\"colony-manager__nests-list\" data-nests-list></ul>\r\n<div class=\"colony-manager__nest-manager\" data-nest-manager></div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsTabTmpl.html":
+/*!*****************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsTabTmpl.html ***!
+  \*****************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "operations tab";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -6417,78 +7396,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Module
 var code = "<div>\r\n    логін: <span data-username></span> \r\n    <button data-logout-btn>вийти</button>\r\n</div>";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/popups/base/template.html":
-/*!*****************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/base/template.html ***!
-  \*****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<div class=\"popup--header\" data-popup-header>\r\n    <span data-title></span>\r\n</div>\r\n<div class=\"popup--body\" data-popup-body></div>\r\n<div class=\"popup--footer\">\r\n    <button data-ok-btn>зберегти</button>\r\n    <button data-cancel-btn>відмінити</button>\r\n</div>";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/popups/nest/body.html":
-/*!*************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/nest/body.html ***!
-  \*************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<div>\r\n    <div>їжі всередині:<span data-stored-calories></span></div>\r\n    <div data-larva-manager></div>\r\n</div>";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/popups/nest/larva.html":
-/*!**************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/nest/larva.html ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<li>\r\n    <div>тип: <span data-type></span></div>\r\n    <div>прогрес: <span data-progress></span></div>\r\n</li>";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/popups/nest/larvaManager.html":
-/*!*********************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/nest/larvaManager.html ***!
-  \*********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<div>\r\n    цариця в місті: <span data-is-queen-inside></span>\r\n</div>\r\n<div>личинки:\r\n    <ul data-larvae-list></ul>\r\n    <div data-adding-new-larva>\r\n        <select data-new-larva-type-select></select>\r\n        <button data-add-new-larva-btn>add</button>\r\n    </div>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -6942,6 +7849,61 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/base/tabSwitcher/styles.css":
+/*!*******************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/base/tabSwitcher/styles.css ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/base/tabSwitcher/styles.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/styles.css":
 /*!********************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/styles.css ***!
@@ -6966,6 +7928,171 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/styles.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/styles.css":
+/*!**************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/styles.css ***!
+  \**************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesList/styles.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/styles.css":
+/*!***************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/styles.css ***!
+  \***************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/styles.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/styles.css":
+/*!*************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/styles.css ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/coloniesTab/styles.css");
 
       
       
@@ -7048,61 +8175,6 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
        /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_operationsTab_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_operationsTab_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_operationsTab_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/popups/base/style.css":
-/*!*************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/popups/base/style.css ***!
-  \*************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../node_modules/css-loader/dist/cjs.js!./style.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/popups/base/style.css");
-
-      
-      
-      
-      
-      
-      
-      
-      
-      
-
-var options = {};
-
-options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
-options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
-
-      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
-    
-options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
-options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
-
-var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
-
-
-
-
-       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),

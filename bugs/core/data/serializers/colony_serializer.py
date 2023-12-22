@@ -33,7 +33,8 @@ class ColonySerializer():
         json.update({
             'owner_id': colony.owner_id,
             'operations': operations_json,
-            'last_registered_entities_in_colony_area_ids': colony.last_registered_entities_in_colony_area_ids
+            'last_registered_entities_in_colony_area_ids': colony.last_registered_entities_in_colony_area_ids,
+            'queen_id': colony.queen_id
         })
 
         return json

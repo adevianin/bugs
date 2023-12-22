@@ -1,25 +1,36 @@
 import larvaTmpl from './larva.html';
 import larvaManagerTmpl from './larvaManager.html';
-import { BaseHTMLView } from '../../base/baseHTMLView';
-import { antTypesLabels } from '../../labels/antTypesLabels';
+import { BaseHTMLView } from '@view/base/baseHTMLView';
+import { antTypesLabels } from '@view/labels/antTypesLabels';
 
 class LarvaManager extends BaseHTMLView {
 
-    constructor(el, nest) {
+    constructor(el) {
         super(el);
-        this._nest = nest;
-        this._myQueen = this.$domainFacade.findMyQueen();
 
         this._render();
 
         this._addNewLarvaBtnEl.addEventListener('click', this._onAddLarvaBtnClick.bind(this));
-        this._unbindLarvaeChangedListener = this._nest.on('larvaeChanged', this._onLarvaeChanged.bind(this));
-        this._unbindQueenLocatedInNestListener = this._myQueen.on('locatedInNestChanged', this._renderIsQueenInNest.bind(this));
     }
 
-    remove() {
+    manageNest(nest) {
+        if (this._nest) {
+            this._stopListenNest();
+        }
+
+        this._nest = nest;
+        this._listenNest();
+
+        this._renderLarvae();
+        this._toggleAddingNewLarva(this._nest.canAddLarva());
+    }
+
+    _listenNest() {
+        this._unbindLarvaeChangedListener = this._nest.on('larvaeChanged', this._onLarvaeChanged.bind(this));
+    }
+
+    _stopListenNest() {
         this._unbindLarvaeChangedListener();
-        this._unbindQueenLocatedInNestListener();
     }
 
     _render() {
@@ -31,10 +42,7 @@ class LarvaManager extends BaseHTMLView {
         this._addNewLarvaBtnEl = this._el.querySelector('[data-add-new-larva-btn]');
         this._isQueenInsideIndicatorEl = this._el.querySelector('[data-is-queen-inside]');
 
-        this._renderLarvae();
-        this._toggleAddingNewLarva(this._nest.canAddLarva());
         this._renderLarvaTypeSelector();
-        this._renderIsQueenInNest();
     }
 
     _renderLarvae() {
@@ -59,18 +67,6 @@ class LarvaManager extends BaseHTMLView {
             optionEl.value = antType;
             this._newLarvaTypeSelectEl.append(optionEl);
         }
-    }
-
-    _renderIsQueenInNest() {
-        let isQueenInNest = this._myQueen.locatedInNestId == this._nest.id;
-        if (isQueenInNest) {
-            this._addNewLarvaBtnEl.removeAttribute('disabled');
-        } else {
-            this._addNewLarvaBtnEl.setAttribute('disabled', '');
-        }
-
-        this._isQueenInsideIndicatorEl.innerHTML = isQueenInNest ? '+' : '-';
-        
     }
 
     _onAddLarvaBtnClick() {
