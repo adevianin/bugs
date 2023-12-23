@@ -1,6 +1,6 @@
 from core.world.entities.colony.colonies.ant_colony.operation.base.operation import Operation
 from core.world.entities.colony.colonies.ant_colony.operation.base.operation_types import OperationTypes
-from core.world.entities.colony.colonies.ant_colony.operation.build_new_nest_operation import BuildNewNestOperation
+from core.world.entities.colony.colonies.ant_colony.operation.build_new_sub_nest_operation import BuildNewSubNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.destroy_nest_operation import DestroyNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.bring_item_to_nest_operation import BringItemToNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.pillage_nest_operation import PillageNestOperation
@@ -13,8 +13,8 @@ class OperationSerializer():
 
     def serialize(self, operation: Operation):
         match(operation.type):
-            case OperationTypes.BUILD_NEW_NEST:
-                return self._serialize_build_new_nest(operation)
+            case OperationTypes.BUILD_NEW_SUB_NEST:
+                return self._serialize_build_new_sub_nest(operation)
             case OperationTypes.DESTROY_NEST:
                 return self._serialize_destroy_nest(operation)
             case OperationTypes.BRING_ITEM_TO_NEST:
@@ -32,10 +32,11 @@ class OperationSerializer():
             'type': operation.type,
         }
 
-    def _serialize_build_new_nest(self, operation: BuildNewNestOperation):
+    def _serialize_build_new_sub_nest(self, operation: BuildNewSubNestOperation):
         json = self._serialize_operation(operation)
         json.update({
-            'building_site': operation.building_site
+            'building_site': operation.building_site,
+            'workers_count': operation.workers_count
         })
 
         return json

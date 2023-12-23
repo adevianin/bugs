@@ -4,25 +4,28 @@ class ColonyApi {
         this._serverConnection = serverConnection;
     }
 
-    stopMyColonyOperation(operationId) {
+    stopOperation(colonyId, operationId) {
         this._serverConnection.send({
             type: 'command',
             command: {
                 command_type: 'stop_operation',
                 params: {
-                    operation_id: operationId
+                    operation_id: operationId,
+                    colony_id: colonyId
                 }
             }
         });
     }
 
-    buildNewNest(position) {
+    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
         this._serverConnection.send({
             type: 'command',
             command: {
-                command_type: 'build_new_nest',
+                command_type: 'build_new_sub_nest',
                 params: {
-                    position
+                    colony_id: colonyId,
+                    building_site: buildingSite,
+                    workers_count: workersCount
                 }
             }
         });

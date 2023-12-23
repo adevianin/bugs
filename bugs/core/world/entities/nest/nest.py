@@ -82,12 +82,14 @@ class Nest(Entity):
     def build(self):
         is_build_before = self.is_built
         build_step = 5
+        hp_step = 5 * self._body.stats.max_hp / 100
         if not self.is_built:
             if self._build_progress + build_step >= 100:
                 self._build_progress = 100
                 self._body.hp = self._body.stats.max_hp
             else:
                 self._build_progress += build_step
+                self._body.hp += hp_step
 
         if is_build_before != self.is_built:
             self._emit_building_status_changed()

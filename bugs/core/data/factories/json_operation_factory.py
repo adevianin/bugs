@@ -12,8 +12,8 @@ class JsonOperationFactory():
 
     def build_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
         match(operation_json['type']):
-            case OperationTypes.BUILD_NEW_NEST:
-                return self._build_build_new_nest_operation_from_json(operation_json, entities_collection)
+            case OperationTypes.BUILD_NEW_SUB_NEST:
+                return self._build_build_new_sub_nest_operation_from_json(operation_json, entities_collection)
             case OperationTypes.DESTROY_NEST:
                 return self._build_destory_nest_operation_from_json(operation_json, entities_collection)
             case OperationTypes.BRING_ITEM_TO_NEST:
@@ -23,10 +23,11 @@ class JsonOperationFactory():
             case _:
                 raise Exception('unknown type of operation')
 
-    def _build_build_new_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
+    def _build_build_new_sub_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
         hired_ants = entities_collection.get_entities(operation_json['hired'])
-        building_site = Point(operation_json['building_site'][0], operation_json['building_site'][1])
-        return self._operation_factory.build_build_new_nest_operation(id=operation_json['id'], hired_ants=hired_ants, flags=operation_json['flags'], building_site=building_site)
+        building_site = Point.from_json(operation_json['building_site'])
+        workers_count = operation_json['workers_count']
+        return self._operation_factory.build_build_new_sub_nest_operation(id=operation_json['id'], hired_ants=hired_ants, flags=operation_json['flags'], building_site=building_site, workers_count=workers_count)
     
     def _build_destory_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
         hired_ants = entities_collection.get_entities(operation_json['hired'])

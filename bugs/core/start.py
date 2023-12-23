@@ -34,7 +34,7 @@ from core.world.entities.ground_beetle.ground_beetle_factory import GroundBeetle
 from core.world.entities.world.world_factory import WorldFactory
 from core.world.services.nest_service import NestService
 from core.world.entities.nest.nest_factory import NestFactory
-from core.world.services.colony_service import ColonyService
+from core.world.services.operation_service import OperationService
 from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
 from core.world.entities.thought.thought_factory import ThoughtFactory
@@ -62,7 +62,7 @@ def start():
     map_factory = MapFactory(event_bus)
     world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ground_beetle_factory)
     
-    colony_service = ColonyService(operation_factory)
+    operation_service = OperationService(operation_factory)
     nest_service = NestService()
     user_service = UserService(colony_factory, ant_factory)
 
@@ -97,11 +97,11 @@ def start():
     json_item_area_factory = JsonItemAreaFactory(item_area_factory)
     world_repository = WorldRepository(world_data_repository, json_nest_factory, json_ant_factory, json_colony_factory, json_thought_factory, json_map_factory, world_factory, json_ground_beetle_factory, json_item_factory, json_item_source_factory, json_item_area_factory, world_serializer)
 
-    world_facade = WorldFacade.init(event_bus, world_repository, colony_service, nest_service, user_service)
+    world_facade = WorldFacade.init(event_bus, world_repository, operation_service, nest_service, user_service)
 
     world_facade.init_world()
 
-    colony_service.set_world(world_facade.world)
+    operation_service.set_world(world_facade.world)
     nest_service.set_world(world_facade.world)
     user_service.set_world(world_facade.world)
 

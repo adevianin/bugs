@@ -90,10 +90,13 @@ class DomainFacade {
         return this._worldService.world.findQueenFromColony(colonyId);
     }
 
+    stopOperation(colonyId, operationId) {
+        this._colonyService.stopOperation(colonyId, operationId);
+    }
 
-
-
-
+    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
+        this._colonyService.buildNewSubNestOperation(colonyId, buildingSite, workersCount);
+    }
 
 
 
@@ -114,9 +117,9 @@ class DomainFacade {
         return colony.ownerId == userData.id;
     }
 
-    buildNewNest(position) {
-        this._colonyService.buildNewNest(position);
-    }
+    // buildNewNest(position) {
+    //     this._colonyService.buildNewNest(position);
+    // }
 
     destroyNestOperation(nest) {
         this._colonyService.destroyNestOperation(nest);
@@ -126,9 +129,9 @@ class DomainFacade {
         this._colonyService.pillageNestOperation(pillagingNest, unloadingNest);
     }
 
-    stopMyColonyOperation(operationId) {
-        this._colonyService.stopMyColonyOperation(operationId);
-    }
+    // stopMyColonyOperation(operationId) {
+    //     this._colonyService.stopMyColonyOperation(operationId);
+    // }
 
     findNearestNestForOffensiveOperation(point) {
         let userData = this.getUserData();
@@ -1304,13 +1307,21 @@ class ColonyService {
         this._mainEventBus.emit('colonyBorn', colony);
     }
 
-    stopMyColonyOperation(operationId) {
-        this._colonyApi.stopMyColonyOperation(operationId);
+    stopOperation(colonyId, operationId) {
+        this._colonyApi.stopOperation(colonyId, operationId);
     }
 
-    buildNewNest(position) {
-        this._colonyApi.buildNewNest(position);
+    // stopMyColonyOperation(operationId) {
+    //     this._colonyApi.stopMyColonyOperation(operationId);
+    // }
+
+    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
+        this._colonyApi.buildNewSubNestOperation(colonyId, buildingSite, workersCount);
     }
+
+    // buildNewNest(position) {
+    //     this._colonyApi.buildNewNest(position);
+    // }
 
     destroyNestOperation(nest) {
         this._colonyApi.destroyNestOperation(nest);
@@ -1319,6 +1330,8 @@ class ColonyService {
     pillageNestOperation(pillagingNest, unloadingNest) {
         this._colonyApi.pillageNestOperation(pillagingNest, unloadingNest);
     }
+
+    build
 
 }
 
@@ -1662,25 +1675,28 @@ class ColonyApi {
         this._serverConnection = serverConnection;
     }
 
-    stopMyColonyOperation(operationId) {
+    stopOperation(colonyId, operationId) {
         this._serverConnection.send({
             type: 'command',
             command: {
                 command_type: 'stop_operation',
                 params: {
-                    operation_id: operationId
+                    operation_id: operationId,
+                    colony_id: colonyId
                 }
             }
         });
     }
 
-    buildNewNest(position) {
+    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
         this._serverConnection.send({
             type: 'command',
             command: {
-                command_type: 'build_new_nest',
+                command_type: 'build_new_sub_nest',
                 params: {
-                    position
+                    colony_id: colonyId,
+                    building_site: buildingSite,
+                    workers_count: workersCount
                 }
             }
         });
@@ -2367,10 +2383,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _panelTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./panelTmpl.html */ "./bugs/core/client/app/src/view/panel/panelTmpl.html");
 /* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _tabs_userTab_userTab__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./tabs/userTab/userTab */ "./bugs/core/client/app/src/view/panel/tabs/userTab/userTab.js");
-/* harmony import */ var _tabs_operationsTab_operationsTab__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tabs/operationsTab/operationsTab */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.js");
-/* harmony import */ var _tabs_coloniesTab__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./tabs/coloniesTab */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/index.js");
-/* harmony import */ var _view_base_tabSwitcher_tabSwitcher__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @view/base/tabSwitcher/tabSwitcher */ "./bugs/core/client/app/src/view/base/tabSwitcher/tabSwitcher.js");
-
+/* harmony import */ var _tabs_coloniesTab__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tabs/coloniesTab */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/index.js");
+/* harmony import */ var _view_base_tabSwitcher_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/base/tabSwitcher/tabSwitcher */ "./bugs/core/client/app/src/view/base/tabSwitcher/tabSwitcher.js");
 
 
 
@@ -2396,12 +2410,10 @@ class Panel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView
         this._el.innerHTML = _panelTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._userTab = new _tabs_userTab_userTab__WEBPACK_IMPORTED_MODULE_3__.UserTab(this._el.querySelector('[data-user-tab]'));
-        this._operationsTab = new _tabs_operationsTab_operationsTab__WEBPACK_IMPORTED_MODULE_4__.OperationsTab(this._el.querySelector('[data-operations-tab]'));
-        this._coloniesTab = new _tabs_coloniesTab__WEBPACK_IMPORTED_MODULE_5__.ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));
+        this._coloniesTab = new _tabs_coloniesTab__WEBPACK_IMPORTED_MODULE_4__.ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));
 
-        this._tabSwitcher = new _view_base_tabSwitcher_tabSwitcher__WEBPACK_IMPORTED_MODULE_6__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+        this._tabSwitcher = new _view_base_tabSwitcher_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
             { name: 'user', label: 'Користувач', tab: this._userTab },
-            { name: 'operations', label: 'Операції', tab: this._operationsTab },
             { name: 'colonies', label: 'Колонії', tab: this._coloniesTab }
         ]);
     }
@@ -2709,6 +2721,7 @@ class ColonyManager extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__
         this._colony = colony;
         this._colonyNameEl.innerHTML = `colony: ${this._colony.id}`;
         this._nestsTab.manageColony(colony);
+        this._operationsTab.manageColony(colony);
     }
 
     showNestManagerFor(nest) {
@@ -3199,6 +3212,333 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/index.js":
+/*!*********************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/index.js ***!
+  \*********************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OperationsCreatorView": () => (/* reexport safe */ _operationsCreatorView__WEBPACK_IMPORTED_MODULE_0__.OperationsCreatorView)
+/* harmony export */ });
+/* harmony import */ var _operationsCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./operationsCreatorView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationsCreatorView.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js":
+/*!**********************************************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js ***!
+  \**********************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "BaseOperationCreatorView": () => (/* binding */ BaseOperationCreatorView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+
+
+class BaseOperationCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(onDone) {
+        let el = document.createElement('div');
+        super(el);
+        this._onDone = onDone;
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/index.js":
+/*!***************************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/index.js ***!
+  \***************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NewNestOperationCreator": () => (/* reexport safe */ _newNest_newNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__.NewNestOperationCreator)
+/* harmony export */ });
+/* harmony import */ var _newNest_newNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./newNest/newNestOperationCreatorView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/newNest/newNestOperationCreatorView.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/newNest/newNestOperationCreatorView.js":
+/*!*********************************************************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/newNest/newNestOperationCreatorView.js ***!
+  \*********************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NewNestOperationCreator": () => (/* binding */ NewNestOperationCreator)
+/* harmony export */ });
+/* harmony import */ var _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseOperationCreatorView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js");
+/* harmony import */ var _newNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./newNestOperationCreatorTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/newNest/newNestOperationCreatorTmpl.html");
+
+
+
+class NewNestOperationCreator extends _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__.BaseOperationCreatorView {
+
+    constructor(colony, onDone) {
+        super(onDone);
+        this._buildingSite = null;
+        this._colony = colony;
+
+        this._render();
+
+        this._chooseBuildingSiteBtn.addEventListener('click', this._onChooseBuildingSiteBtnClick.bind(this));
+        this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = _newNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._chooseBuildingSiteBtn = this._el.querySelector('[data-choose-nest-position]');
+        this._startBtn = this._el.querySelector('[data-start]');
+        this._workersCountEl = this._el.querySelector('[data-workers-count]');
+        this._buildingSiteEl = this._el.querySelector('[data-building-site]');
+
+        this._renderBuildingSite();
+    }
+
+    _renderBuildingSite() {
+        if (this._buildingSite) {
+            this._buildingSiteEl.innerHTML = `(${this._buildingSite.x};${this._buildingSite.y})`;
+        } else {
+            this._buildingSiteEl.innerHTML = 'не задано';
+        }
+    }
+
+    _onChooseBuildingSiteBtnClick() {
+        this.$eventBus.emit('placeNewNestMarkerRequest', (point) => { 
+            this._buildingSite = point;
+            this._renderBuildingSite();
+        });
+    }
+
+    _onStartBtnClick() {
+        if (!this._buildingSite) {
+            return
+        }
+        let workersCount = parseInt(this._workersCountEl.value);
+        this.$domainFacade.buildNewSubNestOperation(this._colony.id, this._buildingSite, workersCount);
+        this._onDone();
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationsCreatorView.js":
+/*!*************************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationsCreatorView.js ***!
+  \*************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OperationsCreatorView": () => (/* binding */ OperationsCreatorView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _operationsCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationsCreatorTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationsCreatorTmpl.html");
+/* harmony import */ var _operationCreators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./operationCreators */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/index.js");
+
+
+
+
+class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+
+        this._render();
+
+        this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
+        this._newNestOperationBtn.addEventListener('click', this._onNewNestOperationBtnClick.bind(this));
+    }
+
+    manageColony(colony) {
+        this._colony = colony;
+    }
+
+    _render() {
+        this._el.innerHTML = _operationsCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._newNestOperationBtn = this._el.querySelector('[data-add-new-nest]');
+        this._newOperationsBtnsListEl = this._el.querySelector('[data-new-operation-list]');
+        this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
+        this._operationCreatorPlaceholderEl = this._el.querySelector('[data-operation-creator-placeholder]');
+        this._toggleCreatorMode(false);
+    }
+
+    _toggleCreatorMode(isCreatorMode) {
+        this._newOperationsBtnsListEl.classList.toggle('hidden', isCreatorMode);
+        this._cancelOperationCreatingBtn.classList.toggle('hidden', !isCreatorMode);
+        this._operationCreatorPlaceholderEl.classList.toggle('hidden', !isCreatorMode);
+    }
+
+    _stopOperationCreating() {
+        this._operationCreator.remove();
+        this._operationCreator = null;
+        this._toggleCreatorMode(false);
+        this.$eventBus.emit('cancelAnyMarkerPlacerRequest');
+    }
+
+    _onNewNestOperationBtnClick() {
+        this._toggleCreatorMode(true);
+        this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.NewNestOperationCreator(this._colony, this._stopOperationCreating.bind(this));
+        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/index.js":
+/*!******************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/index.js ***!
+  \******************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OperationsListView": () => (/* reexport safe */ _operationsListView__WEBPACK_IMPORTED_MODULE_0__.OperationsListView)
+/* harmony export */ });
+/* harmony import */ var _operationsListView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./operationsListView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationsListView.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationView.js":
+/*!**************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationView.js ***!
+  \**************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OperationView": () => (/* binding */ OperationView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _operationTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationTmpl.html");
+
+
+
+class OperationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, operation, colonyId) {
+        super(el);
+        this._operation = operation;
+        this._colonyId = colonyId;
+        
+        this._render();
+
+        this._stopBtn.addEventListener('click', this._onStopBtnClick.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = _operationTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.querySelector('[data-name]').innerHTML = this._operation.name;
+        this._el.querySelector('[data-status]').innerHTML = this._operation.status;
+        this._stopBtn = this._el.querySelector('[data-stop-btn]');
+    }
+
+    _onStopBtnClick() {
+        this.$domainFacade.stopOperation(this._colonyId, this._operation.id);
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationsListView.js":
+/*!*******************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationsListView.js ***!
+  \*******************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OperationsListView": () => (/* binding */ OperationsListView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _operationView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationView.js");
+
+
+
+class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+    
+    constructor(el) {
+        super(el);
+        this._operationViews = {};
+    }
+
+    manageColony(colony) {
+        if (this._colony) {
+            this._stopListenColony();
+        }
+
+        this._colony = colony;
+        this._listenColony(colony);
+
+        this._renderColonyOperations();
+    }
+
+    _listenColony(colony) {
+        this._stopListeningOperationsChanges = colony.on('operationsChanged', this._renderColonyOperations.bind(this));
+    }
+
+    _stopListenColony() {
+        this._stopListeningOperationsChanges();
+    }
+
+    _renderColonyOperations() {
+        this._removeOperationViews();
+        this._colony.operations.forEach(operation => {
+            let el = document.createElement('li');
+            let view = new _operationView__WEBPACK_IMPORTED_MODULE_1__.OperationView(el, operation, this._colony.id);
+            this._operationViews[operation.id] = view;
+            this._el.append(el);
+        });
+    }
+
+    _removeOperationViews() {
+        for (let operationId in this._operationViews) {
+            this._operationViews[operationId].remove();
+        }
+        this._operationViews = {};
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsTab.js":
 /*!***********************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsTab.js ***!
@@ -3212,6 +3552,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _operationsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationsTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsTabTmpl.html");
+/* harmony import */ var _operationsList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./operationsList */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/index.js");
+/* harmony import */ var _operationsCreator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./operationsCreator */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/index.js");
+
+
 
 
 
@@ -3223,8 +3567,17 @@ class OperationsTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._render();
     }
 
+    manageColony(colony) {
+        this._colony = colony;
+        this._operationsCreator.manageColony(colony);
+        this._operationsList.manageColony(colony);
+    }
+
     _render() {
         this._el.innerHTML = _operationsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._operationsList = new _operationsList__WEBPACK_IMPORTED_MODULE_2__.OperationsListView(this._el.querySelector('[data-operations-list]'));
+        this._operationsCreator = new _operationsCreator__WEBPACK_IMPORTED_MODULE_3__.OperationsCreatorView(this._el.querySelector('[data-operations-creator]'));
     }
 }
 
@@ -3245,343 +3598,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _coloniesTabView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./coloniesTabView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesTabView.js");
 
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/destroyNest/destroyNestOperationCreator.js":
-/*!*****************************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/destroyNest/destroyNestOperationCreator.js ***!
-  \*****************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DestroyNestOperationCreator": () => (/* binding */ DestroyNestOperationCreator)
-/* harmony export */ });
-/* harmony import */ var _destoryNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./destoryNestOperationCreatorTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/destroyNest/destoryNestOperationCreatorTmpl.html");
-/* harmony import */ var _operationCreator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../operationCreator */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/operationCreator.js");
-
-
-
-class DestroyNestOperationCreator extends _operationCreator__WEBPACK_IMPORTED_MODULE_1__.OperationCreator {
-
-    constructor(el, onDone) {
-        super(el, onDone);
-
-        this._render();
-
-        this._chooseNestBtnEl.addEventListener('click', this._onChooseNestBtnClick.bind(this));
-    }
-
-    _render() {
-        this._el.innerHTML = _destoryNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_0__["default"];
-
-        this._chooseNestBtnEl = this._el.querySelector('[data-choose-nest-btn]');
-    }
-
-    _onChooseNestBtnClick() {
-        this.$eventBus.emit('placeDestroyNestMarkerRequest', (nest) => {
-            this.$domainFacade.destroyNestOperation(nest);
-            this._onDone();
-        });
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/newNest/newNestOperationCreator.js":
-/*!*********************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/newNest/newNestOperationCreator.js ***!
-  \*********************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "NewNestOperationCreator": () => (/* binding */ NewNestOperationCreator)
-/* harmony export */ });
-/* harmony import */ var _newNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./newNestOperationCreatorTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/newNest/newNestOperationCreatorTmpl.html");
-/* harmony import */ var _operationCreator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../operationCreator */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/operationCreator.js");
-
-
-
-class NewNestOperationCreator extends _operationCreator__WEBPACK_IMPORTED_MODULE_1__.OperationCreator {
-
-    constructor(el, onDone) {
-        super(el, onDone);
-
-        this._render();
-
-        this._chooseBuildingSiteBtnEl.addEventListener('click', this._chooseBuildingSiteBtnClick.bind(this));
-    }
-
-    _render() {
-        this._el.innerHTML = _newNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_0__["default"];
-
-        this._chooseBuildingSiteBtnEl = this._el.querySelector('[data-choose-building-site-btn]');
-    }
-
-    _chooseBuildingSiteBtnClick() {
-        this.$eventBus.emit('placeNewNestMarkerRequest', (point) => {
-            NewNestOperationCreator.domainFacade.buildNewNest({
-                x: point.x,
-                y: point.y 
-            })
-            this._onDone();
-        });
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/operationCreator.js":
-/*!******************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/operationCreator.js ***!
-  \******************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "OperationCreator": () => (/* binding */ OperationCreator)
-/* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
-
-
-class OperationCreator extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
-
-    constructor(el, onDone) {
-        super(el);
-        this._onDone = onDone;
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/pillageNest/pillageNestOperationCreator.js":
-/*!*****************************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/pillageNest/pillageNestOperationCreator.js ***!
-  \*****************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "PillageNestOperationCreator": () => (/* binding */ PillageNestOperationCreator)
-/* harmony export */ });
-/* harmony import */ var _pillageNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./pillageNestOperationCreatorTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/pillageNest/pillageNestOperationCreatorTmpl.html");
-/* harmony import */ var _operationCreator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../operationCreator */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/operationCreator.js");
-
-
-
-class PillageNestOperationCreator extends _operationCreator__WEBPACK_IMPORTED_MODULE_1__.OperationCreator {
-
-    constructor(el, onDone) {
-        super(el, onDone);
-
-        this._render();
-
-        this._choosePillagingNestBtnEl.addEventListener('click', this._onChoosePillagingNestBtnClick.bind(this));
-        this._chooseUnloadingNestBtnEl.addEventListener('click', this._onChooseUnloadingNestBtnClick.bind(this));
-    }
-
-    _render() {
-        this._el.innerHTML = _pillageNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_0__["default"];
-
-        this._choosePillagingNestBtnEl = this._el.querySelector('[data-choose-pillaging-nest-btn]');
-        this._chooseUnloadingNestBtnEl = this._el.querySelector('[data-choose-unloading-nest-btn]');
-    }
-
-    _onChoosePillagingNestBtnClick() {
-        this.$eventBus.emit('placePillageNestMarkerRequest', (pillagingNest) => {
-            this._pillagingNest = pillagingNest;
-            this._onMarkerPlaced();
-        });
-    }
-
-    _onChooseUnloadingNestBtnClick() {
-        this.$eventBus.emit('placeUnloadingNestMarkerRequest', (unloadingNest) => {
-            this._unloadingNest = unloadingNest;
-            this._onMarkerPlaced();
-        });
-    }
-
-    _onMarkerPlaced() {
-        if (this._unloadingNest && this._pillagingNest) {
-            this.$domainFacade.pillageNestOperation(this._pillagingNest, this._unloadingNest);
-            this._onDone();
-        }
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsList/operationsList.js":
-/*!*************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsList/operationsList.js ***!
-  \*************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "OperationsList": () => (/* binding */ OperationsList)
-/* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
-/* harmony import */ var _operationTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsList/operationTmpl.html");
-
-
-
-class OperationsList extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
-
-    constructor(el, myColony) {
-        super(el);
-        this._myColony = myColony;
-
-        this._myColony.on('operationsChanged', this._render.bind(this));
-
-        this._render();
-    }
-
-    _render() {
-        this._el.innerHTML = '';
-
-        this._myColony.operations.forEach(operation => {
-            this._renderOperation(operation);
-        });
-    }
-
-    _renderOperation(operation) {
-        let liEl = document.createElement('li');
-        liEl.innerHTML = _operationTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        liEl.querySelector('[data-name]').innerHTML = operation.name;
-        liEl.querySelector('[data-status]').innerHTML = operation.status;
-        liEl.querySelector('[data-stop-btn]').addEventListener('click', () => {
-            this._stopOperation(operation);
-        });
-        this._el.appendChild(liEl);
-    }
-
-    _stopOperation(operation) {
-        this.$domainFacade.stopMyColonyOperation(operation.id);
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.js":
-/*!*********************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.js ***!
-  \*********************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "OperationsTab": () => (/* binding */ OperationsTab)
-/* harmony export */ });
-/* harmony import */ var _operationsTab_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./operationsTab.css */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css");
-/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
-/* harmony import */ var _operationTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./operationTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationTabTmpl.html");
-/* harmony import */ var _operationCreators_newNest_newNestOperationCreator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./operationCreators/newNest/newNestOperationCreator */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/newNest/newNestOperationCreator.js");
-/* harmony import */ var _operationCreators_destroyNest_destroyNestOperationCreator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./operationCreators/destroyNest/destroyNestOperationCreator */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/destroyNest/destroyNestOperationCreator.js");
-/* harmony import */ var _operationCreators_pillageNest_pillageNestOperationCreator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./operationCreators/pillageNest/pillageNestOperationCreator */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/pillageNest/pillageNestOperationCreator.js");
-/* harmony import */ var _operationsList_operationsList__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./operationsList/operationsList */ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsList/operationsList.js");
-
-
-
-
-
-
-
- 
-
-class OperationsTab extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
-    
-    constructor(el) {
-        super(el);
-        this._operationCreator = null;
-        this._el.innerHTML =  'операції'
-        // this._myColony = this.$domainFacade.findMyColony();
-
-        // this._render();
-
-        // this._addNewNestBtn.addEventListener('click', this._onAddNewNestClick.bind(this));
-        // this._destroyNestBtn.addEventListener('click', this._onDestroyNestClick.bind(this));
-        // this._pillageNestBtn.addEventListener('click', this._onPillageNestClick.bind(this));
-        // this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
-    }
-
-    toggle(isEnabled) {
-        super.toggle(isEnabled);
-        this.$eventBus.emit('operationsViewActivationChanged', isEnabled);
-    }
-
-    _render() {
-        this._el.classList.add('operation-tab');
-        this._el.innerHTML = _operationTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
-
-        this._addNewNestBtn = this._el.querySelector('[data-add-new-nest]');
-        this._destroyNestBtn = this._el.querySelector('[data-destroy-nest]');
-        this._pillageNestBtn = this._el.querySelector('[data-pillage-nest]');
-        this._newOperationListEl = this._el.querySelector('[data-new-operation-list]');
-        this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
-
-        new _operationsList_operationsList__WEBPACK_IMPORTED_MODULE_6__.OperationsList(this._el.querySelector('[data-operations-list]'), this._myColony);
-
-        this._toggleOperationCreating(false);
-    }
-
-    _stopOperationCreating() {
-        this._operationCreator.remove();
-        this._operationCreator = null;
-        this._toggleOperationCreating(false);
-        this.$eventBus.emit('cancelAnyMarkerPlacerRequest');
-    }
-
-    _onAddNewNestClick() {
-        this._toggleOperationCreating(true);
-        let el = document.createElement('div');
-        this._el.querySelector('[data-operation-creator-placeholder]').appendChild(el);
-        this._operationCreator = new _operationCreators_newNest_newNestOperationCreator__WEBPACK_IMPORTED_MODULE_3__.NewNestOperationCreator(el, this._stopOperationCreating.bind(this));
-    }
-
-    _onDestroyNestClick() {
-        this._toggleOperationCreating(true);
-        let el = document.createElement('div');
-        this._el.querySelector('[data-operation-creator-placeholder]').appendChild(el);
-        this._operationCreator = new _operationCreators_destroyNest_destroyNestOperationCreator__WEBPACK_IMPORTED_MODULE_4__.DestroyNestOperationCreator(el, this._stopOperationCreating.bind(this));
-    }
-
-    _onPillageNestClick() {
-        this._toggleOperationCreating(true);
-        let el = document.createElement('div');
-        this._el.querySelector('[data-operation-creator-placeholder]').appendChild(el);
-        this._operationCreator = new _operationCreators_pillageNest_pillageNestOperationCreator__WEBPACK_IMPORTED_MODULE_5__.PillageNestOperationCreator(el, this._stopOperationCreating.bind(this));
-    }
-
-    _toggleOperationCreating(isCreating) {
-        this._newOperationListEl.classList.toggle('hidden', isCreating);
-        this._cancelOperationCreatingBtn.classList.toggle('hidden', !isCreating);
-    }
-}
 
 
 
@@ -5321,7 +5337,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n/* .colony_manager__tabs_list {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony_manager__tab_button {\r\n    margin-left: 5px\r\n} */", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,YAAY;AAChB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,YAAY;AAChB;;AAEA;;;;;;;GAOG","sourcesContent":[".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n/* .colony_manager__tabs_list {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony_manager__tab_button {\r\n    margin-left: 5px\r\n} */"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n\r\n.colony-manager__operations-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__operations-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__operations-creator {\r\n    padding: 3px;\r\n}\r\n\r\n.colony-manager__new_operations_list {\r\n    padding: 3px;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,YAAY;AAChB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,YAAY;AAChB;;;AAGA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,YAAY;IACZ,SAAS;IACT,qBAAqB;AACzB","sourcesContent":[".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n\r\n.colony-manager__operations-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__operations-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__operations-creator {\r\n    padding: 3px;\r\n}\r\n\r\n.colony-manager__new_operations_list {\r\n    padding: 3px;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -5349,33 +5365,6 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, ".colonies-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/coloniesTab/styles.css"],"names":[],"mappings":"AAAA;IACI,aAAa;IACb,mBAAmB;AACvB","sourcesContent":[".colonies-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n"],"sourceRoot":""}]);
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css":
-/*!************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css ***!
-  \************************************************************************************************************************/
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-// Imports
-
-
-var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-// Module
-___CSS_LOADER_EXPORT___.push([module.id, ".operation-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.operation-tab__new-operation-list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.operation-tab__operations-list-container {\r\n    padding: 5px;\r\n    width: 150px;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css"],"names":[],"mappings":"AAAA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,UAAU;IACV,SAAS;IACT,qBAAqB;AACzB;;AAEA;IACI,YAAY;IACZ,YAAY;AAChB","sourcesContent":[".operation-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.operation-tab__new-operation-list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.operation-tab__operations-list-container {\r\n    padding: 5px;\r\n    width: 150px;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -7179,7 +7168,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div><span data-colony-name></span></div>\r\n<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switcher></div>\r\n<div>\r\n    <div data-ants-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div class=\"colony-manager__nest-tab\" data-nests-tab></div>\r\n</div>\r\n";
+var code = "<div><span data-colony-name></span></div>\r\n<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switcher></div>\r\n<div>\r\n    <div data-ants-tab></div>\r\n    <div class=\"colony-manager__operations-tab\" data-operations-tab></div>\r\n    <div class=\"colony-manager__nest-tab\" data-nests-tab></div>\r\n</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -7275,6 +7264,60 @@ var code = "<ul class=\"colony-manager__nests-list\" data-nests-list></ul>\r\n<d
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/newNest/newNestOperationCreatorTmpl.html":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/newNest/newNestOperationCreatorTmpl.html ***!
+  \***********************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість робочих: \r\n    <input data-workers-count type=\"number\" min=\"1\" max=\"3\" value=\"1\" required>\r\n</div>\r\n<button data-start>старт</button>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationsCreatorTmpl.html":
+/*!***************************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationsCreatorTmpl.html ***!
+  \***************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div data-new-operation-list>\r\n    створити операцію:\r\n    <ul class=\"colony-manager__new_operations_list\">\r\n        <li><button data-add-new-nest>нове гніздо</button></li>\r\n        <li><button data-destroy-nest>розвалить гніздо</button></li>\r\n        <li><button data-pillage-nest>пограбувать гніздо</button></li>\r\n    </ul>\r\n</div>\r\n<button data-cancel-operation-creating>назад</button>\r\n<div data-operation-creator-placeholder></div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationTmpl.html":
+/*!****************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationTmpl.html ***!
+  \****************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<span data-name></span>\r\n<span data-status></span>\r\n<button data-stop-btn>X</button>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsTabTmpl.html":
 /*!*****************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsTabTmpl.html ***!
@@ -7287,97 +7330,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "operations tab";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/destroyNest/destoryNestOperationCreatorTmpl.html":
-/*!***********************************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/destroyNest/destoryNestOperationCreatorTmpl.html ***!
-  \***********************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "зруйнувати гніздо\r\n<button data-choose-nest-btn>вибрать гніздо для руйнування</button>";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/newNest/newNestOperationCreatorTmpl.html":
-/*!***************************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/newNest/newNestOperationCreatorTmpl.html ***!
-  \***************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "створюємо нове гніздо\r\n<button data-choose-building-site-btn>вибрать місце будування</button>";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/pillageNest/pillageNestOperationCreatorTmpl.html":
-/*!***********************************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationCreators/pillageNest/pillageNestOperationCreatorTmpl.html ***!
-  \***********************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "грабить гніздо гніздо\r\n<button data-choose-pillaging-nest-btn>вибрать гніздо для грабєжа</button>\r\n<button data-choose-unloading-nest-btn>вибрать гніздо для складання</button>";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationTabTmpl.html":
-/*!**************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationTabTmpl.html ***!
-  \**************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<div>\r\n    список операцій:\r\n    <ul class=\"operation-tab__operations-list-container\" data-operations-list></ul>\r\n</div>\r\n<button data-cancel-operation-creating>назад</button>\r\n<div data-new-operation-list>\r\n    створити операцію:\r\n    <ul class=\"operation-tab__new-operation-list\">\r\n        <li><button data-add-new-nest>нове гніздо</button></li>\r\n        <li><button data-destroy-nest>розвалить гніздо</button></li>\r\n        <li><button data-pillage-nest>пограбувать гніздо</button></li>\r\n    </ul>\r\n</div>\r\n<div data-operation-creator-placeholder></div>\r\n";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsList/operationTmpl.html":
-/*!**************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsList/operationTmpl.html ***!
-  \**************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<span data-name></span>\r\n<span data-status></span>\r\n<button data-stop-btn>X</button>";
+var code = "<ul class=\"colony-manager__operations-list\" data-operations-list></ul>\r\n<div class=\"colony-manager__operations-creator\" data-operations-creator></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -8120,61 +8073,6 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
        /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css":
-/*!**********************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css ***!
-  \**********************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_operationsTab_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../../node_modules/css-loader/dist/cjs.js!./operationsTab.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/operationsTab/operationsTab.css");
-
-      
-      
-      
-      
-      
-      
-      
-      
-      
-
-var options = {};
-
-options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
-options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
-
-      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
-    
-options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
-options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
-
-var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_operationsTab_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
-
-
-
-
-       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_operationsTab_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_operationsTab_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_operationsTab_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),

@@ -13,13 +13,21 @@ class ColonyService {
         this._mainEventBus.emit('colonyBorn', colony);
     }
 
-    stopMyColonyOperation(operationId) {
-        this._colonyApi.stopMyColonyOperation(operationId);
+    stopOperation(colonyId, operationId) {
+        this._colonyApi.stopOperation(colonyId, operationId);
     }
 
-    buildNewNest(position) {
-        this._colonyApi.buildNewNest(position);
+    // stopMyColonyOperation(operationId) {
+    //     this._colonyApi.stopMyColonyOperation(operationId);
+    // }
+
+    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
+        this._colonyApi.buildNewSubNestOperation(colonyId, buildingSite, workersCount);
     }
+
+    // buildNewNest(position) {
+    //     this._colonyApi.buildNewNest(position);
+    // }
 
     destroyNestOperation(nest) {
         this._colonyApi.destroyNestOperation(nest);
@@ -28,6 +36,8 @@ class ColonyService {
     pillageNestOperation(pillagingNest, unloadingNest) {
         this._colonyApi.pillageNestOperation(pillagingNest, unloadingNest);
     }
+
+    build
 
 }
 

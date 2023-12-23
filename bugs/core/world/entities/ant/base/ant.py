@@ -23,6 +23,10 @@ class Ant(LiveEntity):
         self.events.add_listener('died', self._on_died)
 
     @property
+    def sayer(self) -> EventEmitter:
+        return self._body.sayer
+
+    @property
     def ant_type(self):
         return self._ant_type
     

@@ -1,5 +1,5 @@
 import pillageNestOperationCreatorTmpl from './pillageNestOperationCreatorTmpl.html'
-import { OperationCreator } from '../operationCreator';
+import { OperationCreator } from '../../../coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView';
 
 class PillageNestOperationCreator extends OperationCreator {
 

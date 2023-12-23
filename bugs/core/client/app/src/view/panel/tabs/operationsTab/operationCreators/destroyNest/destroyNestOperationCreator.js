@@ -1,5 +1,5 @@
 import destroyNestOperationCreatorTmpl from './destoryNestOperationCreatorTmpl.html'
-import { OperationCreator } from '../operationCreator';
+import { OperationCreator } from '../../../coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView';
 
 class DestroyNestOperationCreator extends OperationCreator {
 

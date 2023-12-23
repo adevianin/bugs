@@ -20,16 +20,7 @@ class OperationsList extends BaseHTMLView {
         });
     }
 
-    _renderOperation(operation) {
-        let liEl = document.createElement('li');
-        liEl.innerHTML = operationTmpl;
-        liEl.querySelector('[data-name]').innerHTML = operation.name;
-        liEl.querySelector('[data-status]').innerHTML = operation.status;
-        liEl.querySelector('[data-stop-btn]').addEventListener('click', () => {
-            this._stopOperation(operation);
-        });
-        this._el.appendChild(liEl);
-    }
+    
 
     _stopOperation(operation) {
         this.$domainFacade.stopMyColonyOperation(operation.id);

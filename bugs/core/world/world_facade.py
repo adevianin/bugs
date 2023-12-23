@@ -1,6 +1,6 @@
 from .utils.event_emiter import EventEmitter
 from .services.nest_service import NestService
-from .services.colony_service import ColonyService
+from .services.operation_service import OperationService
 from .services.user_service import UserService
 from core.world.utils.point import Point
 from core.world.world_repository_interface import iWorldRepository
@@ -12,8 +12,8 @@ class WorldFacade:
     WORLD_ID = 1
 
     @classmethod
-    def init(cls, event_bus: EventEmitter,  world_repository: iWorldRepository, colony_service: ColonyService, nest_service: NestService, user_service: UserService):
-        world_facade = WorldFacade(event_bus, world_repository, colony_service, nest_service, user_service)
+    def init(cls, event_bus: EventEmitter,  world_repository: iWorldRepository, operation_service: OperationService, nest_service: NestService, user_service: UserService):
+        world_facade = WorldFacade(event_bus, world_repository, operation_service, nest_service, user_service)
         WorldFacade._instance = world_facade
         return world_facade
 
@@ -21,7 +21,7 @@ class WorldFacade:
     def get_instance(cls) -> 'WorldFacade':
         return WorldFacade._instance
 
-    def __init__(self, event_bus: EventEmitter, world_repository: iWorldRepository, colony_service: ColonyService, nest_service: NestService, user_service: UserService):
+    def __init__(self, event_bus: EventEmitter, world_repository: iWorldRepository, operation_service: OperationService, nest_service: NestService, user_service: UserService):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
@@ -30,7 +30,7 @@ class WorldFacade:
         self._event_bus = event_bus
         self._world_repository = world_repository
 
-        self._colony_service = colony_service
+        self._operation_service = operation_service
         self._nest_service = nest_service
         self._user_service = user_service
         
@@ -70,14 +70,18 @@ class WorldFacade:
         match command_json['command_type']:
             case 'add_larva':
                 self._nest_service.add_larva(params['nest_id'], user_id, params['larva_type'])
-            case 'build_new_nest':
-                self._colony_service.build_new_nest(user_id, Point(params['position']['x'], params['position']['y']))
-            case 'destroy_nest':
-                self._colony_service.destroy_nest_operation(user_id, params['nest_id'])
-            case 'pillage_nest':
-                self._colony_service.pillage_nest_operation(user_id, params['pillaging_nest_id'], params['unloading_nest_id'])
             case 'stop_operation':
-                self._colony_service.cancel_operation(user_id, params['operation_id'])
+                self._operation_service.stop_operation(user_id, params['colony_id'], params['operation_id'])
+            case 'build_new_sub_nest':
+                building_site = Point(params['building_site']['x'], params['building_site']['y'])
+                colony_id = params['colony_id']
+                workers_count = params['workers_count']
+                self._operation_service.build_new_sub_nest(user_id, colony_id, building_site, workers_count)
+            # case 'destroy_nest':
+            #     self._colony_service.destroy_nest_operation(user_id, params['nest_id'])
+            # case 'pillage_nest':
+            #     self._colony_service.pillage_nest_operation(user_id, params['pillaging_nest_id'], params['unloading_nest_id'])
+            
             case _:
                 raise Exception('unknown type of command')
             

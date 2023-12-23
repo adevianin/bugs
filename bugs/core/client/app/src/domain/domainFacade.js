@@ -76,10 +76,13 @@ class DomainFacade {
         return this._worldService.world.findQueenFromColony(colonyId);
     }
 
+    stopOperation(colonyId, operationId) {
+        this._colonyService.stopOperation(colonyId, operationId);
+    }
 
-
-
-
+    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
+        this._colonyService.buildNewSubNestOperation(colonyId, buildingSite, workersCount);
+    }
 
 
 
@@ -100,9 +103,9 @@ class DomainFacade {
         return colony.ownerId == userData.id;
     }
 
-    buildNewNest(position) {
-        this._colonyService.buildNewNest(position);
-    }
+    // buildNewNest(position) {
+    //     this._colonyService.buildNewNest(position);
+    // }
 
     destroyNestOperation(nest) {
         this._colonyService.destroyNestOperation(nest);
@@ -112,9 +115,9 @@ class DomainFacade {
         this._colonyService.pillageNestOperation(pillagingNest, unloadingNest);
     }
 
-    stopMyColonyOperation(operationId) {
-        this._colonyService.stopMyColonyOperation(operationId);
-    }
+    // stopMyColonyOperation(operationId) {
+    //     this._colonyService.stopMyColonyOperation(operationId);
+    // }
 
     findNearestNestForOffensiveOperation(point) {
         let userData = this.getUserData();

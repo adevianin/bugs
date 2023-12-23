@@ -27,11 +27,24 @@
     padding: 3px;
 }
 
-/* .colony_manager__tabs_list {
+
+.colony-manager__operations-tab {
     display: flex;
     flex-direction: row;
 }
 
-.colony_manager__tab_button {
-    margin-left: 5px
-} */
+.colony-manager__operations-list {
+    list-style-type: none;
+    padding: 3px;
+    margin: 0;
+}
+
+.colony-manager__operations-creator {
+    padding: 3px;
+}
+
+.colony-manager__new_operations_list {
+    padding: 3px;
+    margin: 0;
+    list-style-type: none;
+}
