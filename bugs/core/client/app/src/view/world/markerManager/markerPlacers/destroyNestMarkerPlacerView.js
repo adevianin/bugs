@@ -3,9 +3,10 @@ import * as PIXI from 'pixi.js';
 
 class DestroyNestMarkerPlacerView extends BaseGraphicView {
 
-    constructor(markerContainer, callback) {
+    constructor(markerContainer, performingColonyId, callback) {
         super();
         this._markerContainer = markerContainer;
+        this._performingColonyId = performingColonyId;
         this._callback = callback;
 
         this._render();
@@ -21,7 +22,7 @@ class DestroyNestMarkerPlacerView extends BaseGraphicView {
 
     _onClick(e) {
         let point = this._markerContainer.toLocal(e.client);
-        let nest = this.$domainFacade.findNearestNestForOffensiveOperation(point);
+        let nest = this.$domainFacade.findNearestNestForOffensiveOperation(this._performingColonyId, point);
 
         if (nest) {
             this._callback(nest);

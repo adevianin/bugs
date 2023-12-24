@@ -17,27 +17,17 @@ class ColonyService {
         this._colonyApi.stopOperation(colonyId, operationId);
     }
 
-    // stopMyColonyOperation(operationId) {
-    //     this._colonyApi.stopMyColonyOperation(operationId);
-    // }
-
-    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
-        this._colonyApi.buildNewSubNestOperation(colonyId, buildingSite, workersCount);
+    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount) {
+        this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount);
     }
 
-    // buildNewNest(position) {
-    //     this._colonyApi.buildNewNest(position);
-    // }
-
-    destroyNestOperation(nest) {
-        this._colonyApi.destroyNestOperation(nest);
+    destroyNestOperation(performingColonyId, warriorsCount, nest) {
+        this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, nest);
     }
 
     pillageNestOperation(pillagingNest, unloadingNest) {
         this._colonyApi.pillageNestOperation(pillagingNest, unloadingNest);
     }
-
-    build
 
 }
 

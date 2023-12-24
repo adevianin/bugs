@@ -13,12 +13,13 @@ from core.world.entities.colony.colonies.ant_colony.formation.attack_formation i
 
 class DestroyNestOperation(Operation):
 
-    def __init__(self, events: EventEmitter, formation_manager: FormationManager, id: int, hired_ants: List[Ant], flags: dict, nest: Nest, attack_formation: AttackFormation = None):
+    def __init__(self, events: EventEmitter, formation_manager: FormationManager, id: int, hired_ants: List[Ant], flags: dict, nest: Nest, warriors_count: int, attack_formation: AttackFormation = None):
         self._nest = nest
         self._attack_formation = attack_formation
+        self._warriors_count = warriors_count
         super().__init__(events, formation_manager, id, OperationTypes.DESTROY_NEST, hired_ants, flags)
         self._name = 'знищення мурашника'
-        self._open_vacancies(AntTypes.WARRIOR, 5)
+        self._open_vacancies(AntTypes.WARRIOR, self._warriors_count)
         self._add_marker(MarkerTypes.CROSS, nest.position)
 
     @property
@@ -28,6 +29,10 @@ class DestroyNestOperation(Operation):
     @property
     def attack_foration(self) -> AttackFormation:
         return self._attack_formation
+    
+    @property
+    def warriors_count(self):
+        return self._warriors_count
 
     @property
     def _warriors(self) -> List[WarriorAnt]:

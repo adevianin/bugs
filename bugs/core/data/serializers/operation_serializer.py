@@ -48,6 +48,7 @@ class OperationSerializer():
 
         json.update({
             'nest_id': operation.nest_id,
+            'warriors_count': operation.warriors_count,
             'attack_formation': attack_formation_json
         })
 

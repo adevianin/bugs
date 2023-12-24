@@ -1,0 +1,47 @@
+import { BaseOperationCreatorView } from "../baseOperationCreatorView";
+import destroyNestOperationCreatorTmpl from './destroyNestOperationCreatorTmpl.html';
+
+class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
+
+    constructor(performingColony, onDone) {
+        super(performingColony, onDone);
+        this._choosedNest = null;
+
+        this._render();
+        this._chooseNestBtn.addEventListener('click', this._onChooseNestBtnClick.bind(this));
+        this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = destroyNestOperationCreatorTmpl;
+        this._choosedNestEl = this._el.querySelector('[data-choosed-nest]');
+        this._chooseNestBtn = this._el.querySelector('[data-choose-nest-btn]');
+        this._startBtn = this._el.querySelector('[data-start-btn]');
+        this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
+        this._renderChoosedNest();
+    }
+
+    _renderChoosedNest() {
+        this._choosedNestEl.innerHTML = this._choosedNest ? `(${ this._choosedNest.id })` : '(не вибрано)';
+    }
+
+    _onChooseNestBtnClick() {
+        this.$eventBus.emit('placeDestroyNestMarkerRequest', this._performingColony.id, (nest) => {
+            this._choosedNest = nest;
+            this._renderChoosedNest();
+        });
+    }
+
+    _onStartBtnClick() {
+        if (!this._choosedNest) {
+            return
+        }
+        let warriorsCount = parseInt(this._warriorsCountEl.value);
+        this.$domainFacade.destroyNestOperation(this._performingColony.id, warriorsCount, this._choosedNest);
+        this._onDone();
+    }
+}
+
+export {
+    DestroyNestOperationCreatorView
+}

@@ -32,8 +32,9 @@ class JsonOperationFactory():
     def _build_destory_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
         hired_ants = entities_collection.get_entities(operation_json['hired'])
         nest = entities_collection.get_entity_by_id(operation_json['nest_id'])
+        warriors_count = operation_json['warriors_count']
         attack_formation = self._json_formation_factory.build_formation_from_json(operation_json['attack_formation'], entities_collection)
-        return self._operation_factory.build_destroy_nest_operation(nest=nest, id=operation_json['id'], hired_ants=hired_ants, flags=operation_json['flags'], attack_formation=attack_formation)
+        return self._operation_factory.build_destroy_nest_operation(nest=nest, warriors_count=warriors_count, id=operation_json['id'], hired_ants=hired_ants, flags=operation_json['flags'], attack_formation=attack_formation)
     
     def _build_bring_item_to_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
         hired_ants = entities_collection.get_entities(operation_json['hired'])

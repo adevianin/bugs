@@ -76,13 +76,35 @@ class DomainFacade {
         return this._worldService.world.findQueenFromColony(colonyId);
     }
 
+    isNestMine(nest) {
+        let userData = this.getUserData();
+        let colony = this._worldService.world.findColonyById(nest.fromColony);
+        return colony.ownerId == userData.id;
+    }
+
+    /*======operations========*/
+
     stopOperation(colonyId, operationId) {
         this._colonyService.stopOperation(colonyId, operationId);
     }
 
-    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
-        this._colonyService.buildNewSubNestOperation(colonyId, buildingSite, workersCount);
+    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount) {
+        this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount);
     }
+
+    destroyNestOperation(performingColonyId, warriorsCount, nest) {
+        this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, nest);
+    }
+
+    /*========================*/
+
+    findNearestNestForOffensiveOperation(performingColonyId, point) {
+        return this._worldService.findNearestNestForOffensiveOperation(performingColonyId, point);
+    }
+
+
+
+
 
 
 
@@ -97,33 +119,11 @@ class DomainFacade {
         return this._worldService.world.findQueenByOwnerId(userData.id);
     }
 
-    isNestMine(nest) {
-        let userData = this.getUserData();
-        let colony = this._worldService.world.findColonyById(nest.fromColony);
-        return colony.ownerId == userData.id;
-    }
-
-    // buildNewNest(position) {
-    //     this._colonyService.buildNewNest(position);
-    // }
-
-    destroyNestOperation(nest) {
-        this._colonyService.destroyNestOperation(nest);
-    }
-
     pillageNestOperation(pillagingNest, unloadingNest) {
         this._colonyService.pillageNestOperation(pillagingNest, unloadingNest);
     }
 
-    // stopMyColonyOperation(operationId) {
-    //     this._colonyService.stopMyColonyOperation(operationId);
-    // }
-
-    findNearestNestForOffensiveOperation(point) {
-        let userData = this.getUserData();
-        let myColony = this._worldService.world.findColonyByOwnerId(userData.id);
-        return this._worldService.findNearestNestForOffensiveOperation(point, myColony.id);
-    }
+    
 
     findMyNearestNestForOperation(point) {
         let userData = this.getUserData();

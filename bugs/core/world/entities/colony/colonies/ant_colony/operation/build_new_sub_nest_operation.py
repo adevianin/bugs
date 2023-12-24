@@ -7,7 +7,6 @@ from core.world.entities.ant.base.ant import Ant
 from core.world.entities.ant.worker.worker_ant import WorkerAnt
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
-from core.world.entities.ant.base.larva import Larva
 from core.world.entities.colony.colonies.ant_colony.formation.base.formation_manager import FormationManager
 
 from typing import List
@@ -42,13 +41,6 @@ class BuildNewSubNestOperation(Operation):
             worker.sayer.add_listener('nest_is_found', self._on_nest_found)
             worker.sayer.add_listener('nest_is_built', self._on_nest_built)
             
-
-        # self._queen: QueenAnt = self.get_hired_ants(AntTypes.QUEEN)[0]
-
-        # self._queen.body.sayer.add_listener('arrived_to_building_site', self._on_queen_arrived_to_building_site)
-        # self._queen.body.sayer.add_listener('nest_is_found', self._on_queen_found_nest)
-        # self._queen.body.sayer.add_listener('nest_is_built', self._on_nest_built)
-
     def _start_operation(self):
         super()._start_operation()
         self._prepare_step()

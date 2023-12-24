@@ -74,11 +74,14 @@ class WorldFacade:
                 self._operation_service.stop_operation(user_id, params['colony_id'], params['operation_id'])
             case 'build_new_sub_nest':
                 building_site = Point(params['building_site']['x'], params['building_site']['y'])
-                colony_id = params['colony_id']
+                performing_colony_id = params['performing_colony_id']
                 workers_count = params['workers_count']
-                self._operation_service.build_new_sub_nest(user_id, colony_id, building_site, workers_count)
-            # case 'destroy_nest':
-            #     self._colony_service.destroy_nest_operation(user_id, params['nest_id'])
+                self._operation_service.build_new_sub_nest(user_id, performing_colony_id, building_site, workers_count)
+            case 'destroy_nest':
+                performing_colony_id = params['performing_colony_id']
+                nest_id = params['nest_id']
+                warriors_count = params['warriors_count']
+                self._operation_service.destroy_nest_operation(user_id, performing_colony_id, nest_id, warriors_count)
             # case 'pillage_nest':
             #     self._colony_service.pillage_nest_operation(user_id, params['pillaging_nest_id'], params['unloading_nest_id'])
             

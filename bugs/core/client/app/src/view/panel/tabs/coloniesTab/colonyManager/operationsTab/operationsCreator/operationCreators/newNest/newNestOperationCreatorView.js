@@ -1,12 +1,11 @@
 import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import newNestOperationCreatorTmpl from './newNestOperationCreatorTmpl.html';
 
-class NewNestOperationCreator extends BaseOperationCreatorView {
+class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
-    constructor(colony, onDone) {
-        super(onDone);
+    constructor(performingColony, onDone) {
+        super(performingColony, onDone);
         this._buildingSite = null;
-        this._colony = colony;
 
         this._render();
 
@@ -45,10 +44,10 @@ class NewNestOperationCreator extends BaseOperationCreatorView {
             return
         }
         let workersCount = parseInt(this._workersCountEl.value);
-        this.$domainFacade.buildNewSubNestOperation(this._colony.id, this._buildingSite, workersCount);
+        this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingSite, workersCount);
         this._onDone();
     }
 
 }
 
-export { NewNestOperationCreator }
+export { NewNestOperationCreatorView }

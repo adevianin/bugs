@@ -1,6 +1,7 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import operationsCreatorTmpl from './operationsCreatorTmpl.html';
-import { NewNestOperationCreator } from "./operationCreators";
+import { NewNestOperationCreatorView } from "./operationCreators";
+import { DestroyNestOperationCreatorView } from "./operationCreators";
 
 class OperationsCreatorView extends BaseHTMLView {
 
@@ -11,6 +12,7 @@ class OperationsCreatorView extends BaseHTMLView {
 
         this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
         this._newNestOperationBtn.addEventListener('click', this._onNewNestOperationBtnClick.bind(this));
+        this._destroyNestOperationBtn.addEventListener('click', this._onDestroyOperationBtnClick.bind(this));
     }
 
     manageColony(colony) {
@@ -20,6 +22,7 @@ class OperationsCreatorView extends BaseHTMLView {
     _render() {
         this._el.innerHTML = operationsCreatorTmpl;
         this._newNestOperationBtn = this._el.querySelector('[data-add-new-nest]');
+        this._destroyNestOperationBtn = this._el.querySelector('[data-destroy-nest]');
         this._newOperationsBtnsListEl = this._el.querySelector('[data-new-operation-list]');
         this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
         this._operationCreatorPlaceholderEl = this._el.querySelector('[data-operation-creator-placeholder]');
@@ -41,9 +44,14 @@ class OperationsCreatorView extends BaseHTMLView {
 
     _onNewNestOperationBtnClick() {
         this._toggleCreatorMode(true);
-        this._operationCreator = new NewNestOperationCreator(this._colony, this._stopOperationCreating.bind(this));
+        this._operationCreator = new NewNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
         this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+    }
 
+    _onDestroyOperationBtnClick() {
+        this._toggleCreatorMode(true);
+        this._operationCreator = new DestroyNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
     }
 }
 

@@ -22,9 +22,9 @@ class OperationFactory():
         formation_manager = self._build_formation_manager()
         return BuildNewSubNestOperation(EventEmitter(), formation_manager, id, hired_ants, flags, building_site, workers_count)
     
-    # def build_destroy_nest_operation(self, nest: Nest, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, attack_formation: AttackFormation = None):
-    #     formation_manager = self._build_formation_manager()
-    #     return DestroyNestOperation(EventEmitter(), formation_manager, id, hired_ants, flags, nest, attack_formation)
+    def build_destroy_nest_operation(self, nest: Nest, warriors_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, attack_formation: AttackFormation = None):
+        formation_manager = self._build_formation_manager()
+        return DestroyNestOperation(EventEmitter(), formation_manager, id, hired_ants, flags, nest, warriors_count, attack_formation)
     
     def build_bring_item_to_nest_operation(self, nest: Nest, item: Item, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, bring_item_formation: BringItemFormation = None):
         formation_manager = self._build_formation_manager()

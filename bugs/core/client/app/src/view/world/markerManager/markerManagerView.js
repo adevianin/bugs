@@ -34,10 +34,10 @@ class MarkerManagerView extends BaseGraphicView {
         this._currentMarkerPlacer = new NewNestMarkerPlacerView(newMarkerContainer, callback);
     }
 
-    _onPlaceDestroyNestMarkerRequest(callback) {
+    _onPlaceDestroyNestMarkerRequest(performingColonyId, callback) {
         let newMarkerContainer = new PIXI.Container();
         this._markersManagerContainer.addChild(newMarkerContainer);
-        this._currentMarkerPlacer = new DestroyNestMarkerPlacerView(newMarkerContainer, callback);
+        this._currentMarkerPlacer = new DestroyNestMarkerPlacerView(newMarkerContainer, performingColonyId, callback);
     }
 
     _onPlacePillageNestMarkerRequest(callback) {

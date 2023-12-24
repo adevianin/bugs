@@ -90,13 +90,35 @@ class DomainFacade {
         return this._worldService.world.findQueenFromColony(colonyId);
     }
 
+    isNestMine(nest) {
+        let userData = this.getUserData();
+        let colony = this._worldService.world.findColonyById(nest.fromColony);
+        return colony.ownerId == userData.id;
+    }
+
+    /*======operations========*/
+
     stopOperation(colonyId, operationId) {
         this._colonyService.stopOperation(colonyId, operationId);
     }
 
-    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
-        this._colonyService.buildNewSubNestOperation(colonyId, buildingSite, workersCount);
+    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount) {
+        this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount);
     }
+
+    destroyNestOperation(performingColonyId, warriorsCount, nest) {
+        this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, nest);
+    }
+
+    /*========================*/
+
+    findNearestNestForOffensiveOperation(performingColonyId, point) {
+        return this._worldService.findNearestNestForOffensiveOperation(performingColonyId, point);
+    }
+
+
+
+
 
 
 
@@ -111,33 +133,11 @@ class DomainFacade {
         return this._worldService.world.findQueenByOwnerId(userData.id);
     }
 
-    isNestMine(nest) {
-        let userData = this.getUserData();
-        let colony = this._worldService.world.findColonyById(nest.fromColony);
-        return colony.ownerId == userData.id;
-    }
-
-    // buildNewNest(position) {
-    //     this._colonyService.buildNewNest(position);
-    // }
-
-    destroyNestOperation(nest) {
-        this._colonyService.destroyNestOperation(nest);
-    }
-
     pillageNestOperation(pillagingNest, unloadingNest) {
         this._colonyService.pillageNestOperation(pillagingNest, unloadingNest);
     }
 
-    // stopMyColonyOperation(operationId) {
-    //     this._colonyService.stopMyColonyOperation(operationId);
-    // }
-
-    findNearestNestForOffensiveOperation(point) {
-        let userData = this.getUserData();
-        let myColony = this._worldService.world.findColonyByOwnerId(userData.id);
-        return this._worldService.findNearestNestForOffensiveOperation(point, myColony.id);
-    }
+    
 
     findMyNearestNestForOperation(point) {
         let userData = this.getUserData();
@@ -1311,27 +1311,17 @@ class ColonyService {
         this._colonyApi.stopOperation(colonyId, operationId);
     }
 
-    // stopMyColonyOperation(operationId) {
-    //     this._colonyApi.stopMyColonyOperation(operationId);
-    // }
-
-    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
-        this._colonyApi.buildNewSubNestOperation(colonyId, buildingSite, workersCount);
+    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount) {
+        this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount);
     }
 
-    // buildNewNest(position) {
-    //     this._colonyApi.buildNewNest(position);
-    // }
-
-    destroyNestOperation(nest) {
-        this._colonyApi.destroyNestOperation(nest);
+    destroyNestOperation(performingColonyId, warriorsCount, nest) {
+        this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, nest);
     }
 
     pillageNestOperation(pillagingNest, unloadingNest) {
         this._colonyApi.pillageNestOperation(pillagingNest, unloadingNest);
     }
-
-    build
 
 }
 
@@ -1521,7 +1511,7 @@ class WorldService {
         return this._isWholeWorldInited;
     }
 
-    findNearestNestForOffensiveOperation(point, excludeColonyId) {
+    findNearestNestForOffensiveOperation(performingColonyId, point) {
         let nests = this._world.getNests();
         let nearestNest = null;
         let smallestDistance = null;
@@ -1529,7 +1519,7 @@ class WorldService {
 
         nests.forEach(nest => {
             let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_2__.distance)(point.x, point.y, nest.position.x, nest.position.y);
-            if (nest.fromColony != excludeColonyId && dist <= maxDist && (!smallestDistance || dist < smallestDistance)) {
+            if (nest.fromColony != performingColonyId && dist <= maxDist && (!smallestDistance || dist < smallestDistance)) {
                 smallestDistance = dist;
                 nearestNest = nest;
             }
@@ -1688,13 +1678,13 @@ class ColonyApi {
         });
     }
 
-    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
+    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount) {
         this._serverConnection.send({
             type: 'command',
             command: {
                 command_type: 'build_new_sub_nest',
                 params: {
-                    colony_id: colonyId,
+                    performing_colony_id: performingColonyId,
                     building_site: buildingSite,
                     workers_count: workersCount
                 }
@@ -1702,12 +1692,14 @@ class ColonyApi {
         });
     }
 
-    destroyNestOperation(nest) {
+    destroyNestOperation(performingColonyId, warriorsCount, nest) {
         this._serverConnection.send({
             type: 'command',
             command: {
                 command_type: 'destroy_nest',
                 params: {
+                    performing_colony_id: performingColonyId,
+                    warriors_count: warriorsCount,
                     nest_id: nest.id
                 }
             }
@@ -3246,10 +3238,72 @@ __webpack_require__.r(__webpack_exports__);
 
 class BaseOperationCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    constructor(onDone) {
+    constructor(performingColony, onDone) {
         let el = document.createElement('div');
         super(el);
+        this._performingColony = performingColony;
         this._onDone = onDone;
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/destoryNest/destroyNestOperationCreatorView.js":
+/*!*****************************************************************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/destoryNest/destroyNestOperationCreatorView.js ***!
+  \*****************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "DestroyNestOperationCreatorView": () => (/* binding */ DestroyNestOperationCreatorView)
+/* harmony export */ });
+/* harmony import */ var _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseOperationCreatorView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js");
+/* harmony import */ var _destroyNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./destroyNestOperationCreatorTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/destoryNest/destroyNestOperationCreatorTmpl.html");
+
+
+
+class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__.BaseOperationCreatorView {
+
+    constructor(performingColony, onDone) {
+        super(performingColony, onDone);
+        this._choosedNest = null;
+
+        this._render();
+        this._chooseNestBtn.addEventListener('click', this._onChooseNestBtnClick.bind(this));
+        this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = _destroyNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._choosedNestEl = this._el.querySelector('[data-choosed-nest]');
+        this._chooseNestBtn = this._el.querySelector('[data-choose-nest-btn]');
+        this._startBtn = this._el.querySelector('[data-start-btn]');
+        this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
+        this._renderChoosedNest();
+    }
+
+    _renderChoosedNest() {
+        this._choosedNestEl.innerHTML = this._choosedNest ? `(${ this._choosedNest.id })` : '(не вибрано)';
+    }
+
+    _onChooseNestBtnClick() {
+        this.$eventBus.emit('placeDestroyNestMarkerRequest', this._performingColony.id, (nest) => {
+            this._choosedNest = nest;
+            this._renderChoosedNest();
+        });
+    }
+
+    _onStartBtnClick() {
+        if (!this._choosedNest) {
+            return
+        }
+        let warriorsCount = parseInt(this._warriorsCountEl.value);
+        this.$domainFacade.destroyNestOperation(this._performingColony.id, warriorsCount, this._choosedNest);
+        this._onDone();
     }
 }
 
@@ -3266,9 +3320,12 @@ class BaseOperationCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "NewNestOperationCreator": () => (/* reexport safe */ _newNest_newNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__.NewNestOperationCreator)
+/* harmony export */   "DestroyNestOperationCreatorView": () => (/* reexport safe */ _destoryNest_destroyNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_1__.DestroyNestOperationCreatorView),
+/* harmony export */   "NewNestOperationCreatorView": () => (/* reexport safe */ _newNest_newNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__.NewNestOperationCreatorView)
 /* harmony export */ });
 /* harmony import */ var _newNest_newNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./newNest/newNestOperationCreatorView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/newNest/newNestOperationCreatorView.js");
+/* harmony import */ var _destoryNest_destroyNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./destoryNest/destroyNestOperationCreatorView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/destoryNest/destroyNestOperationCreatorView.js");
+
 
 
 
@@ -3284,19 +3341,18 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "NewNestOperationCreator": () => (/* binding */ NewNestOperationCreator)
+/* harmony export */   "NewNestOperationCreatorView": () => (/* binding */ NewNestOperationCreatorView)
 /* harmony export */ });
 /* harmony import */ var _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseOperationCreatorView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js");
 /* harmony import */ var _newNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./newNestOperationCreatorTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/newNest/newNestOperationCreatorTmpl.html");
 
 
 
-class NewNestOperationCreator extends _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__.BaseOperationCreatorView {
+class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__.BaseOperationCreatorView {
 
-    constructor(colony, onDone) {
-        super(onDone);
+    constructor(performingColony, onDone) {
+        super(performingColony, onDone);
         this._buildingSite = null;
-        this._colony = colony;
 
         this._render();
 
@@ -3335,7 +3391,7 @@ class NewNestOperationCreator extends _baseOperationCreatorView__WEBPACK_IMPORTE
             return
         }
         let workersCount = parseInt(this._workersCountEl.value);
-        this.$domainFacade.buildNewSubNestOperation(this._colony.id, this._buildingSite, workersCount);
+        this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingSite, workersCount);
         this._onDone();
     }
 
@@ -3363,6 +3419,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
     constructor(el) {
@@ -3372,6 +3429,7 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
 
         this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
         this._newNestOperationBtn.addEventListener('click', this._onNewNestOperationBtnClick.bind(this));
+        this._destroyNestOperationBtn.addEventListener('click', this._onDestroyOperationBtnClick.bind(this));
     }
 
     manageColony(colony) {
@@ -3381,6 +3439,7 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
     _render() {
         this._el.innerHTML = _operationsCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
         this._newNestOperationBtn = this._el.querySelector('[data-add-new-nest]');
+        this._destroyNestOperationBtn = this._el.querySelector('[data-destroy-nest]');
         this._newOperationsBtnsListEl = this._el.querySelector('[data-new-operation-list]');
         this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
         this._operationCreatorPlaceholderEl = this._el.querySelector('[data-operation-creator-placeholder]');
@@ -3402,9 +3461,14 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
 
     _onNewNestOperationBtnClick() {
         this._toggleCreatorMode(true);
-        this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.NewNestOperationCreator(this._colony, this._stopOperationCreating.bind(this));
+        this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.NewNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
         this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+    }
 
+    _onDestroyOperationBtnClick() {
+        this._toggleCreatorMode(true);
+        this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.DestroyNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
     }
 }
 
@@ -4352,10 +4416,10 @@ class MarkerManagerView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0
         this._currentMarkerPlacer = new _markerPlacers_newNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_2__.NewNestMarkerPlacerView(newMarkerContainer, callback);
     }
 
-    _onPlaceDestroyNestMarkerRequest(callback) {
+    _onPlaceDestroyNestMarkerRequest(performingColonyId, callback) {
         let newMarkerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._markersManagerContainer.addChild(newMarkerContainer);
-        this._currentMarkerPlacer = new _markerPlacers_destroyNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_3__.DestroyNestMarkerPlacerView(newMarkerContainer, callback);
+        this._currentMarkerPlacer = new _markerPlacers_destroyNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_3__.DestroyNestMarkerPlacerView(newMarkerContainer, performingColonyId, callback);
     }
 
     _onPlacePillageNestMarkerRequest(callback) {
@@ -4400,9 +4464,10 @@ __webpack_require__.r(__webpack_exports__);
 
 class DestroyNestMarkerPlacerView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
 
-    constructor(markerContainer, callback) {
+    constructor(markerContainer, performingColonyId, callback) {
         super();
         this._markerContainer = markerContainer;
+        this._performingColonyId = performingColonyId;
         this._callback = callback;
 
         this._render();
@@ -4418,7 +4483,7 @@ class DestroyNestMarkerPlacerView extends _base_baseGraphicView__WEBPACK_IMPORTE
 
     _onClick(e) {
         let point = this._markerContainer.toLocal(e.client);
-        let nest = this.$domainFacade.findNearestNestForOffensiveOperation(point);
+        let nest = this.$domainFacade.findNearestNestForOffensiveOperation(this._performingColonyId, point);
 
         if (nest) {
             this._callback(nest);
@@ -7259,6 +7324,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Module
 var code = "<ul class=\"colony-manager__nests-list\" data-nests-list></ul>\r\n<div class=\"colony-manager__nest-manager\" data-nest-manager></div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/destoryNest/destroyNestOperationCreatorTmpl.html":
+/*!*******************************************************************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/destoryNest/destroyNestOperationCreatorTmpl.html ***!
+  \*******************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "зруйнувати гніздо\r\n<div>\r\n    гніздо: <span data-choosed-nest></span>\r\n    <button data-choose-nest-btn>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість воїнів: <input data-warriors-count type=\"number\" min=\"1\" max=\"10\" value=\"2\">\r\n</div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

@@ -17,13 +17,13 @@ class ColonyApi {
         });
     }
 
-    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
+    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount) {
         this._serverConnection.send({
             type: 'command',
             command: {
                 command_type: 'build_new_sub_nest',
                 params: {
-                    colony_id: colonyId,
+                    performing_colony_id: performingColonyId,
                     building_site: buildingSite,
                     workers_count: workersCount
                 }
@@ -31,12 +31,14 @@ class ColonyApi {
         });
     }
 
-    destroyNestOperation(nest) {
+    destroyNestOperation(performingColonyId, warriorsCount, nest) {
         this._serverConnection.send({
             type: 'command',
             command: {
                 command_type: 'destroy_nest',
                 params: {
+                    performing_colony_id: performingColonyId,
+                    warriors_count: warriorsCount,
                     nest_id: nest.id
                 }
             }
