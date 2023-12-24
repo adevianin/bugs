@@ -82,9 +82,13 @@ class WorldFacade:
                 nest_id = params['nest_id']
                 warriors_count = params['warriors_count']
                 self._operation_service.destroy_nest_operation(user_id, performing_colony_id, nest_id, warriors_count)
-            # case 'pillage_nest':
-            #     self._colony_service.pillage_nest_operation(user_id, params['pillaging_nest_id'], params['unloading_nest_id'])
-            
+            case 'pillage_nest':
+                performing_colony_id = params['performing_colony_id']
+                nest_to_pillage_id = params['nest_to_pillage_id']
+                nest_for_loot_id = params['nest_for_loot_id']
+                warriors_count = params['warriors_count']
+                workers_count = params['workers_count']
+                self._operation_service.pillage_nest_operation(user_id, performing_colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
             case _:
                 raise Exception('unknown type of command')
             

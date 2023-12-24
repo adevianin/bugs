@@ -41,10 +41,15 @@ class OperationService():
             operation = self._operation_factory.build_destroy_nest_operation(nest, warriors_count)
             performing_colony.add_operation(operation)
 
-    # def pillage_nest_operation(self, user_id: int, pillaging_nest_id: int, unload_nest_id: int):
-    #     colony: AntColony = self._world.get_colony_owned_by_user(user_id)
-    #     nest_to_pillage = self._world.map.get_entity_by_id(pillaging_nest_id)
-    #     nest_to_unload = self._world.map.get_entity_by_id(unload_nest_id)
-    #     if nest_to_pillage.from_colony_id != colony.id and nest_to_unload.from_colony_id == colony.id:
-    #         operation = self._operation_factory.build_pillage_nest_operation(nest_to_pillage=nest_to_pillage, nest_to_unload=nest_to_unload)
-    #         colony.add_operation(operation)
+    def pillage_nest_operation(self, user_id: int, performing_colony_id: int, nest_to_pillage_id: int, nest_for_loot_id: int, workers_count: int, warriors_count: int):
+        performing_colony: AntColony = self._world.get_colony_by_id(performing_colony_id)
+
+        if performing_colony.owner_id != user_id:
+            raise Exception('user is not colony owner')
+
+        nest_to_pillage = self._world.map.get_entity_by_id(nest_to_pillage_id)
+        nest_for_loot = self._world.map.get_entity_by_id(nest_for_loot_id)
+
+        if nest_to_pillage.from_colony_id != performing_colony.id and nest_for_loot.from_colony_id == performing_colony.id:
+            operation = self._operation_factory.build_pillage_nest_operation(nest_to_pillage, nest_for_loot, workers_count, warriors_count)
+            performing_colony.add_operation(operation)

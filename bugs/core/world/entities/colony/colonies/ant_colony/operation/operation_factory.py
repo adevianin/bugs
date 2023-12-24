@@ -30,9 +30,9 @@ class OperationFactory():
         formation_manager = self._build_formation_manager()
         return BringItemToNestOperation(EventEmitter(), formation_manager, id, hired_ants, flags, nest, item, bring_item_formation)
     
-    # def build_pillage_nest_operation(self, nest_to_pillage: Nest, nest_to_unload: Nest, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, attack_formation: AttackFormation = None, go_home_formation: AttackFormation = None):
-    #     formation_manager = self._build_formation_manager()
-    #     return PillageNestOperation(EventEmitter(), formation_manager, id, hired_ants, flags, nest_to_pillage, nest_to_unload, attack_formation, go_home_formation)
+    def build_pillage_nest_operation(self, nest_to_pillage: Nest, nest_for_loot: Nest, workers_count: int, warriors_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, attack_formation: AttackFormation = None, go_home_formation: AttackFormation = None):
+        formation_manager = self._build_formation_manager()
+        return PillageNestOperation(EventEmitter(), formation_manager, id, hired_ants, flags, nest_to_pillage, nest_for_loot, workers_count, warriors_count, attack_formation, go_home_formation)
     
     def _build_formation_manager(self) -> FormationManager:
         return FormationManager.build_formation_manager(self._formation_factory)

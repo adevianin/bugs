@@ -45,10 +45,12 @@ class JsonOperationFactory():
 
     def _build_pillage_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
         hired_ants = entities_collection.get_entities(operation_json['hired'])
-        nest_to_pillage = entities_collection.get_entity_by_id(operation_json['nest_to_pillage_id'])
+        nest_for_loot = entities_collection.get_entity_by_id(operation_json['nest_for_loot_id'])
         nest_to_unload = entities_collection.get_entity_by_id(operation_json['nest_to_unload_id'])
         attack_formation = self._json_formation_factory.build_formation_from_json(operation_json['attack_formation'], entities_collection)
         go_home_formation = self._json_formation_factory.build_formation_from_json(operation_json['go_home_formation'], entities_collection)
         id = operation_json['id']
         flags=operation_json['flags']
-        return self._operation_factory.build_pillage_nest_operation(nest_to_pillage=nest_to_pillage, nest_to_unload=nest_to_unload, id=id, hired_ants=hired_ants, flags=flags, attack_formation=attack_formation, go_home_formation=go_home_formation)
+        workers_count = operation_json['workers_count']
+        warriors_count = operation_json['warriors_count']
+        return self._operation_factory.build_pillage_nest_operation(nest_for_loot=nest_for_loot, nest_to_unload=nest_to_unload, workers_count=workers_count, warriors_count=warriors_count, id=id, hired_ants=hired_ants, flags=flags, attack_formation=attack_formation, go_home_formation=go_home_formation)

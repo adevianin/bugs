@@ -1,11 +1,12 @@
-import { BaseGraphicView } from "../../../base/baseGraphicView";
+import { BaseGraphicView } from '@view/base/baseGraphicView';
 import * as PIXI from 'pixi.js';
 
-class UnloadNestMarkerPlacerView extends BaseGraphicView {
+class NestForLootMarkerPlacerView extends BaseGraphicView {
 
-    constructor(markerContainer, callback) {
+    constructor(markerContainer, performingColonyId, callback) {
         super();
         this._markerContainer = markerContainer;
+        this._performingColonyId = performingColonyId;
         this._callback = callback;
 
         this._render();
@@ -21,7 +22,7 @@ class UnloadNestMarkerPlacerView extends BaseGraphicView {
 
     _onClick(e) {
         let point = this._markerContainer.toLocal(e.client);
-        let nest = this.$domainFacade.findMyNearestNestForOperation(point);
+        let nest = this.$domainFacade.findNearestNestFromColony(this._performingColonyId, point);
 
         if (nest) {
             this._callback(nest);
@@ -35,5 +36,5 @@ class UnloadNestMarkerPlacerView extends BaseGraphicView {
 }
 
 export {
-    UnloadNestMarkerPlacerView
+    NestForLootMarkerPlacerView
 }

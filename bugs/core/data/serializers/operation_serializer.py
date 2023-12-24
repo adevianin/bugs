@@ -75,9 +75,11 @@ class OperationSerializer():
 
         json.update({
             'nest_to_pillage_id': operation.nest_to_pillage_id,
-            'nest_to_unload_id': operation.nest_to_unload_id,
+            'nest_for_loot_id': operation.nest_for_loot_id,
             'attack_formation': attack_formation_json,
-            'go_home_formation': go_home_formation_json
+            'go_home_formation': go_home_formation_json,
+            'warriors_count': operation.warriors_count,
+            'workers_count': operation.workers_count
         })
 
         return json

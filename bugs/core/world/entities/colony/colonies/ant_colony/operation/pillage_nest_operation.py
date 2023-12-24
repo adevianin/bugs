@@ -15,15 +15,17 @@ from core.world.entities.colony.colonies.ant_colony.formation.attack_formation i
 
 class PillageNestOperation(Operation):
     
-    def __init__(self, events: EventEmitter, formation_manager: FormationManager, id: int, hired_ants: List[Ant], flags: dict, nest_to_pillage: Nest, nest_to_unload: Nest, attack_formation: AttackFormation = None, go_home_formation: AttackFormation = None):
+    def __init__(self, events: EventEmitter, formation_manager: FormationManager, id: int, hired_ants: List[Ant], flags: dict, nest_to_pillage: Nest, nest_for_loot: Nest, workers_count: int, warriors_count: int, attack_formation: AttackFormation = None, go_home_formation: AttackFormation = None):
         self._nest_to_pillage = nest_to_pillage
-        self._nest_to_unload = nest_to_unload
+        self._nest_for_loot = nest_for_loot
         self._attack_formation = attack_formation
         self._go_home_formation = go_home_formation
+        self._workers_count = workers_count
+        self._warriors_count = warriors_count
         super().__init__(events, formation_manager, id, OperationTypes.PILLAGE_NEST, hired_ants, flags)
         self._name = 'грабьож мурашника'
-        self._open_vacancies(AntTypes.WARRIOR, 5)
-        self._open_vacancies(AntTypes.WORKER, 2)
+        self._open_vacancies(AntTypes.WARRIOR, self._warriors_count)
+        self._open_vacancies(AntTypes.WORKER, self._workers_count)
         self._add_marker(MarkerTypes.PILLAGE, nest_to_pillage.position)
 
     @property
@@ -31,8 +33,8 @@ class PillageNestOperation(Operation):
         return self._nest_to_pillage.id
     
     @property
-    def nest_to_unload_id(self):
-        return self._nest_to_unload.id
+    def nest_for_loot_id(self):
+        return self._nest_for_loot.id
     
     @property
     def attack_formation(self) -> AttackFormation:
@@ -42,6 +44,14 @@ class PillageNestOperation(Operation):
     def go_home_formation(self) -> AttackFormation:
         return self._go_home_formation
     
+    @property
+    def workers_count(self):
+        return self._workers_count
+    
+    @property
+    def warriors_count(self):
+        return self._warriors_count
+
     @property
     def _warriors(self) -> List[WarriorAnt]:
         return self.get_hired_ants(AntTypes.WARRIOR)
@@ -58,7 +68,7 @@ class PillageNestOperation(Operation):
         self._attack_formation = self._attack_formation or self._formation_manager.prepare_attack_formation(attack_units, self._nest_to_pillage.position)
         self._attack_formation.events.add_listener('reached_destination', self._pillage_step)
 
-        self._go_home_formation = self._go_home_formation or self._formation_manager.prepare_attack_formation(attack_units, self._nest_to_unload.position)
+        self._go_home_formation = self._go_home_formation or self._formation_manager.prepare_attack_formation(attack_units, self._nest_for_loot.position)
         self._go_home_formation.events.add_listener('reached_destination', self._on_ants_got_home)
 
         for ant in self._workers:
@@ -126,12 +136,12 @@ class PillageNestOperation(Operation):
 
     def _on_ants_got_home(self):
         for ant in self._workers:
-            ant.walk_to(self._nest_to_unload.position, 'worker_is_at_home')
+            ant.walk_to(self._nest_for_loot.position, 'worker_is_at_home')
 
     def _on_worker_is_at_home(self, ant: Ant):
         self._write_flag(f'is_worker_{ant.id}_gave_food', True)
-        ant.get_in_nest(self._nest_to_unload)
-        ant.give_food(self._nest_to_unload)
+        ant.get_in_nest(self._nest_for_loot)
+        ant.give_food(self._nest_for_loot)
 
         if self._check_are_all_worker_gave_food():
             self.done()

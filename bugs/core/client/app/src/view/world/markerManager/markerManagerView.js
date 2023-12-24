@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js';
 import { NewNestMarkerPlacerView } from "./markerPlacers/newNestMarkerPlacerView";
 import { DestroyNestMarkerPlacerView } from "./markerPlacers/destroyNestMarkerPlacerView";
 import { PillageNestMarkerPlacerView } from "./markerPlacers/pillageNestMarkerPlacer";
-import { UnloadNestMarkerPlacerView } from "./markerPlacers/unloadNestMarkerPlacer copy";
+import { NestForLootMarkerPlacerView } from "./markerPlacers/nestForLootMarkerPlacer";
 import { MarkersList } from "./markersList/markersList";
 
 class MarkerManagerView extends BaseGraphicView {
@@ -18,7 +18,7 @@ class MarkerManagerView extends BaseGraphicView {
         this.$eventBus.on('placeNewNestMarkerRequest', this._onPlaceNewNestMarkerRequest.bind(this));
         this.$eventBus.on('placeDestroyNestMarkerRequest', this._onPlaceDestroyNestMarkerRequest.bind(this));
         this.$eventBus.on('placePillageNestMarkerRequest', this._onPlacePillageNestMarkerRequest.bind(this));
-        this.$eventBus.on('placeUnloadingNestMarkerRequest', this._onPlaceUnloadNestMarkerRequest.bind(this));
+        this.$eventBus.on('placeNestForLootMarkerRequest', this._onPlaceNestForLootMarkerRequest.bind(this));
         this.$eventBus.on('cancelAnyMarkerPlacerRequest', this._onMarkerPlacerCancel.bind(this));
     }
 
@@ -40,16 +40,16 @@ class MarkerManagerView extends BaseGraphicView {
         this._currentMarkerPlacer = new DestroyNestMarkerPlacerView(newMarkerContainer, performingColonyId, callback);
     }
 
-    _onPlacePillageNestMarkerRequest(callback) {
+    _onPlacePillageNestMarkerRequest(performingColonyId, callback) {
         let newMarkerContainer = new PIXI.Container();
         this._markersManagerContainer.addChild(newMarkerContainer);
-        this._currentMarkerPlacer = new PillageNestMarkerPlacerView(newMarkerContainer, callback);
+        this._currentMarkerPlacer = new PillageNestMarkerPlacerView(newMarkerContainer, performingColonyId, callback);
     }
 
-    _onPlaceUnloadNestMarkerRequest(callback) {
+    _onPlaceNestForLootMarkerRequest(performingColonyId, callback) {
         let newMarkerContainer = new PIXI.Container();
         this._markersManagerContainer.addChild(newMarkerContainer);
-        this._currentMarkerPlacer = new UnloadNestMarkerPlacerView(newMarkerContainer, callback);
+        this._currentMarkerPlacer = new NestForLootMarkerPlacerView(newMarkerContainer, performingColonyId, callback);
     }
 
     _onMarkerPlacerCancel() {

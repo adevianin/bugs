@@ -110,13 +110,19 @@ class DomainFacade {
         this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, nest);
     }
 
+    pillageNestOperation(performingColonyId, pillagingNest, nestForLoot, warriorsCount, workersCount) {
+        this._colonyService.pillageNestOperation(performingColonyId, pillagingNest, nestForLoot, warriorsCount, workersCount);
+    }
+
     /*========================*/
 
     findNearestNestForOffensiveOperation(performingColonyId, point) {
         return this._worldService.findNearestNestForOffensiveOperation(performingColonyId, point);
     }
 
-
+    findNearestNestFromColony(colonyId, point) {
+        return this._worldService.findNearestNestFromColony(colonyId, point);
+    }
 
 
 
@@ -131,18 +137,6 @@ class DomainFacade {
     findMyQueen() {
         let userData = this.getUserData();
         return this._worldService.world.findQueenByOwnerId(userData.id);
-    }
-
-    pillageNestOperation(pillagingNest, unloadingNest) {
-        this._colonyService.pillageNestOperation(pillagingNest, unloadingNest);
-    }
-
-    
-
-    findMyNearestNestForOperation(point) {
-        let userData = this.getUserData();
-        let myColony = this._worldService.world.findColonyByOwnerId(userData.id);
-        return this._worldService.findMyNearestNestForOperation(point, myColony.id);
     }
 
     _tryConnectMessageHandler() {
@@ -1319,8 +1313,8 @@ class ColonyService {
         this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, nest);
     }
 
-    pillageNestOperation(pillagingNest, unloadingNest) {
-        this._colonyApi.pillageNestOperation(pillagingNest, unloadingNest);
+    pillageNestOperation(performingColonyId, pillagingNest, nestForLoot, warriorsCount, workersCount) {
+        this._colonyApi.pillageNestOperation(performingColonyId, pillagingNest, nestForLoot, warriorsCount, workersCount);
     }
 
 }
@@ -1528,7 +1522,7 @@ class WorldService {
         return nearestNest;
     }
 
-    findMyNearestNestForOperation(point, myColonyId) {
+    findNearestNestFromColony(colonyId, point) {
         let nests = this._world.getNests();
         let nearestNest = null;
         let smallestDistance = null;
@@ -1536,7 +1530,7 @@ class WorldService {
 
         nests.forEach(nest => {
             let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_2__.distance)(point.x, point.y, nest.position.x, nest.position.y);
-            if (nest.fromColony == myColonyId && dist <= maxDist && (!smallestDistance || dist < smallestDistance)) {
+            if (nest.fromColony == colonyId && dist <= maxDist && (!smallestDistance || dist < smallestDistance)) {
                 smallestDistance = dist;
                 nearestNest = nest;
             }
@@ -1706,14 +1700,17 @@ class ColonyApi {
         });
     }
 
-    pillageNestOperation(pillagingNest, unloadingNest) {
+    pillageNestOperation(performingColonyId, pillagingNest, nestForLoot, warriorsCount, workersCount) {
         this._serverConnection.send({
             type: 'command',
             command: {
                 command_type: 'pillage_nest',
                 params: {
-                    pillaging_nest_id: pillagingNest.id,
-                    unloading_nest_id: unloadingNest.id
+                    performing_colony_id: performingColonyId,
+                    nest_to_pillage_id: pillagingNest.id,
+                    nest_for_loot_id: nestForLoot.id,
+                    warriors_count: warriorsCount,
+                    workers_count: workersCount
                 }
             }
         });
@@ -3321,10 +3318,13 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "DestroyNestOperationCreatorView": () => (/* reexport safe */ _destoryNest_destroyNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_1__.DestroyNestOperationCreatorView),
-/* harmony export */   "NewNestOperationCreatorView": () => (/* reexport safe */ _newNest_newNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__.NewNestOperationCreatorView)
+/* harmony export */   "NewNestOperationCreatorView": () => (/* reexport safe */ _newNest_newNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__.NewNestOperationCreatorView),
+/* harmony export */   "PillageNestOperationCreatorView": () => (/* reexport safe */ _pillageNest_pillageNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_2__.PillageNestOperationCreatorView)
 /* harmony export */ });
 /* harmony import */ var _newNest_newNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./newNest/newNestOperationCreatorView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/newNest/newNestOperationCreatorView.js");
 /* harmony import */ var _destoryNest_destroyNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./destoryNest/destroyNestOperationCreatorView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/destoryNest/destroyNestOperationCreatorView.js");
+/* harmony import */ var _pillageNest_pillageNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pillageNest/pillageNestOperationCreatorView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/pillageNest/pillageNestOperationCreatorView.js");
+
 
 
 
@@ -3401,6 +3401,89 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/pillageNest/pillageNestOperationCreatorView.js":
+/*!*****************************************************************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/pillageNest/pillageNestOperationCreatorView.js ***!
+  \*****************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "PillageNestOperationCreatorView": () => (/* binding */ PillageNestOperationCreatorView)
+/* harmony export */ });
+/* harmony import */ var _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseOperationCreatorView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js");
+/* harmony import */ var _pillageNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pillageNestOperationCreatorTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/pillageNest/pillageNestOperationCreatorTmpl.html");
+
+
+
+class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__.BaseOperationCreatorView {
+
+    constructor(performingColony, onDone) {
+        super(performingColony, onDone);
+        this._nestToPillage = null;
+        this._nestForLoot = null;
+
+        this._render();
+
+        this._chooseNestToPillageBtn.addEventListener('click', this._onChooseNestToPillageBtnClick.bind(this));
+        this._chooseNestForLootBtn.addEventListener('click', this._onChooseNestForLootBtnClick.bind(this));
+        this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = _pillageNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._chooseNestToPillageBtn = this._el.querySelector('[data-choose-nest-to-pillage]');
+        this._nestToPillageEl = this._el.querySelector('[data-nest-to-pillage]');
+        this._chooseNestForLootBtn = this._el.querySelector('[data-choose-nest-for-loot]');
+        this._nestForLootEl = this._el.querySelector('[data-nest-for-loot]');
+        this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
+        this._workersCountEl = this._el.querySelector('[data-workers-count]');
+        this._startBtn = this._el.querySelector('[data-start-btn]');
+
+        this._renderNestToPillage();
+        this._renderNestForLoot();
+    }
+
+    _renderNestToPillage() {
+        this._nestToPillageEl.innerHTML = this._nestToPillage ? `(${ this._nestToPillage.id })` : '(не вибрано)';
+    }
+
+    _renderNestForLoot() {
+        this._nestForLootEl.innerHTML = this._nestForLoot ? `(${ this._nestForLoot.id })` : '(не вибрано)';
+    }
+
+    _onChooseNestToPillageBtnClick() {
+        this.$eventBus.emit('placePillageNestMarkerRequest', this._performingColony.id, (nestToPillage) => {
+            this._nestToPillage = nestToPillage;
+            this._renderNestToPillage();
+        });
+    }
+
+    _onChooseNestForLootBtnClick() {
+        this.$eventBus.emit('placeNestForLootMarkerRequest', this._performingColony.id, (nestForLoot) => {
+            this._nestForLoot = nestForLoot;
+            this._renderNestForLoot();
+        });
+    }
+
+    _onStartBtnClick() {
+        if (!this._nestToPillage || !this._nestForLoot) {
+            return
+        }
+
+        let warriorsCount = parseInt(this._warriorsCountEl.value);
+        let workersCount = parseInt(this._workersCountEl.value);
+        this.$domainFacade.pillageNestOperation(this._performingColony.id, this._nestToPillage, this._nestForLoot, warriorsCount, workersCount);
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationsCreatorView.js":
 /*!*************************************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationsCreatorView.js ***!
@@ -3419,7 +3502,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
     constructor(el) {
@@ -3430,6 +3512,7 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
         this._newNestOperationBtn.addEventListener('click', this._onNewNestOperationBtnClick.bind(this));
         this._destroyNestOperationBtn.addEventListener('click', this._onDestroyOperationBtnClick.bind(this));
+        this._pillageNestOperationBtn.addEventListener('click', this._onPillageNestOperationBtnClick.bind(this));
     }
 
     manageColony(colony) {
@@ -3440,6 +3523,7 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._el.innerHTML = _operationsCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
         this._newNestOperationBtn = this._el.querySelector('[data-add-new-nest]');
         this._destroyNestOperationBtn = this._el.querySelector('[data-destroy-nest]');
+        this._pillageNestOperationBtn = this._el.querySelector('[data-pillage-nest]');
         this._newOperationsBtnsListEl = this._el.querySelector('[data-new-operation-list]');
         this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
         this._operationCreatorPlaceholderEl = this._el.querySelector('[data-operation-creator-placeholder]');
@@ -3468,6 +3552,12 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
     _onDestroyOperationBtnClick() {
         this._toggleCreatorMode(true);
         this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.DestroyNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+    }
+
+    _onPillageNestOperationBtnClick() {
+        this._toggleCreatorMode(true);
+        this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.PillageNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
         this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
     }
 }
@@ -4378,7 +4468,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _markerPlacers_newNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./markerPlacers/newNestMarkerPlacerView */ "./bugs/core/client/app/src/view/world/markerManager/markerPlacers/newNestMarkerPlacerView.js");
 /* harmony import */ var _markerPlacers_destroyNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./markerPlacers/destroyNestMarkerPlacerView */ "./bugs/core/client/app/src/view/world/markerManager/markerPlacers/destroyNestMarkerPlacerView.js");
 /* harmony import */ var _markerPlacers_pillageNestMarkerPlacer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./markerPlacers/pillageNestMarkerPlacer */ "./bugs/core/client/app/src/view/world/markerManager/markerPlacers/pillageNestMarkerPlacer.js");
-/* harmony import */ var _markerPlacers_unloadNestMarkerPlacer_copy__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./markerPlacers/unloadNestMarkerPlacer copy */ "./bugs/core/client/app/src/view/world/markerManager/markerPlacers/unloadNestMarkerPlacer copy.js");
+/* harmony import */ var _markerPlacers_nestForLootMarkerPlacer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./markerPlacers/nestForLootMarkerPlacer */ "./bugs/core/client/app/src/view/world/markerManager/markerPlacers/nestForLootMarkerPlacer.js");
 /* harmony import */ var _markersList_markersList__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./markersList/markersList */ "./bugs/core/client/app/src/view/world/markerManager/markersList/markersList.js");
 
 
@@ -4400,7 +4490,7 @@ class MarkerManagerView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0
         this.$eventBus.on('placeNewNestMarkerRequest', this._onPlaceNewNestMarkerRequest.bind(this));
         this.$eventBus.on('placeDestroyNestMarkerRequest', this._onPlaceDestroyNestMarkerRequest.bind(this));
         this.$eventBus.on('placePillageNestMarkerRequest', this._onPlacePillageNestMarkerRequest.bind(this));
-        this.$eventBus.on('placeUnloadingNestMarkerRequest', this._onPlaceUnloadNestMarkerRequest.bind(this));
+        this.$eventBus.on('placeNestForLootMarkerRequest', this._onPlaceNestForLootMarkerRequest.bind(this));
         this.$eventBus.on('cancelAnyMarkerPlacerRequest', this._onMarkerPlacerCancel.bind(this));
     }
 
@@ -4422,16 +4512,16 @@ class MarkerManagerView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0
         this._currentMarkerPlacer = new _markerPlacers_destroyNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_3__.DestroyNestMarkerPlacerView(newMarkerContainer, performingColonyId, callback);
     }
 
-    _onPlacePillageNestMarkerRequest(callback) {
+    _onPlacePillageNestMarkerRequest(performingColonyId, callback) {
         let newMarkerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._markersManagerContainer.addChild(newMarkerContainer);
-        this._currentMarkerPlacer = new _markerPlacers_pillageNestMarkerPlacer__WEBPACK_IMPORTED_MODULE_4__.PillageNestMarkerPlacerView(newMarkerContainer, callback);
+        this._currentMarkerPlacer = new _markerPlacers_pillageNestMarkerPlacer__WEBPACK_IMPORTED_MODULE_4__.PillageNestMarkerPlacerView(newMarkerContainer, performingColonyId, callback);
     }
 
-    _onPlaceUnloadNestMarkerRequest(callback) {
+    _onPlaceNestForLootMarkerRequest(performingColonyId, callback) {
         let newMarkerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._markersManagerContainer.addChild(newMarkerContainer);
-        this._currentMarkerPlacer = new _markerPlacers_unloadNestMarkerPlacer_copy__WEBPACK_IMPORTED_MODULE_5__.UnloadNestMarkerPlacerView(newMarkerContainer, callback);
+        this._currentMarkerPlacer = new _markerPlacers_nestForLootMarkerPlacer__WEBPACK_IMPORTED_MODULE_5__.NestForLootMarkerPlacerView(newMarkerContainer, performingColonyId, callback);
     }
 
     _onMarkerPlacerCancel() {
@@ -4484,6 +4574,60 @@ class DestroyNestMarkerPlacerView extends _base_baseGraphicView__WEBPACK_IMPORTE
     _onClick(e) {
         let point = this._markerContainer.toLocal(e.client);
         let nest = this.$domainFacade.findNearestNestForOffensiveOperation(this._performingColonyId, point);
+
+        if (nest) {
+            this._callback(nest);
+            this.remove();
+        }
+    }
+
+    remove() {
+        this._markerContainer.destroy();
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/world/markerManager/markerPlacers/nestForLootMarkerPlacer.js":
+/*!****************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/world/markerManager/markerPlacers/nestForLootMarkerPlacer.js ***!
+  \****************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NestForLootMarkerPlacerView": () => (/* binding */ NestForLootMarkerPlacerView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
+
+
+class NestForLootMarkerPlacerView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
+
+    constructor(markerContainer, performingColonyId, callback) {
+        super();
+        this._markerContainer = markerContainer;
+        this._performingColonyId = performingColonyId;
+        this._callback = callback;
+
+        this._render();
+
+        this._markerContainer.on('pointerdown', this._onClick.bind(this));
+    }
+
+    _render() {
+        this._markerContainer.eventMode = 'static'; 
+        let worldSize = this.$domainFacade.getWorldSize();
+        this._markerContainer.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Rectangle(0, 0, worldSize[0], worldSize[1]);
+    }
+
+    _onClick(e) {
+        let point = this._markerContainer.toLocal(e.client);
+        let nest = this.$domainFacade.findNearestNestFromColony(this._performingColonyId, point);
 
         if (nest) {
             this._callback(nest);
@@ -4569,9 +4713,10 @@ __webpack_require__.r(__webpack_exports__);
 
 class PillageNestMarkerPlacerView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
 
-    constructor(markerContainer, callback) {
+    constructor(markerContainer, performingColonyId, callback) {
         super();
         this._markerContainer = markerContainer;
+        this._performingColonyId = performingColonyId;
         this._callback = callback;
 
         this._render();
@@ -4587,60 +4732,7 @@ class PillageNestMarkerPlacerView extends _base_baseGraphicView__WEBPACK_IMPORTE
 
     _onClick(e) {
         let point = this._markerContainer.toLocal(e.client);
-        let nest = this.$domainFacade.findNearestNestForOffensiveOperation(point);
-
-        if (nest) {
-            this._callback(nest);
-            this.remove();
-        }
-    }
-
-    remove() {
-        this._markerContainer.destroy();
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/world/markerManager/markerPlacers/unloadNestMarkerPlacer copy.js":
-/*!********************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/world/markerManager/markerPlacers/unloadNestMarkerPlacer copy.js ***!
-  \********************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "UnloadNestMarkerPlacerView": () => (/* binding */ UnloadNestMarkerPlacerView)
-/* harmony export */ });
-/* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-
-
-
-class UnloadNestMarkerPlacerView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
-
-    constructor(markerContainer, callback) {
-        super();
-        this._markerContainer = markerContainer;
-        this._callback = callback;
-
-        this._render();
-
-        this._markerContainer.on('pointerdown', this._onClick.bind(this));
-    }
-
-    _render() {
-        this._markerContainer.eventMode = 'static'; 
-        let worldSize = this.$domainFacade.getWorldSize();
-        this._markerContainer.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Rectangle(0, 0, worldSize[0], worldSize[1]);
-    }
-
-    _onClick(e) {
-        let point = this._markerContainer.toLocal(e.client);
-        let nest = this.$domainFacade.findMyNearestNestForOperation(point);
+        let nest = this.$domainFacade.findNearestNestForOffensiveOperation(this._performingColonyId, point);
 
         if (nest) {
             this._callback(nest);
@@ -5348,7 +5440,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}\r\n\r\n.panel__tab-container {\r\n    padding: 5px;\r\n    flex-grow: 1;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,aAAa;IACb,gBAAgB;IAChB,YAAY;AAChB;;AAEA;IACI;AACJ;;AAEA;IACI,YAAY;IACZ,YAAY;AAChB","sourcesContent":[".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}\r\n\r\n.panel__tab-container {\r\n    padding: 5px;\r\n    flex-grow: 1;\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}\r\n\r\n.panel__tab-container {\r\n    padding: 5px;\r\n    flex-grow: 1;\r\n    overflow-y: scroll;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,aAAa;IACb,gBAAgB;IAChB,YAAY;AAChB;;AAEA;IACI;AACJ;;AAEA;IACI,YAAY;IACZ,YAAY;IACZ,kBAAkB;AACtB","sourcesContent":[".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.panel-container {\r\n    height: 200px\r\n}\r\n\r\n.panel__tab-container {\r\n    padding: 5px;\r\n    flex-grow: 1;\r\n    overflow-y: scroll;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -7360,6 +7452,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Module
 var code = "<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість робочих: \r\n    <input data-workers-count type=\"number\" min=\"1\" max=\"3\" value=\"1\" required>\r\n</div>\r\n<button data-start>старт</button>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/pillageNest/pillageNestOperationCreatorTmpl.html":
+/*!*******************************************************************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/pillageNest/pillageNestOperationCreatorTmpl.html ***!
+  \*******************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "грабить гріздо\r\n<div>\r\n    гніздо для пограбування: <span data-nest-to-pillage></span> \r\n    <button data-choose-nest-to-pillage>вибрать</button>\r\n</div>\r\n<div>\r\n    гніздо для здобичі: <span data-nest-for-loot></span>\r\n    <button data-choose-nest-for-loot>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість воїнів: <input data-warriors-count type=\"number\" min=\"2\" max=\"10\" value=\"5\">\r\n</div>\r\n<div>\r\n    кількість робітників: <input data-workers-count type=\"number\" min=\"2\" max=\"10\" value=\"2\">\r\n</div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

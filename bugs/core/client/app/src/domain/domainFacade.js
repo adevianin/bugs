@@ -96,13 +96,19 @@ class DomainFacade {
         this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, nest);
     }
 
+    pillageNestOperation(performingColonyId, pillagingNest, nestForLoot, warriorsCount, workersCount) {
+        this._colonyService.pillageNestOperation(performingColonyId, pillagingNest, nestForLoot, warriorsCount, workersCount);
+    }
+
     /*========================*/
 
     findNearestNestForOffensiveOperation(performingColonyId, point) {
         return this._worldService.findNearestNestForOffensiveOperation(performingColonyId, point);
     }
 
-
+    findNearestNestFromColony(colonyId, point) {
+        return this._worldService.findNearestNestFromColony(colonyId, point);
+    }
 
 
 
@@ -117,18 +123,6 @@ class DomainFacade {
     findMyQueen() {
         let userData = this.getUserData();
         return this._worldService.world.findQueenByOwnerId(userData.id);
-    }
-
-    pillageNestOperation(pillagingNest, unloadingNest) {
-        this._colonyService.pillageNestOperation(pillagingNest, unloadingNest);
-    }
-
-    
-
-    findMyNearestNestForOperation(point) {
-        let userData = this.getUserData();
-        let myColony = this._worldService.world.findColonyByOwnerId(userData.id);
-        return this._worldService.findMyNearestNestForOperation(point, myColony.id);
     }
 
     _tryConnectMessageHandler() {
