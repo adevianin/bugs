@@ -54,7 +54,6 @@ class NestSelectorView extends BaseHTMLView {
     }
 
     remove() {
-        console.log('removing nest seletor');
         this._stopListenEntityDied();
         this._stopListenEntityBorn();
         super.remove();
