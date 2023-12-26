@@ -7,7 +7,7 @@ class World {
         this._entities = [];
         this._colonies = [];
 
-        this._eventBus.on('died', this._on_died.bind(this));
+        this._eventBus.on('entityDied', this._onDied.bind(this));
     }
 
     get entities() {
@@ -96,7 +96,7 @@ class World {
         this._eventBus.emit('worldCleared');
     }
 
-    _on_died(entity) {
+    _onDied(entity) {
         this.deleteEntity(entity.id);
     }
 

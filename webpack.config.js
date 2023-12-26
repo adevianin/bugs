@@ -15,6 +15,7 @@ module.exports = {
         alias: {
           "@utils": path.resolve(__dirname, './bugs/core/client/utils'),
           "@view": path.resolve(__dirname, './bugs/core/client/app/src/view'),
+          "@domain": path.resolve(__dirname, './bugs/core/client/app/src/domain'),
         },
     },
     module: {

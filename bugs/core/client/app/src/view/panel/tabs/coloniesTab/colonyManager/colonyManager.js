@@ -19,6 +19,7 @@ class ColonyManager extends BaseHTMLView {
         this._colonyNameEl.innerHTML = `colony: ${this._colony.id}`;
         this._nestsTab.manageColony(colony);
         this._operationsTab.manageColony(colony);
+        this._antsTab.manageColony(colony);
     }
 
     showNestManagerFor(nest) {

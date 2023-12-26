@@ -1,5 +1,6 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import antsTabTmpl from './antsTabTmpl.html';
+import { AntsListView } from "./antsList";
 
 class AntsTab extends BaseHTMLView {
 
@@ -9,8 +10,14 @@ class AntsTab extends BaseHTMLView {
         this._render();
     }
 
+    manageColony(colony) {
+        this._antsList.manageColony(colony);
+    }
+
     _render() {
         this._el.innerHTML = antsTabTmpl;
+
+        this._antsList = new AntsListView(this._el.querySelector('[data-ants-list]'));
     }
 }
 

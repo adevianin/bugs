@@ -86,6 +86,10 @@ class DomainFacade {
         return this._worldService.world.findNestsFromColony(colonyId);
     }
 
+    getAntsFromColony(colonyId) {
+        return this._worldService.world.findAntsFromColony(colonyId);
+    }
+
     getQueenOfColony(colonyId) {
         return this._worldService.world.findQueenFromColony(colonyId);
     }
@@ -260,12 +264,14 @@ __webpack_require__.r(__webpack_exports__);
 
 class Ant extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
-    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId) {
+    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats) {
         super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony, userSpeed, hp, maxHp);
         this._pickedItemId = pickedItemId;
         this._antType = antType;
         this._setState('standing');
         this._locatedInNestId = locatedInNestId;
+        this._homeNestId = homeNestId;
+        this._stats = stats;
     }
 
     get antType() {
@@ -290,6 +296,14 @@ class Ant extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
     set pickedItemId(itemId) {
         this._pickedItemId = itemId;
+    }
+
+    get homeNestId() {
+        return this._homeNestId;
+    }
+
+    get stats() {
+        return this._stats;
     }
 
     hasPickedItem() {
@@ -523,7 +537,7 @@ class Entity extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
     }
 
     die() {
-        this.globalEmit('died', this);//to delete entity from world
+        this.globalEmit('entityDied', this);//to delete entity from world
         this.emit('died');//to delete view
     }
 
@@ -1011,7 +1025,7 @@ class World {
         this._entities = [];
         this._colonies = [];
 
-        this._eventBus.on('died', this._on_died.bind(this));
+        this._eventBus.on('entityDied', this._onDied.bind(this));
     }
 
     get entities() {
@@ -1100,7 +1114,7 @@ class World {
         this._eventBus.emit('worldCleared');
     }
 
-    _on_died(entity) {
+    _onDied(entity) {
         this.deleteEntity(entity.id);
     }
 
@@ -1587,7 +1601,19 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT: 
-                return this.buildAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp, entityJson.ant_type, entityJson.picked_item_id, entityJson.located_in_nest_id);
+                return this.buildAnt(
+                    entityJson.id,
+                    entityJson.position,
+                    entityJson.angle,
+                    entityJson.from_colony_id,
+                    entityJson.user_speed,
+                    entityJson.hp,
+                    entityJson.max_hp,
+                    entityJson.ant_type,
+                    entityJson.picked_item_id,
+                    entityJson.located_in_nest_id,
+                    entityJson.home_nest_id,
+                    entityJson.stats);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.GROUND_BEETLE:
                 return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
@@ -1619,8 +1645,8 @@ class WorldFactory {
         return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this._mainEventBus);
     }
 
-    buildAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId) {
-        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId);
+    buildAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats);
     }
 
     buildNest(id, position, angle, fromColony, storedCalories, larvaeData, larvaPlacesCount, isBuilt, hp, maxHp) {
@@ -2204,6 +2230,97 @@ class BaseHTMLView {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/base/nestSelector/index.js":
+/*!******************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/base/nestSelector/index.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NestSelectorView": () => (/* reexport safe */ _nestSelectorView__WEBPACK_IMPORTED_MODULE_0__.NestSelectorView)
+/* harmony export */ });
+/* harmony import */ var _nestSelectorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./nestSelectorView */ "./bugs/core/client/app/src/view/base/nestSelector/nestSelectorView.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/base/nestSelector/nestSelectorView.js":
+/*!*****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/base/nestSelector/nestSelectorView.js ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NestSelectorView": () => (/* binding */ NestSelectorView)
+/* harmony export */ });
+/* harmony import */ var _baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+
+
+
+class NestSelectorView extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(colonyId) {
+        let el = document.createElement('select');
+        super(el);
+        this._colonyId = colonyId;
+
+        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+
+        this._render();
+    }
+
+    get nestId() {
+        return parseInt(this._el.value);
+    }
+
+    set nestId(nestId) {
+        this._el.value = nestId;
+    }
+
+    _render() {
+        let nests = this.$domainFacade.getNestsFromColony(this._colonyId);
+        this._el.innerHTML = '';
+        for (let nest of nests) {
+            this._renderNestOption(nest);
+        }
+    }
+
+    _renderNestOption(nest) {
+        let optionEl = document.createElement('option');
+        optionEl.setAttribute('value', nest.id);
+        optionEl.innerHTML = `nest ${nest.id}`;
+        this._el.append(optionEl);
+    }
+
+    _onSomeoneDied(entity) {
+        if (this._isMyNest(entity)) {
+            this._el.querySelector(`[value="${entity.id}"]`).remove();
+        }
+    }
+
+    _onSomeoneBorn(entity) {
+        if (this._isMyNest(entity)) {
+            this._renderNestOption(entity);
+        }
+    }
+
+    _isMyNest(entity) {
+        return entity.type == _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST && entity.fromColony == this._colonyId;
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/base/tabSwitcher/index.js":
 /*!*****************************************************************!*\
   !*** ./bugs/core/client/app/src/view/base/tabSwitcher/index.js ***!
@@ -2621,6 +2738,163 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antView.js":
+/*!********************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antView.js ***!
+  \********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AntView": () => (/* binding */ AntView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _antTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antTmpl.html");
+/* harmony import */ var _view_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/base/nestSelector */ "./bugs/core/client/app/src/view/base/nestSelector/index.js");
+
+
+
+
+class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(ant) {
+        let el = document.createElement('tr');
+        super(el);
+        this._ant = ant;
+
+        this._ant.on('died', this.remove.bind(this));
+
+        this._render();
+    }
+
+    _render() {
+        this._el.innerHTML = _antTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.querySelector('[data-type]').innerHTML = this._ant.antType;
+        this._el.querySelector('[data-attack]').innerHTML = this._ant.stats.attack;
+        this._el.querySelector('[data-defence]').innerHTML = this._ant.stats.defence;
+        this._el.querySelector('[data-max-hp]').innerHTML = this._ant.maxHp;
+
+        this._nestSelector = new _view_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._ant.fromColony);
+        this._nestSelector.nestId = this._ant.homeNestId;
+        this._el.querySelector('[data-nest]').append(this._nestSelector.el);
+    }
+
+    remove() {
+        this._nestSelector.remove();
+        super.remove();
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antsListView.js":
+/*!*************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antsListView.js ***!
+  \*************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AntsListView": () => (/* binding */ AntsListView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _antsListTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antsListTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antsListTmpl.html");
+/* harmony import */ var _antView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./antView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antView.js");
+/* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+
+
+
+
+
+class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+        this._antViews = {};
+
+        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+
+        this._render();
+    }
+
+    manageColony(colony) {
+        this._colony = colony;
+        this._ants = this.$domainFacade.getAntsFromColony(this._colony.id);
+
+        this._renderAnts();
+    }
+
+    _render() {
+        this._el.innerHTML = _antsListTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._antsContainerEl = this._el.querySelector('[data-ants-container]');
+    }
+
+    _renderAnts() {
+        this._clearAntViews();
+        for (let ant of this._ants) {
+            this._renderAntView(ant);
+        }
+    }
+
+    _renderAntView(ant) {
+        let view = new _antView__WEBPACK_IMPORTED_MODULE_2__.AntView(ant);
+        this._antsContainerEl.append(view.el);
+        this._antViews[ant.id] = view;
+    }
+
+    _clearAntViews() {
+        for (let antId in this._antViews) {
+            this._antViews[antId].remove();
+        }
+        this._antViews = {};
+    }
+
+    _onSomeoneDied(entity) {
+        if (this._isMyAnt(entity)) {
+            this._antViews[entity.id].remove();
+            this._ants = this._ants.filter(ant => ant.id != entity.id);
+        }
+    }
+
+    _onSomeoneBorn(entity) {
+        if (this._isMyAnt(entity)) {
+            this._ants.push(entity);
+            this._renderAntView(entity);
+        }
+    }
+
+    _isMyAnt(entity) {
+        return entity.type == _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_3__.EntityTypes.ANT && entity.fromColony == this._colony.id;
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/index.js":
+/*!******************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/index.js ***!
+  \******************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AntsListView": () => (/* reexport safe */ _antsListView__WEBPACK_IMPORTED_MODULE_0__.AntsListView)
+/* harmony export */ });
+/* harmony import */ var _antsListView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./antsListView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antsListView.js");
+
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsTab.js":
 /*!***********************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsTab.js ***!
@@ -2634,6 +2908,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _antsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antsTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsTabTmpl.html");
+/* harmony import */ var _antsList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./antsList */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/index.js");
+
 
 
 
@@ -2645,8 +2921,14 @@ class AntsTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._render();
     }
 
+    manageColony(colony) {
+        this._antsList.manageColony(colony);
+    }
+
     _render() {
         this._el.innerHTML = _antsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._antsList = new _antsList__WEBPACK_IMPORTED_MODULE_2__.AntsListView(this._el.querySelector('[data-ants-list]'));
     }
 }
 
@@ -2711,6 +2993,7 @@ class ColonyManager extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__
         this._colonyNameEl.innerHTML = `colony: ${this._colony.id}`;
         this._nestsTab.manageColony(colony);
         this._operationsTab.manageColony(colony);
+        this._antsTab.manageColony(colony);
     }
 
     showNestManagerFor(nest) {
@@ -5494,7 +5777,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n\r\n.colony-manager__operations-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__operations-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__operations-creator {\r\n    padding: 3px;\r\n}\r\n\r\n.colony-manager__new_operations_list {\r\n    padding: 3px;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,YAAY;AAChB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,YAAY;AAChB;;;AAGA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,YAAY;IACZ,SAAS;IACT,qBAAqB;AACzB","sourcesContent":[".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n\r\n.colony-manager__operations-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__operations-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__operations-creator {\r\n    padding: 3px;\r\n}\r\n\r\n.colony-manager__new_operations_list {\r\n    padding: 3px;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n\r\n.colony-manager__operations-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__operations-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__operations-creator {\r\n    padding: 3px;\r\n}\r\n\r\n.colony-manager__new_operations_list {\r\n    padding: 3px;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.colony-manager__ants-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__ants-table td {\r\n    border: solid 1px;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,YAAY;AAChB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,YAAY;AAChB;;;AAGA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,YAAY;IACZ,SAAS;IACT,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n\r\n.colony-manager__operations-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__operations-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__operations-creator {\r\n    padding: 3px;\r\n}\r\n\r\n.colony-manager__new_operations_list {\r\n    padding: 3px;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.colony-manager__ants-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__ants-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -7295,6 +7578,42 @@ var code = "<ul data-colonies-list class=\"colonies-list\"></ul>\r\n<div data-co
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antTmpl.html":
+/*!**********************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antTmpl.html ***!
+  \**********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<td data-type></td>\r\n<td data-attack></td>\r\n<td data-defence></td>\r\n<td data-role>\r\n    <select>\r\n    </select>\r\n</td>\r\n<td data-max-hp></td>\r\n<td data-nest></td>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antsListTmpl.html":
+/*!***************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antsListTmpl.html ***!
+  \***************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<thead>\r\n    <tr>\r\n        <td>тип</td>\r\n        <td>атака</td>\r\n        <td>захист</td>\r\n        <td>роль</td>\r\n        <td>макс хп</td>\r\n        <td>гніздо</td>\r\n    </tr>\r\n</thead>\r\n<tbody data-ants-container>\r\n</tbody>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsTabTmpl.html":
 /*!*****************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsTabTmpl.html ***!
@@ -7307,7 +7626,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "ants tab";
+var code = "<table class=\"colony-manager__ants-table\" data-ants-list></table>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

@@ -72,6 +72,10 @@ class DomainFacade {
         return this._worldService.world.findNestsFromColony(colonyId);
     }
 
+    getAntsFromColony(colonyId) {
+        return this._worldService.world.findAntsFromColony(colonyId);
+    }
+
     getQueenOfColony(colonyId) {
         return this._worldService.world.findQueenFromColony(colonyId);
     }

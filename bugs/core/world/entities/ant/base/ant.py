@@ -97,7 +97,12 @@ class Ant(LiveEntity):
         json.update({
             'picked_item_id': self._body.picked_item_id,
             'ant_type': self._ant_type,
-            'located_in_nest_id': self._body.located_in_nest_id
+            'located_in_nest_id': self._body.located_in_nest_id,
+            'home_nest_id': self._mind.home_nest.id,
+            'stats': {
+                'attack': self._body.stats.attack,
+                'defence': self._body.stats.defence,
+            }
         })
 
         return json

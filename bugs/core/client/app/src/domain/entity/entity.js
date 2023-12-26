@@ -94,7 +94,7 @@ class Entity extends EventEmitter {
     }
 
     die() {
-        this.globalEmit('died', this);//to delete entity from world
+        this.globalEmit('entityDied', this);//to delete entity from world
         this.emit('died');//to delete view
     }
 

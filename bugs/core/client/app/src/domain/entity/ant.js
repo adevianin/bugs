@@ -4,12 +4,14 @@ import { ACTION_TYPES } from './action/actionTypes';
 
 class Ant extends LiveEntity {
 
-    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId) {
+    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats) {
         super(eventBus, id, position, angle, EntityTypes.ANT, fromColony, userSpeed, hp, maxHp);
         this._pickedItemId = pickedItemId;
         this._antType = antType;
         this._setState('standing');
         this._locatedInNestId = locatedInNestId;
+        this._homeNestId = homeNestId;
+        this._stats = stats;
     }
 
     get antType() {
@@ -34,6 +36,14 @@ class Ant extends LiveEntity {
 
     set pickedItemId(itemId) {
         this._pickedItemId = itemId;
+    }
+
+    get homeNestId() {
+        return this._homeNestId;
+    }
+
+    get stats() {
+        return this._stats;
     }
 
     hasPickedItem() {

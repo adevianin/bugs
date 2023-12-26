@@ -19,7 +19,19 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case EntityTypes.ANT: 
-                return this.buildAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp, entityJson.ant_type, entityJson.picked_item_id, entityJson.located_in_nest_id);
+                return this.buildAnt(
+                    entityJson.id,
+                    entityJson.position,
+                    entityJson.angle,
+                    entityJson.from_colony_id,
+                    entityJson.user_speed,
+                    entityJson.hp,
+                    entityJson.max_hp,
+                    entityJson.ant_type,
+                    entityJson.picked_item_id,
+                    entityJson.located_in_nest_id,
+                    entityJson.home_nest_id,
+                    entityJson.stats);
             case EntityTypes.GROUND_BEETLE:
                 return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp);
             case EntityTypes.NEST:
@@ -51,8 +63,8 @@ class WorldFactory {
         return new World(this._mainEventBus);
     }
 
-    buildAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId) {
-        return new Ant(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId);
+    buildAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats) {
+        return new Ant(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats);
     }
 
     buildNest(id, position, angle, fromColony, storedCalories, larvaeData, larvaPlacesCount, isBuilt, hp, maxHp) {
