@@ -45,15 +45,15 @@ class ColonyApi {
         });
     }
 
-    pillageNestOperation(performingColonyId, pillagingNest, nestForLoot, warriorsCount, workersCount) {
+    pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
         this._serverConnection.send({
             type: 'command',
             command: {
                 command_type: 'pillage_nest',
                 params: {
                     performing_colony_id: performingColonyId,
-                    nest_to_pillage_id: pillagingNest.id,
-                    nest_for_loot_id: nestForLoot.id,
+                    nest_to_pillage_id: pillagingNestId,
+                    nest_for_loot_id: nestForLootId,
                     warriors_count: warriorsCount,
                     workers_count: workersCount
                 }

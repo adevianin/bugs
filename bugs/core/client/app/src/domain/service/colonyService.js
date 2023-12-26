@@ -25,8 +25,8 @@ class ColonyService {
         this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, nest);
     }
 
-    pillageNestOperation(performingColonyId, pillagingNest, nestForLoot, warriorsCount, workersCount) {
-        this._colonyApi.pillageNestOperation(performingColonyId, pillagingNest, nestForLoot, warriorsCount, workersCount);
+    pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
+        this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
     }
 
 }

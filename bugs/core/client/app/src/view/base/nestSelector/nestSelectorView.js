@@ -8,8 +8,8 @@ class NestSelectorView extends BaseHTMLView {
         super(el);
         this._colonyId = colonyId;
 
-        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this._stopListenEntityDied = this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this._stopListenEntityBorn = this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
 
         this._render();
     }
@@ -51,6 +51,13 @@ class NestSelectorView extends BaseHTMLView {
 
     _isMyNest(entity) {
         return entity.type == EntityTypes.NEST && entity.fromColony == this._colonyId;
+    }
+
+    remove() {
+        console.log('removing nest seletor');
+        this._stopListenEntityDied();
+        this._stopListenEntityBorn();
+        super.remove();
     }
 }
 

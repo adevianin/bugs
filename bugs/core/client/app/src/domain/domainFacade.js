@@ -100,18 +100,14 @@ class DomainFacade {
         this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, nest);
     }
 
-    pillageNestOperation(performingColonyId, pillagingNest, nestForLoot, warriorsCount, workersCount) {
-        this._colonyService.pillageNestOperation(performingColonyId, pillagingNest, nestForLoot, warriorsCount, workersCount);
+    pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
+        this._colonyService.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
     }
 
     /*========================*/
 
     findNearestNestForOffensiveOperation(performingColonyId, point) {
         return this._worldService.findNearestNestForOffensiveOperation(performingColonyId, point);
-    }
-
-    findNearestNestFromColony(colonyId, point) {
-        return this._worldService.findNearestNestFromColony(colonyId, point);
     }
 
 

@@ -1,5 +1,6 @@
 import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import pillageNestOperationCreatorTmpl from './pillageNestOperationCreatorTmpl.html';
+import { NestSelectorView } from "@view/base/nestSelector";
 
 class PillageNestOperationCreatorView extends BaseOperationCreatorView {
 
@@ -11,8 +12,12 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         this._render();
 
         this._chooseNestToPillageBtn.addEventListener('click', this._onChooseNestToPillageBtnClick.bind(this));
-        this._chooseNestForLootBtn.addEventListener('click', this._onChooseNestForLootBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+    }
+
+    remove() {
+        this._nestForLootSelector.remove();
+        super.remove();
     }
 
     _render() {
@@ -20,22 +25,18 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
 
         this._chooseNestToPillageBtn = this._el.querySelector('[data-choose-nest-to-pillage]');
         this._nestToPillageEl = this._el.querySelector('[data-nest-to-pillage]');
-        this._chooseNestForLootBtn = this._el.querySelector('[data-choose-nest-for-loot]');
-        this._nestForLootEl = this._el.querySelector('[data-nest-for-loot]');
         this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
         this._workersCountEl = this._el.querySelector('[data-workers-count]');
         this._startBtn = this._el.querySelector('[data-start-btn]');
 
+        this._nestForLootSelector = new NestSelectorView(this._performingColony.id)
+        this._el.querySelector('[data-nest-selector-container]').append(this._nestForLootSelector.el);
+
         this._renderNestToPillage();
-        this._renderNestForLoot();
     }
 
     _renderNestToPillage() {
         this._nestToPillageEl.innerHTML = this._nestToPillage ? `(${ this._nestToPillage.id })` : '(не вибрано)';
-    }
-
-    _renderNestForLoot() {
-        this._nestForLootEl.innerHTML = this._nestForLoot ? `(${ this._nestForLoot.id })` : '(не вибрано)';
     }
 
     _onChooseNestToPillageBtnClick() {
@@ -45,21 +46,15 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         });
     }
 
-    _onChooseNestForLootBtnClick() {
-        this.$eventBus.emit('placeNestForLootMarkerRequest', this._performingColony.id, (nestForLoot) => {
-            this._nestForLoot = nestForLoot;
-            this._renderNestForLoot();
-        });
-    }
-
     _onStartBtnClick() {
-        if (!this._nestToPillage || !this._nestForLoot) {
+        if (!this._nestToPillage) {
             return
         }
 
         let warriorsCount = parseInt(this._warriorsCountEl.value);
         let workersCount = parseInt(this._workersCountEl.value);
-        this.$domainFacade.pillageNestOperation(this._performingColony.id, this._nestToPillage, this._nestForLoot, warriorsCount, workersCount);
+        let nestForLootId = this._nestForLootSelector.nestId;
+        this.$domainFacade.pillageNestOperation(this._performingColony.id, this._nestToPillage.id, nestForLootId, warriorsCount, workersCount);
     }
 
 }
