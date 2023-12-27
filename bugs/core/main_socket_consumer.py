@@ -60,7 +60,7 @@ class MainSocketConsumer(WebsocketConsumer):
                 building_site = [params['building_site']['x'], params['building_site']['y']]
                 performing_colony_id = params['performing_colony_id']
                 workers_count = params['workers_count']
-                self._world_facade.build_new_sub_nest_operation(user_id, performing_colony_id, building_site, workers_count,)
+                self._world_facade.build_new_sub_nest_operation(user_id, performing_colony_id, building_site, workers_count)
             case 'destroy_nest':
                 performing_colony_id = params['performing_colony_id']
                 nest_id = params['nest_id']
@@ -72,7 +72,7 @@ class MainSocketConsumer(WebsocketConsumer):
                 nest_for_loot_id = params['nest_for_loot_id']
                 warriors_count = params['warriors_count']
                 workers_count = params['workers_count']
-                self._world_facade.pillage_nest_operation(user_id, performing_colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count,)
+                self._world_facade.pillage_nest_operation(user_id, performing_colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
             case _:
                 raise Exception('unknown type of command')
     
