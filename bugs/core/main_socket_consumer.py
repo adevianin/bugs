@@ -17,8 +17,6 @@ class MainSocketConsumer(WebsocketConsumer):
         else:
             self.close()
 
-        self._my_colony = self._world_facade.get_my_colony(self._user.id)
-
         self._world_facade.add_listener('step_start', self._on_step_start)
         self._world_facade.add_listener('action_occurred', self._on_action)
 
@@ -32,7 +30,7 @@ class MainSocketConsumer(WebsocketConsumer):
 
         match msg['type']:
             case 'command':
-                self._world_facade.handle_command(msg['command'], self._user.id)
+                self._handle_command(msg['command'], self._user.id)
             case _:
                 raise Exception('unknown type of client message')
 
@@ -50,4 +48,31 @@ class MainSocketConsumer(WebsocketConsumer):
                 'type': 'action',
                 'action': action.to_public_json()
             }))
+
+    def _handle_command(self, command_json, user_id):
+        params = command_json['params']
+        match command_json['command_type']:
+            case 'add_larva':
+                self._world_facade.add_larva(user_id, params['nest_id'], params['larva_type'])
+            case 'stop_operation':
+                self._world_facade.stop_operation(user_id, params['colony_id'], params['operation_id'])
+            case 'build_new_sub_nest':
+                building_site = [params['building_site']['x'], params['building_site']['y']]
+                performing_colony_id = params['performing_colony_id']
+                workers_count = params['workers_count']
+                self._world_facade.build_new_sub_nest_operation(user_id, performing_colony_id, building_site, workers_count,)
+            case 'destroy_nest':
+                performing_colony_id = params['performing_colony_id']
+                nest_id = params['nest_id']
+                warriors_count = params['warriors_count']
+                self._world_facade.destroy_nest_operation(user_id, performing_colony_id, nest_id, warriors_count)
+            case 'pillage_nest':
+                performing_colony_id = params['performing_colony_id']
+                nest_to_pillage_id = params['nest_to_pillage_id']
+                nest_for_loot_id = params['nest_for_loot_id']
+                warriors_count = params['warriors_count']
+                workers_count = params['workers_count']
+                self._world_facade.pillage_nest_operation(user_id, performing_colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count,)
+            case _:
+                raise Exception('unknown type of command')
     

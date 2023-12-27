@@ -5,7 +5,7 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 
-class NestService():
+class ColonyService():
 
     def __init__(self):
         pass
@@ -13,7 +13,7 @@ class NestService():
     def set_world(self, world: World):
         self._world = world
 
-    def add_larva(self, nest_id: int, user_id: int, ant_type: AntTypes):
+    def add_larva(self, user_id: int, nest_id: int, ant_type: AntTypes):
         nest: Nest = self._world.map.get_entity_by_id(nest_id)
         colony = self._world.get_colony_by_id(nest.from_colony_id)
 
