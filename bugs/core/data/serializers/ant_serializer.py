@@ -35,7 +35,9 @@ class AntSerializer(LiveEntitySerializer):
         json = self._serialize_common(json, ant)
 
         json.update({
-            "genes": self._serialize_genes(ant.body.genes)
+            "genes": self._serialize_genes(ant.body.genes),
+            "is_fertilized": ant.body.is_fertilized,
+            "is_in_nuptial_flight": ant.body.is_in_nuptial_flight
         })
 
         return json

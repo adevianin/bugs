@@ -19,13 +19,15 @@ class QueenAnt(Ant):
     def __init__(self, events: EventEmitter, id: int, from_colony_id: int, body: AntBody, mind: AntMind):
         super().__init__(events, id, from_colony_id, body, AntTypes.QUEEN, mind)
 
-    def ask_participation(self):
-        once_relocated = self._body.memory.read('once_relocated')
-        return not once_relocated
-
-    def relocate_to_nest(self, nest: Nest):
-        super().relocate_to_nest(nest)
-        self._body.memory.save('once_relocated', True)
-
     def produce_larva(self, ant_type: AntTypes) -> Larva:
         return self._body.produce_larva(ant_type)
+    
+    def to_public_json(self):
+        json = super().to_public_json()
+
+        json.update({
+            "is_fertilized": self._body.is_fertilized,
+            "is_in_nuptial_flight": self._body.is_in_nuptial_flight
+        })
+        
+        return json

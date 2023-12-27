@@ -1,8 +1,8 @@
-import { LiveEntity } from './liveEntity'; 
-import { EntityTypes } from '../enum/entityTypes';
-import { ACTION_TYPES } from './action/actionTypes';
+import { LiveEntity } from '../liveEntity';
+import { EntityTypes } from '@domain/enum/entityTypes';
+import { ACTION_TYPES } from '../action/actionTypes';
 
-class Ant extends LiveEntity {
+class BaseAnt extends LiveEntity {
 
     constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats) {
         super(eventBus, id, position, angle, EntityTypes.ANT, fromColony, userSpeed, hp, maxHp);
@@ -16,10 +16,6 @@ class Ant extends LiveEntity {
 
     get antType() {
         return this._antType;
-    }
-
-    getColor() {
-        // return this._homeNest.getColor()
     }
 
     get isInNest() {
@@ -113,4 +109,4 @@ class Ant extends LiveEntity {
 
 }
 
-export { Ant }
+export { BaseAnt }

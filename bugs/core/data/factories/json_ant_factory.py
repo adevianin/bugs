@@ -39,7 +39,9 @@ class JsonAntFactory():
             "genes_queen_stats": self._json_stats_factory.build_stats(ant_json['genes']['queen_stats']),
             "genes_worker_food_required": ant_json['genes']['worker_food_required'],
             "genes_warrior_food_required": ant_json['genes']['warrior_food_required'],
-            "genes_queen_food_required": ant_json['genes']['queen_food_required']
+            "genes_queen_food_required": ant_json['genes']['queen_food_required'],
+            "is_fertilized": ant_json['is_fertilized'],
+            "is_in_nuptial_flight": ant_json['is_in_nuptial_flight']
         })
         
         return self._ant_factory.build_queen_ant(**ant_props)

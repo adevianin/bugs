@@ -113,7 +113,9 @@ class Command(BaseCommand):
                         "attack":20,
                         "defence":5
                     },
-                }
+                },
+                "is_fertilized": True,
+                "is_in_nuptial_flight": False
             },
             {
                 "id":3,

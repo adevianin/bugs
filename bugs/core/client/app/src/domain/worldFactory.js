@@ -1,5 +1,4 @@
 import { EntityTypes } from './enum/entityTypes';
-import { Ant } from './entity/ant';
 import { World } from './entity/world';
 import { Nest } from './entity/nest';
 import { Larva } from './entity/larva';
@@ -8,6 +7,8 @@ import { GroundBeetle } from './entity/groundBeetle';
 import { Item } from './entity/item';
 import { ItemSource } from './entity/itemSource';
 import { ItemArea } from './entity/itemArea';
+import { AntTypes } from './enum/antTypes';
+import { WarriorAnt, WorkerAnt, QueenAnt } from './entity/ant';
 
 class WorldFactory {
 
@@ -64,7 +65,14 @@ class WorldFactory {
     }
 
     buildAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats) {
-        return new Ant(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats);
+        switch(antType) {
+            case AntTypes.QUEEN:
+                return new QueenAnt(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
+            case AntTypes.WARRIOR:
+                return new WarriorAnt(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
+            case AntTypes.WORKER:
+                return new WorkerAnt(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
+        }
     }
 
     buildNest(id, position, angle, fromColony, storedCalories, larvaeData, larvaPlacesCount, isBuilt, hp, maxHp) {

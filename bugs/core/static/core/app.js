@@ -240,28 +240,79 @@ const ACTION_TYPES = {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/entity/ant.js":
-/*!*******************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/ant.js ***!
-  \*******************************************************/
+/***/ "./bugs/core/client/app/src/domain/entity/antColony.js":
+/*!*************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/antColony.js ***!
+  \*************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Ant": () => (/* binding */ Ant)
+/* harmony export */   "AntColony": () => (/* binding */ AntColony)
 /* harmony export */ });
-/* harmony import */ var _liveEntity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./liveEntity */ "./bugs/core/client/app/src/domain/entity/liveEntity.js");
-/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
-/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
- 
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+
+
+class AntColony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+
+    constructor(id, onwerId, operations, queenId) {
+        super();
+        this._id = id;
+        this._onwerId = onwerId;
+        this._operations = operations;
+        this._queenId = queenId
+    }
+
+    get id() {
+        return this._id;
+    }
+
+    get ownerId() {
+        return this._onwerId;
+    }
+
+    get operations() {
+        return this._operations;
+    }
+
+    get queenId() {
+        return this._queenId;
+    }
+
+    setOperations(operations) {
+        this._operations = operations;
+        this.emit('operationsChanged');
+    }
+
+}
 
 
 
-class Ant extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/ant/baseAnt.js":
+/*!***************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/ant/baseAnt.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "BaseAnt": () => (/* binding */ BaseAnt)
+/* harmony export */ });
+/* harmony import */ var _liveEntity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../liveEntity */ "./bugs/core/client/app/src/domain/entity/liveEntity.js");
+/* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+
+
+
+
+class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
     constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats) {
-        super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony, userSpeed, hp, maxHp);
+        super(eventBus, id, position, angle, _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony, userSpeed, hp, maxHp);
         this._pickedItemId = pickedItemId;
         this._antType = antType;
         this._setState('standing');
@@ -272,10 +323,6 @@ class Ant extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
     get antType() {
         return this._antType;
-    }
-
-    getColor() {
-        // return this._homeNest.getColor()
     }
 
     get isInNest() {
@@ -373,49 +420,108 @@ class Ant extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/entity/antColony.js":
+/***/ "./bugs/core/client/app/src/domain/entity/ant/index.js":
 /*!*************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/antColony.js ***!
+  !*** ./bugs/core/client/app/src/domain/entity/ant/index.js ***!
   \*************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "AntColony": () => (/* binding */ AntColony)
+/* harmony export */   "QueenAnt": () => (/* reexport safe */ _queenAnt__WEBPACK_IMPORTED_MODULE_0__.QueenAnt),
+/* harmony export */   "WarriorAnt": () => (/* reexport safe */ _warriorAnt__WEBPACK_IMPORTED_MODULE_1__.WarriorAnt),
+/* harmony export */   "WorkerAnt": () => (/* reexport safe */ _workerAnt__WEBPACK_IMPORTED_MODULE_2__.WorkerAnt)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+/* harmony import */ var _queenAnt__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./queenAnt */ "./bugs/core/client/app/src/domain/entity/ant/queenAnt.js");
+/* harmony import */ var _warriorAnt__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./warriorAnt */ "./bugs/core/client/app/src/domain/entity/ant/warriorAnt.js");
+/* harmony import */ var _workerAnt__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./workerAnt */ "./bugs/core/client/app/src/domain/entity/ant/workerAnt.js");
 
 
-class AntColony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
-    constructor(id, onwerId, operations, queenId) {
-        super();
-        this._id = id;
-        this._onwerId = onwerId;
-        this._operations = operations;
-        this._queenId = queenId
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/ant/queenAnt.js":
+/*!****************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/ant/queenAnt.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "QueenAnt": () => (/* binding */ QueenAnt)
+/* harmony export */ });
+/* harmony import */ var _baseAnt__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseAnt */ "./bugs/core/client/app/src/domain/entity/ant/baseAnt.js");
+/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+
+
+
+class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
+    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized) {
+        super(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats);
+        this._isFertilized = isFertilized;
     }
 
-    get id() {
-        return this._id;
+    get isFertilized() {
+        return this._isFertilized;
     }
+}
 
-    get ownerId() {
-        return this._onwerId;
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/ant/warriorAnt.js":
+/*!******************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/ant/warriorAnt.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "WarriorAnt": () => (/* binding */ WarriorAnt)
+/* harmony export */ });
+/* harmony import */ var _baseAnt__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseAnt */ "./bugs/core/client/app/src/domain/entity/ant/baseAnt.js");
+/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+
+
+
+class WarriorAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
+
+    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
+        super(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats);
     }
+}
 
-    get operations() {
-        return this._operations;
-    }
 
-    get queenId() {
-        return this._queenId;
-    }
 
-    setOperations(operations) {
-        this._operations = operations;
-        this.emit('operationsChanged');
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/ant/workerAnt.js":
+/*!*****************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/ant/workerAnt.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "WorkerAnt": () => (/* binding */ WorkerAnt)
+/* harmony export */ });
+/* harmony import */ var _baseAnt__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseAnt */ "./bugs/core/client/app/src/domain/entity/ant/baseAnt.js");
+/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+
+
+
+class WorkerAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
+
+    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
+        super(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WORKER, pickedItemId, locatedInNestId, homeNestId, stats);
     }
 
 }
@@ -1550,15 +1656,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "WorldFactory": () => (/* binding */ WorldFactory)
 /* harmony export */ });
 /* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
-/* harmony import */ var _entity_ant__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entity/ant */ "./bugs/core/client/app/src/domain/entity/ant.js");
-/* harmony import */ var _entity_world__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./entity/world */ "./bugs/core/client/app/src/domain/entity/world.js");
-/* harmony import */ var _entity_nest__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./entity/nest */ "./bugs/core/client/app/src/domain/entity/nest.js");
-/* harmony import */ var _entity_larva__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./entity/larva */ "./bugs/core/client/app/src/domain/entity/larva.js");
-/* harmony import */ var _entity_antColony__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/antColony */ "./bugs/core/client/app/src/domain/entity/antColony.js");
-/* harmony import */ var _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entity/groundBeetle */ "./bugs/core/client/app/src/domain/entity/groundBeetle.js");
-/* harmony import */ var _entity_item__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entity/item */ "./bugs/core/client/app/src/domain/entity/item.js");
-/* harmony import */ var _entity_itemSource__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entity/itemSource */ "./bugs/core/client/app/src/domain/entity/itemSource.js");
-/* harmony import */ var _entity_itemArea__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entity/itemArea */ "./bugs/core/client/app/src/domain/entity/itemArea.js");
+/* harmony import */ var _entity_world__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./entity/world */ "./bugs/core/client/app/src/domain/entity/world.js");
+/* harmony import */ var _entity_nest__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./entity/nest */ "./bugs/core/client/app/src/domain/entity/nest.js");
+/* harmony import */ var _entity_larva__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./entity/larva */ "./bugs/core/client/app/src/domain/entity/larva.js");
+/* harmony import */ var _entity_antColony__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./entity/antColony */ "./bugs/core/client/app/src/domain/entity/antColony.js");
+/* harmony import */ var _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/groundBeetle */ "./bugs/core/client/app/src/domain/entity/groundBeetle.js");
+/* harmony import */ var _entity_item__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entity/item */ "./bugs/core/client/app/src/domain/entity/item.js");
+/* harmony import */ var _entity_itemSource__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entity/itemSource */ "./bugs/core/client/app/src/domain/entity/itemSource.js");
+/* harmony import */ var _entity_itemArea__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entity/itemArea */ "./bugs/core/client/app/src/domain/entity/itemArea.js");
+/* harmony import */ var _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+/* harmony import */ var _entity_ant__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entity/ant */ "./bugs/core/client/app/src/domain/entity/ant/index.js");
+
 
 
 
@@ -1609,37 +1717,44 @@ class WorldFactory {
     }
 
     buildItemArea(id, position, angle, hp, maxHp) {
-        return new _entity_itemArea__WEBPACK_IMPORTED_MODULE_9__.ItemArea(this._mainEventBus, id, position, angle, hp, maxHp);
+        return new _entity_itemArea__WEBPACK_IMPORTED_MODULE_8__.ItemArea(this._mainEventBus, id, position, angle, hp, maxHp);
     }
 
     buildItemSource(id, position, angle, fromColony, hp, maxHp, itemType, isFertile) {
-        return new _entity_itemSource__WEBPACK_IMPORTED_MODULE_8__.ItemSource(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, isFertile);
+        return new _entity_itemSource__WEBPACK_IMPORTED_MODULE_7__.ItemSource(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, isFertile);
     }
 
     buildItem(id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
-        return new _entity_item__WEBPACK_IMPORTED_MODULE_7__.Item(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked);
+        return new _entity_item__WEBPACK_IMPORTED_MODULE_6__.Item(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked);
     }
 
     buildWorld() {
-        return new _entity_world__WEBPACK_IMPORTED_MODULE_2__.World(this._mainEventBus);
+        return new _entity_world__WEBPACK_IMPORTED_MODULE_1__.World(this._mainEventBus);
     }
 
     buildAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats) {
-        return new _entity_ant__WEBPACK_IMPORTED_MODULE_1__.Ant(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats);
+        switch(antType) {
+            case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.QUEEN:
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.QueenAnt(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
+            case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.WARRIOR:
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WarriorAnt(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
+            case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.WORKER:
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WorkerAnt(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
+        }
     }
 
     buildNest(id, position, angle, fromColony, storedCalories, larvaeData, larvaPlacesCount, isBuilt, hp, maxHp) {
         let larvae = [];
-        larvaeData.forEach(larvaData => larvae.push(_entity_larva__WEBPACK_IMPORTED_MODULE_4__.Larva.fromJson(larvaData.ant_type, larvaData.progress)));
-        return new _entity_nest__WEBPACK_IMPORTED_MODULE_3__.Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp);
+        larvaeData.forEach(larvaData => larvae.push(_entity_larva__WEBPACK_IMPORTED_MODULE_3__.Larva.fromJson(larvaData.ant_type, larvaData.progress)));
+        return new _entity_nest__WEBPACK_IMPORTED_MODULE_2__.Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp);
     }
 
     buildAntColony(id, owner_id, operations, queenId) {
-        return new _entity_antColony__WEBPACK_IMPORTED_MODULE_5__.AntColony(id, owner_id, operations, queenId);
+        return new _entity_antColony__WEBPACK_IMPORTED_MODULE_4__.AntColony(id, owner_id, operations, queenId);
     }
 
     buildGroundBeetle(id, position, angle, fromColony, userSpeed, hp, maxHp) {
-        return new _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_6__.GroundBeetle(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp);
+        return new _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_5__.GroundBeetle(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp);
     }
 }
 
@@ -2296,7 +2411,6 @@ class NestSelectorView extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHT
     }
 
     remove() {
-        console.log('removing nest seletor');
         this._stopListenEntityDied();
         this._stopListenEntityBorn();
         super.remove();
@@ -2738,6 +2852,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _antTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antTmpl.html");
 /* harmony import */ var _view_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/base/nestSelector */ "./bugs/core/client/app/src/view/base/nestSelector/index.js");
+/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+
 
 
 
@@ -2764,11 +2880,18 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._nestSelector = new _view_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._ant.fromColony);
         this._nestSelector.nestId = this._ant.homeNestId;
         this._el.querySelector('[data-nest]').append(this._nestSelector.el);
+
+        this.nuptialFlightBtn = this._el.querySelector('[data-nuptial-flight]');
+        this.nuptialFlightBtn.classList.toggle('hidden', !this._hasNuptialFlight());
     }
 
     remove() {
         this._nestSelector.remove();
         super.remove();
+    }
+
+    _hasNuptialFlight() {
+        return this._ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__.AntTypes.QUEEN;
     }
 }
 
@@ -7509,7 +7632,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<td data-type></td>\r\n<td data-attack></td>\r\n<td data-defence></td>\r\n<td data-role>\r\n    <select>\r\n    </select>\r\n</td>\r\n<td data-max-hp></td>\r\n<td data-nest></td>";
+var code = "<td data-type></td>\r\n<td data-attack></td>\r\n<td data-defence></td>\r\n<td data-role>\r\n    <select>\r\n    </select>\r\n</td>\r\n<td data-max-hp></td>\r\n<td data-nest></td>\r\n<td data-actions>\r\n    <button data-delete-ant>X</button>\r\n    <button data-nuptial-flight>шлюбний політ</button>\r\n</td>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -7527,7 +7650,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<thead>\r\n    <tr>\r\n        <td>тип</td>\r\n        <td>атака</td>\r\n        <td>захист</td>\r\n        <td>роль</td>\r\n        <td>макс хп</td>\r\n        <td>гніздо</td>\r\n    </tr>\r\n</thead>\r\n<tbody data-ants-container>\r\n</tbody>";
+var code = "<thead>\r\n    <tr>\r\n        <td>тип</td>\r\n        <td>атака</td>\r\n        <td>захист</td>\r\n        <td>роль</td>\r\n        <td>макс хп</td>\r\n        <td>гніздо</td>\r\n        <td>дії</td>\r\n    </tr>\r\n</thead>\r\n<tbody data-ants-container>\r\n</tbody>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
