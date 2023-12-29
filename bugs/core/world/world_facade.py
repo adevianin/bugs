@@ -65,18 +65,18 @@ class WorldFacade:
     def build_user_starter_pack(self, user_id: int):
         self._user_service.build_user_starter_pack(user_id)
 
-    def stop_operation(self, user_id: int, colony_id: int, operation_id: int):
+    def stop_operation_command(self, user_id: int, colony_id: int, operation_id: int):
         self._operation_service.stop_operation(user_id, colony_id, operation_id)
     
-    def build_new_sub_nest_operation(self, user_id: int, performing_colony_id: int, building_site: List[int], workers_count: int):
+    def build_new_sub_nest_operation_command(self, user_id: int, performing_colony_id: int, building_site: List[int], workers_count: int):
         building_site = Point.from_json(building_site)
         self._operation_service.build_new_sub_nest(user_id, performing_colony_id, building_site, workers_count)
     
-    def destroy_nest_operation(self, user_id: int, performing_colony_id: int, nest_id: int, warriors_count: int):
+    def destroy_nest_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int, warriors_count: int):
         self._operation_service.destroy_nest_operation(user_id, performing_colony_id, nest_id, warriors_count)
 
-    def pillage_nest_operation(self, user_id: int, performing_colony_id: int, nest_to_pillage_id: int, nest_for_loot_id: int, workers_count: int, warriors_count: int):
+    def pillage_nest_operation_command(self, user_id: int, performing_colony_id: int, nest_to_pillage_id: int, nest_for_loot_id: int, workers_count: int, warriors_count: int):
         self._operation_service.pillage_nest_operation(user_id, performing_colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
 
-    def add_larva(self, user_id: int, nest_id: int, larva_type: str):
+    def add_larva_command(self, user_id: int, nest_id: int, larva_type: str):
         self._colony_service.add_larva(user_id, nest_id, larva_type)
