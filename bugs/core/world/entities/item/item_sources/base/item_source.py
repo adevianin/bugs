@@ -14,11 +14,14 @@ class ItemSource(Entity):
     def __init__(self, events: EventEmitter, id: int, from_colony_id: int, body: Body, item_type: ItemTypes, fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
         super().__init__(events, id, EntityTypes.ITEM_SOURCE, from_colony_id, body)
         self._item_type = item_type
+        # move fertility to body
         self._fertility = fertility
         self._accumulated = accumulated
         self._max_item_strength = max_item_strength
         self._min_item_strength = min_item_strength
         self._is_fertile = self._check_fertility()
+
+        self.events.add_listener('hp_changed', self._on_hp_changed)
 
     @property
     def item_type(self):
@@ -82,16 +85,12 @@ class ItemSource(Entity):
         return json
     
     def _on_hp_changed(self):
-        super()._on_hp_changed()
         self.is_fertile = self._check_fertility()
 
     def _on_fertility_changed(self):
-        self._emit_fertility_change()
+        self.events.emit('action', 'item_source_fertility_changed', { 'is_fertile': self.is_fertile })
         if not self._is_fertile:
             self._accumulated = 0
         
-    def _emit_fertility_change(self):
-        self._emit_action('item_source_fertility_changed', { 'is_fertile': self.is_fertile })
-
     def _check_fertility(self) -> bool:
         return self._body.hp > self._body.stats.max_hp / 3

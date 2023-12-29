@@ -17,6 +17,8 @@ class AntMind(Mind):
         self.home_nest = home_nest
         self._is_in_opearetion = is_in_operation
 
+        self.events.add_listener('died', self._on_died)
+
     @property
     def is_in_opearetion(self):
         return self._is_in_opearetion
@@ -79,3 +81,6 @@ class AntMind(Mind):
     def _am_i_far_away_from_home(self):
         dist_from_home = math.dist([self.home_nest.position.x, self.home_nest.position.y], [self._body.position.x, self._body.position.y])
         return dist_from_home > self.home_nest.area
+    
+    def _on_died(self):
+        self.free_mind()

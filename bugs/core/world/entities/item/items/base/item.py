@@ -53,12 +53,12 @@ class Item(Entity):
     
     def pickup(self):
         self._is_picked = True
-        self._emit_action('item_was_picked_up')
+        self.events.emit('action', 'item_was_picked_up')
 
     def drop(self, position: Point):
         self._is_picked = False
         self._body.position = position
-        self._emit_action('item_was_dropped', {
+        self.events.emit('action', 'item_was_dropped', {
             'position': self.position.to_public_json()
         })
 
@@ -74,7 +74,7 @@ class Item(Entity):
     
     def be_bringed_to(self, position: Point, bringing_speed: int):
         self._body.position = position
-        self._emit_action('being_bringed', {
+        self.events.emit('action', 'being_bringed', {
             'new_position': self._body.position.to_public_json(),
             'bring_user_speed': bringing_speed
         })

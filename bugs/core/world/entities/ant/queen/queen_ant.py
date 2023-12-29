@@ -19,8 +19,6 @@ class QueenAnt(Ant):
     def __init__(self, events: EventEmitter, id: int, from_colony_id: int, body: AntBody, mind: AntMind):
         super().__init__(events, id, from_colony_id, body, AntTypes.QUEEN, mind)
 
-        self.events.add_listener('fly_nuptial_flight', self._on_fly_nuptial_flight)
-
     def produce_larva(self, ant_type: AntTypes) -> Larva:
         return self._body.produce_larva(ant_type)
     
@@ -34,5 +32,3 @@ class QueenAnt(Ant):
         
         return json
     
-    def _on_fly_nuptial_flight(self):
-        self._emit_action('fly_nuptial_flight')

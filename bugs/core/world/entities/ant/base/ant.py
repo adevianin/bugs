@@ -18,10 +18,6 @@ class Ant(LiveEntity):
         super().__init__(events, id, EntityTypes.ANT, from_colony_id, body, mind)
         self._ant_type = ant_type
         
-        self.events.add_listener('item_picked', self._on_item_picked)
-        self.events.add_listener('picked_item_dropped', self._on_item_dropped)
-        self.events.add_listener('died', self._on_died)
-
     @property
     def sayer(self) -> EventEmitter:
         return self._body.sayer
@@ -106,17 +102,4 @@ class Ant(LiveEntity):
         })
 
         return json
-    
-    def _on_died(self):
-        self._mind.free_mind()
-        self._body.sayer.remove_all_listeners()
-    
-    def _on_item_picked(self, item_id):
-        self._emit_action('ant_picked_up_item', {
-            'item_id': item_id
-        })
-
-    def _on_item_dropped(self):
-        self._emit_action('ant_dropped_picked_item')
-
     

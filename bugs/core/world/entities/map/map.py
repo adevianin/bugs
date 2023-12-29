@@ -68,7 +68,7 @@ class Map:
     def _handle_entity(self, entity: Entity):
         entity.events.once('ready_to_remove', partial(self._on_entity_ready_to_remove, entity))
         entity.events.once('died', partial(self._on_entity_died, entity))
-        entity.events.add_listener('action_occurred', self._on_entity_action_occured)
+        entity.events.add_listener('action', partial(self._on_entity_action_occured, entity))
 
         if (entity.type in EntityTypesPack.LIVE_ENTITIES):
             entity: LiveEntity = entity
@@ -78,8 +78,8 @@ class Map:
         self._entities_collection.delete_entity(entity.id)
         entity.events.remove_all_listeners()
 
-    def _on_entity_action_occured(self, action: Action):
-        self._event_bus.emit('action_occurred', action)
+    def _on_entity_action_occured(self, entity: Entity, action_type: str, action_data: dict = None):
+        self._event_bus.emit('action_occurred', Action.build_action(entity.id, action_type, 'entity', action_data))
 
     def _on_entity_died(self, entity: Entity):
         self.events.emit('entity_died', entity)

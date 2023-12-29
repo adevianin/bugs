@@ -16,9 +16,6 @@ class Entity(ABC):
         self._from_colony_id = from_colony_id
         self._body = body
 
-        self.events.add_listener('hp_changed', self._on_hp_changed)
-        self.events.add_listener('angle_changed', self._on_angle_changed)
-
     @property
     def id(self):
         return self._id
@@ -44,7 +41,7 @@ class Entity(ABC):
         return self._body.is_died
     
     def born(self):
-        self._emit_action('entity_born', { 'entity': self.to_public_json() })
+        self.events.emit('action', 'entity_born', { 'entity': self.to_public_json() })
 
     def die(self):
         self._body.hp = 0
@@ -65,20 +62,3 @@ class Entity(ABC):
             'size': self._body.SIZE.to_public_json()
         }
     
-    def _emit_action(self, action_type: str, action_data: dict = None):
-        self.events.emit('action_occurred', Action.build_action(self.id, action_type, 'entity', action_data))
-
-    def _handle_dieing(self):
-        self._emit_action('entity_died')
-        self.events.emit('died')
-        self.events.emit('ready_to_remove')
-
-    def _on_hp_changed(self):
-        self._emit_action('entity_hp_change', { 'hp': self._body.hp })
-        if self._body.hp <= 0:
-            self._handle_dieing()
-
-    def _on_angle_changed(self):
-        self._emit_action('entity_rotated', {
-            'angle': self._body.angle
-        })

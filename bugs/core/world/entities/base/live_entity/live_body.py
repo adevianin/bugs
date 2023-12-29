@@ -54,7 +54,8 @@ class LiveBody(Body):
         self._consume_calories(investing_calories)
         self.position = new_position
         
-        self.events.emit('walk', position=new_position)
+        self.events.emit('action', 'entity_walk', { 'position': new_position.to_public_json() })
+        
         return is_walk_done
     
     def step_to_near(self, point: Point, distance: int = 10):

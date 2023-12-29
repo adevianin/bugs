@@ -18,10 +18,6 @@ class LiveEntity(Entity, iEnemy):
         super().__init__(events, id, type, from_colony_id, body)
         self._mind: Mind = mind
 
-        self.events.add_listener('walk', self._on_body_walk)
-        self.events.add_listener('got_in_nest', self._on_got_in_nest)
-        self.events.add_listener('got_out_of_nest', self._on_got_out_of_nest)
-
     @property
     def mind(self):
         return self._mind
@@ -54,16 +50,3 @@ class LiveEntity(Entity, iEnemy):
         })
 
         return json
-
-    def _on_body_walk(self, position: Point):
-        self._emit_action('entity_walk', { 
-            'position': position.to_public_json()
-        })
-
-    def _on_got_in_nest(self, nest: Nest):
-        self._emit_action('entity_got_in_nest', {
-            'nest_id': nest.id
-        })
-
-    def _on_got_out_of_nest(self):
-        self._emit_action('entity_got_out_of_nest')

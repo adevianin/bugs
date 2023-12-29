@@ -45,4 +45,4 @@ class QueenAntBody(AntBody):
     
     def fly_nuptial_flight(self):
         self._is_in_nuptial_flight = True
-        self.events.emit('fly_nuptial_flight')
+        self.events.emit('action', 'fly_nuptial_flight')

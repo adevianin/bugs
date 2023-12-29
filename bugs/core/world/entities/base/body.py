@@ -34,7 +34,7 @@ class Body():
     @angle.setter
     def angle(self, value):
         self._angle = value
-        self.events.emit('angle_changed')
+        self.events.emit('action', 'entity_rotated', { 'angle': self._angle })
 
     @property
     def hp(self):
@@ -43,7 +43,9 @@ class Body():
     @hp.setter
     def hp(self, hp: int):
         self._hp = hp
-        self.events.emit('hp_changed')
+        self.events.emit('action','entity_hp_change', { 'hp': self._hp })
+        if self._hp <= 0:
+            self._handle_dieing()
 
     def receive_damage(self, damage: int):
         if not self.is_died:
@@ -54,3 +56,8 @@ class Body():
     def restore_hp_step(self):
         if self.hp < self.stats.max_hp:
             self.hp += self.stats.hp_regen_rate
+
+    def _handle_dieing(self):
+        self.events.emit('action', 'entity_died')
+        self.events.emit('died')
+        self.events.emit('ready_to_remove')

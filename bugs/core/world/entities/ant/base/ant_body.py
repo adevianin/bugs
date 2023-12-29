@@ -27,6 +27,8 @@ class AntBody(LiveBody):
         self._located_inside_nest = located_in_nest
         self._picked_item = picked_item
 
+        self.events.add_listener('died', self._on_died)
+
     @property
     def located_in_nest_id(self):
         return self._located_inside_nest.id if self._located_inside_nest else None
@@ -53,11 +55,11 @@ class AntBody(LiveBody):
     
     def get_in_nest(self, nest: Nest):
         self._located_inside_nest = nest
-        self.events.emit('got_in_nest', nest)
+        self.events.emit('action', 'entity_got_in_nest', { 'nest_id': nest.id })
 
     def get_out_of_nest(self):
         self._located_inside_nest = None
-        self.events.emit('got_out_of_nest')
+        self.events.emit('action', 'entity_got_out_of_nest')
     
     def say(self, phrase: str, data: dict):
         if (data):
@@ -80,18 +82,18 @@ class AntBody(LiveBody):
     def pick_up_item(self, item: Item):
         self._picked_item = item
         item.pickup()
-        self.events.emit('item_picked', item_id=item.id)
+        self.events.emit('action', 'ant_picked_up_item', { 'item_id': item.id })
         return True
 
     def give_food(self, nest: Nest):
         nest.take_edible_item(self._picked_item)
         self._picked_item = None
-        self.events.emit('picked_item_dropped')
+        self.events.emit('action', 'ant_dropped_picked_item')
 
     def drop_picked_item(self):
         self._picked_item.drop(Point(self.position.x, self.position.y))
         self._picked_item = None
-        self.events.emit('picked_item_dropped')
+        self.events.emit('action', 'ant_dropped_picked_item')
 
     def found_nest(self, position: Point, colony_id: int, callback):
         self.events.emit('birth_request', NestBirthRequest.build(position, colony_id, callback))
@@ -104,4 +106,7 @@ class AntBody(LiveBody):
     
     def fly_nuptial_flight(self):
         pass 
+
+    def _on_died(self):
+        self.sayer.remove_all_listeners()
     
