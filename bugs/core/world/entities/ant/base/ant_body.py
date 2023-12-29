@@ -47,6 +47,10 @@ class AntBody(LiveBody):
     def picked_item_id(self):
         return self._picked_item.id if self.is_item_picked else None
     
+    @property
+    def can_fly_nuptial_flight(self):
+        return False
+    
     def get_in_nest(self, nest: Nest):
         self._located_inside_nest = nest
         self.events.emit('got_in_nest', nest)
@@ -97,3 +101,7 @@ class AntBody(LiveBody):
             self.get_out_of_nest()
             return False
         return super().step_to(destination_point)
+    
+    def fly_nuptial_flight(self):
+        pass 
+    

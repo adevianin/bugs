@@ -124,21 +124,6 @@ class DomainFacade {
         return this._worldService.findNearestNestForOffensiveOperation(performingColonyId, point);
     }
 
-
-
-
-
-
-    // findMyColony() {
-    //     let userData = this.getUserData();
-    //     return this._worldService.world.findColonyByOwnerId(userData.id);
-    // }
-
-    findMyQueen() {
-        let userData = this.getUserData();
-        return this._worldService.world.findQueenByOwnerId(userData.id);
-    }
-
     _tryConnectMessageHandler() {
         if (this._userService.isLoggedIn()) {
             this._messageHandlerService.connect();
@@ -311,7 +296,7 @@ __webpack_require__.r(__webpack_exports__);
 
 class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
-    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats) {
+    constructor(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats) {
         super(eventBus, id, position, angle, _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony, userSpeed, hp, maxHp);
         this._pickedItemId = pickedItemId;
         this._antType = antType;
@@ -319,6 +304,7 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         this._locatedInNestId = locatedInNestId;
         this._homeNestId = homeNestId;
         this._stats = stats;
+        this._antApi = antApi;
     }
 
     get antType() {
@@ -351,6 +337,14 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
     hasPickedItem() {
         return !!this._pickedItemId;
+    }
+
+    get canFlyNuptialFlight() {
+        return false;
+    }
+
+    flyNuptialFlight() {
+        this._antApi.flyNuptialFlight(this._id);
     }
 
     playAction(action) {
@@ -461,13 +455,23 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
-    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized) {
-        super(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats);
+
+    constructor(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight) {
+        super(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats);
         this._isFertilized = isFertilized;
+        this._isInNuptialFlight = isInNuptialFlight;
     }
 
     get isFertilized() {
         return this._isFertilized;
+    }
+
+    get isInNuptialFlight() {
+        return this._isInNuptialFlight;
+    }
+
+    get canFlyNuptialFlight() {
+        return !this._isFertilized;
     }
 }
 
@@ -493,8 +497,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class WarriorAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
-        super(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats);
+    constructor(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
+        super(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats);
     }
 }
 
@@ -520,8 +524,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class WorkerAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
-        super(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WORKER, pickedItemId, locatedInNestId, homeNestId, stats);
+    constructor(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
+        super(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WORKER, pickedItemId, locatedInNestId, homeNestId, stats);
     }
 
 }
@@ -1303,7 +1307,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
-    let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.nestApi);
+    let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.nestApi, apis.antApi);
     let world = worldFactory.buildWorld();
     let actionFactory = new _entity_action_actionFactory__WEBPACK_IMPORTED_MODULE_5__.ActionFactory();
 
@@ -1680,35 +1684,39 @@ __webpack_require__.r(__webpack_exports__);
 
 class WorldFactory {
 
-    constructor(mainEventBus, nestApi) {
+    constructor(mainEventBus, nestApi, antApi) {
         this._mainEventBus = mainEventBus;
         this._nestApi = nestApi;
+        this._antApi = antApi;
     }
 
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT: 
-                return this.buildAnt(
-                    entityJson.id,
-                    entityJson.position,
-                    entityJson.angle,
-                    entityJson.from_colony_id,
-                    entityJson.user_speed,
-                    entityJson.hp,
-                    entityJson.max_hp,
-                    entityJson.ant_type,
-                    entityJson.picked_item_id,
-                    entityJson.located_in_nest_id,
-                    entityJson.home_nest_id,
-                    entityJson.stats);
+                switch (entityJson.ant_type) {
+                    case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.QUEEN:
+                        return this.buildQueenAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, 
+                            entityJson.hp, entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats, 
+                            entityJson.is_fertilized, entityJson.is_in_nuptial_flight)
+                    case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.WARRIOR:
+                        return this.buildWarriorAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
+                            entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats)
+                    case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.WORKER:
+                        return this.buildWorkerAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
+                            entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats)
+                }
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.GROUND_BEETLE:
-                return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp);
+                return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
+                    entityJson.max_hp);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
-                return this.buildNest(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count, entityJson.is_built, entityJson.hp, entityJson.max_hp);
+                return this.buildNest(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.stored_calories, entityJson.larvae, 
+                    entityJson.larva_places_count, entityJson.is_built, entityJson.hp, entityJson.max_hp);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM:
-                return this.buildItem(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.variety, entityJson.is_picked);
+                return this.buildItem(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, 
+                    entityJson.item_type, entityJson.variety, entityJson.is_picked);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM_SOURCE:
-                return this.buildItemSource(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.is_fertile);
+                return this.buildItemSource(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, 
+                    entityJson.item_type, entityJson.is_fertile);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM_AREA:
                 return this.buildItemArea(entityJson.id, entityJson.position, entityJson.angle, entityJson.hp, entityJson.max_hp);
             default:
@@ -1732,15 +1740,17 @@ class WorldFactory {
         return new _entity_world__WEBPACK_IMPORTED_MODULE_1__.World(this._mainEventBus);
     }
 
-    buildAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats) {
-        switch(antType) {
-            case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.QUEEN:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.QueenAnt(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
-            case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.WARRIOR:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WarriorAnt(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
-            case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.WORKER:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WorkerAnt(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
-        }
+    buildQueenAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.QueenAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, 
+            isInNuptialFlight);
+    }
+
+    buildWorkerAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WorkerAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
+    }
+
+    buildWarriorAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WarriorAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
     }
 
     buildNest(id, position, angle, fromColony, storedCalories, larvaeData, larvaPlacesCount, isBuilt, hp, maxHp) {
@@ -1755,6 +1765,40 @@ class WorldFactory {
 
     buildGroundBeetle(id, position, angle, fromColony, userSpeed, hp, maxHp) {
         return new _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_5__.GroundBeetle(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp);
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/sync/antApi.js":
+/*!*************************************************!*\
+  !*** ./bugs/core/client/app/src/sync/antApi.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AntApi": () => (/* binding */ AntApi)
+/* harmony export */ });
+class AntApi {
+
+    constructor(serverConnection) {
+        this._serverConnection = serverConnection;
+    }
+
+    flyNuptialFlight(antId) {
+        this._serverConnection.send({
+            type: 'command',
+            command: {
+                command_type: 'fly_nuptial_flight',
+                params: {
+                    ant_id: antId
+                }
+            }
+        });
     }
 }
 
@@ -1857,6 +1901,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _serverConnection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./serverConnection */ "./bugs/core/client/app/src/sync/serverConnection.js");
 /* harmony import */ var _nestApi__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestApi */ "./bugs/core/client/app/src/sync/nestApi.js");
 /* harmony import */ var _colonyApi__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./colonyApi */ "./bugs/core/client/app/src/sync/colonyApi.js");
+/* harmony import */ var _antApi__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./antApi */ "./bugs/core/client/app/src/sync/antApi.js");
+
 
 
 
@@ -1870,12 +1916,14 @@ function initSyncLayer() {
     let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection();
     let nestApi = new _nestApi__WEBPACK_IMPORTED_MODULE_3__.NestApi(serverConnection);
     let colonyApi = new _colonyApi__WEBPACK_IMPORTED_MODULE_4__.ColonyApi(serverConnection);
+    let antApi = new _antApi__WEBPACK_IMPORTED_MODULE_5__.AntApi(serverConnection);
 
     return {
         userApi,
         nestApi,
         colonyApi,
-        serverConnection
+        serverConnection,
+        antApi
     };
 }
 
@@ -2852,8 +2900,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _antTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antTmpl.html");
 /* harmony import */ var _view_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/base/nestSelector */ "./bugs/core/client/app/src/view/base/nestSelector/index.js");
-/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
-
 
 
 
@@ -2868,6 +2914,8 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._ant.on('died', this.remove.bind(this));
 
         this._render();
+
+        this.nuptialFlightBtn.addEventListener('click', this._onNuptialFlightBtnClick.bind(this));
     }
 
     _render() {
@@ -2882,7 +2930,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._el.querySelector('[data-nest]').append(this._nestSelector.el);
 
         this.nuptialFlightBtn = this._el.querySelector('[data-nuptial-flight]');
-        this.nuptialFlightBtn.classList.toggle('hidden', !this._hasNuptialFlight());
+        this.nuptialFlightBtn.classList.toggle('hidden', !this._ant.canFlyNuptialFlight);
     }
 
     remove() {
@@ -2890,9 +2938,10 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         super.remove();
     }
 
-    _hasNuptialFlight() {
-        return this._ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__.AntTypes.QUEEN;
+    _onNuptialFlightBtnClick() {
+        this._ant.flyNuptialFlight();
     }
+
 }
 
 
@@ -45762,7 +45811,8 @@ let syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)();
 let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)({ 
     userApi: syncLayer.userApi,
     nestApi: syncLayer.nestApi,
-    colonyApi: syncLayer.colonyApi
+    colonyApi: syncLayer.colonyApi,
+    antApi: syncLayer.antApi,
 }, syncLayer.serverConnection, initialData);
 (0,_view__WEBPACK_IMPORTED_MODULE_2__.initViewLayer)(domainFacade, initialData);
 

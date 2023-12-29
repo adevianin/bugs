@@ -10,7 +10,7 @@ import { ColonyService } from './service/colonyService';
 
 function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new EventEmitter();
-    let worldFactory = new WorldFactory(mainEventBus, apis.nestApi);
+    let worldFactory = new WorldFactory(mainEventBus, apis.nestApi, apis.antApi);
     let world = worldFactory.buildWorld();
     let actionFactory = new ActionFactory();
 

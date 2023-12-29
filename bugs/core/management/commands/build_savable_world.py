@@ -184,11 +184,22 @@ class Command(BaseCommand):
                 "angle": 0,
                 "stored_calories":1000,
                 "larvae":[
-                    # {
-                    #     "ant_type":"worker",
-                    #     "ate_calories":50,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    # },
+                    {
+                        "ant_type":"queen",
+                        "ate_calories":800,
+                        "needed_calories":900,
+                        "stats": {
+                            "type":"live_stats",
+                            "max_hp": 300,
+                            "hp_regen_rate":10,
+                            "distance_per_step":32,
+                            "sight_distance":200,
+                            "max_calories":1000,
+                            "distance_per_calorie":2,
+                            "attack":10,
+                            "defence":1
+                        },
+                    },
                     # {
                     #     "ant_type":"worker",
                     #     "ate_calories":50,

@@ -1,7 +1,6 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import antTmpl from './antTmpl.html';
 import { NestSelectorView } from "@view/base/nestSelector";
-import { AntTypes } from "@domain/enum/antTypes";
 
 class AntView extends BaseHTMLView {
 
@@ -13,6 +12,8 @@ class AntView extends BaseHTMLView {
         this._ant.on('died', this.remove.bind(this));
 
         this._render();
+
+        this.nuptialFlightBtn.addEventListener('click', this._onNuptialFlightBtnClick.bind(this));
     }
 
     _render() {
@@ -27,7 +28,7 @@ class AntView extends BaseHTMLView {
         this._el.querySelector('[data-nest]').append(this._nestSelector.el);
 
         this.nuptialFlightBtn = this._el.querySelector('[data-nuptial-flight]');
-        this.nuptialFlightBtn.classList.toggle('hidden', !this._hasNuptialFlight());
+        this.nuptialFlightBtn.classList.toggle('hidden', !this._ant.canFlyNuptialFlight);
     }
 
     remove() {
@@ -35,9 +36,10 @@ class AntView extends BaseHTMLView {
         super.remove();
     }
 
-    _hasNuptialFlight() {
-        return this._ant.antType == AntTypes.QUEEN;
+    _onNuptialFlightBtnClick() {
+        this._ant.flyNuptialFlight();
     }
+
 }
 
 export {

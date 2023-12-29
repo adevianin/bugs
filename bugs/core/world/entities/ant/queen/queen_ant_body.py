@@ -29,6 +29,10 @@ class QueenAntBody(AntBody):
     @property
     def is_in_nuptial_flight(self):
         return self._is_in_nuptial_flight
+    
+    @property
+    def can_fly_nuptial_flight(self):
+        return not self._is_fertilized
 
     def produce_larva(self, ant_type: AntTypes) -> Larva:
         match(ant_type):
@@ -39,3 +43,6 @@ class QueenAntBody(AntBody):
             case AntTypes.QUEEN:
                 return Larva.build_new(ant_type, self._genes.queen_food_required, self._genes.get_queen_stats())
     
+    def fly_nuptial_flight(self):
+        self._is_in_nuptial_flight = True
+        self.events.emit('fly_nuptial_flight')

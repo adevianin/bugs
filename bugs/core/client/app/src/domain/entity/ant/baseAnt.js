@@ -4,7 +4,7 @@ import { ACTION_TYPES } from '../action/actionTypes';
 
 class BaseAnt extends LiveEntity {
 
-    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats) {
+    constructor(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats) {
         super(eventBus, id, position, angle, EntityTypes.ANT, fromColony, userSpeed, hp, maxHp);
         this._pickedItemId = pickedItemId;
         this._antType = antType;
@@ -12,6 +12,7 @@ class BaseAnt extends LiveEntity {
         this._locatedInNestId = locatedInNestId;
         this._homeNestId = homeNestId;
         this._stats = stats;
+        this._antApi = antApi;
     }
 
     get antType() {
@@ -44,6 +45,14 @@ class BaseAnt extends LiveEntity {
 
     hasPickedItem() {
         return !!this._pickedItemId;
+    }
+
+    get canFlyNuptialFlight() {
+        return false;
+    }
+
+    flyNuptialFlight() {
+        this._antApi.flyNuptialFlight(this._id);
     }
 
     playAction(action) {

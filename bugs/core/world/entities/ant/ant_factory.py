@@ -46,7 +46,11 @@ class AntFactory():
         genes_warrior_food_required = 500
         genes_queen_stats = StatsLibrary.GENES_QUEEN_DEFAULT
         genes_queen_food_required = 1000
-        return self.build_queen_ant(id=id, from_colony_id=from_colony_id, stats=stats, position=position, angle=0, hp=None, nest=home_nest, located_in_nest=None, memory_data=None, is_auto_thought_generation=True, picked_item=None, is_in_operation=False, genes_worker_stats=genes_worker_stats, genes_worker_food_required=genes_worker_food_required, genes_warrior_stats=genes_warrior_stats, genes_warrior_food_required=genes_warrior_food_required, genes_queen_stats=genes_queen_stats, genes_queen_food_required=genes_queen_food_required)
+        return self.build_queen_ant(id=id, from_colony_id=from_colony_id, stats=stats, position=position, angle=0, hp=None, nest=home_nest, located_in_nest=None, 
+                                    memory_data=None, is_auto_thought_generation=True, picked_item=None, is_in_operation=False, genes_worker_stats=genes_worker_stats, 
+                                    genes_worker_food_required=genes_worker_food_required, genes_warrior_stats=genes_warrior_stats, 
+                                    genes_warrior_food_required=genes_warrior_food_required, genes_queen_stats=genes_queen_stats, 
+                                    genes_queen_food_required=genes_queen_food_required, is_fertilized=False, is_in_nuptial_flight=False)
 
     def build_warrior_ant(self, id: int, from_colony_id: int, stats: LiveStats, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool):
         events = EventEmitter()

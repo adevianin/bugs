@@ -12,35 +12,39 @@ import { WarriorAnt, WorkerAnt, QueenAnt } from './entity/ant';
 
 class WorldFactory {
 
-    constructor(mainEventBus, nestApi) {
+    constructor(mainEventBus, nestApi, antApi) {
         this._mainEventBus = mainEventBus;
         this._nestApi = nestApi;
+        this._antApi = antApi;
     }
 
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case EntityTypes.ANT: 
-                return this.buildAnt(
-                    entityJson.id,
-                    entityJson.position,
-                    entityJson.angle,
-                    entityJson.from_colony_id,
-                    entityJson.user_speed,
-                    entityJson.hp,
-                    entityJson.max_hp,
-                    entityJson.ant_type,
-                    entityJson.picked_item_id,
-                    entityJson.located_in_nest_id,
-                    entityJson.home_nest_id,
-                    entityJson.stats);
+                switch (entityJson.ant_type) {
+                    case AntTypes.QUEEN:
+                        return this.buildQueenAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, 
+                            entityJson.hp, entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats, 
+                            entityJson.is_fertilized, entityJson.is_in_nuptial_flight)
+                    case AntTypes.WARRIOR:
+                        return this.buildWarriorAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
+                            entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats)
+                    case AntTypes.WORKER:
+                        return this.buildWorkerAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
+                            entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats)
+                }
             case EntityTypes.GROUND_BEETLE:
-                return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, entityJson.max_hp);
+                return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
+                    entityJson.max_hp);
             case EntityTypes.NEST:
-                return this.buildNest(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.stored_calories, entityJson.larvae, entityJson.larva_places_count, entityJson.is_built, entityJson.hp, entityJson.max_hp);
+                return this.buildNest(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.stored_calories, entityJson.larvae, 
+                    entityJson.larva_places_count, entityJson.is_built, entityJson.hp, entityJson.max_hp);
             case EntityTypes.ITEM:
-                return this.buildItem(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.variety, entityJson.is_picked);
+                return this.buildItem(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, 
+                    entityJson.item_type, entityJson.variety, entityJson.is_picked);
             case EntityTypes.ITEM_SOURCE:
-                return this.buildItemSource(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, entityJson.item_type, entityJson.is_fertile);
+                return this.buildItemSource(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, 
+                    entityJson.item_type, entityJson.is_fertile);
             case EntityTypes.ITEM_AREA:
                 return this.buildItemArea(entityJson.id, entityJson.position, entityJson.angle, entityJson.hp, entityJson.max_hp);
             default:
@@ -64,15 +68,17 @@ class WorldFactory {
         return new World(this._mainEventBus);
     }
 
-    buildAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats) {
-        switch(antType) {
-            case AntTypes.QUEEN:
-                return new QueenAnt(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
-            case AntTypes.WARRIOR:
-                return new WarriorAnt(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
-            case AntTypes.WORKER:
-                return new WorkerAnt(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
-        }
+    buildQueenAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight) {
+        return new QueenAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, 
+            isInNuptialFlight);
+    }
+
+    buildWorkerAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
+        return new WorkerAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
+    }
+
+    buildWarriorAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
+        return new WarriorAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
     }
 
     buildNest(id, position, angle, fromColony, storedCalories, larvaeData, larvaPlacesCount, isBuilt, hp, maxHp) {

@@ -9,6 +9,7 @@ let syncLayer = initSyncLayer();
 let domainFacade = initDomainLayer({ 
     userApi: syncLayer.userApi,
     nestApi: syncLayer.nestApi,
-    colonyApi: syncLayer.colonyApi
+    colonyApi: syncLayer.colonyApi,
+    antApi: syncLayer.antApi,
 }, syncLayer.serverConnection, initialData);
 initViewLayer(domainFacade, initialData);

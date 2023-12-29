@@ -110,21 +110,6 @@ class DomainFacade {
         return this._worldService.findNearestNestForOffensiveOperation(performingColonyId, point);
     }
 
-
-
-
-
-
-    // findMyColony() {
-    //     let userData = this.getUserData();
-    //     return this._worldService.world.findColonyByOwnerId(userData.id);
-    // }
-
-    findMyQueen() {
-        let userData = this.getUserData();
-        return this._worldService.world.findQueenByOwnerId(userData.id);
-    }
-
     _tryConnectMessageHandler() {
         if (this._userService.isLoggedIn()) {
             this._messageHandlerService.connect();

@@ -3,8 +3,8 @@ import { AntTypes } from "@domain/enum/antTypes";
 
 class WarriorAnt extends BaseAnt {
 
-    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
-        super(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp, AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats);
+    constructor(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
+        super(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats);
     }
 }
 
