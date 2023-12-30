@@ -204,6 +204,7 @@ __webpack_require__.r(__webpack_exports__);
 const ACTION_TYPES = {
     ANT_PICKED_UP_ITEM: 'ant_picked_up_item',
     ANT_DROPPED_PICKED_ITEM: 'ant_dropped_picked_item',
+    ANT_FLY_NUPTIAL_FLIGHT: 'ant_fly_nuptial_flight',
     ENTITY_EAT_FOOD: 'entity_eat_food',
     ENTITY_DIED: 'entity_died',
     ENTITY_BORN: 'entity_born',
@@ -301,10 +302,14 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         this._pickedItemId = pickedItemId;
         this._antType = antType;
         this._setState('standing');
-        this._locatedInNestId = locatedInNestId;
+        this.locatedInNestId = locatedInNestId;
         this._homeNestId = homeNestId;
         this._stats = stats;
         this._antApi = antApi;
+    }
+
+    updateIsHidden() {
+        this.isHidden = this.isInNest;
     }
 
     get antType() {
@@ -317,6 +322,11 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
     get locatedInNestId() {
         return this._locatedInNestId;
+    }
+
+    set locatedInNestId(nestId) {
+        this._locatedInNestId = nestId;
+        this.updateIsHidden();
     }
 
     get pickedItemId() {
@@ -344,7 +354,7 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
     }
 
     flyNuptialFlight() {
-        this._antApi.flyNuptialFlight(this._id);
+        this._antApi.flyNuptialFlight(this.id);
     }
 
     playAction(action) {
@@ -363,6 +373,8 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
                 return this._playGotInNest(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
                 return this._playGotOutOfNest(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_FLY_NUPTIAL_FLIGHT:
+                return this._playFlyNuptialFlight(action)
         }
     }
 
@@ -391,21 +403,36 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
     _playGotInNest(action) {
         this._setState('standing');
-        this._locatedInNestId = action.actionData.nest_id;
+        this.locatedInNestId = action.actionData.nest_id;
         this.emit('locatedInNestChanged');
         return Promise.resolve();
     }
 
     _playGotOutOfNest() {
         this._setState('standing');
-        this._locatedInNestId = null;
+        this.locatedInNestId = null;
         this.emit('locatedInNestChanged');
         return Promise.resolve();
     }
 
-    _toggleIsInNest(isInNest) {
-        this._isInNest = isInNest;
-        
+    // _toggleIsInNest(isInNest) {
+    //     this._isInNest = isInNest;
+    // }
+
+    _playFlyNuptialFlight(action) {
+        let stepCount = 100;
+        let stepNumber = 0;
+        return new Promise((res) => {
+            let rotationInterval = setInterval(()=> {
+                this.angle += 20;
+                this.setPosition(this._position.x, this._position.y-2);
+                stepNumber++;
+                if (stepNumber > stepCount) {
+                    clearInterval(rotationInterval);
+                    res();
+                }
+            }, 20)
+        });
     }
 
 }
@@ -459,11 +486,20 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
     constructor(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight) {
         super(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats);
         this._isFertilized = isFertilized;
-        this._isInNuptialFlight = isInNuptialFlight;
+        this.isInNuptialFlight = isInNuptialFlight;
+    }
+
+    updateIsHidden() {
+        this.isHidden = this.isInNest || this.isInNuptialFlight;
     }
 
     get isFertilized() {
         return this._isFertilized;
+    }
+
+    set isInNuptialFlight(isInNuptialFlight) {
+        this._isInNuptialFlight = isInNuptialFlight;
+        this.updateIsHidden();
     }
 
     get isInNuptialFlight() {
@@ -472,6 +508,15 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
     get canFlyNuptialFlight() {
         return !this._isFertilized;
+    }
+
+    _getInNuptialFlight() {
+        this.isInNuptialFlight = true;
+        this._eventBus.emit('antFlewNuptialFlight', this);
+    }
+
+    _playFlyNuptialFlight() {
+        return super._playFlyNuptialFlight().then(() => this._getInNuptialFlight());
     }
 }
 
@@ -565,6 +610,19 @@ class Entity extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
         this._angle = angle;
         this._hp = hp;
         this._maxHp = maxHp;
+    }
+
+    get isHidden() {
+        return this._isHidden;
+    }
+
+    set isHidden(isHidden) {
+        this._isHidden = isHidden;
+        this.emit('isHiddenChanged');
+    }
+
+    updateIsHidden() {
+        this.isHidden = false;
     }
 
     get state() {
@@ -4308,7 +4366,7 @@ class AntView extends _liveEntityView__WEBPACK_IMPORTED_MODULE_2__.LiveEntityVie
 
         this._unbindItemPickedUpListener = this._entity.on('itemPickedUp', this._renderPickedItemView.bind(this));
         this._unbindItemDropListener = this._entity.on('itemDroped', this._removePickedItemView.bind(this));
-        this._unbindIsHiddenChangedListener = this._entity.on('locatedInNestChanged', this._renderIsInNest.bind(this));
+        this._unbindIsHiddenChangedListener = this._entity.on('isHiddenChanged', this._renderIsHidden.bind(this));
     }
 
     remove() {
@@ -4326,7 +4384,7 @@ class AntView extends _liveEntityView__WEBPACK_IMPORTED_MODULE_2__.LiveEntityVie
             this._renderPickedItemView();
         }
 
-        this._renderIsInNest();
+        this._renderIsHidden();
     }
 
     _buildStandSprite() {
@@ -4357,9 +4415,10 @@ class AntView extends _liveEntityView__WEBPACK_IMPORTED_MODULE_2__.LiveEntityVie
         }
     }
 
-    _renderIsInNest() {
-        this._entityContainer.renderable = !this._entity.isInNest;
+    _renderIsHidden() {
+        this._entityContainer.renderable = !this._entity.isHidden;
     }
+
 
 }
 

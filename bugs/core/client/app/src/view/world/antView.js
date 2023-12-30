@@ -11,7 +11,7 @@ class AntView extends LiveEntityView {
 
         this._unbindItemPickedUpListener = this._entity.on('itemPickedUp', this._renderPickedItemView.bind(this));
         this._unbindItemDropListener = this._entity.on('itemDroped', this._removePickedItemView.bind(this));
-        this._unbindIsHiddenChangedListener = this._entity.on('locatedInNestChanged', this._renderIsInNest.bind(this));
+        this._unbindIsHiddenChangedListener = this._entity.on('isHiddenChanged', this._renderIsHidden.bind(this));
     }
 
     remove() {
@@ -29,7 +29,7 @@ class AntView extends LiveEntityView {
             this._renderPickedItemView();
         }
 
-        this._renderIsInNest();
+        this._renderIsHidden();
     }
 
     _buildStandSprite() {
@@ -60,9 +60,10 @@ class AntView extends LiveEntityView {
         }
     }
 
-    _renderIsInNest() {
-        this._entityContainer.renderable = !this._entity.isInNest;
+    _renderIsHidden() {
+        this._entityContainer.renderable = !this._entity.isHidden;
     }
+
 
 }
 

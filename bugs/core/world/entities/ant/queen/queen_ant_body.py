@@ -44,5 +44,8 @@ class QueenAntBody(AntBody):
                 return Larva.build_new(ant_type, self._genes.queen_food_required, self._genes.get_queen_stats())
     
     def fly_nuptial_flight(self):
+        if self.is_in_nest:
+            self.get_out_of_nest()
+        
         self._is_in_nuptial_flight = True
-        self.events.emit('action', 'fly_nuptial_flight')
+        self.events.emit('action', 'ant_fly_nuptial_flight')

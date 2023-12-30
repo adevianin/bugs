@@ -6,11 +6,20 @@ class QueenAnt extends BaseAnt {
     constructor(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight) {
         super(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats);
         this._isFertilized = isFertilized;
-        this._isInNuptialFlight = isInNuptialFlight;
+        this.isInNuptialFlight = isInNuptialFlight;
+    }
+
+    updateIsHidden() {
+        this.isHidden = this.isInNest || this.isInNuptialFlight;
     }
 
     get isFertilized() {
         return this._isFertilized;
+    }
+
+    set isInNuptialFlight(isInNuptialFlight) {
+        this._isInNuptialFlight = isInNuptialFlight;
+        this.updateIsHidden();
     }
 
     get isInNuptialFlight() {
@@ -19,6 +28,15 @@ class QueenAnt extends BaseAnt {
 
     get canFlyNuptialFlight() {
         return !this._isFertilized;
+    }
+
+    _getInNuptialFlight() {
+        this.isInNuptialFlight = true;
+        this._eventBus.emit('antFlewNuptialFlight', this);
+    }
+
+    _playFlyNuptialFlight() {
+        return super._playFlyNuptialFlight().then(() => this._getInNuptialFlight());
     }
 }
 

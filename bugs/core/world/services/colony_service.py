@@ -4,6 +4,8 @@ from core.world.entities.world.world import World
 from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
+from core.world.entities.ant.base.ant import Ant
+from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 
 class ColonyService():
 
@@ -31,3 +33,19 @@ class ColonyService():
             raise Exception('queen is not in nest')
 
         nest.add_larva(queen.produce_larva(ant_type))
+
+    def fly_nuptial_flight(self, user_id: int, ant_id: int):
+        ant: Ant = self._world.map.get_entity_by_id(ant_id)
+        
+        if not ant:
+            return
+        
+        colony: AntColony = self._world.get_colony_by_id(ant.from_colony_id)
+
+        if colony.owner_id != user_id:
+            raise Exception(f'user dont have this colony')
+
+        if not ant.can_fly_nuptial_flight:
+            return
+        
+        ant.fly_nuptial_flight()

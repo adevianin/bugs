@@ -38,11 +38,15 @@ class Ant(LiveEntity):
     def located_in_nest_id(self):
         return self._body.located_in_nest_id
     
+    @property
+    def can_fly_nuptial_flight(self):
+        return self._body.can_fly_nuptial_flight
+    
     def prepare_for_operation(self, sayback: str = None):
         self._mind.prepare_for_operation(sayback)
     
-    def feed_myself(self, sayback: str = None):
-        self._mind.feed_myself(sayback)
+    # def feed_myself(self, sayback: str = None):
+    #     self._mind.feed_myself(sayback)
     
     def collect_food(self, sayback: str = None):
         self._mind.collect_food(sayback)
@@ -87,6 +91,9 @@ class Ant(LiveEntity):
 
     def ask_participation(self):
         return self._mind.ask_participation()
+    
+    def fly_nuptial_flight(self):
+        self._body.fly_nuptial_flight()
 
     def to_public_json(self):
         json = super().to_public_json()

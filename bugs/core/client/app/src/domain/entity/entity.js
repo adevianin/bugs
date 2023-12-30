@@ -18,6 +18,19 @@ class Entity extends EventEmitter {
         this._maxHp = maxHp;
     }
 
+    get isHidden() {
+        return this._isHidden;
+    }
+
+    set isHidden(isHidden) {
+        this._isHidden = isHidden;
+        this.emit('isHiddenChanged');
+    }
+
+    updateIsHidden() {
+        this.isHidden = false;
+    }
+
     get state() {
         return this._state;
     }

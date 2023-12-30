@@ -73,8 +73,9 @@ class MainSocketConsumer(WebsocketConsumer):
                 warriors_count = params['warriors_count']
                 workers_count = params['workers_count']
                 self._world_facade.pillage_nest_operation_command(user_id, performing_colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
-            # case 'fly_nuptial_flight':
-                
+            case 'fly_nuptial_flight':
+                ant_id = params['ant_id']
+                self._world_facade.fly_nuptian_flight_command(user_id, ant_id)
             case _:
                 raise Exception('unknown type of command')
     

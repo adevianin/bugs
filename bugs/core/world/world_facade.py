@@ -80,3 +80,6 @@ class WorldFacade:
 
     def add_larva_command(self, user_id: int, nest_id: int, larva_type: str):
         self._colony_service.add_larva(user_id, nest_id, larva_type)
+
+    def fly_nuptian_flight_command(self, user_id: int, ant_id: int):
+        self._colony_service.fly_nuptial_flight(user_id, ant_id)

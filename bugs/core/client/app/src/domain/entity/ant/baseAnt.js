@@ -9,10 +9,14 @@ class BaseAnt extends LiveEntity {
         this._pickedItemId = pickedItemId;
         this._antType = antType;
         this._setState('standing');
-        this._locatedInNestId = locatedInNestId;
+        this.locatedInNestId = locatedInNestId;
         this._homeNestId = homeNestId;
         this._stats = stats;
         this._antApi = antApi;
+    }
+
+    updateIsHidden() {
+        this.isHidden = this.isInNest;
     }
 
     get antType() {
@@ -25,6 +29,11 @@ class BaseAnt extends LiveEntity {
 
     get locatedInNestId() {
         return this._locatedInNestId;
+    }
+
+    set locatedInNestId(nestId) {
+        this._locatedInNestId = nestId;
+        this.updateIsHidden();
     }
 
     get pickedItemId() {
@@ -52,7 +61,7 @@ class BaseAnt extends LiveEntity {
     }
 
     flyNuptialFlight() {
-        this._antApi.flyNuptialFlight(this._id);
+        this._antApi.flyNuptialFlight(this.id);
     }
 
     playAction(action) {
@@ -71,6 +80,8 @@ class BaseAnt extends LiveEntity {
                 return this._playGotInNest(action);
             case ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
                 return this._playGotOutOfNest(action);
+            case ACTION_TYPES.ANT_FLY_NUPTIAL_FLIGHT:
+                return this._playFlyNuptialFlight(action)
         }
     }
 
@@ -99,21 +110,36 @@ class BaseAnt extends LiveEntity {
 
     _playGotInNest(action) {
         this._setState('standing');
-        this._locatedInNestId = action.actionData.nest_id;
+        this.locatedInNestId = action.actionData.nest_id;
         this.emit('locatedInNestChanged');
         return Promise.resolve();
     }
 
     _playGotOutOfNest() {
         this._setState('standing');
-        this._locatedInNestId = null;
+        this.locatedInNestId = null;
         this.emit('locatedInNestChanged');
         return Promise.resolve();
     }
 
-    _toggleIsInNest(isInNest) {
-        this._isInNest = isInNest;
-        
+    // _toggleIsInNest(isInNest) {
+    //     this._isInNest = isInNest;
+    // }
+
+    _playFlyNuptialFlight(action) {
+        let stepCount = 100;
+        let stepNumber = 0;
+        return new Promise((res) => {
+            let rotationInterval = setInterval(()=> {
+                this.angle += 20;
+                this.setPosition(this._position.x, this._position.y-2);
+                stepNumber++;
+                if (stepNumber > stepCount) {
+                    clearInterval(rotationInterval);
+                    res();
+                }
+            }, 20)
+        });
     }
 
 }
