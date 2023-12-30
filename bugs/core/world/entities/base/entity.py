@@ -27,6 +27,11 @@ class Entity(ABC):
     @property
     def from_colony_id(self):
         return self._from_colony_id
+    
+    @from_colony_id.setter
+    def from_colony_id(self, colony_id: int):
+        self._from_colony_id = colony_id
+        self.events.emit('action', 'entity_colony_changed', { 'colony_id': colony_id })
 
     @property
     def body(self) -> Body:

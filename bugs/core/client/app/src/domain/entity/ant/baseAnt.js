@@ -80,7 +80,7 @@ class BaseAnt extends LiveEntity {
                 return this._playGotInNest(action);
             case ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
                 return this._playGotOutOfNest(action);
-            case ACTION_TYPES.ANT_FLY_NUPTIAL_FLIGHT:
+            case ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT:
                 return this._playFlyNuptialFlight(action)
         }
     }

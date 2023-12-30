@@ -48,4 +48,4 @@ class QueenAntBody(AntBody):
             self.get_out_of_nest()
         
         self._is_in_nuptial_flight = True
-        self.events.emit('action', 'ant_fly_nuptial_flight')
+        self.events.emit('action', 'ant_flew_nuptial_flight')

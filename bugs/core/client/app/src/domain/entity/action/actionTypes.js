@@ -1,7 +1,7 @@
 const ACTION_TYPES = {
     ANT_PICKED_UP_ITEM: 'ant_picked_up_item',
     ANT_DROPPED_PICKED_ITEM: 'ant_dropped_picked_item',
-    ANT_FLY_NUPTIAL_FLIGHT: 'ant_fly_nuptial_flight',
+    ANT_FLEW_NUPTIAL_FLIGHT: 'ant_flew_nuptial_flight',
     ENTITY_EAT_FOOD: 'entity_eat_food',
     ENTITY_DIED: 'entity_died',
     ENTITY_BORN: 'entity_born',
@@ -10,6 +10,7 @@ const ACTION_TYPES = {
     ENTITY_GOT_OUT_OF_NEST: 'entity_got_out_of_nest',
     ENTITY_HP_CHANGE: 'entity_hp_change',
     ENTITY_ROTATED: 'entity_rotated',
+    ENTITY_COLONY_CHANGED: 'entity_colony_changed',
     ITEM_WAS_PICKED_UP: 'item_was_picked_up',
     ITEM_WAS_DROPPED: 'item_was_dropped',
     ITEM_SOURCE_FERTILITY_CHANGED: 'item_source_fertility_changed',
