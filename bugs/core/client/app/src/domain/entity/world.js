@@ -76,7 +76,7 @@ class World {
         return this._entities.filter(e => e.type == EntityTypes.NEST && e.fromColony == colonyId);
     }
 
-    findQueenFromColony(colonyId) {
+    getQueenOfColony(colonyId) {
         let colony = this.findColonyById(colonyId);
         let queen = null;
         if (colony.queenId) {

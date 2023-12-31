@@ -91,13 +91,18 @@ class DomainFacade {
     }
 
     getQueenOfColony(colonyId) {
-        return this._worldService.world.findQueenFromColony(colonyId);
+        return this._worldService.world.getQueenOfColony(colonyId);
     }
 
     isNestMine(nest) {
         let userData = this.getUserData();
         let colony = this._worldService.world.findColonyById(nest.fromColony);
         return colony.ownerId == userData.id;
+    }
+
+    getMyQueensInNuptialFlight() {
+        let userData = this.getUserData();
+        return this._worldService.getQueensInNuptialFlightFromUser(userData.id);
     }
 
     /*======operations========*/
@@ -513,7 +518,7 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
     _getInNuptialFlight() {
         this.isInNuptialFlight = true;
-        this._emitToEventBus('antFlewNuptialFlight')
+        this._emitToEventBus('queenFlewNuptialFlight')
     }
 
     _playFlyNuptialFlight() {
@@ -1259,7 +1264,7 @@ class World {
         return this._entities.filter(e => e.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST && e.fromColony == colonyId);
     }
 
-    findQueenFromColony(colonyId) {
+    getQueenOfColony(colonyId) {
         let colony = this.findColonyById(colonyId);
         let queen = null;
         if (colony.queenId) {
@@ -1626,10 +1631,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "WorldService": () => (/* binding */ WorldService)
 /* harmony export */ });
-/* harmony import */ var _enum_antTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
-/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
-/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @utils/distance */ "./bugs/core/client/utils/distance.js");
-
+/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/distance */ "./bugs/core/client/utils/distance.js");
 
 
 
@@ -1691,7 +1694,7 @@ class WorldService {
         let maxDist = 100;
 
         nests.forEach(nest => {
-            let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_2__.distance)(point.x, point.y, nest.position.x, nest.position.y);
+            let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_1__.distance)(point.x, point.y, nest.position.x, nest.position.y);
             if (nest.fromColony != performingColonyId && dist <= maxDist && (!smallestDistance || dist < smallestDistance)) {
                 smallestDistance = dist;
                 nearestNest = nest;
@@ -1699,6 +1702,17 @@ class WorldService {
         });
 
         return nearestNest;
+    }
+
+    getQueensInNuptialFlightFromUser(userId) {
+        let colonies = this._world.findColoniesByOwnerId(userId);
+        let allAnts = [];
+        for (let colony of colonies) {
+            let colonyAnts = this._world.findAntsFromColony(colony.id);
+            allAnts = allAnts.concat(colonyAnts);
+        }
+        
+        return allAnts.filter(ant => ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN && ant.isInNuptialFlight);
     }
 
 }
@@ -2698,6 +2712,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _tabs_userTab_userTab__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./tabs/userTab/userTab */ "./bugs/core/client/app/src/view/panel/tabs/userTab/userTab.js");
 /* harmony import */ var _tabs_coloniesTab__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tabs/coloniesTab */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/index.js");
 /* harmony import */ var _view_base_tabSwitcher_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/base/tabSwitcher/tabSwitcher */ "./bugs/core/client/app/src/view/base/tabSwitcher/tabSwitcher.js");
+/* harmony import */ var _tabs_nuptialFlightTab__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./tabs/nuptialFlightTab */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/index.js");
+
 
 
 
@@ -2724,10 +2740,12 @@ class Panel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView
 
         this._userTab = new _tabs_userTab_userTab__WEBPACK_IMPORTED_MODULE_3__.UserTab(this._el.querySelector('[data-user-tab]'));
         this._coloniesTab = new _tabs_coloniesTab__WEBPACK_IMPORTED_MODULE_4__.ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));
+        this._nuptialFlightTab = new _tabs_nuptialFlightTab__WEBPACK_IMPORTED_MODULE_6__.NuptialFlightTabView(this._el.querySelector('[data-nuptial-flight-tab]'));
 
         this._tabSwitcher = new _view_base_tabSwitcher_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
             { name: 'user', label: 'Користувач', tab: this._userTab },
-            { name: 'colonies', label: 'Колонії', tab: this._coloniesTab }
+            { name: 'colonies', label: 'Колонії', tab: this._coloniesTab },
+            { name: 'nuptial_flight', label: 'Шлюбний політ', tab: this._nuptialFlightTab }
         ]);
     }
 
@@ -3037,7 +3055,7 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
 
         this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
         this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
-        this.$domainFacade.events.on('antFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
+        this.$domainFacade.events.on('queenFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
 
         this._render();
     }
@@ -4267,6 +4285,214 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _coloniesTabView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./coloniesTabView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/coloniesTabView.js");
 
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/index.js":
+/*!****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/index.js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NuptialFlightTabView": () => (/* reexport safe */ _nuptialFlightTabView__WEBPACK_IMPORTED_MODULE_0__.NuptialFlightTabView)
+/* harmony export */ });
+/* harmony import */ var _nuptialFlightTabView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./nuptialFlightTabView */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/nuptialFlightTabView.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/nuptialFlightTabView.js":
+/*!*******************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/nuptialFlightTabView.js ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NuptialFlightTabView": () => (/* binding */ NuptialFlightTabView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _nuptialFlightTab_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nuptialFlightTab.html */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/nuptialFlightTab.html");
+/* harmony import */ var _queensList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./queensList */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/index.js");
+
+
+ 
+
+class NuptialFlightTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+
+        this._render();
+    }
+
+    _render() {
+        this._el.innerHTML = _nuptialFlightTab_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._queensList = new _queensList__WEBPACK_IMPORTED_MODULE_2__.QueensListView(this._el.querySelector('[data-queens-list]'));
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/index.js":
+/*!***************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/index.js ***!
+  \***************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "QueensListView": () => (/* reexport safe */ _queensListView__WEBPACK_IMPORTED_MODULE_0__.QueensListView)
+/* harmony export */ });
+/* harmony import */ var _queensListView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./queensListView */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/queensListView.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/queenView.js":
+/*!*******************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/queenView.js ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "QueenView": () => (/* binding */ QueenView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _queen_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./queen.html */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/queen.html");
+
+
+
+class QueenView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(queen) {
+        let el = document.createElement('li');
+        super(el);
+        el.classList.add('queens-list__queen-item');
+        this._queen = queen;
+
+        this._render();
+
+        this._el.addEventListener('click', this._onClick.bind(this));
+    }
+
+    toggleSelect(isSelected) {
+        this._el.classList.toggle('queens-list__queen-item--selected', isSelected);
+    }
+
+    _render() {
+        this._el.innerHTML = _queen_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._el.querySelector('[data-queen-name]').innerHTML = this._queen.id;
+    }
+
+    _onClick() {
+        this.events.emit('click');
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/queensListView.js":
+/*!************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/queensListView.js ***!
+  \************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "QueensListView": () => (/* binding */ QueensListView)
+/* harmony export */ });
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/styles.css");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _queenView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./queenView */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/queenView.js");
+
+
+
+
+class QueensListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+
+        this._queens = this.$domainFacade.getMyQueensInNuptialFlight();
+        this._queenViews = {};
+
+        this._render();
+
+        this.$domainFacade.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
+    }
+
+    get selectedQueen() {
+        return this._selectQueen;
+    }
+
+    _selectQueen(queen) {
+        this._selectedQueen = queen;
+        this.events.emit('selectedQueenChanged');
+    }
+
+    _render() {
+        this._renderQueens();
+
+        if (this._queens.length > 0) {
+            this._selectQueen(this._queens[0]);
+            this._renderSelectedQueen();
+        }
+    }
+
+    _renderQueens() {
+        for (let queen of this._queens) {
+            this._renderQueen(queen);
+        }
+    }
+
+    _renderQueen(queen) {
+        let queenView = new _queenView__WEBPACK_IMPORTED_MODULE_2__.QueenView(queen);
+        queenView.events.addListener('click', () => this._onQueenViewClick(queen));
+        this._queenViews[queen.id] = queenView;
+        this._el.append(queenView.el);
+    }
+
+    _renderSelectedQueen() {
+        for (let queenId in this._queenViews) {
+            this._queenViews[queenId].toggleSelect(this._selectedQueen.id == queenId);
+        }
+    }
+
+    _onQueenFlewNuptialFlight(queen) {
+        this._queens.push(queen);
+        this._renderQueen(queen);
+        if (!this._selectedQueen) {
+            this._selectQueen(queen);
+            this._renderSelectedQueen();
+        }
+    }
+
+    _onQueenViewClick(queen) {
+        this._selectQueen(queen);
+        this._renderSelectedQueen();
+    }
+
+}
 
 
 
@@ -5975,6 +6201,33 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, ".colonies-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/coloniesTab/styles.css"],"names":[],"mappings":"AAAA;IACI,aAAa;IACb,mBAAmB;AACvB","sourcesContent":[".colonies-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/styles.css":
+/*!*******************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/styles.css ***!
+  \*******************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".queens-list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.queens-list__queen-item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.queens-list__queen-item--selected {\r\n    color: red\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/styles.css"],"names":[],"mappings":"AAAA;IACI,UAAU;IACV,SAAS;IACT,qBAAqB;AACzB;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ","sourcesContent":[".queens-list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.queens-list__queen-item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.queens-list__queen-item--selected {\r\n    color: red\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -7706,7 +7959,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div data-colonies-tab class=\"colonies-tab\"></div>\r\n</div>";
+var code = "<div class=\"tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div data-colonies-tab class=\"colonies-tab\"></div>\r\n    <div data-nuptial-flight-tab></div>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -8013,6 +8266,42 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Module
 var code = "<ul class=\"colony-manager__operations-list\" data-operations-list></ul>\r\n<div class=\"colony-manager__operations-creator\" data-operations-creator></div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/nuptialFlightTab.html":
+/*!*****************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/nuptialFlightTab.html ***!
+  \*****************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<ul class=\"queens-list\" data-queens-list></ul>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/queen.html":
+/*!*****************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/queen.html ***!
+  \*****************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<span>queen <span data-queen-name></span></span>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -8728,6 +9017,61 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/coloniesTab/styles.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/styles.css":
+/*!*****************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/styles.css ***!
+  \*****************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queensList/styles.css");
 
       
       

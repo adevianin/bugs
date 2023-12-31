@@ -200,6 +200,22 @@ class Command(BaseCommand):
                             "defence":1
                         },
                     },
+                    {
+                        "ant_type":"queen",
+                        "ate_calories":850,
+                        "needed_calories":900,
+                        "stats": {
+                            "type":"live_stats",
+                            "max_hp": 300,
+                            "hp_regen_rate":10,
+                            "distance_per_step":32,
+                            "sight_distance":200,
+                            "max_calories":1000,
+                            "distance_per_calorie":2,
+                            "attack":10,
+                            "defence":1
+                        },
+                    },
                     # {
                     #     "ant_type":"worker",
                     #     "ate_calories":50,

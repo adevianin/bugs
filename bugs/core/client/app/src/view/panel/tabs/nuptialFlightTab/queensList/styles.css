@@ -1,0 +1,14 @@
+.queens-list {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+.queens-list__queen-item {
+    color: blue;
+    cursor: pointer;
+}
+
+.queens-list__queen-item--selected {
+    color: red
+}

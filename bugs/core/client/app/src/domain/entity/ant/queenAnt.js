@@ -32,7 +32,7 @@ class QueenAnt extends BaseAnt {
 
     _getInNuptialFlight() {
         this.isInNuptialFlight = true;
-        this._emitToEventBus('antFlewNuptialFlight')
+        this._emitToEventBus('queenFlewNuptialFlight')
     }
 
     _playFlyNuptialFlight() {

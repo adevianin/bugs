@@ -77,13 +77,18 @@ class DomainFacade {
     }
 
     getQueenOfColony(colonyId) {
-        return this._worldService.world.findQueenFromColony(colonyId);
+        return this._worldService.world.getQueenOfColony(colonyId);
     }
 
     isNestMine(nest) {
         let userData = this.getUserData();
         let colony = this._worldService.world.findColonyById(nest.fromColony);
         return colony.ownerId == userData.id;
+    }
+
+    getMyQueensInNuptialFlight() {
+        let userData = this.getUserData();
+        return this._worldService.getQueensInNuptialFlightFromUser(userData.id);
     }
 
     /*======operations========*/

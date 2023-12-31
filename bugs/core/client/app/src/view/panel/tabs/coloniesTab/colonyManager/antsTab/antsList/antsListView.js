@@ -12,7 +12,7 @@ class AntsListView extends BaseHTMLView {
 
         this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
         this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
-        this.$domainFacade.events.on('antFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
+        this.$domainFacade.events.on('queenFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
 
         this._render();
     }

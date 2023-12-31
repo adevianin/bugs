@@ -1,5 +1,4 @@
-import { AntTypes } from "../enum/antTypes";
-import { EntityTypes } from "../enum/entityTypes";
+import { AntTypes } from '@domain/enum/antTypes';
 import { distance } from '@utils/distance';
 
 class WorldService {
@@ -68,6 +67,17 @@ class WorldService {
         });
 
         return nearestNest;
+    }
+
+    getQueensInNuptialFlightFromUser(userId) {
+        let colonies = this._world.findColoniesByOwnerId(userId);
+        let allAnts = [];
+        for (let colony of colonies) {
+            let colonyAnts = this._world.findAntsFromColony(colony.id);
+            allAnts = allAnts.concat(colonyAnts);
+        }
+        
+        return allAnts.filter(ant => ant.antType == AntTypes.QUEEN && ant.isInNuptialFlight);
     }
 
 }
