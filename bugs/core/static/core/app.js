@@ -204,7 +204,7 @@ __webpack_require__.r(__webpack_exports__);
 const ACTION_TYPES = {
     ANT_PICKED_UP_ITEM: 'ant_picked_up_item',
     ANT_DROPPED_PICKED_ITEM: 'ant_dropped_picked_item',
-    ANT_FLY_NUPTIAL_FLIGHT: 'ant_fly_nuptial_flight',
+    ANT_FLEW_NUPTIAL_FLIGHT: 'ant_flew_nuptial_flight',
     ENTITY_EAT_FOOD: 'entity_eat_food',
     ENTITY_DIED: 'entity_died',
     ENTITY_BORN: 'entity_born',
@@ -213,6 +213,7 @@ const ACTION_TYPES = {
     ENTITY_GOT_OUT_OF_NEST: 'entity_got_out_of_nest',
     ENTITY_HP_CHANGE: 'entity_hp_change',
     ENTITY_ROTATED: 'entity_rotated',
+    ENTITY_COLONY_CHANGED: 'entity_colony_changed',
     ITEM_WAS_PICKED_UP: 'item_was_picked_up',
     ITEM_WAS_DROPPED: 'item_was_dropped',
     ITEM_SOURCE_FERTILITY_CHANGED: 'item_source_fertility_changed',
@@ -373,7 +374,7 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
                 return this._playGotInNest(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
                 return this._playGotOutOfNest(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_FLY_NUPTIAL_FLIGHT:
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT:
                 return this._playFlyNuptialFlight(action)
         }
     }
@@ -512,7 +513,7 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
     _getInNuptialFlight() {
         this.isInNuptialFlight = true;
-        this._eventBus.emit('antFlewNuptialFlight', this);
+        this._emitToEventBus('antFlewNuptialFlight')
     }
 
     _playFlyNuptialFlight() {
@@ -696,12 +697,12 @@ class Entity extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
             });
     }
 
-    globalEmit(eventName, data) {
-        this._eventBus.emit(eventName, data);
+    _emitToEventBus(eventName, data) {
+        this._eventBus.emit(eventName, this, data);
     }
 
     die() {
-        this.globalEmit('entityDied', this);//to delete entity from world
+        this._emitToEventBus('entityDied');//to delete entity from world
         this.emit('died');//to delete view
     }
 
@@ -3021,10 +3022,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _antsListTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antsListTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antsListTmpl.html");
 /* harmony import */ var _antView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./antView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antView.js");
 /* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
 
 
 
 
+  
 
 class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
@@ -3034,15 +3037,22 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
 
         this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
         this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this.$domainFacade.events.on('antFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
 
         this._render();
     }
 
     manageColony(colony) {
         this._colony = colony;
-        this._ants = this.$domainFacade.getAntsFromColony(this._colony.id);
+        this._ants = this._getAntsFromColony();
 
         this._renderAnts();
+    }
+
+    _getAntsFromColony() {
+        let ants = this.$domainFacade.getAntsFromColony(this._colony.id);
+        ants = ants.filter(ant => !(ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_4__.AntTypes.QUEEN && ant.isInNuptialFlight));
+        return ants;
     }
 
     _render() {
@@ -3070,10 +3080,14 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
         this._antViews = {};
     }
 
+    _removeAntFromList(antId) {
+        this._antViews[antId].remove();
+        this._ants = this._ants.filter(ant => ant.id != antId);
+    }
+
     _onSomeoneDied(entity) {
         if (this._isMyAnt(entity)) {
-            this._antViews[entity.id].remove();
-            this._ants = this._ants.filter(ant => ant.id != entity.id);
+            this._removeAntFromList(entity.id);
         }
     }
 
@@ -3081,6 +3095,12 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
         if (this._isMyAnt(entity)) {
             this._ants.push(entity);
             this._renderAntView(entity);
+        }
+    }
+
+    _onSomeoneFlewNuptialFlight(ant) {
+        if (this._isMyAnt(ant)) {
+            this._removeAntFromList(ant.id);
         }
     }
 

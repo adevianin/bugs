@@ -102,12 +102,12 @@ class Entity extends EventEmitter {
             });
     }
 
-    globalEmit(eventName, data) {
-        this._eventBus.emit(eventName, data);
+    _emitToEventBus(eventName, data) {
+        this._eventBus.emit(eventName, this, data);
     }
 
     die() {
-        this.globalEmit('entityDied', this);//to delete entity from world
+        this._emitToEventBus('entityDied');//to delete entity from world
         this.emit('died');//to delete view
     }
 
