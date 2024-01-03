@@ -25,7 +25,7 @@ class WorldFactory {
                     case AntTypes.QUEEN:
                         return this.buildQueenAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, 
                             entityJson.hp, entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats, 
-                            entityJson.is_fertilized, entityJson.is_in_nuptial_flight)
+                            entityJson.is_fertilized, entityJson.is_in_nuptial_flight, entityJson.genes)
                     case AntTypes.WARRIOR:
                         return this.buildWarriorAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
                             entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats)
@@ -68,9 +68,9 @@ class WorldFactory {
         return new World(this._mainEventBus);
     }
 
-    buildQueenAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight) {
+    buildQueenAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight, genes) {
         return new QueenAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, 
-            isInNuptialFlight);
+            isInNuptialFlight, genes);
     }
 
     buildWorkerAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {

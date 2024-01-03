@@ -3,10 +3,11 @@ import { AntTypes } from "@domain/enum/antTypes";
 
 class QueenAnt extends BaseAnt {
 
-    constructor(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight) {
+    constructor(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight, genes) {
         super(eventBus, antApi, id, position, angle, fromColony, userSpeed, hp, maxHp, AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats);
         this._isFertilized = isFertilized;
         this.isInNuptialFlight = isInNuptialFlight;
+        this._genes = genes;
     }
 
     updateIsHidden() {
@@ -28,6 +29,10 @@ class QueenAnt extends BaseAnt {
 
     get canFlyNuptialFlight() {
         return !this._isFertilized;
+    }
+
+    get genes() {
+        return this._genes;
     }
 
     _getInNuptialFlight() {

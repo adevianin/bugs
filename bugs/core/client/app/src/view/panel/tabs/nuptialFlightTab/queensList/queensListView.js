@@ -16,7 +16,7 @@ class QueensListView extends BaseHTMLView {
     }
 
     get selectedQueen() {
-        return this._selectQueen;
+        return this._selectedQueen;
     }
 
     _selectQueen(queen) {

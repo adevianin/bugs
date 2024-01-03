@@ -27,7 +27,8 @@ class QueenAnt(Ant):
 
         json.update({
             "is_fertilized": self._body.is_fertilized,
-            "is_in_nuptial_flight": self._body.is_in_nuptial_flight
+            "is_in_nuptial_flight": self._body.is_in_nuptial_flight,
+            "genes": self._body.genes.to_public_json()
         })
         
         return json
