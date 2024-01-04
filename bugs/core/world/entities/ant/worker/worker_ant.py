@@ -10,5 +10,5 @@ from .worker_ant_mind import WorkerAntMind
 
 class WorkerAnt(Ant):
 
-    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, body: AntBody, mind: AntMind):
-        super().__init__(events, id, from_colony_id, body, AntTypes.WORKER, mind)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, body: AntBody, mind: AntMind):
+        super().__init__(event_bus, events, id, from_colony_id, body, AntTypes.WORKER, mind)

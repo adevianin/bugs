@@ -46,17 +46,32 @@ from core.world.entities.item.items.item_factory import ItemFactory
 from core.world.entities.item.item_sources.item_source_factory import ItemSourceFactory
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory
 
+from core.sync.world_client_serializer import WorldClientSerializer
+from core.sync.colony_client_serializer import ColonyClientSerializer
+from core.sync.operation_client_serializer import OperationClientSerializer
+from core.sync.util_client_serializer import UtilClientSerializer
+from core.sync.larva_client_serializer import LarvaClientSerializer
+from core.sync.stats_client_serializer import StatsClientSerializer
+from core.sync.item_client_serializer import ItemClientSerializer
+from core.sync.item_source_client_serializer import ItemSourceClientSerializer
+from core.sync.item_area_client_serializer import ItemAreaClientSerializer
+from core.sync.nest_client_serializer import NestClientSerializer
+from core.sync.ground_beetle_client_serializer import GroundBeetleClientSerializer
+from core.sync.ant_client_serializer import AntClientSerializer
+from core.sync.action_client_serializer import ActionClientSerializer
+from core.sync.entity_client_serializer import EntityClientSerializer
+
 def start():
     event_bus = EventEmitter()
 
-    item_factory = ItemFactory()
-    item_source_factory = ItemSourceFactory()
-    item_area_factory = ItemAreaFactory()
+    item_factory = ItemFactory(event_bus)
+    item_source_factory = ItemSourceFactory(event_bus)
+    item_area_factory = ItemAreaFactory(event_bus)
     formation_factory = FormationFactory(event_bus)
     thought_factory = ThoughtFactory()
-    ant_factory = AntFactory(thought_factory)
-    ground_beetle_factory = GroundBeetleFactory(thought_factory)
-    nest_factory = NestFactory()
+    ant_factory = AntFactory(event_bus, thought_factory)
+    ground_beetle_factory = GroundBeetleFactory(event_bus, thought_factory)
+    nest_factory = NestFactory(event_bus)
     operation_factory = OperationFactory(formation_factory)
     colony_factory = ColonyFactory(event_bus, operation_factory)
     map_factory = MapFactory(event_bus)
@@ -97,7 +112,22 @@ def start():
     json_item_area_factory = JsonItemAreaFactory(item_area_factory)
     world_repository = WorldRepository(world_data_repository, json_nest_factory, json_ant_factory, json_colony_factory, json_thought_factory, json_map_factory, world_factory, json_ground_beetle_factory, json_item_factory, json_item_source_factory, json_item_area_factory, world_serializer)
 
-    world_facade = WorldFacade.init(event_bus, world_repository, operation_service, colony_service, user_service)
+    stats_client_serializer = StatsClientSerializer()
+    larva_client_serializer = LarvaClientSerializer()
+    util_client_serializer = UtilClientSerializer()
+    operation_client_serializer = OperationClientSerializer()
+    colony_client_serializer = ColonyClientSerializer(operation_client_serializer)
+    item_client_serializer = ItemClientSerializer(util_client_serializer)
+    item_source_client_serializer = ItemSourceClientSerializer(util_client_serializer)
+    item_area_client_serializer = ItemAreaClientSerializer(util_client_serializer)
+    nest_client_serializer = NestClientSerializer(util_client_serializer, larva_client_serializer)
+    ground_beetle_client_serializer = GroundBeetleClientSerializer(util_client_serializer)
+    ant_client_serializer = AntClientSerializer(util_client_serializer, stats_client_serializer)
+    entity_client_serializer = EntityClientSerializer(item_client_serializer, item_source_client_serializer, item_area_client_serializer, nest_client_serializer, ground_beetle_client_serializer, ant_client_serializer)
+    world_client_serializer = WorldClientSerializer(colony_client_serializer, entity_client_serializer)
+    action_client_serializer = ActionClientSerializer(entity_client_serializer, util_client_serializer, larva_client_serializer, colony_client_serializer, operation_client_serializer)
+
+    world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, world_repository, operation_service, colony_service, user_service)
 
     world_facade.init_world()
 

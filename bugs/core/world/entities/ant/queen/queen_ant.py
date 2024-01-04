@@ -16,20 +16,9 @@ class QueenAnt(Ant):
     _body: QueenAntBody
     body: QueenAntBody
 
-    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, body: AntBody, mind: AntMind):
-        super().__init__(events, id, from_colony_id, body, AntTypes.QUEEN, mind)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, body: AntBody, mind: AntMind):
+        super().__init__(event_bus, events, id, from_colony_id, body, AntTypes.QUEEN, mind)
 
     def produce_larva(self, ant_type: AntTypes) -> Larva:
         return self._body.produce_larva(ant_type)
-    
-    def to_public_json(self):
-        json = super().to_public_json()
-
-        json.update({
-            "is_fertilized": self._body.is_fertilized,
-            "is_in_nuptial_flight": self._body.is_in_nuptial_flight,
-            "genes": self._body.genes.to_public_json()
-        })
-        
-        return json
     

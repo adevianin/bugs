@@ -4,6 +4,9 @@ from .services.operation_service import OperationService
 from .services.user_service import UserService
 from core.world.utils.point import Point
 from core.world.world_repository_interface import iWorldRepository
+from .world_client_serializer_interface import iWorldClientSerializer
+from .action_client_serializer_interface import iActionClientSerializer
+from core.world.entities.action.action import Action
 
 from typing import Callable, List
 
@@ -12,8 +15,10 @@ class WorldFacade:
     WORLD_ID = 1
 
     @classmethod
-    def init(cls, event_bus: EventEmitter,  world_repository: iWorldRepository, operation_service: OperationService, colony_service: ColonyService, user_service: UserService):
-        world_facade = WorldFacade(event_bus, world_repository, operation_service, colony_service, user_service)
+    def init(cls, event_bus: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer,
+             world_repository: iWorldRepository, operation_service: OperationService, colony_service: ColonyService, user_service: UserService):
+        events = EventEmitter()
+        world_facade = WorldFacade(event_bus, events, world_client_serializer, action_client_serializer, world_repository, operation_service, colony_service, user_service)
         WorldFacade._instance = world_facade
         return world_facade
 
@@ -21,18 +26,25 @@ class WorldFacade:
     def get_instance(cls) -> 'WorldFacade':
         return WorldFacade._instance
 
-    def __init__(self, event_bus: EventEmitter, world_repository: iWorldRepository, operation_service: OperationService, colony_service: ColonyService, user_service: UserService):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer,
+                 world_repository: iWorldRepository, operation_service: OperationService, colony_service: ColonyService, user_service: UserService):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
             WorldFacade._instance = self
 
+        self._events = events
         self._event_bus = event_bus
         self._world_repository = world_repository
+        self._world_client_serializer = world_client_serializer
+        self._action_client_serializer = action_client_serializer
 
         self._operation_service = operation_service
         self._colony_service = colony_service
         self._user_service = user_service
+
+        self._event_bus.add_listener('step_start', self._on_step_start)
+        self._event_bus.add_listener('action', self._on_action)
         
     def init_world(self):
         self._world = self._world_repository.get(self.WORLD_ID)
@@ -54,10 +66,10 @@ class WorldFacade:
         return self._world.is_world_running
 
     def add_listener(self, event_name: str, callback: Callable):
-        self._event_bus.add_listener(event_name, callback)
+        self._events.add_listener(event_name, callback)
 
     def remove_listener(self, event_name: str, callback: Callable):
-        self._event_bus.remove_listener(event_name, callback)
+        self._events.remove_listener(event_name, callback)
 
     def get_my_colony(self, user_id: int):
         return self._world.get_colony_owned_by_user(user_id)
@@ -83,3 +95,13 @@ class WorldFacade:
 
     def fly_nuptian_flight_command(self, user_id: int, ant_id: int):
         self._colony_service.fly_nuptial_flight(user_id, ant_id)
+
+    def get_world_for_client(self):
+        return self._world_client_serializer.serialize(self._world)
+    
+    def _on_step_start(self, step_number: int):
+        self._events.emit('step')
+
+    def _on_action(self, action: Action):
+        serialized_action = self._action_client_serializer.serialize(action)
+        self._events.emit('action_occured', serialized_action)

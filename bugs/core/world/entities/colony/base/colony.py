@@ -5,7 +5,8 @@ from typing import List
 from core.world.entities.nest.nest import Nest
 from core.world.entities.map.map import Map
 from .relation_tester import RelationTester
-from core.world.entities.action import Action
+from core.world.entities.action.action import Action
+from core.world.entities.action.action_types import ActionTypes
 from abc import ABC, abstractmethod
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 
@@ -36,12 +37,7 @@ class Colony(ABC):
         return self._map.get_entities(from_colony_id=self.id, entity_types=[self._member_type])
     
     def born(self):
-        self._emit_action('colony_born', { 'colony': self.to_public_json() })
-    
-    def to_public_json(self):
-        return {
-            'id': self._id,
-        }
+        self._emit_action(ActionTypes.COLONY_BORN, { 'colony': self })
     
     def _on_my_entity_born(self, entity: Entity):
         if entity.type == self.member_type:
@@ -68,5 +64,5 @@ class Colony(ABC):
         for member in my_members:
             member.body.receive_colony_signal(signal)
 
-    def _emit_action(self, action_type: str, action_data: dict = None):
-        self._event_bus.emit('action_occurred', Action.build_action(self.id, action_type, 'colony', action_data))
+    def _emit_action(self, action_type: ActionTypes, action_data: dict = None):
+        self._event_bus.emit('action', Action.build_colony_action(self.id, action_type, action_data))

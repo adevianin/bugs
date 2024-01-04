@@ -11,7 +11,8 @@ from core.world.entities.base.stats_library import StatsLibrary
 
 class GroundBeetleFactory():
 
-    def __init__(self, thought_factory: ThoughtFactory):
+    def __init__(self, event_bus: EventEmitter, thought_factory: ThoughtFactory):
+        self._event_bus = event_bus
         self._thought_factory = thought_factory
 
     def build_new_ground_beetle(self, id: int, position: Point):
@@ -26,4 +27,4 @@ class GroundBeetleFactory():
         body = GroundBeetleBody(events, stats, memory, position, angle, hp, world_interactor)
         mind = GroundBeetleMind(events, body, self._thought_factory, is_auto_thought_generation)
 
-        return GroundBeetle(events, id, from_colony_id, body, mind)
+        return GroundBeetle(self._event_bus, events, id, from_colony_id, body, mind)

@@ -8,7 +8,10 @@ from core.world.entities.base.stats_library import StatsLibrary
 
 class ItemAreaFactory():
 
+    def __init__(self, event_bus: EventEmitter):
+        self._event_bus = event_bus
+
     def build_item_area(self, id: int, from_colony_id: int, hp: int, position: Point, angle: int, size: Size, item_type: ItemTypes, fertility: int, accumulated: int):
         events = EventEmitter()
         body = Body(events, StatsLibrary.GHOST_DEFAULT, position, angle, hp)
-        return ItemArea(events, id, from_colony_id, body, size, item_type, fertility, accumulated)
+        return ItemArea(self._event_bus, events, id, from_colony_id, body, size, item_type, fertility, accumulated)

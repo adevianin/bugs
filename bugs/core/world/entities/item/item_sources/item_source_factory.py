@@ -7,6 +7,9 @@ from core.world.entities.base.stats_library import StatsLibrary
 
 class ItemSourceFactory():
 
+    def __init__(self, event_bus: EventEmitter):
+        self._event_bus = event_bus
+
     def build_item_source(self, id: int, from_colony_id: int, hp: int, position: Point, angle: int, item_type: ItemTypes, fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
         match(item_type):
             case ItemTypes.HONEYDEW:
@@ -18,4 +21,4 @@ class ItemSourceFactory():
         events = EventEmitter()
         stats = StatsLibrary.ITEM_SOURCE_DEFAULT
         body = HoneydewItemSourceBody(events, stats, position, angle, hp)
-        return HoneydewItemSource(events, id, from_colony_id, body, fertility, accumulated, min_item_strength, max_item_strength)
+        return HoneydewItemSource(self._event_bus, events, id, from_colony_id, body, fertility, accumulated, min_item_strength, max_item_strength)

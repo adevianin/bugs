@@ -9,8 +9,8 @@ from core.world.entities.world.birthers.requests.item_birth_request import ItemB
 
 class GroundBeetle(LiveEntity):
 
-    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, body: LiveBody, mind: Mind):
-        super().__init__(events, id, EntityTypes.GROUND_BEETLE, from_colony_id, body, mind)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, body: LiveBody, mind: Mind):
+        super().__init__(event_bus, events, id, EntityTypes.GROUND_BEETLE, from_colony_id, body, mind)
 
         self.events.add_listener('died', self._on_died)
 

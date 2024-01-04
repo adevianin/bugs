@@ -89,23 +89,6 @@ class World():
         self._world_loop_stop_flag = False
         self._is_world_running = True
 
-    def to_public_json(self):
-        entities_json = []
-        entities = self._entities_collection.get_entities()
-        for entity in entities:
-            entities_json.append(entity.to_public_json())
-
-        colonies_json = []
-        for colony in self._colonies:
-            if colony.member_type == EntityTypes.ANT:
-                colonies_json.append(colony.to_public_json())
-        
-        return {
-            'entities': entities_json,
-            'ant_colonies': colonies_json,
-            'size': self._map.size
-        }
-    
     def _run_world_loop(self):
         while not self._world_loop_stop_flag:
             iteration_start = time.time()

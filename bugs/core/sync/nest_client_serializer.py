@@ -1,0 +1,26 @@
+from core.sync.util_client_serializer import UtilClientSerializer
+from core.world.entities.nest.nest import Nest
+from .base.entity_client_serializer import EntityClientSerializer
+from .larva_client_serializer import LarvaClientSerializer
+
+class NestClientSerializer(EntityClientSerializer):
+
+    def __init__(self, util_serializer: UtilClientSerializer, larva_serializer: LarvaClientSerializer):
+        super().__init__(util_serializer)
+        self._larva_serializer = larva_serializer
+
+    def serialize(self, nest: Nest):
+        json = super().serialize(nest)
+        
+        larvae_json = []
+        for larva in nest.larvae:
+            larvae_json.append(self._larva_serializer.serialize(larva))
+
+        json.update({
+            'stored_calories': nest.stored_calories,
+            'larvae': larvae_json,
+            'larva_places_count': nest.larva_places_count,
+            'is_built': nest.is_built
+        })
+
+        return json

@@ -21,7 +21,8 @@ from core.world.entities.base.stats_library import StatsLibrary
 
 class AntFactory():
 
-    def __init__(self, thought_factory: ThoughtFactory):
+    def __init__(self, event_bus: EventEmitter, thought_factory: ThoughtFactory):
+        self._event_bus = event_bus
         self._thought_factory = thought_factory
 
     def build_new_ant(self, id: int, from_colony_id: int, stats: LiveStats, ant_type: AntTypes, position: Point, home_nest: Nest = None):
@@ -59,7 +60,7 @@ class AntFactory():
         memory = Memory(memory_data)
         body = WarriorAntBody(events, stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor)
         mind = WarrirorAntMind(events, body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
-        ant = WarriorAnt(events, id, from_colony_id, body, mind)
+        ant = WarriorAnt(self._event_bus, events, id, from_colony_id, body, mind)
 
         return ant
     
@@ -70,7 +71,7 @@ class AntFactory():
         memory = Memory(memory_data)
         body = WorkerAntBody(events, stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor)
         mind = WorkerAntMind(events, body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
-        ant = WorkerAnt(events, id, from_colony_id, body, mind)
+        ant = WorkerAnt(self._event_bus, events, id, from_colony_id, body, mind)
 
         return ant
     
@@ -82,7 +83,7 @@ class AntFactory():
         genes = Genes.build(genes_worker_stats, genes_worker_food_required, genes_warrior_stats, genes_warrior_food_required, genes_queen_stats, genes_queen_food_required)
         body = QueenAntBody(events, stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor, genes, is_fertilized, is_in_nuptial_flight)
         mind = QueenAntMind(events, body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
-        ant = QueenAnt(events, id, from_colony_id, body, mind)
+        ant = QueenAnt(self._event_bus, events, id, from_colony_id, body, mind)
 
         return ant
     

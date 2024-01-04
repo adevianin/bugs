@@ -177,14 +177,6 @@ class Operation(ABC):
             'point': point
         })
 
-    def to_public_json(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'status': self.status,
-            'markers': self._markers
-        }
-    
     def _on_hired_ant_died(self, ant: Ant):
         ant.leave_operation()
         self._hired_ants.remove(ant)

@@ -5,8 +5,6 @@ from core.world.entities.base.entity_types import EntityTypes, EntityTypesPack
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 from core.world.entities.base.entity_collection import EntityCollection
 from core.world.utils.event_emiter import EventEmitter
-from core.world.entities.ant.base.ant import Ant
-from core.world.entities.action import Action
 
 from typing import List, Callable
 import random, math
@@ -41,6 +39,9 @@ class Map:
     def get_entity_by_id(self, id: int) -> Entity:
         return self._entities_collection.get_entity_by_id(id)
     
+    def get_all_entities(self) -> List[Entity]:
+        return self._entities_collection.get_entities()
+    
     def get_entities(self, from_colony_id: int = None, entity_types: List[EntityTypes] = None, filter: Callable[[Entity], bool] = None) -> List[Entity]:
         found_entities = []
         for entity in self._entities_collection.get_entities():
@@ -68,7 +69,7 @@ class Map:
     def _handle_entity(self, entity: Entity):
         entity.events.once('ready_to_remove', partial(self._on_entity_ready_to_remove, entity))
         entity.events.once('died', partial(self._on_entity_died, entity))
-        entity.events.add_listener('action', partial(self._on_entity_action_occured, entity))
+        # entity.events.add_listener('action', partial(self._on_entity_action_occured, entity))
 
         if (entity.type in EntityTypesPack.LIVE_ENTITIES):
             entity: LiveEntity = entity
@@ -78,8 +79,8 @@ class Map:
         self._entities_collection.delete_entity(entity.id)
         entity.events.remove_all_listeners()
 
-    def _on_entity_action_occured(self, entity: Entity, action_type: str, action_data: dict = None):
-        self._event_bus.emit('action_occurred', Action.build_action(entity.id, action_type, 'entity', action_data))
+    # def _on_entity_action_occured(self, entity: Entity, action_type: str, action_data: dict = None):
+    #     self._event_bus.emit('action_occurred', Action.build_action(entity.id, action_type, 'entity', action_data))
 
     def _on_entity_died(self, entity: Entity):
         self.events.emit('entity_died', entity)

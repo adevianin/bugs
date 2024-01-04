@@ -35,13 +35,3 @@ class Genes():
     def queen_food_required(self):
         return self._queen_food_required
     
-
-    def to_public_json(self):
-        return {
-            "queen_food_required": self.queen_food_required,
-            "warrior_food_required": self.warrior_food_required,
-            "worker_food_required": self.worker_food_required,
-            "worker_stats": self._worker_stats.to_public_json(),
-            "warrior_stats": self._warrior_stats.to_public_json(),
-            "queen_stats": self._queen_stats.to_public_json()
-        }

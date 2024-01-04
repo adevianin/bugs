@@ -10,6 +10,7 @@ from core.world.entities.base.entity import Entity
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.base.body import Body
 from .live_stats import LiveStats
+from core.world.entities.action.action_types import ActionTypes
 
 import math
 from typing import List, Callable
@@ -54,7 +55,7 @@ class LiveBody(Body):
         self._consume_calories(investing_calories)
         self.position = new_position
         
-        self.events.emit('action', 'entity_walk', { 'position': new_position.to_public_json() })
+        self._emit_body_action(ActionTypes.ENTITY_WALK, { 'position': new_position })
         
         return is_walk_done
     
@@ -130,6 +131,3 @@ class LiveBody(Body):
         # self._calories -= amount
         # if self._calories < 0:
         #     self.hp = 0
-
-    def _on_position_changed(self):
-        pass

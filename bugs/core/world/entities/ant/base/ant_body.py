@@ -12,6 +12,7 @@ from core.world.entities.item.items.base.item import Item
 from core.world.utils.size import Size
 from core.world.entities.base.live_entity.live_stats import LiveStats
 from core.world.entities.world.birthers.requests.nest_birth_request import NestBirthRequest
+from core.world.entities.action.action_types import ActionTypes
 
 from typing import List, Callable
 
@@ -55,11 +56,12 @@ class AntBody(LiveBody):
     
     def get_in_nest(self, nest: Nest):
         self._located_inside_nest = nest
-        self.events.emit('action', 'entity_got_in_nest', { 'nest_id': nest.id })
+
+        self._emit_body_action(ActionTypes.ENTITY_GOT_IN_NEST, { 'nest_id': nest.id })
 
     def get_out_of_nest(self):
         self._located_inside_nest = None
-        self.events.emit('action', 'entity_got_out_of_nest')
+        self._emit_body_action(ActionTypes.ENTITY_GOT_OUT_OF_NEST)
     
     def say(self, phrase: str, data: dict):
         if (data):
@@ -82,18 +84,18 @@ class AntBody(LiveBody):
     def pick_up_item(self, item: Item):
         self._picked_item = item
         item.pickup()
-        self.events.emit('action', 'ant_picked_up_item', { 'item_id': item.id })
+        self._emit_body_action(ActionTypes.ANT_PICKED_UP_ITEM, { 'item_id': item.id })
         return True
 
     def give_food(self, nest: Nest):
         nest.take_edible_item(self._picked_item)
         self._picked_item = None
-        self.events.emit('action', 'ant_dropped_picked_item')
+        self._emit_body_action(ActionTypes.ANT_DROPPED_PICKED_ITEM)
 
     def drop_picked_item(self):
         self._picked_item.drop(Point(self.position.x, self.position.y))
         self._picked_item = None
-        self.events.emit('action', 'ant_dropped_picked_item')
+        self._emit_body_action(ActionTypes.ANT_DROPPED_PICKED_ITEM)
 
     def found_nest(self, position: Point, colony_id: int, callback):
         self.events.emit('birth_request', NestBirthRequest.build(position, colony_id, callback))

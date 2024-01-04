@@ -11,8 +11,8 @@ import random
 class ItemSource(Entity):
 
 
-    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, body: Body, item_type: ItemTypes, fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
-        super().__init__(events, id, EntityTypes.ITEM_SOURCE, from_colony_id, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, body: Body, item_type: ItemTypes, fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
+        super().__init__(event_bus, events, id, EntityTypes.ITEM_SOURCE, from_colony_id, body)
         self._item_type = item_type
         # move fertility to body
         self._fertility = fertility
@@ -75,15 +75,6 @@ class ItemSource(Entity):
 
         self._body.restore_hp_step()
 
-    def to_public_json(self):
-        json = super().to_public_json()
-        json.update({
-            'item_type': self._item_type,
-            'is_fertile': self.is_fertile
-        })
-        
-        return json
-    
     def _on_hp_changed(self):
         self.is_fertile = self._check_fertility()
 

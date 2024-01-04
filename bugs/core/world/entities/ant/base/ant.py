@@ -14,8 +14,8 @@ class Ant(LiveEntity):
     _body: AntBody
     body: AntBody
 
-    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, body: AntBody, ant_type: AntTypes, mind: AntMind):
-        super().__init__(events, id, EntityTypes.ANT, from_colony_id, body, mind)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, body: AntBody, ant_type: AntTypes, mind: AntMind):
+        super().__init__(event_bus, events, id, EntityTypes.ANT, from_colony_id, body, mind)
         self._ant_type = ant_type
         
     @property
@@ -94,16 +94,4 @@ class Ant(LiveEntity):
     
     def fly_nuptial_flight(self):
         self._body.fly_nuptial_flight()
-
-    def to_public_json(self):
-        json = super().to_public_json()
-        json.update({
-            'picked_item_id': self._body.picked_item_id,
-            'ant_type': self._ant_type,
-            'located_in_nest_id': self._body.located_in_nest_id,
-            'home_nest_id': self._mind.home_nest.id,
-            'stats': self._body.stats.to_public_json()
-        })
-
-        return json
-    
+        

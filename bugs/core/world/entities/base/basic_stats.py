@@ -18,8 +18,3 @@ class BasicStats():
     def clone(self) -> 'BasicStats':
         return BasicStats(self.max_hp, self.hp_regen_rate)
     
-    def to_public_json(self):
-        return {
-            "max_hp": self.max_hp,
-            "hp_regen_rate": self.hp_regen_rate
-        }

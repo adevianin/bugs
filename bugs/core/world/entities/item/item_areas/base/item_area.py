@@ -11,8 +11,8 @@ import random
 
 class ItemArea(Entity):
 
-    def __init__(self, events: EventEmitter, id: int, from_colony_id: int, body: Body, size: Size, item_type: ItemTypes, fertility: int, accumulated: int):
-        super().__init__(events, id, EntityTypes.ITEM_AREA, from_colony_id, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, body: Body, size: Size, item_type: ItemTypes, fertility: int, accumulated: int):
+        super().__init__(event_bus, events, id, EntityTypes.ITEM_AREA, from_colony_id, body)
         self._size = size
         self._item_type = item_type
         self._fertility = fertility

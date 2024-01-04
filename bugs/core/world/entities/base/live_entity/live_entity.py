@@ -14,8 +14,8 @@ class LiveEntity(Entity, iEnemy):
     body: LiveBody
     mind: Mind
 
-    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, body: LiveBody, mind: Mind):
-        super().__init__(events, id, type, from_colony_id, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, body: LiveBody, mind: Mind):
+        super().__init__(event_bus, events, id, type, from_colony_id, body)
         self._mind: Mind = mind
 
     @property
@@ -41,12 +41,3 @@ class LiveEntity(Entity, iEnemy):
         super().do_step()
 
         self._mind.do_step()
-
-    def to_public_json(self):
-        json = super().to_public_json()
-
-        json.update({
-            'user_speed': self._body.user_speed
-        })
-
-        return json

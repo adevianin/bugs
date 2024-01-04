@@ -7,11 +7,12 @@ from core.world.entities.base.entity import Entity
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.world.birthers.requests.ant_birth_request import AntBirthRequest
 from core.world.entities.world.birthers.requests.item_birth_request import ItemBirthRequest
+from core.world.entities.action.action_types import ActionTypes
 
 class Nest(Entity):
 
-    def __init__(self, events: EventEmitter, id: int, from_colony_id: int,  body: Body, larvae: list[Larva], larva_places_count: int, stored_calories: int, area: int, build_progress: int):
-        super().__init__(events, id, EntityTypes.NEST, from_colony_id, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int,  body: Body, larvae: list[Larva], larva_places_count: int, stored_calories: int, area: int, build_progress: int):
+        super().__init__(event_bus, events, id, EntityTypes.NEST, from_colony_id, body)
         self._area = area
         self._stored_calories = stored_calories
         self._larvae = larvae
@@ -64,17 +65,6 @@ class Nest(Entity):
             self._emit_stored_calories_changed()
             return can_give
 
-    def to_public_json(self):
-        json = super().to_public_json()
-        json.update({
-            'stored_calories': self._stored_calories,
-            'larvae': self._larvae_to_public_json(),
-            'larva_places_count': self._larva_places_count,
-            'is_built': self.is_built
-        })
-        
-        return json
-    
     def add_larva(self, larva: Larva):
         self._larvae.append(larva)
         self._emit_larvae_changed()
@@ -124,23 +114,17 @@ class Nest(Entity):
         self._emit_larvae_changed()
 
     def _emit_stored_calories_changed(self):
-        self.events.emit('action', 'nest_stored_calories_changed', {
+        self._emit_action(ActionTypes.NEST_STORED_CALORIES_CHANGED, {
             'stored_calories': self._stored_calories
         })
 
     def _emit_larvae_changed(self):
-        self.events.emit('action', 'nest_larvae_changed', {
-            'larvae': self._larvae_to_public_json()
+        self._emit_action(ActionTypes.NEST_LARVAE_CHANGED, {
+            'larvae': self._larvae
         })
 
     def _emit_building_status_changed(self):
-        self.events.emit('action', 'nest_build_status_changed', {
+        self._emit_action(ActionTypes.NEST_BUILD_STATUS_CHANGED, {
             'is_built': self.is_built
         })
     
-    def _larvae_to_public_json(self):
-        larvae_json = []
-        for larva in self._larvae:
-            larvae_json.append(larva.to_public_json())
-        
-        return larvae_json

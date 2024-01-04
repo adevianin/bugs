@@ -1,20 +1,22 @@
 from abc import ABC, abstractmethod
 from core.world.utils.event_emiter import EventEmitter
 from .entity_types import EntityTypes
-from core.world.entities.action import Action
 from core.world.entities.base.body import Body
 from core.world.utils.point import Point
-
+from core.world.entities.action.action import Action, ActionTypes
 class Entity(ABC):
 
     _body: Body
 
-    def __init__(self, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, body: Body):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, body: Body):
+        self._event_bus = event_bus
         self.events = events
         self._id: int = id
         self._type: EntityTypes = type
         self._from_colony_id = from_colony_id
         self._body = body
+
+        self.events.add_listener('body_action', self._emit_action)
 
     @property
     def id(self):
@@ -31,7 +33,7 @@ class Entity(ABC):
     @from_colony_id.setter
     def from_colony_id(self, colony_id: int):
         self._from_colony_id = colony_id
-        self.events.emit('action', 'entity_colony_changed', { 'colony_id': colony_id })
+        self._emit_action(ActionTypes.ENTITY_COLONY_CHANGED, { 'colony_id': colony_id })
 
     @property
     def body(self) -> Body:
@@ -46,7 +48,7 @@ class Entity(ABC):
         return self._body.is_died
     
     def born(self):
-        self.events.emit('action', 'entity_born', { 'entity': self.to_public_json() })
+        self._emit_action(ActionTypes.ENTITY_BORN, { 'entity': self })
 
     def die(self):
         self._body.hp = 0
@@ -55,15 +57,6 @@ class Entity(ABC):
     def do_step(self):
         pass
 
-    def to_public_json(self):
-        return {
-            'id': self.id,
-            'type': self._type,
-            'from_colony_id': self._from_colony_id,
-            'hp': self._body.hp,
-            'max_hp': self._body.stats.max_hp,
-            'position': self._body.position.to_public_json(),
-            'angle': self._body.angle,
-            'size': self._body.SIZE.to_public_json()
-        }
+    def _emit_action(self, action_type: ActionTypes, action_data: dict = None):
+        self._event_bus.emit('action', Action.build_entity_action(self.id, action_type, action_data))
     

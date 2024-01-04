@@ -19,15 +19,3 @@ class LiveStats(BasicStats):
     def clone(self) -> 'LiveStats':
         return LiveStats(self.max_hp, self.hp_regen_rate, self.distance_per_step, self.sight_distance, self.max_calories, self.distance_per_calorie, self.attack, self.defence)
     
-    def to_public_json(self):
-        json = super().to_public_json()
-        json.update({
-            "distance_per_step": self.distance_per_step,
-            "sight_distance": self.sight_distance,
-            "max_calories": self.max_calories,
-            "distance_per_calorie": self.distance_per_calorie,
-            "attack": self.attack,
-            "defence": self.defence
-        })
-
-        return json

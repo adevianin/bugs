@@ -1,6 +1,6 @@
 from channels.generic.websocket import WebsocketConsumer
 from core.world.world_facade import WorldFacade
-from core.world.entities.action import Action
+from core.world.entities.action.action import Action
 import json
 
 class MainSocketConsumer(WebsocketConsumer):
@@ -17,12 +17,12 @@ class MainSocketConsumer(WebsocketConsumer):
         else:
             self.close()
 
-        self._world_facade.add_listener('step_start', self._on_step_start)
-        self._world_facade.add_listener('action_occurred', self._on_action)
+        self._world_facade.add_listener('step', self._on_step_start)
+        self._world_facade.add_listener('action_occured', self._on_action)
 
     def disconnect(self, code):
-        self._world_facade.remove_listener('step_start', self._on_step_start)
-        self._world_facade.remove_listener('action_occurred', self._on_action)
+        self._world_facade.remove_listener('step', self._on_step_start)
+        self._world_facade.remove_listener('action_occured', self._on_action)
         return super().disconnect(code)
     
     def receive(self, text_data=None, bytes_data=None):
@@ -34,19 +34,19 @@ class MainSocketConsumer(WebsocketConsumer):
             case _:
                 raise Exception('unknown type of client message')
 
-    def _on_step_start(self, step_number: int):
+    def _on_step_start(self):
         if not self._synced:
             self.send(json.dumps({
                 'type': 'sync_step',
-                'world': self._world_facade.world.to_public_json()
+                'world': self._world_facade.get_world_for_client()
             }))
             self._synced = True
 
-    def _on_action(self, action: Action):
+    def _on_action(self, action: dict):
         if self._synced:
             self.send(json.dumps({
                 'type': 'action',
-                'action': action.to_public_json()
+                'action': action
             }))
 
     def _handle_command(self, command_json, user_id):

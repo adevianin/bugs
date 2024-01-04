@@ -4,11 +4,12 @@ from core.world.utils.point import Point
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
+from core.world.entities.action.action_types import ActionTypes
 
 class Item(Entity):
 
-    def __init__(self, events: EventEmitter, id: int, body: Body, item_type: ItemTypes, strength: int, variety: int, life_span: int, is_picked: bool):
-        super().__init__(events, id, EntityTypes.ITEM, None, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, body: Body, item_type: ItemTypes, strength: int, variety: int, life_span: int, is_picked: bool):
+        super().__init__(event_bus, events, id, EntityTypes.ITEM, None, body)
         self._item_type = item_type
         self._is_picked = is_picked
         self._variety = variety
@@ -53,28 +54,18 @@ class Item(Entity):
     
     def pickup(self):
         self._is_picked = True
-        self.events.emit('action', 'item_was_picked_up')
+        self._emit_action(ActionTypes.ITEM_WAS_PICKED_UP)
 
     def drop(self, position: Point):
         self._is_picked = False
         self._body.position = position
-        self.events.emit('action', 'item_was_dropped', {
-            'position': self.position.to_public_json()
+        self._emit_action(ActionTypes.ITEM_WAS_DROPPED, {
+            'position': self.position
         })
 
-    def to_public_json(self):
-        json = super().to_public_json()
-        json.update({
-            'item_type': self._item_type,
-            'is_picked': self._is_picked,
-            'variety': self._variety
-        })
-        
-        return json
-    
     def be_bringed_to(self, position: Point, bringing_speed: int):
         self._body.position = position
-        self.events.emit('action', 'being_bringed', {
-            'new_position': self._body.position.to_public_json(),
+        self._emit_action(ActionTypes.ITEM_BEING_BRINGED, {
+            'new_position': self._body.position,
             'bring_user_speed': bringing_speed
         })
