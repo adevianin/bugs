@@ -6,6 +6,10 @@ from .ant_mind import AntMind
 from .ant_types import AntTypes
 from core.world.utils.point import Point
 from core.world.entities.nest.nest import Nest
+from core.world.entities.action.entity_got_in_nest_action import EntityGotInNestAction
+from core.world.entities.action.entity_got_out_of_nest_action import EntityGotOutOfNestAction
+from core.world.entities.action.ant_picked_up_item_action import AntPickedUpItemAction
+from core.world.entities.action.ant_dropped_picked_item import AntDroppedPickedItemAction
 
 class Ant(LiveEntity):
 
@@ -17,6 +21,11 @@ class Ant(LiveEntity):
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, body: AntBody, ant_type: AntTypes, mind: AntMind):
         super().__init__(event_bus, events, id, EntityTypes.ANT, from_colony_id, body, mind)
         self._ant_type = ant_type
+
+        self._body.events.add_listener('got_in_nest', self._on_got_in_nest)
+        self._body.events.add_listener('got_out_of_nest', self._on_got_out_of_nest)
+        self._body.events.add_listener('picked_up_item', self._on_picked_up_item)
+        self._body.events.add_listener('dropped_picked_item', self._on_dropped_picked_item)
         
     @property
     def sayer(self) -> EventEmitter:
@@ -94,4 +103,16 @@ class Ant(LiveEntity):
     
     def fly_nuptial_flight(self):
         self._body.fly_nuptial_flight()
+
+    def _on_got_in_nest(self, nest_id: int):
+        self._emit_action(EntityGotInNestAction.build(self.id, nest_id))
+
+    def _on_got_out_of_nest(self):
+        self._emit_action(EntityGotOutOfNestAction.build(self.id))
+
+    def _on_picked_up_item(self, item_id: int):
+        self._emit_action(AntPickedUpItemAction.build(self.id, item_id))
+    
+    def _on_dropped_picked_item(self):
+        self._emit_action(AntDroppedPickedItemAction.build(self.id))
         

@@ -10,7 +10,6 @@ from core.world.entities.base.entity import Entity
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.base.body import Body
 from .live_stats import LiveStats
-from core.world.entities.action.action_types import ActionTypes
 
 import math
 from typing import List, Callable
@@ -54,8 +53,8 @@ class LiveBody(Body):
         investing_calories = round(passed_dist / self._distance_per_calorie)
         self._consume_calories(investing_calories)
         self.position = new_position
-        
-        self._emit_body_action(ActionTypes.ENTITY_WALK, { 'position': new_position })
+
+        self.events.emit('walk', new_position)
         
         return is_walk_done
     
@@ -84,8 +83,6 @@ class LiveBody(Body):
         calories_to_eat = min([calories_i_need, self._can_eat_calories_per_step, food.strength])
 
         self._calories += food.use(calories_to_eat)
-
-        self.events.emit('eat_food')
 
         return food.is_died or self.calc_how_much_calories_is_need() == 0
     
@@ -131,3 +128,6 @@ class LiveBody(Body):
         # self._calories -= amount
         # if self._calories < 0:
         #     self.hp = 0
+    
+
+

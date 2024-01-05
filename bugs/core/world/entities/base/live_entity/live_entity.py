@@ -4,8 +4,9 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from .mind import Mind
 from .live_body import LiveBody
-from core.world.entities.nest.nest import Nest
 from core.world.entities.base.enemy_interface import iEnemy
+from core.world.entities.action.entity_walk_action import EntityWalkAction
+
 from typing import List
 
 class LiveEntity(Entity, iEnemy):
@@ -17,6 +18,8 @@ class LiveEntity(Entity, iEnemy):
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, body: LiveBody, mind: Mind):
         super().__init__(event_bus, events, id, type, from_colony_id, body)
         self._mind: Mind = mind
+
+        self._body.events.add_listener('walk', self._on_walk)
 
     @property
     def mind(self):
@@ -41,3 +44,6 @@ class LiveEntity(Entity, iEnemy):
         super().do_step()
 
         self._mind.do_step()
+
+    def _on_walk(self, position: Point):
+        self._emit_action(EntityWalkAction.build(self.id, position))

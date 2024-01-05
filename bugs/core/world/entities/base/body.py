@@ -2,7 +2,6 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from core.world.utils.size import Size
 from .basic_stats import BasicStats
-from core.world.entities.action.action_types import ActionTypes
 
 class Body():
 
@@ -35,7 +34,7 @@ class Body():
     @angle.setter
     def angle(self, value):
         self._angle = value
-        self._emit_body_action(ActionTypes.ENTITY_ROTATED, { 'angle': self._angle })
+        self.events.emit('angle_changed')
 
     @property
     def hp(self):
@@ -44,9 +43,9 @@ class Body():
     @hp.setter
     def hp(self, hp: int):
         self._hp = hp
-        self._emit_body_action(ActionTypes.ENTITY_HP_CHANGED, { 'hp': self._hp })
+        self.events.emit('hp_changed')
         if self._hp <= 0:
-            self._handle_dieing()
+            self._die()
 
     def receive_damage(self, damage: int):
         if not self.is_died:
@@ -58,10 +57,5 @@ class Body():
         if self.hp < self.stats.max_hp:
             self.hp += self.stats.hp_regen_rate
 
-    def _handle_dieing(self):
-        self._emit_body_action(ActionTypes.ENTITY_DIED)
+    def _die(self):
         self.events.emit('died')
-        self.events.emit('ready_to_remove')
-
-    def _emit_body_action(self, action_type: ActionTypes, action_data: dict = None):
-        self.events.emit('body_action', action_type, action_data)

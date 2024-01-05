@@ -5,6 +5,7 @@ from core.world.entities.base.entity_types import EntityTypes, EntityTypesPack
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 from core.world.entities.base.entity_collection import EntityCollection
 from core.world.utils.event_emiter import EventEmitter
+from core.world.entities.action.entity_born_action import EntityBornAction
 
 from typing import List, Callable
 import random, math
@@ -34,6 +35,7 @@ class Map:
     def add_new_entity(self, new_entity: Entity):
         self._entities_collection.add_entity(new_entity)
         self._handle_entity(new_entity)
+        self._event_bus.emit('action', EntityBornAction.build(new_entity))
         self.events.emit('entity_born', new_entity)
     
     def get_entity_by_id(self, id: int) -> Entity:

@@ -13,7 +13,7 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.item.items.base.item_types import ItemTypesPack
 from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
 from core.world.entities.item.items.base.item import Item
-from core.world.entities.action.action_types import ActionTypes
+from core.world.entities.action.colony_operations_changed_action import ColonyOperationsChangedAction
 
 class AntColony(Colony):
 
@@ -126,7 +126,7 @@ class AntColony(Colony):
         self._operation_has_changes = True
 
     def _emit_operation_change(self):
-        self._emit_action(ActionTypes.COLONY_OPERATIONS_CHANGED, {'operations': self._operations })
+        self._emit_action(ColonyOperationsChangedAction.build(self.id, self._operations))
         self._operation_has_changes = False
     
     def _check_enemies_in_colony_area(self):

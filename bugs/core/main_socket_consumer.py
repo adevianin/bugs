@@ -1,6 +1,5 @@
 from channels.generic.websocket import WebsocketConsumer
 from core.world.world_facade import WorldFacade
-from core.world.entities.action.action import Action
 import json
 
 class MainSocketConsumer(WebsocketConsumer):

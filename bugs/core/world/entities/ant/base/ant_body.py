@@ -12,7 +12,6 @@ from core.world.entities.item.items.base.item import Item
 from core.world.utils.size import Size
 from core.world.entities.base.live_entity.live_stats import LiveStats
 from core.world.entities.world.birthers.requests.nest_birth_request import NestBirthRequest
-from core.world.entities.action.action_types import ActionTypes
 
 from typing import List, Callable
 
@@ -27,8 +26,6 @@ class AntBody(LiveBody):
         self.sayer = sayer
         self._located_inside_nest = located_in_nest
         self._picked_item = picked_item
-
-        self.events.add_listener('died', self._on_died)
 
     @property
     def located_in_nest_id(self):
@@ -57,11 +54,11 @@ class AntBody(LiveBody):
     def get_in_nest(self, nest: Nest):
         self._located_inside_nest = nest
 
-        self._emit_body_action(ActionTypes.ENTITY_GOT_IN_NEST, { 'nest_id': nest.id })
+        self.events.emit('got_in_nest', nest.id)
 
     def get_out_of_nest(self):
         self._located_inside_nest = None
-        self._emit_body_action(ActionTypes.ENTITY_GOT_OUT_OF_NEST)
+        self.events.emit('got_out_of_nest')
     
     def say(self, phrase: str, data: dict):
         if (data):
@@ -84,18 +81,18 @@ class AntBody(LiveBody):
     def pick_up_item(self, item: Item):
         self._picked_item = item
         item.pickup()
-        self._emit_body_action(ActionTypes.ANT_PICKED_UP_ITEM, { 'item_id': item.id })
+        self.events.emit('picked_up_item', item.id)
         return True
 
     def give_food(self, nest: Nest):
         nest.take_edible_item(self._picked_item)
         self._picked_item = None
-        self._emit_body_action(ActionTypes.ANT_DROPPED_PICKED_ITEM)
+        self.events.emit('dropped_picked_item')
 
     def drop_picked_item(self):
         self._picked_item.drop(Point(self.position.x, self.position.y))
         self._picked_item = None
-        self._emit_body_action(ActionTypes.ANT_DROPPED_PICKED_ITEM)
+        self.events.emit('dropped_picked_item')
 
     def found_nest(self, position: Point, colony_id: int, callback):
         self.events.emit('birth_request', NestBirthRequest.build(position, colony_id, callback))
@@ -109,6 +106,6 @@ class AntBody(LiveBody):
     def fly_nuptial_flight(self):
         pass 
 
-    def _on_died(self):
+    def _die(self):
+        super()._die()
         self.sayer.remove_all_listeners()
-    

@@ -7,7 +7,9 @@ from core.world.entities.base.entity import Entity
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.world.birthers.requests.ant_birth_request import AntBirthRequest
 from core.world.entities.world.birthers.requests.item_birth_request import ItemBirthRequest
-from core.world.entities.action.action_types import ActionTypes
+from core.world.entities.action.nest_stored_calories_changed_action import NestStoredCaloriesChangedAction
+from core.world.entities.action.nest_larvae_changed_action import NestLarvaeChangedAction
+from core.world.entities.action.nest_build_status_changed_action import NestBuildStatusChangedAction
 
 class Nest(Entity):
 
@@ -114,17 +116,11 @@ class Nest(Entity):
         self._emit_larvae_changed()
 
     def _emit_stored_calories_changed(self):
-        self._emit_action(ActionTypes.NEST_STORED_CALORIES_CHANGED, {
-            'stored_calories': self._stored_calories
-        })
+        self._emit_action(NestStoredCaloriesChangedAction.build(self.id, self._stored_calories))
 
     def _emit_larvae_changed(self):
-        self._emit_action(ActionTypes.NEST_LARVAE_CHANGED, {
-            'larvae': self._larvae
-        })
+        self._emit_action(NestLarvaeChangedAction.build(self.id, self._larvae))
 
     def _emit_building_status_changed(self):
-        self._emit_action(ActionTypes.NEST_BUILD_STATUS_CHANGED, {
-            'is_built': self.is_built
-        })
+        self._emit_action(NestBuildStatusChangedAction.build(self.id, self.is_built))
     

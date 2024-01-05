@@ -10,9 +10,7 @@ from core.world.id_generator import IdGenerator
 from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.ground_beetle.ground_beetle_spawner import GroundBeetleSpawner
-from core.world.entities.world.birthers.ant_birther import AntBirther
-from core.world.entities.world.birthers.item_birther import ItemBirther
-from core.world.entities.world.birthers.nest_birther import NestBirther
+from core.world.entities.action.colony_born_action import ColonyBornAction
 
 from typing import List
 
@@ -60,6 +58,7 @@ class World():
     
     def add_new_colony(self, colony: Colony):
         self._colonies.append(colony)
+        self._event_bus.emit('action', ColonyBornAction.build(colony))
 
     def get_colony_by_id(self, colony_id: int) -> Colony:
         for colony in self._colonies:

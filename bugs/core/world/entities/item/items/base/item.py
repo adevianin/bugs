@@ -4,7 +4,9 @@ from core.world.utils.point import Point
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
-from core.world.entities.action.action_types import ActionTypes
+from core.world.entities.action.item_was_picked_up_action import ItemWasPickedUpAction
+from core.world.entities.action.item_was_dropped_action import ItemWasDroppedAction
+from core.world.entities.action.item_being_bringed_action import ItemBeingBringedAction
 
 class Item(Entity):
 
@@ -54,18 +56,13 @@ class Item(Entity):
     
     def pickup(self):
         self._is_picked = True
-        self._emit_action(ActionTypes.ITEM_WAS_PICKED_UP)
+        self._emit_action(ItemWasPickedUpAction.build(self.id))
 
     def drop(self, position: Point):
         self._is_picked = False
         self._body.position = position
-        self._emit_action(ActionTypes.ITEM_WAS_DROPPED, {
-            'position': self.position
-        })
+        self._emit_action(ItemWasDroppedAction.build(self.id, self.position))
 
     def be_bringed_to(self, position: Point, bringing_speed: int):
         self._body.position = position
-        self._emit_action(ActionTypes.ITEM_BEING_BRINGED, {
-            'new_position': self._body.position,
-            'bring_user_speed': bringing_speed
-        })
+        self._emit_action(ItemBeingBringedAction.build(self.id, self._body.position, bringing_speed))

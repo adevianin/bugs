@@ -17,7 +17,6 @@ class UserService():
         colony_id = self._world.generate_id()
         colony = self._colony_factory.build_new_ant_colony(id=colony_id, owner_id=user_id, map=self._world.map, colony_relations_table=self._world.colony_relations_table)
         self._world.add_new_colony(colony)
-        colony.born()
 
         stats = LiveStats.build(300, 20, 32, 200, 1000, 2, 20, 5)
         position = self._world.map.generate_random_point()
@@ -25,4 +24,3 @@ class UserService():
         queen_ant = self._ant_factory.build_new_ant(id=queen_id, from_colony_id=colony_id, stats=stats, ant_type=AntTypes.QUEEN, position=position)
         # queen_ant.mind.toggle_auto_thought_generation(False)
         self._world.map.add_new_entity(queen_ant)
-        queen_ant.born()

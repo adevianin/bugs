@@ -37,8 +37,6 @@ class EntityBirther(ABC):
             
         self._map.add_new_entity(new_entity)
 
-        new_entity.born()
-
         if request.callback:
             request.callback(new_entity)
 

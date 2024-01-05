@@ -2,12 +2,10 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.base.entity import Entity
 from core.world.entities.base.entity_types import EntityTypes
 from typing import List
-from core.world.entities.nest.nest import Nest
 from core.world.entities.map.map import Map
 from .relation_tester import RelationTester
-from core.world.entities.action.action import Action
-from core.world.entities.action.action_types import ActionTypes
-from abc import ABC, abstractmethod
+from core.world.entities.action.base.action import Action
+from abc import ABC
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 
 class Colony(ABC):
@@ -36,9 +34,6 @@ class Colony(ABC):
     def get_my_members(self) -> List[LiveEntity]:
         return self._map.get_entities(from_colony_id=self.id, entity_types=[self._member_type])
     
-    def born(self):
-        self._emit_action(ActionTypes.COLONY_BORN, { 'colony': self })
-    
     def _on_my_entity_born(self, entity: Entity):
         if entity.type == self.member_type:
             self._handle_my_member(entity)
@@ -64,5 +59,5 @@ class Colony(ABC):
         for member in my_members:
             member.body.receive_colony_signal(signal)
 
-    def _emit_action(self, action_type: ActionTypes, action_data: dict = None):
-        self._event_bus.emit('action', Action.build_colony_action(self.id, action_type, action_data))
+    def _emit_action(self, action: Action):
+        self._event_bus.emit('action', action)

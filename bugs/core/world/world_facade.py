@@ -6,7 +6,7 @@ from core.world.utils.point import Point
 from core.world.world_repository_interface import iWorldRepository
 from .world_client_serializer_interface import iWorldClientSerializer
 from .action_client_serializer_interface import iActionClientSerializer
-from core.world.entities.action.action import Action
+from core.world.entities.action.base.action import Action
 
 from typing import Callable, List
 

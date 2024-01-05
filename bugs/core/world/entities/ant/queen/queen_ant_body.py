@@ -9,7 +9,6 @@ from ..base.ant_body import AntBody
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.larva import Larva
 from .genes import Genes
-from core.world.entities.action.action_types import ActionTypes
 
 class QueenAntBody(AntBody):
 
@@ -49,4 +48,4 @@ class QueenAntBody(AntBody):
             self.get_out_of_nest()
         
         self._is_in_nuptial_flight = True
-        self._emit_body_action(ActionTypes.ANT_FLEW_NUPTIAL_FLIGHT)
+        self.events.emit('flew_nuptial_flight')

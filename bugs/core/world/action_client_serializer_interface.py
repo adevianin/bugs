@@ -1,4 +1,4 @@
-from core.world.entities.action.action import Action
+from core.world.entities.action.base.action import Action
 
 class iActionClientSerializer():
 

@@ -17,7 +17,7 @@ class AntMind(Mind):
         self.home_nest = home_nest
         self._is_in_opearetion = is_in_operation
 
-        self.events.add_listener('died', self._on_died)
+        self._body.events.add_listener('died', self._on_died)
 
     @property
     def is_in_opearetion(self):

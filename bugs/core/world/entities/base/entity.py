@@ -3,7 +3,12 @@ from core.world.utils.event_emiter import EventEmitter
 from .entity_types import EntityTypes
 from core.world.entities.base.body import Body
 from core.world.utils.point import Point
-from core.world.entities.action.action import Action, ActionTypes
+from core.world.entities.action.base.action import Action
+from core.world.entities.action.entity_died_action import EntityDiedAction
+from core.world.entities.action.entity_rotated_action import EntityRotatedAction
+from core.world.entities.action.entity_hp_changed_action import EntityHpChangedAction
+from core.world.entities.action.entity_colony_changed_action import EntityColonyChangedAction
+
 class Entity(ABC):
 
     _body: Body
@@ -16,7 +21,9 @@ class Entity(ABC):
         self._from_colony_id = from_colony_id
         self._body = body
 
-        self.events.add_listener('body_action', self._emit_action)
+        self._body.events.add_listener('died', self._on_died)
+        self._body.events.add_listener('angle_changed', self._on_angle_changed)
+        self._body.events.add_listener('hp_changed', self._on_hp_changed)
 
     @property
     def id(self):
@@ -33,7 +40,7 @@ class Entity(ABC):
     @from_colony_id.setter
     def from_colony_id(self, colony_id: int):
         self._from_colony_id = colony_id
-        self._emit_action(ActionTypes.ENTITY_COLONY_CHANGED, { 'colony_id': colony_id })
+        self._emit_action(EntityColonyChangedAction.build(self.id, colony_id))
 
     @property
     def body(self) -> Body:
@@ -47,9 +54,6 @@ class Entity(ABC):
     def is_died(self):
         return self._body.is_died
     
-    def born(self):
-        self._emit_action(ActionTypes.ENTITY_BORN, { 'entity': self })
-
     def die(self):
         self._body.hp = 0
 
@@ -57,6 +61,17 @@ class Entity(ABC):
     def do_step(self):
         pass
 
-    def _emit_action(self, action_type: ActionTypes, action_data: dict = None):
-        self._event_bus.emit('action', Action.build_entity_action(self.id, action_type, action_data))
+    def _on_died(self):
+        self._emit_action(EntityDiedAction.build(self.id))
+        self.events.emit('ready_to_remove')
+
+    def _on_angle_changed(self):
+        self._emit_action(EntityRotatedAction.build(self.id, self._body.angle))
+
+    def _on_hp_changed(self):
+        self._emit_action(EntityHpChangedAction.build(self.id, self._body.hp))
+
+    def _emit_action(self, action: Action):
+        self._event_bus.emit('action', action)
+        
     
