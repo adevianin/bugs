@@ -1,8 +1,6 @@
 from ..base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
-from core.world.entities.ant.base.larva import Larva
 from core.world.entities.item.items.base.item import Item
-from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.world.birthers.requests.ant_birth_request import AntBirthRequest
@@ -10,117 +8,80 @@ from core.world.entities.world.birthers.requests.item_birth_request import ItemB
 from core.world.entities.action.nest_stored_calories_changed_action import NestStoredCaloriesChangedAction
 from core.world.entities.action.nest_larvae_changed_action import NestLarvaeChangedAction
 from core.world.entities.action.nest_build_status_changed_action import NestBuildStatusChangedAction
+from core.world.entities.ant.base.larva import Larva
+from .nest_body import NestBody
 
 class Nest(Entity):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int,  body: Body, larvae: list[Larva], larva_places_count: int, stored_calories: int, area: int, build_progress: int):
+    _body: NestBody
+
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, body: NestBody):
         super().__init__(event_bus, events, id, EntityTypes.NEST, from_colony_id, body)
-        self._area = area
-        self._stored_calories = stored_calories
-        self._larvae = larvae
-        self._larva_places_count = larva_places_count
-        self._build_progress = build_progress
+
+        self._body.events.add_listener('larvae_changed', self._on_larvae_changed)
+        self._body.events.add_listener('stored_calories_changed', self._on_stored_calories_changed)
+        self._body.events.add_listener('build_status_changed', self._on_build_status_changed)
+        self._body.events.add_listener('larva_is_ready', self._on_larva_is_ready)
 
     @property
     def area(self):
-        return self._area
+        return self._body.area
     
     @property
     def stored_calories(self):
-        return self._stored_calories
+        return self._body.stored_calories
     
     @property
     def larvae(self):
-        return self._larvae
+        return self._body.larvae
     
     @property
     def larva_places_count(self):
-        return self._larva_places_count
+        return self._body.larva_places_count
     
     @property
     def build_progress(self):
-        return self._build_progress
+        return self._body.build_progress
     
     @property
     def is_built(self):
-        return self._build_progress == 100
+        return self._body.is_built
 
     def do_step(self):
-        self._feed_larvae()
+        self._body.feed_larvae()
 
     def take_edible_item(self, item: Item):
-        self._stored_calories += item.use()
-        self._emit_stored_calories_changed()
+        self._body.take_edible_item(item)
 
     def take_calories(self, caloris_count: int):
-        self._stored_calories += caloris_count
-        self._emit_stored_calories_changed()
+        self._body.take_calories(caloris_count)
 
     def give_calories(self, count: int) -> int:
-        if (self._stored_calories >= count):
-            self._stored_calories -= count
-            self._emit_stored_calories_changed()
-            return count
-        else:
-            can_give = self._stored_calories
-            self._stored_calories = 0
-            self._emit_stored_calories_changed()
-            return can_give
+        return self._body.give_calories(count)
 
     def add_larva(self, larva: Larva):
-        self._larvae.append(larva)
-        self._emit_larvae_changed()
+        self._body.add_larva(larva)
 
     def build(self):
-        is_build_before = self.is_built
-        build_step = 5
-        hp_step = 5 * self._body.stats.max_hp / 100
-        if not self.is_built:
-            if self._build_progress + build_step >= 100:
-                self._build_progress = 100
-                self._body.hp = self._body.stats.max_hp
-            else:
-                self._build_progress += build_step
-                self._body.hp += hp_step
-
-        if is_build_before != self.is_built:
-            self._emit_building_status_changed()
+        self._body.build()
 
     def steal_food(self, on_food_ready):
-        strength = min(300, self._stored_calories)
+        strength = self._body.steal_some_food()
         if strength > 0:
             self._event_bus.emit('item_birth_request', ItemBirthRequest.build(self._body.position, strength, ItemTypes.ANT_FOOD, None, on_food_ready))
-            self._stored_calories -= strength
             return True
         else:
             return False
 
-    def _feed_larvae(self):
-        larvae_count = len(self._larvae)
-        if larvae_count == 0:
-            return 
-        portion_size = 10
-        needed_calories = larvae_count * portion_size
-        calories_for_feeding = self.give_calories(needed_calories)
-        actual_portion_size = calories_for_feeding / larvae_count
-        larvae_ready_to_born = []
-        for larva in self._larvae:
-            larva.feed(actual_portion_size)
-            if larva.is_ready_to_born:
-                larvae_ready_to_born.append(larva)
+    def _on_stored_calories_changed(self):
+        self._emit_action(NestStoredCaloriesChangedAction.build(self.id, self._body.stored_calories))
 
-        for larva in larvae_ready_to_born:
-            self._larvae.remove(larva)
-            self._event_bus.emit('ant_birth_request', AntBirthRequest.build(self._id, larva))
-        
-        self._emit_larvae_changed()
+    def _on_larvae_changed(self):
+        self._emit_action(NestLarvaeChangedAction.build(self.id, self._body.larvae))
 
-    def _emit_stored_calories_changed(self):
-        self._emit_action(NestStoredCaloriesChangedAction.build(self.id, self._stored_calories))
+    def _on_build_status_changed(self):
+        self._emit_action(NestBuildStatusChangedAction.build(self.id, self._body.is_built))
 
-    def _emit_larvae_changed(self):
-        self._emit_action(NestLarvaeChangedAction.build(self.id, self._larvae))
-
-    def _emit_building_status_changed(self):
-        self._emit_action(NestBuildStatusChangedAction.build(self.id, self.is_built))
+    def _on_larva_is_ready(self, larva: Larva):
+        self._event_bus.emit('ant_birth_request', AntBirthRequest.build(self._id, larva))
     
