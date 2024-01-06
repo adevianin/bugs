@@ -18,7 +18,6 @@ class ItemSourceFactory():
                 raise Exception('unknown type of item source')
 
     def _build_honeydew_item_source(self, id: int, from_colony_id: int, hp: int, position: Point, angle: int, fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
-        events = EventEmitter()
         stats = StatsLibrary.ITEM_SOURCE_DEFAULT
-        body = HoneydewItemSourceBody(events, stats, position, angle, hp)
-        return HoneydewItemSource(self._event_bus, events, id, from_colony_id, body, fertility, accumulated, min_item_strength, max_item_strength)
+        body = HoneydewItemSourceBody(EventEmitter(), stats, position, angle, hp)
+        return HoneydewItemSource(self._event_bus, EventEmitter(), id, from_colony_id, body, fertility, accumulated, min_item_strength, max_item_strength)

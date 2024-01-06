@@ -11,7 +11,6 @@ from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.item.items.base.item import Item
 from core.world.utils.size import Size
 from core.world.entities.base.live_entity.live_stats import LiveStats
-from core.world.entities.world.birthers.requests.nest_birth_request import NestBirthRequest
 
 from typing import List, Callable
 
@@ -93,9 +92,6 @@ class AntBody(LiveBody):
         self._picked_item.drop(Point(self.position.x, self.position.y))
         self._picked_item = None
         self.events.emit('dropped_picked_item')
-
-    def found_nest(self, position: Point, colony_id: int, callback):
-        self.events.emit('birth_request', NestBirthRequest.build(position, colony_id, callback))
 
     def step_to(self, destination_point: Point) -> bool:
         if self.is_in_nest:

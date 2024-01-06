@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from .live_body import LiveBody
 from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.entities.thought.thought import Thought
-from core.world.utils.event_emiter import EventEmitter
 from typing import List
 from core.world.utils.point import Point
 from core.world.entities.base.enemy_interface import iEnemy
@@ -10,12 +9,11 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 
 class Mind(ABC):
 
-    def __init__(self, events: EventEmitter, body: LiveBody, thought_factory: ThoughtFactory, is_auto_thought_generation: bool):
+    def __init__(self, body: LiveBody, thought_factory: ThoughtFactory, is_auto_thought_generation: bool):
         self._body = body
         self._thought_factory = thought_factory
         self._thoughts_stack: List[Thought] = []
         self._is_auto_thought_generation = is_auto_thought_generation
-        self.events = events
 
     @property
     def thoughts(self):

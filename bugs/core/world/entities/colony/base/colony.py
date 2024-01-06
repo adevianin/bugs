@@ -20,8 +20,8 @@ class Colony(ABC):
         for member in self.get_my_members():
             self._handle_my_member(member)
 
-        self._map.events.add_listener('entity_died', self._on_entity_died)
-        self._map.events.add_listener('entity_born', self._on_entity_born)
+        self._event_bus.add_listener('entity_died', self._on_entity_died)
+        self._event_bus.add_listener('entity_born', self._on_entity_born)
 
     @property
     def id(self):

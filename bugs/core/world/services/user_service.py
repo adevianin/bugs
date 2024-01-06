@@ -23,4 +23,5 @@ class UserService():
         queen_id = self._world.generate_id()
         queen_ant = self._ant_factory.build_new_ant(id=queen_id, from_colony_id=colony_id, stats=stats, ant_type=AntTypes.QUEEN, position=position)
         # queen_ant.mind.toggle_auto_thought_generation(False)
-        self._world.map.add_new_entity(queen_ant)
+        raise Exception('use entity birther here')
+        # self._world.map.add_new_entity(queen_ant)

@@ -63,7 +63,9 @@ class Entity(ABC):
 
     def _on_died(self):
         self._emit_action(EntityDiedAction.build(self.id))
-        self.events.emit('ready_to_remove')
+        self.events.emit('died')
+        self.events.remove_all_listeners()
+        self._event_bus.emit('entity_died', self)
 
     def _on_angle_changed(self):
         self._emit_action(EntityRotatedAction.build(self.id, self._body.angle))

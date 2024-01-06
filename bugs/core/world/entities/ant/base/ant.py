@@ -10,6 +10,7 @@ from core.world.entities.action.entity_got_in_nest_action import EntityGotInNest
 from core.world.entities.action.entity_got_out_of_nest_action import EntityGotOutOfNestAction
 from core.world.entities.action.ant_picked_up_item_action import AntPickedUpItemAction
 from core.world.entities.action.ant_dropped_picked_item import AntDroppedPickedItemAction
+from core.world.entities.world.birthers.requests.nest_birth_request import NestBirthRequest
 
 class Ant(LiveEntity):
 
@@ -63,8 +64,8 @@ class Ant(LiveEntity):
     def relocate_to_nest(self, nest: Nest):
         self._mind.relocate_to_nest(nest)
 
-    def found_nest(self, building_site: Point, sayback: str):
-        self._mind.found_nest(building_site=building_site, from_colony_id=self.from_colony_id, sayback=sayback)
+    def found_nest(self, building_site: Point, callback):
+        self._event_bus.emit('nest_birth_request', NestBirthRequest.build(building_site, self.from_colony_id, callback))
 
     def build_nest(self, nest: Nest, sayback: str = None):
         self._mind.build_nest(nest=nest, sayback=sayback)

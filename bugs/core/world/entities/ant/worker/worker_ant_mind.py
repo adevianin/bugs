@@ -1,17 +1,16 @@
 from core.world.entities.ant.base.ant_body import AntBody
 from core.world.entities.nest.nest import Nest
 from core.world.entities.thought.thought_factory import ThoughtFactory
-from core.world.utils.event_emiter import EventEmitter
 from ..base.ant_mind import AntMind
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.utils.point import Point
 
 class WorkerAntMind(AntMind):
 
-    def __init__(self, events: EventEmitter, body: AntBody, thought_factory: ThoughtFactory, is_auto_thought_generation: bool, home_nest: Nest, is_in_operation: bool):
-        super().__init__(events, body, thought_factory, is_auto_thought_generation, home_nest, is_in_operation)
+    def __init__(self, body: AntBody, thought_factory: ThoughtFactory, is_auto_thought_generation: bool, home_nest: Nest, is_in_operation: bool):
+        super().__init__(body, thought_factory, is_auto_thought_generation, home_nest, is_in_operation)
 
-        self.events.add_listener('colony_signal:workers_reinforcement_needed', self._on_workers_reinforcement_needed)
+        self._body.events.add_listener('colony_signal:workers_reinforcement_needed', self._on_workers_reinforcement_needed)
 
     def _generate_thoughts(self):
         super()._generate_thoughts()

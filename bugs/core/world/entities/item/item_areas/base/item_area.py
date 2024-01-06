@@ -56,5 +56,5 @@ class ItemArea(Entity):
         return self._accumulated > 5 and random.choice([True, False, False, False])
     
     def _request_birth(self):
-        self.events.emit('birth_request', ItemBirthRequest.build(self._generate_spawn_point(), self._accumulated, self._item_type))
+        self._event_bus.emit('item_birth_request', ItemBirthRequest.build(self._generate_spawn_point(), self._accumulated, self._item_type))
 

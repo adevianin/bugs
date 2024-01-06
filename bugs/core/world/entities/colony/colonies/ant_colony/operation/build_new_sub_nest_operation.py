@@ -38,7 +38,6 @@ class BuildNewSubNestOperation(Operation):
         for worker in self._workers:
             worker.sayer.add_listener('prepared', partial(self._on_worker_prepared, worker))
             worker.sayer.add_listener('arrived_to_building_site', partial(self._on_worker_on_building_site, worker))
-            worker.sayer.add_listener('nest_is_found', self._on_nest_found)
             worker.sayer.add_listener('nest_is_built', self._on_nest_built)
             
     def _start_operation(self):
@@ -76,12 +75,11 @@ class BuildNewSubNestOperation(Operation):
         return True
 
     def _found_nest_step(self):
-        self._workers[0].found_nest(self._building_site, 'nest_is_found')
+        def on_nest_found(nest: Nest):
+            for worker in self._workers:
+                worker.build_nest(nest, 'nest_is_built')
 
-    def _on_nest_found(self, results):
-        nest: Nest = results['nest']
-        for worker in self._workers:
-            worker.build_nest(nest, 'nest_is_built')
+        self._workers[0].found_nest(self._building_site, on_nest_found)
 
     def _on_nest_built(self, nest: Nest):
         if not self._read_flag(f'relocate_step_started'):

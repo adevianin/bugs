@@ -8,7 +8,6 @@ from core.world.entities.ant.base.thoughts.find_food_thought import FindFoodThou
 from core.world.entities.ant.base.thoughts.collect_food_thought import CollectFoodThought
 from core.world.entities.ant.base.thoughts.feed_myself_thought import FeedMyselfThought
 from core.world.entities.ant.base.thoughts.prepare_for_opertation_thought import PrepareForOperationThought
-from core.world.entities.ant.base.thoughts.found_nest_thought import FoundNestThought
 from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestThought
 from core.world.entities.ant.warrior.thoughts.defend_territory_thought import DefendTerritoryThought
 from core.world.entities.ant.base.thoughts.attack_nest_thought import AttackNestThought
@@ -41,9 +40,6 @@ class ThoughtFactory:
 
     def build_prepare_for_operation_thought(self, body: LiveBody, feed_myself_thought: FeedMyselfThought, assemble_point: Point, flags: dict = None, sayback: str = None):
         return PrepareForOperationThought(body=body, feed_myself_thought=feed_myself_thought, assemble_point=assemble_point, flags=flags, sayback=sayback)
-    
-    def build_found_nest_thought(self, body: LiveBody, building_site: Point, from_colony_id: int, found_nest: Nest = None, flags: dict = None, sayback: str = None):
-        return FoundNestThought(body=body, building_site=building_site, from_colony_id=from_colony_id, found_nest=found_nest, flags=flags, sayback=sayback)
     
     def build_build_nest_thought(self, body: LiveBody, building_nest: Nest, flags: dict = None, sayback: str = None):
         return BuildNestThought(body=body, building_nest=building_nest, flags=flags, sayback=sayback)

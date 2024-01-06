@@ -1,4 +1,3 @@
-from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.map.map import Map
 from core.world.id_generator import IdGenerator
 from core.world.utils.event_emiter import EventEmitter
@@ -11,7 +10,7 @@ from core.world.entities.nest.nest import Nest
 class AntBirther(EntityBirther):
 
     def __init__(self, event_bus: EventEmitter, id_generator: IdGenerator, map: Map, ant_factory: AntFactory):
-        super().__init__(event_bus, EntityTypes.ANT, id_generator, map)
+        super().__init__(event_bus, id_generator, 'ant_birth_request', map)
         self._ant_factory = ant_factory
 
     def _build_entity(self, id, request: AntBirthRequest) -> Ant:

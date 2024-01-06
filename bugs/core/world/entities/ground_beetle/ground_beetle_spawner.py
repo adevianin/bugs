@@ -18,7 +18,7 @@ class GroundBeetleSpawner():
     def _on_step_start(self, step_number):
         if self._should_spawn():
             pos = self._generate_spawn_position()
-            self._event_bus.emit('birth_request', GroundBeetleBirthRequest.build(pos))
+            self._event_bus.emit('ground_beetle_birth_request', GroundBeetleBirthRequest.build(pos))
 
     def _should_spawn(self) -> bool:
         return False

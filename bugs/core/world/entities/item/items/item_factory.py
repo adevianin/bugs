@@ -39,44 +39,39 @@ class ItemFactory():
                 return self._build_ant_food_item(id, position, angle, strength, variety, life_span, is_picked)
 
     def _build_flower_item(self, id: int, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool):
-        events = EventEmitter()
         stats = StatsLibrary.GHOST_DEFAULT
-        body = FlowerItemBody(events, stats, position, angle, stats.max_hp)
+        body = FlowerItemBody(EventEmitter(), stats, position, angle, stats.max_hp)
         variety = variety or self._generate_variety(FlowerItemBody.VARIETY_COUNT)
         life_span = life_span or FlowerItemBody.LIFE_SPAN
-        return FlowerItem(self._event_bus, events, id, body, strength, variety, life_span, is_picked)
+        return FlowerItem(self._event_bus, EventEmitter(), id, body, strength, variety, life_span, is_picked)
     
     def _build_leaf_item(self, id: int, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool):
-        events = EventEmitter()
         stats = StatsLibrary.GHOST_DEFAULT
-        body = LeafItemBody(events, stats, position, angle, stats.max_hp)
+        body = LeafItemBody(EventEmitter(), stats, position, angle, stats.max_hp)
         variety = variety or self._generate_variety(LeafItemBody.VARIETY_COUNT)
         life_span = life_span or LeafItemBody.LIFE_SPAN
-        return LeafItem(self._event_bus, events, id, body, strength, variety, life_span, is_picked)
+        return LeafItem(self._event_bus, EventEmitter(), id, body, strength, variety, life_span, is_picked)
     
     def _build_honeydew_item(self, id: int, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool):
-        events = EventEmitter()
         stats = StatsLibrary.GHOST_DEFAULT
-        body = HoneydewItemBody(events, stats, position, angle, stats.max_hp)
+        body = HoneydewItemBody(EventEmitter(), stats, position, angle, stats.max_hp)
         variety = variety or self._generate_variety(HoneydewItemBody.VARIETY_COUNT)
         life_span = life_span or HoneydewItemBody.LIFE_SPAN
-        return HoneydewItem(self._event_bus, events, id, body, strength, variety, life_span, is_picked)
+        return HoneydewItem(self._event_bus, EventEmitter(), id, body, strength, variety, life_span, is_picked)
     
     def _build_ground_beetle_corpse_item(self, id: int, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool):
-        events = EventEmitter()
         stats = StatsLibrary.GHOST_DEFAULT
-        body = GroundBeetleCorpseItemBody(events, stats, position, angle, stats.max_hp)
+        body = GroundBeetleCorpseItemBody(EventEmitter(), stats, position, angle, stats.max_hp)
         variety = variety or self._generate_variety(GroundBeetleCorpseItemBody.VARIETY_COUNT)
         life_span = life_span or GroundBeetleCorpseItemBody.LIFE_SPAN
-        return GroundBeetleCorpseItem(self._event_bus, events, id, body, strength, variety, life_span, is_picked)
+        return GroundBeetleCorpseItem(self._event_bus, EventEmitter(), id, body, strength, variety, life_span, is_picked)
     
     def _build_ant_food_item(self, id: int, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool):
-        events = EventEmitter()
         stats = StatsLibrary.GHOST_DEFAULT
-        body = AntFoodItemBody(events, stats, position, angle, stats.max_hp)
+        body = AntFoodItemBody(EventEmitter(), stats, position, angle, stats.max_hp)
         variety = variety or self._generate_variety(AntFoodItemBody.VARIETY_COUNT)
         life_span = life_span or AntFoodItemBody.LIFE_SPAN
-        return AntFoodItem(self._event_bus, events, id, body, strength, variety, life_span, is_picked)
+        return AntFoodItem(self._event_bus, EventEmitter(), id, body, strength, variety, life_span, is_picked)
     
     def _generate_variety(self, variety_count: int):
         return random.randint(1, variety_count)

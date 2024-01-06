@@ -23,8 +23,6 @@ class JsonThoughtFactory():
                 return self._build_feed_myself_thought(body, thought_json, entities_collection)
             case ThoughtTypes.PREPARE_FOR_OPERATION:
                 return self._build_prepare_for_operation_thought(body, thought_json, entities_collection)
-            case ThoughtTypes.FOUND_NEST:
-                return self._build_found_nest_thought(body, thought_json, entities_collection)
             case ThoughtTypes.BUILD_NEST:
                 return self._build_build_nest_thought(body, thought_json, entities_collection)
             case ThoughtTypes.DEFEND_TERRITORY:
@@ -74,13 +72,6 @@ class JsonThoughtFactory():
         feed_myself_thought = self.build_thougth_from_json(body, thought_json['feed_myself_thought'], entities_collection)
         assemble_point = Point(thought_json['assemble_point'][0], thought_json['assemble_point'][1])
         return self._thought_factory.build_prepare_for_operation_thought(body=body, feed_myself_thought=feed_myself_thought, assemble_point=assemble_point, flags=thought_json['flags'], sayback=thought_json['sayback'])
-    
-    def _build_found_nest_thought(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
-        building_site = Point(thought_json['building_site'][0], thought_json['building_site'][1])
-        found_nest = None
-        if 'found_nest_id' in thought_json:
-            found_nest = entities_collection.get_entity_by_id(thought_json['found_nest_id'])
-        return self._thought_factory.build_found_nest_thought(body=body, building_site=building_site, from_colony_id=thought_json['from_colony_id'], found_nest=found_nest, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_build_nest_thought(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
         building_nest = entities_collection.get_entity_by_id(thought_json['building_nest_id'])

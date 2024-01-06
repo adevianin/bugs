@@ -19,12 +19,11 @@ class GroundBeetleFactory():
         return self.build_ground_beetle(id=id, from_colony_id=GROUND_BEETLE_COLONY_ID, position=position, angle=0, hp=None, memory_data={}, is_auto_thought_generation=True)
 
     def build_ground_beetle(self, id: int, from_colony_id: int, position: Point, angle: int, hp: int, memory_data: dict, is_auto_thought_generation: bool):
-        events = EventEmitter()
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
         stats = StatsLibrary.GROUND_BEETLE_DEFAULT
         hp = hp or stats.max_hp
-        body = GroundBeetleBody(events, stats, memory, position, angle, hp, world_interactor)
-        mind = GroundBeetleMind(events, body, self._thought_factory, is_auto_thought_generation)
+        body = GroundBeetleBody(EventEmitter(), stats, memory, position, angle, hp, world_interactor)
+        mind = GroundBeetleMind(body, self._thought_factory, is_auto_thought_generation)
 
-        return GroundBeetle(self._event_bus, events, id, from_colony_id, body, mind)
+        return GroundBeetle(self._event_bus, EventEmitter(), id, from_colony_id, body, mind)

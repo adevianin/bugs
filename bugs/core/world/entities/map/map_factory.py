@@ -9,5 +9,4 @@ class MapFactory():
         self._event_bus = event_bus
 
     def build_map(self, size: Size, entities_collection: EntityCollection):
-        events = EventEmitter()
-        return Map(self._event_bus, events, size, entities_collection)
+        return Map(self._event_bus, size, entities_collection)

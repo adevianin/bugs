@@ -65,7 +65,7 @@ class ItemSource(Entity):
 
         self._accumulated -= strength
 
-        self.events.emit('birth_request', ItemBirthRequest.build(self._body.position, strength, self._item_type, None, on_item_ready))
+        self._event_bus.emit('item_birth_request', ItemBirthRequest.build(self._body.position, strength, self._item_type, None, on_item_ready))
 
         return True
 

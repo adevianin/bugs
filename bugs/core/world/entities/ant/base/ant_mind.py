@@ -1,19 +1,16 @@
 from core.world.entities.base.live_entity.mind import Mind
 from core.world.entities.thought.thought_factory import ThoughtFactory
 from .ant_body import AntBody
-from core.world.entities.base.live_entity.world_interactor import WorldInteractor
 from core.world.entities.nest.nest import Nest
-from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 import math
-from abc import abstractmethod
 
 class AntMind(Mind):
 
     _body: AntBody
 
-    def __init__(self, events: EventEmitter, body: AntBody, thought_factory: ThoughtFactory, is_auto_thought_generation: bool, home_nest: Nest, is_in_operation: bool):
-        super().__init__(events, body, thought_factory, is_auto_thought_generation)
+    def __init__(self, body: AntBody, thought_factory: ThoughtFactory, is_auto_thought_generation: bool, home_nest: Nest, is_in_operation: bool):
+        super().__init__(body, thought_factory, is_auto_thought_generation)
         self.home_nest = home_nest
         self._is_in_opearetion = is_in_operation
 
@@ -46,10 +43,6 @@ class AntMind(Mind):
     
     def relocate_to_nest(self, nest: Nest):
         self.home_nest = nest
-
-    def found_nest(self, building_site: Point, from_colony_id: int, sayback: str):
-        thought = self._thought_factory.build_found_nest_thought(body=self._body, building_site=building_site, from_colony_id=from_colony_id, sayback=sayback)
-        self._register_thought(thought)
 
     def build_nest(self, nest: Nest, sayback: str):
         thought = self._thought_factory.build_build_nest_thought(body=self._body, building_nest=nest, sayback=sayback)

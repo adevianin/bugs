@@ -59,3 +59,4 @@ class Body():
 
     def _die(self):
         self.events.emit('died')
+        self.events.remove_all_listeners()
