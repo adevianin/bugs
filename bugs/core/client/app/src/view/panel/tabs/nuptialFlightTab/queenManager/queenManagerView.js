@@ -1,6 +1,7 @@
 import './style.css';
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import queenManagerTmpl from './queenManagerTmpl.html';
+import { MalesSearchView } from './malesSearch';
 
 class QueenManagerView extends BaseHTMLView {
 
@@ -22,6 +23,7 @@ class QueenManagerView extends BaseHTMLView {
 
     _renderQueen() {
         this._el.querySelector('[data-queen-name]').innerHTML = this._queen.id;
+        this._malesSearch = new MalesSearchView(this._el.querySelector('[data-males-search]'));
     }
 }
 

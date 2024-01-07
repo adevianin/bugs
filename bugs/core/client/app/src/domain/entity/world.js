@@ -2,10 +2,11 @@ import { EntityTypes } from "../enum/entityTypes";
 import { AntTypes } from "../enum/antTypes";
 
 class World {
-    constructor(eventBus) {
+    constructor(eventBus, foundMalesCollection) {
         this._eventBus = eventBus;
         this._entities = [];
         this._colonies = [];
+        this._foundMalesCollection = foundMalesCollection;
 
         this._eventBus.on('entityDied', this._onDied.bind(this));
     }

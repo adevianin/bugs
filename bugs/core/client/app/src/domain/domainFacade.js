@@ -1,9 +1,9 @@
 class DomainFacade {
 
-    constructor(mainEventBus, userService, messageHandlerService, worldService, colonyService) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
-        this._userService = userService;
+        this._accountService = accountService;
         this._messageHandlerService = messageHandlerService;
         this._colonyService = colonyService;
     }
@@ -21,34 +21,34 @@ class DomainFacade {
     }
 
     isLoggedIn() {
-        return this._userService.isLoggedIn();
+        return this._accountService.isLoggedIn();
     }
 
     login(username, password) {
-        return this._userService.login(username, password).then(() => {
+        return this._accountService.login(username, password).then(() => {
             this._tryConnectMessageHandler();
         });
     }
 
     register(username, password) {
-        return this._userService.register(username, password).then(() => {
+        return this._accountService.register(username, password).then(() => {
             this._tryConnectMessageHandler();
         });
     }
 
     logout() {
-        return this._userService.logout().then(() => {
+        return this._accountService.logout().then(() => {
             this._disconnectMessagerHandler();
             this._worldService.clear();
         });
     }
 
     checkUsernameUnique(username) {
-        return this._userService.checkUsernameUnique(username);
+        return this._accountService.checkUsernameUnique(username);
     }
 
     getUserData() {
-        return this._userService.getUserData();
+        return this._accountService.getUserData();
     }
 
     start() {
@@ -116,7 +116,7 @@ class DomainFacade {
     }
 
     _tryConnectMessageHandler() {
-        if (this._userService.isLoggedIn()) {
+        if (this._accountService.isLoggedIn()) {
             this._messageHandlerService.connect();
         }
     }

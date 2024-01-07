@@ -1,9 +1,8 @@
 class MessageHandlerService {
 
-    constructor(serverConnection, worldService, actionService, colonyService) {
+    constructor(serverConnection, worldService, colonyService) {
         this._serverConnection = serverConnection;
         this._worldService = worldService;
-        this._actionService = actionService;
         this._colonyService = colonyService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
@@ -17,16 +16,27 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        // console.log(msg)
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);
                 break;
             case 'action':
-                this._actionService.playAction(msg.action);
+                this._handleActionMsg(msg);
                 break;
             default: 
                 throw `unknown type of message "${ msg.type }"`
+        }
+    }
+
+    _handleActionMsg(msg) {
+        let action = msg.action;
+        switch(action.actorType) {
+            case 'entity':
+                this._worldService.playEntityAction(action)
+                break;
+            case 'colony':
+                this._colonyService.playColonyAction(action);
+                break;
         }
     }
 

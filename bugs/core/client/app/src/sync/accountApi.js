@@ -1,4 +1,4 @@
-class UserApi {
+class AccountApi {
     
     constructor(requester) {
         this._requester = requester;
@@ -35,5 +35,5 @@ class UserApi {
 }
 
 export {
-    UserApi
+    AccountApi
 }

@@ -9,6 +9,7 @@ import { ItemSource } from './entity/itemSource';
 import { ItemArea } from './entity/itemArea';
 import { AntTypes } from './enum/antTypes';
 import { WarriorAnt, WorkerAnt, QueenAnt } from './entity/ant';
+import { FoundMalesCollection } from './entity/nuptialFlight';
 
 class WorldFactory {
 
@@ -65,7 +66,8 @@ class WorldFactory {
     }
 
     buildWorld() {
-        return new World(this._mainEventBus);
+        let foundMalesCollection = new FoundMalesCollection(this._mainEventBus);
+        return new World(this._mainEventBus, foundMalesCollection);
     }
 
     buildQueenAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight, genes) {

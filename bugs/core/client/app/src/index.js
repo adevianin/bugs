@@ -7,7 +7,7 @@ let initialData = readInitialData();
 
 let syncLayer = initSyncLayer();
 let domainFacade = initDomainLayer({ 
-    userApi: syncLayer.userApi,
+    accountApi: syncLayer.accountApi,
     nestApi: syncLayer.nestApi,
     colonyApi: syncLayer.colonyApi,
     antApi: syncLayer.antApi,

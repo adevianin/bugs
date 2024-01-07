@@ -1,13 +1,13 @@
-class UserService {
+class AccountService {
     
-    constructor(userApi, userData, mainEventBus) {
-        this._userApi = userApi;
+    constructor(accountApi, userData, mainEventBus) {
+        this._accountApi = accountApi;
         this._userData = userData;
         this._mainEventBus = mainEventBus;
     }
 
     login(username, password) {
-        return this._userApi.login(username, password)
+        return this._accountApi.login(username, password)
             .then(userData => {
                 this._userData = userData;
                 this._emitStatusChange();
@@ -15,7 +15,7 @@ class UserService {
     }
 
     register(username, password) {
-        return this._userApi.register(username, password)
+        return this._accountApi.register(username, password)
             .then(userData => {
                 this._userData = userData;
                 this._emitStatusChange();
@@ -23,14 +23,14 @@ class UserService {
     }
 
     logout() {
-        return this._userApi.logout().then(() => {
+        return this._accountApi.logout().then(() => {
             this._userData = null;
             this._emitStatusChange();
         });
     }
 
     checkUsernameUnique(username) {
-        return this._userApi.checkUsernameUnique(username);
+        return this._accountApi.checkUsernameUnique(username);
     }
 
     isLoggedIn() {
@@ -48,5 +48,5 @@ class UserService {
 }
 
 export {
-    UserService
+    AccountService
 }

@@ -7,6 +7,20 @@ class ColonyService {
         this._worldFactory = worldFactory;
     }
 
+    playColonyAction(action) {
+        switch(action.type) {
+            case 'colony_born':
+                this._colonyService.giveBirthToColony(action.actionData.colony);
+                break;
+            case 'colony_operations_change':
+                let colony = this._world.findColonyById(action.actorId);
+                colony.setOperations(action.actionData.operations);
+                break;
+            default:
+                throw 'unknown type of colony action'
+        }
+    }
+
     giveBirthToColony(colonyJson) {
         let colony = this._worldFactory.buildColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
         this._world.addColony(colony);

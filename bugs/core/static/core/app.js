@@ -14,10 +14,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class DomainFacade {
 
-    constructor(mainEventBus, userService, messageHandlerService, worldService, colonyService) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
-        this._userService = userService;
+        this._accountService = accountService;
         this._messageHandlerService = messageHandlerService;
         this._colonyService = colonyService;
     }
@@ -35,34 +35,34 @@ class DomainFacade {
     }
 
     isLoggedIn() {
-        return this._userService.isLoggedIn();
+        return this._accountService.isLoggedIn();
     }
 
     login(username, password) {
-        return this._userService.login(username, password).then(() => {
+        return this._accountService.login(username, password).then(() => {
             this._tryConnectMessageHandler();
         });
     }
 
     register(username, password) {
-        return this._userService.register(username, password).then(() => {
+        return this._accountService.register(username, password).then(() => {
             this._tryConnectMessageHandler();
         });
     }
 
     logout() {
-        return this._userService.logout().then(() => {
+        return this._accountService.logout().then(() => {
             this._disconnectMessagerHandler();
             this._worldService.clear();
         });
     }
 
     checkUsernameUnique(username) {
-        return this._userService.checkUsernameUnique(username);
+        return this._accountService.checkUsernameUnique(username);
     }
 
     getUserData() {
-        return this._userService.getUserData();
+        return this._accountService.getUserData();
     }
 
     start() {
@@ -130,7 +130,7 @@ class DomainFacade {
     }
 
     _tryConnectMessageHandler() {
-        if (this._userService.isLoggedIn()) {
+        if (this._accountService.isLoggedIn()) {
             this._messageHandlerService.connect();
         }
     }
@@ -140,57 +140,6 @@ class DomainFacade {
     }
 
 }
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/domain/entity/action/action.js":
-/*!*****************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/action/action.js ***!
-  \*****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Action": () => (/* binding */ Action)
-/* harmony export */ });
-class Action {
-
-    constructor(actorId, actorType, actionType, actionData) {
-        this.actorId = actorId;
-        this.type = actionType;
-        this.actorType = actorType;
-        this.actionData = actionData;
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/domain/entity/action/actionFactory.js":
-/*!************************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/action/actionFactory.js ***!
-  \************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "ActionFactory": () => (/* binding */ ActionFactory)
-/* harmony export */ });
-/* harmony import */ var _action__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./action */ "./bugs/core/client/app/src/domain/entity/action/action.js");
-
-
-class ActionFactory {
-
-    buildAction(actionJson) {
-        return new _action__WEBPACK_IMPORTED_MODULE_0__.Action(actionJson.actor_id, actionJson.actor_type, actionJson.action_type, actionJson.action_data);
-    }
-}
-
 
 
 /***/ }),
@@ -1177,6 +1126,55 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/domain/entity/nuptialFlight/foundMalesCollection.js":
+/*!**************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/nuptialFlight/foundMalesCollection.js ***!
+  \**************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "FoundMalesCollection": () => (/* binding */ FoundMalesCollection)
+/* harmony export */ });
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+
+
+class FoundMalesCollection extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+
+    constructor(eventBus) {
+        super();
+        this._eventBus = eventBus;
+        this._males = [];
+    }
+
+    setMales(males) {
+        this._males = males;
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/nuptialFlight/index.js":
+/*!***********************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/nuptialFlight/index.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "FoundMalesCollection": () => (/* reexport safe */ _foundMalesCollection__WEBPACK_IMPORTED_MODULE_0__.FoundMalesCollection)
+/* harmony export */ });
+/* harmony import */ var _foundMalesCollection__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./foundMalesCollection */ "./bugs/core/client/app/src/domain/entity/nuptialFlight/foundMalesCollection.js");
+
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/entity/world.js":
 /*!*********************************************************!*\
   !*** ./bugs/core/client/app/src/domain/entity/world.js ***!
@@ -1194,10 +1192,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class World {
-    constructor(eventBus) {
+    constructor(eventBus, foundMalesCollection) {
         this._eventBus = eventBus;
         this._entities = [];
         this._colonies = [];
+        this._foundMalesCollection = foundMalesCollection;
 
         this._eventBus.on('entityDied', this._onDied.bind(this));
     }
@@ -1355,16 +1354,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "initDomainLayer": () => (/* binding */ initDomainLayer)
 /* harmony export */ });
 /* harmony import */ var _domainFacade__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./domainFacade */ "./bugs/core/client/app/src/domain/domainFacade.js");
-/* harmony import */ var _service_userService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./service/userService */ "./bugs/core/client/app/src/domain/service/userService.js");
+/* harmony import */ var _service_accountService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./service/accountService */ "./bugs/core/client/app/src/domain/service/accountService.js");
 /* harmony import */ var _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./service/messageHandlerService */ "./bugs/core/client/app/src/domain/service/messageHandlerService.js");
 /* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
 /* harmony import */ var _worldFactory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./worldFactory */ "./bugs/core/client/app/src/domain/worldFactory.js");
-/* harmony import */ var _entity_action_actionFactory__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/action/actionFactory */ "./bugs/core/client/app/src/domain/entity/action/actionFactory.js");
-/* harmony import */ var _service_worldService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/worldService */ "./bugs/core/client/app/src/domain/service/worldService.js");
-/* harmony import */ var _service_actionService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./service/actionService */ "./bugs/core/client/app/src/domain/service/actionService.js");
-/* harmony import */ var _service_colonyService__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./service/colonyService */ "./bugs/core/client/app/src/domain/service/colonyService.js");
-
-
+/* harmony import */ var _service_worldService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./service/worldService */ "./bugs/core/client/app/src/domain/service/worldService.js");
+/* harmony import */ var _service_colonyService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/colonyService */ "./bugs/core/client/app/src/domain/service/colonyService.js");
 
 
 
@@ -1377,15 +1372,13 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
     let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.nestApi, apis.antApi);
     let world = worldFactory.buildWorld();
-    let actionFactory = new _entity_action_actionFactory__WEBPACK_IMPORTED_MODULE_5__.ActionFactory();
 
-    let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_6__.WorldService(world, worldFactory, mainEventBus);
-    let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_1__.UserService(apis.userApi, initialData.user, mainEventBus);
-    let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_8__.ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
-    let actionService = new _service_actionService__WEBPACK_IMPORTED_MODULE_7__.ActionService(initialData.step_time, actionFactory, worldService, colonyService);
-    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, actionService, colonyService);
+    let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus);
+    let accountService = new _service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user, mainEventBus);
+    let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
+    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, colonyService);
 
-    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, userService, messageHandlerService, worldService, colonyService);
+    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService);
 
     domainFacade.start();
 
@@ -1396,64 +1389,62 @@ function initDomainLayer(apis, serverConnection, initialData) {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/service/actionService.js":
-/*!******************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/service/actionService.js ***!
-  \******************************************************************/
+/***/ "./bugs/core/client/app/src/domain/service/accountService.js":
+/*!*******************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/service/accountService.js ***!
+  \*******************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "ActionService": () => (/* binding */ ActionService)
+/* harmony export */   "AccountService": () => (/* binding */ AccountService)
 /* harmony export */ });
-class ActionService {
-
-    constructor(stepTime, actionFactory, worldService, colonyService) {
-        this._actionFactory = actionFactory;
-        this._worldService = worldService;
-        this._colonyService = colonyService;
-        this._actionsJson = [];
-        this._currentStep = null;
-        this._stepTime = stepTime;
+class AccountService {
+    
+    constructor(accountApi, userData, mainEventBus) {
+        this._accountApi = accountApi;
+        this._userData = userData;
+        this._mainEventBus = mainEventBus;
     }
 
-    playAction(actionJson) {
-        let action = this._actionFactory.buildAction(actionJson);
-        
-        switch(action.actorType) {
-            case 'entity':
-                this._playEntityAction(action);
-                break;
-            case 'colony':
-                this._playColonyAction(action);
-                break;
-        }
+    login(username, password) {
+        return this._accountApi.login(username, password)
+            .then(userData => {
+                this._userData = userData;
+                this._emitStatusChange();
+            });
     }
 
-    _playEntityAction(action) {
-        switch(action.type) {
-            case 'entity_born':
-                this._worldService.giveBirthToEntity(action.actionData.entity)
-                break;
-            default:
-                let actor = this._worldService.world.findEntityById(action.actorId);
-                actor.addAction(action);
-        }
+    register(username, password) {
+        return this._accountApi.register(username, password)
+            .then(userData => {
+                this._userData = userData;
+                this._emitStatusChange();
+            });
     }
 
-    _playColonyAction(action) {
-        switch(action.type) {
-            case 'colony_born':
-                this._colonyService.giveBirthToColony(action.actionData.colony);
-                break;
-            case 'colony_operations_change':
-                let colony = this._worldService.world.findColonyById(action.actorId);
-                colony.setOperations(action.actionData.operations);
-                break;
-            default:
-                throw 'unknown type of colony action'
-        }
+    logout() {
+        return this._accountApi.logout().then(() => {
+            this._userData = null;
+            this._emitStatusChange();
+        });
+    }
+
+    checkUsernameUnique(username) {
+        return this._accountApi.checkUsernameUnique(username);
+    }
+
+    isLoggedIn() {
+        return !!this._userData;
+    }
+
+    getUserData() {
+        return this._userData;
+    }
+
+    _emitStatusChange() {
+        this._mainEventBus.emit('loginStatusChanged', this.isLoggedIn());
     }
 
 }
@@ -1480,6 +1471,20 @@ class ColonyService {
         this._colonyApi = colonyApi;
         this._world = world;
         this._worldFactory = worldFactory;
+    }
+
+    playColonyAction(action) {
+        switch(action.type) {
+            case 'colony_born':
+                this._colonyService.giveBirthToColony(action.actionData.colony);
+                break;
+            case 'colony_operations_change':
+                let colony = this._world.findColonyById(action.actorId);
+                colony.setOperations(action.actionData.operations);
+                break;
+            default:
+                throw 'unknown type of colony action'
+        }
     }
 
     giveBirthToColony(colonyJson) {
@@ -1523,10 +1528,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class MessageHandlerService {
 
-    constructor(serverConnection, worldService, actionService, colonyService) {
+    constructor(serverConnection, worldService, colonyService) {
         this._serverConnection = serverConnection;
         this._worldService = worldService;
-        this._actionService = actionService;
         this._colonyService = colonyService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
@@ -1540,81 +1544,28 @@ class MessageHandlerService {
     }
 
     _onMessage(msg) {
-        // console.log(msg)
         switch(msg.type) {
             case 'sync_step':
                 this._worldService.initWorld(msg.world);
                 break;
             case 'action':
-                this._actionService.playAction(msg.action);
+                this._handleActionMsg(msg);
                 break;
             default: 
                 throw `unknown type of message "${ msg.type }"`
         }
     }
 
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/domain/service/userService.js":
-/*!****************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/service/userService.js ***!
-  \****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "UserService": () => (/* binding */ UserService)
-/* harmony export */ });
-class UserService {
-    
-    constructor(userApi, userData, mainEventBus) {
-        this._userApi = userApi;
-        this._userData = userData;
-        this._mainEventBus = mainEventBus;
-    }
-
-    login(username, password) {
-        return this._userApi.login(username, password)
-            .then(userData => {
-                this._userData = userData;
-                this._emitStatusChange();
-            });
-    }
-
-    register(username, password) {
-        return this._userApi.register(username, password)
-            .then(userData => {
-                this._userData = userData;
-                this._emitStatusChange();
-            });
-    }
-
-    logout() {
-        return this._userApi.logout().then(() => {
-            this._userData = null;
-            this._emitStatusChange();
-        });
-    }
-
-    checkUsernameUnique(username) {
-        return this._userApi.checkUsernameUnique(username);
-    }
-
-    isLoggedIn() {
-        return !!this._userData;
-    }
-
-    getUserData() {
-        return this._userData;
-    }
-
-    _emitStatusChange() {
-        this._mainEventBus.emit('loginStatusChanged', this.isLoggedIn());
+    _handleActionMsg(msg) {
+        let action = msg.action;
+        switch(action.actorType) {
+            case 'entity':
+                this._worldService.playEntityAction(action)
+                break;
+            case 'colony':
+                this._colonyService.playColonyAction(action);
+                break;
+        }
     }
 
 }
@@ -1655,6 +1606,17 @@ class WorldService {
 
     get is_world_inited() {
         return this._isWholeWorldInited;
+    }
+
+    playEntityAction(action) {
+        switch(action.type) {
+            case 'entity_born':
+                this.giveBirthToEntity(action.actionData.entity)
+                break;
+            default:
+                let actor = this.world.findEntityById(action.actorId);
+                actor.addAction(action);
+        }
     }
 
     initWorld(worldJson) {
@@ -1746,6 +1708,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_itemArea__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entity/itemArea */ "./bugs/core/client/app/src/domain/entity/itemArea.js");
 /* harmony import */ var _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
 /* harmony import */ var _entity_ant__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entity/ant */ "./bugs/core/client/app/src/domain/entity/ant/index.js");
+/* harmony import */ var _entity_nuptialFlight__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/nuptialFlight */ "./bugs/core/client/app/src/domain/entity/nuptialFlight/index.js");
+
 
 
 
@@ -1813,7 +1777,8 @@ class WorldFactory {
     }
 
     buildWorld() {
-        return new _entity_world__WEBPACK_IMPORTED_MODULE_1__.World(this._mainEventBus);
+        let foundMalesCollection = new _entity_nuptialFlight__WEBPACK_IMPORTED_MODULE_11__.FoundMalesCollection(this._mainEventBus);
+        return new _entity_world__WEBPACK_IMPORTED_MODULE_1__.World(this._mainEventBus, foundMalesCollection);
     }
 
     buildQueenAnt(id, position, angle, fromColony, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight, genes) {
@@ -1842,6 +1807,57 @@ class WorldFactory {
     buildGroundBeetle(id, position, angle, fromColony, userSpeed, hp, maxHp) {
         return new _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_5__.GroundBeetle(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp);
     }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/sync/accountApi.js":
+/*!*****************************************************!*\
+  !*** ./bugs/core/client/app/src/sync/accountApi.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AccountApi": () => (/* binding */ AccountApi)
+/* harmony export */ });
+class AccountApi {
+    
+    constructor(requester) {
+        this._requester = requester;
+    }
+
+    login(username, password) {
+        return this._requester.post('users/login', {
+            username, password
+        }).then((response) => {
+            return response.data.user;
+        });
+    }
+
+    register(username, password) {
+        return this._requester.post('users', {
+            username, password
+        }).then((response) => {
+            return response.data.user;
+        });
+    }
+
+    logout() {
+        return this._requester.post('users/logout');
+    }
+
+    checkUsernameUnique(username) {
+        return this._requester.post('users/username_unique_check', {
+            username
+        }).then((res) => {
+            return res.data.is_unique;
+        });
+    }
+
 }
 
 
@@ -1973,7 +1989,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "initSyncLayer": () => (/* binding */ initSyncLayer)
 /* harmony export */ });
 /* harmony import */ var _utils_requester__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/requester */ "./bugs/core/client/utils/requester.js");
-/* harmony import */ var _userApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userApi */ "./bugs/core/client/app/src/sync/userApi.js");
+/* harmony import */ var _accountApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./accountApi */ "./bugs/core/client/app/src/sync/accountApi.js");
 /* harmony import */ var _serverConnection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./serverConnection */ "./bugs/core/client/app/src/sync/serverConnection.js");
 /* harmony import */ var _nestApi__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestApi */ "./bugs/core/client/app/src/sync/nestApi.js");
 /* harmony import */ var _colonyApi__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./colonyApi */ "./bugs/core/client/app/src/sync/colonyApi.js");
@@ -1988,14 +2004,14 @@ __webpack_require__.r(__webpack_exports__);
 function initSyncLayer() {
     let requester = new _utils_requester__WEBPACK_IMPORTED_MODULE_0__.Requester();
 
-    let userApi = new _userApi__WEBPACK_IMPORTED_MODULE_1__.UserApi(requester);
+    let accountApi = new _accountApi__WEBPACK_IMPORTED_MODULE_1__.AccountApi(requester);
     let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection();
     let nestApi = new _nestApi__WEBPACK_IMPORTED_MODULE_3__.NestApi(serverConnection);
     let colonyApi = new _colonyApi__WEBPACK_IMPORTED_MODULE_4__.ColonyApi(serverConnection);
     let antApi = new _antApi__WEBPACK_IMPORTED_MODULE_5__.AntApi(serverConnection);
 
     return {
-        userApi,
+        accountApi,
         nestApi,
         colonyApi,
         serverConnection,
@@ -2083,57 +2099,6 @@ class ServerConnection {
     _emitMessage(event) {
         this.events.emit('message', JSON.parse(event.data));
     }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/sync/userApi.js":
-/*!**************************************************!*\
-  !*** ./bugs/core/client/app/src/sync/userApi.js ***!
-  \**************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "UserApi": () => (/* binding */ UserApi)
-/* harmony export */ });
-class UserApi {
-    
-    constructor(requester) {
-        this._requester = requester;
-    }
-
-    login(username, password) {
-        return this._requester.post('users/login', {
-            username, password
-        }).then((response) => {
-            return response.data.user;
-        });
-    }
-
-    register(username, password) {
-        return this._requester.post('users', {
-            username, password
-        }).then((response) => {
-            return response.data.user;
-        });
-    }
-
-    logout() {
-        return this._requester.post('users/logout');
-    }
-
-    checkUsernameUnique(username) {
-        return this._requester.post('users/username_unique_check', {
-            username
-        }).then((res) => {
-            return res.data.is_unique;
-        });
-    }
-
 }
 
 
@@ -4375,6 +4340,65 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/index.js":
+/*!*****************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/index.js ***!
+  \*****************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "MalesSearchView": () => (/* reexport safe */ _malesSearchView__WEBPACK_IMPORTED_MODULE_0__.MalesSearchView)
+/* harmony export */ });
+/* harmony import */ var _malesSearchView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./malesSearchView */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesSearchView.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesSearchView.js":
+/*!***************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesSearchView.js ***!
+  \***************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "MalesSearchView": () => (/* binding */ MalesSearchView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _malesSearchTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./malesSearchTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesSearchTmpl.html");
+
+
+
+class MalesSearchView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+        this._render();
+
+        this._searchBtn.addEventListener('click', this._onSearchBtnClick.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = _malesSearchTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._searchBtn = this._el.querySelector('[data-search-btn]');
+    }
+
+    _onSearchBtnClick() {
+        
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/queenManagerView.js":
 /*!****************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/queenManagerView.js ***!
@@ -4389,6 +4413,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/style.css");
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _queenManagerTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./queenManagerTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/queenManagerTmpl.html");
+/* harmony import */ var _malesSearch__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./malesSearch */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/index.js");
+
 
 
 
@@ -4413,6 +4439,7 @@ class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
     _renderQueen() {
         this._el.querySelector('[data-queen-name]').innerHTML = this._queen.id;
+        this._malesSearch = new _malesSearch__WEBPACK_IMPORTED_MODULE_3__.MalesSearchView(this._el.querySelector('[data-males-search]'));
     }
 }
 
@@ -8419,6 +8446,24 @@ var code = "<ul class=\"queens-list\" data-queens-list></ul>\r\n<div class=\"que
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesSearchTmpl.html":
+/*!*****************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesSearchTmpl.html ***!
+  \*****************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<button data-search-btn>пошук</button>\r\n<ul data-males-list></ul>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/queenManagerTmpl.html":
 /*!******************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/queenManagerTmpl.html ***!
@@ -8431,7 +8476,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>queen <span data-queen-name></span></div>\r\n<div>q</div>";
+var code = "<div>queen <span data-queen-name></span></div>\r\n<div>genes</div>\r\n<div data-males-search></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -46490,7 +46535,7 @@ let initialData = (0,_utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__.readIni
 
 let syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)();
 let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)({ 
-    userApi: syncLayer.userApi,
+    accountApi: syncLayer.accountApi,
     nestApi: syncLayer.nestApi,
     colonyApi: syncLayer.colonyApi,
     antApi: syncLayer.antApi,

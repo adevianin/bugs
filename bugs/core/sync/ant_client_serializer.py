@@ -48,12 +48,12 @@ class AntClientSerializer(LiveEntityClientSerializer):
             'is_fertilized': ant.body.is_fertilized,
             'is_in_nuptial_flight': ant.body.is_in_nuptial_flight,
             'genes': {
-                'queen_food_required': genes.queen_food_required,
-                'warrior_food_required': genes.warrior_food_required,
-                'worker_food_required': genes.worker_food_required,
-                'worker_stats': self._stats_serializer.serialize(genes.get_worker_stats()),
-                'warrior_stats': self._stats_serializer.serialize(genes.get_warrior_stats()),
-                'queen_stats': self._stats_serializer.serialize(genes.get_queen_stats())
+                'queenFoodRequired': genes.queen_food_required,
+                'warriorFoodRequired': genes.warrior_food_required,
+                'workerFoodRequired': genes.worker_food_required,
+                'workerStats': self._stats_serializer.serialize(genes.get_worker_stats()),
+                'warriorStats': self._stats_serializer.serialize(genes.get_warrior_stats()),
+                'queenStats': self._stats_serializer.serialize(genes.get_queen_stats())
             }
         })
 

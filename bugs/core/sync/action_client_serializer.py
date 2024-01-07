@@ -76,9 +76,9 @@ class ActionClientSerializer(iActionClientSerializer):
             
     def _serialize_common(self, action: Action):
         return  {
-            'actor_id': action.actor_id,
-            'actor_type': action.actor_type,
-            'action_type': action.action_type
+            'actorId': action.actor_id,
+            'actorType': action.actor_type,
+            'type': action.action_type
         }
     
     def _default_action_serialize(self, action: Action):
@@ -90,7 +90,7 @@ class ActionClientSerializer(iActionClientSerializer):
         json = self._serialize_common(action)
         serialized_entity = self._entity_serializer.serialize(action.entity)
         json.update({
-            'action_data': { 'entity': serialized_entity }
+            'actionData': { 'entity': serialized_entity }
         })
 
         return json
@@ -98,7 +98,7 @@ class ActionClientSerializer(iActionClientSerializer):
     def _serialize_entity_colony_changed(self, action: EntityColonyChangedAction):
         json = self._serialize_common(action)
         json.update({
-            'action_data': { 'colony_id': action.colony_id }
+            'actionData': { 'colony_id': action.colony_id }
         })
 
         return json
@@ -106,7 +106,7 @@ class ActionClientSerializer(iActionClientSerializer):
     def _serialize_entity_rotated(self, action: EntityRotatedAction):
         json = self._serialize_common(action)
         json.update({
-            'action_data': { 'angle': action.angle }
+            'actionData': { 'angle': action.angle }
         })
 
         return json
@@ -114,7 +114,7 @@ class ActionClientSerializer(iActionClientSerializer):
     def _serialize_hp_changed(self, action: EntityHpChangedAction):
         json = self._serialize_common(action)
         json.update({
-            'action_data': { 'hp': action.hp }
+            'actionData': { 'hp': action.hp }
         })
 
         return json
@@ -123,7 +123,7 @@ class ActionClientSerializer(iActionClientSerializer):
         json = self._serialize_common(action)
         serialized_position = self._util_serializer.serialize_point(action.position)
         json.update({
-            'action_data': { 'position': serialized_position }
+            'actionData': { 'position': serialized_position }
         })
 
         return json
@@ -132,7 +132,7 @@ class ActionClientSerializer(iActionClientSerializer):
         json = self._serialize_common(action)
 
         json.update({
-            'action_data': { 'nest_id': action.nest_id }
+            'actionData': { 'nest_id': action.nest_id }
         })
 
         return json
@@ -141,7 +141,7 @@ class ActionClientSerializer(iActionClientSerializer):
         json = self._serialize_common(action)
 
         json.update({
-            'action_data': { 'item_id': action.item_id }
+            'actionData': { 'item_id': action.item_id }
         })
 
         return json
@@ -150,7 +150,7 @@ class ActionClientSerializer(iActionClientSerializer):
         json = self._serialize_common(action)
 
         json.update({
-            'action_data': { 'stored_calories': action.stored_calories }
+            'actionData': { 'stored_calories': action.stored_calories }
         })
 
         return json
@@ -163,7 +163,7 @@ class ActionClientSerializer(iActionClientSerializer):
             serialized_larvae.append(self._larva_serializer.serialize(larva))
 
         json.update({
-            'action_data': { 'larvae': serialized_larvae }
+            'actionData': { 'larvae': serialized_larvae }
         })
 
         return json
@@ -172,7 +172,7 @@ class ActionClientSerializer(iActionClientSerializer):
         json = self._serialize_common(action)
 
         json.update({
-            'action_data': { 'is_built': action.is_built }
+            'actionData': { 'is_built': action.is_built }
         })
 
         return json
@@ -181,7 +181,7 @@ class ActionClientSerializer(iActionClientSerializer):
         json = self._serialize_common(action)
         serialized_position = self._util_serializer.serialize_point(action.position)
         json.update({
-            'action_data': { 'position': serialized_position }
+            'actionData': { 'position': serialized_position }
         })
 
         return json
@@ -190,7 +190,7 @@ class ActionClientSerializer(iActionClientSerializer):
         json = self._serialize_common(action)
         serialized_new_position = self._util_serializer.serialize_point(action.new_position)
         json.update({
-            'action_data': { 
+            'actionData': { 
                 'new_position': serialized_new_position, 
                 'bring_user_speed': action.bring_user_speed
             }
@@ -202,7 +202,7 @@ class ActionClientSerializer(iActionClientSerializer):
         json = self._serialize_common(action)
         serialized_colony = self._colony_serializer.serialize(action.colony)
         json.update({
-            'action_data': {
+            'actionData': {
                 'colony': serialized_colony
             }
         })
@@ -217,7 +217,7 @@ class ActionClientSerializer(iActionClientSerializer):
             serialized_operations.append(self._operation_serializer.serialize(operation))
 
         json.update({
-            'action_data': {
+            'actionData': {
                 'operations': serialized_operations
             }
         })

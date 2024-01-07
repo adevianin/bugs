@@ -19,6 +19,17 @@ class WorldService {
         return this._isWholeWorldInited;
     }
 
+    playEntityAction(action) {
+        switch(action.type) {
+            case 'entity_born':
+                this.giveBirthToEntity(action.actionData.entity)
+                break;
+            default:
+                let actor = this.world.findEntityById(action.actorId);
+                actor.addAction(action);
+        }
+    }
+
     initWorld(worldJson) {
         worldJson.entities.forEach(entityJson => { 
             let entity = this._worldFactory.buildEntity(entityJson);
