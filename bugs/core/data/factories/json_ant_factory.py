@@ -3,12 +3,14 @@ from core.world.utils.point import Point
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.base.entity_collection import EntityCollection
 from .json_stats_factory import JsonStatsFactory
+from .json_genes_factory import JsonGenesFactory
 
 class JsonAntFactory():
 
-    def __init__(self, json_stats_factory: JsonStatsFactory, ant_factory: AntFactory):
+    def __init__(self, json_stats_factory: JsonStatsFactory, json_genes_factory: JsonGenesFactory, ant_factory: AntFactory):
         self._ant_factory = ant_factory
         self._json_stats_factory = json_stats_factory
+        self._json_genes_factory = json_genes_factory
 
     def build_ant_from_json(self, ant_json: dict, entities_collection: EntityCollection):
         type = AntTypes(ant_json['ant_type'])
@@ -34,12 +36,7 @@ class JsonAntFactory():
     def _build_queen_ant(self, ant_json: dict, entities_collection: EntityCollection):
         ant_props = self._parse_common_ant_props(ant_json, entities_collection)
         ant_props.update({
-            "genes_worker_stats": self._json_stats_factory.build_stats(ant_json['genes']['worker_stats']),
-            "genes_warrior_stats": self._json_stats_factory.build_stats(ant_json['genes']['warrior_stats']),
-            "genes_queen_stats": self._json_stats_factory.build_stats(ant_json['genes']['queen_stats']),
-            "genes_worker_food_required": ant_json['genes']['worker_food_required'],
-            "genes_warrior_food_required": ant_json['genes']['warrior_food_required'],
-            "genes_queen_food_required": ant_json['genes']['queen_food_required'],
+            "genes": self._json_genes_factory.build_genes_from_json(ant_json['genes']),
             "is_fertilized": ant_json['is_fertilized'],
             "is_in_nuptial_flight": ant_json['is_in_nuptial_flight']
         })

@@ -17,7 +17,7 @@ class MalesSearchView extends BaseHTMLView {
     }
 
     _onSearchBtnClick() {
-        
+        this.$domainFacade.generateNuptialMales();
     }
 
 }

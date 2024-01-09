@@ -1,11 +1,12 @@
 class DomainFacade {
 
-    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, playerService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._accountService = accountService;
         this._messageHandlerService = messageHandlerService;
         this._colonyService = colonyService;
+        this._playerService = playerService;
     }
 
     get events() {
@@ -110,6 +111,10 @@ class DomainFacade {
     }
 
     /*========================*/
+
+    generateNuptialMales() {
+        this._playerService.generateNuptialMales();
+    }
 
     findNearestNestForOffensiveOperation(performingColonyId, point) {
         return this._worldService.findNearestNestForOffensiveOperation(performingColonyId, point);

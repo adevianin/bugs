@@ -16,7 +16,7 @@ from .warrior.warrior_ant import WarriorAnt
 from .queen.queen_ant_body import QueenAntBody
 from .queen.queen_ant_mind import QueenAntMind
 from .queen.queen_ant import QueenAnt
-from .queen.genes import Genes
+from core.world.entities.ant.base.genes import Genes
 from core.world.entities.base.stats_library import StatsLibrary
 
 class AntFactory():
@@ -49,11 +49,10 @@ class AntFactory():
         genes_warrior_food_required = 500
         genes_queen_stats = StatsLibrary.GENES_QUEEN_DEFAULT
         genes_queen_food_required = 1000
+        genes = Genes.build(genes_worker_stats, genes_worker_food_required, genes_warrior_stats, genes_warrior_food_required, genes_queen_stats, genes_queen_food_required)
         return self.build_queen_ant(id=id, from_colony_id=from_colony_id, stats=stats, position=position, angle=0, hp=None, nest=home_nest, located_in_nest=None, 
-                                    memory_data=None, is_auto_thought_generation=True, picked_item=None, is_in_operation=False, genes_worker_stats=genes_worker_stats, 
-                                    genes_worker_food_required=genes_worker_food_required, genes_warrior_stats=genes_warrior_stats, 
-                                    genes_warrior_food_required=genes_warrior_food_required, genes_queen_stats=genes_queen_stats, 
-                                    genes_queen_food_required=genes_queen_food_required, is_fertilized=False, is_in_nuptial_flight=False)
+                                    memory_data=None, is_auto_thought_generation=True, picked_item=None, is_in_operation=False, genes=genes, is_fertilized=False, 
+                                    is_in_nuptial_flight=False)
 
     def build_warrior_ant(self, id: int, from_colony_id: int, stats: LiveStats, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
                           is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool):
@@ -78,13 +77,11 @@ class AntFactory():
         return ant
     
     def build_queen_ant(self, id: int, from_colony_id: int, stats: LiveStats, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
-                        is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genes_worker_stats: LiveStats, genes_worker_food_required: int, 
-                        genes_warrior_stats: LiveStats, genes_warrior_food_required: int, genes_queen_stats: LiveStats, genes_queen_food_required: int, is_fertilized: bool, 
+                        is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genes: Genes, is_fertilized: bool, 
                         is_in_nuptial_flight: bool):
         sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
-        genes = Genes.build(genes_worker_stats, genes_worker_food_required, genes_warrior_stats, genes_warrior_food_required, genes_queen_stats, genes_queen_food_required)
         body = QueenAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor, genes, is_fertilized, is_in_nuptial_flight)
         mind = QueenAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
         ant = QueenAnt(self._event_bus, EventEmitter(), id, from_colony_id, body, mind)

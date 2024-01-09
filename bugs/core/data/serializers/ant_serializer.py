@@ -4,13 +4,14 @@ from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.ant.base.ant_types import AntTypes
 from .thought_serializer import ThoughtSerializer
 from .stats_serializer import StatsSerializer
-from core.world.entities.ant.queen.genes import Genes
+from .genes_serializer import GenesSerializer
 
 class AntSerializer(LiveEntitySerializer):
 
-    def __init__(self, stats_serializer: StatsSerializer, thought_serializer: ThoughtSerializer):
+    def __init__(self, stats_serializer: StatsSerializer, thought_serializer: ThoughtSerializer, genes_serializer: GenesSerializer):
         self._thought_serializer = thought_serializer
         self._stats_serializer = stats_serializer
+        self._genes_serializer = genes_serializer
 
     def serialize(self, ant: Ant):
         json = super().serialize(ant)
@@ -35,7 +36,7 @@ class AntSerializer(LiveEntitySerializer):
         json = self._serialize_common(json, ant)
 
         json.update({
-            "genes": self._serialize_genes(ant.body.genes),
+            "genes": self._genes_serializer.serialize(ant.body.genes),
             "is_fertilized": ant.body.is_fertilized,
             "is_in_nuptial_flight": ant.body.is_in_nuptial_flight
         })
@@ -60,20 +61,3 @@ class AntSerializer(LiveEntitySerializer):
 
         return json
     
-    def _serialize_genes(self, genes: Genes):
-        json = {}
-
-        worker_stats_json = self._stats_serializer.serialize(genes.get_worker_stats())
-        warrior_stats_json = self._stats_serializer.serialize(genes.get_warrior_stats())
-        queen_stats_json = self._stats_serializer.serialize(genes.get_queen_stats())
-        
-        json.update({
-            "queen_food_required": genes.queen_food_required,
-            "warrior_food_required": genes.warrior_food_required,
-            "worker_food_required": genes.worker_food_required,
-            "worker_stats": worker_stats_json,
-            "warrior_stats": warrior_stats_json,
-            "queen_stats": queen_stats_json,
-        })
-
-        return json

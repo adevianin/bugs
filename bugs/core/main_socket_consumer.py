@@ -49,7 +49,7 @@ class MainSocketConsumer(WebsocketConsumer):
             }))
 
     def _handle_command(self, command_json, user_id):
-        params = command_json['params']
+        params = command_json.get('params', {})
         match command_json['command_type']:
             case 'add_larva':
                 self._world_facade.add_larva_command(user_id, params['nest_id'], params['larva_type'])
@@ -75,6 +75,8 @@ class MainSocketConsumer(WebsocketConsumer):
             case 'fly_nuptial_flight':
                 ant_id = params['ant_id']
                 self._world_facade.fly_nuptian_flight_command(user_id, ant_id)
+            case 'generate_nuptial_males':
+                self._world_facade.generate_nuptial_males_command(user_id)
             case _:
                 raise Exception('unknown type of command')
     

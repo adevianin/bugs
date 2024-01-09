@@ -8,7 +8,7 @@ from core.world.utils.point import Point
 from ..base.ant_body import AntBody
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.larva import Larva
-from .genes import Genes
+from core.world.entities.ant.base.genes import Genes
 
 class QueenAntBody(AntBody):
 

@@ -1,9 +1,10 @@
 class MessageHandlerService {
 
-    constructor(serverConnection, worldService, colonyService) {
+    constructor(serverConnection, worldService, colonyService, playerService) {
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._colonyService = colonyService;
+        this._playerService = playerService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 

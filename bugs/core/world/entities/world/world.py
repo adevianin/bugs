@@ -11,12 +11,14 @@ from core.world.entities.colony.base.colony_relations_table import ColonyRelatio
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.ground_beetle.ground_beetle_spawner import GroundBeetleSpawner
 from core.world.entities.action.colony_born_action import ColonyBornAction
+from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 
 from typing import List
 
 class World():
 
-    def __init__(self, id: int, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: List[Colony], id_generator: IdGenerator, colony_relations_table: ColonyRelationsTable, birthers, ground_beetle_spawner: GroundBeetleSpawner):
+    def __init__(self, id: int, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: List[Colony], id_generator: IdGenerator, 
+                 colony_relations_table: ColonyRelationsTable, birthers, ground_beetle_spawner: GroundBeetleSpawner, nuptial_environments: List[NuptialEnvironment]):
         self.id = id
         self._entities_collection = entities_collection
         self._map = map
@@ -29,9 +31,7 @@ class World():
         self._colony_relations_table = colony_relations_table
         self._birthers = birthers
         self._ground_beetle_spawner = ground_beetle_spawner
-
-        self._current_step_state = None
-        self._previous_step_state = None
+        self._nuptial_environments = nuptial_environments
 
     @property
     def last_used_id(self):
@@ -53,6 +53,10 @@ class World():
     def colony_relations_table(self):
         return self._colony_relations_table
     
+    @property
+    def nuptial_environments(self):
+        return self._nuptial_environments
+    
     def generate_id(self):
         return self._id_generator.generate_id()
     
@@ -65,6 +69,13 @@ class World():
             if colony.id == colony_id:
                 return colony
         
+        return None
+    
+    def get_nuptial_environment_by_owner(self, owner_id: int) -> NuptialEnvironment:
+        for environment in self._nuptial_environments:
+            if environment.owner_id == owner_id:
+                return environment
+            
         return None
     
     def get_colony_owned_by_user(self, user_id: int):

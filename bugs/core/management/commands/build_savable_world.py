@@ -413,6 +413,50 @@ class Command(BaseCommand):
             { "colony_ids": [1, 2], "value": -1 },
             { "colony_ids": [1, 3], "value": -1 },
             { "colony_ids": [2, 3], "value": -1 }
+        ],
+        "nuptial_environments": [
+            {
+                "owner_id": 2,
+                "base_genes": {
+                    "worker_food_required": 100,
+                    "warrior_food_required": 500,
+                    "queen_food_required": 1000,
+                    "worker_stats": {
+                        "max_hp": 300,
+                        "hp_regen_rate":10,
+                        "type":"live_stats",
+                        "distance_per_step":32,
+                        "sight_distance":200,
+                        "max_calories":1000,
+                        "distance_per_calorie":2,
+                        "attack":10,
+                        "defence":1
+                    },
+                    "warrior_stats": {
+                        "max_hp": 500,
+                        "hp_regen_rate":200,
+                        "distance_per_step":32,
+                        "sight_distance":200,
+                        "max_calories":1000,
+                        "type":"live_stats",
+                        "distance_per_calorie":2,
+                        "attack":20,
+                        "defence":5
+                    },
+                    "queen_stats": {
+                        
+                        "max_hp": 300,
+                        "hp_regen_rate":200,
+                        "distance_per_step":32,
+                        "sight_distance":200,
+                        "max_calories":1000,
+                        "distance_per_calorie":2,
+                        "attack":20,
+                        "defence":5,
+                        "type":"live_stats"
+                    },
+                }
+            }
         ]
     }
 

@@ -4,7 +4,7 @@ from core.world.entities.ant.ant_factory import AntFactory
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.base.live_entity.live_stats import LiveStats
 
-class UserService():
+class PlayerService():
 
     def __init__(self, colony_factory: ColonyFactory, ant_factory: AntFactory):
         self._colony_factory = colony_factory
@@ -13,7 +13,7 @@ class UserService():
     def set_world(self, world: World):
         self._world = world
 
-    def build_user_starter_pack(self, user_id: int):
+    def build_player_starter_pack(self, user_id: int):
         colony_id = self._world.generate_id()
         colony = self._colony_factory.build_new_ant_colony(id=colony_id, owner_id=user_id, map=self._world.map, colony_relations_table=self._world.colony_relations_table)
         self._world.add_new_colony(colony)
@@ -25,3 +25,4 @@ class UserService():
         # queen_ant.mind.toggle_auto_thought_generation(False)
         raise Exception('use entity birther here')
         # self._world.map.add_new_entity(queen_ant)
+    

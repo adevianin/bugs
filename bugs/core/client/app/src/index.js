@@ -11,5 +11,6 @@ let domainFacade = initDomainLayer({
     nestApi: syncLayer.nestApi,
     colonyApi: syncLayer.colonyApi,
     antApi: syncLayer.antApi,
+    playerApi: syncLayer.playerApi,
 }, syncLayer.serverConnection, initialData);
 initViewLayer(domainFacade, initialData);

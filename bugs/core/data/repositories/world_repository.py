@@ -17,10 +17,14 @@ from core.world.entities.ground_beetle.ground_beetle import GroundBeetle
 from core.data.factories.json_item_factory import JsonItemFactory
 from core.data.factories.json_item_source_factory import JsonItemSourceFactory
 from core.data.factories.json_item_area_factory import JsonItemAreaFactory
+from core.data.factories.json_nuptial_environment_factory import JsonNuptialEnvironmentFactory
 
 class WorldRepository(iWorldRepository):
 
-    def __init__(self, world_data_repository: WorldDataRepository, nest_factory: JsonNestFactory, ant_factory: JsonAntFactory, colony_factory: JsonColonyFactory, thought_factory: JsonThoughtFactory, json_map_factory: JsonMapFactory, world_factory: WorldFactory, json_ground_beetle_factory: JsonGroundBeetleFactory, json_item_factory: JsonItemFactory, json_item_source_factory: JsonItemSourceFactory, json_item_area_factory: JsonItemAreaFactory, world_serializer: WorldSerializer):
+    def __init__(self, world_data_repository: WorldDataRepository, nest_factory: JsonNestFactory, ant_factory: JsonAntFactory, colony_factory: JsonColonyFactory, 
+                 thought_factory: JsonThoughtFactory, json_map_factory: JsonMapFactory, world_factory: WorldFactory, json_ground_beetle_factory: JsonGroundBeetleFactory, 
+                 json_item_factory: JsonItemFactory, json_item_source_factory: JsonItemSourceFactory, json_item_area_factory: JsonItemAreaFactory, 
+                 json_nuptial_environment_factory: JsonNuptialEnvironmentFactory, world_serializer: WorldSerializer):
         self._world_data_repository = world_data_repository
         self._json_nest_factory = nest_factory
         self._json_ant_factory = ant_factory
@@ -31,6 +35,7 @@ class WorldRepository(iWorldRepository):
         self._json_item_factory = json_item_factory
         self._json_item_source_factory = json_item_source_factory
         self._json_item_area_factory = json_item_area_factory
+        self._json_nuptial_environment_factory = json_nuptial_environment_factory
         self._world_factory = world_factory
         self._world_serializer = world_serializer
 
@@ -98,7 +103,13 @@ class WorldRepository(iWorldRepository):
             colony = self._json_colony_factory.build_colony_from_json(colony_json, entities_collection, map, colony_relations_table)
             colonies.append(colony)
 
-        world = self._world_factory.build_world(world_id, world_data['last_used_id'], entities_collection, map, colonies, colony_relations_table)
+        nuptial_environments_json = world_data['nuptial_environments']
+        nuptial_environments = []
+        for nuptial_environment_json in nuptial_environments_json:
+            nuptial_environment = self._json_nuptial_environment_factory.build_nuptial_environment_from_json(nuptial_environment_json)
+            nuptial_environments.append(nuptial_environment)
+
+        world = self._world_factory.build_world(world_id, world_data['last_used_id'], entities_collection, map, colonies, colony_relations_table, nuptial_environments)
 
         return world
 
