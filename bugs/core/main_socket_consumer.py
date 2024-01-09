@@ -27,12 +27,6 @@ class MainSocketConsumer(WebsocketConsumer):
     def receive(self, text_data=None, bytes_data=None):
         msg = json.loads(text_data)
 
-        match msg['type']:
-            case 'command':
-                self._handle_command(msg['command'], self._user.id)
-            case _:
-                raise Exception('unknown type of client message')
-
     def _on_step_start(self):
         if not self._synced:
             self.send(json.dumps({
@@ -47,36 +41,3 @@ class MainSocketConsumer(WebsocketConsumer):
                 'type': 'action',
                 'action': action
             }))
-
-    def _handle_command(self, command_json, user_id):
-        params = command_json.get('params', {})
-        match command_json['command_type']:
-            case 'add_larva':
-                self._world_facade.add_larva_command(user_id, params['nest_id'], params['larva_type'])
-            case 'stop_operation':
-                self._world_facade.stop_operation_command(user_id, params['colony_id'], params['operation_id'])
-            case 'build_new_sub_nest':
-                building_site = [params['building_site']['x'], params['building_site']['y']]
-                performing_colony_id = params['performing_colony_id']
-                workers_count = params['workers_count']
-                self._world_facade.build_new_sub_nest_operation_command(user_id, performing_colony_id, building_site, workers_count)
-            case 'destroy_nest':
-                performing_colony_id = params['performing_colony_id']
-                nest_id = params['nest_id']
-                warriors_count = params['warriors_count']
-                self._world_facade.destroy_nest_operation_command(user_id, performing_colony_id, nest_id, warriors_count)
-            case 'pillage_nest':
-                performing_colony_id = params['performing_colony_id']
-                nest_to_pillage_id = params['nest_to_pillage_id']
-                nest_for_loot_id = params['nest_for_loot_id']
-                warriors_count = params['warriors_count']
-                workers_count = params['workers_count']
-                self._world_facade.pillage_nest_operation_command(user_id, performing_colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
-            case 'fly_nuptial_flight':
-                ant_id = params['ant_id']
-                self._world_facade.fly_nuptian_flight_command(user_id, ant_id)
-            case 'generate_nuptial_males':
-                self._world_facade.generate_nuptial_males_command(user_id)
-            case _:
-                raise Exception('unknown type of command')
-    

@@ -8,12 +8,12 @@ import { PlayerApi } from "./playerApi";
 
 function initSyncLayer() {
     let requester = new Requester();
+    let serverConnection = new ServerConnection();
 
     let accountApi = new AccountApi(requester);
-    let serverConnection = new ServerConnection();
-    let nestApi = new NestApi(serverConnection);
-    let colonyApi = new ColonyApi(serverConnection);
-    let antApi = new AntApi(serverConnection);
+    let nestApi = new NestApi(requester);
+    let colonyApi = new ColonyApi(requester);
+    let antApi = new AntApi(requester);
     let playerApi = new PlayerApi(serverConnection);
 
     return {

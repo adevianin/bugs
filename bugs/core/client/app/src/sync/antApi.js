@@ -1,19 +1,11 @@
 class AntApi {
 
-    constructor(serverConnection) {
-        this._serverConnection = serverConnection;
+    constructor(requester) {
+        this._requester = requester;
     }
 
     flyNuptialFlight(antId) {
-        this._serverConnection.send({
-            type: 'command',
-            command: {
-                command_type: 'fly_nuptial_flight',
-                params: {
-                    ant_id: antId
-                }
-            }
-        });
+        return this._requester.post(`world/ants/${ antId }/fly_nuptial_flight`)
     }
 }
 

@@ -1,64 +1,34 @@
 class ColonyApi {
 
-    constructor(serverConnection) {
-        this._serverConnection = serverConnection;
+    constructor(requester) {
+        this._requester = requester;
     }
 
     stopOperation(colonyId, operationId) {
-        this._serverConnection.send({
-            type: 'command',
-            command: {
-                command_type: 'stop_operation',
-                params: {
-                    operation_id: operationId,
-                    colony_id: colonyId
-                }
-            }
-        });
+        return this._requester.post(`world/colonies/${ colonyId }/operations/${ operationId }/stop_operation`)
     }
 
-    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount) {
-        this._serverConnection.send({
-            type: 'command',
-            command: {
-                command_type: 'build_new_sub_nest',
-                params: {
-                    performing_colony_id: performingColonyId,
-                    building_site: buildingSite,
-                    workers_count: workersCount
-                }
-            }
-        });
+    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
+        return this._requester.post(`world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
+            building_site: [buildingSite.x, buildingSite.y],
+            workers_count: workersCount
+        })
     }
 
-    destroyNestOperation(performingColonyId, warriorsCount, nest) {
-        this._serverConnection.send({
-            type: 'command',
-            command: {
-                command_type: 'destroy_nest',
-                params: {
-                    performing_colony_id: performingColonyId,
-                    warriors_count: warriorsCount,
-                    nest_id: nest.id
-                }
-            }
-        });
+    destroyNestOperation(colonyId, warriorsCount, nest) {
+        return this._requester.post(`world/colonies/${ colonyId }/operations/destroy_nest`, {
+            warriors_count: warriorsCount,
+            nest_id: nest.id
+        })
     }
 
-    pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-        this._serverConnection.send({
-            type: 'command',
-            command: {
-                command_type: 'pillage_nest',
-                params: {
-                    performing_colony_id: performingColonyId,
-                    nest_to_pillage_id: pillagingNestId,
-                    nest_for_loot_id: nestForLootId,
-                    warriors_count: warriorsCount,
-                    workers_count: workersCount
-                }
-            }
-        });
+    pillageNestOperation(colonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
+        return this._requester.post(`world/colonies/${ colonyId }/operations/pillage_nest`, {
+            nest_to_pillage_id: pillagingNestId,
+            nest_for_loot_id: nestForLootId,
+            warriors_count: warriorsCount,
+            workers_count: workersCount
+        })
     }
 }
 

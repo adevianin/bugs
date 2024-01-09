@@ -1918,20 +1918,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class AntApi {
 
-    constructor(serverConnection) {
-        this._serverConnection = serverConnection;
+    constructor(requester) {
+        this._requester = requester;
     }
 
     flyNuptialFlight(antId) {
-        this._serverConnection.send({
-            type: 'command',
-            command: {
-                command_type: 'fly_nuptial_flight',
-                params: {
-                    ant_id: antId
-                }
-            }
-        });
+        return this._requester.post(`world/ants/${ antId }/fly_nuptial_flight`)
     }
 }
 
@@ -1952,65 +1944,35 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class ColonyApi {
 
-    constructor(serverConnection) {
-        this._serverConnection = serverConnection;
+    constructor(requester) {
+        this._requester = requester;
     }
 
     stopOperation(colonyId, operationId) {
-        this._serverConnection.send({
-            type: 'command',
-            command: {
-                command_type: 'stop_operation',
-                params: {
-                    operation_id: operationId,
-                    colony_id: colonyId
-                }
-            }
-        });
+        return this._requester.post(`world/colonies/${ colonyId }/operations/${ operationId }/stop_operation`)
     }
 
-    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount) {
-        this._serverConnection.send({
-            type: 'command',
-            command: {
-                command_type: 'build_new_sub_nest',
-                params: {
-                    performing_colony_id: performingColonyId,
-                    building_site: buildingSite,
-                    workers_count: workersCount
-                }
-            }
-        });
+    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
+        return this._requester.post(`world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
+            building_site: [buildingSite.x, buildingSite.y],
+            workers_count: workersCount
+        })
     }
 
-    destroyNestOperation(performingColonyId, warriorsCount, nest) {
-        this._serverConnection.send({
-            type: 'command',
-            command: {
-                command_type: 'destroy_nest',
-                params: {
-                    performing_colony_id: performingColonyId,
-                    warriors_count: warriorsCount,
-                    nest_id: nest.id
-                }
-            }
-        });
+    destroyNestOperation(colonyId, warriorsCount, nest) {
+        return this._requester.post(`world/colonies/${ colonyId }/operations/destroy_nest`, {
+            warriors_count: warriorsCount,
+            nest_id: nest.id
+        })
     }
 
-    pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-        this._serverConnection.send({
-            type: 'command',
-            command: {
-                command_type: 'pillage_nest',
-                params: {
-                    performing_colony_id: performingColonyId,
-                    nest_to_pillage_id: pillagingNestId,
-                    nest_for_loot_id: nestForLootId,
-                    warriors_count: warriorsCount,
-                    workers_count: workersCount
-                }
-            }
-        });
+    pillageNestOperation(colonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
+        return this._requester.post(`world/colonies/${ colonyId }/operations/pillage_nest`, {
+            nest_to_pillage_id: pillagingNestId,
+            nest_for_loot_id: nestForLootId,
+            warriors_count: warriorsCount,
+            workers_count: workersCount
+        })
     }
 }
 
@@ -2046,12 +2008,12 @@ __webpack_require__.r(__webpack_exports__);
 
 function initSyncLayer() {
     let requester = new _utils_requester__WEBPACK_IMPORTED_MODULE_0__.Requester();
+    let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection();
 
     let accountApi = new _accountApi__WEBPACK_IMPORTED_MODULE_1__.AccountApi(requester);
-    let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection();
-    let nestApi = new _nestApi__WEBPACK_IMPORTED_MODULE_3__.NestApi(serverConnection);
-    let colonyApi = new _colonyApi__WEBPACK_IMPORTED_MODULE_4__.ColonyApi(serverConnection);
-    let antApi = new _antApi__WEBPACK_IMPORTED_MODULE_5__.AntApi(serverConnection);
+    let nestApi = new _nestApi__WEBPACK_IMPORTED_MODULE_3__.NestApi(requester);
+    let colonyApi = new _colonyApi__WEBPACK_IMPORTED_MODULE_4__.ColonyApi(requester);
+    let antApi = new _antApi__WEBPACK_IMPORTED_MODULE_5__.AntApi(requester);
     let playerApi = new _playerApi__WEBPACK_IMPORTED_MODULE_6__.PlayerApi(serverConnection);
 
     return {
@@ -2081,22 +2043,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class NestApi {
 
-    constructor(serverConnection) {
-        this._serverConnection = serverConnection;
+    constructor(requester) {
+        this._requester = requester;
     }
 
     addNewLarva(nestId, larvaType) {
-        this._serverConnection.send({
-            type: 'command',
-            command: {
-                command_type: 'add_larva',
-                params: {
-                    nest_id: nestId,
-                    larva_type: larvaType
-                }
-            }
+        return this._requester.post(`world/nests/${nestId}/add_larva`, {
+            larva_type: larvaType
         });
     }
+
 }
 
 
