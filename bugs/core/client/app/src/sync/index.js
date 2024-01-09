@@ -4,7 +4,7 @@ import { ServerConnection } from "./serverConnection";
 import { NestApi } from "./nestApi";
 import { ColonyApi } from "./colonyApi";
 import { AntApi } from "./antApi";
-import { PlayerApi } from "./playerApi";
+import { NuptialApi } from "./nuptialApi";
 
 function initSyncLayer() {
     let requester = new Requester();
@@ -14,7 +14,7 @@ function initSyncLayer() {
     let nestApi = new NestApi(requester);
     let colonyApi = new ColonyApi(requester);
     let antApi = new AntApi(requester);
-    let playerApi = new PlayerApi(serverConnection);
+    let nuptialApi = new NuptialApi(requester);
 
     return {
         accountApi,
@@ -22,7 +22,7 @@ function initSyncLayer() {
         colonyApi,
         serverConnection,
         antApi,
-        playerApi
+        nuptialApi
     };
 }
 

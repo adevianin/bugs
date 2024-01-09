@@ -1,5 +1,7 @@
+import './style.css';
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import malesSearchTmpl from './malesSearchTmpl.html';
+import { MalesListView } from "./malesListView";
 
 class MalesSearchView extends BaseHTMLView {
 
@@ -10,14 +12,21 @@ class MalesSearchView extends BaseHTMLView {
         this._searchBtn.addEventListener('click', this._onSearchBtnClick.bind(this));
     }
 
+    reset() {
+        this._malesList.reset();
+    }
+
     _render() {
         this._el.innerHTML = malesSearchTmpl;
 
         this._searchBtn = this._el.querySelector('[data-search-btn]');
+        this._malesList = new MalesListView(this._el.querySelector('[data-males-list]'));
     }
 
     _onSearchBtnClick() {
-        this.$domainFacade.generateNuptialMales();
+        this.$domainFacade.searchNuptialMales().then((nuptialMales) => {
+            this._malesList.setMales(nuptialMales);
+        });
     }
 
 }

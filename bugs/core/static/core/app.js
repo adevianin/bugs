@@ -14,13 +14,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class DomainFacade {
 
-    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, playerService) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._accountService = accountService;
         this._messageHandlerService = messageHandlerService;
         this._colonyService = colonyService;
-        this._playerService = playerService;
+        this._nuptialService = nuptialService;
     }
 
     get events() {
@@ -126,8 +126,8 @@ class DomainFacade {
 
     /*========================*/
 
-    generateNuptialMales() {
-        this._playerService.generateNuptialMales();
+    searchNuptialMales() {
+        return this._nuptialService.searchNuptialMales();
     }
 
     findNearestNestForOffensiveOperation(performingColonyId, point) {
@@ -1365,7 +1365,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _worldFactory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./worldFactory */ "./bugs/core/client/app/src/domain/worldFactory.js");
 /* harmony import */ var _service_worldService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./service/worldService */ "./bugs/core/client/app/src/domain/service/worldService.js");
 /* harmony import */ var _service_colonyService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/colonyService */ "./bugs/core/client/app/src/domain/service/colonyService.js");
-/* harmony import */ var _service_playerService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./service/playerService */ "./bugs/core/client/app/src/domain/service/playerService.js");
+/* harmony import */ var _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./service/nuptialService */ "./bugs/core/client/app/src/domain/service/nuptialService.js");
 
 
 
@@ -1383,10 +1383,10 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus);
     let accountService = new _service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user, mainEventBus);
     let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
-    let playerService = new _service_playerService__WEBPACK_IMPORTED_MODULE_7__.PlayerService(apis.playerApi);
-    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, colonyService, playerService);
+    let nuptialService = new _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__.NuptialService(apis.nuptialApi);
+    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, colonyService);
 
-    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, playerService);
+    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService);
 
     domainFacade.start();
 
@@ -1536,11 +1536,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class MessageHandlerService {
 
-    constructor(serverConnection, worldService, colonyService, playerService) {
+    constructor(serverConnection, worldService, colonyService) {
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._colonyService = colonyService;
-        this._playerService = playerService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
@@ -1583,29 +1582,25 @@ class MessageHandlerService {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/service/playerService.js":
-/*!******************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/service/playerService.js ***!
-  \******************************************************************/
+/***/ "./bugs/core/client/app/src/domain/service/nuptialService.js":
+/*!*******************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/service/nuptialService.js ***!
+  \*******************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "PlayerService": () => (/* binding */ PlayerService)
+/* harmony export */   "NuptialService": () => (/* binding */ NuptialService)
 /* harmony export */ });
-class PlayerService {
+class NuptialService {
 
     constructor(playerApi) {
         this._playerApi = playerApi;
     }
 
-    playPlayerAction(action) {
-        console.log(action);
-    }
-
-    generateNuptialMales() {
-        this._playerApi.generateNuptialMales();
+    searchNuptialMales() {
+        return this._playerApi.searchNuptialMales();
     }
 
 
@@ -1997,7 +1992,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _nestApi__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestApi */ "./bugs/core/client/app/src/sync/nestApi.js");
 /* harmony import */ var _colonyApi__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./colonyApi */ "./bugs/core/client/app/src/sync/colonyApi.js");
 /* harmony import */ var _antApi__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./antApi */ "./bugs/core/client/app/src/sync/antApi.js");
-/* harmony import */ var _playerApi__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./playerApi */ "./bugs/core/client/app/src/sync/playerApi.js");
+/* harmony import */ var _nuptialApi__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./nuptialApi */ "./bugs/core/client/app/src/sync/nuptialApi.js");
 
 
 
@@ -2014,7 +2009,7 @@ function initSyncLayer() {
     let nestApi = new _nestApi__WEBPACK_IMPORTED_MODULE_3__.NestApi(requester);
     let colonyApi = new _colonyApi__WEBPACK_IMPORTED_MODULE_4__.ColonyApi(requester);
     let antApi = new _antApi__WEBPACK_IMPORTED_MODULE_5__.AntApi(requester);
-    let playerApi = new _playerApi__WEBPACK_IMPORTED_MODULE_6__.PlayerApi(serverConnection);
+    let nuptialApi = new _nuptialApi__WEBPACK_IMPORTED_MODULE_6__.NuptialApi(requester);
 
     return {
         accountApi,
@@ -2022,7 +2017,7 @@ function initSyncLayer() {
         colonyApi,
         serverConnection,
         antApi,
-        playerApi
+        nuptialApi
     };
 }
 
@@ -2059,30 +2054,27 @@ class NestApi {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/sync/playerApi.js":
-/*!****************************************************!*\
-  !*** ./bugs/core/client/app/src/sync/playerApi.js ***!
-  \****************************************************/
+/***/ "./bugs/core/client/app/src/sync/nuptialApi.js":
+/*!*****************************************************!*\
+  !*** ./bugs/core/client/app/src/sync/nuptialApi.js ***!
+  \*****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "PlayerApi": () => (/* binding */ PlayerApi)
+/* harmony export */   "NuptialApi": () => (/* binding */ NuptialApi)
 /* harmony export */ });
-class PlayerApi {
+class NuptialApi {
 
-    constructor(serverConnection) {
-        this._serverConnection = serverConnection;
+    constructor(requester) {
+        this._requester = requester;
     }
 
-    generateNuptialMales() {
-        this._serverConnection.send({
-            type: 'command',
-            command: {
-                command_type: 'generate_nuptial_males'
-            }
-        });
+    searchNuptialMales() {
+        return this._requester.get('world/nuptial_flight/search_nuptial_males').then((response) => {
+            return response.data.nuptial_males;
+        })
     }
 
 }
@@ -4391,6 +4383,123 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/maleItemView.js":
+/*!************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/maleItemView.js ***!
+  \************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "MaleItemView": () => (/* binding */ MaleItemView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _maleItemTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./maleItemTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/maleItemTmpl.html");
+
+
+
+class MaleItemView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(male) {
+        let el = document.createElement('li');
+        super(el);
+        this._male = male;
+
+        this._render();
+
+        this._el.addEventListener('click', this._onClick.bind(this));
+
+    }
+
+    toggleSelect(isSelected) {
+        this._maleItemEl.classList.toggle('queen-manager__male_item--selected', isSelected);
+    }
+
+    _render() {
+        this._el.innerHTML = _maleItemTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.querySelector('[data-name]').innerHTML = this._male.id;
+        this._maleItemEl = this._el.querySelector('[data-male-item]');
+    }
+
+    _onClick() {
+        this.events.emit('click');
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesListView.js":
+/*!*************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesListView.js ***!
+  \*************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "MalesListView": () => (/* binding */ MalesListView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _maleItemView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./maleItemView */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/maleItemView.js");
+
+
+
+class MalesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+
+        this._maleViews = {};
+    }
+
+    reset() {
+        this._clearList();
+    }
+
+    setMales(males) {
+        this._clearList();
+        for (let male of males) {
+            let view = new _maleItemView__WEBPACK_IMPORTED_MODULE_1__.MaleItemView(male);
+            view.events.addListener('click', () => this._onMaleViewClick(male))
+            this._el.append(view.el);
+            this._maleViews[male.id] = view;
+        }
+    }
+
+    _clearList() {
+        for (let maleId in this._maleViews) {
+            this._maleViews[maleId].remove();
+        }
+    }
+
+    _selectMale(male) {
+        this._selectedMale = male;
+        this.events.emit('selectedMaleChanged');
+    }
+
+    _renderSelectedMale() {
+        for (let maleId in this._maleViews) {
+            let isSelected = this._selectedMale && maleId == this._selectedMale.id;
+            this._maleViews[maleId].toggleSelect(isSelected);
+        }
+    }
+
+    _onMaleViewClick(male) {
+        this._selectMale(male);
+        this._renderSelectedMale();
+    }
+
+
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesSearchView.js":
 /*!***************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesSearchView.js ***!
@@ -4402,12 +4511,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "MalesSearchView": () => (/* binding */ MalesSearchView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
-/* harmony import */ var _malesSearchTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./malesSearchTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesSearchTmpl.html");
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/style.css");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _malesSearchTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./malesSearchTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesSearchTmpl.html");
+/* harmony import */ var _malesListView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./malesListView */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesListView.js");
 
 
 
-class MalesSearchView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+
+class MalesSearchView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
 
     constructor(el) {
         super(el);
@@ -4416,14 +4529,21 @@ class MalesSearchView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
         this._searchBtn.addEventListener('click', this._onSearchBtnClick.bind(this));
     }
 
+    reset() {
+        this._malesList.reset();
+    }
+
     _render() {
-        this._el.innerHTML = _malesSearchTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.innerHTML = _malesSearchTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
 
         this._searchBtn = this._el.querySelector('[data-search-btn]');
+        this._malesList = new _malesListView__WEBPACK_IMPORTED_MODULE_3__.MalesListView(this._el.querySelector('[data-males-list]'));
     }
 
     _onSearchBtnClick() {
-        this.$domainFacade.generateNuptialMales();
+        this.$domainFacade.searchNuptialMales().then((nuptialMales) => {
+            this._malesList.setMales(nuptialMales);
+        });
     }
 
 }
@@ -4468,11 +4588,12 @@ class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
     _render() {
         this._el.innerHTML = _queenManagerTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
+        this._malesSearch = new _malesSearch__WEBPACK_IMPORTED_MODULE_3__.MalesSearchView(this._el.querySelector('[data-males-search]'));
     }
 
     _renderQueen() {
         this._el.querySelector('[data-queen-name]').innerHTML = this._queen.id;
-        this._malesSearch = new _malesSearch__WEBPACK_IMPORTED_MODULE_3__.MalesSearchView(this._el.querySelector('[data-males-search]'));
+        this._malesSearch.reset();
     }
 }
 
@@ -6337,6 +6458,33 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, ".colonies-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/coloniesTab/styles.css"],"names":[],"mappings":"AAAA;IACI,aAAa;IACb,mBAAmB;AACvB","sourcesContent":[".colonies-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/style.css":
+/*!********************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/style.css ***!
+  \********************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".queen-manager__males_list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.queen-manager__male_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.queen-manager__male_item--selected {\r\n    color: red;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/style.css"],"names":[],"mappings":"AAAA;IACI,UAAU;IACV,SAAS;IACT,qBAAqB;AACzB;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI,UAAU;AACd","sourcesContent":[".queen-manager__males_list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.queen-manager__male_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.queen-manager__male_item--selected {\r\n    color: red;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -8479,6 +8627,24 @@ var code = "<ul class=\"queens-list\" data-queens-list></ul>\r\n<div class=\"que
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/maleItemTmpl.html":
+/*!**************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/maleItemTmpl.html ***!
+  \**************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div class=\"queen-manager__male_item\" data-male-item>\r\n    <span data-name></span>\r\n    <div>genes</div>\r\n</div>\r\n";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesSearchTmpl.html":
 /*!*****************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/malesSearchTmpl.html ***!
@@ -8491,7 +8657,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<button data-search-btn>пошук</button>\r\n<ul data-males-list></ul>";
+var code = "<button data-search-btn>пошук</button>\r\n<ul class=\"queen-manager__males_list\" data-males-list></ul>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -9270,6 +9436,61 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
        /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/style.css":
+/*!******************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/style.css ***!
+  \******************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../../../../node_modules/css-loader/dist/cjs.js!./style.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/style.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),
@@ -46572,7 +46793,7 @@ let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)({
     nestApi: syncLayer.nestApi,
     colonyApi: syncLayer.colonyApi,
     antApi: syncLayer.antApi,
-    playerApi: syncLayer.playerApi,
+    nuptialApi: syncLayer.nuptialApi,
 }, syncLayer.serverConnection, initialData);
 (0,_view__WEBPACK_IMPORTED_MODULE_2__.initViewLayer)(domainFacade, initialData);
 

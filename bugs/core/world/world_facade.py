@@ -9,6 +9,7 @@ from .world_client_serializer_interface import iWorldClientSerializer
 from .action_client_serializer_interface import iActionClientSerializer
 from core.world.entities.action.base.action import Action
 from core.world.entities.ant.base.ant_types import AntTypes
+from .nuptial_male_client_serializer_interface import iNuptialMaleClientSerializer
 
 from typing import Callable, List
 
@@ -17,12 +18,12 @@ class WorldFacade:
     WORLD_ID = 1
 
     @classmethod
-    def init(cls, event_bus: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer,
-             world_repository: iWorldRepository, operation_service: OperationService, colony_service: ColonyService, player_service: PlayerService, 
-             nuptial_flight_service: NuptialFlightService):
+    def init(cls, event_bus: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
+             nuptial_male_client_serializer: iNuptialMaleClientSerializer, world_repository: iWorldRepository, operation_service: OperationService, 
+             colony_service: ColonyService, player_service: PlayerService, nuptial_flight_service: NuptialFlightService):
         events = EventEmitter()
-        world_facade = WorldFacade(event_bus, events, world_client_serializer, action_client_serializer, world_repository, operation_service, colony_service, player_service, 
-                                   nuptial_flight_service)
+        world_facade = WorldFacade(event_bus, events, world_client_serializer, action_client_serializer, nuptial_male_client_serializer, world_repository, operation_service,
+                                   colony_service, player_service, nuptial_flight_service)
         WorldFacade._instance = world_facade
         return world_facade
 
@@ -30,9 +31,9 @@ class WorldFacade:
     def get_instance(cls) -> 'WorldFacade':
         return WorldFacade._instance
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer,
-                 world_repository: iWorldRepository, operation_service: OperationService, colony_service: ColonyService, player_service: PlayerService, 
-                 nuptial_flight_service: NuptialFlightService):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
+                 nuptial_male_client_serializer: iNuptialMaleClientSerializer, world_repository: iWorldRepository, operation_service: OperationService, 
+                 colony_service: ColonyService, player_service: PlayerService, nuptial_flight_service: NuptialFlightService):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
@@ -43,6 +44,7 @@ class WorldFacade:
         self._world_repository = world_repository
         self._world_client_serializer = world_client_serializer
         self._action_client_serializer = action_client_serializer
+        self._nuptial_male_client_serializer = nuptial_male_client_serializer
 
         self._operation_service = operation_service
         self._colony_service = colony_service
@@ -77,8 +79,8 @@ class WorldFacade:
     def remove_listener(self, event_name: str, callback: Callable):
         self._events.remove_listener(event_name, callback)
 
-    def get_my_colony(self, user_id: int):
-        return self._world.get_colony_owned_by_user(user_id)
+    # def get_my_colony(self, user_id: int):
+    #     return self._world.get_colony_owned_by_user(user_id)
     
     def build_user_starter_pack(self, user_id: int):
         self._player_service.build_player_starter_pack(user_id)
@@ -101,8 +103,13 @@ class WorldFacade:
     def fly_nuptian_flight_command(self, user_id: int, ant_id: int):
         self._colony_service.fly_nuptial_flight(user_id, ant_id)
 
-    def generate_nuptial_males_command(self, user_id: int):
-        self._nuptial_flight_service.generate_nuptial_males(user_id)
+    def generate_nuptial_males_for_client(self, user_id: int) -> List[dict]:
+        nuptial_males = self._nuptial_flight_service.search_nuptial_males_for(user_id)
+        nuptial_males_serialized = []
+        for nuptial_male in nuptial_males:
+            nuptial_males_serialized.append(self._nuptial_male_client_serializer.serialize(nuptial_male))
+            
+        return nuptial_males_serialized
 
     def get_world_for_client(self):
         return self._world_client_serializer.serialize(self._world)

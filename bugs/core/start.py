@@ -49,7 +49,6 @@ from core.world.entities.colony.colonies.ant_colony.formation.formation_factory 
 from core.world.entities.item.items.item_factory import ItemFactory
 from core.world.entities.item.item_sources.item_source_factory import ItemSourceFactory
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory
-from core.world.entities.ant.base.nuptial_environment.nuptial_environment_factory import NuptialEnvironmentFactory
 
 from core.world.services.operation_service import OperationService
 from core.world.services.player_service import PlayerService
@@ -70,6 +69,8 @@ from core.sync.ground_beetle_client_serializer import GroundBeetleClientSerializ
 from core.sync.ant_client_serializer import AntClientSerializer
 from core.sync.action_client_serializer import ActionClientSerializer
 from core.sync.entity_client_serializer import EntityClientSerializer
+from core.sync.genes_client_serializer import GenesClientSerializer
+from core.sync.nuptial_male_client_serializer import NuptialMaleClientSerializer
 
 def start():
     event_bus = EventEmitter()
@@ -85,7 +86,6 @@ def start():
     operation_factory = OperationFactory(formation_factory)
     colony_factory = ColonyFactory(event_bus, operation_factory)
     map_factory = MapFactory(event_bus)
-    nuptial_environment_factory = NuptialEnvironmentFactory(event_bus)
     world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ground_beetle_factory)
     
     operation_service = OperationService(operation_factory)
@@ -126,11 +126,12 @@ def start():
     json_item_factory = JsonItemFactory(item_factory)
     json_item_source_factory = JsonItemSourceFactory(item_source_factory)
     json_item_area_factory = JsonItemAreaFactory(item_area_factory)
-    json_nuptial_environment = JsonNuptialEnvironmentFactory(json_genes_factory, nuptial_environment_factory)
+    json_nuptial_environment = JsonNuptialEnvironmentFactory(json_genes_factory)
     world_repository = WorldRepository(world_data_repository, json_nest_factory, json_ant_factory, json_colony_factory, json_thought_factory, json_map_factory, world_factory, 
                                        json_ground_beetle_factory, json_item_factory, json_item_source_factory, json_item_area_factory, json_nuptial_environment, world_serializer)
 
     stats_client_serializer = StatsClientSerializer()
+    genes_client_serializer = GenesClientSerializer(stats_client_serializer)
     larva_client_serializer = LarvaClientSerializer()
     util_client_serializer = UtilClientSerializer()
     operation_client_serializer = OperationClientSerializer()
@@ -140,12 +141,16 @@ def start():
     item_area_client_serializer = ItemAreaClientSerializer(util_client_serializer)
     nest_client_serializer = NestClientSerializer(util_client_serializer, larva_client_serializer)
     ground_beetle_client_serializer = GroundBeetleClientSerializer(util_client_serializer)
-    ant_client_serializer = AntClientSerializer(util_client_serializer, stats_client_serializer)
-    entity_client_serializer = EntityClientSerializer(item_client_serializer, item_source_client_serializer, item_area_client_serializer, nest_client_serializer, ground_beetle_client_serializer, ant_client_serializer)
+    ant_client_serializer = AntClientSerializer(util_client_serializer, stats_client_serializer, genes_client_serializer)
+    entity_client_serializer = EntityClientSerializer(item_client_serializer, item_source_client_serializer, item_area_client_serializer, nest_client_serializer, 
+                                                      ground_beetle_client_serializer, ant_client_serializer)
     world_client_serializer = WorldClientSerializer(colony_client_serializer, entity_client_serializer)
-    action_client_serializer = ActionClientSerializer(entity_client_serializer, util_client_serializer, larva_client_serializer, colony_client_serializer, operation_client_serializer)
+    action_client_serializer = ActionClientSerializer(entity_client_serializer, util_client_serializer, larva_client_serializer, colony_client_serializer, 
+                                                      operation_client_serializer)
+    nuptial_male_client_serializer = NuptialMaleClientSerializer(genes_client_serializer)
 
-    world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, world_repository, operation_service, colony_service, player_service, nuptial_flight_service)
+    world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, nuptial_male_client_serializer, world_repository, operation_service, 
+                                    colony_service, player_service, nuptial_flight_service)
 
     world_facade.init_world()
 

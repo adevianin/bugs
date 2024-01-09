@@ -19,11 +19,12 @@ class QueenManagerView extends BaseHTMLView {
 
     _render() {
         this._el.innerHTML = queenManagerTmpl;
+        this._malesSearch = new MalesSearchView(this._el.querySelector('[data-males-search]'));
     }
 
     _renderQueen() {
         this._el.querySelector('[data-queen-name]').innerHTML = this._queen.id;
-        this._malesSearch = new MalesSearchView(this._el.querySelector('[data-males-search]'));
+        this._malesSearch.reset();
     }
 }
 

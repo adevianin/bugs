@@ -5,7 +5,7 @@ import { EventEmitter } from '@utils/eventEmitter';
 import { WorldFactory } from './worldFactory';
 import { WorldService } from './service/worldService';
 import { ColonyService } from './service/colonyService';
-import { PlayerService } from './service/playerService';
+import { NuptialService } from './service/nuptialService';
 
 function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new EventEmitter();
@@ -15,10 +15,10 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let worldService = new WorldService(world, worldFactory, mainEventBus);
     let accountService = new AccountService(apis.accountApi, initialData.user, mainEventBus);
     let colonyService = new ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
-    let playerService = new PlayerService(apis.playerApi);
-    let messageHandlerService = new MessageHandlerService(serverConnection, worldService, colonyService, playerService);
+    let nuptialService = new NuptialService(apis.nuptialApi);
+    let messageHandlerService = new MessageHandlerService(serverConnection, worldService, colonyService);
 
-    let domainFacade = new DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, playerService);
+    let domainFacade = new DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService);
 
     domainFacade.start();
 
