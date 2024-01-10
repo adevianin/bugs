@@ -1,6 +1,5 @@
 from .utils.event_emiter import EventEmitter
 from .services.colony_service import ColonyService
-from .services.operation_service import OperationService
 from .services.player_service import PlayerService
 from .services.nuptial_flight_service import NuptialFlightService
 from core.world.utils.point import Point
@@ -19,11 +18,11 @@ class WorldFacade:
 
     @classmethod
     def init(cls, event_bus: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
-             nuptial_male_client_serializer: iNuptialMaleClientSerializer, world_repository: iWorldRepository, operation_service: OperationService, 
-             colony_service: ColonyService, player_service: PlayerService, nuptial_flight_service: NuptialFlightService):
+             nuptial_male_client_serializer: iNuptialMaleClientSerializer, world_repository: iWorldRepository, colony_service: ColonyService, 
+             player_service: PlayerService, nuptial_flight_service: NuptialFlightService):
         events = EventEmitter()
-        world_facade = WorldFacade(event_bus, events, world_client_serializer, action_client_serializer, nuptial_male_client_serializer, world_repository, operation_service,
-                                   colony_service, player_service, nuptial_flight_service)
+        world_facade = WorldFacade(event_bus, events, world_client_serializer, action_client_serializer, nuptial_male_client_serializer, world_repository, colony_service, 
+                                   player_service, nuptial_flight_service)
         WorldFacade._instance = world_facade
         return world_facade
 
@@ -32,8 +31,8 @@ class WorldFacade:
         return WorldFacade._instance
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
-                 nuptial_male_client_serializer: iNuptialMaleClientSerializer, world_repository: iWorldRepository, operation_service: OperationService, 
-                 colony_service: ColonyService, player_service: PlayerService, nuptial_flight_service: NuptialFlightService):
+                 nuptial_male_client_serializer: iNuptialMaleClientSerializer, world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, 
+                 nuptial_flight_service: NuptialFlightService):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
@@ -46,7 +45,6 @@ class WorldFacade:
         self._action_client_serializer = action_client_serializer
         self._nuptial_male_client_serializer = nuptial_male_client_serializer
 
-        self._operation_service = operation_service
         self._colony_service = colony_service
         self._player_service = player_service
         self._nuptial_flight_service = nuptial_flight_service
@@ -86,22 +84,22 @@ class WorldFacade:
         self._player_service.build_player_starter_pack(user_id)
 
     def stop_operation_command(self, user_id: int, colony_id: int, operation_id: int):
-        self._operation_service.stop_operation(user_id, colony_id, operation_id)
+        self._colony_service.stop_operation(user_id, colony_id, operation_id)
     
     def build_new_sub_nest_operation_command(self, user_id: int, performing_colony_id: int, building_site: Point, workers_count: int):
-        self._operation_service.build_new_sub_nest(user_id, performing_colony_id, building_site, workers_count)
+        self._colony_service.build_new_sub_nest(user_id, performing_colony_id, building_site, workers_count)
     
     def destroy_nest_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int, warriors_count: int):
-        self._operation_service.destroy_nest_operation(user_id, performing_colony_id, nest_id, warriors_count)
+        self._colony_service.destroy_nest_operation(user_id, performing_colony_id, nest_id, warriors_count)
 
     def pillage_nest_operation_command(self, user_id: int, performing_colony_id: int, nest_to_pillage_id: int, nest_for_loot_id: int, workers_count: int, warriors_count: int):
-        self._operation_service.pillage_nest_operation(user_id, performing_colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
+        self._colony_service.pillage_nest_operation(user_id, performing_colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
 
     def add_larva_command(self, user_id: int, nest_id: int, larva_type: AntTypes):
         self._colony_service.add_larva(user_id, nest_id, larva_type)
 
     def fly_nuptian_flight_command(self, user_id: int, ant_id: int):
-        self._colony_service.fly_nuptial_flight(user_id, ant_id)
+        self._nuptial_flight_service.fly_nuptial_flight(user_id, ant_id)
 
     def found_colony_command(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point):
         self._nuptial_flight_service.found_new_colony(user_id, queen_id, nuptial_male_id, nest_building_site)

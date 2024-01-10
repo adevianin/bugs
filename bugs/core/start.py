@@ -50,7 +50,6 @@ from core.world.entities.item.items.item_factory import ItemFactory
 from core.world.entities.item.item_sources.item_source_factory import ItemSourceFactory
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory
 
-from core.world.services.operation_service import OperationService
 from core.world.services.player_service import PlayerService
 from core.world.services.colony_service import ColonyService
 from core.world.services.nuptial_flight_service import NuptialFlightService
@@ -88,8 +87,7 @@ def start():
     map_factory = MapFactory(event_bus)
     world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ground_beetle_factory)
     
-    operation_service = OperationService(operation_factory)
-    colony_service = ColonyService()
+    colony_service = ColonyService(operation_factory)
     player_service = PlayerService(colony_factory, ant_factory)
     nuptial_flight_service = NuptialFlightService()
 
@@ -149,12 +147,11 @@ def start():
                                                       operation_client_serializer)
     nuptial_male_client_serializer = NuptialMaleClientSerializer(genes_client_serializer)
 
-    world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, nuptial_male_client_serializer, world_repository, operation_service, 
-                                    colony_service, player_service, nuptial_flight_service)
+    world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, nuptial_male_client_serializer, world_repository, colony_service, 
+                                    player_service, nuptial_flight_service)
 
     world_facade.init_world()
 
-    operation_service.set_world(world_facade.world)
     colony_service.set_world(world_facade.world)
     player_service.set_world(world_facade.world)
     nuptial_flight_service.set_world(world_facade.world)
