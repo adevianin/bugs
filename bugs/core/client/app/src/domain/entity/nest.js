@@ -5,8 +5,8 @@ import { Larva } from './larva';
 
 class Nest extends Entity {
 
-    constructor(eventBus, nestApi, id, position, angle, fromColony, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp) {
-        super(eventBus, id, position, angle, EntityTypes.NEST, fromColony, hp, maxHp);
+    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp) {
+        super(eventBus, id, position, angle, EntityTypes.NEST, fromColony, ownerId, hp, maxHp);
         this._nestApi = nestApi;
         this.storedCalories = storedCalories;
         this.larvae = larvae;

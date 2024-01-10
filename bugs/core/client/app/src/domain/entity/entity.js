@@ -3,13 +3,14 @@ import { ACTION_TYPES } from './action/actionTypes';
 
 class Entity extends EventEmitter {
 
-    constructor(eventBus, id, position, angle, type, fromColony, hp, maxHp) {
+    constructor(eventBus, id, position, angle, type, fromColony, ownerId, hp, maxHp) {
         super();
         this._eventBus = eventBus;
         this.id = id;
         this._position = position;
         this.type = type;
         this._fromColony = fromColony;
+        this._ownerId = ownerId;
         this._actionStack = [];
         this._isPlaying = false;
         this._isHidden = false;
@@ -55,6 +56,10 @@ class Entity extends EventEmitter {
 
     get fromColony() {
         return this._fromColony;
+    }
+
+    get ownerId() {
+        return this._ownerId;
     }
 
     get hp() {

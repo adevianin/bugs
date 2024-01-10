@@ -6,7 +6,7 @@ import { walker } from "@utils/walker";
 class Item extends Entity {
     
     constructor(eventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
-        super(eventBus, id, position, angle, EntityTypes.ITEM, fromColony, hp, maxHp);
+        super(eventBus, id, position, angle, EntityTypes.ITEM, fromColony, null, hp, maxHp);
         this._itemType = itemType;
         this._itemVariety = itemVariety;
         this._isPicked = isPicked;

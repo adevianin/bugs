@@ -83,8 +83,7 @@ class DomainFacade {
 
     isNestMine(nest) {
         let userData = this.getUserData();
-        let colony = this._worldService.world.findColonyById(nest.fromColony);
-        return colony.ownerId == userData.id;
+        return nest.ownerId == userData.id;
     }
 
     getMyQueensInNuptialFlight() {

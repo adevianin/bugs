@@ -5,7 +5,7 @@ import { ACTION_TYPES } from "./action/actionTypes";
 class ItemSource extends Entity {
     
     constructor(eventBus, id, position, angle, fromColony, hp, maxHp, itemType, isFertile) {
-        super(eventBus, id, position, angle, EntityTypes.ITEM_SOURCE, fromColony, hp, maxHp);
+        super(eventBus, id, position, angle, EntityTypes.ITEM_SOURCE, fromColony, null, hp, maxHp);
         this._itemType = itemType;
         this._isFertile = isFertile;
     }

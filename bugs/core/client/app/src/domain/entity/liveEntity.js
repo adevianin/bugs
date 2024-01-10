@@ -4,8 +4,8 @@ import { ACTION_TYPES } from './action/actionTypes';
 
 class LiveEntity extends Entity {
 
-    constructor(eventBus, id, position, angle, entityType, fromColony, userSpeed, hp, maxHp) {
-        super(eventBus, id, position, angle, entityType, fromColony, hp, maxHp);
+    constructor(eventBus, id, position, angle, entityType, fromColony, ownerId, userSpeed, hp, maxHp) {
+        super(eventBus, id, position, angle, entityType, fromColony, ownerId, hp, maxHp);
         this._userSpeed = userSpeed;
     }
 
