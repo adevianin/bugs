@@ -15,8 +15,8 @@ class LiveEntity(Entity, iEnemy):
     body: LiveBody
     mind: Mind
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, body: LiveBody, mind: Mind):
-        super().__init__(event_bus, events, id, type, from_colony_id, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, owner_id: int, body: LiveBody, mind: Mind):
+        super().__init__(event_bus, events, id, type, from_colony_id, owner_id, body)
         self._mind: Mind = mind
 
         self._body.events.add_listener('walk', self._on_walk)

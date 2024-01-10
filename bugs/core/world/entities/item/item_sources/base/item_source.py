@@ -12,7 +12,7 @@ class ItemSource(Entity):
 
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, body: Body, item_type: ItemTypes, fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
-        super().__init__(event_bus, events, id, EntityTypes.ITEM_SOURCE, from_colony_id, body)
+        super().__init__(event_bus, events, id, EntityTypes.ITEM_SOURCE, from_colony_id, None, body)
         self._item_type = item_type
         # move fertility to body
         self._fertility = fertility

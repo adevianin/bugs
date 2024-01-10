@@ -13,12 +13,13 @@ class Entity(ABC):
 
     _body: Body
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, body: Body):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, owner_id: int, body: Body):
         self._event_bus = event_bus
         self.events = events
         self._id: int = id
         self._type: EntityTypes = type
         self._from_colony_id = from_colony_id
+        self._owner_id = owner_id
         self._body = body
 
         self._body.events.add_listener('died', self._on_died)
@@ -41,6 +42,10 @@ class Entity(ABC):
     def from_colony_id(self, colony_id: int):
         self._from_colony_id = colony_id
         self._emit_action(EntityColonyChangedAction.build(self.id, colony_id))
+
+    @property
+    def owner_id(self):
+        return self._owner_id
 
     @property
     def body(self) -> Body:

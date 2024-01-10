@@ -18,6 +18,7 @@ class Command(BaseCommand):
                 "id":1,
                 "type":"ant",
                 "from_colony_id":2,
+                "owner_id": 2,
                 "hp": 100,
                 "position":[
                     610,
@@ -49,6 +50,7 @@ class Command(BaseCommand):
                 "id":2,
                 "type":"ant",
                 "from_colony_id":2,
+                "owner_id": 2,
                 "hp": 300,
                 "position":[
                     650,
@@ -121,6 +123,7 @@ class Command(BaseCommand):
                 "id":3,
                 "type":"ant",
                 "from_colony_id":2,
+                "owner_id": 2,
                 "hp": 300,
                 "position":[
                     550,
@@ -175,6 +178,7 @@ class Command(BaseCommand):
                 "id":30,
                 "type":"nest",
                 "from_colony_id":2,
+                "owner_id": 2,
                 "is_main": True,
                 "hp": 1000,
                 "position":[
@@ -255,6 +259,7 @@ class Command(BaseCommand):
                 "id":31,
                 "type":"nest",
                 "from_colony_id":2,
+                "owner_id": 2,
                 "is_main": False,
                 "hp": 1000,
                 "position":[
@@ -288,6 +293,7 @@ class Command(BaseCommand):
                 "id":32,
                 "type":"nest",
                 "from_colony_id":1,
+                "owner_id": 2,
                 "is_main": True,
                 "hp": 1000,
                 "position":[

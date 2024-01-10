@@ -14,5 +14,6 @@ class NuptialFlightService():
         return nuptial_environment.search_males()
     
     def found_new_colony(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point):
+        
         print('founding new colony')
         

@@ -25,24 +25,24 @@ class AntFactory():
         self._event_bus = event_bus
         self._thought_factory = thought_factory
 
-    def build_new_ant(self, id: int, from_colony_id: int, stats: LiveStats, ant_type: AntTypes, position: Point, home_nest: Nest = None):
+    def build_new_ant(self, id: int, from_colony_id: int, owner_id: int, stats: LiveStats, ant_type: AntTypes, position: Point, home_nest: Nest = None):
         match(ant_type):
             case AntTypes.WORKER:
-                return self.build_new_worker_ant(id, from_colony_id, stats, position, home_nest)
+                return self.build_new_worker_ant(id, from_colony_id, owner_id, stats, position, home_nest)
             case AntTypes.WARRIOR:    
-                return self.build_new_warrior_ant(id, from_colony_id, stats, position, home_nest)
+                return self.build_new_warrior_ant(id, from_colony_id, owner_id, stats, position, home_nest)
             case AntTypes.QUEEN:    
-                return self.build_new_queen_ant(id, from_colony_id, stats, position, home_nest)
+                return self.build_new_queen_ant(id, from_colony_id, owner_id, stats, position, home_nest)
 
-    def build_new_worker_ant(self, id: int, from_colony_id: int, stats: LiveStats, position: Point, home_nest: Nest):
-        return self.build_worker_ant(id=id, from_colony_id=from_colony_id, stats=stats, position=position, angle=0, hp=None, nest=home_nest, located_in_nest=None, 
+    def build_new_worker_ant(self, id: int, from_colony_id: int, owner_id: int, stats: LiveStats, position: Point, home_nest: Nest):
+        return self.build_worker_ant(id=id, from_colony_id=from_colony_id, owner_id=owner_id, stats=stats, position=position, angle=0, hp=None, nest=home_nest, located_in_nest=None, 
                                      memory_data=None, is_auto_thought_generation=True, picked_item=None, is_in_operation=False)
     
-    def build_new_warrior_ant(self, id: int, from_colony_id: int, stats: LiveStats, position: Point, home_nest: Nest):
-        return self.build_warrior_ant(id=id, from_colony_id=from_colony_id, stats=stats, position=position, angle=0, hp=None, nest=home_nest, located_in_nest=None, 
+    def build_new_warrior_ant(self, id: int, from_colony_id: int, owner_id: int, stats: LiveStats, position: Point, home_nest: Nest):
+        return self.build_warrior_ant(id=id, from_colony_id=from_colony_id, owner_id=owner_id, stats=stats, position=position, angle=0, hp=None, nest=home_nest, located_in_nest=None, 
                                       memory_data=None, is_auto_thought_generation=True, picked_item=None, is_in_operation=False)
     
-    def build_new_queen_ant(self, id: int, from_colony_id: int, stats: LiveStats, position: Point, home_nest: Nest):
+    def build_new_queen_ant(self, id: int, from_colony_id: int, owner_id: int, stats: LiveStats, position: Point, home_nest: Nest):
         genes_worker_stats = StatsLibrary.GENES_WORKER_DEFAULT
         genes_worker_food_required = 100 
         genes_warrior_stats = StatsLibrary.GENES_WARRIOR_DEFAULT
@@ -50,33 +50,33 @@ class AntFactory():
         genes_queen_stats = StatsLibrary.GENES_QUEEN_DEFAULT
         genes_queen_food_required = 1000
         genes = Genes.build(genes_worker_stats, genes_worker_food_required, genes_warrior_stats, genes_warrior_food_required, genes_queen_stats, genes_queen_food_required)
-        return self.build_queen_ant(id=id, from_colony_id=from_colony_id, stats=stats, position=position, angle=0, hp=None, nest=home_nest, located_in_nest=None, 
+        return self.build_queen_ant(id=id, from_colony_id=from_colony_id, owner_id=owner_id, stats=stats, position=position, angle=0, hp=None, nest=home_nest, located_in_nest=None, 
                                     memory_data=None, is_auto_thought_generation=True, picked_item=None, is_in_operation=False, genes=genes, is_fertilized=False, 
                                     is_in_nuptial_flight=False)
 
-    def build_warrior_ant(self, id: int, from_colony_id: int, stats: LiveStats, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
+    def build_warrior_ant(self, id: int, from_colony_id: int, owner_id: int, stats: LiveStats, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
                           is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool):
         sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
         body = WarriorAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor)
         mind = WarrirorAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
-        ant = WarriorAnt(self._event_bus, EventEmitter(), id, from_colony_id, body, mind)
+        ant = WarriorAnt(self._event_bus, EventEmitter(), id, from_colony_id, owner_id, body, mind)
 
         return ant
     
-    def build_worker_ant(self, id: int, from_colony_id: int, stats: LiveStats, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
+    def build_worker_ant(self, id: int, from_colony_id: int, owner_id: int, stats: LiveStats, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
                          is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool):
         sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
         body = WorkerAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor)
         mind = WorkerAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
-        ant = WorkerAnt(self._event_bus, EventEmitter(), id, from_colony_id, body, mind)
+        ant = WorkerAnt(self._event_bus, EventEmitter(), id, from_colony_id, owner_id, body, mind)
 
         return ant
     
-    def build_queen_ant(self, id: int, from_colony_id: int, stats: LiveStats, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
+    def build_queen_ant(self, id: int, from_colony_id: int, owner_id: int, stats: LiveStats, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
                         is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genes: Genes, is_fertilized: bool, 
                         is_in_nuptial_flight: bool):
         sayer = EventEmitter()
@@ -84,7 +84,7 @@ class AntFactory():
         memory = Memory(memory_data)
         body = QueenAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor, genes, is_fertilized, is_in_nuptial_flight)
         mind = QueenAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
-        ant = QueenAnt(self._event_bus, EventEmitter(), id, from_colony_id, body, mind)
+        ant = QueenAnt(self._event_bus, EventEmitter(), id, from_colony_id, owner_id, body, mind)
 
         return ant
     

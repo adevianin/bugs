@@ -13,4 +13,4 @@ class NestBirther(EntityBirther):
         self._nest_factory = nest_factory
 
     def _build_entity(self, id, request: NestBirthRequest) -> Nest:
-        return self._nest_factory.build_new_nest(id, request.position, request.colony_id)
+        return self._nest_factory.build_new_nest(id, request.position, request.colony_id, request.owner_id)

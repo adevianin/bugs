@@ -8,6 +8,7 @@ class EntitySerializer():
             'id': entity.id,
             'type': entity.type,
             'from_colony_id': entity.from_colony_id,
+            'owner_id': entity.owner_id,
             'hp': entity.body.hp,
             'position': entity.position,
             'angle': entity.body.angle

@@ -15,8 +15,8 @@ class Nest(Entity):
 
     _body: NestBody
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, body: NestBody):
-        super().__init__(event_bus, events, id, EntityTypes.NEST, from_colony_id, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, owner_id: int, body: NestBody):
+        super().__init__(event_bus, events, id, EntityTypes.NEST, from_colony_id, owner_id, body)
 
         self._body.events.add_listener('larvae_changed', self._on_larvae_changed)
         self._body.events.add_listener('stored_calories_changed', self._on_stored_calories_changed)

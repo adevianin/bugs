@@ -12,8 +12,8 @@ class WarriorAnt(Ant):
     _body: WarriorAntBody
     _mind: WarrirorAntMind
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, body: WarriorAntBody, mind: WarrirorAntMind):
-        super().__init__(event_bus, events, id, from_colony_id, body, AntTypes.WARRIOR, mind)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, owner_id: int, body: WarriorAntBody, mind: WarrirorAntMind):
+        super().__init__(event_bus, events, id, from_colony_id, owner_id, body, AntTypes.WARRIOR, mind)
 
     def keep_clear_territory(self, position: Point, area: int):
         self._mind.keep_clear_territory(position=position, area=area)

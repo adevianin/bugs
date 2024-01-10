@@ -47,6 +47,7 @@ class JsonAntFactory():
         return {
             "id": ant_json['id'],
             "from_colony_id": ant_json['from_colony_id'],
+            "owner_id": ant_json['owner_id'],
             "position": Point.from_json(ant_json['position']),
             "angle": ant_json['angle'],
             "nest": entities_collection.get_entity_by_id(ant_json['from_nest']) if ant_json['from_nest'] else None,
