@@ -1,4 +1,3 @@
-import './style.css';
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import malesSearchTmpl from './malesSearchTmpl.html';
 import { MalesListView } from "./malesListView";
