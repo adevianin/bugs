@@ -101,7 +101,10 @@ class WorldFacade:
         self._colony_service.add_larva(user_id, nest_id, larva_type)
 
     def fly_nuptian_flight_command(self, user_id: int, ant_id: int):
-        self._colony_service.fly_nuptial_flight(user_id, ant_id)
+        self._nuptial_flight_service.fly_nuptial_flight(user_id, ant_id)
+
+    def found_colony_command(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point):
+        self._nuptial_flight_service.found_new_colony(user_id, queen_id, nuptial_male_id, nest_building_site)
 
     def generate_nuptial_males_for_client(self, user_id: int) -> List[dict]:
         nuptial_males = self._nuptial_flight_service.search_nuptial_males_for(user_id)

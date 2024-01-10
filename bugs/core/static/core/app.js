@@ -130,6 +130,10 @@ class DomainFacade {
         return this._nuptialService.searchNuptialMales();
     }
 
+    foundColony(queenId, nuptialMaleId, nestBuildingSite) {
+        this._nuptialService.foundColony(queenId, nuptialMaleId, nestBuildingSite);
+    }
+
     findNearestNestForOffensiveOperation(performingColonyId, point) {
         return this._worldService.findNearestNestForOffensiveOperation(performingColonyId, point);
     }
@@ -1595,14 +1599,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class NuptialService {
 
-    constructor(playerApi) {
-        this._playerApi = playerApi;
+    constructor(nuptialApi) {
+        this._nuptialApi = nuptialApi;
     }
 
     searchNuptialMales() {
-        return this._playerApi.searchNuptialMales();
+        return this._nuptialApi.searchNuptialMales();
     }
 
+    foundColony(queenId, nuptialMaleId, nestBuildingSite) {
+        this._nuptialApi.foundColony(queenId, nuptialMaleId, nestBuildingSite);
+    }
 
 }
 
@@ -2074,6 +2081,14 @@ class NuptialApi {
     searchNuptialMales() {
         return this._requester.get('world/nuptial_flight/search_nuptial_males').then((response) => {
             return response.data.nuptial_males;
+        })
+    }
+
+    foundColony(queenId, nuptialMaleId, nestBuildingSite) { 
+        return this._requester.post('world/nuptial_flight/found_colony', {
+            queen_id: queenId,
+            nuptial_male_id: nuptialMaleId,
+            nest_building_site: [nestBuildingSite.x, nestBuildingSite.y]
         })
     }
 
@@ -4531,6 +4546,10 @@ class MalesSearchView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
         this._searchBtn.addEventListener('click', this._onSearchBtnClick.bind(this));
     }
 
+    get selectedMale() {
+        return this._malesList.selectedMale;
+    }
+
     reset() {
         this._malesList.reset();
     }
@@ -4580,22 +4599,51 @@ class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         super(el);
 
         this._render();
+
+        this._chooseNestPositionBtn.addEventListener('click', this._onChooseNestPositionBtnClick.bind(this));
+        this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
     }
 
     manageQueen(queen) {
         this._queen = queen;
+        this._buildingSite = null;
 
+        this._malesSearch.reset();
         this._renderQueen();
+        this._renderBuildingSite();
     }
 
     _render() {
         this._el.innerHTML = _queenManagerTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
         this._malesSearch = new _malesSearch__WEBPACK_IMPORTED_MODULE_3__.MalesSearchView(this._el.querySelector('[data-males-search]'));
+        this._chooseNestPositionBtn = this._el.querySelector('[data-choose-nest-position]');
+        this._buildingSiteEl = this._el.querySelector('[data-building-site]');
+        this._startBtn = this._el.querySelector('[ data-start]');
     }
 
     _renderQueen() {
         this._el.querySelector('[data-queen-name]').innerHTML = this._queen.id;
-        this._malesSearch.reset();
+    }
+
+    _renderBuildingSite() {
+        if (this._buildingSite) {
+            this._buildingSiteEl.innerHTML = `(${this._buildingSite.x};${this._buildingSite.y})`;
+        } else {
+            this._buildingSiteEl.innerHTML = 'не задано';
+        }
+    }
+
+    _onChooseNestPositionBtnClick() {
+        this.$eventBus.emit('placeNewNestMarkerRequest', (point) => { 
+            this._buildingSite = point;
+            this._renderBuildingSite();
+        });
+    }
+
+    _onStartBtnClick() {
+        if (this._malesSearch.selectedMale && this._buildingSite) {
+            this.$domainFacade.foundColony(this._queen.id, this._malesSearch.selectedMale.id, this._buildingSite);
+        }
     }
 }
 
@@ -8650,7 +8698,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>queen <span data-queen-name></span></div>\r\n<div>genes</div>\r\n<div data-males-search></div>";
+var code = "<div>queen <span data-queen-name></span></div>\r\n<div>genes</div>\r\n<div data-males-search></div>\r\n<div>\r\n    назва колонії \r\n    <input type=\"text\" data-colony-name>\r\n</div>\r\n<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<button data-start> старт </button>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

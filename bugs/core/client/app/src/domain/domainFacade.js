@@ -116,6 +116,10 @@ class DomainFacade {
         return this._nuptialService.searchNuptialMales();
     }
 
+    foundColony(queenId, nuptialMaleId, nestBuildingSite) {
+        this._nuptialService.foundColony(queenId, nuptialMaleId, nestBuildingSite);
+    }
+
     findNearestNestForOffensiveOperation(performingColonyId, point) {
         return this._worldService.findNearestNestForOffensiveOperation(performingColonyId, point);
     }

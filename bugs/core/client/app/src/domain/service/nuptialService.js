@@ -1,13 +1,16 @@
 class NuptialService {
 
-    constructor(playerApi) {
-        this._playerApi = playerApi;
+    constructor(nuptialApi) {
+        this._nuptialApi = nuptialApi;
     }
 
     searchNuptialMales() {
-        return this._playerApi.searchNuptialMales();
+        return this._nuptialApi.searchNuptialMales();
     }
 
+    foundColony(queenId, nuptialMaleId, nestBuildingSite) {
+        this._nuptialApi.foundColony(queenId, nuptialMaleId, nestBuildingSite);
+    }
 
 }
 

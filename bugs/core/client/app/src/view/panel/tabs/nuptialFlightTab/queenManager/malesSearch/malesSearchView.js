@@ -11,6 +11,10 @@ class MalesSearchView extends BaseHTMLView {
         this._searchBtn.addEventListener('click', this._onSearchBtnClick.bind(this));
     }
 
+    get selectedMale() {
+        return this._malesList.selectedMale;
+    }
+
     reset() {
         this._malesList.reset();
     }
