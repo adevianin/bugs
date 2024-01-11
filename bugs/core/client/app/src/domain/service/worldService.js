@@ -82,7 +82,7 @@ class WorldService {
 
     getQueensInNuptialFlightFromUser(userId) {
         let allAnts = this._world.getAnts();
-        return allAnts.filter(ant => ant.antType == AntTypes.QUEEN && ant.isInNuptialFlight);
+        return allAnts.filter(ant => ant.ownerId == userId && ant.antType == AntTypes.QUEEN && ant.isInNuptialFlight);
     }
 
 }
