@@ -13,6 +13,7 @@ class QueensListView extends BaseHTMLView {
         this._render();
 
         this.$domainFacade.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
+        this.$domainFacade.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
     }
 
     get selectedQueen() {
@@ -57,9 +58,25 @@ class QueensListView extends BaseHTMLView {
     }
 
     _onQueenFlewNuptialFlight(queen) {
-        this._queens.push(queen);
-        this._renderQueen(queen);
-        this._autoSelect();
+        let isMyQueen = this.$domainFacade.isEntityMy(queen);
+        if (isMyQueen) {
+            this._queens.push(queen);
+            this._renderQueen(queen);
+            this._autoSelect();
+        }
+    }
+
+    _onQueenFlewNuptialFlightBack(queen) {
+        let isMyQueen = this.$domainFacade.isEntityMy(queen);
+        if (isMyQueen) {
+            this._queenViews[queen.id].remove();
+            delete this._queenViews[queen.id];
+            this._queens = this._queens.filter( q => q.id != queen.id);
+            if (queen.id == this._selectedQueen.id) {
+                this._selectedQueen = null;
+            }
+            this._autoSelect();
+        }
     }
 
     _onQueenViewClick(queen) {

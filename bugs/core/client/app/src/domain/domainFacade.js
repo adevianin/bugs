@@ -81,12 +81,12 @@ class DomainFacade {
         return this._worldService.world.getQueenOfColony(colonyId);
     }
 
-    isNestMine(nest) {
+    isEntityMy(entity) {
         let userData = this.getUserData();
-        return nest.ownerId == userData.id;
+        return entity.ownerId == userData.id;
     }
 
-    isColonyMine(colony) {
+    isColonyMy(colony) {
         let userData = this.getUserData();
         return colony.ownerId == userData.id;
     }

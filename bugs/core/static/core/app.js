@@ -95,12 +95,12 @@ class DomainFacade {
         return this._worldService.world.getQueenOfColony(colonyId);
     }
 
-    isNestMine(nest) {
+    isEntityMy(entity) {
         let userData = this.getUserData();
-        return nest.ownerId == userData.id;
+        return entity.ownerId == userData.id;
     }
 
-    isColonyMine(colony) {
+    isColonyMy(colony) {
         let userData = this.getUserData();
         return colony.ownerId == userData.id;
     }
@@ -2895,7 +2895,7 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     }
 
     _onColonyBorn(colony) {
-        let isMine = this.$domainFacade.isColonyMine(colony);
+        let isMine = this.$domainFacade.isColonyMy(colony);
         if (isMine) {
             this._colonies.push(colony);
             this._renderColony(colony);
@@ -4812,6 +4812,7 @@ class QueensListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1_
         this._render();
 
         this.$domainFacade.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
+        this.$domainFacade.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
     }
 
     get selectedQueen() {
@@ -4856,9 +4857,25 @@ class QueensListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1_
     }
 
     _onQueenFlewNuptialFlight(queen) {
-        this._queens.push(queen);
-        this._renderQueen(queen);
-        this._autoSelect();
+        let isMyQueen = this.$domainFacade.isEntityMy(queen);
+        if (isMyQueen) {
+            this._queens.push(queen);
+            this._renderQueen(queen);
+            this._autoSelect();
+        }
+    }
+
+    _onQueenFlewNuptialFlightBack(queen) {
+        let isMyQueen = this.$domainFacade.isEntityMy(queen);
+        if (isMyQueen) {
+            this._queenViews[queen.id].remove();
+            delete this._queenViews[queen.id];
+            this._queens = this._queens.filter( q => q.id != queen.id);
+            if (queen.id == this._selectedQueen.id) {
+                this._selectedQueen = null;
+            }
+            this._autoSelect();
+        }
     }
 
     _onQueenViewClick(queen) {
@@ -5914,7 +5931,7 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._nestContainer.x = this._entity.position.x;
         this._nestContainer.y = this._entity.position.y;
 
-        if (this.$domainFacade.isNestMine(this._entity)) {
+        if (this.$domainFacade.isEntityMy(this._entity)) {
             this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
         }
 
