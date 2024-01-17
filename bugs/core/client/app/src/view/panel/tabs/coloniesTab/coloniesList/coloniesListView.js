@@ -70,6 +70,7 @@ class ColoniesListView extends BaseHTMLView {
     _onColonyBorn(colony) {
         let isMine = this.$domainFacade.isColonyMine(colony);
         if (isMine) {
+            this._colonies.push(colony);
             this._renderColony(colony);
             this._autoSelect();
         }
