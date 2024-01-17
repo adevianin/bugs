@@ -1,5 +1,6 @@
 import { BaseAnt } from "./baseAnt";
 import { AntTypes } from "@domain/enum/antTypes";
+import { ACTION_TYPES } from "../action/actionTypes";
 
 class QueenAnt extends BaseAnt {
 
@@ -35,13 +36,36 @@ class QueenAnt extends BaseAnt {
         return this._genes;
     }
 
-    _getInNuptialFlight() {
-        this.isInNuptialFlight = true;
-        this._emitToEventBus('queenFlewNuptialFlight')
+    playAction(action) {
+        let promise = super.playAction(action)
+        if (promise) {
+            return promise
+        }
+        switch (action.type) {
+            case ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT:
+                return this._playFlyNuptialFlight(action)
+            case ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT_BACK:
+                return this._playFlyNuptialFlightBack(action)
+        }
+    }
+
+    flyNuptialFlight() {
+        this._antApi.flyNuptialFlight(this.id);
     }
 
     _playFlyNuptialFlight() {
-        return super._playFlyNuptialFlight().then(() => this._getInNuptialFlight());
+        return this._flyAwayAnimation().then(() => {
+            this.isInNuptialFlight = true;
+            this._emitToEventBus('queenFlewNuptialFlight');
+        });
+    }
+
+    _playFlyNuptialFlightBack(action) {
+        let landPos = action.landingPosition;
+        this.setPosition(landPos.x, landPos.y)
+        this.isInNuptialFlight = false;
+        this._emitToEventBus('queenFlewNuptialFlightBack');
+        return Promise.resolve();
     }
 }
 

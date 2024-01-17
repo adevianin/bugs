@@ -26,6 +26,10 @@ class QueenAntBody(AntBody):
     def is_fertilized(self):
         return self._is_fertilized
     
+    @is_fertilized.setter
+    def is_fertilized(self, value: bool):
+        self._is_fertilized = value
+    
     @property
     def is_in_nuptial_flight(self):
         return self._is_in_nuptial_flight
@@ -49,3 +53,8 @@ class QueenAntBody(AntBody):
         
         self._is_in_nuptial_flight = True
         self.events.emit('flew_nuptial_flight')
+
+    def fly_nuptial_flight_back(self, landing_position: Point):
+        self._position = landing_position
+        self._is_in_nuptial_flight = False
+        self.events.emit('flew_nuptial_flight_back', self._position)

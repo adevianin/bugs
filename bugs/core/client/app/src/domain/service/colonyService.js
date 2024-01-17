@@ -10,7 +10,7 @@ class ColonyService {
     playColonyAction(action) {
         switch(action.type) {
             case 'colony_born':
-                this._colonyService.giveBirthToColony(action.actionData.colony);
+                this.giveBirthToColony(action.actionData.colony);
                 break;
             case 'colony_operations_change':
                 let colony = this._world.findColonyById(action.actorId);
@@ -22,7 +22,7 @@ class ColonyService {
     }
 
     giveBirthToColony(colonyJson) {
-        let colony = this._worldFactory.buildColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
+        let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
         this._world.addColony(colony);
         this._mainEventBus.emit('colonyBorn', colony);
     }

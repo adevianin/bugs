@@ -100,6 +100,11 @@ class DomainFacade {
         return nest.ownerId == userData.id;
     }
 
+    isColonyMine(colony) {
+        let userData = this.getUserData();
+        return colony.ownerId == userData.id;
+    }
+
     getMyQueensInNuptialFlight() {
         let userData = this.getUserData();
         return this._worldService.getQueensInNuptialFlightFromUser(userData.id);
@@ -167,6 +172,7 @@ const ACTION_TYPES = {
     ANT_PICKED_UP_ITEM: 'ant_picked_up_item',
     ANT_DROPPED_PICKED_ITEM: 'ant_dropped_picked_item',
     ANT_FLEW_NUPTIAL_FLIGHT: 'ant_flew_nuptial_flight',
+    ANT_FLEW_NUPTIAL_FLIGHT_BACK: 'ant_flew_nuptial_flight_back',
     ENTITY_DIED: 'entity_died',
     ENTITY_BORN: 'entity_born',
     ENTITY_WALK: 'entity_walk',
@@ -311,14 +317,6 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         return !!this._pickedItemId;
     }
 
-    get canFlyNuptialFlight() {
-        return false;
-    }
-
-    flyNuptialFlight() {
-        this._antApi.flyNuptialFlight(this.id);
-    }
-
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {
@@ -335,8 +333,6 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
                 return this._playGotInNest(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
                 return this._playGotOutOfNest(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT:
-                return this._playFlyNuptialFlight(action)
         }
     }
 
@@ -381,7 +377,7 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
     //     this._isInNest = isInNest;
     // }
 
-    _playFlyNuptialFlight(action) {
+    _flyAwayAnimation() {
         let stepCount = 100;
         let stepNumber = 0;
         return new Promise((res) => {
@@ -440,6 +436,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _baseAnt__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseAnt */ "./bugs/core/client/app/src/domain/entity/ant/baseAnt.js");
 /* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+
 
 
 
@@ -477,13 +475,36 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
         return this._genes;
     }
 
-    _getInNuptialFlight() {
-        this.isInNuptialFlight = true;
-        this._emitToEventBus('queenFlewNuptialFlight')
+    playAction(action) {
+        let promise = super.playAction(action)
+        if (promise) {
+            return promise
+        }
+        switch (action.type) {
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT:
+                return this._playFlyNuptialFlight(action)
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT_BACK:
+                return this._playFlyNuptialFlightBack(action)
+        }
+    }
+
+    flyNuptialFlight() {
+        this._antApi.flyNuptialFlight(this.id);
     }
 
     _playFlyNuptialFlight() {
-        return super._playFlyNuptialFlight().then(() => this._getInNuptialFlight());
+        return this._flyAwayAnimation().then(() => {
+            this.isInNuptialFlight = true;
+            this._emitToEventBus('queenFlewNuptialFlight');
+        });
+    }
+
+    _playFlyNuptialFlightBack(action) {
+        let landPos = action.landingPosition;
+        this.setPosition(landPos.x, landPos.y)
+        this.isInNuptialFlight = false;
+        this._emitToEventBus('queenFlewNuptialFlightBack');
+        return Promise.resolve();
     }
 }
 
@@ -649,6 +670,8 @@ class Entity extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
                 return this._playEntityDied(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_1__.ACTION_TYPES.ENTITY_ROTATED:
                 return this._playEntityRotated(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_1__.ACTION_TYPES.ENTITY_COLONY_CHANGED:
+                return this._playEntityColonyChanged(action)
         }
 
         return null;
@@ -722,6 +745,11 @@ class Entity extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
                 res();
             }, 5000)
         });
+    }
+
+    _playEntityColonyChanged(action) {
+        this._fromColony = action.colonyId;
+        return Promise.resolve();
     }
 
 }
@@ -1492,7 +1520,7 @@ class ColonyService {
     playColonyAction(action) {
         switch(action.type) {
             case 'colony_born':
-                this._colonyService.giveBirthToColony(action.actionData.colony);
+                this.giveBirthToColony(action.actionData.colony);
                 break;
             case 'colony_operations_change':
                 let colony = this._world.findColonyById(action.actorId);
@@ -1504,7 +1532,7 @@ class ColonyService {
     }
 
     giveBirthToColony(colonyJson) {
-        let colony = this._worldFactory.buildColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
+        let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
         this._world.addColony(colony);
         this._mainEventBus.emit('colonyBorn', colony);
     }
@@ -1718,7 +1746,7 @@ class WorldService {
 
     getQueensInNuptialFlightFromUser(userId) {
         let allAnts = this._world.getAnts();
-        return allAnts.filter(ant => ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN && ant.isInNuptialFlight);
+        return allAnts.filter(ant => ant.ownerId == userId && ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN && ant.isInNuptialFlight);
     }
 
 }
@@ -2793,11 +2821,13 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
     constructor(el) {
         super(el);
+
+        this.$domainFacade.events.on('colonyBorn', this._onColonyBorn.bind(this));
+
         this._colonies = this.$domainFacade.findMyColonies();
-        this._selectColony(this._colonies[0]);
         
         this._renderColonies();
-        this._renderSelectedColony();
+        this._autoSelect();
     }
 
     get selectedColony() {
@@ -2807,7 +2837,39 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     selectColony(colonyId) {
         let colony = this._colonies.find(colony => colony.id == colonyId);
         this._selectColony(colony);
+    }
+
+    _autoSelect() {
+        if (!this.selectedColony && this._colonies.length > 0) {
+            this._selectColony(this._colonies[0]);
+        }
+    }
+
+    _renderColonies() {
+        this._clearColonyViews();
+        this._colonies.forEach(colony => this._renderColony(colony));
+    }
+
+    _renderColony(colony) {
+        let liEl = document.createElement('li');
+        let colonyView = new _colonyView__WEBPACK_IMPORTED_MODULE_2__.ColonyView(liEl, colony);
+        colonyView.events.addListener('click', () => this._onColonyViewClick(colony))
+        this._colonyViews[colony.id] = colonyView;
+        this._el.append(liEl);
+    }
+
+    _clearColonyViews() {
+        for (let colonyId in this._colonyViews) {
+            this._colonyViews[colonyId].remove();
+        }
+        this._colonyViews = {};
+        this._selectedColony = null;
+    }
+
+    _selectColony(colony) {
+        this._selectedColony = colony;
         this._renderSelectedColony();
+        this.events.emit('selectedColonyChanged');
     }
 
     _renderSelectedColony() {
@@ -2816,32 +2878,16 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         }
     }
 
-    _renderColonies() {
-        this._clearColonyViews();
-        this._colonies.forEach(colony => {
-            let liEl = document.createElement('li');
-            let colonyView = new _colonyView__WEBPACK_IMPORTED_MODULE_2__.ColonyView(liEl, colony);
-            colonyView.events.addListener('click', () => this._onColonyViewClick(colony))
-            this._colonyViews[colony.id] = colonyView;
-            this._el.append(liEl);
-        });
-    }
-
-    _clearColonyViews() {
-        for (let colonyId in this._colonyViews) {
-            this._colonyViews[colonyId].remove();
-        }
-        this._colonyViews = {};
-    }
-
-    _selectColony(colony) {
-        this._selectedColony = colony;
-        this.events.emit('selectedColonyChanged');
-    }
-
     _onColonyViewClick(clickedColony) {
         this._selectColony(clickedColony);
-        this._renderSelectedColony();
+    }
+
+    _onColonyBorn(colony) {
+        let isMine = this.$domainFacade.isColonyMine(colony);
+        if (isMine) {
+            this._renderColony(colony);
+            this._autoSelect();
+        }
     }
 }
 
@@ -2983,6 +3029,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _antTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antTmpl.html");
 /* harmony import */ var _view_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/base/nestSelector */ "./bugs/core/client/app/src/view/base/nestSelector/index.js");
+/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+
 
 
 
@@ -2998,7 +3046,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
 
         this._render();
 
-        this.nuptialFlightBtn.addEventListener('click', this._onNuptialFlightBtnClick.bind(this));
+        this._nuptialFlightActionBtn.addEventListener('click', this._onNuptialFlightBtnClick.bind(this));
     }
 
     _render() {
@@ -3012,8 +3060,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._nestSelector.nestId = this._ant.homeNestId;
         this._el.querySelector('[data-nest]').append(this._nestSelector.el);
 
-        this.nuptialFlightBtn = this._el.querySelector('[data-nuptial-flight]');
-        this.nuptialFlightBtn.classList.toggle('hidden', !this._ant.canFlyNuptialFlight);
+        this._renderActionBtns();
     }
 
     remove() {
@@ -3023,6 +3070,14 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
 
     _onNuptialFlightBtnClick() {
         this._ant.flyNuptialFlight();
+    }
+
+    _renderActionBtns() {
+        this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
+        this._flyAwayActionBtn = this._el.querySelector('[data-fly-away]');
+        
+        let canFlyNuptialFlight = this._ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__.AntTypes.QUEEN && this._ant.canFlyNuptialFlight;
+        this._nuptialFlightActionBtn.classList.toggle('hidden', !canFlyNuptialFlight);
     }
 
 }
@@ -8372,7 +8427,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<td data-type></td>\r\n<td data-attack></td>\r\n<td data-defence></td>\r\n<td data-role>\r\n    <select>\r\n    </select>\r\n</td>\r\n<td data-max-hp></td>\r\n<td data-nest></td>\r\n<td data-actions>\r\n    <button data-delete-ant>X</button>\r\n    <button data-nuptial-flight>шлюбний політ</button>\r\n</td>";
+var code = "<td data-type></td>\r\n<td data-attack></td>\r\n<td data-defence></td>\r\n<td data-role>\r\n    <select>\r\n    </select>\r\n</td>\r\n<td data-max-hp></td>\r\n<td data-nest></td>\r\n<td data-actions>\r\n    <button data-fly-away>X</button>\r\n    <button data-nuptial-flight>шлюбний політ</button>\r\n</td>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

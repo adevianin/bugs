@@ -89,7 +89,7 @@ def start():
     
     colony_service = ColonyService(operation_factory)
     player_service = PlayerService(colony_factory, ant_factory)
-    nuptial_flight_service = NuptialFlightService()
+    nuptial_flight_service = NuptialFlightService(colony_factory)
 
     stats_serializer = StatsSerializer()
     genes_serializer = GenesSerializer(stats_serializer)

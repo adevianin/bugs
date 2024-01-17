@@ -14,8 +14,8 @@ class ColonyFactory():
         self._event_bus = event_bus
         self._operation_factory = operation_factory
 
-    def build_new_ant_colony(self, id: int, owner_id: int, map: Map, colony_relations_table: ColonyRelationsTable) -> AntColony:
-        return self.build_ant_colony(id=id, owner_id=owner_id, map=map, operations=[], colony_relations_table=colony_relations_table, last_registered_entities_in_colony_area_ids=[])
+    def build_new_ant_colony(self, id: int, owner_id: int, map: Map, colony_relations_table: ColonyRelationsTable, queen_id: int) -> AntColony:
+        return self.build_ant_colony(id=id, owner_id=owner_id, map=map, operations=[], colony_relations_table=colony_relations_table, last_registered_entities_in_colony_area_ids=[], queen_id=queen_id)
 
     def build_ant_colony(self, id: int, owner_id: int, map: Map, operations: List[Operation], colony_relations_table: ColonyRelationsTable, last_registered_entities_in_colony_area_ids: List[int], queen_id: int) -> AntColony:
         relation_tester = self._build_relation_tester(colony_relations_table, id)

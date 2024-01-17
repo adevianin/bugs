@@ -55,6 +55,10 @@ class Entity(ABC):
     def position(self) -> Point:
         return self._body.position
     
+    @position.setter
+    def position(self, value):
+        self._body.position = value
+    
     @property
     def is_died(self):
         return self._body.is_died

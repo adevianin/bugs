@@ -56,14 +56,6 @@ class BaseAnt extends LiveEntity {
         return !!this._pickedItemId;
     }
 
-    get canFlyNuptialFlight() {
-        return false;
-    }
-
-    flyNuptialFlight() {
-        this._antApi.flyNuptialFlight(this.id);
-    }
-
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {
@@ -80,8 +72,6 @@ class BaseAnt extends LiveEntity {
                 return this._playGotInNest(action);
             case ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
                 return this._playGotOutOfNest(action);
-            case ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT:
-                return this._playFlyNuptialFlight(action)
         }
     }
 
@@ -126,7 +116,7 @@ class BaseAnt extends LiveEntity {
     //     this._isInNest = isInNest;
     // }
 
-    _playFlyNuptialFlight(action) {
+    _flyAwayAnimation() {
         let stepCount = 100;
         let stepNumber = 0;
         return new Promise((res) => {

@@ -20,6 +20,7 @@ from core.world.entities.action.item_was_dropped_action import ItemWasDroppedAct
 from core.world.entities.action.item_being_bringed_action import ItemBeingBringedAction
 from core.world.entities.action.colony_born_action import ColonyBornAction
 from core.world.entities.action.colony_operations_changed_action import ColonyOperationsChangedAction
+from core.world.entities.action.ant_flew_nuptial_flight_back_action import AntFlewNuptialFlightBackAction
 
 class ActionClientSerializer(iActionClientSerializer):
 
@@ -55,6 +56,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._default_action_serialize(action)
             case ActionTypes.ANT_FLEW_NUPTIAL_FLIGHT:
                 return self._default_action_serialize(action)
+            case ActionTypes.ANT_FLEW_NUPTIAL_FLIGHT_BACK:
+                return self._serialize_ant_flew_nuptial_flight_back(action)
             case ActionTypes.NEST_STORED_CALORIES_CHANGED:
                 return self._serialize_nest_stored_calories_changed(action)
             case ActionTypes.NEST_LARVAE_CHANGED:
@@ -98,7 +101,7 @@ class ActionClientSerializer(iActionClientSerializer):
     def _serialize_entity_colony_changed(self, action: EntityColonyChangedAction):
         json = self._serialize_common(action)
         json.update({
-            'actionData': { 'colony_id': action.colony_id }
+            'colonyId': action.colony_id
         })
 
         return json
@@ -142,6 +145,17 @@ class ActionClientSerializer(iActionClientSerializer):
 
         json.update({
             'actionData': { 'item_id': action.item_id }
+        })
+
+        return json
+    
+    def _serialize_ant_flew_nuptial_flight_back(self, action: AntFlewNuptialFlightBackAction):
+        json = self._serialize_common(action)
+
+        serialized_landing_position = self._util_serializer.serialize_point(action.landing_position)
+
+        json.update({
+            'landingPosition': serialized_landing_position
         })
 
         return json

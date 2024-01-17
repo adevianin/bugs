@@ -88,6 +88,8 @@ class Entity extends EventEmitter {
                 return this._playEntityDied(action);
             case ACTION_TYPES.ENTITY_ROTATED:
                 return this._playEntityRotated(action);
+            case ACTION_TYPES.ENTITY_COLONY_CHANGED:
+                return this._playEntityColonyChanged(action)
         }
 
         return null;
@@ -161,6 +163,11 @@ class Entity extends EventEmitter {
                 res();
             }, 5000)
         });
+    }
+
+    _playEntityColonyChanged(action) {
+        this._fromColony = action.colonyId;
+        return Promise.resolve();
     }
 
 }

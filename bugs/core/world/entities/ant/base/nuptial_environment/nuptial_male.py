@@ -5,7 +5,8 @@ class NuptialMale():
 
     @classmethod
     def build(cls, genes: Genes):
-        return NuptialMale(uuid.uuid4(), genes)
+        id = uuid.uuid4().hex
+        return NuptialMale(id, genes)
 
     def __init__(self, id: str, genes: Genes):
         self.id = id

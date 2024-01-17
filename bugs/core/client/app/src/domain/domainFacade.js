@@ -86,6 +86,11 @@ class DomainFacade {
         return nest.ownerId == userData.id;
     }
 
+    isColonyMine(colony) {
+        let userData = this.getUserData();
+        return colony.ownerId == userData.id;
+    }
+
     getMyQueensInNuptialFlight() {
         let userData = this.getUserData();
         return this._worldService.getQueensInNuptialFlightFromUser(userData.id);
