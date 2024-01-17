@@ -19,18 +19,22 @@ class QueensListView extends BaseHTMLView {
         return this._selectedQueen;
     }
 
+    _autoSelect() {
+        if (!this._selectedQueen && this._queens.length > 0) {
+            this._selectQueen(this._queens[0]);
+        }
+    }
+
     _selectQueen(queen) {
         this._selectedQueen = queen;
+        this._renderSelectedQueen();
         this.events.emit('selectedQueenChanged');
     }
 
     _render() {
         this._renderQueens();
 
-        if (this._queens.length > 0) {
-            this._selectQueen(this._queens[0]);
-            this._renderSelectedQueen();
-        }
+        this._autoSelect();
     }
 
     _renderQueens() {
@@ -55,15 +59,11 @@ class QueensListView extends BaseHTMLView {
     _onQueenFlewNuptialFlight(queen) {
         this._queens.push(queen);
         this._renderQueen(queen);
-        if (!this._selectedQueen) {
-            this._selectQueen(queen);
-            this._renderSelectedQueen();
-        }
+        this._autoSelect();
     }
 
     _onQueenViewClick(queen) {
         this._selectQueen(queen);
-        this._renderSelectedQueen();
     }
 
 }
