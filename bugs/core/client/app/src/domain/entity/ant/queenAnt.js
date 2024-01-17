@@ -15,6 +15,10 @@ class QueenAnt extends BaseAnt {
         this.isHidden = this.isInNest || this.isInNuptialFlight;
     }
 
+    set isFertilized(val) {
+        this._isFertilized = val;
+    }
+
     get isFertilized() {
         return this._isFertilized;
     }
@@ -46,6 +50,8 @@ class QueenAnt extends BaseAnt {
                 return this._playFlyNuptialFlight(action)
             case ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT_BACK:
                 return this._playFlyNuptialFlightBack(action)
+            case ACTION_TYPES.ANT_GOT_FERTILIZED:
+                return this._playGotFertilized(action)
         }
     }
 
@@ -65,6 +71,11 @@ class QueenAnt extends BaseAnt {
         this.setPosition(landPos.x, landPos.y)
         this.isInNuptialFlight = false;
         this._emitToEventBus('queenFlewNuptialFlightBack');
+        return Promise.resolve();
+    }
+
+    _playGotFertilized() {
+        this.isFertilized = true;
         return Promise.resolve();
     }
 }

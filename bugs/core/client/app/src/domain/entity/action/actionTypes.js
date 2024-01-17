@@ -3,6 +3,7 @@ const ACTION_TYPES = {
     ANT_DROPPED_PICKED_ITEM: 'ant_dropped_picked_item',
     ANT_FLEW_NUPTIAL_FLIGHT: 'ant_flew_nuptial_flight',
     ANT_FLEW_NUPTIAL_FLIGHT_BACK: 'ant_flew_nuptial_flight_back',
+    ANT_GOT_FERTILIZED: 'ant_got_fertilized',
     ENTITY_DIED: 'entity_died',
     ENTITY_BORN: 'entity_born',
     ENTITY_WALK: 'entity_walk',

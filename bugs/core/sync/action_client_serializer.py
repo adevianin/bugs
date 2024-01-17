@@ -58,6 +58,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._default_action_serialize(action)
             case ActionTypes.ANT_FLEW_NUPTIAL_FLIGHT_BACK:
                 return self._serialize_ant_flew_nuptial_flight_back(action)
+            case ActionTypes.ANT_GOT_FERTILIZED:
+                return self._default_action_serialize(action)
             case ActionTypes.NEST_STORED_CALORIES_CHANGED:
                 return self._serialize_nest_stored_calories_changed(action)
             case ActionTypes.NEST_LARVAE_CHANGED:

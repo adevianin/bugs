@@ -173,6 +173,7 @@ const ACTION_TYPES = {
     ANT_DROPPED_PICKED_ITEM: 'ant_dropped_picked_item',
     ANT_FLEW_NUPTIAL_FLIGHT: 'ant_flew_nuptial_flight',
     ANT_FLEW_NUPTIAL_FLIGHT_BACK: 'ant_flew_nuptial_flight_back',
+    ANT_GOT_FERTILIZED: 'ant_got_fertilized',
     ENTITY_DIED: 'entity_died',
     ENTITY_BORN: 'entity_born',
     ENTITY_WALK: 'entity_walk',
@@ -454,6 +455,10 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
         this.isHidden = this.isInNest || this.isInNuptialFlight;
     }
 
+    set isFertilized(val) {
+        this._isFertilized = val;
+    }
+
     get isFertilized() {
         return this._isFertilized;
     }
@@ -485,6 +490,8 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
                 return this._playFlyNuptialFlight(action)
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT_BACK:
                 return this._playFlyNuptialFlightBack(action)
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_GOT_FERTILIZED:
+                return this._playGotFertilized(action)
         }
     }
 
@@ -504,6 +511,11 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
         this.setPosition(landPos.x, landPos.y)
         this.isInNuptialFlight = false;
         this._emitToEventBus('queenFlewNuptialFlightBack');
+        return Promise.resolve();
+    }
+
+    _playGotFertilized() {
+        this.isFertilized = true;
         return Promise.resolve();
     }
 }

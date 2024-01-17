@@ -13,6 +13,7 @@ class ActionTypes(StrEnum):
     ANT_DROPPED_PICKED_ITEM = 'ant_dropped_picked_item'
     ANT_FLEW_NUPTIAL_FLIGHT = 'ant_flew_nuptial_flight'
     ANT_FLEW_NUPTIAL_FLIGHT_BACK = 'ant_flew_nuptial_flight_back'
+    ANT_GOT_FERTILIZED = 'ant_got_fertilized'
     NEST_STORED_CALORIES_CHANGED = 'nest_stored_calories_changed'
     NEST_LARVAE_CHANGED = 'nest_larvae_changed'
     NEST_BUILD_STATUS_CHANGED = 'nest_build_status_changed'

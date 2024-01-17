@@ -12,6 +12,7 @@ from core.world.entities.action.ant_flew_nuptial_flight_action import AntFlewNup
 from core.world.entities.action.ant_flew_nuptial_flight_back_action import AntFlewNuptialFlightBackAction
 from core.world.utils.point import Point
 from core.world.entities.ant.base.nuptial_environment.nuptial_male import NuptialMale
+from core.world.entities.action.ant_got_fertilized_action import AntGotFertilizedAction
 
 class QueenAnt(Ant):
 
@@ -44,6 +45,7 @@ class QueenAnt(Ant):
     def fertilize(self, male: NuptialMale):
         self._body.genes.cross(male.genes)
         self._body.is_fertilized = True
+        self._emit_action(AntGotFertilizedAction.build(self.id))
     
     def _on_flew_nuptial_flight(self):
         self._emit_action(AntFlewNuptialFlightAction.build(self.id))
