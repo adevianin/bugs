@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
 import nestsTabTmpl from './nestsTabTmpl.html';
 import { NestsListView } from "./nestsList";
 import { NestManagerView } from "./nestManager";

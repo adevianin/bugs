@@ -1,5 +1,5 @@
 import './styles.css';
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
 import { QueenView } from "./queenView";
 
 class QueensListView extends BaseHTMLView {

@@ -1,4 +1,4 @@
-import { BaseGraphicView } from "../../base/baseGraphicView";
+import { BaseGraphicView } from "../base/baseGraphicView";
 import * as PIXI from 'pixi.js';
 import { NewNestMarkerPlacerView } from "./markerPlacers/newNestMarkerPlacerView";
 import { DestroyNestMarkerPlacerView } from "./markerPlacers/destroyNestMarkerPlacerView";

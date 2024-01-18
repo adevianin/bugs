@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
 import operationsTabTmpl from './operationsTabTmpl.html';
 import { OperationsListView } from "./operationsList";
 import { OperationsCreatorView } from "./operationsCreator";

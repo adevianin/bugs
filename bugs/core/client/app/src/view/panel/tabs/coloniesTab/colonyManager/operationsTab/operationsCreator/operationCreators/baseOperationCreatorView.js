@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
 
 class BaseOperationCreatorView extends BaseHTMLView {
 

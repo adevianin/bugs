@@ -1,4 +1,4 @@
-import { AntTypes } from "../../domain/enum/antTypes";
+import { AntTypes } from "@domain/enum/antTypes";
 
 let antTypesLabels = {
     [AntTypes.WORKER]: 'Робітник',

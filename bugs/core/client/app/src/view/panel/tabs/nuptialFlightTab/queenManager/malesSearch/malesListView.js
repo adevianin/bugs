@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
 import { MaleItemView } from "./maleItemView";
 
 class MalesListView extends BaseHTMLView {

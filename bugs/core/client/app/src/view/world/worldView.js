@@ -4,7 +4,7 @@ import * as PIXI from 'pixi.js';
 import { AntView } from './antView';
 import { NestView } from './nestView';
 import { Camera } from './camera';
-import { BaseGraphicView } from '../base/baseGraphicView';
+import { BaseGraphicView } from './base/baseGraphicView';
 import { EntityTypes } from '../../domain/enum/entityTypes';
 import { MarkerManagerView } from './markerManager/markerManagerView';
 import { GroundBeetleView } from './groundBeetleView';

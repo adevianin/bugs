@@ -1,5 +1,5 @@
 import './style.css';
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
 import nuptialFlightTabTmpl from './nuptialFlightTab.html';
 import { QueensListView } from "./queensList"; 
 import { QueenManagerView } from "./queenManager";

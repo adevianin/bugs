@@ -1,8 +1,8 @@
 import { AppView } from './appView';
 import { Requester } from '@utils/requester';
 import { WorldSpritesheetManager } from './world/worldSpritesheetManager';
-import { BaseGraphicView } from './base/baseGraphicView';
-import { BaseHTMLView } from './base/baseHTMLView';
+import { BaseGraphicView } from './world/base/baseGraphicView';
+import { BaseHTMLView } from './panel/base/baseHTMLView';
 import { PopupManager } from './popups/popupManager';
 import { EventEmitter } from '@utils/eventEmitter.js';
 

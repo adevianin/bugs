@@ -1,7 +1,7 @@
 import './styles.css';
 
 import template from './template.html';
-import { BaseHTMLView } from '../base/baseHTMLView';
+import { BaseHTMLView } from '../panel/base/baseHTMLView';
 
 class AccountView extends BaseHTMLView {
 

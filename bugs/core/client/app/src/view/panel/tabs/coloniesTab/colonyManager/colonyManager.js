@@ -1,10 +1,10 @@
 import './styles.css';
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
 import colonyManagerTmpl from "./colonyManagerTmpl.html";
 import { NestsTabView } from './nestsTab';
 import { AntsTab } from './antsTab';
 import { OperationsTab } from './operationsTab';
-import { TabSwitcher } from '@view/base/tabSwitcher';
+import { TabSwitcher } from '@view/panel/base/tabSwitcher';
 
 class ColonyManager extends BaseHTMLView {
 

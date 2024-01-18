@@ -1,6 +1,6 @@
 import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import pillageNestOperationCreatorTmpl from './pillageNestOperationCreatorTmpl.html';
-import { NestSelectorView } from "@view/base/nestSelector";
+import { NestSelectorView } from "@view/panel/base/nestSelector";
 
 class PillageNestOperationCreatorView extends BaseOperationCreatorView {
 

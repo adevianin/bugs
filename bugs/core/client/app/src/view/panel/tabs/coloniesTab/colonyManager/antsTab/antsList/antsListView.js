@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
 import antsListTmpl from './antsListTmpl.html';
 import { AntView } from "./antView";
 import { EntityTypes } from "@domain/enum/entityTypes";

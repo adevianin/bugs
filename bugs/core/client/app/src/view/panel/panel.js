@@ -1,10 +1,10 @@
 import './styles.css'
 
 import panelTmpl from './panelTmpl.html';
-import { BaseHTMLView } from '../base/baseHTMLView';
+import { BaseHTMLView } from './base/baseHTMLView';
 import { UserTab } from './tabs/userTab/userTab';
 import { ColoniesTabView } from './tabs/coloniesTab';
-import { TabSwitcher } from '@view/base/tabSwitcher/tabSwitcher';
+import { TabSwitcher } from '@view/panel/base/tabSwitcher/tabSwitcher';
 import { NuptialFlightTabView } from './tabs/nuptialFlightTab';
 
 class Panel extends BaseHTMLView {
