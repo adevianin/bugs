@@ -19,15 +19,9 @@ class AntsListView extends BaseHTMLView {
 
     manageColony(colony) {
         this._colony = colony;
-        this._ants = this._getAntsFromColony();
+        this._ants = this.$domainFacade.getAntsFromColony(this._colony.id);
 
         this._renderAnts();
-    }
-
-    _getAntsFromColony() {
-        let ants = this.$domainFacade.getAntsFromColony(this._colony.id);
-        ants = ants.filter(ant => !(ant.antType == AntTypes.QUEEN && ant.isInNuptialFlight));
-        return ants;
     }
 
     _render() {
@@ -74,13 +68,23 @@ class AntsListView extends BaseHTMLView {
     }
 
     _onSomeoneFlewNuptialFlight(ant) {
-        if (this._isMyAnt(ant)) {
+        if (this._isAntInList(ant)) {
             this._removeAntFromList(ant.id);
         }
     }
 
     _isMyAnt(entity) {
         return entity.type == EntityTypes.ANT && entity.fromColony == this._colony.id;
+    }
+
+    _isAntInList(checkingAnt) {
+        for (let ant of this._ants) {
+            if (ant.id == checkingAnt.id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
 

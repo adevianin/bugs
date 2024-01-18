@@ -31,6 +31,7 @@ class QueenAnt(Ant):
         return self._body.can_fly_nuptial_flight
     
     def fly_nuptial_flight(self):
+        self.from_colony_id = None
         self._mind.free_mind()
         self._mind.toggle_auto_thought_generation(False)
         self._body.fly_nuptial_flight()

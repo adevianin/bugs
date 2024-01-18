@@ -3162,15 +3162,9 @@ class AntsListView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
 
     manageColony(colony) {
         this._colony = colony;
-        this._ants = this._getAntsFromColony();
+        this._ants = this.$domainFacade.getAntsFromColony(this._colony.id);
 
         this._renderAnts();
-    }
-
-    _getAntsFromColony() {
-        let ants = this.$domainFacade.getAntsFromColony(this._colony.id);
-        ants = ants.filter(ant => !(ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_4__.AntTypes.QUEEN && ant.isInNuptialFlight));
-        return ants;
     }
 
     _render() {
@@ -3217,13 +3211,23 @@ class AntsListView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
     }
 
     _onSomeoneFlewNuptialFlight(ant) {
-        if (this._isMyAnt(ant)) {
+        if (this._isAntInList(ant)) {
             this._removeAntFromList(ant.id);
         }
     }
 
     _isMyAnt(entity) {
         return entity.type == _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_3__.EntityTypes.ANT && entity.fromColony == this._colony.id;
+    }
+
+    _isAntInList(checkingAnt) {
+        for (let ant of this._ants) {
+            if (ant.id == checkingAnt.id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
 
