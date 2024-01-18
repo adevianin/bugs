@@ -15,8 +15,8 @@ class StatsClientSerializer():
             
     def _serialize_basic_stats(self, stats: BasicStats):
         return {
-            "max_hp": stats.max_hp,
-            "hp_regen_rate": stats.hp_regen_rate
+            "maxHp": stats.max_hp,
+            "hpRegenRate": stats.hp_regen_rate
         }
     
     def _serialize_live_stats(self, stats: LiveStats):

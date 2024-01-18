@@ -2,6 +2,7 @@ import './style.css';
 import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
 import queenManagerTmpl from './queenManagerTmpl.html';
 import { MalesSearchView } from './malesSearch';
+import { GenesView } from '@view/panel/base/genes';
 
 class QueenManagerView extends BaseHTMLView {
 
@@ -19,6 +20,7 @@ class QueenManagerView extends BaseHTMLView {
         this._buildingSite = null;
 
         this._malesSearch.reset();
+        this._queenGenesView.showGenes(this._queen.genes);
         this._renderQueen();
         this._renderBuildingSite();
     }
@@ -28,7 +30,8 @@ class QueenManagerView extends BaseHTMLView {
         this._malesSearch = new MalesSearchView(this._el.querySelector('[data-males-search]'));
         this._chooseNestPositionBtn = this._el.querySelector('[data-choose-nest-position]');
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
-        this._startBtn = this._el.querySelector('[ data-start]');
+        this._queenGenesView = new GenesView(this._el.querySelector('[data-queen-genes]'));
+        this._startBtn = this._el.querySelector('[data-start]');
     }
 
     _renderQueen() {
