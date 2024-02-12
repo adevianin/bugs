@@ -45,11 +45,11 @@ class AntClientSerializer(LiveEntityClientSerializer):
     
     def _serialize_queen(self, json: dict, ant: QueenAnt):
         json = self._serializer_common(json, ant)
-        genes = ant.body.genes
+        # genes = ant.body.genes
         json.update({
             'is_fertilized': ant.body.is_fertilized,
             'is_in_nuptial_flight': ant.body.is_in_nuptial_flight,
-            'genes': self._genes_client_serializer.serialize(genes)
+            'genes': {}
         })
 
         return json

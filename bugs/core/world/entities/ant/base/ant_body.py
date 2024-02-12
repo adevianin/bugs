@@ -11,6 +11,7 @@ from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.item.items.base.item import Item
 from core.world.utils.size import Size
 from core.world.entities.base.live_entity.live_stats import LiveStats
+from .genome.genome import Genome
 
 from typing import List, Callable
 
@@ -20,11 +21,13 @@ class AntBody(LiveBody):
 
     stats: LiveStats
 
-    def __init__(self, events: EventEmitter, stats: LiveStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, located_in_nest: Nest, picked_item: Item, world_interactor: WorldInteractor):
+    def __init__(self, events: EventEmitter, stats: LiveStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, located_in_nest: Nest, picked_item: Item, 
+                 world_interactor: WorldInteractor, genome: Genome):
         super().__init__(events, stats, memory, position, angle, hp, world_interactor)
         self.sayer = sayer
         self._located_inside_nest = located_in_nest
         self._picked_item = picked_item
+        self._genome = genome
 
     @property
     def located_in_nest_id(self):
@@ -45,6 +48,10 @@ class AntBody(LiveBody):
     @property
     def picked_item_id(self):
         return self._picked_item.id if self.is_item_picked else None
+    
+    @property
+    def genome(self) -> Genome:
+        return self._genome
     
     def get_in_nest(self, nest: Nest):
         self._located_inside_nest = nest

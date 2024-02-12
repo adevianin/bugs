@@ -1,21 +1,25 @@
-from core.world.entities.ant.base.genes import Genes
-from .stats_serializer import StatsSerializer
+from core.world.entities.ant.base.genome.genes.genes_types import GenesTypes
+from core.world.entities.ant.base.genome.genes.base_gene import BaseGene
+from core.world.entities.ant.base.genome.genes.base_chromosome.strength_gene import StrengthGene
 
 class GenesSerializer():
 
-    def __init__(self, stats_serializer: StatsSerializer):
-        self._stats_serializer = stats_serializer
-
-    def serialize(self, genes: Genes):
-        worker_stats_json = self._stats_serializer.serialize(genes.get_worker_stats())
-        warrior_stats_json = self._stats_serializer.serialize(genes.get_warrior_stats())
-        queen_stats_json = self._stats_serializer.serialize(genes.get_queen_stats())
-        
+    def serialize(self, gene: BaseGene):
+        match gene.type:
+            case GenesTypes.STRENGTH:
+                return self._serialize_strength_gene(gene)
+            case _:
+                raise Exception('unknown gene type')
+            
+    def _serialize_base_gene(self, gene: BaseGene):
         return {
-            "queen_food_required": genes.queen_food_required,
-            "warrior_food_required": genes.warrior_food_required,
-            "worker_food_required": genes.worker_food_required,
-            "worker_stats": worker_stats_json,
-            "warrior_stats": warrior_stats_json,
-            "queen_stats": queen_stats_json,
+            'type': gene.type,
+            'domination_lvl': gene.domination_lvl
         }
+            
+    def _serialize_strength_gene(self, gene: StrengthGene):
+        json = self._serialize_base_gene(gene)
+        json.update({
+            'strength': gene.strength
+        })
+        return json

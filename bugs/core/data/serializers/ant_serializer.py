@@ -4,14 +4,14 @@ from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.ant.base.ant_types import AntTypes
 from .thought_serializer import ThoughtSerializer
 from .stats_serializer import StatsSerializer
-from .genes_serializer import GenesSerializer
+from .genome_serializer import GenomeSerializer
 
 class AntSerializer(LiveEntitySerializer):
 
-    def __init__(self, stats_serializer: StatsSerializer, thought_serializer: ThoughtSerializer, genes_serializer: GenesSerializer):
+    def __init__(self, stats_serializer: StatsSerializer, thought_serializer: ThoughtSerializer, genome_serializer: GenomeSerializer):
         self._thought_serializer = thought_serializer
         self._stats_serializer = stats_serializer
-        self._genes_serializer = genes_serializer
+        self._genome_serializer = genome_serializer
 
     def serialize(self, ant: Ant):
         json = super().serialize(ant)
@@ -36,7 +36,6 @@ class AntSerializer(LiveEntitySerializer):
         json = self._serialize_common(json, ant)
 
         json.update({
-            "genes": self._genes_serializer.serialize(ant.body.genes),
             "is_fertilized": ant.body.is_fertilized,
             "is_in_nuptial_flight": ant.body.is_in_nuptial_flight
         })
@@ -56,7 +55,8 @@ class AntSerializer(LiveEntitySerializer):
             'is_auto_thought_generation': ant.mind.is_auto_thought_generation,
             'is_in_operation': ant.mind.is_in_opearetion,
             'located_in_nest_id': ant.located_in_nest_id,
-            'stats': self._stats_serializer.serialize(ant.body.stats)
+            'stats': self._stats_serializer.serialize(ant.body.stats),
+            'genome': self._genome_serializer.serialize(ant.body.genome)
         })
 
         return json

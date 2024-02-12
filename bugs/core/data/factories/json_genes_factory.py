@@ -1,16 +1,12 @@
-from core.world.entities.ant.base.genes import Genes
-from .json_stats_factory import JsonStatsFactory
+from core.world.entities.ant.base.genome.genes.base_gene import BaseGene
+from core.world.entities.ant.base.genome.genes.genes_types import GenesTypes
+from core.world.entities.ant.base.genome.genes.base_chromosome.strength_gene import StrengthGene
 
 class JsonGenesFactory():
 
-    def __init__(self, json_stats_factory: JsonStatsFactory):
-        self._json_stats_factory = json_stats_factory
-
-    def build_genes_from_json(self, genes_json: dict) -> Genes:
-        worker_stats = self._json_stats_factory.build_stats(genes_json['worker_stats'])
-        worker_food_required = genes_json['worker_food_required']
-        warrior_stats = self._json_stats_factory.build_stats(genes_json['warrior_stats'])
-        warrior_food_required = genes_json['warrior_food_required']
-        queen_stats = self._json_stats_factory.build_stats(genes_json['queen_stats'])
-        queen_food_required = genes_json['queen_food_required']
-        return Genes.build(worker_stats, worker_food_required, warrior_stats, warrior_food_required, queen_stats, queen_food_required)
+    def build_gene_from_json(self, gene_json: dict) -> BaseGene:
+        match gene_json['type']:
+            case GenesTypes.STRENGTH:
+                return StrengthGene.build(gene_json['domination_lvl'], gene_json['strength'])
+            case _:
+                raise Exception('unknown gene')

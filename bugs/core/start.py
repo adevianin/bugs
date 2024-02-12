@@ -16,6 +16,7 @@ from core.data.factories.json_stats_factory import JsonStatsFactory
 from core.data.factories.json_genes_factory import JsonGenesFactory
 from core.data.factories.json_larva_factory import JsonLarvaFactory
 from core.data.factories.json_nuptial_environment_factory import JsonNuptialEnvironmentFactory
+from core.data.factories.json_genome_factory import JsonGenomeFactory
 
 from core.data.serializers.larva_serializer import LarvaSerializer
 from core.data.serializers.nest_serializer import NestSerializer
@@ -33,6 +34,7 @@ from core.data.serializers.formation_serializer import FormationSerializer
 from core.data.serializers.stats_serializer import StatsSerializer
 from core.data.serializers.genes_serializer import GenesSerializer
 from core.data.serializers.nuptial_environment_serializer import NuptialEnvironmentSerializer
+from core.data.serializers.genome_serializer import GenomeSerializer
 
 from core.world.world_facade import WorldFacade
 from core.world.utils.event_emiter import EventEmitter
@@ -92,11 +94,12 @@ def start():
     nuptial_flight_service = NuptialFlightService(colony_factory)
 
     stats_serializer = StatsSerializer()
-    genes_serializer = GenesSerializer(stats_serializer)
+    genes_serializer = GenesSerializer()
+    genome_serializer = GenomeSerializer(genes_serializer)
     larva_serializer = LarvaSerializer(stats_serializer)
     nest_serializer = NestSerializer(larva_serializer)
     thought_serializer = ThoughtSerializer()
-    ant_serializer = AntSerializer(stats_serializer, thought_serializer, genes_serializer)
+    ant_serializer = AntSerializer(stats_serializer, thought_serializer, genome_serializer)
     formation_serializer = FormationSerializer()
     operation_serializer = OperationSerializer(formation_serializer)
     colony_serializer = ColonySerializer(operation_serializer)
@@ -105,16 +108,17 @@ def start():
     item_serializer = ItemSerializer()
     item_area_serializer = ItemAreaSerializer()
     item_source_serializer = ItemSourceSerializer()
-    nuptial_environment_serializer = NuptialEnvironmentSerializer(genes_serializer)
+    nuptial_environment_serializer = NuptialEnvironmentSerializer()
     world_serializer = WorldSerializer(nest_serializer, ant_serializer, item_serializer, item_area_serializer, item_source_serializer, colony_serializer, 
                                        colony_relations_table_serializer, ground_beetle_serializer, nuptial_environment_serializer)
 
     world_data_repository = WorldDataRepository()
     json_stats_factory = JsonStatsFactory()
-    json_genes_factory = JsonGenesFactory(json_stats_factory)
+    json_genes_factory = JsonGenesFactory()
+    json_genome_factory = JsonGenomeFactory(json_genes_factory)
     json_larva_factory = JsonLarvaFactory(json_stats_factory)
     json_nest_factory = JsonNestFactory(json_larva_factory, nest_factory)
-    json_ant_factory = JsonAntFactory(json_stats_factory, json_genes_factory, ant_factory)
+    json_ant_factory = JsonAntFactory(json_stats_factory, json_genome_factory, ant_factory)
     json_ground_beetle_factory = JsonGroundBeetleFactory(ground_beetle_factory)
     json_formation_factory = JsonFormationFactory(formation_factory)
     json_operation_factory = JsonOperationFactory(operation_factory, json_formation_factory)
@@ -124,7 +128,7 @@ def start():
     json_item_factory = JsonItemFactory(item_factory)
     json_item_source_factory = JsonItemSourceFactory(item_source_factory)
     json_item_area_factory = JsonItemAreaFactory(item_area_factory)
-    json_nuptial_environment = JsonNuptialEnvironmentFactory(json_genes_factory)
+    json_nuptial_environment = JsonNuptialEnvironmentFactory()
     world_repository = WorldRepository(world_data_repository, json_nest_factory, json_ant_factory, json_colony_factory, json_thought_factory, json_map_factory, world_factory, 
                                        json_ground_beetle_factory, json_item_factory, json_item_source_factory, json_item_area_factory, json_nuptial_environment, world_serializer)
 

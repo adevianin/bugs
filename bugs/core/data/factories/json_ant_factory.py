@@ -3,14 +3,14 @@ from core.world.utils.point import Point
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.base.entity_collection import EntityCollection
 from .json_stats_factory import JsonStatsFactory
-from .json_genes_factory import JsonGenesFactory
+from .json_genome_factory import JsonGenomeFactory
 
 class JsonAntFactory():
 
-    def __init__(self, json_stats_factory: JsonStatsFactory, json_genes_factory: JsonGenesFactory, ant_factory: AntFactory):
+    def __init__(self, json_stats_factory: JsonStatsFactory, json_genome_factory: JsonGenomeFactory, ant_factory: AntFactory):
         self._ant_factory = ant_factory
         self._json_stats_factory = json_stats_factory
-        self._json_genes_factory = json_genes_factory
+        self._json_genome_factory = json_genome_factory
 
     def build_ant_from_json(self, ant_json: dict, entities_collection: EntityCollection):
         type = AntTypes(ant_json['ant_type'])
@@ -36,7 +36,6 @@ class JsonAntFactory():
     def _build_queen_ant(self, ant_json: dict, entities_collection: EntityCollection):
         ant_props = self._parse_common_ant_props(ant_json, entities_collection)
         ant_props.update({
-            "genes": self._json_genes_factory.build_genes_from_json(ant_json['genes']),
             "is_fertilized": ant_json['is_fertilized'],
             "is_in_nuptial_flight": ant_json['is_in_nuptial_flight']
         })
@@ -57,5 +56,6 @@ class JsonAntFactory():
             "is_auto_thought_generation": ant_json['is_auto_thought_generation'],
             "is_in_operation": ant_json['is_in_operation'],
             "memory_data": ant_json['memory'],
-            "hp": ant_json['hp']
+            "hp": ant_json['hp'],
+            "genome": self._json_genome_factory.build_genome_from_json(ant_json['genome'])
         }

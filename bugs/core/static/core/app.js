@@ -2484,88 +2484,6 @@ class BaseHTMLView {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/base/genes/genesView.js":
-/*!*********************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genes/genesView.js ***!
-  \*********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "GenesView": () => (/* binding */ GenesView)
-/* harmony export */ });
-/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/panel/base/genes/styles.css");
-/* harmony import */ var _baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
-/* harmony import */ var _genesTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./genesTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genes/genesTmpl.html");
-/* harmony import */ var _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../labels/antTypesLabels */ "./bugs/core/client/app/src/view/panel/base/labels/antTypesLabels.js");
-/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
-
-
-
-
-
-
-class GenesView extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
-
-    constructor(el) {
-        super(el);
-
-        this._render();
-    }
-
-    showGenes(genes) {
-        this._genes = genes;
-
-        this._renderGenes();
-    }
-
-    _render() {
-        this._el.innerHTML = _genesTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
-    }
-
-    _renderGenes() {
-        this._renderGenesRow(this._el.querySelector('[data-queen-row]'), this._genes.queenStats, this._genes.queenFoodRequired, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_4__.AntTypes.QUEEN);
-        this._renderGenesRow(this._el.querySelector('[data-warrior-row]'), this._genes.warriorStats, this._genes.warriorFoodRequired, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_4__.AntTypes.WARRIOR);
-        this._renderGenesRow(this._el.querySelector('[data-worker-row]'), this._genes.workerStats, this._genes.workerFoodRequired, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_4__.AntTypes.WORKER);
-    }
-
-    _renderGenesRow(rowEl, stats, reuqiredFood, antType) {
-        rowEl.querySelector('[data-type]').innerHTML = _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels[antType];
-        rowEl.querySelector('[data-attack]').innerHTML = stats.attack;
-        rowEl.querySelector('[data-defence]').innerHTML = stats.defence;
-        rowEl.querySelector('[data-dist-per-calorie]').innerHTML = stats.distancePerCalorie;
-        rowEl.querySelector('[data-dist-per-step]').innerHTML = stats.distancePerStep;
-        rowEl.querySelector('[data-hp-regen-rate]').innerHTML = stats.hpRegenRate;
-        rowEl.querySelector('[data-max-calories]').innerHTML = stats.maxCalories;
-        rowEl.querySelector('[data-max-hp]').innerHTML = stats.maxHp;
-        rowEl.querySelector('[data-sight-distance]').innerHTML = stats.sightDistance;
-        rowEl.querySelector('[data-required-food]').innerHTML = reuqiredFood;
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genes/index.js":
-/*!*****************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genes/index.js ***!
-  \*****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "GenesView": () => (/* reexport safe */ _genesView__WEBPACK_IMPORTED_MODULE_0__.GenesView)
-/* harmony export */ });
-/* harmony import */ var _genesView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./genesView */ "./bugs/core/client/app/src/view/panel/base/genes/genesView.js");
-
-
-
-
-/***/ }),
-
 /***/ "./bugs/core/client/app/src/view/panel/base/labels/antTypesLabels.js":
 /*!***************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/base/labels/antTypesLabels.js ***!
@@ -4507,10 +4425,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
 /* harmony import */ var _maleItemTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./maleItemTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/maleItemTmpl.html");
-/* harmony import */ var _view_panel_base_genes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/genes */ "./bugs/core/client/app/src/view/panel/base/genes/index.js");
 
 
-
+// import { GenesView } from "@view/panel/base/genes";
 
 class MaleItemView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
@@ -4533,8 +4450,8 @@ class MaleItemView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
         this._el.innerHTML = _maleItemTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
         this._el.querySelector('[data-name]').innerHTML = this._male.id;
         this._maleItemEl = this._el.querySelector('[data-male-item]');
-        this._genesView = new _view_panel_base_genes__WEBPACK_IMPORTED_MODULE_2__.GenesView(this._el.querySelector('[data-genes]'));
-        this._genesView.showGenes(this._male.genes);
+        // this._genesView = new GenesView(this._el.querySelector('[data-genes]'));
+        // this._genesView.showGenes(this._male.genes);
     }
 
     _onClick() {
@@ -4688,12 +4605,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
 /* harmony import */ var _queenManagerTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./queenManagerTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/queenManagerTmpl.html");
 /* harmony import */ var _malesSearch__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./malesSearch */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/index.js");
-/* harmony import */ var _view_panel_base_genes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/panel/base/genes */ "./bugs/core/client/app/src/view/panel/base/genes/index.js");
 
 
 
 
-
+// import { GenesView } from '@view/panel/base/genes';
 
 class QueenManagerView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
 
@@ -4711,7 +4627,7 @@ class QueenManagerView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_M
         this._buildingSite = null;
 
         this._malesSearch.reset();
-        this._queenGenesView.showGenes(this._queen.genes);
+        // this._queenGenesView.showGenes(this._queen.genes);
         this._renderQueen();
         this._renderBuildingSite();
     }
@@ -4721,7 +4637,7 @@ class QueenManagerView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_M
         this._malesSearch = new _malesSearch__WEBPACK_IMPORTED_MODULE_3__.MalesSearchView(this._el.querySelector('[data-males-search]'));
         this._chooseNestPositionBtn = this._el.querySelector('[data-choose-nest-position]');
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
-        this._queenGenesView = new _view_panel_base_genes__WEBPACK_IMPORTED_MODULE_4__.GenesView(this._el.querySelector('[data-queen-genes]'));
+        // this._queenGenesView = new GenesView(this._el.querySelector('[data-queen-genes]'));
         this._startBtn = this._el.querySelector('[data-start]');
     }
 
@@ -6550,33 +6466,6 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, ".hidden {\r\n    display: none !important\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n    overflow: hidden;\r\n}\r\n\r\n.game-container {\r\n    height: 100%;\r\n    display: flex;\r\n    flex-direction: column;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/appStyles.css"],"names":[],"mappings":"AAAA;IACI;AACJ;;AAEA;IACI,SAAS;IACT,UAAU;IACV,gBAAgB;AACpB;;AAEA;IACI,YAAY;IACZ,aAAa;IACb,sBAAsB;AAC1B","sourcesContent":[".hidden {\r\n    display: none !important\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n    overflow: hidden;\r\n}\r\n\r\n.game-container {\r\n    height: 100%;\r\n    display: flex;\r\n    flex-direction: column;\r\n}"],"sourceRoot":""}]);
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/base/genes/styles.css":
-/*!*********************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/base/genes/styles.css ***!
-  \*********************************************************************************************************/
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-// Imports
-
-
-var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-// Module
-___CSS_LOADER_EXPORT___.push([module.id, ".genes-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.genes-table td {\r\n    border: solid 1px;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/base/genes/styles.css"],"names":[],"mappings":"AAAA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".genes-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.genes-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -8512,24 +8401,6 @@ var code = "<div class=\"account-tab\" data-login-tab>\r\n    <span class=\"acco
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/base/genes/genesTmpl.html":
-/*!***********************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genes/genesTmpl.html ***!
-  \***********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<table class=\"genes-table\">\r\n    <tr>\r\n        <td>тип мурахи</td>\r\n        <td>атака</td>\r\n        <td>захист</td>\r\n        <td>відстань за калорію</td>\r\n        <td>швидкість</td>\r\n        <td>швидкість відновлення</td>\r\n        <td>максимум калорій</td>\r\n        <td>максимум HP</td>\r\n        <td>зір</td>\r\n        <td>їжі на вигодовування</td>\r\n    </tr>\r\n    <tr data-queen-row>\r\n        <td data-type></td>\r\n        <td data-attack></td>\r\n        <td data-defence></td>\r\n        <td data-dist-per-calorie></td>\r\n        <td data-dist-per-step></td>\r\n        <td data-hp-regen-rate></td>\r\n        <td data-max-calories></td>\r\n        <td data-max-hp></td>\r\n        <td data-sight-distance></td>\r\n        <td data-required-food></td>\r\n    </tr>\r\n    <tr data-worker-row>\r\n        <td data-type></td>\r\n        <td data-attack></td>\r\n        <td data-defence></td>\r\n        <td data-dist-per-calorie></td>\r\n        <td data-dist-per-step></td>\r\n        <td data-hp-regen-rate></td>\r\n        <td data-max-calories></td>\r\n        <td data-max-hp></td>\r\n        <td data-sight-distance></td>\r\n        <td data-required-food></td>\r\n    </tr>\r\n    <tr data-warrior-row>\r\n        <td data-type></td>\r\n        <td data-attack></td>\r\n        <td data-defence></td>\r\n        <td data-dist-per-calorie></td>\r\n        <td data-dist-per-step></td>\r\n        <td data-hp-regen-rate></td>\r\n        <td data-max-calories></td>\r\n        <td data-max-hp></td>\r\n        <td data-sight-distance></td>\r\n        <td data-required-food></td>\r\n    </tr>\r\n</table>";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
 /***/ "./bugs/core/client/app/src/view/panel/panelTmpl.html":
 /*!************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/panelTmpl.html ***!
@@ -9406,61 +9277,6 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
        /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_appStyles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_appStyles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_appStyles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genes/styles.css":
-/*!*******************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genes/styles.css ***!
-  \*******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/base/genes/styles.css");
-
-      
-      
-      
-      
-      
-      
-      
-      
-      
-
-var options = {};
-
-options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
-options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
-
-      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
-    
-options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
-options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
-
-var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
-
-
-
-
-       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),

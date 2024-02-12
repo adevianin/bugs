@@ -9,19 +9,16 @@ from ..base.ant_body import AntBody
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.larva import Larva
 from core.world.entities.ant.base.genes import Genes
+from core.world.entities.ant.base.genome.genome import Genome
 
 class QueenAntBody(AntBody):
 
-    def __init__(self, events: EventEmitter, stats: LiveStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, located_in_nest: Nest, picked_item: Item, world_interactor: WorldInteractor, genes: Genes, is_fertilized: bool, is_in_nuptial_flight: bool):
-        super().__init__(events, stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor)
-        self._genes = genes
+    def __init__(self, events: EventEmitter, stats: LiveStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, located_in_nest: Nest, picked_item: Item, 
+                 world_interactor: WorldInteractor, genome: Genome, is_fertilized: bool, is_in_nuptial_flight: bool):
+        super().__init__(events, stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor, genome)
         self._is_fertilized = is_fertilized
         self._is_in_nuptial_flight = is_in_nuptial_flight
 
-    @property
-    def genes(self) -> Genes:
-        return self._genes
-    
     @property
     def is_fertilized(self):
         return self._is_fertilized

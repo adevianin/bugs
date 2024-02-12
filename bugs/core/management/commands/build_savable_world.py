@@ -44,6 +44,22 @@ class Command(BaseCommand):
                     "distance_per_calorie":2,
                     "attack":10,
                     "defence":1
+                },
+                "genome": {
+                    "maternal": {
+                        "base": [{"type": "strength", "strength": 10, "domination_lvl": 1 }],
+                        "development": [],
+                        "adaptation": [],
+                        "building": [],
+                        "combat": []
+                    },
+                    "paternal": {
+                        "base": [{"type": "strength", "strength": 15, "domination_lvl": 3 }],
+                        "development": [],
+                        "adaptation": [],
+                        "building": [],
+                        "combat": []
+                    }
                 }
             },
             {
@@ -78,44 +94,60 @@ class Command(BaseCommand):
                     "attack":10,
                     "defence":1
                 },
-                "genes": {
-                    "worker_food_required": 100,
-                    "warrior_food_required": 500,
-                    "queen_food_required": 1000,
-                    "worker_stats": {
-                        "type":"live_stats",
-                        "max_hp": 300,
-                        "hp_regen_rate":10,
-                        "distance_per_step":32,
-                        "sight_distance":200,
-                        "max_calories":1000,
-                        "distance_per_calorie":2,
-                        "attack":10,
-                        "defence":1
+                "genome": {
+                    "maternal": {
+                        "base": [{"type": "strength", "strength": 10, "domination_lvl": 1 }],
+                        "development": [],
+                        "adaptation": [],
+                        "building": [],
+                        "combat": []
                     },
-                    "warrior_stats": {
-                        "type":"live_stats",
-                        "max_hp": 500,
-                        "hp_regen_rate":200,
-                        "distance_per_step":32,
-                        "sight_distance":200,
-                        "max_calories":1000,
-                        "distance_per_calorie":2,
-                        "attack":20,
-                        "defence":5
-                    },
-                    "queen_stats": {
-                        "type":"live_stats",
-                        "max_hp": 300,
-                        "hp_regen_rate":200,
-                        "distance_per_step":32,
-                        "sight_distance":200,
-                        "max_calories":1000,
-                        "distance_per_calorie":2,
-                        "attack":20,
-                        "defence":5
-                    },
+                    "paternal": {
+                        "base": [{"type": "strength", "strength": 15, "domination_lvl": 3 }],
+                        "development": [],
+                        "adaptation": [],
+                        "building": [],
+                        "combat": []
+                    }
                 },
+                # "genes": {
+                #     "worker_food_required": 100,
+                #     "warrior_food_required": 500,
+                #     "queen_food_required": 1000,
+                #     "worker_stats": {
+                #         "type":"live_stats",
+                #         "max_hp": 300,
+                #         "hp_regen_rate":10,
+                #         "distance_per_step":32,
+                #         "sight_distance":200,
+                #         "max_calories":1000,
+                #         "distance_per_calorie":2,
+                #         "attack":10,
+                #         "defence":1
+                #     },
+                #     "warrior_stats": {
+                #         "type":"live_stats",
+                #         "max_hp": 500,
+                #         "hp_regen_rate":200,
+                #         "distance_per_step":32,
+                #         "sight_distance":200,
+                #         "max_calories":1000,
+                #         "distance_per_calorie":2,
+                #         "attack":20,
+                #         "defence":5
+                #     },
+                #     "queen_stats": {
+                #         "type":"live_stats",
+                #         "max_hp": 300,
+                #         "hp_regen_rate":200,
+                #         "distance_per_step":32,
+                #         "sight_distance":200,
+                #         "max_calories":1000,
+                #         "distance_per_calorie":2,
+                #         "attack":20,
+                #         "defence":5
+                #     },
+                # },
                 "is_fertilized": True,
                 "is_in_nuptial_flight": False
             },
@@ -152,6 +184,22 @@ class Command(BaseCommand):
                     "distance_per_calorie":2,
                     "attack":20,
                     "defence":10
+                },
+                "genome": {
+                    "maternal": {
+                        "base": [{"type": "strength", "strength": 10, "domination_lvl": 1 }],
+                        "development": [],
+                        "adaptation": [],
+                        "building": [],
+                        "combat": []
+                    },
+                    "paternal": {
+                        "base": [{"type": "strength", "strength": 15, "domination_lvl": 3 }],
+                        "development": [],
+                        "adaptation": [],
+                        "building": [],
+                        "combat": []
+                    }
                 }
             }
         ],
@@ -188,68 +236,38 @@ class Command(BaseCommand):
                 "angle": 0,
                 "stored_calories":1000,
                 "larvae":[
-                    {
-                        "ant_type":"queen",
-                        "ate_calories":800,
-                        "needed_calories":900,
-                        "stats": {
-                            "type":"live_stats",
-                            "max_hp": 300,
-                            "hp_regen_rate":10,
-                            "distance_per_step":32,
-                            "sight_distance":200,
-                            "max_calories":1000,
-                            "distance_per_calorie":2,
-                            "attack":10,
-                            "defence":1
-                        },
-                    },
-                    {
-                        "ant_type":"queen",
-                        "ate_calories":850,
-                        "needed_calories":900,
-                        "stats": {
-                            "type":"live_stats",
-                            "max_hp": 300,
-                            "hp_regen_rate":10,
-                            "distance_per_step":32,
-                            "sight_distance":200,
-                            "max_calories":1000,
-                            "distance_per_calorie":2,
-                            "attack":10,
-                            "defence":1
-                        },
-                    },
                     # {
-                    #     "ant_type":"worker",
-                    #     "ate_calories":50,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    #     "ant_type":"queen",
+                    #     "ate_calories":800,
+                    #     "needed_calories":900,
+                    #     "stats": {
+                    #         "type":"live_stats",
+                    #         "max_hp": 300,
+                    #         "hp_regen_rate":10,
+                    #         "distance_per_step":32,
+                    #         "sight_distance":200,
+                    #         "max_calories":1000,
+                    #         "distance_per_calorie":2,
+                    #         "attack":10,
+                    #         "defence":1
+                    #     },
                     # },
                     # {
-                    #     "ant_type":"worker",
-                    #     "ate_calories":50,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
+                    #     "ant_type":"queen",
+                    #     "ate_calories":850,
+                    #     "needed_calories":900,
+                    #     "stats": {
+                    #         "type":"live_stats",
+                    #         "max_hp": 300,
+                    #         "hp_regen_rate":10,
+                    #         "distance_per_step":32,
+                    #         "sight_distance":200,
+                    #         "max_calories":1000,
+                    #         "distance_per_calorie":2,
+                    #         "attack":10,
+                    #         "defence":1
+                    #     },
                     # },
-                    # {
-                    #     "ant_type":"warrior",
-                    #     "ate_calories":480,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
-                    # },
-                    # {
-                    #     "ant_type":"warrior",
-                    #     "ate_calories":480,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
-                    # },
-                    # {
-                    #     "ant_type":"warrior",
-                    #     "ate_calories":480,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
-                    # },
-                    # {
-                    #     "ant_type":"warrior",
-                    #     "ate_calories":480,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf000"
-                    # }
                 ],
                 "larva_places_count":3,
                 "area":300,
