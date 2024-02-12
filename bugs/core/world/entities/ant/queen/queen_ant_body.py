@@ -35,6 +35,10 @@ class QueenAntBody(AntBody):
     def can_fly_nuptial_flight(self):
         return not self.is_fertilized
     
+    @property
+    def male_chromosomes_set(self):
+        return self._male_chromosomes_set
+    
     def produce_larva(self, ant_type: AntTypes) -> Larva:
         match(ant_type):
             case AntTypes.WORKER:

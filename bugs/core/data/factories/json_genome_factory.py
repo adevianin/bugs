@@ -10,12 +10,12 @@ class JsonGenomeFactory():
         self._json_genes_factory = json_genes_factory
 
     def build_genome_from_json(self, genome_json: dict) -> Genome:
-        maternal_chromosomes_set = self.build_chromosomes_set(genome_json['maternal'])
-        paternal_chromosomes_set = self.build_chromosomes_set(genome_json['paternal'])
+        maternal_chromosomes_set = self.build_chromosomes_set_from_json(genome_json['maternal'])
+        paternal_chromosomes_set = self.build_chromosomes_set_from_json(genome_json['paternal'])
         
         return Genome.build(maternal_chromosomes_set, paternal_chromosomes_set)
 
-    def build_chromosomes_set(self, chromosomes_set_json: dict) -> ChromosomesSet:
+    def build_chromosomes_set_from_json(self, chromosomes_set_json: dict) -> ChromosomesSet:
         genes_json = chromosomes_set_json[ChromosomesTypes.BASE]
         genes = [self._json_genes_factory.build_gene_from_json(gene_json) for gene_json in genes_json]
         base_chromosome = Chromosome.build(genes)

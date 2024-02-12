@@ -11,13 +11,13 @@ class GenomeSerializer():
     def __init__(self, genes_serializer: GenesSerializer):
         self._genes_serializer = genes_serializer
 
-    def serialize(self, genome: Genome):
+    def serialize_genome(self, genome: Genome):
         return {
-            'maternal': self._serialize_chromosomes_set(genome.maternal_chromosomes_set),
-            'paternal': self._serialize_chromosomes_set(genome.paternal_chromosomes_set)
+            'maternal': self.serialize_chromosomes_set(genome.maternal_chromosomes_set),
+            'paternal': self.serialize_chromosomes_set(genome.paternal_chromosomes_set)
         }
 
-    def _serialize_chromosomes_set(self, chromosomes_set: ChromosomesSet):
+    def serialize_chromosomes_set(self, chromosomes_set: ChromosomesSet):
         base_chromosome = chromosomes_set.base_chromosome
         base_chromosome_json = [self._genes_serializer.serialize(gene) for gene in base_chromosome.genes]
         

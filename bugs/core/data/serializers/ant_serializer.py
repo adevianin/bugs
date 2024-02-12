@@ -35,8 +35,10 @@ class AntSerializer(LiveEntitySerializer):
     def _serialize_queen(self, json: dict, ant: QueenAnt):
         json = self._serialize_common(json, ant)
 
+        male_chromosomes_set_json = self._genome_serializer.serialize_chromosomes_set(ant.body.male_chromosomes_set) if ant.body.male_chromosomes_set else None
+
         json.update({
-            "is_fertilized": ant.body.is_fertilized,
+            "male_chromosomes_set": male_chromosomes_set_json,
             "is_in_nuptial_flight": ant.body.is_in_nuptial_flight
         })
 
@@ -56,7 +58,7 @@ class AntSerializer(LiveEntitySerializer):
             'is_in_operation': ant.mind.is_in_opearetion,
             'located_in_nest_id': ant.located_in_nest_id,
             'stats': self._stats_serializer.serialize(ant.body.stats),
-            'genome': self._genome_serializer.serialize(ant.body.genome)
+            'genome': self._genome_serializer.serialize_genome(ant.body.genome)
         })
 
         return json
