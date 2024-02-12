@@ -19,6 +19,7 @@ from .queen.queen_ant import QueenAnt
 from core.world.entities.ant.base.genes import Genes
 from core.world.entities.base.stats_library import StatsLibrary
 from core.world.entities.ant.base.genome.genome import Genome
+from core.world.entities.ant.base.genome.chromosomes_set import ChromosomesSet
 
 class AntFactory():
 
@@ -78,11 +79,11 @@ class AntFactory():
         return ant
     
     def build_queen_ant(self, id: int, from_colony_id: int, owner_id: int, stats: LiveStats, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
-                        is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genome: Genome, is_fertilized: bool, is_in_nuptial_flight: bool):
+                        is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genome: Genome, male_chromosomes_set: ChromosomesSet, is_in_nuptial_flight: bool):
         sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
-        body = QueenAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor, genome, is_fertilized, is_in_nuptial_flight)
+        body = QueenAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor, genome, male_chromosomes_set, is_in_nuptial_flight)
         mind = QueenAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
         ant = QueenAnt(self._event_bus, EventEmitter(), id, from_colony_id, owner_id, body, mind)
 

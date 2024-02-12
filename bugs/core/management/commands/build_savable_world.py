@@ -103,12 +103,19 @@ class Command(BaseCommand):
                         "combat": []
                     },
                     "paternal": {
-                        "base": [{"type": "strength", "strength": 15, "domination_lvl": 3 }],
+                        "base": [{"type": "strength", "strength": 15, "domination_lvl": 2 }],
                         "development": [],
                         "adaptation": [],
                         "building": [],
                         "combat": []
                     }
+                },
+                "male_chromosomes_set": {
+                    "base": [{"type": "strength", "strength": 17, "domination_lvl": 3 }],
+                    "development": [],
+                    "adaptation": [],
+                    "building": [],
+                    "combat": []
                 },
                 # "genes": {
                 #     "worker_food_required": 100,
@@ -148,7 +155,6 @@ class Command(BaseCommand):
                 #         "defence":5
                 #     },
                 # },
-                "is_fertilized": True,
                 "is_in_nuptial_flight": False
             },
             {

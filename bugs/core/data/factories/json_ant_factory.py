@@ -35,8 +35,9 @@ class JsonAntFactory():
     
     def _build_queen_ant(self, ant_json: dict, entities_collection: EntityCollection):
         ant_props = self._parse_common_ant_props(ant_json, entities_collection)
+        male_chromosomes_set = self._json_genome_factory.build_chromosomes_set(ant_json['male_chromosomes_set']) if ant_json['male_chromosomes_set'] else None
         ant_props.update({
-            "is_fertilized": ant_json['is_fertilized'],
+            "male_chromosomes_set": male_chromosomes_set,
             "is_in_nuptial_flight": ant_json['is_in_nuptial_flight']
         })
         

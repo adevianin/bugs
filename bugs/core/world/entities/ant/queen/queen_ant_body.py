@@ -8,24 +8,24 @@ from core.world.utils.point import Point
 from ..base.ant_body import AntBody
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.larva import Larva
-from core.world.entities.ant.base.genes import Genes
 from core.world.entities.ant.base.genome.genome import Genome
+from core.world.entities.ant.base.genome.chromosomes_set import ChromosomesSet
 
 class QueenAntBody(AntBody):
 
     def __init__(self, events: EventEmitter, stats: LiveStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, located_in_nest: Nest, picked_item: Item, 
-                 world_interactor: WorldInteractor, genome: Genome, is_fertilized: bool, is_in_nuptial_flight: bool):
+                 world_interactor: WorldInteractor, genome: Genome, male_chromosomes_set: ChromosomesSet, is_in_nuptial_flight: bool):
         super().__init__(events, stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor, genome)
-        self._is_fertilized = is_fertilized
+        self._male_chromosomes_set = male_chromosomes_set
         self._is_in_nuptial_flight = is_in_nuptial_flight
 
     @property
     def is_fertilized(self):
-        return self._is_fertilized
+        return self._male_chromosomes_set is not None
     
-    @is_fertilized.setter
-    def is_fertilized(self, value: bool):
-        self._is_fertilized = value
+    # @is_fertilized.setter
+    # def is_fertilized(self, value: bool):
+    #     self._is_fertilized = value
     
     @property
     def is_in_nuptial_flight(self):
@@ -33,8 +33,8 @@ class QueenAntBody(AntBody):
     
     @property
     def can_fly_nuptial_flight(self):
-        return not self._is_fertilized
-
+        return not self.is_fertilized
+    
     def produce_larva(self, ant_type: AntTypes) -> Larva:
         match(ant_type):
             case AntTypes.WORKER:
