@@ -11,7 +11,7 @@ from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.item.items.base.item import Item
 from core.world.utils.size import Size
 from core.world.entities.base.live_entity.live_stats import LiveStats
-from .genome.genome import Genome
+from .genetic.genome import Genome
 
 from typing import List, Callable
 

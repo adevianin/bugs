@@ -1,4 +1,4 @@
-from .genes.base_gene import BaseGene
+from ..genes.base_gene import BaseGene
 from typing import List
 
 class Chromosome():

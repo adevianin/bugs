@@ -1,7 +1,7 @@
-from core.world.entities.ant.base.genome.genome import Genome
-from core.world.entities.ant.base.genome.chromosomes_types import ChromosomesTypes
-from core.world.entities.ant.base.genome.chromosome import Chromosome
-from core.world.entities.ant.base.genome.chromosomes_set import ChromosomesSet
+from core.world.entities.ant.base.genetic.genome import Genome
+from core.world.entities.ant.base.genetic.chromosome.chromosomes_types import ChromosomesTypes
+from core.world.entities.ant.base.genetic.chromosome.chromosome import Chromosome
+from core.world.entities.ant.base.genetic.chromosome.chromosomes_set import ChromosomesSet
 from .genes_serializer import GenesSerializer
 
 from typing import Dict

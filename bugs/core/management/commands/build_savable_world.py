@@ -97,7 +97,9 @@ class Command(BaseCommand):
                 "genome": {
                     "maternal": {
                         "base": [{"type": "strength", "strength": 10, "domination_lvl": 1 }],
-                        "development": [],
+                        "development": [
+                            {"type": "strength_development", "multiplier": 0.8, "ant_type": "worker", "domination_lvl": 1}
+                        ],
                         "adaptation": [],
                         "building": [],
                         "combat": []

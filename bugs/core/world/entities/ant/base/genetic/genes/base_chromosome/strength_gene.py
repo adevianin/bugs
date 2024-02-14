@@ -1,5 +1,5 @@
 from core.world.entities.base.live_entity.live_stats import LiveStats
-from core.world.entities.ant.base.genome.genes.genes_types import GenesTypes
+from core.world.entities.ant.base.genetic.genes.genes_types import GenesTypes
 from ..base_gene import BaseGene
 
 class StrengthGene(BaseGene):

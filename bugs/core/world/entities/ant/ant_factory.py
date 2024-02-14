@@ -18,8 +18,8 @@ from .queen.queen_ant_mind import QueenAntMind
 from .queen.queen_ant import QueenAnt
 from core.world.entities.ant.base.genes import Genes
 from core.world.entities.base.stats_library import StatsLibrary
-from core.world.entities.ant.base.genome.genome import Genome
-from core.world.entities.ant.base.genome.chromosomes_set import ChromosomesSet
+from core.world.entities.ant.base.genetic.genome import Genome
+from core.world.entities.ant.base.genetic.chromosome.chromosomes_set import ChromosomesSet
 
 class AntFactory():
 

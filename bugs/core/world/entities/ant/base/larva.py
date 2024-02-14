@@ -1,21 +1,21 @@
 from core.world.entities.ant.base.ant_types import AntTypes
-from core.world.entities.base.live_entity.live_stats import LiveStats
+from core.world.entities.ant.base.genetic.genome import Genome
 
 class Larva():
 
     @classmethod
-    def build_new(cls, ant_type: AntTypes, needed_calories: int, stats: LiveStats):
-        return Larva(ant_type, 0, needed_calories, stats)
+    def build_new(cls, ant_type: AntTypes, genome: Genome):
+        return Larva(ant_type, 0, genome)
     
     @classmethod
-    def build(cls, ant_type: AntTypes, ate_calories: int, needed_calories: int, stats: LiveStats):
-        return Larva(ant_type, ate_calories, needed_calories, stats)
-
-    def __init__(self, ant_type: AntTypes, ate_calories: int, needed_calories: int, stats: LiveStats):
+    def build(cls, ant_type: AntTypes, ate_calories: int, genome: Genome):
+        return Larva(ant_type, ate_calories, genome)
+    
+    def __init__(self, ant_type: AntTypes, ate_calories: int, genome: Genome):
         self._ant_type = ant_type
         self._ate_calories = ate_calories
-        self._needed_calories = needed_calories
-        self._stats = stats
+        self._required_food = self._calc_required_food()
+        self._genome = genome
 
     @property
     def ant_type(self):
@@ -30,16 +30,19 @@ class Larva():
         return self._ate_calories
     
     @property
-    def needed_calories(self):
-        return self._needed_calories
+    def required_food(self):
+        return self._required_food
     
     @property
-    def stats(self) -> LiveStats:
-        return self._stats
+    def genome(self) -> Genome:
+        return self._genome
 
     @property
     def progress(self):
-        return (100 / self._needed_calories) * self._ate_calories
+        return (100 / self._required_food) * self._ate_calories
 
     def feed(self, calories_count: int):
         self._ate_calories += calories_count
+
+    def _calc_required_food(self):
+        return 500

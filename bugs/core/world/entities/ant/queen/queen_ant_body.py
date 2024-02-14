@@ -8,8 +8,8 @@ from core.world.utils.point import Point
 from ..base.ant_body import AntBody
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.larva import Larva
-from core.world.entities.ant.base.genome.genome import Genome
-from core.world.entities.ant.base.genome.chromosomes_set import ChromosomesSet
+from core.world.entities.ant.base.genetic.genome import Genome
+from core.world.entities.ant.base.genetic.chromosome.chromosomes_set import ChromosomesSet
 
 class QueenAntBody(AntBody):
 
@@ -40,13 +40,9 @@ class QueenAntBody(AntBody):
         return self._male_chromosomes_set
     
     def produce_larva(self, ant_type: AntTypes) -> Larva:
-        match(ant_type):
-            case AntTypes.WORKER:
-                return Larva.build_new(ant_type, self._genes.worker_food_required, self._genes.get_worker_stats())
-            case AntTypes.WARRIOR:
-                return Larva.build_new(ant_type, self._genes.warrior_food_required, self._genes.get_warrior_stats())
-            case AntTypes.QUEEN:
-                return Larva.build_new(ant_type, self._genes.queen_food_required, self._genes.get_queen_stats())
+        maternal_chromosome_set = self._genome.meiosis()
+        genome = Genome.build_new(maternal_chromosome_set, self._male_chromosomes_set)
+        return Larva.build_new(ant_type, genome)
     
     def fly_nuptial_flight(self):
         if self.is_in_nest:
