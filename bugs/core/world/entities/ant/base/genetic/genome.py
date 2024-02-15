@@ -1,6 +1,9 @@
 from .chromosome.chromosomes_set import ChromosomesSet
-from .genes.genes_types import GenesTypes
+from .phenotype import Phenotype
+from .genes.base_gene import BaseGene
+from core.world.entities.ant.base.ant_types import AntTypes
 
+from typing import List
 import random
 
 class Genome():
@@ -28,3 +31,19 @@ class Genome():
         building_chromosome = random.choice([self._maternal_chromosomes_set.building_chromosome, self._paternal_chromosomes_set.building_chromosome])
         combat_chromosome = random.choice([self._maternal_chromosomes_set.combat_chromosome, self._paternal_chromosomes_set.combat_chromosome])
         return ChromosomesSet.build(base_chromosome, development_chromosome, adaptation_chromosome, building_chromosome, combat_chromosome)
+    
+    def generate_phenotype(self, ant_type: AntTypes) -> Phenotype:
+        phenotype = Phenotype.build_empty(ant_type)
+        genes: List[BaseGene] = []
+        genes += self._maternal_chromosomes_set.base_chromosome.merge_genes(self._paternal_chromosomes_set.base_chromosome)
+        genes += self._maternal_chromosomes_set.development_chromosome.merge_genes(self._paternal_chromosomes_set.development_chromosome)
+        genes += self._maternal_chromosomes_set.adaptation_chromosome.merge_genes(self._paternal_chromosomes_set.adaptation_chromosome)
+        genes += self._maternal_chromosomes_set.building_chromosome.merge_genes(self._paternal_chromosomes_set.building_chromosome)
+        genes += self._maternal_chromosomes_set.combat_chromosome.merge_genes(self._paternal_chromosomes_set.combat_chromosome)
+
+        for gene in genes:
+            gene.affect(phenotype)
+
+        return phenotype
+
+

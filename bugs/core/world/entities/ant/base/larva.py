@@ -14,8 +14,9 @@ class Larva():
     def __init__(self, ant_type: AntTypes, ate_calories: int, genome: Genome):
         self._ant_type = ant_type
         self._ate_calories = ate_calories
-        self._required_food = self._calc_required_food()
         self._genome = genome
+        self._phenotype = self._genome.generate_phenotype(self._ant_type)
+        self._required_food = self._calc_required_food()
 
     @property
     def ant_type(self):

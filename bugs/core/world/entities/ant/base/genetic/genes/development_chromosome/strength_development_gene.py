@@ -1,7 +1,7 @@
-from core.world.entities.base.live_entity.live_stats import LiveStats
 from core.world.entities.ant.base.genetic.genes.genes_types import GenesTypes
 from ..base_gene import BaseGene
 from core.world.entities.ant.base.ant_types import AntTypes
+from core.world.entities.ant.base.genetic.phenotype import Phenotype
 
 class StrengthDevelopmentGene(BaseGene):
 
@@ -22,5 +22,5 @@ class StrengthDevelopmentGene(BaseGene):
     def ant_type(self) -> AntTypes:
         return self._ant_type
     
-    def affect_stats(self, stats: LiveStats):
-        stats.attack *= self._multiplier
+    def affect(self, stats: Phenotype):
+        stats.strength *= self._multiplier

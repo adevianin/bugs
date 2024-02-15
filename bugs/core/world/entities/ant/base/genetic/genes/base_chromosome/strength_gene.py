@@ -1,6 +1,7 @@
-from core.world.entities.base.live_entity.live_stats import LiveStats
 from core.world.entities.ant.base.genetic.genes.genes_types import GenesTypes
 from ..base_gene import BaseGene
+from core.world.entities.ant.base.genetic.phenotype import Phenotype
+import math 
 
 class StrengthGene(BaseGene):
 
@@ -12,9 +13,18 @@ class StrengthGene(BaseGene):
         super().__init__(GenesTypes.STRENGTH, domination_lvl)
         self._strength = strength
 
-    def affect_stats(self, stats: LiveStats):
-        stats.attack = self._strength
-
     @property
     def strength(self):
         return self._strength
+    
+    def affect(self, phenotype: Phenotype):
+        phenotype.strength = self._strength
+
+    def merge(self, another_gene: 'StrengthGene') -> BaseGene:
+        dominating_gene = super().merge(another_gene)
+        if dominating_gene is not None:
+            return dominating_gene
+        
+        strength = math.ceil((self.strength + another_gene.strength) / 2)
+        return StrengthGene.build(self.domination_lvl, strength)
+        

@@ -1,6 +1,6 @@
 from .genes_types import GenesTypes
 from abc import ABC, abstractmethod, abstractclassmethod
-from core.world.entities.base.live_entity.live_stats import LiveStats
+from ..phenotype import Phenotype
 
 class BaseGene(ABC):
 
@@ -21,8 +21,13 @@ class BaseGene(ABC):
         return self._domination_lvl
 
     @abstractmethod
-    def affect_stats(self, stats: LiveStats):
+    def affect(self, phenotype: Phenotype):
         pass
 
-    
-
+    def merge(self, another_gene: 'BaseGene') -> 'BaseGene':
+        if another_gene.domination_lvl > self.domination_lvl:
+            return another_gene
+        elif self.domination_lvl > another_gene.domination_lvl:
+            return self
+        else:
+            return None

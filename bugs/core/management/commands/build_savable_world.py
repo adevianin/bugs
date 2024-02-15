@@ -96,7 +96,7 @@ class Command(BaseCommand):
                 },
                 "genome": {
                     "maternal": {
-                        "base": [{"type": "strength", "strength": 10, "domination_lvl": 1 }],
+                        "base": [{"type": "strength", "strength": 10, "domination_lvl": 1 }, {"type": "strength_development", "multiplier": 0.8, "ant_type": "worker", "domination_lvl": 1}],
                         "development": [
                             {"type": "strength_development", "multiplier": 0.8, "ant_type": "worker", "domination_lvl": 1}
                         ],
@@ -105,7 +105,7 @@ class Command(BaseCommand):
                         "combat": []
                     },
                     "paternal": {
-                        "base": [{"type": "strength", "strength": 15, "domination_lvl": 2 }],
+                        "base": [{"type": "strength", "strength": 15, "domination_lvl": 1 }],
                         "development": [],
                         "adaptation": [],
                         "building": [],
@@ -113,7 +113,7 @@ class Command(BaseCommand):
                     }
                 },
                 "male_chromosomes_set": {
-                    "base": [{"type": "strength", "strength": 17, "domination_lvl": 3 }],
+                    "base": [{"type": "strength", "strength": 20, "domination_lvl": 1 }],
                     "development": [],
                     "adaptation": [],
                     "building": [],
