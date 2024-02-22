@@ -1,6 +1,6 @@
 from .chromosome.chromosomes_set import ChromosomesSet
 from .phenotype import Phenotype
-from .genes.base_gene import BaseGene
+from .genes.base.base_gene import BaseGene
 from core.world.entities.ant.base.ant_types import AntTypes
 
 from typing import List
@@ -40,6 +40,7 @@ class Genome():
         genes += self._maternal_chromosomes_set.adaptation_chromosome.merge_genes(self._paternal_chromosomes_set.adaptation_chromosome)
         genes += self._maternal_chromosomes_set.building_chromosome.merge_genes(self._paternal_chromosomes_set.building_chromosome)
         genes += self._maternal_chromosomes_set.combat_chromosome.merge_genes(self._paternal_chromosomes_set.combat_chromosome)
+        genes += self._maternal_chromosomes_set.adjusting_chromosome.merge_genes(self._paternal_chromosomes_set.adjusting_chromosome)
 
         for gene in genes:
             gene.affect(phenotype)

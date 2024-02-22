@@ -24,8 +24,7 @@ class StatsClientSerializer():
         json.update({
             "distancePerStep": stats.distance_per_step,
             "sightDistance": stats.sight_distance,
-            "maxCalories": stats.max_calories,
-            "distancePerCalorie": stats.distance_per_calorie,
+            "distancePerCalorie": 0, #not used
             "attack": stats.attack,
             "defence": stats.defence
         })

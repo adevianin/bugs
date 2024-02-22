@@ -36,4 +36,8 @@ class JsonGenomeFactory():
         genes = [self._json_genes_factory.build_gene_from_json(gene_json) for gene_json in genes_json]
         combat_chromosome = Chromosome.build(genes)
 
-        return ChromosomesSet.build(base_chromosome, development_chromosome, adaptation_chromosome, building_chromosome, combat_chromosome)
+        genes_json = chromosomes_set_json[ChromosomesTypes.ADJUSTING]
+        genes = [self._json_genes_factory.build_gene_from_json(gene_json) for gene_json in genes_json]
+        adjusting_chromosome = Chromosome.build(genes)
+
+        return ChromosomesSet.build(base_chromosome, development_chromosome, adaptation_chromosome, building_chromosome, combat_chromosome, adjusting_chromosome)

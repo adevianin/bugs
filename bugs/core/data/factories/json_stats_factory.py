@@ -20,11 +20,9 @@ class JsonStatsFactory():
         hp_regen_rate = stats_json['hp_regen_rate']
         distance_per_step = stats_json['distance_per_step']
         sight_distance = stats_json['sight_distance']
-        max_calories = stats_json['max_calories']
-        distance_per_calorie = stats_json['distance_per_calorie']
         attack = stats_json['attack']
         defence = stats_json['defence']
-        return LiveStats.build(max_hp, hp_regen_rate, distance_per_step, sight_distance, max_calories, distance_per_calorie, attack, defence)
+        return LiveStats.build(max_hp, hp_regen_rate, distance_per_step, sight_distance, attack, defence)
     
     def _build_basic_stats(self, stats_json: dict):
         max_hp = stats_json['max_hp']

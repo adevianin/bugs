@@ -1,5 +1,5 @@
-from ..genes.base_gene import BaseGene
-from ..genes.genes_types import GenesTypes
+from ..genes.base.base_gene import BaseGene
+from ..genes.base.genes_types import GenesTypes
 from typing import List, Dict
 
 class Chromosome():

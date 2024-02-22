@@ -20,6 +20,7 @@ from core.world.entities.ant.base.genes import Genes
 from core.world.entities.base.stats_library import StatsLibrary
 from core.world.entities.ant.base.genetic.genome import Genome
 from core.world.entities.ant.base.genetic.chromosome.chromosomes_set import ChromosomesSet
+from core.world.entities.ant.base.ant_stats import AntStats
 
 class AntFactory():
 
@@ -56,33 +57,36 @@ class AntFactory():
                                     memory_data=None, is_auto_thought_generation=True, picked_item=None, is_in_operation=False, genes=genes, is_fertilized=False, 
                                     is_in_nuptial_flight=False, genome={})
 
-    def build_warrior_ant(self, id: int, from_colony_id: int, owner_id: int, stats: LiveStats, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
+    def build_warrior_ant(self, id: int, from_colony_id: int, owner_id: int, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
                           is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genome: Genome):
         sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
+        stats = AntStats.build(AntTypes.WARRIOR, genome)
         body = WarriorAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor, genome)
         mind = WarrirorAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
         ant = WarriorAnt(self._event_bus, EventEmitter(), id, from_colony_id, owner_id, body, mind)
 
         return ant
     
-    def build_worker_ant(self, id: int, from_colony_id: int, owner_id: int, stats: LiveStats, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
+    def build_worker_ant(self, id: int, from_colony_id: int, owner_id: int, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
                          is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genome: Genome):
         sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
+        stats = AntStats.build(AntTypes.WORKER, genome)
         body = WorkerAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor, genome)
         mind = WorkerAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
         ant = WorkerAnt(self._event_bus, EventEmitter(), id, from_colony_id, owner_id, body, mind)
 
         return ant
     
-    def build_queen_ant(self, id: int, from_colony_id: int, owner_id: int, stats: LiveStats, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
+    def build_queen_ant(self, id: int, from_colony_id: int, owner_id: int, position: Point, angle: int, hp: int, nest: Nest, located_in_nest: Nest, memory_data: dict, 
                         is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genome: Genome, male_chromosomes_set: ChromosomesSet, is_in_nuptial_flight: bool):
         sayer = EventEmitter()
         world_interactor = WorldInteractor()
         memory = Memory(memory_data)
+        stats = AntStats.build(AntTypes.QUEEN, genome)
         body = QueenAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor, genome, male_chromosomes_set, is_in_nuptial_flight)
         mind = QueenAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
         ant = QueenAnt(self._event_bus, EventEmitter(), id, from_colony_id, owner_id, body, mind)

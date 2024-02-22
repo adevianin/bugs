@@ -6,14 +6,12 @@ class Genes():
     def cross_live_stats(cls, stats1: LiveStats, stats2: LiveStats) -> LiveStats:
         attack = (stats1.attack + stats2.attack) / 2
         defence = (stats1.defence + stats2.defence) / 2
-        distance_per_calorie = (stats1.distance_per_calorie + stats2.distance_per_calorie) / 2
-        max_calories = (stats1.max_calories + stats2.max_calories) / 2
         sight_distance = (stats1.sight_distance + stats2.sight_distance) / 2
         distance_per_step = (stats1.distance_per_step + stats2.distance_per_step) / 2
         max_hp = (stats1.max_hp + stats2.max_hp) / 2
         hp_regen_rate = (stats1.hp_regen_rate + stats2.hp_regen_rate) / 2
 
-        return LiveStats.build(max_hp, hp_regen_rate, distance_per_step, sight_distance, max_calories, distance_per_calorie, attack, defence)
+        return LiveStats.build(max_hp, hp_regen_rate, distance_per_step, sight_distance, attack, defence)
 
     @classmethod
     def build(cls, worker_stats: LiveStats, worker_food_required: int, warrior_stats: LiveStats, warrior_food_required: int, queen_stats: LiveStats, queen_food_required: int):

@@ -25,7 +25,7 @@ class LiveBody(Body):
         self.memory = memory
         self._max_calories = 1000
         self._calories = self._max_calories
-        self._distance_per_calorie = 2
+        # self._distance_per_calorie = 2
         self._can_eat_calories_per_step = 20
         self._user_speed = stats.distance_per_step / STEP_TIME
         self._world_interactor = world_interactor
@@ -50,8 +50,8 @@ class LiveBody(Body):
         if (passed_dist == 0):
             return True
 
-        investing_calories = round(passed_dist / self._distance_per_calorie)
-        self._consume_calories(investing_calories)
+        # investing_calories = round(passed_dist / self._distance_per_calorie)
+        # self._consume_calories(investing_calories)
         self.position = new_position
 
         self.events.emit('walk', new_position)

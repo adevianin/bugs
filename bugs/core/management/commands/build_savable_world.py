@@ -34,31 +34,50 @@ class Command(BaseCommand):
                 "memory": {},
                 "is_auto_thought_generation": True,
                 "is_in_operation": False,
-                "stats": {
-                    "type":"live_stats",
-                    "max_hp":100,
-                    "hp_regen_rate":10,
-                    "distance_per_step":32,
-                    "sight_distance":200,
-                    "max_calories":1000,
-                    "distance_per_calorie":2,
-                    "attack":10,
-                    "defence":1
-                },
                 "genome": {
                     "maternal": {
-                        "base": [{"type": "strength", "strength": 10, "domination_lvl": 1 }],
-                        "development": [],
+                        "base": [
+                            {"type": "base_strength", "domination_code": "A", "strength": 10},
+                            {"type": "base_defense", "domination_code": "C", "defense": 5},
+                            {"type": "base_max_hp", "domination_code": "B", "max_hp": 200},
+                            {"type": "base_hp_regen_rate", "domination_code": "B", "hp_regen_rate": 10},
+                            {"type": "base_speed", "domination_code": "D", "speed": 32},
+                            {"type": "base_sight_distance", "domination_code": "D", "sight_distance": 200}
+                        ],
+                        "development": [
+                            {"type": "development_queen_caste", "domination_code": "A", "strength": 1.5, "defense": 1, "max_hp": 1, "hp_regen_rate": 0.9, "speed": 0.7},
+                            {"type": "development_worker_caste", "domination_code": "B", "strength": 1, "defense": 1.5, "max_hp": 1.5, "hp_regen_rate": 1, "speed": 1},
+                            {"type": "development_warrior_caste", "domination_code": "C", "strength": 1.6, "defense": 2, "max_hp": 2, "hp_regen_rate": 1.5, "speed": 1.3},
+                        ],
                         "adaptation": [],
                         "building": [],
-                        "combat": []
+                        "combat": [],
+                        "adjusting": [
+                            {"type": "adjusting_appetite", "domination_code": "E"},
+                            {"type": "adjusting_development_appetite", "domination_code": "E"}
+                        ]
                     },
                     "paternal": {
-                        "base": [{"type": "strength", "strength": 15, "domination_lvl": 3 }],
-                        "development": [],
+                        "base": [
+                            {"type": "base_strength", "domination_code": "E", "strength": 9},
+                            {"type": "base_defense", "domination_code": "C", "defense": 7},
+                            {"type": "base_max_hp", "domination_code": "C", "max_hp": 150},
+                            {"type": "base_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
+                            {"type": "base_speed", "domination_code": "D", "speed": 32},
+                            {"type": "base_sight_distance", "domination_code": "A", "sight_distance": 250}
+                        ],
+                        "development": [
+                            {"type": "development_queen_caste", "domination_code": "E", "strength": 1.8, "defense": 1, "max_hp": 1, "hp_regen_rate": 0.9, "speed": 0.7},
+                            {"type": "development_worker_caste", "domination_code": "E", "strength": 1, "defense": 1.5, "max_hp": 1.5, "hp_regen_rate": 1, "speed": 1},
+                            {"type": "development_warrior_caste", "domination_code": "E", "strength": 1.6, "defense": 2, "max_hp": 2, "hp_regen_rate": 1.5, "speed": 1.3}
+                        ],
                         "adaptation": [],
                         "building": [],
-                        "combat": []
+                        "combat": [],
+                        "adjusting": [
+                            {"type": "adjusting_appetite", "domination_code": "E"},
+                            {"type": "adjusting_development_appetite", "domination_code": "E"}
+                        ]
                     }
                 }
             },
@@ -83,80 +102,71 @@ class Command(BaseCommand):
                 "memory": {},
                 "is_auto_thought_generation": True,
                 "is_in_operation": False,
-                "stats": {
-                    "type":"live_stats",
-                    "max_hp": 300,
-                    "hp_regen_rate":10,
-                    "distance_per_step":32,
-                    "sight_distance":200,
-                    "max_calories":1000,
-                    "distance_per_calorie":2,
-                    "attack":10,
-                    "defence":1
-                },
                 "genome": {
                     "maternal": {
-                        "base": [{"type": "strength", "strength": 10, "domination_lvl": 1 }, {"type": "strength_development", "multiplier": 0.8, "ant_type": "worker", "domination_lvl": 1}],
+                        "base": [
+                            {"type": "base_strength", "domination_code": "A", "strength": 10},
+                            {"type": "base_defense", "domination_code": "C", "defense": 5},
+                            {"type": "base_max_hp", "domination_code": "B", "max_hp": 200},
+                            {"type": "base_hp_regen_rate", "domination_code": "B", "hp_regen_rate": 10},
+                            {"type": "base_speed", "domination_code": "D", "speed": 32},
+                            {"type": "base_sight_distance", "domination_code": "D", "sight_distance": 200}
+                        ],
                         "development": [
-                            {"type": "strength_development", "multiplier": 0.8, "ant_type": "worker", "domination_lvl": 1}
+                            {"type": "development_queen_caste", "domination_code": "A", "strength": 1.5, "defense": 1, "max_hp": 1, "hp_regen_rate": 0.9, "speed": 0.7},
+                            {"type": "development_worker_caste", "domination_code": "B", "strength": 1, "defense": 1.5, "max_hp": 1.5, "hp_regen_rate": 1, "speed": 1},
+                            {"type": "development_warrior_caste", "domination_code": "C", "strength": 1.6, "defense": 2, "max_hp": 2, "hp_regen_rate": 1.5, "speed": 1.3},
                         ],
                         "adaptation": [],
                         "building": [],
-                        "combat": []
+                        "combat": [],
+                        "adjusting": [
+                            {"type": "adjusting_appetite", "domination_code": "E"},
+                            {"type": "adjusting_development_appetite", "domination_code": "E"}
+                        ]
                     },
                     "paternal": {
-                        "base": [{"type": "strength", "strength": 15, "domination_lvl": 1 }],
-                        "development": [],
+                        "base": [
+                            {"type": "base_strength", "domination_code": "D", "strength": 13},
+                            {"type": "base_defense", "domination_code": "C", "defense": 7},
+                            {"type": "base_max_hp", "domination_code": "C", "max_hp": 100},
+                            {"type": "base_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
+                            {"type": "base_speed", "domination_code": "D", "speed": 32},
+                            {"type": "base_sight_distance", "domination_code": "D", "sight_distance": 200}
+                        ],
+                        "development": [
+                            {"type": "development_queen_caste", "domination_code": "C", "strength": 1.8, "defense": 1, "max_hp": 1, "hp_regen_rate": 0.9, "speed": 0.7},
+                            {"type": "development_worker_caste", "domination_code": "E", "strength": 1, "defense": 1.5, "max_hp": 1.5, "hp_regen_rate": 1, "speed": 1},
+                            {"type": "development_warrior_caste", "domination_code": "E", "strength": 1.6, "defense": 2, "max_hp": 2, "hp_regen_rate": 1.5, "speed": 1.3},
+                        ],
                         "adaptation": [],
                         "building": [],
-                        "combat": []
+                        "combat": [],
+                        "adjusting": [
+                            {"type": "adjusting_appetite", "domination_code": "E"},
+                            {"type": "adjusting_development_appetite", "domination_code": "E"}
+                        ]
                     }
                 },
                 "male_chromosomes_set": {
-                    "base": [{"type": "strength", "strength": 20, "domination_lvl": 1 }],
-                    "development": [],
+                    "base": [
+                            {"type": "base_strength", "domination_code": "E", "strength": 9},
+                            {"type": "base_defense", "domination_code": "C", "defense": 7},
+                            {"type": "base_max_hp", "domination_code": "C", "max_hp": 150},
+                            {"type": "base_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
+                            {"type": "base_speed", "domination_code": "D", "speed": 32},
+                            {"type": "base_sight_distance", "domination_code": "A", "sight_distance": 250}
+                        ],
+                        "development": [
+                            {"type": "development_queen_caste", "domination_code": "E", "strength": 1.8, "defense": 1, "max_hp": 1, "hp_regen_rate": 0.9, "speed": 0.7},
+                            {"type": "development_worker_caste", "domination_code": "E", "strength": 1, "defense": 1.5, "max_hp": 1.5, "hp_regen_rate": 1, "speed": 1},
+                            {"type": "development_warrior_caste", "domination_code": "E", "strength": 1.6, "defense": 2, "max_hp": 2, "hp_regen_rate": 1.5, "speed": 1.3},
+                        ],
                     "adaptation": [],
                     "building": [],
-                    "combat": []
+                    "combat": [],
+                    "adjusting": []
                 },
-                # "genes": {
-                #     "worker_food_required": 100,
-                #     "warrior_food_required": 500,
-                #     "queen_food_required": 1000,
-                #     "worker_stats": {
-                #         "type":"live_stats",
-                #         "max_hp": 300,
-                #         "hp_regen_rate":10,
-                #         "distance_per_step":32,
-                #         "sight_distance":200,
-                #         "max_calories":1000,
-                #         "distance_per_calorie":2,
-                #         "attack":10,
-                #         "defence":1
-                #     },
-                #     "warrior_stats": {
-                #         "type":"live_stats",
-                #         "max_hp": 500,
-                #         "hp_regen_rate":200,
-                #         "distance_per_step":32,
-                #         "sight_distance":200,
-                #         "max_calories":1000,
-                #         "distance_per_calorie":2,
-                #         "attack":20,
-                #         "defence":5
-                #     },
-                #     "queen_stats": {
-                #         "type":"live_stats",
-                #         "max_hp": 300,
-                #         "hp_regen_rate":200,
-                #         "distance_per_step":32,
-                #         "sight_distance":200,
-                #         "max_calories":1000,
-                #         "distance_per_calorie":2,
-                #         "attack":20,
-                #         "defence":5
-                #     },
-                # },
                 "is_in_nuptial_flight": False
             },
             {
@@ -182,31 +192,50 @@ class Command(BaseCommand):
                 },
                 "is_auto_thought_generation": True,
                 "is_in_operation": False,
-                "stats": {
-                    "type":"live_stats",
-                    "max_hp": 500,
-                    "hp_regen_rate":10,
-                    "distance_per_step":32,
-                    "sight_distance":200,
-                    "max_calories":1000,
-                    "distance_per_calorie":2,
-                    "attack":20,
-                    "defence":10
-                },
                 "genome": {
                     "maternal": {
-                        "base": [{"type": "strength", "strength": 10, "domination_lvl": 1 }],
-                        "development": [],
+                        "base": [
+                            {"type": "base_strength", "domination_code": "D", "strength": 13},
+                            {"type": "base_defense", "domination_code": "C", "defense": 7},
+                            {"type": "base_max_hp", "domination_code": "C", "max_hp": 100},
+                            {"type": "base_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
+                            {"type": "base_speed", "domination_code": "D", "speed": 32},
+                            {"type": "base_sight_distance", "domination_code": "D", "sight_distance": 200}
+                        ],
+                        "development": [
+                            {"type": "development_queen_caste", "domination_code": "A", "strength": 1.5, "defense": 1, "max_hp": 1, "hp_regen_rate": 0.9, "speed": 0.7},
+                            {"type": "development_worker_caste", "domination_code": "B", "strength": 1, "defense": 1.5, "max_hp": 1.5, "hp_regen_rate": 1, "speed": 1},
+                            {"type": "development_warrior_caste", "domination_code": "C", "strength": 1.6, "defense": 2, "max_hp": 2, "hp_regen_rate": 1.5, "speed": 1.3},
+                        ],
                         "adaptation": [],
                         "building": [],
-                        "combat": []
+                        "combat": [],
+                        "adjusting": [
+                            {"type": "adjusting_appetite", "domination_code": "E"},
+                            {"type": "adjusting_development_appetite", "domination_code": "E"}
+                        ]
                     },
                     "paternal": {
-                        "base": [{"type": "strength", "strength": 15, "domination_lvl": 3 }],
-                        "development": [],
+                        "base": [
+                            {"type": "base_strength", "domination_code": "E", "strength": 9},
+                            {"type": "base_defense", "domination_code": "C", "defense": 7},
+                            {"type": "base_max_hp", "domination_code": "C", "max_hp": 150},
+                            {"type": "base_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
+                            {"type": "base_speed", "domination_code": "D", "speed": 32},
+                            {"type": "base_sight_distance", "domination_code": "A", "sight_distance": 250}
+                        ],
+                        "development": [
+                            {"type": "development_queen_caste", "domination_code": "E", "strength": 1.8, "defense": 1, "max_hp": 1, "hp_regen_rate": 0.9, "speed": 0.7},
+                            {"type": "development_worker_caste", "domination_code": "E", "strength": 1, "defense": 1.5, "max_hp": 1.5, "hp_regen_rate": 1, "speed": 1},
+                            {"type": "development_warrior_caste", "domination_code": "E", "strength": 1.6, "defense": 2, "max_hp": 2, "hp_regen_rate": 1.5, "speed": 1.3},
+                        ],
                         "adaptation": [],
                         "building": [],
-                        "combat": []
+                        "combat": [],
+                        "adjusting": [
+                            {"type": "adjusting_appetite", "domination_code": "E"},
+                            {"type": "adjusting_development_appetite", "domination_code": "E"}
+                        ]
                     }
                 }
             }
@@ -255,7 +284,6 @@ class Command(BaseCommand):
                     #         "distance_per_step":32,
                     #         "sight_distance":200,
                     #         "max_calories":1000,
-                    #         "distance_per_calorie":2,
                     #         "attack":10,
                     #         "defence":1
                     #     },
@@ -271,7 +299,6 @@ class Command(BaseCommand):
                     #         "distance_per_step":32,
                     #         "sight_distance":200,
                     #         "max_calories":1000,
-                    #         "distance_per_calorie":2,
                     #         "attack":10,
                     #         "defence":1
                     #     },
@@ -460,7 +487,6 @@ class Command(BaseCommand):
                         "distance_per_step":32,
                         "sight_distance":200,
                         "max_calories":1000,
-                        "distance_per_calorie":2,
                         "attack":10,
                         "defence":1
                     },
@@ -471,7 +497,6 @@ class Command(BaseCommand):
                         "sight_distance":200,
                         "max_calories":1000,
                         "type":"live_stats",
-                        "distance_per_calorie":2,
                         "attack":20,
                         "defence":5
                     },
@@ -482,7 +507,6 @@ class Command(BaseCommand):
                         "distance_per_step":32,
                         "sight_distance":200,
                         "max_calories":1000,
-                        "distance_per_calorie":2,
                         "attack":20,
                         "defence":5,
                         "type":"live_stats"

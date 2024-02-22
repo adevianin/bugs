@@ -52,7 +52,6 @@ class JsonAntFactory():
             "angle": ant_json['angle'],
             "nest": entities_collection.get_entity_by_id(ant_json['from_nest']) if ant_json['from_nest'] else None,
             "located_in_nest": entities_collection.get_entity_by_id(ant_json['located_in_nest_id']) if ant_json['located_in_nest_id'] else None,
-            "stats": self._json_stats_factory.build_stats(ant_json['stats']),
             "picked_item": entities_collection.get_entity_by_id(ant_json['picked_item_id']) if ant_json['picked_item_id'] else None,
             "is_auto_thought_generation": ant_json['is_auto_thought_generation'],
             "is_in_operation": ant_json['is_in_operation'],

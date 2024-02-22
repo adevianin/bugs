@@ -37,8 +37,6 @@ class StatsSerializer():
             'hp_regen_rate': stats.hp_regen_rate,
             'distance_per_step': stats.distance_per_step,
             'sight_distance': stats.sight_distance,
-            'max_calories': stats.max_calories,
-            'distance_per_calorie': stats.distance_per_calorie,
             'attack': stats.attack,
             'defence': stats.defence
         })

@@ -1,0 +1,22 @@
+from .base.genes_types import GenesTypes
+from .base.base_gene import BaseGene
+from core.world.entities.ant.base.genetic.phenotype import Phenotype
+from .base.domination_codes import DominationCodes
+
+class AdjustingDevelopmentAppetiteGene(BaseGene):
+
+    @classmethod
+    def build(cls, domination_code: DominationCodes):
+        return AdjustingDevelopmentAppetiteGene(domination_code)
+
+    def __init__(self, domination_code: DominationCodes):
+        super().__init__(GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE, domination_code)
+
+    def affect(self, phenotype: Phenotype):
+        phenotype.required_food = 2 * (phenotype.strength + phenotype.defense + phenotype.speed/2)
+
+    def merge(self, another_gene: 'AdjustingDevelopmentAppetiteGene') -> BaseGene:
+        dominating_gene = super().merge(another_gene)
+        if dominating_gene is None:
+            return another_gene
+        

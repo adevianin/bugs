@@ -35,7 +35,7 @@ class GenesView extends BaseHTMLView {
         rowEl.querySelector('[data-dist-per-calorie]').innerHTML = stats.distancePerCalorie;
         rowEl.querySelector('[data-dist-per-step]').innerHTML = stats.distancePerStep;
         rowEl.querySelector('[data-hp-regen-rate]').innerHTML = stats.hpRegenRate;
-        rowEl.querySelector('[data-max-calories]').innerHTML = stats.maxCalories;
+        // rowEl.querySelector('[data-max-calories]').innerHTML = stats.maxCalories;
         rowEl.querySelector('[data-max-hp]').innerHTML = stats.maxHp;
         rowEl.querySelector('[data-sight-distance]').innerHTML = stats.sightDistance;
         rowEl.querySelector('[data-required-food]').innerHTML = reuqiredFood;

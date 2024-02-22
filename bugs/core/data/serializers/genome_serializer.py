@@ -21,22 +21,26 @@ class GenomeSerializer():
         base_chromosome = chromosomes_set.base_chromosome
         base_chromosome_json = [self._genes_serializer.serialize(gene) for gene in base_chromosome.genes]
         
-        base_chromosome = chromosomes_set.development_chromosome
-        development_chromosome_json = [self._genes_serializer.serialize(gene) for gene in base_chromosome.genes]
+        development_chromosome = chromosomes_set.development_chromosome
+        development_chromosome_json = [self._genes_serializer.serialize(gene) for gene in development_chromosome.genes]
 
-        base_chromosome = chromosomes_set.adaptation_chromosome
-        adaptation_chromosome_json = [self._genes_serializer.serialize(gene) for gene in base_chromosome.genes]
+        adaptation_chromosome = chromosomes_set.adaptation_chromosome
+        adaptation_chromosome_json = [self._genes_serializer.serialize(gene) for gene in adaptation_chromosome.genes]
 
-        base_chromosome = chromosomes_set.building_chromosome
-        building_chromosome_json = [self._genes_serializer.serialize(gene) for gene in base_chromosome.genes]
+        building_chromosome = chromosomes_set.building_chromosome
+        building_chromosome_json = [self._genes_serializer.serialize(gene) for gene in building_chromosome.genes]
 
-        base_chromosome = chromosomes_set.combat_chromosome
-        combat_chromosome_json = [self._genes_serializer.serialize(gene) for gene in base_chromosome.genes]
+        combat_chromosome = chromosomes_set.combat_chromosome
+        combat_chromosome_json = [self._genes_serializer.serialize(gene) for gene in combat_chromosome.genes]
+
+        adjusting_chromosome = chromosomes_set.adjusting_chromosome
+        adjusting_chromosome_json = [self._genes_serializer.serialize(gene) for gene in adjusting_chromosome.genes]
 
         return {
             ChromosomesTypes.BASE: base_chromosome_json,
             ChromosomesTypes.DEVELOPMENT: development_chromosome_json,
             ChromosomesTypes.ADAPTATION: adaptation_chromosome_json,
             ChromosomesTypes.BUILDING: building_chromosome_json,
-            ChromosomesTypes.COMBAT: combat_chromosome_json
+            ChromosomesTypes.COMBAT: combat_chromosome_json,
+            ChromosomesTypes.ADJUSTING: adjusting_chromosome_json
         }

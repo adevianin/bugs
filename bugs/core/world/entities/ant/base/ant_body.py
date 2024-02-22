@@ -10,8 +10,8 @@ from core.world.entities.item.item_sources.base.item_source import ItemSource
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.item.items.base.item import Item
 from core.world.utils.size import Size
-from core.world.entities.base.live_entity.live_stats import LiveStats
 from .genetic.genome import Genome
+from .ant_stats import AntStats
 
 from typing import List, Callable
 
@@ -19,9 +19,9 @@ class AntBody(LiveBody):
 
     SIZE = Size(32, 32)
 
-    stats: LiveStats
+    stats: AntStats
 
-    def __init__(self, events: EventEmitter, stats: LiveStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, located_in_nest: Nest, picked_item: Item, 
+    def __init__(self, events: EventEmitter, stats: AntStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, located_in_nest: Nest, picked_item: Item, 
                  world_interactor: WorldInteractor, genome: Genome):
         super().__init__(events, stats, memory, position, angle, hp, world_interactor)
         self.sayer = sayer
