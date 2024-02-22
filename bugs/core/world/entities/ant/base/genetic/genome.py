@@ -30,7 +30,8 @@ class Genome():
         adaptation_chromosome = random.choice([self._maternal_chromosomes_set.adaptation_chromosome, self._paternal_chromosomes_set.adaptation_chromosome])
         building_chromosome = random.choice([self._maternal_chromosomes_set.building_chromosome, self._paternal_chromosomes_set.building_chromosome])
         combat_chromosome = random.choice([self._maternal_chromosomes_set.combat_chromosome, self._paternal_chromosomes_set.combat_chromosome])
-        return ChromosomesSet.build(base_chromosome, development_chromosome, adaptation_chromosome, building_chromosome, combat_chromosome)
+        adjusting_chromosome = random.choice([self._maternal_chromosomes_set.adjusting_chromosome, self._paternal_chromosomes_set.adjusting_chromosome])
+        return ChromosomesSet.build(base_chromosome, development_chromosome, adaptation_chromosome, building_chromosome, combat_chromosome, adjusting_chromosome)
     
     def generate_phenotype(self, ant_type: AntTypes) -> Phenotype:
         phenotype = Phenotype.build_empty(ant_type)

@@ -16,7 +16,6 @@ class Larva():
         self._ate_calories = ate_calories
         self._genome = genome
         self._phenotype = self._genome.generate_phenotype(self._ant_type)
-        self._required_food = self._calc_required_food()
 
     @property
     def ant_type(self):
@@ -32,7 +31,7 @@ class Larva():
     
     @property
     def required_food(self):
-        return self._required_food
+        return self._phenotype.required_food
     
     @property
     def genome(self) -> Genome:
@@ -40,10 +39,7 @@ class Larva():
 
     @property
     def progress(self):
-        return (100 / self._required_food) * self._ate_calories
+        return (100 / self._phenotype.required_food) * self._ate_calories
 
     def feed(self, calories_count: int):
         self._ate_calories += calories_count
-
-    def _calc_required_food(self):
-        return 500

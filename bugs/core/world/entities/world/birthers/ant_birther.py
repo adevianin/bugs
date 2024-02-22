@@ -16,5 +16,5 @@ class AntBirther(EntityBirther):
     def _build_entity(self, id, request: AntBirthRequest) -> Ant:
         larva = request.larva
         nest: Nest = self._map.get_entity_by_id(request.nest_id)
-        return self._ant_factory.build_new_ant(id, nest.from_colony_id, nest.owner_id, larva.stats, larva.ant_type, nest.position, nest)
+        return self._ant_factory.build_new_ant(id, nest.from_colony_id, nest.owner_id, larva.genome, larva.ant_type, nest.position, nest)
         
