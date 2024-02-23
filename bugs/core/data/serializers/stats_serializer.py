@@ -8,8 +8,10 @@ class StatsSerializer():
         match(stats.type):
             case StatsTypes.BASIC:
                 return self._serialize_basic_stats(stats)
-            case StatsTypes.LIVE_STATS:
+            case StatsTypes.LIVE:
                 return self._serialize_live_stats(stats)
+            case StatsTypes.ANT:
+                raise Exception('ant stats are not savable')
             case _:
                 raise Exception('unknown type of stats')
             

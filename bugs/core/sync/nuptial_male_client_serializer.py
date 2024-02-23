@@ -1,13 +1,13 @@
 from core.world.entities.ant.base.nuptial_environment.nuptial_male import NuptialMale
-from .genes_client_serializer import GenesClientSerializer
+from .genome_client_serializer import GenomeClientSerializer
 
 class NuptialMaleClientSerializer():
 
-    def __init__(self, genes_client_serializer: GenesClientSerializer):
-        self._genes_client_serializer = genes_client_serializer
+    def __init__(self, genome_client_serializer: GenomeClientSerializer):
+        self._genome_client_serializer = genome_client_serializer
 
     def serialize(self, nuptial_male: NuptialMale) -> dict:
         return {
             'id': nuptial_male.id,
-            'genes': self._genes_client_serializer.serialize(nuptial_male.genes)
+            'chromosomes_set': self._genome_client_serializer.serialize_chromosomes_set(nuptial_male.chromosomes_set)
         }

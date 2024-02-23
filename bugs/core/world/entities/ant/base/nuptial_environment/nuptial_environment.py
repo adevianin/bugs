@@ -1,16 +1,16 @@
-from core.world.entities.ant.base.genes import Genes
 from .nuptial_male import NuptialMale
+from core.world.entities.ant.base.genetic.chromosome.chromosomes_set import ChromosomesSet
 
 from typing import List
 
 class NuptialEnvironment():
 
     @classmethod
-    def build(cls, owner_id: int, base_genes: Genes):
-        return NuptialEnvironment(owner_id, base_genes)
+    def build(cls, owner_id: int, base_chromosomes_set: ChromosomesSet):
+        return NuptialEnvironment(owner_id, base_chromosomes_set)
 
-    def __init__(self, owner_id: int, base_genes: Genes):
-        self._base_genes = base_genes
+    def __init__(self, owner_id: int, base_chromosomes_set: ChromosomesSet):
+        self._base_chromosomes_set = base_chromosomes_set
         self._owner_id = owner_id
         self._males = []
 
@@ -19,8 +19,8 @@ class NuptialEnvironment():
         return self._owner_id
     
     @property
-    def base_genes(self):
-        return self._base_genes
+    def base_chromosomes_set(self):
+        return self._base_chromosomes_set
     
     def get_male(self, male_id: str) -> NuptialMale:
         for male in self._males:
@@ -37,5 +37,4 @@ class NuptialEnvironment():
         self._males = [male1, male2, male3]
 
         return self._males
-    
     

@@ -1,6 +1,7 @@
 from core.world.entities.base.basic_stats import BasicStats
 from core.world.entities.base.stats_types import StatsTypes
 from core.world.entities.base.live_entity.live_stats import LiveStats
+from core.world.entities.ant.base.ant_stats import AntStats
 
 class StatsClientSerializer():
 
@@ -8,8 +9,10 @@ class StatsClientSerializer():
         match(stats.type):
             case StatsTypes.BASIC:
                 return self._serialize_basic_stats(stats)
-            case StatsTypes.LIVE_STATS:
+            case StatsTypes.LIVE:
                 return self._serialize_live_stats(stats)
+            case StatsTypes.ANT:
+                return self._serialize_ant_stats(stats)
             case _:
                 raise Exception('unknown type of stats')
             
@@ -27,5 +30,12 @@ class StatsClientSerializer():
             "distancePerCalorie": 0, #not used
             "attack": stats.attack,
             "defence": stats.defence
+        })
+        return json
+    
+    def _serialize_ant_stats(self, stats: AntStats):
+        json = self._serialize_live_stats(stats)
+        json.update({
+            'appetite': stats.appetite
         })
         return json

@@ -15,7 +15,7 @@ class GroundBeetleSerializer(LiveEntitySerializer):
             thoughts_json.append(self._thought_serializer.serialize(thought))
 
         json.update({
-            'dna_profile': ground_beetle.body.dna_profile,
+            # 'dna_profile': ground_beetle.body.dna_profile,
             'thoughts': thoughts_json,
             'is_auto_thought_generation': ground_beetle.mind.is_auto_thought_generation
         })

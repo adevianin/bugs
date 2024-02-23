@@ -273,36 +273,6 @@ class Command(BaseCommand):
                 "angle": 0,
                 "stored_calories":1000,
                 "larvae":[
-                    # {
-                    #     "ant_type":"queen",
-                    #     "ate_calories":800,
-                    #     "needed_calories":900,
-                    #     "stats": {
-                    #         "type":"live_stats",
-                    #         "max_hp": 300,
-                    #         "hp_regen_rate":10,
-                    #         "distance_per_step":32,
-                    #         "sight_distance":200,
-                    #         "max_calories":1000,
-                    #         "attack":10,
-                    #         "defence":1
-                    #     },
-                    # },
-                    # {
-                    #     "ant_type":"queen",
-                    #     "ate_calories":850,
-                    #     "needed_calories":900,
-                    #     "stats": {
-                    #         "type":"live_stats",
-                    #         "max_hp": 300,
-                    #         "hp_regen_rate":10,
-                    #         "distance_per_step":32,
-                    #         "sight_distance":200,
-                    #         "max_calories":1000,
-                    #         "attack":10,
-                    #         "defence":1
-                    #     },
-                    # },
                 ],
                 "larva_places_count":3,
                 "area":300,
@@ -322,21 +292,6 @@ class Command(BaseCommand):
                 "angle": 0,
                 "stored_calories":1000,
                 "larvae":[
-                    # {
-                    #     "ant_type":"warrior",
-                    #     "ate_calories":440.0,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    # },
-                    # {
-                    #     "ant_type":"worker",
-                    #     "ate_calories":99,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    # },
-                    # {
-                    #     "ant_type":"worker",
-                    #     "ate_calories":99,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    # },
                 ],
                 "larva_places_count":1,
                 "area":300,
@@ -356,16 +311,6 @@ class Command(BaseCommand):
                 "angle": 0,
                 "stored_calories":1000,
                 "larvae":[
-                    # {
-                    #     "ant_type":"warrior",
-                    #     "ate_calories":440.0,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    # },
-                    # {
-                    #     "ant_type":"warrior",
-                    #     "ate_calories":440.0,
-                    #     "dna_profile":"e41e2924-ad6c-431e-836b-e399366bf001"
-                    # }
                 ],
                 "larva_places_count":1,
                 "area":300,
@@ -476,41 +421,27 @@ class Command(BaseCommand):
         "nuptial_environments": [
             {
                 "owner_id": 2,
-                "base_genes": {
-                    "worker_food_required": 100,
-                    "warrior_food_required": 500,
-                    "queen_food_required": 1000,
-                    "worker_stats": {
-                        "max_hp": 300,
-                        "hp_regen_rate":10,
-                        "type":"live_stats",
-                        "distance_per_step":32,
-                        "sight_distance":200,
-                        "max_calories":1000,
-                        "attack":10,
-                        "defence":1
-                    },
-                    "warrior_stats": {
-                        "max_hp": 500,
-                        "hp_regen_rate":200,
-                        "distance_per_step":32,
-                        "sight_distance":200,
-                        "max_calories":1000,
-                        "type":"live_stats",
-                        "attack":20,
-                        "defence":5
-                    },
-                    "queen_stats": {
-                        
-                        "max_hp": 300,
-                        "hp_regen_rate":200,
-                        "distance_per_step":32,
-                        "sight_distance":200,
-                        "max_calories":1000,
-                        "attack":20,
-                        "defence":5,
-                        "type":"live_stats"
-                    },
+                "base_chromosomes_set": {
+                    "base": [
+                        {"type": "base_strength", "domination_code": "E", "strength": 9},
+                        {"type": "base_defense", "domination_code": "C", "defense": 7},
+                        {"type": "base_max_hp", "domination_code": "C", "max_hp": 150},
+                        {"type": "base_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
+                        {"type": "base_speed", "domination_code": "D", "speed": 32},
+                        {"type": "base_sight_distance", "domination_code": "A", "sight_distance": 250}
+                    ],
+                    "development": [
+                        {"type": "development_queen_caste", "domination_code": "E", "strength": 1.8, "defense": 1, "max_hp": 1, "hp_regen_rate": 0.9, "speed": 0.7},
+                        {"type": "development_worker_caste", "domination_code": "E", "strength": 1, "defense": 1.5, "max_hp": 1.5, "hp_regen_rate": 1, "speed": 1},
+                        {"type": "development_warrior_caste", "domination_code": "E", "strength": 1.6, "defense": 2, "max_hp": 2, "hp_regen_rate": 1.5, "speed": 1.3},
+                    ],
+                    "adaptation": [],
+                    "building": [],
+                    "combat": [],
+                    "adjusting": [
+                        {"type": "adjusting_appetite", "domination_code": "E"},
+                        {"type": "adjusting_development_appetite", "domination_code": "E"}
+                    ]
                 }
             }
         ]

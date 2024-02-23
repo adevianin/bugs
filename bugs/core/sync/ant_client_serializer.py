@@ -6,14 +6,14 @@ from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.ant.worker.worker_ant import WorkerAnt
 from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
-from .genes_client_serializer import GenesClientSerializer
+from .genome_client_serializer import GenomeClientSerializer
 
 class AntClientSerializer(LiveEntityClientSerializer):
 
-    def __init__(self, util_serializer: UtilClientSerializer, stats_serializer: StatsClientSerializer, genes_client_serializer: GenesClientSerializer):
+    def __init__(self, util_serializer: UtilClientSerializer, stats_serializer: StatsClientSerializer, genome_client_serializer: GenomeClientSerializer):
         super().__init__(util_serializer)
         self._stats_serializer = stats_serializer
-        self._genes_client_serializer = genes_client_serializer
+        self._genome_client_serializer = genome_client_serializer
 
     def serialize(self, ant: Ant):
         json = super().serialize(ant)
@@ -32,7 +32,8 @@ class AntClientSerializer(LiveEntityClientSerializer):
             'ant_type': ant.ant_type,
             'located_in_nest_id': ant.body.located_in_nest_id,
             'home_nest_id': ant.mind.home_nest.id,
-            'stats': self._stats_serializer.serialize(ant._body.stats)
+            'stats': self._stats_serializer.serialize(ant._body.stats),
+            'genome': self._genome_client_serializer.serialize_genome(ant.body.genome)
         })
 
         return json
@@ -45,7 +46,6 @@ class AntClientSerializer(LiveEntityClientSerializer):
     
     def _serialize_queen(self, json: dict, ant: QueenAnt):
         json = self._serializer_common(json, ant)
-        # genes = ant.body.genes
         json.update({
             'is_fertilized': ant.body.is_fertilized,
             'is_in_nuptial_flight': ant.body.is_in_nuptial_flight,

@@ -9,8 +9,10 @@ class JsonStatsFactory():
         match(type):
             case StatsTypes.BASIC:
                 return self._build_basic_stats(stats_json)
-            case StatsTypes.LIVE_STATS:
+            case StatsTypes.LIVE:
                 return self._build_live_stats(stats_json)
+            case StatsTypes.ANT:
+                raise Exception('ant stats are not savable')
             case _:
                 raise Exception('unknown type of stats')
 
