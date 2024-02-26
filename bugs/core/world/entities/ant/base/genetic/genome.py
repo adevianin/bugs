@@ -1,4 +1,4 @@
-from .chromosome.chromosomes_set import ChromosomesSet
+from .chromosomes_set import ChromosomesSet
 from .phenotype import Phenotype
 from .genes.base.base_gene import BaseGene
 from core.world.entities.ant.base.ant_types import AntTypes

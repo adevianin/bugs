@@ -1,9 +1,9 @@
-from .body_chromosome import BodyChromosome
-from .development_chromosome import DevelopmentChromosome
-from .adaptation_chromosome import AdaptationChromosome
-from .building_chromosome import BuildingChromosome
-from .combat_chromosome import CombatChromosome
-from .adjusting_chromosome import AdjustingChromosome
+from .chromosomes.body_chromosome import BodyChromosome
+from .chromosomes.development_chromosome import DevelopmentChromosome
+from .chromosomes.adaptation_chromosome import AdaptationChromosome
+from .chromosomes.building_chromosome import BuildingChromosome
+from .chromosomes.combat_chromosome import CombatChromosome
+from .chromosomes.adjusting_chromosome import AdjustingChromosome
 
 class ChromosomesSet():
 

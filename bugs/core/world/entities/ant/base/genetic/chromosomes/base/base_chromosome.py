@@ -1,5 +1,5 @@
-from ..genes.base.base_gene import BaseGene
-from ..genes.base.genes_types import GenesTypes
+from core.world.entities.ant.base.genetic.genes.base.base_gene import BaseGene
+from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
 from abc import ABC, abstractmethod
 from typing import List, Dict
 from .chromosomes_types import ChromosomesTypes

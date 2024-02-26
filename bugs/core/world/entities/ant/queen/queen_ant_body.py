@@ -9,7 +9,7 @@ from ..base.ant_body import AntBody
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.larva import Larva
 from core.world.entities.ant.base.genetic.genome import Genome
-from core.world.entities.ant.base.genetic.chromosome.chromosomes_set import ChromosomesSet
+from core.world.entities.ant.base.genetic.chromosomes_set import ChromosomesSet
 
 class QueenAntBody(AntBody):
 

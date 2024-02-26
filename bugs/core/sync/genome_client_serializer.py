@@ -1,13 +1,13 @@
 from core.world.entities.ant.base.genetic.genome import Genome
-from core.world.entities.ant.base.genetic.chromosome.chromosomes_types import ChromosomesTypes
-from core.world.entities.ant.base.genetic.chromosome.chromosomes_set import ChromosomesSet
+from core.world.entities.ant.base.genetic.chromosomes.base.chromosomes_types import ChromosomesTypes
+from core.world.entities.ant.base.genetic.chromosomes_set import ChromosomesSet
 from .genes_client_serializer import GenesClientSerializer
-from core.world.entities.ant.base.genetic.chromosome.body_chromosome import BodyChromosome
-from core.world.entities.ant.base.genetic.chromosome.development_chromosome import DevelopmentChromosome
-from core.world.entities.ant.base.genetic.chromosome.adaptation_chromosome import AdaptationChromosome
-from core.world.entities.ant.base.genetic.chromosome.building_chromosome import BuildingChromosome
-from core.world.entities.ant.base.genetic.chromosome.combat_chromosome import CombatChromosome
-from core.world.entities.ant.base.genetic.chromosome.adjusting_chromosome import AdjustingChromosome
+from core.world.entities.ant.base.genetic.chromosomes.body_chromosome import BodyChromosome
+from core.world.entities.ant.base.genetic.chromosomes.development_chromosome import DevelopmentChromosome
+from core.world.entities.ant.base.genetic.chromosomes.adaptation_chromosome import AdaptationChromosome
+from core.world.entities.ant.base.genetic.chromosomes.building_chromosome import BuildingChromosome
+from core.world.entities.ant.base.genetic.chromosomes.combat_chromosome import CombatChromosome
+from core.world.entities.ant.base.genetic.chromosomes.adjusting_chromosome import AdjustingChromosome
 
 class GenomeClientSerializer():
 

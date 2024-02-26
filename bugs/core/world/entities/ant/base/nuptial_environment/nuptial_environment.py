@@ -1,5 +1,5 @@
 from .nuptial_male import NuptialMale
-from core.world.entities.ant.base.genetic.chromosome.chromosomes_set import ChromosomesSet
+from core.world.entities.ant.base.genetic.chromosomes_set import ChromosomesSet
 
 from typing import List
 

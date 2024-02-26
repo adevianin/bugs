@@ -1,13 +1,13 @@
 from typing import List
-from core.world.entities.ant.base.genetic.chromosome.chromosomes_types import ChromosomesTypes
 from core.world.entities.ant.base.genetic.genes.base.base_gene import BaseGene
-from .base_chromosome import BaseChromosome
 from ..genes.body_strength_gene import BodyStrengthGene
 from ..genes.body_defense_gene import BodyDefenseGene
 from ..genes.body_max_hp_gene import BodyMaxHpGene
 from ..genes.body_hp_regen_rate_gene import BodyHpRegenRateGene
 from ..genes.body_sight_distance_gene import BodySightDistanceGene
 from ..genes.body_speed_gene import BodySpeedGene
+from .base.chromosomes_types import ChromosomesTypes
+from .base.base_chromosome import BaseChromosome
 
 class BodyChromosome(BaseChromosome):
     

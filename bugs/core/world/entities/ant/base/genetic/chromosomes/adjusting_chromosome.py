@@ -1,7 +1,7 @@
 from typing import List
 from core.world.entities.ant.base.genetic.genes.base.base_gene import BaseGene
-from core.world.entities.ant.base.genetic.chromosome.chromosomes_types import ChromosomesTypes
-from .base_chromosome import BaseChromosome
+from .base.chromosomes_types import ChromosomesTypes
+from .base.base_chromosome import BaseChromosome
 from ..genes.adjusting_appetite_gene import AdjustingAppetiteGene
 from ..genes.adjusting_development_appetite_gene import AdjustingDevelopmentAppetiteGene
 
