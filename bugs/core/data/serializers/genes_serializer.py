@@ -16,18 +16,18 @@ class GenesSerializer():
 
     def serialize(self, gene: BaseGene):
         match gene.type:
-            case GenesTypes.BASE_STRENGTH:
-                return self._serialize_base_strength_gene(gene)
-            case GenesTypes.BASE_DEFENSE:
-                return self._serialize_base_defense_gene(gene)
-            case GenesTypes.BASE_MAX_HP:
-                return self._serialize_base_max_hp_gene(gene)
-            case GenesTypes.BASE_HP_REGEN_RATE:
-                return self._serialize_base_hp_regen_rate_gene(gene)
-            case GenesTypes.BASE_SPEED:
-                return self._serialize_base_speed_gene(gene)
-            case GenesTypes.BASE_SIGHT_DISTANCE:
-                return self._serialize_base_sight_distance_gene(gene)
+            case GenesTypes.BODY_STRENGTH:
+                return self._serialize_body_strength_gene(gene)
+            case GenesTypes.BODY_DEFENSE:
+                return self._serialize_body_defense_gene(gene)
+            case GenesTypes.BODY_MAX_HP:
+                return self._serialize_body_max_hp_gene(gene)
+            case GenesTypes.BODY_HP_REGEN_RATE:
+                return self._serialize_body_hp_regen_rate_gene(gene)
+            case GenesTypes.BODY_SPEED:
+                return self._serialize_body_speed_gene(gene)
+            case GenesTypes.BODY_SIGHT_DISTANCE:
+                return self._serialize_body_sight_distance_gene(gene)
             case GenesTypes.DEVELOPMENT_QUEEN_CASTE:
                 return self._serialize_development_queen_caste_gene(gene)
             case GenesTypes.DEVELOPMENT_WORKER_CASTE:
@@ -47,42 +47,42 @@ class GenesSerializer():
             'domination_code': gene.domination_code
         }
             
-    def _serialize_base_strength_gene(self, gene: BodyStrengthGene):
+    def _serialize_body_strength_gene(self, gene: BodyStrengthGene):
         json = self._serialize_base_gene(gene)
         json.update({
             'strength': gene.strength
         })
         return json
     
-    def _serialize_base_defense_gene(self, gene: BodyDefenseGene):
+    def _serialize_body_defense_gene(self, gene: BodyDefenseGene):
         json = self._serialize_base_gene(gene)
         json.update({
             'defense': gene.defense
         })
         return json
     
-    def _serialize_base_max_hp_gene(self, gene: BodyMaxHpGene):
+    def _serialize_body_max_hp_gene(self, gene: BodyMaxHpGene):
         json = self._serialize_base_gene(gene)
         json.update({
             'max_hp': gene.max_hp
         })
         return json
     
-    def _serialize_base_hp_regen_rate_gene(self, gene: BodyHpRegenRateGene):
+    def _serialize_body_hp_regen_rate_gene(self, gene: BodyHpRegenRateGene):
         json = self._serialize_base_gene(gene)
         json.update({
             'hp_regen_rate': gene.hp_regen_rate
         })
         return json
     
-    def _serialize_base_speed_gene(self, gene: BodySpeedGene):
+    def _serialize_body_speed_gene(self, gene: BodySpeedGene):
         json = self._serialize_base_gene(gene)
         json.update({
             'speed': gene.speed
         })
         return json
     
-    def _serialize_base_sight_distance_gene(self, gene: BodySightDistanceGene):
+    def _serialize_body_sight_distance_gene(self, gene: BodySightDistanceGene):
         json = self._serialize_base_gene(gene)
         json.update({
             'sight_distance': gene.sight_distance

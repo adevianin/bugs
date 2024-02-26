@@ -63,4 +63,6 @@ class GenomeSerializer():
     
     def _serialize_adjusting_cromosome(self, chromosome: AdjustingChromosome):
         return {
+            'appetite_gene': self._genes_serializer.serialize(chromosome.appetite_gene),
+            'development_appetite_gene': self._genes_serializer.serialize(chromosome.development_appetite_gene)
         }
