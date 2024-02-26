@@ -1,12 +1,12 @@
 from core.world.entities.ant.base.genetic.genes.base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
 from core.world.entities.ant.base.genetic.genes.base.domination_codes import DominationCodes
-from core.world.entities.ant.base.genetic.genes.base_strength_gene import BaseStrengthGene
-from core.world.entities.ant.base.genetic.genes.base_defense_gene import BaseDefenseGene
-from core.world.entities.ant.base.genetic.genes.base_max_hp_gene import BaseMaxHpGene
-from core.world.entities.ant.base.genetic.genes.base_hp_regen_rate_gene import BaseHpRegenRateGene
-from core.world.entities.ant.base.genetic.genes.base_speed_gene import BaseSpeedGene
-from core.world.entities.ant.base.genetic.genes.base_sight_distance_gene import BaseSightDistanceGene
+from core.world.entities.ant.base.genetic.genes.body_strength_gene import BodyStrengthGene
+from core.world.entities.ant.base.genetic.genes.body_defense_gene import BodyDefenseGene
+from core.world.entities.ant.base.genetic.genes.body_max_hp_gene import BodyMaxHpGene
+from core.world.entities.ant.base.genetic.genes.body_hp_regen_rate_gene import BodyHpRegenRateGene
+from core.world.entities.ant.base.genetic.genes.body_speed_gene import BodySpeedGene
+from core.world.entities.ant.base.genetic.genes.body_sight_distance_gene import BodySightDistanceGene
 from core.world.entities.ant.base.genetic.genes.development_queen_caste_gene import DevelopmentQueenCasteGene
 from core.world.entities.ant.base.genetic.genes.development_worker_caste_gene import DevelopmentWorkerCasteGene
 from core.world.entities.ant.base.genetic.genes.development_warrior_caste_gene import DevelopmentWarriorCasteGene
@@ -17,18 +17,18 @@ class JsonGenesFactory():
 
     def build_gene_from_json(self, gene_json: dict) -> BaseGene:
         match gene_json['type']:
-            case GenesTypes.BASE_STRENGTH:
-                return self._build_base_strength_gene(gene_json)
-            case GenesTypes.BASE_DEFENSE:
-                return self._build_base_defense_gene(gene_json)
-            case GenesTypes.BASE_MAX_HP:
-                return self._build_base_max_hp_gene(gene_json)
-            case GenesTypes.BASE_HP_REGEN_RATE:
-                return self._build_base_hp_regen_rate_gene(gene_json)
-            case GenesTypes.BASE_SPEED:
-                return self._build_base_speed_gene(gene_json)
-            case GenesTypes.BASE_SIGHT_DISTANCE:
-                return self._build_base_sight_distance_gene(gene_json)
+            case GenesTypes.BODY_STRENGTH:
+                return self._build_body_strength_gene(gene_json)
+            case GenesTypes.BODY_DEFENSE:
+                return self._build_body_defense_gene(gene_json)
+            case GenesTypes.BODY_MAX_HP:
+                return self._build_body_max_hp_gene(gene_json)
+            case GenesTypes.BODY_HP_REGEN_RATE:
+                return self._build_body_hp_regen_rate_gene(gene_json)
+            case GenesTypes.BODY_SPEED:
+                return self._build_body_speed_gene(gene_json)
+            case GenesTypes.BODY_SIGHT_DISTANCE:
+                return self._build_body_sight_distance_gene(gene_json)
             case GenesTypes.DEVELOPMENT_QUEEN_CASTE:
                 return self._build_development_queen_caste_gene(gene_json)
             case GenesTypes.DEVELOPMENT_WORKER_CASTE:
@@ -42,35 +42,35 @@ class JsonGenesFactory():
             case _:
                 raise Exception('unknown gene')
             
-    def _build_base_strength_gene(self, gene_json: dict):
+    def _build_body_strength_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])
         strength = gene_json['strength']
-        return BaseStrengthGene.build(domination_code, strength)
+        return BodyStrengthGene.build(domination_code, strength)
     
-    def _build_base_defense_gene(self, gene_json: dict):
+    def _build_body_defense_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])
         defense = gene_json['defense']
-        return BaseDefenseGene.build(domination_code, defense)
+        return BodyDefenseGene.build(domination_code, defense)
     
-    def _build_base_max_hp_gene(self, gene_json: dict):
+    def _build_body_max_hp_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])
         max_hp = gene_json['max_hp']
-        return BaseMaxHpGene.build(domination_code, max_hp)
+        return BodyMaxHpGene.build(domination_code, max_hp)
     
-    def _build_base_hp_regen_rate_gene(self, gene_json: dict):
+    def _build_body_hp_regen_rate_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])
         hp_regen_rate = gene_json['hp_regen_rate']
-        return BaseHpRegenRateGene.build(domination_code, hp_regen_rate)
+        return BodyHpRegenRateGene.build(domination_code, hp_regen_rate)
     
-    def _build_base_speed_gene(self, gene_json: dict):
+    def _build_body_speed_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])
         speed = gene_json['speed']
-        return BaseSpeedGene.build(domination_code, speed)
+        return BodySpeedGene.build(domination_code, speed)
     
-    def _build_base_sight_distance_gene(self, gene_json: dict):
+    def _build_body_sight_distance_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])
         sight_distance = gene_json['sight_distance']
-        return BaseSightDistanceGene.build(domination_code, sight_distance)
+        return BodySightDistanceGene.build(domination_code, sight_distance)
     
     def _build_development_queen_caste_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])

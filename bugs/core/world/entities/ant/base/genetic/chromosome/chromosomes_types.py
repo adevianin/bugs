@@ -1,7 +1,7 @@
 from enum import StrEnum
 
 class ChromosomesTypes(StrEnum):
-    BASE = 'base'
+    BODY = 'body'
     DEVELOPMENT = 'development'
     ADAPTATION = 'adaptation'
     BUILDING = 'building'

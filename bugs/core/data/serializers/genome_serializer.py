@@ -1,8 +1,13 @@
 from core.world.entities.ant.base.genetic.genome import Genome
 from core.world.entities.ant.base.genetic.chromosome.chromosomes_types import ChromosomesTypes
-from core.world.entities.ant.base.genetic.chromosome.chromosome import Chromosome
 from core.world.entities.ant.base.genetic.chromosome.chromosomes_set import ChromosomesSet
 from .genes_serializer import GenesSerializer
+from core.world.entities.ant.base.genetic.chromosome.body_chromosome import BodyChromosome
+from core.world.entities.ant.base.genetic.chromosome.development_chromosome import DevelopmentChromosome
+from core.world.entities.ant.base.genetic.chromosome.adaptation_chromosome import AdaptationChromosome
+from core.world.entities.ant.base.genetic.chromosome.building_chromosome import BuildingChromosome
+from core.world.entities.ant.base.genetic.chromosome.combat_chromosome import CombatChromosome
+from core.world.entities.ant.base.genetic.chromosome.adjusting_chromosome import AdjustingChromosome
 
 from typing import Dict
 
@@ -18,29 +23,44 @@ class GenomeSerializer():
         }
 
     def serialize_chromosomes_set(self, chromosomes_set: ChromosomesSet):
-        base_chromosome = chromosomes_set.base_chromosome
-        base_chromosome_json = [self._genes_serializer.serialize(gene) for gene in base_chromosome.genes]
-        
-        development_chromosome = chromosomes_set.development_chromosome
-        development_chromosome_json = [self._genes_serializer.serialize(gene) for gene in development_chromosome.genes]
-
-        adaptation_chromosome = chromosomes_set.adaptation_chromosome
-        adaptation_chromosome_json = [self._genes_serializer.serialize(gene) for gene in adaptation_chromosome.genes]
-
-        building_chromosome = chromosomes_set.building_chromosome
-        building_chromosome_json = [self._genes_serializer.serialize(gene) for gene in building_chromosome.genes]
-
-        combat_chromosome = chromosomes_set.combat_chromosome
-        combat_chromosome_json = [self._genes_serializer.serialize(gene) for gene in combat_chromosome.genes]
-
-        adjusting_chromosome = chromosomes_set.adjusting_chromosome
-        adjusting_chromosome_json = [self._genes_serializer.serialize(gene) for gene in adjusting_chromosome.genes]
-
         return {
-            ChromosomesTypes.BASE: base_chromosome_json,
-            ChromosomesTypes.DEVELOPMENT: development_chromosome_json,
-            ChromosomesTypes.ADAPTATION: adaptation_chromosome_json,
-            ChromosomesTypes.BUILDING: building_chromosome_json,
-            ChromosomesTypes.COMBAT: combat_chromosome_json,
-            ChromosomesTypes.ADJUSTING: adjusting_chromosome_json
+            ChromosomesTypes.BODY: self._serialize_body_chromosome(chromosomes_set.body_chromosome),
+            ChromosomesTypes.DEVELOPMENT: self._serialize_development_chromosome(chromosomes_set.development_chromosome),
+            ChromosomesTypes.ADAPTATION: self._serialize_adaptation_chromosome(chromosomes_set.adaptation_chromosome),
+            ChromosomesTypes.BUILDING: self._serialize_building_chromosome(chromosomes_set.building_chromosome),
+            ChromosomesTypes.COMBAT: self._serialize_combat_chromosome(chromosomes_set.combat_chromosome),
+            ChromosomesTypes.ADJUSTING: self._serialize_adjusting_cromosome(chromosomes_set.adjusting_chromosome)
+        }
+    
+    def _serialize_body_chromosome(self, chromosome: BodyChromosome):
+        return {
+            'strength_gene': self._genes_serializer.serialize(chromosome.strength_gene),
+            'defense_gene': self._genes_serializer.serialize(chromosome.defense_gene),
+            'max_hp_gene': self._genes_serializer.serialize(chromosome.max_hp_gene),
+            'hp_regen_rate_gene': self._genes_serializer.serialize(chromosome.hp_regen_rate_gene),
+            'sight_distance_gene': self._genes_serializer.serialize(chromosome.sight_distance_gene),
+            'speed_gene': self._genes_serializer.serialize(chromosome.speed_gene)
+        }
+    
+    def _serialize_development_chromosome(self, chromosome: DevelopmentChromosome):
+        return {
+            'queen_cast_gene': self._genes_serializer.serialize(chromosome.queen_cast_gene),
+            'worker_cast_gene': self._genes_serializer.serialize(chromosome.worker_cast_gene),
+            'warrior_cast_gene': self._genes_serializer.serialize(chromosome.warrior_cast_gene)
+        }
+    
+    def _serialize_adaptation_chromosome(self, chromosome: AdaptationChromosome):
+        return {
+        }
+    
+    def _serialize_building_chromosome(self, chromosome: BuildingChromosome):
+        return {
+        }
+    
+    def _serialize_combat_chromosome(self, chromosome: CombatChromosome):
+        return {
+        }
+    
+    def _serialize_adjusting_cromosome(self, chromosome: AdjustingChromosome):
+        return {
         }

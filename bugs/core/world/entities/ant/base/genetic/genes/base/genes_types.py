@@ -1,12 +1,12 @@
 from enum import StrEnum
 
 class GenesTypes(StrEnum):
-    BASE_STRENGTH = 'base_strength'
-    BASE_DEFENSE = 'base_defense'
-    BASE_MAX_HP = 'base_max_hp'
-    BASE_HP_REGEN_RATE = 'base_hp_regen_rate'
-    BASE_SPEED = 'base_speed'
-    BASE_SIGHT_DISTANCE = 'base_sight_distance'
+    BODY_STRENGTH = 'body_strength'
+    BODY_DEFENSE = 'body_defense'
+    BODY_MAX_HP = 'body_max_hp'
+    BODY_HP_REGEN_RATE = 'body_hp_regen_rate'
+    BODY_SPEED = 'body_speed'
+    BODY_SIGHT_DISTANCE = 'body_sight_distance'
 
     DEVELOPMENT_QUEEN_CASTE = 'development_queen_caste'
     DEVELOPMENT_WORKER_CASTE = 'development_worker_caste'

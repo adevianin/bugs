@@ -4,14 +4,14 @@ from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
 import math 
 
-class BaseDefenseGene(BaseGene):
+class BodyDefenseGene(BaseGene):
 
     @classmethod
     def build(cls, domination_code: DominationCodes, defense: int):
-        return BaseDefenseGene(domination_code, defense)
+        return BodyDefenseGene(domination_code, defense)
 
     def __init__(self, domination_code: DominationCodes, defense: int):
-        super().__init__(GenesTypes.BASE_DEFENSE, domination_code)
+        super().__init__(GenesTypes.BODY_DEFENSE, domination_code)
         self._defense = defense
 
     @property
@@ -21,11 +21,11 @@ class BaseDefenseGene(BaseGene):
     def affect(self, phenotype: Phenotype):
         phenotype.defense = self._defense
 
-    def merge(self, another_gene: 'BaseDefenseGene') -> BaseGene:
+    def merge(self, another_gene: 'BodyDefenseGene') -> BaseGene:
         dominating_gene = super().merge(another_gene)
         if dominating_gene is not None:
             return dominating_gene
         
         defense = math.ceil((self.defense + another_gene.defense) / 2)
-        return BaseDefenseGene.build(self.domination_code, defense)
+        return BodyDefenseGene.build(self.domination_code, defense)
         

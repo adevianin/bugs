@@ -4,14 +4,14 @@ from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
 import math 
 
-class BaseSightDistanceGene(BaseGene):
+class BodySightDistanceGene(BaseGene):
 
     @classmethod
     def build(cls, domination_code: DominationCodes, sight_distance: int):
-        return BaseSightDistanceGene(domination_code, sight_distance)
+        return BodySightDistanceGene(domination_code, sight_distance)
 
     def __init__(self, domination_code: DominationCodes, sight_distance: int):
-        super().__init__(GenesTypes.BASE_SIGHT_DISTANCE, domination_code)
+        super().__init__(GenesTypes.BODY_SIGHT_DISTANCE, domination_code)
         self._sight_distance = sight_distance
 
     @property
@@ -21,11 +21,11 @@ class BaseSightDistanceGene(BaseGene):
     def affect(self, phenotype: Phenotype):
         phenotype.sight_distance = self._sight_distance
 
-    def merge(self, another_gene: 'BaseSightDistanceGene') -> BaseGene:
+    def merge(self, another_gene: 'BodySightDistanceGene') -> BaseGene:
         dominating_gene = super().merge(another_gene)
         if dominating_gene is not None:
             return dominating_gene
         
         sight_distance = math.ceil((self.sight_distance + another_gene.sight_distance) / 2)
-        return BaseSightDistanceGene.build(self.domination_code, sight_distance)
+        return BodySightDistanceGene.build(self.domination_code, sight_distance)
         

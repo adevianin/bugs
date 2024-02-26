@@ -25,7 +25,7 @@ class Genome():
         return self._paternal_chromosomes_set
     
     def meiosis(self) -> ChromosomesSet:
-        base_chromosome = random.choice([self._maternal_chromosomes_set.base_chromosome, self._paternal_chromosomes_set.base_chromosome])
+        base_chromosome = random.choice([self._maternal_chromosomes_set.body_chromosome, self._paternal_chromosomes_set.body_chromosome])
         development_chromosome = random.choice([self._maternal_chromosomes_set.development_chromosome, self._paternal_chromosomes_set.development_chromosome])
         adaptation_chromosome = random.choice([self._maternal_chromosomes_set.adaptation_chromosome, self._paternal_chromosomes_set.adaptation_chromosome])
         building_chromosome = random.choice([self._maternal_chromosomes_set.building_chromosome, self._paternal_chromosomes_set.building_chromosome])
@@ -36,7 +36,7 @@ class Genome():
     def generate_phenotype(self, ant_type: AntTypes) -> Phenotype:
         phenotype = Phenotype.build_empty(ant_type)
         genes: List[BaseGene] = []
-        genes += self._maternal_chromosomes_set.base_chromosome.merge_genes(self._paternal_chromosomes_set.base_chromosome)
+        genes += self._maternal_chromosomes_set.body_chromosome.merge_genes(self._paternal_chromosomes_set.body_chromosome)
         genes += self._maternal_chromosomes_set.development_chromosome.merge_genes(self._paternal_chromosomes_set.development_chromosome)
         genes += self._maternal_chromosomes_set.adaptation_chromosome.merge_genes(self._paternal_chromosomes_set.adaptation_chromosome)
         genes += self._maternal_chromosomes_set.building_chromosome.merge_genes(self._paternal_chromosomes_set.building_chromosome)
