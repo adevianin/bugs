@@ -2,14 +2,12 @@ from core.world.entities.ant.ant_factory import AntFactory
 from core.world.utils.point import Point
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.base.entity_collection import EntityCollection
-from .json_stats_factory import JsonStatsFactory
 from .json_genome_factory import JsonGenomeFactory
 
 class JsonAntFactory():
 
-    def __init__(self, json_stats_factory: JsonStatsFactory, json_genome_factory: JsonGenomeFactory, ant_factory: AntFactory):
+    def __init__(self, json_genome_factory: JsonGenomeFactory, ant_factory: AntFactory):
         self._ant_factory = ant_factory
-        self._json_stats_factory = json_stats_factory
         self._json_genome_factory = json_genome_factory
 
     def build_ant_from_json(self, ant_json: dict, entities_collection: EntityCollection):

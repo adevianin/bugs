@@ -1,20 +1,19 @@
 from core.world.entities.ant.base.larva import Larva
-from .stats_serializer import StatsSerializer
+from .genome_serializer import GenomeSerializer
 
 from typing import List
 
 class LarvaSerializer():
 
-    def __init__(self, stats_serializer: StatsSerializer):
-        self._stats_serializer = stats_serializer
+    def __init__(self, genome_serializer: GenomeSerializer):
+        self._genome_serializer = genome_serializer
 
     def serialize_larva(self, larva: Larva):
         json = {}
         json.update({
             'ant_type': larva.ant_type,
             'ate_calories': larva.ate_calories,
-            'needed_calories': larva.needed_calories,
-            'stats': self._stats_serializer.serialize(larva.stats)
+            'genome': self._genome_serializer.serialize_genome(larva.genome)
         })
 
         return json

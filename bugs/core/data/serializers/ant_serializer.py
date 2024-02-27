@@ -3,14 +3,12 @@ from core.world.entities.ant.base.ant import Ant
 from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.ant.base.ant_types import AntTypes
 from .thought_serializer import ThoughtSerializer
-from .stats_serializer import StatsSerializer
 from .genome_serializer import GenomeSerializer
 
 class AntSerializer(LiveEntitySerializer):
 
-    def __init__(self, stats_serializer: StatsSerializer, thought_serializer: ThoughtSerializer, genome_serializer: GenomeSerializer):
+    def __init__(self, thought_serializer: ThoughtSerializer, genome_serializer: GenomeSerializer):
         self._thought_serializer = thought_serializer
-        self._stats_serializer = stats_serializer
         self._genome_serializer = genome_serializer
 
     def serialize(self, ant: Ant):
