@@ -17,6 +17,5 @@ class AdjustingDevelopmentAppetiteGene(BaseGene):
 
     def merge(self, another_gene: 'AdjustingDevelopmentAppetiteGene') -> BaseGene:
         dominating_gene = super().merge(another_gene)
-        if dominating_gene is None:
-            return another_gene
+        return dominating_gene or another_gene
         

@@ -16,5 +16,6 @@ class AdjustingAppetiteGene(BaseGene):
         phenotype.appetite = phenotype.strength + phenotype.defense + phenotype.speed/2
 
     def merge(self, another_gene: 'AdjustingAppetiteGene') -> BaseGene:
-        return another_gene
+        dominating_gene = super().merge(another_gene)
+        return dominating_gene or another_gene
         
