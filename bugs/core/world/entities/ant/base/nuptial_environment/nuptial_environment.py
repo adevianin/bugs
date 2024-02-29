@@ -18,7 +18,7 @@ from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_g
 from core.world.entities.ant.base.genetic.chromosomes.adaptation_chromosome import AdaptationChromosome
 from core.world.entities.ant.base.genetic.chromosomes.building_chromosome import BuildingChromosome
 from core.world.entities.ant.base.genetic.chromosomes.combat_chromosome import CombatChromosome
-
+from core.world.entities.ant.base.genetic.genome import Genome
 from typing import List
 import random
 
@@ -64,8 +64,9 @@ class NuptialEnvironment():
         building_chromosome = self._generate_building_chromosome()
         combat_chromosome = self._generate_combat_chromosome()
         adjusting_chromosome = self._generate_adjusting_chromosome()
-        chromosome_set = ChromosomesSet.build(body_chromosome, development_chromosome, adaptation_chromosome, building_chromosome, combat_chromosome, adjusting_chromosome)
-        return NuptialMale.build(chromosome_set)
+        maternal_chromosome_set = ChromosomesSet.build(body_chromosome, development_chromosome, adaptation_chromosome, building_chromosome, combat_chromosome, adjusting_chromosome)
+        genome = Genome.build(maternal_chromosome_set, None)
+        return NuptialMale.build(genome)
     
     def _generate_body_chromosome(self) -> BodyChromosome:
         base_chromosome = self._base_chromosomes_set.body_chromosome

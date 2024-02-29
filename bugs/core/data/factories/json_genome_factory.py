@@ -16,7 +16,7 @@ class JsonGenomeFactory():
 
     def build_genome_from_json(self, genome_json: dict) -> Genome:
         maternal_chromosomes_set = self.build_chromosomes_set_from_json(genome_json['maternal'])
-        paternal_chromosomes_set = self.build_chromosomes_set_from_json(genome_json['paternal'])
+        paternal_chromosomes_set = self.build_chromosomes_set_from_json(genome_json['paternal']) if genome_json['paternal'] else None
         
         return Genome.build(maternal_chromosomes_set, paternal_chromosomes_set)
 

@@ -17,7 +17,7 @@ class GenomeClientSerializer():
     def serialize_genome(self, genome: Genome):
         return {
             'maternal': self.serialize_chromosomes_set(genome.maternal_chromosomes_set),
-            'paternal': self.serialize_chromosomes_set(genome.paternal_chromosomes_set)
+            'paternal': self.serialize_chromosomes_set(genome.paternal_chromosomes_set) if genome.paternal_chromosomes_set else None
         }
 
     def serialize_chromosomes_set(self, chromosomes_set: ChromosomesSet):
@@ -32,19 +32,19 @@ class GenomeClientSerializer():
     
     def _serialize_body_chromosome(self, chromosome: BodyChromosome):
         return {
-            'strength_gene': self._genes_serializer.serialize(chromosome.strength_gene),
-            'defense_gene': self._genes_serializer.serialize(chromosome.defense_gene),
-            'max_hp_gene': self._genes_serializer.serialize(chromosome.max_hp_gene),
-            'hp_regen_rate_gene': self._genes_serializer.serialize(chromosome.hp_regen_rate_gene),
-            'sight_distance_gene': self._genes_serializer.serialize(chromosome.sight_distance_gene),
-            'speed_gene': self._genes_serializer.serialize(chromosome.speed_gene)
+            'strengthGene': self._genes_serializer.serialize(chromosome.strength_gene),
+            'defenseGene': self._genes_serializer.serialize(chromosome.defense_gene),
+            'maxHpGene': self._genes_serializer.serialize(chromosome.max_hp_gene),
+            'hpRegenRateGene': self._genes_serializer.serialize(chromosome.hp_regen_rate_gene),
+            'sightDistanceGene': self._genes_serializer.serialize(chromosome.sight_distance_gene),
+            'speedGene': self._genes_serializer.serialize(chromosome.speed_gene)
         }
     
     def _serialize_development_chromosome(self, chromosome: DevelopmentChromosome):
         return {
-            'queen_cast_gene': self._genes_serializer.serialize(chromosome.queen_cast_gene),
-            'worker_cast_gene': self._genes_serializer.serialize(chromosome.worker_cast_gene),
-            'warrior_cast_gene': self._genes_serializer.serialize(chromosome.warrior_cast_gene)
+            'queenCasteGene': self._genes_serializer.serialize(chromosome.queen_cast_gene),
+            'workerCasteGene': self._genes_serializer.serialize(chromosome.worker_cast_gene),
+            'warriorCasteGene': self._genes_serializer.serialize(chromosome.warrior_cast_gene)
         }
     
     def _serialize_adaptation_chromosome(self, chromosome: AdaptationChromosome):
@@ -61,6 +61,6 @@ class GenomeClientSerializer():
     
     def _serialize_adjusting_cromosome(self, chromosome: AdjustingChromosome):
         return {
-            'appetite_gene': self._genes_serializer.serialize(chromosome.appetite_gene),
-            'development_appetite_gene': self._genes_serializer.serialize(chromosome.development_appetite_gene)
+            'appetiteGene': self._genes_serializer.serialize(chromosome.appetite_gene),
+            'developmentAppetiteGene': self._genes_serializer.serialize(chromosome.development_appetite_gene)
         }

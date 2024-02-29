@@ -14,6 +14,8 @@ from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_g
 
 class GenesClientSerializer():
 
+    NDIGITS = 1
+
     def serialize(self, gene: BaseGene):
         match gene.type:
             case GenesTypes.BODY_STRENGTH:
@@ -44,81 +46,81 @@ class GenesClientSerializer():
     def _serialize_base_gene(self, gene: BaseGene):
         return {
             'type': gene.type,
-            'domination_code': gene.domination_code
+            'dominationCode': gene.domination_code
         }
             
     def _serialize_body_strength_gene(self, gene: BodyStrengthGene):
         json = self._serialize_base_gene(gene)
         json.update({
-            'strength': gene.strength
+            'strength': round(gene.strength, self.NDIGITS)
         })
         return json
     
     def _serialize_body_defense_gene(self, gene: BodyDefenseGene):
         json = self._serialize_base_gene(gene)
         json.update({
-            'defense': gene.defense
+            'defense': round(gene.defense, self.NDIGITS)
         })
         return json
     
     def _serialize_body_max_hp_gene(self, gene: BodyMaxHpGene):
         json = self._serialize_base_gene(gene)
         json.update({
-            'max_hp': gene.max_hp
+            'maxHp': round(gene.max_hp, self.NDIGITS)
         })
         return json
     
     def _serialize_body_hp_regen_rate_gene(self, gene: BodyHpRegenRateGene):
         json = self._serialize_base_gene(gene)
         json.update({
-            'hp_regen_rate': gene.hp_regen_rate
+            'hpRegenRate': round(gene.hp_regen_rate, self.NDIGITS)
         })
         return json
     
     def _serialize_body_speed_gene(self, gene: BodySpeedGene):
         json = self._serialize_base_gene(gene)
         json.update({
-            'speed': gene.speed
+            'speed': round(gene.speed, self.NDIGITS)
         })
         return json
     
     def _serialize_body_sight_distance_gene(self, gene: BodySightDistanceGene):
         json = self._serialize_base_gene(gene)
         json.update({
-            'sight_distance': gene.sight_distance
+            'sightDistance': round(gene.sight_distance, self.NDIGITS)
         })
         return json
     
     def _serialize_development_queen_caste_gene(self, gene: DevelopmentQueenCasteGene):
         json = self._serialize_base_gene(gene)
         json.update({
-            'strength': gene.strength,
-            'defense': gene.defense,
-            'max_hp': gene.max_hp,
-            'hp_regen_rate': gene.hp_regen_rate,
-            'speed': gene.speed
+            'strength': round(gene.strength, self.NDIGITS),
+            'defense': round(gene.defense, self.NDIGITS),
+            'maxHp': round(gene.max_hp, self.NDIGITS),
+            'hpRegenRate': round(gene.hp_regen_rate, self.NDIGITS),
+            'speed': round(gene.speed, self.NDIGITS)
         })
         return json
     
     def _serialize_development_worker_caste_gene(self, gene: DevelopmentWorkerCasteGene):
         json = self._serialize_base_gene(gene)
         json.update({
-            'strength': gene.strength,
-            'defense': gene.defense,
-            'max_hp': gene.max_hp,
-            'hp_regen_rate': gene.hp_regen_rate,
-            'speed': gene.speed
+            'strength': round(gene.strength, self.NDIGITS),
+            'defense': round(gene.defense, self.NDIGITS),
+            'maxHp': round(gene.max_hp, self.NDIGITS),
+            'hpRegenRate': round(gene.hp_regen_rate, self.NDIGITS),
+            'speed': round(gene.speed, self.NDIGITS)
         })
         return json
     
     def _serialize_development_warrior_caste_gene(self, gene: DevelopmentWarriorCasteGene):
         json = self._serialize_base_gene(gene)
         json.update({
-            'strength': gene.strength,
-            'defense': gene.defense,
-            'max_hp': gene.max_hp,
-            'hp_regen_rate': gene.hp_regen_rate,
-            'speed': gene.speed
+            'strength': round(gene.strength, self.NDIGITS),
+            'defense': round(gene.defense, self.NDIGITS),
+            'maxHp': round(gene.max_hp, self.NDIGITS),
+            'hpRegenRate': round(gene.hp_regen_rate, self.NDIGITS),
+            'speed': round(gene.speed, self.NDIGITS)
         })
         return json
     

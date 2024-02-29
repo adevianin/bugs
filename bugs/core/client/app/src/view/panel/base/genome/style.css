@@ -1,0 +1,29 @@
+.genome__chromosome {
+    border: solid 1px
+}
+
+.genome__chromosome-title {
+    font-weight: bold;
+}
+
+.genome__genes-container {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+.genome__genes-container li {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    background-color: burlywood;
+}
+
+.genome__gene-table {
+    border-collapse: collapse;
+    border-spacing: 0px;
+    border: solid 1px;
+}
+
+.genome__gene-table td {
+    border: solid 1px;
+}

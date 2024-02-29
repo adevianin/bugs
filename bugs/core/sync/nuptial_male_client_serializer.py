@@ -9,5 +9,5 @@ class NuptialMaleClientSerializer():
     def serialize(self, nuptial_male: NuptialMale) -> dict:
         return {
             'id': nuptial_male.id,
-            'chromosomes_set': self._genome_client_serializer.serialize_chromosomes_set(nuptial_male.chromosomes_set)
+            'genome': self._genome_client_serializer.serialize_genome(nuptial_male.genome)
         }

@@ -9,8 +9,6 @@ from core.world.entities.ant.base.genetic.chromosomes.building_chromosome import
 from core.world.entities.ant.base.genetic.chromosomes.combat_chromosome import CombatChromosome
 from core.world.entities.ant.base.genetic.chromosomes.adjusting_chromosome import AdjustingChromosome
 
-from typing import Dict
-
 class GenomeSerializer():
 
     def __init__(self, genes_serializer: GenesSerializer):
@@ -19,7 +17,7 @@ class GenomeSerializer():
     def serialize_genome(self, genome: Genome):
         return {
             'maternal': self.serialize_chromosomes_set(genome.maternal_chromosomes_set),
-            'paternal': self.serialize_chromosomes_set(genome.paternal_chromosomes_set)
+            'paternal': self.serialize_chromosomes_set(genome.paternal_chromosomes_set) if genome.paternal_chromosomes_set else None
         }
 
     def serialize_chromosomes_set(self, chromosomes_set: ChromosomesSet):
