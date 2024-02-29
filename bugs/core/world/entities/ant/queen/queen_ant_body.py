@@ -39,6 +39,9 @@ class QueenAntBody(AntBody):
     def male_chromosomes_set(self):
         return self._male_chromosomes_set
     
+    def fertilize(self, chromosome_set: ChromosomesSet):
+        self._male_chromosomes_set = chromosome_set
+    
     def produce_larva(self, ant_type: AntTypes) -> Larva:
         maternal_chromosome_set = self._genome.meiosis()
         genome = Genome.build(maternal_chromosome_set, self._male_chromosomes_set)

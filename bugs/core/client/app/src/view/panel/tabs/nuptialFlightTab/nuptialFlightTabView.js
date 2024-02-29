@@ -10,16 +10,19 @@ class NuptialFlightTabView extends BaseHTMLView {
         super(el);
 
         this._render();
-        this._queensList.events.on('selectedQueenChanged', this._onSelectedQueenChanged.bind(this));
+        this._queensList.events.on('selectedQueenChanged', this._manageSelectedQueen.bind(this));
     }
 
     _render() {
         this._el.innerHTML = nuptialFlightTabTmpl;
         this._queensList = new QueensListView(this._el.querySelector('[data-queens-list]'));
         this._queenManager = new QueenManagerView(this._el.querySelector('[data-queen-manager]'));
+        if (this._queensList.selectedQueen) {
+            this._manageSelectedQueen();
+        }
     }
 
-    _onSelectedQueenChanged() {
+    _manageSelectedQueen() {
         this._queenManager.manageQueen(this._queensList.selectedQueen);
     }
 }

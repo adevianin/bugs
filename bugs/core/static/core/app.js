@@ -4945,16 +4945,19 @@ class NuptialFlightTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORT
         super(el);
 
         this._render();
-        this._queensList.events.on('selectedQueenChanged', this._onSelectedQueenChanged.bind(this));
+        this._queensList.events.on('selectedQueenChanged', this._manageSelectedQueen.bind(this));
     }
 
     _render() {
         this._el.innerHTML = _nuptialFlightTab_html__WEBPACK_IMPORTED_MODULE_2__["default"];
         this._queensList = new _queensList__WEBPACK_IMPORTED_MODULE_3__.QueensListView(this._el.querySelector('[data-queens-list]'));
         this._queenManager = new _queenManager__WEBPACK_IMPORTED_MODULE_4__.QueenManagerView(this._el.querySelector('[data-queen-manager]'));
+        if (this._queensList.selectedQueen) {
+            this._manageSelectedQueen();
+        }
     }
 
-    _onSelectedQueenChanged() {
+    _manageSelectedQueen() {
         this._queenManager.manageQueen(this._queensList.selectedQueen);
     }
 }

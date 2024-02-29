@@ -44,8 +44,7 @@ class QueenAnt(Ant):
         return self._body.produce_larva(ant_type)
     
     def fertilize(self, male: NuptialMale):
-        self._body.genes.cross(male.genes)
-        self._body.is_fertilized = True
+        self._body.fertilize(male.genome.maternal_chromosomes_set)
         self._emit_action(AntGotFertilizedAction.build(self.id))
     
     def _on_flew_nuptial_flight(self):
