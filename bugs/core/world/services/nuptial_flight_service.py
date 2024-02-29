@@ -53,7 +53,7 @@ class NuptialFlightService():
 
         def on_nest_found(nest: Nest):
             queen.relocate_to_nest(nest)
-            queen.build_nest(nest, 'new_nest_is_built')
+            queen.build_nest(nest, True)
 
         queen.found_nest(nest_building_site, on_nest_found)
         

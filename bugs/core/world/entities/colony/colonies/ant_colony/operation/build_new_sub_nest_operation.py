@@ -77,7 +77,7 @@ class BuildNewSubNestOperation(Operation):
     def _found_nest_step(self):
         def on_nest_found(nest: Nest):
             for worker in self._workers:
-                worker.build_nest(nest, 'nest_is_built')
+                worker.build_nest(nest, False, 'nest_is_built')
 
         self._workers[0].found_nest(self._building_site, on_nest_found)
 

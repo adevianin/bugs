@@ -122,7 +122,8 @@ class ThoughtSerializer():
     def _serialize_build_nest(self, thought: BuildNestThought):
         json = self._serialize_thought(thought)
         json.update({
-            'building_nest_id': thought.building_nest_id
+            'building_nest_id': thought.building_nest_id,
+            'get_inside_once_done': thought.get_inside_once_done
         })
 
         return json

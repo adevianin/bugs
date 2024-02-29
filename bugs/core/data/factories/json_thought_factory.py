@@ -75,7 +75,8 @@ class JsonThoughtFactory():
     
     def _build_build_nest_thought(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
         building_nest = entities_collection.get_entity_by_id(thought_json['building_nest_id'])
-        return self._thought_factory.build_build_nest_thought(body=body, building_nest=building_nest, flags=thought_json['flags'], sayback=thought_json['sayback'])
+        build_build_nest_thought = thought_json['get_inside_once_done']
+        return self._thought_factory.build_build_nest_thought(body=body, building_nest=building_nest, get_inside_once_done=build_build_nest_thought, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_defend_territory(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
         random_walk_thought = self.build_thougth_from_json(body, thought_json['random_walk_thought'], entities_collection)

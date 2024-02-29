@@ -41,8 +41,8 @@ class ThoughtFactory:
     def build_prepare_for_operation_thought(self, body: LiveBody, feed_myself_thought: FeedMyselfThought, assemble_point: Point, flags: dict = None, sayback: str = None):
         return PrepareForOperationThought(body=body, feed_myself_thought=feed_myself_thought, assemble_point=assemble_point, flags=flags, sayback=sayback)
     
-    def build_build_nest_thought(self, body: LiveBody, building_nest: Nest, flags: dict = None, sayback: str = None):
-        return BuildNestThought(body=body, building_nest=building_nest, flags=flags, sayback=sayback)
+    def build_build_nest_thought(self, body: LiveBody, building_nest: Nest, get_inside_once_done: bool, flags: dict = None, sayback: str = None):
+        return BuildNestThought(body=body, building_nest=building_nest, get_inside_once_done=get_inside_once_done, flags=flags, sayback=sayback)
     
     def build_defend_teritory(self, body: LiveBody, fight_near_enemies_thought: FightNearEnemiesThought, random_walk_thought: RandomWalkThought, defending_nest: Nest, point_to_check: Point = None, flags: dict = None, sayback: str = None):
         return DefendTerritoryThought(body=body, fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, flags=flags, sayback=sayback)

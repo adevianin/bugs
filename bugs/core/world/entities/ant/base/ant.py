@@ -60,8 +60,8 @@ class Ant(LiveEntity):
     def found_nest(self, building_site: Point, callback):
         self._event_bus.emit('nest_birth_request', NestBirthRequest.build(building_site, self.from_colony_id, self.owner_id, callback))
 
-    def build_nest(self, nest: Nest, sayback: str = None):
-        self._mind.build_nest(nest=nest, sayback=sayback)
+    def build_nest(self, nest: Nest, get_inside_once_done: bool = False, sayback: str = None):
+        self._mind.build_nest(nest=nest, get_inside_once_done=get_inside_once_done, sayback=sayback)
 
     def attack_nest(self, nest: Nest, sayback: str = None):
         self._mind.attack_nest(nest=nest, sayback=sayback)
