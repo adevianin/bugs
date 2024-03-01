@@ -11,6 +11,7 @@ class GenesTypes(StrEnum):
     DEVELOPMENT_QUEEN_CASTE = 'development_queen_caste'
     DEVELOPMENT_WORKER_CASTE = 'development_worker_caste'
     DEVELOPMENT_WARRIOR_CASTE = 'development_warrior_caste'
+    DEVELOPMENT_MALE_CASTE = 'development_male_caste'
 
     ADJUSTING_APPETITE = 'adjusting_appetite'
     ADJUSTING_DEVELOPMENT_APPETITE = 'adjusting_development_appetite'

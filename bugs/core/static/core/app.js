@@ -1448,6 +1448,7 @@ const GenesTypes = {
     DEVELOPMENT_QUEEN_CASTE: 'development_queen_caste',
     DEVELOPMENT_WORKER_CASTE: 'development_worker_caste',
     DEVELOPMENT_WARRIOR_CASTE: 'development_warrior_caste',
+    DEVELOPMENT_MALE_CASTE: 'development_male_caste',
 
     ADJUSTING_APPETITE: 'adjusting_appetite',
     ADJUSTING_DEVELOPMENT_APPETITE: 'adjusting_development_appetite'
@@ -2860,6 +2861,33 @@ class DevelopmentCasteGeneView extends _base_geneView__WEBPACK_IMPORTED_MODULE_0
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentMaleCasteGeneView.js":
+/*!*********************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentMaleCasteGeneView.js ***!
+  \*********************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "DevelopmentMaleCasteGeneView": () => (/* binding */ DevelopmentMaleCasteGeneView)
+/* harmony export */ });
+/* harmony import */ var _base_developmentCasteGeneView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/developmentCasteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/base/developmentCasteGeneView.js");
+/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+
+
+
+class DevelopmentMaleCasteGeneView extends _base_developmentCasteGeneView__WEBPACK_IMPORTED_MODULE_0__.DevelopmentCasteGeneView {
+
+    get _antType() {
+        return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.MALE;
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentQueenCasteGeneView.js":
 /*!**********************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentQueenCasteGeneView.js ***!
@@ -2965,8 +2993,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _genes_developmentChromosome_developmentQueenCasteGeneView__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./genes/developmentChromosome/developmentQueenCasteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentQueenCasteGeneView.js");
 /* harmony import */ var _genes_developmentChromosome_developmentWorkerCasteGeneView__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./genes/developmentChromosome/developmentWorkerCasteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentWorkerCasteGeneView.js");
 /* harmony import */ var _genes_developmentChromosome_developmentWarriorCasteGeneView__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./genes/developmentChromosome/developmentWarriorCasteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentWarriorCasteGeneView.js");
-/* harmony import */ var _genes_adjustingChromosome_adjustingAppetiteGeneView__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./genes/adjustingChromosome/adjustingAppetiteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/adjustingChromosome/adjustingAppetiteGeneView.js");
-/* harmony import */ var _genes_adjustingChromosome_adjustingDevelopmentAppetiteGeneView__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./genes/adjustingChromosome/adjustingDevelopmentAppetiteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/adjustingChromosome/adjustingDevelopmentAppetiteGeneView.js");
+/* harmony import */ var _genes_developmentChromosome_developmentMaleCasteGeneView__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./genes/developmentChromosome/developmentMaleCasteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentMaleCasteGeneView.js");
+/* harmony import */ var _genes_adjustingChromosome_adjustingAppetiteGeneView__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./genes/adjustingChromosome/adjustingAppetiteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/adjustingChromosome/adjustingAppetiteGeneView.js");
+/* harmony import */ var _genes_adjustingChromosome_adjustingDevelopmentAppetiteGeneView__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./genes/adjustingChromosome/adjustingDevelopmentAppetiteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/adjustingChromosome/adjustingDevelopmentAppetiteGeneView.js");
+
 
 
 
@@ -3078,10 +3108,12 @@ class GenomeView extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView
                 return new _genes_developmentChromosome_developmentWorkerCasteGeneView__WEBPACK_IMPORTED_MODULE_12__.DevelopmentWorkerCasteGeneView(el, gene);
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.DEVELOPMENT_WARRIOR_CASTE:
                 return new _genes_developmentChromosome_developmentWarriorCasteGeneView__WEBPACK_IMPORTED_MODULE_13__.DevelopmentWarriorCasteGeneView(el, gene);
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.DEVELOPMENT_MALE_CASTE:
+                return new _genes_developmentChromosome_developmentMaleCasteGeneView__WEBPACK_IMPORTED_MODULE_14__.DevelopmentMaleCasteGeneView(el, gene);
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.ADJUSTING_APPETITE:
-                return new _genes_adjustingChromosome_adjustingAppetiteGeneView__WEBPACK_IMPORTED_MODULE_14__.AdjustingAppetiteGeneView(el, gene);
+                return new _genes_adjustingChromosome_adjustingAppetiteGeneView__WEBPACK_IMPORTED_MODULE_15__.AdjustingAppetiteGeneView(el, gene);
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE:
-                return new _genes_adjustingChromosome_adjustingDevelopmentAppetiteGeneView__WEBPACK_IMPORTED_MODULE_15__.AdjustingDevelopmentAppetiteGeneView(el, gene);
+                return new _genes_adjustingChromosome_adjustingDevelopmentAppetiteGeneView__WEBPACK_IMPORTED_MODULE_16__.AdjustingDevelopmentAppetiteGeneView(el, gene);
             default:
                 throw 'unknown body gene type';
         }

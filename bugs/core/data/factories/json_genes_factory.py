@@ -10,6 +10,7 @@ from core.world.entities.ant.base.genetic.genes.body_sight_distance_gene import 
 from core.world.entities.ant.base.genetic.genes.development_queen_caste_gene import DevelopmentQueenCasteGene
 from core.world.entities.ant.base.genetic.genes.development_worker_caste_gene import DevelopmentWorkerCasteGene
 from core.world.entities.ant.base.genetic.genes.development_warrior_caste_gene import DevelopmentWarriorCasteGene
+from core.world.entities.ant.base.genetic.genes.development_male_caste_gene import DevelopmentMaleCasteGene
 from core.world.entities.ant.base.genetic.genes.adjusting_appetite_gene import AdjustingAppetiteGene
 from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdjustingDevelopmentAppetiteGene
 
@@ -98,6 +99,15 @@ class JsonGenesFactory():
         hp_regen_rate = gene_json['hp_regen_rate']
         speed = gene_json['speed']
         return DevelopmentWarriorCasteGene.build(domination_code, strength, defense, max_hp, hp_regen_rate, speed)
+    
+    def _build_development_male_caste_gene(self, gene_json: dict):
+        domination_code = DominationCodes(gene_json['domination_code'])
+        strength = gene_json['strength']
+        defense = gene_json['defense']
+        max_hp = gene_json['max_hp']
+        hp_regen_rate = gene_json['hp_regen_rate']
+        speed = gene_json['speed']
+        return DevelopmentMaleCasteGene.build(domination_code, strength, defense, max_hp, hp_regen_rate, speed)
     
     def _build_adjusting_appetite_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])

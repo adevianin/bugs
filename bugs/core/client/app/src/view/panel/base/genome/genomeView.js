@@ -12,6 +12,7 @@ import { BodySpeedGeneView } from './genes/bodyChromosome/speedGene/bodySpeedGen
 import { DevelopmentQueenCasteGeneView } from './genes/developmentChromosome/developmentQueenCasteGeneView';
 import { DevelopmentWorkerCasteGeneView } from './genes/developmentChromosome/developmentWorkerCasteGeneView';
 import { DevelopmentWarriorCasteGeneView } from './genes/developmentChromosome/developmentWarriorCasteGeneView';
+import { DevelopmentMaleCasteGeneView } from './genes/developmentChromosome/developmentMaleCasteGeneView';
 import { AdjustingAppetiteGeneView } from './genes/adjustingChromosome/adjustingAppetiteGeneView';
 import { AdjustingDevelopmentAppetiteGeneView } from './genes/adjustingChromosome/adjustingDevelopmentAppetiteGeneView';
 
@@ -109,6 +110,8 @@ class GenomeView extends BaseHTMLView {
                 return new DevelopmentWorkerCasteGeneView(el, gene);
             case GenesTypes.DEVELOPMENT_WARRIOR_CASTE:
                 return new DevelopmentWarriorCasteGeneView(el, gene);
+            case GenesTypes.DEVELOPMENT_MALE_CASTE:
+                return new DevelopmentMaleCasteGeneView(el, gene);
             case GenesTypes.ADJUSTING_APPETITE:
                 return new AdjustingAppetiteGeneView(el, gene);
             case GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE:

@@ -6,9 +6,11 @@ from core.world.entities.ant.base.genetic.genes.body_max_hp_gene import BodyMaxH
 from core.world.entities.ant.base.genetic.genes.body_hp_regen_rate_gene import BodyHpRegenRateGene
 from core.world.entities.ant.base.genetic.genes.body_speed_gene import BodySpeedGene
 from core.world.entities.ant.base.genetic.genes.body_sight_distance_gene import BodySightDistanceGene
+from core.world.entities.ant.base.genetic.genes.development_caste_gene import DevelopmentCasteGene
 from core.world.entities.ant.base.genetic.genes.development_queen_caste_gene import DevelopmentQueenCasteGene
 from core.world.entities.ant.base.genetic.genes.development_worker_caste_gene import DevelopmentWorkerCasteGene
 from core.world.entities.ant.base.genetic.genes.development_warrior_caste_gene import DevelopmentWarriorCasteGene
+from core.world.entities.ant.base.genetic.genes.development_male_caste_gene import DevelopmentMaleCasteGene
 from core.world.entities.ant.base.genetic.genes.adjusting_appetite_gene import AdjustingAppetiteGene
 from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdjustingDevelopmentAppetiteGene
 
@@ -34,6 +36,8 @@ class GenesSerializer():
                 return self._serialize_development_worker_caste_gene(gene)
             case GenesTypes.DEVELOPMENT_WARRIOR_CASTE:
                 return self._serialize_development_warrior_caste_gene(gene)
+            case GenesTypes.DEVELOPMENT_MALE_CASTE:
+                return self._serialize_development_male_caste_gene(gene)
             case GenesTypes.ADJUSTING_APPETITE:
                 return self._serialize_adjusting_appetite_gene(gene)
             case GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE:
@@ -89,7 +93,7 @@ class GenesSerializer():
         })
         return json
     
-    def _serialize_development_queen_caste_gene(self, gene: DevelopmentQueenCasteGene):
+    def _serialize_base_development_caste_gene(self, gene: DevelopmentCasteGene):
         json = self._serialize_base_gene(gene)
         json.update({
             'strength': gene.strength,
@@ -99,28 +103,18 @@ class GenesSerializer():
             'speed': gene.speed
         })
         return json
+    
+    def _serialize_development_queen_caste_gene(self, gene: DevelopmentQueenCasteGene):
+        return self._serialize_base_development_caste_gene(gene)
     
     def _serialize_development_worker_caste_gene(self, gene: DevelopmentWorkerCasteGene):
-        json = self._serialize_base_gene(gene)
-        json.update({
-            'strength': gene.strength,
-            'defense': gene.defense,
-            'max_hp': gene.max_hp,
-            'hp_regen_rate': gene.hp_regen_rate,
-            'speed': gene.speed
-        })
-        return json
+        return self._serialize_base_development_caste_gene(gene)
     
     def _serialize_development_warrior_caste_gene(self, gene: DevelopmentWarriorCasteGene):
-        json = self._serialize_base_gene(gene)
-        json.update({
-            'strength': gene.strength,
-            'defense': gene.defense,
-            'max_hp': gene.max_hp,
-            'hp_regen_rate': gene.hp_regen_rate,
-            'speed': gene.speed
-        })
-        return json
+        return self._serialize_base_development_caste_gene(gene)
+    
+    def _serialize_development_male_caste_gene(self, gene: DevelopmentMaleCasteGene):
+        return self._serialize_base_development_caste_gene(gene)
     
     def _serialize_adjusting_appetite_gene(self, gene: AdjustingAppetiteGene):
         json = self._serialize_base_gene(gene)
