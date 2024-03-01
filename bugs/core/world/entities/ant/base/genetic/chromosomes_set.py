@@ -4,6 +4,7 @@ from .chromosomes.adaptation_chromosome import AdaptationChromosome
 from .chromosomes.building_chromosome import BuildingChromosome
 from .chromosomes.combat_chromosome import CombatChromosome
 from .chromosomes.adjusting_chromosome import AdjustingChromosome
+from .phenotype import Phenotype
 
 class ChromosomesSet():
 
@@ -44,3 +45,20 @@ class ChromosomesSet():
     @property
     def adjusting_chromosome(self) -> AdjustingChromosome:
         return self._adjusting_chromosome
+    
+    def merge(self, another_chromosome_set: 'ChromosomesSet'):
+        body_chromosome = self._body_chromosome.merge(another_chromosome_set.body_chromosome)
+        development_chromosome = self._development_chromosome.merge(another_chromosome_set.development_chromosome)
+        adaptation_chromosome = self._adaptation_chromosome.merge(another_chromosome_set.adaptation_chromosome)
+        building_chromosome = self._building_chromosome.merge(another_chromosome_set.building_chromosome)
+        combat_chromosome = self._combat_chromosome.merge(another_chromosome_set.combat_chromosome)
+        adjusting_chromosome = self._adjusting_chromosome.merge(another_chromosome_set.adjusting_chromosome)
+        return ChromosomesSet.build(body_chromosome, development_chromosome, adaptation_chromosome, building_chromosome, combat_chromosome, adjusting_chromosome)
+    
+    def affect_phenotype(self, phenotype: Phenotype):
+        self._body_chromosome.affect_phenotype(phenotype)
+        self._development_chromosome.affect_phenotype(phenotype)
+        self._adaptation_chromosome.affect_phenotype(phenotype)
+        self._building_chromosome.affect_phenotype(phenotype)
+        self._combat_chromosome.affect_phenotype(phenotype)
+        self._adjusting_chromosome.affect_phenotype(phenotype)

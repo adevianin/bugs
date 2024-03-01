@@ -1,8 +1,7 @@
-from core.world.entities.ant.base.genetic.genes.base.base_gene import BaseGene
-from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
 from abc import ABC, abstractmethod
 from typing import List, Dict
 from .chromosomes_types import ChromosomesTypes
+from core.world.entities.ant.base.genetic.phenotype import Phenotype
 
 class BaseChromosome(ABC):
 
@@ -14,5 +13,9 @@ class BaseChromosome(ABC):
         return self._type
     
     @abstractmethod
-    def merge_genes(self, another_chromosome: 'BaseChromosome')  -> List[BaseGene]:
+    def merge(self, another_chromosome: 'BaseChromosome') -> 'BaseChromosome':
+        pass
+
+    @abstractmethod
+    def affect_phenotype(self, phenotype: Phenotype):
         pass

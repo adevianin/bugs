@@ -8,7 +8,7 @@ import { Item } from './entity/item';
 import { ItemSource } from './entity/itemSource';
 import { ItemArea } from './entity/itemArea';
 import { AntTypes } from './enum/antTypes';
-import { WarriorAnt, WorkerAnt, QueenAnt } from './entity/ant';
+import { WarriorAnt, WorkerAnt, QueenAnt, MaleAnt } from './entity/ant';
 import { FoundMalesCollection } from './entity/nuptialFlight';
 
 class WorldFactory {
@@ -33,6 +33,11 @@ class WorldFactory {
                     case AntTypes.WORKER:
                         return this.buildWorkerAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.owner_id, entityJson.user_speed, 
                             entityJson.hp, entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats)
+                    case AntTypes.MALE:
+                        return this.buildMaleAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.owner_id, entityJson.user_speed, 
+                            entityJson.hp, entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats);
+                    default:
+                        throw 'unknown type of ant';
                 }
             case EntityTypes.GROUND_BEETLE:
                 return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
@@ -81,6 +86,10 @@ class WorldFactory {
 
     buildWarriorAnt(id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
         return new WarriorAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
+    }
+
+    buildMaleAnt(id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
+        return new MaleAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
     }
 
     buildNest(id, position, angle, fromColony, ownerId, storedCalories, larvaeData, larvaPlacesCount, isBuilt, hp, maxHp) {

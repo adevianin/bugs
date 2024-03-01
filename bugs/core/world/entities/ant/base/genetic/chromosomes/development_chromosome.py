@@ -1,4 +1,5 @@
 from typing import List
+from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from core.world.entities.ant.base.genetic.genes.base.base_gene import BaseGene
 from .base.chromosomes_types import ChromosomesTypes
 from .base.base_chromosome import BaseChromosome
@@ -31,16 +32,21 @@ class DevelopmentChromosome(BaseChromosome):
     def warrior_cast_gene(self) -> DevelopmentWarriorCasteGene:
         return self._warrior_cast_gene
     
-    def merge_genes(self, another_chromosome: 'DevelopmentChromosome') -> List[BaseGene]:
-        genes = []
+    def merge(self, another_chromosome: 'DevelopmentChromosome') -> 'DevelopmentChromosome':
+        queen_cast_gene = self.queen_cast_gene.merge(another_chromosome.queen_cast_gene)
+        worker_cast_gene = self.worker_cast_gene.merge(another_chromosome.worker_cast_gene)
 
-        genes.append(self.queen_cast_gene.merge(another_chromosome.queen_cast_gene))
-        genes.append(self.worker_cast_gene.merge(another_chromosome.worker_cast_gene))
-
+        warrior_cast_gene = None
         if self.warrior_cast_gene and another_chromosome.warrior_cast_gene:
-            genes.append(self.warrior_cast_gene.merge(another_chromosome.warrior_cast_gene))
+            warrior_cast_gene = self.warrior_cast_gene.merge(another_chromosome.warrior_cast_gene)
         elif self.warrior_cast_gene or another_chromosome.warrior_cast_gene:
-            genes.append(self.warrior_cast_gene or another_chromosome.warrior_cast_gene)
+            warrior_cast_gene = self.warrior_cast_gene or another_chromosome.warrior_cast_gene
 
-        return genes
+        return DevelopmentChromosome.build(queen_cast_gene, worker_cast_gene, warrior_cast_gene)
+    
+    def affect_phenotype(self, phenotype: Phenotype):
+        self._queen_cast_gene.affect(phenotype)
+        self._worker_cast_gene.affect(phenotype)
+        if self._warrior_cast_gene:
+            self._warrior_cast_gene.affect(phenotype)
     

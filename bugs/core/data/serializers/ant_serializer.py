@@ -21,13 +21,18 @@ class AntSerializer(LiveEntitySerializer):
                 return self._serialize_warrior(json, ant)
             case AntTypes.QUEEN:
                 return self._serialize_queen(json, ant)
+            case AntTypes.MALE:
+                return self._serialize_male(json, ant)
+            case _:
+                raise Exception('unknown type of ant')
 
-        return json
-    
     def _serialize_worker(self, json: dict, ant: Ant):
         return self._serialize_common(json, ant)
     
     def _serialize_warrior(self, json: dict, ant: Ant):
+        return self._serialize_common(json, ant)
+    
+    def _serialize_male(self, json: dict, ant: Ant):
         return self._serialize_common(json, ant)
     
     def _serialize_queen(self, json: dict, ant: QueenAnt):

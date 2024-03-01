@@ -409,6 +409,7 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "MaleAnt": () => (/* reexport safe */ _maleAnt__WEBPACK_IMPORTED_MODULE_3__.MaleAnt),
 /* harmony export */   "QueenAnt": () => (/* reexport safe */ _queenAnt__WEBPACK_IMPORTED_MODULE_0__.QueenAnt),
 /* harmony export */   "WarriorAnt": () => (/* reexport safe */ _warriorAnt__WEBPACK_IMPORTED_MODULE_1__.WarriorAnt),
 /* harmony export */   "WorkerAnt": () => (/* reexport safe */ _workerAnt__WEBPACK_IMPORTED_MODULE_2__.WorkerAnt)
@@ -416,9 +417,38 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _queenAnt__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./queenAnt */ "./bugs/core/client/app/src/domain/entity/ant/queenAnt.js");
 /* harmony import */ var _warriorAnt__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./warriorAnt */ "./bugs/core/client/app/src/domain/entity/ant/warriorAnt.js");
 /* harmony import */ var _workerAnt__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./workerAnt */ "./bugs/core/client/app/src/domain/entity/ant/workerAnt.js");
+/* harmony import */ var _maleAnt__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./maleAnt */ "./bugs/core/client/app/src/domain/entity/ant/maleAnt.js");
 
 
 
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/ant/maleAnt.js":
+/*!***************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/ant/maleAnt.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "MaleAnt": () => (/* binding */ MaleAnt)
+/* harmony export */ });
+/* harmony import */ var _baseAnt__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseAnt */ "./bugs/core/client/app/src/domain/entity/ant/baseAnt.js");
+/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+
+
+
+class MaleAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
+
+    constructor(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
+        super(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats);
+    }
+}
 
 
 
@@ -1364,7 +1394,8 @@ __webpack_require__.r(__webpack_exports__);
 const AntTypes = {
     WORKER: 'worker',
     WARRIOR: 'warrior',
-    QUEEN: 'queen'
+    QUEEN: 'queen',
+    MALE: 'male'
 }
 
 
@@ -1856,6 +1887,11 @@ class WorldFactory {
                     case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.WORKER:
                         return this.buildWorkerAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.owner_id, entityJson.user_speed, 
                             entityJson.hp, entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats)
+                    case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.MALE:
+                        return this.buildMaleAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.owner_id, entityJson.user_speed, 
+                            entityJson.hp, entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats);
+                    default:
+                        throw 'unknown type of ant';
                 }
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.GROUND_BEETLE:
                 return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
@@ -1904,6 +1940,10 @@ class WorldFactory {
 
     buildWarriorAnt(id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
         return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WarriorAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
+    }
+
+    buildMaleAnt(id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
+        return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.MaleAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
     }
 
     buildNest(id, position, angle, fromColony, ownerId, storedCalories, larvaeData, larvaPlacesCount, isBuilt, hp, maxHp) {
@@ -3088,7 +3128,8 @@ __webpack_require__.r(__webpack_exports__);
 let antTypesLabels = {
     [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WORKER]: 'Робітник',
     [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WARRIOR]: 'Воїн',
-    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN]: 'Цариця'
+    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN]: 'Цариця',
+    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.MALE]: 'Самець',
 };
 
 

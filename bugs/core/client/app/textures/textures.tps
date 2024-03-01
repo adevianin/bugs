@@ -173,6 +173,15 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">images/ant_male_1.png</key>
+            <key type="filename">images/ant_male_2.png</key>
+            <key type="filename">images/ant_male_3.png</key>
+            <key type="filename">images/ant_male_4.png</key>
+            <key type="filename">images/ant_male_5.png</key>
+            <key type="filename">images/ant_male_6.png</key>
+            <key type="filename">images/ant_male_7.png</key>
+            <key type="filename">images/ant_male_8.png</key>
+            <key type="filename">images/ant_male_dead.png</key>
             <key type="filename">images/ant_queen_1.png</key>
             <key type="filename">images/ant_queen_2.png</key>
             <key type="filename">images/ant_queen_3.png</key>
@@ -348,6 +357,15 @@
                     <filename>images/marker_eat.png</filename>
                     <filename>images/marker_pillage.png</filename>
                     <filename>images/item_ant_food_1v.png</filename>
+                    <filename>images/ant_male_1.png</filename>
+                    <filename>images/ant_male_2.png</filename>
+                    <filename>images/ant_male_3.png</filename>
+                    <filename>images/ant_male_4.png</filename>
+                    <filename>images/ant_male_5.png</filename>
+                    <filename>images/ant_male_6.png</filename>
+                    <filename>images/ant_male_7.png</filename>
+                    <filename>images/ant_male_8.png</filename>
+                    <filename>images/ant_male_dead.png</filename>
                 </array>
             </struct>
         </map>

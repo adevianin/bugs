@@ -20,6 +20,8 @@ class JsonAntFactory():
                 return self._build_warrior_ant(ant_json, entities_collection)
             case AntTypes.QUEEN:
                 return self._build_queen_ant(ant_json, entities_collection)
+            case AntTypes.MALE:
+                return self._build_male_ant(ant_json, entities_collection)
             case _:
                 raise Exception('unknown type of ant')
 
@@ -30,6 +32,10 @@ class JsonAntFactory():
     def _build_warrior_ant(self, ant_json: dict, entities_collection: EntityCollection):
         ant_props = self._parse_common_ant_props(ant_json, entities_collection)
         return self._ant_factory.build_warrior_ant(**ant_props)
+    
+    def _build_male_ant(self, ant_json: dict, entities_collection: EntityCollection):
+        ant_props = self._parse_common_ant_props(ant_json, entities_collection)
+        return self._ant_factory.build_male_ant(**ant_props)
     
     def _build_queen_ant(self, ant_json: dict, entities_collection: EntityCollection):
         ant_props = self._parse_common_ant_props(ant_json, entities_collection)

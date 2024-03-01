@@ -7,6 +7,7 @@ from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.ant.worker.worker_ant import WorkerAnt
 from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
 from .genome_client_serializer import GenomeClientSerializer
+from core.world.entities.ant.male.male_ant import MaleAnt
 
 class AntClientSerializer(LiveEntityClientSerializer):
 
@@ -25,6 +26,10 @@ class AntClientSerializer(LiveEntityClientSerializer):
                 return self._serialize_warrior(json, ant)
             case AntTypes.QUEEN:
                 return self._serialize_queen(json, ant)
+            case AntTypes.MALE:
+                return self._serialize_male(json, ant)
+            case _:
+                raise Exception('unknown type of ant')
 
     def _serializer_common(self, json: dict, ant: Ant):
         json.update({
@@ -53,3 +58,6 @@ class AntClientSerializer(LiveEntityClientSerializer):
         })
 
         return json
+    
+    def _serialize_male(self, json: dict, ant: MaleAnt):
+        return self._serializer_common(json, ant)
