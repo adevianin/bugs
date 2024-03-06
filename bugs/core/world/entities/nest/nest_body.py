@@ -132,6 +132,6 @@ class NestBody(Body):
 
     def _add_larva(self, larva: Larva):
         self._larvae.append(larva)
-        self.events.emit('larvae_changed')
+        self.events.emit('larva_added', larva)
 
         

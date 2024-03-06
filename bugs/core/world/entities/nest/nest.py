@@ -14,6 +14,7 @@ from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
 from core.world.entities.action.nest_egg_became_larva import NestEggBecameLarvaAction
 from core.world.entities.action.nest_larva_fed_action import NestLarvaFedAction
 from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsReadyAction
+from core.world.entities.action.nest_larva_added_action import NestLarvaAddedAction
 
 class Nest(Entity):
 
@@ -26,6 +27,7 @@ class Nest(Entity):
         self._body.events.add_listener('build_status_changed', self._on_build_status_changed)
         self._body.events.add_listener('larva_is_ready', self._on_larva_is_ready)
         self._body.events.add_listener('larva_fed', self._on_larva_fed)
+        self._body.events.add_listener('larva_added', self._on_larva_added)
         self._body.events.add_listener('egg_develop', self._on_egg_develop)
         self._body.events.add_listener('egg_became_larva', self._on_egg_became_larva)
 
@@ -100,6 +102,9 @@ class Nest(Entity):
 
     def _on_larva_fed(self, larva: Larva):
         self._emit_action(NestLarvaFedAction.build(self.id, larva, self._owner_id))
+
+    def _on_larva_added(self, larva: Larva):
+        self._emit_action(NestLarvaAddedAction.build(self.id, larva, self._owner_id))
 
     def _on_egg_develop(self, egg: Egg):
         self._emit_action(NestEggDevelopAction.build(self.id, egg, self._owner_id))

@@ -189,6 +189,7 @@ const ACTION_TYPES = {
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
     NEST_LARVA_FED: 'nest_larva_fed',
     NEST_LARVA_IS_READY: 'nest_larva_is_ready',
+    NEST_LARVA_ADDED: 'nest_larva_added',
     NEST_EGG_DEVELOP: 'nest_egg_develop',
     NEST_EGG_BECAME_LARVA: 'nest_egg_became_larva',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
@@ -1296,6 +1297,8 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playLarvaFed(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_LARVA_IS_READY:
                 return this._playLarvaIsReady(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_LARVA_ADDED:
+                return this._playLarvaAdded(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
                 return this._playBuildStatusChanged(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_EGG_DEVELOP:
@@ -1330,6 +1333,13 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         let index = this.larvae.indexOf(larva);
         this.larvae.splice(index, 1);
         this.emit('larvaIsReady', larva);
+        return Promise.resolve();
+    }
+    
+    _playLarvaAdded(action) {
+        let larva = _larva__WEBPACK_IMPORTED_MODULE_3__.Larva.buildFromJson(action.larva);
+        this.larvae.push(larva);
+        this.emit('larvaAdded', larva);
         return Promise.resolve();
     }
 
@@ -4466,6 +4476,7 @@ class LarvaTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
 
     _listenNest() {
         this._stopListenLarvaIsReady = this._nest.on('larvaIsReady', this._onLarvaIsReady.bind(this));
+        this._stopListenLarvaAdded = this._nest.on('larvaAdded', this._onLarvaAdded.bind(this));
     }
 
     _stopListenNest() {
@@ -4473,6 +4484,7 @@ class LarvaTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
             return
         }
         this._stopListenLarvaIsReady();
+        this._stopListenLarvaAdded();
     }
 
     _render() {
@@ -4505,6 +4517,10 @@ class LarvaTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
     _onLarvaIsReady(larva) {
         this._larvaeViews[larva.id].remove();
         delete this._larvaeViews[larva.id];
+    }
+
+    _onLarvaAdded(larva) {
+        this._renderLarva(larva);
     }
 
     remove() {

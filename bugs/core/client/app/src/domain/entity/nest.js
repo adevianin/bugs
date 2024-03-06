@@ -29,6 +29,8 @@ class Nest extends Entity {
                 return this._playLarvaFed(action);
             case ACTION_TYPES.NEST_LARVA_IS_READY:
                 return this._playLarvaIsReady(action);
+            case ACTION_TYPES.NEST_LARVA_ADDED:
+                return this._playLarvaAdded(action);
             case ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
                 return this._playBuildStatusChanged(action);
             case ACTION_TYPES.NEST_EGG_DEVELOP:
@@ -63,6 +65,13 @@ class Nest extends Entity {
         let index = this.larvae.indexOf(larva);
         this.larvae.splice(index, 1);
         this.emit('larvaIsReady', larva);
+        return Promise.resolve();
+    }
+    
+    _playLarvaAdded(action) {
+        let larva = Larva.buildFromJson(action.larva);
+        this.larvae.push(larva);
+        this.emit('larvaAdded', larva);
         return Promise.resolve();
     }
 

@@ -17,6 +17,7 @@ class ActionTypes(StrEnum):
     NEST_STORED_CALORIES_CHANGED = 'nest_stored_calories_changed'
     NEST_LARVA_FED = 'nest_larva_fed'
     NEST_LARVA_IS_READY = 'nest_larva_is_ready'
+    NEST_LARVA_ADDED = 'nest_larva_added'
     NEST_EGG_DEVELOP = 'nest_egg_develop'
     NEST_EGG_BECAME_LARVA = 'nest_egg_became_larva'
     NEST_BUILD_STATUS_CHANGED = 'nest_build_status_changed'

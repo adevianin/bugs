@@ -22,6 +22,7 @@ class LarvaTabView extends BaseHTMLView {
 
     _listenNest() {
         this._stopListenLarvaIsReady = this._nest.on('larvaIsReady', this._onLarvaIsReady.bind(this));
+        this._stopListenLarvaAdded = this._nest.on('larvaAdded', this._onLarvaAdded.bind(this));
     }
 
     _stopListenNest() {
@@ -29,6 +30,7 @@ class LarvaTabView extends BaseHTMLView {
             return
         }
         this._stopListenLarvaIsReady();
+        this._stopListenLarvaAdded();
     }
 
     _render() {
@@ -61,6 +63,10 @@ class LarvaTabView extends BaseHTMLView {
     _onLarvaIsReady(larva) {
         this._larvaeViews[larva.id].remove();
         delete this._larvaeViews[larva.id];
+    }
+
+    _onLarvaAdded(larva) {
+        this._renderLarva(larva);
     }
 
     remove() {
