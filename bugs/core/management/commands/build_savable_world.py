@@ -277,6 +277,8 @@ class Command(BaseCommand):
                 "stored_calories":1000,
                 "larvae":[
                     {
+                        "id": 'id1id1',
+                        "name": 'queen Elizabeth',
                         "ant_type": "queen",
                         "ate_calories": 0,
                         "genome": {
@@ -327,6 +329,8 @@ class Command(BaseCommand):
                         }
                     },
                     {
+                        "id": 'id2id2',
+                        "name": 'queen Elizabeth 2',
                         "ant_type": "queen",
                         "ate_calories": 0,
                         "genome": {

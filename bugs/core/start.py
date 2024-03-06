@@ -139,7 +139,7 @@ def start():
     stats_client_serializer = StatsClientSerializer()
     genes_client_serializer = GenesClientSerializer()
     genome_client_serializer = GenomeClientSerializer(genes_client_serializer)
-    larva_client_serializer = LarvaClientSerializer()
+    larva_client_serializer = LarvaClientSerializer(genome_client_serializer)
     egg_client_serializer = EggClientSerializer(genome_client_serializer)
     util_client_serializer = UtilClientSerializer()
     operation_client_serializer = OperationClientSerializer()

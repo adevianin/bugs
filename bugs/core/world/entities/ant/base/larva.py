@@ -1,21 +1,33 @@
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.genetic.genome import Genome
+import uuid
 
 class Larva():
 
     @classmethod
-    def build_new(cls, ant_type: AntTypes, genome: Genome):
-        return Larva(ant_type, 0, genome)
+    def build_new(cls, name: str, ant_type: AntTypes, genome: Genome):
+        id = uuid.uuid4().hex
+        return Larva.build(id, name, ant_type, 0, genome)
     
     @classmethod
-    def build(cls, ant_type: AntTypes, ate_calories: int, genome: Genome):
-        return Larva(ant_type, ate_calories, genome)
+    def build(cls, id: str, name: str, ant_type: AntTypes, ate_calories: int, genome: Genome):
+        return Larva(id, name, ant_type, ate_calories, genome)
     
-    def __init__(self, ant_type: AntTypes, ate_calories: int, genome: Genome):
+    def __init__(self, id: str, name: str, ant_type: AntTypes, ate_calories: int, genome: Genome):
+        self._id = id
+        self._name = name
         self._ant_type = ant_type
         self._ate_calories = ate_calories
         self._genome = genome
         self._phenotype = self._genome.generate_phenotype(self._ant_type)
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     def ant_type(self):
@@ -42,4 +54,7 @@ class Larva():
         return (100 / self._phenotype.required_food) * self._ate_calories
 
     def feed(self, calories_count: int):
-        self._ate_calories += calories_count
+        if self._ate_calories + calories_count > self._phenotype.required_food:
+            self._ate_calories = self._phenotype.required_food
+        else:
+            self._ate_calories += calories_count

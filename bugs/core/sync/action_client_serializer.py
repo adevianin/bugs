@@ -14,7 +14,7 @@ from core.world.entities.action.entity_walk_action import EntityWalkAction
 from core.world.entities.action.entity_got_in_nest_action import EntityGotInNestAction
 from core.world.entities.action.ant_picked_up_item_action import AntPickedUpItemAction
 from core.world.entities.action.nest_stored_calories_changed_action import NestStoredCaloriesChangedAction
-from core.world.entities.action.nest_larvae_changed_action import NestLarvaeChangedAction
+from core.world.entities.action.nest_larva_fed_action import NestLarvaFedAction
 from core.world.entities.action.nest_build_status_changed_action import NestBuildStatusChangedAction
 from core.world.entities.action.item_was_dropped_action import ItemWasDroppedAction
 from core.world.entities.action.item_being_bringed_action import ItemBeingBringedAction
@@ -23,6 +23,7 @@ from core.world.entities.action.colony_operations_changed_action import ColonyOp
 from core.world.entities.action.ant_flew_nuptial_flight_back_action import AntFlewNuptialFlightBackAction
 from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
 from core.world.entities.action.nest_egg_became_larva import NestEggBecameLarvaAction
+from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsReadyAction
 
 class ActionClientSerializer(iActionClientSerializer):
 
@@ -64,8 +65,10 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._default_action_serialize(action)
             case ActionTypes.NEST_STORED_CALORIES_CHANGED:
                 return self._serialize_nest_stored_calories_changed(action)
-            case ActionTypes.NEST_LARVAE_CHANGED:
-                return self._serialize_nest_larvae_changed(action)
+            case ActionTypes.NEST_LARVA_FED:
+                return self._serialize_nest_larva_fed(action)
+            case ActionTypes.NEST_LARVA_IS_READY:
+                return self._serialize_nest_larva_is_ready(action)
             case ActionTypes.NEST_EGG_DEVELOP:
                 return self._serialize_nest_egg_develop(action)
             case ActionTypes.NEST_EGG_BECAME_LARVA:
@@ -177,15 +180,21 @@ class ActionClientSerializer(iActionClientSerializer):
 
         return json
     
-    def _serialize_nest_larvae_changed(self, action: NestLarvaeChangedAction):
+    def _serialize_nest_larva_fed(self, action: NestLarvaFedAction):
         json = self._serialize_common(action)
 
-        serialized_larvae = []
-        for larva in action.larvae:
-            serialized_larvae.append(self._larva_serializer.serialize(larva))
+        json.update({
+            'larvaId': action.larva.id,
+            'progress': action.larva.progress
+        })
+
+        return json
+    
+    def _serialize_nest_larva_is_ready(self, action: NestLarvaIsReadyAction):
+        json = self._serialize_common(action)
 
         json.update({
-            'actionData': { 'larvae': serialized_larvae }
+            'larvaId': action.larva.id
         })
 
         return json

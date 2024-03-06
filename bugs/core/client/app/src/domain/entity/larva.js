@@ -1,17 +1,31 @@
-class Larva {
+import { EventEmitter } from "@utils/eventEmitter";
+import { Genome } from "./genome";
+
+class Larva extends EventEmitter {
 
     static buildFromJson(json) {
-        return new Larva(json.antType, json.progress);
+        let genome = Genome.buildFromJson(json.genome);
+        return new Larva(json.id, json.name, json.antType, json.progress, genome);
     }
 
-    static build(antType, progress) {
-        return new Larva(antType, progress);
-    }
-
-    constructor(antType, progress) {
+    constructor(id, name, antType, progress, genome) {
+        super();
+        this.id = id;
+        this.name = name;
         this.antType = antType;
-        this.progress = progress;
+        this._progress = progress;
+        this.genome = genome;
     }
+
+    get progress() {
+        return this._progress;
+    }
+
+    set progress(value) {
+        this._progress = value;
+        this.emit('progressChanged');
+    }
+
 }
 
 export {

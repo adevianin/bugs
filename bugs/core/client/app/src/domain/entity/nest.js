@@ -25,8 +25,10 @@ class Nest extends Entity {
         switch (action.type) {
             case ACTION_TYPES.NEST_STORED_CALORIES_CHANGED:
                 return this._playTakingFood(action);
-            case ACTION_TYPES.NEST_LARVAE_CHANGED:
-                return this._playLarvaeChanged(action);
+            case ACTION_TYPES.NEST_LARVA_FED:
+                return this._playLarvaFed(action);
+            case ACTION_TYPES.NEST_LARVA_IS_READY:
+                return this._playLarvaIsReady(action);
             case ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
                 return this._playBuildStatusChanged(action);
             case ACTION_TYPES.NEST_EGG_DEVELOP:
@@ -50,12 +52,17 @@ class Nest extends Entity {
         return Promise.resolve();
     }
 
-    _playLarvaeChanged(action) {
-        this.larvae = [];
-        action.actionData.larvae.forEach(larvaJson => {
-            this.larvae.push(Larva.buildFromJson(larvaJson));
-        });
-        this.emit('larvaeChanged');
+    _playLarvaFed(action) {
+        let larva = this.larvae.find(larva => larva.id == action.larvaId);
+        larva.progress = action.progress;
+        return Promise.resolve();
+    }
+
+    _playLarvaIsReady(action) {
+        let larva = this.larvae.find(larva => larva.id == action.larvaId);
+        let index = this.larvae.indexOf(larva);
+        this.larvae.splice(index, 1);
+        this.emit('larvaIsReady', larva);
         return Promise.resolve();
     }
 

@@ -1,7 +1,12 @@
 import { EventEmitter } from "@utils/eventEmitter";
-import { AntTypes } from "@domain/enum/antTypes";
+import { Genome } from "./genome";
 
 class Egg extends EventEmitter {
+
+    static buildFromJson(json) {
+        let genome = Genome.buildFromJson(json.genome);
+        return new Egg(json.id, json.name, genome, json.progress, json.antType);
+    }
 
     constructor(id, name, genome, progress, antType) {
         super();

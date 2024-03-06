@@ -187,7 +187,8 @@ const ACTION_TYPES = {
     ITEM_SOURCE_FERTILITY_CHANGED: 'item_source_fertility_changed',
     ITEM_BEING_BRINGED: 'item_being_bringed',
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
-    NEST_LARVAE_CHANGED: 'nest_larvae_changed',
+    NEST_LARVA_FED: 'nest_larva_fed',
+    NEST_LARVA_IS_READY: 'nest_larva_is_ready',
     NEST_EGG_DEVELOP: 'nest_egg_develop',
     NEST_EGG_BECAME_LARVA: 'nest_egg_became_larva',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
@@ -623,11 +624,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Egg": () => (/* binding */ Egg)
 /* harmony export */ });
 /* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
-/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+/* harmony import */ var _genome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genome */ "./bugs/core/client/app/src/domain/entity/genome.js");
 
 
 
 class Egg extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+
+    static buildFromJson(json) {
+        let genome = _genome__WEBPACK_IMPORTED_MODULE_1__.Genome.buildFromJson(json.genome);
+        return new Egg(json.id, json.name, genome, json.progress, json.antType);
+    }
 
     constructor(id, name, genome, progress, antType) {
         super();
@@ -872,6 +878,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Genome": () => (/* binding */ Genome)
 /* harmony export */ });
 class Genome {
+
+    static buildFromJson(json) {
+        return new Genome(json.maternal, json.paternal, json.avaliableAntTypes);
+    }
 
     constructor(maternal, paternal, avaliableAntTypes) {
         this._maternal = maternal;
@@ -1134,20 +1144,36 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Larva": () => (/* binding */ Larva)
 /* harmony export */ });
-class Larva {
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+/* harmony import */ var _genome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genome */ "./bugs/core/client/app/src/domain/entity/genome.js");
+
+
+
+class Larva extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
     static buildFromJson(json) {
-        return new Larva(json.antType, json.progress);
+        let genome = _genome__WEBPACK_IMPORTED_MODULE_1__.Genome.buildFromJson(json.genome);
+        return new Larva(json.id, json.name, json.antType, json.progress, genome);
     }
 
-    static build(antType, progress) {
-        return new Larva(antType, progress);
-    }
-
-    constructor(antType, progress) {
+    constructor(id, name, antType, progress, genome) {
+        super();
+        this.id = id;
+        this.name = name;
         this.antType = antType;
-        this.progress = progress;
+        this._progress = progress;
+        this.genome = genome;
     }
+
+    get progress() {
+        return this._progress;
+    }
+
+    set progress(value) {
+        this._progress = value;
+        this.emit('progressChanged');
+    }
+
 }
 
 
@@ -1270,8 +1296,10 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         switch (action.type) {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_STORED_CALORIES_CHANGED:
                 return this._playTakingFood(action);
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_LARVAE_CHANGED:
-                return this._playLarvaeChanged(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_LARVA_FED:
+                return this._playLarvaFed(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_LARVA_IS_READY:
+                return this._playLarvaIsReady(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
                 return this._playBuildStatusChanged(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_EGG_DEVELOP:
@@ -1295,12 +1323,17 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         return Promise.resolve();
     }
 
-    _playLarvaeChanged(action) {
-        this.larvae = [];
-        action.actionData.larvae.forEach(larvaJson => {
-            this.larvae.push(_larva__WEBPACK_IMPORTED_MODULE_3__.Larva.buildFromJson(larvaJson));
-        });
-        this.emit('larvaeChanged');
+    _playLarvaFed(action) {
+        let larva = this.larvae.find(larva => larva.id == action.larvaId);
+        larva.progress = action.progress;
+        return Promise.resolve();
+    }
+
+    _playLarvaIsReady(action) {
+        let larva = this.larvae.find(larva => larva.id == action.larvaId);
+        let index = this.larvae.indexOf(larva);
+        this.larvae.splice(index, 1);
+        this.emit('larvaIsReady', larva);
         return Promise.resolve();
     }
 
@@ -2010,8 +2043,7 @@ class WorldFactory {
                 return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
                     entityJson.max_hp);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
-                return this.buildNest(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.owner_id, entityJson.stored_calories, 
-                    entityJson.larvae, entityJson.eggs, entityJson.larva_places_count, entityJson.egg_places_count, entityJson.is_built, entityJson.hp, entityJson.max_hp);
+                return this.buildNest(entityJson);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM:
                 return this.buildItem(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, 
                     entityJson.item_type, entityJson.variety, entityJson.is_picked);
@@ -2058,21 +2090,31 @@ class WorldFactory {
         return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.MaleAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
     }
 
-    buildNest(id, position, angle, fromColony, ownerId, storedCalories, larvaeData, eggsData, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp) {
+    buildNest(nestJson) {
         let eggs = [];
-        for (let eggData of eggsData) {
-            let genome = this._buildGenome(eggData.genome);
-            let egg = this._buildEgg(eggData, genome);
+        for (let eggJson of nestJson.eggs) {
+            let egg = _entity_egg__WEBPACK_IMPORTED_MODULE_11__.Egg.buildFromJson(eggJson);
             eggs.push(egg);
         }
 
         let larvae = [];
-        for (let larvaData of larvaeData) {
-            let larva = this._buildLarva(larvaData.ant_type, larvaData.progress);
+        for (let larvaJson of nestJson.larvae) {
+            let larva = _entity_larva__WEBPACK_IMPORTED_MODULE_3__.Larva.buildFromJson(larvaJson);
             larvae.push(larva);
         }
 
-        return new _entity_nest__WEBPACK_IMPORTED_MODULE_2__.Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp);
+        let id = nestJson.id;
+        let position = nestJson.position;
+        let angle = nestJson.angle;
+        let fromColonyId = nestJson.from_colony_id;
+        let ownerId = nestJson.owner_id;
+        let storedCalories = nestJson.storedCalories;
+        let larvaPlacesCount = nestJson.larvaPlacesCount;
+        let eggPlacesCount = nestJson.eggPlacesCount;
+        let isBuilt = nestJson.isBuilt;
+        let hp = nestJson.hp;
+        let maxHp = nestJson.max_hp;
+        return new _entity_nest__WEBPACK_IMPORTED_MODULE_2__.Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp);
     }
 
     buildAntColony(id, owner_id, operations, queenId) {
@@ -2088,17 +2130,10 @@ class WorldFactory {
         return new _entity_nuptialMale__WEBPACK_IMPORTED_MODULE_13__.NuptialMale(nuptialMaleJson.id, genome);
     }
 
-    _buildEgg(eggJson, genome) {
-        return new _entity_egg__WEBPACK_IMPORTED_MODULE_11__.Egg(eggJson.id, eggJson.name, genome, eggJson.progress, eggJson.antType);
-    }
-
     _buildGenome(genomeJson) {
         return new _entity_genome__WEBPACK_IMPORTED_MODULE_12__.Genome(genomeJson.maternal, genomeJson.paternal, genomeJson.avaliableAntTypes);
     }
 
-    _buildLarva(antType, progress) {
-        return new _entity_larva__WEBPACK_IMPORTED_MODULE_3__.Larva(antType, progress);
-    }
 }
 
 
@@ -4251,6 +4286,7 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         for (let eggId in this._eggsViews) {
             this._eggsViews[eggId].remove();
         }
+        this._eggsViews = {};
     }
 
 }
@@ -4284,8 +4320,8 @@ class EggView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         super(el);
         this._egg = egg;
 
-        this._egg.on('progressChanged', this._onEggProgressChanged.bind(this));
-        this._egg.on('becameLarva', this._onEggBecameLarvaChanged.bind(this));
+        this._stopListenProgressChange = this._egg.on('progressChanged', this._onEggProgressChanged.bind(this));
+        this._stopListenBecameLarva = this._egg.on('becameLarva', this._onEggBecameLarvaChanged.bind(this));
         
         this._render();
     }
@@ -4328,6 +4364,8 @@ class EggView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
     remove() {
         super.remove();
         this._genomeView.remove();
+        this._stopListenProgressChange();
+        this._stopListenBecameLarva();
     }
 }
 
@@ -4393,10 +4431,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "LarvaTabView": () => (/* binding */ LarvaTabView)
 /* harmony export */ });
 /* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
-/* harmony import */ var _view_panel_base_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/panel/base/labels/antTypesLabels */ "./bugs/core/client/app/src/view/panel/base/labels/antTypesLabels.js");
-/* harmony import */ var _larva_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./larva.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larva.html");
-/* harmony import */ var _larvaManager_html__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./larvaManager.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaManager.html");
-
+/* harmony import */ var _larvaTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./larvaTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTabTmpl.html");
+/* harmony import */ var _larvaView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./larvaView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaView.js");
 
 
 
@@ -4406,52 +4442,136 @@ class LarvaTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
     constructor(el) {
         super(el);
 
-        this._render();
+        this._larvaeViews = {};
 
+        this._render();
     }
 
     manageNest(nest) {
         if (this._nest) {
             this._stopListenNest();
         }
-
         this._nest = nest;
         this._listenNest();
 
-        this._renderLarvae();
+        this._renderLarvaeList();
     }
 
     _listenNest() {
-        this._unbindLarvaeChangedListener = this._nest.on('larvaeChanged', this._onLarvaeChanged.bind(this));
+        this._stopListenLarvaIsReady = this._nest.on('larvaIsReady', this._onLarvaIsReady.bind(this));
     }
 
     _stopListenNest() {
-        this._unbindLarvaeChangedListener();
+        this._stopListenLarvaIsReady();
     }
 
     _render() {
-        this._el.innerHTML = _larvaManager_html__WEBPACK_IMPORTED_MODULE_3__["default"];
+        this._el.innerHTML = _larvaTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._larvaeListEl = this._el.querySelector('[data-larvae-list]');
-        this._addingNewLarvaEl = this._el.querySelector('[data-adding-new-larva]');
-        this._isQueenInsideIndicatorEl = this._el.querySelector('[data-is-queen-inside]');
     }
 
-    _renderLarvae() {
-        this._larvaeListEl.innerHTML = '';
-        let tempEl = document.createElement('div');
-        this._nest.larvae.forEach(larva => {
-            tempEl.innerHTML = _larva_html__WEBPACK_IMPORTED_MODULE_2__["default"];
-            tempEl.querySelector('[data-type]').innerHTML = _view_panel_base_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_1__.antTypesLabels[larva.antType];
-            tempEl.querySelector('[data-progress]').innerHTML = larva.progress;
-            this._larvaeListEl.append(tempEl.firstChild);
-        });
+    _renderLarvaeList() {
+        this._clearLarvaeList();
+        for (let larva of this._nest.larvae) {
+            this._renderLarva(larva);
+        }
     }
 
-    _onLarvaeChanged() {
-        this._renderLarvae();
+    _renderLarva(larva) {
+        let el = document.createElement('tr');
+        this._larvaeListEl.append(el);
+        let view = new _larvaView__WEBPACK_IMPORTED_MODULE_2__.LarvaView(el, larva);
+        this._larvaeViews[larva.id] = view;
     }
 
+    _clearLarvaeList() {
+        for (let larvaeId in this._larvaeViews) {
+            this._larvaeViews[larvaeId].remove();
+        }
+        this._larvaeViews = {};
+    }
+
+    _onLarvaIsReady(larva) {
+        this._larvaeViews[larva.id].remove();
+        delete this._larvaeViews[larva.id];
+    }
+
+    // _renderLarvae() {
+    //     this._larvaeListEl.innerHTML = '';
+    //     let tempEl = document.createElement('div');
+    //     this._nest.larvae.forEach(larva => {
+    //         tempEl.innerHTML = larvaTmpl;
+    //         tempEl.querySelector('[data-type]').innerHTML = antTypesLabels[larva.antType];
+    //         tempEl.querySelector('[data-progress]').innerHTML = larva.progress;
+    //         this._larvaeListEl.append(tempEl.firstChild);
+    //     });
+    // }
+
+    // _onLarvaeChanged() {
+    //     this._renderLarvae();
+    // }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaView.js":
+/*!***********************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaView.js ***!
+  \***********************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "LarvaView": () => (/* binding */ LarvaView)
+/* harmony export */ });
+/* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
+/* harmony import */ var _larvaTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./larvaTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTmpl.html");
+/* harmony import */ var _view_panel_base_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/labels/antTypesLabels */ "./bugs/core/client/app/src/view/panel/base/labels/antTypesLabels.js");
+/* harmony import */ var _view_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/panel/base/genome/closableGenomeView */ "./bugs/core/client/app/src/view/panel/base/genome/closableGenomeView.js");
+
+
+
+
+
+class LarvaView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, larva) {
+        super(el);
+        this._larva = larva;
+
+        this._render();
+
+        this._stopListenProgressChange = larva.on('progressChanged', this._onProgressChanged.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = _larvaTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._progressEl = this._el.querySelector('[data-progress]');
+        this._el.querySelector('[data-ant-type]').innerHTML = _view_panel_base_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_2__.antTypesLabels[this._larva.antType];
+        this._el.querySelector('[data-name]').innerHTML = this._larva.name;
+        this._genomeView = new _view_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_3__.ClosableGenomeView(this._el.querySelector('[data-genome]'), this._larva.genome);
+        this._renderProgress();
+    }
+
+    remove() {
+        super.remove();
+        this._genomeView.remove();
+        this._stopListenProgressChange();
+    }
+
+    _renderProgress() {
+        this._progressEl.innerHTML = Math.round(this._larva.progress);
+    }
+
+    _onProgressChanged() {
+        this._renderProgress();
+    }
 }
 
 
@@ -9765,27 +9885,9 @@ var code = "<td data-name></td>\r\n<td data-genome></td>\r\n<td data-is-fertiliz
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larva.html":
-/*!*********************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larva.html ***!
-  \*********************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<li>\r\n    <div>тип: <span data-type></span></div>\r\n    <div>прогрес: <span data-progress></span></div>\r\n</li>";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaManager.html":
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTabTmpl.html":
 /*!****************************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaManager.html ***!
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTabTmpl.html ***!
   \****************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -9795,7 +9897,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "личинки:\r\n<ul data-larvae-list></ul>";
+var code = "<table>\r\n    <tr>\r\n        <td>імя</td>\r\n        <td>геном</td>\r\n        <td>прогрес</td>\r\n        <td>каста</td>\r\n    </tr>\r\n    <tbody data-larvae-list>\r\n        \r\n    </tbody>\r\n</table>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTmpl.html":
+/*!*************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTmpl.html ***!
+  \*************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<td data-name></td>\r\n<td data-genome></td>\r\n<td data-progress></td>\r\n<td data-ant-type></td>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

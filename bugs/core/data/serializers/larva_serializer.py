@@ -11,6 +11,8 @@ class LarvaSerializer():
     def serialize_larva(self, larva: Larva):
         json = {}
         json.update({
+            'id': larva.id,
+            'name': larva.name,
             'ant_type': larva.ant_type,
             'ate_calories': larva.ate_calories,
             'genome': self._genome_serializer.serialize_genome(larva.genome)

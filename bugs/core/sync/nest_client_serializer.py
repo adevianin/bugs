@@ -19,12 +19,12 @@ class NestClientSerializer(EntityClientSerializer):
             larvae_json.append(self._larva_serializer.serialize(larva))
 
         json.update({
-            'stored_calories': nest.stored_calories,
+            'storedCalories': nest.stored_calories,
             'larvae': larvae_json,
             'eggs': self._egg_serializer.serialize_eggs(nest.eggs),
-            'larva_places_count': nest.larva_places_count,
-            'egg_places_count': nest.egg_places_count,
-            'is_built': nest.is_built
+            'larvaPlacesCount': nest.larva_places_count,
+            'eggPlacesCount': nest.egg_places_count,
+            'isBuilt': nest.is_built
         })
 
         return json

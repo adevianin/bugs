@@ -45,8 +45,7 @@ class WorldFactory {
                 return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
                     entityJson.max_hp);
             case EntityTypes.NEST:
-                return this.buildNest(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.owner_id, entityJson.stored_calories, 
-                    entityJson.larvae, entityJson.eggs, entityJson.larva_places_count, entityJson.egg_places_count, entityJson.is_built, entityJson.hp, entityJson.max_hp);
+                return this.buildNest(entityJson);
             case EntityTypes.ITEM:
                 return this.buildItem(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, 
                     entityJson.item_type, entityJson.variety, entityJson.is_picked);
@@ -93,21 +92,31 @@ class WorldFactory {
         return new MaleAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
     }
 
-    buildNest(id, position, angle, fromColony, ownerId, storedCalories, larvaeData, eggsData, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp) {
+    buildNest(nestJson) {
         let eggs = [];
-        for (let eggData of eggsData) {
-            let genome = this._buildGenome(eggData.genome);
-            let egg = this._buildEgg(eggData, genome);
+        for (let eggJson of nestJson.eggs) {
+            let egg = Egg.buildFromJson(eggJson);
             eggs.push(egg);
         }
 
         let larvae = [];
-        for (let larvaData of larvaeData) {
-            let larva = this._buildLarva(larvaData.ant_type, larvaData.progress);
+        for (let larvaJson of nestJson.larvae) {
+            let larva = Larva.buildFromJson(larvaJson);
             larvae.push(larva);
         }
 
-        return new Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp);
+        let id = nestJson.id;
+        let position = nestJson.position;
+        let angle = nestJson.angle;
+        let fromColonyId = nestJson.from_colony_id;
+        let ownerId = nestJson.owner_id;
+        let storedCalories = nestJson.storedCalories;
+        let larvaPlacesCount = nestJson.larvaPlacesCount;
+        let eggPlacesCount = nestJson.eggPlacesCount;
+        let isBuilt = nestJson.isBuilt;
+        let hp = nestJson.hp;
+        let maxHp = nestJson.max_hp;
+        return new Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp);
     }
 
     buildAntColony(id, owner_id, operations, queenId) {
@@ -123,17 +132,10 @@ class WorldFactory {
         return new NuptialMale(nuptialMaleJson.id, genome);
     }
 
-    _buildEgg(eggJson, genome) {
-        return new Egg(eggJson.id, eggJson.name, genome, eggJson.progress, eggJson.antType);
-    }
-
     _buildGenome(genomeJson) {
         return new Genome(genomeJson.maternal, genomeJson.paternal, genomeJson.avaliableAntTypes);
     }
 
-    _buildLarva(antType, progress) {
-        return new Larva(antType, progress);
-    }
 }
 
 export { 

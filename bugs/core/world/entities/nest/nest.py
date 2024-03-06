@@ -6,13 +6,14 @@ from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.world.birthers.requests.ant_birth_request import AntBirthRequest
 from core.world.entities.world.birthers.requests.item_birth_request import ItemBirthRequest
 from core.world.entities.action.nest_stored_calories_changed_action import NestStoredCaloriesChangedAction
-from core.world.entities.action.nest_larvae_changed_action import NestLarvaeChangedAction
 from core.world.entities.action.nest_build_status_changed_action import NestBuildStatusChangedAction
 from core.world.entities.ant.base.larva import Larva
 from .nest_body import NestBody
 from core.world.entities.ant.base.egg import Egg
 from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
 from core.world.entities.action.nest_egg_became_larva import NestEggBecameLarvaAction
+from core.world.entities.action.nest_larva_fed_action import NestLarvaFedAction
+from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsReadyAction
 
 class Nest(Entity):
 
@@ -21,10 +22,10 @@ class Nest(Entity):
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, owner_id: int, body: NestBody):
         super().__init__(event_bus, events, id, EntityTypes.NEST, from_colony_id, owner_id, body)
 
-        self._body.events.add_listener('larvae_changed', self._on_larvae_changed)
         self._body.events.add_listener('stored_calories_changed', self._on_stored_calories_changed)
         self._body.events.add_listener('build_status_changed', self._on_build_status_changed)
         self._body.events.add_listener('larva_is_ready', self._on_larva_is_ready)
+        self._body.events.add_listener('larva_fed', self._on_larva_fed)
         self._body.events.add_listener('egg_develop', self._on_egg_develop)
         self._body.events.add_listener('egg_became_larva', self._on_egg_became_larva)
 
@@ -73,8 +74,8 @@ class Nest(Entity):
     def give_calories(self, count: int) -> int:
         return self._body.give_calories(count)
 
-    def add_larva(self, larva: Larva):
-        self._body.add_larva(larva)
+    # def add_larva(self, larva: Larva):
+    #     self._body.add_larva(larva)
 
     def build(self):
         self._body.build()
@@ -90,14 +91,15 @@ class Nest(Entity):
     def _on_stored_calories_changed(self):
         self._emit_action(NestStoredCaloriesChangedAction.build(self.id, self._body.stored_calories))
 
-    def _on_larvae_changed(self):
-        self._emit_action(NestLarvaeChangedAction.build(self.id, self._body.larvae))
-
     def _on_build_status_changed(self):
         self._emit_action(NestBuildStatusChangedAction.build(self.id, self._body.is_built))
 
     def _on_larva_is_ready(self, larva: Larva):
+        self._emit_action(NestLarvaIsReadyAction.build(self.id, larva, self._owner_id))
         self._event_bus.emit('ant_birth_request', AntBirthRequest.build(self._id, larva))
+
+    def _on_larva_fed(self, larva: Larva):
+        self._emit_action(NestLarvaFedAction.build(self.id, larva, self._owner_id))
 
     def _on_egg_develop(self, egg: Egg):
         self._emit_action(NestEggDevelopAction.build(self.id, egg, self._owner_id))

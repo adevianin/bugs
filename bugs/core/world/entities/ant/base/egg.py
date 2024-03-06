@@ -7,7 +7,7 @@ class Egg():
     @classmethod
     def build_new(cls, name: str, genome: Genome, progress: int, ant_type: AntTypes):
         id = uuid.uuid4().hex
-        return Egg(id, name, genome, progress, ant_type)
+        return Egg.build(id, name, genome, progress, ant_type)
     
     @classmethod
     def build(cls, id: str, name: str, genome: Genome, progress: int, ant_type: AntTypes):

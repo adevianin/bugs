@@ -8,7 +8,9 @@ class JsonLarvaFactory():
         self._json_genome_factory = json_genome_factory
 
     def build_larva(self, larva_json: dict):
+        id = larva_json['id']
+        name = larva_json['name']
         ant_type = AntTypes(larva_json['ant_type'])
         ate_calories = larva_json['ate_calories']
         genome = self._json_genome_factory.build_genome_from_json(larva_json['genome'])
-        return Larva.build(ant_type, ate_calories, genome)
+        return Larva.build(id, name, ant_type, ate_calories, genome)

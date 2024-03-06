@@ -104,16 +104,16 @@ class NestBody(Body):
         larvae_ready_to_born = []
 
         for larva in self._larvae:
-            larva.feed(actual_portion_size)
             if larva.is_ready_to_born:
                 larvae_ready_to_born.append(larva)
+            else:
+                larva.feed(actual_portion_size)
+                self.events.emit('larva_fed', larva)
 
         for larva in larvae_ready_to_born:
             self._larvae.remove(larva)
             self.events.emit('larva_is_ready', larva)
         
-        self.events.emit('larvae_changed')
-
     def develop_eggs(self):
         ready_eggs: List[Egg] = []
 
@@ -126,9 +126,9 @@ class NestBody(Body):
 
         for egg in ready_eggs:
             self._eggs.remove(egg)
-            larva = Larva.build_new(egg.ant_type, egg.genome)
-            self._add_larva(larva)
-            self.events.emit('egg_became_larva', egg)
+            # larva = Larva.build_new(egg.ant_type, egg.genome)
+            # self._add_larva(larva)
+            # self.events.emit('egg_became_larva', egg)
 
     def _add_larva(self, larva: Larva):
         self._larvae.append(larva)

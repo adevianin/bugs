@@ -1,5 +1,9 @@
 class Genome {
 
+    static buildFromJson(json) {
+        return new Genome(json.maternal, json.paternal, json.avaliableAntTypes);
+    }
+
     constructor(maternal, paternal, avaliableAntTypes) {
         this._maternal = maternal;
         this._paternal = paternal;

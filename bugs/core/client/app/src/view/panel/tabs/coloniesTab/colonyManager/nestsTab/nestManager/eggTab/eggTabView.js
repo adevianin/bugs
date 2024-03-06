@@ -41,6 +41,7 @@ class EggTabView extends BaseHTMLView {
         for (let eggId in this._eggsViews) {
             this._eggsViews[eggId].remove();
         }
+        this._eggsViews = {};
     }
 
 }
