@@ -13,9 +13,7 @@ class LarvaTabView extends BaseHTMLView {
     }
 
     manageNest(nest) {
-        if (this._nest) {
-            this._stopListenNest();
-        }
+        this._stopListenNest();
         this._nest = nest;
         this._listenNest();
 
@@ -27,6 +25,9 @@ class LarvaTabView extends BaseHTMLView {
     }
 
     _stopListenNest() {
+        if (!this._nest) {
+            return
+        }
         this._stopListenLarvaIsReady();
     }
 
@@ -60,6 +61,10 @@ class LarvaTabView extends BaseHTMLView {
     _onLarvaIsReady(larva) {
         this._larvaeViews[larva.id].remove();
         delete this._larvaeViews[larva.id];
+    }
+
+    remove() {
+        this._stopListenNest();
     }
 
 }
