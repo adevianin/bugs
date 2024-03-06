@@ -665,10 +665,6 @@ class Egg extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter 
         return this.genome.avaliableAntTypes;
     }
 
-    becomeLarva() {
-        this.emit('becameLarva');
-    }
-
 }
 
 
@@ -1347,7 +1343,7 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         let egg = this.eggs.find(egg => egg.id == action.eggId);
         let index = this.eggs.indexOf(egg);
         this.eggs.splice(index, 1);
-        egg.becomeLarva();
+        this.emit('eggBecameLarva', egg);
         return Promise.resolve();
     }
 
@@ -4262,10 +4258,24 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     }
 
     manageNest(nest) {
+        this._stopListenNest();
         this._nest = nest;
+        this._listenNest();
 
         this._renderEggPlacesCount();
         this._renderEggsList();
+    }
+
+    _listenNest() {
+        this._stopListenEggBecameLarva = this._nest.on('eggBecameLarva', this._onEggBecameLarva.bind(this));
+    }
+
+    _stopListenNest() {
+        if (!this._nest) {
+            return
+        }
+
+        this._stopListenEggBecameLarva();
     }
 
     _renderEggPlacesCount() {
@@ -4287,6 +4297,11 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
             this._eggsViews[eggId].remove();
         }
         this._eggsViews = {};
+    }
+
+    _onEggBecameLarva(egg) {
+        this._eggsViews[egg.id].remove();
+        delete this._eggsViews[egg.id];
     }
 
 }
@@ -4321,7 +4336,6 @@ class EggView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._egg = egg;
 
         this._stopListenProgressChange = this._egg.on('progressChanged', this._onEggProgressChanged.bind(this));
-        this._stopListenBecameLarva = this._egg.on('becameLarva', this._onEggBecameLarvaChanged.bind(this));
         
         this._render();
     }
@@ -4357,15 +4371,10 @@ class EggView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._renderProgress();
     }
 
-    _onEggBecameLarvaChanged() {
-        this.remove();
-    }
-
     remove() {
         super.remove();
         this._genomeView.remove();
         this._stopListenProgressChange();
-        this._stopListenBecameLarva();
     }
 }
 
@@ -4448,9 +4457,7 @@ class LarvaTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
     }
 
     manageNest(nest) {
-        if (this._nest) {
-            this._stopListenNest();
-        }
+        this._stopListenNest();
         this._nest = nest;
         this._listenNest();
 
@@ -4462,6 +4469,9 @@ class LarvaTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
     }
 
     _stopListenNest() {
+        if (!this._nest) {
+            return
+        }
         this._stopListenLarvaIsReady();
     }
 
@@ -4497,20 +4507,9 @@ class LarvaTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
         delete this._larvaeViews[larva.id];
     }
 
-    // _renderLarvae() {
-    //     this._larvaeListEl.innerHTML = '';
-    //     let tempEl = document.createElement('div');
-    //     this._nest.larvae.forEach(larva => {
-    //         tempEl.innerHTML = larvaTmpl;
-    //         tempEl.querySelector('[data-type]').innerHTML = antTypesLabels[larva.antType];
-    //         tempEl.querySelector('[data-progress]').innerHTML = larva.progress;
-    //         this._larvaeListEl.append(tempEl.firstChild);
-    //     });
-    // }
-
-    // _onLarvaeChanged() {
-    //     this._renderLarvae();
-    // }
+    remove() {
+        this._stopListenNest();
+    }
 
 }
 

@@ -76,7 +76,7 @@ class Nest extends Entity {
         let egg = this.eggs.find(egg => egg.id == action.eggId);
         let index = this.eggs.indexOf(egg);
         this.eggs.splice(index, 1);
-        egg.becomeLarva();
+        this.emit('eggBecameLarva', egg);
         return Promise.resolve();
     }
 

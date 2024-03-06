@@ -17,10 +17,24 @@ class EggTabView extends BaseHTMLView {
     }
 
     manageNest(nest) {
+        this._stopListenNest();
         this._nest = nest;
+        this._listenNest();
 
         this._renderEggPlacesCount();
         this._renderEggsList();
+    }
+
+    _listenNest() {
+        this._stopListenEggBecameLarva = this._nest.on('eggBecameLarva', this._onEggBecameLarva.bind(this));
+    }
+
+    _stopListenNest() {
+        if (!this._nest) {
+            return
+        }
+
+        this._stopListenEggBecameLarva();
     }
 
     _renderEggPlacesCount() {
@@ -42,6 +56,11 @@ class EggTabView extends BaseHTMLView {
             this._eggsViews[eggId].remove();
         }
         this._eggsViews = {};
+    }
+
+    _onEggBecameLarva(egg) {
+        this._eggsViews[egg.id].remove();
+        delete this._eggsViews[egg.id];
     }
 
 }

@@ -38,10 +38,6 @@ class Egg extends EventEmitter {
         return this.genome.avaliableAntTypes;
     }
 
-    becomeLarva() {
-        this.emit('becameLarva');
-    }
-
 }
 
 export {
