@@ -102,6 +102,7 @@ class NestBody(Body):
         calories_for_feeding = self.give_calories(needed_calories)
         actual_portion_size = calories_for_feeding / larvae_count
         larvae_ready_to_born = []
+
         for larva in self._larvae:
             larva.feed(actual_portion_size)
             if larva.is_ready_to_born:
@@ -114,15 +115,20 @@ class NestBody(Body):
         self.events.emit('larvae_changed')
 
     def develop_eggs(self):
+        ready_eggs: List[Egg] = []
+
         for egg in self._eggs:
             if egg.is_ready:
-                self._eggs.remove(egg)
-                larva = Larva.build_new(egg.ant_type, egg.genome)
-                self._add_larva(larva)
-                self.events.emit('egg_became_larva', egg)
+                ready_eggs.append(egg)
             else:
                 egg.develop()
                 self.events.emit('egg_develop', egg)
+
+        for egg in ready_eggs:
+            self._eggs.remove(egg)
+            larva = Larva.build_new(egg.ant_type, egg.genome)
+            self._add_larva(larva)
+            self.events.emit('egg_became_larva', egg)
 
     def _add_larva(self, larva: Larva):
         self._larvae.append(larva)
