@@ -31,6 +31,8 @@ class Nest extends Entity {
                 return this._playBuildStatusChanged(action);
             case ACTION_TYPES.NEST_EGG_DEVELOP:
                 return this._playEggDevelop(action);
+            case ACTION_TYPES.NEST_EGG_BECAME_LARVA:
+                return this._playEggBecameLarva(action);
         }
     }
 
@@ -60,6 +62,14 @@ class Nest extends Entity {
     _playEggDevelop(action) {
         let egg = this.eggs.find(egg => egg.id == action.eggId);
         egg.progress = action.progress;
+        return Promise.resolve();
+    }
+
+    _playEggBecameLarva(action) {
+        let egg = this.eggs.find(egg => egg.id == action.eggId);
+        let index = this.eggs.indexOf(egg);
+        this.eggs.splice(index, 1);
+        egg.becomeLarva();
         return Promise.resolve();
     }
 

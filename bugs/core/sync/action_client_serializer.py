@@ -22,6 +22,7 @@ from core.world.entities.action.colony_born_action import ColonyBornAction
 from core.world.entities.action.colony_operations_changed_action import ColonyOperationsChangedAction
 from core.world.entities.action.ant_flew_nuptial_flight_back_action import AntFlewNuptialFlightBackAction
 from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
+from core.world.entities.action.nest_egg_became_larva import NestEggBecameLarvaAction
 
 class ActionClientSerializer(iActionClientSerializer):
 
@@ -67,6 +68,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._serialize_nest_larvae_changed(action)
             case ActionTypes.NEST_EGG_DEVELOP:
                 return self._serialize_nest_egg_develop(action)
+            case ActionTypes.NEST_EGG_BECAME_LARVA:
+                return self._serialize_nest_egg_became_larva(action)
             case ActionTypes.NEST_BUILD_STATUS_CHANGED:
                 return self._serialize_nest_build_status_changed(action)
             case ActionTypes.ITEM_WAS_PICKED_UP:
@@ -193,6 +196,15 @@ class ActionClientSerializer(iActionClientSerializer):
         json.update({
             'eggId': action.egg.id,
             'progress': action.egg.progress
+        })
+
+        return json
+    
+    def _serialize_nest_egg_became_larva(self, action: NestEggBecameLarvaAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'eggId': action.egg.id
         })
 
         return json

@@ -189,6 +189,7 @@ const ACTION_TYPES = {
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
     NEST_LARVAE_CHANGED: 'nest_larvae_changed',
     NEST_EGG_DEVELOP: 'nest_egg_develop',
+    NEST_EGG_BECAME_LARVA: 'nest_egg_became_larva',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
 };
 
@@ -656,6 +657,10 @@ class Egg extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter 
 
     get avaliableAntTypes() {
         return this.genome.avaliableAntTypes;
+    }
+
+    becomeLarva() {
+        this.emit('becameLarva');
     }
 
 }
@@ -1271,6 +1276,8 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playBuildStatusChanged(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_EGG_DEVELOP:
                 return this._playEggDevelop(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_EGG_BECAME_LARVA:
+                return this._playEggBecameLarva(action);
         }
     }
 
@@ -1300,6 +1307,14 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     _playEggDevelop(action) {
         let egg = this.eggs.find(egg => egg.id == action.eggId);
         egg.progress = action.progress;
+        return Promise.resolve();
+    }
+
+    _playEggBecameLarva(action) {
+        let egg = this.eggs.find(egg => egg.id == action.eggId);
+        let index = this.eggs.indexOf(egg);
+        this.eggs.splice(index, 1);
+        egg.becomeLarva();
         return Promise.resolve();
     }
 
@@ -4272,6 +4287,7 @@ class EggView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._egg = egg;
 
         this._egg.on('progressChanged', this._onEggProgressChanged.bind(this));
+        this._egg.on('becameLarva', this._onEggBecameLarvaChanged.bind(this));
         
         this._render();
     }
@@ -4305,6 +4321,10 @@ class EggView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
 
     _onEggProgressChanged() {
         this._renderProgress();
+    }
+
+    _onEggBecameLarvaChanged() {
+        this.remove();
     }
 
     remove() {

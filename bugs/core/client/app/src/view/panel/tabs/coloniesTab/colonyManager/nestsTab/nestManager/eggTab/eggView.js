@@ -9,6 +9,7 @@ class EggView extends BaseHTMLView {
         this._egg = egg;
 
         this._egg.on('progressChanged', this._onEggProgressChanged.bind(this));
+        this._egg.on('becameLarva', this._onEggBecameLarvaChanged.bind(this));
         
         this._render();
     }
@@ -42,6 +43,10 @@ class EggView extends BaseHTMLView {
 
     _onEggProgressChanged() {
         this._renderProgress();
+    }
+
+    _onEggBecameLarvaChanged() {
+        this.remove();
     }
 
     remove() {

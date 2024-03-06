@@ -16,23 +16,24 @@ class ColonyService():
         self._world = world
 
     def add_larva(self, user_id: int, nest_id: int, ant_type: AntTypes):
-        nest: Nest = self._world.map.get_entity_by_id(nest_id)
-        colony = self._world.get_colony_by_id(nest.from_colony_id)
+        raise Exception('old code')
+        # nest: Nest = self._world.map.get_entity_by_id(nest_id)
+        # colony = self._world.get_colony_by_id(nest.from_colony_id)
 
-        if colony.member_type != EntityTypes.ANT:
-            raise Exception('not corrent colony type')
+        # if colony.member_type != EntityTypes.ANT:
+        #     raise Exception('not corrent colony type')
         
-        colony: AntColony
+        # colony: AntColony
 
-        if colony.owner_id != user_id:
-            raise Exception(f'user dont have this colony')
+        # if colony.owner_id != user_id:
+        #     raise Exception(f'user dont have this colony')
         
-        queen: QueenAnt = self._world.map.get_entity_by_id(colony.queen_id)
+        # queen: QueenAnt = self._world.map.get_entity_by_id(colony.queen_id)
 
-        if queen.located_in_nest_id != nest_id:
-            raise Exception('queen is not in nest')
+        # if queen.located_in_nest_id != nest_id:
+        #     raise Exception('queen is not in nest')
 
-        nest.add_larva(queen.produce_larva(ant_type))
+        # nest.add_larva(queen.produce_larva(ant_type))
 
     def stop_operation(self, user_id: int, colony_id: int, operation_id: int):
         colony: AntColony = self._world.get_colony_by_id(colony_id)

@@ -12,6 +12,7 @@ from core.world.entities.ant.base.larva import Larva
 from .nest_body import NestBody
 from core.world.entities.ant.base.egg import Egg
 from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
+from core.world.entities.action.nest_egg_became_larva import NestEggBecameLarvaAction
 
 class Nest(Entity):
 
@@ -25,6 +26,7 @@ class Nest(Entity):
         self._body.events.add_listener('build_status_changed', self._on_build_status_changed)
         self._body.events.add_listener('larva_is_ready', self._on_larva_is_ready)
         self._body.events.add_listener('egg_develop', self._on_egg_develop)
+        self._body.events.add_listener('egg_became_larva', self._on_egg_became_larva)
 
     @property
     def area(self):
@@ -99,4 +101,7 @@ class Nest(Entity):
 
     def _on_egg_develop(self, egg: Egg):
         self._emit_action(NestEggDevelopAction.build(self.id, egg, self._owner_id))
+
+    def _on_egg_became_larva(self, egg: Egg):
+        self._emit_action(NestEggBecameLarvaAction.build(self.id, egg, self._owner_id))
     

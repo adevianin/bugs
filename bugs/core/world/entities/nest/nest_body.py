@@ -78,10 +78,6 @@ class NestBody(Body):
         self.stored_calories -= strength
         return strength
         
-    def add_larva(self, larva: Larva):
-        self._larvae.append(larva)
-        self.events.emit('larvae_changed')
-
     def build(self):
         is_build_before = self.is_built
         build_step = 5
@@ -119,8 +115,17 @@ class NestBody(Body):
 
     def develop_eggs(self):
         for egg in self._eggs:
-            if not egg.is_ready:
+            if egg.is_ready:
+                self._eggs.remove(egg)
+                larva = Larva.build_new(egg.ant_type, egg.genome)
+                self._add_larva(larva)
+                self.events.emit('egg_became_larva', egg)
+            else:
                 egg.develop()
                 self.events.emit('egg_develop', egg)
+
+    def _add_larva(self, larva: Larva):
+        self._larvae.append(larva)
+        self.events.emit('larvae_changed')
 
         
