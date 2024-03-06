@@ -4,9 +4,10 @@ class NestApi {
         this._requester = requester;
     }
 
-    addNewLarva(nestId, larvaType) {
-        return this._requester.post(`world/nests/${nestId}/add_larva`, {
-            larva_type: larvaType
+    addNewEgg(nestId, name, isFertilized) {
+        return this._requester.post(`world/nests/${nestId}/add_egg`, {
+            name,
+            is_fertilized: isFertilized
         });
     }
 

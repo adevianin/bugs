@@ -2,6 +2,7 @@ import { Entity } from './entity';
 import { EntityTypes } from '../enum/entityTypes';
 import { ACTION_TYPES } from './action/actionTypes';
 import { Larva } from './larva';
+import { Egg } from './egg';
 
 class Nest extends Entity {
 
@@ -15,6 +16,10 @@ class Nest extends Entity {
         this.eggPlacesCount = eggPlacesCount;
 
         this._setIsBuilt(isBuilt)
+    }
+
+    addNewEgg(name, isFertilized) {
+        this._nestApi.addNewEgg(this.id, name, isFertilized);
     }
 
     playAction(action) {
@@ -37,15 +42,9 @@ class Nest extends Entity {
                 return this._playEggDevelop(action);
             case ACTION_TYPES.NEST_EGG_BECAME_LARVA:
                 return this._playEggBecameLarva(action);
+            case ACTION_TYPES.NEST_EGG_ADDED:
+                return this._playEggAdded(action);
         }
-    }
-
-    canAddLarva() {
-        return this.larvaPlacesCount > this.larvae.length;
-    }
-
-    addNewLarva(antType) {
-        this._nestApi.addNewLarva(this.id, antType);
     }
 
     _playTakingFood(action) {
@@ -86,6 +85,13 @@ class Nest extends Entity {
         let index = this.eggs.indexOf(egg);
         this.eggs.splice(index, 1);
         this.emit('eggBecameLarva', egg);
+        return Promise.resolve();
+    }
+
+    _playEggAdded(action) {
+        let egg = Egg.buildFromJson(action.egg);
+        this.eggs.push(egg);
+        this.emit('eggAdded', egg);
         return Promise.resolve();
     }
 

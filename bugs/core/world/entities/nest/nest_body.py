@@ -58,6 +58,10 @@ class NestBody(Body):
     def is_built(self):
         return self._build_progress == 100
     
+    def add_egg(self, egg: Egg):
+        self.eggs.append(egg)
+        self.events.emit('egg_added', egg)
+    
     def take_edible_item(self, item: Item):
         self.stored_calories += item.use()
 

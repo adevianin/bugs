@@ -153,7 +153,7 @@ def start():
     entity_client_serializer = EntityClientSerializer(item_client_serializer, item_source_client_serializer, item_area_client_serializer, nest_client_serializer, 
                                                       ground_beetle_client_serializer, ant_client_serializer)
     world_client_serializer = WorldClientSerializer(colony_client_serializer, entity_client_serializer)
-    action_client_serializer = ActionClientSerializer(entity_client_serializer, util_client_serializer, larva_client_serializer, colony_client_serializer, 
+    action_client_serializer = ActionClientSerializer(entity_client_serializer, util_client_serializer, larva_client_serializer, egg_client_serializer, colony_client_serializer, 
                                                       operation_client_serializer)
     nuptial_male_client_serializer = NuptialMaleClientSerializer(genome_client_serializer)
 

@@ -2,6 +2,7 @@ from core.world.action_client_serializer_interface import iActionClientSerialize
 from .util_client_serializer import UtilClientSerializer
 from .entity_client_serializer import EntityClientSerializer
 from .larva_client_serializer import LarvaClientSerializer
+from .egg_client_serializer import EggClientSerializer
 from .colony_client_serializer import ColonyClientSerializer
 from .operation_client_serializer import OperationClientSerializer
 from core.world.entities.action.base.action import Action
@@ -25,14 +26,16 @@ from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
 from core.world.entities.action.nest_egg_became_larva import NestEggBecameLarvaAction
 from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsReadyAction
 from core.world.entities.action.nest_larva_added_action import NestLarvaAddedAction
+from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
 
 class ActionClientSerializer(iActionClientSerializer):
 
-    def __init__(self, entity_serializer: EntityClientSerializer, util_serializer: UtilClientSerializer, larva_serializer: LarvaClientSerializer,
+    def __init__(self, entity_serializer: EntityClientSerializer, util_serializer: UtilClientSerializer, larva_serializer: LarvaClientSerializer, egg_serializer: EggClientSerializer,
                  colony_serializer: ColonyClientSerializer, operation_serializer: OperationClientSerializer):
         self._entity_serializer = entity_serializer
         self._util_serializer = util_serializer
         self._larva_serializer = larva_serializer
+        self._egg_serializer = egg_serializer
         self._colony_serializer = colony_serializer
         self._operation_serializer = operation_serializer
 
@@ -76,6 +79,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._serialize_nest_egg_develop(action)
             case ActionTypes.NEST_EGG_BECAME_LARVA:
                 return self._serialize_nest_egg_became_larva(action)
+            case ActionTypes.NEST_EGG_ADDED:
+                return self._serialize_nest_egg_added(action)
             case ActionTypes.NEST_BUILD_STATUS_CHANGED:
                 return self._serialize_nest_build_status_changed(action)
             case ActionTypes.ITEM_WAS_PICKED_UP:
@@ -226,6 +231,15 @@ class ActionClientSerializer(iActionClientSerializer):
 
         json.update({
             'eggId': action.egg.id
+        })
+
+        return json
+    
+    def _serialize_nest_egg_added(self, action: NestEggAddedAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'egg': self._egg_serializer.serialize_egg(action.egg)
         })
 
         return json

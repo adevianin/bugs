@@ -7,7 +7,7 @@ from ..base.ant_types import AntTypes
 from core.world.utils.event_emiter import EventEmitter
 from .queen_ant_body import QueenAntBody
 from .queen_ant_mind import QueenAntMind
-from core.world.entities.ant.base.larva import Larva
+from core.world.entities.ant.base.egg import Egg
 from core.world.entities.action.ant_flew_nuptial_flight_action import AntFlewNuptialFlightAction
 from core.world.entities.action.ant_flew_nuptial_flight_back_action import AntFlewNuptialFlightBackAction
 from core.world.utils.point import Point
@@ -40,8 +40,8 @@ class QueenAnt(Ant):
         self._mind.toggle_auto_thought_generation(True)
         self._body.fly_nuptial_flight_back(landing_position)
 
-    def produce_larva(self, ant_type: AntTypes) -> Larva:
-        return self._body.produce_larva(ant_type)
+    def produce_egg(self, name: str, is_fertilized: bool) -> Egg:
+        return self._body.produce_egg(name, is_fertilized)
     
     def fertilize(self, male: NuptialMale):
         self._body.fertilize(male.genome.maternal_chromosomes_set)

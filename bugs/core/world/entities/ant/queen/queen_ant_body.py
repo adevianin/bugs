@@ -10,6 +10,7 @@ from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.larva import Larva
 from core.world.entities.ant.base.genetic.genome import Genome
 from core.world.entities.ant.base.genetic.chromosomes_set import ChromosomesSet
+from core.world.entities.ant.base.egg import Egg
 
 class QueenAntBody(AntBody):
 
@@ -42,11 +43,11 @@ class QueenAntBody(AntBody):
     def fertilize(self, chromosome_set: ChromosomesSet):
         self._male_chromosomes_set = chromosome_set
     
-    def produce_larva(self, ant_type: AntTypes) -> Larva:
+    def produce_egg(self, name: str, is_fertilized: bool) -> Egg:
         maternal_chromosome_set = self._genome.meiosis()
-        male_chromosome_set = self._male_chromosomes_set if ant_type != AntTypes.MALE else None
+        male_chromosome_set = self._male_chromosomes_set if is_fertilized else None
         genome = Genome.build(maternal_chromosome_set, male_chromosome_set)
-        return Larva.build_new(ant_type, genome)
+        return Egg.build_new(name, genome)
     
     def fly_nuptial_flight(self):
         if self.is_in_nest:

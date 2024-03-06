@@ -5,9 +5,10 @@ import uuid
 class Egg():
 
     @classmethod
-    def build_new(cls, name: str, genome: Genome, progress: int, ant_type: AntTypes):
+    def build_new(cls, name: str, genome: Genome):
         id = uuid.uuid4().hex
-        return Egg.build(id, name, genome, progress, ant_type)
+        ant_types = genome.get_avaliable_ant_types()
+        return Egg.build(id, name, genome, 0, ant_types[0])
     
     @classmethod
     def build(cls, id: str, name: str, genome: Genome, progress: int, ant_type: AntTypes):

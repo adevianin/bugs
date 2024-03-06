@@ -192,6 +192,7 @@ const ACTION_TYPES = {
     NEST_LARVA_ADDED: 'nest_larva_added',
     NEST_EGG_DEVELOP: 'nest_egg_develop',
     NEST_EGG_BECAME_LARVA: 'nest_egg_became_larva',
+    NEST_EGG_ADDED: 'nest_egg_added',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
 };
 
@@ -1266,6 +1267,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
 /* harmony import */ var _larva__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./larva */ "./bugs/core/client/app/src/domain/entity/larva.js");
+/* harmony import */ var _egg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./egg */ "./bugs/core/client/app/src/domain/entity/egg.js");
+
 
 
 
@@ -1283,6 +1286,10 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this.eggPlacesCount = eggPlacesCount;
 
         this._setIsBuilt(isBuilt)
+    }
+
+    addNewEgg(name, isFertilized) {
+        this._nestApi.addNewEgg(this.id, name, isFertilized);
     }
 
     playAction(action) {
@@ -1305,15 +1312,9 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playEggDevelop(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_EGG_BECAME_LARVA:
                 return this._playEggBecameLarva(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_EGG_ADDED:
+                return this._playEggAdded(action);
         }
-    }
-
-    canAddLarva() {
-        return this.larvaPlacesCount > this.larvae.length;
-    }
-
-    addNewLarva(antType) {
-        this._nestApi.addNewLarva(this.id, antType);
     }
 
     _playTakingFood(action) {
@@ -1354,6 +1355,13 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         let index = this.eggs.indexOf(egg);
         this.eggs.splice(index, 1);
         this.emit('eggBecameLarva', egg);
+        return Promise.resolve();
+    }
+
+    _playEggAdded(action) {
+        let egg = _egg__WEBPACK_IMPORTED_MODULE_4__.Egg.buildFromJson(action.egg);
+        this.eggs.push(egg);
+        this.emit('eggAdded', egg);
         return Promise.resolve();
     }
 
@@ -2339,9 +2347,10 @@ class NestApi {
         this._requester = requester;
     }
 
-    addNewLarva(nestId, larvaType) {
-        return this._requester.post(`world/nests/${nestId}/add_larva`, {
-            larva_type: larvaType
+    addNewEgg(nestId, name, isFertilized) {
+        return this._requester.post(`world/nests/${nestId}/add_egg`, {
+            name,
+            is_fertilized: isFertilized
         });
     }
 
@@ -4260,11 +4269,16 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._eggsViews = {};
 
         this._render();
+
+        this._addEggBtn.addEventListener('click', this._onAddEggBtnClick.bind(this));
     }
 
     _render() {
         this._el.innerHTML = _eggTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
         this._eggsListEl = this._el.querySelector('[data-eggs-list]');
+        this._addEggBtn = this._el.querySelector('[data-add-egg]');
+        this._nameInput = this._el.querySelector('[data-egg-name]');
+        this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
     }
 
     manageNest(nest) {
@@ -4278,6 +4292,7 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
     _listenNest() {
         this._stopListenEggBecameLarva = this._nest.on('eggBecameLarva', this._onEggBecameLarva.bind(this));
+        this._stopListenEggAdded = this._nest.on('eggAdded', this._onEggAdded.bind(this));
     }
 
     _stopListenNest() {
@@ -4286,6 +4301,7 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         }
 
         this._stopListenEggBecameLarva();
+        this._stopListenEggAdded();
     }
 
     _renderEggPlacesCount() {
@@ -4295,11 +4311,15 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     _renderEggsList() {
         this._clearEggsViews();
         for (let egg of this._nest.eggs) {
-            let el = document.createElement('tr');
-            this._eggsListEl.append(el);
-            let view = new _eggView__WEBPACK_IMPORTED_MODULE_2__.EggView(el, egg);
-            this._eggsViews[egg.id] = view;
+            this._renderEgg(egg);
         }
+    }
+
+    _renderEgg(egg) {
+        let el = document.createElement('tr');
+        this._eggsListEl.append(el);
+        let view = new _eggView__WEBPACK_IMPORTED_MODULE_2__.EggView(el, egg);
+        this._eggsViews[egg.id] = view;
     }
 
     _clearEggsViews() {
@@ -4312,6 +4332,18 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     _onEggBecameLarva(egg) {
         this._eggsViews[egg.id].remove();
         delete this._eggsViews[egg.id];
+    }
+
+    _onEggAdded(egg) {
+        this._renderEgg(egg);
+    }
+
+    _onAddEggBtnClick() {
+        let name = this._nameInput.value;
+        let isFertilized = this._isFertilizeCheckbox.checked;
+        if (name.length > 3) {
+            this._nest.addNewEgg(name, isFertilized);
+        }
     }
 
 }
@@ -9876,7 +9908,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    розмір:<span data-egg-places-count></span>\r\n</div>\r\n<div>\r\n    імя: <input type=\"text\" data-egg-name>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized>\r\n    <button>відкласти яйце</button>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>каста</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
+var code = "<div>\r\n    розмір:<span data-egg-places-count></span>\r\n</div>\r\n<div>\r\n    імя: <input type=\"text\" data-egg-name>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>каста</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
