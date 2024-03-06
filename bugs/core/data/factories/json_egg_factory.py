@@ -11,7 +11,6 @@ class JsonEggFactory():
         id = egg_json['id']
         name = egg_json['name']
         genome = self._json_genome_factory.build_genome_from_json(egg_json['genome'])
-        is_fertilized = egg_json['is_fertilized']
         progress = egg_json['progress']
         ant_type = AntTypes(egg_json['ant_type']) if egg_json['ant_type'] else None
-        return Egg.build(id, name, genome, is_fertilized, progress, ant_type)
+        return Egg.build(id, name, genome, progress, ant_type)

@@ -37,3 +37,17 @@ class Genome():
         chromosome_set = self._maternal_chromosomes_set.merge(self._paternal_chromosomes_set) if self._paternal_chromosomes_set else self._maternal_chromosomes_set
         chromosome_set.affect_phenotype(phenotype)
         return phenotype
+    
+    def get_avaliable_ant_types(self):
+        if self._paternal_chromosomes_set is None:
+            return [AntTypes.MALE]
+        
+        types = [
+            AntTypes.WORKER,
+            AntTypes.QUEEN
+        ]
+
+        if self._maternal_chromosomes_set.development_chromosome.warrior_cast_gene or self._paternal_chromosomes_set.development_chromosome.warrior_cast_gene:
+            types.append(AntTypes.WARRIOR)
+
+        return types

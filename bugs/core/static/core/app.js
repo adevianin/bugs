@@ -628,12 +628,11 @@ __webpack_require__.r(__webpack_exports__);
 
 class Egg extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
-    constructor(id, name, genome, isFertilized, progress, antType) {
+    constructor(id, name, genome, progress, antType) {
         super();
         this.id = id;
         this.name = name;
         this.genome = genome;
-        this.isFertilized = isFertilized;
         this._progress = progress;
         this.antType = antType;
     }
@@ -651,12 +650,12 @@ class Egg extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter 
         this.emit('progressChanged');
     }
 
-    getAvaliableAntTypes() {
-        if (this.isFertilized) {
-            return [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.MALE];
-        } else {
-            return this.genome.getAvaliableAntTypes();
-        }
+    get isFertilized() {
+        return this.genome.isFertilized;
+    }
+
+    get avaliableAntTypes() {
+        return this.genome.avaliableAntTypes;
     }
 
 }
@@ -867,30 +866,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Genome": () => (/* binding */ Genome)
 /* harmony export */ });
-/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
-
-
 class Genome {
 
-    constructor(maternal, paternal) {
-        this.maternal = maternal;
-        this.paternal = paternal;
+    constructor(maternal, paternal, avaliableAntTypes) {
+        this._maternal = maternal;
+        this._paternal = paternal;
+        this._avaliableAntTypes = avaliableAntTypes;
+    }
+    
+    get maternal() {
+        return this._maternal;
+    }
+    
+    get paternal() {
+        return this._paternal;
+    }
+    
+    get avaliableAntTypes() {
+        return this._avaliableAntTypes;
     }
 
-    getAvaliableAntTypes() {
-        let res = [
-            _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WORKER,
-            _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.MALE,
-            _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN,
-        ];
-
-        let isWarriorCasteInMaternalChromosome = !!this.maternal.development.warriorCasteGene;
-        let isWarriorCasteInPaternalChromosome = this.paternal ? !!this.paternal.development.warriorCasteGene : false;
-        if (isWarriorCasteInMaternalChromosome || isWarriorCasteInPaternalChromosome) {
-            res.push(_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WARRIOR);
-        }
-
-        return res;
+    get isFertilized() {
+        return !!this._paternal;
     }
 
 }
@@ -2049,8 +2046,8 @@ class WorldFactory {
     buildNest(id, position, angle, fromColony, ownerId, storedCalories, larvaeData, eggsData, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp) {
         let eggs = [];
         for (let eggData of eggsData) {
-            let genome = this._buildGenome(eggData.genome.maternal, eggData.genome.paternal);
-            let egg = this._buildEgg(eggData.id, eggData.name, genome, eggData.isFertilized, eggData.progress, eggData.antType);
+            let genome = this._buildGenome(eggData.genome);
+            let egg = this._buildEgg(eggData, genome);
             eggs.push(egg);
         }
 
@@ -2072,16 +2069,16 @@ class WorldFactory {
     }
 
     buildNuptialMale(nuptialMaleJson) {
-        let genome = this._buildGenome(nuptialMaleJson.genome.maternal, nuptialMaleJson.genome.paternal);
+        let genome = this._buildGenome(nuptialMaleJson.genome);
         return new _entity_nuptialMale__WEBPACK_IMPORTED_MODULE_13__.NuptialMale(nuptialMaleJson.id, genome);
     }
 
-    _buildEgg(id, name, genome, isFertilized, progress, antType) {
-        return new _entity_egg__WEBPACK_IMPORTED_MODULE_11__.Egg(id, name, genome, isFertilized, progress, antType);
+    _buildEgg(eggJson, genome) {
+        return new _entity_egg__WEBPACK_IMPORTED_MODULE_11__.Egg(eggJson.id, eggJson.name, genome, eggJson.progress, eggJson.antType);
     }
 
-    _buildGenome(maternalChromosomeSet, paternalChromosomeSet) {
-        return new _entity_genome__WEBPACK_IMPORTED_MODULE_12__.Genome(maternalChromosomeSet, paternalChromosomeSet);
+    _buildGenome(genomeJson) {
+        return new _entity_genome__WEBPACK_IMPORTED_MODULE_12__.Genome(genomeJson.maternal, genomeJson.paternal, genomeJson.avaliableAntTypes);
     }
 
     _buildLarva(antType, progress) {
@@ -4287,7 +4284,6 @@ class EggView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._el.querySelector('[data-is-fertilized]').innerHTML = this._egg.isFertilized ? '+' : '-';
         this._progressEl = this._el.querySelector('[data-progress]');
         this._antTypeSelector = this._el.querySelector('[data-ant-type-selector]');
-        this._toLarvaeBtn = this._el.querySelector('[data-to-larva]');
 
         this._renderProgress();
         this._renderAntTypeSelectorOptions();
@@ -4295,12 +4291,10 @@ class EggView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
 
     _renderProgress() {
         this._progressEl.innerHTML = this._egg.progress;
-        this._antTypeSelector.disabled = !this._egg.isReady;
-        this._toLarvaeBtn.disabled = !this._egg.isReady;
     }
 
     _renderAntTypeSelectorOptions() {
-        let antTypes = this._egg.getAvaliableAntTypes();
+        let antTypes = this._egg.avaliableAntTypes;
         for (let antType of antTypes) {
             let option = document.createElement('option');
             this._antTypeSelector.append(option);
@@ -9783,7 +9777,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    розмір:<span data-egg-places-count></span>\r\n</div>\r\n<div>\r\n    імя: <input type=\"text\" data-egg-name>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized>\r\n    <button>відкласти яйце</button>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>тип</td>\r\n            <td>дії</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
+var code = "<div>\r\n    розмір:<span data-egg-places-count></span>\r\n</div>\r\n<div>\r\n    імя: <input type=\"text\" data-egg-name>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized>\r\n    <button>відкласти яйце</button>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>каста</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -9801,7 +9795,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<td data-name></td>\r\n<td data-genome></td>\r\n<td data-is-fertilized></td>\r\n<td data-progress></td>\r\n<td>\r\n    <select data-ant-type-selector></select>\r\n</td>\r\n<td>\r\n    <button data-to-larva>в личинки</button>\r\n</td>";
+var code = "<td data-name></td>\r\n<td data-genome></td>\r\n<td data-is-fertilized></td>\r\n<td data-progress></td>\r\n<td>\r\n    <select data-ant-type-selector></select>\r\n</td>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

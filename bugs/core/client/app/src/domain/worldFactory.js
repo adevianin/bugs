@@ -96,8 +96,8 @@ class WorldFactory {
     buildNest(id, position, angle, fromColony, ownerId, storedCalories, larvaeData, eggsData, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp) {
         let eggs = [];
         for (let eggData of eggsData) {
-            let genome = this._buildGenome(eggData.genome.maternal, eggData.genome.paternal);
-            let egg = this._buildEgg(eggData.id, eggData.name, genome, eggData.isFertilized, eggData.progress, eggData.antType);
+            let genome = this._buildGenome(eggData.genome);
+            let egg = this._buildEgg(eggData, genome);
             eggs.push(egg);
         }
 
@@ -119,16 +119,16 @@ class WorldFactory {
     }
 
     buildNuptialMale(nuptialMaleJson) {
-        let genome = this._buildGenome(nuptialMaleJson.genome.maternal, nuptialMaleJson.genome.paternal);
+        let genome = this._buildGenome(nuptialMaleJson.genome);
         return new NuptialMale(nuptialMaleJson.id, genome);
     }
 
-    _buildEgg(id, name, genome, isFertilized, progress, antType) {
-        return new Egg(id, name, genome, isFertilized, progress, antType);
+    _buildEgg(eggJson, genome) {
+        return new Egg(eggJson.id, eggJson.name, genome, eggJson.progress, eggJson.antType);
     }
 
-    _buildGenome(maternalChromosomeSet, paternalChromosomeSet) {
-        return new Genome(maternalChromosomeSet, paternalChromosomeSet);
+    _buildGenome(genomeJson) {
+        return new Genome(genomeJson.maternal, genomeJson.paternal, genomeJson.avaliableAntTypes);
     }
 
     _buildLarva(antType, progress) {

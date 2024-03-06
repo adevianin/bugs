@@ -1,26 +1,25 @@
-import { AntTypes } from "@domain/enum/antTypes";
-
 class Genome {
 
-    constructor(maternal, paternal) {
-        this.maternal = maternal;
-        this.paternal = paternal;
+    constructor(maternal, paternal, avaliableAntTypes) {
+        this._maternal = maternal;
+        this._paternal = paternal;
+        this._avaliableAntTypes = avaliableAntTypes;
+    }
+    
+    get maternal() {
+        return this._maternal;
+    }
+    
+    get paternal() {
+        return this._paternal;
+    }
+    
+    get avaliableAntTypes() {
+        return this._avaliableAntTypes;
     }
 
-    getAvaliableAntTypes() {
-        let res = [
-            AntTypes.WORKER,
-            AntTypes.MALE,
-            AntTypes.QUEEN,
-        ];
-
-        let isWarriorCasteInMaternalChromosome = !!this.maternal.development.warriorCasteGene;
-        let isWarriorCasteInPaternalChromosome = this.paternal ? !!this.paternal.development.warriorCasteGene : false;
-        if (isWarriorCasteInMaternalChromosome || isWarriorCasteInPaternalChromosome) {
-            res.push(AntTypes.WARRIOR);
-        }
-
-        return res;
+    get isFertilized() {
+        return !!this._paternal;
     }
 
 }

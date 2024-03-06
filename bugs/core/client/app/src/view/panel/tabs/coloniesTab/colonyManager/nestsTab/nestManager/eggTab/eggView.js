@@ -21,7 +21,6 @@ class EggView extends BaseHTMLView {
         this._el.querySelector('[data-is-fertilized]').innerHTML = this._egg.isFertilized ? '+' : '-';
         this._progressEl = this._el.querySelector('[data-progress]');
         this._antTypeSelector = this._el.querySelector('[data-ant-type-selector]');
-        this._toLarvaeBtn = this._el.querySelector('[data-to-larva]');
 
         this._renderProgress();
         this._renderAntTypeSelectorOptions();
@@ -29,12 +28,10 @@ class EggView extends BaseHTMLView {
 
     _renderProgress() {
         this._progressEl.innerHTML = this._egg.progress;
-        this._antTypeSelector.disabled = !this._egg.isReady;
-        this._toLarvaeBtn.disabled = !this._egg.isReady;
     }
 
     _renderAntTypeSelectorOptions() {
-        let antTypes = this._egg.getAvaliableAntTypes();
+        let antTypes = this._egg.avaliableAntTypes;
         for (let antType of antTypes) {
             let option = document.createElement('option');
             this._antTypeSelector.append(option);

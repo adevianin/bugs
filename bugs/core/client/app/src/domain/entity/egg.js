@@ -3,12 +3,11 @@ import { AntTypes } from "@domain/enum/antTypes";
 
 class Egg extends EventEmitter {
 
-    constructor(id, name, genome, isFertilized, progress, antType) {
+    constructor(id, name, genome, progress, antType) {
         super();
         this.id = id;
         this.name = name;
         this.genome = genome;
-        this.isFertilized = isFertilized;
         this._progress = progress;
         this.antType = antType;
     }
@@ -26,12 +25,12 @@ class Egg extends EventEmitter {
         this.emit('progressChanged');
     }
 
-    getAvaliableAntTypes() {
-        if (this.isFertilized) {
-            return [AntTypes.MALE];
-        } else {
-            return this.genome.getAvaliableAntTypes();
-        }
+    get isFertilized() {
+        return this.genome.isFertilized;
+    }
+
+    get avaliableAntTypes() {
+        return this.genome.avaliableAntTypes;
     }
 
 }

@@ -5,19 +5,18 @@ import uuid
 class Egg():
 
     @classmethod
-    def build_new(cls, name: str, genome: Genome, is_fertilized: bool, progress: int, ant_type: AntTypes):
+    def build_new(cls, name: str, genome: Genome, progress: int, ant_type: AntTypes):
         id = uuid.uuid4().hex
-        return Egg(id, name, genome, is_fertilized, progress, ant_type)
+        return Egg(id, name, genome, progress, ant_type)
     
     @classmethod
-    def build(cls, id: str, name: str, genome: Genome, is_fertilized: bool, progress: int, ant_type: AntTypes):
-        return Egg(id, name, genome, is_fertilized, progress, ant_type)
+    def build(cls, id: str, name: str, genome: Genome, progress: int, ant_type: AntTypes):
+        return Egg(id, name, genome, progress, ant_type)
 
-    def __init__(self, id: str, name: str, genome: Genome, is_fertilized: bool, progress: int, ant_type: AntTypes):
+    def __init__(self, id: str, name: str, genome: Genome, progress: int, ant_type: AntTypes):
         self._id = id
         self._name = name
         self._genome = genome
-        self._is_fertilized = is_fertilized
         self._progress = progress
         self._ant_type = ant_type
 
@@ -35,7 +34,7 @@ class Egg():
     
     @property
     def is_fertilized(self):
-        return self._is_fertilized
+        return self._genome.paternal_chromosomes_set is not None
     
     @property
     def progress(self):

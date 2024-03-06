@@ -17,7 +17,8 @@ class GenomeClientSerializer():
     def serialize_genome(self, genome: Genome):
         return {
             'maternal': self.serialize_chromosomes_set(genome.maternal_chromosomes_set),
-            'paternal': self.serialize_chromosomes_set(genome.paternal_chromosomes_set) if genome.paternal_chromosomes_set else None
+            'paternal': self.serialize_chromosomes_set(genome.paternal_chromosomes_set) if genome.paternal_chromosomes_set else None,
+            'avaliableAntTypes': genome.get_avaliable_ant_types()
         }
 
     def serialize_chromosomes_set(self, chromosomes_set: ChromosomesSet):
