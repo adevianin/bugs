@@ -13,13 +13,8 @@ class NestsTabView extends BaseHTMLView {
         this._nestsList.events.addListener('selectedNestChanged', this._manageSelectedNest.bind(this));
     }
 
-    manageColony(colony) {
-        this._nestsList.manageColony(colony);
-        this._manageSelectedNest();
-    }
-
-    showNestManagerFor(nest) {
-        this._nestsList.selectNest(nest);
+    manageColony(colony, nestToSelect) {
+        this._nestsList.manageColony(colony, nestToSelect);
     }
 
     _render() {

@@ -120,4 +120,5 @@ class WorldFacade:
 
     def _on_action(self, action: Action):
         serialized_action = self._action_client_serializer.serialize(action)
-        self._events.emit('action_occured', serialized_action)
+        for_user_id = action.for_user_id if action.is_personal() else None
+        self._events.emit('action_occured', serialized_action, for_user_id)

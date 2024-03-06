@@ -8,10 +8,10 @@ class NestsListView extends BaseHTMLView {
         this._nestViews = {};
     }
 
-    manageColony(colony) {
+    manageColony(colony, nestToSelect) {
         this._colony = colony;
         this._nests = this.$domainFacade.getNestsFromColony(colony.id);
-        this._selectNest(this._nests[0]);
+        this._selectNest(nestToSelect || this._nests[0]);
         this._renderNests();
         this._renderSelectedNest();
     }

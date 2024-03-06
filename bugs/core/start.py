@@ -15,10 +15,12 @@ from core.data.factories.json_map_factory import JsonMapFactory
 from core.data.factories.json_stats_factory import JsonStatsFactory
 from core.data.factories.json_genes_factory import JsonGenesFactory
 from core.data.factories.json_larva_factory import JsonLarvaFactory
+from core.data.factories.json_egg_factory import JsonEggFactory
 from core.data.factories.json_nuptial_environment_factory import JsonNuptialEnvironmentFactory
 from core.data.factories.json_genome_factory import JsonGenomeFactory
 
 from core.data.serializers.larva_serializer import LarvaSerializer
+from core.data.serializers.egg_serializer import EggSerializer
 from core.data.serializers.nest_serializer import NestSerializer
 from core.data.serializers.world_serializer import WorldSerializer
 from core.data.serializers.ant_serializer import AntSerializer
@@ -61,6 +63,7 @@ from core.sync.colony_client_serializer import ColonyClientSerializer
 from core.sync.operation_client_serializer import OperationClientSerializer
 from core.sync.util_client_serializer import UtilClientSerializer
 from core.sync.larva_client_serializer import LarvaClientSerializer
+from core.sync.egg_client_serializer import EggClientSerializer
 from core.sync.stats_client_serializer import StatsClientSerializer
 from core.sync.item_client_serializer import ItemClientSerializer
 from core.sync.item_source_client_serializer import ItemSourceClientSerializer
@@ -97,7 +100,8 @@ def start():
     genes_serializer = GenesSerializer()
     genome_serializer = GenomeSerializer(genes_serializer)
     larva_serializer = LarvaSerializer(genome_serializer)
-    nest_serializer = NestSerializer(larva_serializer)
+    egg_serializer = EggSerializer(genome_serializer)
+    nest_serializer = NestSerializer(larva_serializer, egg_serializer)
     thought_serializer = ThoughtSerializer()
     ant_serializer = AntSerializer(thought_serializer, genome_serializer)
     formation_serializer = FormationSerializer()
@@ -116,7 +120,8 @@ def start():
     json_genes_factory = JsonGenesFactory()
     json_genome_factory = JsonGenomeFactory(json_genes_factory)
     json_larva_factory = JsonLarvaFactory(json_genome_factory)
-    json_nest_factory = JsonNestFactory(json_larva_factory, nest_factory)
+    json_egg_factory = JsonEggFactory(json_genome_factory)
+    json_nest_factory = JsonNestFactory(json_larva_factory, json_egg_factory, nest_factory)
     json_ant_factory = JsonAntFactory(json_genome_factory, ant_factory)
     json_ground_beetle_factory = JsonGroundBeetleFactory(ground_beetle_factory)
     json_formation_factory = JsonFormationFactory(formation_factory)
@@ -135,13 +140,14 @@ def start():
     genes_client_serializer = GenesClientSerializer()
     genome_client_serializer = GenomeClientSerializer(genes_client_serializer)
     larva_client_serializer = LarvaClientSerializer()
+    egg_client_serializer = EggClientSerializer(genome_client_serializer)
     util_client_serializer = UtilClientSerializer()
     operation_client_serializer = OperationClientSerializer()
     colony_client_serializer = ColonyClientSerializer(operation_client_serializer)
     item_client_serializer = ItemClientSerializer(util_client_serializer)
     item_source_client_serializer = ItemSourceClientSerializer(util_client_serializer)
     item_area_client_serializer = ItemAreaClientSerializer(util_client_serializer)
-    nest_client_serializer = NestClientSerializer(util_client_serializer, larva_client_serializer)
+    nest_client_serializer = NestClientSerializer(util_client_serializer, larva_client_serializer, egg_client_serializer)
     ground_beetle_client_serializer = GroundBeetleClientSerializer(util_client_serializer)
     ant_client_serializer = AntClientSerializer(util_client_serializer, stats_client_serializer, genome_client_serializer)
     entity_client_serializer = EntityClientSerializer(item_client_serializer, item_source_client_serializer, item_area_client_serializer, nest_client_serializer, 

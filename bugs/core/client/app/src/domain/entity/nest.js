@@ -5,12 +5,14 @@ import { Larva } from './larva';
 
 class Nest extends Entity {
 
-    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp) {
+    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp) {
         super(eventBus, id, position, angle, EntityTypes.NEST, fromColony, ownerId, hp, maxHp);
         this._nestApi = nestApi;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
+        this.eggs = eggs;
         this.larvaPlacesCount = larvaPlacesCount;
+        this.eggPlacesCount = eggPlacesCount;
 
         this._setIsBuilt(isBuilt)
     }
@@ -27,6 +29,8 @@ class Nest extends Entity {
                 return this._playLarvaeChanged(action);
             case ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
                 return this._playBuildStatusChanged(action);
+            case ACTION_TYPES.NEST_EGG_DEVELOP:
+                return this._playEggDevelop(action);
         }
     }
 
@@ -47,9 +51,15 @@ class Nest extends Entity {
     _playLarvaeChanged(action) {
         this.larvae = [];
         action.actionData.larvae.forEach(larvaJson => {
-            this.larvae.push(Larva.fromJson(larvaJson.ant_type, larvaJson.progress));
+            this.larvae.push(Larva.buildFromJson(larvaJson));
         });
         this.emit('larvaeChanged');
+        return Promise.resolve();
+    }
+
+    _playEggDevelop(action) {
+        let egg = this.eggs.find(egg => egg.id == action.eggId);
+        egg.progress = action.progress;
         return Promise.resolve();
     }
 

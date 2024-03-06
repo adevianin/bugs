@@ -16,7 +16,7 @@ class ColoniesTabView extends BaseHTMLView {
 
     showNestManagerFor(nest){
         this._coloniesList.selectColony(nest.fromColony);
-        this._colonyManager.showNestManagerFor(nest);
+        this._colonyManager.manageColony(this._coloniesList.selectedColony, nest);
     }
 
     _render() {

@@ -21,7 +21,7 @@ class ColoniesListView extends BaseHTMLView {
 
     selectColony(colonyId) {
         let colony = this._colonies.find(colony => colony.id == colonyId);
-        this._selectColony(colony);
+        this._selectColony(colony, true);
     }
 
     _autoSelect() {
@@ -51,10 +51,12 @@ class ColoniesListView extends BaseHTMLView {
         this._selectedColony = null;
     }
 
-    _selectColony(colony) {
+    _selectColony(colony, silent = false) {
         this._selectedColony = colony;
         this._renderSelectedColony();
-        this.events.emit('selectedColonyChanged');
+        if (!silent) {
+            this.events.emit('selectedColonyChanged');
+        }
     }
 
     _renderSelectedColony() {

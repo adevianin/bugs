@@ -10,6 +10,8 @@ from core.world.entities.action.nest_larvae_changed_action import NestLarvaeChan
 from core.world.entities.action.nest_build_status_changed_action import NestBuildStatusChangedAction
 from core.world.entities.ant.base.larva import Larva
 from .nest_body import NestBody
+from core.world.entities.ant.base.egg import Egg
+from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
 
 class Nest(Entity):
 
@@ -22,6 +24,7 @@ class Nest(Entity):
         self._body.events.add_listener('stored_calories_changed', self._on_stored_calories_changed)
         self._body.events.add_listener('build_status_changed', self._on_build_status_changed)
         self._body.events.add_listener('larva_is_ready', self._on_larva_is_ready)
+        self._body.events.add_listener('egg_develop', self._on_egg_develop)
 
     @property
     def area(self):
@@ -36,8 +39,16 @@ class Nest(Entity):
         return self._body.larvae
     
     @property
+    def eggs(self):
+        return self._body.eggs
+    
+    @property
     def larva_places_count(self):
         return self._body.larva_places_count
+    
+    @property
+    def egg_places_count(self):
+        return self._body.egg_places_count
     
     @property
     def build_progress(self):
@@ -49,6 +60,7 @@ class Nest(Entity):
 
     def do_step(self):
         self._body.feed_larvae()
+        self._body.develop_eggs()
 
     def take_edible_item(self, item: Item):
         self._body.take_edible_item(item)
@@ -84,4 +96,7 @@ class Nest(Entity):
 
     def _on_larva_is_ready(self, larva: Larva):
         self._event_bus.emit('ant_birth_request', AntBirthRequest.build(self._id, larva))
+
+    def _on_egg_develop(self, egg: Egg):
+        self._emit_action(NestEggDevelopAction.build(self.id, egg, self._owner_id))
     

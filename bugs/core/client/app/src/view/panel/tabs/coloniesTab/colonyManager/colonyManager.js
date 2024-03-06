@@ -14,17 +14,15 @@ class ColonyManager extends BaseHTMLView {
         this._render();
     }
 
-    manageColony(colony){
+    manageColony(colony, nestToSelect){
         this._colony = colony;
         this._colonyNameEl.innerHTML = `colony: ${this._colony.id}`;
-        this._nestsTab.manageColony(colony);
         this._operationsTab.manageColony(colony);
         this._antsTab.manageColony(colony);
-    }
-
-    showNestManagerFor(nest) {
-        this._tabSwitcher.activateTab('nests');
-        this._nestsTab.showNestManagerFor(nest);
+        this._nestsTab.manageColony(colony, nestToSelect);
+        if (nestToSelect) {
+            this._tabSwitcher.activateTab('nests');
+        }
     }
 
     _render() {

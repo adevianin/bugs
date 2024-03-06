@@ -9,7 +9,9 @@ import { ItemSource } from './entity/itemSource';
 import { ItemArea } from './entity/itemArea';
 import { AntTypes } from './enum/antTypes';
 import { WarriorAnt, WorkerAnt, QueenAnt, MaleAnt } from './entity/ant';
-import { FoundMalesCollection } from './entity/nuptialFlight';
+import { Egg } from './entity/egg';
+import { Genome } from './entity/genome';
+import { NuptialMale } from './entity/nuptialMale';
 
 class WorldFactory {
 
@@ -44,7 +46,7 @@ class WorldFactory {
                     entityJson.max_hp);
             case EntityTypes.NEST:
                 return this.buildNest(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.owner_id, entityJson.stored_calories, 
-                    entityJson.larvae, entityJson.larva_places_count, entityJson.is_built, entityJson.hp, entityJson.max_hp);
+                    entityJson.larvae, entityJson.eggs, entityJson.larva_places_count, entityJson.egg_places_count, entityJson.is_built, entityJson.hp, entityJson.max_hp);
             case EntityTypes.ITEM:
                 return this.buildItem(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, 
                     entityJson.item_type, entityJson.variety, entityJson.is_picked);
@@ -71,8 +73,7 @@ class WorldFactory {
     }
 
     buildWorld() {
-        let foundMalesCollection = new FoundMalesCollection(this._mainEventBus);
-        return new World(this._mainEventBus, foundMalesCollection);
+        return new World(this._mainEventBus);
     }
 
     buildQueenAnt(id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight, genes) {
@@ -92,10 +93,21 @@ class WorldFactory {
         return new MaleAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
     }
 
-    buildNest(id, position, angle, fromColony, ownerId, storedCalories, larvaeData, larvaPlacesCount, isBuilt, hp, maxHp) {
+    buildNest(id, position, angle, fromColony, ownerId, storedCalories, larvaeData, eggsData, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp) {
+        let eggs = [];
+        for (let eggData of eggsData) {
+            let genome = this._buildGenome(eggData.genome.maternal, eggData.genome.paternal);
+            let egg = this._buildEgg(eggData.id, eggData.name, genome, eggData.isFertilized, eggData.progress, eggData.antType);
+            eggs.push(egg);
+        }
+
         let larvae = [];
-        larvaeData.forEach(larvaData => larvae.push(Larva.fromJson(larvaData.ant_type, larvaData.progress)));
-        return new Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, larvaPlacesCount, isBuilt, hp, maxHp);
+        for (let larvaData of larvaeData) {
+            let larva = this._buildLarva(larvaData.ant_type, larvaData.progress);
+            larvae.push(larva);
+        }
+
+        return new Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp);
     }
 
     buildAntColony(id, owner_id, operations, queenId) {
@@ -104,6 +116,23 @@ class WorldFactory {
 
     buildGroundBeetle(id, position, angle, fromColony, userSpeed, hp, maxHp) {
         return new GroundBeetle(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp);
+    }
+
+    buildNuptialMale(nuptialMaleJson) {
+        let genome = this._buildGenome(nuptialMaleJson.genome.maternal, nuptialMaleJson.genome.paternal);
+        return new NuptialMale(nuptialMaleJson.id, genome);
+    }
+
+    _buildEgg(id, name, genome, isFertilized, progress, antType) {
+        return new Egg(id, name, genome, isFertilized, progress, antType);
+    }
+
+    _buildGenome(maternalChromosomeSet, paternalChromosomeSet) {
+        return new Genome(maternalChromosomeSet, paternalChromosomeSet);
+    }
+
+    _buildLarva(antType, progress) {
+        return new Larva(antType, progress);
     }
 }
 

@@ -4,18 +4,21 @@ from core.world.utils.point import Point
 from core.world.entities.base.body import Body
 from core.world.entities.ant.base.larva import Larva
 from core.world.entities.item.items.base.item import Item
+from core.world.entities.ant.base.egg import Egg
 
 from typing import List
 
 class NestBody(Body):
     
-    def __init__(self, events: EventEmitter, stats: BasicStats, position: Point, angle: int, hp: int, larvae: List[Larva], larva_places_count: int, stored_calories: int, area: int, 
-                 build_progress: int):
+    def __init__(self, events: EventEmitter, stats: BasicStats, position: Point, angle: int, hp: int, larvae: List[Larva], eggs: List[Egg], larva_places_count: int, egg_places_count: int,
+                stored_calories: int, area: int, build_progress: int):
         super().__init__(events, stats, position, angle, hp)
         self._area = area
         self._stored_calories = stored_calories
         self._larvae = larvae
+        self._eggs = eggs
         self._larva_places_count = larva_places_count
+        self._egg_places_count = egg_places_count
         self._build_progress = build_progress
 
     @property
@@ -36,8 +39,16 @@ class NestBody(Body):
         return self._larvae
     
     @property
+    def eggs(self):
+        return self._eggs
+    
+    @property
     def larva_places_count(self):
         return self._larva_places_count
+    
+    @property
+    def egg_places_count(self):
+        return self._egg_places_count
     
     @property
     def build_progress(self):
@@ -105,3 +116,11 @@ class NestBody(Body):
             self.events.emit('larva_is_ready', larva)
         
         self.events.emit('larvae_changed')
+
+    def develop_eggs(self):
+        for egg in self._eggs:
+            if not egg.is_ready:
+                egg.develop()
+                self.events.emit('egg_develop', egg)
+
+        

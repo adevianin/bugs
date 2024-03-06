@@ -18,6 +18,7 @@ const ACTION_TYPES = {
     ITEM_BEING_BRINGED: 'item_being_bringed',
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
     NEST_LARVAE_CHANGED: 'nest_larvae_changed',
+    NEST_EGG_DEVELOP: 'nest_egg_develop',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
 };
 

@@ -1,6 +1,10 @@
 class Larva {
 
-    static fromJson(antType, progress) {
+    static buildFromJson(json) {
+        return new Larva(json.antType, json.progress);
+    }
+
+    static build(antType, progress) {
         return new Larva(antType, progress);
     }
 

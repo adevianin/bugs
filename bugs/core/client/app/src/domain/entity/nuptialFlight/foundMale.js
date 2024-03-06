@@ -1,7 +1,0 @@
-class FoundMale {
-
-}
-
-export {
-    FoundMale
-}

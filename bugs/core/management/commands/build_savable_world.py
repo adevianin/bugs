@@ -377,7 +377,56 @@ class Command(BaseCommand):
                         }
                     }
                 ],
+                "eggs": [
+                    {'id': 'asdasdas', 'name': 'bario', 'is_fertilized': False, 'progress': 90, 'ant_type': 'worker', 'genome': {
+                            "maternal": {
+                                "body": {
+                                    "strength_gene": { "type": "body_strength", "domination_code": "A", "strength": 10},
+                                    "defense_gene": { "type": "body_defense", "domination_code": "C", "defense": 5},
+                                    "max_hp_gene": { "type": "body_max_hp", "domination_code": "B", "max_hp": 200},
+                                    "hp_regen_rate_gene": { "type": "body_hp_regen_rate", "domination_code": "B", "hp_regen_rate": 10},
+                                    "sight_distance_gene": { "type": "body_sight_distance", "domination_code": "D", "sight_distance": 200},
+                                    "speed_gene": { "type": "body_speed", "domination_code": "D", "speed": 32}
+                                },
+                                "development": {
+                                    "queen_cast_gene": { "type": "development_queen_caste", "domination_code": "E", "strength": 1.8, "defense": 1, "max_hp": 1, "hp_regen_rate": 0.9, "speed": 0.7},
+                                    "worker_cast_gene": { "type": "development_worker_caste", "domination_code": "E", "strength": 1, "defense": 1.5, "max_hp": 1.5, "hp_regen_rate": 1, "speed": 1},
+                                    "warrior_cast_gene": { "type": "development_warrior_caste", "domination_code": "E", "strength": 1.6, "defense": 2, "max_hp": 2, "hp_regen_rate": 1.5, "speed": 1.3}
+                                },
+                                "adaptation": {},
+                                "building": {},
+                                "combat": {},
+                                "adjusting": {
+                                    "appetite_gene": { "type": "adjusting_appetite", "domination_code": "E"},
+                                    "development_appetite_gene": { "type": "adjusting_development_appetite", "domination_code": "E"}
+                                }
+                            },
+                            "paternal": {
+                                "body": {
+                                    "strength_gene": { "type": "body_strength", "domination_code": "B", "strength": 15 },
+                                    "defense_gene": { "type": "body_defense", "domination_code": "C", "defense": 7 },
+                                    "max_hp_gene": { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 },
+                                    "hp_regen_rate_gene": { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20} ,
+                                    "sight_distance_gene": { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 },
+                                    "speed_gene": { "type": "body_speed", "domination_code": "D", "speed": 32 }
+                                },
+                                "development": {
+                                    "queen_cast_gene": { "type": "development_queen_caste", "domination_code": "E", "strength": 1.8, "defense": 1, "max_hp": 1, "hp_regen_rate": 0.9, "speed": 0.7},
+                                    "worker_cast_gene": { "type": "development_worker_caste", "domination_code": "E", "strength": 1, "defense": 1.5, "max_hp": 1.5, "hp_regen_rate": 1, "speed": 1},
+                                    "warrior_cast_gene": { "type": "development_warrior_caste", "domination_code": "E", "strength": 1.6, "defense": 2, "max_hp": 2, "hp_regen_rate": 1.5, "speed": 1.3}
+                                },
+                                "adaptation": {},
+                                "building": {},
+                                "combat": {},
+                                "adjusting": {
+                                    "appetite_gene": { "type": "adjusting_appetite", "domination_code": "E"},
+                                    "development_appetite_gene": { "type": "adjusting_development_appetite", "domination_code": "E"}
+                                }
+                            }
+                        }}
+                ],
                 "larva_places_count":3,
+                "egg_places_count":3,
                 "area":300,
                 "build_progress": 100
             },
@@ -396,7 +445,9 @@ class Command(BaseCommand):
                 "stored_calories":1000,
                 "larvae":[
                 ],
+                "eggs": [],
                 "larva_places_count":1,
+                "egg_places_count":1,
                 "area":300,
                 "build_progress": 100
             },
@@ -415,7 +466,9 @@ class Command(BaseCommand):
                 "stored_calories":1000,
                 "larvae":[
                 ],
+                "eggs": [],
                 "larva_places_count":1,
+                "egg_places_count":1,
                 "area":300,
                 "build_progress": 100
             },

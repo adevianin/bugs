@@ -35,9 +35,10 @@ class MainSocketConsumer(WebsocketConsumer):
             }))
             self._synced = True
 
-    def _on_action(self, action: dict):
+    def _on_action(self, action: dict, for_user_id: int):
         if self._synced:
-            self.send(json.dumps({
-                'type': 'action',
-                'action': action
-            }))
+            if for_user_id is None or for_user_id == self._user.id:
+                self.send(json.dumps({
+                    'type': 'action',
+                    'action': action
+                }))
