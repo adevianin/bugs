@@ -16,6 +16,7 @@ from core.world.entities.action.nest_larva_fed_action import NestLarvaFedAction
 from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsReadyAction
 from core.world.entities.action.nest_larva_added_action import NestLarvaAddedAction
 from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
+from core.world.entities.ant.base.ant_types import AntTypes
 
 class Nest(Entity):
 
@@ -80,6 +81,9 @@ class Nest(Entity):
 
     def add_egg(self, egg: Egg):
         self._body.add_egg(egg)
+
+    def change_egg_caste(self, egg_id: str, ant_type: AntTypes):
+        self._body.change_egg_caste(egg_id, ant_type)
 
     def build(self):
         self._body.build()

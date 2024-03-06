@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 from .views.account import check_username, user_register, user_login, user_logout
 from .views.home import index
 from .views.admin import admin_panel, world_status_check, stop_world, run_world, save_world
-from .views.nest import add_egg
+from .views.nest import add_egg, change_egg_caste
 from .views.colony import stop_operation, build_new_sub_nest, destroy_nest, pillage_nest
 from .views.ant import fly_nuptial_flight
 from .views.nuptial import search_nuptial_males, found_colony
@@ -25,6 +25,7 @@ urlpatterns = [
     path('admin/world/save', save_world, name='save-world'),
 
     path('world/nests/<int:nest_id>/add_egg', add_egg, name='add_egg'),
+    path('world/nests/<int:nest_id>/eggs/<str:egg_id>/change_caste', change_egg_caste, name='change-egg-caste'),
 
     path('world/colonies/<int:colony_id>/operations/<int:operation_id>/stop_operation', stop_operation, name='stop_operation'),
     path('world/colonies/<int:colony_id>/operations/build_new_sub_nest', build_new_sub_nest, name='build_new_sub_nest'),

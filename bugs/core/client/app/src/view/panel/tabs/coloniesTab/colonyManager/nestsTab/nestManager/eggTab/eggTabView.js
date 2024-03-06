@@ -58,7 +58,7 @@ class EggTabView extends BaseHTMLView {
     _renderEgg(egg) {
         let el = document.createElement('tr');
         this._eggsListEl.append(el);
-        let view = new EggView(el, egg);
+        let view = new EggView(el, egg, this._nest);
         this._eggsViews[egg.id] = view;
     }
 

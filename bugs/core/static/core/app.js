@@ -1292,6 +1292,12 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this._nestApi.addNewEgg(this.id, name, isFertilized);
     }
 
+    editCasteForEgg(eggId, antType) {
+        this._nestApi.changeEggCaste(this.id, eggId, antType);
+        let egg = this._findEggById(eggId);
+        egg.antType = antType;
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {
@@ -1345,13 +1351,13 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     _playEggDevelop(action) {
-        let egg = this.eggs.find(egg => egg.id == action.eggId);
+        let egg = this._findEggById(action.eggId);
         egg.progress = action.progress;
         return Promise.resolve();
     }
 
     _playEggBecameLarva(action) {
-        let egg = this.eggs.find(egg => egg.id == action.eggId);
+        let egg = this._findEggById(action.eggId);
         let index = this.eggs.indexOf(egg);
         this.eggs.splice(index, 1);
         this.emit('eggBecameLarva', egg);
@@ -1372,6 +1378,10 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _setIsBuilt(isBuilt) {
         this._setState(isBuilt ? 'built' : 'building');
+    }
+
+    _findEggById(id) {
+        return this.eggs.find(egg => egg.id == id);
     }
 
 }
@@ -2351,6 +2361,12 @@ class NestApi {
         return this._requester.post(`world/nests/${nestId}/add_egg`, {
             name,
             is_fertilized: isFertilized
+        });
+    }
+
+    changeEggCaste(nestId, eggId, antType) {
+        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/change_caste`, {
+            ant_type: antType
         });
     }
 
@@ -4318,7 +4334,7 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     _renderEgg(egg) {
         let el = document.createElement('tr');
         this._eggsListEl.append(el);
-        let view = new _eggView__WEBPACK_IMPORTED_MODULE_2__.EggView(el, egg);
+        let view = new _eggView__WEBPACK_IMPORTED_MODULE_2__.EggView(el, egg, this._nest);
         this._eggsViews[egg.id] = view;
     }
 
@@ -4373,29 +4389,36 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class EggView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
-    constructor(el, egg) {
+    constructor(el, egg, nest) {
         super(el);
+        this._nest = nest;
         this._egg = egg;
 
         this._stopListenProgressChange = this._egg.on('progressChanged', this._onEggProgressChanged.bind(this));
         
         this._render();
+
+        this._antTypeSelector.addEventListener('change', this._onEggAntTypeChanged.bind(this));
     }
 
     _render() {
         this._el.innerHTML = _eggTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._el.querySelector('[data-name]').innerHTML = this._egg.name;
-        this._genomeView = new _view_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_2__.ClosableGenomeView(this._el.querySelector('[data-genome]'), this._egg.genome);
-        this._el.querySelector('[data-is-fertilized]').innerHTML = this._egg.isFertilized ? '+' : '-';
-        this._progressEl = this._el.querySelector('[data-progress]');
-        this._antTypeSelector = this._el.querySelector('[data-ant-type-selector]');
 
-        this._renderProgress();
+        this._genomeView = new _view_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_2__.ClosableGenomeView(this._el.querySelector('[data-genome]'), this._egg.genome);
+
+        this._el.querySelector('[data-is-fertilized]').innerHTML = this._egg.isFertilized ? '+' : '-';
+
+        this._progressEl = this._el.querySelector('[data-progress]');
+        this._renderProgressValue();
+
+        this._antTypeSelector = this._el.querySelector('[data-ant-type-selector]');
         this._renderAntTypeSelectorOptions();
+        this._antTypeSelector.value = this._egg.antType;
     }
 
-    _renderProgress() {
+    _renderProgressValue() {
         this._progressEl.innerHTML = this._egg.progress;
     }
 
@@ -4410,7 +4433,12 @@ class EggView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
     }
 
     _onEggProgressChanged() {
-        this._renderProgress();
+        this._renderProgressValue();
+    }
+
+    _onEggAntTypeChanged() {
+        let antType = this._antTypeSelector.value;
+        this._nest.editCasteForEgg(this._egg.id, antType);
     }
 
     remove() {

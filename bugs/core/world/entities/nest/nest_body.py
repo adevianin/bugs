@@ -5,6 +5,7 @@ from core.world.entities.base.body import Body
 from core.world.entities.ant.base.larva import Larva
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.ant.base.egg import Egg
+from core.world.entities.ant.base.ant_types import AntTypes
 
 from typing import List
 
@@ -61,6 +62,11 @@ class NestBody(Body):
     def add_egg(self, egg: Egg):
         self.eggs.append(egg)
         self.events.emit('egg_added', egg)
+
+    def change_egg_caste(self, egg_id: str, ant_type: AntTypes):
+        egg = self._get_egg_by_id(egg_id)
+        if egg:
+            egg.ant_type = ant_type
     
     def take_edible_item(self, item: Item):
         self.stored_calories += item.use()
@@ -138,4 +144,10 @@ class NestBody(Body):
         self._larvae.append(larva)
         self.events.emit('larva_added', larva)
 
+    def _get_egg_by_id(self, egg_id: str):
+        for egg in self._eggs:
+            if egg.id == egg_id:
+                return egg
+            
+        return None
         

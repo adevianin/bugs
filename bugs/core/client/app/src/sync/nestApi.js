@@ -11,6 +11,12 @@ class NestApi {
         });
     }
 
+    changeEggCaste(nestId, eggId, antType) {
+        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/change_caste`, {
+            ant_type: antType
+        });
+    }
+
 }
 
 export {

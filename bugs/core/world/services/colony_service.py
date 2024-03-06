@@ -38,6 +38,14 @@ class ColonyService():
         egg = queen.produce_egg(name, is_fertilized)
         nest.add_egg(egg)
 
+    def change_egg_caste(self, user_id: int, nest_id: int, egg_id: str, ant_type: AntTypes):
+        nest: Nest = self._world.map.get_entity_by_id(nest_id)
+
+        if nest.owner_id != user_id:
+            raise Exception(f'user dont have this nest')
+        
+        nest.change_egg_caste(egg_id, ant_type)
+
     def stop_operation(self, user_id: int, colony_id: int, operation_id: int):
         colony: AntColony = self._world.get_colony_by_id(colony_id)
         

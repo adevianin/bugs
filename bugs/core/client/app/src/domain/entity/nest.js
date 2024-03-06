@@ -22,6 +22,12 @@ class Nest extends Entity {
         this._nestApi.addNewEgg(this.id, name, isFertilized);
     }
 
+    editCasteForEgg(eggId, antType) {
+        this._nestApi.changeEggCaste(this.id, eggId, antType);
+        let egg = this._findEggById(eggId);
+        egg.antType = antType;
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {
@@ -75,13 +81,13 @@ class Nest extends Entity {
     }
 
     _playEggDevelop(action) {
-        let egg = this.eggs.find(egg => egg.id == action.eggId);
+        let egg = this._findEggById(action.eggId);
         egg.progress = action.progress;
         return Promise.resolve();
     }
 
     _playEggBecameLarva(action) {
-        let egg = this.eggs.find(egg => egg.id == action.eggId);
+        let egg = this._findEggById(action.eggId);
         let index = this.eggs.indexOf(egg);
         this.eggs.splice(index, 1);
         this.emit('eggBecameLarva', egg);
@@ -102,6 +108,10 @@ class Nest extends Entity {
 
     _setIsBuilt(isBuilt) {
         this._setState(isBuilt ? 'built' : 'building');
+    }
+
+    _findEggById(id) {
+        return this.eggs.find(egg => egg.id == id);
     }
 
 }

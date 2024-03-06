@@ -45,6 +45,10 @@ class Egg():
     def ant_type(self):
         return self._ant_type
     
+    @ant_type.setter
+    def ant_type(self, ant_type: AntTypes):
+        self._ant_type = ant_type
+    
     @property
     def is_ready(self):
         return self._progress == 100

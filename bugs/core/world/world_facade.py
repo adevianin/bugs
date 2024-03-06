@@ -98,6 +98,9 @@ class WorldFacade:
     def add_egg_command(self, user_id: int, nest_id: int, name: str, is_fertilized: bool):
         self._colony_service.add_egg(user_id, nest_id, name, is_fertilized)
 
+    def change_egg_caste_command(self, user_id: int, nest_id: int, egg_id: str, ant_type: AntTypes):
+        self._colony_service.change_egg_caste(user_id, nest_id, egg_id, ant_type)
+
     def fly_nuptian_flight_command(self, user_id: int, ant_id: int):
         self._nuptial_flight_service.fly_nuptial_flight(user_id, ant_id)
 
