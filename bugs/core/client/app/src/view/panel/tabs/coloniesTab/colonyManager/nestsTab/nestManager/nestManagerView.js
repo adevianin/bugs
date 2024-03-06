@@ -1,6 +1,5 @@
 import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
 import nestManagerTmpl from './nestManagerTmpl.html';
-import { LarvaManager } from "./larvaManager";
 import { TabSwitcher } from "@view/panel/base/tabSwitcher";
 import { EggTabView } from "./eggTab/eggTabView";
 import { LarvaTabView } from "./larvaTab/larvaTabView";
@@ -16,7 +15,8 @@ class NestManagerView extends BaseHTMLView {
     }
 
     manageNest(nest) {
-        this._eggTab.manageNest(nest)
+        this._eggTab.manageNest(nest);
+        this._larvaTab.manageNest(nest);
         // if (this._nest) {
         //     this._stopListenNest();
         // }

@@ -378,7 +378,7 @@ class Command(BaseCommand):
                     }
                 ],
                 "eggs": [
-                    {'id': 'asdasdas', 'name': 'bario', 'progress': 70, 'ant_type': 'worker', 'genome': {
+                    {'id': 'asdasdas', 'name': 'bario', 'progress': 90, 'ant_type': 'worker', 'genome': {
                             "maternal": {
                                 "body": {
                                     "strength_gene": { "type": "body_strength", "domination_code": "A", "strength": 10},

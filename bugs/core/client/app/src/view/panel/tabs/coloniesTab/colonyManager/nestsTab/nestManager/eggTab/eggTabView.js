@@ -19,8 +19,6 @@ class EggTabView extends BaseHTMLView {
     manageNest(nest) {
         this._nest = nest;
 
-        console.log('render egg tab view', nest.id);
-
         this._renderEggPlacesCount();
         this._renderEggsList();
     }

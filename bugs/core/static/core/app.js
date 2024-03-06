@@ -4229,8 +4229,6 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     manageNest(nest) {
         this._nest = nest;
 
-        console.log('render egg tab view', nest.id);
-
         this._renderEggPlacesCount();
         this._renderEggsList();
     }
@@ -4383,108 +4381,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaManager.js":
-/*!*****************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaManager.js ***!
-  \*****************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "LarvaManager": () => (/* binding */ LarvaManager)
-/* harmony export */ });
-/* harmony import */ var _larva_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./larva.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larva.html");
-/* harmony import */ var _larvaManager_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./larvaManager.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaManager.html");
-/* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
-/* harmony import */ var _view_panel_base_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/panel/base/labels/antTypesLabels */ "./bugs/core/client/app/src/view/panel/base/labels/antTypesLabels.js");
-
-
-
-
-
-class LarvaManager extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
-
-    constructor(el) {
-        super(el);
-
-        this._render();
-
-        this._addNewLarvaBtnEl.addEventListener('click', this._onAddLarvaBtnClick.bind(this));
-    }
-
-    manageNest(nest) {
-        if (this._nest) {
-            this._stopListenNest();
-        }
-
-        this._nest = nest;
-        this._listenNest();
-
-        this._renderLarvae();
-        this._toggleAddingNewLarva(this._nest.canAddLarva());
-    }
-
-    _listenNest() {
-        this._unbindLarvaeChangedListener = this._nest.on('larvaeChanged', this._onLarvaeChanged.bind(this));
-    }
-
-    _stopListenNest() {
-        this._unbindLarvaeChangedListener();
-    }
-
-    _render() {
-        this._el.innerHTML = _larvaManager_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-
-        this._larvaeListEl = this._el.querySelector('[data-larvae-list]');
-        this._addingNewLarvaEl = this._el.querySelector('[data-adding-new-larva]');
-        this._newLarvaTypeSelectEl = this._el.querySelector('[data-new-larva-type-select]');
-        this._addNewLarvaBtnEl = this._el.querySelector('[data-add-new-larva-btn]');
-        this._isQueenInsideIndicatorEl = this._el.querySelector('[data-is-queen-inside]');
-
-        this._renderLarvaTypeSelector();
-    }
-
-    _renderLarvae() {
-        this._larvaeListEl.innerHTML = '';
-        let tempEl = document.createElement('div');
-        this._nest.larvae.forEach(larva => {
-            tempEl.innerHTML = _larva_html__WEBPACK_IMPORTED_MODULE_0__["default"];
-            tempEl.querySelector('[data-type]').innerHTML = _view_panel_base_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels[larva.antType];
-            tempEl.querySelector('[data-progress]').innerHTML = larva.progress;
-            this._larvaeListEl.append(tempEl.firstChild);
-        });
-    }
-
-    _toggleAddingNewLarva(isEnabled) {
-        this._addingNewLarvaEl.classList.toggle('hidden', !isEnabled);
-    }
-
-    _renderLarvaTypeSelector() {
-        for (let antType in _view_panel_base_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels) {
-            let optionEl = document.createElement('option');
-            optionEl.innerHTML = _view_panel_base_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__.antTypesLabels[antType];
-            optionEl.value = antType;
-            this._newLarvaTypeSelectEl.append(optionEl);
-        }
-    }
-
-    _onAddLarvaBtnClick() {
-        let antType = this._newLarvaTypeSelectEl.value;
-        this._nest.addNewLarva(antType);
-    }
-
-    _onLarvaeChanged() {
-        this._renderLarvae();
-        this._toggleAddingNewLarva(this._nest.canAddLarva());
-    }
-
-}
-
-
-
-/***/ }),
-
 /***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTabView.js":
 /*!**************************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTabView.js ***!
@@ -4497,6 +4393,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "LarvaTabView": () => (/* binding */ LarvaTabView)
 /* harmony export */ });
 /* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
+/* harmony import */ var _view_panel_base_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/panel/base/labels/antTypesLabels */ "./bugs/core/client/app/src/view/panel/base/labels/antTypesLabels.js");
+/* harmony import */ var _larva_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./larva.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larva.html");
+/* harmony import */ var _larvaManager_html__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./larvaManager.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaManager.html");
+
+
+
 
 
 class LarvaTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
@@ -4504,7 +4406,50 @@ class LarvaTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
     constructor(el) {
         super(el);
 
-        this._el.innerHTML = 'larva';
+        this._render();
+
+    }
+
+    manageNest(nest) {
+        if (this._nest) {
+            this._stopListenNest();
+        }
+
+        this._nest = nest;
+        this._listenNest();
+
+        this._renderLarvae();
+    }
+
+    _listenNest() {
+        this._unbindLarvaeChangedListener = this._nest.on('larvaeChanged', this._onLarvaeChanged.bind(this));
+    }
+
+    _stopListenNest() {
+        this._unbindLarvaeChangedListener();
+    }
+
+    _render() {
+        this._el.innerHTML = _larvaManager_html__WEBPACK_IMPORTED_MODULE_3__["default"];
+
+        this._larvaeListEl = this._el.querySelector('[data-larvae-list]');
+        this._addingNewLarvaEl = this._el.querySelector('[data-adding-new-larva]');
+        this._isQueenInsideIndicatorEl = this._el.querySelector('[data-is-queen-inside]');
+    }
+
+    _renderLarvae() {
+        this._larvaeListEl.innerHTML = '';
+        let tempEl = document.createElement('div');
+        this._nest.larvae.forEach(larva => {
+            tempEl.innerHTML = _larva_html__WEBPACK_IMPORTED_MODULE_2__["default"];
+            tempEl.querySelector('[data-type]').innerHTML = _view_panel_base_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_1__.antTypesLabels[larva.antType];
+            tempEl.querySelector('[data-progress]').innerHTML = larva.progress;
+            this._larvaeListEl.append(tempEl.firstChild);
+        });
+    }
+
+    _onLarvaeChanged() {
+        this._renderLarvae();
     }
 
 }
@@ -4526,12 +4471,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
 /* harmony import */ var _nestManagerTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nestManagerTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/nestManagerTmpl.html");
-/* harmony import */ var _larvaManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./larvaManager */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaManager.js");
-/* harmony import */ var _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/panel/base/tabSwitcher */ "./bugs/core/client/app/src/view/panel/base/tabSwitcher/index.js");
-/* harmony import */ var _eggTab_eggTabView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./eggTab/eggTabView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/eggTab/eggTabView.js");
-/* harmony import */ var _larvaTab_larvaTabView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./larvaTab/larvaTabView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTabView.js");
-/* harmony import */ var _foodTab_foodTabView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./foodTab/foodTabView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/foodTab/foodTabView.js");
-
+/* harmony import */ var _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/tabSwitcher */ "./bugs/core/client/app/src/view/panel/base/tabSwitcher/index.js");
+/* harmony import */ var _eggTab_eggTabView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./eggTab/eggTabView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/eggTab/eggTabView.js");
+/* harmony import */ var _larvaTab_larvaTabView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./larvaTab/larvaTabView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTabView.js");
+/* harmony import */ var _foodTab_foodTabView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foodTab/foodTabView */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/foodTab/foodTabView.js");
 
 
 
@@ -4549,7 +4492,8 @@ class NestManagerView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MO
     }
 
     manageNest(nest) {
-        this._eggTab.manageNest(nest)
+        this._eggTab.manageNest(nest);
+        this._larvaTab.manageNest(nest);
         // if (this._nest) {
         //     this._stopListenNest();
         // }
@@ -4594,10 +4538,10 @@ class NestManagerView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MO
         // this._storedCaloriesEl = this._el.querySelector('[data-stored-calories]');
         // this._isQueenInsideIndicatorEl = this._el.querySelector('[data-is-queen-inside]');
         // this._larvaManager = new LarvaManager(this._el.querySelector('[data-larva-manager]'));
-        this._eggTab = new _eggTab_eggTabView__WEBPACK_IMPORTED_MODULE_4__.EggTabView(this._el.querySelector('[data-egg-tab]'));
-        this._larvaTab = new _larvaTab_larvaTabView__WEBPACK_IMPORTED_MODULE_5__.LarvaTabView(this._el.querySelector('[data-larva-tab]'));
-        this._foodTab = new _foodTab_foodTabView__WEBPACK_IMPORTED_MODULE_6__.FoodTabView(this._el.querySelector('[data-food-tab]'));
-        this._tabSwitcher = new _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_3__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+        this._eggTab = new _eggTab_eggTabView__WEBPACK_IMPORTED_MODULE_3__.EggTabView(this._el.querySelector('[data-egg-tab]'));
+        this._larvaTab = new _larvaTab_larvaTabView__WEBPACK_IMPORTED_MODULE_4__.LarvaTabView(this._el.querySelector('[data-larva-tab]'));
+        this._foodTab = new _foodTab_foodTabView__WEBPACK_IMPORTED_MODULE_5__.FoodTabView(this._el.querySelector('[data-food-tab]'));
+        this._tabSwitcher = new _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_2__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
             { name: 'egg', label: 'яйця', tab: this._eggTab },
             { name: 'larva', label: 'личинки', tab: this._larvaTab },
             { name: 'food', label: 'їжа', tab: this._foodTab }
@@ -9821,10 +9765,10 @@ var code = "<td data-name></td>\r\n<td data-genome></td>\r\n<td data-is-fertiliz
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larva.html":
-/*!************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larva.html ***!
-  \************************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larva.html":
+/*!*********************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larva.html ***!
+  \*********************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -9839,10 +9783,10 @@ var code = "<li>\r\n    <div>тип: <span data-type></span></div>\r\n    <div>�
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaManager.html":
-/*!*******************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaManager.html ***!
-  \*******************************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaManager.html":
+/*!****************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaManager.html ***!
+  \****************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -9851,7 +9795,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>личинки:\r\n    <ul data-larvae-list></ul>\r\n    <div data-adding-new-larva>\r\n        <select data-new-larva-type-select></select>\r\n        <button data-add-new-larva-btn>add</button>\r\n    </div>\r\n</div>";
+var code = "личинки:\r\n<ul data-larvae-list></ul>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
