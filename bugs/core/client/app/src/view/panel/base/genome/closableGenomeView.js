@@ -16,8 +16,7 @@ class ClosableGenomeView extends BaseHTMLView {
     _render() {
         this._el.innerHTML = closableGenomeTmpl;
 
-        this._genomView = new GenomeView(this._el.querySelector('[data-genome]'));
-        this._genomView.showGenome(this._genome);
+        this._genomView = new GenomeView(this._el.querySelector('[data-genome]'), this._genome);
 
         this._previewEl = this._el.querySelector('[data-preview]');
         this._closingBtn = this._el.querySelector('[data-closing-btn]');

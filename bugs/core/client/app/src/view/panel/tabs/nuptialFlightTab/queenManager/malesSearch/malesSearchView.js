@@ -26,7 +26,6 @@ class MalesSearchView extends BaseHTMLView {
     reset() {
         this._selectedMaleIndex = 0;
         this._males = [];
-        this._maleProfile.reset();
     }
 
     _render() {

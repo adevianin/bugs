@@ -1448,9 +1448,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class NuptialMale {
 
-    constructor(id, genome) {
+    constructor(id, genome, stats, isLocal) {
         this.id = id;
         this.genome = genome;
+        this.stats = stats;
+        this.isLocal = isLocal;
     }
 }
 
@@ -2195,7 +2197,7 @@ class WorldFactory {
 
     buildNuptialMale(nuptialMaleJson) {
         let genome = this._buildGenome(nuptialMaleJson.genome);
-        return new _entity_nuptialMale__WEBPACK_IMPORTED_MODULE_13__.NuptialMale(nuptialMaleJson.id, genome);
+        return new _entity_nuptialMale__WEBPACK_IMPORTED_MODULE_13__.NuptialMale(nuptialMaleJson.id, genome, nuptialMaleJson.stats, nuptialMaleJson.isLocal);
     }
 
     _buildGenome(genomeJson) {
@@ -2837,8 +2839,7 @@ class ClosableGenomeView extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
     _render() {
         this._el.innerHTML = _closableGenomeTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this._genomView = new _genomeView__WEBPACK_IMPORTED_MODULE_2__.GenomeView(this._el.querySelector('[data-genome]'));
-        this._genomView.showGenome(this._genome);
+        this._genomView = new _genomeView__WEBPACK_IMPORTED_MODULE_2__.GenomeView(this._el.querySelector('[data-genome]'), this._genome);
 
         this._previewEl = this._el.querySelector('[data-preview]');
         this._closingBtn = this._el.querySelector('[data-closing-btn]');
@@ -3328,23 +3329,19 @@ __webpack_require__.r(__webpack_exports__);
 
 class GenomeView extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
 
-    constructor(el) {
+    constructor(el, genome) {
         super(el);
         this._genesViews = [];
+        this._genome = genome;
+
+        this._render();
     }
 
-    reset() {
-        this._el.innerHTML = '';
+    remove() {
+        super.remove();
         for (let geneView of this._genesViews) {
             geneView.remove();
         }
-        this._genesViews = [];
-    }
-
-    showGenome(genome) {
-        this._genome = genome;
-        this.reset();
-        this._render();
     }
 
     _render() {
@@ -3433,24 +3430,6 @@ class GenomeView extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView
     }
 
 }
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/index.js":
-/*!******************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/index.js ***!
-  \******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "GenomeView": () => (/* reexport safe */ _genomeView__WEBPACK_IMPORTED_MODULE_0__.GenomeView)
-/* harmony export */ });
-/* harmony import */ var _genomeView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./genomeView */ "./bugs/core/client/app/src/view/panel/base/genome/genomeView.js");
-
 
 
 
@@ -5785,7 +5764,6 @@ class MalesSearchView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MO
     reset() {
         this._selectedMaleIndex = 0;
         this._males = [];
-        this._maleProfile.reset();
     }
 
     _render() {
@@ -5845,8 +5823,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "NuptialMaleProfileView": () => (/* binding */ NuptialMaleProfileView)
 /* harmony export */ });
 /* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
-/* harmony import */ var _view_panel_base_genome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/panel/base/genome */ "./bugs/core/client/app/src/view/panel/base/genome/index.js");
-/* harmony import */ var _nuptialMaleProfileTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./nuptialMaleProfileTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/nuptialMaleProfileTmpl.html");
+/* harmony import */ var _nuptialMaleProfileTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nuptialMaleProfileTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/queenManager/malesSearch/nuptialMaleProfileTmpl.html");
+/* harmony import */ var _view_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/genome/closableGenomeView */ "./bugs/core/client/app/src/view/panel/base/genome/closableGenomeView.js");
 
 
 
@@ -5855,23 +5833,34 @@ class NuptialMaleProfileView extends _view_panel_base_baseHTMLView__WEBPACK_IMPO
 
     constructor(el) {
         super(el);
+    }
+
+    _render() {
+        this._el.innerHTML = _nuptialMaleProfileTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._el.querySelector('[data-attack]').innerHTML = Math.round(this._male.stats.attack);
+        this._el.querySelector('[data-defense]').innerHTML = Math.round(this._male.stats.defence);
+        this._el.querySelector('[data-speed]').innerHTML = Math.round(this._male.stats.distancePerStep);
+        this._el.querySelector('[data-hp-regen-rate]').innerHTML = Math.round(this._male.stats.hpRegenRate);
+        this._el.querySelector('[data-max-hp]').innerHTML = Math.round(this._male.stats.maxHp);
+        this._el.querySelector('[data-sight-distance]').innerHTML = Math.round(this._male.stats.sightDistance);
+        this._el.querySelector('[data-is-local]').innerHTML = this._male.isLocal ? 'місцевий' : 'з дальніх країв';
+        this._genomeView = new _view_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_2__.ClosableGenomeView(this._el.querySelector('[data-genome]'), this._male.genome);
+    }
+
+    showMale(male) {
+        if (this._male) {
+            this._reset();
+        }
+        this._male = male;
 
         this._render();
     }
 
-    _render() {
-        this._el.innerHTML = _nuptialMaleProfileTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
-
-        this._genomeView = new _view_panel_base_genome__WEBPACK_IMPORTED_MODULE_1__.GenomeView(this._el.querySelector('[data-genome]'));
+    _reset() {
+        this._genomeView.remove();
     }
 
-    reset() {
-        this._genomeView.reset();
-    }
-
-    showMale(male) {
-        this._genomeView.showGenome(male.genome);
-    }
 }
 
 
@@ -5915,7 +5904,6 @@ class QueenManagerView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_M
         this._buildingSite = null;
 
         this._malesSearch.reset();
-        // this._queenGenesView.showGenes(this._queen.genes);
         this._renderQueen();
         this._renderBuildingSite();
     }
@@ -5925,7 +5913,6 @@ class QueenManagerView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_M
         this._malesSearch = new _malesSearch__WEBPACK_IMPORTED_MODULE_3__.MalesSearchView(this._el.querySelector('[data-males-search]'));
         this._chooseNestPositionBtn = this._el.querySelector('[data-choose-nest-position]');
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
-        // this._queenGenesView = new GenesView(this._el.querySelector('[data-queen-genes]'));
         this._startBtn = this._el.querySelector('[data-start]');
     }
 
@@ -10340,7 +10327,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-genome></div>";
+var code = "<table>\r\n    <tr>\r\n        <td>атака</td>\r\n        <td>захист</td>\r\n        <td>швидкість</td>\r\n        <td>швидкість відновлення</td>\r\n        <td>макс ХП</td>\r\n        <td>зір</td>\r\n        <td>звідки</td>\r\n        <td>геном</td>\r\n    </tr>\r\n    <tr>\r\n        <td data-attack></td>\r\n        <td data-defense></td>\r\n        <td data-speed></td>\r\n        <td data-hp-regen-rate></td>\r\n        <td data-max-hp></td>\r\n        <td data-sight-distance></td>\r\n        <td data-is-local></td>\r\n        <td data-genome></td>\r\n    </tr>\r\n</table>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -10358,7 +10345,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>queen <span data-queen-name></span></div>\r\n<div data-queen-genes></div>\r\n<div data-males-search></div>\r\n<div>\r\n    назва колонії \r\n    <input type=\"text\" data-colony-name>\r\n</div>\r\n<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<button data-start> старт </button>";
+var code = "<div>queen <span data-queen-name></span></div>\r\n<div data-males-search></div>\r\n<div>\r\n    назва колонії \r\n    <input type=\"text\" data-colony-name>\r\n</div>\r\n<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<button data-start> старт </button>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

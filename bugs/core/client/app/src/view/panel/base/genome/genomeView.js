@@ -18,23 +18,19 @@ import { AdjustingDevelopmentAppetiteGeneView } from './genes/adjustingChromosom
 
 class GenomeView extends BaseHTMLView {
 
-    constructor(el) {
+    constructor(el, genome) {
         super(el);
         this._genesViews = [];
+        this._genome = genome;
+
+        this._render();
     }
 
-    reset() {
-        this._el.innerHTML = '';
+    remove() {
+        super.remove();
         for (let geneView of this._genesViews) {
             geneView.remove();
         }
-        this._genesViews = [];
-    }
-
-    showGenome(genome) {
-        this._genome = genome;
-        this.reset();
-        this._render();
     }
 
     _render() {

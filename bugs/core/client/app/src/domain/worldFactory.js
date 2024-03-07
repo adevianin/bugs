@@ -129,7 +129,7 @@ class WorldFactory {
 
     buildNuptialMale(nuptialMaleJson) {
         let genome = this._buildGenome(nuptialMaleJson.genome);
-        return new NuptialMale(nuptialMaleJson.id, genome);
+        return new NuptialMale(nuptialMaleJson.id, genome, nuptialMaleJson.stats, nuptialMaleJson.isLocal);
     }
 
     _buildGenome(genomeJson) {
