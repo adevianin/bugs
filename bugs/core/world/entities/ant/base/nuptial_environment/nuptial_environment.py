@@ -26,7 +26,7 @@ import random
 
 class NuptialEnvironment():
 
-    INCOME_MALE_AFFECT_CHANCE = 80
+    INCOME_MALE_AFFECT_CHANCE = 10
 
     @classmethod
     def build(cls, owner_id: int, base_chromosomes_set: ChromosomesSet):
@@ -35,7 +35,8 @@ class NuptialEnvironment():
     def __init__(self, owner_id: int, base_chromosomes_set: ChromosomesSet):
         self._base_chromosomes_set = base_chromosomes_set
         self._owner_id = owner_id
-        self._males = []
+        self._distant_males: List[NuptialMale] = []
+        self._local_males: List[NuptialMale] = []
 
     @property
     def owner_id(self):
@@ -47,22 +48,33 @@ class NuptialEnvironment():
     
     def fly_in_male(self, male: MaleAnt):
         self._affect_base_chromosomes_set(male.body.genome.maternal_chromosomes_set, NuptialEnvironment.INCOME_MALE_AFFECT_CHANCE)
+        nuptial_male = NuptialMale.build(male.body.genome, True)
+        self._local_males.append(nuptial_male)
     
     def get_male(self, male_id: str) -> NuptialMale:
-        for male in self._males:
+        for male in self._distant_males:
             if male.id == male_id:
+                self._distant_males.remove(male)
+                return male
+            
+        for male in self._local_males:
+            if male.id == male_id:
+                self._local_males.remove(male)
                 return male
         
         return None
     
     def search_males(self) -> List[NuptialMale]:
-        male1 = self._generate_distant_nuptial_male()
-        male2 = self._generate_distant_nuptial_male()
-        male3 = self._generate_distant_nuptial_male()
+        if len(self._distant_males) == 0:
+            self._generate_distant_males()
 
-        self._males = [male1, male2, male3]
-
-        return self._males
+        return self._local_males + self._distant_males
+    
+    def _generate_distant_males(self, count = 3):
+        self._distant_males = []
+        for i in range(count):
+            male = self._generate_distant_nuptial_male()
+            self._distant_males.append(male)
     
     def _affect_base_chromosomes_set(self, chromosomes_set: ChromosomesSet, affect_chance: int):
         if self._chance(affect_chance):

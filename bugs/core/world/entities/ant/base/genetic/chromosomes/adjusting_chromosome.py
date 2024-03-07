@@ -14,23 +14,15 @@ class AdjustingChromosome(BaseChromosome):
 
     def __init__(self, appetite_gene: AdjustingAppetiteGene, development_appetite_gene: AdjustingDevelopmentAppetiteGene):
         super().__init__(ChromosomesTypes.ADJUSTING)
-        self._appetite_gene = appetite_gene
-        self._development_appetite_gene = development_appetite_gene
+        self.appetite_gene = appetite_gene
+        self.development_appetite_gene = development_appetite_gene
 
-    @property
-    def appetite_gene(self) -> AdjustingAppetiteGene:
-        return self._appetite_gene
-
-    @property
-    def development_appetite_gene(self) -> AdjustingDevelopmentAppetiteGene:
-        return self._development_appetite_gene
-    
     def merge(self, another_chromosome: 'AdjustingChromosome') -> 'AdjustingChromosome':
         appetite_gene = self.appetite_gene.merge(another_chromosome.appetite_gene)
         development_appetite_gene = self.development_appetite_gene.merge(another_chromosome.development_appetite_gene)
         return AdjustingChromosome.build(appetite_gene, development_appetite_gene)
     
     def affect_phenotype(self, phenotype: Phenotype):
-        self._appetite_gene.affect(phenotype)
-        self._development_appetite_gene.affect(phenotype)
+        self.appetite_gene.affect(phenotype)
+        self.development_appetite_gene.affect(phenotype)
     

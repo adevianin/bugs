@@ -16,26 +16,10 @@ class DevelopmentChromosome(BaseChromosome):
 
     def __init__(self, queen_cast_gene: DevelopmentQueenCasteGene, worker_cast_gene: DevelopmentWorkerCasteGene, male_cast_gene: DevelopmentMaleCasteGene, warrior_cast_gene: DevelopmentWarriorCasteGene):
         super().__init__(ChromosomesTypes.DEVELOPMENT)
-        self._queen_cast_gene = queen_cast_gene
-        self._worker_cast_gene = worker_cast_gene
-        self._warrior_cast_gene = warrior_cast_gene
-        self._male_cast_gene = male_cast_gene
-
-    @property
-    def queen_cast_gene(self) -> DevelopmentQueenCasteGene:
-        return self._queen_cast_gene
-
-    @property
-    def worker_cast_gene(self) -> DevelopmentWorkerCasteGene:
-        return self._worker_cast_gene
-
-    @property
-    def male_cast_gene(self) -> DevelopmentMaleCasteGene:
-        return self._male_cast_gene
-    
-    @property
-    def warrior_cast_gene(self) -> DevelopmentWarriorCasteGene:
-        return self._warrior_cast_gene
+        self.queen_cast_gene = queen_cast_gene
+        self.worker_cast_gene = worker_cast_gene
+        self.warrior_cast_gene = warrior_cast_gene
+        self.male_cast_gene = male_cast_gene
     
     def merge(self, another_chromosome: 'DevelopmentChromosome') -> 'DevelopmentChromosome':
         queen_cast_gene = self.queen_cast_gene.merge(another_chromosome.queen_cast_gene)
@@ -51,9 +35,9 @@ class DevelopmentChromosome(BaseChromosome):
         return DevelopmentChromosome.build(queen_cast_gene, worker_cast_gene, male_cast_gene, warrior_cast_gene)
     
     def affect_phenotype(self, phenotype: Phenotype):
-        self._queen_cast_gene.affect(phenotype)
-        self._worker_cast_gene.affect(phenotype)
-        self._male_cast_gene.affect(phenotype)
-        if self._warrior_cast_gene:
-            self._warrior_cast_gene.affect(phenotype)
+        self.queen_cast_gene.affect(phenotype)
+        self.worker_cast_gene.affect(phenotype)
+        self.male_cast_gene.affect(phenotype)
+        if self.warrior_cast_gene:
+            self.warrior_cast_gene.affect(phenotype)
     

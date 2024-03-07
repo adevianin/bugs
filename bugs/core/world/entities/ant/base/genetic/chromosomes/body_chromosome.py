@@ -20,37 +20,13 @@ class BodyChromosome(BaseChromosome):
     def __init__(self, strength_gene: BodyStrengthGene, defense_gene: BodyDefenseGene, max_hp_gene: BodyMaxHpGene, hp_regen_rate_gene: BodyHpRegenRateGene, 
                  sight_distance_gene: BodySightDistanceGene, speed_gene: BodySpeedGene):
         super().__init__(ChromosomesTypes.BODY)
-        self._strength_gene = strength_gene
-        self._defense_gene = defense_gene
-        self._max_hp_gene = max_hp_gene
-        self._hp_regen_rate_gene = hp_regen_rate_gene
-        self._sight_distance_gene = sight_distance_gene
-        self._speed_gene = speed_gene
+        self.strength_gene = strength_gene
+        self.defense_gene = defense_gene
+        self.max_hp_gene = max_hp_gene
+        self.hp_regen_rate_gene = hp_regen_rate_gene
+        self.sight_distance_gene = sight_distance_gene
+        self.speed_gene = speed_gene
 
-    @property
-    def strength_gene(self) -> BodyStrengthGene:
-        return self._strength_gene
-
-    @property
-    def defense_gene(self) -> BodyDefenseGene:
-        return self._defense_gene
-
-    @property
-    def max_hp_gene(self) -> BodyMaxHpGene:
-        return self._max_hp_gene
-
-    @property
-    def hp_regen_rate_gene(self) -> BodyHpRegenRateGene:
-        return self._hp_regen_rate_gene
-
-    @property
-    def sight_distance_gene(self) -> BodySightDistanceGene:
-        return self._sight_distance_gene
-
-    @property
-    def speed_gene(self) -> BodySpeedGene:
-        return self._speed_gene
-    
     def merge(self, another_chromosome: 'BodyChromosome') -> 'BodyChromosome':
         strength_gene = self.strength_gene.merge(another_chromosome.strength_gene)
         defense_gene = self.defense_gene.merge(another_chromosome.defense_gene)
@@ -61,10 +37,10 @@ class BodyChromosome(BaseChromosome):
         return BodyChromosome.build(strength_gene, defense_gene, max_hp_gene, hp_regen_rate_gene, sight_distance_gene, speed_gene)
     
     def affect_phenotype(self, phenotype: Phenotype):
-        self._strength_gene.affect(phenotype)
-        self._defense_gene.affect(phenotype)
-        self._max_hp_gene.affect(phenotype)
-        self._hp_regen_rate_gene.affect(phenotype)
-        self._sight_distance_gene.affect(phenotype)
-        self._speed_gene.affect(phenotype)
+        self.strength_gene.affect(phenotype)
+        self.defense_gene.affect(phenotype)
+        self.max_hp_gene.affect(phenotype)
+        self.hp_regen_rate_gene.affect(phenotype)
+        self.sight_distance_gene.affect(phenotype)
+        self.speed_gene.affect(phenotype)
     
