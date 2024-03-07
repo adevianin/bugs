@@ -18,6 +18,7 @@ class LarvaTabView extends BaseHTMLView {
         this._listenNest();
 
         this._renderLarvaeList();
+        this._renderLarvaPlacesCount();
     }
 
     _listenNest() {
@@ -37,6 +38,7 @@ class LarvaTabView extends BaseHTMLView {
         this._el.innerHTML = larvaTabTmpl;
 
         this._larvaeListEl = this._el.querySelector('[data-larvae-list]');
+        this._larvaPlacesCountEl = this._el.querySelector('[data-larva-places-count]');
     }
 
     _renderLarvaeList() {
@@ -51,6 +53,10 @@ class LarvaTabView extends BaseHTMLView {
         this._larvaeListEl.append(el);
         let view = new LarvaView(el, larva);
         this._larvaeViews[larva.id] = view;
+    }
+
+    _renderLarvaPlacesCount() {
+        this._larvaPlacesCountEl.innerHTML = this._nest.larvaPlacesCount;
     }
 
     _clearLarvaeList() {

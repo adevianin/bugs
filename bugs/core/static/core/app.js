@@ -1288,6 +1288,18 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this._setIsBuilt(isBuilt)
     }
 
+    get takenChildPlacesCount() {
+        return this.larvae.length + this.eggs.length;
+    }
+
+    get childPlacesCount() {
+        return this.larvaPlacesCount + this.eggPlacesCount;
+    }
+
+    checkCanAddNewEgg() {
+        return this.childPlacesCount > this.takenChildPlacesCount;
+    }
+
     addNewEgg(name, isFertilized) {
         this._nestApi.addNewEgg(this.id, name, isFertilized);
     }
@@ -4295,6 +4307,7 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._addEggBtn = this._el.querySelector('[data-add-egg]');
         this._nameInput = this._el.querySelector('[data-egg-name]');
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
+        this._childPlacesEl = this._el.querySelector('[data-child-places]');
     }
 
     manageNest(nest) {
@@ -4304,11 +4317,14 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
         this._renderEggPlacesCount();
         this._renderEggsList();
+        this._renderChildPlacesCount();
+        this._renderAddEggBtnStatus();
     }
 
     _listenNest() {
         this._stopListenEggBecameLarva = this._nest.on('eggBecameLarva', this._onEggBecameLarva.bind(this));
         this._stopListenEggAdded = this._nest.on('eggAdded', this._onEggAdded.bind(this));
+        this._stopListenLarvaIsReady = this._nest.on('larvaIsReady', this._onLarvaIsReady.bind(this));
     }
 
     _stopListenNest() {
@@ -4318,6 +4334,7 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
         this._stopListenEggBecameLarva();
         this._stopListenEggAdded();
+        this._stopListenLarvaIsReady();
     }
 
     _renderEggPlacesCount() {
@@ -4338,6 +4355,14 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._eggsViews[egg.id] = view;
     }
 
+    _renderChildPlacesCount() {
+        this._childPlacesEl.innerHTML = `${ this._nest.takenChildPlacesCount }/${ this._nest.childPlacesCount }`;
+    }
+
+    _renderAddEggBtnStatus() {
+        this._addEggBtn.disabled = !this._nest.checkCanAddNewEgg();
+    }
+
     _clearEggsViews() {
         for (let eggId in this._eggsViews) {
             this._eggsViews[eggId].remove();
@@ -4352,6 +4377,13 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
     _onEggAdded(egg) {
         this._renderEgg(egg);
+        this._renderChildPlacesCount();
+        this._renderAddEggBtnStatus();
+    }
+
+    _onLarvaIsReady() {
+        this._renderChildPlacesCount();
+        this._renderAddEggBtnStatus();
     }
 
     _onAddEggBtnClick() {
@@ -4568,6 +4600,7 @@ class LarvaTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
         this._listenNest();
 
         this._renderLarvaeList();
+        this._renderLarvaPlacesCount();
     }
 
     _listenNest() {
@@ -4587,6 +4620,7 @@ class LarvaTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
         this._el.innerHTML = _larvaTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._larvaeListEl = this._el.querySelector('[data-larvae-list]');
+        this._larvaPlacesCountEl = this._el.querySelector('[data-larva-places-count]');
     }
 
     _renderLarvaeList() {
@@ -4601,6 +4635,10 @@ class LarvaTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
         this._larvaeListEl.append(el);
         let view = new _larvaView__WEBPACK_IMPORTED_MODULE_2__.LarvaView(el, larva);
         this._larvaeViews[larva.id] = view;
+    }
+
+    _renderLarvaPlacesCount() {
+        this._larvaPlacesCountEl.innerHTML = this._nest.larvaPlacesCount;
     }
 
     _clearLarvaeList() {
@@ -9973,7 +10011,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    розмір:<span data-egg-places-count></span>\r\n</div>\r\n<div>\r\n    імя: <input type=\"text\" data-egg-name>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>каста</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
+var code = "<div>\r\n    розмір камери:<span data-egg-places-count></span>\r\n</div>\r\n<div>\r\n    місця для потомства: (<span data-child-places></span>)\r\n</div>\r\n<div>\r\n    імя: <input type=\"text\" data-egg-name>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>каста</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -10027,7 +10065,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<table>\r\n    <tr>\r\n        <td>імя</td>\r\n        <td>геном</td>\r\n        <td>прогрес</td>\r\n        <td>каста</td>\r\n    </tr>\r\n    <tbody data-larvae-list>\r\n        \r\n    </tbody>\r\n</table>";
+var code = "<div>\r\n    розмір камери: <span data-larva-places-count></span>\r\n</div>\r\n<table>\r\n    <tr>\r\n        <td>імя</td>\r\n        <td>геном</td>\r\n        <td>прогрес</td>\r\n        <td>каста</td>\r\n    </tr>\r\n    <tbody data-larvae-list>\r\n        \r\n    </tbody>\r\n</table>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

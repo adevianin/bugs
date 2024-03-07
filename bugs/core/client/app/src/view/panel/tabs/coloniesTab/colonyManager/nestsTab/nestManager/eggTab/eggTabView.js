@@ -19,6 +19,7 @@ class EggTabView extends BaseHTMLView {
         this._addEggBtn = this._el.querySelector('[data-add-egg]');
         this._nameInput = this._el.querySelector('[data-egg-name]');
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
+        this._childPlacesEl = this._el.querySelector('[data-child-places]');
     }
 
     manageNest(nest) {
@@ -28,11 +29,14 @@ class EggTabView extends BaseHTMLView {
 
         this._renderEggPlacesCount();
         this._renderEggsList();
+        this._renderChildPlacesCount();
+        this._renderAddEggBtnStatus();
     }
 
     _listenNest() {
         this._stopListenEggBecameLarva = this._nest.on('eggBecameLarva', this._onEggBecameLarva.bind(this));
         this._stopListenEggAdded = this._nest.on('eggAdded', this._onEggAdded.bind(this));
+        this._stopListenLarvaIsReady = this._nest.on('larvaIsReady', this._onLarvaIsReady.bind(this));
     }
 
     _stopListenNest() {
@@ -42,6 +46,7 @@ class EggTabView extends BaseHTMLView {
 
         this._stopListenEggBecameLarva();
         this._stopListenEggAdded();
+        this._stopListenLarvaIsReady();
     }
 
     _renderEggPlacesCount() {
@@ -62,6 +67,14 @@ class EggTabView extends BaseHTMLView {
         this._eggsViews[egg.id] = view;
     }
 
+    _renderChildPlacesCount() {
+        this._childPlacesEl.innerHTML = `${ this._nest.takenChildPlacesCount }/${ this._nest.childPlacesCount }`;
+    }
+
+    _renderAddEggBtnStatus() {
+        this._addEggBtn.disabled = !this._nest.checkCanAddNewEgg();
+    }
+
     _clearEggsViews() {
         for (let eggId in this._eggsViews) {
             this._eggsViews[eggId].remove();
@@ -76,6 +89,13 @@ class EggTabView extends BaseHTMLView {
 
     _onEggAdded(egg) {
         this._renderEgg(egg);
+        this._renderChildPlacesCount();
+        this._renderAddEggBtnStatus();
+    }
+
+    _onLarvaIsReady() {
+        this._renderChildPlacesCount();
+        this._renderAddEggBtnStatus();
     }
 
     _onAddEggBtnClick() {

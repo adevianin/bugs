@@ -18,6 +18,18 @@ class Nest extends Entity {
         this._setIsBuilt(isBuilt)
     }
 
+    get takenChildPlacesCount() {
+        return this.larvae.length + this.eggs.length;
+    }
+
+    get childPlacesCount() {
+        return this.larvaPlacesCount + this.eggPlacesCount;
+    }
+
+    checkCanAddNewEgg() {
+        return this.childPlacesCount > this.takenChildPlacesCount;
+    }
+
     addNewEgg(name, isFertilized) {
         this._nestApi.addNewEgg(this.id, name, isFertilized);
     }
