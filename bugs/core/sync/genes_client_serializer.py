@@ -38,6 +38,8 @@ class GenesClientSerializer():
                 return self._serialize_development_worker_caste_gene(gene)
             case GenesTypes.DEVELOPMENT_WARRIOR_CASTE:
                 return self._serialize_development_warrior_caste_gene(gene)
+            case GenesTypes.DEVELOPMENT_MALE_CASTE:
+                return self._serialize_development_male_caste_gene(gene)
             case GenesTypes.ADJUSTING_APPETITE:
                 return self._serialize_adjusting_appetite_gene(gene)
             case GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE:

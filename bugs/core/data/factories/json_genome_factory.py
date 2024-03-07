@@ -42,8 +42,9 @@ class JsonGenomeFactory():
     def _build_development_chromosome(self, chromosome_json: dict) -> DevelopmentChromosome:
         queen_cast_gene = self._json_genes_factory.build_gene_from_json(chromosome_json['queen_cast_gene'])
         worker_cast_gene = self._json_genes_factory.build_gene_from_json(chromosome_json['worker_cast_gene'])
+        male_cast_gene = self._json_genes_factory.build_gene_from_json(chromosome_json['male_cast_gene'])
         warrior_cast_gene = self._json_genes_factory.build_gene_from_json(chromosome_json['warrior_cast_gene']) if chromosome_json['warrior_cast_gene'] else None
-        return DevelopmentChromosome.build(queen_cast_gene, worker_cast_gene, warrior_cast_gene)
+        return DevelopmentChromosome.build(queen_cast_gene, worker_cast_gene, male_cast_gene, warrior_cast_gene)
     
     def _build_adjusting_chromosome(self, chromosome_json: dict) -> AdjustingChromosome:
         appetite_gene = self._json_genes_factory.build_gene_from_json(chromosome_json['appetite_gene'])

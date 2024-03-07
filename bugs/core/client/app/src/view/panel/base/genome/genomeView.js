@@ -71,6 +71,7 @@ class GenomeView extends BaseHTMLView {
         let genesContainerEl = el.querySelector('[data-genes-container]');
         this._renderGene(genesContainerEl, devChromosome.queenCasteGene);
         this._renderGene(genesContainerEl, devChromosome.workerCasteGene);
+        this._renderGene(genesContainerEl, devChromosome.maleCasteGene);
         if (devChromosome.warriorCasteGene) {
             this._renderGene(genesContainerEl, devChromosome.warriorCasteGene);
         }

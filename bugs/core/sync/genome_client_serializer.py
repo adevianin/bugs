@@ -45,6 +45,7 @@ class GenomeClientSerializer():
         return {
             'queenCasteGene': self._genes_serializer.serialize(chromosome.queen_cast_gene),
             'workerCasteGene': self._genes_serializer.serialize(chromosome.worker_cast_gene),
+            'maleCasteGene': self._genes_serializer.serialize(chromosome.male_cast_gene),
             'warriorCasteGene': self._genes_serializer.serialize(chromosome.warrior_cast_gene)
         }
     

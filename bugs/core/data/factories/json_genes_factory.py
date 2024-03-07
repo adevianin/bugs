@@ -36,6 +36,8 @@ class JsonGenesFactory():
                 return self._build_development_worker_caste_gene(gene_json)
             case GenesTypes.DEVELOPMENT_WARRIOR_CASTE:
                 return self._build_development_warrior_caste_gene(gene_json)
+            case GenesTypes.DEVELOPMENT_MALE_CASTE:
+                return self._build_development_male_caste_gene(gene_json)
             case GenesTypes.ADJUSTING_APPETITE:
                 return self._build_adjusting_appetite_gene(gene_json)
             case GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE:
