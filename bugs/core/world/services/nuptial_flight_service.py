@@ -3,6 +3,7 @@ from core.world.entities.ant.base.nuptial_environment.nuptial_male import Nuptia
 from core.world.utils.point import Point
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.ant.queen.queen_ant import QueenAnt
+from core.world.entities.ant.male.male_ant import MaleAnt
 from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.ant_types import AntTypes
@@ -28,10 +29,16 @@ class NuptialFlightService():
             raise Exception('user dont have this ant')
         
         if ant.ant_type == AntTypes.QUEEN:
-            ant: QueenAnt = ant
-            if ant.can_fly_nuptial_flight:
-                ant.fly_nuptial_flight()
+            queen: QueenAnt = ant
+            if queen.can_fly_nuptial_flight:
+                queen.fly_nuptial_flight()
                 return
+        elif ant.ant_type == AntTypes.MALE:
+            male: MaleAnt = ant
+            male.fly_nuptial_flight()
+            nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
+            nuptial_environment.fly_in_male(male)
+            return
             
         raise Exception('cant fly nuptial flight')
     

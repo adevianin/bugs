@@ -445,6 +445,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _baseAnt__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseAnt */ "./bugs/core/client/app/src/domain/entity/ant/baseAnt.js");
 /* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+
 
 
 
@@ -452,6 +454,36 @@ class MaleAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
     constructor(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
         super(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats);
+    }
+
+    playAction(action) {
+        let promise = super.playAction(action)
+        if (promise) {
+            return promise
+        }
+        switch (action.type) {
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT:
+                return this._playFlyNuptialFlight(action)
+        }
+    }
+
+    flyNuptialFlight() {
+        this._antApi.flyNuptialFlight(this.id);
+    }
+
+    _playFlyNuptialFlight() {
+        return this._flyAwayAnimation().then(() => {
+            this.isHidden = true;
+        });
+    }
+
+    _playEntityDied(action) {
+        if (this.isHidden) {
+            this.die();
+            return Promise.resolve();
+        } else {
+            super._playEntityDied(action);
+        }
     }
 }
 
@@ -3349,6 +3381,7 @@ class GenomeView extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView
         let genesContainerEl = el.querySelector('[data-genes-container]');
         this._renderGene(genesContainerEl, devChromosome.queenCasteGene);
         this._renderGene(genesContainerEl, devChromosome.workerCasteGene);
+        this._renderGene(genesContainerEl, devChromosome.maleCasteGene);
         if (devChromosome.warriorCasteGene) {
             this._renderGene(genesContainerEl, devChromosome.warriorCasteGene);
         }
@@ -3975,8 +4008,16 @@ class AntView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
         this._flyAwayActionBtn = this._el.querySelector('[data-fly-away]');
         
-        let canFlyNuptialFlight = this._ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__.AntTypes.QUEEN && this._ant.canFlyNuptialFlight;
+        let canFlyNuptialFlight = this._checkCanFlyNuptialFlight(this._ant);
         this._nuptialFlightActionBtn.classList.toggle('hidden', !canFlyNuptialFlight);
+    }
+
+    _checkCanFlyNuptialFlight(ant) {
+        if (ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__.AntTypes.QUEEN) {
+            return ant.canFlyNuptialFlight;
+        } else if (ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__.AntTypes.MALE) {
+            return true;
+        }
     }
 
 }

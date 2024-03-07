@@ -44,8 +44,16 @@ class AntView extends BaseHTMLView {
         this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
         this._flyAwayActionBtn = this._el.querySelector('[data-fly-away]');
         
-        let canFlyNuptialFlight = this._ant.antType == AntTypes.QUEEN && this._ant.canFlyNuptialFlight;
+        let canFlyNuptialFlight = this._checkCanFlyNuptialFlight(this._ant);
         this._nuptialFlightActionBtn.classList.toggle('hidden', !canFlyNuptialFlight);
+    }
+
+    _checkCanFlyNuptialFlight(ant) {
+        if (ant.antType == AntTypes.QUEEN) {
+            return ant.canFlyNuptialFlight;
+        } else if (ant.antType == AntTypes.MALE) {
+            return true;
+        }
     }
 
 }

@@ -11,6 +11,7 @@ from core.world.entities.ant.base.genetic.genes.body_speed_gene import BodySpeed
 from core.world.entities.ant.base.genetic.chromosomes.development_chromosome import DevelopmentChromosome
 from core.world.entities.ant.base.genetic.genes.development_queen_caste_gene import DevelopmentQueenCasteGene
 from core.world.entities.ant.base.genetic.genes.development_worker_caste_gene import DevelopmentWorkerCasteGene
+from core.world.entities.ant.base.genetic.genes.development_male_caste_gene import DevelopmentMaleCasteGene
 from core.world.entities.ant.base.genetic.genes.development_warrior_caste_gene import DevelopmentWarriorCasteGene
 from core.world.entities.ant.base.genetic.chromosomes.adjusting_chromosome import AdjustingChromosome
 from core.world.entities.ant.base.genetic.genes.adjusting_appetite_gene import AdjustingAppetiteGene
@@ -19,10 +20,13 @@ from core.world.entities.ant.base.genetic.chromosomes.adaptation_chromosome impo
 from core.world.entities.ant.base.genetic.chromosomes.building_chromosome import BuildingChromosome
 from core.world.entities.ant.base.genetic.chromosomes.combat_chromosome import CombatChromosome
 from core.world.entities.ant.base.genetic.genome import Genome
+from core.world.entities.ant.male.male_ant import MaleAnt
 from typing import List
 import random
 
 class NuptialEnvironment():
+
+    INCOME_MALE_AFFECT_CHANCE = 80
 
     @classmethod
     def build(cls, owner_id: int, base_chromosomes_set: ChromosomesSet):
@@ -41,6 +45,9 @@ class NuptialEnvironment():
     def base_chromosomes_set(self):
         return self._base_chromosomes_set
     
+    def fly_in_male(self, male: MaleAnt):
+        self._affect_base_chromosomes_set(male.body.genome.maternal_chromosomes_set, NuptialEnvironment.INCOME_MALE_AFFECT_CHANCE)
+    
     def get_male(self, male_id: str) -> NuptialMale:
         for male in self._males:
             if male.id == male_id:
@@ -57,6 +64,29 @@ class NuptialEnvironment():
 
         return self._males
     
+    def _affect_base_chromosomes_set(self, chromosomes_set: ChromosomesSet, affect_chance: int):
+        if self._chance(affect_chance):
+            self._base_chromosomes_set.body_chromosome.strength_gene = chromosomes_set.body_chromosome.strength_gene
+        if self._chance(affect_chance):
+            self._base_chromosomes_set.body_chromosome.defense_gene = chromosomes_set.body_chromosome.defense_gene
+        if self._chance(affect_chance):
+            self._base_chromosomes_set.body_chromosome.max_hp_gene = chromosomes_set.body_chromosome.max_hp_gene
+        if self._chance(affect_chance):
+            self._base_chromosomes_set.body_chromosome.hp_regen_rate_gene = chromosomes_set.body_chromosome.hp_regen_rate_gene
+        if self._chance(affect_chance):
+            self._base_chromosomes_set.body_chromosome.sight_distance_gene = chromosomes_set.body_chromosome.sight_distance_gene
+        if self._chance(affect_chance):
+            self._base_chromosomes_set.body_chromosome.speed_gene = chromosomes_set.body_chromosome.speed_gene
+
+        if self._chance(affect_chance):
+            self._base_chromosomes_set.development_chromosome.queen_cast_gene = chromosomes_set.development_chromosome.queen_cast_gene
+        if self._chance(affect_chance):
+            self._base_chromosomes_set.development_chromosome.worker_cast_gene = chromosomes_set.development_chromosome.worker_cast_gene
+        if self._chance(affect_chance):
+            self._base_chromosomes_set.development_chromosome.warrior_cast_gene = chromosomes_set.development_chromosome.warrior_cast_gene
+        if self._chance(affect_chance):
+            self._base_chromosomes_set.development_chromosome.male_cast_gene = chromosomes_set.development_chromosome.male_cast_gene
+
     def _generate_nuptial_male(self) -> NuptialMale:
         body_chromosome = self._generate_body_chromosome()
         development_chromosome = self._generate_development_chromosome()
@@ -116,6 +146,14 @@ class NuptialEnvironment():
         speed = self._deviate_value(base_worker_cast_gene.speed, deviation_percent, super_deviation_chance, super_deviation_percent)
         worker_caste_gene = DevelopmentWorkerCasteGene.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed)
 
+        base_male_cast_gene = base_development_chromosome.male_cast_gene
+        strength = self._deviate_value(base_male_cast_gene.strength, deviation_percent, super_deviation_chance, super_deviation_percent)
+        defense = self._deviate_value(base_male_cast_gene.defense, deviation_percent, super_deviation_chance, super_deviation_percent)
+        max_hp = self._deviate_value(base_male_cast_gene.max_hp, deviation_percent, super_deviation_chance, super_deviation_percent)
+        hp_regen_rate = self._deviate_value(base_male_cast_gene.hp_regen_rate, deviation_percent, super_deviation_chance, super_deviation_percent)
+        speed = self._deviate_value(base_male_cast_gene.speed, deviation_percent, super_deviation_chance, super_deviation_percent)
+        male_caste_gene = DevelopmentMaleCasteGene.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed)
+
         warrior_caste_gene = None
         if base_development_chromosome.warrior_cast_gene or self._check_can_develop_warrior():
             base_warrior_cast_gene = base_development_chromosome.warrior_cast_gene
@@ -126,7 +164,7 @@ class NuptialEnvironment():
             speed = self._deviate_value(base_warrior_cast_gene.speed, deviation_percent, super_deviation_chance, super_deviation_percent)
             warrior_caste_gene = DevelopmentWarriorCasteGene.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed)
 
-        return DevelopmentChromosome.build(queen_caste_gene, worker_caste_gene, warrior_caste_gene)
+        return DevelopmentChromosome.build(queen_caste_gene, worker_caste_gene, male_caste_gene, warrior_caste_gene)
     
     def _generate_adjusting_chromosome(self) -> AdjustingChromosome:
         base_adjusting_chromosome = self._base_chromosomes_set.adjusting_chromosome
@@ -156,5 +194,8 @@ class NuptialEnvironment():
     
     def _check_can_develop_warrior(self):
         return True
-
+    
+    def _chance(self, chance: int):
+        return random.random() <= chance / 100
+    
     

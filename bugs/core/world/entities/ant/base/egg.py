@@ -55,4 +55,4 @@ class Egg():
     
     def develop(self):
         if not self.is_ready:
-            self._progress += 1
+            self._progress += 10

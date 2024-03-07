@@ -7,7 +7,6 @@ from ..base.ant_types import AntTypes
 from core.world.utils.event_emiter import EventEmitter
 from .male_ant_body import MaleAntBody
 from .male_ant_mind import MaleAntMind
-from core.world.entities.ant.base.larva import Larva
 from core.world.entities.action.ant_flew_nuptial_flight_action import AntFlewNuptialFlightAction
 
 class MaleAnt(Ant):
@@ -26,6 +25,7 @@ class MaleAnt(Ant):
         self._mind.free_mind()
         self._mind.toggle_auto_thought_generation(False)
         self._body.fly_nuptial_flight()
+        self.die()
 
     def _on_flew_nuptial_flight(self):
         self._emit_action(AntFlewNuptialFlightAction.build(self.id))
