@@ -4464,6 +4464,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "FoodTabView": () => (/* binding */ FoodTabView)
 /* harmony export */ });
 /* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
+/* harmony import */ var _foodTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foodTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/foodTab/foodTabTmpl.html");
+
 
 
 class FoodTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
@@ -4471,7 +4473,41 @@ class FoodTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
     constructor(el) {
         super(el);
 
-        this._el.innerHTML = 'food';
+        this._render();
+    }
+
+    manageNest(nest) {
+        this._stopListenNest();
+        this._nest = nest;
+        this._listenNest();
+
+        this._renderStoredClalories();
+    }
+
+    _listenNest() {
+        this._stopListenStoredCaloriesChanged = this._nest.on('storedCaloriesChanged', this._onStoredCaloriesChanged.bind(this));
+    }
+
+    _stopListenNest() {
+        if (!this._nest) {
+            return
+        }
+
+        this._stopListenStoredCaloriesChanged();
+    }
+
+    _render() {
+        this._el.innerHTML = _foodTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._storedCaloriesEl = this._el.querySelector('[data-stored-calories]');
+    }
+
+    _renderStoredClalories() {
+        this._storedCaloriesEl.innerHTML = this._nest.storedCalories;
+    }
+
+    _onStoredCaloriesChanged() {
+        this._renderStoredClalories();
     }
 
 }
@@ -4689,6 +4725,7 @@ class NestManagerView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MO
     manageNest(nest) {
         this._eggTab.manageNest(nest);
         this._larvaTab.manageNest(nest);
+        this._foodTab.manageNest(nest);
         // if (this._nest) {
         //     this._stopListenNest();
         // }
@@ -9960,6 +9997,24 @@ var code = "<td data-name></td>\r\n<td data-genome></td>\r\n<td data-is-fertiliz
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/foodTab/foodTabTmpl.html":
+/*!**************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/foodTab/foodTabTmpl.html ***!
+  \**************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "їжі всередині:<span data-stored-calories></span>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTabTmpl.html":
 /*!****************************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTabTmpl.html ***!
@@ -10008,7 +10063,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<!-- <div>\r\n    їжі всередині:<span data-stored-calories></span>\r\n</div>\r\n<div>\r\n    цариця в місті: <span data-is-queen-inside></span>\r\n</div>\r\n<div data-larva-manager></div> -->\r\n<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switcher></div>\r\n<div>\r\n    <div data-egg-tab></div>\r\n    <div data-larva-tab></div>\r\n    <div data-food-tab></div>\r\n</div>\r\n";
+var code = "<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switcher></div>\r\n<div>\r\n    <div data-egg-tab></div>\r\n    <div data-larva-tab></div>\r\n    <div data-food-tab></div>\r\n</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
