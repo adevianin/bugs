@@ -5845,7 +5845,6 @@ class NuptialMaleProfileView extends _view_panel_base_baseHTMLView__WEBPACK_IMPO
         this._el.querySelector('[data-max-hp]').innerHTML = this._male.stats.maxHp;
         this._el.querySelector('[data-sight-distance]').innerHTML = this._male.stats.sightDistance;
         this._el.querySelector('[data-appetite]').innerHTML = this._male.stats.appetite;
-        this._el.querySelector('[data-is-local]').innerHTML = this._male.isLocal ? 'місцевий' : 'з дальніх країв';
         this._genomeView = new _view_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_2__.ClosableGenomeView(this._el.querySelector('[data-genome]'), this._male.genome);
     }
 
@@ -10328,7 +10327,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<table>\r\n    <tr>\r\n        <td>атака</td>\r\n        <td>захист</td>\r\n        <td>швидкість</td>\r\n        <td>швидкість відновлення</td>\r\n        <td>макс ХП</td>\r\n        <td>зір</td>\r\n        <td>апетит</td>\r\n        <td>звідки</td>\r\n        <td>геном</td>\r\n    </tr>\r\n    <tr>\r\n        <td data-attack></td>\r\n        <td data-defense></td>\r\n        <td data-speed></td>\r\n        <td data-hp-regen-rate></td>\r\n        <td data-max-hp></td>\r\n        <td data-sight-distance></td>\r\n        <td data-appetite></td>\r\n        <td data-is-local></td>\r\n        <td data-genome></td>\r\n    </tr>\r\n</table>\r\n";
+var code = "<table>\r\n    <tr>\r\n        <td>атака</td>\r\n        <td>захист</td>\r\n        <td>швидкість</td>\r\n        <td>швидкість відновлення</td>\r\n        <td>макс ХП</td>\r\n        <td>зір</td>\r\n        <td>апетит</td>\r\n        <td>геном</td>\r\n    </tr>\r\n    <tr>\r\n        <td data-attack></td>\r\n        <td data-defense></td>\r\n        <td data-speed></td>\r\n        <td data-hp-regen-rate></td>\r\n        <td data-max-hp></td>\r\n        <td data-sight-distance></td>\r\n        <td data-appetite></td>\r\n        <td data-genome></td>\r\n    </tr>\r\n</table>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

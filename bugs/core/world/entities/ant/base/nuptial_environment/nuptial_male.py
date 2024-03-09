@@ -6,14 +6,13 @@ import uuid
 class NuptialMale():
 
     @classmethod
-    def build(cls, genome: Genome, is_local: bool):
+    def build(cls, genome: Genome):
         id = uuid.uuid4().hex
-        return NuptialMale(id, genome, is_local)
+        return NuptialMale(id, genome)
 
-    def __init__(self, id: str, genome: Genome, is_local: bool):
+    def __init__(self, id: str, genome: Genome):
         self._id = id
         self._genome = genome
-        self._is_local = is_local
         self._stats = AntStats.build(AntTypes.MALE, genome)
 
     @property
@@ -27,7 +26,3 @@ class NuptialMale():
     @property
     def stats(self) -> AntStats:
         return self._stats
-    
-    @property
-    def is_local(self) -> bool:
-        return self._is_local

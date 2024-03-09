@@ -35,8 +35,8 @@ class NuptialEnvironment():
     def __init__(self, owner_id: int, base_chromosomes_set: ChromosomesSet):
         self._base_chromosomes_set = base_chromosomes_set
         self._owner_id = owner_id
-        self._distant_males: List[NuptialMale] = []
-        self._local_males: List[NuptialMale] = []
+        self._males: List[NuptialMale] = []
+        # self._
 
     @property
     def owner_id(self):
@@ -48,33 +48,26 @@ class NuptialEnvironment():
     
     def fly_in_male(self, male: MaleAnt):
         self._affect_base_chromosomes_set(male.body.genome.maternal_chromosomes_set, NuptialEnvironment.INCOME_MALE_AFFECT_CHANCE)
-        nuptial_male = NuptialMale.build(male.body.genome, True)
-        self._local_males.append(nuptial_male)
     
     def get_male(self, male_id: str) -> NuptialMale:
-        for male in self._distant_males:
+        for male in self._males:
             if male.id == male_id:
-                self._distant_males.remove(male)
-                return male
-            
-        for male in self._local_males:
-            if male.id == male_id:
-                self._local_males.remove(male)
+                self._males.remove(male)
                 return male
         
         return None
     
     def search_males(self) -> List[NuptialMale]:
-        if len(self._distant_males) == 0:
-            self._generate_distant_males()
+        if len(self._males) == 0:
+            self._generate_males()
 
-        return self._local_males + self._distant_males
+        return self._males
     
-    def _generate_distant_males(self, count = 3):
-        self._distant_males = []
+    def _generate_males(self, count = 3):
+        self._males = []
         for i in range(count):
-            male = self._generate_distant_nuptial_male()
-            self._distant_males.append(male)
+            male = self._generate_nuptial_male()
+            self._males.append(male)
     
     def _affect_base_chromosomes_set(self, chromosomes_set: ChromosomesSet, affect_chance: int):
         if self._chance(affect_chance):
@@ -99,7 +92,7 @@ class NuptialEnvironment():
         if self._chance(affect_chance):
             self._base_chromosomes_set.development_chromosome.male_cast_gene = chromosomes_set.development_chromosome.male_cast_gene
 
-    def _generate_distant_nuptial_male(self) -> NuptialMale:
+    def _generate_nuptial_male(self) -> NuptialMale:
         body_chromosome = self._generate_body_chromosome()
         development_chromosome = self._generate_development_chromosome()
         adaptation_chromosome = self._generate_adaptation_chromosome()
@@ -108,7 +101,7 @@ class NuptialEnvironment():
         adjusting_chromosome = self._generate_adjusting_chromosome()
         maternal_chromosome_set = ChromosomesSet.build(body_chromosome, development_chromosome, adaptation_chromosome, building_chromosome, combat_chromosome, adjusting_chromosome)
         genome = Genome.build(maternal_chromosome_set, None)
-        return NuptialMale.build(genome, False)
+        return NuptialMale.build(genome)
     
     def _generate_body_chromosome(self) -> BodyChromosome:
         base_chromosome = self._base_chromosomes_set.body_chromosome

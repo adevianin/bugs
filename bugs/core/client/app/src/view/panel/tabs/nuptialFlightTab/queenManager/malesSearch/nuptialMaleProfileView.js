@@ -18,7 +18,6 @@ class NuptialMaleProfileView extends BaseHTMLView {
         this._el.querySelector('[data-max-hp]').innerHTML = this._male.stats.maxHp;
         this._el.querySelector('[data-sight-distance]').innerHTML = this._male.stats.sightDistance;
         this._el.querySelector('[data-appetite]').innerHTML = this._male.stats.appetite;
-        this._el.querySelector('[data-is-local]').innerHTML = this._male.isLocal ? 'місцевий' : 'з дальніх країв';
         this._genomeView = new ClosableGenomeView(this._el.querySelector('[data-genome]'), this._male.genome);
     }
 

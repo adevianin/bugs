@@ -13,5 +13,4 @@ class NuptialMaleClientSerializer():
             'id': nuptial_male.id,
             'genome': self._genome_serializer.serialize_genome(nuptial_male.genome),
             'stats': self._stats_serializer.serialize(nuptial_male.stats),
-            'isLocal': nuptial_male.is_local
         }
