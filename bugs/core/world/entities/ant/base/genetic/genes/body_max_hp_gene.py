@@ -28,4 +28,7 @@ class BodyMaxHpGene(BaseGene):
         
         max_hp = math.ceil((self.max_hp + another_gene.max_hp) / 2)
         return BodyMaxHpGene.build(self.domination_code, max_hp)
+    
+    def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
+        return BodyMaxHpGene.build(DominationCodes.random(), self._deviate_value(self.max_hp, percent, super_mutate_chance, super_mutate_percent))
         

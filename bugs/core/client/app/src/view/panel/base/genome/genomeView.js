@@ -47,37 +47,17 @@ class GenomeView extends BaseHTMLView {
 
         el.querySelector('[data-chromosome-set-title]').innerHTML = title;
 
-        this._renderBodyChromosome(el.querySelector('[data-body-chromosome]'), chromosomesSet.body);
-        this._renderDevelopmentChromosome(el.querySelector('[data-development-chromosome]'), chromosomesSet.development);
-        this._renderAdjustingChromosome(el.querySelector('[data-adjusting-chromosome]'), chromosomesSet.adjusting);
+        this._renderChromosome(el.querySelector('[data-body-chromosome]'), chromosomesSet.body);
+        this._renderChromosome(el.querySelector('[data-development-chromosome]'), chromosomesSet.development);
+        this._renderChromosome(el.querySelector('[data-adjusting-chromosome]'), chromosomesSet.adjusting);
     }
 
-    _renderBodyChromosome(el, bodyChromosome) {
+    _renderChromosome(el, chromosome) {
         let genesContainerEl = el.querySelector('[data-genes-container]');
 
-        this._renderGene(genesContainerEl, bodyChromosome.strengthGene);
-        this._renderGene(genesContainerEl, bodyChromosome.defenseGene);
-        this._renderGene(genesContainerEl, bodyChromosome.maxHpGene);
-        this._renderGene(genesContainerEl, bodyChromosome.hpRegenRateGene);
-        this._renderGene(genesContainerEl, bodyChromosome.sightDistanceGene);
-        this._renderGene(genesContainerEl, bodyChromosome.speedGene);
-    }
-
-    _renderDevelopmentChromosome(el, devChromosome) {
-        let genesContainerEl = el.querySelector('[data-genes-container]');
-        this._renderGene(genesContainerEl, devChromosome.queenCasteGene);
-        this._renderGene(genesContainerEl, devChromosome.workerCasteGene);
-        this._renderGene(genesContainerEl, devChromosome.maleCasteGene);
-        if (devChromosome.warriorCasteGene) {
-            this._renderGene(genesContainerEl, devChromosome.warriorCasteGene);
+        for (let gene of chromosome.genes) {
+            this._renderGene(genesContainerEl, gene);
         }
-    }
-
-    _renderAdjustingChromosome(el, adjustingChromosome) {
-        let genesContainerEl = el.querySelector('[data-genes-container]');
-        
-        this._renderGene(genesContainerEl, adjustingChromosome.appetiteGene);
-        this._renderGene(genesContainerEl, adjustingChromosome.developmentAppetiteGene);
     }
 
     _renderGene(geneContainerEl, gene) {

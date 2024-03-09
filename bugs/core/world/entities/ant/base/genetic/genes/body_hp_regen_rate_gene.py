@@ -28,4 +28,7 @@ class BodyHpRegenRateGene(BaseGene):
         
         hp_regen_rate = math.ceil((self.hp_regen_rate + another_gene.hp_regen_rate) / 2)
         return BodyHpRegenRateGene.build(self.domination_code, hp_regen_rate)
+    
+    def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
+        return BodyHpRegenRateGene.build(DominationCodes.random(), self._deviate_value(self.hp_regen_rate, percent, super_mutate_chance, super_mutate_percent))
         

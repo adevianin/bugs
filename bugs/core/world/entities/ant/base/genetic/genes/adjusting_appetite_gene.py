@@ -18,4 +18,7 @@ class AdjustingAppetiteGene(BaseGene):
     def merge(self, another_gene: 'AdjustingAppetiteGene') -> BaseGene:
         dominating_gene = super().merge(another_gene)
         return dominating_gene or another_gene
+    
+    def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
+        return AdjustingAppetiteGene.build(DominationCodes.random())
         

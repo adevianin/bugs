@@ -28,4 +28,7 @@ class BodyStrengthGene(BaseGene):
         
         strength = math.ceil((self.strength + another_gene.strength) / 2)
         return BodyStrengthGene.build(self.domination_code, strength)
+    
+    def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
+        return BodyStrengthGene.build(DominationCodes.random(), self._deviate_value(self.strength, percent, super_mutate_chance, super_mutate_percent))
         

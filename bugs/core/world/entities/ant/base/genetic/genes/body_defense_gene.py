@@ -28,4 +28,7 @@ class BodyDefenseGene(BaseGene):
         
         defense = math.ceil((self.defense + another_gene.defense) / 2)
         return BodyDefenseGene.build(self.domination_code, defense)
+    
+    def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
+        return BodyDefenseGene.build(DominationCodes.random(), self._deviate_value(self.defense, percent, super_mutate_chance, super_mutate_percent))
         

@@ -28,4 +28,7 @@ class BodySightDistanceGene(BaseGene):
         
         sight_distance = math.ceil((self.sight_distance + another_gene.sight_distance) / 2)
         return BodySightDistanceGene.build(self.domination_code, sight_distance)
+    
+    def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
+        return BodySightDistanceGene.build(DominationCodes.random(), self._deviate_value(self.sight_distance, percent, super_mutate_chance, super_mutate_percent))
         

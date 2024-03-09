@@ -2,6 +2,7 @@ from .genes_types import GenesTypes
 from abc import ABC, abstractmethod, abstractclassmethod
 from ...phenotype import Phenotype
 from .domination_codes import DominationCodes
+import random
 
 class BaseGene(ABC):
 
@@ -33,3 +34,16 @@ class BaseGene(ABC):
             return self
         else:
             return None
+        
+    @abstractmethod
+    def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> 'BaseGene':
+        pass
+
+    def _deviate_value(self, value, percent, super_deviation_chance, super_deviation_percent):
+        is_super_deviation = random.random() <= super_deviation_chance / 100
+        if is_super_deviation:
+            percent = super_deviation_percent
+
+        min_value = value * (100 - percent) / 100
+        max_value = value * (100 + percent) / 100
+        return random.uniform(min_value, max_value)

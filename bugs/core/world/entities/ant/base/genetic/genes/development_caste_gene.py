@@ -4,8 +4,6 @@ from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
 from abc import abstractclassmethod
 
-import math
-
 class DevelopmentCasteGene(BaseGene):
 
     @abstractclassmethod
@@ -58,5 +56,13 @@ class DevelopmentCasteGene(BaseGene):
         hp_regen_rate = (self.hp_regen_rate + another_gene.hp_regen_rate) / 2
         speed = (self.speed + another_gene.speed) / 2
         return self.build(self.domination_code, strength, defense, max_hp, hp_regen_rate, speed)
+    
+    def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
+        strength = self._deviate_value(self.strength, percent, super_mutate_chance, super_mutate_percent)
+        defense = self._deviate_value(self.defense, percent, super_mutate_chance, super_mutate_percent)
+        max_hp = self._deviate_value(self.max_hp, percent, super_mutate_chance, super_mutate_percent)
+        hp_regen_rate = self._deviate_value(self.hp_regen_rate, percent, super_mutate_chance, super_mutate_percent)
+        speed = self._deviate_value(self.speed, percent, super_mutate_chance, super_mutate_percent)
+        return self.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed)
 
         

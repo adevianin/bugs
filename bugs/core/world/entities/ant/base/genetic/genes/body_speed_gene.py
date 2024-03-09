@@ -28,4 +28,7 @@ class BodySpeedGene(BaseGene):
         
         speed = math.ceil((self.speed + another_gene.speed) / 2)
         return BodySpeedGene.build(self.domination_code, speed)
+    
+    def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
+        return BodySpeedGene.build(DominationCodes.random(), self._deviate_value(self.speed, percent, super_mutate_chance, super_mutate_percent))
         
