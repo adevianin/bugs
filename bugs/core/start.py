@@ -56,7 +56,7 @@ from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactor
 
 from core.world.services.player_service import PlayerService
 from core.world.services.colony_service import ColonyService
-from core.world.services.nuptial_flight_service import NuptialFlightService
+from core.world.services.nuptial_environment_service import NuptialEnvironmentService
 
 from core.sync.world_client_serializer import WorldClientSerializer
 from core.sync.colony_client_serializer import ColonyClientSerializer
@@ -75,7 +75,7 @@ from core.sync.action_client_serializer import ActionClientSerializer
 from core.sync.entity_client_serializer import EntityClientSerializer
 from core.sync.genes_client_serializer import GenesClientSerializer
 from core.sync.genome_client_serializer import GenomeClientSerializer
-from core.sync.nuptial_male_client_serializer import NuptialMaleClientSerializer
+from core.sync.nuptial_environment_client_serializer import NuptialEnvironmentClientSerializer
 
 def start():
     event_bus = EventEmitter()
@@ -95,7 +95,7 @@ def start():
     
     colony_service = ColonyService(operation_factory)
     player_service = PlayerService(colony_factory, ant_factory)
-    nuptial_flight_service = NuptialFlightService(colony_factory)
+    nuptial_environment_service = NuptialEnvironmentService(colony_factory)
 
     genes_serializer = GenesSerializer()
     genome_serializer = GenomeSerializer(genes_serializer)
@@ -112,7 +112,7 @@ def start():
     item_serializer = ItemSerializer()
     item_area_serializer = ItemAreaSerializer()
     item_source_serializer = ItemSourceSerializer()
-    nuptial_environment_serializer = NuptialEnvironmentSerializer(genome_serializer)
+    nuptial_environment_serializer = NuptialEnvironmentSerializer(genes_serializer)
     world_serializer = WorldSerializer(nest_serializer, ant_serializer, item_serializer, item_area_serializer, item_source_serializer, colony_serializer, 
                                        colony_relations_table_serializer, ground_beetle_serializer, nuptial_environment_serializer)
 
@@ -132,7 +132,7 @@ def start():
     json_item_factory = JsonItemFactory(item_factory)
     json_item_source_factory = JsonItemSourceFactory(item_source_factory)
     json_item_area_factory = JsonItemAreaFactory(item_area_factory)
-    json_nuptial_environment = JsonNuptialEnvironmentFactory(json_genome_factory)
+    json_nuptial_environment = JsonNuptialEnvironmentFactory(json_genes_factory)
     world_repository = WorldRepository(world_data_repository, json_nest_factory, json_ant_factory, json_colony_factory, json_thought_factory, json_map_factory, world_factory, 
                                        json_ground_beetle_factory, json_item_factory, json_item_source_factory, json_item_area_factory, json_nuptial_environment, world_serializer)
 
@@ -155,15 +155,15 @@ def start():
     world_client_serializer = WorldClientSerializer(colony_client_serializer, entity_client_serializer)
     action_client_serializer = ActionClientSerializer(entity_client_serializer, util_client_serializer, larva_client_serializer, egg_client_serializer, colony_client_serializer, 
                                                       operation_client_serializer)
-    nuptial_male_client_serializer = NuptialMaleClientSerializer(genome_client_serializer, stats_client_serializer)
+    nuptial_environment_client_serializer = NuptialEnvironmentClientSerializer(genome_client_serializer, genes_client_serializer, stats_client_serializer)
 
-    world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, nuptial_male_client_serializer, world_repository, colony_service, 
-                                    player_service, nuptial_flight_service)
+    world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, world_repository, colony_service, 
+                                    player_service, nuptial_environment_service)
 
     world_facade.init_world()
 
     colony_service.set_world(world_facade.world)
     player_service.set_world(world_facade.world)
-    nuptial_flight_service.set_world(world_facade.world)
+    nuptial_environment_service.set_world(world_facade.world)
 
     world_facade.world.run()

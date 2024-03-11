@@ -30,3 +30,14 @@ def found_colony(request: HttpRequest):
     wf.found_colony_command(request.user.id, queen_id, nuptial_male_id, nest_building_site)
 
     return HttpResponse(status=200)
+
+@require_GET
+@login_required     
+def get_my_specie_builder(request: HttpRequest):
+    wf = WorldFacade.get_instance()
+
+    specie_builder = wf.get_specie_builder_for_client(request.user.id)
+
+    return JsonResponse({ 
+        'specie_builder': specie_builder
+    }, status=200)

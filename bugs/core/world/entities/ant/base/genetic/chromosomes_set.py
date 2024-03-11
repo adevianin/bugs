@@ -51,3 +51,12 @@ class ChromosomesSet():
 
         return genes
     
+    def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> 'ChromosomesSet':
+        body = self._body_chromosome.mutate(percent, super_mutate_chance, super_mutate_percent)
+        development = self._development_chromosome.mutate(percent, super_mutate_chance, super_mutate_percent)
+        adaptation = self._adaptation_chromosome.mutate(percent, super_mutate_chance, super_mutate_percent)
+        building = self._building_chromosome.mutate(percent, super_mutate_chance, super_mutate_percent)
+        combat = self._combat_chromosome.mutate(percent, super_mutate_chance, super_mutate_percent)
+        adjusting = self._adjusting_chromosome.mutate(percent, super_mutate_chance, super_mutate_percent)
+        return ChromosomesSet.build(body, development, adaptation, building, combat, adjusting)
+    

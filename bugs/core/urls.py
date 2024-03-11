@@ -9,7 +9,7 @@ from .views.admin import admin_panel, world_status_check, stop_world, run_world,
 from .views.nest import add_egg, change_egg_caste
 from .views.colony import stop_operation, build_new_sub_nest, destroy_nest, pillage_nest
 from .views.ant import fly_nuptial_flight
-from .views.nuptial import search_nuptial_males, found_colony
+from .views.nuptial import search_nuptial_males, found_colony, get_my_specie_builder
 
 urlpatterns = [
     path('', index, name='index'),
@@ -34,8 +34,9 @@ urlpatterns = [
     
     path('world/ants/<int:ant_id>/fly_nuptial_flight', fly_nuptial_flight, name='fly_nuptial_flight'),
 
-    path('world/nuptial_flight/search_nuptial_males', search_nuptial_males, name='search_nuptial_males'),
-    path('world/nuptial_flight/found_colony', found_colony, name='found_colony'),
+    path('world/nuptial_environment/search_nuptial_males', search_nuptial_males, name='search_nuptial_males'),
+    path('world/nuptial_environment/found_colony', found_colony, name='found_colony'),
+    path('world/nuptial_environment/specie_builder', get_my_specie_builder, name='get_my_specie_builder'),
 
 
 
