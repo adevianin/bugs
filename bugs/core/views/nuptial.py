@@ -36,8 +36,6 @@ def found_colony(request: HttpRequest):
 def get_my_specie_builder(request: HttpRequest):
     wf = WorldFacade.get_instance()
 
-    specie_builder = wf.get_specie_builder_for_client(request.user.id)
+    specie_builder_json = wf.get_specie_builder_for_client(request.user.id)
 
-    return JsonResponse({ 
-        'specie_builder': specie_builder
-    }, status=200)
+    return JsonResponse(specie_builder_json, status=200)

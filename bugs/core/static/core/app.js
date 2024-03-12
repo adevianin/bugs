@@ -14,17 +14,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class DomainFacade {
 
-    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilder) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._accountService = accountService;
         this._messageHandlerService = messageHandlerService;
         this._colonyService = colonyService;
         this._nuptialService = nuptialService;
+
+        this._specieBuilder = specieBuilder;
     }
 
     get events() {
         return this._mainEventBus;
+    }
+
+    get specieBuilder() {
+        return this._specieBuilder;
     }
 
     getEntities() {
@@ -1460,6 +1466,44 @@ class NuptialMale {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/domain/entity/specieBuilder.js":
+/*!*****************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/specieBuilder.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "SpecieBuilder": () => (/* binding */ SpecieBuilder)
+/* harmony export */ });
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+
+
+class SpecieBuilder extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+
+    constructor(specieBuilderApi) {
+        super();
+        this._specieBuilderApi = specieBuilderApi;
+        this._isLoaded = false;
+    }
+
+    load() {
+        if (!this._isLoaded) {
+            this.emit('loadingStart');
+            this._specieBuilderApi.loadBuilderData().then((genesEntries, schema) => {
+                this._genesEntries = genesEntries;
+                this._schema = schema;
+                this.emit('loadingEnd');
+            })
+        }
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/entity/world.js":
 /*!*********************************************************!*\
   !*** ./bugs/core/client/app/src/domain/entity/world.js ***!
@@ -1472,8 +1516,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "World": () => (/* binding */ World)
 /* harmony export */ });
 /* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
-/* harmony import */ var _enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
-
 
 
 class World {
@@ -1678,6 +1720,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _service_worldService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./service/worldService */ "./bugs/core/client/app/src/domain/service/worldService.js");
 /* harmony import */ var _service_colonyService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/colonyService */ "./bugs/core/client/app/src/domain/service/colonyService.js");
 /* harmony import */ var _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./service/nuptialService */ "./bugs/core/client/app/src/domain/service/nuptialService.js");
+/* harmony import */ var _entity_specieBuilder__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entity/specieBuilder */ "./bugs/core/client/app/src/domain/entity/specieBuilder.js");
+
 
 
 
@@ -1691,6 +1735,7 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
     let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.nestApi, apis.antApi);
     let world = worldFactory.buildWorld();
+    let specieBuilder = new _entity_specieBuilder__WEBPACK_IMPORTED_MODULE_8__.SpecieBuilder(apis.specieBuilderApi);
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus);
     let accountService = new _service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user, mainEventBus);
@@ -1698,7 +1743,7 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let nuptialService = new _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__.NuptialService(apis.nuptialApi, worldFactory);
     let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, colonyService);
 
-    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService);
+    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilder);
 
     domainFacade.start();
 
@@ -2354,6 +2399,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _colonyApi__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./colonyApi */ "./bugs/core/client/app/src/sync/colonyApi.js");
 /* harmony import */ var _antApi__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./antApi */ "./bugs/core/client/app/src/sync/antApi.js");
 /* harmony import */ var _nuptialApi__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./nuptialApi */ "./bugs/core/client/app/src/sync/nuptialApi.js");
+/* harmony import */ var _specieBuilderApi__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./specieBuilderApi */ "./bugs/core/client/app/src/sync/specieBuilderApi.js");
+
 
 
 
@@ -2371,14 +2418,18 @@ function initSyncLayer() {
     let colonyApi = new _colonyApi__WEBPACK_IMPORTED_MODULE_4__.ColonyApi(requester);
     let antApi = new _antApi__WEBPACK_IMPORTED_MODULE_5__.AntApi(requester);
     let nuptialApi = new _nuptialApi__WEBPACK_IMPORTED_MODULE_6__.NuptialApi(requester);
+    let specieBuilderApi = new _specieBuilderApi__WEBPACK_IMPORTED_MODULE_7__.SpecieBuilderApi(requester);
 
     return {
-        accountApi,
-        nestApi,
-        colonyApi,
+        apis: {
+            accountApi,
+            nestApi,
+            colonyApi,
+            antApi,
+            nuptialApi,
+            specieBuilderApi
+        },
         serverConnection,
-        antApi,
-        nuptialApi
     };
 }
 
@@ -2500,6 +2551,38 @@ class ServerConnection {
     _emitMessage(event) {
         this.events.emit('message', JSON.parse(event.data));
     }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/sync/specieBuilderApi.js":
+/*!***********************************************************!*\
+  !*** ./bugs/core/client/app/src/sync/specieBuilderApi.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "SpecieBuilderApi": () => (/* binding */ SpecieBuilderApi)
+/* harmony export */ });
+class SpecieBuilderApi {
+
+    constructor(requester) {
+        this._requester = requester;
+    }
+
+    loadBuilderData() {
+        return this._requester.get('world/nuptial_environment/specie_builder').then((response) => {
+            return {
+                genesEntries: response.data.genesEntries,
+                schema: response.data.schema
+            };
+        });
+    }
+    
 }
 
 
@@ -2869,60 +2952,10 @@ class ClosableGenomeView extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/adjustingChromosome/adjustingAppetiteGeneView.js":
-/*!****************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/adjustingChromosome/adjustingAppetiteGeneView.js ***!
-  \****************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "AdjustingAppetiteGeneView": () => (/* binding */ AdjustingAppetiteGeneView)
-/* harmony export */ });
-/* harmony import */ var _base_geneView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/geneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/base/geneView.js");
-
-
-class AdjustingAppetiteGeneView extends _base_geneView__WEBPACK_IMPORTED_MODULE_0__.GeneView {
-
-    _renderGene(el) {
-        el.innerHTML = 'ген підстройки апетиту';
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/adjustingChromosome/adjustingDevelopmentAppetiteGeneView.js":
-/*!***************************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/adjustingChromosome/adjustingDevelopmentAppetiteGeneView.js ***!
-  \***************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "AdjustingDevelopmentAppetiteGeneView": () => (/* binding */ AdjustingDevelopmentAppetiteGeneView)
-/* harmony export */ });
-/* harmony import */ var _base_geneView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/geneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/base/geneView.js");
-
-
-class AdjustingDevelopmentAppetiteGeneView extends _base_geneView__WEBPACK_IMPORTED_MODULE_0__.GeneView {
-
-    _renderGene(el) {
-        el.innerHTML = 'ген підстройки апетиту розвитку';
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/base/geneView.js":
-/*!********************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/base/geneView.js ***!
-  \********************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/geneView.js":
+/*!***************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/geneView.js ***!
+  \***************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2930,14 +2963,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "GeneView": () => (/* binding */ GeneView)
 /* harmony export */ });
-/* harmony import */ var _baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
-/* harmony import */ var _geneTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./geneTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/base/geneTmpl.html");
+/* harmony import */ var _baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
+/* harmony import */ var _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/genesTypes */ "./bugs/core/client/app/src/domain/enum/genesTypes.js");
+/* harmony import */ var _geneTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./geneTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/geneTmpl.html");
+/* harmony import */ var _bodyStrengthTmpl_html__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./bodyStrengthTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyStrengthTmpl.html");
+/* harmony import */ var _bodyDefenseTmpl_html__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./bodyDefenseTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyDefenseTmpl.html");
+/* harmony import */ var _bodyMaxHpTmpl_html__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./bodyMaxHpTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyMaxHpTmpl.html");
+/* harmony import */ var _bodyHpRegenRateTmpl_html__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./bodyHpRegenRateTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyHpRegenRateTmpl.html");
+/* harmony import */ var _bodySightDistanceTmpl_html__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./bodySightDistanceTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodySightDistanceTmpl.html");
+/* harmony import */ var _bodySpeedTmpl_html__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./bodySpeedTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodySpeedTmpl.html");
+/* harmony import */ var _developmentCasteGeneTmpl_html__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./developmentCasteGeneTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentCasteGeneTmpl.html");
+/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+/* harmony import */ var _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../labels/antTypesLabels */ "./bugs/core/client/app/src/view/panel/base/labels/antTypesLabels.js");
+
+
+
+
+
+
+
+
+
+
 
 
 
 class GeneView extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    constructor (el, gene) {
+    constructor(el, gene) {
         super(el);
         this._gene = gene;
 
@@ -2945,336 +2998,115 @@ class GeneView extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
     }
 
     _render() {
-        this._el.innerHTML = _geneTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.innerHTML = _geneTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
 
         this._el.querySelector('[data-domination-code]').innerHTML = this._gene.dominationCode;
-        this._renderGene(this._el.querySelector('[data-gene]'));
+        this._geneEl = this._el.querySelector('[data-gene]');
+        this._renderGene();
     }
 
-    _renderGene(el) {
-        throw 'abstract method';
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/defenseGene/bodyDefenseGeneView.js":
-/*!*****************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/defenseGene/bodyDefenseGeneView.js ***!
-  \*****************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BodyDefenseGeneView": () => (/* binding */ BodyDefenseGeneView)
-/* harmony export */ });
-/* harmony import */ var _base_geneView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/geneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/base/geneView.js");
-/* harmony import */ var _bodyDefenseTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bodyDefenseTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/defenseGene/bodyDefenseTmpl.html");
-
-
-
-class BodyDefenseGeneView extends _base_geneView__WEBPACK_IMPORTED_MODULE_0__.GeneView {
-
-    _renderGene(el) {
-        el.innerHTML = _bodyDefenseTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        el.querySelector('[data-defense]').innerHTML = this._gene.defense;
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/hpRegenRateGene/bodyHpRegenRateGeneView.js":
-/*!*************************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/hpRegenRateGene/bodyHpRegenRateGeneView.js ***!
-  \*************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BodyHpRegenRateGeneView": () => (/* binding */ BodyHpRegenRateGeneView)
-/* harmony export */ });
-/* harmony import */ var _base_geneView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/geneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/base/geneView.js");
-/* harmony import */ var _bodyHpRegenRateTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bodyHpRegenRateTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/hpRegenRateGene/bodyHpRegenRateTmpl.html");
-
-
-
-class BodyHpRegenRateGeneView extends _base_geneView__WEBPACK_IMPORTED_MODULE_0__.GeneView {
-
-    _renderGene(el) {
-        el.innerHTML = _bodyHpRegenRateTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        el.querySelector('[data-hp-regen-rate]').innerHTML = this._gene.hpRegenRate;
+    _renderGene() {
+        switch(this._gene.type) {
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.BODY_STRENGTH:
+                this._renderBodyStrengthGene();
+                break;
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.BODY_DEFENSE:
+                this._renderBodyDefenseGene();
+                break;
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.BODY_MAX_HP:
+                this._renderBodyMaxHpGene();
+                break;
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.BODY_HP_REGEN_RATE:
+                this._renderBodyHpRegenRateGene();
+                break;
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.BODY_SIGHT_DISTANCE:
+                this._renderBodySightDistanceGene();
+                break;
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.BODY_SPEED:
+                this._renderBodySpeedGene();
+                break;
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_QUEEN_CASTE:
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_WORKER_CASTE:
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_WARRIOR_CASTE:
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_MALE_CASTE:
+                this._renderCasteDevelopmentGene();
+                break;
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.ADJUSTING_APPETITE:
+                this._renderAdjustingAppetiteGene();
+                break;
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE:
+                this._renderAdjustingDevelopmentAppetiteGene();
+                break;
+            default:
+                throw 'unknown body gene type';
+        }
     }
 
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/maxHpGene/bodyMaxHpGeneView.js":
-/*!*************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/maxHpGene/bodyMaxHpGeneView.js ***!
-  \*************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BodyMaxHpGeneView": () => (/* binding */ BodyMaxHpGeneView)
-/* harmony export */ });
-/* harmony import */ var _base_geneView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/geneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/base/geneView.js");
-/* harmony import */ var _bodyMaxHpTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bodyMaxHpTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/maxHpGene/bodyMaxHpTmpl.html");
-
-
-
-class BodyMaxHpGeneView extends _base_geneView__WEBPACK_IMPORTED_MODULE_0__.GeneView {
-
-    _renderGene(el) {
-        el.innerHTML = _bodyMaxHpTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        el.querySelector('[data-max-hp]').innerHTML = this._gene.maxHp;
+    _renderBodyStrengthGene() {
+        this._geneEl.innerHTML = _bodyStrengthTmpl_html__WEBPACK_IMPORTED_MODULE_3__["default"];
+        this._geneEl.querySelector('[data-strength]').innerHTML = this._gene.strength;
     }
 
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/sightDistanceGene/bodySightDistanceGeneView.js":
-/*!*****************************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/sightDistanceGene/bodySightDistanceGeneView.js ***!
-  \*****************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BodySightDistanceGeneView": () => (/* binding */ BodySightDistanceGeneView)
-/* harmony export */ });
-/* harmony import */ var _base_geneView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/geneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/base/geneView.js");
-/* harmony import */ var _bodySightDistanceTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bodySightDistanceTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/sightDistanceGene/bodySightDistanceTmpl.html");
-
-
-
-class BodySightDistanceGeneView extends _base_geneView__WEBPACK_IMPORTED_MODULE_0__.GeneView {
-
-    _renderGene(el) {
-        el.innerHTML = _bodySightDistanceTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        el.querySelector('[data-sight-distance]').innerHTML = this._gene.sightDistance;
+    _renderBodyDefenseGene() {
+        this._geneEl.innerHTML = _bodyDefenseTmpl_html__WEBPACK_IMPORTED_MODULE_4__["default"];
+        this._geneEl.querySelector('[data-defense]').innerHTML = this._gene.defense;
     }
 
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/speedGene/bodySpeedGeneView.js":
-/*!*************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/speedGene/bodySpeedGeneView.js ***!
-  \*************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BodySpeedGeneView": () => (/* binding */ BodySpeedGeneView)
-/* harmony export */ });
-/* harmony import */ var _base_geneView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/geneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/base/geneView.js");
-/* harmony import */ var _bodySpeedTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bodySpeedTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/speedGene/bodySpeedTmpl.html");
-
-
-
-class BodySpeedGeneView extends _base_geneView__WEBPACK_IMPORTED_MODULE_0__.GeneView {
-
-    _renderGene(el) {
-        el.innerHTML = _bodySpeedTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        el.querySelector('[data-speed]').innerHTML = this._gene.speed;
+    _renderBodyMaxHpGene() {
+        this._geneEl.innerHTML = _bodyMaxHpTmpl_html__WEBPACK_IMPORTED_MODULE_5__["default"];
+        this._geneEl.querySelector('[data-max-hp]').innerHTML = this._gene.maxHp;
     }
 
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/strengthGene/bodyStrengthGeneView.js":
-/*!*******************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/strengthGene/bodyStrengthGeneView.js ***!
-  \*******************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BodyStrengthGeneView": () => (/* binding */ BodyStrengthGeneView)
-/* harmony export */ });
-/* harmony import */ var _base_geneView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/geneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/base/geneView.js");
-/* harmony import */ var _bodyStrengthTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bodyStrengthTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/strengthGene/bodyStrengthTmpl.html");
-
-
-
-class BodyStrengthGeneView extends _base_geneView__WEBPACK_IMPORTED_MODULE_0__.GeneView {
-
-    _renderGene(el) {
-        el.innerHTML = _bodyStrengthTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        el.querySelector('[data-strength]').innerHTML = this._gene.strength;
+    _renderBodyHpRegenRateGene() {
+        this._geneEl.innerHTML = _bodyHpRegenRateTmpl_html__WEBPACK_IMPORTED_MODULE_6__["default"];
+        this._geneEl.querySelector('[data-hp-regen-rate]').innerHTML = this._gene.hpRegenRate;
     }
 
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/base/developmentCasteGeneView.js":
-/*!**********************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/base/developmentCasteGeneView.js ***!
-  \**********************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DevelopmentCasteGeneView": () => (/* binding */ DevelopmentCasteGeneView)
-/* harmony export */ });
-/* harmony import */ var _base_geneView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/geneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/base/geneView.js");
-/* harmony import */ var _developmentCasteGeneTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./developmentCasteGeneTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/base/developmentCasteGeneTmpl.html");
-/* harmony import */ var _view_panel_base_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/labels/antTypesLabels */ "./bugs/core/client/app/src/view/panel/base/labels/antTypesLabels.js");
-
-
-
-
-class DevelopmentCasteGeneView extends _base_geneView__WEBPACK_IMPORTED_MODULE_0__.GeneView {
-
-    _renderGene(el) {
-        el.innerHTML = _developmentCasteGeneTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        el.querySelector('[data-ant-type]').innerHTML = _view_panel_base_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_2__.antTypesLabels[this._antType];
-        el.querySelector('[data-dev-strength]').innerHTML = this._gene.strength;
-        el.querySelector('[data-dev-defense]').innerHTML = this._gene.defense;
-        el.querySelector('[data-dev-max-hp]').innerHTML = this._gene.maxHp;
-        el.querySelector('[data-dev-hp-regen-rate]').innerHTML = this._gene.hpRegenRate;
-        el.querySelector('[data-dev-speed]').innerHTML = this._gene.speed;
+    _renderBodySightDistanceGene() {
+        this._geneEl.innerHTML = _bodySightDistanceTmpl_html__WEBPACK_IMPORTED_MODULE_7__["default"];
+        this._geneEl.querySelector('[data-sight-distance]').innerHTML = this._gene.sightDistance;
     }
 
-    get _antType() {
-        throw 'abstract method'; 
+    _renderBodySpeedGene() {
+        this._geneEl.innerHTML = _bodySpeedTmpl_html__WEBPACK_IMPORTED_MODULE_8__["default"];
+        this._geneEl.querySelector('[data-speed]').innerHTML = this._gene.speed;
     }
 
-}
+    _renderCasteDevelopmentGene() {
+        let antType = this._figureOutAntTypeOfDevelopmentGene();
 
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentMaleCasteGeneView.js":
-/*!*********************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentMaleCasteGeneView.js ***!
-  \*********************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DevelopmentMaleCasteGeneView": () => (/* binding */ DevelopmentMaleCasteGeneView)
-/* harmony export */ });
-/* harmony import */ var _base_developmentCasteGeneView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/developmentCasteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/base/developmentCasteGeneView.js");
-/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
-
-
-
-class DevelopmentMaleCasteGeneView extends _base_developmentCasteGeneView__WEBPACK_IMPORTED_MODULE_0__.DevelopmentCasteGeneView {
-
-    get _antType() {
-        return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.MALE;
+        this._geneEl.innerHTML = _developmentCasteGeneTmpl_html__WEBPACK_IMPORTED_MODULE_9__["default"];
+        this._geneEl.querySelector('[data-ant-type]').innerHTML = _labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_11__.antTypesLabels[antType];
+        this._geneEl.querySelector('[data-dev-strength]').innerHTML = this._gene.strength;
+        this._geneEl.querySelector('[data-dev-defense]').innerHTML = this._gene.defense;
+        this._geneEl.querySelector('[data-dev-max-hp]').innerHTML = this._gene.maxHp;
+        this._geneEl.querySelector('[data-dev-hp-regen-rate]').innerHTML = this._gene.hpRegenRate;
+        this._geneEl.querySelector('[data-dev-speed]').innerHTML = this._gene.speed;
     }
-}
 
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentQueenCasteGeneView.js":
-/*!**********************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentQueenCasteGeneView.js ***!
-  \**********************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DevelopmentQueenCasteGeneView": () => (/* binding */ DevelopmentQueenCasteGeneView)
-/* harmony export */ });
-/* harmony import */ var _base_developmentCasteGeneView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/developmentCasteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/base/developmentCasteGeneView.js");
-/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
-
-
-
-class DevelopmentQueenCasteGeneView extends _base_developmentCasteGeneView__WEBPACK_IMPORTED_MODULE_0__.DevelopmentCasteGeneView {
-    get _antType() {
-        return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN;
+    _figureOutAntTypeOfDevelopmentGene() {
+        switch(this._gene.type) {
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_QUEEN_CASTE:
+                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_10__.AntTypes.QUEEN;
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_WORKER_CASTE:
+                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_10__.AntTypes.WORKER;
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_MALE_CASTE:
+                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_10__.AntTypes.MALE;
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_WARRIOR_CASTE:
+                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_10__.AntTypes.WARRIOR;
+            default:
+                throw 'unknown development gene type';
+        }
     }
-}
 
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentWarriorCasteGeneView.js":
-/*!************************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentWarriorCasteGeneView.js ***!
-  \************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DevelopmentWarriorCasteGeneView": () => (/* binding */ DevelopmentWarriorCasteGeneView)
-/* harmony export */ });
-/* harmony import */ var _base_developmentCasteGeneView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/developmentCasteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/base/developmentCasteGeneView.js");
-/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
-
-
-
-class DevelopmentWarriorCasteGeneView extends _base_developmentCasteGeneView__WEBPACK_IMPORTED_MODULE_0__.DevelopmentCasteGeneView {
-
-    get _antType() {
-        return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WARRIOR;
+    _renderAdjustingAppetiteGene() {
+        this._geneEl.innerHTML = 'ген підстройки апетиту';
     }
-}
 
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentWorkerCasteGeneView.js":
-/*!***********************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentWorkerCasteGeneView.js ***!
-  \***********************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DevelopmentWorkerCasteGeneView": () => (/* binding */ DevelopmentWorkerCasteGeneView)
-/* harmony export */ });
-/* harmony import */ var _base_developmentCasteGeneView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/developmentCasteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/base/developmentCasteGeneView.js");
-/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
-
-
-
-class DevelopmentWorkerCasteGeneView extends _base_developmentCasteGeneView__WEBPACK_IMPORTED_MODULE_0__.DevelopmentCasteGeneView {
-
-    get _antType() {
-        return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WORKER;
+    _renderAdjustingDevelopmentAppetiteGene() {
+        this._geneEl.innerHTML = 'ген підстройки апетиту розвитку';
     }
+
 }
 
 
@@ -3297,29 +3129,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _genomeTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./genomeTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/genomeTmpl.html");
 /* harmony import */ var _chromosomesSetTmpl_html__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./chromosomesSetTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/chromosomesSetTmpl.html");
 /* harmony import */ var _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/enum/genesTypes */ "./bugs/core/client/app/src/domain/enum/genesTypes.js");
-/* harmony import */ var _genes_bodyChromosome_strengthGene_bodyStrengthGeneView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./genes/bodyChromosome/strengthGene/bodyStrengthGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/strengthGene/bodyStrengthGeneView.js");
-/* harmony import */ var _genes_bodyChromosome_defenseGene_bodyDefenseGeneView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./genes/bodyChromosome/defenseGene/bodyDefenseGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/defenseGene/bodyDefenseGeneView.js");
-/* harmony import */ var _genes_bodyChromosome_maxHpGene_bodyMaxHpGeneView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./genes/bodyChromosome/maxHpGene/bodyMaxHpGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/maxHpGene/bodyMaxHpGeneView.js");
-/* harmony import */ var _genes_bodyChromosome_hpRegenRateGene_bodyHpRegenRateGeneView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./genes/bodyChromosome/hpRegenRateGene/bodyHpRegenRateGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/hpRegenRateGene/bodyHpRegenRateGeneView.js");
-/* harmony import */ var _genes_bodyChromosome_sightDistanceGene_bodySightDistanceGeneView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./genes/bodyChromosome/sightDistanceGene/bodySightDistanceGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/sightDistanceGene/bodySightDistanceGeneView.js");
-/* harmony import */ var _genes_bodyChromosome_speedGene_bodySpeedGeneView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./genes/bodyChromosome/speedGene/bodySpeedGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/speedGene/bodySpeedGeneView.js");
-/* harmony import */ var _genes_developmentChromosome_developmentQueenCasteGeneView__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./genes/developmentChromosome/developmentQueenCasteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentQueenCasteGeneView.js");
-/* harmony import */ var _genes_developmentChromosome_developmentWorkerCasteGeneView__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./genes/developmentChromosome/developmentWorkerCasteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentWorkerCasteGeneView.js");
-/* harmony import */ var _genes_developmentChromosome_developmentWarriorCasteGeneView__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./genes/developmentChromosome/developmentWarriorCasteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentWarriorCasteGeneView.js");
-/* harmony import */ var _genes_developmentChromosome_developmentMaleCasteGeneView__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./genes/developmentChromosome/developmentMaleCasteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/developmentMaleCasteGeneView.js");
-/* harmony import */ var _genes_adjustingChromosome_adjustingAppetiteGeneView__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./genes/adjustingChromosome/adjustingAppetiteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/adjustingChromosome/adjustingAppetiteGeneView.js");
-/* harmony import */ var _genes_adjustingChromosome_adjustingDevelopmentAppetiteGeneView__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./genes/adjustingChromosome/adjustingDevelopmentAppetiteGeneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/adjustingChromosome/adjustingDevelopmentAppetiteGeneView.js");
-
-
-
-
-
-
-
-
-
-
-
+/* harmony import */ var _genes_geneView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./genes/geneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/geneView.js");
 
 
 
@@ -3374,39 +3184,8 @@ class GenomeView extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView
     _renderGene(geneContainerEl, gene) {
         let li = document.createElement('li');
         geneContainerEl.append(li);
-        let view = this._buildGeneView(li, gene);
+        let view = new _genes_geneView__WEBPACK_IMPORTED_MODULE_5__.GeneView(li, gene);
         this._genesViews.push(view);
-    }
-
-    _buildGeneView(el, gene) {
-        switch (gene.type) {
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.BODY_STRENGTH:
-                return new _genes_bodyChromosome_strengthGene_bodyStrengthGeneView__WEBPACK_IMPORTED_MODULE_5__.BodyStrengthGeneView(el, gene);
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.BODY_DEFENSE:
-                return new _genes_bodyChromosome_defenseGene_bodyDefenseGeneView__WEBPACK_IMPORTED_MODULE_6__.BodyDefenseGeneView(el, gene);
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.BODY_MAX_HP:
-                return new _genes_bodyChromosome_maxHpGene_bodyMaxHpGeneView__WEBPACK_IMPORTED_MODULE_7__.BodyMaxHpGeneView(el, gene);
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.BODY_HP_REGEN_RATE:
-                return new _genes_bodyChromosome_hpRegenRateGene_bodyHpRegenRateGeneView__WEBPACK_IMPORTED_MODULE_8__.BodyHpRegenRateGeneView(el, gene);
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.BODY_SIGHT_DISTANCE:
-                return new _genes_bodyChromosome_sightDistanceGene_bodySightDistanceGeneView__WEBPACK_IMPORTED_MODULE_9__.BodySightDistanceGeneView(el, gene);
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.BODY_SPEED:
-                return new _genes_bodyChromosome_speedGene_bodySpeedGeneView__WEBPACK_IMPORTED_MODULE_10__.BodySpeedGeneView(el, gene);
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.DEVELOPMENT_QUEEN_CASTE:
-                return new _genes_developmentChromosome_developmentQueenCasteGeneView__WEBPACK_IMPORTED_MODULE_11__.DevelopmentQueenCasteGeneView(el, gene);
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.DEVELOPMENT_WORKER_CASTE:
-                return new _genes_developmentChromosome_developmentWorkerCasteGeneView__WEBPACK_IMPORTED_MODULE_12__.DevelopmentWorkerCasteGeneView(el, gene);
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.DEVELOPMENT_WARRIOR_CASTE:
-                return new _genes_developmentChromosome_developmentWarriorCasteGeneView__WEBPACK_IMPORTED_MODULE_13__.DevelopmentWarriorCasteGeneView(el, gene);
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.DEVELOPMENT_MALE_CASTE:
-                return new _genes_developmentChromosome_developmentMaleCasteGeneView__WEBPACK_IMPORTED_MODULE_14__.DevelopmentMaleCasteGeneView(el, gene);
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.ADJUSTING_APPETITE:
-                return new _genes_adjustingChromosome_adjustingAppetiteGeneView__WEBPACK_IMPORTED_MODULE_15__.AdjustingAppetiteGeneView(el, gene);
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__.GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE:
-                return new _genes_adjustingChromosome_adjustingDevelopmentAppetiteGeneView__WEBPACK_IMPORTED_MODULE_16__.AdjustingDevelopmentAppetiteGeneView(el, gene);
-            default:
-                throw 'unknown body gene type';
-        }
     }
 
 }
@@ -3635,6 +3414,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _tabs_coloniesTab__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tabs/coloniesTab */ "./bugs/core/client/app/src/view/panel/tabs/coloniesTab/index.js");
 /* harmony import */ var _view_panel_base_tabSwitcher_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/panel/base/tabSwitcher/tabSwitcher */ "./bugs/core/client/app/src/view/panel/base/tabSwitcher/tabSwitcher.js");
 /* harmony import */ var _tabs_nuptialFlightTab__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./tabs/nuptialFlightTab */ "./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/index.js");
+/* harmony import */ var _tabs_specieBuilderTab__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./tabs/specieBuilderTab */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/index.js");
+
 
 
 
@@ -3663,11 +3444,13 @@ class Panel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView
         this._userTab = new _tabs_userTab_userTab__WEBPACK_IMPORTED_MODULE_3__.UserTab(this._el.querySelector('[data-user-tab]'));
         this._coloniesTab = new _tabs_coloniesTab__WEBPACK_IMPORTED_MODULE_4__.ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));
         this._nuptialFlightTab = new _tabs_nuptialFlightTab__WEBPACK_IMPORTED_MODULE_6__.NuptialFlightTabView(this._el.querySelector('[data-nuptial-flight-tab]'));
+        this._specieBuildertTab = new _tabs_specieBuilderTab__WEBPACK_IMPORTED_MODULE_7__.SpecieBuilderTabView(this._el.querySelector('[data-specie-builder-tab]'));
 
         this._tabSwitcher = new _view_panel_base_tabSwitcher_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
             { name: 'user', label: 'Користувач', tab: this._userTab },
             { name: 'colonies', label: 'Колонії', tab: this._coloniesTab },
-            { name: 'nuptial_flight', label: 'Шлюбний політ', tab: this._nuptialFlightTab }
+            { name: 'nuptial_flight', label: 'Шлюбний політ', tab: this._nuptialFlightTab },
+            { name: 'specie_builder', label: 'Вид', tab: this._specieBuildertTab },
         ]);
     }
 
@@ -6089,6 +5872,123 @@ class QueensListView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MOD
 
     _onQueenViewClick(queen) {
         this._selectQueen(queen);
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/index.js":
+/*!****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/index.js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "SpecieBuilderTabView": () => (/* reexport safe */ _specieBuilderTabView__WEBPACK_IMPORTED_MODULE_0__.SpecieBuilderTabView)
+/* harmony export */ });
+/* harmony import */ var _specieBuilderTabView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./specieBuilderTabView */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabView.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabView.js":
+/*!*******************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabView.js ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "SpecieBuilderTabView": () => (/* binding */ SpecieBuilderTabView)
+/* harmony export */ });
+/* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
+/* harmony import */ var _specieBuilderTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieBuilderTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabTmpl.html");
+/* harmony import */ var _specieBuilder_specieBuilderView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./specieBuilder/specieBuilderView */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderView.js");
+
+
+
+
+class SpecieBuilderTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+
+        this._render();
+
+        this._specieBuilder = this.$domainFacade.specieBuilder;
+        this._specieBuilder.on('loadingStart', this._onLoadingStart.bind(this))
+        this._specieBuilder.on('loadingEnd', this._onLoadingEnd.bind(this))
+    }
+
+    toggle(isEnabled) {
+        super.toggle(isEnabled);
+        if (isEnabled) {
+            this._specieBuilder.load()
+        }
+    }
+
+    _render() {
+        this._el.innerHTML = _specieBuilderTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._loaderEl = this._el.querySelector('[data-loader]');
+        this._specieBuilderView = new _specieBuilder_specieBuilderView__WEBPACK_IMPORTED_MODULE_2__.SpecieBuilderView(this._el.querySelector('[data-specie-builder]'), this._specieBuilder);
+    }
+
+    _toggleLoadingState(isLoading) {
+        this._loaderEl.classList.toggle('hidden', !isLoading);
+        this._specieBuilderView.toggle(!isLoading);
+    }
+
+    _onLoadingStart() {
+        this._toggleLoadingState(true);
+    }
+
+    _onLoadingEnd() {
+        this._toggleLoadingState(false);
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderView.js":
+/*!******************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderView.js ***!
+  \******************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "SpecieBuilderView": () => (/* binding */ SpecieBuilderView)
+/* harmony export */ });
+/* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
+/* harmony import */ var _specieBuilderTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieBuilderTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderTmpl.html");
+
+
+
+class SpecieBuilderView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, specieBuilder) {
+        super(el);
+
+        this._specieBuilder = specieBuilder;
+
+        this._render();
+    }
+
+    _render() {
+        this._el.innerHTML = _specieBuilderTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
     }
 
 }
@@ -9719,28 +9619,10 @@ var code = "<span data-preview>genome</span>\r\n<button data-closing-btn></butto
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/base/geneTmpl.html":
-/*!**********************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/base/geneTmpl.html ***!
-  \**********************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<div data-gene></div>\r\n<div>код домінування: <span data-domination-code></span></div>";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/defenseGene/bodyDefenseTmpl.html":
-/*!***************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/defenseGene/bodyDefenseTmpl.html ***!
-  \***************************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyDefenseTmpl.html":
+/*!************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyDefenseTmpl.html ***!
+  \************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -9755,10 +9637,10 @@ var code = "ген захисту: <span data-defense></span>";
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/hpRegenRateGene/bodyHpRegenRateTmpl.html":
-/*!***********************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/hpRegenRateGene/bodyHpRegenRateTmpl.html ***!
-  \***********************************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyHpRegenRateTmpl.html":
+/*!****************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyHpRegenRateTmpl.html ***!
+  \****************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -9773,10 +9655,10 @@ var code = "ген відновлення ХП: <span data-hp-regen-rate></span>
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/maxHpGene/bodyMaxHpTmpl.html":
-/*!***********************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/maxHpGene/bodyMaxHpTmpl.html ***!
-  \***********************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyMaxHpTmpl.html":
+/*!**********************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyMaxHpTmpl.html ***!
+  \**********************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -9791,10 +9673,10 @@ var code = "ген макс ХП: <span data-max-hp></span>";
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/sightDistanceGene/bodySightDistanceTmpl.html":
-/*!***************************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/sightDistanceGene/bodySightDistanceTmpl.html ***!
-  \***************************************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodySightDistanceTmpl.html":
+/*!******************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodySightDistanceTmpl.html ***!
+  \******************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -9809,10 +9691,10 @@ var code = "ген зору: <span data-sight-distance></span>";
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/speedGene/bodySpeedTmpl.html":
-/*!***********************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/speedGene/bodySpeedTmpl.html ***!
-  \***********************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodySpeedTmpl.html":
+/*!**********************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodySpeedTmpl.html ***!
+  \**********************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -9827,10 +9709,10 @@ var code = "ген руху: <span data-speed></span>";
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/strengthGene/bodyStrengthTmpl.html":
-/*!*****************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyChromosome/strengthGene/bodyStrengthTmpl.html ***!
-  \*****************************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/bodyStrengthTmpl.html":
+/*!*************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/bodyStrengthTmpl.html ***!
+  \*************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -9845,10 +9727,10 @@ var code = "ген сили: <span data-strength></span>";
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/base/developmentCasteGeneTmpl.html":
-/*!************************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/developmentChromosome/base/developmentCasteGeneTmpl.html ***!
-  \************************************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/developmentCasteGeneTmpl.html":
+/*!*********************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/developmentCasteGeneTmpl.html ***!
+  \*********************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -9858,6 +9740,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Module
 var code = "ген розвитку касти <span data-ant-type></span>\r\n<table class=\"genome__gene-table\">\r\n    <tr>\r\n        <td>сила</td>\r\n        <td>захист</td>\r\n        <td>макс ХП</td>\r\n        <td>відновлення ХП</td>\r\n        <td>швидкість</td>\r\n    </tr>\r\n    <tr>\r\n        <td data-dev-strength></td>\r\n        <td data-dev-defense></td>\r\n        <td data-dev-max-hp></td>\r\n        <td data-dev-hp-regen-rate></td>\r\n        <td data-dev-speed></td>\r\n    </tr>\r\n</table>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/base/genome/genes/geneTmpl.html":
+/*!*****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/base/genome/genes/geneTmpl.html ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div data-gene></div>\r\n<div>код домінування: <span data-domination-code></span></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -9893,7 +9793,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div data-colonies-tab class=\"colonies-tab\"></div>\r\n    <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n</div>";
+var code = "<div class=\"tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div data-colonies-tab class=\"colonies-tab\"></div>\r\n    <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n    <div data-specie-builder-tab class=\"\"></div>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -10344,6 +10244,42 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Module
 var code = "<span>queen <span data-queen-name></span></span>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabTmpl.html":
+/*!*********************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabTmpl.html ***!
+  \*********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div data-loader>завантаження...</div>\r\n<div data-specie-builder></div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderTmpl.html":
+/*!********************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderTmpl.html ***!
+  \********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "specie builder";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -48438,13 +48374,7 @@ __webpack_require__.r(__webpack_exports__);
 let initialData = (0,_utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__.readInitialData)();
 
 let syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)();
-let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)({ 
-    accountApi: syncLayer.accountApi,
-    nestApi: syncLayer.nestApi,
-    colonyApi: syncLayer.colonyApi,
-    antApi: syncLayer.antApi,
-    nuptialApi: syncLayer.nuptialApi,
-}, syncLayer.serverConnection, initialData);
+let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)(syncLayer.apis, syncLayer.serverConnection, initialData);
 (0,_view__WEBPACK_IMPORTED_MODULE_2__.initViewLayer)(domainFacade, initialData);
 
 })();

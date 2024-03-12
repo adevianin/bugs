@@ -6,6 +6,7 @@ import { UserTab } from './tabs/userTab/userTab';
 import { ColoniesTabView } from './tabs/coloniesTab';
 import { TabSwitcher } from '@view/panel/base/tabSwitcher/tabSwitcher';
 import { NuptialFlightTabView } from './tabs/nuptialFlightTab';
+import { SpecieBuilderTabView } from './tabs/specieBuilderTab';
 
 class Panel extends BaseHTMLView {
 
@@ -26,11 +27,13 @@ class Panel extends BaseHTMLView {
         this._userTab = new UserTab(this._el.querySelector('[data-user-tab]'));
         this._coloniesTab = new ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));
         this._nuptialFlightTab = new NuptialFlightTabView(this._el.querySelector('[data-nuptial-flight-tab]'));
+        this._specieBuildertTab = new SpecieBuilderTabView(this._el.querySelector('[data-specie-builder-tab]'));
 
         this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
             { name: 'user', label: 'Користувач', tab: this._userTab },
             { name: 'colonies', label: 'Колонії', tab: this._coloniesTab },
-            { name: 'nuptial_flight', label: 'Шлюбний політ', tab: this._nuptialFlightTab }
+            { name: 'nuptial_flight', label: 'Шлюбний політ', tab: this._nuptialFlightTab },
+            { name: 'specie_builder', label: 'Вид', tab: this._specieBuildertTab },
         ]);
     }
 

@@ -1,16 +1,22 @@
 class DomainFacade {
 
-    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilder) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._accountService = accountService;
         this._messageHandlerService = messageHandlerService;
         this._colonyService = colonyService;
         this._nuptialService = nuptialService;
+
+        this._specieBuilder = specieBuilder;
     }
 
     get events() {
         return this._mainEventBus;
+    }
+
+    get specieBuilder() {
+        return this._specieBuilder;
     }
 
     getEntities() {
