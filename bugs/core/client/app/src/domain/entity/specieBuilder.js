@@ -5,19 +5,16 @@ class SpecieBuilder extends EventEmitter {
     constructor(specieBuilderApi) {
         super();
         this._specieBuilderApi = specieBuilderApi;
-        this._isLoaded = false;
     }
 
     load() {
-        if (!this._isLoaded) {
-            this.emit('loadingStart');
-            this._specieBuilderApi.loadBuilderData().then((genesEntries, schema) => {
-                this._genesEntries = genesEntries;
-                this._schema = schema;
-                this.emit('loadingEnd');
-            })
-        }
+        return this._specieBuilderApi.loadBuilderData().then((geneEntries, schema) => {
+            this._geneEntries = geneEntries;
+            this._schema = schema;
+        });
     }
+
+    get
 }
 
 export {

@@ -7,7 +7,7 @@ class SpecieBuilderApi {
     loadBuilderData() {
         return this._requester.get('world/nuptial_environment/specie_builder').then((response) => {
             return {
-                genesEntries: response.data.genesEntries,
+                geneEntries: response.data.geneEntries,
                 schema: response.data.schema
             };
         });

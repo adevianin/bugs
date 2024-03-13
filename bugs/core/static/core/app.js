@@ -1485,19 +1485,16 @@ class SpecieBuilder extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.Eve
     constructor(specieBuilderApi) {
         super();
         this._specieBuilderApi = specieBuilderApi;
-        this._isLoaded = false;
     }
 
     load() {
-        if (!this._isLoaded) {
-            this.emit('loadingStart');
-            this._specieBuilderApi.loadBuilderData().then((genesEntries, schema) => {
-                this._genesEntries = genesEntries;
-                this._schema = schema;
-                this.emit('loadingEnd');
-            })
-        }
+        return this._specieBuilderApi.loadBuilderData().then((geneEntries, schema) => {
+            this._geneEntries = geneEntries;
+            this._schema = schema;
+        });
     }
+
+    get
 }
 
 
@@ -2577,7 +2574,7 @@ class SpecieBuilderApi {
     loadBuilderData() {
         return this._requester.get('world/nuptial_environment/specie_builder').then((response) => {
             return {
-                genesEntries: response.data.genesEntries,
+                geneEntries: response.data.geneEntries,
                 schema: response.data.schema
             };
         });
@@ -5922,39 +5919,64 @@ class SpecieBuilderTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORT
         super(el);
 
         this._render();
+        this._toggleLoader(true);
 
-        this._specieBuilder = this.$domainFacade.specieBuilder;
-        this._specieBuilder.on('loadingStart', this._onLoadingStart.bind(this))
-        this._specieBuilder.on('loadingEnd', this._onLoadingEnd.bind(this))
+        this.$domainFacade.specieBuilder.load().then(this._onSpecieBuilderReady.bind(this));
     }
 
-    toggle(isEnabled) {
-        super.toggle(isEnabled);
-        if (isEnabled) {
-            this._specieBuilder.load()
-        }
+    _onSpecieBuilderReady() {
+        this._toggleLoader(false);
+        this._specieBuilderView = new _specieBuilder_specieBuilderView__WEBPACK_IMPORTED_MODULE_2__.SpecieBuilderView(this._specieBuilderEl);
     }
 
     _render() {
         this._el.innerHTML = _specieBuilderTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._loaderEl = this._el.querySelector('[data-loader]');
-        this._specieBuilderView = new _specieBuilder_specieBuilderView__WEBPACK_IMPORTED_MODULE_2__.SpecieBuilderView(this._el.querySelector('[data-specie-builder]'), this._specieBuilder);
+        this._specieBuilderEl = this._el.querySelector('[data-specie-builder]');
     }
 
-    _toggleLoadingState(isLoading) {
+    _toggleLoader(isLoading) {
         this._loaderEl.classList.toggle('hidden', !isLoading);
-        this._specieBuilderView.toggle(!isLoading);
     }
 
-    _onLoadingStart() {
-        this._toggleLoadingState(true);
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/chromosomeEditorTabView.js":
+/*!************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/chromosomeEditorTabView.js ***!
+  \************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ChromosomeEditorTab": () => (/* binding */ ChromosomeEditorTab)
+/* harmony export */ });
+/* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
+/* harmony import */ var _chromosomeEditorTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./chromosomeEditorTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/chromosomeEditorTabTmpl.html");
+
+
+
+class ChromosomeEditorTab extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, chromosomeSchema, geneEntries) {
+        super(el);
+        this._chromosomeSchema = chromosomeSchema;
+        this._geneEntries = geneEntries;
+
+        this._render();
     }
 
-    _onLoadingEnd() {
-        this._toggleLoadingState(false);
+    _render() {
+        this._el.innerHTML = _chromosomeEditorTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
     }
 
+    
 }
 
 
@@ -5974,21 +5996,33 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
 /* harmony import */ var _specieBuilderTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieBuilderTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderTmpl.html");
+/* harmony import */ var _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/tabSwitcher */ "./bugs/core/client/app/src/view/panel/base/tabSwitcher/index.js");
+/* harmony import */ var _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./chromosomeEditorTabView */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/chromosomeEditorTabView.js");
+
+
 
 
 
 class SpecieBuilderView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    constructor(el, specieBuilder) {
+    constructor(el) {
         super(el);
 
-        this._specieBuilder = specieBuilder;
+        this._specieBuilder = this.$domainFacade.specieBuilder
 
         this._render();
     }
 
     _render() {
         this._el.innerHTML = _specieBuilderTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._bodyChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-body-chromosome-editor-tab]'));
+        this._developmentChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-development-chromosome-editor-tab]'));
+
+        this._tabSwitcher = new _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_2__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+            { name: 'body_editor', label: 'Тіло', tab: this._bodyChromosomeEditorTab },
+            { name: 'development_editor', label: 'Розвиток', tab: this._developmentChromosomeEditorTab },
+        ]);
     }
 
 }
@@ -10267,6 +10301,24 @@ var code = "<div data-loader>завантаження...</div>\r\n<div data-spec
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/chromosomeEditorTabTmpl.html":
+/*!**************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/chromosomeEditorTabTmpl.html ***!
+  \**************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "chromosome editor";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderTmpl.html":
 /*!********************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderTmpl.html ***!
@@ -10279,7 +10331,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "specie builder";
+var code = "<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switcher></div>\r\n<div data-body-chromosome-editor-tab></div>\r\n<div data-development-chromosome-editor-tab></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

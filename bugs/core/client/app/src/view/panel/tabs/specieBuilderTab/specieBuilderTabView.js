@@ -8,37 +8,25 @@ class SpecieBuilderTabView extends BaseHTMLView {
         super(el);
 
         this._render();
+        this._toggleLoader(true);
 
-        this._specieBuilder = this.$domainFacade.specieBuilder;
-        this._specieBuilder.on('loadingStart', this._onLoadingStart.bind(this))
-        this._specieBuilder.on('loadingEnd', this._onLoadingEnd.bind(this))
+        this.$domainFacade.specieBuilder.load().then(this._onSpecieBuilderReady.bind(this));
     }
 
-    toggle(isEnabled) {
-        super.toggle(isEnabled);
-        if (isEnabled) {
-            this._specieBuilder.load()
-        }
+    _onSpecieBuilderReady() {
+        this._toggleLoader(false);
+        this._specieBuilderView = new SpecieBuilderView(this._specieBuilderEl);
     }
 
     _render() {
         this._el.innerHTML = specieBuilderTabTmpl;
 
         this._loaderEl = this._el.querySelector('[data-loader]');
-        this._specieBuilderView = new SpecieBuilderView(this._el.querySelector('[data-specie-builder]'), this._specieBuilder);
+        this._specieBuilderEl = this._el.querySelector('[data-specie-builder]');
     }
 
-    _toggleLoadingState(isLoading) {
+    _toggleLoader(isLoading) {
         this._loaderEl.classList.toggle('hidden', !isLoading);
-        this._specieBuilderView.toggle(!isLoading);
-    }
-
-    _onLoadingStart() {
-        this._toggleLoadingState(true);
-    }
-
-    _onLoadingEnd() {
-        this._toggleLoadingState(false);
     }
 
 }

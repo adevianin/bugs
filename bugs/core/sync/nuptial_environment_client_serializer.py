@@ -28,7 +28,7 @@ class NuptialEnvironmentClientSerializer(iNuptialEnvironmentClientSerializer):
     def serialize_specie_builder(self, specie_builder: SpecieBuilder):
         return {
             'schema': self._serialize_schema(specie_builder.schema),
-            'genesEntries': [self._serialize_gene_entry(gene_entry) for gene_entry in specie_builder.genes_entries]
+            'geneEntries': [self._serialize_gene_entry(gene_entry) for gene_entry in specie_builder.genes_entries]
         }
     
     def _serialize_schema(self, specie_schema: SpecieSchema):
