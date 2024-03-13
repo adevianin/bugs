@@ -1,36 +1,29 @@
 from .nuptial_male import NuptialMale
 from core.world.entities.ant.male.male_ant import MaleAnt
-from .specie_builder.specie_builder import SpecieBuilder
+from .specie_builder.specie import Specie
 from typing import List
 
 class NuptialEnvironment():
 
     @classmethod
-    def build(cls, owner_id: int, specie_builder: SpecieBuilder):
-        return NuptialEnvironment(owner_id, specie_builder)
+    def build(cls, owner_id: int, specie: Specie):
+        return NuptialEnvironment(owner_id, specie)
 
-    def __init__(self, owner_id: int, specie_builder: SpecieBuilder):
-        self._specie_builder = specie_builder
+    def __init__(self, owner_id: int, specie: Specie):
+        self._specie = specie
         self._owner_id = owner_id
         self._males: List[NuptialMale] = []
-        self._specie_male_genome = self._specie_builder.build_male_genome()
 
     @property
     def owner_id(self):
         return self._owner_id
     
     @property
-    def specie_builder(self) -> SpecieBuilder:
-        return self._specie_builder
-    
-    # @property
-    # def base_chromosomes_set(self):
-    #     return self._base_chromosomes_set
+    def specie(self) -> Specie:
+        return self._specie
     
     def fly_in_male(self, male: MaleAnt):
-        genes = male.body.genome.get_genes()
-        for gene in genes:
-            self._specie_builder.add_new_gene(gene)
+        self._specie.accept_male_genome(male.body.genome)
     
     def get_male(self, male_id: str) -> NuptialMale:
         for male in self._males:
@@ -53,6 +46,6 @@ class NuptialEnvironment():
             self._males.append(male)
     
     def _generate_nuptial_male(self) -> NuptialMale:
-        mutated_genome = self._specie_male_genome.mutate(20, 1, 60)
-        return NuptialMale.build(mutated_genome)
+        genome = self._specie.generate_male_genome(20, 1, 60)
+        return NuptialMale.build(genome)
     

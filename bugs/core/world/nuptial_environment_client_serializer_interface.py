@@ -1,5 +1,5 @@
 from core.world.entities.ant.base.nuptial_environment.nuptial_male import NuptialMale
-from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_builder import SpecieBuilder
+from core.world.entities.ant.base.nuptial_environment.specie_builder.specie import Specie
 from abc import abstractmethod, ABC
 from typing import List
 
@@ -14,5 +14,5 @@ class iNuptialEnvironmentClientSerializer(ABC):
         pass
 
     @abstractmethod
-    def serialize_specie_builder(self, specie_builder: SpecieBuilder) -> dict:
+    def serialize_specie(self, specie: Specie) -> dict:
         pass

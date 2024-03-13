@@ -1,8 +1,8 @@
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 from .genes_serializer import GenesSerializer
-from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_builder import SpecieBuilder
-from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_schema import SpecieSchema
-from core.world.entities.ant.base.nuptial_environment.specie_builder.gene_entry import GeneEntry
+from core.world.entities.ant.base.nuptial_environment.specie_builder.specie import Specie
+from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chromosome import SpecieChromosome
+from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_gene import SpecieGene
 
 class NuptialEnvironmentSerializer():
 
@@ -12,27 +12,27 @@ class NuptialEnvironmentSerializer():
     def serialize(self, nuptial_environment: NuptialEnvironment):
         return {
             'owner_id': nuptial_environment.owner_id,
-            'specie': self._serialize_specie_builder(nuptial_environment.specie_builder)
+            'specie': self._serialize_specie(nuptial_environment.specie)
         }
     
-    def _serialize_specie_builder(self, specie_builder: SpecieBuilder):
+    def _serialize_specie(self, specie: Specie):
         return {
-            'schema': self._serialize_schema(specie_builder.schema),
-            'genes_entries': [self._serialize_gene_entry(gene_entry) for gene_entry in specie_builder.genes_entries]
+            'body': self._serialize_specie_chromosome(specie.specie_chromosome_set.body_specie_chromosome),
+            'development': self._serialize_specie_chromosome(specie.specie_chromosome_set.development_specie_chromosome),
+            'adaptation': self._serialize_specie_chromosome(specie.specie_chromosome_set.adaptation_specie_chromosome),
+            'building': self._serialize_specie_chromosome(specie.specie_chromosome_set.building_specie_chromosome),
+            'combat': self._serialize_specie_chromosome(specie.specie_chromosome_set.combat_specie_chromosome),
+            'adjusting': self._serialize_specie_chromosome(specie.specie_chromosome_set.adjusting_specie_chromosome),
         }
     
-    def _serialize_schema(self, specie_schema: SpecieSchema):
+    def _serialize_specie_chromosome(self, specie_chromosome: SpecieChromosome):
         return {
-            'body': specie_schema.body_schema,
-            'development': specie_schema.development_schema,
-            'adaptation': specie_schema.adaptation_schema,
-            'building': specie_schema.building_schema,
-            'combat': specie_schema.combat_schema,
-            'adjusting': specie_schema.adjusting_schema,
+            'activated_specie_genes_ids': specie_chromosome.activated_specie_genes_ids,
+            'specie_genes': [self._serialize_specie_gene(specie_gene) for specie_gene in specie_chromosome.specie_genes]
         }
     
-    def _serialize_gene_entry(self, gene_entry: GeneEntry):
+    def _serialize_specie_gene(self, specie_gene: SpecieGene):
         return {
-            'id': gene_entry.id,
-            'gene': self._genes_serializer.serialize(gene_entry.gene)
+            'id': specie_gene.id,
+            'gene': self._genes_serializer.serialize(specie_gene.gene)
         }

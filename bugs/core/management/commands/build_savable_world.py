@@ -753,28 +753,45 @@ class Command(BaseCommand):
             {
                 "owner_id": 2,
                 "specie": {
-                    "schema": {
-                        "body": ['key1', 'key2', 'key3', 'key4', 'key5', 'key6'],
-                        "development": ['key7', 'key8', 'key9', 'key10'],
-                        "adaptation": [],
-                        "building": [],
-                        "combat": [],
-                        "adjusting": ['key11', 'key12']
+                    "body": {
+                        "activated_specie_genes_ids": ['key1', 'key2', 'key3', 'key4', 'key5', 'key6'], 
+                        "specie_genes": [
+                            { 'id': 'key1', 'gene': { "type": "body_strength", "domination_code": "E", "strength": 9 } },
+                            { 'id': 'key2', 'gene': { "type": "body_defense", "domination_code": "C", "defense": 7 } },
+                            { 'id': 'key3', 'gene': { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 } },
+                            { 'id': 'key4', 'gene': { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20} },
+                            { 'id': 'key5', 'gene': { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 } },
+                            { 'id': 'key6', 'gene': { "type": "body_speed", "domination_code": "D", "speed": 32 } }
+                        ]
                     },
-                    "genes_entries": [
-                        { 'id': 'key1', 'gene': { "type": "body_strength", "domination_code": "E", "strength": 9 } },
-                        { 'id': 'key2', 'gene': { "type": "body_defense", "domination_code": "C", "defense": 7 } },
-                        { 'id': 'key3', 'gene': { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 } },
-                        { 'id': 'key4', 'gene': { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20} },
-                        { 'id': 'key5', 'gene': { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 } },
-                        { 'id': 'key6', 'gene': { "type": "body_speed", "domination_code": "D", "speed": 32 } },
-                        { 'id': 'key7', 'gene': { "type": "development_queen_caste", "domination_code": "E", "strength": 1.8, "defense": 1, "max_hp": 1, "hp_regen_rate": 0.9, "speed": 0.7} },
-                        { 'id': 'key8', 'gene': { "type": "development_worker_caste", "domination_code": "E", "strength": 1, "defense": 1.5, "max_hp": 1.5, "hp_regen_rate": 1, "speed": 1} },
-                        { 'id': 'key9', 'gene': { "type": "development_male_caste", "domination_code": "E", "strength": 1, "defense": 1.5, "max_hp": 1.5, "hp_regen_rate": 1, "speed": 1} },
-                        { 'id': 'key10', 'gene': { "type": "development_warrior_caste", "domination_code": "E", "strength": 1.6, "defense": 2, "max_hp": 2, "hp_regen_rate": 1.5, "speed": 1.3} },
-                        { 'id': 'key11', 'gene': { "type": "adjusting_appetite", "domination_code": "E"} },
-                        { 'id': 'key12', 'gene': { "type": "adjusting_development_appetite", "domination_code": "E"} }
-                    ]
+                    "development": {
+                        "activated_specie_genes_ids": ['key7', 'key8', 'key9', 'key10'],
+                        "specie_genes": [
+                            { 'id': 'key7', 'gene': { "type": "development_queen_caste", "domination_code": "E", "strength": 1.8, "defense": 1, "max_hp": 1, "hp_regen_rate": 0.9, "speed": 0.7} },
+                            { 'id': 'key8', 'gene': { "type": "development_worker_caste", "domination_code": "E", "strength": 1, "defense": 1.5, "max_hp": 1.5, "hp_regen_rate": 1, "speed": 1} },
+                            { 'id': 'key9', 'gene': { "type": "development_male_caste", "domination_code": "E", "strength": 1, "defense": 1.5, "max_hp": 1.5, "hp_regen_rate": 1, "speed": 1} },
+                            { 'id': 'key10', 'gene': { "type": "development_warrior_caste", "domination_code": "E", "strength": 1.6, "defense": 2, "max_hp": 2, "hp_regen_rate": 1.5, "speed": 1.3} },
+                        ]
+                    },
+                    "adaptation": {
+                        "activated_specie_genes_ids": [],
+                        "specie_genes": []
+                    },
+                    "building": {
+                        "activated_specie_genes_ids": [],
+                        "specie_genes": []
+                    },
+                    "combat": {
+                        "activated_specie_genes_ids": [],
+                        "specie_genes": []
+                    },
+                    "adjusting": {
+                        "activated_specie_genes_ids": ['key11', 'key12'],
+                        "specie_genes": [
+                            { 'id': 'key11', 'gene': { "type": "adjusting_appetite", "domination_code": "E"} },
+                            { 'id': 'key12', 'gene': { "type": "adjusting_development_appetite", "domination_code": "E"} }
+                        ]
+                    }
                 }
             }
         ]

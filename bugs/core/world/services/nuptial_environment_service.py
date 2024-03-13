@@ -7,7 +7,7 @@ from core.world.entities.ant.male.male_ant import MaleAnt
 from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.ant_types import AntTypes
-from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_builder import SpecieBuilder
+from core.world.entities.ant.base.nuptial_environment.specie_builder.specie import Specie
 
 from typing import List
 
@@ -65,8 +65,8 @@ class NuptialEnvironmentService():
 
         queen.found_nest(nest_building_site, on_nest_found)
 
-    def get_specie_builder_for(self, user_id: int) -> SpecieBuilder:
+    def get_specie_for(self, user_id: int) -> Specie:
         nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
 
-        return nuptial_environment.specie_builder
+        return nuptial_environment.specie
         

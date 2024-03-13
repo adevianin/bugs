@@ -1,8 +1,9 @@
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 from .json_genes_factory import JsonGenesFactory
-from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_builder import SpecieBuilder
-from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_schema import SpecieSchema
-from core.world.entities.ant.base.nuptial_environment.specie_builder.gene_entry import GeneEntry
+from core.world.entities.ant.base.nuptial_environment.specie_builder.specie import Specie
+from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chromosome_set import SpecieChromosomeSet
+from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chromosome import SpecieChromosome
+from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_gene import SpecieGene
 
 class JsonNuptialEnvironmentFactory():
 
@@ -11,18 +12,26 @@ class JsonNuptialEnvironmentFactory():
 
     def build_nuptial_environment_from_json(self, json: dict):
         owner_id = json['owner_id']
-        specie_builder = self._build_specie_builder(json['specie'])
-        return NuptialEnvironment.build(owner_id, specie_builder)
+        specie = self._build_specie(json['specie'])
+        return NuptialEnvironment.build(owner_id, specie)
     
-    def _build_specie_builder(self, specie_json: dict):
-        schema = self._build_schema(specie_json['schema'])
-        genes_entries_json = specie_json['genes_entries']
-        genes_entries = [self._build_gene_entry(gene_entry_json) for gene_entry_json in genes_entries_json]
-        return SpecieBuilder.build(schema, genes_entries)
+    def _build_specie(self, specie_json: dict):
+        chromosome = self._build_specie_chromosome_set(specie_json)
+        return Specie.build(chromosome)
+
+    def _build_specie_chromosome_set(self, specie_chromosome_set_json: dict):
+        body = self._build_specie_chromosome(specie_chromosome_set_json['body'])
+        development = self._build_specie_chromosome(specie_chromosome_set_json['development'])
+        adaptation = self._build_specie_chromosome(specie_chromosome_set_json['adaptation'])
+        building = self._build_specie_chromosome(specie_chromosome_set_json['building'])
+        combat = self._build_specie_chromosome(specie_chromosome_set_json['combat'])
+        adjusting = self._build_specie_chromosome(specie_chromosome_set_json['adjusting'])
+        return SpecieChromosomeSet.build(body, development, adaptation, building, combat, adjusting)
     
-    def _build_schema(self, schema_json: dict):
-        return SpecieSchema.build(schema_json['body'], schema_json['development'], schema_json['adaptation'], schema_json['building'], schema_json['combat'], schema_json['adjusting'])
+    def _build_specie_chromosome(self, specie_chromosome_json: dict):
+        genes = [self._build_specie_gene(specie_gene_json) for specie_gene_json in specie_chromosome_json['specie_genes']]
+        return SpecieChromosome.build(specie_chromosome_json['activated_specie_genes_ids'], genes)
     
-    def _build_gene_entry(self, gene_entry_json: dict):
-        gene = self._json_genes_factory.build_gene_from_json(gene_entry_json['gene'])
-        return GeneEntry.build(gene_entry_json['id'], gene)
+    def _build_specie_gene(self, specie_gene_json: dict):
+        gene = self._json_genes_factory.build_gene_from_json(specie_gene_json['gene'])
+        return SpecieGene.build(specie_gene_json['id'], gene)

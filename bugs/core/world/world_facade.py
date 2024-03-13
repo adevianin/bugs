@@ -111,9 +111,9 @@ class WorldFacade:
         nuptial_males = self._nuptial_environment_service.search_nuptial_males_for(user_id)
         return self._nuptial_environment_client_serializer.serialize_nuptial_males(nuptial_males)
     
-    def get_specie_builder_for_client(self, user_id: int) -> dict:
-        specie_builder = self._nuptial_environment_service.get_specie_builder_for(user_id)
-        return self._nuptial_environment_client_serializer.serialize_specie_builder(specie_builder)
+    def get_specie_for_client(self, user_id: int) -> dict:
+        specie = self._nuptial_environment_service.get_specie_for(user_id)
+        return self._nuptial_environment_client_serializer.serialize_specie(specie)
 
     def get_world_for_client(self):
         return self._world_client_serializer.serialize(self._world)

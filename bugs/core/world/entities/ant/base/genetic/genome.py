@@ -25,15 +25,6 @@ class Genome():
     def paternal_chromosomes_set(self) -> ChromosomesSet:
         return self._paternal
     
-    def get_genes(self) -> List[BaseGene]:
-        genes = []
-
-        genes += self._maternal.get_genes()
-        genes += self._paternal.get_genes() if self._paternal else []
-
-        return genes
-
-    
     def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int):
         maternal_chromosomes_set = self._maternal.mutate(percent, super_mutate_chance, super_mutate_percent)
         paternal_chromosomes_set = self._paternal.mutate(percent, super_mutate_chance, super_mutate_percent) if self._paternal else None
