@@ -4,10 +4,9 @@ import { SpecieGeneView } from "./specieGeneView";
 
 class ChromosomeEditorTab extends BaseHTMLView {
 
-    constructor(el, activatedSpecieGenesIds, specieGenes) {
+    constructor(el, chromosome) {
         super(el);
-        this._activatedSpecieGenesIds = activatedSpecieGenesIds;
-        this._specieGenes = specieGenes;
+        this._chromosome = chromosome;
 
         this._specieGeneViews = {};
 
@@ -24,13 +23,13 @@ class ChromosomeEditorTab extends BaseHTMLView {
     }
 
     _renderSpecieGenesList() {
-        for (let specieGene of this._specieGenes) {
+        for (let specieGene of this._chromosome.specieGenes) {
             this._renderSpecieGene(specieGene);
         }
     }
 
     _renderSpecieGene(specieGene) {
-        let isActivated = this._checkIsActivated(specieGene);
+        let isActivated = this._chromosome.checkIsGeneActivated(specieGene);
         let el = document.createElement('li');
         let view = new SpecieGeneView(el, specieGene, isActivated);
         this._specieGeneViews[specieGene.id] = view;
@@ -50,11 +49,6 @@ class ChromosomeEditorTab extends BaseHTMLView {
         this._specieGeneViews = {};
     }
 
-    _checkIsActivated(specieGene) {
-        let index = this._activatedSpecieGenesIds.indexOf(specieGene.id);
-        return index >= 0;
-    }
-    
 }
 
 export {

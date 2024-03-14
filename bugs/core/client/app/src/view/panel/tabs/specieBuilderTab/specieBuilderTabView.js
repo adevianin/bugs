@@ -10,26 +10,17 @@ class SpecieBuilderTabView extends BaseHTMLView {
         super(el);
 
         this._render();
-        this._toggleLoader(true);
-
-        let specie = this.$domainFacade.getMySpecie();
-        console.log(specie);
     }
 
-    _onSpecieBuilderInited() {
-        this._toggleLoader(false);
-        this._specieBuilderView = new SpecieBuilderView(this._specieBuilderEl);
+    remove() {
+        super.remove();
+        this._specieBuilderView.remove();
     }
 
     _render() {
         this._el.innerHTML = specieBuilderTabTmpl;
 
-        this._loaderEl = this._el.querySelector('[data-loader]');
-        this._specieBuilderEl = this._el.querySelector('[data-specie-builder]');
-    }
-
-    _toggleLoader(isLoading) {
-        this._loaderEl.classList.toggle('hidden', !isLoading);
+        this._specieBuilderView = new SpecieBuilderView(this._el.querySelector('[data-specie-builder]'));
     }
 
 }
