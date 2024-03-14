@@ -6094,74 +6094,10 @@ class QueensListView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MOD
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/index.js":
-/*!****************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/index.js ***!
-  \****************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "SpecieBuilderTabView": () => (/* reexport safe */ _specieBuilderTabView__WEBPACK_IMPORTED_MODULE_0__.SpecieBuilderTabView)
-/* harmony export */ });
-/* harmony import */ var _specieBuilderTabView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./specieBuilderTabView */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabView.js");
-
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabView.js":
-/*!*******************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabView.js ***!
-  \*******************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "SpecieBuilderTabView": () => (/* binding */ SpecieBuilderTabView)
-/* harmony export */ });
-/* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
-/* harmony import */ var _specieBuilderTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieBuilderTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabTmpl.html");
-/* harmony import */ var _specieBuilder_specieBuilderView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./specieBuilder/specieBuilderView */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderView.js");
-/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/styles.css");
-
-
-
-
-
-
-class SpecieBuilderTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
-
-    constructor(el) {
-        super(el);
-
-        this._render();
-    }
-
-    remove() {
-        super.remove();
-        this._specieBuilderView.remove();
-    }
-
-    _render() {
-        this._el.innerHTML = _specieBuilderTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-
-        this._specieBuilderView = new _specieBuilder_specieBuilderView__WEBPACK_IMPORTED_MODULE_2__.SpecieBuilderView(this._el.querySelector('[data-specie-builder]'));
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/chromosomeEditorTabView.js":
-/*!************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/chromosomeEditorTabView.js ***!
-  \************************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/chromosomeEditorTabView.js":
+/*!**********************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/chromosomeEditorTabView.js ***!
+  \**********************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -6170,8 +6106,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ChromosomeEditorTab": () => (/* binding */ ChromosomeEditorTab)
 /* harmony export */ });
 /* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
-/* harmony import */ var _chromosomeEditorTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./chromosomeEditorTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/chromosomeEditorTabTmpl.html");
-/* harmony import */ var _specieGeneView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./specieGeneView */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieGeneView.js");
+/* harmony import */ var _chromosomeEditorTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./chromosomeEditorTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/chromosomeEditorTabTmpl.html");
+/* harmony import */ var _specieGeneView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./specieGeneView */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieGeneView.js");
 
 
 
@@ -6229,27 +6165,48 @@ class ChromosomeEditorTab extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTE
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderView.js":
-/*!******************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderView.js ***!
-  \******************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/index.js":
+/*!****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/index.js ***!
+  \****************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "SpecieBuilderView": () => (/* binding */ SpecieBuilderView)
+/* harmony export */   "SpecieBuilderTabView": () => (/* reexport safe */ _specieBuilderTabView__WEBPACK_IMPORTED_MODULE_0__.SpecieBuilderTabView)
+/* harmony export */ });
+/* harmony import */ var _specieBuilderTabView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./specieBuilderTabView */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabView.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabView.js":
+/*!*******************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabView.js ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "SpecieBuilderTabView": () => (/* binding */ SpecieBuilderTabView)
 /* harmony export */ });
 /* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
-/* harmony import */ var _specieBuilderTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieBuilderTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderTmpl.html");
-/* harmony import */ var _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/tabSwitcher */ "./bugs/core/client/app/src/view/panel/base/tabSwitcher/index.js");
-/* harmony import */ var _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./chromosomeEditorTabView */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/chromosomeEditorTabView.js");
+/* harmony import */ var _specieBuilderTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieBuilderTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabTmpl.html");
+/* harmony import */ var _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./chromosomeEditorTabView */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/chromosomeEditorTabView.js");
+/* harmony import */ var _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/panel/base/tabSwitcher */ "./bugs/core/client/app/src/view/panel/base/tabSwitcher/index.js");
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/styles.css");
 
 
 
 
 
-class SpecieBuilderView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+
+class SpecieBuilderTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
     constructor(el) {
         super(el);
@@ -6259,17 +6216,22 @@ class SpecieBuilderView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_
         this._render();
     }
 
+    remove() {
+        super.remove();
+        this._tabSwitcher.remove();
+    }
+
     _render() {
-        this._el.innerHTML = _specieBuilderTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.innerHTML = _specieBuilderTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this._bodyChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-body-chromosome-editor-tab]'), this._specie.bodyChromosome);
-        this._developmentChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-development-chromosome-editor-tab]'), this._specie.developmentChromosome);
-        this._adaptationChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-adaptation-chromosome-editor-tab]'), this._specie.adaptationChromosome);
-        this._buildingChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-building-chromosome-editor-tab]'), this._specie.buildingChromosome);
-        this._combatChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-combat-chromosome-editor-tab]'), this._specie.combatChromosome);
-        this._adjustingChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-adjusting-chromosome-editor-tab]'), this._specie.adjustingChromosome);
+        this._bodyChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_2__.ChromosomeEditorTab(this._el.querySelector('[data-body-chromosome-editor-tab]'), this._specie.bodyChromosome);
+        this._developmentChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_2__.ChromosomeEditorTab(this._el.querySelector('[data-development-chromosome-editor-tab]'), this._specie.developmentChromosome);
+        this._adaptationChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_2__.ChromosomeEditorTab(this._el.querySelector('[data-adaptation-chromosome-editor-tab]'), this._specie.adaptationChromosome);
+        this._buildingChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_2__.ChromosomeEditorTab(this._el.querySelector('[data-building-chromosome-editor-tab]'), this._specie.buildingChromosome);
+        this._combatChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_2__.ChromosomeEditorTab(this._el.querySelector('[data-combat-chromosome-editor-tab]'), this._specie.combatChromosome);
+        this._adjustingChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_2__.ChromosomeEditorTab(this._el.querySelector('[data-adjusting-chromosome-editor-tab]'), this._specie.adjustingChromosome);
 
-        this._tabSwitcher = new _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_2__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+        this._tabSwitcher = new _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_3__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
             { name: 'body_editor', label: 'Тіло', tab: this._bodyChromosomeEditorTab },
             { name: 'development_editor', label: 'Розвиток', tab: this._developmentChromosomeEditorTab },
             { name: 'adaptation_editor', label: 'Адаптація', tab: this._adaptationChromosomeEditorTab },
@@ -6279,20 +6241,16 @@ class SpecieBuilderView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_
         ]);
     }
 
-    _buildChromosomeEditorTab(el, specieChromosome) {
-        return 
-    }
-
 }
 
 
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieGeneView.js":
-/*!***************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieGeneView.js ***!
-  \***************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieGeneView.js":
+/*!*************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieGeneView.js ***!
+  \*************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -6301,7 +6259,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "SpecieGeneView": () => (/* binding */ SpecieGeneView)
 /* harmony export */ });
 /* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
-/* harmony import */ var _specieGeneTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieGeneTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieGeneTmpl.html");
+/* harmony import */ var _specieGeneTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieGeneTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieGeneTmpl.html");
 /* harmony import */ var _view_panel_base_genome_genes_geneView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/genome/genes/geneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/geneView.js");
 
 
@@ -10636,28 +10594,10 @@ var code = "<span>queen <span data-queen-name></span></span>";
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabTmpl.html":
-/*!*********************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabTmpl.html ***!
-  \*********************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<div data-specie-builder></div>";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/chromosomeEditorTabTmpl.html":
-/*!**************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/chromosomeEditorTabTmpl.html ***!
-  \**************************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/chromosomeEditorTabTmpl.html":
+/*!************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/chromosomeEditorTabTmpl.html ***!
+  \************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -10672,10 +10612,10 @@ var code = "<ul data-activated-specie-genes-list class=\"specie-builder__genes-l
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderTmpl.html":
-/*!********************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderTmpl.html ***!
-  \********************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabTmpl.html":
+/*!*********************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabTmpl.html ***!
+  \*********************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -10690,10 +10630,10 @@ var code = "<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switch
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieGeneTmpl.html":
-/*!*****************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieGeneTmpl.html ***!
-  \*****************************************************************************************************/
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieGeneTmpl.html":
+/*!***************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieGeneTmpl.html ***!
+  \***************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
