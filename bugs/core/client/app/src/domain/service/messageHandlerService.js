@@ -19,8 +19,8 @@ class MessageHandlerService {
 
     _onMessage(msg) {
         switch(msg.type) {
-            case 'init_step':
-                this._handleInitStepMsg(msg);
+            case 'sync_step':
+                this._handleSyncStepMsg(msg);
                 break;
             case 'action':
                 this._handleActionMsg(msg);
@@ -42,10 +42,8 @@ class MessageHandlerService {
         }
     }
 
-    _handleInitStepMsg(msg) {
+    _handleSyncStepMsg(msg) {
         this._worldService.initWorld(msg.world);
-        this._specieBuilderService.initBuilder(msg.specie);
-        this._mainEventBus.emit('initStepDone');
     }
 
 }

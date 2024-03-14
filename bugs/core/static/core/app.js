@@ -1831,14 +1831,17 @@ __webpack_require__.r(__webpack_exports__);
 
 function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
+
     let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.nestApi, apis.antApi);
+    let specieFactory = new _entity_specieBuilder_specieFactory__WEBPACK_IMPORTED_MODULE_9__.SpecieFactory();
+
     let world = worldFactory.buildWorld();
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus);
     let accountService = new _service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user, mainEventBus);
     let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
     let nuptialService = new _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__.NuptialService(apis.nuptialApi, worldFactory);
-    let specieBuilderService = new _service_specieBuilderService__WEBPACK_IMPORTED_MODULE_8__.SpecieBuilderService(mainEventBus, apis.specieBuilderApi, new _entity_specieBuilder_specieFactory__WEBPACK_IMPORTED_MODULE_9__.SpecieFactory());
+    let specieBuilderService = new _service_specieBuilderService__WEBPACK_IMPORTED_MODULE_8__.SpecieBuilderService(mainEventBus, apis.specieBuilderApi, specieFactory, initialData.specie);
     let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService);
 
     let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService);
@@ -2013,8 +2016,8 @@ class MessageHandlerService {
 
     _onMessage(msg) {
         switch(msg.type) {
-            case 'init_step':
-                this._handleInitStepMsg(msg);
+            case 'sync_step':
+                this._handleSyncStepMsg(msg);
                 break;
             case 'action':
                 this._handleActionMsg(msg);
@@ -2036,10 +2039,8 @@ class MessageHandlerService {
         }
     }
 
-    _handleInitStepMsg(msg) {
+    _handleSyncStepMsg(msg) {
         this._worldService.initWorld(msg.world);
-        this._specieBuilderService.initBuilder(msg.specie);
-        this._mainEventBus.emit('initStepDone');
     }
 
 }
@@ -2101,20 +2102,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "SpecieBuilderService": () => (/* binding */ SpecieBuilderService)
 /* harmony export */ });
 class SpecieBuilderService {
-    constructor(mainEventBus, specieBuilderApi, specieFactory) {
+    constructor(mainEventBus, specieBuilderApi, specieFactory, specieJson) {
         this._mainEventBus = mainEventBus;
         this._specieBuilderApi = specieBuilderApi;
         this._specieFactory = specieFactory;
 
         this._mainEventBus.on('userLogout', this._onUserLogout.bind(this));
-    }
 
-    initBuilder(specieJson) {
-        this._specie = this._specieFactory.buildSpecieFromJson(specieJson);
+        this._initBuilder(specieJson);
     }
 
     getMySpecie() {
         return this._specie;
+    }
+
+    _initBuilder(specieJson) {
+        this._specie = this._specieFactory.buildSpecieFromJson(specieJson);
     }
 
     _onUserLogout() {
@@ -3575,7 +3578,7 @@ class Panel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView
         super(el);
 
         this.$domainFacade.events.on('userLogout', this._removeTabViews.bind(this));
-        this.$domainFacade.events.on('initStepDone', this._renderTabViews.bind(this));
+        this.$domainFacade.events.on('worldInited', this._renderTabViews.bind(this));
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
     }
 

@@ -14,7 +14,7 @@ class Panel extends BaseHTMLView {
         super(el);
 
         this.$domainFacade.events.on('userLogout', this._removeTabViews.bind(this));
-        this.$domainFacade.events.on('initStepDone', this._renderTabViews.bind(this));
+        this.$domainFacade.events.on('worldInited', this._renderTabViews.bind(this));
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
     }
 
