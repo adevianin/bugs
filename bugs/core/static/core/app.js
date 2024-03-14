@@ -3452,6 +3452,13 @@ class TabSwitcher extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLVie
         this.activateTab(this._tabsData[0].name);
     }
 
+    remove() {
+        super.remove();
+        for (let tabData of this._tabsData) {
+            tabData.tab.remove();
+        }
+    }
+
     _render() {
         this._tabsData.forEach(tabData => {
             let btn = document.createElement('button');
@@ -3520,11 +3527,11 @@ class Panel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView
         super(el);
 
         this.$domainFacade.events.on('userLogout', this._removeTabViews.bind(this));
-        this.$domainFacade.events.on('initStepDone', this._buildTabViews.bind(this));
+        this.$domainFacade.events.on('initStepDone', this._renderTabViews.bind(this));
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
     }
 
-    _buildTabViews() {
+    _renderTabViews() {
         this._el.innerHTML = _panelTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._userTab = new _tabs_userTab_userTab__WEBPACK_IMPORTED_MODULE_3__.UserTab(this._el.querySelector('[data-user-tab]'));
@@ -3578,7 +3585,7 @@ class ColoniesListView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_M
     constructor(el) {
         super(el);
 
-        this.$domainFacade.events.on('colonyBorn', this._onColonyBorn.bind(this));
+        this._stopListenColonyBorn = this.$domainFacade.events.on('colonyBorn', this._onColonyBorn.bind(this));
 
         this._colonies = this.$domainFacade.findMyColonies();
         
@@ -3593,6 +3600,12 @@ class ColoniesListView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_M
     selectColony(colonyId) {
         let colony = this._colonies.find(colony => colony.id == colonyId);
         this._selectColony(colony, true);
+    }
+
+    remove() {
+        super.remove();
+        this._stopListenColonyBorn();
+        this._clearColonyViews();
     }
 
     _autoSelect() {
@@ -3768,6 +3781,12 @@ class ColoniesTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._colonyManager.manageColony(this._coloniesList.selectedColony);
     }
 
+    remove() {
+        super.remove();
+        this._coloniesList.remove();
+        this._colonyManager.remove();
+    }
+
 }
 
 
@@ -3881,9 +3900,9 @@ class AntsListView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
         super(el);
         this._antViews = {};
 
-        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
-        this.$domainFacade.events.on('queenFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
+        this._stopListenEntityDied = this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this._stopListenEntityBorn = this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this._stopListenQueenFlewNuptialFlight = this.$domainFacade.events.on('queenFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
 
         this._render();
     }
@@ -3893,6 +3912,14 @@ class AntsListView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
         this._ants = this.$domainFacade.getAntsFromColony(this._colony.id);
 
         this._renderAnts();
+    }
+
+    remove() {
+        super.remove();
+        this._stopListenEntityDied();
+        this._stopListenEntityBorn();
+        this._stopListenQueenFlewNuptialFlight();
+        this._clearAntViews();
     }
 
     _render() {
@@ -4011,6 +4038,11 @@ class AntsTab extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._antsList.manageColony(colony);
     }
 
+    remove() {
+        super.remove();
+        this._antsList.remove();
+    }
+
     _render() {
         this._el.innerHTML = _antsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
@@ -4083,6 +4115,11 @@ class ColonyManager extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODU
         if (nestToSelect) {
             this._tabSwitcher.activateTab('nests');
         }
+    }
+
+    remove() {
+        super.remove();
+        this._tabSwitcher.remove();
     }
 
     _render() {
@@ -4167,6 +4204,12 @@ class EggTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._render();
 
         this._addEggBtn.addEventListener('click', this._onAddEggBtnClick.bind(this));
+    }
+
+    remove() {
+        super.remove();
+        this._stopListenNest();
+        this._clearEggsViews();
     }
 
     _render() {
@@ -4384,6 +4427,11 @@ class FoodTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
         this._renderStoredClalories();
     }
 
+    remove() {
+        super.remove();
+        this._stopListenNest();
+    }
+
     _listenNest() {
         this._stopListenStoredCaloriesChanged = this._nest.on('storedCaloriesChanged', this._onStoredCaloriesChanged.bind(this));
     }
@@ -4460,6 +4508,12 @@ class LarvaTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
         this._larvaeViews = {};
 
         this._render();
+    }
+
+    remove() {
+        super.remove();
+        this._stopListenNest();
+        this._clearLarvaeList();
     }
 
     manageNest(nest) {
@@ -4626,6 +4680,11 @@ class NestManagerView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._nest = null;
 
         this._render();
+    }
+
+    remove() {
+        super.remove();
+        this._tabSwitcher.remove();
     }
 
     manageNest(nest) {
@@ -4808,6 +4867,11 @@ class NestsListView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODU
         this._renderSelectedNest();
     }
 
+    remove() {
+        super.remove();
+        this._clearNestViews();
+    }
+
     _selectNest(nest) {
         this._selectedNest = nest;
         this.events.emit('selectedNestChanged');
@@ -4879,6 +4943,12 @@ class NestsTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
 
     manageColony(colony, nestToSelect) {
         this._nestsList.manageColony(colony, nestToSelect);
+    }
+
+    remove() {
+        super.remove();
+        this._nestsList.remove();
+        this._nestManager.remove();
     }
 
     _render() {
@@ -5229,6 +5299,13 @@ class OperationsCreatorView extends _view_panel_base_baseHTMLView__WEBPACK_IMPOR
         this._colony = colony;
     }
 
+    remove() {
+        super.remove();
+        if (this._operationCreator) {
+            this._operationCreator.remove();
+        }
+    }
+
     _render() {
         this._el.innerHTML = _operationsCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
         this._newNestOperationBtn = this._el.querySelector('[data-add-new-nest]');
@@ -5363,14 +5440,17 @@ class OperationsListView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED
     }
 
     manageColony(colony) {
-        if (this._colony) {
-            this._stopListenColony();
-        }
-
+        this._stopListenColony();
         this._colony = colony;
         this._listenColony(colony);
 
         this._renderColonyOperations();
+    }
+
+    remove() {
+        super.remove();
+        this._stopListenColony();
+        this._removeOperationViews();
     }
 
     _listenColony(colony) {
@@ -5378,7 +5458,9 @@ class OperationsListView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED
     }
 
     _stopListenColony() {
-        this._stopListeningOperationsChanges();
+        if (this._colony) {
+            this._stopListeningOperationsChanges();
+        }
     }
 
     _renderColonyOperations() {
@@ -5435,6 +5517,12 @@ class OperationsTab extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODU
         this._colony = colony;
         this._operationsCreator.manageColony(colony);
         this._operationsList.manageColony(colony);
+    }
+
+    remove() {
+        super.remove();
+        this._operationsList.remove();
+        this._operationsCreator.remove();
     }
 
     _render() {
@@ -5514,6 +5602,12 @@ class NuptialFlightTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORT
 
         this._render();
         this._queensList.events.on('selectedQueenChanged', this._manageSelectedQueen.bind(this));
+    }
+
+    remove() {
+        super.remove();
+        this._queensList.remove();
+        this._queenManager.remove();
     }
 
     _render() {
@@ -5614,6 +5708,11 @@ class MalesSearchView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._males = [];
     }
 
+    remove() {
+        super.remove();
+        this._maleProfile.remove();
+    }
+
     _render() {
         this._el.innerHTML = _malesSearchTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
@@ -5696,17 +5795,22 @@ class NuptialMaleProfileView extends _view_panel_base_baseHTMLView__WEBPACK_IMPO
         this._genomeView = new _view_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_2__.ClosableGenomeView(this._el.querySelector('[data-genome]'), this._male.genome);
     }
 
+    remove() {
+        super.remove();
+        this._reset();
+    }
+
     showMale(male) {
-        if (this._male) {
-            this._reset();
-        }
+        this._reset();
         this._male = male;
 
         this._render();
     }
 
     _reset() {
-        this._genomeView.remove();
+        if (this._male) {
+            this._genomeView.remove();
+        }
     }
 
 }
@@ -5754,6 +5858,11 @@ class QueenManagerView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_M
         this._malesSearch.reset();
         this._renderQueen();
         this._renderBuildingSite();
+    }
+
+    remove() {
+        super.remove();
+        this._malesSearch.remove();
     }
 
     _render() {
@@ -5888,12 +5997,19 @@ class QueensListView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MOD
 
         this._render();
 
-        this.$domainFacade.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
-        this.$domainFacade.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
+        this._stopListenQueenFlewNuptialFlight = this.$domainFacade.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
+        this._stopListenQueenFlewNuptialFlightBack = this.$domainFacade.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
     }
 
     get selectedQueen() {
         return this._selectedQueen;
+    }
+
+    remove() {
+        super.remove();
+        this._clearQueenViews();
+        this._stopListenQueenFlewNuptialFlight();
+        this._stopListenQueenFlewNuptialFlightBack();
     }
 
     _autoSelect() {
@@ -5957,6 +6073,14 @@ class QueensListView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MOD
 
     _onQueenViewClick(queen) {
         this._selectQueen(queen);
+    }
+
+    _clearQueenViews() {
+        for (let queenId in this._queenViews) {
+            this._queenViews[queenId].remove();
+        }
+
+        this._queenViews = {};
     }
 
 }
@@ -6262,8 +6386,6 @@ class UserTab extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
 
         this._render();
 
-        this.$domainFacade.events.on('userLogin', this._renderState.bind(this));
-        this.$domainFacade.events.on('userLogout', this._renderState.bind(this));
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
     }
 
@@ -6273,20 +6395,16 @@ class UserTab extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._userNameEl = this._el.querySelector('[data-username]');
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
 
-        this._renderState();
+        this._renderUserData();
     }
 
-    _renderState() {
-        let isLoggedIn = UserTab.domainFacade.isLoggedIn();
-
-        if (isLoggedIn) {
-            let user = UserTab.domainFacade.getUserData();
-            this._userNameEl.innerHTML = user.username;
-        }
+    _renderUserData() {
+        let user = this.$domainFacade.getUserData();
+        this._userNameEl.innerHTML = user.username;
     }
 
     _onUserLogoutBtnClick() {
-        UserTab.domainFacade.logout();
+        this.$domainFacade.logout();
     }
 
 }

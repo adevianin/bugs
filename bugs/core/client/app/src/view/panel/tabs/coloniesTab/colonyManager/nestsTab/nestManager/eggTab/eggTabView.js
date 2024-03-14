@@ -13,6 +13,12 @@ class EggTabView extends BaseHTMLView {
         this._addEggBtn.addEventListener('click', this._onAddEggBtnClick.bind(this));
     }
 
+    remove() {
+        super.remove();
+        this._stopListenNest();
+        this._clearEggsViews();
+    }
+
     _render() {
         this._el.innerHTML = eggTabTmpl;
         this._eggsListEl = this._el.querySelector('[data-eggs-list]');

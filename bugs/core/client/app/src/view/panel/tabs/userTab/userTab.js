@@ -8,8 +8,6 @@ class UserTab extends BaseHTMLView {
 
         this._render();
 
-        this.$domainFacade.events.on('userLogin', this._renderState.bind(this));
-        this.$domainFacade.events.on('userLogout', this._renderState.bind(this));
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
     }
 
@@ -19,20 +17,16 @@ class UserTab extends BaseHTMLView {
         this._userNameEl = this._el.querySelector('[data-username]');
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
 
-        this._renderState();
+        this._renderUserData();
     }
 
-    _renderState() {
-        let isLoggedIn = UserTab.domainFacade.isLoggedIn();
-
-        if (isLoggedIn) {
-            let user = UserTab.domainFacade.getUserData();
-            this._userNameEl.innerHTML = user.username;
-        }
+    _renderUserData() {
+        let user = this.$domainFacade.getUserData();
+        this._userNameEl.innerHTML = user.username;
     }
 
     _onUserLogoutBtnClick() {
-        UserTab.domainFacade.logout();
+        this.$domainFacade.logout();
     }
 
 }

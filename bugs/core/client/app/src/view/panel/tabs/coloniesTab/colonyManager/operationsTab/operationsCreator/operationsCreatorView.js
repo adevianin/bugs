@@ -19,6 +19,13 @@ class OperationsCreatorView extends BaseHTMLView {
         this._colony = colony;
     }
 
+    remove() {
+        super.remove();
+        if (this._operationCreator) {
+            this._operationCreator.remove();
+        }
+    }
+
     _render() {
         this._el.innerHTML = operationsCreatorTmpl;
         this._newNestOperationBtn = this._el.querySelector('[data-add-new-nest]');

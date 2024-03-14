@@ -14,6 +14,11 @@ class AntsTab extends BaseHTMLView {
         this._antsList.manageColony(colony);
     }
 
+    remove() {
+        super.remove();
+        this._antsList.remove();
+    }
+
     _render() {
         this._el.innerHTML = antsTabTmpl;
 

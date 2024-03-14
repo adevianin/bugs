@@ -17,6 +17,12 @@ class NestsTabView extends BaseHTMLView {
         this._nestsList.manageColony(colony, nestToSelect);
     }
 
+    remove() {
+        super.remove();
+        this._nestsList.remove();
+        this._nestManager.remove();
+    }
+
     _render() {
         this._el.innerHTML = nestsTabTmpl;
 

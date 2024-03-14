@@ -21,17 +21,22 @@ class NuptialMaleProfileView extends BaseHTMLView {
         this._genomeView = new ClosableGenomeView(this._el.querySelector('[data-genome]'), this._male.genome);
     }
 
+    remove() {
+        super.remove();
+        this._reset();
+    }
+
     showMale(male) {
-        if (this._male) {
-            this._reset();
-        }
+        this._reset();
         this._male = male;
 
         this._render();
     }
 
     _reset() {
-        this._genomeView.remove();
+        if (this._male) {
+            this._genomeView.remove();
+        }
     }
 
 }

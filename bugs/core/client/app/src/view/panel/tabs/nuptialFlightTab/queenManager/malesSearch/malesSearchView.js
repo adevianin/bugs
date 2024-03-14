@@ -28,6 +28,11 @@ class MalesSearchView extends BaseHTMLView {
         this._males = [];
     }
 
+    remove() {
+        super.remove();
+        this._maleProfile.remove();
+    }
+
     _render() {
         this._el.innerHTML = malesSearchTmpl;
 

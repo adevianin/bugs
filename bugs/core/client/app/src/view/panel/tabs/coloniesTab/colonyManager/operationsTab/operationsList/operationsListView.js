@@ -9,14 +9,17 @@ class OperationsListView extends BaseHTMLView {
     }
 
     manageColony(colony) {
-        if (this._colony) {
-            this._stopListenColony();
-        }
-
+        this._stopListenColony();
         this._colony = colony;
         this._listenColony(colony);
 
         this._renderColonyOperations();
+    }
+
+    remove() {
+        super.remove();
+        this._stopListenColony();
+        this._removeOperationViews();
     }
 
     _listenColony(colony) {
@@ -24,7 +27,9 @@ class OperationsListView extends BaseHTMLView {
     }
 
     _stopListenColony() {
-        this._stopListeningOperationsChanges();
+        if (this._colony) {
+            this._stopListeningOperationsChanges();
+        }
     }
 
     _renderColonyOperations() {

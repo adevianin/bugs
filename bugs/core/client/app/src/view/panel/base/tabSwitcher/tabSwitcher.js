@@ -14,6 +14,13 @@ class TabSwitcher extends BaseHTMLView {
         this.activateTab(this._tabsData[0].name);
     }
 
+    remove() {
+        super.remove();
+        for (let tabData of this._tabsData) {
+            tabData.tab.remove();
+        }
+    }
+
     _render() {
         this._tabsData.forEach(tabData => {
             let btn = document.createElement('button');

@@ -31,6 +31,12 @@ class ColoniesTabView extends BaseHTMLView {
         this._colonyManager.manageColony(this._coloniesList.selectedColony);
     }
 
+    remove() {
+        super.remove();
+        this._coloniesList.remove();
+        this._colonyManager.remove();
+    }
+
 }
 
 export {

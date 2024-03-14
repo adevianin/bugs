@@ -14,11 +14,11 @@ class Panel extends BaseHTMLView {
         super(el);
 
         this.$domainFacade.events.on('userLogout', this._removeTabViews.bind(this));
-        this.$domainFacade.events.on('initStepDone', this._buildTabViews.bind(this));
+        this.$domainFacade.events.on('initStepDone', this._renderTabViews.bind(this));
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
     }
 
-    _buildTabViews() {
+    _renderTabViews() {
         this._el.innerHTML = panelTmpl;
 
         this._userTab = new UserTab(this._el.querySelector('[data-user-tab]'));

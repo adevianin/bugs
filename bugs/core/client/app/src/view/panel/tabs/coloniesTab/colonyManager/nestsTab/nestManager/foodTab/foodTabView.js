@@ -17,6 +17,11 @@ class FoodTabView extends BaseHTMLView {
         this._renderStoredClalories();
     }
 
+    remove() {
+        super.remove();
+        this._stopListenNest();
+    }
+
     _listenNest() {
         this._stopListenStoredCaloriesChanged = this._nest.on('storedCaloriesChanged', this._onStoredCaloriesChanged.bind(this));
     }

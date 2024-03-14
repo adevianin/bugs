@@ -7,7 +7,7 @@ class ColoniesListView extends BaseHTMLView {
     constructor(el) {
         super(el);
 
-        this.$domainFacade.events.on('colonyBorn', this._onColonyBorn.bind(this));
+        this._stopListenColonyBorn = this.$domainFacade.events.on('colonyBorn', this._onColonyBorn.bind(this));
 
         this._colonies = this.$domainFacade.findMyColonies();
         
@@ -22,6 +22,12 @@ class ColoniesListView extends BaseHTMLView {
     selectColony(colonyId) {
         let colony = this._colonies.find(colony => colony.id == colonyId);
         this._selectColony(colony, true);
+    }
+
+    remove() {
+        super.remove();
+        this._stopListenColonyBorn();
+        this._clearColonyViews();
     }
 
     _autoSelect() {
