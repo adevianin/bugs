@@ -10,9 +10,10 @@ class BaseGene(ABC):
     def build(cls, domination_code: DominationCodes):
         pass
 
-    def __init__(self, type: GenesTypes, domination_code: DominationCodes):
+    def __init__(self, type: GenesTypes, domination_code: DominationCodes, is_required: bool):
         self._type = type
         self._domination_code = domination_code
+        self._is_required = is_required
 
     @property
     def type(self):
@@ -21,6 +22,10 @@ class BaseGene(ABC):
     @property
     def domination_code(self):
         return self._domination_code
+    
+    @property
+    def is_required(self):
+        return self._is_required
 
     @abstractmethod
     def affect(self, phenotype: Phenotype):

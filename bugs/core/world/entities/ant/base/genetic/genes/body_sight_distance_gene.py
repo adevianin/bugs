@@ -11,7 +11,7 @@ class BodySightDistanceGene(BaseGene):
         return BodySightDistanceGene(domination_code, sight_distance)
 
     def __init__(self, domination_code: DominationCodes, sight_distance: int):
-        super().__init__(GenesTypes.BODY_SIGHT_DISTANCE, domination_code)
+        super().__init__(GenesTypes.BODY_SIGHT_DISTANCE, domination_code, True)
         self._sight_distance = sight_distance
 
     @property

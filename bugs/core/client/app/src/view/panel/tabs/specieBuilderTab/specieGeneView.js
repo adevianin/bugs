@@ -20,8 +20,8 @@ class SpecieGeneView extends BaseHTMLView {
         this._geneView = new GeneView(this._el.querySelector('[data-gene]'), this._specieGene.gene);
         this._activateBtn = this._el.querySelector('[data-activate-btn]');
         this._deactivateBtn = this._el.querySelector('[data-deactivate-btn]');
-        this._toggleActivationBtn(this._isActivated);
-        this._toggleDeactivationBtn(!this._isActivated);
+        this._toggleActivationBtn(!this._isActivated);
+        this._toggleDeactivationBtn(this._isActivated && !this._specieGene.isRequired);
     }
 
     remove() {
@@ -38,11 +38,11 @@ class SpecieGeneView extends BaseHTMLView {
     }
 
     _onActivateBtnClick() {
-        this.events.emit('activatedGene', this._specieGene);
+        this.events.emit('actiovationGene', this._specieGene);
     }
 
     _onDeactivateBtnClick() {
-        this.events.emit('deactivatedGene', this._specieGene);
+        this.events.emit('deactiovationGene', this._specieGene);
     }
 }
 

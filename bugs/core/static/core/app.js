@@ -1503,16 +1503,59 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "SpecieChromosome": () => (/* binding */ SpecieChromosome)
 /* harmony export */ });
-class SpecieChromosome {
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+
+
+class SpecieChromosome extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
     constructor(activatedSpecieGenesIds, specieGenes) {
+        super();
         this.activatedSpecieGenesIds = activatedSpecieGenesIds;
         this.specieGenes = specieGenes;
     }
 
-    checkIsGeneActivated(specieGene) {
-        let index = this.activatedSpecieGenesIds.indexOf(specieGene.id);
+    checkIsGeneActivated(specieGeneId) {
+        let index = this.activatedSpecieGenesIds.indexOf(specieGeneId);
         return index >= 0;
+    }
+
+    activateSpecieGene(activatingSpecieGene) {
+        let specieGeneToDeactivating = this._getActivatedSpecieGeneByType(activatingSpecieGene.gene.type);
+        this.activatedSpecieGenesIds.push(activatingSpecieGene.id);
+        this._emitSpecieGeneChanged(activatingSpecieGene);
+        if (specieGeneToDeactivating) {
+            this.deactivateSpecieGene(specieGeneToDeactivating);
+        }
+    }
+
+    deactivateSpecieGene(specieGene) {
+        let index = this.activatedSpecieGenesIds.indexOf(specieGene.id);
+        this.activatedSpecieGenesIds.splice(index, 1);
+        this._emitSpecieGeneChanged(specieGene);
+    }
+
+    _emitSpecieGeneChanged(specieGene) {
+        this.emit('specieGeneActivatingChanged', specieGene);
+    }
+
+    getSpecieGeneById(id) {
+        for (let specieGene of this.specieGenes) {
+            if (specieGene.id == id) {
+                return specieGene;
+            }
+        }
+
+        return null;
+    }
+
+    _getActivatedSpecieGeneByType(type) {
+        for (let specieGene of this.specieGenes) {
+            if (this.checkIsGeneActivated(specieGene.id) && specieGene.gene.type == type) {
+                return specieGene;
+            }
+        }
+
+        return null;
     }
 }
 
@@ -6118,6 +6161,8 @@ class ChromosomeEditorTab extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTE
         super(el);
         this._chromosome = chromosome;
 
+        this._chromosome.on('specieGeneActivatingChanged', this._onSpecieGeneActivatingChanged.bind(this));
+
         this._specieGeneViews = {};
 
         this._render();
@@ -6139,9 +6184,11 @@ class ChromosomeEditorTab extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTE
     }
 
     _renderSpecieGene(specieGene) {
-        let isActivated = this._chromosome.checkIsGeneActivated(specieGene);
+        let isActivated = this._chromosome.checkIsGeneActivated(specieGene.id);
         let el = document.createElement('li');
         let view = new _specieGeneView__WEBPACK_IMPORTED_MODULE_2__.SpecieGeneView(el, specieGene, isActivated);
+        view.events.on('actiovationGene', this._onActivationGene.bind(this));
+        view.events.on('deactiovationGene', this._onDeactivationGene.bind(this));
         this._specieGeneViews[specieGene.id] = view;
         if (isActivated) {
             this._activatedSpecieGenesListEl.append(el);
@@ -6157,6 +6204,20 @@ class ChromosomeEditorTab extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTE
         }
 
         this._specieGeneViews = {};
+    }
+
+    _onActivationGene(specieGene) {
+        this._chromosome.activateSpecieGene(specieGene);
+    }
+
+    _onDeactivationGene(specieGene) {
+        this._chromosome.deactivateSpecieGene(specieGene);
+    }
+
+    _onSpecieGeneActivatingChanged(specieGene) {
+        this._specieGeneViews[specieGene.id].remove();
+        delete this._specieGeneViews[specieGene.id];
+        this._renderSpecieGene(specieGene);
     }
 
 }
@@ -6283,8 +6344,8 @@ class SpecieGeneView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MOD
         this._geneView = new _view_panel_base_genome_genes_geneView__WEBPACK_IMPORTED_MODULE_2__.GeneView(this._el.querySelector('[data-gene]'), this._specieGene.gene);
         this._activateBtn = this._el.querySelector('[data-activate-btn]');
         this._deactivateBtn = this._el.querySelector('[data-deactivate-btn]');
-        this._toggleActivationBtn(this._isActivated);
-        this._toggleDeactivationBtn(!this._isActivated);
+        this._toggleActivationBtn(!this._isActivated);
+        this._toggleDeactivationBtn(this._isActivated && !this._specieGene.isRequired);
     }
 
     remove() {
@@ -6301,11 +6362,11 @@ class SpecieGeneView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MOD
     }
 
     _onActivateBtnClick() {
-        this.events.emit('activatedGene', this._specieGene);
+        this.events.emit('actiovationGene', this._specieGene);
     }
 
     _onDeactivateBtnClick() {
-        this.events.emit('deactivatedGene', this._specieGene);
+        this.events.emit('deactiovationGene', this._specieGene);
     }
 }
 
@@ -10642,7 +10703,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<button data-deactivate-btn>&#60;</button>\r\n<button data-activate-btn>&#62;</button>\r\n<div data-gene></div>\r\n";
+var code = "<button data-activate-btn>&#60;</button>\r\n<button data-deactivate-btn>&#62;</button>\r\n<div data-gene></div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

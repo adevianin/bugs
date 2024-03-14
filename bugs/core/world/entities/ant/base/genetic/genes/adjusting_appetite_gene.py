@@ -10,7 +10,7 @@ class AdjustingAppetiteGene(BaseGene):
         return AdjustingAppetiteGene(domination_code)
 
     def __init__(self, domination_code: DominationCodes):
-        super().__init__(GenesTypes.ADJUSTING_APPETITE, domination_code)
+        super().__init__(GenesTypes.ADJUSTING_APPETITE, domination_code, True)
 
     def affect(self, phenotype: Phenotype):
         phenotype.appetite = phenotype.strength + phenotype.defense + phenotype.speed/2

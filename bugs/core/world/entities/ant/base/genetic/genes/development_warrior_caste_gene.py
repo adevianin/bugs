@@ -11,7 +11,7 @@ class DevelopmentWarriorCasteGene(DevelopmentCasteGene):
         return DevelopmentWarriorCasteGene(domination_code, strength, defense, max_hp, hp_regen_rate, speed)
 
     def __init__(self, domination_code: DominationCodes, strength: int, defense: int, max_hp: int, hp_regen_rate: int, speed: int):
-        super().__init__(GenesTypes.DEVELOPMENT_WARRIOR_CASTE, domination_code, strength, defense, max_hp, hp_regen_rate, speed)
+        super().__init__(GenesTypes.DEVELOPMENT_WARRIOR_CASTE, domination_code, strength, defense, max_hp, hp_regen_rate, speed, False)
 
     def affect(self, phenotype: Phenotype):
         if phenotype.ant_type == AntTypes.WARRIOR:

@@ -11,7 +11,7 @@ class BodyHpRegenRateGene(BaseGene):
         return BodyHpRegenRateGene(domination_code, hp_regen_rate)
 
     def __init__(self, domination_code: DominationCodes, hp_regen_rate: int):
-        super().__init__(GenesTypes.BODY_HP_REGEN_RATE, domination_code)
+        super().__init__(GenesTypes.BODY_HP_REGEN_RATE, domination_code, True)
         self._hp_regen_rate = hp_regen_rate
 
     @property

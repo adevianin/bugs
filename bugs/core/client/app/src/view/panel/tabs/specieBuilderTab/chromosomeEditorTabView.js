@@ -8,6 +8,8 @@ class ChromosomeEditorTab extends BaseHTMLView {
         super(el);
         this._chromosome = chromosome;
 
+        this._chromosome.on('specieGeneActivatingChanged', this._onSpecieGeneActivatingChanged.bind(this));
+
         this._specieGeneViews = {};
 
         this._render();
@@ -29,9 +31,11 @@ class ChromosomeEditorTab extends BaseHTMLView {
     }
 
     _renderSpecieGene(specieGene) {
-        let isActivated = this._chromosome.checkIsGeneActivated(specieGene);
+        let isActivated = this._chromosome.checkIsGeneActivated(specieGene.id);
         let el = document.createElement('li');
         let view = new SpecieGeneView(el, specieGene, isActivated);
+        view.events.on('actiovationGene', this._onActivationGene.bind(this));
+        view.events.on('deactiovationGene', this._onDeactivationGene.bind(this));
         this._specieGeneViews[specieGene.id] = view;
         if (isActivated) {
             this._activatedSpecieGenesListEl.append(el);
@@ -47,6 +51,20 @@ class ChromosomeEditorTab extends BaseHTMLView {
         }
 
         this._specieGeneViews = {};
+    }
+
+    _onActivationGene(specieGene) {
+        this._chromosome.activateSpecieGene(specieGene);
+    }
+
+    _onDeactivationGene(specieGene) {
+        this._chromosome.deactivateSpecieGene(specieGene);
+    }
+
+    _onSpecieGeneActivatingChanged(specieGene) {
+        this._specieGeneViews[specieGene.id].remove();
+        delete this._specieGeneViews[specieGene.id];
+        this._renderSpecieGene(specieGene);
     }
 
 }
