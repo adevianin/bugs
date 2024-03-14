@@ -1,9 +1,11 @@
 class MessageHandlerService {
 
-    constructor(serverConnection, worldService, colonyService) {
+    constructor(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService) {
+        this._mainEventBus = mainEventBus;
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._colonyService = colonyService;
+        this._specieBuilderService = specieBuilderService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
@@ -17,8 +19,8 @@ class MessageHandlerService {
 
     _onMessage(msg) {
         switch(msg.type) {
-            case 'sync_step':
-                this._worldService.initWorld(msg.world);
+            case 'init_step':
+                this._handleInitStepMsg(msg);
                 break;
             case 'action':
                 this._handleActionMsg(msg);
@@ -38,6 +40,12 @@ class MessageHandlerService {
                 this._colonyService.playColonyAction(action);
                 break;
         }
+    }
+
+    _handleInitStepMsg(msg) {
+        this._worldService.initWorld(msg.world);
+        this._specieBuilderService.initBuilder(msg.specie);
+        this._mainEventBus.emit('initStepDone');
     }
 
 }

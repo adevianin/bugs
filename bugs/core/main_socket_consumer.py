@@ -30,8 +30,9 @@ class MainSocketConsumer(WebsocketConsumer):
     def _on_step_start(self):
         if not self._synced:
             self.send(json.dumps({
-                'type': 'sync_step',
-                'world': self._world_facade.get_world_for_client()
+                'type': 'init_step',
+                'world': self._world_facade.get_world_for_client(),
+                'specie': self._world_facade.get_specie_for_client(self._user.id)
             }))
             self._synced = True
 

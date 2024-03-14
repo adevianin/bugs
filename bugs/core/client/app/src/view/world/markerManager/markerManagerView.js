@@ -14,10 +14,18 @@ class MarkerManagerView extends BaseGraphicView {
 
         this._render();
 
-        this.$eventBus.on('placeNewNestMarkerRequest', this._onPlaceNewNestMarkerRequest.bind(this));
-        this.$eventBus.on('placeDestroyNestMarkerRequest', this._onPlaceDestroyNestMarkerRequest.bind(this));
-        this.$eventBus.on('placePillageNestMarkerRequest', this._onPlacePillageNestMarkerRequest.bind(this));
-        this.$eventBus.on('cancelAnyMarkerPlacerRequest', this._onMarkerPlacerCancel.bind(this));
+        this._stopListenPlaceNewNestMarkerRequest = this.$eventBus.on('placeNewNestMarkerRequest', this._onPlaceNewNestMarkerRequest.bind(this));
+        this._stopListenPlaceDestroyNestMarkerRequest = this.$eventBus.on('placeDestroyNestMarkerRequest', this._onPlaceDestroyNestMarkerRequest.bind(this));
+        this._stopListenPillageDestroyNestMarkerRequest = this.$eventBus.on('placePillageNestMarkerRequest', this._onPlacePillageNestMarkerRequest.bind(this));
+        this._stopListenCancelAnyMarkerPlacerRequest = this.$eventBus.on('cancelAnyMarkerPlacerRequest', this._onMarkerPlacerCancel.bind(this));
+    }
+
+    remove() {
+        this._removeMarkerPlacerPlacer();
+        this._stopListenPlaceNewNestMarkerRequest();
+        this._stopListenPlaceDestroyNestMarkerRequest();
+        this._stopListenPillageDestroyNestMarkerRequest();
+        this._stopListenCancelAnyMarkerPlacerRequest();
     }
 
     _render() {
@@ -45,6 +53,10 @@ class MarkerManagerView extends BaseGraphicView {
     }
 
     _onMarkerPlacerCancel() {
+        this._removeMarkerPlacerPlacer();
+    }
+
+    _removeMarkerPlacerPlacer() {
         if (this._currentMarkerPlacer) {
             this._currentMarkerPlacer.remove();
             this._currentMarkerPlacer = null;

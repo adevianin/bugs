@@ -42,7 +42,12 @@ class AccountService {
     }
 
     _emitStatusChange() {
-        this._mainEventBus.emit('loginStatusChanged', this.isLoggedIn());
+        if (this.isLoggedIn()) {
+            this._mainEventBus.emit('userLogin');
+        } else {
+            this._mainEventBus.emit('userLogout');
+        }
+        
     }
 
 }

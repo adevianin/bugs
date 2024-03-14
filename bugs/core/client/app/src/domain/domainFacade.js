@@ -1,22 +1,17 @@
 class DomainFacade {
 
-    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilder) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._accountService = accountService;
         this._messageHandlerService = messageHandlerService;
         this._colonyService = colonyService;
         this._nuptialService = nuptialService;
-
-        this._specieBuilder = specieBuilder;
+        this._specieBuilderService = specieBuilderService;
     }
 
     get events() {
         return this._mainEventBus;
-    }
-
-    get specieBuilder() {
-        return this._specieBuilder;
     }
 
     getEntities() {
@@ -46,7 +41,6 @@ class DomainFacade {
     logout() {
         return this._accountService.logout().then(() => {
             this._disconnectMessagerHandler();
-            this._worldService.clear();
         });
     }
 
@@ -60,10 +54,6 @@ class DomainFacade {
 
     start() {
         this._tryConnectMessageHandler();
-    }
-
-    isWholeWorldInited() {
-        return this._worldService.isWholeWorldInited();
     }
 
     getWorldSize() {
@@ -132,6 +122,10 @@ class DomainFacade {
 
     findNearestNestForOffensiveOperation(performingColonyId, point) {
         return this._worldService.findNearestNestForOffensiveOperation(performingColonyId, point);
+    }
+
+    getMySpecie() {
+        return this._specieBuilderService.getMySpecie();
     }
 
     _tryConnectMessageHandler() {

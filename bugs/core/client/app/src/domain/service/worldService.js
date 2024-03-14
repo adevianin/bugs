@@ -7,16 +7,13 @@ class WorldService {
         this._world = world;
         this._worldFactory = worldFactory;
         this._mainEventBus = mainEventBus;
-        this._isWholeWorldInited = false;
         this._worldSize = null;
+
+        this._mainEventBus.on('userLogout', this._clearWorld.bind(this));
     }
 
     get world() {
         return this._world;
-    }
-
-    get is_world_inited() {
-        return this._isWholeWorldInited;
     }
 
     playEntityAction(action) {
@@ -42,25 +39,19 @@ class WorldService {
         });
         
         this._world.size = worldJson.size;
+        
+        this._mainEventBus.emit('worldInited');
+    }
 
-        this._isWholeWorldInited = true;
-
-        this._mainEventBus.emit('wholeWorldInited');
+    _clearWorld() {
+        this._world.clear();
+        this._mainEventBus.emit('worldCleared');
     }
 
     giveBirthToEntity(entityJson) {
         let entity = this._worldFactory.buildEntity(entityJson);
         this._world.addEntity(entity);
         this._mainEventBus.emit('entityBorn', entity);
-    }
-
-    clear() {
-        this._world.clear();
-        this._isWholeWorldInited = false;
-    }
-
-    isWholeWorldInited() {
-        return this._isWholeWorldInited;
     }
 
     findNearestNestForOffensiveOperation(performingColonyId, point) {

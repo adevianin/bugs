@@ -20,8 +20,6 @@ class WorldView extends BaseGraphicView {
         this._entityViews = [];
         this._textures = {};
 
-        this.$domainFacade.events.on('worldCleared', this._onWorldCleared.bind(this));
-
         this._init();
     }
 
@@ -56,15 +54,12 @@ class WorldView extends BaseGraphicView {
 
         this._camera = new Camera(this._entityContainer, this._bg, this._app.view);
 
-        this.$domainFacade.events.on('wholeWorldInited', this._onWholeWorldInit.bind(this));
-        if (this.$domainFacade.isWholeWorldInited()) {
-            this._onWholeWorldInit();
-        }
-
+        this.$domainFacade.events.on('worldInited', this._onWorldInit.bind(this));
+        this.$domainFacade.events.on('worldCleared', this._onWorldCleared.bind(this));
         this.$domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
     }
 
-    _onWholeWorldInit() {
+    _onWorldInit() {
         this._setUpCamera();
         this._buildEntityViews();
         this._markerManager = new MarkerManagerView(this._markersContainer);

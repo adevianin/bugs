@@ -8,7 +8,8 @@ class UserTab extends BaseHTMLView {
 
         this._render();
 
-        UserTab.domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
+        this.$domainFacade.events.on('userLogin', this._renderState.bind(this));
+        this.$domainFacade.events.on('userLogout', this._renderState.bind(this));
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
     }
 

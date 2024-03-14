@@ -14,23 +14,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class DomainFacade {
 
-    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilder) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._accountService = accountService;
         this._messageHandlerService = messageHandlerService;
         this._colonyService = colonyService;
         this._nuptialService = nuptialService;
-
-        this._specieBuilder = specieBuilder;
+        this._specieBuilderService = specieBuilderService;
     }
 
     get events() {
         return this._mainEventBus;
-    }
-
-    get specieBuilder() {
-        return this._specieBuilder;
     }
 
     getEntities() {
@@ -60,7 +55,6 @@ class DomainFacade {
     logout() {
         return this._accountService.logout().then(() => {
             this._disconnectMessagerHandler();
-            this._worldService.clear();
         });
     }
 
@@ -74,10 +68,6 @@ class DomainFacade {
 
     start() {
         this._tryConnectMessageHandler();
-    }
-
-    isWholeWorldInited() {
-        return this._worldService.isWholeWorldInited();
     }
 
     getWorldSize() {
@@ -146,6 +136,10 @@ class DomainFacade {
 
     findNearestNestForOffensiveOperation(performingColonyId, point) {
         return this._worldService.findNearestNestForOffensiveOperation(performingColonyId, point);
+    }
+
+    getMySpecie() {
+        return this._specieBuilderService.getMySpecie();
     }
 
     _tryConnectMessageHandler() {
@@ -1466,35 +1460,93 @@ class NuptialMale {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/entity/specieBuilder.js":
-/*!*****************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/specieBuilder.js ***!
-  \*****************************************************************/
+/***/ "./bugs/core/client/app/src/domain/entity/specieBuilder/specie.js":
+/*!************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/specieBuilder/specie.js ***!
+  \************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "SpecieBuilder": () => (/* binding */ SpecieBuilder)
+/* harmony export */   "Specie": () => (/* binding */ Specie)
 /* harmony export */ });
 /* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
 
 
-class SpecieBuilder extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+class Specie extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
-    constructor(specieBuilderApi) {
+    constructor(bodyChromosome, developmentChromosome, adaptationChromosome, buildingChromosome, combatChromosome, adjustingChromosome) {
         super();
-        this._specieBuilderApi = specieBuilderApi;
+        this.bodyChromosome = bodyChromosome;
+        this.developmentChromosome = developmentChromosome;
+        this.adaptationChromosome = adaptationChromosome;
+        this.buildingChromosome = buildingChromosome;
+        this.combatChromosome = combatChromosome;
+        this.adjustingChromosome = adjustingChromosome;
     }
 
-    load() {
-        return this._specieBuilderApi.loadBuilderData().then((geneEntries, schema) => {
-            this._geneEntries = geneEntries;
-            this._schema = schema;
-        });
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/specieBuilder/specieChromosome.js":
+/*!**********************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/specieBuilder/specieChromosome.js ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "SpecieChromosome": () => (/* binding */ SpecieChromosome)
+/* harmony export */ });
+class SpecieChromosome {
+
+    constructor(activatedSpecieGenesIds, specieGenes) {
+        this.activatedSpecieGenesIds = activatedSpecieGenesIds;
+        this.specieGenes = specieGenes;
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/specieBuilder/specieFactory.js":
+/*!*******************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/specieBuilder/specieFactory.js ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "SpecieFactory": () => (/* binding */ SpecieFactory)
+/* harmony export */ });
+/* harmony import */ var _specie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./specie */ "./bugs/core/client/app/src/domain/entity/specieBuilder/specie.js");
+/* harmony import */ var _specieChromosome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieChromosome */ "./bugs/core/client/app/src/domain/entity/specieBuilder/specieChromosome.js");
+
+
+
+class SpecieFactory {
+
+    buildSpecieFromJson(specieJson) {
+        let bodyChromosome =this._buildChromosome(specieJson.body);
+        let developmentChromosome = this._buildChromosome(specieJson.development);
+        let adaptationChromosome = this._buildChromosome(specieJson.adaptation);
+        let buildingChromosome = this._buildChromosome(specieJson.building);
+        let combatChromosome = this._buildChromosome(specieJson.combat);
+        let adjustingChromosome = this._buildChromosome(specieJson.adjusting);
+
+        return new _specie__WEBPACK_IMPORTED_MODULE_0__.Specie(bodyChromosome, developmentChromosome, adaptationChromosome, buildingChromosome, combatChromosome, adjustingChromosome);
     }
 
-    get
+    _buildChromosome(chromosomeJson) {
+        return new _specieChromosome__WEBPACK_IMPORTED_MODULE_1__.SpecieChromosome(chromosomeJson.activatedGenesIds, chromosomeJson.genes);
+    }
 }
 
 
@@ -1516,12 +1568,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class World {
-    constructor(eventBus) {
-        this._eventBus = eventBus;
+    constructor(mainEventBus) {
+        this._mainEventBus = mainEventBus;
         this._entities = [];
         this._colonies = [];
 
-        this._eventBus.on('entityDied', this._onDied.bind(this));
+        this._mainEventBus.on('entityDied', this._onDied.bind(this));
     }
 
     get entities() {
@@ -1607,7 +1659,6 @@ class World {
     clear() {
         this._entities = [];
         this._colonies = [];
-        this._eventBus.emit('worldCleared');
     }
 
     _onDied(entity) {
@@ -1717,7 +1768,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _service_worldService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./service/worldService */ "./bugs/core/client/app/src/domain/service/worldService.js");
 /* harmony import */ var _service_colonyService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/colonyService */ "./bugs/core/client/app/src/domain/service/colonyService.js");
 /* harmony import */ var _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./service/nuptialService */ "./bugs/core/client/app/src/domain/service/nuptialService.js");
-/* harmony import */ var _entity_specieBuilder__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entity/specieBuilder */ "./bugs/core/client/app/src/domain/entity/specieBuilder.js");
+/* harmony import */ var _service_specieBuilderService__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./service/specieBuilderService */ "./bugs/core/client/app/src/domain/service/specieBuilderService.js");
+/* harmony import */ var _entity_specieBuilder_specieFactory__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entity/specieBuilder/specieFactory */ "./bugs/core/client/app/src/domain/entity/specieBuilder/specieFactory.js");
+
 
 
 
@@ -1732,17 +1785,15 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
     let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.nestApi, apis.antApi);
     let world = worldFactory.buildWorld();
-    let specieBuilder = new _entity_specieBuilder__WEBPACK_IMPORTED_MODULE_8__.SpecieBuilder(apis.specieBuilderApi);
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus);
     let accountService = new _service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user, mainEventBus);
     let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
     let nuptialService = new _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__.NuptialService(apis.nuptialApi, worldFactory);
-    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(serverConnection, worldService, colonyService);
+    let specieBuilderService = new _service_specieBuilderService__WEBPACK_IMPORTED_MODULE_8__.SpecieBuilderService(mainEventBus, apis.specieBuilderApi, new _entity_specieBuilder_specieFactory__WEBPACK_IMPORTED_MODULE_9__.SpecieFactory());
+    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService);
 
-    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilder);
-
-    domainFacade.start();
+    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService);
 
     return domainFacade;
 }
@@ -1806,7 +1857,12 @@ class AccountService {
     }
 
     _emitStatusChange() {
-        this._mainEventBus.emit('loginStatusChanged', this.isLoggedIn());
+        if (this.isLoggedIn()) {
+            this._mainEventBus.emit('userLogin');
+        } else {
+            this._mainEventBus.emit('userLogout');
+        }
+        
     }
 
 }
@@ -1890,10 +1946,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class MessageHandlerService {
 
-    constructor(serverConnection, worldService, colonyService) {
+    constructor(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService) {
+        this._mainEventBus = mainEventBus;
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._colonyService = colonyService;
+        this._specieBuilderService = specieBuilderService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
@@ -1907,8 +1965,8 @@ class MessageHandlerService {
 
     _onMessage(msg) {
         switch(msg.type) {
-            case 'sync_step':
-                this._worldService.initWorld(msg.world);
+            case 'init_step':
+                this._handleInitStepMsg(msg);
                 break;
             case 'action':
                 this._handleActionMsg(msg);
@@ -1928,6 +1986,12 @@ class MessageHandlerService {
                 this._colonyService.playColonyAction(action);
                 break;
         }
+    }
+
+    _handleInitStepMsg(msg) {
+        this._worldService.initWorld(msg.world);
+        this._specieBuilderService.initBuilder(msg.specie);
+        this._mainEventBus.emit('initStepDone');
     }
 
 }
@@ -1977,6 +2041,44 @@ class NuptialService {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/domain/service/specieBuilderService.js":
+/*!*************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/service/specieBuilderService.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "SpecieBuilderService": () => (/* binding */ SpecieBuilderService)
+/* harmony export */ });
+class SpecieBuilderService {
+    constructor(mainEventBus, specieBuilderApi, specieFactory) {
+        this._mainEventBus = mainEventBus;
+        this._specieBuilderApi = specieBuilderApi;
+        this._specieFactory = specieFactory;
+
+        this._mainEventBus.on('userLogout', this._onUserLogout.bind(this));
+    }
+
+    initBuilder(specieJson) {
+        this._specie = this._specieFactory.buildSpecieFromJson(specieJson);
+    }
+
+    getMySpecie() {
+        return this._specie;
+    }
+
+    _onUserLogout() {
+        this._specie = null;
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/service/worldService.js":
 /*!*****************************************************************!*\
   !*** ./bugs/core/client/app/src/domain/service/worldService.js ***!
@@ -1999,16 +2101,13 @@ class WorldService {
         this._world = world;
         this._worldFactory = worldFactory;
         this._mainEventBus = mainEventBus;
-        this._isWholeWorldInited = false;
         this._worldSize = null;
+
+        this._mainEventBus.on('userLogout', this._clearWorld.bind(this));
     }
 
     get world() {
         return this._world;
-    }
-
-    get is_world_inited() {
-        return this._isWholeWorldInited;
     }
 
     playEntityAction(action) {
@@ -2034,25 +2133,19 @@ class WorldService {
         });
         
         this._world.size = worldJson.size;
+        
+        this._mainEventBus.emit('worldInited');
+    }
 
-        this._isWholeWorldInited = true;
-
-        this._mainEventBus.emit('wholeWorldInited');
+    _clearWorld() {
+        this._world.clear();
+        this._mainEventBus.emit('worldCleared');
     }
 
     giveBirthToEntity(entityJson) {
         let entity = this._worldFactory.buildEntity(entityJson);
         this._world.addEntity(entity);
         this._mainEventBus.emit('entityBorn', entity);
-    }
-
-    clear() {
-        this._world.clear();
-        this._isWholeWorldInited = false;
-    }
-
-    isWholeWorldInited() {
-        return this._isWholeWorldInited;
     }
 
     findNearestNestForOffensiveOperation(performingColonyId, point) {
@@ -2571,12 +2664,9 @@ class SpecieBuilderApi {
         this._requester = requester;
     }
 
-    loadBuilderData() {
+    loadSpecieData() {
         return this._requester.get('world/nuptial_environment/specie').then((response) => {
-            return {
-                geneEntries: response.data.geneEntries,
-                schema: response.data.schema
-            };
+            return response.data;
         });
     }
     
@@ -2610,7 +2700,8 @@ class AccountView extends _panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.
     constructor(el) {
         super(el);
 
-        this.$domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
+        this.$domainFacade.events.on('userLogin', this._renderState.bind(this));
+        this.$domainFacade.events.on('userLogout', this._renderState.bind(this));
 
         this._render();
         this._renderState();
@@ -2752,7 +2843,8 @@ class AppView {
         this._document = document;
         this._domainFacade = domainFacade;
 
-        this._domainFacade.events.on('loginStatusChanged', this._renderLoginStatus.bind(this));
+        this._domainFacade.events.on('userLogin', this._renderLoginStatus.bind(this));
+        this._domainFacade.events.on('userLogout', this._renderLoginStatus.bind(this));
 
         this._render();
     }
@@ -3427,11 +3519,8 @@ class Panel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView
     constructor(el) {
         super(el);
 
-        this.$domainFacade.events.on('worldCleared', this._removeTabViews.bind(this));
-        this.$domainFacade.events.on('wholeWorldInited', this._buildTabViews.bind(this));
-        if (this.$domainFacade.isWholeWorldInited()) {
-            this._buildTabViews();
-        }
+        this.$domainFacade.events.on('userLogout', this._removeTabViews.bind(this));
+        this.$domainFacade.events.on('initStepDone', this._buildTabViews.bind(this));
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
     }
 
@@ -3452,8 +3541,7 @@ class Panel extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView
     }
 
     _removeTabViews() {
-        this._userTab.remove();
-        this._operationsTab.remove();
+        this._tabSwitcher.remove();
     }
 
     _onNestManageRequest(nest) {
@@ -5909,6 +5997,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
 /* harmony import */ var _specieBuilderTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieBuilderTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabTmpl.html");
 /* harmony import */ var _specieBuilder_specieBuilderView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./specieBuilder/specieBuilderView */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieBuilderView.js");
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/styles.css");
+
+
 
 
 
@@ -5921,10 +6012,11 @@ class SpecieBuilderTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORT
         this._render();
         this._toggleLoader(true);
 
-        this.$domainFacade.specieBuilder.load().then(this._onSpecieBuilderReady.bind(this));
+        let specie = this.$domainFacade.getMySpecie();
+        console.log(specie);
     }
 
-    _onSpecieBuilderReady() {
+    _onSpecieBuilderInited() {
         this._toggleLoader(false);
         this._specieBuilderView = new _specieBuilder_specieBuilderView__WEBPACK_IMPORTED_MODULE_2__.SpecieBuilderView(this._specieBuilderEl);
     }
@@ -5959,23 +6051,63 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
 /* harmony import */ var _chromosomeEditorTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./chromosomeEditorTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/chromosomeEditorTabTmpl.html");
+/* harmony import */ var _specieGeneView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./specieGeneView */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieGeneView.js");
+
 
 
 
 class ChromosomeEditorTab extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    constructor(el, chromosomeSchema, geneEntries) {
+    constructor(el, activatedSpecieGenesIds, specieGenes) {
         super(el);
-        this._chromosomeSchema = chromosomeSchema;
-        this._geneEntries = geneEntries;
+        this._activatedSpecieGenesIds = activatedSpecieGenesIds;
+        this._specieGenes = specieGenes;
+
+        this._specieGeneViews = {};
 
         this._render();
     }
 
     _render() {
         this._el.innerHTML = _chromosomeEditorTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._specieGenesListEl = this._el.querySelector('[data-specie-genes-list]');
+        this._activatedSpecieGenesListEl = this._el.querySelector('[data-activated-specie-genes-list]');
+        
+        this._renderSpecieGenesList();
     }
 
+    _renderSpecieGenesList() {
+        for (let specieGene of this._specieGenes) {
+            this._renderSpecieGene(specieGene);
+        }
+    }
+
+    _renderSpecieGene(specieGene) {
+        let isActivated = this._checkIsActivated(specieGene);
+        let el = document.createElement('li');
+        let view = new _specieGeneView__WEBPACK_IMPORTED_MODULE_2__.SpecieGeneView(el, specieGene, isActivated);
+        this._specieGeneViews[specieGene.id] = view;
+        if (isActivated) {
+            this._activatedSpecieGenesListEl.append(el);
+        } else {
+            this._specieGenesListEl.append(el);
+        }
+        
+    }
+
+    _clearSpecieGenesList() {
+        for (let specieGeneId in this._specieGeneViews) {
+            this._specieGeneViews[specieGeneId].remove();
+        }
+
+        this._specieGeneViews = {};
+    }
+
+    _checkIsActivated(specieGene) {
+        let index = this._activatedSpecieGenesIds.indexOf(specieGene.id);
+        return index >= 0;
+    }
     
 }
 
@@ -6008,23 +6140,99 @@ class SpecieBuilderView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_
     constructor(el) {
         super(el);
 
-        this._specieBuilder = this.$domainFacade.specieBuilder
-
         this._render();
     }
 
     _render() {
         this._el.innerHTML = _specieBuilderTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this._bodyChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-body-chromosome-editor-tab]'));
-        this._developmentChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-development-chromosome-editor-tab]'));
+        let specieChromosome;
+        let el;
 
-        this._tabSwitcher = new _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_2__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
-            { name: 'body_editor', label: 'Тіло', tab: this._bodyChromosomeEditorTab },
-            { name: 'development_editor', label: 'Розвиток', tab: this._developmentChromosomeEditorTab },
-        ]);
+        // specieChromosome = this.$domainFacade.specie.chromosomes.body;
+        // el = this._el.querySelector('[data-body-chromosome-editor-tab]');
+        // this._bodyChromosomeEditorTab = new ChromosomeEditorTab(el, specieChromosome.activatedGenesIds, specieChromosome.genes);
+
+        // specieChromosome = this.$domainFacade.specie.chromosomes.development;
+        // el = this._el.querySelector('[data-development-chromosome-editor-tab]');
+        // this._developmentChromosomeEditorTab = new ChromosomeEditorTab(el, specieChromosome.activatedGenesIds, specieChromosome.genes);
+
+        // this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+        //     { name: 'body_editor', label: 'Тіло', tab: this._bodyChromosomeEditorTab },
+        //     { name: 'development_editor', label: 'Розвиток', tab: this._developmentChromosomeEditorTab },
+        // ]);
     }
 
+    _buildChromosomeEditorTab(el, specieChromosome) {
+        return 
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieGeneView.js":
+/*!***************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieGeneView.js ***!
+  \***************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "SpecieGeneView": () => (/* binding */ SpecieGeneView)
+/* harmony export */ });
+/* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
+/* harmony import */ var _specieGeneTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieGeneTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieGeneTmpl.html");
+/* harmony import */ var _view_panel_base_genome_genes_geneView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/genome/genes/geneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/geneView.js");
+
+
+
+
+class SpecieGeneView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, specieGene, isActivated) {
+        super(el);
+        this._specieGene = specieGene;
+        this._isActivated = isActivated;
+
+        this._render();
+
+        this._activateBtn.addEventListener('click', this._onActivateBtnClick.bind(this));
+        this._deactivateBtn.addEventListener('click', this._onDeactivateBtnClick.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = _specieGeneTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._geneView = new _view_panel_base_genome_genes_geneView__WEBPACK_IMPORTED_MODULE_2__.GeneView(this._el.querySelector('[data-gene]'), this._specieGene.gene);
+        this._activateBtn = this._el.querySelector('[data-activate-btn]');
+        this._deactivateBtn = this._el.querySelector('[data-deactivate-btn]');
+        this._toggleActivationBtn(this._isActivated);
+        this._toggleDeactivationBtn(!this._isActivated);
+    }
+
+    remove() {
+        super.remove();
+        this._geneView.remove();
+    }
+
+    _toggleActivationBtn(isActive) {
+        this._activateBtn.classList.toggle('hidden', !isActive);
+    }
+
+    _toggleDeactivationBtn(isActive) {
+        this._deactivateBtn.classList.toggle('hidden', !isActive);
+    }
+
+    _onActivateBtnClick() {
+        this.events.emit('activatedGene', this._specieGene);
+    }
+
+    _onDeactivateBtnClick() {
+        this.events.emit('deactivatedGene', this._specieGene);
+    }
 }
 
 
@@ -6054,7 +6262,8 @@ class UserTab extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
 
         this._render();
 
-        UserTab.domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
+        this.$domainFacade.events.on('userLogin', this._renderState.bind(this));
+        this.$domainFacade.events.on('userLogout', this._renderState.bind(this));
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
     }
 
@@ -6816,10 +7025,18 @@ class MarkerManagerView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0
 
         this._render();
 
-        this.$eventBus.on('placeNewNestMarkerRequest', this._onPlaceNewNestMarkerRequest.bind(this));
-        this.$eventBus.on('placeDestroyNestMarkerRequest', this._onPlaceDestroyNestMarkerRequest.bind(this));
-        this.$eventBus.on('placePillageNestMarkerRequest', this._onPlacePillageNestMarkerRequest.bind(this));
-        this.$eventBus.on('cancelAnyMarkerPlacerRequest', this._onMarkerPlacerCancel.bind(this));
+        this._stopListenPlaceNewNestMarkerRequest = this.$eventBus.on('placeNewNestMarkerRequest', this._onPlaceNewNestMarkerRequest.bind(this));
+        this._stopListenPlaceDestroyNestMarkerRequest = this.$eventBus.on('placeDestroyNestMarkerRequest', this._onPlaceDestroyNestMarkerRequest.bind(this));
+        this._stopListenPillageDestroyNestMarkerRequest = this.$eventBus.on('placePillageNestMarkerRequest', this._onPlacePillageNestMarkerRequest.bind(this));
+        this._stopListenCancelAnyMarkerPlacerRequest = this.$eventBus.on('cancelAnyMarkerPlacerRequest', this._onMarkerPlacerCancel.bind(this));
+    }
+
+    remove() {
+        this._removeMarkerPlacerPlacer();
+        this._stopListenPlaceNewNestMarkerRequest();
+        this._stopListenPlaceDestroyNestMarkerRequest();
+        this._stopListenPillageDestroyNestMarkerRequest();
+        this._stopListenCancelAnyMarkerPlacerRequest();
     }
 
     _render() {
@@ -6847,6 +7064,10 @@ class MarkerManagerView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0
     }
 
     _onMarkerPlacerCancel() {
+        this._removeMarkerPlacerPlacer();
+    }
+
+    _removeMarkerPlacerPlacer() {
         if (this._currentMarkerPlacer) {
             this._currentMarkerPlacer.remove();
             this._currentMarkerPlacer = null;
@@ -7304,8 +7525,6 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_5__.BaseG
         this._entityViews = [];
         this._textures = {};
 
-        this.$domainFacade.events.on('worldCleared', this._onWorldCleared.bind(this));
-
         this._init();
     }
 
@@ -7340,15 +7559,12 @@ class WorldView extends _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_5__.BaseG
 
         this._camera = new _camera__WEBPACK_IMPORTED_MODULE_4__.Camera(this._entityContainer, this._bg, this._app.view);
 
-        this.$domainFacade.events.on('wholeWorldInited', this._onWholeWorldInit.bind(this));
-        if (this.$domainFacade.isWholeWorldInited()) {
-            this._onWholeWorldInit();
-        }
-
+        this.$domainFacade.events.on('worldInited', this._onWorldInit.bind(this));
+        this.$domainFacade.events.on('worldCleared', this._onWorldCleared.bind(this));
         this.$domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
     }
 
-    _onWholeWorldInit() {
+    _onWorldInit() {
         this._setUpCamera();
         this._buildEntityViews();
         this._markerManager = new _markerManager_markerManagerView__WEBPACK_IMPORTED_MODULE_7__.MarkerManagerView(this._markersContainer);
@@ -7898,6 +8114,33 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, ".nuptial-flight-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/nuptialFlightTab/style.css"],"names":[],"mappings":"AAAA;IACI,aAAa;IACb,mBAAmB;AACvB","sourcesContent":[".nuptial-flight-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/styles.css":
+/*!********************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/styles.css ***!
+  \********************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".specie-builder__chromosome-editor-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.specie-builder__genes-list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/styles.css"],"names":[],"mappings":"AAAA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,UAAU;IACV,SAAS;IACT,qBAAqB;AACzB","sourcesContent":[".specie-builder__chromosome-editor-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.specie-builder__genes-list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -10313,7 +10556,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "chromosome editor";
+var code = "<ul data-activated-specie-genes-list class=\"specie-builder__genes-list\">\r\n</ul>\r\n<ul data-specie-genes-list class=\"specie-builder__genes-list\">\r\n</ul>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -10331,7 +10574,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switcher></div>\r\n<div data-body-chromosome-editor-tab></div>\r\n<div data-development-chromosome-editor-tab></div>";
+var code = "<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switcher></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-body-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-development-chromosome-editor-tab></div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieGeneTmpl.html":
+/*!*****************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilder/specieGeneTmpl.html ***!
+  \*****************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<button data-activate-btn>&#60;</button>\r\n<button data-deactivate-btn>&#62;</button>\r\n<div data-gene></div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -11294,6 +11555,61 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
        /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/styles.css":
+/*!******************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/styles.css ***!
+  \******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/styles.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),
@@ -48428,6 +48744,8 @@ let initialData = (0,_utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__.readIni
 let syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)();
 let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)(syncLayer.apis, syncLayer.serverConnection, initialData);
 (0,_view__WEBPACK_IMPORTED_MODULE_2__.initViewLayer)(domainFacade, initialData);
+
+domainFacade.start();
 
 })();
 

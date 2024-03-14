@@ -1,0 +1,10 @@
+.specie-builder__chromosome-editor-tab {
+    display: flex;
+    flex-direction: row;
+}
+
+.specie-builder__genes-list {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}

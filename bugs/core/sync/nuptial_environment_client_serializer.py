@@ -37,8 +37,8 @@ class NuptialEnvironmentClientSerializer(iNuptialEnvironmentClientSerializer):
     
     def _serialize_specie_chromosome(self, chromosome: SpecieChromosome):
         return {
-            'activated_specie_genes_ids': chromosome.activated_specie_genes_ids,
-            'specie_genes': [self._serialize_specie_gene(specie_gene) for specie_gene in chromosome.specie_genes]
+            'activatedGenesIds': chromosome.activated_specie_genes_ids,
+            'genes': [self._serialize_specie_gene(specie_gene) for specie_gene in chromosome.specie_genes]
         }
     
     def _serialize_specie_gene(self, specie_gene: SpecieGene):

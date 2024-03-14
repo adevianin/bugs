@@ -8,3 +8,5 @@ let initialData = readInitialData();
 let syncLayer = initSyncLayer();
 let domainFacade = initDomainLayer(syncLayer.apis, syncLayer.serverConnection, initialData);
 initViewLayer(domainFacade, initialData);
+
+domainFacade.start();

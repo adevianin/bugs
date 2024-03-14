@@ -8,21 +8,31 @@ class SpecieBuilderView extends BaseHTMLView {
     constructor(el) {
         super(el);
 
-        this._specieBuilder = this.$domainFacade.specieBuilder
-
         this._render();
     }
 
     _render() {
         this._el.innerHTML = specieBuilderTmpl;
 
-        this._bodyChromosomeEditorTab = new ChromosomeEditorTab(this._el.querySelector('[data-body-chromosome-editor-tab]'));
-        this._developmentChromosomeEditorTab = new ChromosomeEditorTab(this._el.querySelector('[data-development-chromosome-editor-tab]'));
+        let specieChromosome;
+        let el;
 
-        this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
-            { name: 'body_editor', label: 'Тіло', tab: this._bodyChromosomeEditorTab },
-            { name: 'development_editor', label: 'Розвиток', tab: this._developmentChromosomeEditorTab },
-        ]);
+        // specieChromosome = this.$domainFacade.specie.chromosomes.body;
+        // el = this._el.querySelector('[data-body-chromosome-editor-tab]');
+        // this._bodyChromosomeEditorTab = new ChromosomeEditorTab(el, specieChromosome.activatedGenesIds, specieChromosome.genes);
+
+        // specieChromosome = this.$domainFacade.specie.chromosomes.development;
+        // el = this._el.querySelector('[data-development-chromosome-editor-tab]');
+        // this._developmentChromosomeEditorTab = new ChromosomeEditorTab(el, specieChromosome.activatedGenesIds, specieChromosome.genes);
+
+        // this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+        //     { name: 'body_editor', label: 'Тіло', tab: this._bodyChromosomeEditorTab },
+        //     { name: 'development_editor', label: 'Розвиток', tab: this._developmentChromosomeEditorTab },
+        // ]);
+    }
+
+    _buildChromosomeEditorTab(el, specieChromosome) {
+        return 
     }
 
 }

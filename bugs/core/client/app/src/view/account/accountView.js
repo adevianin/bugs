@@ -8,7 +8,8 @@ class AccountView extends BaseHTMLView {
     constructor(el) {
         super(el);
 
-        this.$domainFacade.events.on('loginStatusChanged', this._renderState.bind(this));
+        this.$domainFacade.events.on('userLogin', this._renderState.bind(this));
+        this.$domainFacade.events.on('userLogout', this._renderState.bind(this));
 
         this._render();
         this._renderState();

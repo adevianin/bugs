@@ -13,11 +13,8 @@ class Panel extends BaseHTMLView {
     constructor(el) {
         super(el);
 
-        this.$domainFacade.events.on('worldCleared', this._removeTabViews.bind(this));
-        this.$domainFacade.events.on('wholeWorldInited', this._buildTabViews.bind(this));
-        if (this.$domainFacade.isWholeWorldInited()) {
-            this._buildTabViews();
-        }
+        this.$domainFacade.events.on('userLogout', this._removeTabViews.bind(this));
+        this.$domainFacade.events.on('initStepDone', this._buildTabViews.bind(this));
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
     }
 
@@ -38,8 +35,7 @@ class Panel extends BaseHTMLView {
     }
 
     _removeTabViews() {
-        this._userTab.remove();
-        this._operationsTab.remove();
+        this._tabSwitcher.remove();
     }
 
     _onNestManageRequest(nest) {

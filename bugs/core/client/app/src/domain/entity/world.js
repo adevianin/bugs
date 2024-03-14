@@ -1,12 +1,12 @@
 import { EntityTypes } from "../enum/entityTypes";
 
 class World {
-    constructor(eventBus) {
-        this._eventBus = eventBus;
+    constructor(mainEventBus) {
+        this._mainEventBus = mainEventBus;
         this._entities = [];
         this._colonies = [];
 
-        this._eventBus.on('entityDied', this._onDied.bind(this));
+        this._mainEventBus.on('entityDied', this._onDied.bind(this));
     }
 
     get entities() {
@@ -92,7 +92,6 @@ class World {
     clear() {
         this._entities = [];
         this._colonies = [];
-        this._eventBus.emit('worldCleared');
     }
 
     _onDied(entity) {

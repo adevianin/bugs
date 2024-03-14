@@ -9,7 +9,8 @@ class AppView {
         this._document = document;
         this._domainFacade = domainFacade;
 
-        this._domainFacade.events.on('loginStatusChanged', this._renderLoginStatus.bind(this));
+        this._domainFacade.events.on('userLogin', this._renderLoginStatus.bind(this));
+        this._domainFacade.events.on('userLogout', this._renderLoginStatus.bind(this));
 
         this._render();
     }

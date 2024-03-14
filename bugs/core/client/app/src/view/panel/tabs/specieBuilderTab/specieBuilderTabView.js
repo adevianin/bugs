@@ -2,6 +2,8 @@ import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
 import specieBuilderTabTmpl from './specieBuilderTabTmpl.html';
 import { SpecieBuilderView } from "./specieBuilder/specieBuilderView";
 
+import './styles.css';
+
 class SpecieBuilderTabView extends BaseHTMLView {
 
     constructor(el) {
@@ -10,10 +12,11 @@ class SpecieBuilderTabView extends BaseHTMLView {
         this._render();
         this._toggleLoader(true);
 
-        this.$domainFacade.specieBuilder.load().then(this._onSpecieBuilderReady.bind(this));
+        let specie = this.$domainFacade.getMySpecie();
+        console.log(specie);
     }
 
-    _onSpecieBuilderReady() {
+    _onSpecieBuilderInited() {
         this._toggleLoader(false);
         this._specieBuilderView = new SpecieBuilderView(this._specieBuilderEl);
     }
