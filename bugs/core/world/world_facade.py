@@ -114,6 +114,9 @@ class WorldFacade:
     def get_specie_for_client(self, user_id: int) -> dict:
         specie = self._nuptial_environment_service.get_specie_for(user_id)
         return self._nuptial_environment_client_serializer.serialize_specie(specie)
+    
+    def change_specie_schema(self, user_id: int, specie_schema: dict):
+        self._nuptial_environment_service.change_specie_schema(user_id, specie_schema)
 
     def get_world_for_client(self):
         return self._world_client_serializer.serialize(self._world)

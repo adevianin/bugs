@@ -10,6 +10,17 @@ class Specie extends EventEmitter {
         this.buildingChromosome = buildingChromosome;
         this.combatChromosome = combatChromosome;
         this.adjustingChromosome = adjustingChromosome;
+
+        this.bodyChromosome.on('change', this._onChromosomeChange.bind(this));
+        this.developmentChromosome.on('change', this._onChromosomeChange.bind(this));
+        this.adaptationChromosome.on('change', this._onChromosomeChange.bind(this));
+        this.buildingChromosome.on('change', this._onChromosomeChange.bind(this));
+        this.combatChromosome.on('change', this._onChromosomeChange.bind(this));
+        this.adjustingChromosome.on('change', this._onChromosomeChange.bind(this));
+    }
+
+    _onChromosomeChange() {
+        this.emit('change');
     }
 
 }

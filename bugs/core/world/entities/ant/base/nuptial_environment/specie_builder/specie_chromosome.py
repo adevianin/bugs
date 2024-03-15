@@ -40,3 +40,10 @@ class SpecieChromosome():
                 activated_genes.append(specie_gene)
 
         return activated_genes
+    
+    def get_specie_gene_by_id(self, id: str):  
+        for specie_gene in self._specie_genes:
+            if specie_gene.id == id:
+                return specie_gene
+            
+        return None

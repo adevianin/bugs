@@ -4,10 +4,17 @@ class SpecieBuilderApi {
         this._requester = requester;
     }
 
-    loadSpecieData() {
-        return this._requester.get('world/nuptial_environment/specie').then((response) => {
-            return response.data;
-        });
+    saveSpecie(specie) {
+        this._requester.post('world/nuptial_environment/specie', {
+            specie: {
+                'body': specie.bodyChromosome.activatedSpecieGenesIds,
+                'development': specie.developmentChromosome.activatedSpecieGenesIds,
+                'adaptation': specie.adaptationChromosome.activatedSpecieGenesIds,
+                'building': specie.buildingChromosome.activatedSpecieGenesIds,
+                'combat': specie.combatChromosome.activatedSpecieGenesIds,
+                'adjusting': specie.adjustingChromosome.activatedSpecieGenesIds
+            }
+        })
     }
     
 }

@@ -8,6 +8,7 @@ from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie import Specie
+from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_schema import SpecieSchema
 
 from typing import List
 
@@ -69,4 +70,8 @@ class NuptialEnvironmentService():
         nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
 
         return nuptial_environment.specie
+    
+    def change_specie_schema(self, user_id: int, specie_schema: SpecieSchema):
+        nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
+        nuptial_environment.specie.apply_schema(specie_schema)
         

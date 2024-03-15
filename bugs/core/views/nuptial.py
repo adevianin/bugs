@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, JsonResponse, HttpResponse
 from core.world.world_facade import WorldFacade
 from core.world.utils.point import Point
+from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_schema import SpecieSchema
 
 import json
 
@@ -31,11 +32,20 @@ def found_colony(request: HttpRequest):
 
     return HttpResponse(status=200)
 
-@require_GET
+@require_POST
 @login_required     
-def get_my_specie(request: HttpRequest):
+def save_my_specie(request: HttpRequest):
+    data = json.loads(request.body)
     wf = WorldFacade.get_instance()
 
-    specie_builder_json = wf.get_specie_for_client(request.user.id)
+    body = data['specie']['body']
+    development = data['specie']['development']
+    adaptation = data['specie']['adaptation']
+    building = data['specie']['building']
+    combat = data['specie']['combat']
+    adjusting = data['specie']['adjusting']
+    schema = SpecieSchema.build(body, development, adaptation, building, combat, adjusting)
+    
+    wf.change_specie_schema(request.user.id, schema)
 
-    return JsonResponse(specie_builder_json, status=200)
+    return HttpResponse(status=200)

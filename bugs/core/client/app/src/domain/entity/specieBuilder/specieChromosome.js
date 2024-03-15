@@ -16,20 +16,23 @@ class SpecieChromosome extends EventEmitter {
     activateSpecieGene(activatingSpecieGene) {
         let specieGeneToDeactivating = this._getActivatedSpecieGeneByType(activatingSpecieGene.gene.type);
         this.activatedSpecieGenesIds.push(activatingSpecieGene.id);
-        this._emitSpecieGeneChanged(activatingSpecieGene);
+        this.emit('specieGeneActiveStatusChanged', activatingSpecieGene);
         if (specieGeneToDeactivating) {
-            this.deactivateSpecieGene(specieGeneToDeactivating);
+            this._executeSpecieGeneDeactivation(specieGeneToDeactivating);
+            this.emit('specieGeneActiveStatusChanged', specieGeneToDeactivating);
         }
+        this.emit('change');
     }
 
     deactivateSpecieGene(specieGene) {
-        let index = this.activatedSpecieGenesIds.indexOf(specieGene.id);
-        this.activatedSpecieGenesIds.splice(index, 1);
-        this._emitSpecieGeneChanged(specieGene);
+        this._executeSpecieGeneDeactivation(specieGene)
+        this.emit('specieGeneActiveStatusChanged', specieGene);
+        this.emit('change');
     }
 
-    _emitSpecieGeneChanged(specieGene) {
-        this.emit('specieGeneActivatingChanged', specieGene);
+    _executeSpecieGeneDeactivation(specieGene) {
+        let index = this.activatedSpecieGenesIds.indexOf(specieGene.id);
+        this.activatedSpecieGenesIds.splice(index, 1);
     }
 
     getSpecieGeneById(id) {

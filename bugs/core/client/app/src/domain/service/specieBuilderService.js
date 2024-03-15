@@ -15,10 +15,16 @@ class SpecieBuilderService {
 
     _initBuilder(specieJson) {
         this._specie = this._specieFactory.buildSpecieFromJson(specieJson);
+        this._stopListenSpecieChange = this._specie.on('change', this._onSpecieChanged.bind(this));
     }
 
     _onUserLogout() {
+        this._stopListenSpecieChange();
         this._specie = null;
+    }
+
+    _onSpecieChanged() {
+        this._specieBuilderApi.saveSpecie(this._specie);
     }
 
 }

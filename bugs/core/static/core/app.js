@@ -1484,6 +1484,17 @@ class Specie extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
         this.buildingChromosome = buildingChromosome;
         this.combatChromosome = combatChromosome;
         this.adjustingChromosome = adjustingChromosome;
+
+        this.bodyChromosome.on('change', this._onChromosomeChange.bind(this));
+        this.developmentChromosome.on('change', this._onChromosomeChange.bind(this));
+        this.adaptationChromosome.on('change', this._onChromosomeChange.bind(this));
+        this.buildingChromosome.on('change', this._onChromosomeChange.bind(this));
+        this.combatChromosome.on('change', this._onChromosomeChange.bind(this));
+        this.adjustingChromosome.on('change', this._onChromosomeChange.bind(this));
+    }
+
+    _onChromosomeChange() {
+        this.emit('change');
     }
 
 }
@@ -1522,20 +1533,23 @@ class SpecieChromosome extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.
     activateSpecieGene(activatingSpecieGene) {
         let specieGeneToDeactivating = this._getActivatedSpecieGeneByType(activatingSpecieGene.gene.type);
         this.activatedSpecieGenesIds.push(activatingSpecieGene.id);
-        this._emitSpecieGeneChanged(activatingSpecieGene);
+        this.emit('specieGeneActiveStatusChanged', activatingSpecieGene);
         if (specieGeneToDeactivating) {
-            this.deactivateSpecieGene(specieGeneToDeactivating);
+            this._executeSpecieGeneDeactivation(specieGeneToDeactivating);
+            this.emit('specieGeneActiveStatusChanged', specieGeneToDeactivating);
         }
+        this.emit('change');
     }
 
     deactivateSpecieGene(specieGene) {
-        let index = this.activatedSpecieGenesIds.indexOf(specieGene.id);
-        this.activatedSpecieGenesIds.splice(index, 1);
-        this._emitSpecieGeneChanged(specieGene);
+        this._executeSpecieGeneDeactivation(specieGene)
+        this.emit('specieGeneActiveStatusChanged', specieGene);
+        this.emit('change');
     }
 
-    _emitSpecieGeneChanged(specieGene) {
-        this.emit('specieGeneActivatingChanged', specieGene);
+    _executeSpecieGeneDeactivation(specieGene) {
+        let index = this.activatedSpecieGenesIds.indexOf(specieGene.id);
+        this.activatedSpecieGenesIds.splice(index, 1);
     }
 
     getSpecieGeneById(id) {
@@ -2118,10 +2132,16 @@ class SpecieBuilderService {
 
     _initBuilder(specieJson) {
         this._specie = this._specieFactory.buildSpecieFromJson(specieJson);
+        this._stopListenSpecieChange = this._specie.on('change', this._onSpecieChanged.bind(this));
     }
 
     _onUserLogout() {
+        this._stopListenSpecieChange();
         this._specie = null;
+    }
+
+    _onSpecieChanged() {
+        this._specieBuilderApi.saveSpecie(this._specie);
     }
 
 }
@@ -2715,10 +2735,23 @@ class SpecieBuilderApi {
         this._requester = requester;
     }
 
-    loadSpecieData() {
-        return this._requester.get('world/nuptial_environment/specie').then((response) => {
-            return response.data;
-        });
+    // loadSpecieData() {
+    //     return this._requester.get('world/nuptial_environment/specie').then((response) => {
+    //         return response.data;
+    //     });
+    // }
+
+    saveSpecie(specie) {
+        this._requester.post('world/nuptial_environment/specie', {
+            specie: {
+                'body': specie.bodyChromosome.activatedSpecieGenesIds,
+                'development': specie.developmentChromosome.activatedSpecieGenesIds,
+                'adaptation': specie.adaptationChromosome.activatedSpecieGenesIds,
+                'building': specie.buildingChromosome.activatedSpecieGenesIds,
+                'combat': specie.combatChromosome.activatedSpecieGenesIds,
+                'adjusting': specie.adjustingChromosome.activatedSpecieGenesIds
+            }
+        })
     }
     
 }
@@ -6164,7 +6197,7 @@ class ChromosomeEditorTab extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTE
         super(el);
         this._chromosome = chromosome;
 
-        this._chromosome.on('specieGeneActivatingChanged', this._onSpecieGeneActivatingChanged.bind(this));
+        this._chromosome.on('specieGeneActiveStatusChanged', this._onSpecieGeneActiveStatusChanged.bind(this));
 
         this._specieGeneViews = {};
 
@@ -6217,7 +6250,7 @@ class ChromosomeEditorTab extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTE
         this._chromosome.deactivateSpecieGene(specieGene);
     }
 
-    _onSpecieGeneActivatingChanged(specieGene) {
+    _onSpecieGeneActiveStatusChanged(specieGene) {
         this._specieGeneViews[specieGene.id].remove();
         delete this._specieGeneViews[specieGene.id];
         this._renderSpecieGene(specieGene);
