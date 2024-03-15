@@ -10,7 +10,7 @@ import { ItemArea } from './entity/itemArea';
 import { AntTypes } from './enum/antTypes';
 import { WarriorAnt, WorkerAnt, QueenAnt, MaleAnt } from './entity/ant';
 import { Egg } from './entity/egg';
-import { Genome } from './entity/genome';
+import { Genome } from './entity/genetic/genome';
 import { NuptialMale } from './entity/nuptialMale';
 
 class WorldFactory {
@@ -128,12 +128,8 @@ class WorldFactory {
     }
 
     buildNuptialMale(nuptialMaleJson) {
-        let genome = this._buildGenome(nuptialMaleJson.genome);
+        let genome = Genome.buildFromJson(nuptialMaleJson.genome);
         return new NuptialMale(nuptialMaleJson.id, genome, nuptialMaleJson.stats, nuptialMaleJson.isLocal);
-    }
-
-    _buildGenome(genomeJson) {
-        return new Genome(genomeJson.maternal, genomeJson.paternal, genomeJson.avaliableAntTypes);
     }
 
 }

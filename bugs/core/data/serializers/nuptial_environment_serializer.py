@@ -17,16 +17,12 @@ class NuptialEnvironmentSerializer():
     
     def _serialize_specie(self, specie: Specie):
         return {
-            'body': self._serialize_specie_chromosome(specie.specie_chromosome_set.body_specie_chromosome),
-            'development': self._serialize_specie_chromosome(specie.specie_chromosome_set.development_specie_chromosome),
-            'adaptation': self._serialize_specie_chromosome(specie.specie_chromosome_set.adaptation_specie_chromosome),
-            'building': self._serialize_specie_chromosome(specie.specie_chromosome_set.building_specie_chromosome),
-            'combat': self._serialize_specie_chromosome(specie.specie_chromosome_set.combat_specie_chromosome),
-            'adjusting': self._serialize_specie_chromosome(specie.specie_chromosome_set.adjusting_specie_chromosome),
+            'chromosomes_set': [self._serialize_specie_chromosome(specie_chromosome) for specie_chromosome in specie.specie_chromosome_set.specie_chromosomes]
         }
     
     def _serialize_specie_chromosome(self, specie_chromosome: SpecieChromosome):
         return {
+            'type': specie_chromosome.type,
             'activated_specie_genes_ids': specie_chromosome.activated_specie_genes_ids,
             'specie_genes': [self._serialize_specie_gene(specie_gene) for specie_gene in specie_chromosome.specie_genes]
         }

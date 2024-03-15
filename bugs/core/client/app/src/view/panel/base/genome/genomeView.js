@@ -4,6 +4,7 @@ import genomeTmpl from './genomeTmpl.html';
 import chromosomesSetTmpl from './chromosomesSetTmpl.html';
 import { GenesTypes } from '@domain/enum/genesTypes';
 import { GeneView } from './genes/geneView';
+import { ChromosomesTypes } from '@domain/enum/chromosomeTypes';
 
 class GenomeView extends BaseHTMLView {
 
@@ -36,9 +37,9 @@ class GenomeView extends BaseHTMLView {
 
         el.querySelector('[data-chromosome-set-title]').innerHTML = title;
 
-        this._renderChromosome(el.querySelector('[data-body-chromosome]'), chromosomesSet.body);
-        this._renderChromosome(el.querySelector('[data-development-chromosome]'), chromosomesSet.development);
-        this._renderChromosome(el.querySelector('[data-adjusting-chromosome]'), chromosomesSet.adjusting);
+        this._renderChromosome(el.querySelector('[data-body-chromosome]'), chromosomesSet.getChromosomeByType(ChromosomesTypes.BODY));
+        this._renderChromosome(el.querySelector('[data-development-chromosome]'), chromosomesSet.getChromosomeByType(ChromosomesTypes.DEVELOPMENT));
+        this._renderChromosome(el.querySelector('[data-adjusting-chromosome]'), chromosomesSet.getChromosomeByType(ChromosomesTypes.ADJUSTING));
     }
 
     _renderChromosome(el, chromosome) {

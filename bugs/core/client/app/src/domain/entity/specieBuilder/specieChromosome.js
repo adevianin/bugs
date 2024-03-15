@@ -2,8 +2,9 @@ import { EventEmitter } from "@utils/eventEmitter";
 
 class SpecieChromosome extends EventEmitter {
 
-    constructor(activatedSpecieGenesIds, specieGenes) {
+    constructor(type, activatedSpecieGenesIds, specieGenes) {
         super();
+        this.type = type;
         this.activatedSpecieGenesIds = activatedSpecieGenesIds;
         this.specieGenes = specieGenes;
     }

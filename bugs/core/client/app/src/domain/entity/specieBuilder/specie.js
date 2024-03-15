@@ -2,21 +2,17 @@ import { EventEmitter } from "@utils/eventEmitter";
 
 class Specie extends EventEmitter {
 
-    constructor(bodyChromosome, developmentChromosome, adaptationChromosome, buildingChromosome, combatChromosome, adjustingChromosome) {
+    constructor(specieChromosomes) {
         super();
-        this.bodyChromosome = bodyChromosome;
-        this.developmentChromosome = developmentChromosome;
-        this.adaptationChromosome = adaptationChromosome;
-        this.buildingChromosome = buildingChromosome;
-        this.combatChromosome = combatChromosome;
-        this.adjustingChromosome = adjustingChromosome;
+        this._specieChromosomes = specieChromosomes;
+    }
 
-        this.bodyChromosome.on('change', this._onChromosomeChange.bind(this));
-        this.developmentChromosome.on('change', this._onChromosomeChange.bind(this));
-        this.adaptationChromosome.on('change', this._onChromosomeChange.bind(this));
-        this.buildingChromosome.on('change', this._onChromosomeChange.bind(this));
-        this.combatChromosome.on('change', this._onChromosomeChange.bind(this));
-        this.adjustingChromosome.on('change', this._onChromosomeChange.bind(this));
+    getChromosomeByType(type) {
+        for (let chromosome of this._specieChromosomes) {
+            if (chromosome.type == type) {
+                return chromosome;
+            }
+        }
     }
 
     _onChromosomeChange() {

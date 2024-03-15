@@ -51,7 +51,7 @@ class Larva():
 
     @property
     def progress(self):
-        return (100 / self._phenotype.required_food) * self._ate_calories
+        return round((100 / self._phenotype.required_food) * self._ate_calories)
 
     def feed(self, calories_count: int):
         if self._ate_calories + calories_count > self._phenotype.required_food:

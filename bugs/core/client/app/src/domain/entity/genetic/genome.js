@@ -1,7 +1,11 @@
+import { ChromosomesSet } from "./chromosomesSet";
+
 class Genome {
 
     static buildFromJson(json) {
-        return new Genome(json.maternal, json.paternal, json.avaliableAntTypes);
+        let maternalChromosomesSet = new ChromosomesSet(json.maternal);
+        let paternalChromosomesSet = json.paternal ? new ChromosomesSet(json.paternal) : null;
+        return new Genome(maternalChromosomesSet, paternalChromosomesSet, json.avaliableAntTypes);
     }
 
     constructor(maternal, paternal, avaliableAntTypes) {

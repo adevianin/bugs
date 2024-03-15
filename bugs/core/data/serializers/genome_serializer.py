@@ -15,16 +15,10 @@ class GenomeSerializer():
         }
 
     def serialize_chromosomes_set(self, chromosomes_set: ChromosomesSet):
-        return {
-            'body': self._serialize_chromosome(chromosomes_set.body_chromosome),
-            'development': self._serialize_chromosome(chromosomes_set.development_chromosome),
-            'adaptation': self._serialize_chromosome(chromosomes_set.adaptation_chromosome),
-            'building': self._serialize_chromosome(chromosomes_set.building_chromosome),
-            'combat': self._serialize_chromosome(chromosomes_set.combat_chromosome),
-            'adjusting': self._serialize_chromosome(chromosomes_set.adjusting_chromosome)
-        }
+        return [self._serialize_chromosome(chromosome) for chromosome in chromosomes_set.chromosomes]
     
     def _serialize_chromosome(self, chromosome: Chromosome):
         return {
-            'genes': [self._genes_serializer.serialize(gene) for gene in chromosome.genes]
+            'type': chromosome.type,
+            'genes': [self._genes_serializer.serialize(gene) for gene in chromosome.genes],
         }

@@ -1,5 +1,5 @@
 import { EventEmitter } from "@utils/eventEmitter";
-import { Genome } from "./genome";
+import { Genome } from "./genetic/genome";
 
 class Egg extends EventEmitter {
 

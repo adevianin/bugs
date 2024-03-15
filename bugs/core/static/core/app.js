@@ -658,14 +658,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Egg": () => (/* binding */ Egg)
 /* harmony export */ });
 /* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
-/* harmony import */ var _genome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genome */ "./bugs/core/client/app/src/domain/entity/genome.js");
+/* harmony import */ var _genetic_genome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genetic/genome */ "./bugs/core/client/app/src/domain/entity/genetic/genome.js");
 
 
 
 class Egg extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
     static buildFromJson(json) {
-        let genome = _genome__WEBPACK_IMPORTED_MODULE_1__.Genome.buildFromJson(json.genome);
+        let genome = _genetic_genome__WEBPACK_IMPORTED_MODULE_1__.Genome.buildFromJson(json.genome);
         return new Egg(json.id, json.name, genome, json.progress, json.antType);
     }
 
@@ -896,10 +896,39 @@ class Entity extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/entity/genome.js":
-/*!**********************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/genome.js ***!
-  \**********************************************************/
+/***/ "./bugs/core/client/app/src/domain/entity/genetic/chromosomesSet.js":
+/*!**************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/genetic/chromosomesSet.js ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ChromosomesSet": () => (/* binding */ ChromosomesSet)
+/* harmony export */ });
+class ChromosomesSet {
+    constructor(chromosomes) {
+        this._chromosomes = chromosomes;
+    }
+
+    getChromosomeByType(type) {
+        for (let chromosome of this._chromosomes) {
+            if (chromosome.type == type) {
+                return chromosome;
+            }
+        }
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/genetic/genome.js":
+/*!******************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/genetic/genome.js ***!
+  \******************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -907,10 +936,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Genome": () => (/* binding */ Genome)
 /* harmony export */ });
+/* harmony import */ var _chromosomesSet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./chromosomesSet */ "./bugs/core/client/app/src/domain/entity/genetic/chromosomesSet.js");
+
+
 class Genome {
 
     static buildFromJson(json) {
-        return new Genome(json.maternal, json.paternal, json.avaliableAntTypes);
+        let maternalChromosomesSet = new _chromosomesSet__WEBPACK_IMPORTED_MODULE_0__.ChromosomesSet(json.maternal);
+        let paternalChromosomesSet = json.paternal ? new _chromosomesSet__WEBPACK_IMPORTED_MODULE_0__.ChromosomesSet(json.paternal) : null;
+        return new Genome(maternalChromosomesSet, paternalChromosomesSet, json.avaliableAntTypes);
     }
 
     constructor(maternal, paternal, avaliableAntTypes) {
@@ -1175,14 +1209,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Larva": () => (/* binding */ Larva)
 /* harmony export */ });
 /* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
-/* harmony import */ var _genome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genome */ "./bugs/core/client/app/src/domain/entity/genome.js");
+/* harmony import */ var _genetic_genome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genetic/genome */ "./bugs/core/client/app/src/domain/entity/genetic/genome.js");
 
 
 
 class Larva extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
     static buildFromJson(json) {
-        let genome = _genome__WEBPACK_IMPORTED_MODULE_1__.Genome.buildFromJson(json.genome);
+        let genome = _genetic_genome__WEBPACK_IMPORTED_MODULE_1__.Genome.buildFromJson(json.genome);
         return new Larva(json.id, json.name, json.antType, json.progress, genome);
     }
 
@@ -1476,21 +1510,17 @@ __webpack_require__.r(__webpack_exports__);
 
 class Specie extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
-    constructor(bodyChromosome, developmentChromosome, adaptationChromosome, buildingChromosome, combatChromosome, adjustingChromosome) {
+    constructor(specieChromosomes) {
         super();
-        this.bodyChromosome = bodyChromosome;
-        this.developmentChromosome = developmentChromosome;
-        this.adaptationChromosome = adaptationChromosome;
-        this.buildingChromosome = buildingChromosome;
-        this.combatChromosome = combatChromosome;
-        this.adjustingChromosome = adjustingChromosome;
+        this._specieChromosomes = specieChromosomes;
+    }
 
-        this.bodyChromosome.on('change', this._onChromosomeChange.bind(this));
-        this.developmentChromosome.on('change', this._onChromosomeChange.bind(this));
-        this.adaptationChromosome.on('change', this._onChromosomeChange.bind(this));
-        this.buildingChromosome.on('change', this._onChromosomeChange.bind(this));
-        this.combatChromosome.on('change', this._onChromosomeChange.bind(this));
-        this.adjustingChromosome.on('change', this._onChromosomeChange.bind(this));
+    getChromosomeByType(type) {
+        for (let chromosome of this._specieChromosomes) {
+            if (chromosome.type == type) {
+                return chromosome;
+            }
+        }
     }
 
     _onChromosomeChange() {
@@ -1519,8 +1549,9 @@ __webpack_require__.r(__webpack_exports__);
 
 class SpecieChromosome extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
-    constructor(activatedSpecieGenesIds, specieGenes) {
+    constructor(type, activatedSpecieGenesIds, specieGenes) {
         super();
+        this.type = type;
         this.activatedSpecieGenesIds = activatedSpecieGenesIds;
         this.specieGenes = specieGenes;
     }
@@ -1596,18 +1627,17 @@ __webpack_require__.r(__webpack_exports__);
 class SpecieFactory {
 
     buildSpecieFromJson(specieJson) {
-        let bodyChromosome =this._buildChromosome(specieJson.body);
-        let developmentChromosome = this._buildChromosome(specieJson.development);
-        let adaptationChromosome = this._buildChromosome(specieJson.adaptation);
-        let buildingChromosome = this._buildChromosome(specieJson.building);
-        let combatChromosome = this._buildChromosome(specieJson.combat);
-        let adjustingChromosome = this._buildChromosome(specieJson.adjusting);
+        let chromosomes = []
 
-        return new _specie__WEBPACK_IMPORTED_MODULE_0__.Specie(bodyChromosome, developmentChromosome, adaptationChromosome, buildingChromosome, combatChromosome, adjustingChromosome);
+        for (let specieChromosomeJson of specieJson['specieChromosomesSet']) {
+            chromosomes.push(this._buildChromosome(specieChromosomeJson));
+        }
+
+        return new _specie__WEBPACK_IMPORTED_MODULE_0__.Specie(chromosomes);
     }
 
     _buildChromosome(chromosomeJson) {
-        return new _specieChromosome__WEBPACK_IMPORTED_MODULE_1__.SpecieChromosome(chromosomeJson.activatedGenesIds, chromosomeJson.genes);
+        return new _specieChromosome__WEBPACK_IMPORTED_MODULE_1__.SpecieChromosome(chromosomeJson.type, chromosomeJson.activatedGenesIds, chromosomeJson.genes);
     }
 }
 
@@ -1749,6 +1779,30 @@ const AntTypes = {
     WARRIOR: 'warrior',
     QUEEN: 'queen',
     MALE: 'male'
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/enum/chromosomeTypes.js":
+/*!*****************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/enum/chromosomeTypes.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ChromosomesTypes": () => (/* binding */ ChromosomesTypes)
+/* harmony export */ });
+const ChromosomesTypes = {
+    BODY: 'body',
+    DEVELOPMENT: 'development',
+    ADAPTATION: 'adaptation',
+    BUILDING: 'building',
+    COMBAT: 'combat',
+    ADJUSTING: 'adjusting'
 }
 
 
@@ -2270,7 +2324,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
 /* harmony import */ var _entity_ant__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entity/ant */ "./bugs/core/client/app/src/domain/entity/ant/index.js");
 /* harmony import */ var _entity_egg__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/egg */ "./bugs/core/client/app/src/domain/entity/egg.js");
-/* harmony import */ var _entity_genome__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./entity/genome */ "./bugs/core/client/app/src/domain/entity/genome.js");
+/* harmony import */ var _entity_genetic_genome__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./entity/genetic/genome */ "./bugs/core/client/app/src/domain/entity/genetic/genome.js");
 /* harmony import */ var _entity_nuptialMale__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./entity/nuptialMale */ "./bugs/core/client/app/src/domain/entity/nuptialMale.js");
 
 
@@ -2402,12 +2456,8 @@ class WorldFactory {
     }
 
     buildNuptialMale(nuptialMaleJson) {
-        let genome = this._buildGenome(nuptialMaleJson.genome);
+        let genome = _entity_genetic_genome__WEBPACK_IMPORTED_MODULE_12__.Genome.buildFromJson(nuptialMaleJson.genome);
         return new _entity_nuptialMale__WEBPACK_IMPORTED_MODULE_13__.NuptialMale(nuptialMaleJson.id, genome, nuptialMaleJson.stats, nuptialMaleJson.isLocal);
-    }
-
-    _buildGenome(genomeJson) {
-        return new _entity_genome__WEBPACK_IMPORTED_MODULE_12__.Genome(genomeJson.maternal, genomeJson.paternal, genomeJson.avaliableAntTypes);
     }
 
 }
@@ -2734,12 +2784,6 @@ class SpecieBuilderApi {
     constructor(requester) {
         this._requester = requester;
     }
-
-    // loadSpecieData() {
-    //     return this._requester.get('world/nuptial_environment/specie').then((response) => {
-    //         return response.data;
-    //     });
-    // }
 
     saveSpecie(specie) {
         this._requester.post('world/nuptial_environment/specie', {
@@ -3303,6 +3347,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _chromosomesSetTmpl_html__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./chromosomesSetTmpl.html */ "./bugs/core/client/app/src/view/panel/base/genome/chromosomesSetTmpl.html");
 /* harmony import */ var _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/enum/genesTypes */ "./bugs/core/client/app/src/domain/enum/genesTypes.js");
 /* harmony import */ var _genes_geneView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./genes/geneView */ "./bugs/core/client/app/src/view/panel/base/genome/genes/geneView.js");
+/* harmony import */ var _domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @domain/enum/chromosomeTypes */ "./bugs/core/client/app/src/domain/enum/chromosomeTypes.js");
+
 
 
 
@@ -3341,9 +3387,9 @@ class GenomeView extends _baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView
 
         el.querySelector('[data-chromosome-set-title]').innerHTML = title;
 
-        this._renderChromosome(el.querySelector('[data-body-chromosome]'), chromosomesSet.body);
-        this._renderChromosome(el.querySelector('[data-development-chromosome]'), chromosomesSet.development);
-        this._renderChromosome(el.querySelector('[data-adjusting-chromosome]'), chromosomesSet.adjusting);
+        this._renderChromosome(el.querySelector('[data-body-chromosome]'), chromosomesSet.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_6__.ChromosomesTypes.BODY));
+        this._renderChromosome(el.querySelector('[data-development-chromosome]'), chromosomesSet.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_6__.ChromosomesTypes.DEVELOPMENT));
+        this._renderChromosome(el.querySelector('[data-adjusting-chromosome]'), chromosomesSet.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_6__.ChromosomesTypes.ADJUSTING));
     }
 
     _renderChromosome(el, chromosome) {
@@ -6291,11 +6337,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "SpecieBuilderTabView": () => (/* binding */ SpecieBuilderTabView)
 /* harmony export */ });
-/* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
-/* harmony import */ var _specieBuilderTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieBuilderTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabTmpl.html");
-/* harmony import */ var _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./chromosomeEditorTabView */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/chromosomeEditorTabView.js");
-/* harmony import */ var _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/panel/base/tabSwitcher */ "./bugs/core/client/app/src/view/panel/base/tabSwitcher/index.js");
-/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/styles.css");
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/styles.css");
+/* harmony import */ var _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
+/* harmony import */ var _specieBuilderTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./specieBuilderTabTmpl.html */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/specieBuilderTabTmpl.html");
+/* harmony import */ var _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./chromosomeEditorTabView */ "./bugs/core/client/app/src/view/panel/tabs/specieBuilderTab/chromosomeEditorTabView.js");
+/* harmony import */ var _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/panel/base/tabSwitcher */ "./bugs/core/client/app/src/view/panel/base/tabSwitcher/index.js");
+/* harmony import */ var _domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @domain/enum/chromosomeTypes */ "./bugs/core/client/app/src/domain/enum/chromosomeTypes.js");
 
 
 
@@ -6303,7 +6350,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class SpecieBuilderTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class SpecieBuilderTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
 
     constructor(el) {
         super(el);
@@ -6319,16 +6366,16 @@ class SpecieBuilderTabView extends _view_panel_base_baseHTMLView__WEBPACK_IMPORT
     }
 
     _render() {
-        this._el.innerHTML = _specieBuilderTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.innerHTML = _specieBuilderTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
 
-        this._bodyChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_2__.ChromosomeEditorTab(this._el.querySelector('[data-body-chromosome-editor-tab]'), this._specie.bodyChromosome);
-        this._developmentChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_2__.ChromosomeEditorTab(this._el.querySelector('[data-development-chromosome-editor-tab]'), this._specie.developmentChromosome);
-        this._adaptationChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_2__.ChromosomeEditorTab(this._el.querySelector('[data-adaptation-chromosome-editor-tab]'), this._specie.adaptationChromosome);
-        this._buildingChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_2__.ChromosomeEditorTab(this._el.querySelector('[data-building-chromosome-editor-tab]'), this._specie.buildingChromosome);
-        this._combatChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_2__.ChromosomeEditorTab(this._el.querySelector('[data-combat-chromosome-editor-tab]'), this._specie.combatChromosome);
-        this._adjustingChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_2__.ChromosomeEditorTab(this._el.querySelector('[data-adjusting-chromosome-editor-tab]'), this._specie.adjustingChromosome);
+        this._bodyChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-body-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.BODY));
+        this._developmentChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-development-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.DEVELOPMENT));
+        this._adaptationChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-adaptation-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.ADAPTATION));
+        this._buildingChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-building-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.BUILDING));
+        this._combatChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-combat-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.COMBAT));
+        this._adjustingChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-adjusting-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.ADJUSTING));
 
-        this._tabSwitcher = new _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_3__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+        this._tabSwitcher = new _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_4__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
             { name: 'body_editor', label: 'Тіло', tab: this._bodyChromosomeEditorTab },
             { name: 'development_editor', label: 'Розвиток', tab: this._developmentChromosomeEditorTab },
             { name: 'adaptation_editor', label: 'Адаптація', tab: this._adaptationChromosomeEditorTab },
