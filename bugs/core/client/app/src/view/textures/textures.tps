@@ -124,7 +124,7 @@
             <key>data</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>../../../static/core/textures/world_spritesheet.json</filename>
+                <filename>build/world_spritesheet.json</filename>
             </struct>
         </map>
         <key>multiPackMode</key>

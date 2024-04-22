@@ -10,6 +10,8 @@ module.exports = {
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'bugs/core/static/core'),
+        assetModuleFilename: '[hash][ext]',
+        clean: true
     },
     resolve: {
         alias: {
@@ -28,6 +30,10 @@ module.exports = {
                 test: /\.html$/i,
                 loader: "html-loader",
             },
+            {
+                test: /\.png$/i,
+                type: 'asset/resource'
+            }
         ],
     },
 };

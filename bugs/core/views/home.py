@@ -9,11 +9,6 @@ def index(request):
 
     initial_data = {
         'user': request.user.get_general_data() if request.user.is_authenticated else None,
-        'urls': {
-            'world_spritesheet': static('core/textures/world_spritesheet.png'),
-            'world_spritesheet_atlas': static('core/textures/world_spritesheet.json'),
-        },
-        'step_time': STEP_TIME,
         'specie': wf.get_specie_for_client(request.user.id)
     }
     

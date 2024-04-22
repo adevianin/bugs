@@ -1,6 +1,17 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png":
+/*!****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/textures/build/world_spritesheet.png ***!
+  \****************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+module.exports = __webpack_require__.p + "6286cc76908529f02998.png";
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/domainFacade.js":
 /*!*********************************************************!*\
   !*** ./bugs/core/client/app/src/domain/domainFacade.js ***!
@@ -3018,6 +3029,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _panel_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./panel/base/baseHTMLView */ "./bugs/core/client/app/src/view/panel/base/baseHTMLView.js");
 /* harmony import */ var _popups_popupManager__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./popups/popupManager */ "./bugs/core/client/app/src/view/popups/popupManager.js");
 /* harmony import */ var _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @utils/eventEmitter.js */ "./bugs/core/client/utils/eventEmitter.js");
+/* harmony import */ var _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./textures/build/world_spritesheet.json */ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.json");
+/* harmony import */ var _textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./textures/build/world_spritesheet.png */ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png");
 
 
 
@@ -3026,11 +3039,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function initViewLayer(domainFacade, initialData) {
+
+
+function initViewLayer(domainFacade) {
     let requester = new _utils_requester__WEBPACK_IMPORTED_MODULE_1__.Requester();
     let eventBus = new _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__.EventEmitter();
 
-    let spritesheetManager = new _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__.WorldSpritesheetManager(initialData.urls.world_spritesheet, initialData.urls.world_spritesheet_atlas, requester);
+    let spritesheetManager = new _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__.WorldSpritesheetManager(_textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_8__, _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_7__, requester);
     _world_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useTextureManager(spritesheetManager);
 
     let popupManager = new _popups_popupManager__WEBPACK_IMPORTED_MODULE_5__.PopupManager(document.querySelector('[data-popup-container]'));
@@ -7657,21 +7672,19 @@ __webpack_require__.r(__webpack_exports__);
 
 class WorldSpritesheetManager {
     
-    constructor(imageUrl, atlasUrl, requester) {
+    constructor(imageUrl, atlas, requester) {
         this._imageUrl = imageUrl;
-        this._atlasUrl = atlasUrl;
+        this._atlas = atlas;
         this._requester = requester;
         this._spritesheet = null;
     }
 
     async prepareTextures() {
-        let atlas_response = await this._requester.get(this._atlasUrl);
-        let atlasData = atlas_response.data;
         let texture = await pixi_js__WEBPACK_IMPORTED_MODULE_0__.Assets.load(this._imageUrl);
 
         this._spritesheet = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Spritesheet(
             texture,
-            atlasData
+            this._atlas
         );
 
         await this._spritesheet.parse();
@@ -48817,6 +48830,17 @@ __webpack_require__.r(__webpack_exports__);
 //# sourceMappingURL=index.mjs.map
 
 
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.json":
+/*!*****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/textures/build/world_spritesheet.json ***!
+  \*****************************************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = JSON.parse('{"frames":{"ant_male_1.png":{"frame":{"x":0,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_2.png":{"frame":{"x":32,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_3.png":{"frame":{"x":64,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_4.png":{"frame":{"x":96,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_5.png":{"frame":{"x":128,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_6.png":{"frame":{"x":160,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_7.png":{"frame":{"x":192,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_8.png":{"frame":{"x":224,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_dead.png":{"frame":{"x":0,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_1.png":{"frame":{"x":32,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_2.png":{"frame":{"x":64,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_3.png":{"frame":{"x":96,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_4.png":{"frame":{"x":128,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_5.png":{"frame":{"x":160,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_6.png":{"frame":{"x":192,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_7.png":{"frame":{"x":224,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_8.png":{"frame":{"x":0,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_dead.png":{"frame":{"x":32,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_1.png":{"frame":{"x":64,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_2.png":{"frame":{"x":96,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_3.png":{"frame":{"x":128,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_4.png":{"frame":{"x":160,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_5.png":{"frame":{"x":192,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_6.png":{"frame":{"x":224,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_7.png":{"frame":{"x":0,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_8.png":{"frame":{"x":32,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_dead.png":{"frame":{"x":64,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_1.png":{"frame":{"x":96,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_2.png":{"frame":{"x":128,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_3.png":{"frame":{"x":160,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_4.png":{"frame":{"x":192,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_5.png":{"frame":{"x":224,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_6.png":{"frame":{"x":0,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_7.png":{"frame":{"x":32,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_8.png":{"frame":{"x":64,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_dead.png":{"frame":{"x":96,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"grass.png":{"frame":{"x":184,"y":224,"w":64,"h":64},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":64,"h":64},"sourceSize":{"w":64,"h":64}},"ground_beetle_1.png":{"frame":{"x":128,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_2.png":{"frame":{"x":160,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_3.png":{"frame":{"x":192,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_4.png":{"frame":{"x":224,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_5.png":{"frame":{"x":0,"y":160,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_6.png":{"frame":{"x":32,"y":160,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_7.png":{"frame":{"x":64,"y":160,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_8.png":{"frame":{"x":96,"y":160,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_dead.png":{"frame":{"x":128,"y":160,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_ant_food_1v.png":{"frame":{"x":160,"y":160,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_flower_1v.png":{"frame":{"x":192,"y":160,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_flower_2v.png":{"frame":{"x":224,"y":160,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_flower_3v.png":{"frame":{"x":0,"y":192,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_ground_beetle_corpse_1v.png":{"frame":{"x":0,"y":288,"w":45,"h":65},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":45,"h":65},"sourceSize":{"w":45,"h":65}},"item_honeydew_1v.png":{"frame":{"x":32,"y":192,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_1v.png":{"frame":{"x":64,"y":192,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_2v.png":{"frame":{"x":96,"y":192,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_3v.png":{"frame":{"x":128,"y":192,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_4v.png":{"frame":{"x":160,"y":192,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_source_honeydew.png":{"frame":{"x":45,"y":288,"w":90,"h":110},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":90,"h":110},"sourceSize":{"w":90,"h":110}},"item_source_honeydew_not_fertile.png":{"frame":{"x":135,"y":288,"w":90,"h":110},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":90,"h":110},"sourceSize":{"w":90,"h":110}},"marker_cross.png":{"frame":{"x":192,"y":192,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_eat.png":{"frame":{"x":224,"y":192,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_pillage.png":{"frame":{"x":0,"y":224,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_pointer.png":{"frame":{"x":32,"y":224,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"nest.png":{"frame":{"x":64,"y":224,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}},"nest_building.png":{"frame":{"x":104,"y":224,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}},"nest_destroyed.png":{"frame":{"x":144,"y":224,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}}},"animations":{"ant_male":["ant_male_1.png","ant_male_2.png","ant_male_3.png","ant_male_4.png","ant_male_5.png","ant_male_6.png","ant_male_7.png","ant_male_8.png"],"ant_queen":["ant_queen_1.png","ant_queen_2.png","ant_queen_3.png","ant_queen_4.png","ant_queen_5.png","ant_queen_6.png","ant_queen_7.png","ant_queen_8.png"],"ant_warrior":["ant_warrior_1.png","ant_warrior_2.png","ant_warrior_3.png","ant_warrior_4.png","ant_warrior_5.png","ant_warrior_6.png","ant_warrior_7.png","ant_warrior_8.png"],"ant_worker":["ant_worker_1.png","ant_worker_2.png","ant_worker_3.png","ant_worker_4.png","ant_worker_5.png","ant_worker_6.png","ant_worker_7.png","ant_worker_8.png"],"ground_beetle":["ground_beetle_1.png","ground_beetle_2.png","ground_beetle_3.png","ground_beetle_4.png","ground_beetle_5.png","ground_beetle_6.png","ground_beetle_7.png","ground_beetle_8.png"]},"meta":{"app":"https://www.codeandweb.com/texturepacker","version":"1.1","image":"world_spritesheet.png","format":"RGBA8888","size":{"w":256,"h":398},"scale":"1","smartupdate":"$TexturePacker:SmartUpdate:5de1e96911560d3d5f10ea7caeb61c2a:121521356e5a53d8e72e1010a329f673:2b831dbdc2ad4f91b77d89d68a6c0718$"}}');
+
 /***/ })
 
 /******/ 	});
@@ -48910,6 +48934,26 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/publicPath */
+/******/ 	(() => {
+/******/ 		var scriptUrl;
+/******/ 		if (__webpack_require__.g.importScripts) scriptUrl = __webpack_require__.g.location + "";
+/******/ 		var document = __webpack_require__.g.document;
+/******/ 		if (!scriptUrl && document) {
+/******/ 			if (document.currentScript)
+/******/ 				scriptUrl = document.currentScript.src;
+/******/ 			if (!scriptUrl) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				if(scripts.length) scriptUrl = scripts[scripts.length - 1].src
+/******/ 			}
+/******/ 		}
+/******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
+/******/ 		// or pass an empty string ("") and set the __webpack_public_path__ variable from your code to use your own logic.
+/******/ 		if (!scriptUrl) throw new Error("Automatic publicPath is not supported in this browser");
+/******/ 		scriptUrl = scriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
+/******/ 		__webpack_require__.p = scriptUrl;
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/nonce */
 /******/ 	(() => {
 /******/ 		__webpack_require__.nc = undefined;
@@ -48937,7 +48981,7 @@ let initialData = (0,_utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__.readIni
 
 let syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)();
 let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)(syncLayer.apis, syncLayer.serverConnection, initialData);
-(0,_view__WEBPACK_IMPORTED_MODULE_2__.initViewLayer)(domainFacade, initialData);
+(0,_view__WEBPACK_IMPORTED_MODULE_2__.initViewLayer)(domainFacade);
 
 domainFacade.start();
 
