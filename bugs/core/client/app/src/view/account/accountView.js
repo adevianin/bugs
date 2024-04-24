@@ -1,23 +1,25 @@
 import './styles.css';
 
 import template from './template.html';
-import { BaseHTMLView } from '../panel/base/baseHTMLView';
+import { BaseHTMLView } from '../base/baseHTMLView';
 
 class AccountView extends BaseHTMLView {
 
     constructor(el) {
         super(el);
 
-        this.$domainFacade.events.on('userLogin', this._renderState.bind(this));
-        this.$domainFacade.events.on('userLogout', this._renderState.bind(this));
+        // this.$domainFacade.events.on('userLogin', this._renderState.bind(this));
+        // this.$domainFacade.events.on('userLogout', this._renderState.bind(this));
 
         this._render();
-        this._renderState();
+        // this._renderState();
 
         this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));
         this._registrationBtn.addEventListener('click', this._onRegistrationBtnClick.bind(this));
         this._switchModeToRegisterBtn.addEventListener('click', this._onSwitchModeToRegisterClick.bind(this));
         this._switchModeToLoginBtn.addEventListener('click', this._onSwitchModeToLoginClick.bind(this));
+
+        this._switchMode('login');
     }
 
     _render() {
@@ -40,16 +42,16 @@ class AccountView extends BaseHTMLView {
         this._toggleUsernameIsntUniqueError(false);
     }
 
-    _renderState() {
-        let isLoggedIn = this.$domainFacade.isLoggedIn();
+    // _renderState() {
+    //     let isLoggedIn = this.$domainFacade.isLoggedIn();
 
-        if (isLoggedIn) {
-            this._toggle(false);
-        } else {
-            this._toggle(true);
-            this._switchMode('login');
-        }
-    }
+    //     if (isLoggedIn) {
+    //         this._toggle(false);
+    //     } else {
+    //         this._toggle(true);
+    //         this._switchMode('login');
+    //     }
+    // }
 
     _onLoginBtnClick() {
         let username = this._loginTabEl.querySelector('[data-user-name]').value;

@@ -1,6 +1,6 @@
 import './styles.css';
 
-import { BaseHTMLView } from "../baseHTMLView";
+import { BaseHTMLView } from "../../../base/baseHTMLView";
 
 class TabSwitcher extends BaseHTMLView {
 

@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "../baseHTMLView";
+import { BaseHTMLView } from "../../../base/baseHTMLView";
 import { EntityTypes } from "@domain/enum/entityTypes";
 
 class NestSelectorView extends BaseHTMLView {

@@ -1,5 +1,5 @@
 import './styles.css';
-import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
+import { BaseHTMLView } from "@view/base/baseHTMLView";
 import coloniesTabTmpl from "./coloniesTab.html";
 import { ColoniesListView } from './coloniesList';
 import { ColonyManager } from './colonyManager';

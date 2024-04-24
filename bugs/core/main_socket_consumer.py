@@ -6,7 +6,7 @@ class MainSocketConsumer(WebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._world_facade = WorldFacade.get_instance()
-        self._synced = False
+        self._inited = False
 
     def connect(self):
         self._user = self.scope["user"]
@@ -28,15 +28,16 @@ class MainSocketConsumer(WebsocketConsumer):
         msg = json.loads(text_data)
 
     def _on_step_start(self):
-        if not self._synced:
+        if not self._inited:
             self.send(json.dumps({
-                'type': 'sync_step',
-                'world': self._world_facade.get_world_for_client()
+                'type': 'init_step',
+                'world': self._world_facade.get_world_for_client(),
+                'specie': self._world_facade.get_specie_for_client(self._user.id),
             }))
-            self._synced = True
+            self._inited = True
 
     def _on_action(self, action: dict, for_user_id: int):
-        if self._synced:
+        if self._inited:
             if for_user_id is None or for_user_id == self._user.id:
                 self.send(json.dumps({
                     'type': 'action',

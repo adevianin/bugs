@@ -1,6 +1,6 @@
 import './style.css';
 import popupTemplate from './template.html';
-import { BaseHTMLView } from '../../panel/base/baseHTMLView';
+import { BaseHTMLView } from '../../base/baseHTMLView';
 
 class BasePopup extends BaseHTMLView {
 

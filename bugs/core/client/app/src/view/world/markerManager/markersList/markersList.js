@@ -1,4 +1,4 @@
-import { BaseGraphicView } from "@view/world/base/baseGraphicView";
+import { BaseGraphicView } from "@view/base/baseGraphicView";
 import * as PIXI from 'pixi.js';
 
 class MarkersList extends BaseGraphicView {

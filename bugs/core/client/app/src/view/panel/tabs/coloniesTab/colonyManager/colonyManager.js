@@ -1,5 +1,5 @@
 import './styles.css';
-import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
+import { BaseHTMLView } from "@view/base/baseHTMLView";
 import colonyManagerTmpl from "./colonyManagerTmpl.html";
 import { NestsTabView } from './nestsTab';
 import { AntsTab } from './antsTab';

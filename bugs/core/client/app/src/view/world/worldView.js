@@ -1,12 +1,9 @@
-import './worldStyles.css';
-
 import * as PIXI from 'pixi.js';
+import { BaseGraphicView } from "@view/base/baseGraphicView";
 import { AntView } from './antView';
 import { NestView } from './nestView';
-import { Camera } from './camera';
-import { BaseGraphicView } from './base/baseGraphicView';
-import { EntityTypes } from '../../domain/enum/entityTypes';
-import { MarkerManagerView } from './markerManager/markerManagerView';
+import { EntityTypes } from "@domain/enum/entityTypes";
+import { MarkerManagerView } from "./markerManager/markerManagerView";
 import { GroundBeetleView } from './groundBeetleView';
 import { ItemView } from './itemView';
 import { ItemSourceView } from './itemSourceView';
@@ -14,23 +11,28 @@ import { ItemAreaView } from './itemAreaView';
 
 class WorldView extends BaseGraphicView {
 
-    constructor(el) {
+    constructor(container) {
         super();
-        this._el = el;
+        this._container = container;
+        
         this._entityViews = [];
         this._textures = {};
 
-        this._init();
+        this._render();
     }
 
-    async _init() {
-        await this.$textureManager.prepareTextures();
+    turnOn() {
+        this._resizeBg();
+        this._buildEntityViews();
+    }
 
-        this._app = new PIXI.Application({ resizeTo: this._el });
-        this._el.appendChild(this._app.view);
+    turnOff() {
+        this._clearEntityViews();
+        this._markerManager.clear();
+    }
 
+    _render() {
         this._bg = new PIXI.TilingSprite(this.$textureManager.getTexture('grass.png'));
-        this._entityContainer = new PIXI.Container();
         this._antContainer = new PIXI.Container();
         this._groundBeetleContainer = new PIXI.Container();
         this._itemContainer = new PIXI.Container();
@@ -40,33 +42,30 @@ class WorldView extends BaseGraphicView {
         this._itemSourceContainer = new PIXI.Container();
         this._markersContainer = new PIXI.Container();
 
-        this._app.stage.addChild(this._entityContainer);
+        this._container.addChild(this._bg);
+        this._container.addChild(this._nestContainer);
+        this._container.addChild(this._itemAreaContainer);
+        this._container.addChild(this._itemContainer);
+        this._container.addChild(this._antContainer);
+        this._container.addChild(this._groundBeetleContainer);
+        this._container.addChild(this._bigContainer);
+        this._container.addChild(this._itemSourceContainer);
+        this._container.addChild(this._markersContainer);
 
-        this._entityContainer.addChild(this._bg);
-        this._entityContainer.addChild(this._nestContainer);
-        this._entityContainer.addChild(this._itemAreaContainer);
-        this._entityContainer.addChild(this._itemContainer);
-        this._entityContainer.addChild(this._antContainer);
-        this._entityContainer.addChild(this._groundBeetleContainer);
-        this._entityContainer.addChild(this._bigContainer);
-        this._entityContainer.addChild(this._itemSourceContainer);
-        this._entityContainer.addChild(this._markersContainer);
-
-        this._camera = new Camera(this._entityContainer, this._bg, this._app.view);
-
-        this.$domainFacade.events.on('worldInited', this._onWorldInit.bind(this));
-        this.$domainFacade.events.on('worldCleared', this._onWorldCleared.bind(this));
-        this.$domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
-    }
-
-    _onWorldInit() {
-        this._setUpCamera();
-        this._buildEntityViews();
         this._markerManager = new MarkerManagerView(this._markersContainer);
+
+        this.$domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
     }
 
     _onEntityBorn(entity) {
         this._buildEntityView(entity);
+    }
+
+    _clearEntityViews() {
+        this._entityViews.forEach(view => {
+            view.remove();
+        });
+        this._entityViews = [];
     }
 
     _buildEntityViews() {
@@ -104,23 +103,14 @@ class WorldView extends BaseGraphicView {
         this._entityViews.push(view);
     }
 
-    _setUpCamera() {
+    _resizeBg() {
         let worldSize = this.$domainFacade.getWorldSize();
-
         this._bg.width = worldSize[0];
         this._bg.height = worldSize[1];
-
-        this._camera.setMapSize(worldSize[0], worldSize[1]);
-    }
-
-    _onWorldCleared() {
-        this._entityViews.forEach(view => {
-            view.remove();
-        });
-        this._entityViews = [];
-        this._markerManager.remove();
     }
 
 }
 
-export { WorldView }
+export {
+    WorldView
+}

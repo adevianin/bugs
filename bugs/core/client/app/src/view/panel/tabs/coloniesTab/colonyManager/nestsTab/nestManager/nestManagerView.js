@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
+import { BaseHTMLView } from "@view/base/baseHTMLView";
 import nestManagerTmpl from './nestManagerTmpl.html';
 import { TabSwitcher } from "@view/panel/base/tabSwitcher";
 import { EggTabView } from "./eggTab/eggTabView";

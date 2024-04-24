@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
+import { BaseHTMLView } from "@view/base/baseHTMLView";
 import antTmpl from './antTmpl.html';
 import { NestSelectorView } from "@view/panel/base/nestSelector";
 import { AntTypes } from "@domain/enum/antTypes";

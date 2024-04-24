@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
+import { BaseHTMLView } from "@view/base/baseHTMLView";
 import malesSearchTmpl from './malesSearchTmpl.html';
 import { NuptialMaleProfileView } from "./nuptialMaleProfileView";
 

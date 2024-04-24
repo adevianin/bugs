@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
+import { BaseHTMLView } from "@view/base/baseHTMLView";
 import specieGeneTmpl from './specieGeneTmpl.html';
 import { GeneView } from "@view/panel/base/genome/genes/geneView";
 

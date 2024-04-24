@@ -1,5 +1,5 @@
 import './style.css';
-import { BaseHTMLView } from "../baseHTMLView";
+import { BaseHTMLView } from "../../../base/baseHTMLView";
 import genomeTmpl from './genomeTmpl.html';
 import chromosomesSetTmpl from './chromosomesSetTmpl.html';
 import { GenesTypes } from '@domain/enum/genesTypes';

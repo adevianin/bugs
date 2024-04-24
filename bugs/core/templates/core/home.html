@@ -4,15 +4,6 @@
         {{ initial_data|json_script:"initial-data" }}
         {% csrf_token %}
     </head>
-    <body>
-        <div class="popup-container" data-popup-container></div>
-        <div class="game-container" data-game-container>
-            <div class="canvas-container" data-world></div>
-            <div class="panel-container">
-                <div class="panel" data-panel></div>
-            </div>
-        </div>
-        <div class="account hidden" data-account-view></div>
-    </body>
+    <body></body>
     <script src="{% static 'core/app.js' %}"></script>
 </html>

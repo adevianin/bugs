@@ -1,4 +1,4 @@
-import { BaseGraphicView } from "./base/baseGraphicView";
+import { BaseGraphicView } from "../base/baseGraphicView";
 import * as PIXI from 'pixi.js';
 
 class EntityView extends BaseGraphicView {

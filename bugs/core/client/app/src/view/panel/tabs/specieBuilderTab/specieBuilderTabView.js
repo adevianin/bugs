@@ -1,5 +1,5 @@
 import './styles.css';
-import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
+import { BaseHTMLView } from "@view/base/baseHTMLView";
 import specieBuilderTabTmpl from './specieBuilderTabTmpl.html';
 import { ChromosomeEditorTab } from "./chromosomeEditorTabView";
 import { TabSwitcher } from "@view/panel/base/tabSwitcher";

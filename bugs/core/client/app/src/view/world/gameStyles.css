@@ -1,0 +1,10 @@
+.game {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.game__canvas-container {
+    flex-grow: 1;
+    overflow: hidden;
+}

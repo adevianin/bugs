@@ -1,7 +1,7 @@
 import './styles.css'
 
 import panelTmpl from './panelTmpl.html';
-import { BaseHTMLView } from './base/baseHTMLView';
+import { BaseHTMLView } from '../base/baseHTMLView';
 import { UserTab } from './tabs/userTab/userTab';
 import { ColoniesTabView } from './tabs/coloniesTab';
 import { TabSwitcher } from '@view/panel/base/tabSwitcher/tabSwitcher';
@@ -13,9 +13,20 @@ class Panel extends BaseHTMLView {
     constructor(el) {
         super(el);
 
-        this.$domainFacade.events.on('userLogout', this._removeTabViews.bind(this));
-        this.$domainFacade.events.on('worldInited', this._renderTabViews.bind(this));
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
+    }
+
+    turnOn() {
+        this.toggle(true);
+        this._renderTabViews();
+    }
+
+    turnOff() {
+        this.toggle(false);
+        if (this._tabSwitcher) {
+            this._tabSwitcher.remove();
+            this._tabSwitcher = null;
+        }
     }
 
     _renderTabViews() {
@@ -32,10 +43,6 @@ class Panel extends BaseHTMLView {
             { name: 'nuptial_flight', label: 'Шлюбний політ', tab: this._nuptialFlightTab },
             { name: 'specie_builder', label: 'Вид', tab: this._specieBuildertTab },
         ]);
-    }
-
-    _removeTabViews() {
-        this._tabSwitcher.remove();
     }
 
     _onNestManageRequest(nest) {

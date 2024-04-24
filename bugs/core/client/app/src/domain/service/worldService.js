@@ -40,12 +40,12 @@ class WorldService {
         
         this._world.size = worldJson.size;
         
-        this._mainEventBus.emit('worldInited');
+        // this._mainEventBus.emit('worldInited');
     }
 
     _clearWorld() {
         this._world.clear();
-        this._mainEventBus.emit('worldCleared');
+        // this._mainEventBus.emit('worldCleared');
     }
 
     giveBirthToEntity(entityJson) {

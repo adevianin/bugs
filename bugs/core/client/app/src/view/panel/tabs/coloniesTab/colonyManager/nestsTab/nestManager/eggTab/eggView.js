@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
+import { BaseHTMLView } from "@view/base/baseHTMLView";
 import eggTmpl from './eggTmpl.html';
 import { ClosableGenomeView } from "@view/panel/base/genome/closableGenomeView";
 import { antTypesLabels } from "@view/panel/base/labels/antTypesLabels";

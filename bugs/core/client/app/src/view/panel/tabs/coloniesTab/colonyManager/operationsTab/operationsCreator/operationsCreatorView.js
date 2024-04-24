@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
+import { BaseHTMLView } from "@view/base/baseHTMLView";
 import operationsCreatorTmpl from './operationsCreatorTmpl.html';
 import { NewNestOperationCreatorView, DestroyNestOperationCreatorView, PillageNestOperationCreatorView } from "./operationCreators";
 

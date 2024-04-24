@@ -1,36 +1,73 @@
 import './appStyles.css';
 
-import { WorldView } from './world/worldView';
+import { BaseHTMLView } from './base/baseHTMLView';
+import { GameView } from './world/gameView';
 import { AccountView } from './account/accountView';
-import { Panel } from './panel/panel';
+import appTmpl from './appTmpl.html';
 
-class AppView {
-    constructor(document, domainFacade) {
-        this._document = document;
-        this._domainFacade = domainFacade;
+class AppView extends BaseHTMLView {
+    constructor(el) {
+        super(el);
 
-        this._domainFacade.events.on('userLogin', this._renderLoginStatus.bind(this));
-        this._domainFacade.events.on('userLogout', this._renderLoginStatus.bind(this));
+        this.$domainFacade.events.on('userLogin', this._onLogin.bind(this));
+        this.$domainFacade.events.on('userLogout', this._onLogout.bind(this));
+        this.$domainFacade.events.on('initStepDone', this._onInitStepDone.bind(this));
 
         this._render();
     }
 
     _render() {
-        this._renderLoginStatus();
+        this._el.innerHTML = appTmpl;
 
-        let worldEl = this._document.querySelector('[data-world]');
-        this._worldView = new WorldView(worldEl);
-
-        let accountViewEl = this._document.querySelector('[data-account-view]');
+        let accountViewEl = this._el.querySelector('[data-account]');
         this._accountView = new AccountView(accountViewEl);
 
-        let panelViewEl = this._document.querySelector('[data-panel]');
-        this._panel = new Panel(panelViewEl);
+        let gameEl = this._el.querySelector('[data-game]');
+        this._gameView = new GameView(gameEl);
+
+        let isLoggedin = this.$domainFacade.isLoggedIn();
+        if (isLoggedin) {
+            this._renderLoggedInState();
+        } else {
+            this._renderLoggedOutState();
+        }
     }
 
-    _renderLoginStatus() {
-        let isLoggedin = this._domainFacade.isLoggedIn();
-        this._document.querySelector('[data-game-container]').classList.toggle('hidden', !isLoggedin);
+    _renderLoggedInState() {
+        console.log('loggedin');
+        this._accountView.toggle(false);
+        this._gameView.turnOff();
+        this._toggleGameLoader(true);
+    }
+
+    _renderLoggedOutState() {
+        console.log('loggedout');
+        this._accountView.toggle(true);
+        this._gameView.turnOff();
+        this._toggleGameLoader(false);
+    }
+
+    _renderAppInitedState() {
+        console.log('inited');
+        this._accountView.toggle(false);
+        this._gameView.turnOn();
+        this._toggleGameLoader(false);
+    }
+
+    _toggleGameLoader(isEnabled) {
+        console.log('loader', isEnabled);
+    }
+
+    _onLogin() {
+        this._renderLoggedInState();
+    }
+
+    _onLogout() {
+        this._renderLoggedOutState();
+    }
+
+    _onInitStepDone() {
+        this._renderAppInitedState();
     }
 }
 

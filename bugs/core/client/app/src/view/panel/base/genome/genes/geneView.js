@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "../../baseHTMLView";
+import { BaseHTMLView } from "../../../../base/baseHTMLView";
 import { GenesTypes } from '@domain/enum/genesTypes';
 import geneTmpl from './geneTmpl.html';
 import bodyStrengthTmpl from './bodyStrengthTmpl.html';

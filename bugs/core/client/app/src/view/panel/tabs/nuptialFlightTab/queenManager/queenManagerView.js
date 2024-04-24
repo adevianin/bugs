@@ -1,5 +1,5 @@
 import './style.css';
-import { BaseHTMLView } from "@view/panel/base/baseHTMLView";
+import { BaseHTMLView } from "@view/base/baseHTMLView";
 import queenManagerTmpl from './queenManagerTmpl.html';
 import { MalesSearchView } from './malesSearch';
 // import { GenesView } from '@view/panel/base/genes';

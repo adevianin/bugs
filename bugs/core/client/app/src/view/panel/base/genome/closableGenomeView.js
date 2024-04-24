@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "../baseHTMLView";
+import { BaseHTMLView } from "../../../base/baseHTMLView";
 import closableGenomeTmpl from './closableGenomeTmpl.html';
 import { GenomeView } from "./genomeView";
 

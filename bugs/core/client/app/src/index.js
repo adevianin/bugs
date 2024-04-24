@@ -3,10 +3,14 @@ import { initDomainLayer } from './domain';
 import { initViewLayer } from './view';
 import { readInitialData } from '@utils/readInitialData';
 
-let initialData = readInitialData();
+async function initApp() {
+    let initialData = readInitialData();
 
-let syncLayer = initSyncLayer();
-let domainFacade = initDomainLayer(syncLayer.apis, syncLayer.serverConnection, initialData);
-initViewLayer(domainFacade);
+    let syncLayer = initSyncLayer();
+    let domainFacade = initDomainLayer(syncLayer.apis, syncLayer.serverConnection, initialData);
+    await initViewLayer(domainFacade);
 
-domainFacade.start();
+    domainFacade.start();
+}
+
+initApp();
