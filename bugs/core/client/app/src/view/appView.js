@@ -36,21 +36,18 @@ class AppView extends BaseHTMLView {
     }
 
     _renderLoggedInState() {
-        console.log('loggedin');
         this._accountView.toggle(false);
         this._gameView.turnOff();
         this._toggleGameLoader(true);
     }
 
     _renderLoggedOutState() {
-        console.log('loggedout');
         this._accountView.toggle(true);
         this._gameView.turnOff();
         this._toggleGameLoader(false);
     }
 
     _renderAppInitedState() {
-        console.log('inited');
         this._accountView.toggle(false);
         this._gameView.turnOn();
         this._toggleGameLoader(false);
