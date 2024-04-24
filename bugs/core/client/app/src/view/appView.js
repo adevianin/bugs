@@ -25,6 +25,8 @@ class AppView extends BaseHTMLView {
         let gameEl = this._el.querySelector('[data-game]');
         this._gameView = new GameView(gameEl);
 
+        this._loaderEl = this._el.querySelector('[data-loader]');
+
         let isLoggedin = this.$domainFacade.isLoggedIn();
         if (isLoggedin) {
             this._renderLoggedInState();
@@ -55,7 +57,7 @@ class AppView extends BaseHTMLView {
     }
 
     _toggleGameLoader(isEnabled) {
-        console.log('loader', isEnabled);
+        this._loaderEl.classList.toggle('hidden', !isEnabled);
     }
 
     _onLogin() {

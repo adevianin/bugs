@@ -1,6 +1,17 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png":
+/*!****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/textures/build/world_spritesheet.png ***!
+  \****************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+module.exports = __webpack_require__.p + "6286cc76908529f02998.png";
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/domainFacade.js":
 /*!*********************************************************!*\
   !*** ./bugs/core/client/app/src/domain/domainFacade.js ***!
@@ -2990,6 +3001,8 @@ class AppView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLVi
         let gameEl = this._el.querySelector('[data-game]');
         this._gameView = new _game_gameView__WEBPACK_IMPORTED_MODULE_2__.GameView(gameEl);
 
+        this._loaderEl = this._el.querySelector('[data-loader]');
+
         let isLoggedin = this.$domainFacade.isLoggedIn();
         if (isLoggedin) {
             this._renderLoggedInState();
@@ -3020,7 +3033,7 @@ class AppView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLVi
     }
 
     _toggleGameLoader(isEnabled) {
-        console.log('loader', isEnabled);
+        this._loaderEl.classList.toggle('hidden', !isEnabled);
     }
 
     _onLogin() {
@@ -8204,7 +8217,7 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 ___CSS_LOADER_EXPORT___.i(_node_modules_css_loader_dist_cjs_js_utilStyles_css__WEBPACK_IMPORTED_MODULE_2__["default"]);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "body {\r\n    margin: 0;\r\n    padding: 0;\r\n    overflow: hidden;\r\n}\r\n", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/appStyles.css"],"names":[],"mappings":"AAEA;IACI,SAAS;IACT,UAAU;IACV,gBAAgB;AACpB","sourcesContent":["@import './utilStyles.css';\r\n\r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n    overflow: hidden;\r\n}\r\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "body {\r\n    margin: 0;\r\n    padding: 0;\r\n    overflow: hidden;\r\n}\r\n\r\n.loader {\r\n    height: 100%;\r\n    width: 100%;\r\n    background-color: blueviolet;\r\n}\r\n", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/appStyles.css"],"names":[],"mappings":"AAEA;IACI,SAAS;IACT,UAAU;IACV,gBAAgB;AACpB;;AAEA;IACI,YAAY;IACZ,WAAW;IACX,4BAA4B;AAChC","sourcesContent":["@import './utilStyles.css';\r\n\r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n    overflow: hidden;\r\n}\r\n\r\n.loader {\r\n    height: 100%;\r\n    width: 100%;\r\n    background-color: blueviolet;\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -10233,7 +10246,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"game\" data-game></div>\r\n<div class=\"account\" data-account></div>";
+var code = "<div class=\"game\" data-game></div>\r\n<div class=\"account\" data-account></div>\r\n<div class=\"loader\" data-loader>loading</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -13618,17 +13631,6 @@ module.exports = {
   }
 };
 
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png":
-/*!****************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/textures/build/world_spritesheet.png ***!
-  \****************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "6286cc76908529f02998.png";
 
 /***/ }),
 
