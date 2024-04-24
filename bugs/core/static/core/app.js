@@ -3012,21 +3012,18 @@ class AppView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLVi
     }
 
     _renderLoggedInState() {
-        console.log('loggedin');
         this._accountView.toggle(false);
         this._gameView.turnOff();
         this._toggleGameLoader(true);
     }
 
     _renderLoggedOutState() {
-        console.log('loggedout');
         this._accountView.toggle(true);
         this._gameView.turnOff();
         this._toggleGameLoader(false);
     }
 
     _renderAppInitedState() {
-        console.log('inited');
         this._accountView.toggle(false);
         this._gameView.turnOn();
         this._toggleGameLoader(false);
@@ -7916,27 +7913,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _game_world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game/world/worldSpritesheetManager */ "./bugs/core/client/app/src/view/game/world/worldSpritesheetManager.js");
 /* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base/baseGraphicView */ "./bugs/core/client/app/src/view/base/baseGraphicView.js");
 /* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
-/* harmony import */ var _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @utils/eventEmitter.js */ "./bugs/core/client/utils/eventEmitter.js");
-/* harmony import */ var _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./textures/build/world_spritesheet.json */ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.json");
-/* harmony import */ var _textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./textures/build/world_spritesheet.png */ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png");
+/* harmony import */ var _popups_popupManager__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./popups/popupManager */ "./bugs/core/client/app/src/view/popups/popupManager.js");
+/* harmony import */ var _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @utils/eventEmitter.js */ "./bugs/core/client/utils/eventEmitter.js");
+/* harmony import */ var _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./textures/build/world_spritesheet.json */ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.json");
+/* harmony import */ var _textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./textures/build/world_spritesheet.png */ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png");
 
 
 
 
 
-// import { PopupManager } from './popups/popupManager';
+
 
 
 
 
 async function initViewLayer(domainFacade) {
     let requester = new _utils_requester__WEBPACK_IMPORTED_MODULE_1__.Requester();
-    let eventBus = new _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_5__.EventEmitter();
-    let spritesheetManager = new _game_world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__.WorldSpritesheetManager(_textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_7__, _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_6__, requester);
-    // let popupManager = new PopupManager(document.querySelector('[data-popup-container]'));
+    let eventBus = new _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__.EventEmitter();
+    let spritesheetManager = new _game_world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__.WorldSpritesheetManager(_textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_8__, _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_7__, requester);
+    let popupManager = new _popups_popupManager__WEBPACK_IMPORTED_MODULE_5__.PopupManager(document.querySelector('[data-popup-container]'));
 
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useTextureManager(spritesheetManager);
-    // BaseGraphicView.usePopupManager(popupManager);
+    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.usePopupManager(popupManager);
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useDomainFacade(domainFacade);
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useEventBus(eventBus);
     _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.useDomainFacade(domainFacade);
@@ -7944,7 +7942,7 @@ async function initViewLayer(domainFacade) {
 
     await spritesheetManager.prepareTextures();
 
-    let app = new _appView__WEBPACK_IMPORTED_MODULE_0__.AppView(document.body);
+    let app = new _appView__WEBPACK_IMPORTED_MODULE_0__.AppView(document.querySelector('[data-app]'));
 }
 
 
@@ -7971,6 +7969,38 @@ let antTypesLabels = {
     [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN]: 'Цариця',
     [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.MALE]: 'Самець',
 };
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/popups/popupManager.js":
+/*!**************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/popups/popupManager.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "PopupManager": () => (/* binding */ PopupManager)
+/* harmony export */ });
+class PopupManager {
+
+    constructor(el) {
+        this._el = el;
+    }
+
+    // openNestPopup(nest) {
+    //     let popup = new NestPopup(nest);
+    //     this._showPopup(popup);
+    // }
+
+    _showPopup(popup) {
+        this._el.innerHTML = '';
+        this._el.appendChild(popup.el);
+    }
+}
 
 
 

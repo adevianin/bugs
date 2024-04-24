@@ -4,6 +4,9 @@
         {{ initial_data|json_script:"initial-data" }}
         {% csrf_token %}
     </head>
-    <body></body>
+    <body>
+        <div data-app></div>
+        <div data-popup-container></div>
+    </body>
     <script src="{% static 'core/app.js' %}"></script>
 </html>
