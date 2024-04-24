@@ -1,7 +1,7 @@
 import './appStyles.css';
 
 import { BaseHTMLView } from './base/baseHTMLView';
-import { GameView } from './world/gameView';
+import { GameView } from './game/gameView';
 import { AccountView } from './account/accountView';
 import appTmpl from './appTmpl.html';
 
