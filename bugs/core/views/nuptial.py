@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, JsonResponse, HttpResponse
 from core.world.world_facade import WorldFacade
 from core.world.utils.point import Point
-from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_schema import SpecieSchema
+from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 import json
 
@@ -34,18 +34,16 @@ def found_colony(request: HttpRequest):
 
 @require_POST
 @login_required     
-def save_my_specie(request: HttpRequest):
+def save_specie_schema(request: HttpRequest):
     data = json.loads(request.body)
     wf = WorldFacade.get_instance()
 
-    body = data['specie']['body']
-    development = data['specie']['development']
-    adaptation = data['specie']['adaptation']
-    building = data['specie']['building']
-    combat = data['specie']['combat']
-    adjusting = data['specie']['adjusting']
-    schema = SpecieSchema.build(body, development, adaptation, building, combat, adjusting)
-    
-    wf.change_specie_schema(request.user.id, schema)
+    specie_schema = {}
+    for chromosome_type in data['specie_schema']:
+        type = ChromosomeTypes(chromosome_type)
+        ids = data['specie_schema'][chromosome_type]
+        specie_schema[type] = ids
+
+    wf.change_specie_schema(request.user.id, specie_schema)
 
     return HttpResponse(status=200)

@@ -15,10 +15,10 @@ class SpecieChromosomeSet():
     @property
     def specie_chromosomes(self) -> List[SpecieChromosome]:
         return self._specie_chromosomes
-
+    
     def accept_chromosome_set(self, chromosome_set: ChromosomesSet):
         for chromosome in chromosome_set.chromosomes:
-            specie_chromosome = self._get_specie_chomosome_by_type(chromosome.type)
+            specie_chromosome = self.get_specie_chromosome_by_type(chromosome.type)
             specie_chromosome.accept_chromosome(chromosome)
     
     def generate_chorosome_set(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> ChromosomesSet:
@@ -28,7 +28,7 @@ class SpecieChromosomeSet():
 
         return ChromosomesSet.build(generated_chromosomes)
     
-    def _get_specie_chomosome_by_type(self, type: ChromosomeTypes):
+    def get_specie_chromosome_by_type(self, type: ChromosomeTypes) -> SpecieChromosome:
         for specie_chromosome in self._specie_chromosomes:
             if specie_chromosome.type == type:
                 return specie_chromosome

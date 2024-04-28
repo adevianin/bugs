@@ -26,6 +26,9 @@ class SpecieChromosome():
     def type(self):
         return self._type
     
+    def apply_schema(self, ids: List[str]):
+        self._activated_specie_genes_ids = ids
+    
     def accept_chromosome(self, chromosome: Chromosome):
         for gene in chromosome.genes:
             specie_gene = SpecieGene.build_new(gene)
@@ -39,12 +42,29 @@ class SpecieChromosome():
 
         return Chromosome.build(self.type, generated_genes)
     
-    def get_specie_gene_by_id(self, id: str):  
+    def get_specie_gene_by_id(self, id: str) -> SpecieGene:  
         for specie_gene in self._specie_genes:
             if specie_gene.id == id:
                 return specie_gene
             
         return None
+    
+    def validate_schema(self, validating_ids: List[str]) -> bool:
+        chromosome_genes_ids = [specie_gene.id for specie_gene in self._specie_genes]
+
+        for id in validating_ids:
+            if id not in chromosome_genes_ids:
+                return False
+            
+        genes_types = set()
+        for id in validating_ids:
+            specie_gene = self.get_specie_gene_by_id(id)
+            type = specie_gene.gene.type
+            if type in genes_types:
+                return False
+            genes_types.add(type)
+
+        return True
     
     def _get_activated_specie_genes(self) -> List[SpecieGene]:
         activated_genes = []

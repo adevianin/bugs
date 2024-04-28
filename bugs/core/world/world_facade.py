@@ -9,8 +9,9 @@ from .action_client_serializer_interface import iActionClientSerializer
 from core.world.entities.action.base.action import Action
 from core.world.entities.ant.base.ant_types import AntTypes
 from .nuptial_environment_client_serializer_interface import iNuptialEnvironmentClientSerializer
+from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
-from typing import Callable, List
+from typing import Callable, List, Dict
 
 class WorldFacade:
     _instance = None
@@ -115,7 +116,7 @@ class WorldFacade:
         specie = self._nuptial_environment_service.get_specie_for(user_id)
         return self._nuptial_environment_client_serializer.serialize_specie(specie)
     
-    def change_specie_schema(self, user_id: int, specie_schema: dict):
+    def change_specie_schema(self, user_id: int, specie_schema: Dict[ChromosomeTypes, List[str]]):
         self._nuptial_environment_service.change_specie_schema(user_id, specie_schema)
 
     def get_world_for_client(self):

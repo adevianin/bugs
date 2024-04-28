@@ -1524,6 +1524,17 @@ class Specie extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
     constructor(specieChromosomes) {
         super();
         this._specieChromosomes = specieChromosomes;
+
+        this._listenSpecieChromosomes();
+    }
+
+    get schema() {
+        let schema = {};
+        for (let chromosome of this._specieChromosomes) {
+            schema[chromosome.type] = chromosome.activatedSpecieGenesIds;
+        }
+
+        return schema;
     }
 
     getChromosomeByType(type) {
@@ -1534,8 +1545,14 @@ class Specie extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
         }
     }
 
+    _listenSpecieChromosomes() {
+        for (let chromosome of this._specieChromosomes) {
+            chromosome.on('change', this._onChromosomeChange.bind(this));
+        }
+    }
+
     _onChromosomeChange() {
-        this.emit('change');
+        this.emit('specieSchemaChanged');
     }
 
 }
@@ -2197,7 +2214,7 @@ class SpecieBuilderService {
 
     initBuilder(specieJson) {
         this._specie = this._specieFactory.buildSpecieFromJson(specieJson);
-        this._stopListenSpecieChange = this._specie.on('change', this._onSpecieChanged.bind(this));
+        this._stopListenSpecieChange = this._specie.on('specieSchemaChanged', this._onSpecieSchemaChanged.bind(this));
     }
 
     _onUserLogout() {
@@ -2205,8 +2222,8 @@ class SpecieBuilderService {
         this._specie = null;
     }
 
-    _onSpecieChanged() {
-        this._specieBuilderApi.saveSpecie(this._specie);
+    _onSpecieSchemaChanged() {
+        this._specieBuilderApi.saveSpecieSchema(this._specie);
     }
 
 }
@@ -2796,17 +2813,10 @@ class SpecieBuilderApi {
         this._requester = requester;
     }
 
-    saveSpecie(specie) {
-        this._requester.post('world/nuptial_environment/specie', {
-            specie: {
-                'body': specie.bodyChromosome.activatedSpecieGenesIds,
-                'development': specie.developmentChromosome.activatedSpecieGenesIds,
-                'adaptation': specie.adaptationChromosome.activatedSpecieGenesIds,
-                'building': specie.buildingChromosome.activatedSpecieGenesIds,
-                'combat': specie.combatChromosome.activatedSpecieGenesIds,
-                'adjusting': specie.adjustingChromosome.activatedSpecieGenesIds
-            }
-        })
+    saveSpecieSchema(specie) {
+        this._requester.post('world/nuptial_environment/specie/specie_schema', {
+            specie_schema: specie.schema
+        });
     }
     
 }
@@ -2839,11 +2849,7 @@ class AccountView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHT
     constructor(el) {
         super(el);
 
-        // this.$domainFacade.events.on('userLogin', this._renderState.bind(this));
-        // this.$domainFacade.events.on('userLogout', this._renderState.bind(this));
-
         this._render();
-        // this._renderState();
 
         this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));
         this._registrationBtn.addEventListener('click', this._onRegistrationBtnClick.bind(this));
@@ -2872,17 +2878,6 @@ class AccountView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHT
         this._toggleDifferentPasswordsError(false);
         this._toggleUsernameIsntUniqueError(false);
     }
-
-    // _renderState() {
-    //     let isLoggedIn = this.$domainFacade.isLoggedIn();
-
-    //     if (isLoggedIn) {
-    //         this._toggle(false);
-    //     } else {
-    //         this._toggle(true);
-    //         this._switchMode('login');
-    //     }
-    // }
 
     _onLoginBtnClick() {
         let username = this._loginTabEl.querySelector('[data-user-name]').value;

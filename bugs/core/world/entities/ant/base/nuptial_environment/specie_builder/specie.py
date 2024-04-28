@@ -1,9 +1,8 @@
 from .specie_chromosome_set import SpecieChromosomeSet
-from .specie_chromosome import SpecieChromosome
 from core.world.entities.ant.base.genetic.genome import Genome
-from .specie_schema import SpecieSchema
+from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
-from typing import List
+from typing import List, Dict
 
 class Specie():
 
@@ -26,29 +25,18 @@ class Specie():
         maternal_chromosome = self._chromosome_set.generate_chorosome_set(percent, super_mutate_chance, super_mutate_percent)
         return Genome.build(maternal_chromosome, None)
     
-    def apply_schema(self, schema: SpecieSchema):
-        print(schema)
-        pass
+    def apply_schema(self, schema: Dict[ChromosomeTypes, List[str]]):
+        for chromosome_type in schema:
+            ids = schema[chromosome_type]
+            specie_chromosome = self._chromosome_set.get_specie_chromosome_by_type(chromosome_type)
+            specie_chromosome.apply_schema(ids)
+        
+    def validate_schema(self, schema: Dict[ChromosomeTypes, List[str]]):
+        for chromosome_type in schema:
+            schema_ids = schema[chromosome_type]
+            specie_chromosome = self._chromosome_set.get_specie_chromosome_by_type(chromosome_type)
 
-    # def _validate_specie_schema(self, schema: SpecieSchema):
-    #     schema.body_schema
-    #     self._chromosome_set.body_specie_chromosome
+            if not specie_chromosome.validate_schema(schema_ids):
+                return False
 
-    # def _validate_chromosome_schema(chromosome_schema: List[str], specie_chromosome: SpecieChromosome):
-    #     types_register = {}
-    #     for specie_gene_id in chromosome_schema:
-    #         specie_gene = specie_chromosome.get_specie_gene_by_id(specie_gene_id)
-
-    #         if specie_gene is None:
-    #             return False
-            
-    #         if specie_gene.gene.type in types_register:
-    #             return False
-    #         else:
-    #             types_register[specie_gene.gene.type] = 1
-
-    #     return True
-
-    
-
-    
+        return True

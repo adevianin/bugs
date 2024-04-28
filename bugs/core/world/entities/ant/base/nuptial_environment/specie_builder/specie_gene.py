@@ -21,8 +21,9 @@ class SpecieGene():
         return self._id
 
     @property
-    def gene(self):
+    def gene(self) -> BaseGene:
         return self._gene
     
     def generate_gene(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
         return self._gene.mutate(percent, super_mutate_chance, super_mutate_percent)
+    
