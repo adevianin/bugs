@@ -92,6 +92,10 @@ class DomainFacade {
         return this._worldService.getQueensInNuptialFlightFromUser(userData.id);
     }
 
+    getClimate() {
+        return this._worldService.world.climate;
+    }
+
     /*======operations========*/
 
     stopOperation(colonyId, operationId) {

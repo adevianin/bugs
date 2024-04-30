@@ -117,6 +117,10 @@ class DomainFacade {
         return this._worldService.getQueensInNuptialFlightFromUser(userData.id);
     }
 
+    getClimate() {
+        return this._worldService.world.climate;
+    }
+
     /*======operations========*/
 
     stopOperation(colonyId, operationId) {
@@ -651,6 +655,56 @@ class WorkerAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
         super(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WORKER, pickedItemId, locatedInNestId, homeNestId, stats);
     }
 
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/climate.js":
+/*!***********************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/climate.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Climate": () => (/* binding */ Climate)
+/* harmony export */ });
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+
+
+class Climate extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+
+    constructor() {
+        super();
+    }
+
+    get dailyTemperature() {
+        return this._dailyTemp;
+    }
+
+    get changeDirection() {
+        return this._changeDirection;
+    }
+
+    setTemperatureChange(dailyTemp, changeDirection) {
+        this._dailyTemp = dailyTemp;
+        this._changeDirection = changeDirection;
+        this.emit('change');
+    }
+
+    playAction(action) {
+        switch(action.type) {
+            case 'climate_temperature_change':
+                this._playTemperatureChangeAction(action);
+        }
+    }
+
+    _playTemperatureChangeAction(action) {
+        this.setTemperatureChange(action.dailyTemperature, action.changeDirection);
+    }
 }
 
 
@@ -1688,10 +1742,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class World {
-    constructor(mainEventBus) {
+    constructor(mainEventBus, climate) {
         this._mainEventBus = mainEventBus;
         this._entities = [];
         this._colonies = [];
+        this._climate = climate;
 
         this._mainEventBus.on('entityDied', this._onDied.bind(this));
     }
@@ -1706,6 +1761,10 @@ class World {
 
     get size() {
         return this._size;
+    }
+
+    get climate() {
+        return this._climate;
     }
 
     getAnts() {
@@ -2132,6 +2191,9 @@ class MessageHandlerService {
             case 'colony':
                 this._colonyService.playColonyAction(action);
                 break;
+            case 'climate':
+                this._worldService.playClimateAction(action);
+                break;
         }
     }
 
@@ -2274,6 +2336,10 @@ class WorldService {
         }
     }
 
+    playClimateAction(action) {
+        this._world.climate.playAction(action);
+    }
+
     initWorld(worldJson) {
         worldJson.entities.forEach(entityJson => { 
             let entity = this._worldFactory.buildEntity(entityJson);
@@ -2286,8 +2352,8 @@ class WorldService {
         });
         
         this._world.size = worldJson.size;
-        
-        // this._mainEventBus.emit('worldInited');
+
+        this._world.climate.setTemperatureChange(worldJson.climate.dailyTemperature, worldJson.climate.changeDirection);
     }
 
     _clearWorld() {
@@ -2354,6 +2420,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_egg__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/egg */ "./bugs/core/client/app/src/domain/entity/egg.js");
 /* harmony import */ var _entity_genetic_genome__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./entity/genetic/genome */ "./bugs/core/client/app/src/domain/entity/genetic/genome.js");
 /* harmony import */ var _entity_nuptialMale__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./entity/nuptialMale */ "./bugs/core/client/app/src/domain/entity/nuptialMale.js");
+/* harmony import */ var _entity_climate__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./entity/climate */ "./bugs/core/client/app/src/domain/entity/climate.js");
+
 
 
 
@@ -2428,7 +2496,8 @@ class WorldFactory {
     }
 
     buildWorld() {
-        return new _entity_world__WEBPACK_IMPORTED_MODULE_1__.World(this._mainEventBus);
+        let climate = new _entity_climate__WEBPACK_IMPORTED_MODULE_14__.Climate();
+        return new _entity_world__WEBPACK_IMPORTED_MODULE_1__.World(this._mainEventBus, climate);
     }
 
     buildQueenAnt(id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight, genes) {
@@ -3850,6 +3919,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./base/tabSwitcher */ "./bugs/core/client/app/src/view/game/panel/base/tabSwitcher/index.js");
 /* harmony import */ var _tabs_nuptialFlightTab__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./tabs/nuptialFlightTab */ "./bugs/core/client/app/src/view/game/panel/tabs/nuptialFlightTab/index.js");
 /* harmony import */ var _tabs_specieBuilderTab__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./tabs/specieBuilderTab */ "./bugs/core/client/app/src/view/game/panel/tabs/specieBuilderTab/index.js");
+/* harmony import */ var _tabs_climateTab__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./tabs/climateTab */ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/index.js");
+
 
 
 
@@ -3888,12 +3959,14 @@ class Panel extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTM
         this._coloniesTab = new _tabs_coloniesTab__WEBPACK_IMPORTED_MODULE_4__.ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));
         this._nuptialFlightTab = new _tabs_nuptialFlightTab__WEBPACK_IMPORTED_MODULE_6__.NuptialFlightTabView(this._el.querySelector('[data-nuptial-flight-tab]'));
         this._specieBuildertTab = new _tabs_specieBuilderTab__WEBPACK_IMPORTED_MODULE_7__.SpecieBuilderTabView(this._el.querySelector('[data-specie-builder-tab]'));
+        this._climateTab = new _tabs_climateTab__WEBPACK_IMPORTED_MODULE_8__.ClimateTabView(this._el.querySelector('[data-climate-tab]'));
 
         this._tabSwitcher = new _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
             { name: 'user', label: 'Користувач', tab: this._userTab },
             { name: 'colonies', label: 'Колонії', tab: this._coloniesTab },
             { name: 'nuptial_flight', label: 'Шлюбний політ', tab: this._nuptialFlightTab },
             { name: 'specie_builder', label: 'Вид', tab: this._specieBuildertTab },
+            { name: 'climate', label: 'Клімат', tab: this._climateTab },
         ]);
     }
 
@@ -3903,6 +3976,72 @@ class Panel extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTM
     }
 
 }
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/climateTabView.js":
+/*!************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/climateTab/climateTabView.js ***!
+  \************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ClimateTabView": () => (/* binding */ ClimateTabView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _climateTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./climateTabTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/climateTabTmpl.html");
+
+
+
+class ClimateTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+
+        this._climate = this.$domainFacade.getClimate();
+
+        this._climate.on('change', this._renderTemperatureChange.bind(this));
+
+        this._render();
+    }
+
+    _render() {
+        this._el.innerHTML = _climateTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._temperatureEl = this._el.querySelector('[data-temperature]');
+        this._changeDirectionEl = this._el.querySelector('[data-change-direction]');
+
+        this._renderTemperatureChange();
+    }
+
+    _renderTemperatureChange() {
+        this._temperatureEl.innerHTML = this._climate.dailyTemperature;
+        this._changeDirectionEl.innerHTML = this._climate.changeDirection > 0 ? 'потепління' : 'похолодання';
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/index.js":
+/*!***************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/climateTab/index.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ClimateTabView": () => (/* reexport safe */ _climateTabView__WEBPACK_IMPORTED_MODULE_0__.ClimateTabView)
+/* harmony export */ });
+/* harmony import */ var _climateTabView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./climateTabView */ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/climateTabView.js");
+
 
 
 
@@ -10505,7 +10644,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div data-colonies-tab class=\"colonies-tab\"></div>\r\n    <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n    <div data-specie-builder-tab class=\"\"></div>\r\n</div>";
+var code = "<div class=\"tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div data-colonies-tab class=\"colonies-tab\"></div>\r\n    <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n    <div data-specie-builder-tab class=\"\"></div>\r\n    <div data-climate-tab></div>\r\n</div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/climateTabTmpl.html":
+/*!**************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/climateTab/climateTabTmpl.html ***!
+  \**************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div>температура: <span data-temperature></span></div>\r\n<div>зміни: <span data-change-direction></span></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

@@ -27,6 +27,10 @@ class WorldService {
         }
     }
 
+    playClimateAction(action) {
+        this._world.climate.playAction(action);
+    }
+
     initWorld(worldJson) {
         worldJson.entities.forEach(entityJson => { 
             let entity = this._worldFactory.buildEntity(entityJson);
@@ -39,8 +43,8 @@ class WorldService {
         });
         
         this._world.size = worldJson.size;
-        
-        // this._mainEventBus.emit('worldInited');
+
+        this._world.climate.setTemperatureChange(worldJson.climate.dailyTemperature, worldJson.climate.changeDirection);
     }
 
     _clearWorld() {

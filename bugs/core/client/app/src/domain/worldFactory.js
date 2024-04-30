@@ -12,6 +12,7 @@ import { WarriorAnt, WorkerAnt, QueenAnt, MaleAnt } from './entity/ant';
 import { Egg } from './entity/egg';
 import { Genome } from './entity/genetic/genome';
 import { NuptialMale } from './entity/nuptialMale';
+import { Climate } from './entity/climate';
 
 class WorldFactory {
 
@@ -72,7 +73,8 @@ class WorldFactory {
     }
 
     buildWorld() {
-        return new World(this._mainEventBus);
+        let climate = new Climate();
+        return new World(this._mainEventBus, climate);
     }
 
     buildQueenAnt(id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight, genes) {

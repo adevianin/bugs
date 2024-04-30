@@ -15,6 +15,7 @@ from core.world.entities.world.birthers.item_birther import ItemBirther
 from core.world.entities.world.birthers.nest_birther import NestBirther
 from core.world.entities.world.birthers.ground_beetle_birther import GroundBeetleBirther
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
+from core.world.entities.climate.climate import Climate
 
 from typing import List
 
@@ -28,7 +29,7 @@ class WorldFactory():
         self._ground_beetle_factory = ground_beetle_factory
 
     def build_world(self, id: int, last_used_id: int, entities_collection: EntityCollection, map: Map, colonies: List[Colony], colony_relations_table: ColonyRelationsTable, 
-                    nuptial_environments: List[NuptialEnvironment]) -> World:
+                    nuptial_environments: List[NuptialEnvironment], climate: Climate) -> World:
         id_generator = IdGenerator.build_id_generator(last_used_id)
         ground_beetle_spawner = GroundBeetleSpawner(self._event_bus, map)
         birthers = {
@@ -37,5 +38,5 @@ class WorldFactory():
             'nest_birther': NestBirther(self._event_bus, id_generator, map, self._nest_factory),
             'ground_beetle_birther': GroundBeetleBirther(self._event_bus, id_generator, map, self._ground_beetle_factory)
         }
-        return World(id, entities_collection, map, self._event_bus, colonies, id_generator, colony_relations_table, birthers, ground_beetle_spawner, nuptial_environments)
+        return World(id, entities_collection, map, self._event_bus, colonies, id_generator, colony_relations_table, birthers, ground_beetle_spawner, nuptial_environments, climate)
     

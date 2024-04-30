@@ -39,6 +39,9 @@ class MessageHandlerService {
             case 'colony':
                 this._colonyService.playColonyAction(action);
                 break;
+            case 'climate':
+                this._worldService.playClimateAction(action);
+                break;
         }
     }
 

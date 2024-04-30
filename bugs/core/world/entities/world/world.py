@@ -12,13 +12,15 @@ from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.ground_beetle.ground_beetle_spawner import GroundBeetleSpawner
 from core.world.entities.action.colony_born_action import ColonyBornAction
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
+from core.world.entities.climate.climate import Climate
 
 from typing import List
 
 class World():
 
     def __init__(self, id: int, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: List[Colony], id_generator: IdGenerator, 
-                 colony_relations_table: ColonyRelationsTable, birthers, ground_beetle_spawner: GroundBeetleSpawner, nuptial_environments: List[NuptialEnvironment]):
+                 colony_relations_table: ColonyRelationsTable, birthers, ground_beetle_spawner: GroundBeetleSpawner, nuptial_environments: List[NuptialEnvironment], 
+                 climate: Climate):
         self.id = id
         self._entities_collection = entities_collection
         self._map = map
@@ -32,6 +34,7 @@ class World():
         self._birthers = birthers
         self._ground_beetle_spawner = ground_beetle_spawner
         self._nuptial_environments = nuptial_environments
+        self._climate = climate
 
     @property
     def last_used_id(self):
@@ -56,6 +59,10 @@ class World():
     @property
     def nuptial_environments(self):
         return self._nuptial_environments
+    
+    @property
+    def climate(self) -> Climate:
+        return self._climate
     
     def generate_id(self):
         return self._id_generator.generate_id()
@@ -117,6 +124,8 @@ class World():
         self._map.handle_intractions()
 
         self._event_bus.emit('step_start', self._step_counter)
+
+        self._climate.do_step()
         
         entities = self._entities_collection.get_entities()
         for entity in entities:

@@ -13,6 +13,10 @@ class Command(BaseCommand):
             }
         },
         "last_used_id":70,
+        "climate": {
+            "change_direction": -1,
+            "current_temperature": 5
+        },
         "ants":[
             {
                 "id":1,

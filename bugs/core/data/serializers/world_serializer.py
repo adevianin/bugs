@@ -10,6 +10,7 @@ from core.data.serializers.item_area_serializer import ItemAreaSerializer
 from core.data.serializers.item_source_serializer import ItemSourceSerializer
 from core.data.serializers.nuptial_environment_serializer import NuptialEnvironmentSerializer
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
+from .climate_serializer import ClimateSerializer
 
 from typing import List
 
@@ -17,7 +18,7 @@ class WorldSerializer():
 
     def __init__(self, nest_serializer: NestSerializer, ant_serializer: AntSerializer, item_serializer: ItemSerializer, item_area_serializer: ItemAreaSerializer, 
                  item_source_serializer: ItemSourceSerializer, colony_serializer: ColonySerializer, colony_relations_table_serializer: ColonyRelationsTableSerializer, 
-                 ground_beetle_serializer: GroundBeetleSerializer, nuptial_environment_serializer: NuptialEnvironmentSerializer):
+                 ground_beetle_serializer: GroundBeetleSerializer, nuptial_environment_serializer: NuptialEnvironmentSerializer, climate_serializer: ClimateSerializer):
         self._nest_serializer = nest_serializer
         self._ant_serializer = ant_serializer
         self._colony_serializer = colony_serializer
@@ -27,6 +28,7 @@ class WorldSerializer():
         self._item_area_serializer = item_area_serializer
         self._item_source_serializer = item_source_serializer
         self._nuptial_environment_serializer = nuptial_environment_serializer
+        self._climate_serializer = climate_serializer
 
     def serialize(self, world: World):
         json = {
@@ -44,7 +46,7 @@ class WorldSerializer():
                     'height': world.map.size.height
                 }
             },
-            'last_used_id': world.last_used_id
+            'last_used_id': world.last_used_id,
         }
 
         nests = world.map.get_entities(entity_types=[EntityTypes.NEST])
@@ -80,5 +82,7 @@ class WorldSerializer():
             json['nuptial_environments'].append(self._nuptial_environment_serializer.serialize(nuptial_environment))
 
         json['colonies_relations'] = self._colony_relations_table_serializer.serialize(world.colony_relations_table)
+
+        json['climate'] = self._climate_serializer.serialize_climate(world.climate)
 
         return json

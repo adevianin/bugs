@@ -27,6 +27,7 @@ from core.world.entities.action.nest_egg_became_larva import NestEggBecameLarvaA
 from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsReadyAction
 from core.world.entities.action.nest_larva_added_action import NestLarvaAddedAction
 from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
+from core.world.entities.action.climate_temperature_change_action import ClimateTemperatureChangeAction
 
 class ActionClientSerializer(iActionClientSerializer):
 
@@ -93,6 +94,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._serialize_colony_born(action)
             case ActionTypes.COLONY_OPERATIONS_CHANGED:
                 return self._serialize_operations_changed(action)
+            case ActionTypes.CLIMATE_TEMPERATURE_CHANGE:
+                return self._serialize_climate_temperature_changed(action)
             case _:
                 raise Exception('unknown type of action')
             
@@ -296,6 +299,16 @@ class ActionClientSerializer(iActionClientSerializer):
             'actionData': {
                 'operations': serialized_operations
             }
+        })
+
+        return json
+    
+    def _serialize_climate_temperature_changed(self, action: ClimateTemperatureChangeAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'dailyTemperature': action.daily_temperature,
+            'changeDirection': action.change_direction
         })
 
         return json

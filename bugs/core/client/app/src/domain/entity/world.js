@@ -1,10 +1,11 @@
 import { EntityTypes } from "../enum/entityTypes";
 
 class World {
-    constructor(mainEventBus) {
+    constructor(mainEventBus, climate) {
         this._mainEventBus = mainEventBus;
         this._entities = [];
         this._colonies = [];
+        this._climate = climate;
 
         this._mainEventBus.on('entityDied', this._onDied.bind(this));
     }
@@ -19,6 +20,10 @@ class World {
 
     get size() {
         return this._size;
+    }
+
+    get climate() {
+        return this._climate;
     }
 
     getAnts() {
