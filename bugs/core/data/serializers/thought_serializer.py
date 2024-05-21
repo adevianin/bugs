@@ -14,6 +14,7 @@ from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought im
 from core.world.entities.ant.base.thoughts.reinforce_nest_defence_thought import ReinforceNestDefenceThought
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 from core.world.entities.ground_beetle.thoughts.hunt_for_aphid import HuntForAphid
+from core.world.entities.ant.warrior.thoughts.patrol_nest_territory_thought import PatrolNestTerritoryThought
 
 
 class ThoughtSerializer():
@@ -34,8 +35,8 @@ class ThoughtSerializer():
                 return self._serialize_prepare_for_operation(thought)
             case ThoughtTypes.BUILD_NEST:
                 return self._serialize_build_nest(thought)
-            case ThoughtTypes.DEFEND_TERRITORY:
-                return self._serialize_defend_territory(thought)
+            # case ThoughtTypes.DEFEND_TERRITORY:
+            #     return self._serialize_defend_territory(thought)
             case ThoughtTypes.ATTACK_NEST:
                 return self._serialize_attack_nest(thought)
             case ThoughtTypes.FIGHT_ENEMY:
@@ -48,6 +49,8 @@ class ThoughtSerializer():
                 return self._serialize_random_walk(thought)
             case ThoughtTypes.HUNT_FOR_APHID:
                 return self._serialize_hunt_for_aphid(thought)
+            case ThoughtTypes.PATROL_NEST_TERRITORY:
+                return self._serialize_patrol_nest_territory(thought)
             case _:
                 raise Exception('unknown type of thought')
 
@@ -128,18 +131,18 @@ class ThoughtSerializer():
 
         return json
     
-    def _serialize_defend_territory(self, thought: DefendTerritoryThought):
-        json = self._serialize_thought(thought)
-        random_walk_thought_json = self.serialize(thought.random_walk_thought)
-        fight_near_enemies_thought_json = self.serialize(thought.fight_near_enemies_thought)
-        json.update({
-            'random_walk_thought': random_walk_thought_json,
-            'fight_near_enemies_thought': fight_near_enemies_thought_json,
-            'defending_nest_id': thought.defending_nest_id,
-            'point_to_check': thought.point_to_check
-        })
+    # def _serialize_defend_territory(self, thought: DefendTerritoryThought):
+    #     json = self._serialize_thought(thought)
+    #     random_walk_thought_json = self.serialize(thought.random_walk_thought)
+    #     fight_near_enemies_thought_json = self.serialize(thought.fight_near_enemies_thought)
+    #     json.update({
+    #         'random_walk_thought': random_walk_thought_json,
+    #         'fight_near_enemies_thought': fight_near_enemies_thought_json,
+    #         'defending_nest_id': thought.defending_nest_id,
+    #         'point_to_check': thought.point_to_check
+    #     })
 
-        return json
+    #     return json
     
     def _serialize_attack_nest(self, thought: AttackNestThought):
         json = self._serialize_thought(thought)
@@ -203,3 +206,13 @@ class ThoughtSerializer():
 
         return json
     
+    def _serialize_patrol_nest_territory(self, thought: PatrolNestTerritoryThought):
+        json = self._serialize_thought(thought)
+        random_walk_thought_json = self.serialize(thought.random_walk_thought)
+        json.update({
+            'step_count': thought.step_count,
+            'nest_id': thought.nest_id,
+            'random_walk_thought': random_walk_thought_json
+        })
+
+        return json

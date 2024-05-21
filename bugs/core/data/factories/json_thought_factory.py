@@ -25,8 +25,8 @@ class JsonThoughtFactory():
                 return self._build_prepare_for_operation_thought(body, thought_json, entities_collection)
             case ThoughtTypes.BUILD_NEST:
                 return self._build_build_nest_thought(body, thought_json, entities_collection)
-            case ThoughtTypes.DEFEND_TERRITORY:
-                return self._build_defend_territory(body, thought_json, entities_collection)
+            # case ThoughtTypes.DEFEND_TERRITORY:
+            #     return self._build_defend_territory(body, thought_json, entities_collection)
             case ThoughtTypes.ATTACK_NEST:
                 return self._build_attack_nest_thought(body, thought_json, entities_collection)
             case ThoughtTypes.FIGHT_ENEMY:
@@ -39,6 +39,8 @@ class JsonThoughtFactory():
                 return self._build_random_walk(body, thought_json, entities_collection)
             case ThoughtTypes.HUNT_FOR_APHID:
                 return self._build_hynt_for_aphid(body, thought_json, entities_collection)
+            case ThoughtTypes.PATROL_NEST_TERRITORY:
+                return self._build_patrol_nest_territory(body, thought_json, entities_collection)
             case _:
                 raise Exception('unknown type of thought')
             
@@ -78,12 +80,12 @@ class JsonThoughtFactory():
         build_build_nest_thought = thought_json['get_inside_once_done']
         return self._thought_factory.build_build_nest_thought(body=body, building_nest=building_nest, get_inside_once_done=build_build_nest_thought, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
-    def _build_defend_territory(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
-        random_walk_thought = self.build_thougth_from_json(body, thought_json['random_walk_thought'], entities_collection)
-        fight_near_enemies_thought = self.build_thougth_from_json(body, thought_json['fight_near_enemies_thought'], entities_collection)
-        defending_nest = entities_collection.get_entity_by_id(thought_json['defending_nest_id'])
-        point_to_check = Point.from_json(thought_json['point_to_check']) if thought_json['point_to_check'] else None
-        return self._thought_factory.build_defend_teritory(body=body, fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, flags=thought_json['flags'], sayback=thought_json['sayback'])
+    # def _build_defend_territory(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
+    #     random_walk_thought = self.build_thougth_from_json(body, thought_json['random_walk_thought'], entities_collection)
+    #     fight_near_enemies_thought = self.build_thougth_from_json(body, thought_json['fight_near_enemies_thought'], entities_collection)
+    #     defending_nest = entities_collection.get_entity_by_id(thought_json['defending_nest_id'])
+    #     point_to_check = Point.from_json(thought_json['point_to_check']) if thought_json['point_to_check'] else None
+    #     return self._thought_factory.build_defend_teritory(body=body, fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_attack_nest_thought(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
         nest = entities_collection.get_entity_by_id(thought_json['nest_id'])
@@ -116,3 +118,10 @@ class JsonThoughtFactory():
         found_food_source = entities_collection.get_entity_by_id(thought_json['found_food_source_id']) if thought_json['found_food_source_id'] else None
         return self._thought_factory.build_hunt_for_aphid(body=body, random_walk_thought=random_walk_thought, fight_near_enemies_thought=fight_near_enemies_thought, found_food_source=found_food_source, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
+    def _build_patrol_nest_territory(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
+        random_walk_thought = self.build_thougth_from_json(body, thought_json['random_walk_thought'], entities_collection)
+        nest = entities_collection.get_entity_by_id(thought_json['nest_id'])
+        step_count = thought_json['step_count']
+        flags = thought_json['flags']
+        sayback = thought_json['sayback']
+        return self._thought_factory.build_patrol_nest_territory(body, random_walk_thought, nest, step_count, flags, sayback)

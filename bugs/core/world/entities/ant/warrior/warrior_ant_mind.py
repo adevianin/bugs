@@ -12,8 +12,8 @@ class WarrirorAntMind(AntMind):
 
         self._body.events.add_listener('colony_signal:warrirors_reinforcement_needed', self._on_warriors_reinforcement_needed)
 
-    def defend_home_territory(self, sayback: str = None):
-        thought = self._thought_factory.build_defend_nest_territory_full(body=self._body, nest=self.home_nest, sayback=sayback)
+    def patrol_home_territory(self, sayback: str = None):
+        thought = self._thought_factory.build_patrol_nest_territory_full(self._body, self.home_nest, sayback=sayback)
         self._register_thought(thought)
 
     def keep_clear_territory(self, position: Point, area: int, sayback: str = None):
@@ -23,7 +23,7 @@ class WarrirorAntMind(AntMind):
     def _auto_generate_thoughts(self):
         super()._auto_generate_thoughts()
         if not self._has_thoughts_to_do():
-            self.defend_home_territory()
+            self.patrol_home_territory()
 
     def _on_warriors_reinforcement_needed(self, signal: dict):
         if self._is_in_opearetion:
