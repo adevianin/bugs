@@ -12,8 +12,8 @@ class WorkerAntMind(AntMind):
 
         self._body.events.add_listener('colony_signal:workers_reinforcement_needed', self._on_workers_reinforcement_needed)
 
-    def _generate_thoughts(self):
-        super()._generate_thoughts()
+    def _auto_generate_thoughts(self):
+        super()._auto_generate_thoughts()
         if not self._has_thoughts_to_do():
             self.collect_food()
 

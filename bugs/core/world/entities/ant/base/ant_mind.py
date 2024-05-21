@@ -3,6 +3,7 @@ from core.world.entities.thought.thought_factory import ThoughtFactory
 from .ant_body import AntBody
 from core.world.entities.nest.nest import Nest
 from core.world.utils.point import Point
+from core.world.entities.thought.thought_types import ThoughtTypes
 import math
 
 class AntMind(Mind):
@@ -62,11 +63,11 @@ class AntMind(Mind):
     def _calc_assemble_point(self):
         return Point(self.home_nest.position.x, self.home_nest.position.y + 40)
     
-    def _generate_thoughts(self):
-        super()._generate_thoughts()
+    def _auto_generate_thoughts(self):
+        super()._auto_generate_thoughts()
 
-        if (self._body.check_am_i_hungry()):
-            self.feed_myself(asap=True)
+        if (self._body.check_am_i_hungry() and not self._is_thought_in_stack(ThoughtTypes.FEED_MYSELF)):
+            self.feed_myself()
 
         if not self._has_thoughts_to_do() and self._am_i_far_away_from_home():
             self.go_home()

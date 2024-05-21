@@ -20,8 +20,8 @@ class WarrirorAntMind(AntMind):
         thought = self._thought_factory.build_keep_clear_territory_full(body=self._body, position=position, area=area, sayback=sayback)
         self._register_thought(thought)
 
-    def _generate_thoughts(self):
-        super()._generate_thoughts()
+    def _auto_generate_thoughts(self):
+        super()._auto_generate_thoughts()
         if not self._has_thoughts_to_do():
             self.defend_home_territory()
 

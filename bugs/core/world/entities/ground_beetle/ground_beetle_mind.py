@@ -11,6 +11,6 @@ class GroundBeetleMind(Mind):
         thought = self._thought_factory.build_hunt_for_aphid_thought_full(self._body)
         self._register_thought(thought)
 
-    def _generate_thoughts(self):
+    def _auto_generate_thoughts(self):
         if not self._has_thoughts_to_do():
             self.hunt_for_aphid()

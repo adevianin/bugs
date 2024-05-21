@@ -4,6 +4,3 @@ class MaleAntMind(AntMind):
 
     def ask_participation(self):
         return False
-
-    def _generate_thoughts(self):
-        super()._generate_thoughts()

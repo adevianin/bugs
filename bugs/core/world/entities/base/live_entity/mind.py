@@ -43,7 +43,7 @@ class Mind(ABC):
         self._body.memory.treat_records()
 
         if self._is_auto_thought_generation:
-            self._generate_thoughts()
+            self._auto_generate_thoughts()
 
         if self._has_thoughts_to_do():
             self._get_current_thought().do_step()
@@ -64,7 +64,7 @@ class Mind(ABC):
         # self._thoughts_stack.clear() do not clear thought stack here
 
     @abstractmethod
-    def _generate_thoughts(self):
+    def _auto_generate_thoughts(self):
         pass
 
     def _register_thought(self, thought: Thought, asap: bool = False):
@@ -104,4 +104,11 @@ class Mind(ABC):
             return current_thought.type == thought_type
         else:
             return False
+        
+    def _is_thought_in_stack(self, thought_type: ThoughtTypes):
+        for thought in self._thoughts_stack:
+            if thought.type == thought_type:
+                return True
+        
+        return False
 
