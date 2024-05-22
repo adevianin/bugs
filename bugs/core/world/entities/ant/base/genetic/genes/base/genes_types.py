@@ -15,3 +15,5 @@ class GenesTypes(StrEnum):
 
     ADJUSTING_APPETITE = 'adjusting_appetite'
     ADJUSTING_DEVELOPMENT_APPETITE = 'adjusting_development_appetite'
+
+    ADAPTATION_COLD = 'adaptation_cold'

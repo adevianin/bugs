@@ -318,7 +318,9 @@ class Command(BaseCommand):
                         },
                         {
                             "type": "adaptation",
-                            'genes': []
+                            'genes': [
+                                { "type": "adaptation_cold", "domination_code": "A", "resistance_points": 50 }
+                            ]
                         },
                         {
                             "type": "building",

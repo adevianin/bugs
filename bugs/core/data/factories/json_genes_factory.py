@@ -13,6 +13,7 @@ from core.world.entities.ant.base.genetic.genes.development_warrior_caste_gene i
 from core.world.entities.ant.base.genetic.genes.development_male_caste_gene import DevelopmentMaleCasteGene
 from core.world.entities.ant.base.genetic.genes.adjusting_appetite_gene import AdjustingAppetiteGene
 from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdjustingDevelopmentAppetiteGene
+from core.world.entities.ant.base.genetic.genes.adaptation_cold_gene import AdaptationColdGene
 
 class JsonGenesFactory():
 
@@ -42,6 +43,8 @@ class JsonGenesFactory():
                 return self._build_adjusting_appetite_gene(gene_json)
             case GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE:
                 return self._build_adjusting_development_appetite_gene(gene_json)
+            case GenesTypes.ADAPTATION_COLD:
+                return self._build_adaptation_cold_gene(gene_json)
             case _:
                 raise Exception('unknown gene')
             
@@ -118,4 +121,9 @@ class JsonGenesFactory():
     def _build_adjusting_development_appetite_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])
         return AdjustingDevelopmentAppetiteGene.build(domination_code)
+    
+    def _build_adaptation_cold_gene(self, gene_json: dict):
+        domination_code = DominationCodes(gene_json['domination_code'])
+        resistance_points = gene_json['resistance_points']
+        return AdaptationColdGene.build(domination_code, resistance_points)
     
