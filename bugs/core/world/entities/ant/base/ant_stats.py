@@ -5,7 +5,7 @@ from core.world.entities.ant.base.ant_types import AntTypes
 
 class AntStats(LiveStats):
 
-    NDIGITS = 1
+    NDIGITS = 0
 
     @classmethod
     def build(cls, ant_type: AntTypes, genome: Genome):
@@ -17,7 +17,7 @@ class AntStats(LiveStats):
         strength = round(phenotype.strength, AntStats.NDIGITS)
         defense = round(phenotype.defense, AntStats.NDIGITS)
         appetite = round(phenotype.appetite, AntStats.NDIGITS)
-        min_temperature = phenotype.min_temperature
+        min_temperature = round(phenotype.min_temperature, AntStats.NDIGITS)
         return AntStats(StatsTypes.ANT, max_hp, hp_regen_rate, speed, sight_distance, strength, defense, appetite, min_temperature)
     
     def __init__(self, type: StatsTypes, max_hp: int, hp_regen_rate: int, distance_per_step: int, sight_distance: int, attack: int, defense: int, appetite: int, min_temperature: int):

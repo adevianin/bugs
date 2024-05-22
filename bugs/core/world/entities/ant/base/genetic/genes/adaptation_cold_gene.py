@@ -22,7 +22,7 @@ class AdaptationColdGene(BaseGene):
 
     def affect(self, phenotype: Phenotype):
         resistance_temperature = self._resistance_points / self.POINTS_PER_TEMP_UNIT
-        phenotype.min_temperature = round(self.RAW_MIN_TEMPERATURE - resistance_temperature, 0)
+        phenotype.min_temperature = self.RAW_MIN_TEMPERATURE - resistance_temperature
 
     def merge(self, another_gene: 'AdaptationColdGene') -> BaseGene:
         dominating_gene = super().merge(another_gene)
