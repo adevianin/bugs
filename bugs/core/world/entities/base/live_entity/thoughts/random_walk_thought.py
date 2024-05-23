@@ -57,7 +57,7 @@ class RandomWalkThought(Thought):
             self._visited_points.pop(0)
 
     def _validate_point(self, point: Point):
-        can_walk = self._body.world_interactor.can_walk_to(point)
+        can_walk = self._body.visual_sensor.can_walk_to(point)
         has_walking_area = self._center and self._radius
         is_in_walking_area = point.dist(self._center) <= self._radius if has_walking_area else True
         

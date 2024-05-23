@@ -1,6 +1,6 @@
 from core.world.entities.base.live_entity.live_stats import LiveStats
 from core.world.entities.base.live_entity.memory import Memory
-from core.world.entities.base.live_entity.world_interactor import WorldInteractor
+from core.world.entities.base.live_entity.visual_sensor import VisualSensor
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from core.world.entities.base.live_entity.live_body import LiveBody

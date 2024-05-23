@@ -13,6 +13,7 @@ from core.world.entities.ground_beetle.ground_beetle_spawner import GroundBeetle
 from core.world.entities.action.colony_born_action import ColonyBornAction
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 from core.world.entities.climate.climate import Climate
+from .sensor_handlers.visual_sensor_handler import VisualSensorHandler
 
 from typing import List
 
@@ -20,7 +21,7 @@ class World():
 
     def __init__(self, id: int, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: List[Colony], id_generator: IdGenerator, 
                  colony_relations_table: ColonyRelationsTable, birthers, ground_beetle_spawner: GroundBeetleSpawner, nuptial_environments: List[NuptialEnvironment], 
-                 climate: Climate):
+                 climate: Climate, sensor_handlers):
         self.id = id
         self._entities_collection = entities_collection
         self._map = map
@@ -35,6 +36,7 @@ class World():
         self._ground_beetle_spawner = ground_beetle_spawner
         self._nuptial_environments = nuptial_environments
         self._climate = climate
+        self._visual_sensor_handler: VisualSensorHandler = sensor_handlers['visual_sensor_handler']
 
     @property
     def last_used_id(self):
@@ -121,10 +123,9 @@ class World():
     def _do_step(self):
         print(f'step { self._step_counter } start')
 
-        self._map.handle_intractions()
-
         self._event_bus.emit('step_start', self._step_counter)
 
+        self._visual_sensor_handler.handle_sensors()
         self._climate.do_step()
         
         entities = self._entities_collection.get_entities()

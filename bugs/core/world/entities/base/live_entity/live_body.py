@@ -1,7 +1,7 @@
 from core.world.utils.point import Point
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME
-from core.world.entities.base.live_entity.world_interactor import WorldInteractor
+from core.world.entities.base.live_entity.visual_sensor import VisualSensor
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.entity_types import EntityTypes, EntityTypesPack
@@ -16,11 +16,11 @@ from typing import List, Callable
 
 class LiveBody(Body):
 
-    _world_interactor: WorldInteractor
+    _visual_sensor: VisualSensor
     _stats: LiveStats
     stats: LiveStats
 
-    def __init__(self, events: EventEmitter, stats: LiveStats, memory: Memory, position: Point, angle: int, hp: int, world_interactor: WorldInteractor):
+    def __init__(self, events: EventEmitter, stats: LiveStats, memory: Memory, position: Point, angle: int, hp: int, visual_sensor: VisualSensor):
         super().__init__(events, stats, position, angle, hp)
         self.memory = memory
         self._max_calories = 1000
@@ -28,11 +28,11 @@ class LiveBody(Body):
         # self._distance_per_calorie = 2
         self._can_eat_calories_per_step = 20
         self._user_speed = stats.distance_per_step / STEP_TIME
-        self._world_interactor = world_interactor
+        self._visual_sensor = visual_sensor
 
     @property
-    def world_interactor(self):
-        return self._world_interactor
+    def visual_sensor(self):
+        return self._visual_sensor
 
     @property
     def user_speed(self):
@@ -108,14 +108,14 @@ class LiveBody(Body):
         return nearest_point
     
     def look_around(self, types_list: List[EntityTypes] = None, filter: Callable = None):
-        return self._world_interactor.get_nearby_entities(types_list, filter)
+        return self._visual_sensor.get_nearby_entities(types_list, filter)
     
     def set_relation_tester(self, relation_tester: RelationTester):
         self._relation_tester = relation_tester
 
     def look_around_for_enemies(self) -> List[iEnemy]:
         enemies_filter: Callable[[Entity], bool] = lambda entity: not entity.is_died and self._relation_tester.is_enemy(entity)
-        return self._world_interactor.get_nearby_entities(EntityTypesPack.LIVE_ENTITIES, enemies_filter)
+        return self._visual_sensor.get_nearby_entities(EntityTypesPack.LIVE_ENTITIES, enemies_filter)
     
     def receive_colony_signal(self, signal: dict):
         self.events.emit(f'colony_signal:{ signal["type"] }', signal)

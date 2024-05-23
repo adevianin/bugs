@@ -1,6 +1,6 @@
 from core.world.entities.ant.base.ant_stats import AntStats
 from core.world.entities.base.live_entity.memory import Memory
-from core.world.entities.base.live_entity.world_interactor import WorldInteractor
+from core.world.entities.base.live_entity.visual_sensor import VisualSensor
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.nest.nest import Nest
 from core.world.utils.event_emiter import EventEmitter
@@ -15,8 +15,8 @@ from core.world.entities.ant.base.egg import Egg
 class QueenAntBody(AntBody):
 
     def __init__(self, events: EventEmitter, stats: AntStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, located_in_nest: Nest, picked_item: Item, 
-                 world_interactor: WorldInteractor, genome: Genome, male_chromosomes_set: ChromosomesSet, is_in_nuptial_flight: bool):
-        super().__init__(events, stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, world_interactor, genome)
+                 visual_sensor: VisualSensor, genome: Genome, male_chromosomes_set: ChromosomesSet, is_in_nuptial_flight: bool):
+        super().__init__(events, stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, visual_sensor, genome)
         self._male_chromosomes_set = male_chromosomes_set
         self._is_in_nuptial_flight = is_in_nuptial_flight
 

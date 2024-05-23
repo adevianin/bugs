@@ -19,8 +19,6 @@ class Map:
         self._event_bus.add_listener('entity_died', self._on_entity_died)
         self._event_bus.add_listener('entity_born', self._on_entity_born)
 
-        self._set_up_world_interactors()
-
     @property
     def size(self):
         return self._size
@@ -55,27 +53,11 @@ class Map:
 
         return found_entities
     
-    def handle_intractions(self):
-        live_entities: List[LiveEntity] = self.get_entities(entity_types=EntityTypesPack.LIVE_ENTITIES)
-        for live_entity in live_entities:
-            entities_in_sight = self._find_entities_in_sight(live_entity)
-            live_entity.body.world_interactor.set_nearby_entities(entities_in_sight)
-
-    def _set_up_world_interactors(self):
-        live_entities: List[LiveEntity] = self.get_entities(entity_types=EntityTypesPack.LIVE_ENTITIES)
-        for live_entity in live_entities:
-            self._set_up_world_interactor_for_entity(live_entity)
-
-    def _set_up_world_interactor_for_entity(self, entity: LiveEntity):
-        entity.body.world_interactor.set_map_size(self._size)
-
+    def get_live_entities(self) -> List[LiveEntity]:
+        return self.get_entities(entity_types=EntityTypesPack.LIVE_ENTITIES)
+    
     def _on_entity_died(self, entity: Entity):
         self._entities_collection.delete_entity(entity.id)
 
     def _on_entity_born(self, entity: Entity):
-        if (entity.type in EntityTypesPack.LIVE_ENTITIES):
-            self._set_up_world_interactor_for_entity(entity)
         self._entities_collection.add_entity(entity)
-
-    def _find_entities_in_sight(self, entity: LiveEntity):
-        return self.find_entities_near(point=entity.position, max_distance=entity.body.stats.sight_distance, filter=lambda checking_entity: entity.id != checking_entity.id)

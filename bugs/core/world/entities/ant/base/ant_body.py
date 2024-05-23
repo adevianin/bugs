@@ -4,7 +4,7 @@ from core.world.utils.point import Point
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.entity_types import EntityTypes
-from core.world.entities.base.live_entity.world_interactor import WorldInteractor
+from core.world.entities.base.live_entity.visual_sensor import VisualSensor
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.item.item_sources.base.item_source import ItemSource
 from core.world.entities.item.items.base.item_types import ItemTypes
@@ -22,8 +22,8 @@ class AntBody(LiveBody):
     stats: AntStats
 
     def __init__(self, events: EventEmitter, stats: AntStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, located_in_nest: Nest, picked_item: Item, 
-                 world_interactor: WorldInteractor, genome: Genome):
-        super().__init__(events, stats, memory, position, angle, hp, world_interactor)
+                 visual_sensor: VisualSensor, genome: Genome):
+        super().__init__(events, stats, memory, position, angle, hp, visual_sensor)
         self.sayer = sayer
         self._located_inside_nest = located_in_nest
         self._picked_item = picked_item

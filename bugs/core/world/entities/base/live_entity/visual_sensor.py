@@ -4,7 +4,7 @@ from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.size import Size
 from core.world.utils.point import Point
 
-class WorldInteractor():
+class VisualSensor():
 
     def __init__(self):
         self._nearby_entities = []
