@@ -20,16 +20,15 @@ class Climate():
     def change_direction(self):
         return self._direction
 
-    def build(cls, event_bus: EventEmitter, current_temp: float, direction: int):
-        return Climate(event_bus, current_temp, direction)
-
     def __init__(self, event_bus: EventEmitter, current_temp: float, direction: int):
         self._event_bus = event_bus
         self._current_temp = current_temp
         self._direction = direction
         self._last_emited_temp = self.daily_temperature
 
-    def do_step(self):
+        self._event_bus.add_listener('step_start', self._on_step_start)
+
+    def _do_step(self):
         self._current_temp = round(self._current_temp + self._direction * self.STEP, 3)
 
         if abs(self._last_emited_temp - self.daily_temperature) >= 1:
@@ -42,4 +41,7 @@ class Climate():
         action = ClimateTemperatureChangeAction.build(self.daily_temperature, self._direction)
         self._event_bus.emit('action', action)
         self._last_emited_temp = self.daily_temperature
+
+    def _on_step_start(self, step_number):
+        self._do_step()
     

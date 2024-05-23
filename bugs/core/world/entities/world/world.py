@@ -126,7 +126,6 @@ class World():
         self._event_bus.emit('step_start', self._step_counter)
 
         self._visual_sensor_handler.handle_sensors()
-        self._climate.do_step()
         
         entities = self._entities_collection.get_entities()
         for entity in entities:
