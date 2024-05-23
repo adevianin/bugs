@@ -44,7 +44,7 @@ class WorldService {
         
         this._world.size = worldJson.size;
 
-        this._world.climate.setTemperatureChange(worldJson.climate.dailyTemperature, worldJson.climate.changeDirection);
+        this._world.climate.setTemperatureChange(worldJson.climate.dailyTemperature, worldJson.climate.directionOfChange);
     }
 
     _clearWorld() {

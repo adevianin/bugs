@@ -17,6 +17,7 @@ from core.world.entities.world.birthers.ground_beetle_birther import GroundBeetl
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 from core.world.entities.climate.climate import Climate
 from .sensor_handlers.visual_sensor_handler import VisualSensorHandler
+from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
 
 from typing import List
 
@@ -40,7 +41,8 @@ class WorldFactory():
             'ground_beetle_birther': GroundBeetleBirther(self._event_bus, id_generator, map, self._ground_beetle_factory)
         }
         sensor_handlers = {
-            'visual_sensor_handler': VisualSensorHandler(self._event_bus, map)
+            'visual_sensor_handler': VisualSensorHandler(self._event_bus, map),
+            'temperature_sensor_handler': TemperatureSensorHandler(map, climate)
         }
         return World(id, entities_collection, map, self._event_bus, colonies, id_generator, colony_relations_table, birthers, ground_beetle_spawner, nuptial_environments, climate, sensor_handlers)
     

@@ -4,6 +4,6 @@ class ClimateSerializer():
 
     def serialize_climate(self, climate: Climate):
         return {
-            'change_direction': climate.change_direction,
+            'direction_of_change': climate.direction_of_change,
             'current_temperature': climate.current_temperature
         }

@@ -1,13 +1,12 @@
 from core.world.entities.ant.base.ant_stats import AntStats
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.live_entity.visual_sensor import VisualSensor
+from core.world.entities.base.live_entity.temperature_sensor import TemperatureSensor
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.nest.nest import Nest
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from ..base.ant_body import AntBody
-from core.world.entities.ant.base.ant_types import AntTypes
-from core.world.entities.ant.base.larva import Larva
 from core.world.entities.ant.base.genetic.genome import Genome
 from core.world.entities.ant.base.genetic.chromosomes_set import ChromosomesSet
 from core.world.entities.ant.base.egg import Egg
@@ -15,8 +14,8 @@ from core.world.entities.ant.base.egg import Egg
 class QueenAntBody(AntBody):
 
     def __init__(self, events: EventEmitter, stats: AntStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, located_in_nest: Nest, picked_item: Item, 
-                 visual_sensor: VisualSensor, genome: Genome, male_chromosomes_set: ChromosomesSet, is_in_nuptial_flight: bool):
-        super().__init__(events, stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, visual_sensor, genome)
+                 visual_sensor: VisualSensor, temperature_sensor: TemperatureSensor, genome: Genome, male_chromosomes_set: ChromosomesSet, is_in_nuptial_flight: bool):
+        super().__init__(events, stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
         self._male_chromosomes_set = male_chromosomes_set
         self._is_in_nuptial_flight = is_in_nuptial_flight
 

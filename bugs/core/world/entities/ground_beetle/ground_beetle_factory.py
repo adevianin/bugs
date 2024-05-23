@@ -2,6 +2,7 @@ from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.live_entity.visual_sensor import VisualSensor
+from core.world.entities.base.live_entity.temperature_sensor import TemperatureSensor
 from core.world.utils.point import Point
 from core.world.settings import GROUND_BEETLE_COLONY_ID
 from core.world.entities.ground_beetle.ground_beetle import GroundBeetle
@@ -20,10 +21,11 @@ class GroundBeetleFactory():
 
     def build_ground_beetle(self, id: int, from_colony_id: int, position: Point, angle: int, hp: int, memory_data: dict, is_auto_thought_generation: bool):
         visual_sensor = VisualSensor()
+        temperature_sensor = TemperatureSensor()
         memory = Memory(memory_data)
         stats = StatsLibrary.GROUND_BEETLE_DEFAULT
         hp = hp or stats.max_hp
-        body = GroundBeetleBody(EventEmitter(), stats, memory, position, angle, hp, visual_sensor)
+        body = GroundBeetleBody(EventEmitter(), stats, memory, position, angle, hp, visual_sensor, temperature_sensor)
         mind = GroundBeetleMind(body, self._thought_factory, is_auto_thought_generation)
 
         return GroundBeetle(self._event_bus, EventEmitter(), id, from_colony_id, body, mind)

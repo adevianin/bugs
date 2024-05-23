@@ -17,7 +17,7 @@ class Climate():
         return self._current_temp
     
     @property
-    def change_direction(self):
+    def direction_of_change(self):
         return self._direction
 
     def __init__(self, event_bus: EventEmitter, current_temp: float, direction: int):

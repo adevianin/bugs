@@ -5,5 +5,5 @@ class ClimateClientSerializer():
     def serialize(self, climate: Climate):
         return {
             'dailyTemperature': climate.daily_temperature,
-            'changeDirection': climate.change_direction
+            'directionOfChange': climate.direction_of_change
         }

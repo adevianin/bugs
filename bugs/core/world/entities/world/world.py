@@ -14,6 +14,7 @@ from core.world.entities.action.colony_born_action import ColonyBornAction
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 from core.world.entities.climate.climate import Climate
 from .sensor_handlers.visual_sensor_handler import VisualSensorHandler
+from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
 
 from typing import List
 
@@ -37,6 +38,7 @@ class World():
         self._nuptial_environments = nuptial_environments
         self._climate = climate
         self._visual_sensor_handler: VisualSensorHandler = sensor_handlers['visual_sensor_handler']
+        self._temperature_sensor_handler: TemperatureSensorHandler = sensor_handlers['temperature_sensor_handler']
 
     @property
     def last_used_id(self):
@@ -126,6 +128,7 @@ class World():
         self._event_bus.emit('step_start', self._step_counter)
 
         self._visual_sensor_handler.handle_sensors()
+        self._temperature_sensor_handler.handle_sensors()
         
         entities = self._entities_collection.get_entities()
         for entity in entities:

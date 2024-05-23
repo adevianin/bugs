@@ -24,7 +24,7 @@ class ClimateTabView extends BaseHTMLView {
 
     _renderTemperatureChange() {
         this._temperatureEl.innerHTML = this._climate.dailyTemperature;
-        this._changeDirectionEl.innerHTML = this._climate.changeDirection > 0 ? 'потепління' : 'похолодання';
+        this._changeDirectionEl.innerHTML = this._climate.directionOfChange > 0 ? 'потепління' : 'похолодання';
     }
 
 }

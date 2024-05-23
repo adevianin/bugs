@@ -308,7 +308,7 @@ class ActionClientSerializer(iActionClientSerializer):
 
         json.update({
             'dailyTemperature': action.daily_temperature,
-            'changeDirection': action.change_direction
+            'directionOfChange': action.direction_of_change
         })
 
         return json

@@ -4,6 +4,7 @@ from .base.ant_types import AntTypes
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.live_entity.visual_sensor import VisualSensor
+from core.world.entities.base.live_entity.temperature_sensor import TemperatureSensor
 from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.entities.item.items.base.item import Item
 from .worker.worker_ant_body import WorkerAntBody
@@ -55,9 +56,10 @@ class AntFactory():
                           is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genome: Genome):
         sayer = EventEmitter()
         visual_sensor = VisualSensor()
+        temperature_sensor = TemperatureSensor()
         memory = Memory(memory_data)
         stats = AntStats.build(AntTypes.WARRIOR, genome)
-        body = WarriorAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, visual_sensor, genome)
+        body = WarriorAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
         mind = WarrirorAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
         ant = WarriorAnt(self._event_bus, EventEmitter(), id, from_colony_id, owner_id, body, mind)
 
@@ -67,9 +69,10 @@ class AntFactory():
                          is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genome: Genome):
         sayer = EventEmitter()
         visual_sensor = VisualSensor()
+        temperature_sensor = TemperatureSensor()
         memory = Memory(memory_data)
         stats = AntStats.build(AntTypes.WORKER, genome)
-        body = WorkerAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, visual_sensor, genome)
+        body = WorkerAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
         mind = WorkerAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
         ant = WorkerAnt(self._event_bus, EventEmitter(), id, from_colony_id, owner_id, body, mind)
 
@@ -79,9 +82,10 @@ class AntFactory():
                         is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genome: Genome, male_chromosomes_set: ChromosomesSet, is_in_nuptial_flight: bool):
         sayer = EventEmitter()
         visual_sensor = VisualSensor()
+        temperature_sensor = TemperatureSensor()
         memory = Memory(memory_data)
         stats = AntStats.build(AntTypes.QUEEN, genome)
-        body = QueenAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, visual_sensor, genome, male_chromosomes_set, is_in_nuptial_flight)
+        body = QueenAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome, male_chromosomes_set, is_in_nuptial_flight)
         mind = QueenAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
         ant = QueenAnt(self._event_bus, EventEmitter(), id, from_colony_id, owner_id, body, mind)
 
@@ -91,9 +95,10 @@ class AntFactory():
                           is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genome: Genome):
         sayer = EventEmitter()
         visual_sensor = VisualSensor()
+        temperature_sensor = TemperatureSensor()
         memory = Memory(memory_data)
         stats = AntStats.build(AntTypes.MALE, genome)
-        body = MaleAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, visual_sensor, genome)
+        body = MaleAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
         mind = MaleAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation)
         ant = MaleAnt(self._event_bus, EventEmitter(), id, from_colony_id, owner_id, body, mind)
 

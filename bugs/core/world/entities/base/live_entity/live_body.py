@@ -2,6 +2,7 @@ from core.world.utils.point import Point
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME
 from core.world.entities.base.live_entity.visual_sensor import VisualSensor
+from core.world.entities.base.live_entity.temperature_sensor import TemperatureSensor
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.base.entity_types import EntityTypes, EntityTypesPack
@@ -20,7 +21,7 @@ class LiveBody(Body):
     _stats: LiveStats
     stats: LiveStats
 
-    def __init__(self, events: EventEmitter, stats: LiveStats, memory: Memory, position: Point, angle: int, hp: int, visual_sensor: VisualSensor):
+    def __init__(self, events: EventEmitter, stats: LiveStats, memory: Memory, position: Point, angle: int, hp: int, visual_sensor: VisualSensor, temperature_sensor: TemperatureSensor):
         super().__init__(events, stats, position, angle, hp)
         self.memory = memory
         self._max_calories = 1000
@@ -29,10 +30,15 @@ class LiveBody(Body):
         self._can_eat_calories_per_step = 20
         self._user_speed = stats.distance_per_step / STEP_TIME
         self._visual_sensor = visual_sensor
+        self._temperature_sensor = temperature_sensor
 
     @property
-    def visual_sensor(self):
+    def visual_sensor(self) -> VisualSensor:
         return self._visual_sensor
+
+    @property
+    def temperature_sensor(self) -> TemperatureSensor:
+        return self._temperature_sensor
 
     @property
     def user_speed(self):

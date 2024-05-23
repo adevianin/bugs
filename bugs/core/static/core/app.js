@@ -685,13 +685,13 @@ class Climate extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmit
         return this._dailyTemp;
     }
 
-    get changeDirection() {
-        return this._changeDirection;
+    get directionOfChange() {
+        return this._directionOfChange;
     }
 
-    setTemperatureChange(dailyTemp, changeDirection) {
+    setTemperatureChange(dailyTemp, directionOfChange) {
         this._dailyTemp = dailyTemp;
-        this._changeDirection = changeDirection;
+        this._directionOfChange = directionOfChange;
         this.emit('change');
     }
 
@@ -703,7 +703,7 @@ class Climate extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmit
     }
 
     _playTemperatureChangeAction(action) {
-        this.setTemperatureChange(action.dailyTemperature, action.changeDirection);
+        this.setTemperatureChange(action.dailyTemperature, action.directionOfChange);
     }
 }
 
@@ -2353,7 +2353,7 @@ class WorldService {
         
         this._world.size = worldJson.size;
 
-        this._world.climate.setTemperatureChange(worldJson.climate.dailyTemperature, worldJson.climate.changeDirection);
+        this._world.climate.setTemperatureChange(worldJson.climate.dailyTemperature, worldJson.climate.directionOfChange);
     }
 
     _clearWorld() {
@@ -4020,7 +4020,7 @@ class ClimateTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0_
 
     _renderTemperatureChange() {
         this._temperatureEl.innerHTML = this._climate.dailyTemperature;
-        this._changeDirectionEl.innerHTML = this._climate.changeDirection > 0 ? 'потепління' : 'похолодання';
+        this._changeDirectionEl.innerHTML = this._climate.directionOfChange > 0 ? 'потепління' : 'похолодання';
     }
 
 }

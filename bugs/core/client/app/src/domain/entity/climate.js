@@ -10,13 +10,13 @@ class Climate extends EventEmitter {
         return this._dailyTemp;
     }
 
-    get changeDirection() {
-        return this._changeDirection;
+    get directionOfChange() {
+        return this._directionOfChange;
     }
 
-    setTemperatureChange(dailyTemp, changeDirection) {
+    setTemperatureChange(dailyTemp, directionOfChange) {
         this._dailyTemp = dailyTemp;
-        this._changeDirection = changeDirection;
+        this._directionOfChange = directionOfChange;
         this.emit('change');
     }
 
@@ -28,7 +28,7 @@ class Climate extends EventEmitter {
     }
 
     _playTemperatureChangeAction(action) {
-        this.setTemperatureChange(action.dailyTemperature, action.changeDirection);
+        this.setTemperatureChange(action.dailyTemperature, action.directionOfChange);
     }
 }
 

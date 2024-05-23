@@ -5,12 +5,12 @@ from .base.action import Action
 class ClimateTemperatureChangeAction(Action):
 
     @classmethod
-    def build(cls, daily_temperature: int, change_direction: int):
-        return ClimateTemperatureChangeAction(daily_temperature, change_direction)
+    def build(cls, daily_temperature: int, direction_of_change: int):
+        return ClimateTemperatureChangeAction(daily_temperature, direction_of_change)
 
-    def __init__(self, daily_temperature: int, change_direction: int):
+    def __init__(self, daily_temperature: int, direction_of_change: int):
         super().__init__(None, ActionTypes.CLIMATE_TEMPERATURE_CHANGE, ActorTypes.CLIMATE)
         self.daily_temperature = daily_temperature
-        self.change_direction = change_direction
+        self.direction_of_change = direction_of_change
 
     
