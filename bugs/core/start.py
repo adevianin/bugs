@@ -12,7 +12,6 @@ from core.data.factories.json_item_area_factory import JsonItemAreaFactory
 from core.data.factories.json_formation_factory import JsonFormationFactory
 from core.data.factories.json_item_factory import JsonItemFactory
 from core.data.factories.json_map_factory import JsonMapFactory
-from core.data.factories.json_stats_factory import JsonStatsFactory
 from core.data.factories.json_genes_factory import JsonGenesFactory
 from core.data.factories.json_larva_factory import JsonLarvaFactory
 from core.data.factories.json_egg_factory import JsonEggFactory
@@ -34,7 +33,6 @@ from core.data.serializers.item_serializer import ItemSerializer
 from core.data.serializers.item_area_serializer import ItemAreaSerializer
 from core.data.serializers.item_source_serializer import ItemSourceSerializer
 from core.data.serializers.formation_serializer import FormationSerializer
-from core.data.serializers.stats_serializer import StatsSerializer
 from core.data.serializers.genes_serializer import GenesSerializer
 from core.data.serializers.nuptial_environment_serializer import NuptialEnvironmentSerializer
 from core.data.serializers.genome_serializer import GenomeSerializer

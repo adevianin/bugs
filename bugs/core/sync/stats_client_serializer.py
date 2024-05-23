@@ -28,13 +28,12 @@ class StatsClientSerializer():
             "distancePerStep": stats.distance_per_step,
             "sightDistance": stats.sight_distance,
             "attack": stats.attack,
-            "defence": stats.defence
+            "defence": stats.defence,
+            "appetite": stats.appetite,
+            "minTemperature": stats.min_temperature
         })
         return json
     
     def _serialize_ant_stats(self, stats: AntStats):
         json = self._serialize_live_stats(stats)
-        json.update({
-            'appetite': stats.appetite
-        })
         return json

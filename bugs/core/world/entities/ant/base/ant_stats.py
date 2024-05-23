@@ -20,7 +20,3 @@ class AntStats(LiveStats):
         min_temperature = round(phenotype.min_temperature, AntStats.NDIGITS)
         return AntStats(StatsTypes.ANT, max_hp, hp_regen_rate, speed, sight_distance, strength, defense, appetite, min_temperature)
     
-    def __init__(self, type: StatsTypes, max_hp: int, hp_regen_rate: int, distance_per_step: int, sight_distance: int, attack: int, defense: int, appetite: int, min_temperature: int):
-        super().__init__(type, max_hp, hp_regen_rate, distance_per_step, sight_distance, attack, defense)
-        self.appetite = appetite
-        self.min_temperature = min_temperature
