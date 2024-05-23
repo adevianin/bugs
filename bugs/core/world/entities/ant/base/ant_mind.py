@@ -69,6 +69,9 @@ class AntMind(Mind):
         if (self._body.check_am_i_hungry() and not self._is_thought_in_stack(ThoughtTypes.FEED_MYSELF)):
             self.feed_myself()
 
+        if (self._body.check_am_i_cold()):
+            print('i am cold') 
+
         if not self._has_thoughts_to_do() and self._am_i_far_away_from_home():
             self.go_home()
 

@@ -17,8 +17,6 @@ from typing import List, Callable
 
 class LiveBody(Body):
 
-    _visual_sensor: VisualSensor
-    _stats: LiveStats
     stats: LiveStats
 
     def __init__(self, events: EventEmitter, stats: LiveStats, memory: Memory, position: Point, angle: int, hp: int, visual_sensor: VisualSensor, temperature_sensor: TemperatureSensor):
@@ -73,6 +71,9 @@ class LiveBody(Body):
     
     def check_am_i_hungry(self):
         return self._calories / (self._max_calories / 100) < 30
+    
+    def check_am_i_cold(self) -> bool:
+        return self._temperature_sensor.temperature + 1 <= self.stats.min_temperature
     
     def calc_how_much_calories_is_need(self):
         return self._max_calories - self._calories
