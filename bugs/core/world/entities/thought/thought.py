@@ -63,8 +63,7 @@ class Thought(ABC):
         self._iterate_nested_thoughts(lambda thought: thought.restart())
 
     def do_step(self) -> bool:
-        if self.is_done or self.is_canceled:
-            raise Exception('cant think thought')
+        pass
 
     def _read_flag(self, flag_name: str):
         if flag_name in self._flags:
