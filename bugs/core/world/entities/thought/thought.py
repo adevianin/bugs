@@ -10,7 +10,7 @@ class Thought(ABC):
         self._type = type
         self._results = None
         self._sayback = sayback
-        self._flags = flags or {}
+        self._flags = flags or self._default_flags
         self._nested_thoughts = {}
 
     @property
@@ -58,9 +58,7 @@ class Thought(ABC):
         pass
 
     def restart(self):
-        self._is_done = False
-        self._is_canceled = False
-        self._flags = {}
+        self._flags = self._default_flags
         self._results = None
         self._iterate_nested_thoughts(lambda thought: thought.restart())
 
@@ -83,5 +81,12 @@ class Thought(ABC):
 
     def _on_stop_thinking(self):
         pass
+
+    @property
+    def _default_flags(self):
+        return {
+            'is_done': False,
+            'is_canceled': False
+        }
 
 
