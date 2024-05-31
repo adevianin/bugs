@@ -8,8 +8,6 @@ class Thought(ABC):
     def __init__(self, body: LiveBody, type: ThoughtTypes, flags: dict, sayback: str):
         self._body = body
         self._type = type
-        self._is_done = False
-        self._is_canceled = False
         self._results = None
         self._sayback = sayback
         self._flags = flags or {}
@@ -17,15 +15,15 @@ class Thought(ABC):
 
     @property
     def is_done(self):
-        return self._is_done
+        return self._read_flag('is_done')
     
     @property
     def is_canceled(self):
-        return self._is_canceled
+        return self._read_flag('is_canceled')
     
     @property
     def is_completed(self):
-        return self._is_canceled or self._is_done
+        return self.is_canceled or self.is_done
     
     @property
     def results(self):
@@ -44,12 +42,12 @@ class Thought(ABC):
         return self._flags
     
     def done(self, results = None):
-        self._is_done = True
+        self._write_flag('is_done', True)
         self._results = results
         self._on_stop_thinking()
 
     def cancel(self):
-        self._is_canceled = True
+        self._write_flag('is_canceled', True)
         self._results = None
         self._on_stop_thinking()
 
@@ -67,7 +65,7 @@ class Thought(ABC):
         self._iterate_nested_thoughts(lambda thought: thought.restart())
 
     def do_step(self) -> bool:
-        if self._is_done or self._is_canceled:
+        if self.is_done or self.is_canceled:
             raise Exception('cant think thought')
 
     def _read_flag(self, flag_name: str):
