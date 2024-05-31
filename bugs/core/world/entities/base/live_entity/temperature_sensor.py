@@ -9,6 +9,10 @@ class TemperatureSensor():
         return self._temperature
     
     @property
-    def direction_of_change(self):
-        return self._direction_of_change
+    def is_warming(self):
+        return self._direction_of_change > 0
+    
+    # @property
+    # def direction_of_change(self):
+    #     return self._direction_of_change
     

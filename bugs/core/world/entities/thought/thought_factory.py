@@ -21,6 +21,7 @@ from core.world.entities.item.item_sources.base.item_source import ItemSource
 from core.world.entities.ant.warrior.thoughts.keep_clear_territory_thought import KeepClearTerritoryThought
 from core.world.entities.base.live_entity.thoughts.wait_step_thought import WaitStepThought
 from core.world.entities.ant.warrior.thoughts.patrol_nest_territory_thought import PatrolNestTerritoryThought
+from core.world.entities.ant.base.thoughts.hibernation_thought import HibernationThought
 
 class ThoughtFactory:
 
@@ -74,6 +75,9 @@ class ThoughtFactory:
     
     def build_patrol_nest_territory(self, body: LiveBody, random_walk_thought: RandomWalkThought, nest: Nest, step_count: int, flags: dict = None, sayback: str = None) -> PatrolNestTerritoryThought:
         return PatrolNestTerritoryThought(body, random_walk_thought, nest, step_count, flags, sayback)
+    
+    def build_hibernation(self, body: LiveBody, go_gome_thought: GoInNestThought, flags: dict = None, sayback: str = None):
+        return HibernationThought(body, go_gome_thought, flags, sayback)
 
     def build_feed_myself_full(self, body: LiveBody, home_nest: Nest, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(body, home_nest.position, home_nest.area)
@@ -121,3 +125,7 @@ class ThoughtFactory:
     def build_patrol_nest_territory_full(self, body: LiveBody, nest: Nest, step_count: int = 0, flags: dict = None, sayback: str = None) -> PatrolNestTerritoryThought:
         random_walk_thought = self.build_random_walk_thought(body, nest.position, nest.area)
         return self.build_patrol_nest_territory(body, random_walk_thought, nest, step_count, flags, sayback)
+    
+    def build_hibernation_full(self, body: LiveBody, home: Nest, flags: dict = None, sayback: str = None) -> HibernationThought:
+        go_home_thought = self.build_go_in_nest_thought(body, home)
+        return HibernationThought(body, go_home_thought, flags, sayback)

@@ -57,6 +57,10 @@ class AntMind(Mind):
         thought = self._thought_factory.build_reinforce_nest_defence_thought_full(body=self._body, nest=nest, point_to_check=point_to_check, sayback=sayback)
         self._register_thought(thought=thought, asap=asap)
 
+    def hibernate(self, asap: bool = False):
+        thought = self._thought_factory.build_hibernation_full(self._body, self.home_nest)
+        self._register_thought(thought=thought, asap=asap)
+
     def toggle_is_in_operation(self, is_in_operation: bool):
         self._is_in_opearetion = is_in_operation
 
@@ -69,8 +73,8 @@ class AntMind(Mind):
         if (self._body.check_am_i_hungry() and not self._is_thought_in_stack(ThoughtTypes.FEED_MYSELF)):
             self.feed_myself()
 
-        if (self._body.check_am_i_cold()):
-            print('i am cold') 
+        if (self._body.check_urge_to_hibernate() and not self._is_thought_in_stack(ThoughtTypes.HIBERNATION)):
+            self.hibernate()
 
         if not self._has_thoughts_to_do() and self._am_i_far_away_from_home():
             self.go_home()

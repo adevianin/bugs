@@ -18,3 +18,4 @@ class ThoughtTypes(StrEnum):
     HUNT_FOR_APHID = 'hunt_for_aphid'
     KEEP_CLEAR_TERRITORY = 'keep_clear_territory'
     WAIT_STEP = 'wait_step'
+    HIBERNATION = 'hibernation'
