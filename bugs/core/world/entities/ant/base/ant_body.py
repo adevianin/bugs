@@ -35,9 +35,13 @@ class AntBody(LiveBody):
         return self._located_inside_nest.id if self._located_inside_nest else None
     
     @property
+    def located_in_nest(self) -> Nest:
+        return self._located_inside_nest
+    
+    @property
     def is_in_nest(self):
         return self._located_inside_nest != None
-
+    
     @property
     def is_item_picked(self):
         return self._picked_item is not None
@@ -102,6 +106,20 @@ class AntBody(LiveBody):
             self.get_out_of_nest()
             return False
         return super().step_to(destination_point)
+    
+    def eat_from_nest(self, nest: Nest):
+        needed_cals = self.calc_how_much_calories_is_need()
+        calories = nest.give_calories(needed_cals)
+        self.eat_calories(calories)
+    
+    def enter_hibernation(self):
+        self.memory.save('am_in_hibernation', True)
+
+    def exit_hibernation(self):
+        self.memory.save('am_in_hibernation', False)
+
+    def am_i_in_hibernation(self) -> bool:
+        return bool(self.memory.read('am_in_hibernation'))
     
     def _die(self):
         super()._die()

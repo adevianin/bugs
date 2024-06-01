@@ -15,7 +15,7 @@ from core.world.entities.ant.base.thoughts.reinforce_nest_defence_thought import
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 from core.world.entities.ground_beetle.thoughts.hunt_for_aphid import HuntForAphid
 from core.world.entities.ant.warrior.thoughts.patrol_nest_territory_thought import PatrolNestTerritoryThought
-
+from core.world.entities.ant.base.thoughts.hibernation_thought import HibernationThought
 
 class ThoughtSerializer():
 
@@ -51,6 +51,8 @@ class ThoughtSerializer():
                 return self._serialize_hunt_for_aphid(thought)
             case ThoughtTypes.PATROL_NEST_TERRITORY:
                 return self._serialize_patrol_nest_territory(thought)
+            case ThoughtTypes.HIBERNATION:
+                return self._serialize_hibernation(thought)
             case _:
                 raise Exception('unknown type of thought')
 
@@ -213,6 +215,15 @@ class ThoughtSerializer():
             'step_count': thought.step_count,
             'nest_id': thought.nest_id,
             'random_walk_thought': random_walk_thought_json
+        })
+
+        return json
+    
+    def _serialize_hibernation(self, thought: HibernationThought):
+        json = self._serialize_thought(thought)
+        go_home_thought_json = self.serialize(thought.go_home_thought)
+        json.update({
+            'go_home_thought': go_home_thought_json
         })
 
         return json

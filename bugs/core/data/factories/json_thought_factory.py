@@ -41,6 +41,8 @@ class JsonThoughtFactory():
                 return self._build_hynt_for_aphid(body, thought_json, entities_collection)
             case ThoughtTypes.PATROL_NEST_TERRITORY:
                 return self._build_patrol_nest_territory(body, thought_json, entities_collection)
+            case ThoughtTypes.HIBERNATION:
+                return self._build_hibernation(body, thought_json, entities_collection)
             case _:
                 raise Exception('unknown type of thought')
             
@@ -125,3 +127,9 @@ class JsonThoughtFactory():
         flags = thought_json['flags']
         sayback = thought_json['sayback']
         return self._thought_factory.build_patrol_nest_territory(body, random_walk_thought, nest, step_count, flags, sayback)
+    
+    def _build_hibernation(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
+        go_home_thought = self.build_thougth_from_json(body, thought_json['go_home_thought'], entities_collection)
+        flags = thought_json['flags']
+        sayback = thought_json['sayback']
+        return self._thought_factory.build_hibernation(body, go_home_thought, flags, sayback)
