@@ -112,15 +112,6 @@ class AntBody(LiveBody):
         calories = nest.give_calories(needed_cals)
         self.eat_calories(calories)
     
-    def enter_hibernation(self):
-        self.memory.save('am_in_hibernation', True)
-
-    def exit_hibernation(self):
-        self.memory.save('am_in_hibernation', False)
-
-    def am_i_in_hibernation(self) -> bool:
-        return bool(self.memory.read('am_in_hibernation'))
-    
     def _die(self):
         super()._die()
         self.sayer.remove_all_listeners()

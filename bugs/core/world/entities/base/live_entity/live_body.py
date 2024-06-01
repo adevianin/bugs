@@ -73,13 +73,22 @@ class LiveBody(Body):
         return self._calories / (self._max_calories / 100) < 30
     
     def check_am_i_freezing(self) -> bool:
-        return self._temperature_sensor.temperature < self.stats.min_temperature
+        return self._temperature_sensor.temperature < self.stats.min_temperature and not self.am_i_in_hibernation()
     
     def check_urge_to_hibernate(self) -> bool:
         return self._temperature_sensor.temperature + 1 <= self.stats.min_temperature and not self._temperature_sensor.is_warming
 
     def check_urge_to_exit_hibernation(self) -> bool:
         return self._temperature_sensor.temperature >= self.stats.min_temperature and self._temperature_sensor.is_warming
+    
+    def enter_hibernation(self):
+        self.memory.save('am_in_hibernation', True)
+
+    def exit_hibernation(self):
+        self.memory.save('am_in_hibernation', False)
+
+    def am_i_in_hibernation(self) -> bool:
+        return bool(self.memory.read('am_in_hibernation'))
     
     def calc_how_much_calories_is_need(self):
         return self._max_calories - self._calories
