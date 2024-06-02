@@ -16,6 +16,10 @@ class GoInNestThought(Thought):
         return self._nest.id
 
     def do_step(self):
+        if self._body.located_in_nest_id == self._nest.id:
+            self.done()
+            return
+
         if self._read_flag('is_near_nest'):
             self._body.get_in_nest(self._nest)
             self.done()
