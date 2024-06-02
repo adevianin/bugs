@@ -38,7 +38,7 @@ class QueenManagerView extends BaseHTMLView {
     }
 
     _renderQueen() {
-        this._el.querySelector('[data-queen-name]').innerHTML = this._queen.id;
+        this._el.querySelector('[data-queen-name]').innerHTML = this._queen ? this._queen.id : '';
     }
 
     _renderBuildingSite() {

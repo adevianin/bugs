@@ -1,17 +1,6 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png":
-/*!****************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/textures/build/world_spritesheet.png ***!
-  \****************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "6286cc76908529f02998.png";
-
-/***/ }),
-
 /***/ "./bugs/core/client/app/src/domain/domainFacade.js":
 /*!*********************************************************!*\
   !*** ./bugs/core/client/app/src/domain/domainFacade.js ***!
@@ -6345,6 +6334,14 @@ class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._renderBuildingSite();
     }
 
+    clear() {
+        this._queen = null;
+        this._buildingSite = null;
+        this._malesSearch.reset();
+        this._renderQueen();
+        this._renderBuildingSite();
+    }
+
     remove() {
         super.remove();
         this._malesSearch.remove();
@@ -6359,7 +6356,7 @@ class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     }
 
     _renderQueen() {
-        this._el.querySelector('[data-queen-name]').innerHTML = this._queen.id;
+        this._el.querySelector('[data-queen-name]').innerHTML = this._queen ? this._queen.id : '';
     }
 
     _renderBuildingSite() {
@@ -6484,6 +6481,7 @@ class QueensListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1_
 
         this._stopListenQueenFlewNuptialFlight = this.$domainFacade.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
         this._stopListenQueenFlewNuptialFlightBack = this.$domainFacade.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
+        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
     }
 
     get selectedQueen() {
@@ -6498,9 +6496,8 @@ class QueensListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1_
     }
 
     _autoSelect() {
-        if (!this._selectedQueen && this._queens.length > 0) {
-            this._selectQueen(this._queens[0]);
-        }
+        let queenToSelect = this._queens.length > 0 ? this._queens[0] : null;
+        this._selectQueen(queenToSelect);
     }
 
     _selectQueen(queen) {
@@ -6529,9 +6526,33 @@ class QueensListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1_
     }
 
     _renderSelectedQueen() {
+        let selectedQueenId = this._selectedQueen ? this._selectedQueen.id : null;
         for (let queenId in this._queenViews) {
-            this._queenViews[queenId].toggleSelect(this._selectedQueen.id == queenId);
+            this._queenViews[queenId].toggleSelect(selectedQueenId == queenId);
         }
+    }
+
+    _removeQueen(queenId) {
+        this._queenViews[queenId].remove();
+        delete this._queenViews[queenId];
+        this._queens = this._queens.filter( q => q.id != queenId);
+        if (queenId == this._selectedQueen.id) {
+            this._selectedQueen = null;
+        }
+    }
+
+    _checkIdInQueensList(id) {
+        let queensIds = this._queens.map(queen => queen.id);
+        let isMyQueen = queensIds.includes(id);
+        return isMyQueen;
+    }
+
+    _clearQueenViews() {
+        for (let queenId in this._queenViews) {
+            this._queenViews[queenId].remove();
+        }
+
+        this._queenViews = {};
     }
 
     _onQueenFlewNuptialFlight(queen) {
@@ -6546,12 +6567,7 @@ class QueensListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1_
     _onQueenFlewNuptialFlightBack(queen) {
         let isMyQueen = this.$domainFacade.isEntityMy(queen);
         if (isMyQueen) {
-            this._queenViews[queen.id].remove();
-            delete this._queenViews[queen.id];
-            this._queens = this._queens.filter( q => q.id != queen.id);
-            if (queen.id == this._selectedQueen.id) {
-                this._selectedQueen = null;
-            }
+            this._removeQueen(queen.id);
             this._autoSelect();
         }
     }
@@ -6560,12 +6576,11 @@ class QueensListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1_
         this._selectQueen(queen);
     }
 
-    _clearQueenViews() {
-        for (let queenId in this._queenViews) {
-            this._queenViews[queenId].remove();
+    _onSomeoneDied(someone) {
+        if (this._checkIdInQueensList(someone.id)) {
+            this._removeQueen(someone.id);
+            this._autoSelect();
         }
-
-        this._queenViews = {};
     }
 
 }
@@ -13813,6 +13828,17 @@ module.exports = {
   }
 };
 
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png":
+/*!****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/textures/build/world_spritesheet.png ***!
+  \****************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+module.exports = __webpack_require__.p + "6286cc76908529f02998.png";
 
 /***/ }),
 
