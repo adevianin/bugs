@@ -6,7 +6,6 @@ from typing import List
 from core.world.utils.point import Point
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.thought.thought_types import ThoughtTypes
-from core.world.settings import COLD_DAMAGE
 
 class Mind(ABC):
 
@@ -42,9 +41,6 @@ class Mind(ABC):
 
     def do_step(self):
         self._body.memory.treat_records()
-
-        if self._body.check_am_i_freezing():
-            self._body.receive_damage(COLD_DAMAGE)
 
         if self._is_auto_thought_generation:
             self._auto_generate_thoughts()

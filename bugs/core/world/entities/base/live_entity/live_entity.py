@@ -6,6 +6,7 @@ from .mind import Mind
 from .live_body import LiveBody
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.action.entity_walk_action import EntityWalkAction
+from core.world.settings import COLD_DAMAGE
 
 from typing import List
 
@@ -42,6 +43,9 @@ class LiveEntity(Entity, iEnemy):
     
     def do_step(self):
         super().do_step()
+
+        if self._body.check_am_i_freezing():
+            self._body.receive_damage(COLD_DAMAGE)
 
         self._mind.do_step()
 
