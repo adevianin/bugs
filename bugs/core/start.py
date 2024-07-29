@@ -58,6 +58,7 @@ from core.world.entities.climate.climate_factory import ClimateFactory
 from core.world.services.player_service import PlayerService
 from core.world.services.colony_service import ColonyService
 from core.world.services.nuptial_environment_service import NuptialEnvironmentService
+from core.world.services.ant_service import AntService
 
 from core.sync.world_client_serializer import WorldClientSerializer
 from core.sync.colony_client_serializer import ColonyClientSerializer
@@ -99,6 +100,7 @@ def start():
     colony_service = ColonyService(operation_factory)
     player_service = PlayerService(colony_factory, ant_factory)
     nuptial_environment_service = NuptialEnvironmentService(colony_factory)
+    ant_service = AntService()
 
     genes_serializer = GenesSerializer()
     genome_serializer = GenomeSerializer(genes_serializer)
@@ -165,12 +167,13 @@ def start():
     nuptial_environment_client_serializer = NuptialEnvironmentClientSerializer(genome_client_serializer, genes_client_serializer, stats_client_serializer)
 
     world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, world_repository, colony_service, 
-                                    player_service, nuptial_environment_service)
+                                    player_service, nuptial_environment_service, ant_service)
 
     world_facade.init_world()
 
     colony_service.set_world(world_facade.world)
     player_service.set_world(world_facade.world)
     nuptial_environment_service.set_world(world_facade.world)
+    ant_service.set_world(world_facade.world)
 
     world_facade.world.run()

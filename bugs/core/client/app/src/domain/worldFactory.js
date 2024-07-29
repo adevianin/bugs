@@ -25,23 +25,7 @@ class WorldFactory {
     buildEntity(entityJson) {
         switch(entityJson.type) {
             case EntityTypes.ANT: 
-                switch (entityJson.ant_type) {
-                    case AntTypes.QUEEN:
-                        return this.buildQueenAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.owner_id, entityJson.user_speed, 
-                            entityJson.hp, entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats, 
-                            entityJson.is_fertilized, entityJson.is_in_nuptial_flight, entityJson.genes)
-                    case AntTypes.WARRIOR:
-                        return this.buildWarriorAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.owner_id, entityJson.user_speed, 
-                            entityJson.hp, entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats)
-                    case AntTypes.WORKER:
-                        return this.buildWorkerAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.owner_id, entityJson.user_speed, 
-                            entityJson.hp, entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats)
-                    case AntTypes.MALE:
-                        return this.buildMaleAnt(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.owner_id, entityJson.user_speed, 
-                            entityJson.hp, entityJson.max_hp, entityJson.picked_item_id, entityJson.located_in_nest_id, entityJson.home_nest_id, entityJson.stats);
-                    default:
-                        throw 'unknown type of ant';
-                }
+                return this.buildAnt(entityJson)
             case EntityTypes.GROUND_BEETLE:
                 return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
                     entityJson.max_hp);
@@ -77,23 +61,6 @@ class WorldFactory {
         return new World(this._mainEventBus, climate);
     }
 
-    buildQueenAnt(id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, isInNuptialFlight, genes) {
-        return new QueenAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, isFertilized, 
-            isInNuptialFlight, genes);
-    }
-
-    buildWorkerAnt(id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
-        return new WorkerAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
-    }
-
-    buildWarriorAnt(id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
-        return new WarriorAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
-    }
-
-    buildMaleAnt(id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats) {
-        return new MaleAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats);
-    }
-
     buildNest(nestJson) {
         let eggs = [];
         for (let eggJson of nestJson.eggs) {
@@ -119,6 +86,39 @@ class WorldFactory {
         let hp = nestJson.hp;
         let maxHp = nestJson.max_hp;
         return new Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp);
+    }
+
+    buildAnt(antJson) {
+        let id = antJson.id;
+        let position = antJson.position;
+        let angle = antJson.angle;
+        let fromColony = antJson.from_colony_id;
+        let ownerId = antJson.owner_id;
+        let userSpeed = antJson.user_speed;
+        let hp = antJson.hp;
+        let maxHp = antJson.max_hp;
+        let pickedItemId = antJson.picked_item_id;
+        let locatedInNestId = antJson.located_in_nest_id;
+        let homeNestId = antJson.home_nest_id;
+        let stats = antJson.stats;
+        let behavior = antJson.behavior;
+
+        switch (antJson.ant_type) {
+            case AntTypes.QUEEN:
+                let isFertilized = antJson.is_fertilized;
+                let isInNuptialFlight = antJson.is_in_nuptial_flight;
+                let genes = antJson.genes;
+                return new QueenAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
+                     isFertilized, isInNuptialFlight, genes);
+            case AntTypes.WARRIOR:
+                return new WarriorAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior);
+            case AntTypes.WORKER:
+                return new WorkerAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior);
+            case AntTypes.MALE:
+                return new MaleAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior);
+            default:
+                throw 'unknown type of ant';
+        }
     }
 
     buildAntColony(id, owner_id, operations, queenId) {

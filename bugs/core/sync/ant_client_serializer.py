@@ -38,7 +38,11 @@ class AntClientSerializer(LiveEntityClientSerializer):
             'located_in_nest_id': ant.body.located_in_nest_id,
             'home_nest_id': ant.mind.home_nest.id,
             'stats': self._stats_serializer.serialize(ant._body.stats),
-            'genome': self._genome_client_serializer.serialize_genome(ant.body.genome)
+            'genome': self._genome_client_serializer.serialize_genome(ant.body.genome),
+            'behavior': {
+                'guardian': ant.is_guardian_behavior,
+                'cooperative': ant.is_cooperative_behavior
+            }
         })
 
         return json

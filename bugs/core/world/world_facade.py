@@ -10,6 +10,7 @@ from core.world.entities.action.base.action import Action
 from core.world.entities.ant.base.ant_types import AntTypes
 from .nuptial_environment_client_serializer_interface import iNuptialEnvironmentClientSerializer
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
+from core.world.services.ant_service import AntService
 
 from typing import Callable, List, Dict
 
@@ -20,10 +21,10 @@ class WorldFacade:
     @classmethod
     def init(cls, event_bus: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
              nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, world_repository: iWorldRepository, colony_service: ColonyService, 
-             player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService):
+             player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, ant_service: AntService):
         events = EventEmitter()
         world_facade = WorldFacade(event_bus, events, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, world_repository, colony_service, 
-                                   player_service, nuptial_environment_service)
+                                   player_service, nuptial_environment_service, ant_service)
         WorldFacade._instance = world_facade
         return world_facade
 
@@ -33,7 +34,7 @@ class WorldFacade:
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
                  nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, 
-                 nuptial_environment_service: NuptialEnvironmentService):
+                 nuptial_environment_service: NuptialEnvironmentService, ant_service: AntService):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
@@ -49,6 +50,7 @@ class WorldFacade:
         self._colony_service = colony_service
         self._player_service = player_service
         self._nuptial_environment_service = nuptial_environment_service
+        self._ant_service = ant_service
 
         self._event_bus.add_listener('step_start', self._on_step_start)
         self._event_bus.add_listener('action', self._on_action)
@@ -102,11 +104,17 @@ class WorldFacade:
     def change_egg_caste_command(self, user_id: int, nest_id: int, egg_id: str, ant_type: AntTypes):
         self._colony_service.change_egg_caste(user_id, nest_id, egg_id, ant_type)
 
-    def fly_nuptian_flight_command(self, user_id: int, ant_id: int):
-        self._nuptial_environment_service.fly_nuptial_flight(user_id, ant_id)
-
     def found_colony_command(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point):
         self._nuptial_environment_service.found_new_colony(user_id, queen_id, nuptial_male_id, nest_building_site)
+
+    def fly_nuptial_flight_command(self, user_id: int, ant_id: int):
+        self._ant_service.fly_nuptial_flight(user_id, ant_id)
+
+    def change_ant_guardian_behavior_command(self, user_id: int, ant_id: int, is_enabled: bool):
+        self._ant_service.change_ant_guardian_behavior(user_id, ant_id, is_enabled)
+
+    def change_ant_cooperative_behavior_command(self, user_id: int, ant_id: int, is_enabled: bool):
+        self._ant_service.change_ant_cooperative_behavior(user_id, ant_id, is_enabled)
 
     def generate_nuptial_males_for_client(self, user_id: int) -> List[dict]:
         nuptial_males = self._nuptial_environment_service.search_nuptial_males_for(user_id)

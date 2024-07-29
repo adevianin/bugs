@@ -15,6 +15,16 @@ class AntView extends BaseHTMLView {
         this._render();
 
         this._nuptialFlightActionBtn.addEventListener('click', this._onNuptialFlightBtnClick.bind(this));
+        this._guardianBehaviorToggleEl.addEventListener('change', this._onGuardianBehaviorTogglerChange.bind(this));
+        this._cooperativeBehaviorTogglerEl.addEventListener('change', this._onCooperativeBehaviorTogglerChange.bind(this));
+    }
+
+    _onGuardianBehaviorTogglerChange () {
+        this._ant.toggleGuardianBehavior(this._guardianBehaviorToggleEl.checked);
+    }
+
+    _onCooperativeBehaviorTogglerChange () {
+        this._ant.toggleCooperativeBehavior(this._cooperativeBehaviorTogglerEl.checked);
     }
 
     _render() {
@@ -29,6 +39,12 @@ class AntView extends BaseHTMLView {
         this._el.querySelector('[data-nest]').append(this._nestSelector.el);
 
         this._renderActionBtns();
+
+        this._guardianBehaviorToggleEl = this._el.querySelector('[data-is-guardian]');
+        this._guardianBehaviorToggleEl.checked = this._ant.isGuardianBehavior;
+
+        this._cooperativeBehaviorTogglerEl = this._el.querySelector('[data-is-cooperactive]');
+        this._cooperativeBehaviorTogglerEl.checked = this._ant.isCooperativeBehavior;
     }
 
     remove() {

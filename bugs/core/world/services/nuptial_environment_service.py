@@ -1,12 +1,9 @@
 from core.world.entities.world.world import World
 from core.world.entities.ant.base.nuptial_environment.nuptial_male import NuptialMale
 from core.world.utils.point import Point
-from core.world.entities.ant.base.ant import Ant
 from core.world.entities.ant.queen.queen_ant import QueenAnt
-from core.world.entities.ant.male.male_ant import MaleAnt
 from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.nest.nest import Nest
-from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie import Specie
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
@@ -23,26 +20,6 @@ class NuptialEnvironmentService():
     def search_nuptial_males_for(self, user_id: int) -> List[NuptialMale]:
         nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
         return nuptial_environment.search_males()
-    
-    def fly_nuptial_flight(self, user_id: int, ant_id: int):
-        ant: Ant = self._world.map.get_entity_by_id(ant_id)
-        
-        if not ant or ant.owner_id != user_id:
-            raise Exception('user dont have this ant')
-        
-        if ant.ant_type == AntTypes.QUEEN:
-            queen: QueenAnt = ant
-            if queen.can_fly_nuptial_flight:
-                queen.fly_nuptial_flight()
-                return
-        elif ant.ant_type == AntTypes.MALE:
-            male: MaleAnt = ant
-            male.fly_nuptial_flight()
-            nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
-            nuptial_environment.fly_in_male(male)
-            return
-            
-        raise Exception('cant fly nuptial flight')
     
     def found_new_colony(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point):
         queen: QueenAnt = self._world.map.get_entity_by_id(queen_id)
