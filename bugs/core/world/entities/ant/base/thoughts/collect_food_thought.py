@@ -104,7 +104,7 @@ class CollectFoodThought(Thought):
 
 
     def can_be_delayed(self):
-        if (self._read_flag('is_pickup_food_done')):
+        if (self._read_flag('am_i_got_food')):
             return False
         else:
             return True

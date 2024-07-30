@@ -7,12 +7,12 @@ from typing import List
 from core.world.utils.point import Point
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 
-class ReinforceNestDefenceThought(Thought):
+class DefendNestThought(Thought):
 
     _body: AntBody
 
     def __init__(self, body: AntBody, fight_near_enemies_thought: FightNearEnemiesThought, random_walk_thought: RandomWalkThought, defending_nest: Nest, point_to_check: Point = None, flags: dict = None, sayback: str = None):
-        super().__init__(body=body, type=ThoughtTypes.REINFORCE_NEST_DEFENCE, flags=flags, sayback=sayback)
+        super().__init__(body=body, type=ThoughtTypes.DEFEND_NEST, flags=flags, sayback=sayback)
         self._nested_thoughts['random_walk_thought'] = random_walk_thought
         self._nested_thoughts['fight_near_enemies_thought'] = fight_near_enemies_thought
         self._point_to_check = point_to_check

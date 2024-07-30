@@ -40,8 +40,8 @@ class AntClientSerializer(LiveEntityClientSerializer):
             'stats': self._stats_serializer.serialize(ant._body.stats),
             'genome': self._genome_client_serializer.serialize_genome(ant.body.genome),
             'behavior': {
-                'guardian': ant.is_guardian_behavior,
-                'cooperative': ant.is_cooperative_behavior
+                'guardian': ant.body.is_guardian_behavior,
+                'cooperative': ant.body.is_cooperative_behavior
             }
         })
 

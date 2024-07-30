@@ -72,9 +72,9 @@ class Mind(ABC):
             current_thought = self._get_current_thought()
             if (current_thought.can_be_delayed()):
                 current_thought.delay()
+                self._thoughts_stack.insert(0, thought)
             else:
-                current_thought.cancel()
-            self._thoughts_stack.insert(0, thought)
+                self._thoughts_stack.insert(1, thought)
         else:
             self._thoughts_stack.append(thought)
 

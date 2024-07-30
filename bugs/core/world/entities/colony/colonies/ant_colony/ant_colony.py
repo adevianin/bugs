@@ -154,19 +154,19 @@ class AntColony(Colony):
                     'enemies_positions': enemies_positions
                 })
 
-            if enemies_count > defenders_count:
-                self._send_signal_to_members({
-                    'type': 'workers_reinforcement_needed',
-                    'nest': nest,
-                    'enemies_positions': enemies_positions
-                })
+            # if enemies_count > defenders_count:
+            #     self._send_signal_to_members({
+            #         'type': 'workers_reinforcement_needed',
+            #         'nest': nest,
+            #         'enemies_positions': enemies_positions
+            #     })
 
-            if enemies_count > defenders_count:
-                self._send_signal_to_members({
-                    'type': 'warrirors_reinforcement_needed',
-                    'nest': nest,
-                    'enemies_positions': enemies_positions
-                })
+            # if enemies_count > defenders_count:
+            #     self._send_signal_to_members({
+            #         'type': 'warrirors_reinforcement_needed',
+            #         'nest': nest,
+            #         'enemies_positions': enemies_positions
+            #     })
 
     def _on_colony_nest_destroyed(self, destroyed_nest: Nest):
         remaining_nests_filter: Callable[[Nest], bool] = lambda entity: entity.id != destroyed_nest.id

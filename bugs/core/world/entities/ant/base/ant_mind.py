@@ -5,6 +5,7 @@ from core.world.entities.nest.nest import Nest
 from core.world.utils.point import Point
 from core.world.entities.thought.thought_types import ThoughtTypes
 import math
+from typing import List
 
 class AntMind(Mind):
 
@@ -16,6 +17,7 @@ class AntMind(Mind):
         self._is_in_opearetion = is_in_operation
 
         self._body.events.add_listener('died', self._on_died)
+        self._body.events.add_listener('colony_signal:enemy_spotted', self._on_enemy_spotted_signal)
 
     @property
     def is_in_opearetion(self):
@@ -53,8 +55,8 @@ class AntMind(Mind):
         thought = self._thought_factory.build_attack_nest_thought_full(body=self._body, nest=nest, sayback=sayback)
         self._register_thought(thought)
 
-    def reinforce_nest(self, nest: Nest, point_to_check: Point, asap: bool = True, sayback: str = None):
-        thought = self._thought_factory.build_reinforce_nest_defence_thought_full(body=self._body, nest=nest, point_to_check=point_to_check, sayback=sayback)
+    def defend_nest(self, nest: Nest, point_to_check: Point, asap: bool = True, sayback: str = None):
+        thought = self._thought_factory.build_defend_nest_thought_full(body=self._body, nest=nest, point_to_check=point_to_check, sayback=sayback)
         self._register_thought(thought=thought, asap=asap)
 
     def hibernate(self, asap: bool = False):
@@ -85,3 +87,15 @@ class AntMind(Mind):
     
     def _on_died(self):
         self.free_mind()
+
+    def _on_enemy_spotted_signal(self, signal: dict):
+        if self._is_in_opearetion or self._am_i_think_thought_type(ThoughtTypes.DEFEND_NEST):
+            return
+        
+        if self._body.is_guardian_behavior:
+            nest: Nest = signal['nest']
+            is_my_nest = nest.id == self.home_nest.id
+            if is_my_nest:
+                enemies_positions: List[Point] = signal['enemies_positions']
+                nearest_enemy_pos = self._body.calc_nearest_point(enemies_positions)
+                self.defend_nest(nest, nearest_enemy_pos, True)

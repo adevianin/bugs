@@ -95,20 +95,6 @@ class Ant(LiveEntity):
     def ask_participation(self):
         return self._mind.ask_participation()
     
-    def toggle_guardian_behavior(self, is_enabled: bool):
-        self._body.memory.save('guardian_behavior', is_enabled)
-
-    @property
-    def is_guardian_behavior(self):
-        return bool(self._body.memory.read('guardian_behavior'))
-    
-    def toggle_cooperative_behavior(self, is_enabled: bool):
-        self._body.memory.save('cooperative_behavior', is_enabled)
-
-    @property
-    def is_cooperative_behavior(self):
-        return bool(self._body.memory.read('cooperative_behavior'))
-    
     def _on_got_in_nest(self, nest_id: int):
         self._emit_action(EntityGotInNestAction.build(self.id, nest_id))
 

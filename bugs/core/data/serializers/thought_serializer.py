@@ -11,7 +11,7 @@ from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestTh
 from core.world.entities.base.live_entity.thoughts.fight_enemy_thought import FightEnemyThought
 from core.world.entities.ant.base.thoughts.attack_nest_thought import AttackNestThought
 from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
-from core.world.entities.ant.base.thoughts.reinforce_nest_defence_thought import ReinforceNestDefenceThought
+from core.world.entities.ant.base.thoughts.defend_nest_thought import DefendNestThought
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 from core.world.entities.ground_beetle.thoughts.hunt_for_aphid import HuntForAphid
 from core.world.entities.ant.warrior.thoughts.patrol_nest_territory_thought import PatrolNestTerritoryThought
@@ -43,8 +43,8 @@ class ThoughtSerializer():
                 return self._serialize_fight_enemy(thought)
             case ThoughtTypes.FIGHT_NEAR_ENEMIES:
                 return self._serialize_fight_near_enemies(thought)
-            case ThoughtTypes.REINFORCE_NEST_DEFENCE:
-                return self._serialize_reinforce_nest_defence(thought)
+            case ThoughtTypes.DEFEND_NEST:
+                return self._serialize_defend_nest(thought)
             case ThoughtTypes.RANDOM_WALK:
                 return self._serialize_random_walk(thought)
             case ThoughtTypes.HUNT_FOR_APHID:
@@ -173,7 +173,7 @@ class ThoughtSerializer():
 
         return json
     
-    def _serialize_reinforce_nest_defence(self, thought: ReinforceNestDefenceThought):
+    def _serialize_defend_nest(self, thought: DefendNestThought):
         json = self._serialize_thought(thought)
         random_walk_thought_json = self.serialize(thought.random_walk_thought)
         fight_near_enemies_thought_json = self.serialize(thought.fight_near_enemies_thought)

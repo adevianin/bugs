@@ -35,7 +35,7 @@ class AntService():
         if not ant or ant.owner_id != user_id:
             raise Exception('user dont have this ant')
         
-        ant.toggle_guardian_behavior(is_enabled)
+        ant.body.toggle_guardian_behavior(is_enabled)
 
     def change_ant_cooperative_behavior(self, user_id: int, ant_id: int, is_enabled: bool):
         ant: Ant = self._world.map.get_entity_by_id(ant_id)
@@ -43,4 +43,4 @@ class AntService():
         if not ant or ant.owner_id != user_id:
             raise Exception('user dont have this ant')
         
-        ant.toggle_cooperative_behavior(is_enabled)
+        ant.body.toggle_cooperative_behavior(is_enabled)

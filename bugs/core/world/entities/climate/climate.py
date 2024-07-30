@@ -4,7 +4,7 @@ import math
 
 class Climate():
 
-    MIN_TEMP = -10
+    MIN_TEMP = 1
     MAX_TEMP = 30
     STEP = 0.2
 
