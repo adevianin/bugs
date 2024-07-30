@@ -43,6 +43,8 @@ class JsonThoughtFactory():
                 return self._build_patrol_nest_territory(body, thought_json, entities_collection)
             case ThoughtTypes.HIBERNATION:
                 return self._build_hibernation(body, thought_json, entities_collection)
+            case ThoughtTypes.SHELTER_IN_NEST:
+                return self._build_shelter_in_nest(body, thought_json, entities_collection)
             case _:
                 raise Exception('unknown type of thought')
             
@@ -133,3 +135,10 @@ class JsonThoughtFactory():
         flags = thought_json['flags']
         sayback = thought_json['sayback']
         return self._thought_factory.build_hibernation(body, go_home_thought, flags, sayback)
+    
+    def _build_shelter_in_nest(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
+        go_home_thought = self.build_thougth_from_json(body, thought_json['go_home_thought'], entities_collection)
+        shelter_nest = entities_collection.get_entity_by_id(thought_json['shelter_nest_id'])
+        flags = thought_json['flags']
+        sayback = thought_json['sayback']
+        return self._thought_factory.build_shelter_in_nest(body, go_home_thought, shelter_nest, flags, sayback)

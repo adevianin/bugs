@@ -63,6 +63,10 @@ class AntMind(Mind):
         thought = self._thought_factory.build_hibernation_full(self._body, self.home_nest)
         self._register_thought(thought=thought, asap=asap)
 
+    def shelter_in_home_nest(self, asap: bool = False):
+        thought = self._thought_factory.build_shelter_in_nest_full(self._body, self.home_nest)
+        self._register_thought(thought=thought, asap=asap)
+
     def toggle_is_in_operation(self, is_in_operation: bool):
         self._is_in_opearetion = is_in_operation
 
@@ -89,7 +93,7 @@ class AntMind(Mind):
         self.free_mind()
 
     def _on_enemy_spotted_signal(self, signal: dict):
-        if self._is_in_opearetion or self._am_i_think_thought_type(ThoughtTypes.DEFEND_NEST):
+        if self._is_in_opearetion or self._is_thought_in_stack(ThoughtTypes.DEFEND_NEST) or self._is_thought_in_stack(ThoughtTypes.SHELTER_IN_NEST):
             return
         
         if self._body.is_guardian_behavior:
@@ -99,3 +103,5 @@ class AntMind(Mind):
                 enemies_positions: List[Point] = signal['enemies_positions']
                 nearest_enemy_pos = self._body.calc_nearest_point(enemies_positions)
                 self.defend_nest(nest, nearest_enemy_pos, True)
+        else:
+            self.shelter_in_home_nest(True)

@@ -15,6 +15,7 @@ class ThoughtTypes(StrEnum):
     FIGHT_ENEMY = 'fight_enemy'
     FIGHT_NEAR_ENEMIES = 'fight_near_enemies'
     DEFEND_NEST = 'defend_nest'
+    SHELTER_IN_NEST = 'shelter_in_nest'
     HUNT_FOR_APHID = 'hunt_for_aphid'
     KEEP_CLEAR_TERRITORY = 'keep_clear_territory'
     WAIT_STEP = 'wait_step'

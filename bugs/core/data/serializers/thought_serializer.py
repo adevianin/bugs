@@ -16,6 +16,7 @@ from core.world.entities.base.live_entity.thoughts.random_walk_thought import Ra
 from core.world.entities.ground_beetle.thoughts.hunt_for_aphid import HuntForAphid
 from core.world.entities.ant.warrior.thoughts.patrol_nest_territory_thought import PatrolNestTerritoryThought
 from core.world.entities.ant.base.thoughts.hibernation_thought import HibernationThought
+from core.world.entities.ant.base.thoughts.shelter_in_nest import ShelterInNestThought
 
 class ThoughtSerializer():
 
@@ -53,6 +54,8 @@ class ThoughtSerializer():
                 return self._serialize_patrol_nest_territory(thought)
             case ThoughtTypes.HIBERNATION:
                 return self._serialize_hibernation(thought)
+            case ThoughtTypes.SHELTER_IN_NEST:
+                return self._serialize_shelter_in_nest(thought)
             case _:
                 raise Exception('unknown type of thought')
 
@@ -224,6 +227,16 @@ class ThoughtSerializer():
         go_home_thought_json = self.serialize(thought.go_home_thought)
         json.update({
             'go_home_thought': go_home_thought_json
+        })
+
+        return json
+    
+    def _serialize_shelter_in_nest(self, thought: ShelterInNestThought):
+        json = self._serialize_thought(thought)
+        go_home_thought_json = self.serialize(thought.go_home_thought)
+        json.update({
+            'go_home_thought': go_home_thought_json,
+            'shelter_nest_id': thought.shelter_nest_id
         })
 
         return json
