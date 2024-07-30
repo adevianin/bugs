@@ -344,10 +344,12 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
     }
 
     toggleGuardianBehavior(isEnabled) {
+        this._behavior.guardian = isEnabled;
         this._antApi.toggleGuardianBehavior(this.id, isEnabled);
     }
 
     toggleCooperativeBehavior(isEnabled) {
+        this._behavior.cooperative = isEnabled;
         this._antApi.toggleCooperativeBehavior(this.id, isEnabled);
     }
 
