@@ -2,12 +2,12 @@ from core.world.entities.base.entity_collection import EntityCollection
 from core.world.entities.ground_beetle.ground_beetle_factory import GroundBeetleFactory
 from core.world.utils.point import Point
 
-class JsonGroundBeetleFactory():
+class GroundBeetleDeserializer():
 
     def __init__(self, ground_beetle_factory: GroundBeetleFactory):
         self._ground_beetle_factory = ground_beetle_factory
 
-    def build_ground_beetle_from_json(self, ground_beetle_json: dict, entities_collection: EntityCollection):
+    def deserialize_ground_beetle(self, ground_beetle_json: dict, entities_collection: EntityCollection):
         id = ground_beetle_json['id']
         from_colony_id = ground_beetle_json['from_colony_id']
         position = Point.from_json(ground_beetle_json['position'])

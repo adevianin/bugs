@@ -2,12 +2,12 @@ from core.world.entities.item.items.item_factory import ItemFactory
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.utils.point import Point
 
-class JsonItemFactory():
+class ItemDeserializer():
 
     def __init__(self, item_factory: ItemFactory):
         self._item_factory = item_factory
 
-    def build_item_from_json(self, item_json: dict):
+    def deserialize_item(self, item_json: dict):
         id = item_json['id']
         item_type = ItemTypes(item_json['item_type'])
         position = Point.from_json(item_json['position'])

@@ -2,12 +2,12 @@ from core.world.entities.item.item_sources.item_source_factory import ItemSource
 from core.world.utils.point import Point
 from core.world.entities.item.items.base.item_types import ItemTypes
 
-class JsonItemSourceFactory():
+class ItemSourceDeserializer():
 
     def __init__(self, item_source_factory: ItemSourceFactory):
         self._item_source_factory = item_source_factory
 
-    def build_item_source_from_json(self, item_source_factory_json: dict):
+    def deserialize_item_source(self, item_source_factory_json: dict):
         id = item_source_factory_json['id']
         from_colony_id = item_source_factory_json['from_colony_id']
         hp = item_source_factory_json['hp']

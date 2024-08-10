@@ -4,12 +4,12 @@ from core.world.entities.base.entity_collection import EntityCollection
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.base.live_entity.live_body import LiveBody
 
-class JsonThoughtFactory():
+class ThoughtDeserializer():
 
     def __init__(self, thought_factory: ThoughtFactory):
         self._thought_factory = thought_factory
 
-    def build_thougth_from_json(self, body: LiveBody, thought_json: dict, entities_collection: EntityCollection):
+    def deserialize_thougth(self, body: LiveBody, thought_json: dict, entities_collection: EntityCollection):
         match thought_json['type']:
             case ThoughtTypes.GO_IN_NEST:
                 return self._build_go_in_nest_thought(body, thought_json, entities_collection)

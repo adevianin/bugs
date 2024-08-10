@@ -1,23 +1,23 @@
 from core.data.repositories.world_data_repository import WorldDataRepository
 from core.data.repositories.world_repository import WorldRepository
 
-from core.data.factories.json_nest_factory import JsonNestFactory
-from core.data.factories.json_ant_factory import JsonAntFactory
-from core.data.factories.json_colony_factory import JsonColonyFactory
-from core.data.factories.json_thought_factory import JsonThoughtFactory
-from core.data.factories.json_operation_factory import JsonOperationFactory
-from core.data.factories.json_ground_beetle_factory import JsonGroundBeetleFactory
-from core.data.factories.json_item_source_factory import JsonItemSourceFactory
-from core.data.factories.json_item_area_factory import JsonItemAreaFactory
-from core.data.factories.json_formation_factory import JsonFormationFactory
-from core.data.factories.json_item_factory import JsonItemFactory
-from core.data.factories.json_map_factory import JsonMapFactory
-from core.data.factories.json_genes_factory import JsonGenesFactory
-from core.data.factories.json_larva_factory import JsonLarvaFactory
-from core.data.factories.json_egg_factory import JsonEggFactory
-from core.data.factories.json_nuptial_environment_factory import JsonNuptialEnvironmentFactory
-from core.data.factories.json_genome_factory import JsonGenomeFactory
-from core.data.factories.json_climate_factory import JsonClimateFactory
+from core.data.deserializers.nest_deserializer import NestDeserializer
+from core.data.deserializers.ant_deserializer import AntDeserializer
+from core.data.deserializers.colony_deserializer import ColonyDeserializer
+from core.data.deserializers.thought_deserializer import ThoughtDeserializer
+from core.data.deserializers.operation_deserializer import OperationDeserializer
+from core.data.deserializers.ground_beetle_deserializer import GroundBeetleDeserializer
+from core.data.deserializers.item_source_deserializer import ItemSourceDeserializer
+from core.data.deserializers.item_area_deserializer import ItemAreaDeserializer
+from core.data.deserializers.formation_deserializer import FormationDeserializer
+from core.data.deserializers.item_deserializer import ItemDeserializer
+from core.data.deserializers.map_deserializer import MapDeserializer
+from core.data.deserializers.gene_deserializer import GeneDeserializer
+from core.data.deserializers.larva_deserializer import LarvaDeserializer
+from core.data.deserializers.egg_deserializer import EggDeserializer
+from core.data.deserializers.nuptial_environment_deserializer import NuptialEnvironmentDeserializer
+from core.data.deserializers.genome_deserializer import GenomeDeserializer
+from core.data.deserializers.climate_deserializer import ClimateDeserializer
 
 from core.data.serializers.larva_serializer import LarvaSerializer
 from core.data.serializers.egg_serializer import EggSerializer
@@ -123,25 +123,25 @@ def start():
                                        colony_relations_table_serializer, ground_beetle_serializer, nuptial_environment_serializer, climate_serializer)
 
     world_data_repository = WorldDataRepository()
-    json_genes_factory = JsonGenesFactory()
-    json_genome_factory = JsonGenomeFactory(json_genes_factory)
-    json_larva_factory = JsonLarvaFactory(json_genome_factory)
-    json_egg_factory = JsonEggFactory(json_genome_factory)
-    json_nest_factory = JsonNestFactory(json_larva_factory, json_egg_factory, nest_factory)
-    json_ant_factory = JsonAntFactory(json_genome_factory, ant_factory)
-    json_ground_beetle_factory = JsonGroundBeetleFactory(ground_beetle_factory)
-    json_formation_factory = JsonFormationFactory(formation_factory)
-    json_operation_factory = JsonOperationFactory(operation_factory, json_formation_factory)
-    json_map_factory = JsonMapFactory(map_factory)
-    json_colony_factory = JsonColonyFactory(colony_factory, json_operation_factory)
-    json_thought_factory = JsonThoughtFactory(thought_factory)
-    json_item_factory = JsonItemFactory(item_factory)
-    json_item_source_factory = JsonItemSourceFactory(item_source_factory)
-    json_item_area_factory = JsonItemAreaFactory(item_area_factory)
-    json_nuptial_environment = JsonNuptialEnvironmentFactory(json_genes_factory)
-    json_climate_factory = JsonClimateFactory(climate_factory)
-    world_repository = WorldRepository(world_data_repository, json_nest_factory, json_ant_factory, json_colony_factory, json_thought_factory, json_map_factory, world_factory, 
-                                       json_ground_beetle_factory, json_item_factory, json_item_source_factory, json_item_area_factory, json_nuptial_environment, json_climate_factory,
+    gene_deserializer = GeneDeserializer()
+    genome_deserializer = GenomeDeserializer(gene_deserializer)
+    larva_deserializer = LarvaDeserializer(genome_deserializer)
+    egg_deserializer = EggDeserializer(genome_deserializer)
+    nest_deserializer = NestDeserializer(larva_deserializer, egg_deserializer, nest_factory)
+    ant_deserializer = AntDeserializer(genome_deserializer, ant_factory)
+    ground_beetle_deserializer = GroundBeetleDeserializer(ground_beetle_factory)
+    formation_deserializer = FormationDeserializer(formation_factory)
+    operation_deserializer = OperationDeserializer(operation_factory, formation_deserializer)
+    map_deserializer = MapDeserializer(map_factory)
+    colony_deserializer = ColonyDeserializer(colony_factory, operation_deserializer)
+    thought_deserializer = ThoughtDeserializer(thought_factory)
+    item_deserializer = ItemDeserializer(item_factory)
+    item_source_deserializer = ItemSourceDeserializer(item_source_factory)
+    item_area_deserializer = ItemAreaDeserializer(item_area_factory)
+    nuptial_environment_deserializer = NuptialEnvironmentDeserializer(gene_deserializer)
+    climate_deserializer = ClimateDeserializer(climate_factory)
+    world_repository = WorldRepository(world_data_repository, nest_deserializer, ant_deserializer, colony_deserializer, thought_deserializer, map_deserializer, world_factory, 
+                                       ground_beetle_deserializer, item_deserializer, item_source_deserializer, item_area_deserializer, nuptial_environment_deserializer, climate_deserializer,
                                         world_serializer)
 
     stats_client_serializer = StatsClientSerializer()

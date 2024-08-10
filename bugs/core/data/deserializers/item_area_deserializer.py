@@ -3,12 +3,12 @@ from core.world.utils.point import Point
 from core.world.utils.size import Size
 from core.world.entities.item.items.base.item_types import ItemTypes
 
-class JsonItemAreaFactory():
+class ItemAreaDeserializer():
 
     def __init__(self, item_area_factory: ItemAreaFactory):
         self._item_area_factory = item_area_factory
 
-    def build_item_area_from_json(self, item_area_json: dict):
+    def deserialize_item_area(self, item_area_json: dict):
         id = item_area_json['id']
         from_colony_id = item_area_json['from_colony_id']
         hp = item_area_json['hp']

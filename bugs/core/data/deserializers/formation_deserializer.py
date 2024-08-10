@@ -3,12 +3,12 @@ from core.world.entities.colony.colonies.ant_colony.formation.base.formation_typ
 from core.world.entities.base.entity_collection import EntityCollection
 from core.world.utils.point import Point
 
-class JsonFormationFactory():
+class FormationDeserializer():
 
     def __init__(self, formation_factory: FormationFactory):
         self._formation_factory = formation_factory
 
-    def build_formation_from_json(self, json: dict, entities_collection: EntityCollection):
+    def deserialize_formation(self, json: dict, entities_collection: EntityCollection):
         match(json['type']):
             case FormationTypes.ATTACK:
                 return self._build_attack_formation(json, entities_collection)

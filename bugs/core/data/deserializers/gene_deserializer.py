@@ -15,9 +15,9 @@ from core.world.entities.ant.base.genetic.genes.adjusting_appetite_gene import A
 from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdjustingDevelopmentAppetiteGene
 from core.world.entities.ant.base.genetic.genes.adaptation_cold_gene import AdaptationColdGene
 
-class JsonGenesFactory():
+class GeneDeserializer():
 
-    def build_gene_from_json(self, gene_json: dict) -> BaseGene:
+    def deserialize_gene(self, gene_json: dict) -> BaseGene:
         match gene_json['type']:
             case GenesTypes.BODY_STRENGTH:
                 return self._build_body_strength_gene(gene_json)

@@ -1,5 +1,5 @@
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
-from .json_genes_factory import JsonGenesFactory
+from .gene_deserializer import GeneDeserializer
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie import Specie
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chromosome_set import SpecieChromosomeSet
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chromosome import SpecieChromosome
@@ -8,12 +8,12 @@ from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeType
 
 from typing import List
 
-class JsonNuptialEnvironmentFactory():
+class NuptialEnvironmentDeserializer():
 
-    def __init__(self, json_genes_factory: JsonGenesFactory):
-        self._json_genes_factory = json_genes_factory
+    def __init__(self, gene_deserializer: GeneDeserializer):
+        self._gene_deserializer = gene_deserializer
 
-    def build_nuptial_environment_from_json(self, json: dict):
+    def deserialize_nuptial_environment(self, json: dict):
         owner_id = json['owner_id']
         specie = self._build_specie(json['specie'])
         return NuptialEnvironment.build(owner_id, specie)
@@ -32,5 +32,5 @@ class JsonNuptialEnvironmentFactory():
         return SpecieChromosome.build(type, specie_chromosome_json['activated_specie_genes_ids'], genes)
     
     def _build_specie_gene(self, specie_gene_json: dict):
-        gene = self._json_genes_factory.build_gene_from_json(specie_gene_json['gene'])
+        gene = self._gene_deserializer.deserialize_gene(specie_gene_json['gene'])
         return SpecieGene.build(specie_gene_json['id'], gene)

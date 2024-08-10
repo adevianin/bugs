@@ -2,15 +2,15 @@ from core.world.entities.ant.ant_factory import AntFactory
 from core.world.utils.point import Point
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.base.entity_collection import EntityCollection
-from .json_genome_factory import JsonGenomeFactory
+from .genome_deserializer import GenomeDeserializer
 
-class JsonAntFactory():
+class AntDeserializer():
 
-    def __init__(self, json_genome_factory: JsonGenomeFactory, ant_factory: AntFactory):
+    def __init__(self, genome_deserializer: GenomeDeserializer, ant_factory: AntFactory):
         self._ant_factory = ant_factory
-        self._json_genome_factory = json_genome_factory
+        self._genome_deserializer = genome_deserializer
 
-    def build_ant_from_json(self, ant_json: dict, entities_collection: EntityCollection):
+    def deserialize_ant(self, ant_json: dict, entities_collection: EntityCollection):
         type = AntTypes(ant_json['ant_type'])
 
         match(type):
@@ -39,7 +39,7 @@ class JsonAntFactory():
     
     def _build_queen_ant(self, ant_json: dict, entities_collection: EntityCollection):
         ant_props = self._parse_common_ant_props(ant_json, entities_collection)
-        male_chromosomes_set = self._json_genome_factory.build_chromosomes_set_from_json(ant_json['male_chromosomes_set']) if ant_json['male_chromosomes_set'] else None
+        male_chromosomes_set = self._genome_deserializer.deserialize_chromosomes_set(ant_json['male_chromosomes_set']) if ant_json['male_chromosomes_set'] else None
         ant_props.update({
             "male_chromosomes_set": male_chromosomes_set,
             "is_in_nuptial_flight": ant_json['is_in_nuptial_flight']
@@ -61,5 +61,5 @@ class JsonAntFactory():
             "is_in_operation": ant_json['is_in_operation'],
             "memory_data": ant_json['memory'],
             "hp": ant_json['hp'],
-            "genome": self._json_genome_factory.build_genome_from_json(ant_json['genome'])
+            "genome": self._genome_deserializer.deserialize_genome(ant_json['genome'])
         }
