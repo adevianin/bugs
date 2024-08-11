@@ -96,8 +96,7 @@ class AntColony(Colony):
                 return
             hiring_types = operation.get_hiring_ant_types()
             if not member.mind.is_in_opearetion and member.ant_type in hiring_types:
-                ant_answer = member.ask_participation()
-                if ant_answer:
+                if member.body.is_cooperative_behavior:
                     member.join_operation()
                     operation.hire_ant(member)
 

@@ -3,6 +3,4 @@ from core.world.entities.nest.nest import Nest
 from core.world.utils.point import Point
 
 class QueenAntMind(AntMind):
-
-    def ask_participation(self):
-        return False
+    pass

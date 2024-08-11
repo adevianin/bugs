@@ -23,9 +23,6 @@ class AntMind(Mind):
     def is_in_opearetion(self):
         return self._is_in_opearetion
     
-    def ask_participation(self):
-        return True
-
     def feed_myself(self, sayback: str = None, asap: bool = False):
         thought = self._thought_factory.build_feed_myself_full(body=self._body, home_nest=self.home_nest, sayback=sayback)
         self._register_thought(thought, asap)

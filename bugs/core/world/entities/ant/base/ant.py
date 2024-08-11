@@ -92,9 +92,6 @@ class Ant(LiveEntity):
         self._mind.toggle_auto_thought_generation(True)
         self._body.sayer.remove_all_listeners()
 
-    def ask_participation(self):
-        return self._mind.ask_participation()
-    
     def _on_got_in_nest(self, nest_id: int):
         self._emit_action(EntityGotInNestAction.build(self.id, nest_id))
 
