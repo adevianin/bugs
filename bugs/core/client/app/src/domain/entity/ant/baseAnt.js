@@ -4,7 +4,7 @@ import { ACTION_TYPES } from '../action/actionTypes';
 
 class BaseAnt extends LiveEntity {
 
-    constructor(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior) {
+    constructor(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
         super(eventBus, id, position, angle, EntityTypes.ANT, fromColony, ownerId, userSpeed, hp, maxHp);
         this._pickedItemId = pickedItemId;
         this._antType = antType;
@@ -14,6 +14,7 @@ class BaseAnt extends LiveEntity {
         this._stats = stats;
         this._behavior = behavior;
         this._antApi = antApi;
+        this._genome = genome
     }
 
     updateIsHidden() {
@@ -59,6 +60,10 @@ class BaseAnt extends LiveEntity {
 
     get isCooperativeBehavior() {
         return this._behavior.cooperative;
+    }
+
+    get genome() {
+        return this._genome;
     }
 
     toggleGuardianBehavior(isEnabled) {

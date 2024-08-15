@@ -4,8 +4,8 @@ import { ACTION_TYPES } from "../action/actionTypes";
 
 class QueenAnt extends BaseAnt {
 
-    constructor(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, isFertilized, isInNuptialFlight, genes) {
-        super(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior);
+    constructor(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, isFertilized, isInNuptialFlight, genes) {
+        super(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
         this._isFertilized = isFertilized;
         this.isInNuptialFlight = isInNuptialFlight;
         this._genes = genes;

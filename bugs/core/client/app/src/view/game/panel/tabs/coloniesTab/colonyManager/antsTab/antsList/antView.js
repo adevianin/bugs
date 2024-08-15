@@ -29,6 +29,7 @@ class AntView extends BaseHTMLView {
 
     _render() {
         this._el.innerHTML = antTmpl;
+        this._el.querySelector('[data-id]').innerHTML = this._ant.id;
         this._el.querySelector('[data-type]').innerHTML = this._ant.antType;
         this._el.querySelector('[data-attack]').innerHTML = this._ant.stats.attack;
         this._el.querySelector('[data-defence]').innerHTML = this._ant.stats.defence;
@@ -45,6 +46,11 @@ class AntView extends BaseHTMLView {
 
         this._cooperativeBehaviorTogglerEl = this._el.querySelector('[data-is-cooperactive]');
         this._cooperativeBehaviorTogglerEl.checked = this._ant.isCooperativeBehavior;
+
+        this._el.querySelector('[data-genome-debug]').addEventListener('click', () => {
+            console.log(this._ant.genome);
+        })
+        
     }
 
     remove() {
