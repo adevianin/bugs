@@ -65,21 +65,21 @@ class Genome():
         res = []
 
         if self._paternal is None:
-            if self._check_gene_presence(GenesTypes.DEVELOPMENT_MALE_CASTE):
+            if self.check_gene_presence(GenesTypes.DEVELOPMENT_MALE_CASTE):
                 res.append(AntTypes.MALE)
         else:
-            if self._check_gene_presence(GenesTypes.DEVELOPMENT_WORKER_CASTE):
+            if self.check_gene_presence(GenesTypes.DEVELOPMENT_WORKER_CASTE):
                 res.append(AntTypes.WORKER)
 
-            if self._check_gene_presence(GenesTypes.DEVELOPMENT_QUEEN_CASTE):
+            if self.check_gene_presence(GenesTypes.DEVELOPMENT_QUEEN_CASTE):
                 res.append(AntTypes.QUEEN)
 
-            if self._check_gene_presence(GenesTypes.DEVELOPMENT_WARRIOR_CASTE):
+            if self.check_gene_presence(GenesTypes.DEVELOPMENT_WARRIOR_CASTE):
                 res.append(AntTypes.WARRIOR)
 
         return res
 
-    def _check_gene_presence(self, gene_type: GenesTypes):
+    def check_gene_presence(self, gene_type: GenesTypes):
         is_in_maternal = self._maternal.has_gene(gene_type)
         is_in_paternal = self._paternal.has_gene(gene_type) if self._paternal is not None else False
         return is_in_maternal or is_in_paternal

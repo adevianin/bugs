@@ -84,21 +84,12 @@ class AntColony(Colony):
         operation.events.add_listener('change', self._on_operation_change)
 
     def _hire_for_operations(self):
-        if len(self._operations) == 0:
-            return
+        ants = self.get_my_members()
         for operation in self._operations:
-            if operation.is_hiring:
-                self._hire_for_operation(operation)
-
-    def _hire_for_operation(self, operation: Operation):
-        for member in self.get_my_members():
-            if not operation.is_hiring:
-                return
-            hiring_types = operation.get_hiring_ant_types()
-            if not member.mind.is_in_opearetion and member.ant_type in hiring_types:
-                if member.body.is_cooperative_behavior:
-                    member.join_operation()
-                    operation.hire_ant(member)
+            for ant in ants:
+                if not operation.is_hiring:
+                    break
+                operation.try_hire_ant(ant)
 
     def _generate_operation_id(self):
         last_used_id = 0

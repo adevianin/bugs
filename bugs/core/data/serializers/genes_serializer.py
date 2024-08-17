@@ -14,6 +14,7 @@ from core.world.entities.ant.base.genetic.genes.development_male_caste_gene impo
 from core.world.entities.ant.base.genetic.genes.adjusting_appetite_gene import AdjustingAppetiteGene
 from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdjustingDevelopmentAppetiteGene
 from core.world.entities.ant.base.genetic.genes.adaptation_cold_gene import AdaptationColdGene
+from core.world.entities.ant.base.genetic.genes.building_subnest_gene import BuildingSubnestGene
 
 class GenesSerializer():
 
@@ -45,6 +46,8 @@ class GenesSerializer():
                 return self._serialize_adjusting_development_appetite_gene(gene)
             case GenesTypes.ADAPTATION_COLD:
                 return self._serialize_adaptation_cold_gene(gene)
+            case GenesTypes.BUILDING_SUBNEST:
+                return self._serialize_building_subnest_gene(gene)
             case _:
                 raise Exception('unknown gene type')
             
@@ -133,4 +136,7 @@ class GenesSerializer():
             'resistance_points': gene.resistance_points
         })
         return json
+    
+    def _serialize_building_subnest_gene(self, gene: BuildingSubnestGene):
+        return self._serialize_base_gene(gene)
     

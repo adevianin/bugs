@@ -172,7 +172,9 @@ class Command(BaseCommand):
                         },
                         {
                             "type": "building",
-                            'genes': []
+                            'genes': [
+                                { "type": "building_subnest", "domination_code": "E" }
+                            ]
                         },
                         {
                             "type": "combat",
@@ -255,7 +257,9 @@ class Command(BaseCommand):
                     },
                     {
                         "type": "building",
-                        'genes': []
+                        'genes': [
+                            { "type": "building_subnest", "domination_code": "E" }
+                        ]
                     },
                     {
                         "type": "combat",

@@ -14,6 +14,7 @@ from core.world.entities.ant.base.genetic.genes.development_male_caste_gene impo
 from core.world.entities.ant.base.genetic.genes.adjusting_appetite_gene import AdjustingAppetiteGene
 from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdjustingDevelopmentAppetiteGene
 from core.world.entities.ant.base.genetic.genes.adaptation_cold_gene import AdaptationColdGene
+from core.world.entities.ant.base.genetic.genes.building_subnest_gene import BuildingSubnestGene
 
 class GeneDeserializer():
 
@@ -45,6 +46,8 @@ class GeneDeserializer():
                 return self._build_adjusting_development_appetite_gene(gene_json)
             case GenesTypes.ADAPTATION_COLD:
                 return self._build_adaptation_cold_gene(gene_json)
+            case GenesTypes.BUILDING_SUBNEST:
+                return self._build_building_subnest_gene(gene_json)
             case _:
                 raise Exception('unknown gene')
             
@@ -126,4 +129,8 @@ class GeneDeserializer():
         domination_code = DominationCodes(gene_json['domination_code'])
         resistance_points = gene_json['resistance_points']
         return AdaptationColdGene.build(domination_code, resistance_points)
+    
+    def _build_building_subnest_gene(self, gene_json: dict):
+        domination_code = DominationCodes(gene_json['domination_code'])
+        return BuildingSubnestGene.build(domination_code)
     

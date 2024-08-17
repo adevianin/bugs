@@ -136,7 +136,7 @@ class NestBody(Body):
 
         for egg in ready_eggs:
             self._eggs.remove(egg)
-            larva = Larva.build_new(egg.name, egg.ant_type, egg.genome,)
+            larva = Larva.build_new(egg.name, egg.ant_type, egg.genome)
             self._add_larva(larva)
             self.events.emit('egg_became_larva', egg)
 

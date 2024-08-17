@@ -9,6 +9,7 @@ from .operation_types import OperationTypes
 from typing import List
 from functools import partial
 from core.world.entities.colony.colonies.ant_colony.formation.base.formation_manager import FormationManager
+from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
 
 class Operation(ABC):
 
@@ -67,10 +68,6 @@ class Operation(ABC):
         return self._markers
     
     @property
-    def vacancies(self):
-        return self._vacancies
-    
-    @property
     def flags(self):
         return self._flags
     
@@ -84,28 +81,15 @@ class Operation(ABC):
         else:
             return self._hired_ants
         
-    def hire_ant(self, ant: Ant):
+    def try_hire_ant(self, ant: Ant):
         if (not self.is_hiring):
             raise Exception('operation is not hiring')
         
-        if not self._test_potential_member(ant):
-            return
+        is_ant_good = self._check_hiring_ant(ant)
 
-        self._hired_ants.append(ant)
-
-        if not self.is_hiring:
-            self._on_hired_all()
-        
-        self.events.emit('change')
-
-    def get_hiring_ant_types(self):
-        hiring_ant_type = []
-        for ant_type in self._vacancies.keys():
-            needed_count = self._vacancies[ant_type]
-            hired_count = self._count_hired_ants(ant_type)
-            if (needed_count > hired_count):
-                hiring_ant_type.append(ant_type)
-        return hiring_ant_type
+        if is_ant_good:
+            ant.join_operation()
+            self._hire_ant(ant)
     
     def done(self):
         self._is_done = True
@@ -129,8 +113,36 @@ class Operation(ABC):
         
         self.events.emit('change')
 
-    def _test_potential_member(self, ant: Ant):
+
+    def _check_hiring_ant(self, ant: Ant):
+        if ant.mind.is_in_opearetion:
+            return False
+        
+        if not ant.body.is_cooperative_behavior:
+            return False
+        
+        if ant.ant_type not in self._vacancies:
+            return False
+
+        vacancie = self._vacancies[ant.ant_type]
+
+        if self._count_hired_ants(ant.ant_type) >= vacancie['count']:
+            return False
+        
+        if vacancie['required_genes'] is not None:
+            for gene_type in vacancie['required_genes']:
+                if not ant.body.genome.check_gene_presence(gene_type):
+                    return False
+                
         return True
+
+    def _hire_ant(self, ant: Ant):
+        self._hired_ants.append(ant)
+
+        if not self.is_hiring:
+            self._on_hired_all()
+        
+        self.events.emit('change')
 
     def _on_hired_all(self):
         self._init_staff()
@@ -158,8 +170,8 @@ class Operation(ABC):
 
         return count
     
-    def _open_vacancies(self, ant_type: AntTypes, count: int):
-        self._vacancies[ant_type] = count
+    def _open_vacancies(self, ant_type: AntTypes, count: int, required_genes: List[GenesTypes] = None):
+        self._vacancies[ant_type] = { 'count': count, 'required_genes': required_genes }
         self._total_hiring_ants_count += count
 
     def _start_operation(self):

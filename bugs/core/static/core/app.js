@@ -11026,7 +11026,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість робочих: \r\n    <input data-workers-count type=\"number\" min=\"1\" max=\"3\" value=\"1\" required>\r\n</div>\r\n<button data-start>старт</button>";
+var code = "<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість робочих(із геном BUILDING_SUBNEST): \r\n    <input data-workers-count type=\"number\" min=\"1\" max=\"3\" value=\"1\" required>\r\n</div>\r\n<button data-start>старт</button>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

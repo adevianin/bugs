@@ -8,6 +8,7 @@ from core.world.entities.ant.worker.worker_ant import WorkerAnt
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
 from core.world.entities.colony.colonies.ant_colony.formation.base.formation_manager import FormationManager
+from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
 
 from typing import List
 from functools import partial
@@ -19,7 +20,7 @@ class BuildNewSubNestOperation(Operation):
         self._building_site = building_site
         self._workers_count = workers_count
         self._name = 'новий мурашник'
-        self._open_vacancies(AntTypes.WORKER, self._workers_count)
+        self._open_vacancies(AntTypes.WORKER, self._workers_count, [GenesTypes.BUILDING_SUBNEST])
         self._add_marker(MarkerTypes.POINTER, self._building_site)
 
     @property
