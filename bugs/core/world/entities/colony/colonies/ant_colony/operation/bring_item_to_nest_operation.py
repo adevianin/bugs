@@ -42,13 +42,14 @@ class BringItemToNestOperation(Operation):
     def _workers(self) -> List[WorkerAnt]:
         return self.get_hired_ants(AntTypes.WORKER)
     
-    def _test_potential_member(self, ant: Ant):
-        return ant.home_nest_id == self._nest.id
+    # def _test_potential_member(self, ant: Ant):
+    #     return ant.home_nest_id == self._nest.id
 
     def _init_staff(self):
         super()._init_staff()
         ants = self._workers
 
+        # TODO add formation to manager
         self._bring_item_formation = self._bring_item_formation or self._formation_manager.prepare_bring_item_formation(units=self._workers, dest_point=self._nest.position, item=self._item)
         self._bring_item_formation.events.add_listener('reached_destination', self._on_formation_reached_destination)
 
