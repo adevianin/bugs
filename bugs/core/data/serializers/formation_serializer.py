@@ -17,10 +17,10 @@ class FormationSerializer():
     def _serialize_base_formation(self, formation: BaseFormation):
         return {
             'type': formation.type,
+            'name': formation.name,
             'units_ids': formation.units_ids,
             'position': formation.position,
-            'destination': formation.destination,
-            'is_activated': formation.is_activated
+            'destination': formation.destination
         }
     
     def _serialize_bring_item_formation(self, formation: BringItemFormation):

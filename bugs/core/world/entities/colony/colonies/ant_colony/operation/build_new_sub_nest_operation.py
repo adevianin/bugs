@@ -7,16 +7,17 @@ from core.world.entities.ant.base.ant import Ant
 from core.world.entities.ant.worker.worker_ant import WorkerAnt
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
-from core.world.entities.colony.colonies.ant_colony.formation.base.formation_manager import FormationManager
+from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
 from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
+from core.world.entities.colony.colonies.ant_colony.formation.base.base_formation import BaseFormation
 
 from typing import List
 from functools import partial
 
 class BuildNewSubNestOperation(Operation):
     
-    def __init__(self, events: EventEmitter, formation_manager: FormationManager, id: int, hired_ants: List[Ant], flags: dict, building_site: Point, workers_count: int):
-        super().__init__(events, formation_manager, id, OperationTypes.BUILD_NEW_SUB_NEST, hired_ants, flags)
+    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, hired_ants: List[Ant], flags: dict, formations: List[BaseFormation], building_site: Point, workers_count: int):
+        super().__init__(events, formation_factory, id, OperationTypes.BUILD_NEW_SUB_NEST, hired_ants, flags, formations)
         self._building_site = building_site
         self._workers_count = workers_count
         self._name = 'новий мурашник'

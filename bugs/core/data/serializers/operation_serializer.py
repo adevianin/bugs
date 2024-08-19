@@ -27,9 +27,10 @@ class OperationSerializer():
     def _serialize_operation(self, operation: Operation):
         return {
             'id': operation.id,
-            'hired': [ant.id for ant in operation.get_hired_ants()],
+            'hired_ants': [ant.id for ant in operation.get_hired_ants()],
             'flags': operation.flags,
             'type': operation.type,
+            'formations': [self._formation_serializer.serialize(formation) for formation in operation.formations]
         }
 
     def _serialize_build_new_sub_nest(self, operation: BuildNewSubNestOperation):
@@ -44,12 +45,9 @@ class OperationSerializer():
     def _serialize_destroy_nest(self, operation: DestroyNestOperation):
         json = self._serialize_operation(operation)
 
-        attack_formation_json = self._formation_serializer.serialize(operation.attack_foration)
-
         json.update({
             'nest_id': operation.nest_id,
-            'warriors_count': operation.warriors_count,
-            'attack_formation': attack_formation_json
+            'warriors_count': operation.warriors_count
         })
 
         return json
@@ -57,12 +55,9 @@ class OperationSerializer():
     def _serialize_bring_item_to_nest(self, operation: BringItemToNestOperation):
         json = self._serialize_operation(operation)
 
-        bring_item_formation_json = self._formation_serializer.serialize(operation.bring_item_formation)
-
         json.update({
             'nest_id': operation.nest_id,
-            'item_id': operation.item_id,
-            'bring_item_formation': bring_item_formation_json
+            'item_id': operation.item_id
         })
 
         return json
@@ -70,14 +65,9 @@ class OperationSerializer():
     def _serialize_pillage_nest(self, operation: PillageNestOperation):
         json = self._serialize_operation(operation)
 
-        attack_formation_json = self._formation_serializer.serialize(operation.attack_formation)
-        go_home_formation_json = self._formation_serializer.serialize(operation.go_home_formation)
-
         json.update({
             'nest_to_pillage_id': operation.nest_to_pillage_id,
             'nest_for_loot_id': operation.nest_for_loot_id,
-            'attack_formation': attack_formation_json,
-            'go_home_formation': go_home_formation_json,
             'warriors_count': operation.warriors_count,
             'workers_count': operation.workers_count
         })

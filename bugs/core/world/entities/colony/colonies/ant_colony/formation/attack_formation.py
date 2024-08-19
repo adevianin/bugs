@@ -7,8 +7,8 @@ from .base.base_formation import BaseFormation
 
 class AttackFormation(BaseFormation):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, units: List[Ant], start_point: Point, destination_point: Point, is_activated: bool):
-        super().__init__(event_bus, events, FormationTypes.ATTACK, units, start_point, destination_point, is_activated)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, name: str, units: List[Ant], start_point: Point, destination_point: Point):
+        super().__init__(event_bus, events, FormationTypes.ATTACK, name, units, start_point, destination_point)
 
     def _calc_unit_place_position(self, unit_place_number: int) -> Point:
         row_index = int(unit_place_number / 2)

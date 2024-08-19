@@ -1,7 +1,8 @@
 from core.world.entities.colony.colonies.ant_colony.operation.base.operation import Operation
 from core.world.entities.colony.colonies.ant_colony.operation.base.operation_types import OperationTypes
 from core.world.utils.event_emiter import EventEmitter
-from core.world.entities.colony.colonies.ant_colony.formation.base.formation_manager import FormationManager
+from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
+from core.world.entities.colony.colonies.ant_colony.formation.base.base_formation import BaseFormation
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.ant.worker.worker_ant import WorkerAnt
 from core.world.entities.ant.base.ant_types import AntTypes
@@ -13,8 +14,8 @@ from functools import partial
 
 class TransportFoodOperation(Operation):
 
-    def __init__(self, events: EventEmitter, formation_manager: FormationManager, id: int, hired_ants: List[Ant], flags: dict, nest_from: Nest, nest_to: Nest, food_count: int, transported_food_count: int, workers_count: int):
-        super().__init__(events, formation_manager, id, OperationTypes.TRANSPORT_FOOD, hired_ants, flags)
+    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, hired_ants: List[Ant], flags: dict, formations: List[BaseFormation], nest_from: Nest, nest_to: Nest, food_count: int, transported_food_count: int, workers_count: int):
+        super().__init__(events, formation_factory, id, OperationTypes.TRANSPORT_FOOD, hired_ants, flags, formations)
         self._nest_from = nest_from
         self._nest_to = nest_to
         self._food_count = food_count

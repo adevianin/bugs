@@ -8,27 +8,25 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
 from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
-from core.world.entities.colony.colonies.ant_colony.formation.base.formation_manager import FormationManager
+from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
+from core.world.entities.colony.colonies.ant_colony.formation.base.base_formation import BaseFormation
 from core.world.entities.colony.colonies.ant_colony.formation.attack_formation import AttackFormation
 
 class DestroyNestOperation(Operation):
 
-    def __init__(self, events: EventEmitter, formation_manager: FormationManager, id: int, hired_ants: List[Ant], flags: dict, nest: Nest, warriors_count: int, attack_formation: AttackFormation = None):
+    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, hired_ants: List[Ant], flags: dict, formations: List[BaseFormation], nest: Nest, warriors_count: int):
         self._nest = nest
-        self._attack_formation = attack_formation
         self._warriors_count = warriors_count
-        super().__init__(events, formation_manager, id, OperationTypes.DESTROY_NEST, hired_ants, flags)
+        super().__init__(events, formation_factory, id, OperationTypes.DESTROY_NEST, hired_ants, flags, formations)
         self._name = 'знищення мурашника'
         self._open_vacancies(AntTypes.WARRIOR, self._warriors_count)
         self._add_marker(MarkerTypes.CROSS, nest.position)
 
+        self.events.add_listener('formation:attack_formation:reached_destination', self._on_formation_reached_destination)
+
     @property
     def nest_id(self):
         return self._nest.id
-    
-    @property
-    def attack_foration(self) -> AttackFormation:
-        return self._attack_formation
     
     @property
     def warriors_count(self):
@@ -41,9 +39,6 @@ class DestroyNestOperation(Operation):
     def _init_staff(self):
         super()._init_staff()
 
-        self._attack_formation = self._attack_formation or self._formation_manager.prepare_attack_formation(self._warriors, self._nest.position)
-        self._attack_formation.events.add_listener('reached_destination', self._on_formation_reached_destination)
-        
         for ant in self._warriors:
             ant.body.sayer.add_listener('prepared', partial(self._on_warrior_prepared, ant))
             ant.body.sayer.add_listener('nest_destroyed', self._on_nest_destroyed)
@@ -68,7 +63,8 @@ class DestroyNestOperation(Operation):
         return True
     
     def _attack_step(self):
-        self._attack_formation.activate()
+        formation = self._formation_factory.build_attack_formation('attack_formation', self._warriors, self._nest.position)
+        self._register_formation(formation)
 
     def _on_formation_reached_destination(self):
         self._destroy_step()

@@ -18,15 +18,15 @@ class FormationDeserializer():
                 raise Exception('unknown type of formation')
             
     def _build_bring_item_formation(self, json: dict, entities_collection: EntityCollection):
+        name = json['name']
         units = entities_collection.get_entities(json['units_ids'])
         dest_point = Point.from_json(json['destination'])
         item = entities_collection.get_entity_by_id(json['item_id'])
-        is_activated = json['is_activated']
-        return self._formation_factory.build_bring_item_formation(units, dest_point, is_activated, item)
+        return self._formation_factory.build_bring_item_formation(name, units, dest_point, item)
     
     def _build_attack_formation(self, json: dict, entities_collection: EntityCollection):
+        name = json['name']
         units = entities_collection.get_entities(json['units_ids'])
         dest_point = Point.from_json(json['destination'])
-        is_activated = json['is_activated']
-        return self._formation_factory.build_attack_formation(units, dest_point, is_activated)
+        return self._formation_factory.build_attack_formation(name, units, dest_point)
     

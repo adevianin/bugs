@@ -14,17 +14,17 @@ class FormationFactory():
         self._event_bus = event_bus
         self._unit_size = AntBody.SIZE
 
-    def build_attack_formation(self, units: List[Ant], dest_point: Point, is_activated: bool, start_position: Point = None):
+    def build_attack_formation(self, name: str, units: List[Ant], dest_point: Point, start_position: Point = None):
         events = EventEmitter()
         units = units.copy()
-        return AttackFormation(self._event_bus, events, units, start_position, dest_point, is_activated)
+        return AttackFormation(self._event_bus, events, name, units, start_position, dest_point)
 
-    def build_bring_item_formation(self, units: List[Ant], dest_point: Point, is_activated: bool, item: Item):
+    def build_bring_item_formation(self, name: str, units: List[Ant], dest_point: Point, item: Item):
         events = EventEmitter()
         units = units.copy()
-        return BringItemFormation(self._event_bus, events, units, item.position, dest_point, is_activated, item)
+        return BringItemFormation(self._event_bus, events, name, units, item.position, dest_point, item)
     
-    def build_convoy_formation(self, units: List[Ant], dest_point: Point, is_activated: bool, start_position: Point = None):
+    def build_convoy_formation(self, name: str, units: List[Ant], dest_point: Point, start_position: Point = None):
         events = EventEmitter()
         units = units.copy()
-        return ConvoyFormation(self._event_bus, events, units, start_position, dest_point, is_activated)
+        return ConvoyFormation(self._event_bus, events, name, units, start_position, dest_point)

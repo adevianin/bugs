@@ -22,35 +22,46 @@ class OperationDeserializer():
                 return self._build_pillage_nest_operation_from_json(operation_json, entities_collection)
             case _:
                 raise Exception('unknown type of operation')
+            
+    def _deserialize_basic_operation_props(self, operation_json: dict, entities_collection: EntityCollection):
+        return {
+            'id': operation_json['id'],
+            'hired_ants': entities_collection.get_entities(operation_json['hired_ants']),
+            'flags': operation_json['flags'],
+            'formations': [self._formation_deserializer.deserialize_formation(formation_json, entities_collection) for formation_json in operation_json['formations']]
+        }
 
     def _build_build_new_sub_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
-        hired_ants = entities_collection.get_entities(operation_json['hired'])
-        building_site = Point.from_json(operation_json['building_site'])
-        workers_count = operation_json['workers_count']
-        return self._operation_factory.build_build_new_sub_nest_operation(id=operation_json['id'], hired_ants=hired_ants, flags=operation_json['flags'], building_site=building_site, workers_count=workers_count)
+        props = self._deserialize_basic_operation_props(operation_json, entities_collection)
+        props.update({
+            'building_site': Point.from_json(operation_json['building_site']),
+            'workers_count': operation_json['workers_count']
+        })
+        return self._operation_factory.build_build_new_sub_nest_operation(**props)
     
     def _build_destory_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
-        hired_ants = entities_collection.get_entities(operation_json['hired'])
-        nest = entities_collection.get_entity_by_id(operation_json['nest_id'])
-        warriors_count = operation_json['warriors_count']
-        attack_formation = self._formation_deserializer.deserialize_formation(operation_json['attack_formation'], entities_collection)
-        return self._operation_factory.build_destroy_nest_operation(nest=nest, warriors_count=warriors_count, id=operation_json['id'], hired_ants=hired_ants, flags=operation_json['flags'], attack_formation=attack_formation)
+        props = self._deserialize_basic_operation_props(operation_json, entities_collection)
+        props.update({
+            'nest': entities_collection.get_entity_by_id(operation_json['nest_id']),
+            'warriors_count': operation_json['warriors_count']
+        })
+        return self._operation_factory.build_destroy_nest_operation(**props)
     
     def _build_bring_item_to_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
-        hired_ants = entities_collection.get_entities(operation_json['hired'])
-        nest = entities_collection.get_entity_by_id(operation_json['nest_id'])
-        item = entities_collection.get_entity_by_id(operation_json['item_id'])
-        bring_item_formation = self._formation_deserializer.deserialize_formation(operation_json['bring_item_formation'], entities_collection)
-        return self._operation_factory.build_bring_item_to_nest_operation(nest=nest, item=item, id=operation_json['id'], hired_ants=hired_ants, flags=operation_json['flags'], bring_item_formation=bring_item_formation)
+        props = self._deserialize_basic_operation_props(operation_json, entities_collection)
+        props.update({
+            'nest': entities_collection.get_entity_by_id(operation_json['nest_id']),
+            'item': entities_collection.get_entity_by_id(operation_json['item_id'])
+        })
+        return self._operation_factory.build_bring_item_to_nest_operation(**props)
 
     def _build_pillage_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
-        hired_ants = entities_collection.get_entities(operation_json['hired'])
-        nest_for_loot = entities_collection.get_entity_by_id(operation_json['nest_for_loot_id'])
-        nest_to_unload = entities_collection.get_entity_by_id(operation_json['nest_to_unload_id'])
-        attack_formation = self._formation_deserializer.deserialize_formation(operation_json['attack_formation'], entities_collection)
-        go_home_formation = self._formation_deserializer.deserialize_formation(operation_json['go_home_formation'], entities_collection)
-        id = operation_json['id']
-        flags=operation_json['flags']
-        workers_count = operation_json['workers_count']
-        warriors_count = operation_json['warriors_count']
-        return self._operation_factory.build_pillage_nest_operation(nest_for_loot=nest_for_loot, nest_to_unload=nest_to_unload, workers_count=workers_count, warriors_count=warriors_count, id=id, hired_ants=hired_ants, flags=flags, attack_formation=attack_formation, go_home_formation=go_home_formation)
+        props = self._deserialize_basic_operation_props(operation_json, entities_collection)
+        props.update({
+            'nest_to_pillage': entities_collection.get_entity_by_id(operation_json['nest_to_pillage_id']),
+            'nest_for_loot': entities_collection.get_entity_by_id(operation_json['nest_for_loot_id']),
+            'workers_count': operation_json['workers_count'],
+            'warriors_count': operation_json['warriors_count']
+        })
+        
+        return self._operation_factory.build_pillage_nest_operation(**props)

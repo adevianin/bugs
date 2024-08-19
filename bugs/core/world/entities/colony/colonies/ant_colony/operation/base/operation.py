@@ -8,14 +8,15 @@ from .marker_types import MarkerTypes
 from .operation_types import OperationTypes
 from typing import List
 from functools import partial
-from core.world.entities.colony.colonies.ant_colony.formation.base.formation_manager import FormationManager
+from core.world.entities.colony.colonies.ant_colony.formation.base.base_formation import BaseFormation
 from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
+from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
 
 class Operation(ABC):
 
-    def __init__(self, events: EventEmitter, formation_manager: FormationManager, id: int, type: OperationTypes, hired_ants: List[Ant], flags: dict):
+    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, type: OperationTypes, hired_ants: List[Ant], flags: dict, formations: List[BaseFormation]):
         self.events = events
-        self._formation_manager = formation_manager
+        self._formation_factory = formation_factory
         self.id = id
         self._type = type
         self._vacancies = {}
@@ -26,14 +27,17 @@ class Operation(ABC):
         self._markers = []
         self._total_hiring_ants_count = 0
         self._flags = flags or {}
+        self._formations = formations
+
+        self._listen_formations()
 
         if (self._read_flag('is_operation_started')):
             self._init_staff()
 
     @property
-    def formations(self):
-        return self._formation_manager.formations
-
+    def formations(self) -> List[BaseFormation]:
+        return self._formations
+    
     @property
     def is_hiring(self):
         is_all_vacancies_taken = len(self._hired_ants) >= self._total_hiring_ants_count
@@ -113,6 +117,24 @@ class Operation(ABC):
         
         self.events.emit('change')
 
+    def _register_formation(self, formation: BaseFormation):
+        self._formations.append(formation)
+        self._listen_formation(formation)
+
+    def _listen_formations(self):
+        for formation in self._formations:
+            self._listen_formation(formation)
+
+    def _listen_formation(self, formation: BaseFormation):
+        def on_formation_reached_destination():
+            self.events.emit(f'formation:{formation.name}:reached_destination')
+
+        def on_formation_destroyed():
+            self._formations.remove(formation)
+            self.events.emit(f'formation:{formation.name}:destroyed')
+
+        formation.events.add_listener('reached_destination', on_formation_reached_destination)
+        formation.events.add_listener('destroyed', on_formation_destroyed)
 
     def _check_hiring_ant(self, ant: Ant):
         if ant.mind.is_in_opearetion:
@@ -196,5 +218,6 @@ class Operation(ABC):
             self.cancel()
 
     def _on_operation_stop(self):
-        self._formation_manager.clear()
+        for formation in self._formations:
+            formation.destroy()
     

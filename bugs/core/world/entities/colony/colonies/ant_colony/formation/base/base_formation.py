@@ -13,7 +13,7 @@ class FormationState(StrEnum):
 
 class BaseFormation(ABC):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, type: FormationTypes, units: List[Ant], start_point: Point, destination_point: Point, is_activated: bool):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, type: FormationTypes, name: str, units: List[Ant], start_point: Point, destination_point: Point):
         self.events = events
         self._event_bus = event_bus
         self._units = units
@@ -26,15 +26,18 @@ class BaseFormation(ABC):
         self._targeted_enemy: iEnemy = None
         self._type = type
         self._state = None
-        self._is_activated = is_activated
+        self._name = name
 
         if not start_point:
             start_point = self._generate_formation_position()
             
         self._set_current_position(start_point)
 
-        if self._is_activated:
-            self.activate()
+        self._event_bus.add_listener('step_start', self._on_step_start)
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     def is_destroyed(self):
@@ -60,20 +63,11 @@ class BaseFormation(ABC):
     def has_targeted_enemy(self):
         return self._targeted_enemy is not None and not self._targeted_enemy.is_died
     
-    @property
-    def is_activated(self):
-        return self._is_activated
-    
-    def activate(self):
-        self._is_activated = True
-        self._event_bus.add_listener('step_start', self._on_step_start)
-
     def destroy(self):
         if self.is_destroyed:
             return
         self._is_destroyed = True
-        if self._is_activated:
-            self._event_bus.remove_listener('step_start', self._on_step_start)
+        self._event_bus.remove_listener('step_start', self._on_step_start)
         self.events.emit('destroyed')
     
     def _on_step_start(self, step_number):

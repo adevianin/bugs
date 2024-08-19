@@ -8,8 +8,8 @@ from .base.formation_types import FormationTypes
 
 class BringItemFormation(BaseFormation):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, units: List[Ant], start_point: Point, destination_point: Point, is_activated: bool, item: Item):
-        super().__init__(event_bus, events, FormationTypes.BRING_ITEM, units, start_point, destination_point, is_activated)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, name: str, units: List[Ant], start_point: Point, destination_point: Point, item: Item):
+        super().__init__(event_bus, events, FormationTypes.BRING_ITEM, name, units, start_point, destination_point)
         self._item = item
         self._item_size = item.body.SIZE
         self._item_bringing_speed = self._get_item_bringing_speed(units)
