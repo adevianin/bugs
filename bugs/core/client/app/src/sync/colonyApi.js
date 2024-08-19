@@ -30,6 +30,15 @@ class ColonyApi {
             workers_count: workersCount
         })
     }
+
+    transportFoodOperation(colonyId, fromNestId, toNestId, foodCount, workersCount) {
+        return this._requester.post(`world/colonies/${ colonyId }/operations/transport_food`, {
+            from_nest_id: fromNestId,
+            to_nest_id: toNestId,
+            food_count: foodCount,
+            workers_count: workersCount
+        });
+    }
 }
 
 export {

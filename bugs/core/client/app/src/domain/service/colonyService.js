@@ -43,6 +43,10 @@ class ColonyService {
         this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
     }
 
+    transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount) {
+        this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount);
+    }
+
 }
 
 export {

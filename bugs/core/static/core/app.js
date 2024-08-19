@@ -1,17 +1,6 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png":
-/*!****************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/textures/build/world_spritesheet.png ***!
-  \****************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "6286cc76908529f02998.png";
-
-/***/ }),
-
 /***/ "./bugs/core/client/app/src/domain/domainFacade.js":
 /*!*********************************************************!*\
   !*** ./bugs/core/client/app/src/domain/domainFacade.js ***!
@@ -137,6 +126,10 @@ class DomainFacade {
 
     pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
         this._colonyService.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
+    }
+
+    transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount) {
+        this._colonyService.transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount);
     }
 
     /*========================*/
@@ -2157,6 +2150,10 @@ class ColonyService {
         this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
     }
 
+    transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount) {
+        this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount);
+    }
+
 }
 
 
@@ -2719,6 +2716,15 @@ class ColonyApi {
             warriors_count: warriorsCount,
             workers_count: workersCount
         })
+    }
+
+    transportFoodOperation(colonyId, fromNestId, toNestId, foodCount, workersCount) {
+        return this._requester.post(`world/colonies/${ colonyId }/operations/transport_food`, {
+            from_nest_id: fromNestId,
+            to_nest_id: toNestId,
+            food_count: foodCount,
+            workers_count: workersCount
+        });
     }
 }
 
@@ -5647,11 +5653,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "DestroyNestOperationCreatorView": () => (/* reexport safe */ _destoryNest_destroyNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_1__.DestroyNestOperationCreatorView),
 /* harmony export */   "NewNestOperationCreatorView": () => (/* reexport safe */ _newNest_newNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__.NewNestOperationCreatorView),
-/* harmony export */   "PillageNestOperationCreatorView": () => (/* reexport safe */ _pillageNest_pillageNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_2__.PillageNestOperationCreatorView)
+/* harmony export */   "PillageNestOperationCreatorView": () => (/* reexport safe */ _pillageNest_pillageNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_2__.PillageNestOperationCreatorView),
+/* harmony export */   "TransportFoodOperationCreatorView": () => (/* reexport safe */ _transportFood_transportFoodOperationCreatorView__WEBPACK_IMPORTED_MODULE_3__.TransportFoodOperationCreatorView)
 /* harmony export */ });
 /* harmony import */ var _newNest_newNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./newNest/newNestOperationCreatorView */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/newNest/newNestOperationCreatorView.js");
 /* harmony import */ var _destoryNest_destroyNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./destoryNest/destroyNestOperationCreatorView */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/destoryNest/destroyNestOperationCreatorView.js");
 /* harmony import */ var _pillageNest_pillageNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pillageNest/pillageNestOperationCreatorView */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/pillageNest/pillageNestOperationCreatorView.js");
+/* harmony import */ var _transportFood_transportFoodOperationCreatorView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./transportFood/transportFoodOperationCreatorView */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/transportFood/transportFoodOperationCreatorView.js");
+
 
 
 
@@ -5808,6 +5817,79 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/transportFood/transportFoodOperationCreatorView.js":
+/*!**************************************************************************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/transportFood/transportFoodOperationCreatorView.js ***!
+  \**************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "TransportFoodOperationCreatorView": () => (/* binding */ TransportFoodOperationCreatorView)
+/* harmony export */ });
+/* harmony import */ var _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseOperationCreatorView */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js");
+/* harmony import */ var _transportFoodOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./transportFoodOperationCreatorTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/transportFood/transportFoodOperationCreatorTmpl.html");
+/* harmony import */ var _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/nestSelector */ "./bugs/core/client/app/src/view/game/panel/base/nestSelector/index.js");
+
+
+
+
+class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__.BaseOperationCreatorView {
+
+    constructor(performingColony, onDone) {
+        super(performingColony, onDone);
+
+        this._render();
+
+        this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+
+    }
+
+    remove() {
+        this._nestSelectorFrom.remove();
+        this._nestSelectorTo.remove();
+        super.remove();
+    }
+
+    _render() {
+        this._el.innerHTML = _transportFoodOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._nestSelectorFrom = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id);
+        this._el.querySelector('[data-from-nest-selector-container]').append(this._nestSelectorFrom.el);
+
+        this._nestSelectorTo = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id);
+        this._el.querySelector('[data-to-nest-selector-container]').append(this._nestSelectorTo.el);
+
+        this._foodCountInput = this._el.querySelector('[data-food-count]');
+        this._workersCountInput = this._el.querySelector('[data-workers-count]');
+
+        this._startBtn = this._el.querySelector('[data-start-btn]');
+
+        this._updateFoodCountInput();
+    }
+
+    _updateFoodCountInput() {
+        let nest = this.$domainFacade.findEntityById(this._nestSelectorFrom.nestId);
+        this._foodCountInput.setAttribute('max', nest.storedCalories);
+    }
+
+    _onStartBtnClick() {
+        let performingColonyId = this._performingColony.id;
+        let fromNestId = this._nestSelectorFrom.nestId;
+        let toNestId = this._nestSelectorTo.nestId;
+        let foodCount = this._foodCountInput.value;
+        let workersCount = this._workersCountInput.value;
+        this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount);
+        this._onDone();
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationsCreatorView.js":
 /*!******************************************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationsCreatorView.js ***!
@@ -5837,6 +5919,7 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._newNestOperationBtn.addEventListener('click', this._onNewNestOperationBtnClick.bind(this));
         this._destroyNestOperationBtn.addEventListener('click', this._onDestroyOperationBtnClick.bind(this));
         this._pillageNestOperationBtn.addEventListener('click', this._onPillageNestOperationBtnClick.bind(this));
+        this._transportFoodOperationBtn.addEventListener('click', this._onTransportFoodOperationBtnClick.bind(this));
     }
 
     manageColony(colony) {
@@ -5855,6 +5938,7 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._newNestOperationBtn = this._el.querySelector('[data-add-new-nest]');
         this._destroyNestOperationBtn = this._el.querySelector('[data-destroy-nest]');
         this._pillageNestOperationBtn = this._el.querySelector('[data-pillage-nest]');
+        this._transportFoodOperationBtn = this._el.querySelector('[data-transport-food]');
         this._newOperationsBtnsListEl = this._el.querySelector('[data-new-operation-list]');
         this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
         this._operationCreatorPlaceholderEl = this._el.querySelector('[data-operation-creator-placeholder]');
@@ -5889,6 +5973,12 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
     _onPillageNestOperationBtnClick() {
         this._toggleCreatorMode(true);
         this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.PillageNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+    }
+
+    _onTransportFoodOperationBtnClick() {
+        this._toggleCreatorMode(true);
+        this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.TransportFoodOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
         this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
     }
 }
@@ -11050,6 +11140,24 @@ var code = "грабить гріздо\r\n<div>\r\n    гніздо для по
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/transportFood/transportFoodOperationCreatorTmpl.html":
+/*!****************************************************************************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/transportFood/transportFoodOperationCreatorTmpl.html ***!
+  \****************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "перенести їжу\r\n<div>\r\n    із гнізда:\r\n    <div data-from-nest-selector-container></div>\r\n</div>\r\n<div>\r\n    кількість їжі:\r\n    <input data-food-count type=\"number\" step=\"100\" min=\"0\" value=\"100\">\r\n</div>\r\n<div>\r\n    в гніздо:\r\n    <div data-to-nest-selector-container></div>\r\n</div>\r\n<div>\r\n    кількість робочих:\r\n    <input data-workers-count type=\"number\" min=\"1\" value=\"2\">\r\n</div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationsCreatorTmpl.html":
 /*!********************************************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationsCreatorTmpl.html ***!
@@ -11062,7 +11170,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-new-operation-list>\r\n    створити операцію:\r\n    <ul class=\"colony-manager__new_operations_list\">\r\n        <li><button data-add-new-nest>нове гніздо</button></li>\r\n        <li><button data-destroy-nest>розвалить гніздо</button></li>\r\n        <li><button data-pillage-nest>пограбувать гніздо</button></li>\r\n    </ul>\r\n</div>\r\n<button data-cancel-operation-creating>назад</button>\r\n<div data-operation-creator-placeholder></div>";
+var code = "<div data-new-operation-list>\r\n    створити операцію:\r\n    <ul class=\"colony-manager__new_operations_list\">\r\n        <li><button data-add-new-nest>нове гніздо</button></li>\r\n        <li><button data-destroy-nest>розвалить гніздо</button></li>\r\n        <li><button data-pillage-nest>пограбувать гніздо</button></li>\r\n        <li><button data-transport-food>перенести їжу</button></li>\r\n    </ul>\r\n</div>\r\n<button data-cancel-operation-creating>назад</button>\r\n<div data-operation-creator-placeholder></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -13889,6 +13997,17 @@ module.exports = {
   }
 };
 
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png":
+/*!****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/textures/build/world_spritesheet.png ***!
+  \****************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+module.exports = __webpack_require__.p + "6286cc76908529f02998.png";
 
 /***/ }),
 

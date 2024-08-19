@@ -98,6 +98,9 @@ class WorldFacade:
     def pillage_nest_operation_command(self, user_id: int, performing_colony_id: int, nest_to_pillage_id: int, nest_for_loot_id: int, workers_count: int, warriors_count: int):
         self._colony_service.pillage_nest_operation(user_id, performing_colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
 
+    def transfer_food_operation_command(self, user_id: int, performing_colony_id: int, from_nest_id: int, to_nest_id: int, food_count: int, workers_count: int):
+        self._colony_service.transfer_food_operation(user_id, performing_colony_id, from_nest_id, to_nest_id, food_count, workers_count)
+
     def add_egg_command(self, user_id: int, nest_id: int, name: str, is_fertilized: bool):
         self._colony_service.add_egg(user_id, nest_id, name, is_fertilized)
 

@@ -5,6 +5,7 @@ from .bring_item_formation import BringItemFormation
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.ant.base.ant_body import AntBody
 from core.world.entities.ant.base.ant import Ant
+from .convoy_formation import ConvoyFormation
 from typing import Dict, List
 
 class FormationFactory():
@@ -22,3 +23,8 @@ class FormationFactory():
         events = EventEmitter()
         units = units.copy()
         return BringItemFormation(self._event_bus, events, units, item.position, dest_point, is_activated, item)
+    
+    def build_convoy_formation(self, units: List[Ant], dest_point: Point, is_activated: bool, start_position: Point = None):
+        events = EventEmitter()
+        units = units.copy()
+        return ConvoyFormation(self._event_bus, events, units, start_position, dest_point, is_activated)

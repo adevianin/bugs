@@ -12,6 +12,7 @@ from core.world.entities.colony.colonies.ant_colony.operation.pillage_nest_opera
 from core.world.entities.colony.colonies.ant_colony.formation.base.formation_manager import FormationManager
 from core.world.entities.colony.colonies.ant_colony.formation.bring_item_formation import BringItemFormation
 from core.world.entities.colony.colonies.ant_colony.formation.attack_formation import AttackFormation
+from core.world.entities.colony.colonies.ant_colony.operation.transport_food_operation import TransportFoodOperation
 
 class OperationFactory():
 
@@ -33,6 +34,10 @@ class OperationFactory():
     def build_pillage_nest_operation(self, nest_to_pillage: Nest, nest_for_loot: Nest, workers_count: int, warriors_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, attack_formation: AttackFormation = None, go_home_formation: AttackFormation = None):
         formation_manager = self._build_formation_manager()
         return PillageNestOperation(EventEmitter(), formation_manager, id, hired_ants, flags, nest_to_pillage, nest_for_loot, workers_count, warriors_count, attack_formation, go_home_formation)
+    
+    def build_transport_food_operation(self, nest_from: Nest, nest_to: Nest, food_count: int, transported_food_count: int, workers_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None):
+        formation_manager = self._build_formation_manager()
+        return TransportFoodOperation(EventEmitter(), formation_manager, id, hired_ants, flags, nest_from, nest_to, food_count, transported_food_count, workers_count)
     
     def _build_formation_manager(self) -> FormationManager:
         return FormationManager.build_formation_manager(self._formation_factory)

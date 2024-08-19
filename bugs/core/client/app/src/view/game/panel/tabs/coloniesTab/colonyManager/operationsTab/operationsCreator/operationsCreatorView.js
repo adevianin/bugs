@@ -1,6 +1,6 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import operationsCreatorTmpl from './operationsCreatorTmpl.html';
-import { NewNestOperationCreatorView, DestroyNestOperationCreatorView, PillageNestOperationCreatorView } from "./operationCreators";
+import { NewNestOperationCreatorView, DestroyNestOperationCreatorView, PillageNestOperationCreatorView, TransportFoodOperationCreatorView } from "./operationCreators";
 
 class OperationsCreatorView extends BaseHTMLView {
 
@@ -13,6 +13,7 @@ class OperationsCreatorView extends BaseHTMLView {
         this._newNestOperationBtn.addEventListener('click', this._onNewNestOperationBtnClick.bind(this));
         this._destroyNestOperationBtn.addEventListener('click', this._onDestroyOperationBtnClick.bind(this));
         this._pillageNestOperationBtn.addEventListener('click', this._onPillageNestOperationBtnClick.bind(this));
+        this._transportFoodOperationBtn.addEventListener('click', this._onTransportFoodOperationBtnClick.bind(this));
     }
 
     manageColony(colony) {
@@ -31,6 +32,7 @@ class OperationsCreatorView extends BaseHTMLView {
         this._newNestOperationBtn = this._el.querySelector('[data-add-new-nest]');
         this._destroyNestOperationBtn = this._el.querySelector('[data-destroy-nest]');
         this._pillageNestOperationBtn = this._el.querySelector('[data-pillage-nest]');
+        this._transportFoodOperationBtn = this._el.querySelector('[data-transport-food]');
         this._newOperationsBtnsListEl = this._el.querySelector('[data-new-operation-list]');
         this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
         this._operationCreatorPlaceholderEl = this._el.querySelector('[data-operation-creator-placeholder]');
@@ -65,6 +67,12 @@ class OperationsCreatorView extends BaseHTMLView {
     _onPillageNestOperationBtnClick() {
         this._toggleCreatorMode(true);
         this._operationCreator = new PillageNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+    }
+
+    _onTransportFoodOperationBtnClick() {
+        this._toggleCreatorMode(true);
+        this._operationCreator = new TransportFoodOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
         this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
     }
 }

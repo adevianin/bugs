@@ -35,3 +35,8 @@ class FormationManager():
         self._formations.append(formation)
         return formation
     
+    def prepare_convoy_formation(self, units, dest_point: Point) -> BaseFormation:
+        formation = self._formation_factory.build_convoy_formation(units, dest_point, False)
+        self._formations.append(formation)
+        return formation
+    
