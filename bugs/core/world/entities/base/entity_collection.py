@@ -20,7 +20,7 @@ class EntityCollection():
         return self._entities[id]
 
     def get_entities(self, ids: List[int] = None) -> List[Entity]:
-        if ids:
+        if ids is not None:
             res = []
             for id in ids:
                 res.append(self._entities[id])
