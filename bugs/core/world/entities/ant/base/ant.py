@@ -81,6 +81,9 @@ class Ant(LiveEntity):
     def free_mind(self):
         self._mind.free_mind()
 
+    def get_food_item_from_nest(self, nest: Nest):
+        return self._body.get_food_item_from_nest(nest)
+
     def join_operation(self):
         if self._mind.is_in_opearetion:
             raise Exception('already in operation')

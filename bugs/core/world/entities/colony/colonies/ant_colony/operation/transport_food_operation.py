@@ -14,17 +14,18 @@ from functools import partial
 
 class TransportFoodOperation(Operation):
 
-    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, hired_ants: List[Ant], flags: dict, formations: List[BaseFormation], nest_from: Nest, nest_to: Nest, food_count: int, transported_food_count: int, workers_count: int):
+    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, hired_ants: List[Ant], flags: dict, formations: List[BaseFormation], nest_from: Nest, nest_to: Nest, workers_count: int):
         super().__init__(events, formation_factory, id, OperationTypes.TRANSPORT_FOOD, hired_ants, flags, formations)
         self._nest_from = nest_from
         self._nest_to = nest_to
-        self._food_count = food_count
-        self._transported_food_count = transported_food_count
         self._workers_count = workers_count
         self._name = 'перенести їжу'
         self._open_vacancies(AntTypes.WORKER, workers_count)
         self._add_marker(MarkerTypes.EAT, self._nest_from.position)
         self._add_marker(MarkerTypes.EAT, self._nest_to.position)
+
+        self.events.add_listener('formation:go_to_nest_from:reached_destination', self._on_formation_reached_nest_from)
+        self.events.add_listener('formation:go_to_nest_to:reached_destination', self._on_formation_reached_nest_to)
 
     @property
     def _workers(self) -> List[WorkerAnt]:
@@ -36,6 +37,9 @@ class TransportFoodOperation(Operation):
         ants = self._workers
         for ant in ants:
             ant.body.sayer.add_listener('prepared', partial(self._on_worker_prepared, ant))
+            ant.body.sayer.add_listener('worker_is_near_nest_from', partial(self._on_worker_near_nest_from, ant))
+            ant.body.sayer.add_listener('worker_got_food', partial(self._on_worker_got_food, ant))
+            ant.body.sayer.add_listener('worker_is_near_nest_to', partial(self._on_worker_near_nest_to, ant))
 
     def _start_operation(self):
         super()._start_operation()
@@ -48,7 +52,7 @@ class TransportFoodOperation(Operation):
     def _on_worker_prepared(self, ant: WorkerAnt):
         self._write_flag(f'worker_{ant.id}_prepared', True)
         if self._check_are_all_workers_prepared():
-            self._go_for_food_step()
+            self._go_to_nest_from_step()
 
     def _check_are_all_workers_prepared(self):
         for ant in self._workers:
@@ -56,6 +60,51 @@ class TransportFoodOperation(Operation):
                 return False
         return True
     
-    def _go_for_food_step(self):
-        print('go to nest')
+    def _go_to_nest_from_step(self):
+        formation = self._formation_factory.build_convoy_formation('go_to_nest_from', self._workers, self._nest_from.position)
+        self._register_formation(formation)
 
+    def _on_formation_reached_nest_from(self):
+        for ant in self._workers:
+            ant.walk_to(self._nest_from.position, 'worker_is_near_nest_from')
+
+    def _on_worker_near_nest_from(self, ant: Ant):
+        ant.get_in_nest(self._nest_from)
+        ant.get_food_item_from_nest(self._nest_from)
+        ant.wait_step(1, 'worker_got_food')
+
+    def _on_worker_got_food(self, ant: Ant):
+        self._write_flag(f'is_worker_{ant.id}_got_food', True)
+        if self._check_are_all_workers_got_food():
+            self._go_to_nest_to()
+
+    def _check_are_all_workers_got_food(self):
+        for ant in self._workers:
+            if not self._read_flag(f'is_worker_{ant.id}_got_food'):
+                return False
+        return True
+
+    def _go_to_nest_to(self):
+        for ant in self._workers:
+            ant.get_out_of_nest()
+
+        formation = self._formation_factory.build_convoy_formation('go_to_nest_to', self._workers, self._nest_to.position)
+        self._register_formation(formation)
+
+    def _on_formation_reached_nest_to(self):
+        for ant in self._workers:
+            ant.walk_to(self._nest_to.position, 'worker_is_near_nest_to')
+
+    def _on_worker_near_nest_to(self, ant: Ant):
+        ant.get_in_nest(self._nest_to)
+        ant.give_food(self._nest_to)
+        self._write_flag(f'is_worker_{ant.id}_gave_food', True)
+
+        if self._check_are_all_worker_gave_food():
+            self.done()
+
+    def _check_are_all_worker_gave_food(self):
+        for ant in self._workers:
+            if not self._read_flag(f'is_worker_{ant.id}_gave_food'):
+                return False
+        return True

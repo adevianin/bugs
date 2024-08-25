@@ -114,8 +114,8 @@ class DomainFacade {
         this._colonyService.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
     }
 
-    transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount) {
-        this._colonyService.transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount);
+    transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount) {
+        this._colonyService.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount);
     }
 
     /*========================*/

@@ -28,26 +28,17 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         this._nestSelectorTo = new NestSelectorView(this._performingColony.id);
         this._el.querySelector('[data-to-nest-selector-container]').append(this._nestSelectorTo.el);
 
-        this._foodCountInput = this._el.querySelector('[data-food-count]');
         this._workersCountInput = this._el.querySelector('[data-workers-count]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
-
-        this._updateFoodCountInput();
-    }
-
-    _updateFoodCountInput() {
-        let nest = this.$domainFacade.findEntityById(this._nestSelectorFrom.nestId);
-        this._foodCountInput.setAttribute('max', nest.storedCalories);
     }
 
     _onStartBtnClick() {
         let performingColonyId = this._performingColony.id;
         let fromNestId = this._nestSelectorFrom.nestId;
         let toNestId = this._nestSelectorTo.nestId;
-        let foodCount = this._foodCountInput.value;
         let workersCount = this._workersCountInput.value;
-        this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount);
+        this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount);
         this._onDone();
     }
 

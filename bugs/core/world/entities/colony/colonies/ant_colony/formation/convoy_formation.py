@@ -11,11 +11,8 @@ class ConvoyFormation(BaseFormation):
         super().__init__(event_bus, events, FormationTypes.CONVOY, name, units, start_point, destination_point)
 
     def _calc_unit_place_position(self, unit_place_number: int) -> Point:
-        row_index = int(unit_place_number / 2)
-        col_index = unit_place_number % 2
-
-        x = self._current_position.x - row_index * self._unit_size.width
-        y = self._current_position.y + col_index * self._unit_size.height
+        x = self._current_position.x - unit_place_number * self._unit_size.width
+        y = self._current_position.y
 
         p = Point(x, y)
         p = p.rotate(self._angle, self._current_position)

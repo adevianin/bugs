@@ -125,6 +125,12 @@ class AntBody(LiveBody):
         needed_cals = self.calc_how_much_calories_is_need()
         calories = nest.give_calories(needed_cals)
         self.eat_calories(calories)
+
+    def get_food_item_from_nest(self, nest: Nest):
+        def on_food_ready(ant_food: Item):
+            self.pick_up_item(ant_food)
+
+        return nest.get_some_food(on_food_ready, self.stats.attack)
     
     def _die(self):
         super()._die()

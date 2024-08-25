@@ -95,11 +95,8 @@ class PillageNestOperation(Operation):
             ant.walk_to(self._nest_to_pillage.position, 'worker_is_near_nest')
 
     def _on_worker_near_nest(self, ant: Ant):
-        def on_food_ready(ant_food: Item):
-            ant.pick_up_item(ant_food)
-
         ant.get_in_nest(self._nest_to_pillage)
-        is_there_food = self._nest_to_pillage.steal_food(on_food_ready)
+        ant.get_food_item_from_nest(self._nest_to_pillage)
         ant.wait_step(1, 'worker_is_ready_for_load')
 
     def _on_worker_is_ready_for_load(self, ant: Ant):

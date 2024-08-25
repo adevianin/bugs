@@ -1,6 +1,17 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png":
+/*!****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/textures/build/world_spritesheet.png ***!
+  \****************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+module.exports = __webpack_require__.p + "6286cc76908529f02998.png";
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/domainFacade.js":
 /*!*********************************************************!*\
   !*** ./bugs/core/client/app/src/domain/domainFacade.js ***!
@@ -128,8 +139,8 @@ class DomainFacade {
         this._colonyService.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
     }
 
-    transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount) {
-        this._colonyService.transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount);
+    transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount) {
+        this._colonyService.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount);
     }
 
     /*========================*/
@@ -2150,8 +2161,8 @@ class ColonyService {
         this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
     }
 
-    transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount) {
-        this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount);
+    transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount) {
+        this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount);
     }
 
 }
@@ -2718,11 +2729,10 @@ class ColonyApi {
         })
     }
 
-    transportFoodOperation(colonyId, fromNestId, toNestId, foodCount, workersCount) {
+    transportFoodOperation(colonyId, fromNestId, toNestId, workersCount) {
         return this._requester.post(`world/colonies/${ colonyId }/operations/transport_food`, {
             from_nest_id: fromNestId,
             to_nest_id: toNestId,
-            food_count: foodCount,
             workers_count: workersCount
         });
     }
@@ -5861,26 +5871,17 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
         this._nestSelectorTo = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id);
         this._el.querySelector('[data-to-nest-selector-container]').append(this._nestSelectorTo.el);
 
-        this._foodCountInput = this._el.querySelector('[data-food-count]');
         this._workersCountInput = this._el.querySelector('[data-workers-count]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
-
-        this._updateFoodCountInput();
-    }
-
-    _updateFoodCountInput() {
-        let nest = this.$domainFacade.findEntityById(this._nestSelectorFrom.nestId);
-        this._foodCountInput.setAttribute('max', nest.storedCalories);
     }
 
     _onStartBtnClick() {
         let performingColonyId = this._performingColony.id;
         let fromNestId = this._nestSelectorFrom.nestId;
         let toNestId = this._nestSelectorTo.nestId;
-        let foodCount = this._foodCountInput.value;
         let workersCount = this._workersCountInput.value;
-        this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, foodCount, workersCount);
+        this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount);
         this._onDone();
     }
 
@@ -11152,7 +11153,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "перенести їжу\r\n<div>\r\n    із гнізда:\r\n    <div data-from-nest-selector-container></div>\r\n</div>\r\n<div>\r\n    кількість їжі:\r\n    <input data-food-count type=\"number\" step=\"100\" min=\"0\" value=\"100\">\r\n</div>\r\n<div>\r\n    в гніздо:\r\n    <div data-to-nest-selector-container></div>\r\n</div>\r\n<div>\r\n    кількість робочих:\r\n    <input data-workers-count type=\"number\" min=\"1\" value=\"2\">\r\n</div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
+var code = "перенести їжу\r\n<div>\r\n    із гнізда:\r\n    <div data-from-nest-selector-container></div>\r\n</div>\r\n<div>\r\n    в гніздо:\r\n    <div data-to-nest-selector-container></div>\r\n</div>\r\n<div>\r\n    кількість робочих:\r\n    <input data-workers-count type=\"number\" min=\"1\" value=\"2\">\r\n</div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -13997,17 +13998,6 @@ module.exports = {
   }
 };
 
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png":
-/*!****************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/textures/build/world_spritesheet.png ***!
-  \****************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "6286cc76908529f02998.png";
 
 /***/ }),
 

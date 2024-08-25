@@ -83,8 +83,8 @@ class NestBody(Body):
             self.stored_calories = 0
             return can_give
         
-    def steal_some_food(self):
-        strength = min(300, self.stored_calories)
+    def get_some_food(self, food_count: int):
+        strength = min(food_count, self.stored_calories)
         self.stored_calories -= strength
         return strength
         
