@@ -60,6 +60,7 @@ def transport_food(request: HttpRequest, colony_id: int):
     from_nest_id = int(data['from_nest_id'])
     to_nest_id = int(data['to_nest_id'])
     workers_count = int(data['workers_count'])
+    warriors_count = int(data['warriors_count'])
 
-    wf.transfer_food_operation_command(request.user.id, colony_id, from_nest_id, to_nest_id, workers_count)
+    wf.transfer_food_operation_command(request.user.id, colony_id, from_nest_id, to_nest_id, workers_count, warriors_count)
     return HttpResponse(status=200)

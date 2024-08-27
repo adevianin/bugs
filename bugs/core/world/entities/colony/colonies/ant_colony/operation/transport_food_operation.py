@@ -5,6 +5,7 @@ from core.world.entities.colony.colonies.ant_colony.formation.formation_factory 
 from core.world.entities.colony.colonies.ant_colony.formation.base.base_formation import BaseFormation
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.ant.worker.worker_ant import WorkerAnt
+from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
@@ -14,13 +15,15 @@ from functools import partial
 
 class TransportFoodOperation(Operation):
 
-    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, hired_ants: List[Ant], flags: dict, formations: List[BaseFormation], nest_from: Nest, nest_to: Nest, workers_count: int):
+    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, hired_ants: List[Ant], flags: dict, formations: List[BaseFormation], nest_from: Nest, nest_to: Nest, workers_count: int, warriors_count: int):
         super().__init__(events, formation_factory, id, OperationTypes.TRANSPORT_FOOD, hired_ants, flags, formations)
         self._nest_from = nest_from
         self._nest_to = nest_to
         self._workers_count = workers_count
+        self._warriors_count = warriors_count
         self._name = 'перенести їжу'
         self._open_vacancies(AntTypes.WORKER, workers_count)
+        self._open_vacancies(AntTypes.WARRIOR, warriors_count)
         self._add_marker(MarkerTypes.EAT, self._nest_from.position)
         self._add_marker(MarkerTypes.EAT, self._nest_to.position)
 
@@ -31,12 +34,17 @@ class TransportFoodOperation(Operation):
     def _workers(self) -> List[WorkerAnt]:
         return self.get_hired_ants(AntTypes.WORKER)
     
+    @property
+    def _warriors(self) -> List[WarriorAnt]:
+        return self.get_hired_ants(AntTypes.WARRIOR)
+    
     def _init_staff(self):
         super()._init_staff()
 
-        ants = self._workers
-        for ant in ants:
-            ant.body.sayer.add_listener('prepared', partial(self._on_worker_prepared, ant))
+        for ant in self._hired_ants:
+            ant.body.sayer.add_listener('prepared', partial(self._on_ant_prepared, ant))
+
+        for ant in self._workers: 
             ant.body.sayer.add_listener('worker_is_near_nest_from', partial(self._on_worker_near_nest_from, ant))
             ant.body.sayer.add_listener('worker_got_food', partial(self._on_worker_got_food, ant))
             ant.body.sayer.add_listener('worker_is_near_nest_to', partial(self._on_worker_near_nest_to, ant))
@@ -46,27 +54,30 @@ class TransportFoodOperation(Operation):
         self._prepare_step()
 
     def _prepare_step(self):
-        for ant in self._workers:
+        for ant in self._hired_ants:
             ant.prepare_for_operation('prepared')
 
-    def _on_worker_prepared(self, ant: WorkerAnt):
-        self._write_flag(f'worker_{ant.id}_prepared', True)
-        if self._check_are_all_workers_prepared():
+    def _on_ant_prepared(self, ant: Ant):
+        self._write_flag(f'ant_{ant.id}_prepared', True)
+        if self._check_are_all_ants_prepared():
             self._go_to_nest_from_step()
 
-    def _check_are_all_workers_prepared(self):
-        for ant in self._workers:
-            if not self._read_flag(f'worker_{ant.id}_prepared'):
+    def _check_are_all_ants_prepared(self):
+        for ant in self._hired_ants:
+            if not self._read_flag(f'ant_{ant.id}_prepared'):
                 return False
         return True
     
     def _go_to_nest_from_step(self):
-        formation = self._formation_factory.build_convoy_formation('go_to_nest_from', self._workers, self._nest_from.position)
+        formation = self._formation_factory.build_convoy_formation('go_to_nest_from', self._warriors + self._workers, self._nest_from.position)
         self._register_formation(formation)
 
     def _on_formation_reached_nest_from(self):
         for ant in self._workers:
             ant.walk_to(self._nest_from.position, 'worker_is_near_nest_from')
+
+        for ant in self._warriors:
+            ant.keep_clear_territory(self._nest_from.position, 100)
 
     def _on_worker_near_nest_from(self, ant: Ant):
         ant.get_in_nest(self._nest_from)
@@ -87,13 +98,19 @@ class TransportFoodOperation(Operation):
     def _go_to_nest_to(self):
         for ant in self._workers:
             ant.get_out_of_nest()
+        
+        for ant in self._warriors:
+            ant.free_mind()
 
-        formation = self._formation_factory.build_convoy_formation('go_to_nest_to', self._workers, self._nest_to.position)
+        formation = self._formation_factory.build_convoy_formation('go_to_nest_to', self._warriors + self._workers, self._nest_to.position)
         self._register_formation(formation)
 
     def _on_formation_reached_nest_to(self):
         for ant in self._workers:
             ant.walk_to(self._nest_to.position, 'worker_is_near_nest_to')
+
+        for ant in self._warriors:
+            ant.keep_clear_territory(self._nest_to.position, 100)
 
     def _on_worker_near_nest_to(self, ant: Ant):
         ant.get_in_nest(self._nest_to)

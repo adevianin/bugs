@@ -31,11 +31,12 @@ class ColonyApi {
         })
     }
 
-    transportFoodOperation(colonyId, fromNestId, toNestId, workersCount) {
+    transportFoodOperation(colonyId, fromNestId, toNestId, workersCount, warriorsCount) {
         return this._requester.post(`world/colonies/${ colonyId }/operations/transport_food`, {
             from_nest_id: fromNestId,
             to_nest_id: toNestId,
-            workers_count: workersCount
+            workers_count: workersCount,
+            warriors_count: warriorsCount,
         });
     }
 }

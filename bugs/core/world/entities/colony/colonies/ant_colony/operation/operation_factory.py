@@ -29,5 +29,5 @@ class OperationFactory():
     def build_pillage_nest_operation(self, nest_to_pillage: Nest, nest_for_loot: Nest, workers_count: int, warriors_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formations: List[BaseFormation] = []):
         return PillageNestOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, formations, nest_to_pillage, nest_for_loot, workers_count, warriors_count)
     
-    def build_transport_food_operation(self, nest_from: Nest, nest_to: Nest, workers_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formations: List[BaseFormation] = []):
-        return TransportFoodOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, formations, nest_from, nest_to, workers_count)
+    def build_transport_food_operation(self, nest_from: Nest, nest_to: Nest, workers_count: int, warriors_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formations: List[BaseFormation] = []):
+        return TransportFoodOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, formations, nest_from, nest_to, workers_count, warriors_count)

@@ -88,7 +88,7 @@ class ColonyService():
             operation = self._operation_factory.build_pillage_nest_operation(nest_to_pillage, nest_for_loot, workers_count, warriors_count)
             performing_colony.add_operation(operation)
 
-    def transfer_food_operation(self, user_id: int, performing_colony_id: int, from_nest_id: int, to_nest_id: int, workers_count: int):
+    def transfer_food_operation(self, user_id: int, performing_colony_id: int, from_nest_id: int, to_nest_id: int, workers_count: int, warriors_count: int):
         performing_colony: AntColony = self._world.get_colony_by_id(performing_colony_id)
 
         if performing_colony.owner_id != user_id:
@@ -106,7 +106,7 @@ class ColonyService():
         if from_nest.id == to_nest.id:
             raise Exception('wrong nest id')
         
-        operation = self._operation_factory.build_transport_food_operation(from_nest, to_nest, workers_count)
+        operation = self._operation_factory.build_transport_food_operation(from_nest, to_nest, workers_count, warriors_count)
         performing_colony.add_operation(operation)
 
     

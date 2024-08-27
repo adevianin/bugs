@@ -29,6 +29,7 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         this._el.querySelector('[data-to-nest-selector-container]').append(this._nestSelectorTo.el);
 
         this._workersCountInput = this._el.querySelector('[data-workers-count]');
+        this._warriorsCountInput = this._el.querySelector('[data-warriors-count]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
     }
@@ -38,7 +39,8 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         let fromNestId = this._nestSelectorFrom.nestId;
         let toNestId = this._nestSelectorTo.nestId;
         let workersCount = this._workersCountInput.value;
-        this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount);
+        let warriorsCount = this._warriorsCountInput.value;
+        this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
         this._onDone();
     }
 

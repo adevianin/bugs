@@ -43,8 +43,8 @@ class ColonyService {
         this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
     }
 
-    transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount) {
-        this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount);
+    transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
+        this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
     }
 
 }
