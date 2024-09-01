@@ -7,6 +7,7 @@ class DominationCodes(StrEnum):
     C = 'C'
     D = 'D'
     E = 'E'
+    S = 'S' # for test purposes only
 
     @classmethod
     def check_domination(cls, first_code: 'DominationCodes', second_code: 'DominationCodes') -> int:
@@ -14,6 +15,7 @@ class DominationCodes(StrEnum):
             return 0
         
         domination_rules = {
+            DominationCodes.S: [DominationCodes.A, DominationCodes.B, DominationCodes.C, DominationCodes.D, DominationCodes.E], 
             DominationCodes.A: [DominationCodes.B, DominationCodes.C, DominationCodes.E],
             DominationCodes.B: [DominationCodes.D, DominationCodes.E],
             DominationCodes.C: [DominationCodes.B],

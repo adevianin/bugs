@@ -17,6 +17,7 @@ from core.world.entities.ground_beetle.thoughts.hunt_for_aphid import HuntForAph
 from core.world.entities.ant.warrior.thoughts.patrol_nest_territory_thought import PatrolNestTerritoryThought
 from core.world.entities.ant.base.thoughts.hibernation_thought import HibernationThought
 from core.world.entities.ant.base.thoughts.shelter_in_nest import ShelterInNestThought
+from core.world.entities.ant.base.thoughts.get_stashed_item_back_thought import GetStashedItemBack
 
 class ThoughtSerializer():
 
@@ -56,6 +57,8 @@ class ThoughtSerializer():
                 return self._serialize_hibernation(thought)
             case ThoughtTypes.SHELTER_IN_NEST:
                 return self._serialize_shelter_in_nest(thought)
+            case ThoughtTypes.GET_STAHED_ITEM_BACK:
+                return self._serialize_get_stashed_item_back(thought)
             case _:
                 raise Exception('unknown type of thought')
 
@@ -238,5 +241,10 @@ class ThoughtSerializer():
             'go_home_thought': go_home_thought_json,
             'shelter_nest_id': thought.shelter_nest_id
         })
+
+        return json
+    
+    def _serialize_get_stashed_item_back(self, thought: GetStashedItemBack):
+        json = self._serialize_thought(thought)
 
         return json

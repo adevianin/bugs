@@ -45,6 +45,8 @@ class ThoughtDeserializer():
                 return self._build_hibernation(body, thought_json, entities_collection)
             case ThoughtTypes.SHELTER_IN_NEST:
                 return self._build_shelter_in_nest(body, thought_json, entities_collection)
+            case ThoughtTypes.GET_STAHED_ITEM_BACK:
+                return self._build_get_stashed_item_back(body, thought_json, entities_collection)
             case _:
                 raise Exception('unknown type of thought')
             
@@ -142,3 +144,8 @@ class ThoughtDeserializer():
         flags = thought_json['flags']
         sayback = thought_json['sayback']
         return self._thought_factory.build_shelter_in_nest(body, go_home_thought, shelter_nest, flags, sayback)
+    
+    def _build_get_stashed_item_back(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
+        flags = thought_json['flags']
+        sayback = thought_json['sayback']
+        return self._thought_factory.build_get_stashed_item_back(body, flags, sayback)

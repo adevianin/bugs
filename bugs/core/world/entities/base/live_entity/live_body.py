@@ -47,6 +47,8 @@ class LiveBody(Body):
         return self._calories <= 0
     
     def step_to(self, destination_point: Point) -> bool:
+        if self._has_stun_effect:
+            return
         self._look_at(destination_point)
 
         new_position, passed_dist, is_walk_done = Point.do_step_on_path(self.position, destination_point, self.stats.distance_per_step)
@@ -108,12 +110,19 @@ class LiveBody(Body):
 
         return food.is_died or self.calc_how_much_calories_is_need() == 0
     
-    def damage_enemy(self, enemy_body: Body):
-        enemy_body.receive_damage(20)
+    # ----------------------------------
+    def damage_enemy(self, enemy_body: 'LiveBody'):
+        enemy_body.receive_combat_damage(20)
 
     def damage_nest(self, nest_body: Body):
         nest_body.receive_damage(10)
-    
+
+    def receive_combat_damage(self, damage: int):
+        self._stun_effect()
+        self.receive_damage(damage)
+        self.events.emit('received_combat_damage')
+    # -----------------------------------
+
     def is_near_to_attack(self, point: Point):
         dist = self.position.dist(point)
         return dist <= self.stats.distance_per_step / 2
@@ -150,6 +159,13 @@ class LiveBody(Body):
         # self._calories -= amount
         # if self._calories < 0:
         #     self.hp = 0
+
+    def _stun_effect(self):
+        self.memory.save('stun_effect', True, 1)
+
+    @property
+    def _has_stun_effect(self):
+        return bool(self.memory.read('stun_effect'))
     
 
 

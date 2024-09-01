@@ -64,6 +64,10 @@ class AntMind(Mind):
         thought = self._thought_factory.build_shelter_in_nest_full(self._body, self.home_nest)
         self._register_thought(thought=thought, asap=asap)
 
+    def get_stashed_item_back(self, sayback: str = None):
+        thought = self._thought_factory.build_get_stashed_item_back(self._body, sayback=sayback)
+        self._register_thought(thought=thought)
+
     def toggle_is_in_operation(self, is_in_operation: bool):
         self._is_in_opearetion = is_in_operation
 

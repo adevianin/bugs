@@ -126,15 +126,19 @@ class Operation(ABC):
             self._listen_formation(formation)
 
     def _listen_formation(self, formation: BaseFormation):
-        def on_formation_reached_destination():
-            self.events.emit(f'formation:{formation.name}:reached_destination')
-
+        def on_formation_event(event_name: str):
+            def handler(*args, **kwargs):
+                self.events.emit(f'formation:{formation.name}:{event_name}')
+            return handler
+        
         def on_formation_destroyed():
             self._formations.remove(formation)
-            self.events.emit(f'formation:{formation.name}:destroyed')
 
-        formation.events.add_listener('reached_destination', on_formation_reached_destination)
         formation.events.add_listener('destroyed', on_formation_destroyed)
+        formation.events.add_listener('destroyed', on_formation_event('destroyed'))
+        formation.events.add_listener('reached_destination', on_formation_event('reached_destination'))
+        formation.events.add_listener('before_fighting', on_formation_event('before_fighting'))
+        formation.events.add_listener('before_walking', on_formation_event('before_walking'))
 
     def _check_hiring_ant(self, ant: Ant):
         if ant.mind.is_in_opearetion:

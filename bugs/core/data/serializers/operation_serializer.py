@@ -4,6 +4,7 @@ from core.world.entities.colony.colonies.ant_colony.operation.build_new_sub_nest
 from core.world.entities.colony.colonies.ant_colony.operation.destroy_nest_operation import DestroyNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.bring_item_to_nest_operation import BringItemToNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.pillage_nest_operation import PillageNestOperation
+from core.world.entities.colony.colonies.ant_colony.operation.transport_food_operation import TransportFoodOperation
 from core.data.serializers.formation_serializer import FormationSerializer
 
 class OperationSerializer():
@@ -21,6 +22,8 @@ class OperationSerializer():
                 return self._serialize_bring_item_to_nest(operation)
             case OperationTypes.PILLAGE_NEST:
                 return self._serialize_pillage_nest(operation)
+            case OperationTypes.TRANSPORT_FOOD:
+                return self._serialize_transport_food(operation)
             case _:
                 raise Exception('unknown type of operation')
 
@@ -70,6 +73,18 @@ class OperationSerializer():
             'nest_for_loot_id': operation.nest_for_loot_id,
             'warriors_count': operation.warriors_count,
             'workers_count': operation.workers_count
+        })
+
+        return json
+    
+    def _serialize_transport_food(self, operation: TransportFoodOperation):
+        json = self._serialize_operation(operation)
+
+        json.update({
+            'nest_from_id': operation.nest_from_id,
+            'nest_to_id': operation.nest_to_id,
+            'workers_count': operation.workers_count,
+            'warriors_count': operation.warriors_count
         })
 
         return json

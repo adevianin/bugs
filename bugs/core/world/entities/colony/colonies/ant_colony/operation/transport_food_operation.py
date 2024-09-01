@@ -10,6 +10,8 @@ from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
 
+# from core.world.my_test_env import MY_TEST_ENV
+
 from typing import List
 from functools import partial
 
@@ -29,6 +31,24 @@ class TransportFoodOperation(Operation):
 
         self.events.add_listener('formation:go_to_nest_from:reached_destination', self._on_formation_reached_nest_from)
         self.events.add_listener('formation:go_to_nest_to:reached_destination', self._on_formation_reached_nest_to)
+        self.events.add_listener('formation:go_to_nest_to:before_fighting', self._on_before_fight_on_go_to_nest_to)
+        self.events.add_listener('formation:go_to_nest_to:before_walking', self._on_before_walking_on_go_to_nest_to)
+
+    @property
+    def nest_from_id(self):
+        return self._nest_from.id
+
+    @property
+    def nest_to_id(self):
+        return self._nest_to.id
+    
+    @property
+    def workers_count(self):
+        return self._workers_count
+    
+    @property
+    def warriors_count(self):
+        return self._warriors_count
 
     @property
     def _workers(self) -> List[WorkerAnt]:
@@ -105,6 +125,8 @@ class TransportFoodOperation(Operation):
         formation = self._formation_factory.build_convoy_formation('go_to_nest_to', self._warriors + self._workers, self._nest_to.position)
         self._register_formation(formation)
 
+        # MY_TEST_ENV['attacker'].fight_enemy(self._warriors[0])
+
     def _on_formation_reached_nest_to(self):
         for ant in self._workers:
             ant.walk_to(self._nest_to.position, 'worker_is_near_nest_to')
@@ -125,3 +147,12 @@ class TransportFoodOperation(Operation):
             if not self._read_flag(f'is_worker_{ant.id}_gave_food'):
                 return False
         return True
+    
+    def _on_before_fight_on_go_to_nest_to(self):
+        for ant in self._workers:
+            ant.stash_picked_item()
+
+    def _on_before_walking_on_go_to_nest_to(self):
+        for ant in self._workers:
+            if ant.has_stashed_item():
+                ant.get_stashed_item_back()

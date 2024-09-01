@@ -80,6 +80,8 @@ from core.sync.genome_client_serializer import GenomeClientSerializer
 from core.sync.nuptial_environment_client_serializer import NuptialEnvironmentClientSerializer
 from core.sync.climate_client_serializer import ClimateClientSerializer
 
+from core.world.my_test_env import MY_TEST_ENV
+
 def start():
     event_bus = EventEmitter()
 
@@ -175,5 +177,7 @@ def start():
     player_service.set_world(world_facade.world)
     nuptial_environment_service.set_world(world_facade.world)
     ant_service.set_world(world_facade.world)
+
+    # MY_TEST_ENV['attacker'] = world_facade.world.map.get_entity_by_id(5)
 
     world_facade.world.run()

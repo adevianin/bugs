@@ -11,6 +11,8 @@ class FormationSerializer():
                 return self._serialize_attack_formation(formation)
             case FormationTypes.BRING_ITEM:
                 return self._serialize_bring_item_formation(formation)
+            case FormationTypes.CONVOY:
+                return self._serialize_convoy_formation(formation)
             case _:
                 raise Exception('unknown type of formation')
 
@@ -19,8 +21,9 @@ class FormationSerializer():
             'type': formation.type,
             'name': formation.name,
             'units_ids': formation.units_ids,
-            'position': formation.position,
-            'destination': formation.destination
+            'current_position': formation.current_position,
+            'destination_point': formation.destination_point,
+            'state': formation.state
         }
     
     def _serialize_bring_item_formation(self, formation: BringItemFormation):
@@ -33,6 +36,11 @@ class FormationSerializer():
         return json
     
     def _serialize_attack_formation(self, formation: AttackFormation):
+        json = self._serialize_base_formation(formation)
+
+        return json
+    
+    def _serialize_convoy_formation(self, formation: AttackFormation):
         json = self._serialize_base_formation(formation)
 
         return json

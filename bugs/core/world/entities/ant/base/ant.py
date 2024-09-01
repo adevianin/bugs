@@ -75,6 +75,15 @@ class Ant(LiveEntity):
     def pick_up_item(self, item):
         self._body.pick_up_item(item)
 
+    def stash_picked_item(self):
+        self._body.stash_picked_item()
+
+    def get_stashed_item_back(self):
+        self._mind.get_stashed_item_back()
+
+    def has_stashed_item(self):
+        return self._body.has_stashed_item()
+
     def give_food(self, nest: Nest):
         self._body.give_food(nest)
 

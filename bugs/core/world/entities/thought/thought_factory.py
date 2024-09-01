@@ -23,6 +23,7 @@ from core.world.entities.base.live_entity.thoughts.wait_step_thought import Wait
 from core.world.entities.ant.warrior.thoughts.patrol_nest_territory_thought import PatrolNestTerritoryThought
 from core.world.entities.ant.base.thoughts.hibernation_thought import HibernationThought
 from core.world.entities.ant.base.thoughts.shelter_in_nest import ShelterInNestThought
+from core.world.entities.ant.base.thoughts.get_stashed_item_back_thought import GetStashedItemBack
 
 class ThoughtFactory:
 
@@ -82,6 +83,9 @@ class ThoughtFactory:
     
     def build_shelter_in_nest(self,  body: LiveBody, go_gome_thought: GoInNestThought, shelter_nest: Nest, flags: dict = None, sayback: str = None):
         return ShelterInNestThought(body, go_gome_thought, shelter_nest, flags, sayback)
+    
+    def build_get_stashed_item_back(self,  body: LiveBody, flags: dict = None, sayback: str = None):
+        return GetStashedItemBack(body, flags, sayback)
 
     def build_feed_myself_full(self, body: LiveBody, home_nest: Nest, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(body, home_nest.position, home_nest.area)

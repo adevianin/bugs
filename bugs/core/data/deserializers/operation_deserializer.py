@@ -20,6 +20,8 @@ class OperationDeserializer():
                 return self._build_bring_item_to_nest_operation_from_json(operation_json, entities_collection)
             case OperationTypes.PILLAGE_NEST:
                 return self._build_pillage_nest_operation_from_json(operation_json, entities_collection)
+            case OperationTypes.TRANSPORT_FOOD:
+                return self._build_transport_food_operation(operation_json, entities_collection)
             case _:
                 raise Exception('unknown type of operation')
             
@@ -65,3 +67,14 @@ class OperationDeserializer():
         })
         
         return self._operation_factory.build_pillage_nest_operation(**props)
+    
+    def _build_transport_food_operation(self, operation_json: dict, entities_collection: EntityCollection):
+        props = self._deserialize_basic_operation_props(operation_json, entities_collection)
+        props.update({
+            'nest_from': entities_collection.get_entity_by_id(operation_json['nest_from_id']),
+            'nest_to': entities_collection.get_entity_by_id(operation_json['nest_to_id']),
+            'workers_count': operation_json['workers_count'],
+            'warriors_count': operation_json['warriors_count']
+        })
+        
+        return self._operation_factory.build_transport_food_operation(**props)

@@ -115,6 +115,16 @@ class AntBody(LiveBody):
         self._picked_item = None
         self.events.emit('dropped_picked_item')
 
+    def stash_picked_item(self):
+        if not self._picked_item:
+            return
+        self.memory.save('stashed_item', { 'item_id': self._picked_item.id, 'position': [self.position.x, self.position.y] })
+        self.drop_picked_item()
+
+    def has_stashed_item(self):
+        item_memory = self.memory.read('stashed_item')
+        return bool(item_memory)
+
     def step_to(self, destination_point: Point) -> bool:
         if self.is_in_nest:
             self.get_out_of_nest()
