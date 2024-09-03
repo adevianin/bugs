@@ -2,6 +2,7 @@ from enum import StrEnum
 
 class ItemTypes(StrEnum):
     LEAF = 'leaf'
+    STICK = 'stick'
     FLOWER = 'flower'
     HONEYDEW = 'honeydew'
     GROUND_BEETLE_CORPSE = 'ground_beetle_corpse'

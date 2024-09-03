@@ -228,6 +228,7 @@
             <key type="filename">images/item_leaf_2v.png</key>
             <key type="filename">images/item_leaf_3v.png</key>
             <key type="filename">images/item_leaf_4v.png</key>
+            <key type="filename">images/item_stick_2v.png</key>
             <key type="filename">images/marker_cross.png</key>
             <key type="filename">images/marker_eat.png</key>
             <key type="filename">images/marker_pillage.png</key>
@@ -274,6 +275,21 @@
                 <rect>23,28,45,55</rect>
                 <key>scale9Paddings</key>
                 <rect>23,28,45,55</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">images/item_stick_1v.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>10,8,19,16</rect>
+                <key>scale9Paddings</key>
+                <rect>10,8,19,16</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -366,6 +382,8 @@
                     <filename>images/ant_male_7.png</filename>
                     <filename>images/ant_male_8.png</filename>
                     <filename>images/ant_male_dead.png</filename>
+                    <filename>images/item_stick_1v.png</filename>
+                    <filename>images/item_stick_2v.png</filename>
                 </array>
             </struct>
         </map>

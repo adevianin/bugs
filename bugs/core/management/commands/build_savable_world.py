@@ -1030,6 +1030,24 @@ class Command(BaseCommand):
                 "fertility":5,
                 "item_type":"flower",
                 "accumulated": 0
+            },
+            {
+                "id":42,
+                "type":"item_area",
+                "from_colony_id":None,
+                "hp": 100,
+                "position":[
+                    450,
+                    300
+                ],
+                "angle": 0,
+                "size":[
+                    350,
+                    200
+                ],
+                "fertility":5,
+                "item_type":"stick",
+                "accumulated": 0
             }
         ],
         "item_sources": [

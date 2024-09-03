@@ -13,6 +13,8 @@ from core.world.entities.item.items.ground_beetle_corpse_item.ground_beetle_corp
 from core.world.entities.item.items.ant_food.ant_food_item import AntFoodItem
 from core.world.entities.item.items.ant_food.ant_food_item_body import AntFoodItemBody
 from core.world.entities.base.stats_library import StatsLibrary
+from core.world.entities.item.items.stick_item.stick_item import StickItem
+from core.world.entities.item.items.stick_item.stick_item_body import StickItemBody
 
 
 import random
@@ -37,6 +39,10 @@ class ItemFactory():
                 return self._build_ground_beetle_corpse_item(id, position, angle, strength, variety, life_span, is_picked)
             case ItemTypes.ANT_FOOD:
                 return self._build_ant_food_item(id, position, angle, strength, variety, life_span, is_picked)
+            case ItemTypes.STICK:
+                return self._build_stick_item(id, position, angle, strength, variety, life_span, is_picked)
+            case _:
+                raise Exception('unknown item type')
 
     def _build_flower_item(self, id: int, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool):
         stats = StatsLibrary.GHOST_DEFAULT
@@ -72,6 +78,13 @@ class ItemFactory():
         variety = variety or self._generate_variety(AntFoodItemBody.VARIETY_COUNT)
         life_span = life_span or AntFoodItemBody.LIFE_SPAN
         return AntFoodItem(self._event_bus, EventEmitter(), id, body, strength, variety, life_span, is_picked)
+    
+    def _build_stick_item(self, id: int, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool):
+        stats = StatsLibrary.GHOST_DEFAULT
+        body = StickItemBody(EventEmitter(), stats, position, angle, stats.max_hp)
+        variety = variety or self._generate_variety(StickItemBody.VARIETY_COUNT)
+        life_span = life_span or StickItemBody.LIFE_SPAN
+        return StickItem(self._event_bus, EventEmitter(), id, body, strength, variety, life_span, is_picked)
     
     def _generate_variety(self, variety_count: int):
         return random.randint(1, variety_count)
