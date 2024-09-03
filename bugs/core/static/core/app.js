@@ -213,6 +213,7 @@ const ACTION_TYPES = {
     NEST_EGG_BECAME_LARVA: 'nest_egg_became_larva',
     NEST_EGG_ADDED: 'nest_egg_added',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
+    NEST_FORTIFICATION_CHANGED: 'nest_fortification_changed'
 };
 
 
@@ -1435,7 +1436,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp) {
+    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp, 
+        fortification, maxFortification) {
         super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST, fromColony, ownerId, hp, maxHp);
         this._nestApi = nestApi;
         this.storedCalories = storedCalories;
@@ -1443,6 +1445,8 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this.eggs = eggs;
         this.larvaPlacesCount = larvaPlacesCount;
         this.eggPlacesCount = eggPlacesCount;
+        this._fortification = fortification;
+        this.maxFortification = maxFortification;
 
         this._setIsBuilt(isBuilt)
     }
@@ -1453,6 +1457,15 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     get childPlacesCount() {
         return this.larvaPlacesCount + this.eggPlacesCount;
+    }
+
+    get fortification() {
+        return this._fortification;
+    }
+
+    set fortification(value) {
+        this._fortification = value;
+        this.emit('fortificationChanged');
     }
 
     checkCanAddNewEgg() {
@@ -1491,6 +1504,8 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playEggBecameLarva(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_EGG_ADDED:
                 return this._playEggAdded(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_FORTIFICATION_CHANGED:
+                return this._playFortificationChanged(action);
         }
     }
 
@@ -1544,6 +1559,11 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _playBuildStatusChanged(action) {
         this._setIsBuilt(action.actionData.is_built)
+        return Promise.resolve();
+    }
+
+    _playFortificationChanged(action) {
+        this.fortification = action.fortification;
         return Promise.resolve();
     }
 
@@ -2540,7 +2560,10 @@ class WorldFactory {
         let isBuilt = nestJson.isBuilt;
         let hp = nestJson.hp;
         let maxHp = nestJson.max_hp;
-        return new _entity_nest__WEBPACK_IMPORTED_MODULE_2__.Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp);
+        let maxFortification = nestJson.maxFortification;
+        let fortification = nestJson.fortification;
+        return new _entity_nest__WEBPACK_IMPORTED_MODULE_2__.Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, 
+            hp, maxHp, fortification, maxFortification);
     }
 
     buildAnt(antJson) {
@@ -7581,6 +7604,7 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._render();
 
         this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderState.bind(this));
+        this._unbindFortificationChangeListener = this._entity.on('fortificationChanged', this._renderFortificationValue.bind(this));
     }
 
     _render() {
@@ -7618,7 +7642,13 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
         this._renderState();
 
-        this._hpLineView = new _hpLine__WEBPACK_IMPORTED_MODULE_2__.HpLineView(this._entity, { x: 0, y: -8 }, this._builtNestSprite.width, this._uiContainer);
+        this._hpLineView = new _hpLine__WEBPACK_IMPORTED_MODULE_2__.HpLineView(this._entity, { x: 0, y: -13 }, this._builtNestSprite.width, this._uiContainer);
+
+        this._fortificationLine = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Graphics();
+        this._fortificationLine.x = 0;
+        this._fortificationLine.y = -8;
+        this._uiContainer.addChild(this._fortificationLine);
+        this._renderFortificationValue();
     }
 
     remove() {
@@ -7634,6 +7664,17 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._builtNestSprite.renderable = state == 'built';
         this._buildingNestSprite.renderable = state == 'building';
         this._destroyedNestSprite.renderable = state == 'dead';
+    }
+
+    _renderFortificationValue() {
+        let fortLineMaxWidth = this._builtNestSprite.width;
+        let fortInPercent = (this._entity.fortification * 100) / this._entity.maxFortification;
+        let lineWidth = (fortLineMaxWidth / 100) * fortInPercent;
+
+        let color = 0x800080;
+        this._fortificationLine.clear();
+        this._fortificationLine.beginFill(color);
+        this._fortificationLine.drawRect(0, 0, lineWidth, 5);
     }
 
     _onClick() {

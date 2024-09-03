@@ -17,10 +17,13 @@ from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsRea
 from core.world.entities.action.nest_larva_added_action import NestLarvaAddedAction
 from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
 from core.world.entities.ant.base.ant_types import AntTypes
+from .nest_stats import NestStats
+from core.world.entities.action.nest_fortification_changed_action import NestFortificationChangedAction
 
 class Nest(Entity):
 
     _body: NestBody
+    stats: NestStats
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, owner_id: int, body: NestBody):
         super().__init__(event_bus, events, id, EntityTypes.NEST, from_colony_id, owner_id, body)
@@ -33,6 +36,7 @@ class Nest(Entity):
         self._body.events.add_listener('egg_develop', self._on_egg_develop)
         self._body.events.add_listener('egg_became_larva', self._on_egg_became_larva)
         self._body.events.add_listener('egg_added', self._on_egg_added)
+        self._body.events.add_listener('fortification_changed', self._on_fortification_changed)
 
     @property
     def area(self):
@@ -65,6 +69,10 @@ class Nest(Entity):
     @property
     def is_built(self):
         return self._body.is_built
+    
+    @property
+    def fortification(self):
+        return self._body.fortification
 
     def do_step(self):
         self._body.feed_larvae()
@@ -120,4 +128,7 @@ class Nest(Entity):
 
     def _on_egg_added(self, egg: Egg):
         self._emit_action(NestEggAddedAction.build(self.id, egg, self._owner_id))
+
+    def _on_fortification_changed(self):
+        self._emit_action(NestFortificationChangedAction.build(self.id, self._body.fortification))
     

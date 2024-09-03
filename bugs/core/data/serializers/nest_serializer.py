@@ -19,7 +19,8 @@ class NestSerializer(EntitySerializer):
             'larva_places_count': entity.larva_places_count,
             'egg_places_count': entity.egg_places_count,
             'area': entity.area,
-            'build_progress': entity.build_progress
+            'build_progress': entity.build_progress,
+            'fortification': entity.fortification
         })
 
         return json

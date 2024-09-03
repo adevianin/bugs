@@ -28,6 +28,7 @@ from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsRea
 from core.world.entities.action.nest_larva_added_action import NestLarvaAddedAction
 from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
 from core.world.entities.action.climate_temperature_change_action import ClimateTemperatureChangeAction
+from core.world.entities.action.nest_fortification_changed_action import NestFortificationChangedAction
 
 class ActionClientSerializer(iActionClientSerializer):
 
@@ -82,6 +83,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._serialize_nest_egg_became_larva(action)
             case ActionTypes.NEST_EGG_ADDED:
                 return self._serialize_nest_egg_added(action)
+            case ActionTypes.NEST_FORTIFICATION_CHANGED:
+                return self._serialize_fortification_changed(action)
             case ActionTypes.NEST_BUILD_STATUS_CHANGED:
                 return self._serialize_nest_build_status_changed(action)
             case ActionTypes.ITEM_WAS_PICKED_UP:
@@ -243,6 +246,15 @@ class ActionClientSerializer(iActionClientSerializer):
 
         json.update({
             'egg': self._egg_serializer.serialize_egg(action.egg)
+        })
+
+        return json
+    
+    def _serialize_fortification_changed(self, action: NestFortificationChangedAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'fortification': action.fortification
         })
 
         return json

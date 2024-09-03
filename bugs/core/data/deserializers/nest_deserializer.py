@@ -22,7 +22,8 @@ class NestDeserializer():
         stored_calories = nest_json['stored_calories']
         area = nest_json['area']
         build_progress = nest_json['build_progress']
+        fortification = nest_json['fortification']
         larvae = [self._larva_deserializer.deserialize_larva(larva_json) for larva_json in nest_json['larvae']]
         eggs = [self._egg_deserializer.deserialize_egg(egg_json) for egg_json in nest_json['eggs']]
-        return self._nest_factory.build_nest(id, position, angle, from_colony_id, owner_id, hp, larvae, eggs, larva_places_count, egg_places_count, stored_calories, area, build_progress)
+        return self._nest_factory.build_nest(id, position, angle, from_colony_id, owner_id, hp, larvae, eggs, larva_places_count, egg_places_count, stored_calories, area, build_progress, fortification)
     

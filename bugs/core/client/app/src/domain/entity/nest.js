@@ -6,7 +6,8 @@ import { Egg } from './egg';
 
 class Nest extends Entity {
 
-    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp) {
+    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp, 
+        fortification, maxFortification) {
         super(eventBus, id, position, angle, EntityTypes.NEST, fromColony, ownerId, hp, maxHp);
         this._nestApi = nestApi;
         this.storedCalories = storedCalories;
@@ -14,6 +15,8 @@ class Nest extends Entity {
         this.eggs = eggs;
         this.larvaPlacesCount = larvaPlacesCount;
         this.eggPlacesCount = eggPlacesCount;
+        this._fortification = fortification;
+        this.maxFortification = maxFortification;
 
         this._setIsBuilt(isBuilt)
     }
@@ -24,6 +27,15 @@ class Nest extends Entity {
 
     get childPlacesCount() {
         return this.larvaPlacesCount + this.eggPlacesCount;
+    }
+
+    get fortification() {
+        return this._fortification;
+    }
+
+    set fortification(value) {
+        this._fortification = value;
+        this.emit('fortificationChanged');
     }
 
     checkCanAddNewEgg() {
@@ -62,6 +74,8 @@ class Nest extends Entity {
                 return this._playEggBecameLarva(action);
             case ACTION_TYPES.NEST_EGG_ADDED:
                 return this._playEggAdded(action);
+            case ACTION_TYPES.NEST_FORTIFICATION_CHANGED:
+                return this._playFortificationChanged(action);
         }
     }
 
@@ -115,6 +129,11 @@ class Nest extends Entity {
 
     _playBuildStatusChanged(action) {
         this._setIsBuilt(action.actionData.is_built)
+        return Promise.resolve();
+    }
+
+    _playFortificationChanged(action) {
+        this.fortification = action.fortification;
         return Promise.resolve();
     }
 

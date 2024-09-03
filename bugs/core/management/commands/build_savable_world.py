@@ -949,7 +949,8 @@ class Command(BaseCommand):
                 "larva_places_count":3,
                 "egg_places_count":3,
                 "area":300,
-                "build_progress": 100
+                "build_progress": 100,
+                "fortification": 1000
             },
             {
                 "id":31,
@@ -970,7 +971,8 @@ class Command(BaseCommand):
                 "larva_places_count":1,
                 "egg_places_count":1,
                 "area":300,
-                "build_progress": 100
+                "build_progress": 100,
+                "fortification": 250
             },
             {
                 "id":32,
@@ -991,7 +993,8 @@ class Command(BaseCommand):
                 "larva_places_count":1,
                 "egg_places_count":1,
                 "area":300,
-                "build_progress": 100
+                "build_progress": 100,
+                "fortification": 500
             },
         ],
         "item_areas": [

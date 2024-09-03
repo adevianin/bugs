@@ -63,6 +63,10 @@ class Entity(ABC):
     def is_died(self):
         return self._body.is_died
     
+    @property
+    def stats(self):
+        return self._body.stats
+    
     def die(self):
         self._body.hp = 0
 

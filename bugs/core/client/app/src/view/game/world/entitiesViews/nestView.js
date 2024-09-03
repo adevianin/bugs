@@ -10,6 +10,7 @@ class NestView extends EntityView {
         this._render();
 
         this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderState.bind(this));
+        this._unbindFortificationChangeListener = this._entity.on('fortificationChanged', this._renderFortificationValue.bind(this));
     }
 
     _render() {
@@ -47,7 +48,13 @@ class NestView extends EntityView {
 
         this._renderState();
 
-        this._hpLineView = new HpLineView(this._entity, { x: 0, y: -8 }, this._builtNestSprite.width, this._uiContainer);
+        this._hpLineView = new HpLineView(this._entity, { x: 0, y: -13 }, this._builtNestSprite.width, this._uiContainer);
+
+        this._fortificationLine = new PIXI.Graphics();
+        this._fortificationLine.x = 0;
+        this._fortificationLine.y = -8;
+        this._uiContainer.addChild(this._fortificationLine);
+        this._renderFortificationValue();
     }
 
     remove() {
@@ -63,6 +70,17 @@ class NestView extends EntityView {
         this._builtNestSprite.renderable = state == 'built';
         this._buildingNestSprite.renderable = state == 'building';
         this._destroyedNestSprite.renderable = state == 'dead';
+    }
+
+    _renderFortificationValue() {
+        let fortLineMaxWidth = this._builtNestSprite.width;
+        let fortInPercent = (this._entity.fortification * 100) / this._entity.maxFortification;
+        let lineWidth = (fortLineMaxWidth / 100) * fortInPercent;
+
+        let color = 0x800080;
+        this._fortificationLine.clear();
+        this._fortificationLine.beginFill(color);
+        this._fortificationLine.drawRect(0, 0, lineWidth, 5);
     }
 
     _onClick() {
