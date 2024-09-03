@@ -104,14 +104,17 @@ class AntBody(LiveBody):
         item.pickup()
         self.events.emit('picked_up_item', item.id)
         return True
-
-    def give_food(self, nest: Nest):
-        nest.take_edible_item(self._picked_item)
+    
+    def drop_picked_item(self):
+        self._picked_item.drop(Point(self.position.x, self.position.y))
         self._picked_item = None
         self.events.emit('dropped_picked_item')
 
-    def drop_picked_item(self):
-        self._picked_item.drop(Point(self.position.x, self.position.y))
+    def has_picked_item(self):
+        return bool(self._picked_item)
+
+    def give_food(self, nest: Nest):
+        nest.take_edible_item(self._picked_item)
         self._picked_item = None
         self.events.emit('dropped_picked_item')
 

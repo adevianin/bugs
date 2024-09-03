@@ -135,8 +135,9 @@ class TransportFoodOperation(Operation):
             ant.keep_clear_territory(self._nest_to.position, 100)
 
     def _on_worker_near_nest_to(self, ant: Ant):
-        ant.get_in_nest(self._nest_to)
-        ant.give_food(self._nest_to)
+        if ant.has_picked_item():
+            ant.get_in_nest(self._nest_to)
+            ant.give_food(self._nest_to)
         self._write_flag(f'is_worker_{ant.id}_gave_food', True)
 
         if self._check_are_all_worker_gave_food():
@@ -150,7 +151,8 @@ class TransportFoodOperation(Operation):
     
     def _on_before_fight_on_go_to_nest_to(self):
         for ant in self._workers:
-            ant.stash_picked_item()
+            if ant.has_picked_item():
+                ant.stash_picked_item()
 
     def _on_before_walking_on_go_to_nest_to(self):
         for ant in self._workers:

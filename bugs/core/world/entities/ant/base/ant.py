@@ -75,6 +75,9 @@ class Ant(LiveEntity):
     def pick_up_item(self, item):
         self._body.pick_up_item(item)
 
+    def has_picked_item(self):
+        return self._body.has_picked_item()
+
     def stash_picked_item(self):
         self._body.stash_picked_item()
 
