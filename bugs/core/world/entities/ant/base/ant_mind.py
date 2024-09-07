@@ -17,7 +17,7 @@ class AntMind(Mind):
         self._is_in_opearetion = is_in_operation
 
         self._body.events.add_listener('died', self._on_died)
-        self.home_nest.events.add_listener('is_under_attack', self._on_home_nest_is_under_attack)
+        self._listen_home_nest()
 
     @property
     def is_in_opearetion(self):
@@ -42,7 +42,9 @@ class AntMind(Mind):
         self._register_thought(thought)
     
     def relocate_to_nest(self, nest: Nest):
+        self._stop_listen_home_nest()
         self.home_nest = nest
+        self._listen_home_nest()
 
     def build_nest(self, nest: Nest, get_inside_once_done: bool, sayback: str):
         thought = self._thought_factory.build_build_nest_thought(body=self._body, building_nest=nest, get_inside_once_done=get_inside_once_done, sayback=sayback)
@@ -75,6 +77,12 @@ class AntMind(Mind):
     def toggle_is_in_operation(self, is_in_operation: bool):
         self._is_in_opearetion = is_in_operation
 
+    def _listen_home_nest(self):
+        self.home_nest.events.add_listener('is_under_attack', self._on_home_nest_is_under_attack)
+
+    def _stop_listen_home_nest(self):
+        self.home_nest.events.remove_listener('is_under_attack', self._on_home_nest_is_under_attack)
+
     def _calc_assemble_point(self):
         return Point(self.home_nest.position.x, self.home_nest.position.y + 40)
     
@@ -95,7 +103,7 @@ class AntMind(Mind):
         return dist_from_home > self.home_nest.area
     
     def _on_died(self):
-        self.home_nest.events.remove_listener('is_under_attack', self._on_home_nest_is_under_attack)
+        self._stop_listen_home_nest()
         self.free_mind()
 
     def _on_home_nest_is_under_attack(self, enemies_positions: List[Point]):
