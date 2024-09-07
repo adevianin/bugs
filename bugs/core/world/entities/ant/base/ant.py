@@ -48,6 +48,10 @@ class Ant(LiveEntity):
     def located_in_nest_id(self):
         return self._body.located_in_nest_id
     
+    @property
+    def is_detectable(self):
+        return not self._body.is_in_nest
+    
     def prepare_for_operation(self, sayback: str = None):
         self._mind.prepare_for_operation(sayback)
     
