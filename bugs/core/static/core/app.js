@@ -147,6 +147,10 @@ class DomainFacade {
         this._colonyService.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
     }
 
+    bringBugOpearation(performingColonyId, nestId) {
+        this._colonyService.bringBugOpearation(performingColonyId, nestId);
+    }
+
     /*========================*/
 
     searchNuptialMales() {
@@ -2193,6 +2197,10 @@ class ColonyService {
         this._colonyApi.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
     }
 
+    bringBugOpearation(performingColonyId, nestId) {
+        this._colonyApi.bringBugOpearation(performingColonyId, nestId);
+    }
+
 }
 
 
@@ -2773,6 +2781,12 @@ class ColonyApi {
         return this._requester.post(`world/colonies/${ colonyId }/operations/build_fortification`, {
             nest_id: nestId,
             workers_count: workersCount
+        });
+    }
+
+    bringBugOpearation(colonyId, nestId) {
+        return this._requester.post(`world/colonies/${ colonyId }/operations/bring_bug`, {
+            nest_id: nestId
         });
     }
 }
@@ -5630,6 +5644,60 @@ class BaseOperationCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/bringBug/bringBugOperationCreatorView.js":
+/*!****************************************************************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/bringBug/bringBugOperationCreatorView.js ***!
+  \****************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "BringBugOperationCreatorView": () => (/* binding */ BringBugOperationCreatorView)
+/* harmony export */ });
+/* harmony import */ var _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseOperationCreatorView */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js");
+/* harmony import */ var _bringBugOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bringBugOperationCreatorTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/bringBug/bringBugOperationCreatorTmpl.html");
+/* harmony import */ var _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/nestSelector */ "./bugs/core/client/app/src/view/game/panel/base/nestSelector/index.js");
+
+
+
+
+class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__.BaseOperationCreatorView {
+
+    constructor(performingColony, onDone) {
+        super(performingColony, onDone);
+
+        this._render();
+
+        this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+    }
+
+    remove() {
+        this._nestSelector.remove();
+        super.remove();
+    }
+
+    _render() {
+        this._el.innerHTML = _bringBugOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._nestSelector = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id);
+        this._el.querySelector('[data-nest-selector]').append(this._nestSelector.el);
+
+        this._startBtn = this._el.querySelector('[data-start-btn]');
+    }
+
+    _onStartBtnClick() {
+        let nestId = this._nestSelector.nestId;
+        this.$domainFacade.bringBugOpearation(this._performingColony.id, nestId);
+        this._onDone();
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/buildFortification/buildFortificationOperationCreatorView.js":
 /*!************************************************************************************************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/buildFortification/buildFortificationOperationCreatorView.js ***!
@@ -5758,6 +5826,7 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "BringBugOperationCreatorView": () => (/* reexport safe */ _bringBug_bringBugOperationCreatorView__WEBPACK_IMPORTED_MODULE_5__.BringBugOperationCreatorView),
 /* harmony export */   "BuildFortificationOperationCreatorView": () => (/* reexport safe */ _buildFortification_buildFortificationOperationCreatorView__WEBPACK_IMPORTED_MODULE_4__.BuildFortificationOperationCreatorView),
 /* harmony export */   "DestroyNestOperationCreatorView": () => (/* reexport safe */ _destoryNest_destroyNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_1__.DestroyNestOperationCreatorView),
 /* harmony export */   "NewNestOperationCreatorView": () => (/* reexport safe */ _newNest_newNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__.NewNestOperationCreatorView),
@@ -5769,6 +5838,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pillageNest_pillageNestOperationCreatorView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pillageNest/pillageNestOperationCreatorView */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/pillageNest/pillageNestOperationCreatorView.js");
 /* harmony import */ var _transportFood_transportFoodOperationCreatorView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./transportFood/transportFoodOperationCreatorView */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/transportFood/transportFoodOperationCreatorView.js");
 /* harmony import */ var _buildFortification_buildFortificationOperationCreatorView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./buildFortification/buildFortificationOperationCreatorView */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/buildFortification/buildFortificationOperationCreatorView.js");
+/* harmony import */ var _bringBug_bringBugOperationCreatorView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./bringBug/bringBugOperationCreatorView */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/bringBug/bringBugOperationCreatorView.js");
+
 
 
 
@@ -6024,6 +6095,7 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._pillageNestOperationBtn.addEventListener('click', this._onPillageNestOperationBtnClick.bind(this));
         this._transportFoodOperationBtn.addEventListener('click', this._onTransportFoodOperationBtnClick.bind(this));
         this._buildFortificationOperationBtn.addEventListener('click', this._onBuildFortificationOperationBtnClick.bind(this));
+        this._bringBugOperationBtn.addEventListener('click', this._onBringBugOperationBtnClick.bind(this));
     }
 
     manageColony(colony) {
@@ -6044,6 +6116,7 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._pillageNestOperationBtn = this._el.querySelector('[data-pillage-nest]');
         this._transportFoodOperationBtn = this._el.querySelector('[data-transport-food]');
         this._buildFortificationOperationBtn = this._el.querySelector('[data-build-fortification]');
+        this._bringBugOperationBtn = this._el.querySelector('[data-bring-bug]');
         this._newOperationsBtnsListEl = this._el.querySelector('[data-new-operation-list]');
         this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
         this._operationCreatorPlaceholderEl = this._el.querySelector('[data-operation-creator-placeholder]');
@@ -6090,6 +6163,12 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
     _onBuildFortificationOperationBtnClick() {
         this._toggleCreatorMode(true);
         this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.BuildFortificationOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+    }
+
+    _onBringBugOperationBtnClick() {
+        this._toggleCreatorMode(true);
+        this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.BringBugOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
         this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
     }
 }
@@ -11215,6 +11294,24 @@ var code = "<ul class=\"colony-manager__nests-list\" data-nests-list></ul>\r\n<d
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/bringBug/bringBugOperationCreatorTmpl.html":
+/*!******************************************************************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/bringBug/bringBugOperationCreatorTmpl.html ***!
+  \******************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "принести жука\r\n<div>\r\n    гніздо:\r\n    <div data-nest-selector></div>\r\n</div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/buildFortification/buildFortificationOperationCreatorTmpl.html":
 /*!**************************************************************************************************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/buildFortification/buildFortificationOperationCreatorTmpl.html ***!
@@ -11317,7 +11414,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-new-operation-list>\r\n    створити операцію:\r\n    <ul class=\"colony-manager__new_operations_list\">\r\n        <li><button data-add-new-nest>нове гніздо</button></li>\r\n        <li><button data-destroy-nest>розвалить гніздо</button></li>\r\n        <li><button data-pillage-nest>пограбувать гніздо</button></li>\r\n        <li><button data-transport-food>перенести їжу</button></li>\r\n        <li><button data-build-fortification>будувать фортифікації</button></li>\r\n    </ul>\r\n</div>\r\n<button data-cancel-operation-creating>назад</button>\r\n<div data-operation-creator-placeholder></div>";
+var code = "<div data-new-operation-list>\r\n    створити операцію:\r\n    <ul class=\"colony-manager__new_operations_list\">\r\n        <li><button data-add-new-nest>нове гніздо</button></li>\r\n        <li><button data-destroy-nest>розвалить гніздо</button></li>\r\n        <li><button data-pillage-nest>пограбувать гніздо</button></li>\r\n        <li><button data-transport-food>перенести їжу</button></li>\r\n        <li><button data-build-fortification>будувать фортифікації</button></li>\r\n        <li><button data-bring-bug>принести жука</button></li>\r\n    </ul>\r\n</div>\r\n<button data-cancel-operation-creating>назад</button>\r\n<div data-operation-creator-placeholder></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

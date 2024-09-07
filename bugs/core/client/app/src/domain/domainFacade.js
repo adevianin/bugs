@@ -122,6 +122,10 @@ class DomainFacade {
         this._colonyService.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
     }
 
+    bringBugOpearation(performingColonyId, nestId) {
+        this._colonyService.bringBugOpearation(performingColonyId, nestId);
+    }
+
     /*========================*/
 
     searchNuptialMales() {

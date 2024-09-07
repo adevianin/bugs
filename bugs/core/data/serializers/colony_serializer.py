@@ -26,14 +26,10 @@ class ColonySerializer():
     
     def _serialize_ant_colony(self, colony: AntColony):
         json = self._serialize_colony(colony)
-        operations_json = []
-        for operation in colony.operations:
-            operations_json.append(self._operation_serializer.serialize(operation))
         
         json.update({
             'owner_id': colony.owner_id,
-            'operations': operations_json,
-            'last_registered_entities_in_colony_area_ids': colony.last_registered_entities_in_colony_area_ids,
+            'operations': [self._operation_serializer.serialize(operation) for operation in colony.operations],
             'queen_id': colony.queen_id
         })
 

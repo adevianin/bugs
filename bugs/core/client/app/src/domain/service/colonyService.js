@@ -51,6 +51,10 @@ class ColonyService {
         this._colonyApi.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
     }
 
+    bringBugOpearation(performingColonyId, nestId) {
+        this._colonyApi.bringBugOpearation(performingColonyId, nestId);
+    }
+
 }
 
 export {

@@ -76,3 +76,14 @@ def build_fortification(request: HttpRequest, colony_id: int):
 
     wf.build_fortification_operation_command(request.user.id, colony_id, nest_id, workers_count)
     return HttpResponse(status=200)
+
+@require_POST
+@login_required     
+def bring_bug(request: HttpRequest, colony_id: int):
+    data = json.loads(request.body)
+    wf = WorldFacade.get_instance()
+
+    nest_id = int(data['nest_id'])
+
+    wf.bring_bug_operation_command(request.user.id, colony_id, nest_id)
+    return HttpResponse(status=200)

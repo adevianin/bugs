@@ -3,11 +3,13 @@ import { DestroyNestOperationCreatorView } from "./destoryNest/destroyNestOperat
 import { PillageNestOperationCreatorView } from "./pillageNest/pillageNestOperationCreatorView";
 import { TransportFoodOperationCreatorView } from "./transportFood/transportFoodOperationCreatorView";
 import { BuildFortificationOperationCreatorView } from "./buildFortification/buildFortificationOperationCreatorView";
+import { BringBugOperationCreatorView } from "./bringBug/bringBugOperationCreatorView";
 
 export { 
     NewNestOperationCreatorView,
     DestroyNestOperationCreatorView,
     PillageNestOperationCreatorView,
     TransportFoodOperationCreatorView,
-    BuildFortificationOperationCreatorView
+    BuildFortificationOperationCreatorView,
+    BringBugOperationCreatorView
 }

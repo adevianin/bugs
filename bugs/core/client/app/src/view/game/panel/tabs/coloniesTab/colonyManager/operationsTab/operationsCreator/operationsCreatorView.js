@@ -1,7 +1,7 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import operationsCreatorTmpl from './operationsCreatorTmpl.html';
 import { NewNestOperationCreatorView, DestroyNestOperationCreatorView, PillageNestOperationCreatorView, 
-    TransportFoodOperationCreatorView, BuildFortificationOperationCreatorView } from "./operationCreators";
+    TransportFoodOperationCreatorView, BuildFortificationOperationCreatorView, BringBugOperationCreatorView } from "./operationCreators";
 
 class OperationsCreatorView extends BaseHTMLView {
 
@@ -16,6 +16,7 @@ class OperationsCreatorView extends BaseHTMLView {
         this._pillageNestOperationBtn.addEventListener('click', this._onPillageNestOperationBtnClick.bind(this));
         this._transportFoodOperationBtn.addEventListener('click', this._onTransportFoodOperationBtnClick.bind(this));
         this._buildFortificationOperationBtn.addEventListener('click', this._onBuildFortificationOperationBtnClick.bind(this));
+        this._bringBugOperationBtn.addEventListener('click', this._onBringBugOperationBtnClick.bind(this));
     }
 
     manageColony(colony) {
@@ -36,6 +37,7 @@ class OperationsCreatorView extends BaseHTMLView {
         this._pillageNestOperationBtn = this._el.querySelector('[data-pillage-nest]');
         this._transportFoodOperationBtn = this._el.querySelector('[data-transport-food]');
         this._buildFortificationOperationBtn = this._el.querySelector('[data-build-fortification]');
+        this._bringBugOperationBtn = this._el.querySelector('[data-bring-bug]');
         this._newOperationsBtnsListEl = this._el.querySelector('[data-new-operation-list]');
         this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
         this._operationCreatorPlaceholderEl = this._el.querySelector('[data-operation-creator-placeholder]');
@@ -82,6 +84,12 @@ class OperationsCreatorView extends BaseHTMLView {
     _onBuildFortificationOperationBtnClick() {
         this._toggleCreatorMode(true);
         this._operationCreator = new BuildFortificationOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+    }
+
+    _onBringBugOperationBtnClick() {
+        this._toggleCreatorMode(true);
+        this._operationCreator = new BringBugOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
         this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
     }
 }

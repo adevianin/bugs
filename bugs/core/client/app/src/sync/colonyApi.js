@@ -46,6 +46,12 @@ class ColonyApi {
             workers_count: workersCount
         });
     }
+
+    bringBugOpearation(colonyId, nestId) {
+        return this._requester.post(`world/colonies/${ colonyId }/operations/bring_bug`, {
+            nest_id: nestId
+        });
+    }
 }
 
 export {

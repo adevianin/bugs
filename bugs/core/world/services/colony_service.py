@@ -6,6 +6,10 @@ from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
 from core.world.utils.point import Point
+from core.world.entities.item.items.base.item import Item 
+from core.world.entities.item.items.base.item_types import ItemTypes 
+
+from typing import Callable
 
 class ColonyService():
 
@@ -122,4 +126,26 @@ class ColonyService():
         
         operation = self._operation_factory.build_build_fortification(nest, workers_count)
         performing_colony.add_operation(operation)
+
+    def bring_bug_operation(self, user_id: int, performing_colony_id: int, nest_id: int):
+        performing_colony: AntColony = self._world.get_colony_by_id(performing_colony_id)
+
+        if performing_colony.owner_id != user_id:
+            raise Exception('user is not colony owner')
+        
+        nest: Nest = self._world.map.get_entity_by_id(nest_id)
+
+        if not nest or nest.owner_id != user_id:
+            raise Exception('wrong nest id')
+        
+        filter: Callable[[Item], bool] = lambda item: item.item_type == ItemTypes.GROUND_BEETLE_CORPSE
+        items = self._world.map.find_entities_near(nest.position, nest.area, EntityTypes.ITEM, filter)
+
+        if not items:
+            raise Exception('no bug in nest area')
+        
+        operation = self._operation_factory.build_bring_item_to_nest_operation(nest, items[0])
+        performing_colony.add_operation(operation)
+
+    
     

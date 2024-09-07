@@ -1093,16 +1093,14 @@ class Command(BaseCommand):
                 "owner_id":2,
                 "queen_id": 4,
                 "member_type": "ant",
-                "operations":[],
-                "last_registered_entities_in_colony_area_ids": []
+                "operations":[]
             },
             {
                 "id":2,
                 "owner_id":2,
                 "queen_id": 2,
                 "member_type": "ant",
-                "operations":[],
-                "last_registered_entities_in_colony_area_ids": []
+                "operations":[]
             },
             {
                 "id":3,

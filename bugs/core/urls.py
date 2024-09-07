@@ -7,7 +7,7 @@ from .views.account import check_username, user_register, user_login, user_logou
 from .views.home import index
 from .views.admin import admin_panel, world_status_check, stop_world, run_world, save_world
 from .views.nest import add_egg, change_egg_caste
-from .views.colony import stop_operation, build_new_sub_nest, destroy_nest, pillage_nest, transport_food, build_fortification
+from .views.colony import stop_operation, build_new_sub_nest, destroy_nest, pillage_nest, transport_food, build_fortification, bring_bug
 from .views.ant import fly_nuptial_flight, change_ant_guardian_behavior, change_ant_cooperative_behavior
 from .views.nuptial import search_nuptial_males, found_colony, save_specie_schema
 
@@ -33,6 +33,7 @@ urlpatterns = [
     path('world/colonies/<int:colony_id>/operations/pillage_nest', pillage_nest, name='pillage_nest'),
     path('world/colonies/<int:colony_id>/operations/transport_food', transport_food, name='transport_food'),
     path('world/colonies/<int:colony_id>/operations/build_fortification', build_fortification, name='build_fortification'),
+    path('world/colonies/<int:colony_id>/operations/bring_bug', bring_bug, name='bring_bug'),
     
     path('world/ants/<int:ant_id>/fly_nuptial_flight', fly_nuptial_flight, name='fly_nuptial_flight'),
     path('world/ants/<int:ant_id>/guardian_behavior', change_ant_guardian_behavior, name='change_ant_guardian_behavior'),
