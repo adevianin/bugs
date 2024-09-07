@@ -28,6 +28,8 @@ class Nest(Entity):
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, owner_id: int, body: NestBody):
         super().__init__(event_bus, events, id, EntityTypes.NEST, from_colony_id, owner_id, body)
 
+        self._is_under_attack = False
+
         self._body.events.add_listener('stored_calories_changed', self._on_stored_calories_changed)
         self._body.events.add_listener('build_status_changed', self._on_build_status_changed)
         self._body.events.add_listener('larva_is_ready', self._on_larva_is_ready)
@@ -109,6 +111,12 @@ class Nest(Entity):
 
     def raise_attack_alarm(self, enemies_positions):
         self.events.emit('is_under_attack', enemies_positions)
+        self._is_under_attack = True
+
+    def cancel_attack_alert(self):
+        if self._is_under_attack:
+            self.events.emit('attack_is_over')
+        self._is_under_attack = False
 
     def _on_stored_calories_changed(self):
         self._emit_action(NestStoredCaloriesChangedAction.build(self.id, self._body.stored_calories))

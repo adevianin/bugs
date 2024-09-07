@@ -19,8 +19,8 @@ class DefendNestThought(Thought):
         self._defending_nest = defending_nest
 
         self._defending_nest.events.add_listener('died', self._on_defending_nest_died)
-        self._body.events.add_listener('colony_signal:enemy_spotted', self._on_enemy_spotted_signal)
-        self._body.events.add_listener('colony_signal:no_enemies', self._on_no_enemies_signal)
+        self._defending_nest.events.add_listener('is_under_attack', self._on_defending_nest_id_under_attack)
+        self._defending_nest.events.add_listener('attack_is_over', self._on_defending_nest_attack_is_over)
 
     @property
     def random_walk_thought(self) -> RandomWalkThought:
@@ -51,16 +51,11 @@ class DefendNestThought(Thought):
         
         self.random_walk_thought.do_step()
 
-    def _on_enemy_spotted_signal(self, signal: dict):
-        nest: Nest = signal['nest']
-        positions: List[Point] = signal['enemies_positions']
-        if nest.id == self._defending_nest.id:
-            self._point_to_check = self._body.calc_nearest_point(positions)
+    def _on_defending_nest_id_under_attack(self, enemies_positions: List[Point]):
+        self._point_to_check = self._body.calc_nearest_point(enemies_positions)
 
-    def _on_no_enemies_signal(self, signal: dict):
-        nest: Nest = signal['nest']
-        if nest.id == self._defending_nest.id:
-            self.done()
+    def _on_defending_nest_attack_is_over(self):
+        self.done()
 
     def _on_defending_nest_died(self):
         self.cancel()
@@ -68,8 +63,8 @@ class DefendNestThought(Thought):
     def _on_stop_thinking(self):
         super()._on_stop_thinking()
 
-        self._body.events.remove_listener('colony_signal:enemy_spotted', self._on_enemy_spotted_signal)
-        self._body.events.remove_listener('colony_signal:no_enemies', self._on_no_enemies_signal)
         self._defending_nest.events.remove_listener('died', self._on_defending_nest_died)
+        self._defending_nest.events.remove_listener('is_under_attack', self._on_defending_nest_id_under_attack)
+        self._defending_nest.events.remove_listener('attack_is_over', self._on_defending_nest_attack_is_over)
 
         

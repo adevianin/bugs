@@ -13,7 +13,7 @@ class ShelterInNestThought(Thought):
         self._nested_thoughts['go_home_thought'] = go_home_thought
         self._shelter_nest = shelter_nest
 
-        self._body.events.add_listener('colony_signal:no_enemies', self._on_no_enemies_signal)
+        self._shelter_nest.events.add_listener('attack_is_over', self._on_attack_is_over)
 
     @property
     def go_home_thought(self) -> GoInNestThought:
@@ -28,15 +28,12 @@ class ShelterInNestThought(Thought):
             self.go_home_thought.do_step()
             return  
         
-    def _on_no_enemies_signal(self, signal: dict):
-        nest: Nest = signal['nest']
-        if nest.id == self._shelter_nest.id:
-            print('done sheltering', self._body)
-            self.done()
+    def _on_attack_is_over(self):
+        self.done()
 
     def _on_stop_thinking(self):
         super()._on_stop_thinking()
 
-        self._body.events.remove_listener('colony_signal:no_enemies', self._on_no_enemies_signal)
+        self._shelter_nest.events.remove_listener('attack_is_over', self._on_attack_is_over)
         
         

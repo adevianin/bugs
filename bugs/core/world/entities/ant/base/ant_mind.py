@@ -17,7 +17,7 @@ class AntMind(Mind):
         self._is_in_opearetion = is_in_operation
 
         self._body.events.add_listener('died', self._on_died)
-        self._body.events.add_listener('colony_signal:enemy_spotted', self._on_enemy_spotted_signal)
+        self.home_nest.events.add_listener('is_under_attack', self._on_home_nest_is_under_attack)
 
     @property
     def is_in_opearetion(self):
@@ -95,18 +95,15 @@ class AntMind(Mind):
         return dist_from_home > self.home_nest.area
     
     def _on_died(self):
+        self.home_nest.events.remove_listener('is_under_attack', self._on_home_nest_is_under_attack)
         self.free_mind()
 
-    def _on_enemy_spotted_signal(self, signal: dict):
+    def _on_home_nest_is_under_attack(self, enemies_positions: List[Point]):
         if self._is_in_opearetion or self._is_thought_in_stack(ThoughtTypes.DEFEND_NEST) or self._is_thought_in_stack(ThoughtTypes.SHELTER_IN_NEST):
             return
         
         if self._body.is_guardian_behavior:
-            nest: Nest = signal['nest']
-            is_my_nest = nest.id == self.home_nest.id
-            if is_my_nest:
-                enemies_positions: List[Point] = signal['enemies_positions']
-                nearest_enemy_pos = self._body.calc_nearest_point(enemies_positions)
-                self.defend_nest(nest, nearest_enemy_pos, True)
+            nearest_enemy_pos = self._body.calc_nearest_point(enemies_positions)
+            self.defend_nest(self.home_nest, nearest_enemy_pos, True)
         else:
             self.shelter_in_home_nest(True)

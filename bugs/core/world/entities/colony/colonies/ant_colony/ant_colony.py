@@ -124,40 +124,15 @@ class AntColony(Colony):
         for nest in my_nests:
             enemies_filter: Callable[[Entity], bool] = lambda entity: self._relation_tester.is_enemy(entity)
             enemies: List[iEnemy] = self._map.find_entities_near(point=nest.position, max_distance=nest.area, filter=enemies_filter)
-            defenders_filter: Callable[[Ant], bool] = lambda entity: entity.ant_type == AntTypes.WARRIOR and entity.from_colony_id == self.id
-            defenders: List[Ant] = self._map.find_entities_near(point=nest.position, max_distance=nest.area, entity_types=[EntityTypes.ANT], filter=defenders_filter)
 
             enemies_count = len(enemies)
-            defenders_count = len(defenders)
             enemies_positions = [enemy.position for enemy in enemies]
 
             if enemies_count == 0:
-                self._send_signal_to_members({
-                    'type': 'no_enemies',
-                    'nest': nest,
-                })
+                nest.cancel_attack_alert()
 
             if enemies_count > 0:
                 nest.raise_attack_alarm(enemies_positions)
-                self._send_signal_to_members({
-                    'type': 'enemy_spotted',
-                    'nest': nest,
-                    'enemies_positions': enemies_positions
-                })
-
-            # if enemies_count > defenders_count:
-            #     self._send_signal_to_members({
-            #         'type': 'workers_reinforcement_needed',
-            #         'nest': nest,
-            #         'enemies_positions': enemies_positions
-            #     })
-
-            # if enemies_count > defenders_count:
-            #     self._send_signal_to_members({
-            #         'type': 'warrirors_reinforcement_needed',
-            #         'nest': nest,
-            #         'enemies_positions': enemies_positions
-            #     })
 
     def _on_colony_nest_destroyed(self, destroyed_nest: Nest):
         remaining_nests_filter: Callable[[Nest], bool] = lambda entity: entity.id != destroyed_nest.id
