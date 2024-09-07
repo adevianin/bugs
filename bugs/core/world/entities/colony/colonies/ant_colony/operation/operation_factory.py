@@ -11,6 +11,7 @@ from core.world.entities.item.items.base.item import Item
 from core.world.entities.colony.colonies.ant_colony.operation.pillage_nest_operation import PillageNestOperation
 from core.world.entities.colony.colonies.ant_colony.formation.base.base_formation import BaseFormation
 from core.world.entities.colony.colonies.ant_colony.operation.transport_food_operation import TransportFoodOperation
+from .build_fortification_operation import BuildFortificationOperation
 
 class OperationFactory():
 
@@ -31,3 +32,6 @@ class OperationFactory():
     
     def build_transport_food_operation(self, nest_from: Nest, nest_to: Nest, workers_count: int, warriors_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formations: List[BaseFormation] = []):
         return TransportFoodOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, formations, nest_from, nest_to, workers_count, warriors_count)
+    
+    def build_build_fortification(self, nest: Nest, workers_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formations: List[BaseFormation] = []):
+        return BuildFortificationOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, formations, nest, workers_count)

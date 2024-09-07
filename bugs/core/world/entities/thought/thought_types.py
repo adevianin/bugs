@@ -21,3 +21,4 @@ class ThoughtTypes(StrEnum):
     WAIT_STEP = 'wait_step'
     HIBERNATION = 'hibernation'
     GET_STAHED_ITEM_BACK = 'get_stashed_item_back'
+    BUILD_FORTIFICATION = 'build_fortification'

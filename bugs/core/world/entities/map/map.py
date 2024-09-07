@@ -56,6 +56,9 @@ class Map:
     def get_live_entities(self) -> List[LiveEntity]:
         return self.get_entities(entity_types=EntityTypesPack.LIVE_ENTITIES)
     
+    def get_not_live_entities(self) -> List[Entity]:
+        return self.get_entities(entity_types=EntityTypesPack.NOT_LIVE_ENTITIES)
+    
     def _on_entity_died(self, entity: Entity):
         self._entities_collection.delete_entity(entity.id)
 

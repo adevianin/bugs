@@ -39,6 +39,13 @@ class ColonyApi {
             warriors_count: warriorsCount,
         });
     }
+
+    buildFortificationsOpearation(colonyId, nestId, workersCount) {
+        return this._requester.post(`world/colonies/${ colonyId }/operations/build_fortification`, {
+            nest_id: nestId,
+            workers_count: workersCount
+        });
+    }
 }
 
 export {

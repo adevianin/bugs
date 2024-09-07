@@ -47,6 +47,10 @@ class ColonyService {
         this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
     }
 
+    buildFortificationsOpearation(performingColonyId, nestId, workersCount) {
+        this._colonyApi.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
+    }
+
 }
 
 export {

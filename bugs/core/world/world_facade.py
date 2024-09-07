@@ -101,6 +101,9 @@ class WorldFacade:
     def transfer_food_operation_command(self, user_id: int, performing_colony_id: int, from_nest_id: int, to_nest_id: int, workers_count: int, warriors_count: int):
         self._colony_service.transfer_food_operation(user_id, performing_colony_id, from_nest_id, to_nest_id, workers_count, warriors_count)
 
+    def build_fortification_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int):
+        self._colony_service.build_fortification_operation(user_id, performing_colony_id, nest_id, workers_count)
+
     def add_egg_command(self, user_id: int, nest_id: int, name: str, is_fertilized: bool):
         self._colony_service.add_egg(user_id, nest_id, name, is_fertilized)
 

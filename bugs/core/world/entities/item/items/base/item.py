@@ -38,6 +38,10 @@ class Item(Entity):
     def life_span(self):
         return self._life_span
     
+    @property
+    def is_detectable(self):
+        return not self.is_picked
+    
     def do_step(self):
         if self._life_span != -1:
             self._life_span -= 1

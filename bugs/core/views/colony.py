@@ -64,3 +64,15 @@ def transport_food(request: HttpRequest, colony_id: int):
 
     wf.transfer_food_operation_command(request.user.id, colony_id, from_nest_id, to_nest_id, workers_count, warriors_count)
     return HttpResponse(status=200)
+
+@require_POST
+@login_required     
+def build_fortification(request: HttpRequest, colony_id: int):
+    data = json.loads(request.body)
+    wf = WorldFacade.get_instance()
+
+    nest_id = int(data['nest_id'])
+    workers_count = int(data['workers_count'])
+
+    wf.build_fortification_operation_command(request.user.id, colony_id, nest_id, workers_count)
+    return HttpResponse(status=200)

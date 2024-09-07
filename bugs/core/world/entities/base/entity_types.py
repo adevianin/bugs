@@ -10,3 +10,4 @@ class EntityTypes(StrEnum):
 
 class EntityTypesPack():
     LIVE_ENTITIES = [EntityTypes.ANT, EntityTypes.GROUND_BEETLE]
+    NOT_LIVE_ENTITIES = [EntityTypes.NEST, EntityTypes.ITEM, EntityTypes.ITEM_SOURCE, EntityTypes.ITEM_AREA]

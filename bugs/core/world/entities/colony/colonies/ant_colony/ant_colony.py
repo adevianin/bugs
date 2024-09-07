@@ -138,6 +138,7 @@ class AntColony(Colony):
                 })
 
             if enemies_count > 0:
+                nest.raise_attack_alarm(enemies_positions)
                 self._send_signal_to_members({
                     'type': 'enemy_spotted',
                     'nest': nest,

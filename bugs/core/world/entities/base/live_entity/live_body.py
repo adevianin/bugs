@@ -126,6 +126,9 @@ class LiveBody(Body):
     def is_near_to_attack(self, point: Point):
         dist = self.position.dist(point)
         return dist <= self.stats.distance_per_step / 2
+    
+    # def calc_distance_to(self, point: Point):
+    #     return self.position.dist(point)
 
     def calc_nearest_point(self, points: List[Point]):
         nearest_dist = None
@@ -138,8 +141,13 @@ class LiveBody(Body):
 
         return nearest_point
     
-    def look_around(self, types_list: List[EntityTypes] = None, filter: Callable = None):
-        return self._visual_sensor.get_nearby_entities(types_list, filter)
+    def look_around(self, types_list: List[EntityTypes] = None, filter: Callable = None, nearest_first = False):
+        entities = self._visual_sensor.get_nearby_entities(types_list, filter)
+        if nearest_first:
+            key: Callable[[Entity], int] = lambda entity: self.position.dist(entity.position)
+            entities.sort(key = key)
+
+        return entities
     
     def set_relation_tester(self, relation_tester: RelationTester):
         self._relation_tester = relation_tester

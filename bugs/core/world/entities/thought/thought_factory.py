@@ -24,6 +24,7 @@ from core.world.entities.ant.warrior.thoughts.patrol_nest_territory_thought impo
 from core.world.entities.ant.base.thoughts.hibernation_thought import HibernationThought
 from core.world.entities.ant.base.thoughts.shelter_in_nest import ShelterInNestThought
 from core.world.entities.ant.base.thoughts.get_stashed_item_back_thought import GetStashedItemBack
+from core.world.entities.ant.base.thoughts.build_fortification_thought import BuildFortificationThought
 
 class ThoughtFactory:
 
@@ -86,6 +87,9 @@ class ThoughtFactory:
     
     def build_get_stashed_item_back(self,  body: LiveBody, flags: dict = None, sayback: str = None):
         return GetStashedItemBack(body, flags, sayback)
+    
+    def build_build_fortification(self, body: LiveBody, random_walk_thought: RandomWalkThought, nest: Nest, flags: dict = None, sayback: str = None):
+        return BuildFortificationThought(body, random_walk_thought, nest, flags, sayback)
 
     def build_feed_myself_full(self, body: LiveBody, home_nest: Nest, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(body, home_nest.position, home_nest.area)
@@ -141,3 +145,7 @@ class ThoughtFactory:
     def build_shelter_in_nest_full(self, body: LiveBody, shelter_nest: Nest, flags: dict = None, sayback: str = None) -> ShelterInNestThought:
         go_home_thought = self.build_go_in_nest_thought(body, shelter_nest)
         return self.build_shelter_in_nest(body, go_home_thought, shelter_nest, flags, sayback)
+    
+    def build_build_fortification_full(self, body: LiveBody, nest: Nest, flags: dict = None, sayback: str = None) -> BuildFortificationThought:
+        random_walk_thought = self.build_random_walk_thought(body, nest.position, nest.area)
+        return self.build_build_fortification(body, random_walk_thought, nest, flags, sayback)

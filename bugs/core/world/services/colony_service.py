@@ -109,4 +109,17 @@ class ColonyService():
         operation = self._operation_factory.build_transport_food_operation(from_nest, to_nest, workers_count, warriors_count)
         performing_colony.add_operation(operation)
 
+    def build_fortification_operation(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int):
+        performing_colony: AntColony = self._world.get_colony_by_id(performing_colony_id)
+
+        if performing_colony.owner_id != user_id:
+            raise Exception('user is not colony owner')
+        
+        nest = self._world.map.get_entity_by_id(nest_id)
+
+        if not nest or nest.owner_id != user_id:
+            raise Exception('wrong nest id')
+        
+        operation = self._operation_factory.build_build_fortification(nest, workers_count)
+        performing_colony.add_operation(operation)
     

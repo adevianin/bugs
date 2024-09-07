@@ -52,6 +52,10 @@ class AntMind(Mind):
         thought = self._thought_factory.build_attack_nest_thought_full(body=self._body, nest=nest, sayback=sayback)
         self._register_thought(thought)
 
+    def build_fortification(self, nest: Nest, sayback: str):
+        thought = self._thought_factory.build_build_fortification_full(body=self._body, nest=nest, sayback=sayback)
+        self._register_thought(thought)
+
     def defend_nest(self, nest: Nest, point_to_check: Point, asap: bool = True, sayback: str = None):
         thought = self._thought_factory.build_defend_nest_thought_full(body=self._body, nest=nest, point_to_check=point_to_check, sayback=sayback)
         self._register_thought(thought=thought, asap=asap)

@@ -158,6 +158,15 @@ class NestBody(Body):
             return False
         else:
             return super().receive_damage(damage)
+        
+    def take_fortificating_item(self, item: Item):
+        item.die()
+
+        if self.fortification + item.strength < self.stats.max_fortification:
+            self.fortification += item.strength
+        else:
+            self.fortification = self.stats.max_fortification
+        
 
     def _add_larva(self, larva: Larva):
         self._larvae.append(larva)

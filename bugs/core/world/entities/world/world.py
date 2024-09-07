@@ -126,12 +126,15 @@ class World():
         print(f'step { self._step_counter } start')
 
         self._event_bus.emit('step_start', self._step_counter)
-
-        self._visual_sensor_handler.handle_sensors()
-        self._temperature_sensor_handler.handle_sensors()
         
-        entities = self._entities_collection.get_entities()
+        not_live_entities = self._map.get_not_live_entities()
+        for entity in not_live_entities:
+            entity.do_step()
+        
+        entities = self._map.get_live_entities()
         for entity in entities:
+            self._temperature_sensor_handler.handle_sensor(entity)
+            self._visual_sensor_handler.handle_sensor(entity)
             entity.do_step()
 
         self._step_counter += 1

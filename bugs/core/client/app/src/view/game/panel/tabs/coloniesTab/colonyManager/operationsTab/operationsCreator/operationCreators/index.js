@@ -2,10 +2,12 @@ import { NewNestOperationCreatorView } from "./newNest/newNestOperationCreatorVi
 import { DestroyNestOperationCreatorView } from "./destoryNest/destroyNestOperationCreatorView";
 import { PillageNestOperationCreatorView } from "./pillageNest/pillageNestOperationCreatorView";
 import { TransportFoodOperationCreatorView } from "./transportFood/transportFoodOperationCreatorView";
+import { BuildFortificationOperationCreatorView } from "./buildFortification/buildFortificationOperationCreatorView";
 
 export { 
     NewNestOperationCreatorView,
     DestroyNestOperationCreatorView,
     PillageNestOperationCreatorView,
-    TransportFoodOperationCreatorView
+    TransportFoodOperationCreatorView,
+    BuildFortificationOperationCreatorView
 }

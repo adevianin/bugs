@@ -8,11 +8,12 @@ from core.world.entities.base.live_entity.visual_sensor import VisualSensor
 from core.world.entities.base.live_entity.temperature_sensor import TemperatureSensor
 from core.world.entities.base.live_entity.memory import Memory
 from core.world.entities.item.item_sources.base.item_source import ItemSource
-from core.world.entities.item.items.base.item_types import ItemTypes
+from core.world.entities.item.items.base.item_types import ItemTypes, ItemTypesPack
 from core.world.entities.item.items.base.item import Item
 from core.world.utils.size import Size
 from .genetic.genome import Genome
 from .ant_stats import AntStats
+from core.world.entities.base.entity import Entity
 
 from typing import List, Callable
 
@@ -29,6 +30,7 @@ class AntBody(LiveBody):
         self._located_inside_nest = located_in_nest
         self._picked_item = picked_item
         self._genome = genome
+        self._remembered_entities_cash = {}
 
     @property
     def located_in_nest_id(self):
@@ -95,6 +97,18 @@ class AntBody(LiveBody):
         honeydew_filter: Callable[[ItemSource], bool] = lambda item_source: item_source.item_type == ItemTypes.HONEYDEW
         return self.look_around(types_list=[EntityTypes.ITEM_SOURCE], filter=honeydew_filter)
     
+    def look_around_for_building_items(self) -> List[Item]:
+        building_item: Callable[[Item], bool] = lambda item: item.item_type in ItemTypesPack.BUILDING_ITEMS
+        return self.look_around(types_list=[EntityTypes.ITEM], filter=building_item, nearest_first=True)
+    
+    def look_around_for_item_with_id(self, id) -> Item:
+        id_filter: Callable[[Entity], bool] = lambda entity: entity.id == id
+        items = self.look_around(types_list=[EntityTypes.ITEM], filter=id_filter)
+        if items:
+            return items[0]
+        else:
+            return None
+    
     def build_nest(self, nest: Nest):
         nest.build()
         self._consume_calories(10)
@@ -115,6 +129,11 @@ class AntBody(LiveBody):
 
     def give_food(self, nest: Nest):
         nest.take_edible_item(self._picked_item)
+        self._picked_item = None
+        self.events.emit('dropped_picked_item')
+
+    def give_fortificating_item(self, nest: Nest):
+        nest.take_fortificating_item(self._picked_item)
         self._picked_item = None
         self.events.emit('dropped_picked_item')
 
@@ -144,6 +163,35 @@ class AntBody(LiveBody):
             self.pick_up_item(ant_food)
 
         return nest.get_some_food(on_food_ready, self.stats.attack)
+    
+    def remember_entity(self, name: str, entity: Entity):
+        key = self._build_entity_key(name)
+        if key in self._remembered_entities_cash:
+            del self._remembered_entities_cash[key]
+        self.memory.save(key, {
+            'id': entity.id,
+            'position': [entity.position.x, entity.position.y]
+        })
+
+    def forget_entity(self, name: str):
+        key = self._build_entity_key(name)
+        if key in self._remembered_entities_cash:
+            del self._remembered_entities_cash[key]
+        self.memory.clear(key)
+
+    def recall_entity(self, name: str):
+        key = self._build_entity_key(name)
+        if key in self._remembered_entities_cash:
+            return self._remembered_entities_cash[key]
+        data = self.memory.read(key)
+        if not data:
+            return None
+        data['position'] = Point.from_json(data['position'])
+        self._remembered_entities_cash[key] = data
+        return data
+    
+    def _build_entity_key(self, name: str):
+        return f'entity_{name}'
     
     def _die(self):
         super()._die()

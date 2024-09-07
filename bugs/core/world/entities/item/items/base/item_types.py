@@ -10,3 +10,4 @@ class ItemTypes(StrEnum):
 
 class ItemTypesPack():
     ANT_EDIBLE_ITEMS = [ItemTypes.GROUND_BEETLE_CORPSE]
+    BUILDING_ITEMS = [ItemTypes.LEAF, ItemTypes.STICK]

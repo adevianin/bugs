@@ -118,6 +118,10 @@ class DomainFacade {
         this._colonyService.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
     }
 
+    buildFortificationsOpearation(performingColonyId, nestId, workersCount) {
+        this._colonyService.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
+    }
+
     /*========================*/
 
     searchNuptialMales() {

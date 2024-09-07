@@ -66,6 +66,10 @@ class Entity(ABC):
     @property
     def stats(self):
         return self._body.stats
+
+    @property
+    def is_detectable(self):
+        return True
     
     def die(self):
         self._body.hp = 0

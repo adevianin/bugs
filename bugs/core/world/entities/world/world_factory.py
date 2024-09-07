@@ -42,7 +42,7 @@ class WorldFactory():
         }
         sensor_handlers = {
             'visual_sensor_handler': VisualSensorHandler(self._event_bus, map),
-            'temperature_sensor_handler': TemperatureSensorHandler(map, climate)
+            'temperature_sensor_handler': TemperatureSensorHandler(climate)
         }
         return World(id, entities_collection, map, self._event_bus, colonies, id_generator, colony_relations_table, birthers, ground_beetle_spawner, nuptial_environments, climate, sensor_handlers)
     

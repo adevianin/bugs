@@ -103,6 +103,12 @@ class Nest(Entity):
             return True
         else:
             return False
+        
+    def take_fortificating_item(self, item: Item):
+        self._body.take_fortificating_item(item)
+
+    def raise_attack_alarm(self, enemies_positions):
+        self.events.emit('is_under_attack', enemies_positions)
 
     def _on_stored_calories_changed(self):
         self._emit_action(NestStoredCaloriesChangedAction.build(self.id, self._body.stored_calories))

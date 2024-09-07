@@ -21,7 +21,7 @@ class VisualSensor():
     def set_nearby_entities(self, entities: List[Entity]):
         self._nearby_entities = entities
 
-    def get_nearby_entities(self, types_list: List[EntityTypes] = None, filter: Callable = None):
+    def get_nearby_entities(self, types_list: List[EntityTypes] = None, filter: Callable = None) -> List[Entity]:
         res = []
         for entity in self._nearby_entities:
             if (not types_list or entity.type in types_list) and (not filter or filter(entity)):

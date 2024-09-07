@@ -6,4 +6,5 @@ class OperationTypes(StrEnum):
     PILLAGE_NEST = 'pillage_nest'
     BRING_ITEM_TO_NEST = 'bring_item_to_nest'
     TRANSPORT_FOOD = 'transport_food'
+    BUILD_FORTIFICATION = 'build_fortification'
     

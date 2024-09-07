@@ -294,7 +294,6 @@ class Command(BaseCommand):
                     
                 ],
                 "memory": {
-                    'debashyr': { 'data': True, 'expired_in': None }
                 },
                 "is_auto_thought_generation": True,
                 "is_in_operation": False,
@@ -950,7 +949,7 @@ class Command(BaseCommand):
                 "egg_places_count":3,
                 "area":300,
                 "build_progress": 100,
-                "fortification": 1000
+                "fortification": 200
             },
             {
                 "id":31,
@@ -1012,7 +1011,7 @@ class Command(BaseCommand):
                     350,
                     200
                 ],
-                "fertility":5,
+                "fertility":1,
                 "item_type":"leaf",
                 "accumulated": 0
             },
@@ -1048,7 +1047,7 @@ class Command(BaseCommand):
                     350,
                     200
                 ],
-                "fertility":5,
+                "fertility":1,
                 "item_type":"stick",
                 "accumulated": 0
             }

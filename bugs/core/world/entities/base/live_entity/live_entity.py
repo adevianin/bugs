@@ -7,6 +7,7 @@ from .live_body import LiveBody
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.action.entity_walk_action import EntityWalkAction
 from core.world.settings import COLD_DAMAGE
+from core.world.entities.base.live_entity.visual_sensor import VisualSensor
 
 from typing import List
 
@@ -25,6 +26,10 @@ class LiveEntity(Entity, iEnemy):
     @property
     def mind(self):
         return self._mind
+    
+    @property
+    def visual_sensor(self) -> VisualSensor:
+        return self._body.visual_sensor
 
     def walk_to(self, position: Point, sayback: str = None):
         self._mind.walk_to(position=position, sayback=sayback)

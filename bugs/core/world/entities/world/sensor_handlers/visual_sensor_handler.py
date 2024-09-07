@@ -3,6 +3,7 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 from core.world.entities.base.entity_types import EntityTypesPack
 from core.world.entities.base.entity import Entity
+from typing import Callable
 
 class VisualSensorHandler():
 
@@ -14,11 +15,10 @@ class VisualSensorHandler():
 
         self._setup_sensors()
 
-    def handle_sensors(self):
-        live_entities = self._map.get_live_entities()
-        for entity in live_entities:
-            entities_in_sight = self._map.find_entities_near(point=entity.position, max_distance=entity.body.stats.sight_distance, filter=lambda checking_entity: entity.id != checking_entity.id)
-            entity.body.visual_sensor.set_nearby_entities(entities_in_sight)
+    def handle_sensor(self, entity: LiveEntity):
+        filter: Callable[[Entity], bool] = lambda checking_entity: entity.id != checking_entity.id and checking_entity.is_detectable
+        entities_in_sight = self._map.find_entities_near(point=entity.position, max_distance=entity.body.stats.sight_distance, filter=filter)
+        entity.visual_sensor.set_nearby_entities(entities_in_sight)
 
     def _setup_sensors(self):
         live_entities = self._map.get_live_entities()
@@ -26,7 +26,7 @@ class VisualSensorHandler():
             self._setup_sensor_for_entity(entity)
 
     def _setup_sensor_for_entity(self, entity: LiveEntity):
-        entity.body.visual_sensor.set_map_size(self._map.size)
+        entity.visual_sensor.set_map_size(self._map.size)
 
     def _on_entity_born(self, entity: Entity):
         if (entity.type in EntityTypesPack.LIVE_ENTITIES):
