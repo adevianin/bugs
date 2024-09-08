@@ -19,6 +19,12 @@ class AntApi {
             is_enabled: isEnabled
         });
     }
+
+    relocateToNest(antId, nestId) {
+        return this._requester.post(`world/ants/${ antId }/relocate`, {
+            nest_id: nestId
+        });
+    }
 }
 
 export {

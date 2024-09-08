@@ -10,6 +10,7 @@ class NestSelectorView extends BaseHTMLView {
 
         this._stopListenEntityDied = this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
         this._stopListenEntityBorn = this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this._el.addEventListener('change', this._onChange.bind(this));
 
         this._render();
     }
@@ -51,6 +52,10 @@ class NestSelectorView extends BaseHTMLView {
 
     _isMyNest(entity) {
         return entity.type == EntityTypes.NEST && entity.fromColony == this._colonyId;
+    }
+
+    _onChange() {
+        this.events.emit('changed');
     }
 
     remove() {

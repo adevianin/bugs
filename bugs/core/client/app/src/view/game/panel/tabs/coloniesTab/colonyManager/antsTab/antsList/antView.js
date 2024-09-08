@@ -17,6 +17,7 @@ class AntView extends BaseHTMLView {
         this._nuptialFlightActionBtn.addEventListener('click', this._onNuptialFlightBtnClick.bind(this));
         this._guardianBehaviorToggleEl.addEventListener('change', this._onGuardianBehaviorTogglerChange.bind(this));
         this._cooperativeBehaviorTogglerEl.addEventListener('change', this._onCooperativeBehaviorTogglerChange.bind(this));
+        this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
     }
 
     _onGuardianBehaviorTogglerChange () {
@@ -76,6 +77,10 @@ class AntView extends BaseHTMLView {
         } else if (ant.antType == AntTypes.MALE) {
             return true;
         }
+    }
+
+    _onNestChanged() {
+        this._ant.relocateToNest(this._nestSelector.nestId);
     }
 
 }

@@ -80,6 +80,10 @@ class BaseAnt extends LiveEntity {
         return !!this._pickedItemId;
     }
 
+    relocateToNest(nestId) {
+        this._antApi.relocateToNest(this.id, nestId);
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {

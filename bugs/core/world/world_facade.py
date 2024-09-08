@@ -125,6 +125,9 @@ class WorldFacade:
     def change_ant_cooperative_behavior_command(self, user_id: int, ant_id: int, is_enabled: bool):
         self._ant_service.change_ant_cooperative_behavior(user_id, ant_id, is_enabled)
 
+    def relocate_ant_command(self, user_id: int, ant_id: int, nest_id: int):
+        self._ant_service.relocate_ant(user_id, ant_id, nest_id)
+
     def generate_nuptial_males_for_client(self, user_id: int) -> List[dict]:
         nuptial_males = self._nuptial_environment_service.search_nuptial_males_for(user_id)
         return self._nuptial_environment_client_serializer.serialize_nuptial_males(nuptial_males)

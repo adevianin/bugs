@@ -375,6 +375,10 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         return !!this._pickedItemId;
     }
 
+    relocateToNest(nestId) {
+        this._antApi.relocateToNest(this.id, nestId);
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {
@@ -2718,6 +2722,12 @@ class AntApi {
             is_enabled: isEnabled
         });
     }
+
+    relocateToNest(antId, nestId) {
+        return this._requester.post(`world/ants/${ antId }/relocate`, {
+            nest_id: nestId
+        });
+    }
 }
 
 
@@ -3847,6 +3857,7 @@ class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
         this._stopListenEntityDied = this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
         this._stopListenEntityBorn = this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this._el.addEventListener('change', this._onChange.bind(this));
 
         this._render();
     }
@@ -3888,6 +3899,10 @@ class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
     _isMyNest(entity) {
         return entity.type == _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST && entity.fromColony == this._colonyId;
+    }
+
+    _onChange() {
+        this.events.emit('changed');
     }
 
     remove() {
@@ -4418,6 +4433,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._nuptialFlightActionBtn.addEventListener('click', this._onNuptialFlightBtnClick.bind(this));
         this._guardianBehaviorToggleEl.addEventListener('change', this._onGuardianBehaviorTogglerChange.bind(this));
         this._cooperativeBehaviorTogglerEl.addEventListener('change', this._onCooperativeBehaviorTogglerChange.bind(this));
+        this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
     }
 
     _onGuardianBehaviorTogglerChange () {
@@ -4477,6 +4493,10 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         } else if (ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__.AntTypes.MALE) {
             return true;
         }
+    }
+
+    _onNestChanged() {
+        this._ant.relocateToNest(this._nestSelector.nestId);
     }
 
 }

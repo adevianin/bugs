@@ -3,6 +3,8 @@ from core.world.entities.ant.male.male_ant import MaleAnt
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.world.world import World
+from core.world.entities.nest.nest import Nest
+from core.world.entities.base.entity_types import EntityTypes
 
 class AntService():
 
@@ -44,3 +46,19 @@ class AntService():
             raise Exception('user dont have this ant')
         
         ant.body.toggle_cooperative_behavior(is_enabled)
+
+    def relocate_ant(self, user_id: int, ant_id: int, nest_id: int):
+        ant: Ant = self._world.map.get_entity_by_id(ant_id)
+        
+        if not ant or ant.owner_id != user_id or ant.type != EntityTypes.ANT:
+            raise Exception('user dont have this ant')
+        
+        nest: Nest = self._world.map.get_entity_by_id(nest_id)
+
+        if not nest or nest.owner_id != user_id or nest.type != EntityTypes.NEST:
+            raise Exception('user dont have this nest')
+        
+        if ant.from_colony_id != nest.from_colony_id:
+            raise Exception('wrong nest')
+        
+        ant.relocate_to_nest(nest)

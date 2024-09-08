@@ -28,3 +28,12 @@ def change_ant_cooperative_behavior(request: HttpRequest, ant_id: int):
     is_enabled = bool(data['is_enabled'])
     wf.change_ant_cooperative_behavior_command(request.user.id, ant_id, is_enabled)
     return HttpResponse(status=200)
+
+@require_POST
+@login_required     
+def relocate_ant(request: HttpRequest, ant_id: int):
+    wf = WorldFacade.get_instance()
+    data = json.loads(request.body)
+    nest_id = int(data['nest_id'])
+    wf.relocate_ant_command(request.user.id, ant_id, nest_id)
+    return HttpResponse(status=200)
