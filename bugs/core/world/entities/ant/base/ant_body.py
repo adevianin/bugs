@@ -15,6 +15,7 @@ from .genetic.genome import Genome
 from .ant_stats import AntStats
 from core.world.entities.base.entity import Entity
 
+
 from typing import List, Callable
 
 class AntBody(LiveBody):
@@ -59,20 +60,6 @@ class AntBody(LiveBody):
     @property
     def genome(self) -> Genome:
         return self._genome
-    
-    @property
-    def is_guardian_behavior(self):
-        return bool(self.memory.read('guardian_behavior'))
-    
-    @property
-    def is_cooperative_behavior(self):
-        return bool(self.memory.read('cooperative_behavior'))
-    
-    def toggle_guardian_behavior(self, is_enabled: bool):
-        self.memory.save('guardian_behavior', is_enabled)
-
-    def toggle_cooperative_behavior(self, is_enabled: bool):
-        self.memory.save('cooperative_behavior', is_enabled)
     
     def get_in_nest(self, nest: Nest):
         self._located_inside_nest = nest

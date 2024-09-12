@@ -7,9 +7,6 @@ from core.world.utils.point import Point
 
 class WorkerAntMind(AntMind):
 
-    def __init__(self, body: AntBody, thought_factory: ThoughtFactory, is_auto_thought_generation: bool, home_nest: Nest, is_in_operation: bool):
-        super().__init__(body, thought_factory, is_auto_thought_generation, home_nest, is_in_operation)
-
     def _auto_generate_thoughts(self):
         super()._auto_generate_thoughts()
         if not self._has_thoughts_to_do():

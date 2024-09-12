@@ -4,6 +4,8 @@ from .ant_body import AntBody
 from core.world.entities.nest.nest import Nest
 from core.world.utils.point import Point
 from core.world.entities.thought.thought_types import ThoughtTypes
+from .guardian_behaviors import GuardianBehaviors
+
 import math
 from typing import List
 
@@ -11,12 +13,16 @@ class AntMind(Mind):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, thought_factory: ThoughtFactory, is_auto_thought_generation: bool, home_nest: Nest, is_in_operation: bool):
+    def __init__(self, body: AntBody, thought_factory: ThoughtFactory, is_auto_thought_generation: bool, home_nest: Nest, is_in_operation: bool, guardian_behavior: GuardianBehaviors, is_cooperative: bool):
         super().__init__(body, thought_factory, is_auto_thought_generation)
         self.home_nest = home_nest
         self._is_in_opearetion = is_in_operation
+        self.guardian_behavior = guardian_behavior
+        self.is_cooperative = is_cooperative
 
         self._body.events.add_listener('died', self._on_died)
+        self._body.events.add_listener('colony_signal:enemy_spotted_in_colony_area', self._on_enemy_spotted_in_colony_area)
+
         self._listen_home_nest()
 
     @property
@@ -74,6 +80,10 @@ class AntMind(Mind):
         thought = self._thought_factory.build_get_stashed_item_back(self._body, sayback=sayback)
         self._register_thought(thought=thought)
 
+    def defend_colony(self, point_to_check: Point, sayback: str = None):
+        thought = self._thought_factory.build_defend_colony_full(self._body, point_to_check, sayback)
+        self._register_thought(thought=thought, immediately=True)
+
     def toggle_is_in_operation(self, is_in_operation: bool):
         self._is_in_opearetion = is_in_operation
 
@@ -110,8 +120,15 @@ class AntMind(Mind):
         if self._is_in_opearetion or self._is_thought_in_stack(ThoughtTypes.DEFEND_NEST) or self._is_thought_in_stack(ThoughtTypes.SHELTER_IN_NEST):
             return
         
-        if self._body.is_guardian_behavior:
+        if self.guardian_behavior == GuardianBehaviors.NEST:
             nearest_enemy_pos = self._body.calc_nearest_point(enemies_positions)
             self.defend_nest(self.home_nest, nearest_enemy_pos, True)
-        else:
+        elif self.guardian_behavior == GuardianBehaviors.NONE:
             self.shelter_in_home_nest(True)
+
+    def _on_enemy_spotted_in_colony_area(self, signal):
+        if self._is_in_opearetion or self.guardian_behavior != GuardianBehaviors.COLONY or self._is_thought_in_stack(ThoughtTypes.DEFEND_COLONY):
+            return
+
+        nearest_enemy_pos = self._body.calc_nearest_point(signal['enemies_positions'])
+        self.defend_colony(nearest_enemy_pos)

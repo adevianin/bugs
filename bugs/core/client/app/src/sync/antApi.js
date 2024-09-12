@@ -8,9 +8,9 @@ class AntApi {
         return this._requester.post(`world/ants/${ antId }/fly_nuptial_flight`)
     }
 
-    toggleGuardianBehavior(antId, isEnabled) {
+    changeGuardianBehavior(antId, behaviorValue) {
         return this._requester.post(`world/ants/${ antId }/guardian_behavior`, {
-            is_enabled: isEnabled
+            guaridan_behavior: behaviorValue
         });
     }
 

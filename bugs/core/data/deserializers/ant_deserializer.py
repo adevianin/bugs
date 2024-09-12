@@ -3,6 +3,7 @@ from core.world.utils.point import Point
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.base.entity_collection import EntityCollection
 from .genome_deserializer import GenomeDeserializer
+from core.world.entities.ant.base.guardian_behaviors import GuardianBehaviors
 
 class AntDeserializer():
 
@@ -61,5 +62,7 @@ class AntDeserializer():
             "is_in_operation": ant_json['is_in_operation'],
             "memory_data": ant_json['memory'],
             "hp": ant_json['hp'],
-            "genome": self._genome_deserializer.deserialize_genome(ant_json['genome'])
+            "genome": self._genome_deserializer.deserialize_genome(ant_json['genome']),
+            "guardian_behavior": GuardianBehaviors(ant_json['guardian_behavior']),
+            "is_cooperative": ant_json['is_cooperative']
         }

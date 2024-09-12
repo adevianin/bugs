@@ -110,18 +110,30 @@ class AntColony(Colony):
     
     def _check_enemies_in_colony_area(self):
         my_nests = self.get_my_nests()
+        all_enemies_positions = []
         for nest in my_nests:
             enemies_filter: Callable[[Entity], bool] = lambda entity: self._relation_tester.is_enemy(entity)
             enemies: List[iEnemy] = self._map.find_entities_near(point=nest.position, max_distance=nest.area, filter=enemies_filter)
 
             enemies_count = len(enemies)
             enemies_positions = [enemy.position for enemy in enemies]
-
-            if enemies_count == 0:
-                nest.cancel_attack_alert()
+            all_enemies_positions += enemies_positions
 
             if enemies_count > 0:
                 nest.raise_attack_alarm(enemies_positions)
+            else:   
+                nest.cancel_attack_alarm()
+        
+        all_enemies_count = len(all_enemies_positions)
+        if all_enemies_count > 0:
+            self._send_signal_to_members({
+                'type': 'enemy_spotted_in_colony_area',
+                'enemies_positions': all_enemies_positions
+            })
+        else:
+            self._send_signal_to_members({
+                'type': 'no_enemies_in_colony_area'
+            })
 
     def _on_colony_nest_destroyed(self, destroyed_nest: Nest):
         remaining_nests_filter: Callable[[Nest], bool] = lambda entity: entity.id != destroyed_nest.id

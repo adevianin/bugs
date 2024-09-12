@@ -54,21 +54,21 @@ class BaseAnt extends LiveEntity {
         return this._stats;
     }
 
-    get isGuardianBehavior() {
-        return this._behavior.guardian;
+    get guardianBehavior() {
+        return this._behavior.guardianBehavior;
     }
 
     get isCooperativeBehavior() {
-        return this._behavior.cooperative;
+        return this._behavior.isCooperative;
     }
 
     get genome() {
         return this._genome;
     }
 
-    toggleGuardianBehavior(isEnabled) {
-        this._behavior.guardian = isEnabled;
-        this._antApi.toggleGuardianBehavior(this.id, isEnabled);
+    changeGuardianBehavior(behaviorValue) {
+        this._behavior.guardianBehavior = behaviorValue;
+        this._antApi.changeGuardianBehavior(this.id, behaviorValue);
     }
 
     toggleCooperativeBehavior(isEnabled) {

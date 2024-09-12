@@ -60,7 +60,9 @@ class AntSerializer(LiveEntitySerializer):
             'is_auto_thought_generation': ant.mind.is_auto_thought_generation,
             'is_in_operation': ant.mind.is_in_opearetion,
             'located_in_nest_id': ant.located_in_nest_id,
-            'genome': self._genome_serializer.serialize_genome(ant.body.genome)
+            'genome': self._genome_serializer.serialize_genome(ant.body.genome),
+            'is_cooperative': ant.is_cooperative,
+            'guardian_behavior': ant.guardian_behavior
         })
 
         return json

@@ -11,6 +11,7 @@ from core.world.entities.action.entity_got_out_of_nest_action import EntityGotOu
 from core.world.entities.action.ant_picked_up_item_action import AntPickedUpItemAction
 from core.world.entities.action.ant_dropped_picked_item import AntDroppedPickedItemAction
 from core.world.entities.world.birthers.requests.nest_birth_request import NestBirthRequest
+from .guardian_behaviors import GuardianBehaviors
 
 class Ant(LiveEntity):
 
@@ -51,6 +52,22 @@ class Ant(LiveEntity):
     @property
     def is_detectable(self):
         return not self._body.is_in_nest
+    
+    @property
+    def is_cooperative(self) -> bool:
+        return self._mind.is_cooperative
+    
+    @is_cooperative.setter
+    def is_cooperative(self, is_enabled):
+        self._mind.is_cooperative = is_enabled
+    
+    @property
+    def guardian_behavior(self) -> GuardianBehaviors:
+        return self._mind.guardian_behavior
+    
+    @guardian_behavior.setter
+    def guardian_behavior(self, behavior: GuardianBehaviors):
+        self._mind.guardian_behavior = behavior
     
     def prepare_for_operation(self, sayback: str = None):
         self._mind.prepare_for_operation(sayback)

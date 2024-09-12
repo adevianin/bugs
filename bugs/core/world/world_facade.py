@@ -11,6 +11,7 @@ from core.world.entities.ant.base.ant_types import AntTypes
 from .nuptial_environment_client_serializer_interface import iNuptialEnvironmentClientSerializer
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 from core.world.services.ant_service import AntService
+from core.world.entities.ant.base.guardian_behaviors import GuardianBehaviors
 
 from typing import Callable, List, Dict
 
@@ -119,8 +120,8 @@ class WorldFacade:
     def fly_nuptial_flight_command(self, user_id: int, ant_id: int):
         self._ant_service.fly_nuptial_flight(user_id, ant_id)
 
-    def change_ant_guardian_behavior_command(self, user_id: int, ant_id: int, is_enabled: bool):
-        self._ant_service.change_ant_guardian_behavior(user_id, ant_id, is_enabled)
+    def change_ant_guardian_behavior_command(self, user_id: int, ant_id: int, guaridan_behavior: GuardianBehaviors):
+        self._ant_service.change_ant_guardian_behavior(user_id, ant_id, guaridan_behavior)
 
     def change_ant_cooperative_behavior_command(self, user_id: int, ant_id: int, is_enabled: bool):
         self._ant_service.change_ant_cooperative_behavior(user_id, ant_id, is_enabled)

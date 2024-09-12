@@ -144,7 +144,7 @@ class Operation(ABC):
         if ant.mind.is_in_opearetion:
             return False
         
-        if not ant.body.is_cooperative_behavior:
+        if not ant.is_cooperative:
             return False
         
         if ant.ant_type not in self._vacancies:

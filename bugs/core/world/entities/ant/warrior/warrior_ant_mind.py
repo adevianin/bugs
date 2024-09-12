@@ -7,9 +7,6 @@ from core.world.utils.point import Point
 
 class WarrirorAntMind(AntMind):
 
-    def __init__(self, body: AntBody, thought_factory: ThoughtFactory, is_auto_thought_generation: bool, home_nest: Nest, is_in_operation: bool):
-        super().__init__(body, thought_factory, is_auto_thought_generation, home_nest, is_in_operation)
-
     def patrol_home_territory(self, sayback: str = None):
         thought = self._thought_factory.build_patrol_nest_territory_full(self._body, self.home_nest, sayback=sayback)
         self._register_thought(thought)

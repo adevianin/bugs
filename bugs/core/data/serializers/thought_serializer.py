@@ -19,6 +19,7 @@ from core.world.entities.ant.base.thoughts.hibernation_thought import Hibernatio
 from core.world.entities.ant.base.thoughts.shelter_in_nest import ShelterInNestThought
 from core.world.entities.ant.base.thoughts.get_stashed_item_back_thought import GetStashedItemBack
 from core.world.entities.ant.base.thoughts.build_fortification_thought import BuildFortificationThought
+from core.world.entities.ant.base.thoughts.defend_colony_thought import DefendColonyThought
 
 class ThoughtSerializer():
 
@@ -62,6 +63,8 @@ class ThoughtSerializer():
                 return self._serialize_get_stashed_item_back(thought)
             case ThoughtTypes.BUILD_FORTIFICATION:
                 return self._serialize_build_fortification(thought)
+            case ThoughtTypes.DEFEND_COLONY:
+                return self._serialize_defend_colony(thought)
             case _:
                 raise Exception('unknown type of thought')
 
@@ -259,6 +262,17 @@ class ThoughtSerializer():
         json.update({
             'nest_id': thought.nest_id,
             'random_walk_thought': random_walk_thought_json
+        })
+
+        return json
+    
+    def _serialize_defend_colony(self, thought: DefendColonyThought):
+        json = self._serialize_thought(thought)
+
+        fight_near_enemies_thought_json = self.serialize(thought.fight_near_enemies_thought)
+        json.update({
+            'point_to_check': thought.point_to_check,
+            'fight_near_enemies_thought': fight_near_enemies_thought_json
         })
 
         return json

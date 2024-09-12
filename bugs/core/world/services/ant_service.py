@@ -5,6 +5,7 @@ from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.world.world import World
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.entity_types import EntityTypes
+from core.world.entities.ant.base.guardian_behaviors import GuardianBehaviors
 
 class AntService():
 
@@ -31,13 +32,13 @@ class AntService():
             
         raise Exception('cant fly nuptial flight')
     
-    def change_ant_guardian_behavior(self, user_id: int, ant_id: int, is_enabled: bool):
+    def change_ant_guardian_behavior(self, user_id: int, ant_id: int, guaridan_behavior: GuardianBehaviors):
         ant: Ant = self._world.map.get_entity_by_id(ant_id)
         
         if not ant or ant.owner_id != user_id:
             raise Exception('user dont have this ant')
         
-        ant.body.toggle_guardian_behavior(is_enabled)
+        ant.guardian_behavior = guaridan_behavior
 
     def change_ant_cooperative_behavior(self, user_id: int, ant_id: int, is_enabled: bool):
         ant: Ant = self._world.map.get_entity_by_id(ant_id)
@@ -45,7 +46,7 @@ class AntService():
         if not ant or ant.owner_id != user_id:
             raise Exception('user dont have this ant')
         
-        ant.body.toggle_cooperative_behavior(is_enabled)
+        ant.is_cooperative = is_enabled
 
     def relocate_ant(self, user_id: int, ant_id: int, nest_id: int):
         ant: Ant = self._world.map.get_entity_by_id(ant_id)

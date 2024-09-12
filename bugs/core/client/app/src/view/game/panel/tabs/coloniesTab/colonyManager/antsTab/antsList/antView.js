@@ -15,13 +15,13 @@ class AntView extends BaseHTMLView {
         this._render();
 
         this._nuptialFlightActionBtn.addEventListener('click', this._onNuptialFlightBtnClick.bind(this));
-        this._guardianBehaviorToggleEl.addEventListener('change', this._onGuardianBehaviorTogglerChange.bind(this));
+        this._guardianTypeSelector.addEventListener('change', this._onGuardianBehaviorSelectorChange.bind(this));
         this._cooperativeBehaviorTogglerEl.addEventListener('change', this._onCooperativeBehaviorTogglerChange.bind(this));
         this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
     }
 
-    _onGuardianBehaviorTogglerChange () {
-        this._ant.toggleGuardianBehavior(this._guardianBehaviorToggleEl.checked);
+    _onGuardianBehaviorSelectorChange () {
+        this._ant.changeGuardianBehavior(this._guardianTypeSelector.value);
     }
 
     _onCooperativeBehaviorTogglerChange () {
@@ -42,8 +42,8 @@ class AntView extends BaseHTMLView {
 
         this._renderActionBtns();
 
-        this._guardianBehaviorToggleEl = this._el.querySelector('[data-is-guardian]');
-        this._guardianBehaviorToggleEl.checked = this._ant.isGuardianBehavior;
+        this._guardianTypeSelector = this._el.querySelector('[data-guardian-type]');
+        this._guardianTypeSelector.value = this._ant.guardianBehavior;
 
         this._cooperativeBehaviorTogglerEl = this._el.querySelector('[data-is-cooperactive]');
         this._cooperativeBehaviorTogglerEl.checked = this._ant.isCooperativeBehavior;

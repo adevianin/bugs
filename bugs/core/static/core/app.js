@@ -349,21 +349,21 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         return this._stats;
     }
 
-    get isGuardianBehavior() {
-        return this._behavior.guardian;
+    get guardianBehavior() {
+        return this._behavior.guardianBehavior;
     }
 
     get isCooperativeBehavior() {
-        return this._behavior.cooperative;
+        return this._behavior.isCooperative;
     }
 
     get genome() {
         return this._genome;
     }
 
-    toggleGuardianBehavior(isEnabled) {
-        this._behavior.guardian = isEnabled;
-        this._antApi.toggleGuardianBehavior(this.id, isEnabled);
+    changeGuardianBehavior(behaviorValue) {
+        this._behavior.guardianBehavior = behaviorValue;
+        this._antApi.changeGuardianBehavior(this.id, behaviorValue);
     }
 
     toggleCooperativeBehavior(isEnabled) {
@@ -2711,9 +2711,9 @@ class AntApi {
         return this._requester.post(`world/ants/${ antId }/fly_nuptial_flight`)
     }
 
-    toggleGuardianBehavior(antId, isEnabled) {
+    changeGuardianBehavior(antId, behaviorValue) {
         return this._requester.post(`world/ants/${ antId }/guardian_behavior`, {
-            is_enabled: isEnabled
+            guaridan_behavior: behaviorValue
         });
     }
 
@@ -4431,13 +4431,13 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._render();
 
         this._nuptialFlightActionBtn.addEventListener('click', this._onNuptialFlightBtnClick.bind(this));
-        this._guardianBehaviorToggleEl.addEventListener('change', this._onGuardianBehaviorTogglerChange.bind(this));
+        this._guardianTypeSelector.addEventListener('change', this._onGuardianBehaviorSelectorChange.bind(this));
         this._cooperativeBehaviorTogglerEl.addEventListener('change', this._onCooperativeBehaviorTogglerChange.bind(this));
         this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
     }
 
-    _onGuardianBehaviorTogglerChange () {
-        this._ant.toggleGuardianBehavior(this._guardianBehaviorToggleEl.checked);
+    _onGuardianBehaviorSelectorChange () {
+        this._ant.changeGuardianBehavior(this._guardianTypeSelector.value);
     }
 
     _onCooperativeBehaviorTogglerChange () {
@@ -4458,8 +4458,8 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
 
         this._renderActionBtns();
 
-        this._guardianBehaviorToggleEl = this._el.querySelector('[data-is-guardian]');
-        this._guardianBehaviorToggleEl.checked = this._ant.isGuardianBehavior;
+        this._guardianTypeSelector = this._el.querySelector('[data-guardian-type]');
+        this._guardianTypeSelector.value = this._ant.guardianBehavior;
 
         this._cooperativeBehaviorTogglerEl = this._el.querySelector('[data-is-cooperactive]');
         this._cooperativeBehaviorTogglerEl.checked = this._ant.isCooperativeBehavior;
@@ -11110,7 +11110,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<td data-id></td>\r\n<td data-type></td>\r\n<td data-attack></td>\r\n<td data-defence></td>\r\n<td data-role>\r\n    <select>\r\n    </select>\r\n</td>\r\n<td data-max-hp></td>\r\n<td data-nest></td>\r\n<td>\r\n    <input data-is-guardian type=\"checkbox\">\r\n</td>\r\n<td>\r\n    <input data-is-cooperactive type=\"checkbox\">\r\n</td>\r\n<td data-actions>\r\n    <button data-fly-away>X</button>\r\n    <button data-nuptial-flight>шлюбний політ</button>\r\n    <button data-genome-debug>геном</button>\r\n</td>";
+var code = "<td data-id></td>\r\n<td data-type></td>\r\n<td data-attack></td>\r\n<td data-defence></td>\r\n<td data-role>\r\n    <select>\r\n    </select>\r\n</td>\r\n<td data-max-hp></td>\r\n<td data-nest></td>\r\n<td>\r\n    <select data-guardian-type>\r\n        <option value=\"none\">не захищає</option>\r\n        <option value=\"nest\">тільки гніздо</option>\r\n        <option value=\"colony\">вся колонія</option>\r\n    </select>\r\n</td>\r\n<td>\r\n    <input data-is-cooperactive type=\"checkbox\">\r\n</td>\r\n<td data-actions>\r\n    <button data-fly-away>X</button>\r\n    <button data-nuptial-flight>шлюбний політ</button>\r\n    <button data-genome-debug>геном</button>\r\n</td>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

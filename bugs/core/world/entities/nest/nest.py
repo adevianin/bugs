@@ -113,7 +113,7 @@ class Nest(Entity):
         self.events.emit('is_under_attack', enemies_positions)
         self._is_under_attack = True
 
-    def cancel_attack_alert(self):
+    def cancel_attack_alarm(self):
         if self._is_under_attack:
             self.events.emit('attack_is_over')
         self._is_under_attack = False

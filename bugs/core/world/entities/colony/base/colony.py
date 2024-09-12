@@ -56,3 +56,8 @@ class Colony(ABC):
 
     def _emit_action(self, action: Action):
         self._event_bus.emit('action', action)
+
+    def _send_signal_to_members(self, signal: dict):
+        my_members = self.get_my_members()
+        for member in my_members:
+            member.body.receive_colony_signal(signal)

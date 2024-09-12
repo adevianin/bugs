@@ -49,6 +49,8 @@ class ThoughtDeserializer():
                 return self._build_get_stashed_item_back(body, thought_json, entities_collection)
             case ThoughtTypes.BUILD_FORTIFICATION:
                 return self._build_build_fortification(body, thought_json, entities_collection)
+            case ThoughtTypes.DEFEND_COLONY:
+                return self._build_defend_colony(body, thought_json, entities_collection)
             case _:
                 raise Exception('unknown type of thought')
             
@@ -158,4 +160,11 @@ class ThoughtDeserializer():
         random_walk_thought = self.deserialize_thougth(body, thought_json['random_walk_thought'], entities_collection)
         nest = entities_collection.get_entity_by_id(thought_json['nest_id'])
         return self._thought_factory.build_build_fortification(body, random_walk_thought, nest, flags, sayback)
+    
+    def _build_defend_colony(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
+        flags = thought_json['flags']
+        sayback = thought_json['sayback']
+        fight_near_enemies_thought = self.deserialize_thougth(body, thought_json['fight_near_enemies_thought'], entities_collection)
+        point_to_check = Point.from_json(thought_json['point_to_check'])
+        return self._thought_factory.build_defend_colony(body, fight_near_enemies_thought, point_to_check, flags, sayback)
     
