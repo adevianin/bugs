@@ -64,17 +64,17 @@ class AntMind(Mind):
         thought = self._thought_factory.build_build_fortification_full(body=self._body, nest=nest, sayback=sayback)
         self._register_thought(thought)
 
-    def defend_nest(self, nest: Nest, point_to_check: Point, asap: bool = True, sayback: str = None):
+    def defend_nest(self, nest: Nest, point_to_check: Point, sayback: str = None):
         thought = self._thought_factory.build_defend_nest_thought_full(body=self._body, nest=nest, point_to_check=point_to_check, sayback=sayback)
-        self._register_thought(thought=thought, asap=asap)
+        self._register_thought(thought=thought, immediately=True)
 
     def hibernate(self, asap: bool = False):
         thought = self._thought_factory.build_hibernation_full(self._body, self.home_nest)
         self._register_thought(thought=thought, asap=asap)
 
-    def shelter_in_home_nest(self, asap: bool = False):
+    def shelter_in_home_nest(self):
         thought = self._thought_factory.build_shelter_in_nest_full(self._body, self.home_nest)
-        self._register_thought(thought=thought, asap=asap)
+        self._register_thought(thought=thought, immediately=True)
 
     def get_stashed_item_back(self, sayback: str = None):
         thought = self._thought_factory.build_get_stashed_item_back(self._body, sayback=sayback)
@@ -122,9 +122,9 @@ class AntMind(Mind):
         
         if self.guardian_behavior == GuardianBehaviors.NEST:
             nearest_enemy_pos = self._body.calc_nearest_point(enemies_positions)
-            self.defend_nest(self.home_nest, nearest_enemy_pos, True)
+            self.defend_nest(self.home_nest, nearest_enemy_pos)
         elif self.guardian_behavior == GuardianBehaviors.NONE:
-            self.shelter_in_home_nest(True)
+            self.shelter_in_home_nest()
 
     def _on_enemy_spotted_in_colony_area(self, signal):
         if self._is_in_opearetion or self.guardian_behavior != GuardianBehaviors.COLONY or self._is_thought_in_stack(ThoughtTypes.DEFEND_COLONY):
