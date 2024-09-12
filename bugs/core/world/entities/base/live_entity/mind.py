@@ -71,7 +71,7 @@ class Mind(ABC):
         if asap and immediately:
             raise Exception('thought can be asap and immediately at the same time')
         
-        if not self._has_thoughts_to_do():
+        if (not asap and not immediately) or not self._has_thoughts_to_do():
             self._thoughts_stack.append(thought)
         else:
             current_thought = self._get_current_thought()
@@ -83,8 +83,6 @@ class Mind(ABC):
                 self._thoughts_stack.insert(0, thought)
             elif asap:
                 self._thoughts_stack.insert(1, thought)
-            else:
-                self._thoughts_stack.append(thought)
                 
     def _get_current_thought(self) -> Thought:
         for thought in self._thoughts_stack:
