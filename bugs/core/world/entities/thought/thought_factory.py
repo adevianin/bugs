@@ -62,8 +62,8 @@ class ThoughtFactory:
     def build_fight_near_enemies_thought(self, body: LiveBody, fight_enemy_thought: FightEnemyThought, flags: dict = None, sayback: str = None):
         return FightNearEnemiesThought(body=body, fight_enemy_thought=fight_enemy_thought, flags=flags, sayback=sayback)
     
-    def build_defend_nest_thought(self, body: LiveBody, fight_near_enemies_thought: FightNearEnemiesThought, random_walk_thought: RandomWalkThought, defending_nest: Nest, point_to_check: Point, flags: dict = None, sayback: str = None):
-        return DefendNestThought(body=body, fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, flags=flags, sayback=sayback)
+    def build_defend_nest_thought(self, body: LiveBody, fight_near_enemies_thought: FightNearEnemiesThought, defending_nest: Nest, point_to_check: Point, flags: dict = None, sayback: str = None):
+        return DefendNestThought(body=body, fight_near_enemies_thought=fight_near_enemies_thought, defending_nest=defending_nest, point_to_check=point_to_check, flags=flags, sayback=sayback)
     
     def build_random_walk_thought(self, body: LiveBody, center: Point, radius: int, flags: dict = None, sayback: str = None):
         return RandomWalkThought(body=body, center=center, radius=radius, flags=flags, sayback=sayback)
@@ -120,9 +120,8 @@ class ThoughtFactory:
         return self.build_attack_nest_thought(body=body, fight_near_enemies_thought=fight_near_enemies_thought, nest=nest, sayback=sayback)
     
     def build_defend_nest_thought_full(self, body: LiveBody, nest: Nest, point_to_check: Point, sayback: str = None):
-        random_walk_thought = self.build_random_walk_thought(body, nest.position, nest.area)
         fight_near_enemies_thought = self.build_fight_near_enemies_thought_full(body=body)
-        return self.build_defend_nest_thought(body=body, fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, defending_nest=nest, point_to_check=point_to_check, sayback=sayback)
+        return self.build_defend_nest_thought(body=body, fight_near_enemies_thought=fight_near_enemies_thought, defending_nest=nest, point_to_check=point_to_check, sayback=sayback)
 
     def build_fight_near_enemies_thought_full(self, body: LiveBody):
         fight_enemy_thought = self.build_fight_enemy_thought(body, None)

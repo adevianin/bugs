@@ -11,9 +11,8 @@ class DefendNestThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, fight_near_enemies_thought: FightNearEnemiesThought, random_walk_thought: RandomWalkThought, defending_nest: Nest, point_to_check: Point = None, flags: dict = None, sayback: str = None):
+    def __init__(self, body: AntBody, fight_near_enemies_thought: FightNearEnemiesThought, defending_nest: Nest, point_to_check: Point = None, flags: dict = None, sayback: str = None):
         super().__init__(body=body, type=ThoughtTypes.DEFEND_NEST, flags=flags, sayback=sayback)
-        self._nested_thoughts['random_walk_thought'] = random_walk_thought
         self._nested_thoughts['fight_near_enemies_thought'] = fight_near_enemies_thought
         self._point_to_check = point_to_check
         self._defending_nest = defending_nest
@@ -22,10 +21,6 @@ class DefendNestThought(Thought):
         self._defending_nest.events.add_listener('is_under_attack', self._on_defending_nest_id_under_attack)
         self._defending_nest.events.add_listener('attack_is_over', self._on_defending_nest_attack_is_over)
 
-    @property
-    def random_walk_thought(self) -> RandomWalkThought:
-        return self._nested_thoughts['random_walk_thought']
-    
     @property
     def fight_near_enemies_thought(self) -> FightNearEnemiesThought:
         return self._nested_thoughts['fight_near_enemies_thought']
@@ -49,7 +44,7 @@ class DefendNestThought(Thought):
                 self._point_to_check = None
             return
         
-        self.random_walk_thought.do_step()
+        self.done()
 
     def _on_defending_nest_id_under_attack(self, enemies_positions: List[Point]):
         self._point_to_check = self._body.calc_nearest_point(enemies_positions)
