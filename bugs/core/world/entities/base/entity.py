@@ -15,7 +15,7 @@ class Entity(ABC):
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, owner_id: int, body: Body):
         self._event_bus = event_bus
-        self.events = events
+        self._events = events
         self._id: int = id
         self._type: EntityTypes = type
         self._from_colony_id = from_colony_id
@@ -29,6 +29,10 @@ class Entity(ABC):
     @property
     def id(self):
         return self._id
+    
+    @property
+    def events(self):
+        return self._events
 
     @property
     def type(self):
@@ -81,7 +85,7 @@ class Entity(ABC):
     def _on_died(self):
         self._emit_action(EntityDiedAction.build(self.id))
         self.events.emit('died')
-        self.events.remove_all_listeners()
+        # self.events.remove_all_listeners()
         self._event_bus.emit('entity_died', self)
 
     def _on_angle_changed(self):

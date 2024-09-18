@@ -9,14 +9,12 @@ from enum import StrEnum
 
 class FormationState(StrEnum):
         INITIAL = 'initial'
-        FIGHTING = 'fighting'
         WALKING = 'walking'
 
 class BaseFormation(ABC):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, type: FormationTypes, name: str, state: FormationState, units: List[Ant], current_position: Point, destination_point: Point, is_aggressive: int):
+    def __init__(self, events: EventEmitter, type: FormationTypes, name: str, state: FormationState, units: List[Ant], current_position: Point, destination_point: Point):
         self.events = events
-        self._event_bus = event_bus
         self._units = units
         self._destination_point = destination_point
         self._unit_step_size = self._get_unit_step_size(units)
@@ -27,15 +25,9 @@ class BaseFormation(ABC):
         self._type = type
         self._state = state if state else FormationState.INITIAL
         self._name = name
-        self._is_aggressive = is_aggressive
-
-        for unit in self._units:
-            self._listen_unit(unit)
 
         current_position = current_position if current_position else self._generate_formation_position()
         self._set_current_position(current_position)
-
-        self._event_bus.add_listener('step_start', self._on_step_start)
 
     @property
     def name(self):
@@ -65,46 +57,12 @@ class BaseFormation(ABC):
     def state(self) -> FormationState:
         return self._state
     
-    # @property
-    # def _has_targeted_enemy(self):
-    #     return self._targeted_enemy is not None and not self._targeted_enemy.is_died
-    
-    def destroy(self):
-        if self.is_destroyed:
-            return
-        
-        for unit in self._units:
-            self._stop_listen_unit(unit)
-
-        self._is_destroyed = True
-        self._event_bus.remove_listener('step_start', self._on_step_start)
-        self.events.emit('destroyed')
-
-    def _listen_unit(self, ant: Ant):
-        ant.body.events.add_listener('received_combat_damage', self._on_combat_damage)
-
-    def _stop_listen_unit(self, ant: Ant):
-        ant.body.events.remove_listener('received_combat_damage', self._on_combat_damage)
-    
-    def _on_step_start(self, step_number):
+    def step_pulse(self):
         is_someone_died = self._handle_died_units()
 
         if self._state == FormationState.INITIAL:
             self._start_walking()
-        elif self._state == FormationState.FIGHTING:
-            if self._targeted_enemy and self._targeted_enemy.is_died:
-                self._targeted_enemy = None
-
-            if not self._targeted_enemy:
-                is_found_enemy = self._fight_nearby_enemy()
-                if not is_found_enemy:
-                    self._start_walking()
         elif self._state == FormationState.WALKING:
-            if self._is_aggressive:
-                is_found_enemy = self._fight_nearby_enemy()
-                if is_found_enemy:
-                    return
-                
             if is_someone_died:
                 self._regroup_walking_units()
 
@@ -118,26 +76,18 @@ class BaseFormation(ABC):
                     self._done()
                 else:
                     self._do_next_step()
+    
+    def destroy(self):
+        if self.is_destroyed:
+            return
 
-    def _fight_nearby_enemy(self):
-        enemy = self._search_enemy()
-        if enemy:
-            self._start_fighting(enemy)
-            return True
-        else:
-            return False
+        self._is_destroyed = True
+        self.events.emit('destroyed')
+        self.events.remove_all_listeners()
 
     def _regroup_walking_units(self):
         self._order_units_to_free_mind()
         self._order_units_move_on_positions()
-
-    def _start_fighting(self, enemy: iEnemy):
-        self._targeted_enemy = enemy
-        self._order_units_to_free_mind()
-        if self._state != FormationState.FIGHTING:
-            self._state = FormationState.FIGHTING
-            self.events.emit('before_fighting')
-        self._order_units_to_attack_targeted_enemy()
 
     def _start_walking(self):
         self._order_units_to_free_mind()
@@ -174,7 +124,7 @@ class BaseFormation(ABC):
         return self._current_position.is_equal(self._destination_point)
     
     def _done(self):
-        self.events.emit('reached_destination')
+        self.events.emit('done')
         self.destroy()
 
     def _get_unit_step_size(self, units: List[Ant]):
@@ -246,5 +196,3 @@ class BaseFormation(ABC):
         
         return far_away_units_count > len(self._units) / 2
     
-    def _on_combat_damage(self):
-        self._fight_nearby_enemy()

@@ -86,8 +86,8 @@ class ThoughtFactory:
     def build_shelter_in_nest(self,  body: LiveBody, go_gome_thought: GoInNestThought, shelter_nest: Nest, flags: dict = None, sayback: str = None):
         return ShelterInNestThought(body, go_gome_thought, shelter_nest, flags, sayback)
     
-    def build_get_stashed_item_back(self,  body: LiveBody, flags: dict = None, sayback: str = None):
-        return GetStashedItemBack(body, flags, sayback)
+    # def build_get_stashed_item_back(self,  body: LiveBody, flags: dict = None, sayback: str = None):
+    #     return GetStashedItemBack(body, flags, sayback)
     
     def build_build_fortification(self, body: LiveBody, random_walk_thought: RandomWalkThought, nest: Nest, flags: dict = None, sayback: str = None):
         return BuildFortificationThought(body, random_walk_thought, nest, flags, sayback)

@@ -22,6 +22,7 @@ class LiveEntity(Entity, iEnemy):
         self._mind: Mind = mind
 
         self._body.events.add_listener('walk', self._on_walk)
+        self._body.events.add_listener('received_combat_damage', self._on_received_combat_damage)
 
     @property
     def mind(self):
@@ -30,6 +31,10 @@ class LiveEntity(Entity, iEnemy):
     @property
     def visual_sensor(self) -> VisualSensor:
         return self._body.visual_sensor
+    
+    @property
+    def is_detectable(self):
+        return not self.is_died
 
     def walk_to(self, position: Point, sayback: str = None):
         self._mind.walk_to(position=position, sayback=sayback)
@@ -46,6 +51,9 @@ class LiveEntity(Entity, iEnemy):
     def look_around_for_enemies(self) -> List[iEnemy]:
         return self._body.look_around_for_enemies()
     
+    def sort_by_distance(self, entities: List[Entity]) -> List[Entity]:
+        return self._body.sort_by_distance(entities)
+    
     def do_step(self):
         super().do_step()
 
@@ -56,3 +64,6 @@ class LiveEntity(Entity, iEnemy):
 
     def _on_walk(self, position: Point):
         self._emit_action(EntityWalkAction.build(self.id, position))
+
+    def _on_received_combat_damage(self):
+        self.events.emit('received_combat_damage')

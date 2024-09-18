@@ -7,11 +7,13 @@ from core.world.entities.colony.colonies.ant_colony.operation.pillage_nest_opera
 from core.world.entities.colony.colonies.ant_colony.operation.transport_food_operation import TransportFoodOperation
 from core.world.entities.colony.colonies.ant_colony.operation.build_fortification_operation import BuildFortificationOperation
 from core.data.serializers.formation_serializer import FormationSerializer
+from .fight_serializer import FightSerializer
 
 class OperationSerializer():
 
-    def __init__(self, formation_serializer: FormationSerializer):
+    def __init__(self, formation_serializer: FormationSerializer, fight_serializer: FightSerializer):
         self._formation_serializer = formation_serializer
+        self._fight_serializer = fight_serializer
 
     def serialize(self, operation: Operation):
         match(operation.type):
@@ -36,7 +38,8 @@ class OperationSerializer():
             'hired_ants': [ant.id for ant in operation.get_hired_ants()],
             'flags': operation.flags,
             'type': operation.type,
-            'formations': [self._formation_serializer.serialize(formation) for formation in operation.formations]
+            'formation': self._formation_serializer.serialize(operation.formation) if operation.formation else None,
+            'fight': self._fight_serializer.serialize(operation.fight) if operation.fight else None
         }
 
     def _serialize_build_new_sub_nest(self, operation: BuildNewSubNestOperation):

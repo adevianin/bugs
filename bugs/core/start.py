@@ -10,6 +10,7 @@ from core.data.deserializers.ground_beetle_deserializer import GroundBeetleDeser
 from core.data.deserializers.item_source_deserializer import ItemSourceDeserializer
 from core.data.deserializers.item_area_deserializer import ItemAreaDeserializer
 from core.data.deserializers.formation_deserializer import FormationDeserializer
+from core.data.deserializers.fight_deserializer import FightDeserializer
 from core.data.deserializers.item_deserializer import ItemDeserializer
 from core.data.deserializers.map_deserializer import MapDeserializer
 from core.data.deserializers.gene_deserializer import GeneDeserializer
@@ -33,6 +34,7 @@ from core.data.serializers.item_serializer import ItemSerializer
 from core.data.serializers.item_area_serializer import ItemAreaSerializer
 from core.data.serializers.item_source_serializer import ItemSourceSerializer
 from core.data.serializers.formation_serializer import FormationSerializer
+from core.data.serializers.fight_serializer import FightSerializer
 from core.data.serializers.genes_serializer import GenesSerializer
 from core.data.serializers.nuptial_environment_serializer import NuptialEnvironmentSerializer
 from core.data.serializers.genome_serializer import GenomeSerializer
@@ -50,6 +52,7 @@ from core.world.entities.colony.colonies.ant_colony.operation.operation_factory 
 from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.entities.map.map_factory import MapFactory
 from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
+from core.world.entities.colony.colonies.ant_colony.operation.base.fight.fight_factory import FightFactory
 from core.world.entities.item.items.item_factory import ItemFactory
 from core.world.entities.item.item_sources.item_source_factory import ItemSourceFactory
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory
@@ -88,12 +91,13 @@ def start():
     item_factory = ItemFactory(event_bus)
     item_source_factory = ItemSourceFactory(event_bus)
     item_area_factory = ItemAreaFactory(event_bus)
-    formation_factory = FormationFactory(event_bus)
+    formation_factory = FormationFactory()
+    fight_factory = FightFactory()
     thought_factory = ThoughtFactory()
     ant_factory = AntFactory(event_bus, thought_factory)
     ground_beetle_factory = GroundBeetleFactory(event_bus, thought_factory)
     nest_factory = NestFactory(event_bus)
-    operation_factory = OperationFactory(formation_factory)
+    operation_factory = OperationFactory(event_bus, formation_factory, fight_factory)
     colony_factory = ColonyFactory(event_bus, operation_factory)
     map_factory = MapFactory(event_bus)
     climate_factory = ClimateFactory(event_bus)
@@ -112,7 +116,8 @@ def start():
     thought_serializer = ThoughtSerializer()
     ant_serializer = AntSerializer(thought_serializer, genome_serializer)
     formation_serializer = FormationSerializer()
-    operation_serializer = OperationSerializer(formation_serializer)
+    fight_serializer = FightSerializer()
+    operation_serializer = OperationSerializer(formation_serializer, fight_serializer)
     colony_serializer = ColonySerializer(operation_serializer)
     colony_relations_table_serializer = ColonyRelationsTableSerializer()
     ground_beetle_serializer = GroundBeetleSerializer(thought_serializer)
@@ -133,7 +138,8 @@ def start():
     ant_deserializer = AntDeserializer(genome_deserializer, ant_factory)
     ground_beetle_deserializer = GroundBeetleDeserializer(ground_beetle_factory)
     formation_deserializer = FormationDeserializer(formation_factory)
-    operation_deserializer = OperationDeserializer(operation_factory, formation_deserializer)
+    fight_deserializer = FightDeserializer(fight_factory)
+    operation_deserializer = OperationDeserializer(operation_factory, formation_deserializer, fight_deserializer)
     map_deserializer = MapDeserializer(map_factory)
     colony_deserializer = ColonyDeserializer(colony_factory, operation_deserializer)
     thought_deserializer = ThoughtDeserializer(thought_factory)
@@ -179,5 +185,7 @@ def start():
     ant_service.set_world(world_facade.world)
 
     # MY_TEST_ENV['attacker'] = world_facade.world.map.get_entity_by_id(5)
+    # MY_TEST_ENV['attacker2'] = world_facade.world.map.get_entity_by_id(6)
+    # MY_TEST_ENV['attacker3'] = world_facade.world.map.get_entity_by_id(7)
 
     world_facade.world.run()

@@ -8,6 +8,8 @@ from core.world.entities.action.item_was_picked_up_action import ItemWasPickedUp
 from core.world.entities.action.item_was_dropped_action import ItemWasDroppedAction
 from core.world.entities.action.item_being_bringed_action import ItemBeingBringedAction
 
+import random
+
 class Item(Entity):
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, body: Body, item_type: ItemTypes, strength: int, variety: int, life_span: int, is_picked: bool):
@@ -63,6 +65,7 @@ class Item(Entity):
         self._emit_action(ItemWasPickedUpAction.build(self.id))
 
     def drop(self, position: Point):
+        self._almost_die()
         self._is_picked = False
         self._body.position = position
         self._emit_action(ItemWasDroppedAction.build(self.id, self.position))
@@ -70,3 +73,6 @@ class Item(Entity):
     def be_bringed_to(self, position: Point, bringing_speed: int):
         self._body.position = position
         self._emit_action(ItemBeingBringedAction.build(self.id, self._body.position, bringing_speed))
+
+    def _almost_die(self):
+        self._life_span = random.randint(3, 6)

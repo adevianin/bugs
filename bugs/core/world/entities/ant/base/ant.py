@@ -12,6 +12,7 @@ from core.world.entities.action.ant_picked_up_item_action import AntPickedUpItem
 from core.world.entities.action.ant_dropped_picked_item import AntDroppedPickedItemAction
 from core.world.entities.world.birthers.requests.nest_birth_request import NestBirthRequest
 from .guardian_behaviors import GuardianBehaviors
+from core.world.entities.item.items.base.item import Item
 
 class Ant(LiveEntity):
 
@@ -51,7 +52,7 @@ class Ant(LiveEntity):
     
     @property
     def is_detectable(self):
-        return not self._body.is_in_nest
+        return super().is_detectable and not self._body.is_in_nest
     
     @property
     def is_cooperative(self) -> bool:
@@ -99,17 +100,26 @@ class Ant(LiveEntity):
     def pick_up_item(self, item):
         self._body.pick_up_item(item)
 
+    def drop_picked_item(self):
+        self._body.drop_picked_item()
+
     def has_picked_item(self):
         return self._body.has_picked_item()
 
-    def stash_picked_item(self):
-        self._body.stash_picked_item()
+    # def stash_picked_item(self):
+    #     self._body.stash_picked_item()
 
-    def get_stashed_item_back(self):
-        self._mind.get_stashed_item_back()
+    # def get_stashed_item_back(self):
+    #     self._mind.get_stashed_item_back()
 
-    def has_stashed_item(self):
-        return self._body.has_stashed_item()
+    # def has_stashed_item(self):
+    #     return self._body.has_stashed_item()
+    
+    # def get_stashed_item_data(self):
+    #     return self._body.get_stashed_item_data()
+    
+    # def pickup_stashed_item(self):
+    #     self._body.pickup_stashed_item()
 
     def give_food(self, nest: Nest):
         self._body.give_food(nest)

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from core.world.utils.event_emiter import EventEmitter
 
 class iEnemy(ABC):
 
@@ -20,4 +21,9 @@ class iEnemy(ABC):
     @property
     @abstractmethod
     def body(self):
+        pass
+
+    @property
+    @abstractmethod
+    def events(self) -> EventEmitter:
         pass

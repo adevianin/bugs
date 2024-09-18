@@ -124,16 +124,6 @@ class AntBody(LiveBody):
         self._picked_item = None
         self.events.emit('dropped_picked_item')
 
-    def stash_picked_item(self):
-        if not self._picked_item:
-            return
-        self.memory.save('stashed_item', { 'item_id': self._picked_item.id, 'position': [self.position.x, self.position.y] })
-        self.drop_picked_item()
-
-    def has_stashed_item(self):
-        item_memory = self.memory.read('stashed_item')
-        return bool(item_memory)
-
     def step_to(self, destination_point: Point) -> bool:
         if self.is_in_nest:
             self.get_out_of_nest()
@@ -179,6 +169,28 @@ class AntBody(LiveBody):
     
     def _build_entity_key(self, name: str):
         return f'entity_{name}'
+    
+    # def stash_picked_item(self):
+    #     if not self._picked_item:
+    #         return
+    #     item = self._picked_item
+    #     self.drop_picked_item()
+    #     self.remember_entity('stashed_item', item)
+
+    # def pickup_stashed_item(self):
+    #     item_data = self.get_stashed_item_data()
+    #     filter: Callable[[Item], List[Item]] = lambda item: item.id == item_data['id']
+    #     items = self.visual_sensor.get_nearby_entities(EntityTypes.ITEM, filter)
+    #     if len(items) == 1:
+    #         self.pick_up_item(items[0])
+    #     self.forget_entity('stashed_item')
+
+    # def has_stashed_item(self):
+    #     item_memory = self.recall_entity('stashed_item')
+    #     return bool(item_memory)
+    
+    # def get_stashed_item_data(self):
+    #     return self.recall_entity('stashed_item')
     
     def _die(self):
         super()._die()

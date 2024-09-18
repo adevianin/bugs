@@ -76,9 +76,9 @@ class AntMind(Mind):
         thought = self._thought_factory.build_shelter_in_nest_full(self._body, self.home_nest)
         self._register_thought(thought=thought, immediately=True)
 
-    def get_stashed_item_back(self, sayback: str = None):
-        thought = self._thought_factory.build_get_stashed_item_back(self._body, sayback=sayback)
-        self._register_thought(thought=thought)
+    # def get_stashed_item_back(self, sayback: str = None):
+    #     thought = self._thought_factory.build_get_stashed_item_back(self._body, sayback=sayback)
+    #     self._register_thought(thought=thought)
 
     def defend_colony(self, point_to_check: Point, sayback: str = None):
         thought = self._thought_factory.build_defend_colony_full(self._body, point_to_check, sayback)

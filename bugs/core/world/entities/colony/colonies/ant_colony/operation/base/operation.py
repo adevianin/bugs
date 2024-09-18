@@ -11,12 +11,17 @@ from functools import partial
 from core.world.entities.colony.colonies.ant_colony.formation.base.base_formation import BaseFormation
 from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
 from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
+from core.world.entities.colony.colonies.ant_colony.operation.base.fight.fight_factory import FightFactory
+from core.world.entities.colony.colonies.ant_colony.operation.base.fight.fight import Fight
 
 class Operation(ABC):
 
-    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, type: OperationTypes, hired_ants: List[Ant], flags: dict, formations: List[BaseFormation]):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, formation_factory: FormationFactory, fight_factory: FightFactory, id: int, type: OperationTypes, hired_ants: List[Ant], 
+                 flags: dict, formation: BaseFormation, fight: Fight):
+        self._event_bus = event_bus
         self.events = events
         self._formation_factory = formation_factory
+        self._fight_factory = fight_factory
         self.id = id
         self._type = type
         self._vacancies = {}
@@ -27,16 +32,26 @@ class Operation(ABC):
         self._markers = []
         self._total_hiring_ants_count = 0
         self._flags = flags or {}
-        self._formations = formations
+        self._formation = formation
+        self._fight = fight
+        self._ants_listeners = {}
 
-        self._listen_formations()
+        if self._fight:
+            self._listen_fight(self._fight)
+
+        if self._formation:
+            self._listen_formation(self._formation)
 
         if (self._read_flag('is_operation_started')):
-            self._init_staff()
+            self._subscribe_events()
 
     @property
-    def formations(self) -> List[BaseFormation]:
-        return self._formations
+    def formation(self) -> BaseFormation:
+        return self._formation
+    
+    @property
+    def fight(self) -> Fight:
+        return self._fight
     
     @property
     def is_hiring(self):
@@ -75,6 +90,14 @@ class Operation(ABC):
     def flags(self):
         return self._flags
     
+    @property
+    def _stage(self):
+        return self._flags['stage'] or 'start'
+    
+    @_stage.setter
+    def _stage(self, name: str):
+        self._flags['stage'] = name
+
     def get_hired_ants(self, ant_type: AntTypes = None):
         if (ant_type):
             res = []
@@ -98,10 +121,6 @@ class Operation(ABC):
     def done(self):
         self._is_done = True
 
-        ants = self.get_hired_ants()
-        for ant in ants:
-            ant.leave_operation()
-
         self._on_operation_stop()
 
         self.events.emit('change')
@@ -109,21 +128,62 @@ class Operation(ABC):
     def cancel(self):
         self._is_canceled = True
 
-        ants = self.get_hired_ants()
-        for ant in ants:
-            ant.leave_operation()
-
         self._on_operation_stop()
         
         self.events.emit('change')
 
-    def _register_formation(self, formation: BaseFormation):
-        self._formations.append(formation)
-        self._listen_formation(formation)
+    def _on_step_start(self, step_number):
+        if self._fight:
+            self._fight.step_pulse()
+        elif self._formation:
+            self._formation.step_pulse()
 
-    def _listen_formations(self):
-        for formation in self._formations:
-            self._listen_formation(formation)
+        if not self._fight and self._is_aggressive_now():
+            if self._are_enemies_around():
+                self._init_fight(self._hired_ants)
+
+    def _is_aggressive_now(self):
+        return False
+    
+    def _are_enemies_around(self):
+        for ant in self._hired_ants:
+            enemies = ant.look_around_for_enemies()
+            if len(enemies):
+                return True
+
+        return False
+    
+    def _subscribe_events(self):
+        self._event_bus.add_listener('step_start', self._on_step_start)
+        self._init_staff()
+
+    def _init_staff(self):
+        ants = self.get_hired_ants()
+        for ant in ants:
+            self._listen_ant(ant)
+
+    def _listen_ant(self, ant: Ant):
+        self._ants_listeners[ant] = {}
+
+        died_listener = partial(self._on_hired_ant_died, ant)
+        self._ants_listeners[ant]['died'] = died_listener
+        ant.events.add_listener('died', died_listener)
+
+        received_combat_damage_listener = partial(self._on_hired_ant_received_combat_damage, ant)
+        self._ants_listeners[ant]['received_combat_damage'] = received_combat_damage_listener
+        ant.events.add_listener('received_combat_damage', received_combat_damage_listener)
+
+    def _stop_listen_ant(self, ant: Ant):
+        ant_listeners = self._ants_listeners[ant]
+        ant.events.remove_listener('died', ant_listeners['died'])
+        ant.events.remove_listener('received_combat_damage', ant_listeners['received_combat_damage'])
+        del self._ants_listeners[ant]
+
+    def _register_formation(self, formation: BaseFormation):
+        if self._formation:
+            raise Exception('formation already registered')
+        self._formation = formation
+        self._listen_formation(formation)
 
     def _listen_formation(self, formation: BaseFormation):
         def on_formation_event(event_name: str):
@@ -131,14 +191,41 @@ class Operation(ABC):
                 self.events.emit(f'formation:{formation.name}:{event_name}')
             return handler
         
-        def on_formation_destroyed():
-            self._formations.remove(formation)
-
-        formation.events.add_listener('destroyed', on_formation_destroyed)
+        formation.events.add_listener('destroyed', self._on_formation_destroyed)
         formation.events.add_listener('destroyed', on_formation_event('destroyed'))
-        formation.events.add_listener('reached_destination', on_formation_event('reached_destination'))
-        formation.events.add_listener('before_fighting', on_formation_event('before_fighting'))
-        formation.events.add_listener('before_walking', on_formation_event('before_walking'))
+        formation.events.add_listener('done', on_formation_event('done'))
+
+    def _on_formation_destroyed(self):
+        self._formation = None
+
+    def _init_fight(self, ants: List[Ant]):
+        if self._fight:
+            raise Exception('fight already inited')
+        if self._formation:
+            self._formation.destroy()
+        self.events.emit(f'fight_start:{self._stage}')
+        self._fight = self._fight_factory.build_fight(ants)
+        self._listen_fight(self._fight)
+
+    def _destroy_fight(self):
+        self._fight.destroy()
+        self._fight = None
+
+    def _listen_fight(self, fight: Fight):
+        fight.events.add_listener('won', self._on_fight_won)
+        fight.events.add_listener('defeated', self._on_fight_defeated)
+
+    def _stop_listen_fight(self, fight: Fight):
+        fight.events.remove_listener('won', self._on_fight_won)
+        fight.events.remove_listener('defeated', self._on_fight_defeated)
+
+    def _on_fight_won(self):
+        self._destroy_fight()
+        self.events.emit(f'fight_won:{self._stage}')
+
+    def _on_fight_defeated(self):
+        self._destroy_fight()
+        self.events.emit(f'fight_defeated:{self._stage}')
 
     def _check_hiring_ant(self, ant: Ant):
         if ant.mind.is_in_opearetion:
@@ -171,13 +258,8 @@ class Operation(ABC):
         self.events.emit('change')
 
     def _on_hired_all(self):
-        self._init_staff()
+        self._subscribe_events()
         self._start_operation()
-
-    def _init_staff(self):
-        ants = self.get_hired_ants()
-        for ant in ants:
-            ant.events.add_listener('died', partial(self._on_hired_ant_died, ant))
 
     def _read_flag(self, flag_name: str):
         if flag_name in self._flags:
@@ -216,12 +298,30 @@ class Operation(ABC):
         })
 
     def _on_hired_ant_died(self, ant: Ant):
+        if self._fight:
+            self._fight.remove_ant(ant)
+        # if self._formation:
+        #     self._formation.remove_ant(ant)
         ant.leave_operation()
         self._hired_ants.remove(ant)
+        self._stop_listen_ant(ant)
         if len(self._hired_ants) == 0:
             self.cancel()
 
+    def _on_hired_ant_received_combat_damage(self, ant: Ant):
+        if not self._fight:
+            self._init_fight(self._hired_ants)
+
     def _on_operation_stop(self):
-        for formation in self._formations:
-            formation.destroy()
+        self._event_bus.remove_listener('step_start', self._on_step_start)
+
+        if self._formation:
+            self._formation.destroy()
+
+        if self._fight:
+            self._destroy_fight()
+
+        for ant in self._hired_ants:
+            self._stop_listen_ant(ant)
+            ant.leave_operation()
     

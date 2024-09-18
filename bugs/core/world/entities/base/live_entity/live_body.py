@@ -1,6 +1,6 @@
 from core.world.utils.point import Point
 from core.world.utils.event_emiter import EventEmitter
-from core.world.settings import STEP_TIME
+from core.world.settings import STEP_TIME, MAX_ATTACK_DISTANCE
 from core.world.entities.base.live_entity.visual_sensor import VisualSensor
 from core.world.entities.base.live_entity.temperature_sensor import TemperatureSensor
 from core.world.entities.base.enemy_interface import iEnemy
@@ -125,7 +125,7 @@ class LiveBody(Body):
 
     def is_near_to_attack(self, point: Point):
         dist = self.position.dist(point)
-        return dist <= self.stats.distance_per_step / 2
+        return dist <= MAX_ATTACK_DISTANCE
     
     # def calc_distance_to(self, point: Point):
     #     return self.position.dist(point)
@@ -141,6 +141,12 @@ class LiveBody(Body):
 
         return nearest_point
     
+    def sort_by_distance(self, entities: List[Entity]):
+        entities = entities.copy()
+        key: Callable[[Entity], int] = lambda entity: self.position.dist(entity.position)
+        entities.sort(key=key)
+        return entities
+    
     def look_around(self, types_list: List[EntityTypes] = None, filter: Callable = None, nearest_first = False):
         entities = self._visual_sensor.get_nearby_entities(types_list, filter)
         if nearest_first:
@@ -154,7 +160,7 @@ class LiveBody(Body):
 
     def look_around_for_enemies(self) -> List[iEnemy]:
         enemies_filter: Callable[[Entity], bool] = lambda entity: not entity.is_died and self._relation_tester.is_enemy(entity)
-        return self._visual_sensor.get_nearby_entities(EntityTypesPack.LIVE_ENTITIES, enemies_filter)
+        return self.look_around(EntityTypesPack.LIVE_ENTITIES, enemies_filter, True)
     
     def receive_colony_signal(self, signal: dict):
         self.events.emit(f'colony_signal:{ signal["type"] }', signal)

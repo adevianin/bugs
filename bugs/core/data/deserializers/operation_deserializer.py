@@ -3,12 +3,14 @@ from core.world.utils.point import Point
 from core.world.entities.base.entity_collection import EntityCollection
 from core.world.entities.colony.colonies.ant_colony.operation.base.operation_types import OperationTypes
 from .formation_deserializer import FormationDeserializer
+from .fight_deserializer import FightDeserializer
 
 class OperationDeserializer():
 
-    def __init__(self, operation_factory: OperationFactory, formation_deserializer: FormationDeserializer):
+    def __init__(self, operation_factory: OperationFactory, formation_deserializer: FormationDeserializer, fight_deserializer: FightDeserializer):
         self._operation_factory = operation_factory
         self._formation_deserializer = formation_deserializer
+        self._fight_deserializer = fight_deserializer
 
     def deserialize_operation(self, operation_json: dict, entities_collection: EntityCollection):
         match(operation_json['type']):
@@ -28,11 +30,14 @@ class OperationDeserializer():
                 raise Exception('unknown type of operation')
             
     def _deserialize_basic_operation_props(self, operation_json: dict, entities_collection: EntityCollection):
+        formation = self._formation_deserializer.deserialize_formation(operation_json['formation'], entities_collection) if operation_json['formation'] else None
+        fight = self._fight_deserializer.deserialize_fight(operation_json['fight'], entities_collection) if operation_json['fight'] else None
         return {
             'id': operation_json['id'],
             'hired_ants': entities_collection.get_entities(operation_json['hired_ants']),
             'flags': operation_json['flags'],
-            'formations': [self._formation_deserializer.deserialize_formation(formation_json, entities_collection) for formation_json in operation_json['formations']]
+            'formation': formation,
+            'fight': fight
         }
 
     def _build_build_new_sub_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
