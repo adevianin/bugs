@@ -8,9 +8,9 @@ from core.world.entities.ant.worker.worker_ant import WorkerAnt
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.nest.nest import Nest
 from core.world.entities.item.items.base.item import Item
-from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
-from core.world.entities.colony.colonies.ant_colony.formation.base.base_formation import BaseFormation
-from core.world.entities.colony.colonies.ant_colony.formation.bring_item_formation import BringItemFormation
+from core.world.entities.colony.colonies.ant_colony.operation.base.formation.formation_factory import FormationFactory
+from core.world.entities.colony.colonies.ant_colony.operation.base.formation.base.base_formation import BaseFormation
+from core.world.entities.colony.colonies.ant_colony.operation.base.formation.bring_item_formation import BringItemFormation
 
 
 from typing import List

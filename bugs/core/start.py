@@ -51,7 +51,7 @@ from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
 from core.world.entities.thought.thought_factory import ThoughtFactory
 from core.world.entities.map.map_factory import MapFactory
-from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
+from core.world.entities.colony.colonies.ant_colony.operation.base.formation.formation_factory import FormationFactory
 from core.world.entities.colony.colonies.ant_colony.operation.base.fight.fight_factory import FightFactory
 from core.world.entities.item.items.item_factory import ItemFactory
 from core.world.entities.item.item_sources.item_source_factory import ItemSourceFactory

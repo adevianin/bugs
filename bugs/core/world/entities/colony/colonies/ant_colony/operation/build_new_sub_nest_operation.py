@@ -7,9 +7,9 @@ from core.world.entities.ant.base.ant import Ant
 from core.world.entities.ant.worker.worker_ant import WorkerAnt
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
-from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
+from core.world.entities.colony.colonies.ant_colony.operation.base.formation.formation_factory import FormationFactory
 from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
-from core.world.entities.colony.colonies.ant_colony.formation.base.base_formation import BaseFormation
+from core.world.entities.colony.colonies.ant_colony.operation.base.formation.base.base_formation import BaseFormation
 
 from typing import List
 from functools import partial

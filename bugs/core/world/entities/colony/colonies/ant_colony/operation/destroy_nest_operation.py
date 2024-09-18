@@ -8,9 +8,9 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
 from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
-from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
-from core.world.entities.colony.colonies.ant_colony.formation.base.base_formation import BaseFormation
-from core.world.entities.colony.colonies.ant_colony.formation.attack_formation import AttackFormation
+from core.world.entities.colony.colonies.ant_colony.operation.base.formation.formation_factory import FormationFactory
+from core.world.entities.colony.colonies.ant_colony.operation.base.formation.base.base_formation import BaseFormation
+from core.world.entities.colony.colonies.ant_colony.operation.base.formation.attack_formation import AttackFormation
 
 class DestroyNestOperation(Operation):
 

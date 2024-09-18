@@ -8,9 +8,9 @@ from .marker_types import MarkerTypes
 from .operation_types import OperationTypes
 from typing import List
 from functools import partial
-from core.world.entities.colony.colonies.ant_colony.formation.base.base_formation import BaseFormation
+from core.world.entities.colony.colonies.ant_colony.operation.base.formation.base.base_formation import BaseFormation
 from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
-from core.world.entities.colony.colonies.ant_colony.formation.formation_factory import FormationFactory
+from core.world.entities.colony.colonies.ant_colony.operation.base.formation.formation_factory import FormationFactory
 from core.world.entities.colony.colonies.ant_colony.operation.base.fight.fight_factory import FightFactory
 from core.world.entities.colony.colonies.ant_colony.operation.base.fight.fight import Fight
 
