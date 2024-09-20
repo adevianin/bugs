@@ -19,9 +19,6 @@ class Fight():
 
         self._update_targets()
 
-        if not self._is_started:
-            self._start()
-
     @property
     def ants_ids(self) -> List[int]:
         return [ant.id for ant in self._ants]
@@ -29,8 +26,20 @@ class Fight():
     @property
     def is_started(self):
         return self._is_started
+    
+    def start(self):
+        for ant in self._ants:
+            ant.free_mind()
+            self._order_ant_to_fight_enemies(ant)
+
+    def step_pulse(self):
+        self._update_targets()
+
+        if len(self._targets) == 0:
+            self._done()
 
     def destroy(self):
+        self.events.remove_all_listeners()
         for ant in self._ants:
             self._stop_listen_ant(ant)
 
@@ -39,12 +48,6 @@ class Fight():
         self._stop_listen_ant(ant)
         if len(self._ants) == 0:
             self.events.emit('defeated')
-
-    def step_pulse(self):
-        self._update_targets()
-
-        if len(self._targets) == 0:
-            self._done()
 
     def _done(self):
         self.events.emit('won')
@@ -59,12 +62,6 @@ class Fight():
     def _filter_died_targets(self):
         is_alive_filter: Callable[[LiveEntity], bool] = lambda entity: not entity.is_died
         self._targets = list(filter(is_alive_filter, self._targets))
-
-    def _start(self):
-        for ant in self._ants:
-            ant.free_mind()
-            self._order_ant_to_fight_enemies(ant)
-        self._is_started = True
 
     def _order_ant_to_fight_enemies(self, ant: Ant):
         enemies = ant.sort_by_distance(self._targets)

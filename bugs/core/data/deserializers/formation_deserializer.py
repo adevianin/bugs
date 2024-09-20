@@ -1,6 +1,5 @@
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.formation_factory import FormationFactory
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.base.formation_types import FormationTypes
-from core.world.entities.colony.colonies.ant_colony.operation.base.formation.base.base_formation import FormationState
 from core.world.entities.base.entity_collection import EntityCollection
 from core.world.utils.point import Point
 
@@ -26,7 +25,6 @@ class FormationDeserializer():
             'units': entities_collection.get_entities(json['units_ids']),
             'destination_point': Point.from_json(json['destination_point']),
             'current_position': Point.from_json(json['current_position']),
-            'state': FormationState(json['state'])
         }
             
     def _build_bring_item_formation(self, json: dict, entities_collection: EntityCollection):

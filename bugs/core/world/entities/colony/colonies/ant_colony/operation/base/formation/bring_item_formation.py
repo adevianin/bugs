@@ -5,12 +5,11 @@ from core.world.utils.point import Point
 from .base.base_formation import BaseFormation
 from core.world.entities.item.items.base.item import Item
 from .base.formation_types import FormationTypes
-from .base.base_formation import FormationState
 
 class BringItemFormation(BaseFormation):
 
-    def __init__(self, events: EventEmitter, name: str, state: FormationState, units: List[Ant], current_position: Point, destination_point: Point, item: Item):
-        super().__init__(events, FormationTypes.BRING_ITEM, name, state, units, current_position, destination_point)
+    def __init__(self, events: EventEmitter, name: str, units: List[Ant], current_position: Point, destination_point: Point, item: Item):
+        super().__init__(events, FormationTypes.BRING_ITEM, name, units, current_position, destination_point)
         self._item = item
         self._item_size = item.body.SIZE
         self._item_bringing_speed = self._get_item_bringing_speed(units)

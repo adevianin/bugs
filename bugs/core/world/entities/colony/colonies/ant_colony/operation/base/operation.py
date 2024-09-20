@@ -133,14 +133,14 @@ class Operation(ABC):
         self.events.emit('change')
 
     def _on_step_start(self, step_number):
+        if not self._fight and self._is_aggressive_now():
+            if self._are_enemies_around():
+                self._init_fight(self._hired_ants)
+
         if self._fight:
             self._fight.step_pulse()
         elif self._formation:
             self._formation.step_pulse()
-
-        if not self._fight and self._is_aggressive_now():
-            if self._are_enemies_around():
-                self._init_fight(self._hired_ants)
 
     def _is_aggressive_now(self):
         return False
@@ -180,31 +180,38 @@ class Operation(ABC):
         del self._ants_listeners[ant]
 
     def _register_formation(self, formation: BaseFormation):
+        if self._fight:
+            raise Exception('cant register formation during fight')
         if self._formation:
             raise Exception('formation already registered')
         self._formation = formation
+        self._formation.start()
         self._listen_formation(formation)
 
-    def _listen_formation(self, formation: BaseFormation):
-        def on_formation_event(event_name: str):
-            def handler(*args, **kwargs):
-                self.events.emit(f'formation:{formation.name}:{event_name}')
-            return handler
-        
-        formation.events.add_listener('destroyed', self._on_formation_destroyed)
-        formation.events.add_listener('destroyed', on_formation_event('destroyed'))
-        formation.events.add_listener('done', on_formation_event('done'))
-
-    def _on_formation_destroyed(self):
+    def _destroy_formation(self):
+        self._formation.destroy()
         self._formation = None
+
+    def _listen_formation(self, formation: BaseFormation):
+        formation.events.add_listener('done', partial(self._on_formation_done, formation))
+        formation.events.add_listener('no_units', partial(self._on_formation_no_units, formation))
+
+    def _on_formation_done(self, formation: BaseFormation):
+        self.events.emit(f'formation:{formation.name}:done')
+        self._destroy_formation()
+
+    def _on_formation_no_units(self, formation: BaseFormation):
+        self.events.emit(f'formation:{formation.name}:no_units')
+        self._destroy_formation()
 
     def _init_fight(self, ants: List[Ant]):
         if self._fight:
             raise Exception('fight already inited')
         if self._formation:
-            self._formation.destroy()
+            self._destroy_formation()
         self.events.emit(f'fight_start:{self._stage}')
         self._fight = self._fight_factory.build_fight(ants)
+        self._fight.start()
         self._listen_fight(self._fight)
 
     def _destroy_fight(self):
@@ -214,10 +221,6 @@ class Operation(ABC):
     def _listen_fight(self, fight: Fight):
         fight.events.add_listener('won', self._on_fight_won)
         fight.events.add_listener('defeated', self._on_fight_defeated)
-
-    def _stop_listen_fight(self, fight: Fight):
-        fight.events.remove_listener('won', self._on_fight_won)
-        fight.events.remove_listener('defeated', self._on_fight_defeated)
 
     def _on_fight_won(self):
         self._destroy_fight()
@@ -300,8 +303,8 @@ class Operation(ABC):
     def _on_hired_ant_died(self, ant: Ant):
         if self._fight:
             self._fight.remove_ant(ant)
-        # if self._formation:
-        #     self._formation.remove_ant(ant)
+        if self._formation:
+            self._formation.remove_ant(ant)
         ant.leave_operation()
         self._hired_ants.remove(ant)
         self._stop_listen_ant(ant)

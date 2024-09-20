@@ -6,7 +6,6 @@ from core.world.entities.item.items.base.item import Item
 from core.world.entities.ant.base.ant_body import AntBody
 from core.world.entities.ant.base.ant import Ant
 from .convoy_formation import ConvoyFormation
-from .base.base_formation import FormationState
 from typing import Dict, List
 
 class FormationFactory():
@@ -14,17 +13,17 @@ class FormationFactory():
     def __init__(self):
         self._unit_size = AntBody.SIZE
 
-    def build_attack_formation(self, name: str, units: List[Ant], destination_point: Point, current_position: Point = None, state: FormationState = None):
+    def build_attack_formation(self, name: str, units: List[Ant], destination_point: Point, current_position: Point = None):
         events = EventEmitter()
         units = units.copy()
-        return AttackFormation(events, name, state, units, current_position, destination_point)
+        return AttackFormation(events, name, units, current_position, destination_point)
 
-    def build_bring_item_formation(self, name: str, units: List[Ant], destination_point: Point, item: Item, state: FormationState = None):
+    def build_bring_item_formation(self, name: str, units: List[Ant], destination_point: Point, item: Item):
         events = EventEmitter()
         units = units.copy()
-        return BringItemFormation( events, name, state, units, item.position, destination_point, item)
+        return BringItemFormation( events, name, units, item.position, destination_point, item)
     
-    def build_convoy_formation(self, name: str, units: List[Ant], destination_point: Point, current_position: Point = None, state: FormationState = None):
+    def build_convoy_formation(self, name: str, units: List[Ant], destination_point: Point, current_position: Point = None):
         events = EventEmitter()
         units = units.copy()
-        return ConvoyFormation(events, name, state, units, current_position, destination_point)
+        return ConvoyFormation(events, name, units, current_position, destination_point)

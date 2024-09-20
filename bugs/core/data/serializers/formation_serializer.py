@@ -22,8 +22,7 @@ class FormationSerializer():
             'name': formation.name,
             'units_ids': formation.units_ids,
             'current_position': formation.current_position,
-            'destination_point': formation.destination_point,
-            'state': formation.state
+            'destination_point': formation.destination_point
         }
     
     def _serialize_bring_item_formation(self, formation: BringItemFormation):
