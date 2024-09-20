@@ -68,9 +68,6 @@ class TransportFoodOperation(Operation):
     def _warriors(self) -> List[WarriorAnt]:
         return self.get_hired_ants(AntTypes.WARRIOR)
     
-    def _is_aggressive_now(self):
-        return True
-
     def _init_staff(self):
         super()._init_staff()
 
