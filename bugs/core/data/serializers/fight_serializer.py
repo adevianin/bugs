@@ -4,6 +4,5 @@ class FightSerializer():
 
     def serialize(self, fight: Fight):
         return {
-            'ants_ids': fight.ants_ids,
-            'is_started': fight.is_started
+            'ants_ids': fight.ants_ids
         }

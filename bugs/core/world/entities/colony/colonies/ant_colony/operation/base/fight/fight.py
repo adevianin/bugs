@@ -7,11 +7,10 @@ from functools import partial
 
 class Fight():
 
-    def __init__(self, events: EventEmitter, ants: List[Ant], is_started: bool):
+    def __init__(self, events: EventEmitter, ants: List[Ant]):
         self._listeners = {}
         self.events = events
         self._ants = ants.copy()
-        self._is_started = is_started
         self._targets = []
 
         for ant in self._ants:
@@ -22,10 +21,6 @@ class Fight():
     @property
     def ants_ids(self) -> List[int]:
         return [ant.id for ant in self._ants]
-    
-    @property
-    def is_started(self):
-        return self._is_started
     
     def start(self):
         for ant in self._ants:

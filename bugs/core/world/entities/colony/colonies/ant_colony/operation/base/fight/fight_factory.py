@@ -7,6 +7,6 @@ from typing import List
 
 class FightFactory():
 
-    def build_fight(self, units: List[Ant], is_started: bool = False):
+    def build_fight(self, units: List[Ant]):
         events = EventEmitter()
-        return Fight(events, units, is_started)
+        return Fight(events, units)

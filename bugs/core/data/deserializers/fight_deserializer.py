@@ -8,5 +8,4 @@ class FightDeserializer():
 
     def deserialize_fight(self, json: dict, entities_collection: EntityCollection):
         ants = entities_collection.get_entities(json['ants_ids'])
-        is_started = json['is_started']
-        return self._fight_factory.build_fight(ants, is_started)
+        return self._fight_factory.build_fight(ants)
