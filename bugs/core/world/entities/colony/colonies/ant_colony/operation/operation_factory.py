@@ -28,8 +28,8 @@ class OperationFactory():
     def build_destroy_nest_operation(self, nest: Nest, warriors_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formations: List[BaseFormation] = []):
         return DestroyNestOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, formations, nest, warriors_count)
     
-    def build_bring_item_to_nest_operation(self, nest: Nest, item: Item, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formations: List[BaseFormation] = []):
-        return BringItemToNestOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, formations, nest, item)
+    def build_bring_item_to_nest_operation(self, nest: Nest, item: Item, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
+        return BringItemToNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, nest, item)
     
     def build_pillage_nest_operation(self, nest_to_pillage: Nest, nest_for_loot: Nest, workers_count: int, warriors_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formations: List[BaseFormation] = []):
         return PillageNestOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, formations, nest_to_pillage, nest_for_loot, workers_count, warriors_count)

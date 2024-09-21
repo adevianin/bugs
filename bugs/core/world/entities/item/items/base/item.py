@@ -2,17 +2,19 @@ from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from core.world.entities.item.items.base.item_types import ItemTypes
-from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
 from core.world.entities.action.item_was_picked_up_action import ItemWasPickedUpAction
 from core.world.entities.action.item_was_dropped_action import ItemWasDroppedAction
 from core.world.entities.action.item_being_bringed_action import ItemBeingBringedAction
+from .item_body import ItemBody
 
 import random
 
 class Item(Entity):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, body: Body, item_type: ItemTypes, strength: int, variety: int, life_span: int, is_picked: bool):
+    _body: ItemBody
+
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, body: ItemBody, item_type: ItemTypes, strength: int, variety: int, life_span: int, is_picked: bool):
         super().__init__(event_bus, events, id, EntityTypes.ITEM, None, None, body)
         self._item_type = item_type
         self._is_picked = is_picked
@@ -49,6 +51,12 @@ class Item(Entity):
             self._life_span -= 1
             if self._life_span == 0 and not self._is_picked:
                 self.die()
+
+    def please_do_not_die(self):
+        self._life_span != -1
+
+    def refresh_life_span(self):
+        self._life_span = self._body.LIFE_SPAN
     
     def use(self, using_strength: int = None) -> int:
         if (using_strength is None):

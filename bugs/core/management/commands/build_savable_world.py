@@ -547,9 +547,9 @@ class Command(BaseCommand):
                 "type":"ant",
                 "from_colony_id":1,
                 "owner_id": 2,
-                "hp": 300,
+                "hp": 1000,
                 "position":[
-                    1300,
+                    1050,
                     500
                 ],
                 "angle": 0,
@@ -659,7 +659,7 @@ class Command(BaseCommand):
                 "owner_id": 2,
                 "hp": 300,
                 "position":[
-                    1250,
+                    1000,
                     500
                 ],
                 "angle": 0,
@@ -769,7 +769,7 @@ class Command(BaseCommand):
                 "owner_id": 2,
                 "hp": 300,
                 "position":[
-                    1250,
+                    1000,
                     450
                 ],
                 "angle": 0,
