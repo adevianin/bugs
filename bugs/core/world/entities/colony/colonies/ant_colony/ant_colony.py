@@ -64,7 +64,7 @@ class AntColony(Colony):
     
     def _on_start_step(self, step_number: int):
         self._check_enemies_in_colony_area()
-        self._clean_done_operations()
+        self._clean_completed_operations()
         self._hire_for_operations()
         if self._operation_has_changes:
             self._emit_operation_change()
@@ -88,19 +88,15 @@ class AntColony(Colony):
 
         return last_used_id + 1
     
-    def _clean_done_operations(self):
-        done_operations = []
+    def _clean_completed_operations(self):
+        completed_operations = []
         for operation in self._operations:
-            if operation.is_done or operation.is_canceled:
-                done_operations.append(operation)
+            if operation.is_completed:
+                completed_operations.append(operation)
         
-        for operation in done_operations:
-            self._remove_operation(operation)
+        for operation in completed_operations:
+            self._operations.remove(operation)
     
-    def _remove_operation(self, operation: Operation):
-        operation.events.remove_listener('change', self._on_operation_change)
-        self._operations.remove(operation)
-
     def _on_operation_change(self):
         self._operation_has_changes = True
 

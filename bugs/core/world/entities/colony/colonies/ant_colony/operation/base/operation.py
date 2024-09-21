@@ -68,6 +68,10 @@ class Operation(ABC):
         return self._is_canceled
     
     @property
+    def is_completed(self):
+        return self._is_done or self._is_canceled
+    
+    @property
     def status(self):
         if self.is_hiring:
             return OperationStatuses.HIRING
@@ -119,18 +123,18 @@ class Operation(ABC):
             self._hire_ant(ant)
     
     def done(self):
+        if self.is_completed:
+            raise Exception('operation is already compleated')
         self._is_done = True
-
-        self._on_operation_stop()
-
         self.events.emit('change')
+        self._on_operation_stop()
     
     def cancel(self):
+        if self.is_completed:
+            raise Exception('operation is already compleated')
         self._is_canceled = True
-
-        self._on_operation_stop()
-        
         self.events.emit('change')
+        self._on_operation_stop()
 
     def _on_step_start(self, step_number):
         if not self._fight and self._is_aggressive_now():
@@ -189,20 +193,21 @@ class Operation(ABC):
         self._listen_formation(formation)
 
     def _destroy_formation(self):
-        self._formation.destroy()
-        self._formation = None
+        if self._formation:
+            self._formation.destroy()
+            self._formation = None
 
     def _listen_formation(self, formation: BaseFormation):
         formation.events.add_listener('done', partial(self._on_formation_done, formation))
         formation.events.add_listener('no_units', partial(self._on_formation_no_units, formation))
 
     def _on_formation_done(self, formation: BaseFormation):
-        self.events.emit(f'formation:{formation.name}:done')
         self._destroy_formation()
+        self.events.emit(f'formation:{formation.name}:done')
 
     def _on_formation_no_units(self, formation: BaseFormation):
-        self.events.emit(f'formation:{formation.name}:no_units')
         self._destroy_formation()
+        self.events.emit(f'formation:{formation.name}:no_units')
 
     def _init_fight(self, ants: List[Ant]):
         if self._fight:
@@ -215,8 +220,9 @@ class Operation(ABC):
         self._listen_fight(self._fight)
 
     def _destroy_fight(self):
-        self._fight.destroy()
-        self._fight = None
+        if self._fight:
+            self._fight.destroy()
+            self._fight = None
 
     def _listen_fight(self, fight: Fight):
         fight.events.add_listener('won', self._on_fight_won)
@@ -313,6 +319,7 @@ class Operation(ABC):
         self._stop_listen_ant(ant)
         if len(self._hired_ants) == 0:
             self.cancel()
+        self.events.emit('hired_ant_died', ant)
 
     def _on_hired_ant_received_combat_damage(self, ant: Ant):
         if not self._fight:
@@ -322,7 +329,7 @@ class Operation(ABC):
         self._event_bus.remove_listener('step_start', self._on_step_start)
 
         if self._formation:
-            self._formation.destroy()
+            self._destroy_formation()
 
         if self._fight:
             self._destroy_fight()
@@ -330,4 +337,5 @@ class Operation(ABC):
         for ant in self._hired_ants:
             self._stop_listen_ant(ant)
             ant.leave_operation()
-    
+
+        self.events.remove_all_listeners()
