@@ -42,11 +42,15 @@ class Thought(ABC):
         return self._flags
     
     def done(self, results = None):
+        if self.is_completed:
+            raise Exception('thought is already compleated')
         self._write_flag('is_done', True)
         self._results = results
         self._on_stop_thinking()
 
     def cancel(self):
+        if self.is_completed:
+            raise Exception('thought is already compleated')
         self._write_flag('is_canceled', True)
         self._results = None
         self._on_stop_thinking()
