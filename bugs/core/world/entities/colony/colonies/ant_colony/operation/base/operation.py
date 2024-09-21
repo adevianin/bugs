@@ -286,6 +286,9 @@ class Operation(ABC):
         self._total_hiring_ants_count += count
 
     def _start_operation(self):
+        for ant in self._hired_ants:
+            ant.toggle_auto_thought_generation(False)
+            ant.free_mind()
         self._write_flag('is_operation_started', True)
 
     def _add_pointer_marker(self, point: Point):

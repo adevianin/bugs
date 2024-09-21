@@ -42,8 +42,6 @@ class AntMind(Mind):
         self._register_thought(thought)
 
     def prepare_for_operation(self, sayback: str = None):
-        self.toggle_auto_thought_generation(False)
-        self.free_mind()
         thought = self._thought_factory.build_prepare_for_operation_full(body=self._body, home_nest=self.home_nest, assemble_point=self._calc_assemble_point(), sayback=sayback)
         self._register_thought(thought)
     
