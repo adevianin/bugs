@@ -127,6 +127,9 @@ class Ant(LiveEntity):
     def free_mind(self):
         self._mind.free_mind()
 
+    def toggle_auto_thought_generation(self, is_enabled: bool):
+        self._mind.toggle_auto_thought_generation(is_enabled)
+
     def get_food_item_from_nest(self, nest: Nest):
         return self._body.get_food_item_from_nest(nest)
 
