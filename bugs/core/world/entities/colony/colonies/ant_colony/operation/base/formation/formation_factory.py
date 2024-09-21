@@ -21,7 +21,7 @@ class FormationFactory():
     def build_bring_item_formation(self, name: str, units: List[Ant], destination_point: Point, item: Item):
         events = EventEmitter()
         units = units.copy()
-        return BringItemFormation( events, name, units, item.position, destination_point, item)
+        return BringItemFormation(events, name, units, item.position, destination_point, item)
     
     def build_convoy_formation(self, name: str, units: List[Ant], destination_point: Point, current_position: Point = None):
         events = EventEmitter()
