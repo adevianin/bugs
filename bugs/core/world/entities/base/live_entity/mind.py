@@ -60,7 +60,8 @@ class Mind(ABC):
     def free_mind(self):
         if self._has_thoughts_to_do():
             for thought in self._thoughts_stack:
-                thought.cancel()
+                if not thought.is_completed:
+                    thought.cancel()
         # self._thoughts_stack.clear() do not clear thought stack here
 
     @abstractmethod
