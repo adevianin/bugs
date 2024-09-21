@@ -21,6 +21,7 @@ class FightEnemyThought(Thought):
     def do_step(self):
         if self._enemy.is_died:
             self.done()
+            return
 
         is_near_to_enemy = self._body.is_near_to_attack(self._enemy.position)
 
