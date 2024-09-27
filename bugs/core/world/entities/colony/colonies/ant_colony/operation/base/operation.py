@@ -36,6 +36,8 @@ class Operation(ABC):
         self._fight = fight
         self._ants_listeners = {}
 
+        self._init_stage()
+
         if self._fight:
             self._listen_fight(self._fight)
 
@@ -96,7 +98,7 @@ class Operation(ABC):
     
     @property
     def _stage(self):
-        return self._flags['stage'] or 'start'
+        return self._flags['stage']
     
     @_stage.setter
     def _stage(self, name: str):
@@ -124,14 +126,14 @@ class Operation(ABC):
     
     def done(self):
         if self.is_completed:
-            raise Exception('operation is already compleated')
+            return
         self._is_done = True
         self.events.emit('change')
         self._on_operation_stop()
     
     def cancel(self):
         if self.is_completed:
-            raise Exception('operation is already compleated')
+            return
         self._is_canceled = True
         self.events.emit('change')
         self._on_operation_stop()
@@ -214,10 +216,11 @@ class Operation(ABC):
             raise Exception('fight already inited')
         if self._formation:
             self._destroy_formation()
-        self.events.emit(f'fight_start:{self._stage}')
         self._fight = self._fight_factory.build_fight(ants)
         self._fight.start()
         self._listen_fight(self._fight)
+        self.events.emit(f'fight_start')
+        self.events.emit(f'fight_start:{self._stage}')
 
     def _destroy_fight(self):
         if self._fight:
@@ -339,3 +342,7 @@ class Operation(ABC):
             ant.leave_operation()
 
         self.events.remove_all_listeners()
+
+    def _init_stage(self):
+        if 'stage' not in self._flags:
+            self._stage = 'start'

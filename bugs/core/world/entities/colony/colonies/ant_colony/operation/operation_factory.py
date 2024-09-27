@@ -37,5 +37,5 @@ class OperationFactory():
     def build_transport_food_operation(self, nest_from: Nest, nest_to: Nest, workers_count: int, warriors_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
         return TransportFoodOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, nest_from, nest_to, workers_count, warriors_count)
     
-    def build_build_fortification(self, nest: Nest, workers_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formations: List[BaseFormation] = []):
-        return BuildFortificationOperation(EventEmitter(), self._formation_factory, id, hired_ants, flags, formations, nest, workers_count)
+    def build_build_fortification(self, nest: Nest, workers_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
+        return BuildFortificationOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, nest, workers_count)

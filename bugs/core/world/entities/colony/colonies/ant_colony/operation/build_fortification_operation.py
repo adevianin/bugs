@@ -8,16 +8,17 @@ from core.world.entities.ant.worker.worker_ant import WorkerAnt
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
-
-# from core.world.my_test_env import MY_TEST_ENV
+from .base.fight.fight_factory import FightFactory
+from .base.fight.fight import Fight
 
 from typing import List
 from functools import partial
 
 class BuildFortificationOperation(Operation):
 
-    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, hired_ants: List[Ant], flags: dict, formations: List[BaseFormation], nest: Nest, workers_count: int):
-        super().__init__(events, formation_factory, id, OperationTypes.BUILD_FORTIFICATION, hired_ants, flags, formations)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, formation_factory: FormationFactory, fight_factory: FightFactory, id: int, hired_ants: List[Ant], 
+                 flags: dict, formation: BaseFormation, fight: Fight, nest: Nest, workers_count: int):
+        super().__init__(event_bus, events, formation_factory, fight_factory, id, OperationTypes.BUILD_FORTIFICATION, hired_ants, flags, formation, fight)
         self._nest = nest
         self._workers_count = workers_count
         self._name = 'будування фортицікацій'
@@ -25,6 +26,7 @@ class BuildFortificationOperation(Operation):
         self._add_marker(MarkerTypes.POINTER, self._nest.position)
 
         self._nest.events.add_listener('is_under_attack', self._on_nest_is_under_attack)
+        self.events.add_listener('fight_start', self._on_fight_start)
 
     @property
     def nest_id(self):
@@ -83,4 +85,7 @@ class BuildFortificationOperation(Operation):
             ant.build_fortification(self._nest, 'added_fortification_piece')
 
     def _on_nest_is_under_attack(self, enemies_positions):
+        self.cancel()
+
+    def _on_fight_start(self):
         self.cancel()
