@@ -24,6 +24,6 @@ class BuildNestThought(Thought):
         if (self._building_nest.is_built):
             if self._get_inside_once_done:
                 self._body.get_in_nest(self._building_nest)
-            self.done(self._building_nest)
+            self.done()
         else:
             self._body.build_nest(self._building_nest)

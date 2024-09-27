@@ -42,8 +42,11 @@ class OperationDeserializer():
 
     def _build_build_new_sub_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
         props = self._deserialize_basic_operation_props(operation_json, entities_collection)
+        building_site = Point.from_json(operation_json['building_site'])
+        building_nest = entities_collection.get_entity_by_id(operation_json['building_nest_id']) if operation_json['building_nest_id'] else None
         props.update({
-            'building_site': Point.from_json(operation_json['building_site']),
+            'building_site': building_site,
+            'building_nest': building_nest,
             'workers_count': operation_json['workers_count']
         })
         return self._operation_factory.build_build_new_sub_nest_operation(**props)

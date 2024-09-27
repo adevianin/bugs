@@ -46,6 +46,7 @@ class OperationSerializer():
         json = self._serialize_operation(operation)
         json.update({
             'building_site': operation.building_site,
+            'building_nest_id': operation.building_nest_id,
             'workers_count': operation.workers_count
         })
 
