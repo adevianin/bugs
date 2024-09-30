@@ -66,6 +66,10 @@ class Ant(LiveEntity):
     def guardian_behavior(self) -> GuardianBehaviors:
         return self._mind.guardian_behavior
     
+    @property
+    def is_in_nest(self) -> bool:
+        return self._body.is_in_nest
+    
     @guardian_behavior.setter
     def guardian_behavior(self, behavior: GuardianBehaviors):
         self._mind.guardian_behavior = behavior

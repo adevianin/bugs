@@ -25,6 +25,8 @@ class Fight():
     def start(self):
         for ant in self._ants:
             ant.free_mind()
+            if ant.is_in_nest:
+                ant.get_out_of_nest()
             self._order_ant_to_fight_enemies(ant)
 
     def step_pulse(self):

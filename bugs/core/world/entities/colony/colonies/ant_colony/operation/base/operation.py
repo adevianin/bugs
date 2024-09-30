@@ -6,13 +6,14 @@ from .operation_statuses import OperationStatuses
 from core.world.utils.point import Point
 from .marker_types import MarkerTypes
 from .operation_types import OperationTypes
-from typing import List
+from typing import List, Callable
 from functools import partial
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.base.base_formation import BaseFormation
 from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.formation_factory import FormationFactory
 from core.world.entities.colony.colonies.ant_colony.operation.base.fight.fight_factory import FightFactory
 from core.world.entities.colony.colonies.ant_colony.operation.base.fight.fight import Fight
+from core.world.entities.base.live_entity.live_entity import LiveEntity
 
 class Operation(ABC):
 
@@ -35,6 +36,7 @@ class Operation(ABC):
         self._formation = formation
         self._fight = fight
         self._ants_listeners = {}
+        self._aggression_targets_filter: Callable[[LiveEntity], bool] = None
 
         self._init_stage()
 
@@ -104,6 +106,9 @@ class Operation(ABC):
     def _stage(self, name: str):
         self._flags['stage'] = name
 
+    def _is_aggressive_now(self):
+        return False
+
     def get_hired_ants(self, ant_type: AntTypes = None):
         if (ant_type):
             res = []
@@ -139,21 +144,19 @@ class Operation(ABC):
         self._on_operation_stop()
 
     def _on_step_start(self, step_number):
-        if not self._fight and self._is_aggressive_now():
-            if self._are_enemies_around():
-                self._init_fight(self._hired_ants)
+        if not self._fight and self._is_aggressive_now() and self._check_for_aggression_targets():
+            self._init_fight(self._hired_ants)
 
         if self._fight:
             self._fight.step_pulse()
         elif self._formation:
             self._formation.step_pulse()
 
-    def _is_aggressive_now(self):
-        return False
-    
-    def _are_enemies_around(self):
+    def _check_for_aggression_targets(self):
         for ant in self._hired_ants:
             enemies = ant.look_around_for_enemies()
+            if self._aggression_targets_filter:
+                enemies = list(filter(self._aggression_targets_filter, enemies))
             if len(enemies):
                 return True
 
