@@ -47,8 +47,8 @@ class BuildNewSubNestOperation(Operation):
     def workers_count(self):
         return self._workers_count
     
-    def _init_staff(self):
-        super()._init_staff()
+    def _setup_operation(self):
+        super()._setup_operation()
 
         self._workers = self.get_hired_ants(AntTypes.WORKER)
 
@@ -65,7 +65,7 @@ class BuildNewSubNestOperation(Operation):
         self._stage = 'preparing'
         for worker in self._workers:
             self._write_flag(f'worker_{worker.id}_prepared', False)
-            worker.prepare_for_operation('prepared')
+            worker.prepare_for_operation(self._assemble_point, 'prepared')
 
     def _on_worker_prepared(self, worker: WorkerAnt):
         self._write_flag(f'worker_{worker.id}_prepared', True)

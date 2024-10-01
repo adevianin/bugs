@@ -68,8 +68,8 @@ class PillageNestOperation(Operation):
     def _is_aggressive_now(self):
         return self._read_flag('is_agressive')
     
-    def _init_staff(self):
-        super()._init_staff()
+    def _setup_operation(self):
+        super()._setup_operation()
 
         for ant in self._workers:
             ant.body.sayer.add_listener('worker_is_approached_nest_to_pillage', partial(self._on_worker_is_approached_nest_to_pillage, ant))
@@ -89,7 +89,7 @@ class PillageNestOperation(Operation):
         self._write_flag('is_agressive', False)
         for ant in self._hired_ants:
             self._write_flag(f'ant_{ant.id}_prepared', False)
-            ant.prepare_for_operation('prepared')
+            ant.prepare_for_operation(self._assemble_point, 'prepared')
 
     def _on_ant_prepared(self, ant: Ant):
         self._write_flag(f'ant_{ant.id}_prepared', True)

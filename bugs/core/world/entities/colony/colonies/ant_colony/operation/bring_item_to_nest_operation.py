@@ -50,8 +50,8 @@ class BringItemToNestOperation(Operation):
     def _workers(self) -> List[WorkerAnt]:
         return self.get_hired_ants(AntTypes.WORKER)
     
-    def _init_staff(self):
-        super()._init_staff()
+    def _setup_operation(self):
+        super()._setup_operation()
         ants = self._workers
 
         for ant in ants:
@@ -75,7 +75,7 @@ class BringItemToNestOperation(Operation):
         self._stage = 'preparing'
         for ant in self._workers:
             self._write_flag(f'worker_{ant.id}_prepared', False)
-            ant.prepare_for_operation('prepared')
+            ant.prepare_for_operation(self._assemble_point, 'prepared')
 
     def _on_worker_prepared(self, ant: WorkerAnt):
         self._write_flag(f'worker_{ant.id}_prepared', True)

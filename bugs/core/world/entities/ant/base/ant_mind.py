@@ -41,8 +41,9 @@ class AntMind(Mind):
         thought = self._thought_factory.build_collect_food_full(body=self._body, home_nest=self.home_nest, sayback=sayback)
         self._register_thought(thought)
 
-    def prepare_for_operation(self, sayback: str = None):
-        thought = self._thought_factory.build_prepare_for_operation_full(body=self._body, home_nest=self.home_nest, assemble_point=self._calc_assemble_point(), sayback=sayback)
+    def prepare_for_operation(self, assemble_point: Point = None, sayback: str = None):
+        assemble_point = assemble_point or self._calc_assemble_point()
+        thought = self._thought_factory.build_prepare_for_operation_full(body=self._body, home_nest=self.home_nest, assemble_point=assemble_point, sayback=sayback)
         self._register_thought(thought)
     
     def relocate_to_nest(self, nest: Nest):

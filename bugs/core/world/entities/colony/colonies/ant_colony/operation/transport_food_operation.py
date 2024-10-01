@@ -68,8 +68,8 @@ class TransportFoodOperation(Operation):
     def _warriors(self) -> List[WarriorAnt]:
         return self.get_hired_ants(AntTypes.WARRIOR)
     
-    def _init_staff(self):
-        super()._init_staff()
+    def _setup_operation(self):
+        super()._setup_operation()
 
         for ant in self._hired_ants:
             ant.body.sayer.add_listener('prepared', partial(self._on_ant_prepared, ant))
@@ -92,7 +92,7 @@ class TransportFoodOperation(Operation):
         self._stage = 'preparing'
         for ant in self._hired_ants:
             self._write_flag(f'ant_{ant.id}_prepared', False)
-            ant.prepare_for_operation('prepared')
+            ant.prepare_for_operation(self._assemble_point, 'prepared')
 
     def _on_ant_prepared(self, ant: Ant):
         self._write_flag(f'ant_{ant.id}_prepared', True)

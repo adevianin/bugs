@@ -8,6 +8,7 @@ from .marker_types import MarkerTypes
 from .operation_types import OperationTypes
 from typing import List, Callable
 from functools import partial
+from collections import Counter
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.base.base_formation import BaseFormation
 from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.formation_factory import FormationFactory
@@ -38,16 +39,8 @@ class Operation(ABC):
         self._ants_listeners = {}
         self._aggression_targets_filter: Callable[[LiveEntity], bool] = None
 
-        self._init_stage()
-
-        if self._fight:
-            self._listen_fight(self._fight)
-
-        if self._formation:
-            self._listen_formation(self._formation)
-
         if (self._read_flag('is_operation_started')):
-            self._subscribe_events()
+            self._setup_operation()
 
     @property
     def formation(self) -> BaseFormation:
@@ -143,6 +136,34 @@ class Operation(ABC):
         self.events.emit('change')
         self._on_operation_stop()
 
+    def _start_operation(self):
+        self._write_flag('is_operation_started', True)
+        self._stage = 'start'
+        self._setup_operation()
+        for ant in self._hired_ants:
+            ant.toggle_auto_thought_generation(False)
+            ant.free_mind()
+
+    def _setup_operation(self):
+        self._init_assemble_point()
+        
+        if self._fight:
+            self._listen_fight(self._fight)
+
+        if self._formation:
+            self._listen_formation(self._formation)
+
+        for ant in self._hired_ants:
+            self._listen_ant(ant)
+
+        self._event_bus.add_listener('step_start', self._on_step_start)
+
+    def _init_assemble_point(self):
+        nests = [ant.home_nest for ant in self._hired_ants]
+        nests_counts = Counter(nests)
+        most_common_nest = nests_counts.most_common(1)[0][0]
+        self._assemble_point = Point(most_common_nest.position.x, most_common_nest.position.y + 40) 
+
     def _on_step_start(self, step_number):
         if not self._fight and self._is_aggressive_now() and self._check_for_aggression_targets():
             self._init_fight(self._hired_ants)
@@ -162,15 +183,6 @@ class Operation(ABC):
 
         return False
     
-    def _subscribe_events(self):
-        self._event_bus.add_listener('step_start', self._on_step_start)
-        self._init_staff()
-
-    def _init_staff(self):
-        ants = self.get_hired_ants()
-        for ant in ants:
-            self._listen_ant(ant)
-
     def _listen_ant(self, ant: Ant):
         self._ants_listeners[ant] = {}
 
@@ -273,7 +285,6 @@ class Operation(ABC):
         self.events.emit('change')
 
     def _on_hired_all(self):
-        self._subscribe_events()
         self._start_operation()
 
     def _read_flag(self, flag_name: str):
@@ -296,12 +307,6 @@ class Operation(ABC):
     def _open_vacancies(self, ant_type: AntTypes, count: int, required_genes: List[GenesTypes] = None):
         self._vacancies[ant_type] = { 'count': count, 'required_genes': required_genes }
         self._total_hiring_ants_count += count
-
-    def _start_operation(self):
-        for ant in self._hired_ants:
-            ant.toggle_auto_thought_generation(False)
-            ant.free_mind()
-        self._write_flag('is_operation_started', True)
 
     def _add_pointer_marker(self, point: Point):
         self._markers.append({
@@ -345,7 +350,3 @@ class Operation(ABC):
             ant.leave_operation()
 
         self.events.remove_all_listeners()
-
-    def _init_stage(self):
-        if 'stage' not in self._flags:
-            self._stage = 'start'

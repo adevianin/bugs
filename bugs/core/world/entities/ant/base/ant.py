@@ -74,8 +74,8 @@ class Ant(LiveEntity):
     def guardian_behavior(self, behavior: GuardianBehaviors):
         self._mind.guardian_behavior = behavior
     
-    def prepare_for_operation(self, sayback: str = None):
-        self._mind.prepare_for_operation(sayback)
+    def prepare_for_operation(self, assemble_point: Point = None, sayback: str = None):
+        self._mind.prepare_for_operation(assemble_point, sayback)
     
     def collect_food(self, sayback: str = None):
         self._mind.collect_food(sayback)
