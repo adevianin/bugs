@@ -143,6 +143,7 @@ class PillageNestOperation(Operation):
 
     def _march_to_nest_for_loot(self):
         self._stage = 'march_to_nest_for_loot'
+        # self._write_flag('is_agressive', False)
         units = self._warriors + self._workers
         formation = self._formation_factory.build_attack_formation('march_to_nest_for_loot', units, self._nest_for_loot.position)
         self._register_formation(formation)
