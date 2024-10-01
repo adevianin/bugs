@@ -10,19 +10,31 @@ from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types 
 from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.formation_factory import FormationFactory
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.base.base_formation import BaseFormation
-from core.world.entities.colony.colonies.ant_colony.operation.base.formation.attack_formation import AttackFormation
+from .base.fight.fight_factory import FightFactory
+from .base.fight.fight import Fight
+
+from core.world.my_test_env import MY_TEST_ENV
 
 class DestroyNestOperation(Operation):
 
-    def __init__(self, events: EventEmitter, formation_factory: FormationFactory, id: int, hired_ants: List[Ant], flags: dict, formations: List[BaseFormation], nest: Nest, warriors_count: int):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, formation_factory: FormationFactory, fight_factory: FightFactory, id: int, hired_ants: List[Ant],
+                  flags: dict, formation: BaseFormation, fight: Fight, nest: Nest, warriors_count: int):
         self._nest = nest
         self._warriors_count = warriors_count
-        super().__init__(events, formation_factory, id, OperationTypes.DESTROY_NEST, hired_ants, flags, formations)
+        super().__init__(event_bus, events, formation_factory, fight_factory, id, OperationTypes.DESTROY_NEST, hired_ants, flags, formation, fight)
         self._name = 'знищення мурашника'
         self._open_vacancies(AntTypes.WARRIOR, self._warriors_count)
         self._add_marker(MarkerTypes.CROSS, nest.position)
 
-        self.events.add_listener('formation:attack_formation:reached_destination', self._on_formation_reached_destination)
+        self._aggression_targets_filter = lambda entity: entity.from_colony_id == self._nest.from_colony_id
+
+        self.events.add_listener('formation:march_to_nest_to_destroy:done', self._destroy_step)
+        self.events.add_listener('formation:march_to_assemble_point:done', self.done)
+
+        self.events.add_listener('fight_won:preparing', self._prepare_step)
+        self.events.add_listener('fight_won:march_to_nest_to_destroy', self._march_to_nest_to_destroy_step)
+        self.events.add_listener('fight_won:destroying', self._destroy_step)
+        self.events.add_listener('fight_won:march_to_assemble_point', self._march_to_assemble_point)
 
     @property
     def nest_id(self):
@@ -36,8 +48,11 @@ class DestroyNestOperation(Operation):
     def _warriors(self) -> List[WarriorAnt]:
         return self.get_hired_ants(AntTypes.WARRIOR)
     
-    def _init_staff(self):
-        super()._init_staff()
+    def _is_aggressive_now(self):
+        return self._read_flag('is_agressive')
+    
+    def _setup_operation(self):
+        super()._setup_operation()
 
         for ant in self._warriors:
             ant.body.sayer.add_listener('prepared', partial(self._on_warrior_prepared, ant))
@@ -48,31 +63,34 @@ class DestroyNestOperation(Operation):
         self._prepare_step()
     
     def _prepare_step(self):
+        self._stage = 'preparing'
         for ant in self._warriors:
-            ant.prepare_for_operation('prepared')
+            self._write_ant_flag(ant, 'warrior_ready', False)
+            ant.prepare_for_operation(self._assemble_point, 'prepared')
 
     def _on_warrior_prepared(self, ant: WarriorAnt):
-        self._write_flag(f'warrior_{ant.id}_prepared', True)
-        if self._check_are_all_warriors_prepared():
-            self._attack_step()
-
-    def _check_are_all_warriors_prepared(self):
-        for ant in self._warriors:
-            if not self._read_flag(f'warrior_{ant.id}_prepared'):
-                return False
-        return True
+        self._write_ant_flag(ant, 'warrior_ready', True)
+        if self._check_ant_flag_for_ants(self._warriors, 'warrior_ready'):
+            self._march_to_nest_to_destroy_step()
     
-    def _attack_step(self):
-        formation = self._formation_factory.build_attack_formation('attack_formation', self._warriors, self._nest.position)
+    def _march_to_nest_to_destroy_step(self):
+        self._stage = 'march_to_nest_to_destroy'
+        self._write_flag('is_agressive', True)
+        formation = self._formation_factory.build_attack_formation('march_to_nest_to_destroy', self._warriors, self._nest.position)
         self._register_formation(formation)
 
-    def _on_formation_reached_destination(self):
-        self._destroy_step()
-
     def _destroy_step(self):
+        self._stage = 'destroying'
         for ant in self._warriors:
             ant.attack_nest(nest=self._nest, sayback='nest_destroyed')
 
     def _on_nest_destroyed(self):
-        self.done()
+        if not self._read_flag('nest_destroyed'):
+            self._write_flag('nest_destroyed', True)
+            self._march_to_assemble_point()
+
+    def _march_to_assemble_point(self):
+        self._stage = 'march_to_assemble_point'
+        formation = self._formation_factory.build_attack_formation('march_to_assemble_point', self._warriors, self._assemble_point)
+        self._register_formation(formation)
     

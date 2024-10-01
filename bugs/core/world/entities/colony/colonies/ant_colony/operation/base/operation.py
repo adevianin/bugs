@@ -294,7 +294,22 @@ class Operation(ABC):
             return False
         
     def _write_flag(self, flag_name: str, value: bool):
-        self._flags[flag_name] = value
+        self._flags[flag_name] = bool(value)
+
+    def _write_ant_flag(self, ant: Ant, flag_name: str, value: bool):
+        self._write_flag(self._build_ant_flag(ant, flag_name), value)
+
+    def _read_ant_flag(self, ant: Ant, flag_name: str) -> bool:
+        return self._read_flag(self._build_ant_flag(ant, flag_name))
+    
+    def _check_ant_flag_for_ants(self, ants: List[Ant], flag_name: str) -> bool:
+        for ant in ants:
+            if not self._read_ant_flag(ant, flag_name):
+                return False
+        return True
+        
+    def _build_ant_flag(self, ant: Ant, flag_name: str):
+        return f'ant_flag_{ant.id}_{flag_name}'
 
     def _count_hired_ants(self, ant_type: AntTypes):
         count = 0
