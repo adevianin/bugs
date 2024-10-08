@@ -21,7 +21,7 @@ class LiveEntity(Entity, iEnemy):
         super().__init__(event_bus, events, id, type, from_colony_id, owner_id, body)
         self._mind: Mind = mind
 
-        self._body.events.add_listener('walk', self._on_walk)
+        self._body.events.add_listener('step', self._on_step)
         self._body.events.add_listener('received_combat_damage', self._on_received_combat_damage)
 
     @property
@@ -62,8 +62,8 @@ class LiveEntity(Entity, iEnemy):
 
         self._mind.do_step()
 
-    def _on_walk(self, position: Point):
-        self.events.emit('walk')
+    def _on_step(self, position: Point):
+        self.events.emit('step')
         self._emit_action(EntityWalkAction.build(self.id, position))
 
     def _on_received_combat_damage(self):

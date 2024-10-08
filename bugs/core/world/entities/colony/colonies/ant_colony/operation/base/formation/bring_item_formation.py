@@ -15,7 +15,7 @@ class BringItemFormation(BaseFormation):
         self._item_bringing_speed = self._get_item_bringing_speed(units)
         self._listening_ant = None
 
-        self._listen_ant_walk()
+        self._listen_ant_step()
 
     @property
     def item_id(self):
@@ -23,17 +23,17 @@ class BringItemFormation(BaseFormation):
     
     def destroy(self):
         super().destroy()
-        self._stop_listen_ant_walk()
+        self._stop_listen_ant_step()
 
-    def _listen_ant_walk(self):
+    def _listen_ant_step(self):
         self._listening_ant = self._units[0]
-        self._listening_ant.events.add_listener('walk', self._on_ant_walk)
+        self._listening_ant.events.add_listener('step', self._on_ant_step)
 
-    def _stop_listen_ant_walk(self):
-        self._listening_ant.events.remove_listener('walk', self._on_ant_walk)
+    def _stop_listen_ant_step(self):
+        self._listening_ant.events.remove_listener('step', self._on_ant_step)
         self._listening_ant = None
     
-    def _on_ant_walk(self):
+    def _on_ant_step(self):
         if not self._current_position.is_equal(self._item.position):
             self._item.be_bringed_to(self._current_position, self._item_bringing_speed)
 

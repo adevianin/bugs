@@ -60,7 +60,7 @@ class LiveBody(Body):
         # self._consume_calories(investing_calories)
         self.position = new_position
 
-        self.events.emit('walk', new_position)
+        self.events.emit('step', new_position)
         
         return is_walk_done
     
