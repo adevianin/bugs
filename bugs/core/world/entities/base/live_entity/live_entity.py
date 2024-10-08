@@ -63,7 +63,6 @@ class LiveEntity(Entity, iEnemy):
         self._mind.do_step()
 
     def _on_step(self, position: Point):
-        self.events.emit('step')
         self._emit_action(EntityWalkAction.build(self.id, position))
 
     def _on_received_combat_damage(self):

@@ -21,6 +21,8 @@ class Item(Entity):
         self._variety = variety
         self._strength = strength
         self._life_span = life_span
+        self._bringing_position = None
+        self._bringing_speed = None
 
     @property
     def item_type(self):
@@ -52,6 +54,9 @@ class Item(Entity):
             if self._life_span == 0 and not self._is_picked:
                 self.die()
 
+        if self._bringing_position:
+            self._be_bringed()
+
     def please_do_not_die(self):
         self._life_span != -1
 
@@ -78,9 +83,18 @@ class Item(Entity):
         self._body.position = position
         self._emit_action(ItemWasDroppedAction.build(self.id, self.position))
 
-    def be_bringed_to(self, position: Point, bringing_speed: int):
-        self._body.position = position
-        self._emit_action(ItemBeingBringedAction.build(self.id, self._body.position, bringing_speed))
+    def setup_bringing(self, position: Point, bringing_speed: int):
+        self._bringing_position = position
+        self._bringing_speed = bringing_speed
+
+    def clear_bringing(self):
+        self._bringing_position = None
+        self._bringing_speed = None
+
+    def _be_bringed(self):
+        self._body.position = self._bringing_position
+        self._emit_action(ItemBeingBringedAction.build(self.id, self._body.position, self._bringing_speed))
 
     def _almost_die(self):
         self._life_span = random.randint(3, 6)
+        
