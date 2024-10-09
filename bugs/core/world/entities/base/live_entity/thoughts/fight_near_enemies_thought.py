@@ -28,8 +28,6 @@ class FightNearEnemiesThought(Thought):
             if not self.fight_enemy_thought.has_enemy_to_fight:
                 self._search_enemies_to_fight()
 
-        return self.is_fighting
-
     def _search_enemies_to_fight(self):
         enemies = self._body.look_around_for_enemies()
         if (len(enemies) > 0):

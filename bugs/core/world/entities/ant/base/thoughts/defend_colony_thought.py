@@ -25,8 +25,8 @@ class DefendColonyThought(Thought):
         return self._point_to_check
     
     def do_step(self):
-        is_fighting = self.fight_near_enemies_thought.do_step()
-        if is_fighting:
+        self.fight_near_enemies_thought.do_step()
+        if self.fight_near_enemies_thought.is_fighting:
             return
         
         if self._point_to_check:

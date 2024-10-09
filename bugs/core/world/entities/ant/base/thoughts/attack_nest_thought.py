@@ -22,9 +22,9 @@ class AttackNestThought(Thought):
         return self._nest.id
     
     def do_step(self):
-        is_fighting = self.fight_near_enemies_thought.do_step()
-        if is_fighting:
-            return True
+        self.fight_near_enemies_thought.do_step()
+        if self.fight_near_enemies_thought.is_fighting:
+            return
         
         is_near_nest = self._body.is_near_to_attack(self._nest.position)
         if is_near_nest:
@@ -34,6 +34,6 @@ class AttackNestThought(Thought):
         else:
             self._body.step_to(self._nest.position)
 
-        return True
+        return
 
 

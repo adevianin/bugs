@@ -22,8 +22,8 @@ class KeepClearTerritoryThought(Thought):
         return self._nested_thoughts['fight_near_enemies_thought']
     
     def do_step(self):
-        self._write_flag('is_fighting', self.fight_near_enemies_thought.do_step())
-        if self._read_flag('is_fighting'):
+        self.fight_near_enemies_thought.do_step()
+        if self.fight_near_enemies_thought.is_fighting:
             return
         
         self.random_walk_thought.do_step()
