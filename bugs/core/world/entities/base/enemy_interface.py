@@ -27,3 +27,8 @@ class iEnemy(ABC):
     @abstractmethod
     def events(self) -> EventEmitter:
         pass
+
+    @property
+    @abstractmethod
+    def is_detectable(self) -> bool:
+        pass

@@ -22,6 +22,7 @@ class AntMind(Mind):
 
         self._body.events.add_listener('died', self._on_died)
         self._body.events.add_listener('colony_signal:enemy_spotted_in_colony_area', self._on_enemy_spotted_in_colony_area)
+        self._body.events.add_listener('received_combat_damage', self._on_received_combat_damage)
 
         self._listen_home_nest()
 
@@ -67,6 +68,14 @@ class AntMind(Mind):
         thought = self._thought_factory.build_defend_nest_thought_full(body=self._body, nest=nest, point_to_check=point_to_check, sayback=sayback)
         self._register_thought(thought=thought, immediately=True)
 
+    def defend_colony(self, point_to_check: Point, sayback: str = None):
+        thought = self._thought_factory.build_defend_colony_full(self._body, point_to_check, sayback)
+        self._register_thought(thought=thought, immediately=True)
+
+    def defend_myself(self, sayback: str = None):
+        thought = self._thought_factory.build_defend_myself_full(self._body, sayback=sayback)
+        self._register_thought(thought=thought, immediately=True)
+
     def hibernate(self, asap: bool = False):
         thought = self._thought_factory.build_hibernation_full(self._body, self.home_nest)
         self._register_thought(thought=thought, asap=asap)
@@ -78,10 +87,6 @@ class AntMind(Mind):
     # def get_stashed_item_back(self, sayback: str = None):
     #     thought = self._thought_factory.build_get_stashed_item_back(self._body, sayback=sayback)
     #     self._register_thought(thought=thought)
-
-    def defend_colony(self, point_to_check: Point, sayback: str = None):
-        thought = self._thought_factory.build_defend_colony_full(self._body, point_to_check, sayback)
-        self._register_thought(thought=thought, immediately=True)
 
     def toggle_is_in_operation(self, is_in_operation: bool):
         self._is_in_opearetion = is_in_operation
@@ -131,3 +136,9 @@ class AntMind(Mind):
 
         nearest_enemy_pos = self._body.calc_nearest_point(signal['enemies_positions'])
         self.defend_colony(nearest_enemy_pos)
+
+    def _on_received_combat_damage(self):
+        if self._is_in_opearetion or self._body.is_in_fight:
+            return
+
+        self.defend_myself()

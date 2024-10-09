@@ -14,20 +14,23 @@ class FightNearEnemiesThought(Thought):
     @property
     def fight_enemy_thought(self) -> FightEnemyThought:
         return self._nested_thoughts['fight_enemy_thought']
+    
+    @property
+    def is_fighting(self) -> bool:
+        return self.fight_enemy_thought.has_enemy_to_fight
 
     def do_step(self):
-        if (not self._read_flag('is_fighting_enemy')):
-            enemies = self._body.look_around_for_enemies()
-            is_enemy_near = len(enemies) > 0
-            if (is_enemy_near):
-                self._write_flag('is_fighting_enemy', True)
-                self.fight_enemy_thought.restart()
-                self.fight_enemy_thought.set_enemy(enemy=enemies[0])
-        
-        if (self._read_flag('is_fighting_enemy')):
+        if not self.fight_enemy_thought.has_enemy_to_fight:
+            self._search_enemies_to_fight()
+
+        if self.fight_enemy_thought.has_enemy_to_fight:
             self.fight_enemy_thought.do_step()
-            self._write_flag('is_fighting_enemy', not self.fight_enemy_thought.is_done)
-            return True
-        
-        return False
-        
+            if not self.fight_enemy_thought.has_enemy_to_fight:
+                self._search_enemies_to_fight()
+
+        return self.is_fighting
+
+    def _search_enemies_to_fight(self):
+        enemies = self._body.look_around_for_enemies()
+        if (len(enemies) > 0):
+            self.fight_enemy_thought.set_enemy(enemies[0])

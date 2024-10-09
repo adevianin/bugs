@@ -51,6 +51,8 @@ class ThoughtDeserializer():
                 return self._build_build_fortification(body, thought_json, entities_collection)
             case ThoughtTypes.DEFEND_COLONY:
                 return self._build_defend_colony(body, thought_json, entities_collection)
+            case ThoughtTypes.DEFEND_MYSELF:
+                return self._build_defend_myself(body, thought_json, entities_collection)
             case _:
                 raise Exception('unknown type of thought')
             
@@ -166,4 +168,10 @@ class ThoughtDeserializer():
         fight_near_enemies_thought = self.deserialize_thougth(body, thought_json['fight_near_enemies_thought'], entities_collection)
         point_to_check = Point.from_json(thought_json['point_to_check'])
         return self._thought_factory.build_defend_colony(body, fight_near_enemies_thought, point_to_check, flags, sayback)
+    
+    def _build_defend_myself(self, body: LiveBody, thought_json, entities_collection: EntityCollection):
+        flags = thought_json['flags']
+        sayback = thought_json['sayback']
+        fight_near_enemies_thought = self.deserialize_thougth(body, thought_json['fight_near_enemies_thought'], entities_collection)
+        return self._thought_factory.build_defend_myself(body, fight_near_enemies_thought, flags, sayback)
     

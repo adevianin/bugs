@@ -46,6 +46,14 @@ class LiveBody(Body):
     def is_no_calories(self):
         return self._calories <= 0
     
+    @property
+    def is_in_fight(self):
+        return bool(self.memory.read('is_in_fight'))
+    
+    @is_in_fight.setter
+    def is_in_fight(self, value: bool):
+        self.memory.save('is_in_fight', bool(value))
+    
     def step_to(self, destination_point: Point) -> bool:
         if self._has_stun_effect:
             return
@@ -158,9 +166,9 @@ class LiveBody(Body):
     def set_relation_tester(self, relation_tester: RelationTester):
         self._relation_tester = relation_tester
 
-    def look_around_for_enemies(self) -> List[iEnemy]:
+    def look_around_for_enemies(self, nearest_first: bool = True) -> List[iEnemy]:
         enemies_filter: Callable[[Entity], bool] = lambda entity: not entity.is_died and self._relation_tester.is_enemy(entity)
-        return self.look_around(EntityTypesPack.LIVE_ENTITIES, enemies_filter, True)
+        return self.look_around(EntityTypesPack.LIVE_ENTITIES, enemies_filter, nearest_first)
     
     def receive_colony_signal(self, signal: dict):
         self.events.emit(f'colony_signal:{ signal["type"] }', signal)

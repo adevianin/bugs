@@ -15,21 +15,37 @@ class FightEnemyThought(Thought):
     def enemy_id(self):
         return self._enemy.id if self._enemy and not self._enemy.is_died else None
     
+    @property
+    def has_enemy_to_fight(self) -> bool:
+        return bool(self._enemy) and not self._enemy.is_died and self._enemy.is_detectable
+    
     def set_enemy(self, enemy: iEnemy):
+        if self.is_completed:
+            self.restart()
         self._enemy = enemy
+        self._body.is_in_fight = True
 
     def do_step(self):
-        if self._enemy.is_died:
+        if not self.has_enemy_to_fight:
             self.done()
             return
-
+        
+        self._body.is_in_fight = True
+        
         is_near_to_enemy = self._body.is_near_to_attack(self._enemy.position)
-
         if is_near_to_enemy:
-            self._body.damage_enemy(self._enemy.body)
-            if self._enemy.is_died:
-                self.done()
+            self._damage_enemy()
         else:
             self._body.step_to_near(self._enemy.position)
+            is_near_to_enemy = self._body.is_near_to_attack(self._enemy.position)
+            if is_near_to_enemy:
+                self._damage_enemy()
 
-        
+    def _damage_enemy(self):
+        self._body.damage_enemy(self._enemy.body)
+        if self._enemy.is_died:
+            self.done()
+
+    def _on_stop_thinking(self):
+        super()._on_stop_thinking()
+        self._body.is_in_fight = False

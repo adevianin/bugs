@@ -26,6 +26,7 @@ from core.world.entities.ant.base.thoughts.shelter_in_nest import ShelterInNestT
 from core.world.entities.ant.base.thoughts.get_stashed_item_back_thought import GetStashedItemBack
 from core.world.entities.ant.base.thoughts.build_fortification_thought import BuildFortificationThought
 from core.world.entities.ant.base.thoughts.defend_colony_thought import DefendColonyThought
+from core.world.entities.ant.base.thoughts.defend_myself_thought import DefendMyselfThought
 
 class ThoughtFactory:
 
@@ -94,6 +95,9 @@ class ThoughtFactory:
     
     def build_defend_colony(self, body: LiveBody, fight_near_enemies_thought: FightNearEnemiesThought, point_to_check: Point = None, flags: dict = None, sayback: str = None):
         return DefendColonyThought(body, fight_near_enemies_thought, point_to_check, flags, sayback)
+    
+    def build_defend_myself(self, body: LiveBody, fight_near_enemies_thought: FightNearEnemiesThought, flags: dict = None, sayback: str = None):
+        return DefendMyselfThought(body, fight_near_enemies_thought, flags, sayback)
 
     def build_feed_myself_full(self, body: LiveBody, home_nest: Nest, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(body, home_nest.position, home_nest.area)
@@ -156,3 +160,7 @@ class ThoughtFactory:
     def build_defend_colony_full(self, body: LiveBody, point_to_check: Point, sayback: str = None) -> DefendColonyThought:
         fight_near_enemies_thought = self.build_fight_near_enemies_thought_full(body=body)
         return self.build_defend_colony(body, fight_near_enemies_thought, point_to_check, sayback=sayback)
+    
+    def build_defend_myself_full(self, body: LiveBody, sayback: str = None) -> DefendMyselfThought:
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full(body=body)
+        return self.build_defend_myself(body, fight_near_enemies_thought, sayback=sayback)

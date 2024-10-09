@@ -550,7 +550,7 @@ class Command(BaseCommand):
                 "hp": 1000,
                 "position":[
                     1050,
-                    500
+                    700
                 ],
                 "angle": 0,
                 "located_in_nest_id":None,
@@ -562,7 +562,7 @@ class Command(BaseCommand):
                 ],
                 "memory": {},
                 "is_auto_thought_generation": False,
-                "is_in_operation": True,
+                "is_in_operation": False,
                 "guardian_behavior": 'none',
                 "is_cooperative": False,
                 "genome": {
@@ -660,7 +660,7 @@ class Command(BaseCommand):
                 "hp": 300,
                 "position":[
                     1000,
-                    500
+                    700
                 ],
                 "angle": 0,
                 "located_in_nest_id":None,
@@ -672,7 +672,7 @@ class Command(BaseCommand):
                 ],
                 "memory": {},
                 "is_auto_thought_generation": False,
-                "is_in_operation": True,
+                "is_in_operation": False,
                 "guardian_behavior": 'none',
                 "is_cooperative": False,
                 "genome": {
@@ -770,7 +770,7 @@ class Command(BaseCommand):
                 "hp": 300,
                 "position":[
                     1000,
-                    450
+                    750
                 ],
                 "angle": 0,
                 "located_in_nest_id":None,
@@ -782,7 +782,7 @@ class Command(BaseCommand):
                 ],
                 "memory": {},
                 "is_auto_thought_generation": False,
-                "is_in_operation": True,
+                "is_in_operation": False,
                 "guardian_behavior": 'none',
                 "is_cooperative": False,
                 "genome": {
