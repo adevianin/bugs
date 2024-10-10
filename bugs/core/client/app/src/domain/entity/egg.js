@@ -1,33 +1,34 @@
 import { EventEmitter } from "@utils/eventEmitter";
 import { Genome } from "./genetic/genome";
+import { EggStates } from "@domain/enum/eggStates";
 
 class Egg extends EventEmitter {
 
     static buildFromJson(json) {
         let genome = Genome.buildFromJson(json.genome);
-        return new Egg(json.id, json.name, genome, json.progress, json.antType);
+        return new Egg(json.id, json.name, genome, json.progress, json.antType, json.state);
     }
 
-    constructor(id, name, genome, progress, antType) {
+    constructor(id, name, genome, progress, antType, state) {
         super();
         this.id = id;
         this.name = name;
         this.genome = genome;
-        this._progress = progress;
+        this.progress = progress;
         this.antType = antType;
+        this.state = state;
     }
 
     get isReady() {
-        return this.progress == 100;
+        return this.state == EggStates.READY;
     }
 
-    get progress() {
-        return this._progress;
+    get isDevelopment() {
+        return this.state == EggStates.DEVELOPMENT;
     }
 
-    set progress(value) {
-        this._progress = value;
-        this.emit('progressChanged');
+    get isSpoiled() {
+        return this.state == EggStates.SPOILED;
     }
 
     get isFertilized() {
@@ -36,6 +37,12 @@ class Egg extends EventEmitter {
 
     get avaliableAntTypes() {
         return this.genome.avaliableAntTypes;
+    }
+
+    updateProgress(progress, state) {
+        this.progress = progress;
+        this.state = state;
+        this.emit('progressChanged');
     }
 
 }

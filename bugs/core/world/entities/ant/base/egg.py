@@ -1,5 +1,6 @@
 from .genetic.genome import Genome
 from .ant_types import AntTypes
+from .egg_states import EggStates
 import uuid
 
 class Egg():
@@ -29,6 +30,10 @@ class Egg():
     def name(self):
         return self._name
     
+    @name.setter
+    def name(self, value: str):
+        self._name = value
+    
     @property
     def genome(self):
         return self._genome
@@ -51,8 +56,23 @@ class Egg():
     
     @property
     def is_ready(self):
-        return self._progress == 100
+        return self.state == EggStates.READY
     
+    @property
+    def is_spoiled(self):
+        return self.state == EggStates.SPOILED
+
+    @property
+    def state(self) -> EggStates:
+        if self._progress < 100:
+            return EggStates.DEVELOPMENT
+        elif self._progress >= 100 and self._progress < 300:
+            return EggStates.READY
+        else:
+            return EggStates.SPOILED
+
     def develop(self):
-        if not self.is_ready:
-            self._progress += 10
+        if self.state == EggStates.SPOILED:
+            return
+        
+        self._progress += 10

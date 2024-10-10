@@ -31,6 +31,7 @@ class AntView extends BaseHTMLView {
     _render() {
         this._el.innerHTML = antTmpl;
         this._el.querySelector('[data-id]').innerHTML = this._ant.id;
+        this._el.querySelector('[data-name]').innerHTML = this._ant.name;
         this._el.querySelector('[data-type]').innerHTML = this._ant.antType;
         this._el.querySelector('[data-attack]').innerHTML = this._ant.stats.attack;
         this._el.querySelector('[data-defence]').innerHTML = this._ant.stats.defence;

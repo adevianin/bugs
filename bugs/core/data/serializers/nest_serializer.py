@@ -16,8 +16,6 @@ class NestSerializer(EntitySerializer):
             'stored_calories': entity.stored_calories,
             'larvae':  self._larva_serializer.serialize_larvae(entity.larvae),
             'eggs':  self._egg_serializer.serialize_eggs(entity.eggs),
-            'larva_places_count': entity.larva_places_count,
-            'egg_places_count': entity.egg_places_count,
             'area': entity.area,
             'build_progress': entity.build_progress,
             'fortification': entity.fortification

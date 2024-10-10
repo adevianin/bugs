@@ -33,6 +33,7 @@ class AntClientSerializer(LiveEntityClientSerializer):
 
     def _serializer_common(self, json: dict, ant: Ant):
         json.update({
+            'name': ant.name,
             'picked_item_id': ant.body.picked_item_id,
             'ant_type': ant.ant_type,
             'located_in_nest_id': ant.body.located_in_nest_id,

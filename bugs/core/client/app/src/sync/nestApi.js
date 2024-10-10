@@ -17,6 +17,20 @@ class NestApi {
         });
     }
 
+    changeEggName(nestId, eggId, name) {
+        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/change_name`, {
+            name: name
+        });
+    }
+
+    eggToLarvaChamber(nestId, eggId) {
+        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/move_to_larva_chamber`);
+    }
+
+    eggDelete(nestId, eggId) {
+        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/delete`);
+    }
+
 }
 
 export {

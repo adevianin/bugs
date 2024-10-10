@@ -6,15 +6,13 @@ import { Egg } from './egg';
 
 class Nest extends Entity {
 
-    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp, 
+    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, isBuilt, hp, maxHp, 
         fortification, maxFortification) {
         super(eventBus, id, position, angle, EntityTypes.NEST, fromColony, ownerId, hp, maxHp);
         this._nestApi = nestApi;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
         this.eggs = eggs;
-        this.larvaPlacesCount = larvaPlacesCount;
-        this.eggPlacesCount = eggPlacesCount;
         this._fortification = fortification;
         this.maxFortification = maxFortification;
 
@@ -23,10 +21,6 @@ class Nest extends Entity {
 
     get takenChildPlacesCount() {
         return this.larvae.length + this.eggs.length;
-    }
-
-    get childPlacesCount() {
-        return this.larvaPlacesCount + this.eggPlacesCount;
     }
 
     get fortification() {
@@ -46,10 +40,33 @@ class Nest extends Entity {
         this._nestApi.addNewEgg(this.id, name, isFertilized);
     }
 
+    eggToLarvaChamber(eggId) {
+        this._nestApi.eggToLarvaChamber(this.id, eggId);
+    }
+
+    eggDelete(eggId) {
+        this._nestApi.eggDelete(this.id, eggId);
+
+        let egg = this._findEggById(eggId);
+        this._removeEggFromArray(egg);
+        this.emit('eggDeleted', egg);
+    }
+
     editCasteForEgg(eggId, antType) {
         this._nestApi.changeEggCaste(this.id, eggId, antType);
         let egg = this._findEggById(eggId);
         egg.antType = antType;
+    }
+
+    editNameForEgg(eggId, name) {
+        this._nestApi.changeEggName(this.id, eggId, name);
+        let egg = this._findEggById(eggId);
+        egg.name = name;
+    }
+
+    _removeEggFromArray(egg) {
+        let index = this.eggs.indexOf(egg);
+        this.eggs.splice(index, 1);
     }
 
     playAction(action) {
@@ -108,14 +125,13 @@ class Nest extends Entity {
 
     _playEggDevelop(action) {
         let egg = this._findEggById(action.eggId);
-        egg.progress = action.progress;
+        egg.updateProgress(action.progress, action.state);
         return Promise.resolve();
     }
 
     _playEggBecameLarva(action) {
         let egg = this._findEggById(action.eggId);
-        let index = this.eggs.indexOf(egg);
-        this.eggs.splice(index, 1);
+        this._removeEggFromArray(egg);
         this.emit('eggBecameLarva', egg);
         return Promise.resolve();
     }

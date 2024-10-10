@@ -51,6 +51,7 @@ class AntDeserializer():
     def _parse_common_ant_props(self, ant_json: dict, entities_collection: EntityCollection):   
         return {
             "id": ant_json['id'],
+            "name": ant_json['name'],
             "from_colony_id": ant_json['from_colony_id'],
             "owner_id": ant_json['owner_id'],
             "position": Point.from_json(ant_json['position']),

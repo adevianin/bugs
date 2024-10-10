@@ -299,8 +299,9 @@ __webpack_require__.r(__webpack_exports__);
 
 class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
-    constructor(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
         super(eventBus, id, position, angle, _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony, ownerId, userSpeed, hp, maxHp);
+        this._name = name;
         this._pickedItemId = pickedItemId;
         this._antType = antType;
         this._setState('standing');
@@ -314,6 +315,10 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
     updateIsHidden() {
         this.isHidden = this.isInNest;
+    }
+
+    get name() {
+        return this._name;
     }
 
     get antType() {
@@ -508,8 +513,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class MaleAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
-        super(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
     }
 
     playAction(action) {
@@ -567,8 +572,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, isFertilized, isInNuptialFlight, genes) {
-        super(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, isFertilized, isInNuptialFlight, genes) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
         this._isFertilized = isFertilized;
         this.isInNuptialFlight = isInNuptialFlight;
         this._genes = genes;
@@ -665,8 +670,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class WarriorAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
-        super(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
     }
 }
 
@@ -692,8 +697,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class WorkerAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
-        super(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WORKER, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WORKER, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
     }
 
 }
@@ -765,6 +770,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
 /* harmony import */ var _genetic_genome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genetic/genome */ "./bugs/core/client/app/src/domain/entity/genetic/genome.js");
+/* harmony import */ var _domain_enum_eggStates__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/eggStates */ "./bugs/core/client/app/src/domain/enum/eggStates.js");
+
 
 
 
@@ -772,29 +779,29 @@ class Egg extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter 
 
     static buildFromJson(json) {
         let genome = _genetic_genome__WEBPACK_IMPORTED_MODULE_1__.Genome.buildFromJson(json.genome);
-        return new Egg(json.id, json.name, genome, json.progress, json.antType);
+        return new Egg(json.id, json.name, genome, json.progress, json.antType, json.state);
     }
 
-    constructor(id, name, genome, progress, antType) {
+    constructor(id, name, genome, progress, antType, state) {
         super();
         this.id = id;
         this.name = name;
         this.genome = genome;
-        this._progress = progress;
+        this.progress = progress;
         this.antType = antType;
+        this.state = state;
     }
 
     get isReady() {
-        return this.progress == 100;
+        return this.state == _domain_enum_eggStates__WEBPACK_IMPORTED_MODULE_2__.EggStates.READY;
     }
 
-    get progress() {
-        return this._progress;
+    get isDevelopment() {
+        return this.state == _domain_enum_eggStates__WEBPACK_IMPORTED_MODULE_2__.EggStates.DEVELOPMENT;
     }
 
-    set progress(value) {
-        this._progress = value;
-        this.emit('progressChanged');
+    get isSpoiled() {
+        return this.state == _domain_enum_eggStates__WEBPACK_IMPORTED_MODULE_2__.EggStates.SPOILED;
     }
 
     get isFertilized() {
@@ -803,6 +810,12 @@ class Egg extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter 
 
     get avaliableAntTypes() {
         return this.genome.avaliableAntTypes;
+    }
+
+    updateProgress(progress, state) {
+        this.progress = progress;
+        this.state = state;
+        this.emit('progressChanged');
     }
 
 }
@@ -1448,15 +1461,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, hp, maxHp, 
+    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, isBuilt, hp, maxHp, 
         fortification, maxFortification) {
         super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST, fromColony, ownerId, hp, maxHp);
         this._nestApi = nestApi;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
         this.eggs = eggs;
-        this.larvaPlacesCount = larvaPlacesCount;
-        this.eggPlacesCount = eggPlacesCount;
         this._fortification = fortification;
         this.maxFortification = maxFortification;
 
@@ -1465,10 +1476,6 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     get takenChildPlacesCount() {
         return this.larvae.length + this.eggs.length;
-    }
-
-    get childPlacesCount() {
-        return this.larvaPlacesCount + this.eggPlacesCount;
     }
 
     get fortification() {
@@ -1488,10 +1495,33 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this._nestApi.addNewEgg(this.id, name, isFertilized);
     }
 
+    eggToLarvaChamber(eggId) {
+        this._nestApi.eggToLarvaChamber(this.id, eggId);
+    }
+
+    eggDelete(eggId) {
+        this._nestApi.eggDelete(this.id, eggId);
+
+        let egg = this._findEggById(eggId);
+        this._removeEggFromArray(egg);
+        this.emit('eggDeleted', egg);
+    }
+
     editCasteForEgg(eggId, antType) {
         this._nestApi.changeEggCaste(this.id, eggId, antType);
         let egg = this._findEggById(eggId);
         egg.antType = antType;
+    }
+
+    editNameForEgg(eggId, name) {
+        this._nestApi.changeEggName(this.id, eggId, name);
+        let egg = this._findEggById(eggId);
+        egg.name = name;
+    }
+
+    _removeEggFromArray(egg) {
+        let index = this.eggs.indexOf(egg);
+        this.eggs.splice(index, 1);
     }
 
     playAction(action) {
@@ -1550,14 +1580,13 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _playEggDevelop(action) {
         let egg = this._findEggById(action.eggId);
-        egg.progress = action.progress;
+        egg.updateProgress(action.progress, action.state);
         return Promise.resolve();
     }
 
     _playEggBecameLarva(action) {
         let egg = this._findEggById(action.eggId);
-        let index = this.eggs.indexOf(egg);
-        this.eggs.splice(index, 1);
+        this._removeEggFromArray(egg);
         this.emit('eggBecameLarva', egg);
         return Promise.resolve();
     }
@@ -1950,6 +1979,27 @@ const ChromosomesTypes = {
     BUILDING: 'building',
     COMBAT: 'combat',
     ADJUSTING: 'adjusting'
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/enum/eggStates.js":
+/*!***********************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/enum/eggStates.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "EggStates": () => (/* binding */ EggStates)
+/* harmony export */ });
+const EggStates = {
+    DEVELOPMENT: 'development',
+    READY: 'ready',
+    SPOILED: 'spoiled'
 }
 
 
@@ -2575,19 +2625,18 @@ class WorldFactory {
         let fromColonyId = nestJson.from_colony_id;
         let ownerId = nestJson.owner_id;
         let storedCalories = nestJson.storedCalories;
-        let larvaPlacesCount = nestJson.larvaPlacesCount;
-        let eggPlacesCount = nestJson.eggPlacesCount;
         let isBuilt = nestJson.isBuilt;
         let hp = nestJson.hp;
         let maxHp = nestJson.max_hp;
         let maxFortification = nestJson.maxFortification;
         let fortification = nestJson.fortification;
-        return new _entity_nest__WEBPACK_IMPORTED_MODULE_2__.Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, larvaPlacesCount, eggPlacesCount, isBuilt, 
+        return new _entity_nest__WEBPACK_IMPORTED_MODULE_2__.Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, isBuilt, 
             hp, maxHp, fortification, maxFortification);
     }
 
     buildAnt(antJson) {
         let id = antJson.id;
+        let name = antJson.name;
         let position = antJson.position;
         let angle = antJson.angle;
         let fromColony = antJson.from_colony_id;
@@ -2607,14 +2656,14 @@ class WorldFactory {
                 let isFertilized = antJson.is_fertilized;
                 let isInNuptialFlight = antJson.is_in_nuptial_flight;
                 let genes = antJson.genes;
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.QueenAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.QueenAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
                     genome, isFertilized, isInNuptialFlight, genes);
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.WARRIOR:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WarriorAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WarriorAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.WORKER:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WorkerAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WorkerAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.MALE:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.MaleAnt(this._mainEventBus, this._antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.MaleAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
             default:
                 throw 'unknown type of ant';
         }
@@ -2889,6 +2938,20 @@ class NestApi {
         return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/change_caste`, {
             ant_type: antType
         });
+    }
+
+    changeEggName(nestId, eggId, name) {
+        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/change_name`, {
+            name: name
+        });
+    }
+
+    eggToLarvaChamber(nestId, eggId) {
+        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/move_to_larva_chamber`);
+    }
+
+    eggDelete(nestId, eggId) {
+        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/delete`);
     }
 
 }
@@ -4447,6 +4510,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
     _render() {
         this._el.innerHTML = _antTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
         this._el.querySelector('[data-id]').innerHTML = this._ant.id;
+        this._el.querySelector('[data-name]').innerHTML = this._ant.name;
         this._el.querySelector('[data-type]').innerHTML = this._ant.antType;
         this._el.querySelector('[data-attack]').innerHTML = this._ant.stats.attack;
         this._el.querySelector('[data-defence]').innerHTML = this._ant.stats.defence;
@@ -4849,9 +4913,7 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._el.innerHTML = _eggTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
         this._eggsListEl = this._el.querySelector('[data-eggs-list]');
         this._addEggBtn = this._el.querySelector('[data-add-egg]');
-        this._nameInput = this._el.querySelector('[data-egg-name]');
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
-        this._childPlacesEl = this._el.querySelector('[data-child-places]');
     }
 
     manageNest(nest) {
@@ -4859,16 +4921,13 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._nest = nest;
         this._listenNest();
 
-        this._renderEggPlacesCount();
         this._renderEggsList();
-        this._renderChildPlacesCount();
-        this._renderAddEggBtnStatus();
     }
 
     _listenNest() {
         this._stopListenEggBecameLarva = this._nest.on('eggBecameLarva', this._onEggBecameLarva.bind(this));
+        this._stopListenEggDeleted = this._nest.on('eggDeleted', this._onEggDeleted.bind(this));
         this._stopListenEggAdded = this._nest.on('eggAdded', this._onEggAdded.bind(this));
-        this._stopListenLarvaIsReady = this._nest.on('larvaIsReady', this._onLarvaIsReady.bind(this));
     }
 
     _stopListenNest() {
@@ -4877,12 +4936,8 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         }
 
         this._stopListenEggBecameLarva();
+        this._stopListenEggDeleted();
         this._stopListenEggAdded();
-        this._stopListenLarvaIsReady();
-    }
-
-    _renderEggPlacesCount() {
-        this._el.querySelector('[data-egg-places-count]').innerHTML = this._nest.eggPlacesCount
     }
 
     _renderEggsList() {
@@ -4899,14 +4954,6 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._eggsViews[egg.id] = view;
     }
 
-    _renderChildPlacesCount() {
-        this._childPlacesEl.innerHTML = `${ this._nest.takenChildPlacesCount }/${ this._nest.childPlacesCount }`;
-    }
-
-    _renderAddEggBtnStatus() {
-        this._addEggBtn.disabled = !this._nest.checkCanAddNewEgg();
-    }
-
     _clearEggsViews() {
         for (let eggId in this._eggsViews) {
             this._eggsViews[eggId].remove();
@@ -4914,28 +4961,37 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._eggsViews = {};
     }
 
-    _onEggBecameLarva(egg) {
+    _removeEggView(egg) {
         this._eggsViews[egg.id].remove();
         delete this._eggsViews[egg.id];
     }
 
-    _onEggAdded(egg) {
-        this._renderEgg(egg);
-        this._renderChildPlacesCount();
-        this._renderAddEggBtnStatus();
+    _onEggBecameLarva(egg) {
+        this._removeEggView(egg);
     }
 
-    _onLarvaIsReady() {
-        this._renderChildPlacesCount();
-        this._renderAddEggBtnStatus();
+    _onEggDeleted(egg) {
+        this._removeEggView(egg);
+    }
+
+    _onEggAdded(egg) {
+        this._renderEgg(egg);
     }
 
     _onAddEggBtnClick() {
-        let name = this._nameInput.value;
+        let name = this._generateAntName();
         let isFertilized = this._isFertilizeCheckbox.checked;
-        if (name.length > 3) {
-            this._nest.addNewEgg(name, isFertilized);
-        }
+        this._nest.addNewEgg(name, isFertilized);
+    }
+
+    _generateAntName() {
+        let adjectives = ["Веселий", "Швидкий", "Сміливий", "Маленький", "Розумний", "Спритний"];
+        let nouns = ['Трудяга', "Борець", "Мандрівник", "Дослідник", "Боб", "Захисник", 'Мурашко'];
+
+        let randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+        let randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+
+        return `${randomAdjective} ${randomNoun}`;
     }
 
 }
@@ -4959,6 +5015,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _eggTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./eggTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/eggTab/eggTmpl.html");
 /* harmony import */ var _view_game_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/genome/closableGenomeView */ "./bugs/core/client/app/src/view/game/panel/base/genome/closableGenomeView.js");
 /* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./bugs/core/client/app/src/view/labels/antTypesLabels.js");
+/* harmony import */ var _view_labels_eggStatesLabels__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/labels/eggStatesLabels */ "./bugs/core/client/app/src/view/labels/eggStatesLabels.js");
+
 
 
 
@@ -4975,27 +5033,39 @@ class EggView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._render();
 
         this._antTypeSelector.addEventListener('change', this._onEggAntTypeChanged.bind(this));
+        this._nameInput.addEventListener('change', this._onEggNameChanged.bind(this));
+        this._toLarvaChamberBtn.addEventListener('click', this._onEggtoLarvaChamberClick.bind(this));
+        this._deleteBtn.addEventListener('click', this._onEggDeleteClick.bind(this));
     }
 
     _render() {
         this._el.innerHTML = _eggTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this._el.querySelector('[data-name]').innerHTML = this._egg.name;
+        this._nameInput = this._el.querySelector('[data-name]');
+        this._nameInput.value = this._egg.name;
 
         this._genomeView = new _view_game_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_2__.ClosableGenomeView(this._el.querySelector('[data-genome]'), this._egg.genome);
 
         this._el.querySelector('[data-is-fertilized]').innerHTML = this._egg.isFertilized ? '+' : '-';
 
+        this._toLarvaChamberBtn = this._el.querySelector('[data-to-larva-chamber]');
+        this._deleteBtn = this._el.querySelector('[data-delete]');
+
         this._progressEl = this._el.querySelector('[data-progress]');
-        this._renderProgressValue();
+        this._stateEl = this._el.querySelector('[data-state]');
+        this._renderProgress();
 
         this._antTypeSelector = this._el.querySelector('[data-ant-type-selector]');
         this._renderAntTypeSelectorOptions();
         this._antTypeSelector.value = this._egg.antType;
     }
 
-    _renderProgressValue() {
-        this._progressEl.innerHTML = this._egg.progress;
+    _renderProgress() {
+        let progressValue = this._egg.isDevelopment ? this._egg.progress : 100;
+        this._progressEl.innerHTML = progressValue;
+        this._stateEl.innerHTML = _view_labels_eggStatesLabels__WEBPACK_IMPORTED_MODULE_4__.eggStatesLabels[this._egg.state];
+        this._toLarvaChamberBtn.disabled = !this._egg.isReady;
+        this._deleteBtn.disabled = !this._egg.isSpoiled;
     }
 
     _renderAntTypeSelectorOptions() {
@@ -5009,12 +5079,27 @@ class EggView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
     }
 
     _onEggProgressChanged() {
-        this._renderProgressValue();
+        this._renderProgress();
     }
 
     _onEggAntTypeChanged() {
         let antType = this._antTypeSelector.value;
         this._nest.editCasteForEgg(this._egg.id, antType);
+    }
+
+    _onEggNameChanged() {
+        let name = this._nameInput.value;
+        if (name) {
+            this._nest.editNameForEgg(this._egg.id, name);
+        }
+    }
+
+    _onEggtoLarvaChamberClick() {
+        this._nest.eggToLarvaChamber(this._egg.id);
+    }
+
+    _onEggDeleteClick() {
+        this._nest.eggDelete(this._egg.id);
     }
 
     remove() {
@@ -5155,7 +5240,6 @@ class LarvaTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
         this._listenNest();
 
         this._renderLarvaeList();
-        this._renderLarvaPlacesCount();
     }
 
     _listenNest() {
@@ -5175,7 +5259,6 @@ class LarvaTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
         this._el.innerHTML = _larvaTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._larvaeListEl = this._el.querySelector('[data-larvae-list]');
-        this._larvaPlacesCountEl = this._el.querySelector('[data-larva-places-count]');
     }
 
     _renderLarvaeList() {
@@ -5190,10 +5273,6 @@ class LarvaTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
         this._larvaeListEl.append(el);
         let view = new _larvaView__WEBPACK_IMPORTED_MODULE_2__.LarvaView(el, larva);
         this._larvaeViews[larva.id] = view;
-    }
-
-    _renderLarvaPlacesCount() {
-        this._larvaPlacesCountEl.innerHTML = this._nest.larvaPlacesCount;
     }
 
     _clearLarvaeList() {
@@ -8502,6 +8581,30 @@ let antTypesLabels = {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/labels/eggStatesLabels.js":
+/*!*****************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/labels/eggStatesLabels.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "eggStatesLabels": () => (/* binding */ eggStatesLabels)
+/* harmony export */ });
+/* harmony import */ var _domain_enum_eggStates__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/enum/eggStates */ "./bugs/core/client/app/src/domain/enum/eggStates.js");
+
+
+let eggStatesLabels = {
+    [_domain_enum_eggStates__WEBPACK_IMPORTED_MODULE_0__.EggStates.DEVELOPMENT]: 'Розвивається',
+    [_domain_enum_eggStates__WEBPACK_IMPORTED_MODULE_0__.EggStates.READY]: 'Готове',
+    [_domain_enum_eggStates__WEBPACK_IMPORTED_MODULE_0__.EggStates.SPOILED]: 'Зіпсоване'
+};
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/popups/popupManager.js":
 /*!**************************************************************!*\
   !*** ./bugs/core/client/app/src/view/popups/popupManager.js ***!
@@ -11110,7 +11213,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<td data-id></td>\r\n<td data-type></td>\r\n<td data-attack></td>\r\n<td data-defence></td>\r\n<td data-role>\r\n    <select>\r\n    </select>\r\n</td>\r\n<td data-max-hp></td>\r\n<td data-nest></td>\r\n<td>\r\n    <select data-guardian-type>\r\n        <option value=\"none\">не захищає</option>\r\n        <option value=\"nest\">тільки гніздо</option>\r\n        <option value=\"colony\">вся колонія</option>\r\n    </select>\r\n</td>\r\n<td>\r\n    <input data-is-cooperactive type=\"checkbox\">\r\n</td>\r\n<td data-actions>\r\n    <button data-fly-away>X</button>\r\n    <button data-nuptial-flight>шлюбний політ</button>\r\n    <button data-genome-debug>геном</button>\r\n</td>";
+var code = "<td data-id></td>\r\n<td data-name></td>\r\n<td data-type></td>\r\n<td data-attack></td>\r\n<td data-defence></td>\r\n<td data-role>\r\n    <select>\r\n    </select>\r\n</td>\r\n<td data-max-hp></td>\r\n<td data-nest></td>\r\n<td>\r\n    <select data-guardian-type>\r\n        <option value=\"none\">не захищає</option>\r\n        <option value=\"nest\">тільки гніздо</option>\r\n        <option value=\"colony\">вся колонія</option>\r\n    </select>\r\n</td>\r\n<td>\r\n    <input data-is-cooperactive type=\"checkbox\">\r\n</td>\r\n<td data-actions>\r\n    <button data-fly-away>X</button>\r\n    <button data-nuptial-flight>шлюбний політ</button>\r\n    <button data-genome-debug>геном</button>\r\n</td>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -11128,7 +11231,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<thead>\r\n    <tr>\r\n        <td>id</td>\r\n        <td>тип</td>\r\n        <td>атака</td>\r\n        <td>захист</td>\r\n        <td>роль</td>\r\n        <td>макс хп</td>\r\n        <td>гніздо</td>\r\n        <td>guardian</td>\r\n        <td>cooperative</td>\r\n        <td>дії</td>\r\n    </tr>\r\n</thead>\r\n<tbody data-ants-container>\r\n</tbody>";
+var code = "<thead>\r\n    <tr>\r\n        <td>id</td>\r\n        <td>імя</td>\r\n        <td>тип</td>\r\n        <td>атака</td>\r\n        <td>захист</td>\r\n        <td>роль</td>\r\n        <td>макс хп</td>\r\n        <td>гніздо</td>\r\n        <td>guardian</td>\r\n        <td>cooperative</td>\r\n        <td>дії</td>\r\n    </tr>\r\n</thead>\r\n<tbody data-ants-container>\r\n</tbody>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -11182,7 +11285,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    розмір камери:<span data-egg-places-count></span>\r\n</div>\r\n<div>\r\n    місця для потомства: (<span data-child-places></span>)\r\n</div>\r\n<div>\r\n    імя: <input type=\"text\" data-egg-name>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>каста</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
+var code = "<div>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>стан</td>\r\n            <td>каста</td>\r\n            <td>дії</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -11200,7 +11303,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<td data-name></td>\r\n<td data-genome></td>\r\n<td data-is-fertilized></td>\r\n<td data-progress></td>\r\n<td>\r\n    <select data-ant-type-selector></select>\r\n</td>";
+var code = "<td>\r\n    <input data-name />\r\n</td>\r\n<td data-genome></td>\r\n<td data-is-fertilized></td>\r\n<td data-progress></td>\r\n<td data-state></td>\r\n<td>\r\n    <select data-ant-type-selector></select>\r\n</td>\r\n<td data-actions>\r\n    <button data-to-larva-chamber>в личинки</button>\r\n    <button data-delete>винести</button>\r\n</td>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -11236,7 +11339,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    розмір камери: <span data-larva-places-count></span>\r\n</div>\r\n<table>\r\n    <tr>\r\n        <td>імя</td>\r\n        <td>геном</td>\r\n        <td>прогрес</td>\r\n        <td>каста</td>\r\n    </tr>\r\n    <tbody data-larvae-list>\r\n        \r\n    </tbody>\r\n</table>";
+var code = "<table>\r\n    <tr>\r\n        <td>імя</td>\r\n        <td>геном</td>\r\n        <td>прогрес</td>\r\n        <td>каста</td>\r\n    </tr>\r\n    <tbody data-larvae-list>\r\n        \r\n    </tbody>\r\n</table>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

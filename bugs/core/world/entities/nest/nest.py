@@ -57,14 +57,6 @@ class Nest(Entity):
         return self._body.eggs
     
     @property
-    def larva_places_count(self):
-        return self._body.larva_places_count
-    
-    @property
-    def egg_places_count(self):
-        return self._body.egg_places_count
-    
-    @property
     def build_progress(self):
         return self._body.build_progress
     
@@ -94,6 +86,15 @@ class Nest(Entity):
 
     def change_egg_caste(self, egg_id: str, ant_type: AntTypes):
         self._body.change_egg_caste(egg_id, ant_type)
+        
+    def change_egg_name(self, egg_id: str, name: str):
+        self._body.change_egg_name(egg_id, name)
+
+    def move_egg_to_larva_chamber(self, egg_id: str):
+        self._body.move_egg_to_larva_chamber(egg_id)
+
+    def delete_egg(self, egg_id: str):
+        self._body.delete_egg(egg_id)
 
     def build(self):
         self._body.build()

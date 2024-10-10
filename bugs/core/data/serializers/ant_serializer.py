@@ -53,6 +53,7 @@ class AntSerializer(LiveEntitySerializer):
             thoughts_json.append(self._thought_serializer.serialize(thought))
 
         json.update({
+            'name': ant.name,
             'picked_item_id': ant.body.picked_item_id,
             'ant_type': ant.ant_type,
             'from_nest': ant.home_nest_id,

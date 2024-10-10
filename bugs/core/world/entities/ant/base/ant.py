@@ -21,14 +21,19 @@ class Ant(LiveEntity):
     _body: AntBody
     body: AntBody
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, owner_id: int, body: AntBody, ant_type: AntTypes, mind: AntMind):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, name: str, from_colony_id: int, owner_id: int, body: AntBody, ant_type: AntTypes, mind: AntMind):
         super().__init__(event_bus, events, id, EntityTypes.ANT, from_colony_id, owner_id, body, mind)
         self._ant_type = ant_type
+        self._name = name
 
         self._body.events.add_listener('got_in_nest', self._on_got_in_nest)
         self._body.events.add_listener('got_out_of_nest', self._on_got_out_of_nest)
         self._body.events.add_listener('picked_up_item', self._on_picked_up_item)
         self._body.events.add_listener('dropped_picked_item', self._on_dropped_picked_item)
+
+    @property
+    def name(self):
+        return self._name
         
     @property
     def sayer(self) -> EventEmitter:

@@ -4,8 +4,8 @@ import { ACTION_TYPES } from "../action/actionTypes";
 
 class MaleAnt extends BaseAnt {
 
-    constructor(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
-        super(eventBus, antApi, id, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
     }
 
     playAction(action) {

@@ -22,8 +22,6 @@ class NestClientSerializer(EntityClientSerializer):
             'storedCalories': nest.stored_calories,
             'larvae': larvae_json,
             'eggs': self._egg_serializer.serialize_eggs(nest.eggs),
-            'larvaPlacesCount': nest.larva_places_count,
-            'eggPlacesCount': nest.egg_places_count,
             'isBuilt': nest.is_built,
             'fortification': nest.fortification,
             'maxFortification': nest.stats.max_fortification

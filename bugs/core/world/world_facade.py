@@ -114,6 +114,15 @@ class WorldFacade:
     def change_egg_caste_command(self, user_id: int, nest_id: int, egg_id: str, ant_type: AntTypes):
         self._colony_service.change_egg_caste(user_id, nest_id, egg_id, ant_type)
 
+    def change_egg_name_command(self, user_id: int, nest_id: int, egg_id: str, name: str):
+        self._colony_service.change_egg_name(user_id, nest_id, egg_id, name)
+
+    def move_egg_to_larva_chamber_command(self, user_id: int, nest_id: int, egg_id: str):
+        self._colony_service.move_egg_to_larva_chamber(user_id, nest_id, egg_id)
+
+    def delete_egg_command(self, user_id: int, nest_id: int, egg_id: str):
+        self._colony_service.delete_egg(user_id, nest_id, egg_id)
+
     def found_colony_command(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point):
         self._nuptial_environment_service.found_new_colony(user_id, queen_id, nuptial_male_id, nest_building_site)
 

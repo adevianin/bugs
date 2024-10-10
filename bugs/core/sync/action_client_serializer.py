@@ -227,7 +227,8 @@ class ActionClientSerializer(iActionClientSerializer):
 
         json.update({
             'eggId': action.egg.id,
-            'progress': action.egg.progress
+            'progress': action.egg.progress,
+            'state': action.egg.state
         })
 
         return json

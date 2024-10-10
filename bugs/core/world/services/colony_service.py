@@ -50,6 +50,30 @@ class ColonyService():
         
         nest.change_egg_caste(egg_id, ant_type)
 
+    def change_egg_name(self, user_id: int, nest_id: int, egg_id: str, name: str):
+        nest: Nest = self._world.map.get_entity_by_id(nest_id)
+
+        if nest.owner_id != user_id:
+            raise Exception(f'user dont have this nest')
+        
+        nest.change_egg_name(egg_id, name)
+
+    def move_egg_to_larva_chamber(self, user_id: int, nest_id: int, egg_id: str):
+        nest: Nest = self._world.map.get_entity_by_id(nest_id)
+
+        if nest.owner_id != user_id:
+            raise Exception(f'user dont have this nest')
+        
+        nest.move_egg_to_larva_chamber(egg_id)
+
+    def delete_egg(self, user_id: int, nest_id: int, egg_id: str):
+        nest: Nest = self._world.map.get_entity_by_id(nest_id)
+
+        if nest.owner_id != user_id:
+            raise Exception(f'user dont have this nest')
+        
+        nest.delete_egg(egg_id)
+
     def stop_operation(self, user_id: int, colony_id: int, operation_id: int):
         colony: AntColony = self._world.get_colony_by_id(colony_id)
         

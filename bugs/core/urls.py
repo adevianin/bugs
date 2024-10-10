@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 from .views.account import check_username, user_register, user_login, user_logout
 from .views.home import index
 from .views.admin import admin_panel, world_status_check, stop_world, run_world, save_world
-from .views.nest import add_egg, change_egg_caste
+from .views.nest import add_egg, change_egg_caste, change_egg_name, move_egg_to_larva_chamber, delete_egg
 from .views.colony import stop_operation, build_new_sub_nest, destroy_nest, pillage_nest, transport_food, build_fortification, bring_bug
 from .views.ant import fly_nuptial_flight, change_ant_guardian_behavior, change_ant_cooperative_behavior, relocate_ant
 from .views.nuptial import search_nuptial_males, found_colony, save_specie_schema
@@ -26,6 +26,9 @@ urlpatterns = [
 
     path('world/nests/<int:nest_id>/add_egg', add_egg, name='add_egg'),
     path('world/nests/<int:nest_id>/eggs/<str:egg_id>/change_caste', change_egg_caste, name='change-egg-caste'),
+    path('world/nests/<int:nest_id>/eggs/<str:egg_id>/change_name', change_egg_name, name='change-egg-name'),
+    path('world/nests/<int:nest_id>/eggs/<str:egg_id>/move_to_larva_chamber', move_egg_to_larva_chamber, name='move-egg-to-larva-chamber'),
+    path('world/nests/<int:nest_id>/eggs/<str:egg_id>/delete', delete_egg, name='delete-egg'),
 
     path('world/colonies/<int:colony_id>/operations/<int:operation_id>/stop_operation', stop_operation, name='stop_operation'),
     path('world/colonies/<int:colony_id>/operations/build_new_sub_nest', build_new_sub_nest, name='build_new_sub_nest'),

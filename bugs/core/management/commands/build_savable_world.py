@@ -20,6 +20,7 @@ class Command(BaseCommand):
         "ants":[
             {
                 "id":1,
+                "name": 'ant 1',
                 "type":"ant",
                 "from_colony_id":2,
                 "owner_id": 2,
@@ -127,6 +128,7 @@ class Command(BaseCommand):
             },
             {
                 "id":2,
+                "name": 'ant 2',
                 "type":"ant",
                 "from_colony_id":2,
                 "owner_id": 2,
@@ -281,6 +283,7 @@ class Command(BaseCommand):
             },
             {
                 "id":3,
+                "name": 'ant 3',
                 "type":"ant",
                 "from_colony_id":2,
                 "owner_id": 2,
@@ -393,6 +396,7 @@ class Command(BaseCommand):
 
             {
                 "id":4,
+                "name": 'ant 4 super',
                 "type":"ant",
                 "from_colony_id":1,
                 "owner_id": 2,
@@ -544,6 +548,7 @@ class Command(BaseCommand):
 
             {
                 "id":5,
+                "name": 'ant 5 band',
                 "type":"ant",
                 "from_colony_id":1,
                 "owner_id": 2,
@@ -654,6 +659,7 @@ class Command(BaseCommand):
             },
             {
                 "id":6,
+                "name": 'ninja',
                 "type":"ant",
                 "from_colony_id":1,
                 "owner_id": 2,
@@ -764,6 +770,7 @@ class Command(BaseCommand):
             },
             {
                 "id":7,
+                "name": 'hidden',
                 "type":"ant",
                 "from_colony_id":1,
                 "owner_id": 2,
@@ -1175,8 +1182,6 @@ class Command(BaseCommand):
                         }
                     }
                 ],
-                "larva_places_count":3,
-                "egg_places_count":3,
                 "area":300,
                 "build_progress": 100,
                 "fortification": 200
@@ -1197,8 +1202,6 @@ class Command(BaseCommand):
                 "larvae":[
                 ],
                 "eggs": [],
-                "larva_places_count":1,
-                "egg_places_count":1,
                 "area":300,
                 "build_progress": 100,
                 "fortification": 50
@@ -1219,8 +1222,6 @@ class Command(BaseCommand):
                 "larvae":[
                 ],
                 "eggs": [],
-                "larva_places_count":1,
-                "egg_places_count":1,
                 "area":300,
                 "build_progress": 100,
                 "fortification": 500

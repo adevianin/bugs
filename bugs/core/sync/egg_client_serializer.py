@@ -13,6 +13,7 @@ class EggClientSerializer():
             'name': egg.name,
             'genome': self._genome_client_serializer.serialize_genome(egg.genome),
             'progress': egg.progress,
+            'state': egg.state,
             'antType': egg.ant_type
         }
     
