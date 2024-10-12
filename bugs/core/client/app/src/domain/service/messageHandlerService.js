@@ -1,3 +1,5 @@
+import { initConts } from "@domain/consts";
+
 class MessageHandlerService {
 
     constructor(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService) {
@@ -46,6 +48,7 @@ class MessageHandlerService {
     }
 
     _handleInitStepMsg(msg) {
+        initConts(msg.consts);
         this._worldService.initWorld(msg.world);
         this._specieBuilderService.initBuilder(msg.specie);
         this._mainEventBus.emit('initStepDone');

@@ -8,6 +8,7 @@ from core.world.entities.colony.colonies.ant_colony.operation.operation_factory 
 from core.world.utils.point import Point
 from core.world.entities.item.items.base.item import Item 
 from core.world.entities.item.items.base.item_types import ItemTypes 
+from core.world.settings import NEW_EGG_FOOD_COST
 
 from typing import Callable
 
@@ -36,10 +37,11 @@ class ColonyService():
         if queen.located_in_nest_id != nest_id:
             raise Exception('queen is not in nest')
         
-        if len(name) < 3:
-            raise Exception('invalid name')
+        if nest.stored_calories < NEW_EGG_FOOD_COST:
+            raise Exception('not enought food')
         
         egg = queen.produce_egg(name, is_fertilized)
+        nest.give_calories(NEW_EGG_FOOD_COST)
         nest.add_egg(egg)
 
     def change_egg_caste(self, user_id: int, nest_id: int, egg_id: str, ant_type: AntTypes):

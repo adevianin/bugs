@@ -12,6 +12,30 @@ module.exports = __webpack_require__.p + "73ab50ce492f152974ab.png";
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/domain/consts.js":
+/*!***************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/consts.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "CONSTS": () => (/* binding */ CONSTS),
+/* harmony export */   "initConts": () => (/* binding */ initConts)
+/* harmony export */ });
+const CONSTS = {
+    NEW_EGG_FOOD_COST: null
+}
+
+function initConts(constsValues) {
+    Object.assign(CONSTS, constsValues)
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/domainFacade.js":
 /*!*********************************************************!*\
   !*** ./bugs/core/client/app/src/domain/domainFacade.js ***!
@@ -1453,6 +1477,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
 /* harmony import */ var _larva__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./larva */ "./bugs/core/client/app/src/domain/entity/larva.js");
 /* harmony import */ var _egg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./egg */ "./bugs/core/client/app/src/domain/entity/egg.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @domain/consts */ "./bugs/core/client/app/src/domain/consts.js");
+
 
 
 
@@ -1488,7 +1514,7 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     checkCanAddNewEgg() {
-        return this.childPlacesCount > this.takenChildPlacesCount;
+        return this.storedCalories >= _domain_consts__WEBPACK_IMPORTED_MODULE_5__.CONSTS.NEW_EGG_FOOD_COST;
     }
 
     addNewEgg(name, isFertilized) {
@@ -1531,7 +1557,7 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         }
         switch (action.type) {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_STORED_CALORIES_CHANGED:
-                return this._playTakingFood(action);
+                return this._playStoredCaloriesChanged(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_LARVA_FED:
                 return this._playLarvaFed(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_LARVA_IS_READY:
@@ -1551,7 +1577,7 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         }
     }
 
-    _playTakingFood(action) {
+    _playStoredCaloriesChanged(action) {
         this.storedCalories = action.actionData.stored_calories;
         this.emit('storedCaloriesChanged');
         return Promise.resolve();
@@ -2272,6 +2298,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "MessageHandlerService": () => (/* binding */ MessageHandlerService)
 /* harmony export */ });
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/consts */ "./bugs/core/client/app/src/domain/consts.js");
+
+
 class MessageHandlerService {
 
     constructor(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService) {
@@ -2320,6 +2349,7 @@ class MessageHandlerService {
     }
 
     _handleInitStepMsg(msg) {
+        (0,_domain_consts__WEBPACK_IMPORTED_MODULE_0__.initConts)(msg.consts);
         this._worldService.initWorld(msg.world);
         this._specieBuilderService.initBuilder(msg.specie);
         this._mainEventBus.emit('initStepDone');
@@ -4914,6 +4944,7 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._eggsListEl = this._el.querySelector('[data-eggs-list]');
         this._addEggBtn = this._el.querySelector('[data-add-egg]');
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
+        this._notEnoughtFoodMsg = this._el.querySelector('[data-not-enought-food-msg]');
     }
 
     manageNest(nest) {
@@ -4922,12 +4953,14 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._listenNest();
 
         this._renderEggsList();
+        this._renderCanAddNewEgg();
     }
 
     _listenNest() {
         this._stopListenEggBecameLarva = this._nest.on('eggBecameLarva', this._onEggBecameLarva.bind(this));
         this._stopListenEggDeleted = this._nest.on('eggDeleted', this._onEggDeleted.bind(this));
         this._stopListenEggAdded = this._nest.on('eggAdded', this._onEggAdded.bind(this));
+        this._stopListenStoredCaloriesChanged = this._nest.on('storedCaloriesChanged', this._onStoredCaloriesChanged.bind(this));
     }
 
     _stopListenNest() {
@@ -4938,6 +4971,7 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._stopListenEggBecameLarva();
         this._stopListenEggDeleted();
         this._stopListenEggAdded();
+        this._stopListenStoredCaloriesChanged();
     }
 
     _renderEggsList() {
@@ -4978,10 +5012,20 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._renderEgg(egg);
     }
 
+    _onStoredCaloriesChanged() {
+        this._renderCanAddNewEgg();
+    }
+
     _onAddEggBtnClick() {
         let name = this._generateAntName();
         let isFertilized = this._isFertilizeCheckbox.checked;
         this._nest.addNewEgg(name, isFertilized);
+    }
+
+    _renderCanAddNewEgg() {
+        let canAdd = this._nest.checkCanAddNewEgg();
+        this._addEggBtn.disabled = !canAdd;
+        this._notEnoughtFoodMsg.classList.toggle('hidden', canAdd);
     }
 
     _generateAntName() {
@@ -11285,7 +11329,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>стан</td>\r\n            <td>каста</td>\r\n            <td>дії</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
+var code = "<div>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n    <span data-not-enought-food-msg>не вистачає їжі</span>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>стан</td>\r\n            <td>каста</td>\r\n            <td>дії</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

@@ -24,6 +24,7 @@ class EggTabView extends BaseHTMLView {
         this._eggsListEl = this._el.querySelector('[data-eggs-list]');
         this._addEggBtn = this._el.querySelector('[data-add-egg]');
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
+        this._notEnoughFoodMsg = this._el.querySelector('[data-not-enough-food-msg]');
     }
 
     manageNest(nest) {
@@ -32,12 +33,14 @@ class EggTabView extends BaseHTMLView {
         this._listenNest();
 
         this._renderEggsList();
+        this._renderCanAddNewEgg();
     }
 
     _listenNest() {
         this._stopListenEggBecameLarva = this._nest.on('eggBecameLarva', this._onEggBecameLarva.bind(this));
         this._stopListenEggDeleted = this._nest.on('eggDeleted', this._onEggDeleted.bind(this));
         this._stopListenEggAdded = this._nest.on('eggAdded', this._onEggAdded.bind(this));
+        this._stopListenStoredCaloriesChanged = this._nest.on('storedCaloriesChanged', this._onStoredCaloriesChanged.bind(this));
     }
 
     _stopListenNest() {
@@ -48,6 +51,7 @@ class EggTabView extends BaseHTMLView {
         this._stopListenEggBecameLarva();
         this._stopListenEggDeleted();
         this._stopListenEggAdded();
+        this._stopListenStoredCaloriesChanged();
     }
 
     _renderEggsList() {
@@ -88,10 +92,20 @@ class EggTabView extends BaseHTMLView {
         this._renderEgg(egg);
     }
 
+    _onStoredCaloriesChanged() {
+        this._renderCanAddNewEgg();
+    }
+
     _onAddEggBtnClick() {
         let name = this._generateAntName();
         let isFertilized = this._isFertilizeCheckbox.checked;
         this._nest.addNewEgg(name, isFertilized);
+    }
+
+    _renderCanAddNewEgg() {
+        let canAdd = this._nest.checkCanAddNewEgg();
+        this._addEggBtn.disabled = !canAdd;
+        this._notEnoughFoodMsg.classList.toggle('hidden', canAdd);
     }
 
     _generateAntName() {

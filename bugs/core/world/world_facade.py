@@ -12,6 +12,7 @@ from .nuptial_environment_client_serializer_interface import iNuptialEnvironment
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 from core.world.services.ant_service import AntService
 from core.world.entities.ant.base.guardian_behaviors import GuardianBehaviors
+from core.sync.constants_client_serializer import ConstantsClientSerializer
 
 from typing import Callable, List, Dict
 
@@ -21,11 +22,12 @@ class WorldFacade:
 
     @classmethod
     def init(cls, event_bus: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
-             nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, world_repository: iWorldRepository, colony_service: ColonyService, 
-             player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, ant_service: AntService):
+             nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer,
+             world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, 
+             ant_service: AntService):
         events = EventEmitter()
-        world_facade = WorldFacade(event_bus, events, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, world_repository, colony_service, 
-                                   player_service, nuptial_environment_service, ant_service)
+        world_facade = WorldFacade(event_bus, events, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, 
+                                   world_repository, colony_service, player_service, nuptial_environment_service, ant_service)
         WorldFacade._instance = world_facade
         return world_facade
 
@@ -34,8 +36,9 @@ class WorldFacade:
         return WorldFacade._instance
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
-                 nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, 
-                 nuptial_environment_service: NuptialEnvironmentService, ant_service: AntService):
+                 nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer, 
+                 world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, 
+                 ant_service: AntService):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
@@ -47,6 +50,7 @@ class WorldFacade:
         self._world_client_serializer = world_client_serializer
         self._action_client_serializer = action_client_serializer
         self._nuptial_environment_client_serializer = nuptial_environment_client_serializer
+        self._constants_client_serializer = constants_client_serializer
 
         self._colony_service = colony_service
         self._player_service = player_service
@@ -151,6 +155,9 @@ class WorldFacade:
 
     def get_world_for_client(self):
         return self._world_client_serializer.serialize(self._world)
+    
+    def get_consts_for_client(self):
+        return self._constants_client_serializer.serialize_constants()
     
     def _on_step_start(self, step_number: int):
         self._events.emit('step')

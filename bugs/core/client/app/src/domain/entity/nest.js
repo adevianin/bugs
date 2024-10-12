@@ -3,6 +3,7 @@ import { EntityTypes } from '../enum/entityTypes';
 import { ACTION_TYPES } from './action/actionTypes';
 import { Larva } from './larva';
 import { Egg } from './egg';
+import { CONSTS } from '@domain/consts';
 
 class Nest extends Entity {
 
@@ -33,7 +34,7 @@ class Nest extends Entity {
     }
 
     checkCanAddNewEgg() {
-        return this.childPlacesCount > this.takenChildPlacesCount;
+        return this.storedCalories >= CONSTS.NEW_EGG_FOOD_COST;
     }
 
     addNewEgg(name, isFertilized) {
@@ -76,7 +77,7 @@ class Nest extends Entity {
         }
         switch (action.type) {
             case ACTION_TYPES.NEST_STORED_CALORIES_CHANGED:
-                return this._playTakingFood(action);
+                return this._playStoredCaloriesChanged(action);
             case ACTION_TYPES.NEST_LARVA_FED:
                 return this._playLarvaFed(action);
             case ACTION_TYPES.NEST_LARVA_IS_READY:
@@ -96,7 +97,7 @@ class Nest extends Entity {
         }
     }
 
-    _playTakingFood(action) {
+    _playStoredCaloriesChanged(action) {
         this.storedCalories = action.actionData.stored_calories;
         this.emit('storedCaloriesChanged');
         return Promise.resolve();

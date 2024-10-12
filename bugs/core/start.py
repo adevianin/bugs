@@ -82,6 +82,7 @@ from core.sync.genes_client_serializer import GenesClientSerializer
 from core.sync.genome_client_serializer import GenomeClientSerializer
 from core.sync.nuptial_environment_client_serializer import NuptialEnvironmentClientSerializer
 from core.sync.climate_client_serializer import ClimateClientSerializer
+from core.sync.constants_client_serializer import ConstantsClientSerializer
 
 from core.world.my_test_env import MY_TEST_ENV
 
@@ -173,9 +174,10 @@ def start():
     action_client_serializer = ActionClientSerializer(entity_client_serializer, util_client_serializer, larva_client_serializer, egg_client_serializer, colony_client_serializer, 
                                                       operation_client_serializer)
     nuptial_environment_client_serializer = NuptialEnvironmentClientSerializer(genome_client_serializer, genes_client_serializer, stats_client_serializer)
+    constants_client_serializer = ConstantsClientSerializer()
 
-    world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, world_repository, colony_service, 
-                                    player_service, nuptial_environment_service, ant_service)
+    world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, 
+                                    world_repository, colony_service, player_service, nuptial_environment_service, ant_service)
 
     world_facade.init_world()
 
