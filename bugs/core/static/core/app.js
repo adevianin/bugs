@@ -1373,6 +1373,10 @@ class Larva extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
         this.genome = genome;
     }
 
+    get isDied() {
+        return this._ateFood < 0;
+    }
+
     get ateFood() {
         return this._ateFood;
     }
@@ -5427,7 +5431,12 @@ class LarvaView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Bas
     }
 
     _renderProgress() {
-        this._progressEl.innerHTML = `${Math.round(this._larva.ateFood)}/${this._larva.requiredFood}`;
+        if (!this._larva.isDied) {
+            this._progressEl.innerHTML = `${Math.round(this._larva.ateFood)}/${this._larva.requiredFood}`;
+        } else {
+            this._progressEl.innerHTML = 'загинув';
+        }
+        
     }
 
     _onProgressChanged() {

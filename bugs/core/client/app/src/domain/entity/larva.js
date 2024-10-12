@@ -18,6 +18,10 @@ class Larva extends EventEmitter {
         this.genome = genome;
     }
 
+    get isDied() {
+        return this._ateFood < 0;
+    }
+
     get ateFood() {
         return this._ateFood;
     }

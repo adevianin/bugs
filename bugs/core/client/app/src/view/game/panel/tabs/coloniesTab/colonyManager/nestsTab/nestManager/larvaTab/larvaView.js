@@ -34,7 +34,12 @@ class LarvaView extends BaseHTMLView {
     }
 
     _renderProgress() {
-        this._progressEl.innerHTML = `${Math.round(this._larva.ateFood)}/${this._larva.requiredFood}`;
+        if (!this._larva.isDied) {
+            this._progressEl.innerHTML = `${Math.round(this._larva.ateFood)}/${this._larva.requiredFood}`;
+        } else {
+            this._progressEl.innerHTML = 'загинув';
+        }
+        
     }
 
     _onProgressChanged() {

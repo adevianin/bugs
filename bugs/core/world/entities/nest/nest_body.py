@@ -136,7 +136,7 @@ class NestBody(Body):
 
     def feed_larvae(self):
         larvae_count = len(self._larvae)
-        if larvae_count == 0 or self.stored_calories == 0:
+        if larvae_count == 0:
             return 
         portion_size = 10
         needed_calories = larvae_count * portion_size

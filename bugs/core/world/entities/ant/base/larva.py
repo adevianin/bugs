@@ -48,13 +48,23 @@ class Larva():
     @property
     def genome(self) -> Genome:
         return self._genome
+    
+    @property
+    def is_died(self):
+        return self.ate_food < 0
 
-    # @property
-    # def progress(self):
-    #     return round((100 / self._phenotype.required_food) * self._ate_food)
-
-    def feed(self, calories_count: int):
-        if self._ate_food + calories_count > self._phenotype.required_food:
+    def feed(self, food_count: int):
+        if self.is_died:
+            return
+        
+        if food_count == 0:
+            self._die()
+            return
+        
+        if self._ate_food + food_count > self._phenotype.required_food:
             self._ate_food = self._phenotype.required_food
         else:
-            self._ate_food += calories_count
+            self._ate_food += food_count
+
+    def _die(self):
+        self._ate_food = -1
