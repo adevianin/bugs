@@ -76,6 +76,14 @@ class ColonyService():
         
         nest.delete_egg(egg_id)
 
+    def delete_larva(self, user_id: int, nest_id: int, larva_id: str):
+        nest: Nest = self._world.map.get_entity_by_id(nest_id)
+
+        if nest.owner_id != user_id:
+            raise Exception(f'user dont have this nest')
+        
+        nest.delete_larva(larva_id)
+
     def stop_operation(self, user_id: int, colony_id: int, operation_id: int):
         colony: AntColony = self._world.get_colony_by_id(colony_id)
         

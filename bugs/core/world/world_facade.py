@@ -127,6 +127,9 @@ class WorldFacade:
     def delete_egg_command(self, user_id: int, nest_id: int, egg_id: str):
         self._colony_service.delete_egg(user_id, nest_id, egg_id)
 
+    def delete_larva_command(self, user_id: int, nest_id: int, larva_id: str):
+        self._colony_service.delete_larva(user_id, nest_id, larva_id)
+
     def found_colony_command(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point):
         self._nuptial_environment_service.found_new_colony(user_id, queen_id, nuptial_male_id, nest_building_site)
 

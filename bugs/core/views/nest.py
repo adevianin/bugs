@@ -56,3 +56,10 @@ def delete_egg(request: HttpRequest, nest_id: int, egg_id: int):
     wf = WorldFacade.get_instance()
     wf.delete_egg_command(request.user.id, nest_id, egg_id)
     return HttpResponse(status=200)
+
+@require_POST
+@login_required     
+def delete_larva(request: HttpRequest, nest_id: int, larva_id: int):
+    wf = WorldFacade.get_instance()
+    wf.delete_larva_command(request.user.id, nest_id, larva_id)
+    return HttpResponse(status=200)

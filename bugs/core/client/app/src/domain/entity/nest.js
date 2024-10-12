@@ -65,9 +65,29 @@ class Nest extends Entity {
         egg.name = name;
     }
 
+    larvaDelete(larvaId) {
+        this._nestApi.larvaDelete(this.id, larvaId);
+        let larva = this._findLarvaById(larvaId);
+        this._removeLarvaFromArray(larva);
+        this.emit('larvaDeleted', larva);
+    }
+
     _removeEggFromArray(egg) {
         let index = this.eggs.indexOf(egg);
         this.eggs.splice(index, 1);
+    }
+
+    _removeLarvaFromArray(larva) {
+        let index = this.larvae.indexOf(larva);
+        this.larvae.splice(index, 1);
+    }
+
+    _findEggById(id) {
+        return this.eggs.find(egg => egg.id == id);
+    }
+
+    _findLarvaById(id) {
+        return this.larvae.find(larva => larva.id == id);
     }
 
     playAction(action) {
@@ -156,10 +176,6 @@ class Nest extends Entity {
 
     _setIsBuilt(isBuilt) {
         this._setState(isBuilt ? 'built' : 'building');
-    }
-
-    _findEggById(id) {
-        return this.eggs.find(egg => egg.id == id);
     }
 
 }

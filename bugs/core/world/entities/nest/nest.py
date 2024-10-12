@@ -96,6 +96,9 @@ class Nest(Entity):
     def delete_egg(self, egg_id: str):
         self._body.delete_egg(egg_id)
 
+    def delete_larva(self, larva_id: str):
+        self._body.delete_larva(larva_id)
+
     def build(self):
         self._body.build()
 

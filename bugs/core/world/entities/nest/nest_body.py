@@ -93,6 +93,11 @@ class NestBody(Body):
         egg = self._get_egg_by_id(egg_id)
         if egg:
             self._eggs.remove(egg)
+
+    def develop_eggs(self):
+        for egg in self._eggs:
+            egg.develop()
+            self.events.emit('egg_develop', egg)
     
     def take_edible_item(self, item: Item):
         self.stored_calories += item.use()
@@ -149,12 +154,16 @@ class NestBody(Body):
         for larva in larvae_ready_to_born:
             self._larvae.remove(larva)
             self.events.emit('larva_is_ready', larva)
+
+    def _add_larva(self, larva: Larva):
+        self._larvae.append(larva)
+        self.events.emit('larva_added', larva)
+
+    def delete_larva(self, larva_id: str):
+        larva = self._get_larva_by_id(larva_id)
+        if larva:
+            self._larvae.remove(larva)
         
-    def develop_eggs(self):
-        for egg in self._eggs:
-            egg.develop()
-            self.events.emit('egg_develop', egg)
-                
     def receive_damage(self, damage: int):
         if self.fortification > 0:
             self.fortification -= damage if damage <= self.fortification else self.fortification
@@ -171,14 +180,17 @@ class NestBody(Body):
             self.fortification = self.stats.max_fortification
         
 
-    def _add_larva(self, larva: Larva):
-        self._larvae.append(larva)
-        self.events.emit('larva_added', larva)
-
     def _get_egg_by_id(self, egg_id: str) -> Egg:
         for egg in self._eggs:
             if egg.id == egg_id:
                 return egg
+            
+        return None
+    
+    def _get_larva_by_id(self, larva_id: str) -> Larva:
+        for larva in self._larvae:
+            if larva.id == larva_id:
+                return larva
             
         return None
         

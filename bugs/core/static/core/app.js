@@ -1546,9 +1546,29 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         egg.name = name;
     }
 
+    larvaDelete(larvaId) {
+        this._nestApi.larvaDelete(this.id, larvaId);
+        let larva = this._findLarvaById(larvaId);
+        this._removeLarvaFromArray(larva);
+        this.emit('larvaDeleted', larva);
+    }
+
     _removeEggFromArray(egg) {
         let index = this.eggs.indexOf(egg);
         this.eggs.splice(index, 1);
+    }
+
+    _removeLarvaFromArray(larva) {
+        let index = this.larvae.indexOf(larva);
+        this.larvae.splice(index, 1);
+    }
+
+    _findEggById(id) {
+        return this.eggs.find(egg => egg.id == id);
+    }
+
+    _findLarvaById(id) {
+        return this.larvae.find(larva => larva.id == id);
     }
 
     playAction(action) {
@@ -1637,10 +1657,6 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _setIsBuilt(isBuilt) {
         this._setState(isBuilt ? 'built' : 'building');
-    }
-
-    _findEggById(id) {
-        return this.eggs.find(egg => egg.id == id);
     }
 
 }
@@ -2983,6 +2999,10 @@ class NestApi {
 
     eggDelete(nestId, eggId) {
         return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/delete`);
+    }
+
+    larvaDelete(nestId, larvaId) {
+        return this._requester.post(`world/nests/${nestId}/larvae/${larvaId}/delete`);
     }
 
 }
@@ -5289,6 +5309,7 @@ class LarvaTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
 
     _listenNest() {
         this._stopListenLarvaIsReady = this._nest.on('larvaIsReady', this._onLarvaIsReady.bind(this));
+        this._stopListenLarvaDeleted = this._nest.on('larvaDeleted', this._onLarvaDeleted.bind(this));
         this._stopListenLarvaAdded = this._nest.on('larvaAdded', this._onLarvaAdded.bind(this));
     }
 
@@ -5297,6 +5318,7 @@ class LarvaTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
             return
         }
         this._stopListenLarvaIsReady();
+        this._stopListenLarvaDeleted();
         this._stopListenLarvaAdded();
     }
 
@@ -5316,7 +5338,7 @@ class LarvaTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
     _renderLarva(larva) {
         let el = document.createElement('tr');
         this._larvaeListEl.append(el);
-        let view = new _larvaView__WEBPACK_IMPORTED_MODULE_2__.LarvaView(el, larva);
+        let view = new _larvaView__WEBPACK_IMPORTED_MODULE_2__.LarvaView(el, larva, this._nest);
         this._larvaeViews[larva.id] = view;
     }
 
@@ -5328,6 +5350,14 @@ class LarvaTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
     }
 
     _onLarvaIsReady(larva) {
+        this._removeLarvaView(larva);
+    }
+
+    _onLarvaDeleted(larva) {
+        this._removeLarvaView(larva);
+    }
+
+    _removeLarvaView(larva) {
         this._larvaeViews[larva.id].remove();
         delete this._larvaeViews[larva.id];
     }
@@ -5368,13 +5398,15 @@ __webpack_require__.r(__webpack_exports__);
 
 class LarvaView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    constructor(el, larva) {
+    constructor(el, larva, nest) {
         super(el);
         this._larva = larva;
+        this._nest = nest;
 
         this._render();
 
         this._stopListenProgressChange = larva.on('progressChanged', this._onProgressChanged.bind(this));
+        this._deleteLarvaBtn.addEventListener('click', this._onDeleteBtnClick.bind(this));
     }
 
     _render() {
@@ -5384,6 +5416,7 @@ class LarvaView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Bas
         this._el.querySelector('[data-ant-type]').innerHTML = _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_2__.antTypesLabels[this._larva.antType];
         this._el.querySelector('[data-name]').innerHTML = this._larva.name;
         this._genomeView = new _view_game_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_3__.ClosableGenomeView(this._el.querySelector('[data-genome]'), this._larva.genome);
+        this._deleteLarvaBtn = this._el.querySelector('[data-delete]');
         this._renderProgress();
     }
 
@@ -5399,6 +5432,10 @@ class LarvaView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Bas
 
     _onProgressChanged() {
         this._renderProgress();
+    }
+
+    _onDeleteBtnClick() {
+        this._nest.larvaDelete(this._larva.id);
     }
 }
 
@@ -11384,7 +11421,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<table>\r\n    <tr>\r\n        <td>імя</td>\r\n        <td>геном</td>\r\n        <td>прогрес</td>\r\n        <td>каста</td>\r\n    </tr>\r\n    <tbody data-larvae-list>\r\n        \r\n    </tbody>\r\n</table>";
+var code = "<table>\r\n    <tr>\r\n        <td>імя</td>\r\n        <td>геном</td>\r\n        <td>прогрес</td>\r\n        <td>каста</td>\r\n        <td>дії</td>\r\n    </tr>\r\n    <tbody data-larvae-list>\r\n        \r\n    </tbody>\r\n</table>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -11402,7 +11439,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<td data-name></td>\r\n<td data-genome></td>\r\n<td data-progress></td>\r\n<td data-ant-type></td>";
+var code = "<td data-name></td>\r\n<td data-genome></td>\r\n<td data-progress></td>\r\n<td data-ant-type></td>\r\n<td data-actions>\r\n    <button data-delete>винести</button>\r\n</td>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
