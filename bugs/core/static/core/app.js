@@ -5110,7 +5110,7 @@ class EggView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._progressEl.innerHTML = progressValue;
         this._stateEl.innerHTML = _view_labels_eggStatesLabels__WEBPACK_IMPORTED_MODULE_4__.eggStatesLabels[this._egg.state];
         this._toLarvaChamberBtn.disabled = !this._egg.isReady;
-        this._deleteBtn.disabled = !this._egg.isSpoiled;
+        // this._deleteBtn.disabled = !this._egg.isSpoiled;
     }
 
     _renderAntTypeSelectorOptions() {

@@ -47,7 +47,7 @@ class EggView extends BaseHTMLView {
         this._progressEl.innerHTML = progressValue;
         this._stateEl.innerHTML = eggStatesLabels[this._egg.state];
         this._toLarvaChamberBtn.disabled = !this._egg.isReady;
-        this._deleteBtn.disabled = !this._egg.isSpoiled;
+        // this._deleteBtn.disabled = !this._egg.isSpoiled;
     }
 
     _renderAntTypeSelectorOptions() {
