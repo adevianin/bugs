@@ -5,24 +5,25 @@ class Larva extends EventEmitter {
 
     static buildFromJson(json) {
         let genome = Genome.buildFromJson(json.genome);
-        return new Larva(json.id, json.name, json.antType, json.progress, genome);
+        return new Larva(json.id, json.name, json.antType, json.ateFood, json.requiredFood, genome);
     }
 
-    constructor(id, name, antType, progress, genome) {
+    constructor(id, name, antType, ateFood, requiredFood, genome) {
         super();
         this.id = id;
         this.name = name;
         this.antType = antType;
-        this._progress = progress;
+        this._ateFood = ateFood;
+        this.requiredFood = requiredFood;
         this.genome = genome;
     }
 
-    get progress() {
-        return this._progress;
+    get ateFood() {
+        return this._ateFood;
     }
 
-    set progress(value) {
-        this._progress = value;
+    set ateFood(value) {
+        this._ateFood = value;
         this.emit('progressChanged');
     }
 

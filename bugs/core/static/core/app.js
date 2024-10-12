@@ -1360,24 +1360,25 @@ class Larva extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitte
 
     static buildFromJson(json) {
         let genome = _genetic_genome__WEBPACK_IMPORTED_MODULE_1__.Genome.buildFromJson(json.genome);
-        return new Larva(json.id, json.name, json.antType, json.progress, genome);
+        return new Larva(json.id, json.name, json.antType, json.ateFood, json.requiredFood, genome);
     }
 
-    constructor(id, name, antType, progress, genome) {
+    constructor(id, name, antType, ateFood, requiredFood, genome) {
         super();
         this.id = id;
         this.name = name;
         this.antType = antType;
-        this._progress = progress;
+        this._ateFood = ateFood;
+        this.requiredFood = requiredFood;
         this.genome = genome;
     }
 
-    get progress() {
-        return this._progress;
+    get ateFood() {
+        return this._ateFood;
     }
 
-    set progress(value) {
-        this._progress = value;
+    set ateFood(value) {
+        this._ateFood = value;
         this.emit('progressChanged');
     }
 
@@ -1585,7 +1586,7 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _playLarvaFed(action) {
         let larva = this.larvae.find(larva => larva.id == action.larvaId);
-        larva.progress = action.progress;
+        larva.ateFood = action.ateFood;
         return Promise.resolve();
     }
 
@@ -4944,7 +4945,7 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._eggsListEl = this._el.querySelector('[data-eggs-list]');
         this._addEggBtn = this._el.querySelector('[data-add-egg]');
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
-        this._notEnoughtFoodMsg = this._el.querySelector('[data-not-enought-food-msg]');
+        this._notEnoughFoodMsg = this._el.querySelector('[data-not-enough-food-msg]');
     }
 
     manageNest(nest) {
@@ -5025,7 +5026,7 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
     _renderCanAddNewEgg() {
         let canAdd = this._nest.checkCanAddNewEgg();
         this._addEggBtn.disabled = !canAdd;
-        this._notEnoughtFoodMsg.classList.toggle('hidden', canAdd);
+        this._notEnoughFoodMsg.classList.toggle('hidden', canAdd);
     }
 
     _generateAntName() {
@@ -5393,7 +5394,7 @@ class LarvaView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Bas
     }
 
     _renderProgress() {
-        this._progressEl.innerHTML = Math.round(this._larva.progress);
+        this._progressEl.innerHTML = `${Math.round(this._larva.ateFood)}/${this._larva.requiredFood}`;
     }
 
     _onProgressChanged() {
@@ -11329,7 +11330,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n    <span data-not-enought-food-msg>не вистачає їжі</span>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>стан</td>\r\n            <td>каста</td>\r\n            <td>дії</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
+var code = "<div>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n    <span data-not-enough-food-msg>не вистачає їжі</span>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>стан</td>\r\n            <td>каста</td>\r\n            <td>дії</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

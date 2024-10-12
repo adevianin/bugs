@@ -917,7 +917,7 @@ class Command(BaseCommand):
                         "id": 'id1id1',
                         "name": 'queen Elizabeth',
                         "ant_type": "queen",
-                        "ate_calories": 0,
+                        "ate_food": 0,
                         "genome": {
                             "maternal": [
                                 {
@@ -1007,7 +1007,7 @@ class Command(BaseCommand):
                         "id": 'id2id2',
                         "name": 'queen Elizabeth 2',
                         "ant_type": "queen",
-                        "ate_calories": 0,
+                        "ate_food": 0,
                         "genome": {
                             "maternal": [
                                 {

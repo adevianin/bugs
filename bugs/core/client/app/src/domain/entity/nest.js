@@ -105,7 +105,7 @@ class Nest extends Entity {
 
     _playLarvaFed(action) {
         let larva = this.larvae.find(larva => larva.id == action.larvaId);
-        larva.progress = action.progress;
+        larva.ateFood = action.ateFood;
         return Promise.resolve();
     }
 

@@ -11,6 +11,6 @@ class LarvaDeserializer():
         id = larva_json['id']
         name = larva_json['name']
         ant_type = AntTypes(larva_json['ant_type'])
-        ate_calories = larva_json['ate_calories']
+        ate_food = larva_json['ate_food']
         genome = self._genome_deserializer.deserialize_genome(larva_json['genome'])
-        return Larva.build(id, name, ant_type, ate_calories, genome)
+        return Larva.build(id, name, ant_type, ate_food, genome)

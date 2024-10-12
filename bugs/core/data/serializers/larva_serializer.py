@@ -14,7 +14,7 @@ class LarvaSerializer():
             'id': larva.id,
             'name': larva.name,
             'ant_type': larva.ant_type,
-            'ate_calories': larva.ate_calories,
+            'ate_food': larva.ate_food,
             'genome': self._genome_serializer.serialize_genome(larva.genome)
         })
 

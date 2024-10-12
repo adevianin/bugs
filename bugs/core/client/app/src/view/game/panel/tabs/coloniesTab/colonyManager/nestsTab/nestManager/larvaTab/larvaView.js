@@ -31,7 +31,7 @@ class LarvaView extends BaseHTMLView {
     }
 
     _renderProgress() {
-        this._progressEl.innerHTML = Math.round(this._larva.progress);
+        this._progressEl.innerHTML = `${Math.round(this._larva.ateFood)}/${this._larva.requiredFood}`;
     }
 
     _onProgressChanged() {

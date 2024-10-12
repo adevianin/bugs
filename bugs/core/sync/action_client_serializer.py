@@ -199,7 +199,7 @@ class ActionClientSerializer(iActionClientSerializer):
 
         json.update({
             'larvaId': action.larva.id,
-            'progress': action.larva.progress
+            'ateFood': action.larva.ate_food
         })
 
         return json
