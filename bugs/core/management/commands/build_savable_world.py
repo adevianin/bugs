@@ -51,7 +51,8 @@ class Command(BaseCommand):
                                 { "type": "body_max_hp", "domination_code": "B", "max_hp": 200},
                                 { "type": "body_hp_regen_rate", "domination_code": "B", "hp_regen_rate": 10},
                                 { "type": "body_sight_distance", "domination_code": "D", "sight_distance": 200},
-                                { "type": "body_speed", "domination_code": "D", "speed": 32}
+                                { "type": "body_speed", "domination_code": "D", "speed": 32},
+                                { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                             ]
                         },
                         {
@@ -92,7 +93,8 @@ class Command(BaseCommand):
                                 { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 },
                                 { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
                                 { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 },
-                                { "type": "body_speed", "domination_code": "D", "speed": 32 }
+                                { "type": "body_speed", "domination_code": "D", "speed": 32 },
+                                { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                             ]
                         },
                         {
@@ -160,7 +162,8 @@ class Command(BaseCommand):
                                 { "type": "body_max_hp", "domination_code": "B", "max_hp": 200},
                                 { "type": "body_hp_regen_rate", "domination_code": "B", "hp_regen_rate": 10},
                                 { "type": "body_sight_distance", "domination_code": "D", "sight_distance": 200},
-                                { "type": "body_speed", "domination_code": "D", "speed": 32}
+                                { "type": "body_speed", "domination_code": "D", "speed": 32},
+                                { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                             ]
                         },
                         {
@@ -203,7 +206,8 @@ class Command(BaseCommand):
                                 { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 },
                                 { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
                                 { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 },
-                                { "type": "body_speed", "domination_code": "D", "speed": 32 }
+                                { "type": "body_speed", "domination_code": "D", "speed": 32 },
+                                { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                             ]
                         },
                         {
@@ -245,7 +249,8 @@ class Command(BaseCommand):
                             { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 },
                             { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
                             { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 },
-                            { "type": "body_speed", "domination_code": "D", "speed": 32 }
+                            { "type": "body_speed", "domination_code": "D", "speed": 32 },
+                            { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                         ]
                     },
                     {
@@ -316,7 +321,8 @@ class Command(BaseCommand):
                                 { "type": "body_max_hp", "domination_code": "B", "max_hp": 200},
                                 { "type": "body_hp_regen_rate", "domination_code": "B", "hp_regen_rate": 10},
                                 { "type": "body_sight_distance", "domination_code": "D", "sight_distance": 200},
-                                { "type": "body_speed", "domination_code": "D", "speed": 32}
+                                { "type": "body_speed", "domination_code": "D", "speed": 32},
+                                { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                             ]
                         },
                         {
@@ -359,7 +365,8 @@ class Command(BaseCommand):
                                 { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 },
                                 { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
                                 { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 },
-                                { "type": "body_speed", "domination_code": "D", "speed": 32 }
+                                { "type": "body_speed", "domination_code": "D", "speed": 32 },
+                                { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                             ]
                         },
                         {
@@ -428,7 +435,8 @@ class Command(BaseCommand):
                                 { "type": "body_max_hp", "domination_code": "B", "max_hp": 200},
                                 { "type": "body_hp_regen_rate", "domination_code": "B", "hp_regen_rate": 10},
                                 { "type": "body_sight_distance", "domination_code": "D", "sight_distance": 200},
-                                { "type": "body_speed", "domination_code": "D", "speed": 32}
+                                { "type": "body_speed", "domination_code": "D", "speed": 32},
+                                { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                             ]
                         },
                         {
@@ -469,7 +477,8 @@ class Command(BaseCommand):
                                 { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 },
                                 { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
                                 { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 },
-                                { "type": "body_speed", "domination_code": "D", "speed": 32 }
+                                { "type": "body_speed", "domination_code": "D", "speed": 32 },
+                                { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                             ]
                         },
                         {
@@ -511,7 +520,8 @@ class Command(BaseCommand):
                             { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 },
                             { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
                             { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 },
-                            { "type": "body_speed", "domination_code": "D", "speed": 32 }
+                            { "type": "body_speed", "domination_code": "D", "speed": 32 },
+                            { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                         ]
                     },
                     {
@@ -580,7 +590,8 @@ class Command(BaseCommand):
                                 { "type": "body_max_hp", "domination_code": "B", "max_hp": 200},
                                 { "type": "body_hp_regen_rate", "domination_code": "B", "hp_regen_rate": 10},
                                 { "type": "body_sight_distance", "domination_code": "D", "sight_distance": 200},
-                                { "type": "body_speed", "domination_code": "S", "speed": 50}
+                                { "type": "body_speed", "domination_code": "S", "speed": 50},
+                                { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                             ]
                         },
                         {
@@ -623,7 +634,8 @@ class Command(BaseCommand):
                                 { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 },
                                 { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
                                 { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 },
-                                { "type": "body_speed", "domination_code": "D", "speed": 32 }
+                                { "type": "body_speed", "domination_code": "D", "speed": 32 },
+                                { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                             ]
                         },
                         {
@@ -691,7 +703,8 @@ class Command(BaseCommand):
                                 { "type": "body_max_hp", "domination_code": "B", "max_hp": 200},
                                 { "type": "body_hp_regen_rate", "domination_code": "B", "hp_regen_rate": 10},
                                 { "type": "body_sight_distance", "domination_code": "D", "sight_distance": 200},
-                                { "type": "body_speed", "domination_code": "S", "speed": 50}
+                                { "type": "body_speed", "domination_code": "S", "speed": 50},
+                                { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                             ]
                         },
                         {
@@ -734,7 +747,8 @@ class Command(BaseCommand):
                                 { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 },
                                 { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
                                 { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 },
-                                { "type": "body_speed", "domination_code": "D", "speed": 32 }
+                                { "type": "body_speed", "domination_code": "D", "speed": 32 },
+                                { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                             ]
                         },
                         {
@@ -802,7 +816,8 @@ class Command(BaseCommand):
                                 { "type": "body_max_hp", "domination_code": "B", "max_hp": 200},
                                 { "type": "body_hp_regen_rate", "domination_code": "B", "hp_regen_rate": 10},
                                 { "type": "body_sight_distance", "domination_code": "D", "sight_distance": 200},
-                                { "type": "body_speed", "domination_code": "S", "speed": 50}
+                                { "type": "body_speed", "domination_code": "S", "speed": 50},
+                                { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                             ]
                         },
                         {
@@ -845,7 +860,8 @@ class Command(BaseCommand):
                                 { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 },
                                 { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
                                 { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 },
-                                { "type": "body_speed", "domination_code": "D", "speed": 32 }
+                                { "type": "body_speed", "domination_code": "D", "speed": 32 },
+                                { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                             ]
                         },
                         {
@@ -928,7 +944,8 @@ class Command(BaseCommand):
                                         { "type": "body_max_hp", "domination_code": "B", "max_hp": 200},
                                         { "type": "body_hp_regen_rate", "domination_code": "B", "hp_regen_rate": 10},
                                         { "type": "body_sight_distance", "domination_code": "D", "sight_distance": 200},
-                                        { "type": "body_speed", "domination_code": "D", "speed": 32}
+                                        { "type": "body_speed", "domination_code": "D", "speed": 32},
+                                        { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                                     ]
                                 },
                                 {
@@ -969,7 +986,8 @@ class Command(BaseCommand):
                                         { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 },
                                         { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
                                         { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 },
-                                        { "type": "body_speed", "domination_code": "D", "speed": 32 }
+                                        { "type": "body_speed", "domination_code": "D", "speed": 32 },
+                                        { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                                     ]
                                 },
                                 {
@@ -1018,7 +1036,8 @@ class Command(BaseCommand):
                                         { "type": "body_max_hp", "domination_code": "B", "max_hp": 200},
                                         { "type": "body_hp_regen_rate", "domination_code": "B", "hp_regen_rate": 10},
                                         { "type": "body_sight_distance", "domination_code": "D", "sight_distance": 200},
-                                        { "type": "body_speed", "domination_code": "D", "speed": 32}
+                                        { "type": "body_speed", "domination_code": "D", "speed": 32},
+                                        { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                                     ]
                                 },
                                 {
@@ -1059,7 +1078,8 @@ class Command(BaseCommand):
                                         { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 },
                                         { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
                                         { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 },
-                                        { "type": "body_speed", "domination_code": "D", "speed": 32 }
+                                        { "type": "body_speed", "domination_code": "D", "speed": 32 },
+                                        { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                                     ]
                                 },
                                 {
@@ -1106,7 +1126,8 @@ class Command(BaseCommand):
                                         { "type": "body_max_hp", "domination_code": "B", "max_hp": 200},
                                         { "type": "body_hp_regen_rate", "domination_code": "B", "hp_regen_rate": 10},
                                         { "type": "body_sight_distance", "domination_code": "D", "sight_distance": 200},
-                                        { "type": "body_speed", "domination_code": "D", "speed": 32}
+                                        { "type": "body_speed", "domination_code": "D", "speed": 32},
+                                        { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                                     ]
                                 },
                                 {
@@ -1147,7 +1168,8 @@ class Command(BaseCommand):
                                         { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 },
                                         { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20},
                                         { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 },
-                                        { "type": "body_speed", "domination_code": "D", "speed": 32 }
+                                        { "type": "body_speed", "domination_code": "D", "speed": 32 },
+                                        { "type": "body_life_span", "domination_code": "D", "life_span": 10000 }
                                     ]
                                 },
                                 {
@@ -1351,14 +1373,15 @@ class Command(BaseCommand):
                     "chromosomes_set": [
                         {
                             "type": "body",
-                            "activated_specie_genes_ids": ['key1', 'key2', 'key3', 'key4', 'key5', 'key6'], 
+                            "activated_specie_genes_ids": ['key1', 'key2', 'key3', 'key4', 'key5', 'key6', 'key7'], 
                             "specie_genes": [
                                 { 'id': 'key1', 'gene': { "type": "body_strength", "domination_code": "E", "strength": 9 } },
                                 { 'id': 'key2', 'gene': { "type": "body_defense", "domination_code": "C", "defense": 7 } },
                                 { 'id': 'key3', 'gene': { "type": "body_max_hp", "domination_code": "C", "max_hp": 150 } },
                                 { 'id': 'key4', 'gene': { "type": "body_hp_regen_rate", "domination_code": "C", "hp_regen_rate": 20} },
                                 { 'id': 'key5', 'gene': { "type": "body_sight_distance", "domination_code": "A", "sight_distance": 250 } },
-                                { 'id': 'key6', 'gene': { "type": "body_speed", "domination_code": "D", "speed": 32 } }
+                                { 'id': 'key6', 'gene': { "type": "body_speed", "domination_code": "D", "speed": 32 } },
+                                { 'id': 'key7', 'gene': { "type": "body_life_span", "domination_code": "D", "life_span": 10000 } },
                             ]
                         },
                         {

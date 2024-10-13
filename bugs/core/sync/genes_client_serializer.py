@@ -6,6 +6,7 @@ from core.world.entities.ant.base.genetic.genes.body_max_hp_gene import BodyMaxH
 from core.world.entities.ant.base.genetic.genes.body_hp_regen_rate_gene import BodyHpRegenRateGene
 from core.world.entities.ant.base.genetic.genes.body_speed_gene import BodySpeedGene
 from core.world.entities.ant.base.genetic.genes.body_sight_distance_gene import BodySightDistanceGene
+from core.world.entities.ant.base.genetic.genes.body_life_span_gene import BodyLifeSpanGene
 from core.world.entities.ant.base.genetic.genes.development_caste_gene import DevelopmentCasteGene
 from core.world.entities.ant.base.genetic.genes.development_queen_caste_gene import DevelopmentQueenCasteGene
 from core.world.entities.ant.base.genetic.genes.development_worker_caste_gene import DevelopmentWorkerCasteGene
@@ -34,6 +35,8 @@ class GenesClientSerializer():
                 return self._serialize_body_speed_gene(gene)
             case GenesTypes.BODY_SIGHT_DISTANCE:
                 return self._serialize_body_sight_distance_gene(gene)
+            case GenesTypes.BODY_LIFE_SPAN:
+                return self._serialize_body_life_span_gene(gene)
             case GenesTypes.DEVELOPMENT_QUEEN_CASTE:
                 return self._serialize_development_queen_caste_gene(gene)
             case GenesTypes.DEVELOPMENT_WORKER_CASTE:
@@ -98,6 +101,13 @@ class GenesClientSerializer():
         json = self._serialize_base_gene(gene)
         json.update({
             'sightDistance': round(gene.sight_distance, self.NDIGITS)
+        })
+        return json
+    
+    def _serialize_body_life_span_gene(self, gene: BodyLifeSpanGene):
+        json = self._serialize_base_gene(gene)
+        json.update({
+            'lifeSpan': round(gene.life_span, self.NDIGITS)
         })
         return json
     

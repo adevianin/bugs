@@ -8,6 +8,7 @@ import bodyHpRegenRateTmpl from './bodyHpRegenRateTmpl.html';
 import bodySightDistanceTmpl from './bodySightDistanceTmpl.html';
 import bodySpeedTmpl from './bodySpeedTmpl.html';
 import devCasteGeneTmpl from './developmentCasteGeneTmpl.html';
+import bodyLifeSpanTmpl from './bodyLifeSpanTmpl.html';
 import { AntTypes } from "@domain/enum/antTypes";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
 
@@ -47,6 +48,9 @@ class GeneView extends BaseHTMLView {
                 break;
             case GenesTypes.BODY_SPEED:
                 this._renderBodySpeedGene();
+                break;
+            case GenesTypes.BODY_LIFE_SPAN:
+                this._renderBodyLifeSpanGene();
                 break;
             case GenesTypes.DEVELOPMENT_QUEEN_CASTE:
             case GenesTypes.DEVELOPMENT_WORKER_CASTE:
@@ -93,6 +97,11 @@ class GeneView extends BaseHTMLView {
     _renderBodySpeedGene() {
         this._geneEl.innerHTML = bodySpeedTmpl;
         this._geneEl.querySelector('[data-speed]').innerHTML = this._gene.speed;
+    }
+
+    _renderBodyLifeSpanGene() {
+        this._geneEl.innerHTML = bodyLifeSpanTmpl;
+        this._geneEl.querySelector('[data-life-span]').innerHTML = this._gene.lifeSpan;
     }
 
     _renderCasteDevelopmentGene() {

@@ -7,6 +7,7 @@ class GenesTypes(StrEnum):
     BODY_HP_REGEN_RATE = 'body_hp_regen_rate'
     BODY_SPEED = 'body_speed'
     BODY_SIGHT_DISTANCE = 'body_sight_distance'
+    BODY_LIFE_SPAN = 'body_life_span'
 
     DEVELOPMENT_QUEEN_CASTE = 'development_queen_caste'
     DEVELOPMENT_WORKER_CASTE = 'development_worker_caste'

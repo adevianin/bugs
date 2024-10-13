@@ -6,6 +6,7 @@ from core.world.entities.ant.base.genetic.genes.body_defense_gene import BodyDef
 from core.world.entities.ant.base.genetic.genes.body_max_hp_gene import BodyMaxHpGene
 from core.world.entities.ant.base.genetic.genes.body_hp_regen_rate_gene import BodyHpRegenRateGene
 from core.world.entities.ant.base.genetic.genes.body_speed_gene import BodySpeedGene
+from core.world.entities.ant.base.genetic.genes.body_life_span_gene import BodyLifeSpanGene
 from core.world.entities.ant.base.genetic.genes.body_sight_distance_gene import BodySightDistanceGene
 from core.world.entities.ant.base.genetic.genes.development_queen_caste_gene import DevelopmentQueenCasteGene
 from core.world.entities.ant.base.genetic.genes.development_worker_caste_gene import DevelopmentWorkerCasteGene
@@ -32,6 +33,8 @@ class GeneDeserializer():
                 return self._build_body_speed_gene(gene_json)
             case GenesTypes.BODY_SIGHT_DISTANCE:
                 return self._build_body_sight_distance_gene(gene_json)
+            case GenesTypes.BODY_LIFE_SPAN:
+                return self._build_body_life_span_gene(gene_json)
             case GenesTypes.DEVELOPMENT_QUEEN_CASTE:
                 return self._build_development_queen_caste_gene(gene_json)
             case GenesTypes.DEVELOPMENT_WORKER_CASTE:
@@ -80,6 +83,11 @@ class GeneDeserializer():
         domination_code = DominationCodes(gene_json['domination_code'])
         sight_distance = gene_json['sight_distance']
         return BodySightDistanceGene.build(domination_code, sight_distance)
+    
+    def _build_body_life_span_gene(self, gene_json: dict):
+        domination_code = DominationCodes(gene_json['domination_code'])
+        life_span = gene_json['life_span']
+        return BodyLifeSpanGene.build(domination_code, life_span)
     
     def _build_development_queen_caste_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])

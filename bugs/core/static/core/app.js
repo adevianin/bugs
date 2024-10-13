@@ -2095,6 +2095,7 @@ const GenesTypes = {
     BODY_HP_REGEN_RATE: 'body_hp_regen_rate',
     BODY_SPEED: 'body_speed',
     BODY_SIGHT_DISTANCE: 'body_sight_distance',
+    BODY_LIFE_SPAN: 'body_life_span',
 
     DEVELOPMENT_QUEEN_CASTE: 'development_queen_caste',
     DEVELOPMENT_WORKER_CASTE: 'development_worker_caste',
@@ -3710,8 +3711,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _bodySightDistanceTmpl_html__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./bodySightDistanceTmpl.html */ "./bugs/core/client/app/src/view/game/panel/base/genome/genes/bodySightDistanceTmpl.html");
 /* harmony import */ var _bodySpeedTmpl_html__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./bodySpeedTmpl.html */ "./bugs/core/client/app/src/view/game/panel/base/genome/genes/bodySpeedTmpl.html");
 /* harmony import */ var _developmentCasteGeneTmpl_html__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./developmentCasteGeneTmpl.html */ "./bugs/core/client/app/src/view/game/panel/base/genome/genes/developmentCasteGeneTmpl.html");
-/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
-/* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./bugs/core/client/app/src/view/labels/antTypesLabels.js");
+/* harmony import */ var _bodyLifeSpanTmpl_html__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./bodyLifeSpanTmpl.html */ "./bugs/core/client/app/src/view/game/panel/base/genome/genes/bodyLifeSpanTmpl.html");
+/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+/* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./bugs/core/client/app/src/view/labels/antTypesLabels.js");
+
 
 
 
@@ -3762,6 +3765,9 @@ class GeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.BODY_SPEED:
                 this._renderBodySpeedGene();
                 break;
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.BODY_LIFE_SPAN:
+                this._renderBodyLifeSpanGene();
+                break;
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_QUEEN_CASTE:
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_WORKER_CASTE:
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_WARRIOR_CASTE:
@@ -3809,11 +3815,16 @@ class GeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
         this._geneEl.querySelector('[data-speed]').innerHTML = this._gene.speed;
     }
 
+    _renderBodyLifeSpanGene() {
+        this._geneEl.innerHTML = _bodyLifeSpanTmpl_html__WEBPACK_IMPORTED_MODULE_10__["default"];
+        this._geneEl.querySelector('[data-life-span]').innerHTML = this._gene.lifeSpan;
+    }
+
     _renderCasteDevelopmentGene() {
         let antType = this._figureOutAntTypeOfDevelopmentGene();
 
         this._geneEl.innerHTML = _developmentCasteGeneTmpl_html__WEBPACK_IMPORTED_MODULE_9__["default"];
-        this._geneEl.querySelector('[data-ant-type]').innerHTML = _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_11__.antTypesLabels[antType];
+        this._geneEl.querySelector('[data-ant-type]').innerHTML = _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_12__.antTypesLabels[antType];
         this._geneEl.querySelector('[data-dev-strength]').innerHTML = this._gene.strength;
         this._geneEl.querySelector('[data-dev-defense]').innerHTML = this._gene.defense;
         this._geneEl.querySelector('[data-dev-max-hp]').innerHTML = this._gene.maxHp;
@@ -3824,13 +3835,13 @@ class GeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
     _figureOutAntTypeOfDevelopmentGene() {
         switch(this._gene.type) {
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_QUEEN_CASTE:
-                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_10__.AntTypes.QUEEN;
+                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_11__.AntTypes.QUEEN;
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_WORKER_CASTE:
-                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_10__.AntTypes.WORKER;
+                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_11__.AntTypes.WORKER;
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_MALE_CASTE:
-                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_10__.AntTypes.MALE;
+                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_11__.AntTypes.MALE;
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_WARRIOR_CASTE:
-                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_10__.AntTypes.WARRIOR;
+                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_11__.AntTypes.WARRIOR;
             default:
                 throw 'unknown development gene type';
         }
@@ -11089,6 +11100,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Module
 var code = "ген відновлення ХП: <span data-hp-regen-rate></span>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/base/genome/genes/bodyLifeSpanTmpl.html":
+/*!******************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/base/genome/genes/bodyLifeSpanTmpl.html ***!
+  \******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "ген тривалості життя: <span data-life-span></span>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
