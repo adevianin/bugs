@@ -31,7 +31,7 @@ class WorldFactory():
         self._ground_beetle_factory = ground_beetle_factory
 
     def build_world(self, id: int, last_used_id: int, entities_collection: EntityCollection, map: Map, colonies: List[Colony], colony_relations_table: ColonyRelationsTable, 
-                    nuptial_environments: List[NuptialEnvironment], climate: Climate) -> World:
+                    nuptial_environments: List[NuptialEnvironment], climate: Climate, current_step: int) -> World:
         id_generator = IdGenerator.build_id_generator(last_used_id)
         ground_beetle_spawner = GroundBeetleSpawner(self._event_bus, map)
         birthers = {
@@ -44,5 +44,6 @@ class WorldFactory():
             'visual_sensor_handler': VisualSensorHandler(self._event_bus, map),
             'temperature_sensor_handler': TemperatureSensorHandler(climate)
         }
-        return World(id, entities_collection, map, self._event_bus, colonies, id_generator, colony_relations_table, birthers, ground_beetle_spawner, nuptial_environments, climate, sensor_handlers)
+        return World(id, entities_collection, map, self._event_bus, colonies, id_generator, colony_relations_table, birthers, ground_beetle_spawner, nuptial_environments, 
+                     climate, sensor_handlers, current_step)
     

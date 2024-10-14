@@ -17,6 +17,7 @@ class Command(BaseCommand):
             "direction_of_change": -1,
             "current_temperature": 5
         },
+        "current_step": 100,
         "ants":[
             {
                 "id":1,

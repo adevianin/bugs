@@ -22,7 +22,7 @@ class World():
 
     def __init__(self, id: int, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: List[Colony], id_generator: IdGenerator, 
                  colony_relations_table: ColonyRelationsTable, birthers, ground_beetle_spawner: GroundBeetleSpawner, nuptial_environments: List[NuptialEnvironment], 
-                 climate: Climate, sensor_handlers):
+                 climate: Climate, sensor_handlers, current_step: int):
         self.id = id
         self._entities_collection = entities_collection
         self._map = map
@@ -31,7 +31,7 @@ class World():
         self._id_generator = id_generator
         self._world_loop_stop_flag = False
         self._is_world_running = False
-        self._step_counter = 0
+        self._current_step = current_step
         self._colony_relations_table = colony_relations_table
         self._birthers = birthers
         self._ground_beetle_spawner = ground_beetle_spawner
@@ -39,6 +39,10 @@ class World():
         self._climate = climate
         self._visual_sensor_handler: VisualSensorHandler = sensor_handlers['visual_sensor_handler']
         self._temperature_sensor_handler: TemperatureSensorHandler = sensor_handlers['temperature_sensor_handler']
+
+    @property
+    def current_step(self):
+        return self._current_step
 
     @property
     def last_used_id(self):
@@ -123,7 +127,7 @@ class World():
                 time.sleep(STEP_TIME - iteration_time)
 
     def _do_step(self):
-        print(f'step { self._step_counter } start')
+        print(f'step { self._current_step } start')
 
         not_live_entities = self._map.get_not_live_entities()
         for entity in not_live_entities:
@@ -136,6 +140,6 @@ class World():
             entity.do_step()
 
         # rename to step_done
-        self._event_bus.emit('step_start', self._step_counter)
+        self._event_bus.emit('step_start', self._current_step)
 
-        self._step_counter += 1
+        self._current_step += 1

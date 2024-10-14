@@ -113,7 +113,9 @@ class WorldRepository(iWorldRepository):
 
         climate = self._climate_deserializer.deserialize_climate(world_data['climate'])
 
-        world = self._world_factory.build_world(world_id, world_data['last_used_id'], entities_collection, map, colonies, colony_relations_table, nuptial_environments, climate)
+        last_used_id = world_data['last_used_id']
+        current_step = world_data['current_step']
+        world = self._world_factory.build_world(world_id, last_used_id, entities_collection, map, colonies, colony_relations_table, nuptial_environments, climate, current_step)
 
         return world
 
