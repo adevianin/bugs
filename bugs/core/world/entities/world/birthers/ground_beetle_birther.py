@@ -13,4 +13,4 @@ class GroundBeetleBirther(EntityBirther):
         self._ground_beetle_factory = ground_beetle_factory
 
     def _build_entity(self, id, request: GroundBeetleBirthRequest) -> GroundBeetle:
-        return self._ground_beetle_factory.build_new_ground_beetle(id, request.position)
+        return self._ground_beetle_factory.build_new_ground_beetle(id, request.position, 0)

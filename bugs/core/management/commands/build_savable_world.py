@@ -38,6 +38,7 @@ class Command(BaseCommand):
                 "thoughts":[
                 ],
                 "memory": {},
+                "birth_step": 0,
                 "is_auto_thought_generation": True,
                 "is_in_operation": False,
                 "guardian_behavior": 'none',
@@ -149,6 +150,7 @@ class Command(BaseCommand):
                     
                 ],
                 "memory": {},
+                "birth_step": 0,
                 "is_auto_thought_generation": True,
                 "is_in_operation": False,
                 "guardian_behavior": 'none',
@@ -308,6 +310,7 @@ class Command(BaseCommand):
                 ],
                 "memory": {
                 },
+                "birth_step": 0,
                 "is_auto_thought_generation": True,
                 "is_in_operation": False,
                 "guardian_behavior": 'none',
@@ -422,6 +425,7 @@ class Command(BaseCommand):
                     
                 ],
                 "memory": {},
+                "birth_step": 0,
                 "is_auto_thought_generation": True,
                 "is_in_operation": False,
                 "guardian_behavior": 'none',
@@ -577,6 +581,7 @@ class Command(BaseCommand):
                     
                 ],
                 "memory": {},
+                "birth_step": 0,
                 "is_auto_thought_generation": False,
                 "is_in_operation": False,
                 "guardian_behavior": 'none',
@@ -690,6 +695,7 @@ class Command(BaseCommand):
                     
                 ],
                 "memory": {},
+                "birth_step": 0,
                 "is_auto_thought_generation": False,
                 "is_in_operation": False,
                 "guardian_behavior": 'none',
@@ -803,6 +809,7 @@ class Command(BaseCommand):
                     
                 ],
                 "memory": {},
+                "birth_step": 0,
                 "is_auto_thought_generation": False,
                 "is_in_operation": False,
                 "guardian_behavior": 'none',
@@ -1338,6 +1345,7 @@ class Command(BaseCommand):
             #     "thoughts":[
             #     ],
             #     "memory": {},
+            #     "birth_step": 0,
             #     "is_auto_thought_generation": True
             # },
         ],

@@ -19,8 +19,10 @@ class LiveBody(Body):
 
     stats: LiveStats
 
-    def __init__(self, events: EventEmitter, stats: LiveStats, memory: Memory, position: Point, angle: int, hp: int, visual_sensor: VisualSensor, temperature_sensor: TemperatureSensor):
+    def __init__(self, events: EventEmitter, stats: LiveStats, memory: Memory, position: Point, angle: int, hp: int, birth_step: int, visual_sensor: VisualSensor, 
+                 temperature_sensor: TemperatureSensor):
         super().__init__(events, stats, position, angle, hp)
+        self._birth_step = birth_step
         self.memory = memory
         self._max_calories = 1000
         self._calories = self._max_calories
@@ -29,6 +31,10 @@ class LiveBody(Body):
         self._user_speed = stats.distance_per_step / STEP_TIME
         self._visual_sensor = visual_sensor
         self._temperature_sensor = temperature_sensor
+
+    @property
+    def birth_step(self):
+        return self._birth_step
 
     @property
     def visual_sensor(self) -> VisualSensor:

@@ -25,6 +25,10 @@ class LiveEntity(Entity, iEnemy):
         self._body.events.add_listener('received_combat_damage', self._on_received_combat_damage)
 
     @property
+    def birth_step(self):
+        return self._body.birth_step
+
+    @property
     def mind(self):
         return self._mind
     

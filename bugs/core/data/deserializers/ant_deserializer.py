@@ -62,6 +62,7 @@ class AntDeserializer():
             "is_auto_thought_generation": ant_json['is_auto_thought_generation'],
             "is_in_operation": ant_json['is_in_operation'],
             "memory_data": ant_json['memory'],
+            "birth_step": ant_json['birth_step'],
             "hp": ant_json['hp'],
             "genome": self._genome_deserializer.deserialize_genome(ant_json['genome']),
             "guardian_behavior": GuardianBehaviors(ant_json['guardian_behavior']),
