@@ -5,6 +5,7 @@ from core.world.id_generator import IdGenerator
 from core.world.utils.event_emiter import EventEmitter
 from .entity_birther import EntityBirther
 from core.world.entities.nest.nest_factory import NestFactory
+from core.world.entities.base.ownership_config import OwnershipConfig
 
 class NestBirther(EntityBirther):
 
@@ -13,4 +14,5 @@ class NestBirther(EntityBirther):
         self._nest_factory = nest_factory
 
     def _build_entity(self, id, request: NestBirthRequest) -> Nest:
-        return self._nest_factory.build_new_nest(id, request.position, request.colony_id, request.owner_id)
+        ownership = OwnershipConfig(request.colony_id, request.owner_id)
+        return self._nest_factory.build_new_nest(id, request.position, ownership)

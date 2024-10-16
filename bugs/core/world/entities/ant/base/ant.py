@@ -12,7 +12,7 @@ from core.world.entities.action.ant_picked_up_item_action import AntPickedUpItem
 from core.world.entities.action.ant_dropped_picked_item import AntDroppedPickedItemAction
 from core.world.entities.world.birthers.requests.nest_birth_request import NestBirthRequest
 from .guardian_behaviors import GuardianBehaviors
-from core.world.entities.item.items.base.item import Item
+from core.world.entities.base.ownership_config import OwnershipConfig
 
 class Ant(LiveEntity):
 
@@ -21,8 +21,8 @@ class Ant(LiveEntity):
     _body: AntBody
     body: AntBody
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, name: str, from_colony_id: int, owner_id: int, body: AntBody, ant_type: AntTypes, mind: AntMind):
-        super().__init__(event_bus, events, id, EntityTypes.ANT, from_colony_id, owner_id, body, mind)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, name: str, ownership: OwnershipConfig, body: AntBody, ant_type: AntTypes, mind: AntMind):
+        super().__init__(event_bus, events, id, EntityTypes.ANT, ownership, body, mind)
         self._ant_type = ant_type
         self._name = name
 

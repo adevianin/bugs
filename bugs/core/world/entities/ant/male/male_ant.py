@@ -8,6 +8,7 @@ from core.world.utils.event_emiter import EventEmitter
 from .male_ant_body import MaleAntBody
 from .male_ant_mind import MaleAntMind
 from core.world.entities.action.ant_flew_nuptial_flight_action import AntFlewNuptialFlightAction
+from core.world.entities.base.ownership_config import OwnershipConfig
 
 class MaleAnt(Ant):
 
@@ -15,8 +16,8 @@ class MaleAnt(Ant):
     _body: MaleAntBody
     body: MaleAntBody
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, name: str, from_colony_id: int, owner_id: int, body: AntBody, mind: AntMind):
-        super().__init__(event_bus, events, id, name, from_colony_id, owner_id, body, AntTypes.MALE, mind)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, name: str, ownership: OwnershipConfig, body: AntBody, mind: AntMind):
+        super().__init__(event_bus, events, id, name, ownership, body, AntTypes.MALE, mind)
 
         self._body.events.add_listener('flew_nuptial_flight', self._on_flew_nuptial_flight)
     

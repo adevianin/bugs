@@ -4,6 +4,7 @@ from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
 from core.world.entities.world.birthers.requests.item_birth_request import ItemBirthRequest
+from core.world.entities.base.ownership_config import OwnershipConfig
 
 from typing import Callable
 import random
@@ -11,8 +12,8 @@ import random
 class ItemSource(Entity):
 
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, body: Body, item_type: ItemTypes, fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
-        super().__init__(event_bus, events, id, EntityTypes.ITEM_SOURCE, from_colony_id, None, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: Body, item_type: ItemTypes, fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
+        super().__init__(event_bus, events, id, EntityTypes.ITEM_SOURCE, ownership, body)
         self._item_type = item_type
         # move fertility to body
         self._fertility = fertility

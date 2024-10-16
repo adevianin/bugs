@@ -6,13 +6,14 @@ from core.world.utils.size import Size
 from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
 from core.world.entities.world.birthers.requests.item_birth_request import ItemBirthRequest
+from core.world.entities.base.ownership_config import OwnershipConfig
 
 import random
 
 class ItemArea(Entity):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, body: Body, size: Size, item_type: ItemTypes, fertility: int, accumulated: int):
-        super().__init__(event_bus, events, id, EntityTypes.ITEM_AREA, from_colony_id, None, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: Body, size: Size, item_type: ItemTypes, fertility: int, accumulated: int):
+        super().__init__(event_bus, events, id, EntityTypes.ITEM_AREA, ownership, body)
         self._size = size
         self._item_type = item_type
         self._fertility = fertility

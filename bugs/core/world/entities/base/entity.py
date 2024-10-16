@@ -8,18 +8,19 @@ from core.world.entities.action.entity_died_action import EntityDiedAction
 from core.world.entities.action.entity_rotated_action import EntityRotatedAction
 from core.world.entities.action.entity_hp_changed_action import EntityHpChangedAction
 from core.world.entities.action.entity_colony_changed_action import EntityColonyChangedAction
+from .ownership_config import OwnershipConfig
 
 class Entity(ABC):
 
     _body: Body
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, owner_id: int, body: Body):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, ownership: OwnershipConfig, body: Body):
         self._event_bus = event_bus
         self._events = events
         self._id: int = id
         self._type: EntityTypes = type
-        self._from_colony_id = from_colony_id
-        self._owner_id = owner_id
+        self._from_colony_id = ownership.owner_colony_id
+        self._owner_id = ownership.owner_user_id
         self._body = body
 
         self._body.events.add_listener('died', self._on_died)

@@ -908,7 +908,8 @@ class Command(BaseCommand):
             {
                 "id":20,
                 "type":"item",
-                "from_colony_id":None,
+                "from_colony_id": None,
+                "owner_id": None,
                 "hp": 100,
                 "position":[
                     850,
@@ -1262,6 +1263,7 @@ class Command(BaseCommand):
                 "id":40,
                 "type":"item_area",
                 "from_colony_id":None,
+                "owner_id": None,
                 "hp": 100,
                 "position":[
                     450,
@@ -1280,6 +1282,7 @@ class Command(BaseCommand):
                 "id":41,
                 "type":"item_area",
                 "from_colony_id":None,
+                "owner_id": None,
                 "hp": 100,
                 "position":[
                     1800,
@@ -1298,6 +1301,7 @@ class Command(BaseCommand):
                 "id":42,
                 "type":"item_area",
                 "from_colony_id":None,
+                "owner_id": None,
                 "hp": 100,
                 "position":[
                     450,
@@ -1318,6 +1322,7 @@ class Command(BaseCommand):
                 "id":50,
                 "type":"item_source",
                 "from_colony_id": None,
+                "owner_id": None,
                 "hp": 100,
                 "position":[
                     850,
@@ -1336,6 +1341,7 @@ class Command(BaseCommand):
             #     "id":60,
             #     "type":"ground_beetle",
             #     "from_colony_id":3,
+            #     "owner_id": None,
             #     "hp": 800,
             #     "position":[
             #         950,

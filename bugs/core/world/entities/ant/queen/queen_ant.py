@@ -13,6 +13,7 @@ from core.world.entities.action.ant_flew_nuptial_flight_back_action import AntFl
 from core.world.utils.point import Point
 from core.world.entities.ant.base.nuptial_environment.nuptial_male import NuptialMale
 from core.world.entities.action.ant_got_fertilized_action import AntGotFertilizedAction
+from core.world.entities.base.ownership_config import OwnershipConfig
 
 class QueenAnt(Ant):
 
@@ -20,8 +21,8 @@ class QueenAnt(Ant):
     _body: QueenAntBody
     body: QueenAntBody
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, name: str, from_colony_id: int, owner_id: int, body: AntBody, mind: AntMind):
-        super().__init__(event_bus, events, id, name, from_colony_id, owner_id, body, AntTypes.QUEEN, mind)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, name: str, ownership: OwnershipConfig, body: AntBody, mind: AntMind):
+        super().__init__(event_bus, events, id, name, ownership, body, AntTypes.QUEEN, mind)
 
         self._body.events.add_listener('flew_nuptial_flight', self._on_flew_nuptial_flight)
         self._body.events.add_listener('flew_nuptial_flight_back', self._on_flew_nuptial_flight_back)

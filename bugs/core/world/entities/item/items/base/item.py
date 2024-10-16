@@ -7,6 +7,7 @@ from core.world.entities.action.item_was_picked_up_action import ItemWasPickedUp
 from core.world.entities.action.item_was_dropped_action import ItemWasDroppedAction
 from core.world.entities.action.item_being_bringed_action import ItemBeingBringedAction
 from .item_body import ItemBody
+from core.world.entities.base.ownership_config import OwnershipConfig
 
 import random
 
@@ -14,8 +15,8 @@ class Item(Entity):
 
     _body: ItemBody
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, body: ItemBody, item_type: ItemTypes, strength: int, variety: int, life_span: int, is_picked: bool):
-        super().__init__(event_bus, events, id, EntityTypes.ITEM, None, None, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, body: ItemBody, item_type: ItemTypes, ownership: OwnershipConfig, strength: int, variety: int, life_span: int, is_picked: bool):
+        super().__init__(event_bus, events, id, EntityTypes.ITEM, ownership, body)
         self._item_type = item_type
         self._is_picked = is_picked
         self._variety = variety

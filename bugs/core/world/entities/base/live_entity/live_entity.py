@@ -8,6 +8,7 @@ from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.action.entity_walk_action import EntityWalkAction
 from core.world.settings import COLD_DAMAGE
 from core.world.entities.base.live_entity.visual_sensor import VisualSensor
+from core.world.entities.base.ownership_config import OwnershipConfig
 
 from typing import List
 
@@ -17,8 +18,8 @@ class LiveEntity(Entity, iEnemy):
     body: LiveBody
     mind: Mind
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, from_colony_id: int, owner_id: int, body: LiveBody, mind: Mind):
-        super().__init__(event_bus, events, id, type, from_colony_id, owner_id, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, ownership: OwnershipConfig, body: LiveBody, mind: Mind):
+        super().__init__(event_bus, events, id, type, ownership, body)
         self._mind: Mind = mind
 
         self._body.events.add_listener('step', self._on_step)

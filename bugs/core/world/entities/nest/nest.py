@@ -19,14 +19,15 @@ from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
 from core.world.entities.ant.base.ant_types import AntTypes
 from .nest_stats import NestStats
 from core.world.entities.action.nest_fortification_changed_action import NestFortificationChangedAction
+from core.world.entities.base.ownership_config import OwnershipConfig
 
 class Nest(Entity):
 
     _body: NestBody
     stats: NestStats
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, from_colony_id: int, owner_id: int, body: NestBody):
-        super().__init__(event_bus, events, id, EntityTypes.NEST, from_colony_id, owner_id, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: NestBody):
+        super().__init__(event_bus, events, id, EntityTypes.NEST, ownership, body)
 
         self._is_under_attack = False
 

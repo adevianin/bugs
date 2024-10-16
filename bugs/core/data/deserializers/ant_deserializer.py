@@ -4,8 +4,9 @@ from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.base.entity_collection import EntityCollection
 from .genome_deserializer import GenomeDeserializer
 from core.world.entities.ant.base.guardian_behaviors import GuardianBehaviors
+from .base.live_entity_desrializer import LiveEntityDeserializer
 
-class AntDeserializer():
+class AntDeserializer(LiveEntityDeserializer):
 
     def __init__(self, genome_deserializer: GenomeDeserializer, ant_factory: AntFactory):
         self._ant_factory = ant_factory
@@ -49,22 +50,16 @@ class AntDeserializer():
         return self._ant_factory.build_queen_ant(**ant_props)
 
     def _parse_common_ant_props(self, ant_json: dict, entities_collection: EntityCollection):   
-        return {
-            "id": ant_json['id'],
+        props = self.parse_live_entity_props(ant_json)
+        props.update({
             "name": ant_json['name'],
-            "from_colony_id": ant_json['from_colony_id'],
-            "owner_id": ant_json['owner_id'],
-            "position": Point.from_json(ant_json['position']),
-            "angle": ant_json['angle'],
             "nest": entities_collection.get_entity_by_id(ant_json['from_nest']) if ant_json['from_nest'] else None,
             "located_in_nest": entities_collection.get_entity_by_id(ant_json['located_in_nest_id']) if ant_json['located_in_nest_id'] else None,
             "picked_item": entities_collection.get_entity_by_id(ant_json['picked_item_id']) if ant_json['picked_item_id'] else None,
-            "is_auto_thought_generation": ant_json['is_auto_thought_generation'],
             "is_in_operation": ant_json['is_in_operation'],
-            "memory_data": ant_json['memory'],
-            "birth_step": ant_json['birth_step'],
-            "hp": ant_json['hp'],
             "genome": self._genome_deserializer.deserialize_genome(ant_json['genome']),
             "guardian_behavior": GuardianBehaviors(ant_json['guardian_behavior']),
             "is_cooperative": ant_json['is_cooperative']
-        }
+        })
+
+        return props

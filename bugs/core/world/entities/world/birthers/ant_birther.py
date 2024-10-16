@@ -6,6 +6,7 @@ from core.world.entities.ant.ant_factory import AntFactory
 from core.world.entities.ant.base.ant import Ant
 from .requests.ant_birth_request import AntBirthRequest
 from core.world.entities.nest.nest import Nest
+from core.world.entities.base.ownership_config import OwnershipConfig
 
 class AntBirther(EntityBirther):
 
@@ -16,5 +17,6 @@ class AntBirther(EntityBirther):
     def _build_entity(self, id, request: AntBirthRequest) -> Ant:
         larva = request.larva
         nest: Nest = self._map.get_entity_by_id(request.nest_id)
-        return self._ant_factory.build_new_ant(id, larva.name, nest.from_colony_id, nest.owner_id, larva.genome, larva.ant_type, nest.position, 101, nest)
+        ownership = OwnershipConfig(nest.from_colony_id, nest.owner_id)
+        return self._ant_factory.build_new_ant(id, larva.name, ownership, larva.genome, larva.ant_type, nest.position, 101, nest)
         

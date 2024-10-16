@@ -2,8 +2,9 @@ from .ant_food_item_body import AntFoodItemBody
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.item.items.base.item import Item
+from core.world.entities.base.ownership_config import OwnershipConfig
 
 class AntFoodItem(Item):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, body: AntFoodItemBody, strength: int, variety: int, life_span: int, is_picked: bool):
-        super().__init__(event_bus, events, id, body, ItemTypes.ANT_FOOD, strength, variety, life_span, is_picked)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, body: AntFoodItemBody, ownership: OwnershipConfig, strength: int, variety: int, life_span: int, is_picked: bool):
+        super().__init__(event_bus, events, id, body, ItemTypes.ANT_FOOD, ownership, strength, variety, life_span, is_picked)
