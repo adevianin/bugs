@@ -18,19 +18,15 @@ class GroundBeetleFactory():
         self._thought_factory = thought_factory
 
     def build_new_ground_beetle(self, id: int, position: Point, birth_step: int):
-        ownership=self._build_ownership()
-        return self.build_ground_beetle(id=id, ownership=ownership, position=position, angle=0, hp=None, memory_data={}, is_auto_thought_generation=True, birth_step=birth_step)
+        ownership = OwnershipConfig(GROUND_BEETLE_COLONY_ID, None) 
+        hp = StatsLibrary.GROUND_BEETLE_DEFAULT.max_hp
+        return self.build_ground_beetle(id=id, ownership=ownership, position=position, angle=0, hp=hp, memory=Memory(), is_auto_thought_generation=True, birth_step=birth_step)
 
-    def build_ground_beetle(self, id: int, ownership: OwnershipConfig, position: Point, angle: int, hp: int, birth_step: int, memory_data: dict, is_auto_thought_generation: bool):
+    def build_ground_beetle(self, id: int, ownership: OwnershipConfig, position: Point, angle: int, hp: int, birth_step: int, memory: Memory, is_auto_thought_generation: bool):
         visual_sensor = VisualSensor()
         temperature_sensor = TemperatureSensor()
-        memory = Memory(memory_data)
         stats = StatsLibrary.GROUND_BEETLE_DEFAULT
-        hp = hp or stats.max_hp
         body = GroundBeetleBody(EventEmitter(), stats, memory, position, angle, hp, birth_step, visual_sensor, temperature_sensor)
         mind = GroundBeetleMind(body, self._thought_factory, is_auto_thought_generation)
 
         return GroundBeetle(self._event_bus, EventEmitter(), id, ownership, body, mind)
-    
-    def _build_ownership(self):
-        return OwnershipConfig(GROUND_BEETLE_COLONY_ID, None) 
