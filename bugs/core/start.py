@@ -19,6 +19,7 @@ from core.data.deserializers.egg_deserializer import EggDeserializer
 from core.data.deserializers.nuptial_environment_deserializer import NuptialEnvironmentDeserializer
 from core.data.deserializers.genome_deserializer import GenomeDeserializer
 from core.data.deserializers.climate_deserializer import ClimateDeserializer
+from core.data.deserializers.world_deserializer import WorldDeserializer
 
 from core.data.serializers.larva_serializer import LarvaSerializer
 from core.data.serializers.egg_serializer import EggSerializer
@@ -150,9 +151,10 @@ def start():
     item_area_deserializer = ItemAreaDeserializer(item_area_factory)
     nuptial_environment_deserializer = NuptialEnvironmentDeserializer(gene_deserializer)
     climate_deserializer = ClimateDeserializer(climate_factory)
-    world_repository = WorldRepository(world_data_repository, nest_deserializer, ant_deserializer, colony_deserializer, thought_deserializer, map_deserializer, world_factory, 
-                                       ground_beetle_deserializer, item_deserializer, item_source_deserializer, item_area_deserializer, nuptial_environment_deserializer, climate_deserializer,
-                                        world_serializer)
+    world_deserializer = WorldDeserializer(world_factory, nest_deserializer, ant_deserializer, colony_deserializer, thought_deserializer, map_deserializer, 
+                                           ground_beetle_deserializer, item_deserializer, item_source_deserializer, item_area_deserializer, nuptial_environment_deserializer, 
+                                           climate_deserializer)
+    world_repository = WorldRepository(world_data_repository, world_serializer, world_deserializer)
 
     stats_client_serializer = StatsClientSerializer()
     genes_client_serializer = GenesClientSerializer()

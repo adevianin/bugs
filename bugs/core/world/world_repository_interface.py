@@ -8,5 +8,5 @@ class iWorldRepository(ABC):
         pass
 
     @abstractclassmethod
-    def push(self, world: World):
+    def push(self, world: World, world_id: int):
         pass

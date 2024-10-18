@@ -64,7 +64,7 @@ class WorldFacade:
         self._world = self._world_repository.get(self.WORLD_ID)
 
     def save_world(self):
-        self._world_repository.push(self._world)
+        self._world_repository.push(self._world, self.WORLD_ID)
 
     @property
     def world(self):
