@@ -17,7 +17,6 @@ from core.world.entities.ground_beetle.thoughts.hunt_for_aphid import HuntForAph
 from core.world.entities.ant.warrior.thoughts.patrol_nest_territory_thought import PatrolNestTerritoryThought
 from core.world.entities.ant.base.thoughts.hibernation_thought import HibernationThought
 from core.world.entities.ant.base.thoughts.shelter_in_nest import ShelterInNestThought
-# from core.world.entities.ant.base.thoughts.get_stashed_item_back_thought import GetStashedItemBack
 from core.world.entities.ant.base.thoughts.build_fortification_thought import BuildFortificationThought
 from core.world.entities.ant.base.thoughts.defend_colony_thought import DefendColonyThought
 from core.world.entities.ant.base.thoughts.defend_myself_thought import DefendMyselfThought
@@ -250,11 +249,6 @@ class ThoughtSerializer():
         })
 
         return json
-    
-    # def _serialize_get_stashed_item_back(self, thought: GetStashedItemBack):
-    #     json = self._serialize_thought(thought)
-
-    #     return json
     
     def _serialize_build_fortification(self, thought: BuildFortificationThought):
         json = self._serialize_thought(thought)

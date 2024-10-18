@@ -85,9 +85,6 @@ class ThoughtFactory:
     def build_shelter_in_nest(self, go_gome_thought: GoInNestThought, shelter_nest: Nest, flags: dict = None, sayback: str = None):
         return ShelterInNestThought(go_gome_thought, shelter_nest, flags, sayback)
     
-    # def build_get_stashed_item_back(self, flags: dict = None, sayback: str = None):
-    #     return GetStashedItemBack(flags, sayback)
-    
     def build_build_fortification(self, random_walk_thought: RandomWalkThought, nest: Nest, flags: dict = None, sayback: str = None):
         return BuildFortificationThought(random_walk_thought, nest, flags, sayback)
     
