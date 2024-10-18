@@ -9,6 +9,7 @@ from core.world.entities.action.entity_walk_action import EntityWalkAction
 from core.world.settings import COLD_DAMAGE
 from core.world.entities.base.live_entity.visual_sensor import VisualSensor
 from core.world.entities.base.ownership_config import OwnershipConfig
+from core.world.entities.thought.thought import Thought
 
 from typing import List
 
@@ -40,6 +41,13 @@ class LiveEntity(Entity, iEnemy):
     @property
     def is_detectable(self):
         return not self.is_died
+    
+    @property
+    def thoughts(self) -> List[Thought]:
+        return self._mind.thoughts
+    
+    def set_thoughts(self, thoughts: List[Thought]):
+        self._mind.set_thoughts(thoughts)
 
     def walk_to(self, position: Point, sayback: str = None):
         self._mind.walk_to(position=position, sayback=sayback)

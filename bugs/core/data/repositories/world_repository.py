@@ -19,6 +19,7 @@ from core.data.deserializers.ant_deserializer import AntDeserializer
 from core.data.deserializers.colony_deserializer import ColonyDeserializer
 from core.data.deserializers.thought_deserializer import ThoughtDeserializer
 from core.data.deserializers.ground_beetle_deserializer import GroundBeetleDeserializer
+from core.world.entities.base.live_entity.live_entity import LiveEntity
 
 class WorldRepository(iWorldRepository):
 
@@ -76,25 +77,14 @@ class WorldRepository(iWorldRepository):
             ant = self._ant_deserializer.deserialize_ant(ant_json, entities_collection)
             entities_collection.add_entity(ant)
 
-        ants_json = world_data['ants']
-        for ant_json in ants_json:
-            ant: Ant = entities_collection.get_entity_by_id(ant_json['id'])
-            thoughts_json = ant_json['thoughts']
+        # need to be after init all entities
+        for thought_pack in world_data['thought_packs']:
+            entity: LiveEntity = entities_collection.get_entity_by_id(thought_pack['entity_id'])
             thoughts = []
-            for thought_json in thoughts_json:
-                thought = self._thought_deserializer.deserialize_thougth(ant.body, thought_json, entities_collection)
+            for thought_json in thought_pack['thoughts']:
+                thought = self._thought_deserializer.deserialize_thougth(entity.body, thought_json, entities_collection)
                 thoughts.append(thought)
-            ant.mind.set_thoughts(thoughts)
-
-        ground_beetles_json = world_data['ground_beetles']
-        for ground_beetle_json in ground_beetles_json:
-            ground_beetle: GroundBeetle = entities_collection.get_entity_by_id(ground_beetle_json['id'])
-            thoughts_json = ground_beetle_json['thoughts']
-            thoughts = []
-            for thought_json in thoughts_json:
-                thought = self._thought_deserializer.deserialize_thougth(ground_beetle.body, thought_json, entities_collection)
-                thoughts.append(thought)
-            ground_beetle.mind.set_thoughts(thoughts)
+            entity.set_thoughts(thoughts)
 
         map = self._map_deserializer.deserialize_map(world_data['map'], entities_collection)
         colony_relations_table = ColonyRelationsTable.build_colony_relations_table(world_data['colonies_relations'])

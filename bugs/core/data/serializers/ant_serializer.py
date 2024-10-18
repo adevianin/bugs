@@ -7,8 +7,7 @@ from .genome_serializer import GenomeSerializer
 
 class AntSerializer(LiveEntitySerializer):
 
-    def __init__(self, thought_serializer: ThoughtSerializer, genome_serializer: GenomeSerializer):
-        self._thought_serializer = thought_serializer
+    def __init__(self, genome_serializer: GenomeSerializer):
         self._genome_serializer = genome_serializer
 
     def serialize(self, ant: Ant):
@@ -48,16 +47,11 @@ class AntSerializer(LiveEntitySerializer):
         return json
     
     def _serialize_common(self, json: dict, ant: Ant):
-        thoughts_json = []
-        for thought in ant.mind.thoughts:
-            thoughts_json.append(self._thought_serializer.serialize(thought))
-
         json.update({
             'name': ant.name,
             'picked_item_id': ant.body.picked_item_id,
             'ant_type': ant.ant_type,
             'from_nest': ant.home_nest_id,
-            'thoughts': thoughts_json,
             'is_auto_thought_generation': ant.mind.is_auto_thought_generation,
             'is_in_operation': ant.mind.is_in_opearetion,
             'located_in_nest_id': ant.located_in_nest_id,

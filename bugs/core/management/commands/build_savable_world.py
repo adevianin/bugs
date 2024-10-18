@@ -1435,7 +1435,8 @@ class Command(BaseCommand):
                     ]
                 }
             }
-        ]
+        ],
+        "thought_packs": []
     }
 
     def handle(self, *args, **options):
