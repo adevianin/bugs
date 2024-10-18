@@ -8,7 +8,8 @@ class LiveEntitySerializer(EntitySerializer):
 
         json.update({
             'memory': entity.body.memory.records,
-            'birth_step': entity.birth_step
+            'birth_step': entity.birth_step,
+            'is_auto_thought_generation': entity.is_auto_thought_generation,
         })
 
         return json

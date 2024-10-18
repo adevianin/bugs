@@ -52,7 +52,6 @@ class AntSerializer(LiveEntitySerializer):
             'picked_item_id': ant.body.picked_item_id,
             'ant_type': ant.ant_type,
             'from_nest': ant.home_nest_id,
-            'is_auto_thought_generation': ant.mind.is_auto_thought_generation,
             'is_in_operation': ant.mind.is_in_opearetion,
             'located_in_nest_id': ant.located_in_nest_id,
             'genome': self._genome_serializer.serialize_genome(ant.body.genome),

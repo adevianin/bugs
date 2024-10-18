@@ -6,9 +6,4 @@ class GroundBeetleSerializer(LiveEntitySerializer):
     def serialize(self, ground_beetle: GroundBeetle):
         json = super().serialize(ground_beetle)
 
-        json.update({
-            # 'dna_profile': ground_beetle.body.dna_profile,
-            'is_auto_thought_generation': ground_beetle.mind.is_auto_thought_generation
-        })
-
         return json

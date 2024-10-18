@@ -46,6 +46,10 @@ class LiveEntity(Entity, iEnemy):
     def thoughts(self) -> List[Thought]:
         return self._mind.thoughts
     
+    @property
+    def is_auto_thought_generation(self):
+        return self._mind.is_auto_thought_generation
+    
     def set_thoughts(self, thoughts: List[Thought]):
         self._mind.set_thoughts(thoughts)
 
