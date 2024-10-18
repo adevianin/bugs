@@ -7,8 +7,8 @@ class FightEnemyThought(Thought):
 
     _body: LiveBody
 
-    def __init__(self, body: LiveBody, flags, sayback: str, enemy: iEnemy = None):
-        super().__init__(body=body, type=ThoughtTypes.FIGHT_ENEMY, flags=flags, sayback=sayback)
+    def __init__(self, flags, sayback: str, enemy: iEnemy = None):
+        super().__init__(type=ThoughtTypes.FIGHT_ENEMY, flags=flags, sayback=sayback)
         self._enemy = enemy
 
     @property

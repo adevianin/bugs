@@ -31,20 +31,20 @@ class AntMind(Mind):
         return self._is_in_opearetion
     
     def feed_myself(self, sayback: str = None, asap: bool = False):
-        thought = self._thought_factory.build_feed_myself_full(body=self._body, home_nest=self.home_nest, sayback=sayback)
+        thought = self._thought_factory.build_feed_myself_full(home_nest=self.home_nest, sayback=sayback)
         self._register_thought(thought, asap)
 
     def go_home(self, sayback: str = None, asap: bool = False):
-        go_home_thought = self._thought_factory.build_go_in_nest_thought(body=self._body, nest=self.home_nest)
+        go_home_thought = self._thought_factory.build_go_in_nest_thought(nest=self.home_nest)
         self._register_thought(go_home_thought)
 
     def collect_food(self, sayback: str = None):
-        thought = self._thought_factory.build_collect_food_full(body=self._body, home_nest=self.home_nest, sayback=sayback)
+        thought = self._thought_factory.build_collect_food_full(home_nest=self.home_nest, sayback=sayback)
         self._register_thought(thought)
 
     def prepare_for_operation(self, assemble_point: Point = None, sayback: str = None):
         assemble_point = assemble_point or self._calc_assemble_point()
-        thought = self._thought_factory.build_prepare_for_operation_full(body=self._body, home_nest=self.home_nest, assemble_point=assemble_point, sayback=sayback)
+        thought = self._thought_factory.build_prepare_for_operation_full(home_nest=self.home_nest, assemble_point=assemble_point, sayback=sayback)
         self._register_thought(thought)
     
     def relocate_to_nest(self, nest: Nest):
@@ -53,39 +53,39 @@ class AntMind(Mind):
         self._listen_home_nest()
 
     def build_nest(self, nest: Nest, get_inside_once_done: bool, sayback: str):
-        thought = self._thought_factory.build_build_nest_thought(body=self._body, building_nest=nest, get_inside_once_done=get_inside_once_done, sayback=sayback)
+        thought = self._thought_factory.build_build_nest_thought(building_nest=nest, get_inside_once_done=get_inside_once_done, sayback=sayback)
         self._register_thought(thought)
 
     def attack_nest(self, nest: Nest, sayback: str):
-        thought = self._thought_factory.build_attack_nest_thought_full(body=self._body, nest=nest, sayback=sayback)
+        thought = self._thought_factory.build_attack_nest_thought_full(nest=nest, sayback=sayback)
         self._register_thought(thought)
 
     def build_fortification(self, nest: Nest, sayback: str):
-        thought = self._thought_factory.build_build_fortification_full(body=self._body, nest=nest, sayback=sayback)
+        thought = self._thought_factory.build_build_fortification_full(nest=nest, sayback=sayback)
         self._register_thought(thought)
 
     def defend_nest(self, nest: Nest, point_to_check: Point, sayback: str = None):
-        thought = self._thought_factory.build_defend_nest_thought_full(body=self._body, nest=nest, point_to_check=point_to_check, sayback=sayback)
+        thought = self._thought_factory.build_defend_nest_thought_full(nest=nest, point_to_check=point_to_check, sayback=sayback)
         self._register_thought(thought=thought, immediately=True)
 
     def defend_colony(self, point_to_check: Point, sayback: str = None):
-        thought = self._thought_factory.build_defend_colony_full(self._body, point_to_check, sayback)
+        thought = self._thought_factory.build_defend_colony_full(point_to_check, sayback)
         self._register_thought(thought=thought, immediately=True)
 
     def defend_myself(self, sayback: str = None):
-        thought = self._thought_factory.build_defend_myself_full(self._body, sayback=sayback)
+        thought = self._thought_factory.build_defend_myself_full(sayback=sayback)
         self._register_thought(thought=thought, immediately=True)
 
     def hibernate(self, asap: bool = False):
-        thought = self._thought_factory.build_hibernation_full(self._body, self.home_nest)
+        thought = self._thought_factory.build_hibernation_full(self.home_nest)
         self._register_thought(thought=thought, asap=asap)
 
     def shelter_in_home_nest(self):
-        thought = self._thought_factory.build_shelter_in_nest_full(self._body, self.home_nest)
+        thought = self._thought_factory.build_shelter_in_nest_full(self.home_nest)
         self._register_thought(thought=thought, immediately=True)
 
     # def get_stashed_item_back(self, sayback: str = None):
-    #     thought = self._thought_factory.build_get_stashed_item_back(self._body, sayback=sayback)
+    #     thought = self._thought_factory.build_get_stashed_item_back(sayback=sayback)
     #     self._register_thought(thought=thought)
 
     def toggle_is_in_operation(self, is_in_operation: bool):

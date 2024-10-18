@@ -5,8 +5,7 @@ from typing import Callable
 
 class Thought(ABC):
 
-    def __init__(self, body: LiveBody, type: ThoughtTypes, flags: dict, sayback: str):
-        self._body = body
+    def __init__(self, type: ThoughtTypes, flags: dict, sayback: str):
         self._type = type
         self._results = None
         self._sayback = sayback
@@ -40,6 +39,10 @@ class Thought(ABC):
     @property
     def flags(self):
         return self._flags
+    
+    def set_body(self, body: LiveBody):
+        self._body = body
+        self._iterate_nested_thoughts(lambda thought: thought.set_body(body))
     
     def done(self, results = None):
         if self.is_completed:

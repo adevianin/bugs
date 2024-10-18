@@ -12,8 +12,8 @@ class CollectFoodThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, nest: Nest, random_walk_thought: RandomWalkThought, go_home_thought: GoInNestThought, found_food: Item = None, flags: dict = None, sayback: str = None):
-        super().__init__(body=body, type=ThoughtTypes.COLLECT_FOOD, flags=flags, sayback=sayback)
+    def __init__(self, nest: Nest, random_walk_thought: RandomWalkThought, go_home_thought: GoInNestThought, found_food: Item = None, flags: dict = None, sayback: str = None):
+        super().__init__(type=ThoughtTypes.COLLECT_FOOD, flags=flags, sayback=sayback)
         self._nest = nest
         self._nested_thoughts['random_walk_thought'] = random_walk_thought
         self._nested_thoughts['go_home_thought'] = go_home_thought

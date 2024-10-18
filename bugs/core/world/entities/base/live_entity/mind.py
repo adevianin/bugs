@@ -24,19 +24,19 @@ class Mind(ABC):
         return self._is_auto_thought_generation
     
     def walk_to(self, position: Point, sayback: str = None):
-        thought = self._thought_factory.build_walk_to_thought(body=self._body, position=position, sayback=sayback)
+        thought = self._thought_factory.build_walk_to_thought(position=position, sayback=sayback)
         self._register_thought(thought)
 
     def fight_enemy(self, enemy: iEnemy, asap: bool, sayback: str = None):
-        thought = self._thought_factory.build_fight_enemy_thought(body=self._body, enemy=enemy, sayback=sayback)
+        thought = self._thought_factory.build_fight_enemy_thought(enemy=enemy, sayback=sayback)
         self._register_thought(thought, asap)
 
     def random_walk(self):
-        thought = self._thought_factory.build_random_walk_thought(self._body, center=None, radius=None)
+        thought = self._thought_factory.build_random_walk_thought(center=None, radius=None)
         self._register_thought(thought)
 
     def wait_step(self, step_count: int, sayback: str):
-        thought = self._thought_factory.build_wait_step(body=self._body, step_count=step_count, sayback=sayback)
+        thought = self._thought_factory.build_wait_step(step_count=step_count, sayback=sayback)
         self._register_thought(thought)
 
     def do_step(self):
@@ -84,6 +84,8 @@ class Mind(ABC):
                 self._thoughts_stack.insert(0, thought)
             elif asap:
                 self._thoughts_stack.insert(1, thought)
+        
+        thought.set_body(self._body)
                 
     def _get_current_thought(self) -> Thought:
         for thought in self._thoughts_stack:

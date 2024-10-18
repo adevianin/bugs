@@ -7,8 +7,8 @@ class FindFoodThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, random_walk_thought: RandomWalkThought, flags: dict = None, sayback: str = None):
-        super().__init__(body=body, type=ThoughtTypes.FIND_FOOD, flags=flags, sayback=sayback)
+    def __init__(self, random_walk_thought: RandomWalkThought, flags: dict = None, sayback: str = None):
+        super().__init__(type=ThoughtTypes.FIND_FOOD, flags=flags, sayback=sayback)
         self._nested_thoughts['random_walk_thought'] = random_walk_thought
 
     @property

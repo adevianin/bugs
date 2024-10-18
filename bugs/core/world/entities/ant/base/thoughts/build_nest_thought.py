@@ -7,8 +7,8 @@ class BuildNestThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, building_nest: Nest, get_inside_once_done: bool, flags: dict, sayback: str):
-        super().__init__(body=body, type=ThoughtTypes.BUILD_NEST, flags=flags, sayback=sayback)
+    def __init__(self, building_nest: Nest, get_inside_once_done: bool, flags: dict, sayback: str):
+        super().__init__(type=ThoughtTypes.BUILD_NEST, flags=flags, sayback=sayback)
         self._building_nest = building_nest
         self._get_inside_once_done = get_inside_once_done
 

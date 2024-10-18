@@ -8,8 +8,8 @@ class ShelterInNestThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, go_home_thought: GoInNestThought, shelter_nest: Nest, flags: dict, sayback: str):
-        super().__init__(body, ThoughtTypes.SHELTER_IN_NEST, flags, sayback)
+    def __init__(self, go_home_thought: GoInNestThought, shelter_nest: Nest, flags: dict, sayback: str):
+        super().__init__(ThoughtTypes.SHELTER_IN_NEST, flags, sayback)
         self._nested_thoughts['go_home_thought'] = go_home_thought
         self._shelter_nest = shelter_nest
 

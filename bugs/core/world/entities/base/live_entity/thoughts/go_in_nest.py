@@ -7,8 +7,8 @@ class GoInNestThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, flags, sayback: str, nest: Nest):
-        super().__init__(body=body, type=ThoughtTypes.GO_IN_NEST, flags=flags, sayback=sayback)
+    def __init__(self, flags, sayback: str, nest: Nest):
+        super().__init__(type=ThoughtTypes.GO_IN_NEST, flags=flags, sayback=sayback)
         self._nest = nest
 
     @property

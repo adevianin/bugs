@@ -8,7 +8,7 @@ class GroundBeetleMind(Mind):
         super().__init__(body, thought_factory, is_auto_thought_generation)
 
     def hunt_for_aphid(self):
-        thought = self._thought_factory.build_hunt_for_aphid_thought_full(self._body)
+        thought = self._thought_factory.build_hunt_for_aphid_thought_full()
         self._register_thought(thought)
 
     def _auto_generate_thoughts(self):

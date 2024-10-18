@@ -10,8 +10,8 @@ class HuntForAphid(Thought):
 
     _body: GroundBeetleBody
 
-    def __init__(self, body: GroundBeetleBody, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_food_source: ItemSource, flags: dict, sayback: str):
-        super().__init__(body, ThoughtTypes.HUNT_FOR_APHID, flags, sayback)
+    def __init__(self, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_food_source: ItemSource, flags: dict, sayback: str):
+        super().__init__(ThoughtTypes.HUNT_FOR_APHID, flags, sayback)
         self._nested_thoughts['random_walk_thought'] = random_walk_thought
         self._nested_thoughts['fight_near_enemies_thought'] = fight_near_enemies_thought
         self._found_food_source = found_food_source

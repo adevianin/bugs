@@ -82,7 +82,7 @@ class WorldRepository(iWorldRepository):
             entity: LiveEntity = entities_collection.get_entity_by_id(thought_pack['entity_id'])
             thoughts = []
             for thought_json in thought_pack['thoughts']:
-                thought = self._thought_deserializer.deserialize_thougth(entity.body, thought_json, entities_collection)
+                thought = self._thought_deserializer.deserialize_thougth(thought_json, entities_collection)
                 thoughts.append(thought)
             entity.set_thoughts(thoughts)
 

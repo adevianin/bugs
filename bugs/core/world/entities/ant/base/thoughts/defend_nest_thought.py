@@ -11,8 +11,8 @@ class DefendNestThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, fight_near_enemies_thought: FightNearEnemiesThought, defending_nest: Nest, point_to_check: Point = None, flags: dict = None, sayback: str = None):
-        super().__init__(body=body, type=ThoughtTypes.DEFEND_NEST, flags=flags, sayback=sayback)
+    def __init__(self, fight_near_enemies_thought: FightNearEnemiesThought, defending_nest: Nest, point_to_check: Point = None, flags: dict = None, sayback: str = None):
+        super().__init__(type=ThoughtTypes.DEFEND_NEST, flags=flags, sayback=sayback)
         self._nested_thoughts['fight_near_enemies_thought'] = fight_near_enemies_thought
         self._point_to_check = point_to_check
         self._defending_nest = defending_nest

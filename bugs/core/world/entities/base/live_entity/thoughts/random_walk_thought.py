@@ -10,8 +10,8 @@ class RandomWalkThought(Thought):
     DIRECTIONS_COUNT = 8
     VISITED_POINTS_MEMORY = 5
 
-    def __init__(self, body: LiveBody, center: Point, radius: int, flags: dict, sayback: str):
-        super().__init__(body, ThoughtTypes.RANDOM_WALK, flags, sayback)
+    def __init__(self, center: Point, radius: int, flags: dict, sayback: str):
+        super().__init__(ThoughtTypes.RANDOM_WALK, flags, sayback)
         self._visited_points = []
         self._center = center
         self._radius = radius

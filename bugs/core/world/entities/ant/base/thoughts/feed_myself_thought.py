@@ -10,8 +10,8 @@ class FeedMyselfThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Item = None, flags: dict = None, sayback: str = None):
-        super().__init__(body=body, type=ThoughtTypes.FEED_MYSELF, flags=flags, sayback=sayback)
+    def __init__(self, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Item = None, flags: dict = None, sayback: str = None):
+        super().__init__(type=ThoughtTypes.FEED_MYSELF, flags=flags, sayback=sayback)
         self._home = home
         self._nested_thoughts['find_food_thought'] = find_food_thought
         self._nested_thoughts['go_home_thought'] = go_home_thought

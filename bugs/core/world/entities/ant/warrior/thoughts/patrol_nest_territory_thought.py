@@ -9,8 +9,8 @@ class PatrolNestTerritoryThought(Thought):
     _body: WarriorAntBody
     MAX_STEP_COUNT = 10
 
-    def __init__(self, body: WarriorAntBody, random_walk_thought: RandomWalkThought, nest: Nest, step_count: int, flags: dict = None, sayback: str = None):
-        super().__init__(body=body, type=ThoughtTypes.PATROL_NEST_TERRITORY, flags=flags, sayback=sayback)
+    def __init__(self, random_walk_thought: RandomWalkThought, nest: Nest, step_count: int, flags: dict = None, sayback: str = None):
+        super().__init__(type=ThoughtTypes.PATROL_NEST_TERRITORY, flags=flags, sayback=sayback)
         self._nested_thoughts['random_walk_thought'] = random_walk_thought
         self._nest = nest
         self._step_count = step_count

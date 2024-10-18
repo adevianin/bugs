@@ -7,8 +7,8 @@ class HibernationThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, go_home_thought: GoInNestThought, flags: dict, sayback: str):
-        super().__init__(body, ThoughtTypes.HIBERNATION, flags, sayback)
+    def __init__(self, go_home_thought: GoInNestThought, flags: dict, sayback: str):
+        super().__init__(ThoughtTypes.HIBERNATION, flags, sayback)
         self._nested_thoughts['go_home_thought'] = go_home_thought
 
     @property

@@ -8,8 +8,8 @@ class GetStashedItemBack(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, flags: dict = None, sayback: str = None):
-        super().__init__(body=body, type=ThoughtTypes.GET_STAHED_ITEM_BACK, flags=flags, sayback=sayback)
+    def __init__(self, flags: dict = None, sayback: str = None):
+        super().__init__(type=ThoughtTypes.GET_STAHED_ITEM_BACK, flags=flags, sayback=sayback)
 
     def do_step(self):
         stashed_item_data = self._body.memory.read('stashed_item')

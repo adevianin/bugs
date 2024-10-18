@@ -8,8 +8,8 @@ class BuildFortificationThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, body: AntBody, random_walk_thought: RandomWalkThought, nest: Nest, flags: dict = None, sayback: str = None):
-        super().__init__(body=body, type=ThoughtTypes.BUILD_FORTIFICATION, flags=flags, sayback=sayback)
+    def __init__(self, random_walk_thought: RandomWalkThought, nest: Nest, flags: dict = None, sayback: str = None):
+        super().__init__(type=ThoughtTypes.BUILD_FORTIFICATION, flags=flags, sayback=sayback)
         self._nested_thoughts['random_walk_thought'] = random_walk_thought
         self._nest = nest
 

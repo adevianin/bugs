@@ -5,8 +5,8 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 
 class WalkToThought(Thought):
 
-    def __init__(self, body: LiveBody, position: Point, flags: dict = None, sayback: str = None):
-        super().__init__(body=body, type=ThoughtTypes.WALK_TO, flags=flags, sayback=sayback)
+    def __init__(self, position: Point, flags: dict = None, sayback: str = None):
+        super().__init__(type=ThoughtTypes.WALK_TO, flags=flags, sayback=sayback)
         self._position = position
 
     @property

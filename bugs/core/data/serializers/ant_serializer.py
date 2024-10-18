@@ -2,7 +2,6 @@ from .base.live_entity_serializer import LiveEntitySerializer
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.ant.base.ant_types import AntTypes
-from .thought_serializer import ThoughtSerializer
 from .genome_serializer import GenomeSerializer
 
 class AntSerializer(LiveEntitySerializer):

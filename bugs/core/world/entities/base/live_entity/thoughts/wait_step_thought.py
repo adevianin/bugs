@@ -5,8 +5,8 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 
 class WaitStepThought(Thought):
 
-    def __init__(self, body: LiveBody, step_count: int, flags: dict = None, sayback: str = None):
-        super().__init__(body=body, type=ThoughtTypes.WAIT_STEP, flags=flags, sayback=sayback)
+    def __init__(self, step_count: int, flags: dict = None, sayback: str = None):
+        super().__init__(type=ThoughtTypes.WAIT_STEP, flags=flags, sayback=sayback)
         self._step_count = step_count
 
     @property

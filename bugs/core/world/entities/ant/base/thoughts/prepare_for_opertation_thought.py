@@ -6,8 +6,8 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 
 class PrepareForOperationThought(Thought):
 
-    def __init__(self, body: LiveBody, feed_myself_thought: FeedMyselfThought, assemble_point: Point, flags: dict = None, sayback: str = None):
-        super().__init__(body=body, type=ThoughtTypes.PREPARE_FOR_OPERATION, flags=flags, sayback=sayback)
+    def __init__(self, feed_myself_thought: FeedMyselfThought, assemble_point: Point, flags: dict = None, sayback: str = None):
+        super().__init__(type=ThoughtTypes.PREPARE_FOR_OPERATION, flags=flags, sayback=sayback)
         self._nested_thoughts['feed_myself_thought'] = feed_myself_thought
         self._assemble_point = assemble_point
 
