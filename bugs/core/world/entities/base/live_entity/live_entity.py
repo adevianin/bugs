@@ -71,13 +71,15 @@ class LiveEntity(Entity, iEnemy):
     def sort_by_distance(self, entities: List[Entity]) -> List[Entity]:
         return self._body.sort_by_distance(entities)
     
-    def do_step(self):
+    def do_step(self, step_number: int):
         super().do_step()
 
         if self._body.check_am_i_freezing():
             self._body.receive_damage(COLD_DAMAGE)
 
         self._mind.do_step()
+
+        self._body.handle_aging(step_number)
 
     def _on_step(self, position: Point):
         self._emit_action(EntityWalkAction.build(self.id, position))
