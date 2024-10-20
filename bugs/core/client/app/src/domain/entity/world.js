@@ -6,6 +6,7 @@ class World {
         this._entities = [];
         this._colonies = [];
         this._climate = climate;
+        this.current_step = 0;
 
         this._mainEventBus.on('entityDied', this._onDied.bind(this));
     }

@@ -13,6 +13,7 @@ from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeType
 from core.world.services.ant_service import AntService
 from core.world.entities.ant.base.guardian_behaviors import GuardianBehaviors
 from core.sync.constants_client_serializer import ConstantsClientSerializer
+from core.world.action_accumulator import ActionAccumulator
 
 from typing import Callable, List, Dict
 
@@ -24,10 +25,10 @@ class WorldFacade:
     def init(cls, event_bus: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
              nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer,
              world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, 
-             ant_service: AntService):
+             ant_service: AntService, action_accumulator: ActionAccumulator):
         events = EventEmitter()
         world_facade = WorldFacade(event_bus, events, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, 
-                                   world_repository, colony_service, player_service, nuptial_environment_service, ant_service)
+                                   world_repository, colony_service, player_service, nuptial_environment_service, ant_service, action_accumulator)
         WorldFacade._instance = world_facade
         return world_facade
 
@@ -38,7 +39,7 @@ class WorldFacade:
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
                  nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer, 
                  world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, 
-                 ant_service: AntService):
+                 ant_service: AntService, action_accumulator: ActionAccumulator):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
@@ -57,8 +58,10 @@ class WorldFacade:
         self._nuptial_environment_service = nuptial_environment_service
         self._ant_service = ant_service
 
+        self._action_accumulator = action_accumulator
+        self._serialized_common_actions = []
+
         self._event_bus.add_listener('step_done', self._on_step_done)
-        self._event_bus.add_listener('action', self._on_action)
         
     def init_world(self):
         self._world = self._world_repository.get(self.WORLD_ID)
@@ -162,10 +165,15 @@ class WorldFacade:
     def get_consts_for_client(self):
         return self._constants_client_serializer.serialize_constants()
     
+    def get_current_actions_pack_for_client(self, user_id: int):
+        personal_actions = self._action_accumulator.pull_personal_actions(user_id)
+        serialized_personal_actions = [self._action_client_serializer.serialize(action) for action in personal_actions]
+        return self._serialized_common_actions + serialized_personal_actions
+    
     def _on_step_done(self, step_number: int):
-        self._events.emit('step')
+        self._serialize_common_actions()
+        self._events.emit('step', step_number)
 
-    def _on_action(self, action: Action):
-        serialized_action = self._action_client_serializer.serialize(action)
-        for_user_id = action.for_user_id if action.is_personal() else None
-        self._events.emit('action_occured', serialized_action, for_user_id)
+    def _serialize_common_actions(self):
+        actions = self._action_accumulator.pull_common_actions()
+        self._serialized_common_actions = [self._action_client_serializer.serialize(action) for action in actions]

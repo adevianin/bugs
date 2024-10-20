@@ -146,6 +146,7 @@ class Nest(Entity):
         self._emit_action(NestEggBecameLarvaAction.build(self.id, egg, self._owner_id))
 
     def _on_egg_added(self, egg: Egg):
+        print('egg action')
         self._emit_action(NestEggAddedAction.build(self.id, egg, self._owner_id))
 
     def _on_fortification_changed(self):

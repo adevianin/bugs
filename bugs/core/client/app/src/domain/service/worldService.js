@@ -16,6 +16,10 @@ class WorldService {
         return this._world;
     }
 
+    setCurrentStep(currentStep) {
+        this._world.currentStep = currentStep;
+    }
+
     playEntityAction(action) {
         switch(action.type) {
             case 'entity_born':

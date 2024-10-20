@@ -24,26 +24,11 @@ class MessageHandlerService {
             case 'init_step':
                 this._handleInitStepMsg(msg);
                 break;
-            case 'action':
-                this._handleActionMsg(msg);
+            case 'step':
+                this._handleStepMsg(msg);
                 break;
             default: 
                 throw `unknown type of message "${ msg.type }"`
-        }
-    }
-
-    _handleActionMsg(msg) {
-        let action = msg.action;
-        switch(action.actorType) {
-            case 'entity':
-                this._worldService.playEntityAction(action)
-                break;
-            case 'colony':
-                this._colonyService.playColonyAction(action);
-                break;
-            case 'climate':
-                this._worldService.playClimateAction(action);
-                break;
         }
     }
 
@@ -52,6 +37,29 @@ class MessageHandlerService {
         this._worldService.initWorld(msg.world);
         this._specieBuilderService.initBuilder(msg.specie);
         this._mainEventBus.emit('initStepDone');
+        this._handleActions(msg.step, msg.actions);
+    }
+
+    _handleStepMsg(msg) {
+        this._handleActions(msg.step, msg.actions);
+    }
+
+    _handleActions(stepNumber, actions) {
+        console.log(actions);
+        this._worldService.setCurrentStep(stepNumber);
+        for (let action of actions) {
+            switch(action.actorType) {
+                case 'entity':
+                    this._worldService.playEntityAction(action)
+                    break;
+                case 'colony':
+                    this._colonyService.playColonyAction(action);
+                    break;
+                case 'climate':
+                    this._worldService.playClimateAction(action);
+                    break;
+            }
+        }
     }
 
 }

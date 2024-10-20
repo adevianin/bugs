@@ -43,6 +43,7 @@ from core.data.serializers.climate_serializer import ClimateSerializer
 
 from core.world.world_facade import WorldFacade
 from core.world.utils.event_emiter import EventEmitter
+from core.world.action_accumulator import ActionAccumulator
 
 from core.world.entities.ant.ant_factory import AntFactory
 from core.world.entities.ground_beetle.ground_beetle_factory import GroundBeetleFactory
@@ -179,8 +180,10 @@ def start():
     nuptial_environment_client_serializer = NuptialEnvironmentClientSerializer(genome_client_serializer, genes_client_serializer, stats_client_serializer)
     constants_client_serializer = ConstantsClientSerializer()
 
+    action_accumulator = ActionAccumulator(event_bus)
+
     world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, 
-                                    world_repository, colony_service, player_service, nuptial_environment_service, ant_service)
+                                    world_repository, colony_service, player_service, nuptial_environment_service, ant_service, action_accumulator)
 
     world_facade.init_world()
 
