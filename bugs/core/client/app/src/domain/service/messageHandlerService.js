@@ -37,17 +37,11 @@ class MessageHandlerService {
         this._worldService.initWorld(msg.world);
         this._specieBuilderService.initBuilder(msg.specie);
         this._mainEventBus.emit('initStepDone');
-        this._handleActions(msg.step, msg.actions);
     }
 
     _handleStepMsg(msg) {
-        this._handleActions(msg.step, msg.actions);
-    }
-
-    _handleActions(stepNumber, actions) {
-        console.log(actions);
-        this._worldService.setCurrentStep(stepNumber);
-        for (let action of actions) {
+        this._worldService.setCurrentStep(msg.step);
+        for (let action of msg.actions) {
             switch(action.actorType) {
                 case 'entity':
                     this._worldService.playEntityAction(action)

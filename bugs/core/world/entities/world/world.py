@@ -126,9 +126,8 @@ class World():
                 time.sleep(STEP_TIME - iteration_time)
 
     def _do_step(self):
-        print(f'step { self._current_step } start')
+        print(f'step { self._current_step }')
 
-        print('step_start', self._current_step)
         self._event_bus.emit('step_start', self._current_step)
 
         not_live_entities = self._map.get_not_live_entities()
@@ -141,7 +140,6 @@ class World():
             self._visual_sensor_handler.handle_sensor(entity)
             entity.do_step(self._current_step)
 
-        print('step_done', self._current_step)
         self._event_bus.emit('step_done', self._current_step)
 
         self._current_step += 1
