@@ -156,7 +156,7 @@ class Operation(ABC):
         for ant in self._hired_ants:
             self._listen_ant(ant)
 
-        self._event_bus.add_listener('step_start', self._on_step_start)
+        self._event_bus.add_listener('step_done', self._on_step_done)
 
     def _init_assemble_point(self):
         nests = [ant.home_nest for ant in self._hired_ants]
@@ -164,7 +164,7 @@ class Operation(ABC):
         most_common_nest = nests_counts.most_common(1)[0][0]
         self._assemble_point = Point(most_common_nest.position.x, most_common_nest.position.y + 40) 
 
-    def _on_step_start(self, step_number):
+    def _on_step_done(self, step_number):
         if not self._fight and self._is_aggressive_now() and self._check_for_aggression_targets():
             self._init_fight(self._hired_ants)
 
@@ -352,7 +352,7 @@ class Operation(ABC):
             self._init_fight(self._hired_ants)
 
     def _on_operation_stop(self):
-        self._event_bus.remove_listener('step_start', self._on_step_start)
+        self._event_bus.remove_listener('step_done', self._on_step_done)
 
         if self._formation:
             self._destroy_formation()

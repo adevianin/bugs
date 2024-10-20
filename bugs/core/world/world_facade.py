@@ -57,7 +57,7 @@ class WorldFacade:
         self._nuptial_environment_service = nuptial_environment_service
         self._ant_service = ant_service
 
-        self._event_bus.add_listener('step_start', self._on_step_start)
+        self._event_bus.add_listener('step_done', self._on_step_done)
         self._event_bus.add_listener('action', self._on_action)
         
     def init_world(self):
@@ -162,7 +162,7 @@ class WorldFacade:
     def get_consts_for_client(self):
         return self._constants_client_serializer.serialize_constants()
     
-    def _on_step_start(self, step_number: int):
+    def _on_step_done(self, step_number: int):
         self._events.emit('step')
 
     def _on_action(self, action: Action):

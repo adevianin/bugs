@@ -13,9 +13,9 @@ class GroundBeetleSpawner():
         self._event_bus = event_bus
         self._map = map
 
-        self._event_bus.add_listener('step_start', self._on_step_start)
+        self._event_bus.add_listener('step_done', self._on_step_done)
 
-    def _on_step_start(self, step_number):
+    def _on_step_done(self, step_number):
         if self._should_spawn():
             pos = self._generate_spawn_position()
             self._event_bus.emit('ground_beetle_birth_request', GroundBeetleBirthRequest.build(pos))

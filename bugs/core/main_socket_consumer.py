@@ -16,18 +16,18 @@ class MainSocketConsumer(WebsocketConsumer):
         else:
             self.close()
 
-        self._world_facade.add_listener('step', self._on_step_start)
+        self._world_facade.add_listener('step', self._on_step_done)
         self._world_facade.add_listener('action_occured', self._on_action)
 
     def disconnect(self, code):
-        self._world_facade.remove_listener('step', self._on_step_start)
+        self._world_facade.remove_listener('step', self._on_step_done)
         self._world_facade.remove_listener('action_occured', self._on_action)
         return super().disconnect(code)
     
     def receive(self, text_data=None, bytes_data=None):
         msg = json.loads(text_data)
 
-    def _on_step_start(self):
+    def _on_step_done(self):
         if not self._inited:
             self.send(json.dumps({
                 'type': 'init_step',

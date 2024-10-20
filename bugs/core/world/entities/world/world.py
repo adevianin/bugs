@@ -138,7 +138,6 @@ class World():
             self._visual_sensor_handler.handle_sensor(entity)
             entity.do_step(self._current_step)
 
-        # rename to step_done
-        self._event_bus.emit('step_start', self._current_step)
+        self._event_bus.emit('step_done', self._current_step)
 
         self._current_step += 1

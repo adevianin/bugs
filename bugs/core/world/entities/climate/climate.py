@@ -26,7 +26,7 @@ class Climate():
         self._direction = direction
         self._last_emited_temp = self.daily_temperature
 
-        self._event_bus.add_listener('step_start', self._on_step_start)
+        self._event_bus.add_listener('step_done', self._on_step_done)
 
     def _do_step(self):
         self._current_temp = round(self._current_temp + self._direction * self.STEP, 3)
@@ -42,6 +42,6 @@ class Climate():
         self._event_bus.emit('action', action)
         self._last_emited_temp = self.daily_temperature
 
-    def _on_step_start(self, step_number):
+    def _on_step_done(self, step_number):
         self._do_step()
     

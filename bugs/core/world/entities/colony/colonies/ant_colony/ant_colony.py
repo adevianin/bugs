@@ -25,7 +25,7 @@ class AntColony(Colony):
         for operation in self._operations:
             self._listen_operation(operation)
 
-        event_bus.add_listener('step_start', self._on_start_step)
+        event_bus.add_listener('step_done', self._on_start_step)
 
     @property
     def owner_id(self):
