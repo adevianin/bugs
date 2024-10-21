@@ -25,7 +25,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "initConts": () => (/* binding */ initConts)
 /* harmony export */ });
 const CONSTS = {
-    NEW_EGG_FOOD_COST: null
+    NEW_EGG_FOOD_COST: null,
+    STEPS_IN_YEAR: null
 }
 
 function initConts(constsValues) {
@@ -57,6 +58,10 @@ class DomainFacade {
         this._colonyService = colonyService;
         this._nuptialService = nuptialService;
         this._specieBuilderService = specieBuilderService;
+    }
+
+    get currentStep() {
+        return this._worldService.world.currentStep;
     }
 
     get events() {
@@ -323,7 +328,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, 
+            genome, birthStep) {
         super(eventBus, id, position, angle, _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony, ownerId, userSpeed, hp, maxHp);
         this._name = name;
         this._pickedItemId = pickedItemId;
@@ -335,6 +341,7 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         this._behavior = behavior;
         this._antApi = antApi;
         this._genome = genome
+        this._birthStep = birthStep;
     }
 
     updateIsHidden() {
@@ -388,6 +395,10 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
     get genome() {
         return this._genome;
+    }
+
+    get birthStep() {
+        return this._birthStep;
     }
 
     changeGuardianBehavior(behaviorValue) {
@@ -537,8 +548,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class MaleAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
-        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
     }
 
     playAction(action) {
@@ -596,8 +607,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, isFertilized, isInNuptialFlight, genes) {
-        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, isFertilized, isInNuptialFlight, genes) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
         this._isFertilized = isFertilized;
         this.isInNuptialFlight = isInNuptialFlight;
         this._genes = genes;
@@ -694,8 +705,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class WarriorAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
-        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
     }
 }
 
@@ -721,8 +732,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class WorkerAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
-        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WORKER, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WORKER, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
     }
 
 }
@@ -1883,9 +1894,18 @@ class World {
         this._entities = [];
         this._colonies = [];
         this._climate = climate;
-        this.current_step = 0;
+        this._currentStep = 0;
 
         this._mainEventBus.on('entityDied', this._onDied.bind(this));
+    }
+
+    get currentStep() {
+        return this._currentStep;
+    }
+
+    set currentStep(stepNumber) {
+        this._currentStep = stepNumber;
+        this._mainEventBus.emit('currentStepChanged', stepNumber);
     }
 
     get entities() {
@@ -2361,17 +2381,11 @@ class MessageHandlerService {
         this._worldService.initWorld(msg.world);
         this._specieBuilderService.initBuilder(msg.specie);
         this._mainEventBus.emit('initStepDone');
-        // this._handleActions(msg.step, msg.actions);
     }
 
     _handleStepMsg(msg) {
-        this._handleActions(msg.step, msg.actions);
-    }
-
-    _handleActions(stepNumber, actions) {
-        console.log(actions);
-        this._worldService.setCurrentStep(stepNumber);
-        for (let action of actions) {
+        this._worldService.setCurrentStep(msg.step);
+        for (let action of msg.actions) {
             switch(action.actorType) {
                 case 'entity':
                     this._worldService.playEntityAction(action)
@@ -2715,6 +2729,7 @@ class WorldFactory {
         let stats = antJson.stats;
         let behavior = antJson.behavior;
         let genome = antJson.genome;
+        let birthStep = antJson.birthStep;
 
         switch (antJson.ant_type) {
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.QUEEN:
@@ -2722,13 +2737,13 @@ class WorldFactory {
                 let isInNuptialFlight = antJson.is_in_nuptial_flight;
                 let genes = antJson.genes;
                 return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.QueenAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
-                    genome, isFertilized, isInNuptialFlight, genes);
+                    genome, birthStep, isFertilized, isInNuptialFlight, genes);
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.WARRIOR:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WarriorAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WarriorAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.WORKER:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WorkerAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WorkerAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.MALE:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.MaleAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome);
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.MaleAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
             default:
                 throw 'unknown type of ant';
         }
@@ -4556,6 +4571,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _antTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antTmpl.html");
 /* harmony import */ var _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/nestSelector */ "./bugs/core/client/app/src/view/game/panel/base/nestSelector/index.js");
 /* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/consts */ "./bugs/core/client/app/src/domain/consts.js");
+
 
 
 
@@ -4564,9 +4581,10 @@ __webpack_require__.r(__webpack_exports__);
 class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
     constructor(ant) {
-        let el = document.createElement('tr');
+        let el = document.createElement('tbody');
         super(el);
         this._ant = ant;
+        this._profileState = false;
 
         this._ant.on('died', this.remove.bind(this));
 
@@ -4576,6 +4594,9 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._guardianTypeSelector.addEventListener('change', this._onGuardianBehaviorSelectorChange.bind(this));
         this._cooperativeBehaviorTogglerEl.addEventListener('change', this._onCooperativeBehaviorTogglerChange.bind(this));
         this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
+        this._profileBtn.addEventListener('click', this._onProfileBtnClick.bind(this));
+
+        this._stopListenCurrentStepChanged = this.$domainFacade.events.on('currentStepChanged', this._renderAge.bind(this));
     }
 
     _onGuardianBehaviorSelectorChange () {
@@ -4609,11 +4630,19 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
 
         this._el.querySelector('[data-genome-debug]').addEventListener('click', () => {
             console.log(this._ant.genome);
-        })
+        });
+
+        this._profileEl = this._el.querySelector('[data-ant-profile]');
+        this._profileBtn = this._el.querySelector('[data-profile-btn]');
+        this._renderProfileState();
+
+        this._ageEl = this._el.querySelector('[data-age]');
+        this._renderAge();
         
     }
 
     remove() {
+        this._stopListenCurrentStepChanged();
         this._nestSelector.remove();
         super.remove();
     }
@@ -4630,6 +4659,17 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._nuptialFlightActionBtn.classList.toggle('hidden', !canFlyNuptialFlight);
     }
 
+    _renderAge() {
+        let livedSteps = this.$domainFacade.currentStep - this._ant.birthStep;
+        let age = Math.floor(livedSteps / _domain_consts__WEBPACK_IMPORTED_MODULE_4__.CONSTS.STEPS_IN_YEAR);
+        this._ageEl.innerHTML = age;
+    }
+
+    _renderProfileState() {
+        this._profileEl.classList.toggle('hidden', !this._profileState);
+        this._profileBtn.innerHTML = this._profileState ? '-' : '+';
+    }
+
     _checkCanFlyNuptialFlight(ant) {
         if (ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__.AntTypes.QUEEN) {
             return ant.canFlyNuptialFlight;
@@ -4640,6 +4680,11 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
 
     _onNestChanged() {
         this._ant.relocateToNest(this._nestSelector.nestId);
+    }
+
+    _onProfileBtnClick() {
+        this._profileState = !this._profileState;
+        this._renderProfileState();
     }
 
 }
@@ -4700,7 +4745,7 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
 
     _render() {
         this._el.innerHTML = _antsListTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        this._antsContainerEl = this._el.querySelector('[data-ants-container]');
+        this._antsContainerEl = this._el;
     }
 
     _renderAnts() {
@@ -11346,7 +11391,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<td data-id></td>\r\n<td data-name></td>\r\n<td data-type></td>\r\n<td data-attack></td>\r\n<td data-defence></td>\r\n<td data-role>\r\n    <select>\r\n    </select>\r\n</td>\r\n<td data-max-hp></td>\r\n<td data-nest></td>\r\n<td>\r\n    <select data-guardian-type>\r\n        <option value=\"none\">не захищає</option>\r\n        <option value=\"nest\">тільки гніздо</option>\r\n        <option value=\"colony\">вся колонія</option>\r\n    </select>\r\n</td>\r\n<td>\r\n    <input data-is-cooperactive type=\"checkbox\">\r\n</td>\r\n<td data-actions>\r\n    <button data-fly-away>X</button>\r\n    <button data-nuptial-flight>шлюбний політ</button>\r\n    <button data-genome-debug>геном</button>\r\n</td>";
+var code = "<tr>\r\n    <td data-id rowspan=\"2\"></td>\r\n    <td data-name></td>\r\n    <td data-type></td>\r\n    <td data-attack></td>\r\n    <td data-defence></td>\r\n    <td data-role>\r\n        <select>\r\n        </select>\r\n    </td>\r\n    <td data-max-hp></td>\r\n    <td data-nest></td>\r\n    <td>\r\n        <select data-guardian-type>\r\n            <option value=\"none\">не захищає</option>\r\n            <option value=\"nest\">тільки гніздо</option>\r\n            <option value=\"colony\">вся колонія</option>\r\n        </select>\r\n    </td>\r\n    <td>\r\n        <input data-is-cooperactive type=\"checkbox\">\r\n    </td>\r\n    <td data-actions>\r\n        <button data-fly-away>X</button>\r\n        <button data-nuptial-flight>шлюбний політ</button>\r\n        <button data-genome-debug>геном</button>\r\n        <button data-profile-btn>+</button>\r\n    </td>\r\n</tr>\r\n<tr data-ant-profile>\r\n    <td colspan=\"11\">\r\n        <div>age: <span data-age></span></div>\r\n    </td>\r\n</tr>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -11364,7 +11409,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<thead>\r\n    <tr>\r\n        <td>id</td>\r\n        <td>імя</td>\r\n        <td>тип</td>\r\n        <td>атака</td>\r\n        <td>захист</td>\r\n        <td>роль</td>\r\n        <td>макс хп</td>\r\n        <td>гніздо</td>\r\n        <td>guardian</td>\r\n        <td>cooperative</td>\r\n        <td>дії</td>\r\n    </tr>\r\n</thead>\r\n<tbody data-ants-container>\r\n</tbody>";
+var code = "<thead>\r\n    <tr>\r\n        <td>id</td>\r\n        <td>імя</td>\r\n        <td>тип</td>\r\n        <td>атака</td>\r\n        <td>захист</td>\r\n        <td>роль</td>\r\n        <td>макс хп</td>\r\n        <td>гніздо</td>\r\n        <td>guardian</td>\r\n        <td>cooperative</td>\r\n        <td>дії</td>\r\n    </tr>\r\n</thead>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

@@ -10,6 +10,10 @@ class DomainFacade {
         this._specieBuilderService = specieBuilderService;
     }
 
+    get currentStep() {
+        return this._worldService.world.currentStep;
+    }
+
     get events() {
         return this._mainEventBus;
     }

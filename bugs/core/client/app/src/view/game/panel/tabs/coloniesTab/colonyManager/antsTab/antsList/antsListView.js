@@ -34,7 +34,7 @@ class AntsListView extends BaseHTMLView {
 
     _render() {
         this._el.innerHTML = antsListTmpl;
-        this._antsContainerEl = this._el.querySelector('[data-ants-container]');
+        this._antsContainerEl = this._el;
     }
 
     _renderAnts() {

@@ -1,26 +1,34 @@
-<td data-id></td>
-<td data-name></td>
-<td data-type></td>
-<td data-attack></td>
-<td data-defence></td>
-<td data-role>
-    <select>
-    </select>
-</td>
-<td data-max-hp></td>
-<td data-nest></td>
-<td>
-    <select data-guardian-type>
-        <option value="none">не захищає</option>
-        <option value="nest">тільки гніздо</option>
-        <option value="colony">вся колонія</option>
-    </select>
-</td>
-<td>
-    <input data-is-cooperactive type="checkbox">
-</td>
-<td data-actions>
-    <button data-fly-away>X</button>
-    <button data-nuptial-flight>шлюбний політ</button>
-    <button data-genome-debug>геном</button>
-</td>
+<tr>
+    <td data-id rowspan="2"></td>
+    <td data-name></td>
+    <td data-type></td>
+    <td data-attack></td>
+    <td data-defence></td>
+    <td data-role>
+        <select>
+        </select>
+    </td>
+    <td data-max-hp></td>
+    <td data-nest></td>
+    <td>
+        <select data-guardian-type>
+            <option value="none">не захищає</option>
+            <option value="nest">тільки гніздо</option>
+            <option value="colony">вся колонія</option>
+        </select>
+    </td>
+    <td>
+        <input data-is-cooperactive type="checkbox">
+    </td>
+    <td data-actions>
+        <button data-fly-away>X</button>
+        <button data-nuptial-flight>шлюбний політ</button>
+        <button data-genome-debug>геном</button>
+        <button data-profile-btn>+</button>
+    </td>
+</tr>
+<tr data-ant-profile>
+    <td colspan="11">
+        <div>age: <span data-age></span></div>
+    </td>
+</tr>

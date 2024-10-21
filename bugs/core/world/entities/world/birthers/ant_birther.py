@@ -13,10 +13,15 @@ class AntBirther(EntityBirther):
     def __init__(self, event_bus: EventEmitter, id_generator: IdGenerator, map: Map, ant_factory: AntFactory):
         super().__init__(event_bus, id_generator, 'ant_birth_request', map)
         self._ant_factory = ant_factory
+        self._current_step = 0
+
+        self._event_bus.add_listener('step_start', self._on_step_start)
 
     def _build_entity(self, id, request: AntBirthRequest) -> Ant:
         larva = request.larva
         nest: Nest = self._map.get_entity_by_id(request.nest_id)
         ownership = OwnershipConfig(nest.from_colony_id, nest.owner_id)
-        return self._ant_factory.build_new_ant(id, larva.name, ownership, larva.genome, larva.ant_type, nest.position, 101, nest)
+        return self._ant_factory.build_new_ant(id, larva.name, ownership, larva.genome, larva.ant_type, nest.position, self._current_step, nest)
         
+    def _on_step_start(self, step_number: int):
+        self._current_step = step_number

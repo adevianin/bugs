@@ -43,7 +43,8 @@ class AntClientSerializer(LiveEntityClientSerializer):
             'behavior': {
                 'guardianBehavior': ant.guardian_behavior,
                 'isCooperative': ant.is_cooperative
-            }
+            },
+            'birthStep': ant.birth_step
         })
 
         return json

@@ -6,9 +6,18 @@ class World {
         this._entities = [];
         this._colonies = [];
         this._climate = climate;
-        this.current_step = 0;
+        this._currentStep = 0;
 
         this._mainEventBus.on('entityDied', this._onDied.bind(this));
+    }
+
+    get currentStep() {
+        return this._currentStep;
+    }
+
+    set currentStep(stepNumber) {
+        this._currentStep = stepNumber;
+        this._mainEventBus.emit('currentStepChanged', stepNumber);
     }
 
     get entities() {

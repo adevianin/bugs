@@ -2,13 +2,15 @@ import { BaseHTMLView } from "@view/base/baseHTMLView";
 import antTmpl from './antTmpl.html';
 import { NestSelectorView } from "@view/game/panel/base/nestSelector";
 import { AntTypes } from "@domain/enum/antTypes";
+import { CONSTS } from "@domain/consts";
 
 class AntView extends BaseHTMLView {
 
     constructor(ant) {
-        let el = document.createElement('tr');
+        let el = document.createElement('tbody');
         super(el);
         this._ant = ant;
+        this._profileState = false;
 
         this._ant.on('died', this.remove.bind(this));
 
@@ -18,6 +20,9 @@ class AntView extends BaseHTMLView {
         this._guardianTypeSelector.addEventListener('change', this._onGuardianBehaviorSelectorChange.bind(this));
         this._cooperativeBehaviorTogglerEl.addEventListener('change', this._onCooperativeBehaviorTogglerChange.bind(this));
         this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
+        this._profileBtn.addEventListener('click', this._onProfileBtnClick.bind(this));
+
+        this._stopListenCurrentStepChanged = this.$domainFacade.events.on('currentStepChanged', this._renderAge.bind(this));
     }
 
     _onGuardianBehaviorSelectorChange () {
@@ -51,11 +56,19 @@ class AntView extends BaseHTMLView {
 
         this._el.querySelector('[data-genome-debug]').addEventListener('click', () => {
             console.log(this._ant.genome);
-        })
+        });
+
+        this._profileEl = this._el.querySelector('[data-ant-profile]');
+        this._profileBtn = this._el.querySelector('[data-profile-btn]');
+        this._renderProfileState();
+
+        this._ageEl = this._el.querySelector('[data-age]');
+        this._renderAge();
         
     }
 
     remove() {
+        this._stopListenCurrentStepChanged();
         this._nestSelector.remove();
         super.remove();
     }
@@ -72,6 +85,17 @@ class AntView extends BaseHTMLView {
         this._nuptialFlightActionBtn.classList.toggle('hidden', !canFlyNuptialFlight);
     }
 
+    _renderAge() {
+        let livedSteps = this.$domainFacade.currentStep - this._ant.birthStep;
+        let age = Math.floor(livedSteps / CONSTS.STEPS_IN_YEAR);
+        this._ageEl.innerHTML = age;
+    }
+
+    _renderProfileState() {
+        this._profileEl.classList.toggle('hidden', !this._profileState);
+        this._profileBtn.innerHTML = this._profileState ? '-' : '+';
+    }
+
     _checkCanFlyNuptialFlight(ant) {
         if (ant.antType == AntTypes.QUEEN) {
             return ant.canFlyNuptialFlight;
@@ -82,6 +106,11 @@ class AntView extends BaseHTMLView {
 
     _onNestChanged() {
         this._ant.relocateToNest(this._nestSelector.nestId);
+    }
+
+    _onProfileBtnClick() {
+        this._profileState = !this._profileState;
+        this._renderProfileState();
     }
 
 }

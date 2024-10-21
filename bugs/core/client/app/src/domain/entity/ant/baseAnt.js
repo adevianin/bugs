@@ -4,7 +4,8 @@ import { ACTION_TYPES } from '../action/actionTypes';
 
 class BaseAnt extends LiveEntity {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome) {
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, 
+            genome, birthStep) {
         super(eventBus, id, position, angle, EntityTypes.ANT, fromColony, ownerId, userSpeed, hp, maxHp);
         this._name = name;
         this._pickedItemId = pickedItemId;
@@ -16,6 +17,7 @@ class BaseAnt extends LiveEntity {
         this._behavior = behavior;
         this._antApi = antApi;
         this._genome = genome
+        this._birthStep = birthStep;
     }
 
     updateIsHidden() {
@@ -69,6 +71,10 @@ class BaseAnt extends LiveEntity {
 
     get genome() {
         return this._genome;
+    }
+
+    get birthStep() {
+        return this._birthStep;
     }
 
     changeGuardianBehavior(behaviorValue) {
