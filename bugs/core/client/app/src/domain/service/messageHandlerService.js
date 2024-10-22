@@ -33,6 +33,7 @@ class MessageHandlerService {
     }
 
     _handleInitStepMsg(msg) {
+        console.log(msg.notifications);
         initConts(msg.consts);
         this._worldService.initWorld(msg.world);
         this._specieBuilderService.initBuilder(msg.specie);
@@ -51,6 +52,9 @@ class MessageHandlerService {
                     break;
                 case 'climate':
                     this._worldService.playClimateAction(action);
+                    break;
+                case 'user':
+                    console.log(action)
                     break;
             }
         }

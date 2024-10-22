@@ -14,6 +14,7 @@ from core.world.services.ant_service import AntService
 from core.world.entities.ant.base.guardian_behaviors import GuardianBehaviors
 from core.sync.constants_client_serializer import ConstantsClientSerializer
 from core.world.action_accumulator import ActionAccumulator
+from core.sync.notification_client_serializer import NotificationClientSerializer
 
 from typing import Callable, List, Dict
 
@@ -23,11 +24,11 @@ class WorldFacade:
 
     @classmethod
     def init(cls, event_bus: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
-             nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer,
+             nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer, notification_client_serializer: NotificationClientSerializer,
              world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, 
              ant_service: AntService, action_accumulator: ActionAccumulator):
         events = EventEmitter()
-        world_facade = WorldFacade(event_bus, events, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, 
+        world_facade = WorldFacade(event_bus, events, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, notification_client_serializer,
                                    world_repository, colony_service, player_service, nuptial_environment_service, ant_service, action_accumulator)
         WorldFacade._instance = world_facade
         return world_facade
@@ -37,7 +38,7 @@ class WorldFacade:
         return WorldFacade._instance
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
-                 nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer, 
+                 nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer, notification_client_serializer: NotificationClientSerializer,
                  world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, 
                  ant_service: AntService, action_accumulator: ActionAccumulator):
         if WorldFacade._instance != None:
@@ -52,6 +53,7 @@ class WorldFacade:
         self._action_client_serializer = action_client_serializer
         self._nuptial_environment_client_serializer = nuptial_environment_client_serializer
         self._constants_client_serializer = constants_client_serializer
+        self._notification_client_serializer = notification_client_serializer
 
         self._colony_service = colony_service
         self._player_service = player_service
@@ -169,6 +171,11 @@ class WorldFacade:
         personal_actions = self._action_accumulator.pull_personal_actions(user_id)
         serialized_personal_actions = [self._action_client_serializer.serialize(action) for action in personal_actions]
         return self._serialized_common_actions + serialized_personal_actions
+    
+    def get_notifications_for_client(self, user_id: int):
+        notifications = self._world.get_notifications_for_owner(user_id)
+        serialized_notifications = [self._notification_client_serializer.serialize(notification) for notification in notifications]
+        return serialized_notifications
     
     def _on_step_done(self, step_number: int):
         self._serialize_common_actions()

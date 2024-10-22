@@ -29,17 +29,20 @@ from core.world.entities.action.nest_larva_added_action import NestLarvaAddedAct
 from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
 from core.world.entities.action.climate_temperature_change_action import ClimateTemperatureChangeAction
 from core.world.entities.action.nest_fortification_changed_action import NestFortificationChangedAction
+from core.world.entities.action.user_notification_action import UserNotificationAction
+from .notification_client_serializer import NotificationClientSerializer
 
 class ActionClientSerializer(iActionClientSerializer):
 
     def __init__(self, entity_serializer: EntityClientSerializer, util_serializer: UtilClientSerializer, larva_serializer: LarvaClientSerializer, egg_serializer: EggClientSerializer,
-                 colony_serializer: ColonyClientSerializer, operation_serializer: OperationClientSerializer):
+                 colony_serializer: ColonyClientSerializer, operation_serializer: OperationClientSerializer, notification_serializer: NotificationClientSerializer):
         self._entity_serializer = entity_serializer
         self._util_serializer = util_serializer
         self._larva_serializer = larva_serializer
         self._egg_serializer = egg_serializer
         self._colony_serializer = colony_serializer
         self._operation_serializer = operation_serializer
+        self._notification_serializer = notification_serializer
 
     def serialize(self, action: Action):
         match(action.action_type):
@@ -99,6 +102,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._serialize_operations_changed(action)
             case ActionTypes.CLIMATE_TEMPERATURE_CHANGE:
                 return self._serialize_climate_temperature_changed(action)
+            case ActionTypes.USER_NOTIFICATION:
+                return self._serialize_user_notification(action)
             case _:
                 raise Exception('unknown type of action')
             
@@ -322,6 +327,15 @@ class ActionClientSerializer(iActionClientSerializer):
         json.update({
             'dailyTemperature': action.daily_temperature,
             'directionOfChange': action.direction_of_change
+        })
+
+        return json
+    
+    def _serialize_user_notification(self, action: UserNotificationAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'notification': self._notification_serializer.serialize(action.notification)
         })
 
         return json

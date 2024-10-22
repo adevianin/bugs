@@ -12,6 +12,7 @@ from core.data.serializers.nuptial_environment_serializer import NuptialEnvironm
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 from .climate_serializer import ClimateSerializer
 from .thought_serializer import ThoughtSerializer
+from .notification_serializer import NotificationSerializer
 
 from typing import List
 
@@ -20,7 +21,7 @@ class WorldSerializer():
     def __init__(self, nest_serializer: NestSerializer, ant_serializer: AntSerializer, item_serializer: ItemSerializer, item_area_serializer: ItemAreaSerializer, 
                  item_source_serializer: ItemSourceSerializer, colony_serializer: ColonySerializer, colony_relations_table_serializer: ColonyRelationsTableSerializer, 
                  ground_beetle_serializer: GroundBeetleSerializer, nuptial_environment_serializer: NuptialEnvironmentSerializer, climate_serializer: ClimateSerializer, 
-                 thought_serializer: ThoughtSerializer):
+                 thought_serializer: ThoughtSerializer, notification_serializer: NotificationSerializer):
         self._nest_serializer = nest_serializer
         self._ant_serializer = ant_serializer
         self._colony_serializer = colony_serializer
@@ -32,6 +33,7 @@ class WorldSerializer():
         self._nuptial_environment_serializer = nuptial_environment_serializer
         self._climate_serializer = climate_serializer
         self._thought_serializer = thought_serializer
+        self._notification_serializer = notification_serializer
 
     def serialize(self, world: World):
         json = {
@@ -51,7 +53,8 @@ class WorldSerializer():
                 }
             },
             'last_used_id': world.last_used_id,
-            'current_step': world.current_step
+            'current_step': world.current_step,
+            'notifications': []
         }
 
         nests = world.map.get_entities(entity_types=[EntityTypes.NEST])
@@ -97,5 +100,8 @@ class WorldSerializer():
                     'entity_id': entity.id,
                     'thoughts': [self._thought_serializer.serialize(thought) for thought in entity.thoughts]
                 })
+
+        notifications = world.get_all_notifications()
+        json['notifications'] = [self._notification_serializer.serialize(notification) for notification in notifications ]
 
         return json

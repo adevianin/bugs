@@ -9,6 +9,7 @@ from core.world.entities.action.entity_rotated_action import EntityRotatedAction
 from core.world.entities.action.entity_hp_changed_action import EntityHpChangedAction
 from core.world.entities.action.entity_colony_changed_action import EntityColonyChangedAction
 from .ownership_config import OwnershipConfig
+from core.world.entities.world.notification.notifications.notification import Notification
 
 class Entity(ABC):
 
@@ -97,5 +98,8 @@ class Entity(ABC):
 
     def _emit_action(self, action: Action):
         self._event_bus.emit('action', action)
+
+    def _emit_notification(self, notification: Notification):
+        self._event_bus.emit('notification', notification)
         
     

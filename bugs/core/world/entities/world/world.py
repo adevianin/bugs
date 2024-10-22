@@ -15,6 +15,8 @@ from core.world.entities.ant.base.nuptial_environment.nuptial_environment import
 from core.world.entities.climate.climate import Climate
 from .sensor_handlers.visual_sensor_handler import VisualSensorHandler
 from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
+from .notification.notification_manager import NotificationManager
+from .notification.notifications.notification import Notification
 
 from typing import List
 
@@ -22,7 +24,7 @@ class World():
 
     def __init__(self, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: List[Colony], id_generator: IdGenerator, 
                  colony_relations_table: ColonyRelationsTable, birthers, ground_beetle_spawner: GroundBeetleSpawner, nuptial_environments: List[NuptialEnvironment], 
-                 climate: Climate, sensor_handlers, current_step: int):
+                 climate: Climate, sensor_handlers, current_step: int, notification_manager: NotificationManager):
         self._entities_collection = entities_collection
         self._map = map
         self._event_bus = event_bus
@@ -38,6 +40,7 @@ class World():
         self._climate = climate
         self._visual_sensor_handler: VisualSensorHandler = sensor_handlers['visual_sensor_handler']
         self._temperature_sensor_handler: TemperatureSensorHandler = sensor_handlers['temperature_sensor_handler']
+        self._notification_manager = notification_manager
 
     @property
     def current_step(self):
@@ -70,6 +73,12 @@ class World():
     @property
     def climate(self) -> Climate:
         return self._climate
+    
+    def get_all_notifications(self) -> List[Notification]:
+        return self._notification_manager.get_all_notifications()
+    
+    def get_notifications_for_owner(self, owner_id: int):
+        return self._notification_manager.get_notifications_for_owner(owner_id)
     
     def generate_id(self):
         return self._id_generator.generate_id()

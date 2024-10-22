@@ -29,3 +29,4 @@ class ActionTypes(StrEnum):
     COLONY_BORN = 'colony_born'
     COLONY_OPERATIONS_CHANGED = 'colony_operations_change'
     CLIMATE_TEMPERATURE_CHANGE = 'climate_temperature_change'
+    USER_NOTIFICATION = 'user_notification'

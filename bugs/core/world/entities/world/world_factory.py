@@ -18,6 +18,8 @@ from core.world.entities.ant.base.nuptial_environment.nuptial_environment import
 from core.world.entities.climate.climate import Climate
 from .sensor_handlers.visual_sensor_handler import VisualSensorHandler
 from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
+from .notification.notifications.notification import Notification
+from .notification.notification_manager import NotificationManager
 
 from typing import List
 
@@ -31,7 +33,7 @@ class WorldFactory():
         self._ground_beetle_factory = ground_beetle_factory
 
     def build_world(self, last_used_id: int, entities_collection: EntityCollection, map: Map, colonies: List[Colony], colony_relations_table: ColonyRelationsTable, 
-                    nuptial_environments: List[NuptialEnvironment], climate: Climate, current_step: int) -> World:
+                    nuptial_environments: List[NuptialEnvironment], climate: Climate, current_step: int, notifications: List[Notification]) -> World:
         id_generator = IdGenerator.build_id_generator(last_used_id)
         ground_beetle_spawner = GroundBeetleSpawner(self._event_bus, map)
         birthers = {
@@ -44,6 +46,8 @@ class WorldFactory():
             'visual_sensor_handler': VisualSensorHandler(self._event_bus, map),
             'temperature_sensor_handler': TemperatureSensorHandler(climate)
         }
+        notification_manager = NotificationManager(self._event_bus, notifications)
+        
         return World(entities_collection, map, self._event_bus, colonies, id_generator, colony_relations_table, birthers, ground_beetle_spawner, nuptial_environments, 
-                     climate, sensor_handlers, current_step)
+                     climate, sensor_handlers, current_step, notification_manager)
     
