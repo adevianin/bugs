@@ -27,9 +27,9 @@ class NotificationManager():
     
     def _break_in_packages(self, notifications: List[Notification]):
         for notification in notifications:
-            self._push_notification(notification)
+            self._push_notification_to_packs(notification)
     
-    def _push_notification(self, notification: Notification):
+    def _push_notification_to_packs(self, notification: Notification):
         notification_pack: List[Notification] = self._notification_packs.get(notification.owner_id, [])
         notification_pack.append(notification)
         self._notification_packs[notification.owner_id] = notification_pack
@@ -39,6 +39,6 @@ class NotificationManager():
 
     def _on_notification(self, notification: Notification):
         notification.step = self._current_step
-        self._push_notification(notification)
+        self._push_notification_to_packs(notification)
         action = UserNotificationAction.build(notification.owner_id, notification, notification.owner_id)
         self._event_bus.emit('action', action)
