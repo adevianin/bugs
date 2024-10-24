@@ -20,6 +20,7 @@ class DestroyNestOperation(Operation):
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, formation_factory: FormationFactory, fight_factory: FightFactory, id: int, hired_ants: List[Ant],
                   flags: dict, formation: BaseFormation, fight: Fight, nest: Nest, warriors_count: int):
         self._nest = nest
+        # fix if saved operation after destroying nest
         self._warriors_count = warriors_count
         super().__init__(event_bus, events, formation_factory, fight_factory, id, OperationTypes.DESTROY_NEST, hired_ants, flags, formation, fight)
         self._name = 'знищення мурашника'
