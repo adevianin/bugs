@@ -2,6 +2,9 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
 from core.world.utils.size import Size
 from .basic_stats import BasicStats
+from .damage_types import DamageTypes
+from .death_record.base_death_record import BaseDeathRecord
+from .death_record.damage_death_record import DamageDeathRecord
 
 class Body():
 
@@ -44,12 +47,12 @@ class Body():
     def hp(self, hp: int):
         self._hp = hp
         self.events.emit('hp_changed')
-        if self._hp <= 0:
-            self._die()
 
-    def receive_damage(self, damage: int):
+    def receive_damage(self, damage: int, damage_type: DamageTypes):
         if not self.is_died:
             self.hp -= damage if self.hp > damage else self.hp
+            if self._hp <= 0:
+                self.die(DamageDeathRecord(self._position, damage_type))
 
         return self.is_died
     
@@ -57,6 +60,7 @@ class Body():
         if self.hp < self.stats.max_hp:
             self.hp += self.stats.hp_regen_rate
 
-    def _die(self):
-        self.events.emit('died')
+    def die(self, death_record: BaseDeathRecord):
+        self.hp = 0
+        self.events.emit('died', death_record)
         self.events.remove_all_listeners()

@@ -1,3 +1,4 @@
+from core.world.entities.base.death_record.base_death_record import BaseDeathRecord
 from ..base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.item.items.base.item import Item
@@ -20,6 +21,9 @@ from core.world.entities.ant.base.ant_types import AntTypes
 from .nest_stats import NestStats
 from core.world.entities.action.nest_fortification_changed_action import NestFortificationChangedAction
 from core.world.entities.base.ownership_config import OwnershipConfig
+from core.world.entities.world.notification.notifications.died_nest_notification import DiedNestNotification
+from core.world.entities.world.notification.notifications.nest_alarm_raised_notification import NestAlarmRaisedNotification
+from core.world.entities.world.notification.notifications.nest_alarm_canceled_notification import NestAlarmCanceledNotification
 
 class Nest(Entity):
 
@@ -116,11 +120,14 @@ class Nest(Entity):
 
     def raise_attack_alarm(self, enemies_positions):
         self.events.emit('is_under_attack', enemies_positions)
+        if not self._is_under_attack:
+            self._emit_notification(NestAlarmRaisedNotification(self.owner_id, self.position))
         self._is_under_attack = True
 
     def cancel_attack_alarm(self):
         if self._is_under_attack:
             self.events.emit('attack_is_over')
+            self._emit_notification(NestAlarmCanceledNotification(self.owner_id, self.position))
         self._is_under_attack = False
 
     def _on_stored_calories_changed(self):
@@ -146,9 +153,12 @@ class Nest(Entity):
         self._emit_action(NestEggBecameLarvaAction.build(self.id, egg, self._owner_id))
 
     def _on_egg_added(self, egg: Egg):
-        print('egg action')
         self._emit_action(NestEggAddedAction.build(self.id, egg, self._owner_id))
 
     def _on_fortification_changed(self):
         self._emit_action(NestFortificationChangedAction.build(self.id, self._body.fortification))
+
+    def _on_body_died(self, death_record: BaseDeathRecord):
+        super()._on_body_died(death_record)
+        self._emit_notification(DiedNestNotification(self.owner_id, self.position, death_record))
     

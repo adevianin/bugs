@@ -14,6 +14,7 @@ from core.world.utils.size import Size
 from .genetic.genome import Genome
 from .ant_stats import AntStats
 from core.world.entities.base.entity import Entity
+from core.world.entities.base.death_record.base_death_record import BaseDeathRecord
 
 
 from typing import List, Callable
@@ -98,7 +99,6 @@ class AntBody(LiveBody):
     
     def build_nest(self, nest: Nest):
         nest.build()
-        self._consume_calories(10)
 
     def pick_up_item(self, item: Item):
         self._picked_item = item
@@ -192,6 +192,6 @@ class AntBody(LiveBody):
     # def get_stashed_item_data(self):
     #     return self.recall_entity('stashed_item')
     
-    def _die(self):
-        super()._die()
+    def die(self, death_record: BaseDeathRecord):
+        super().die(death_record)
         self.sayer.remove_all_listeners()

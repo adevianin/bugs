@@ -11,6 +11,10 @@ from core.world.entities.base.entity import Entity
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.base.body import Body
 from .live_stats import LiveStats
+from core.world.entities.base.damage_types import DamageTypes
+from core.world.settings import COLD_DAMAGE
+from core.world.entities.base.death_record.age_death_record import AgeDeathRecord
+from core.world.entities.base.death_record.hunger_death_record import HungerDeathRecord
 
 import math
 from typing import List, Callable
@@ -88,9 +92,6 @@ class LiveBody(Body):
     def check_am_i_hungry(self):
         return self._calories / (self._max_calories / 100) < 30
     
-    def check_am_i_freezing(self) -> bool:
-        return self._temperature_sensor.temperature < self.stats.min_temperature and not self.am_i_in_hibernation()
-    
     def check_urge_to_hibernate(self) -> bool:
         return self._temperature_sensor.temperature + 1 <= self.stats.min_temperature and not self._temperature_sensor.is_warming
 
@@ -126,14 +127,14 @@ class LiveBody(Body):
     
     # ----------------------------------
     def damage_enemy(self, enemy_body: 'LiveBody'):
-        enemy_body.receive_combat_damage(20)
+        enemy_body.receive_combat_damage(self.stats.attack)
 
     def damage_nest(self, nest_body: Body):
-        nest_body.receive_damage(10)
+        nest_body.receive_damage(10, DamageTypes.COMBAT)
 
     def receive_combat_damage(self, damage: int):
         self._stun_effect()
-        self.receive_damage(damage)
+        self.receive_damage(damage, DamageTypes.COMBAT)
         self.events.emit('received_combat_damage')
     # -----------------------------------
 
@@ -182,16 +183,19 @@ class LiveBody(Body):
     def handle_aging(self, current_step: int):
         lived_steps = current_step - self.birth_step
         if lived_steps >= self.stats.life_span:
-            self._die()
+            self.die(AgeDeathRecord(self.position))
+
+    def handle_temperature(self):
+        if self._check_am_i_freezing():
+            self.receive_damage(COLD_DAMAGE, DamageTypes.COLD)
+
+    def handle_calories(self):
+        self._calories -= self.stats.appetite
+        if self._calories <= 0:
+            self.die(HungerDeathRecord(self.position))
 
     def _look_at(self, point: Point):
         self.angle = (math.atan2(point.y - self.position.y, point.x - self.position.x) * 180 / math.pi) + 90
-
-    def _consume_calories(self, amount: int):
-        pass
-        # self._calories -= amount
-        # if self._calories < 0:
-        #     self.hp = 0
 
     def _stun_effect(self):
         self.memory.save('stun_effect', True, 1)
@@ -199,6 +203,9 @@ class LiveBody(Body):
     @property
     def _has_stun_effect(self):
         return bool(self.memory.read('stun_effect'))
+    
+    def _check_am_i_freezing(self) -> bool:
+        return self._temperature_sensor.temperature < self.stats.min_temperature and not self.am_i_in_hibernation()
     
     
     

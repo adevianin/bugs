@@ -53,7 +53,7 @@ class Item(Entity):
         if self._life_span != -1:
             self._life_span -= 1
             if self._life_span == 0 and not self._is_picked:
-                self.die()
+                self.simple_die()
 
         if self._bringing_position:
             self._be_bringed()
@@ -70,7 +70,7 @@ class Item(Entity):
         used_strength = using_strength if self._strength > using_strength else self._strength
         self._strength -= used_strength
         if self._strength == 0:
-            self.die()
+            self.simple_die()
 
         return used_strength
     
@@ -98,4 +98,3 @@ class Item(Entity):
 
     def _almost_die(self):
         self._life_span = random.randint(3, 6)
-        

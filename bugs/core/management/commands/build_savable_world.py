@@ -1243,7 +1243,7 @@ class Command(BaseCommand):
                 "from_colony_id":1,
                 "owner_id": 2,
                 "is_main": True,
-                "hp": 1000,
+                "hp": 100,
                 "position":[
                     600,
                     1000
@@ -1255,7 +1255,7 @@ class Command(BaseCommand):
                 "eggs": [],
                 "area":300,
                 "build_progress": 100,
-                "fortification": 500
+                "fortification": 50
             },
         ],
         "item_areas": [
@@ -1436,7 +1436,8 @@ class Command(BaseCommand):
                 }
             }
         ],
-        "thought_packs": []
+        "thought_packs": [],
+        "notifications": []
     }
 
     def handle(self, *args, **options):

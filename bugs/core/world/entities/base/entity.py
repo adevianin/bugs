@@ -10,6 +10,8 @@ from core.world.entities.action.entity_hp_changed_action import EntityHpChangedA
 from core.world.entities.action.entity_colony_changed_action import EntityColonyChangedAction
 from .ownership_config import OwnershipConfig
 from core.world.entities.world.notification.notifications.notification import Notification
+from .death_record.base_death_record import BaseDeathRecord
+from .death_record.simple_death_record import SimpleDeathRecord
 
 class Entity(ABC):
 
@@ -24,7 +26,7 @@ class Entity(ABC):
         self._owner_id = ownership.owner_user_id
         self._body = body
 
-        self._body.events.add_listener('died', self._on_died)
+        self._body.events.add_listener('died', self._on_body_died)
         self._body.events.add_listener('angle_changed', self._on_angle_changed)
         self._body.events.add_listener('hp_changed', self._on_hp_changed)
 
@@ -77,14 +79,14 @@ class Entity(ABC):
     def is_detectable(self):
         return True
     
-    def die(self):
-        self._body.hp = 0
+    def simple_die(self):
+        self._body.die(SimpleDeathRecord(self.body.position))
 
     @abstractmethod
     def do_step(self):
         pass
 
-    def _on_died(self):
+    def _on_body_died(self, death_record: BaseDeathRecord):
         self._emit_action(EntityDiedAction.build(self.id))
         self.events.emit('died')
         # self.events.remove_all_listeners()

@@ -6,6 +6,7 @@ from core.world.entities.ant.base.larva import Larva
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.ant.base.egg import Egg
 from core.world.entities.ant.base.ant_types import AntTypes
+from core.world.entities.base.damage_types import DamageTypes
 
 from typing import List
 
@@ -164,15 +165,15 @@ class NestBody(Body):
         if larva:
             self._larvae.remove(larva)
         
-    def receive_damage(self, damage: int):
+    def receive_damage(self, damage: int, damage_type: DamageTypes):
         if self.fortification > 0:
             self.fortification -= damage if damage <= self.fortification else self.fortification
             return False
         else:
-            return super().receive_damage(damage)
+            return super().receive_damage(damage, damage_type)
         
     def take_fortificating_item(self, item: Item):
-        item.die()
+        item.simple_die()
 
         if self.fortification + item.strength < self.stats.max_fortification:
             self.fortification += item.strength

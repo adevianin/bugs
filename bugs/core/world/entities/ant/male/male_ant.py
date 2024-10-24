@@ -9,6 +9,7 @@ from .male_ant_body import MaleAntBody
 from .male_ant_mind import MaleAntMind
 from core.world.entities.action.ant_flew_nuptial_flight_action import AntFlewNuptialFlightAction
 from core.world.entities.base.ownership_config import OwnershipConfig
+from core.world.entities.base.death_record.nuptiali_fly_death_record import NuptialFlyDeathRecord
 
 class MaleAnt(Ant):
 
@@ -26,7 +27,7 @@ class MaleAnt(Ant):
         self._mind.free_mind()
         self._mind.toggle_auto_thought_generation(False)
         self._body.fly_nuptial_flight()
-        self.die()
+        self._body.die(NuptialFlyDeathRecord(self.position))
 
     def _on_flew_nuptial_flight(self):
         self._emit_action(AntFlewNuptialFlightAction.build(self.id))

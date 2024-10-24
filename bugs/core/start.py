@@ -20,6 +20,7 @@ from core.data.deserializers.nuptial_environment_deserializer import NuptialEnvi
 from core.data.deserializers.genome_deserializer import GenomeDeserializer
 from core.data.deserializers.climate_deserializer import ClimateDeserializer
 from core.data.deserializers.notification_deserializer import NotificationDeserializer
+from core.data.deserializers.death_record_deserializer import DeathRecordDeserializer
 from core.data.deserializers.world_deserializer import WorldDeserializer
 
 from core.data.serializers.larva_serializer import LarvaSerializer
@@ -42,6 +43,7 @@ from core.data.serializers.nuptial_environment_serializer import NuptialEnvironm
 from core.data.serializers.genome_serializer import GenomeSerializer
 from core.data.serializers.climate_serializer import ClimateSerializer
 from core.data.serializers.notification_serializer import NotificationSerializer
+from core.data.serializers.death_record_serializer import DeathRecordSerializer
 
 from core.world.world_facade import WorldFacade
 from core.world.utils.event_emiter import EventEmitter
@@ -88,6 +90,7 @@ from core.sync.nuptial_environment_client_serializer import NuptialEnvironmentCl
 from core.sync.climate_client_serializer import ClimateClientSerializer
 from core.sync.constants_client_serializer import ConstantsClientSerializer
 from core.sync.notification_client_serializer import NotificationClientSerializer
+from core.sync.death_record_client_serializer import DeathRecordClientSerializer
 
 from core.world.my_test_env import MY_TEST_ENV
 
@@ -132,7 +135,8 @@ def start():
     item_source_serializer = ItemSourceSerializer()
     nuptial_environment_serializer = NuptialEnvironmentSerializer(genes_serializer)
     climate_serializer = ClimateSerializer()
-    notification_serializer = NotificationSerializer()
+    death_record_serializer = DeathRecordSerializer()
+    notification_serializer = NotificationSerializer(death_record_serializer)
     world_serializer = WorldSerializer(nest_serializer, ant_serializer, item_serializer, item_area_serializer, item_source_serializer, colony_serializer, 
                                        colony_relations_table_serializer, ground_beetle_serializer, nuptial_environment_serializer, climate_serializer, 
                                        thought_serializer, notification_serializer)
@@ -156,7 +160,8 @@ def start():
     item_area_deserializer = ItemAreaDeserializer(item_area_factory)
     nuptial_environment_deserializer = NuptialEnvironmentDeserializer(gene_deserializer)
     climate_deserializer = ClimateDeserializer(climate_factory)
-    notification_deserializer = NotificationDeserializer()
+    death_record_deserializer = DeathRecordDeserializer()
+    notification_deserializer = NotificationDeserializer(death_record_deserializer)
     world_deserializer = WorldDeserializer(world_factory, nest_deserializer, ant_deserializer, colony_deserializer, thought_deserializer, map_deserializer, 
                                            ground_beetle_deserializer, item_deserializer, item_source_deserializer, item_area_deserializer, nuptial_environment_deserializer, 
                                            climate_deserializer, notification_deserializer)
@@ -180,7 +185,8 @@ def start():
                                                       ground_beetle_client_serializer, ant_client_serializer)
     climate_client_serializer = ClimateClientSerializer()
     world_client_serializer = WorldClientSerializer(colony_client_serializer, entity_client_serializer, climate_client_serializer)
-    notification_client_serializer = NotificationClientSerializer(util_client_serializer)
+    death_record_client_serializer = DeathRecordClientSerializer(util_client_serializer)
+    notification_client_serializer = NotificationClientSerializer(util_client_serializer, death_record_client_serializer)
     action_client_serializer = ActionClientSerializer(entity_client_serializer, util_client_serializer, larva_client_serializer, egg_client_serializer, colony_client_serializer, 
                                                       operation_client_serializer, notification_client_serializer)
     nuptial_environment_client_serializer = NuptialEnvironmentClientSerializer(genome_client_serializer, genes_client_serializer, stats_client_serializer)

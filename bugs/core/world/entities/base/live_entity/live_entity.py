@@ -6,7 +6,6 @@ from .mind import Mind
 from .live_body import LiveBody
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.action.entity_walk_action import EntityWalkAction
-from core.world.settings import COLD_DAMAGE
 from core.world.entities.base.live_entity.visual_sensor import VisualSensor
 from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.thought.thought import Thought
@@ -74,12 +73,11 @@ class LiveEntity(Entity, iEnemy):
     def do_step(self, step_number: int):
         super().do_step()
 
-        if self._body.check_am_i_freezing():
-            self._body.receive_damage(COLD_DAMAGE)
-
         self._mind.do_step()
 
+        self._body.handle_temperature()
         self._body.handle_aging(step_number)
+        # self._body.handle_calories()
 
     def _on_step(self, position: Point):
         self._emit_action(EntityWalkAction.build(self.id, position))

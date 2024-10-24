@@ -14,6 +14,8 @@ from core.world.entities.world.birthers.requests.nest_birth_request import NestB
 from .guardian_behaviors import GuardianBehaviors
 from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.world.notification.notifications.died_ant_notification import DiedAntNotification
+from core.world.entities.base.death_record.base_death_record import BaseDeathRecord
+from core.world.entities.base.death_record.no_home_death_record import NoHomeDeathRecord
 
 class Ant(LiveEntity):
 
@@ -154,6 +156,9 @@ class Ant(LiveEntity):
         self._mind.toggle_auto_thought_generation(True)
         self._body.sayer.remove_all_listeners()
 
+    def no_home_die(self):
+        self._body.die(NoHomeDeathRecord(self.position))
+
     def _on_got_in_nest(self, nest_id: int):
         self._emit_action(EntityGotInNestAction.build(self.id, nest_id))
 
@@ -166,8 +171,8 @@ class Ant(LiveEntity):
     def _on_dropped_picked_item(self):
         self._emit_action(AntDroppedPickedItemAction.build(self.id))
 
-    def _on_died(self):
-        super()._on_died()
-        self._emit_notification(DiedAntNotification(self.owner_id, self._name))
+    def _on_body_died(self, death_record: BaseDeathRecord):
+        super()._on_body_died(death_record)
+        self._emit_notification(DiedAntNotification(self.owner_id, self._name, death_record))
 
         

@@ -5,6 +5,7 @@ from core.world.entities.nest.nest import Nest
 from core.world.utils.point import Point
 from core.world.entities.thought.thought_types import ThoughtTypes
 from .guardian_behaviors import GuardianBehaviors
+from core.world.entities.base.death_record.base_death_record import BaseDeathRecord
 
 import math
 from typing import List
@@ -20,7 +21,7 @@ class AntMind(Mind):
         self.guardian_behavior = guardian_behavior
         self.is_cooperative = is_cooperative
 
-        self._body.events.add_listener('died', self._on_died)
+        self._body.events.add_listener('died', self._on_body_died)
         self._body.events.add_listener('colony_signal:enemy_spotted_in_colony_area', self._on_enemy_spotted_in_colony_area)
         self._body.events.add_listener('received_combat_damage', self._on_received_combat_damage)
 
@@ -116,7 +117,7 @@ class AntMind(Mind):
         dist_from_home = math.dist([self.home_nest.position.x, self.home_nest.position.y], [self._body.position.x, self._body.position.y])
         return dist_from_home > self.home_nest.area
     
-    def _on_died(self):
+    def _on_body_died(self, death_record: BaseDeathRecord):
         self._stop_listen_home_nest()
         self.free_mind()
 
