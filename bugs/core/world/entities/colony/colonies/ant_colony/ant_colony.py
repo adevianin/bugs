@@ -12,6 +12,7 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
 from core.world.entities.action.colony_operations_changed_action import ColonyOperationsChangedAction
 
+# fix destorying colony after all nest destroyed
 class AntColony(Colony):
 
     def __init__(self, id: int, event_bus: EventEmitter, operation_factory: OperationFactory, owner_id: int, map: Map, operations: List[Operation], relation_tester: RelationTester, queen_id: int):
@@ -143,7 +144,7 @@ class AntColony(Colony):
                 ant.relocate_to_nest(relocate_nest)
         else:
             for ant in ants_from_destroyed_nest:
-                ant.die()
+                ant.no_home_die()
 
     def get_my_members(self) -> List[Ant]:
         return super().get_my_members()
