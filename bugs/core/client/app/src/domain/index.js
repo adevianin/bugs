@@ -6,8 +6,10 @@ import { WorldFactory } from './worldFactory';
 import { WorldService } from './service/worldService';
 import { ColonyService } from './service/colonyService';
 import { NuptialService } from './service/nuptialService';
+import { UserService } from './service/userService';
 import { SpecieBuilderService } from './service/specieBuilderService';
 import { SpecieFactory } from './entity/specieBuilder/specieFactory';
+import { NotificationsContainer } from './entity/notificationsContainer';
 
 function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new EventEmitter();
@@ -15,6 +17,7 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let worldFactory = new WorldFactory(mainEventBus, apis.nestApi, apis.antApi);
     let specieFactory = new SpecieFactory();
 
+    let notificationsContainer = new NotificationsContainer();
     let world = worldFactory.buildWorld();
 
     let worldService = new WorldService(world, worldFactory, mainEventBus);
@@ -22,9 +25,10 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let colonyService = new ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
     let nuptialService = new NuptialService(apis.nuptialApi, worldFactory);
     let specieBuilderService = new SpecieBuilderService(mainEventBus, apis.specieBuilderApi, specieFactory, initialData.specie);
-    let messageHandlerService = new MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService);
+    let userService = new UserService(notificationsContainer);
+    let messageHandlerService = new MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService);
 
-    let domainFacade = new DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService);
+    let domainFacade = new DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService, userService);
 
     return domainFacade;
 }

@@ -2,12 +2,13 @@ import { initConts } from "@domain/consts";
 
 class MessageHandlerService {
 
-    constructor(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService) {
+    constructor(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService) {
         this._mainEventBus = mainEventBus;
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._colonyService = colonyService;
         this._specieBuilderService = specieBuilderService;
+        this._userService = userService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
@@ -33,8 +34,8 @@ class MessageHandlerService {
     }
 
     _handleInitStepMsg(msg) {
-        console.log(msg.notifications);
         initConts(msg.consts);
+        this._userService.initNotifications(msg.notifications)
         this._worldService.initWorld(msg.world);
         this._specieBuilderService.initBuilder(msg.specie);
         this._mainEventBus.emit('initStepDone');
@@ -54,7 +55,7 @@ class MessageHandlerService {
                     this._worldService.playClimateAction(action);
                     break;
                 case 'user':
-                    console.log(action)
+                    this._userService.playUserAction(action);
                     break;
             }
         }

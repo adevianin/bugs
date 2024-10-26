@@ -5,8 +5,8 @@ class UtilClientSerializer():
 
     def serialize_point(self, point: Point):
         return {
-            'x': point.x,
-            'y': point.y
+            'x': round(point.x),
+            'y': round(point.y)
         }
     
     def serialize_size(sefl, size: Size):

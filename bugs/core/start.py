@@ -194,7 +194,7 @@ def start():
 
     action_accumulator = ActionAccumulator(event_bus)
 
-    world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, notification_serializer, 
+    world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, notification_client_serializer, 
                                     world_repository, colony_service, player_service, nuptial_environment_service, ant_service, action_accumulator)
 
     world_facade.init_world()
@@ -204,8 +204,8 @@ def start():
     nuptial_environment_service.set_world(world_facade.world)
     ant_service.set_world(world_facade.world)
 
-    MY_TEST_ENV['attacker'] = world_facade.world.map.get_entity_by_id(5)
-    MY_TEST_ENV['attacker2'] = world_facade.world.map.get_entity_by_id(6)
-    MY_TEST_ENV['attacker3'] = world_facade.world.map.get_entity_by_id(7)
+    # MY_TEST_ENV['attacker'] = world_facade.world.map.get_entity_by_id(5)
+    # MY_TEST_ENV['attacker2'] = world_facade.world.map.get_entity_by_id(6)
+    # MY_TEST_ENV['attacker3'] = world_facade.world.map.get_entity_by_id(7)
 
     world_facade.world.run()

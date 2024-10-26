@@ -1,6 +1,6 @@
 class DomainFacade {
 
-    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService, userService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._accountService = accountService;
@@ -8,6 +8,7 @@ class DomainFacade {
         this._colonyService = colonyService;
         this._nuptialService = nuptialService;
         this._specieBuilderService = specieBuilderService;
+        this._userService = userService;
     }
 
     get currentStep() {
@@ -16,6 +17,10 @@ class DomainFacade {
 
     get events() {
         return this._mainEventBus;
+    }
+
+    get notificationsContainer() {
+        return this._userService.notificationsContainer;
     }
 
     getEntities() {

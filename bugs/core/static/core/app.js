@@ -50,7 +50,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class DomainFacade {
 
-    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService, userService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._accountService = accountService;
@@ -58,6 +58,7 @@ class DomainFacade {
         this._colonyService = colonyService;
         this._nuptialService = nuptialService;
         this._specieBuilderService = specieBuilderService;
+        this._userService = userService;
     }
 
     get currentStep() {
@@ -66,6 +67,10 @@ class DomainFacade {
 
     get events() {
         return this._mainEventBus;
+    }
+
+    get notificationsContainer() {
+        return this._userService.notificationsContainer;
     }
 
     getEntities() {
@@ -1681,6 +1686,50 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/domain/entity/notificationsContainer.js":
+/*!**************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/notificationsContainer.js ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NotificationsContainer": () => (/* binding */ NotificationsContainer)
+/* harmony export */ });
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+
+
+class NotificationsContainer extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+
+    constructor() {
+        super();
+        this._notifications = [];
+    }
+
+    get notifications() {
+        return this._notifications;
+    }
+
+    setNotifications(notifications) {
+        this._notifications = this._notifications.concat(notifications);
+        // this._sortByStep();
+    }
+
+    pushNewNotification(notification) {
+        this._notifications.push(notification);
+        this.emit('newNotification', notification);
+    }
+
+    // _sortByStep() {
+    //     this._notifications.sort((n1, n2) => n1.step - n2.step);
+    // }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/entity/nuptialMale.js":
 /*!***************************************************************!*\
   !*** ./bugs/core/client/app/src/domain/entity/nuptialMale.js ***!
@@ -2053,6 +2102,50 @@ const ChromosomesTypes = {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/domain/enum/damageTypes.js":
+/*!*************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/enum/damageTypes.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "DamageTypes": () => (/* binding */ DamageTypes)
+/* harmony export */ });
+const DamageTypes = {
+    COLD: 'cold',
+    COMBAT: 'combat'
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/enum/deathTypes.js":
+/*!************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/enum/deathTypes.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "DeathTypes": () => (/* binding */ DeathTypes)
+/* harmony export */ });
+const DeathTypes = {
+    DAMAGE: 'damage',
+    NUPTIAL_FLY: 'nuptial_fly',
+    NO_HOME: 'no_home',
+    AGED: 'aged',
+    HUNGER: 'hunger',
+    SIMPLE: 'simple'
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/enum/eggStates.js":
 /*!***********************************************************!*\
   !*** ./bugs/core/client/app/src/domain/enum/eggStates.js ***!
@@ -2131,6 +2224,28 @@ const GenesTypes = {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/domain/enum/notificationTypes.js":
+/*!*******************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/enum/notificationTypes.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NotificationTypes": () => (/* binding */ NotificationTypes)
+/* harmony export */ });
+const NotificationTypes = {
+    DIED_ANT: 'died_ant',
+    DIED_NEST: 'died_nest',
+    NEST_ALARM_RAISED: 'nest_alarm_raised',
+    NEST_ALARM_CANCELED: 'nest_alarm_canceled'
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/index.js":
 /*!**************************************************!*\
   !*** ./bugs/core/client/app/src/domain/index.js ***!
@@ -2150,8 +2265,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _service_worldService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./service/worldService */ "./bugs/core/client/app/src/domain/service/worldService.js");
 /* harmony import */ var _service_colonyService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/colonyService */ "./bugs/core/client/app/src/domain/service/colonyService.js");
 /* harmony import */ var _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./service/nuptialService */ "./bugs/core/client/app/src/domain/service/nuptialService.js");
-/* harmony import */ var _service_specieBuilderService__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./service/specieBuilderService */ "./bugs/core/client/app/src/domain/service/specieBuilderService.js");
-/* harmony import */ var _entity_specieBuilder_specieFactory__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entity/specieBuilder/specieFactory */ "./bugs/core/client/app/src/domain/entity/specieBuilder/specieFactory.js");
+/* harmony import */ var _service_userService__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./service/userService */ "./bugs/core/client/app/src/domain/service/userService.js");
+/* harmony import */ var _service_specieBuilderService__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./service/specieBuilderService */ "./bugs/core/client/app/src/domain/service/specieBuilderService.js");
+/* harmony import */ var _entity_specieBuilder_specieFactory__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entity/specieBuilder/specieFactory */ "./bugs/core/client/app/src/domain/entity/specieBuilder/specieFactory.js");
+/* harmony import */ var _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/notificationsContainer */ "./bugs/core/client/app/src/domain/entity/notificationsContainer.js");
+
+
 
 
 
@@ -2167,18 +2286,20 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
 
     let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.nestApi, apis.antApi);
-    let specieFactory = new _entity_specieBuilder_specieFactory__WEBPACK_IMPORTED_MODULE_9__.SpecieFactory();
+    let specieFactory = new _entity_specieBuilder_specieFactory__WEBPACK_IMPORTED_MODULE_10__.SpecieFactory();
 
+    let notificationsContainer = new _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_11__.NotificationsContainer();
     let world = worldFactory.buildWorld();
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus);
     let accountService = new _service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user, mainEventBus);
     let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
     let nuptialService = new _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__.NuptialService(apis.nuptialApi, worldFactory);
-    let specieBuilderService = new _service_specieBuilderService__WEBPACK_IMPORTED_MODULE_8__.SpecieBuilderService(mainEventBus, apis.specieBuilderApi, specieFactory, initialData.specie);
-    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService);
+    let specieBuilderService = new _service_specieBuilderService__WEBPACK_IMPORTED_MODULE_9__.SpecieBuilderService(mainEventBus, apis.specieBuilderApi, specieFactory, initialData.specie);
+    let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_8__.UserService(notificationsContainer);
+    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService);
 
-    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService);
+    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService, userService);
 
     return domainFacade;
 }
@@ -2346,12 +2467,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class MessageHandlerService {
 
-    constructor(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService) {
+    constructor(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService) {
         this._mainEventBus = mainEventBus;
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._colonyService = colonyService;
         this._specieBuilderService = specieBuilderService;
+        this._userService = userService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
@@ -2377,8 +2499,8 @@ class MessageHandlerService {
     }
 
     _handleInitStepMsg(msg) {
-        console.log(msg.notifications);
         (0,_domain_consts__WEBPACK_IMPORTED_MODULE_0__.initConts)(msg.consts);
+        this._userService.initNotifications(msg.notifications)
         this._worldService.initWorld(msg.world);
         this._specieBuilderService.initBuilder(msg.specie);
         this._mainEventBus.emit('initStepDone');
@@ -2398,7 +2520,7 @@ class MessageHandlerService {
                     this._worldService.playClimateAction(action);
                     break;
                 case 'user':
-                    console.log(action)
+                    this._userService.playUserAction(action);
                     break;
             }
         }
@@ -2487,6 +2609,41 @@ class SpecieBuilderService {
 
     _onSpecieSchemaChanged() {
         this._specieBuilderApi.saveSpecieSchema(this._specie);
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/service/userService.js":
+/*!****************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/service/userService.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "UserService": () => (/* binding */ UserService)
+/* harmony export */ });
+class UserService {
+
+    constructor(notificationsContainer) {
+        this._notificationsContainer = notificationsContainer
+    }
+
+    get notificationsContainer() {
+        return this._notificationsContainer;
+    }
+
+    initNotifications(notifications) {
+        this._notificationsContainer.setNotifications(notifications);
+    }
+
+    playUserAction(action) {
+        this._notificationsContainer.pushNewNotification(action.notification);
     }
 
 }
@@ -4202,6 +4359,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _tabs_nuptialFlightTab__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./tabs/nuptialFlightTab */ "./bugs/core/client/app/src/view/game/panel/tabs/nuptialFlightTab/index.js");
 /* harmony import */ var _tabs_specieBuilderTab__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./tabs/specieBuilderTab */ "./bugs/core/client/app/src/view/game/panel/tabs/specieBuilderTab/index.js");
 /* harmony import */ var _tabs_climateTab__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./tabs/climateTab */ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/index.js");
+/* harmony import */ var _tabs_notificationsTab__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./tabs/notificationsTab */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/index.js");
+
 
 
 
@@ -4242,6 +4401,7 @@ class Panel extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTM
         this._nuptialFlightTab = new _tabs_nuptialFlightTab__WEBPACK_IMPORTED_MODULE_6__.NuptialFlightTabView(this._el.querySelector('[data-nuptial-flight-tab]'));
         this._specieBuildertTab = new _tabs_specieBuilderTab__WEBPACK_IMPORTED_MODULE_7__.SpecieBuilderTabView(this._el.querySelector('[data-specie-builder-tab]'));
         this._climateTab = new _tabs_climateTab__WEBPACK_IMPORTED_MODULE_8__.ClimateTabView(this._el.querySelector('[data-climate-tab]'));
+        this._notificationsTab = new _tabs_notificationsTab__WEBPACK_IMPORTED_MODULE_9__.NotificationsTabView(this._el.querySelector('[data-notifications-tab]'));
 
         this._tabSwitcher = new _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
             { name: 'user', label: 'Користувач', tab: this._userTab },
@@ -4249,6 +4409,7 @@ class Panel extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTM
             { name: 'nuptial_flight', label: 'Шлюбний політ', tab: this._nuptialFlightTab },
             { name: 'specie_builder', label: 'Вид', tab: this._specieBuildertTab },
             { name: 'climate', label: 'Клімат', tab: this._climateTab },
+            { name: 'notifications', label: 'Сповіщення', tab: this._notificationsTab },
         ]);
     }
 
@@ -6642,6 +6803,252 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/index.js":
+/*!*********************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/index.js ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NotificationsTabView": () => (/* reexport safe */ _notificationsTabView__WEBPACK_IMPORTED_MODULE_0__.NotificationsTabView)
+/* harmony export */ });
+/* harmony import */ var _notificationsTabView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./notificationsTabView */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notificationsTabView.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/notificationView.js":
+/*!*********************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/notificationView.js ***!
+  \*********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NotificationView": () => (/* binding */ NotificationView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _domain_enum_notificationTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/notificationTypes */ "./bugs/core/client/app/src/domain/enum/notificationTypes.js");
+/* harmony import */ var _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/deathTypes */ "./bugs/core/client/app/src/domain/enum/deathTypes.js");
+/* harmony import */ var _domain_enum_damageTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/damageTypes */ "./bugs/core/client/app/src/domain/enum/damageTypes.js");
+/* harmony import */ var _diedAntNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./diedAntNotificationTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/diedAntNotificationTmpl.html");
+/* harmony import */ var _diedNestNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./diedNestNotificationTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/diedNestNotificationTmpl.html");
+/* harmony import */ var _nestAlarmCanceledNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./nestAlarmCanceledNotificationTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/nestAlarmCanceledNotificationTmpl.html");
+/* harmony import */ var _nestAlarmRaisedNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./nestAlarmRaisedNotificationTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/nestAlarmRaisedNotificationTmpl.html");
+/* harmony import */ var _utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @utils/convertStepsToYear */ "./bugs/core/client/utils/convertStepsToYear.js");
+
+
+
+
+
+
+
+
+
+
+class NotificationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, notification) {
+        super(el);
+        this._notification = notification;
+
+        this._render();
+    }
+
+    _render() {
+        switch (this._notification.type) {
+            case _domain_enum_notificationTypes__WEBPACK_IMPORTED_MODULE_1__.NotificationTypes.DIED_ANT:
+                this._renderDiedAntNotification();
+                break;
+            case _domain_enum_notificationTypes__WEBPACK_IMPORTED_MODULE_1__.NotificationTypes.DIED_NEST:
+                this._renderDiedNestNotification();
+                break;
+            case _domain_enum_notificationTypes__WEBPACK_IMPORTED_MODULE_1__.NotificationTypes.NEST_ALARM_RAISED:
+                this._renderNestAlarmRaisedNotification();
+                break;
+            case _domain_enum_notificationTypes__WEBPACK_IMPORTED_MODULE_1__.NotificationTypes.NEST_ALARM_CANCELED:
+                this._renderNestAlarmCanceledNotification();
+                break;
+        }
+    }
+
+    _renderDiedAntNotification() {
+        this._el.innerHTML = _diedAntNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_4__["default"];
+        this._el.querySelector('[data-ant-name]').innerHTML = this._notification.antName;
+        this._el.querySelector('[data-death-describe]').innerHTML = this._generateAntDeathDescribeText();
+        this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.deathRecord.deathPosition);
+        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_8__.converStepsToYear)(this._notification.step) ;
+    }
+
+    _renderDiedNestNotification() {
+        this._el.innerHTML = _diedNestNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_5__["default"];
+        this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
+        this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.deathRecord.deathPosition);
+        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_8__.converStepsToYear)(this._notification.step) ;
+    }
+
+    _renderNestAlarmRaisedNotification() {
+        this._el.innerHTML = _nestAlarmRaisedNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_7__["default"];
+        this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
+        this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.nestPosition);
+        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_8__.converStepsToYear)(this._notification.step);
+    }
+
+    _renderNestAlarmCanceledNotification() {
+        this._el.innerHTML = _nestAlarmCanceledNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_6__["default"];
+        this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
+        this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.nestPosition);
+        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_8__.converStepsToYear)(this._notification.step) ;
+    }
+
+    _generateAntDeathDescribeText() {
+        switch(this._notification.deathRecord.type) {
+            case _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__.DeathTypes.DAMAGE:
+                switch(this._notification.deathRecord.damageType) {
+                    case _domain_enum_damageTypes__WEBPACK_IMPORTED_MODULE_3__.DamageTypes.COMBAT:
+                        return 'загинув в бою';
+                    case _domain_enum_damageTypes__WEBPACK_IMPORTED_MODULE_3__.DamageTypes.COLD:
+                        return 'замерз';
+                }
+            case _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__.DeathTypes.AGED:
+                return 'помер від старості';
+            case _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__.DeathTypes.HUNGER:
+                return 'помер з голоду';
+            case _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__.DeathTypes.NO_HOME:
+                return 'помер без дому';
+            case _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__.DeathTypes.NUPTIAL_FLY:
+                return 'помер в шлюбному льоті';
+            case _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__.DeathTypes.SIMPLE:
+                return 'помер з невідомих причин';
+        }
+    }
+
+    _renderPosition(position) {
+        return `(${position.x}:${position.y})`;
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notificationsListView.js":
+/*!*************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notificationsListView.js ***!
+  \*************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NotificationsListView": () => (/* binding */ NotificationsListView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _notificationsListTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./notificationsListTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notificationsListTmpl.html");
+/* harmony import */ var _notification_notificationView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./notification/notificationView */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/notificationView.js");
+
+
+
+
+class NotificationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+        this._notificationsContainer = this.$domainFacade.notificationsContainer;
+        this._notificationViews = [];
+
+        this._render();
+
+        this._stopListenNewNotification = this._notificationsContainer.on('newNotification', this._onNewNotification.bind(this));
+
+    }
+
+    _render() {
+        this.el.innerHTML = _notificationsListTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._listEl = this._el.querySelector('[data-notifications-list]');
+
+        for (let notification of this._notificationsContainer.notifications) {
+            this._renderNotification(notification);
+        }
+    }
+
+    _renderNotification(notification) {
+        let el = document.createElement('tr');
+        let view = new _notification_notificationView__WEBPACK_IMPORTED_MODULE_2__.NotificationView(el, notification);
+        this._notificationViews.push(view);
+        this._listEl.append(el);
+    }
+
+    remove() {
+        super.remove();
+        for (let notificationView of this._notificationViews) {
+            notificationView.remove();
+        }
+        this._stopListenNewNotification();
+    }
+
+    _onNewNotification(notification) {
+        this._renderNotification(notification);
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notificationsTabView.js":
+/*!************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notificationsTabView.js ***!
+  \************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NotificationsTabView": () => (/* binding */ NotificationsTabView)
+/* harmony export */ });
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/styles.css");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _notificationsTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./notificationsTabTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notificationsTabTmpl.html");
+/* harmony import */ var _notificationsListView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./notificationsListView */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notificationsListView.js");
+
+
+
+
+
+class NotificationsTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+
+        this._render();
+    }
+
+    _render() {
+        this._el.innerHTML = _notificationsTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
+        
+        this._notificationsListView = new _notificationsListView__WEBPACK_IMPORTED_MODULE_3__.NotificationsListView(this._el.querySelector('[data-notifications]'));
+    }
+
+    remove() {
+        super.remove();
+        this._notificationsListView.remove();
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/game/panel/tabs/nuptialFlightTab/index.js":
 /*!*********************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/game/panel/tabs/nuptialFlightTab/index.js ***!
@@ -8801,6 +9208,29 @@ class PopupManager {
 
 /***/ }),
 
+/***/ "./bugs/core/client/utils/convertStepsToYear.js":
+/*!******************************************************!*\
+  !*** ./bugs/core/client/utils/convertStepsToYear.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "converStepsToYear": () => (/* binding */ converStepsToYear)
+/* harmony export */ });
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/consts */ "./bugs/core/client/app/src/domain/consts.js");
+
+
+function converStepsToYear(steps) {
+    // return Math.floor(steps / CONSTS.STEPS_IN_YEAR);
+    return steps;
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/utils/distance.js":
 /*!********************************************!*\
   !*** ./bugs/core/client/utils/distance.js ***!
@@ -9232,6 +9662,33 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, ".colonies-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/styles.css"],"names":[],"mappings":"AAAA;IACI,aAAa;IACb,mBAAmB;AACvB","sourcesContent":[".colonies-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/styles.css":
+/*!*************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/styles.css ***!
+  \*************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".notifications-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.notifications-table td {\r\n    border: solid 1px;\r\n}\r\n\r\n.notifications-table thead {\r\n    font-weight: 700;\r\n}\r\n\r\n.notifications-table__name {\r\n    font-weight: 700;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/styles.css"],"names":[],"mappings":"AAAA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,gBAAgB;AACpB;;AAEA;IACI,gBAAgB;AACpB","sourcesContent":[".notifications-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.notifications-table td {\r\n    border: solid 1px;\r\n}\r\n\r\n.notifications-table thead {\r\n    font-weight: 700;\r\n}\r\n\r\n.notifications-table__name {\r\n    font-weight: 700;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -11323,7 +11780,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div data-colonies-tab class=\"colonies-tab\"></div>\r\n    <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n    <div data-specie-builder-tab class=\"\"></div>\r\n    <div data-climate-tab></div>\r\n</div>";
+var code = "<div class=\"tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div data-colonies-tab class=\"colonies-tab\"></div>\r\n    <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n    <div data-specie-builder-tab class=\"\"></div>\r\n    <div data-climate-tab></div>\r\n    <div data-notifications-tab></div>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -11756,6 +12213,114 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Module
 var code = "<ul class=\"colony-manager__operations-list\" data-operations-list></ul>\r\n<div class=\"colony-manager__operations-creator\" data-operations-creator></div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/diedAntNotificationTmpl.html":
+/*!******************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/diedAntNotificationTmpl.html ***!
+  \******************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<td>\r\n    мураха <span class=\"notifications-table__name\" data-ant-name></span> <span data-death-describe></span>. місце смерті: <span data-death-position></span>\r\n</td> \r\n<td data-year></td>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/diedNestNotificationTmpl.html":
+/*!*******************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/diedNestNotificationTmpl.html ***!
+  \*******************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<td>\r\n    гніздо <span class=\"notifications-table__name\" data-nest-name></span><span data-death-position></span> розбито.\r\n</td>\r\n<td data-year></td>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/nestAlarmCanceledNotificationTmpl.html":
+/*!****************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/nestAlarmCanceledNotificationTmpl.html ***!
+  \****************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<td>\r\n    гніздо <span class=\"notifications-table__name\" data-nest-name></span><span data-death-position></span> відмінило тривогу\r\n</td>\r\n<td data-year></td>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/nestAlarmRaisedNotificationTmpl.html":
+/*!**************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/nestAlarmRaisedNotificationTmpl.html ***!
+  \**************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<td>\r\n    гніздо <span class=\"notifications-table__name\" data-nest-name></span><span data-death-position></span> підняло тривогу. \r\n</td>\r\n<td data-year></td>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notificationsListTmpl.html":
+/*!***************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notificationsListTmpl.html ***!
+  \***************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<table class=\"notifications-table\">\r\n    <thead>\r\n        <tr>\r\n            <td>подія</td>\r\n            <td>рік</td>\r\n        </tr>\r\n    </thead>\r\n    <tbody data-notifications-list>\r\n\r\n    </tbody>\r\n</table>\r\n";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notificationsTabTmpl.html":
+/*!**************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notificationsTabTmpl.html ***!
+  \**************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div data-notifications>\r\n\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -12725,6 +13290,61 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/styles.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/styles.css":
+/*!***********************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/styles.css ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/styles.css");
 
       
       

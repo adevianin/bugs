@@ -47,7 +47,7 @@ class NotificationClientSerializer():
         props = self._serialize_common(notification)
 
         props.update({
-            'nestPosition': notification.nest_position,
+            'nestName': 'nest_name',
             'deathRecord': self._death_record_client_serializer.serialize(notification.death_record)
         })
 
@@ -57,7 +57,8 @@ class NotificationClientSerializer():
         props = self._serialize_common(notification)
 
         props.update({
-            'nestPosition': notification.nest_position
+            'nestName': 'nest_name',
+            'nestPosition': self._util_client_serializer.serialize_point(notification.nest_position)
         })
 
         return props
@@ -67,7 +68,8 @@ class NotificationClientSerializer():
         props = self._serialize_common(notification)
 
         props.update({
-            'nestPosition': notification.nest_position
+            'nestName': 'nest_name',
+            'nestPosition': self._util_client_serializer.serialize_point(notification.nest_position)
         })
 
         return props
