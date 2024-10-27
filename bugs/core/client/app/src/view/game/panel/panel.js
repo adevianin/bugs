@@ -9,6 +9,7 @@ import { NuptialFlightTabView } from './tabs/nuptialFlightTab';
 import { SpecieBuilderTabView } from './tabs/specieBuilderTab';
 import { ClimateTabView } from './tabs/climateTab';
 import { NotificationsTabView } from './tabs/notificationsTab';
+import { RatingTabView } from './tabs/ratingTab';
 
 class Panel extends BaseHTMLView {
 
@@ -40,6 +41,7 @@ class Panel extends BaseHTMLView {
         this._specieBuildertTab = new SpecieBuilderTabView(this._el.querySelector('[data-specie-builder-tab]'));
         this._climateTab = new ClimateTabView(this._el.querySelector('[data-climate-tab]'));
         this._notificationsTab = new NotificationsTabView(this._el.querySelector('[data-notifications-tab]'));
+        this._ratingTab = new RatingTabView(this._el.querySelector('[data-rating-tab]'));
 
         this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
             { name: 'user', label: 'Користувач', tab: this._userTab },
@@ -48,6 +50,7 @@ class Panel extends BaseHTMLView {
             { name: 'specie_builder', label: 'Вид', tab: this._specieBuildertTab },
             { name: 'climate', label: 'Клімат', tab: this._climateTab },
             { name: 'notifications', label: 'Сповіщення', tab: this._notificationsTab },
+            { name: 'rating', label: 'Рейтинг', tab: this._ratingTab },
         ]);
     }
 

@@ -16,6 +16,7 @@ from core.sync.constants_client_serializer import ConstantsClientSerializer
 from core.world.action_accumulator import ActionAccumulator
 # make interface
 from core.sync.notification_client_serializer import NotificationClientSerializer
+from core.world.services.rating_serivice import RatingService
 
 from typing import Callable, List, Dict
 
@@ -27,10 +28,10 @@ class WorldFacade:
     def init(cls, event_bus: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
              nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer, notification_client_serializer: NotificationClientSerializer,
              world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, 
-             ant_service: AntService, action_accumulator: ActionAccumulator):
+             ant_service: AntService, action_accumulator: ActionAccumulator, rating_service: RatingService):
         events = EventEmitter()
         world_facade = WorldFacade(event_bus, events, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, notification_client_serializer,
-                                   world_repository, colony_service, player_service, nuptial_environment_service, ant_service, action_accumulator)
+                                   world_repository, colony_service, player_service, nuptial_environment_service, ant_service, action_accumulator, rating_service)
         WorldFacade._instance = world_facade
         return world_facade
 
@@ -41,7 +42,7 @@ class WorldFacade:
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
                  nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer, notification_client_serializer: NotificationClientSerializer,
                  world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, 
-                 ant_service: AntService, action_accumulator: ActionAccumulator):
+                 ant_service: AntService, action_accumulator: ActionAccumulator, rating_service: RatingService):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
@@ -60,6 +61,7 @@ class WorldFacade:
         self._player_service = player_service
         self._nuptial_environment_service = nuptial_environment_service
         self._ant_service = ant_service
+        self._rating_service = rating_service
 
         self._action_accumulator = action_accumulator
         self._serialized_common_actions = []
@@ -177,6 +179,9 @@ class WorldFacade:
         notifications = self._world.get_notifications_for_owner(user_id)
         serialized_notifications = [self._notification_client_serializer.serialize(notification) for notification in notifications]
         return serialized_notifications
+    
+    def get_rating(self):
+        return self._rating_service.rating
     
     def _on_step_done(self, step_number: int):
         self._serialize_common_actions()

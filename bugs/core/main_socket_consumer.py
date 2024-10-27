@@ -38,7 +38,8 @@ class MainSocketConsumer(WebsocketConsumer):
                 'world': self._world_facade.get_world_for_client(),
                 'specie': self._world_facade.get_specie_for_client(self._user.id),
                 'consts': self._world_facade.get_consts_for_client(),
-                'notifications': self._world_facade.get_notifications_for_client(self._user.id)
+                'notifications': self._world_facade.get_notifications_for_client(self._user.id),
+                'rating': self._world_facade.get_rating()
             }))
             self._inited = True
             

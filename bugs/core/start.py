@@ -1,5 +1,6 @@
 from core.data.repositories.world_data_repository import WorldDataRepository
 from core.data.repositories.world_repository import WorldRepository
+from core.data.repositories.usernames_repository import UsernamesRepository
 
 from core.data.deserializers.nest_deserializer import NestDeserializer
 from core.data.deserializers.ant_deserializer import AntDeserializer
@@ -68,6 +69,7 @@ from core.world.services.player_service import PlayerService
 from core.world.services.colony_service import ColonyService
 from core.world.services.nuptial_environment_service import NuptialEnvironmentService
 from core.world.services.ant_service import AntService
+from core.world.services.rating_serivice import RatingService
 
 from core.sync.world_client_serializer import WorldClientSerializer
 from core.sync.colony_client_serializer import ColonyClientSerializer
@@ -112,11 +114,6 @@ def start():
     climate_factory = ClimateFactory(event_bus)
     world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ground_beetle_factory)
     
-    colony_service = ColonyService(operation_factory)
-    player_service = PlayerService(colony_factory, ant_factory)
-    nuptial_environment_service = NuptialEnvironmentService(colony_factory)
-    ant_service = AntService()
-
     genes_serializer = GenesSerializer()
     genome_serializer = GenomeSerializer(genes_serializer)
     larva_serializer = LarvaSerializer(genome_serializer)
@@ -141,7 +138,6 @@ def start():
                                        colony_relations_table_serializer, ground_beetle_serializer, nuptial_environment_serializer, climate_serializer, 
                                        thought_serializer, notification_serializer)
 
-    world_data_repository = WorldDataRepository()
     gene_deserializer = GeneDeserializer()
     genome_deserializer = GenomeDeserializer(gene_deserializer)
     larva_deserializer = LarvaDeserializer(genome_deserializer)
@@ -165,7 +161,16 @@ def start():
     world_deserializer = WorldDeserializer(world_factory, nest_deserializer, ant_deserializer, colony_deserializer, thought_deserializer, map_deserializer, 
                                            ground_beetle_deserializer, item_deserializer, item_source_deserializer, item_area_deserializer, nuptial_environment_deserializer, 
                                            climate_deserializer, notification_deserializer)
+    
+    world_data_repository = WorldDataRepository()
     world_repository = WorldRepository(world_data_repository, world_serializer, world_deserializer)
+    usernames_repository = UsernamesRepository()
+
+    colony_service = ColonyService(operation_factory)
+    player_service = PlayerService(colony_factory, ant_factory)
+    nuptial_environment_service = NuptialEnvironmentService(colony_factory)
+    ant_service = AntService()
+    rating_service = RatingService(event_bus, usernames_repository)
 
     stats_client_serializer = StatsClientSerializer()
     genes_client_serializer = GenesClientSerializer()
@@ -195,7 +200,7 @@ def start():
     action_accumulator = ActionAccumulator(event_bus)
 
     world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, notification_client_serializer, 
-                                    world_repository, colony_service, player_service, nuptial_environment_service, ant_service, action_accumulator)
+                                    world_repository, colony_service, player_service, nuptial_environment_service, ant_service, action_accumulator, rating_service)
 
     world_facade.init_world()
 
@@ -203,6 +208,7 @@ def start():
     player_service.set_world(world_facade.world)
     nuptial_environment_service.set_world(world_facade.world)
     ant_service.set_world(world_facade.world)
+    rating_service.set_world(world_facade.world)
 
     # MY_TEST_ENV['attacker'] = world_facade.world.map.get_entity_by_id(5)
     # MY_TEST_ENV['attacker2'] = world_facade.world.map.get_entity_by_id(6)

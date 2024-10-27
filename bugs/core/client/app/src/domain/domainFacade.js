@@ -23,6 +23,10 @@ class DomainFacade {
         return this._userService.notificationsContainer;
     }
 
+    get ratingContainer() {
+        return this._worldService.ratingContainer;
+    }
+
     getEntities() {
         return this._worldService.world.entities;
     }

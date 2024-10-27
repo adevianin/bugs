@@ -37,6 +37,7 @@ class MessageHandlerService {
         initConts(msg.consts);
         this._userService.initNotifications(msg.notifications)
         this._worldService.initWorld(msg.world);
+        this._worldService.setRating(msg.rating);
         this._specieBuilderService.initBuilder(msg.specie);
         this._mainEventBus.emit('initStepDone');
     }
@@ -56,6 +57,9 @@ class MessageHandlerService {
                     break;
                 case 'user':
                     this._userService.playUserAction(action);
+                    break;
+                case 'rating':
+                    this._worldService.playRatingAction(action);
                     break;
             }
         }

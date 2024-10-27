@@ -5,3 +5,4 @@ class ActorTypes(StrEnum):
     COLONY = 'colony'
     CLIMATE = 'climate'
     USER = 'user'
+    RATING = 'rating'

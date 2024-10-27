@@ -10,6 +10,7 @@ import { UserService } from './service/userService';
 import { SpecieBuilderService } from './service/specieBuilderService';
 import { SpecieFactory } from './entity/specieBuilder/specieFactory';
 import { NotificationsContainer } from './entity/notificationsContainer';
+import { RatingContainer } from './entity/ratingContainer';
 
 function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new EventEmitter();
@@ -18,9 +19,10 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let specieFactory = new SpecieFactory();
 
     let notificationsContainer = new NotificationsContainer();
+    let ratingContainer = new RatingContainer();
     let world = worldFactory.buildWorld();
 
-    let worldService = new WorldService(world, worldFactory, mainEventBus);
+    let worldService = new WorldService(world, worldFactory, mainEventBus, ratingContainer);
     let accountService = new AccountService(apis.accountApi, initialData.user, mainEventBus);
     let colonyService = new ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
     let nuptialService = new NuptialService(apis.nuptialApi, worldFactory);

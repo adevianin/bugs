@@ -73,6 +73,10 @@ class DomainFacade {
         return this._userService.notificationsContainer;
     }
 
+    get ratingContainer() {
+        return this._worldService.ratingContainer;
+    }
+
     getEntities() {
         return this._worldService.world.entities;
     }
@@ -1755,6 +1759,36 @@ class NuptialMale {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/domain/entity/ratingContainer.js":
+/*!*******************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/ratingContainer.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RatingContainer": () => (/* binding */ RatingContainer)
+/* harmony export */ });
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+
+
+class RatingContainer extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+
+    get ratingPlaces() {
+        return this._ratingPlaces;
+    }
+
+    setRatingPlaces(ratingPlaces) {
+        this._ratingPlaces = ratingPlaces;
+        this.emit('changed');
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/entity/specieBuilder/specie.js":
 /*!************************************************************************!*\
   !*** ./bugs/core/client/app/src/domain/entity/specieBuilder/specie.js ***!
@@ -2269,6 +2303,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _service_specieBuilderService__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./service/specieBuilderService */ "./bugs/core/client/app/src/domain/service/specieBuilderService.js");
 /* harmony import */ var _entity_specieBuilder_specieFactory__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entity/specieBuilder/specieFactory */ "./bugs/core/client/app/src/domain/entity/specieBuilder/specieFactory.js");
 /* harmony import */ var _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/notificationsContainer */ "./bugs/core/client/app/src/domain/entity/notificationsContainer.js");
+/* harmony import */ var _entity_ratingContainer__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./entity/ratingContainer */ "./bugs/core/client/app/src/domain/entity/ratingContainer.js");
+
 
 
 
@@ -2289,9 +2325,10 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let specieFactory = new _entity_specieBuilder_specieFactory__WEBPACK_IMPORTED_MODULE_10__.SpecieFactory();
 
     let notificationsContainer = new _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_11__.NotificationsContainer();
+    let ratingContainer = new _entity_ratingContainer__WEBPACK_IMPORTED_MODULE_12__.RatingContainer();
     let world = worldFactory.buildWorld();
 
-    let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus);
+    let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus, ratingContainer);
     let accountService = new _service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user, mainEventBus);
     let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
     let nuptialService = new _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__.NuptialService(apis.nuptialApi, worldFactory);
@@ -2502,6 +2539,7 @@ class MessageHandlerService {
         (0,_domain_consts__WEBPACK_IMPORTED_MODULE_0__.initConts)(msg.consts);
         this._userService.initNotifications(msg.notifications)
         this._worldService.initWorld(msg.world);
+        this._worldService.setRating(msg.rating);
         this._specieBuilderService.initBuilder(msg.specie);
         this._mainEventBus.emit('initStepDone');
     }
@@ -2521,6 +2559,9 @@ class MessageHandlerService {
                     break;
                 case 'user':
                     this._userService.playUserAction(action);
+                    break;
+                case 'rating':
+                    this._worldService.playRatingAction(action);
                     break;
             }
         }
@@ -2670,11 +2711,12 @@ __webpack_require__.r(__webpack_exports__);
 
 class WorldService {
 
-    constructor(world, worldFactory, mainEventBus) {
+    constructor(world, worldFactory, mainEventBus, ratingContainer) {
         this._world = world;
         this._worldFactory = worldFactory;
         this._mainEventBus = mainEventBus;
         this._worldSize = null;
+        this._ratingContainer = ratingContainer;
 
         this._mainEventBus.on('userLogout', this._clearWorld.bind(this));
     }
@@ -2683,8 +2725,20 @@ class WorldService {
         return this._world;
     }
 
+    get ratingContainer() {
+        return this._ratingContainer;
+    }
+
     setCurrentStep(currentStep) {
         this._world.currentStep = currentStep;
+    }
+
+    setRating(ratingData) {
+        this._ratingContainer.setRatingPlaces(ratingData);
+    }
+
+    playRatingAction(ratingAction) {
+        this.setRating(ratingAction.ratingPlaces);
     }
 
     playEntityAction(action) {
@@ -4360,6 +4414,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _tabs_specieBuilderTab__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./tabs/specieBuilderTab */ "./bugs/core/client/app/src/view/game/panel/tabs/specieBuilderTab/index.js");
 /* harmony import */ var _tabs_climateTab__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./tabs/climateTab */ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/index.js");
 /* harmony import */ var _tabs_notificationsTab__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./tabs/notificationsTab */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/index.js");
+/* harmony import */ var _tabs_ratingTab__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./tabs/ratingTab */ "./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/index.js");
+
 
 
 
@@ -4402,6 +4458,7 @@ class Panel extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTM
         this._specieBuildertTab = new _tabs_specieBuilderTab__WEBPACK_IMPORTED_MODULE_7__.SpecieBuilderTabView(this._el.querySelector('[data-specie-builder-tab]'));
         this._climateTab = new _tabs_climateTab__WEBPACK_IMPORTED_MODULE_8__.ClimateTabView(this._el.querySelector('[data-climate-tab]'));
         this._notificationsTab = new _tabs_notificationsTab__WEBPACK_IMPORTED_MODULE_9__.NotificationsTabView(this._el.querySelector('[data-notifications-tab]'));
+        this._ratingTab = new _tabs_ratingTab__WEBPACK_IMPORTED_MODULE_10__.RatingTabView(this._el.querySelector('[data-rating-tab]'));
 
         this._tabSwitcher = new _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
             { name: 'user', label: 'Користувач', tab: this._userTab },
@@ -4410,6 +4467,7 @@ class Panel extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTM
             { name: 'specie_builder', label: 'Вид', tab: this._specieBuildertTab },
             { name: 'climate', label: 'Клімат', tab: this._climateTab },
             { name: 'notifications', label: 'Сповіщення', tab: this._notificationsTab },
+            { name: 'rating', label: 'Рейтинг', tab: this._ratingTab },
         ]);
     }
 
@@ -7600,6 +7658,90 @@ class QueensListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1_
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/index.js":
+/*!**************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/index.js ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RatingTabView": () => (/* reexport safe */ _ratingTabView__WEBPACK_IMPORTED_MODULE_0__.RatingTabView)
+/* harmony export */ });
+/* harmony import */ var _ratingTabView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ratingTabView */ "./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/ratingTabView.js");
+
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/ratingTabView.js":
+/*!**********************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/ratingTabView.js ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RatingTabView": () => (/* binding */ RatingTabView)
+/* harmony export */ });
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/styles.css");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _ratingTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ratingTabTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/ratingTabTmpl.html");
+/* harmony import */ var _ratingPlaceTmpl_html__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ratingPlaceTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/ratingPlaceTmpl.html");
+
+
+
+
+
+class RatingTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+        this._ratingContainer = this.$domainFacade.ratingContainer;
+
+        this._stopListenRatingChange = this._ratingContainer.on('changed', this._onRatingChanged.bind(this));
+
+        this._render();
+    }
+
+    _render() {
+        this._el.innerHTML = _ratingTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
+
+        this._ratingPlacesListEl = this._el.querySelector('[data-rating-places-list]');
+
+        for (let ratingPlace of this._ratingContainer.ratingPlaces) {
+            this._renderRatinPlace(ratingPlace);
+        }
+    }
+
+    _renderRatinPlace(ratingPlace) {
+        let tr = document.createElement('tr');
+        tr.innerHTML = _ratingPlaceTmpl_html__WEBPACK_IMPORTED_MODULE_3__["default"];
+        tr.querySelector('[data-place-number]').innerHTML = ratingPlace.place;
+        tr.querySelector('[data-username]').innerHTML = ratingPlace.username;
+        tr.querySelector('[data-ants-count]').innerHTML = ratingPlace.ants;
+        tr.querySelector('[data-colonies-count]').innerHTML = ratingPlace.colonies;
+        this._ratingPlacesListEl.append(tr);
+    }
+
+    _onRatingChanged() {
+        this._render();
+    }
+
+    remove() {
+        super.remove();
+        this._stopListenRatingChange();
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/game/panel/tabs/specieBuilderTab/chromosomeEditorTabView.js":
 /*!***************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/game/panel/tabs/specieBuilderTab/chromosomeEditorTabView.js ***!
@@ -9776,6 +9918,33 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".nuptial-flight-tab {\r\n    display: 
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/styles.css":
+/*!******************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/styles.css ***!
+  \******************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".rating-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.rating-table td {\r\n    border: solid 1px;\r\n}\r\n\r\n.rating-table thead {\r\n    font-weight: 700;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/styles.css"],"names":[],"mappings":"AAAA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,gBAAgB;AACpB","sourcesContent":[".rating-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.rating-table td {\r\n    border: solid 1px;\r\n}\r\n\r\n.rating-table thead {\r\n    font-weight: 700;\r\n}"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/tabs/specieBuilderTab/styles.css":
 /*!*************************************************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/tabs/specieBuilderTab/styles.css ***!
@@ -11780,7 +11949,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div data-colonies-tab class=\"colonies-tab\"></div>\r\n    <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n    <div data-specie-builder-tab class=\"\"></div>\r\n    <div data-climate-tab></div>\r\n    <div data-notifications-tab></div>\r\n</div>";
+var code = "<div class=\"tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div data-colonies-tab class=\"colonies-tab\"></div>\r\n    <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n    <div data-specie-builder-tab class=\"\"></div>\r\n    <div data-climate-tab></div>\r\n    <div data-notifications-tab></div>\r\n    <div data-rating-tab></div>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -12411,6 +12580,42 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Module
 var code = "<span>queen <span data-queen-name></span></span>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/ratingPlaceTmpl.html":
+/*!**************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/ratingPlaceTmpl.html ***!
+  \**************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<td data-place-number></td>\r\n<td data-username></td>\r\n<td data-ants-count></td>\r\n<td data-colonies-count></td>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/ratingTabTmpl.html":
+/*!************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/ratingTabTmpl.html ***!
+  \************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<table class=\"rating-table\">\r\n    <thead>\r\n        <tr>\r\n            <td>місце</td>\r\n            <td>імя</td>\r\n            <td>мурах</td>\r\n            <td>колоній</td>\r\n        </tr>\r\n    </thead>\r\n    <tbody data-rating-places-list>\r\n    </tbody>\r\n</table>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -13537,6 +13742,61 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
        /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/styles.css":
+/*!****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/styles.css ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/tabs/ratingTab/styles.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),

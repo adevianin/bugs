@@ -30,6 +30,7 @@ from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
 from core.world.entities.action.climate_temperature_change_action import ClimateTemperatureChangeAction
 from core.world.entities.action.nest_fortification_changed_action import NestFortificationChangedAction
 from core.world.entities.action.user_notification_action import UserNotificationAction
+from core.world.entities.action.rating_updated_action import RatingUpdatedAction
 from .notification_client_serializer import NotificationClientSerializer
 
 class ActionClientSerializer(iActionClientSerializer):
@@ -104,6 +105,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._serialize_climate_temperature_changed(action)
             case ActionTypes.USER_NOTIFICATION:
                 return self._serialize_user_notification(action)
+            case ActionTypes.RATING_UPDATED:
+                return self._serialize_rating_updated(action)
             case _:
                 raise Exception('unknown type of action')
             
@@ -336,6 +339,15 @@ class ActionClientSerializer(iActionClientSerializer):
 
         json.update({
             'notification': self._notification_serializer.serialize(action.notification)
+        })
+
+        return json
+    
+    def _serialize_rating_updated(self, action: RatingUpdatedAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'ratingPlaces': action.rating_places
         })
 
         return json

@@ -18,7 +18,7 @@ from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
 from .notification.notification_manager import NotificationManager
 from .notification.notifications.notification import Notification
 
-from typing import List
+from typing import List, Callable
 
 class World():
 
@@ -62,6 +62,11 @@ class World():
     def colonies(self):
         return self._colonies
     
+    @property
+    def ant_colonies(self):
+        ant_colonies_filter: Callable[[Colony], bool] = lambda colony: colony.member_type == EntityTypes.ANT
+        return list(filter(ant_colonies_filter, self._colonies))
+
     @property
     def colony_relations_table(self):
         return self._colony_relations_table

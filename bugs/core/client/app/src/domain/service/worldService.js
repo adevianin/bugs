@@ -3,11 +3,12 @@ import { distance } from '@utils/distance';
 
 class WorldService {
 
-    constructor(world, worldFactory, mainEventBus) {
+    constructor(world, worldFactory, mainEventBus, ratingContainer) {
         this._world = world;
         this._worldFactory = worldFactory;
         this._mainEventBus = mainEventBus;
         this._worldSize = null;
+        this._ratingContainer = ratingContainer;
 
         this._mainEventBus.on('userLogout', this._clearWorld.bind(this));
     }
@@ -16,8 +17,20 @@ class WorldService {
         return this._world;
     }
 
+    get ratingContainer() {
+        return this._ratingContainer;
+    }
+
     setCurrentStep(currentStep) {
         this._world.currentStep = currentStep;
+    }
+
+    setRating(ratingData) {
+        this._ratingContainer.setRatingPlaces(ratingData);
+    }
+
+    playRatingAction(ratingAction) {
+        this.setRating(ratingAction.ratingPlaces);
     }
 
     playEntityAction(action) {
