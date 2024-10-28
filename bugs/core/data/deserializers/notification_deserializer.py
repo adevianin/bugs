@@ -5,6 +5,7 @@ from core.world.entities.world.notification.notifications.died_nest_notification
 from .death_record_deserializer import DeathRecordDeserializer
 from core.world.entities.world.notification.notifications.nest_alarm_raised_notification import NestAlarmRaisedNotification
 from core.world.entities.world.notification.notifications.nest_alarm_canceled_notification import NestAlarmCanceledNotification
+from core.world.entities.world.notification.notifications.died_colony_notification import DiedColonyNotification
 
 class NotificationDeserializer():
 
@@ -23,6 +24,8 @@ class NotificationDeserializer():
                 return self._build_nest_alarm_raised(json)
             case NotificationTypes.NEST_ALARM_CANCELED:
                 return self._build_nest_alarm_canceled(json)
+            case NotificationTypes.DIED_COLONY:
+                return self._build_died_colony(json)
             case _:
                 raise Exception('unknown type of notification')
             
@@ -42,3 +45,6 @@ class NotificationDeserializer():
     def _build_nest_alarm_canceled(self, json: dict):
         nest_position = Point.from_json(json['nest_position'])
         return NestAlarmCanceledNotification(json['owner_id'], nest_position, json['step'])
+    
+    def _build_died_colony(self, json: dict):
+        return DiedColonyNotification(json['owner_id'], json['colony_name'], json['step'])

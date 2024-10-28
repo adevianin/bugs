@@ -8,6 +8,7 @@ class ColoniesListView extends BaseHTMLView {
         super(el);
 
         this._stopListenColonyBorn = this.$domainFacade.events.on('colonyBorn', this._onColonyBorn.bind(this));
+        this._stopListenColonyDied = this.$domainFacade.events.on('colonyDied', this._onColonyDied.bind(this));
 
         this._colonies = this.$domainFacade.findMyColonies();
         
@@ -27,6 +28,7 @@ class ColoniesListView extends BaseHTMLView {
     remove() {
         super.remove();
         this._stopListenColonyBorn();
+        this._stopListenColonyDied();
         this._clearColonyViews();
     }
 
@@ -71,6 +73,18 @@ class ColoniesListView extends BaseHTMLView {
         }
     }
 
+    _deleteColonyEntity(colony) {
+        let index = this._colonies.indexOf(colony);
+        if (index != -1) {
+            this._colonies.splice(index, 1);
+        }
+    }
+
+    _deleteColonyView(colony) {
+        this._colonyViews[colony.id].remove();
+        delete this._colonyViews[colony.id];
+    }
+
     _onColonyViewClick(clickedColony) {
         this._selectColony(clickedColony);
     }
@@ -81,6 +95,18 @@ class ColoniesListView extends BaseHTMLView {
             this._colonies.push(colony);
             this._renderColony(colony);
             this._autoSelect();
+        }
+    }
+
+    _onColonyDied(colony) {
+        let isMine = this.$domainFacade.isColonyMy(colony);
+        if (isMine) {
+            this._deleteColonyEntity(colony);
+            this._deleteColonyView(colony);
+            if (this._selectedColony == colony) {
+                this._selectedColony = null;
+                this._autoSelect();
+            }
         }
     }
 }

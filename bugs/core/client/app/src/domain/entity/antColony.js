@@ -2,8 +2,9 @@ import { EventEmitter } from "@utils/eventEmitter";
 
 class AntColony extends EventEmitter {
 
-    constructor(id, onwerId, operations, queenId) {
+    constructor(eventBus, id, onwerId, operations, queenId) {
         super();
+        this._eventBus = eventBus;
         this._id = id;
         this._onwerId = onwerId;
         this._operations = operations;
@@ -26,9 +27,29 @@ class AntColony extends EventEmitter {
         return this._queenId;
     }
 
-    setOperations(operations) {
-        this._operations = operations;
+    playAction(action) {
+        switch(action.type) {
+            case 'colony_died':
+                this._playColonyDiedAction(action);
+                break;
+            case 'colony_operations_change':
+                this._playOperationsChangedAction(action);
+                break;
+        }
+    }
+
+    _playOperationsChangedAction(action) {
+        this._operations = action.actionData.operations;
         this.emit('operationsChanged');
+    }
+
+    _playColonyDiedAction(action) {
+        this._emitToEventBus('colonyDied'); //to delete colony from world
+        // this.emit('died');//to delete view
+    }
+
+    _emitToEventBus(eventName, data) {
+        this._eventBus.emit(eventName, this, data);
     }
 
 }

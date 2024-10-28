@@ -6,6 +6,7 @@ import diedAntNotificationTmpl from './diedAntNotificationTmpl.html';
 import diedNestNotificationTmpl from './diedNestNotificationTmpl.html';
 import nestAlarmCanceledNotificationTmpl from './nestAlarmCanceledNotificationTmpl.html';
 import nestAlarmRaisedNotificationTmpl from './nestAlarmRaisedNotificationTmpl.html';
+import diedColonyNotificationTmpl from './diedColonyNotificationTmpl.html';
 import { converStepsToYear } from "@utils/convertStepsToYear";
 
 class NotificationView extends BaseHTMLView {
@@ -31,6 +32,11 @@ class NotificationView extends BaseHTMLView {
             case NotificationTypes.NEST_ALARM_CANCELED:
                 this._renderNestAlarmCanceledNotification();
                 break;
+            case NotificationTypes.DIED_COLONY:
+                this._renderDiedColonyNotification();
+                break;
+            default:
+                throw 'unknown notification type';
         }
     }
 
@@ -60,6 +66,12 @@ class NotificationView extends BaseHTMLView {
         this._el.innerHTML = nestAlarmCanceledNotificationTmpl;
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.nestPosition);
+        this._el.querySelector('[data-year]').innerHTML = converStepsToYear(this._notification.step) ;
+    }
+
+    _renderDiedColonyNotification() {
+        this._el.innerHTML = diedColonyNotificationTmpl;
+        this._el.querySelector('[data-colony-name]').innerHTML = this._notification.colonyName;
         this._el.querySelector('[data-year]').innerHTML = converStepsToYear(this._notification.step) ;
     }
 

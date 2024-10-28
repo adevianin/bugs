@@ -8,7 +8,8 @@ class World {
         this._climate = climate;
         this._currentStep = 0;
 
-        this._mainEventBus.on('entityDied', this._onDied.bind(this));
+        this._mainEventBus.on('entityDied', this._onEntityDied.bind(this));
+        this._mainEventBus.on('colonyDied', this._onColonyDied.bind(this));
     }
 
     get currentStep() {
@@ -66,6 +67,13 @@ class World {
         }
     }
 
+    _deleteColony(colony) {
+        let index = this._colonies.indexOf(colony);
+        if (index != -1) {
+            this._colonies.splice(index, 1);
+        }
+    }
+
     findEntityById(id) {
         return this._entities.find( entity => entity.id == id);
     }
@@ -109,8 +117,12 @@ class World {
         this._colonies = [];
     }
 
-    _onDied(entity) {
+    _onEntityDied(entity) {
         this.deleteEntity(entity.id);
+    }
+
+    _onColonyDied(colony) {
+        this._deleteColony(colony);
     }
 
 }

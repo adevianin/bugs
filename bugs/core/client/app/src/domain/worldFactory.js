@@ -126,7 +126,7 @@ class WorldFactory {
     }
 
     buildAntColony(id, owner_id, operations, queenId) {
-        return new AntColony(id, owner_id, operations, queenId);
+        return new AntColony(this._mainEventBus, id, owner_id, operations, queenId);
     }
 
     buildGroundBeetle(id, position, angle, fromColony, userSpeed, hp, maxHp) {

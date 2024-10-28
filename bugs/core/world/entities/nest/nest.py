@@ -159,6 +159,6 @@ class Nest(Entity):
         self._emit_action(NestFortificationChangedAction.build(self.id, self._body.fortification))
 
     def _on_body_died(self, death_record: BaseDeathRecord):
+        self._emit_notification(DiedNestNotification(self.owner_id, self.position, death_record)) #before super because nest died notification then colony died notification
         super()._on_body_died(death_record)
-        self._emit_notification(DiedNestNotification(self.owner_id, self.position, death_record))
     

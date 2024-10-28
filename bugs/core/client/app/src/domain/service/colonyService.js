@@ -12,15 +12,12 @@ class ColonyService {
             case 'colony_born':
                 this.giveBirthToColony(action.actionData.colony);
                 break;
-            case 'colony_operations_change':
-                let colony = this._world.findColonyById(action.actorId);
-                colony.setOperations(action.actionData.operations);
-                break;
             default:
-                throw 'unknown type of colony action'
+                let colony = this._world.findColonyById(action.actorId);
+                colony.playAction(action);
         }
+    
     }
-
     giveBirthToColony(colonyJson) {
         let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
         this._world.addColony(colony);

@@ -42,6 +42,8 @@ class World():
         self._temperature_sensor_handler: TemperatureSensorHandler = sensor_handlers['temperature_sensor_handler']
         self._notification_manager = notification_manager
 
+        self._event_bus.add_listener('colony_died', self._on_colony_died)
+
     @property
     def current_step(self):
         return self._current_step
@@ -157,3 +159,6 @@ class World():
         self._event_bus.emit('step_done', self._current_step)
 
         self._current_step += 1
+
+    def _on_colony_died(self, colony: Colony):
+        self._colonies.remove(colony)

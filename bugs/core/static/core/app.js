@@ -282,8 +282,9 @@ __webpack_require__.r(__webpack_exports__);
 
 class AntColony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
-    constructor(id, onwerId, operations, queenId) {
+    constructor(eventBus, id, onwerId, operations, queenId) {
         super();
+        this._eventBus = eventBus;
         this._id = id;
         this._onwerId = onwerId;
         this._operations = operations;
@@ -306,9 +307,29 @@ class AntColony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEm
         return this._queenId;
     }
 
-    setOperations(operations) {
-        this._operations = operations;
+    playAction(action) {
+        switch(action.type) {
+            case 'colony_died':
+                this._playColonyDiedAction(action);
+                break;
+            case 'colony_operations_change':
+                this._playOperationsChangedAction(action);
+                break;
+        }
+    }
+
+    _playOperationsChangedAction(action) {
+        this._operations = action.actionData.operations;
         this.emit('operationsChanged');
+    }
+
+    _playColonyDiedAction(action) {
+        this._emitToEventBus('colonyDied'); //to delete colony from world
+        // this.emit('died');//to delete view
+    }
+
+    _emitToEventBus(eventName, data) {
+        this._eventBus.emit(eventName, this, data);
     }
 
 }
@@ -1979,7 +2000,8 @@ class World {
         this._climate = climate;
         this._currentStep = 0;
 
-        this._mainEventBus.on('entityDied', this._onDied.bind(this));
+        this._mainEventBus.on('entityDied', this._onEntityDied.bind(this));
+        this._mainEventBus.on('colonyDied', this._onColonyDied.bind(this));
     }
 
     get currentStep() {
@@ -2037,6 +2059,13 @@ class World {
         }
     }
 
+    _deleteColony(colony) {
+        let index = this._colonies.indexOf(colony);
+        if (index != -1) {
+            this._colonies.splice(index, 1);
+        }
+    }
+
     findEntityById(id) {
         return this._entities.find( entity => entity.id == id);
     }
@@ -2080,8 +2109,12 @@ class World {
         this._colonies = [];
     }
 
-    _onDied(entity) {
+    _onEntityDied(entity) {
         this.deleteEntity(entity.id);
+    }
+
+    _onColonyDied(colony) {
+        this._deleteColony(colony);
     }
 
 }
@@ -2273,7 +2306,9 @@ const NotificationTypes = {
     DIED_ANT: 'died_ant',
     DIED_NEST: 'died_nest',
     NEST_ALARM_RAISED: 'nest_alarm_raised',
-    NEST_ALARM_CANCELED: 'nest_alarm_canceled'
+    NEST_ALARM_CANCELED: 'nest_alarm_canceled',
+    NEST_ALARM_CANCELED: 'nest_alarm_canceled',
+    DIED_COLONY: 'died_colony'
 }
 
 
@@ -2439,15 +2474,12 @@ class ColonyService {
             case 'colony_born':
                 this.giveBirthToColony(action.actionData.colony);
                 break;
-            case 'colony_operations_change':
-                let colony = this._world.findColonyById(action.actorId);
-                colony.setOperations(action.actionData.operations);
-                break;
             default:
-                throw 'unknown type of colony action'
+                let colony = this._world.findColonyById(action.actorId);
+                colony.playAction(action);
         }
+    
     }
-
     giveBirthToColony(colonyJson) {
         let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
         this._world.addColony(colony);
@@ -2965,7 +2997,7 @@ class WorldFactory {
     }
 
     buildAntColony(id, owner_id, operations, queenId) {
-        return new _entity_antColony__WEBPACK_IMPORTED_MODULE_4__.AntColony(id, owner_id, operations, queenId);
+        return new _entity_antColony__WEBPACK_IMPORTED_MODULE_4__.AntColony(this._mainEventBus, id, owner_id, operations, queenId);
     }
 
     buildGroundBeetle(id, position, angle, fromColony, userSpeed, hp, maxHp) {
@@ -4572,6 +4604,7 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         super(el);
 
         this._stopListenColonyBorn = this.$domainFacade.events.on('colonyBorn', this._onColonyBorn.bind(this));
+        this._stopListenColonyDied = this.$domainFacade.events.on('colonyDied', this._onColonyDied.bind(this));
 
         this._colonies = this.$domainFacade.findMyColonies();
         
@@ -4591,6 +4624,7 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     remove() {
         super.remove();
         this._stopListenColonyBorn();
+        this._stopListenColonyDied();
         this._clearColonyViews();
     }
 
@@ -4635,6 +4669,18 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         }
     }
 
+    _deleteColonyEntity(colony) {
+        let index = this._colonies.indexOf(colony);
+        if (index != -1) {
+            this._colonies.splice(index, 1);
+        }
+    }
+
+    _deleteColonyView(colony) {
+        this._colonyViews[colony.id].remove();
+        delete this._colonyViews[colony.id];
+    }
+
     _onColonyViewClick(clickedColony) {
         this._selectColony(clickedColony);
     }
@@ -4645,6 +4691,18 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
             this._colonies.push(colony);
             this._renderColony(colony);
             this._autoSelect();
+        }
+    }
+
+    _onColonyDied(colony) {
+        let isMine = this.$domainFacade.isColonyMy(colony);
+        if (isMine) {
+            this._deleteColonyEntity(colony);
+            this._deleteColonyView(colony);
+            if (this._selectedColony == colony) {
+                this._selectedColony = null;
+                this._autoSelect();
+            }
         }
     }
 }
@@ -6898,7 +6956,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _diedNestNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./diedNestNotificationTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/diedNestNotificationTmpl.html");
 /* harmony import */ var _nestAlarmCanceledNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./nestAlarmCanceledNotificationTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/nestAlarmCanceledNotificationTmpl.html");
 /* harmony import */ var _nestAlarmRaisedNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./nestAlarmRaisedNotificationTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/nestAlarmRaisedNotificationTmpl.html");
-/* harmony import */ var _utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @utils/convertStepsToYear */ "./bugs/core/client/utils/convertStepsToYear.js");
+/* harmony import */ var _diedColonyNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diedColonyNotificationTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/diedColonyNotificationTmpl.html");
+/* harmony import */ var _utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @utils/convertStepsToYear */ "./bugs/core/client/utils/convertStepsToYear.js");
+
 
 
 
@@ -6932,6 +6992,11 @@ class NotificationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
             case _domain_enum_notificationTypes__WEBPACK_IMPORTED_MODULE_1__.NotificationTypes.NEST_ALARM_CANCELED:
                 this._renderNestAlarmCanceledNotification();
                 break;
+            case _domain_enum_notificationTypes__WEBPACK_IMPORTED_MODULE_1__.NotificationTypes.DIED_COLONY:
+                this._renderDiedColonyNotification();
+                break;
+            default:
+                throw 'unknown notification type';
         }
     }
 
@@ -6940,28 +7005,34 @@ class NotificationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._el.querySelector('[data-ant-name]').innerHTML = this._notification.antName;
         this._el.querySelector('[data-death-describe]').innerHTML = this._generateAntDeathDescribeText();
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.deathRecord.deathPosition);
-        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_8__.converStepsToYear)(this._notification.step) ;
+        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.converStepsToYear)(this._notification.step) ;
     }
 
     _renderDiedNestNotification() {
         this._el.innerHTML = _diedNestNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_5__["default"];
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.deathRecord.deathPosition);
-        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_8__.converStepsToYear)(this._notification.step) ;
+        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.converStepsToYear)(this._notification.step) ;
     }
 
     _renderNestAlarmRaisedNotification() {
         this._el.innerHTML = _nestAlarmRaisedNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_7__["default"];
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.nestPosition);
-        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_8__.converStepsToYear)(this._notification.step);
+        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.converStepsToYear)(this._notification.step);
     }
 
     _renderNestAlarmCanceledNotification() {
         this._el.innerHTML = _nestAlarmCanceledNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_6__["default"];
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.nestPosition);
-        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_8__.converStepsToYear)(this._notification.step) ;
+        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.converStepsToYear)(this._notification.step) ;
+    }
+
+    _renderDiedColonyNotification() {
+        this._el.innerHTML = _diedColonyNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_8__["default"];
+        this._el.querySelector('[data-colony-name]').innerHTML = this._notification.colonyName;
+        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.converStepsToYear)(this._notification.step) ;
     }
 
     _generateAntDeathDescribeText() {
@@ -12400,6 +12471,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Module
 var code = "<td>\r\n    мураха <span class=\"notifications-table__name\" data-ant-name></span> <span data-death-describe></span>. місце смерті: <span data-death-position></span>\r\n</td> \r\n<td data-year></td>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/diedColonyNotificationTmpl.html":
+/*!*********************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/notificationsTab/notification/diedColonyNotificationTmpl.html ***!
+  \*********************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<td>\r\n    колонія <span class=\"notifications-table__name\" data-colony-name></span> розбита\r\n</td> \r\n<td data-year></td>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

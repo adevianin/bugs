@@ -7,6 +7,7 @@ from .relation_tester import RelationTester
 from core.world.entities.action.base.action import Action
 from abc import ABC
 from core.world.entities.base.live_entity.live_entity import LiveEntity
+from core.world.entities.world.notification.notifications.notification import Notification
 
 class Colony(ABC):
 
@@ -56,6 +57,9 @@ class Colony(ABC):
 
     def _emit_action(self, action: Action):
         self._event_bus.emit('action', action)
+
+    def _emit_notification(self, notification: Notification):
+        self._event_bus.emit('notification', notification)
 
     def _send_signal_to_members(self, signal: dict):
         my_members = self.get_my_members()

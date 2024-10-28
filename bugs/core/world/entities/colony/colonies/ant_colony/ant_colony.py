@@ -11,8 +11,9 @@ from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
 from core.world.entities.action.colony_operations_changed_action import ColonyOperationsChangedAction
+from core.world.entities.action.colony_died_action import ColonyDiedAction
+from core.world.entities.world.notification.notifications.died_colony_notification import DiedColonyNotification
 
-# fix destorying colony after all nest destroyed
 class AntColony(Colony):
 
     def __init__(self, id: int, event_bus: EventEmitter, operation_factory: OperationFactory, owner_id: int, map: Map, operations: List[Operation], relation_tester: RelationTester, queen_id: int):
@@ -54,6 +55,11 @@ class AntColony(Colony):
         operation = next(filter(lambda op: op.id == operation_id, self._operations), None)
         if operation:
             operation.cancel()
+
+    def _die(self):
+        self._emit_action(ColonyDiedAction(self.id))
+        self._emit_notification(DiedColonyNotification(self.owner_id, f'colony {self.id}'))
+        self._event_bus.emit('colony_died', self)
 
     def _on_my_entity_born(self, entity: Entity):
         super()._on_my_entity_born(entity)
@@ -145,6 +151,8 @@ class AntColony(Colony):
         else:
             for ant in ants_from_destroyed_nest:
                 ant.no_home_die()
+
+            self._die()
 
     def get_my_members(self) -> List[Ant]:
         return super().get_my_members()

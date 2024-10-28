@@ -6,6 +6,7 @@ from core.world.entities.world.notification.notifications.died_nest_notification
 from .death_record_client_serializer import DeathRecordClientSerializer
 from core.world.entities.world.notification.notifications.nest_alarm_raised_notification import NestAlarmRaisedNotification
 from core.world.entities.world.notification.notifications.nest_alarm_canceled_notification import NestAlarmCanceledNotification
+from core.world.entities.world.notification.notifications.died_colony_notification import DiedColonyNotification
 
 class NotificationClientSerializer():
 
@@ -24,6 +25,8 @@ class NotificationClientSerializer():
                 return self._serialize_nest_alarm_raised(notification)
             case NotificationTypes.NEST_ALARM_CANCELED:
                 return self._serialize_nest_alarm_canceled(notification)
+            case NotificationTypes.DIED_COLONY:
+                return self._serialize_died_colony(notification)
             case _:
                 raise Exception('unknown type of notification')
             
@@ -70,6 +73,15 @@ class NotificationClientSerializer():
         props.update({
             'nestName': 'nest_name',
             'nestPosition': self._util_client_serializer.serialize_point(notification.nest_position)
+        })
+
+        return props
+    
+    def _serialize_died_colony(self, notification: DiedColonyNotification):
+        props = self._serialize_common(notification)
+
+        props.update({
+            'colonyName': notification.colony_name,
         })
 
         return props

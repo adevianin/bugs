@@ -20,6 +20,7 @@ from core.world.entities.action.nest_build_status_changed_action import NestBuil
 from core.world.entities.action.item_was_dropped_action import ItemWasDroppedAction
 from core.world.entities.action.item_being_bringed_action import ItemBeingBringedAction
 from core.world.entities.action.colony_born_action import ColonyBornAction
+from core.world.entities.action.colony_died_action import ColonyDiedAction
 from core.world.entities.action.colony_operations_changed_action import ColonyOperationsChangedAction
 from core.world.entities.action.ant_flew_nuptial_flight_back_action import AntFlewNuptialFlightBackAction
 from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
@@ -99,6 +100,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._serialize_item_being_bringed(action)
             case ActionTypes.COLONY_BORN:
                 return self._serialize_colony_born(action)
+            case ActionTypes.COLONY_DIED:
+                return self._serialize_colony_died(action)
             case ActionTypes.COLONY_OPERATIONS_CHANGED:
                 return self._serialize_operations_changed(action)
             case ActionTypes.CLIMATE_TEMPERATURE_CHANGE:
@@ -307,6 +310,10 @@ class ActionClientSerializer(iActionClientSerializer):
             }
         })
 
+        return json
+    
+    def _serialize_colony_died(self, action: ColonyDiedAction):
+        json = self._serialize_common(action)
         return json
     
     def _serialize_operations_changed(self, action: ColonyOperationsChangedAction):
