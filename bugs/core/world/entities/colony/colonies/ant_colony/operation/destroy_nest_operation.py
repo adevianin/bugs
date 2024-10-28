@@ -13,21 +13,19 @@ from core.world.entities.colony.colonies.ant_colony.operation.base.formation.bas
 from .base.fight.fight_factory import FightFactory
 from .base.fight.fight import Fight
 
-from core.world.my_test_env import MY_TEST_ENV
-
 class DestroyNestOperation(Operation):
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, formation_factory: FormationFactory, fight_factory: FightFactory, id: int, hired_ants: List[Ant],
                   flags: dict, formation: BaseFormation, fight: Fight, nest: Nest, warriors_count: int):
         self._nest = nest
-        # fix if saved operation after destroying nest
         self._warriors_count = warriors_count
         super().__init__(event_bus, events, formation_factory, fight_factory, id, OperationTypes.DESTROY_NEST, hired_ants, flags, formation, fight)
         self._name = 'знищення мурашника'
         self._open_vacancies(AntTypes.WARRIOR, self._warriors_count)
-        self._add_marker(MarkerTypes.CROSS, nest.position)
 
-        self._aggression_targets_filter = lambda entity: entity.from_colony_id == self._nest.from_colony_id
+        if self._nest:
+            self._add_marker(MarkerTypes.CROSS, nest.position)
+            self._aggression_targets_filter = lambda entity: entity.from_colony_id == self._nest.from_colony_id
 
         self.events.add_listener('formation:march_to_nest_to_destroy:done', self._destroy_step)
         self.events.add_listener('formation:march_to_assemble_point:done', self.done)
@@ -39,7 +37,7 @@ class DestroyNestOperation(Operation):
 
     @property
     def nest_id(self):
-        return self._nest.id
+        return self._nest.id if self._nest and not self._nest.is_died else None
     
     @property
     def warriors_count(self):
@@ -88,6 +86,8 @@ class DestroyNestOperation(Operation):
     def _on_nest_destroyed(self):
         if not self._read_flag('nest_destroyed'):
             self._write_flag('nest_destroyed', True)
+            self._write_flag('is_agressive', False)
+            self._nest = None
             self._march_to_assemble_point()
 
     def _march_to_assemble_point(self):
