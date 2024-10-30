@@ -77,8 +77,8 @@ class Entity(ABC):
 
     @property
     def is_detectable(self):
-        return True
-    
+        return not self.is_died
+
     def simple_die(self):
         self._body.die(SimpleDeathRecord(self.body.position))
 

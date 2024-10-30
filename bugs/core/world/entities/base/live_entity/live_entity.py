@@ -38,10 +38,6 @@ class LiveEntity(Entity, iEnemy):
         return self._body.visual_sensor
     
     @property
-    def is_detectable(self):
-        return not self.is_died
-    
-    @property
     def thoughts(self) -> List[Thought]:
         return self._mind.thoughts
     
