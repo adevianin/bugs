@@ -7,6 +7,7 @@ from .ant_client_serializer import AntClientSerializer
 from core.world.entities.base.entity import Entity
 from core.world.entities.base.entity_types import EntityTypes
 
+#rename class
 class EntityClientSerializer():
 
     def __init__(self, item_serializer: ItemClientSerializer, item_source_serializer: ItemSourceClientSerializer, item_area_serializer: ItemAreaClientSerializer, 
