@@ -13,8 +13,9 @@ from core.world.entities.ant.base.nuptial_environment.nuptial_environment import
 from .climate_serializer import ClimateSerializer
 from .thought_serializer import ThoughtSerializer
 from .notification_serializer import NotificationSerializer
+from core.world.entities.base.entity import Entity
 
-from typing import List
+from typing import List, Dict
 
 class WorldSerializer():
 
@@ -57,27 +58,30 @@ class WorldSerializer():
             'notifications': []
         }
 
-        nests = world.map.get_entities(entity_types=[EntityTypes.NEST])
+        entities = world.map.get_all_entities()
+        entities = self._sort_entities_by_type(entities)
+
+        nests = entities.get(EntityTypes.NEST, [])
         for nest in nests:
             json['nests'].append(self._nest_serializer.serialize(nest))
 
-        ants = world.map.get_entities(entity_types=[EntityTypes.ANT])
+        ants = entities.get(EntityTypes.ANT, [])
         for ant in ants:
             json['ants'].append(self._ant_serializer.serialize(ant))
 
-        ground_beetles = world.map.get_entities(entity_types=[EntityTypes.GROUND_BEETLE])
+        ground_beetles = entities.get(EntityTypes.GROUND_BEETLE, [])
         for ground_beetle in ground_beetles:
             json['ground_beetles'].append(self._ground_beetle_serializer.serialize(ground_beetle))
 
-        items = world.map.get_entities(entity_types=[EntityTypes.ITEM])
+        items = entities.get(EntityTypes.ITEM, [])
         for item in items:
             json['items'].append(self._item_serializer.serialize(item))
 
-        item_areas = world.map.get_entities(entity_types=[EntityTypes.ITEM_AREA])
+        item_areas = entities.get(EntityTypes.ITEM_AREA, [])
         for item_area in item_areas:
             json['item_areas'].append(self._item_area_serializer.serialize(item_area))
 
-        item_sources = world.map.get_entities(entity_types=[EntityTypes.ITEM_SOURCE])
+        item_sources = entities.get(EntityTypes.ITEM_SOURCE, [])
         for item_source in item_sources:
             json['item_sources'].append(self._item_source_serializer.serialize(item_source))
 
@@ -105,3 +109,12 @@ class WorldSerializer():
         json['notifications'] = [self._notification_serializer.serialize(notification) for notification in notifications ]
 
         return json
+    
+    def _sort_entities_by_type(self, entities: List[Entity]) -> Dict[EntityTypes, Entity]:
+        sorted = {}
+        for entity in entities:
+            type_array: List[Entity] = sorted.get(entity.type, [])
+            type_array.append(entity)
+            sorted[entity.type] = type_array
+
+        return sorted

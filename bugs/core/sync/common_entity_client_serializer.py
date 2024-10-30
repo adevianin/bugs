@@ -7,8 +7,7 @@ from .ant_client_serializer import AntClientSerializer
 from core.world.entities.base.entity import Entity
 from core.world.entities.base.entity_types import EntityTypes
 
-#rename class
-class EntityClientSerializer():
+class CommonEntityClientSerializer():
 
     def __init__(self, item_serializer: ItemClientSerializer, item_source_serializer: ItemSourceClientSerializer, item_area_serializer: ItemAreaClientSerializer, 
                  nest_serializer: NestClientSerializer, ground_beetle_serializer: GroundBeetleClientSerializer, ant_serializer: AntClientSerializer) :
@@ -33,3 +32,5 @@ class EntityClientSerializer():
                 return self._ground_beetle_serializer.serialize(entity)
             case EntityTypes.ANT:
                 return self._ant_serializer.serialize(entity)
+            case _:
+                raise Exception('unknown entity type')

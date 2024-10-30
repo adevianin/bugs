@@ -85,7 +85,7 @@ from core.sync.nest_client_serializer import NestClientSerializer
 from core.sync.ground_beetle_client_serializer import GroundBeetleClientSerializer
 from core.sync.ant_client_serializer import AntClientSerializer
 from core.sync.action_client_serializer import ActionClientSerializer
-from core.sync.entity_client_serializer import EntityClientSerializer
+from core.sync.common_entity_client_serializer import CommonEntityClientSerializer
 from core.sync.genes_client_serializer import GenesClientSerializer
 from core.sync.genome_client_serializer import GenomeClientSerializer
 from core.sync.nuptial_environment_client_serializer import NuptialEnvironmentClientSerializer
@@ -186,13 +186,13 @@ def start():
     nest_client_serializer = NestClientSerializer(util_client_serializer, larva_client_serializer, egg_client_serializer)
     ground_beetle_client_serializer = GroundBeetleClientSerializer(util_client_serializer)
     ant_client_serializer = AntClientSerializer(util_client_serializer, stats_client_serializer, genome_client_serializer)
-    entity_client_serializer = EntityClientSerializer(item_client_serializer, item_source_client_serializer, item_area_client_serializer, nest_client_serializer, 
-                                                      ground_beetle_client_serializer, ant_client_serializer)
+    common_entity_client_serializer = CommonEntityClientSerializer(item_client_serializer, item_source_client_serializer, item_area_client_serializer, nest_client_serializer, 
+                                                                   ground_beetle_client_serializer, ant_client_serializer)
     climate_client_serializer = ClimateClientSerializer()
-    world_client_serializer = WorldClientSerializer(colony_client_serializer, entity_client_serializer, climate_client_serializer)
+    world_client_serializer = WorldClientSerializer(common_entity_client_serializer, colony_client_serializer, climate_client_serializer)
     death_record_client_serializer = DeathRecordClientSerializer(util_client_serializer)
     notification_client_serializer = NotificationClientSerializer(util_client_serializer, death_record_client_serializer)
-    action_client_serializer = ActionClientSerializer(entity_client_serializer, util_client_serializer, larva_client_serializer, egg_client_serializer, colony_client_serializer, 
+    action_client_serializer = ActionClientSerializer(common_entity_client_serializer, util_client_serializer, larva_client_serializer, egg_client_serializer, colony_client_serializer, 
                                                       operation_client_serializer, notification_client_serializer)
     nuptial_environment_client_serializer = NuptialEnvironmentClientSerializer(genome_client_serializer, genes_client_serializer, stats_client_serializer)
     constants_client_serializer = ConstantsClientSerializer()

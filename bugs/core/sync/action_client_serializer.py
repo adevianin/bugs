@@ -1,6 +1,6 @@
 from core.world.action_client_serializer_interface import iActionClientSerializer
 from .util_client_serializer import UtilClientSerializer
-from .entity_client_serializer import EntityClientSerializer
+from .common_entity_client_serializer import CommonEntityClientSerializer
 from .larva_client_serializer import LarvaClientSerializer
 from .egg_client_serializer import EggClientSerializer
 from .colony_client_serializer import ColonyClientSerializer
@@ -36,9 +36,9 @@ from .notification_client_serializer import NotificationClientSerializer
 
 class ActionClientSerializer(iActionClientSerializer):
 
-    def __init__(self, entity_serializer: EntityClientSerializer, util_serializer: UtilClientSerializer, larva_serializer: LarvaClientSerializer, egg_serializer: EggClientSerializer,
+    def __init__(self, common_entity_serializer: CommonEntityClientSerializer, util_serializer: UtilClientSerializer, larva_serializer: LarvaClientSerializer, egg_serializer: EggClientSerializer,
                  colony_serializer: ColonyClientSerializer, operation_serializer: OperationClientSerializer, notification_serializer: NotificationClientSerializer):
-        self._entity_serializer = entity_serializer
+        self._common_entity_serializer = common_entity_serializer
         self._util_serializer = util_serializer
         self._larva_serializer = larva_serializer
         self._egg_serializer = egg_serializer
@@ -127,7 +127,7 @@ class ActionClientSerializer(iActionClientSerializer):
             
     def _serialize_entity_born(self, action: EntityBornAction):
         json = self._serialize_common(action)
-        serialized_entity = self._entity_serializer.serialize(action.entity)
+        serialized_entity = self._common_entity_serializer.serialize(action.entity)
         json.update({
             'actionData': { 'entity': serialized_entity }
         })
