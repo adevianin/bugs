@@ -17,7 +17,7 @@ class Entity(ABC):
 
     _body: Body
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, ownership: OwnershipConfig, body: Body):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, ownership: OwnershipConfig, is_removal_blocked: bool, body: Body):
         self._event_bus = event_bus
         self._events = events
         self._id: int = id
@@ -25,6 +25,7 @@ class Entity(ABC):
         self._from_colony_id = ownership.owner_colony_id
         self._owner_id = ownership.owner_user_id
         self._body = body
+        self._is_removal_blocked = is_removal_blocked
 
         self._body.events.add_listener('died', self._on_body_died)
         self._body.events.add_listener('angle_changed', self._on_angle_changed)
@@ -78,6 +79,14 @@ class Entity(ABC):
     @property
     def is_detectable(self):
         return not self.is_died
+    
+    @property
+    def is_pending_removal(self):
+        return self.is_died and self._is_removal_blocked
+    
+    @property
+    def is_removal_blocked(self):
+        return self._is_removal_blocked
 
     def simple_die(self):
         self._body.die(SimpleDeathRecord(self.body.position))
@@ -85,6 +94,12 @@ class Entity(ABC):
     @abstractmethod
     def do_step(self):
         pass
+
+    def block_removal(self):
+        self._is_removal_blocked = True
+
+    def unblock_removal(self):
+        self._is_removal_blocked = False
 
     def _on_body_died(self, death_record: BaseDeathRecord):
         self._emit_action(EntityDiedAction.build(self.id))

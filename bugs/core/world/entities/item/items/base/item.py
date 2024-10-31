@@ -15,8 +15,9 @@ class Item(Entity):
 
     _body: ItemBody
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, body: ItemBody, item_type: ItemTypes, ownership: OwnershipConfig, strength: int, variety: int, life_span: int, is_picked: bool):
-        super().__init__(event_bus, events, id, EntityTypes.ITEM, ownership, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, body: ItemBody, item_type: ItemTypes, ownership: OwnershipConfig, is_removal_blocked: bool,
+                 strength: int, variety: int, life_span: int, is_picked: bool):
+        super().__init__(event_bus, events, id, EntityTypes.ITEM, ownership, is_removal_blocked, body)
         self._item_type = item_type
         self._is_picked = is_picked
         self._variety = variety

@@ -25,6 +25,7 @@ class Command(BaseCommand):
                 "type":"ant",
                 "from_colony_id":2,
                 "owner_id": 2,
+                "is_removal_blocked": False,
                 "hp": 300,
                 "position":[
                     610,
@@ -136,6 +137,7 @@ class Command(BaseCommand):
                 "type":"ant",
                 "from_colony_id":2,
                 "owner_id": 2,
+                "is_removal_blocked": False,
                 "hp": 300,
                 "position":[
                     650,
@@ -295,6 +297,7 @@ class Command(BaseCommand):
                 "type":"ant",
                 "from_colony_id":2,
                 "owner_id": 2,
+                "is_removal_blocked": False,
                 "hp": 300,
                 "position":[
                     550,
@@ -411,6 +414,7 @@ class Command(BaseCommand):
                 "type":"ant",
                 "from_colony_id":1,
                 "owner_id": 2,
+                "is_removal_blocked": False,
                 "hp": 300,
                 "position":[
                     600,
@@ -567,6 +571,7 @@ class Command(BaseCommand):
                 "type":"ant",
                 "from_colony_id":1,
                 "owner_id": 2,
+                "is_removal_blocked": False,
                 "hp": 1000,
                 "position":[
                     1050,
@@ -681,6 +686,7 @@ class Command(BaseCommand):
                 "type":"ant",
                 "from_colony_id":1,
                 "owner_id": 2,
+                "is_removal_blocked": False,
                 "hp": 300,
                 "position":[
                     1000,
@@ -795,6 +801,7 @@ class Command(BaseCommand):
                 "type":"ant",
                 "from_colony_id":1,
                 "owner_id": 2,
+                "is_removal_blocked": False,
                 "hp": 300,
                 "position":[
                     1000,
@@ -910,6 +917,7 @@ class Command(BaseCommand):
                 "type":"item",
                 "from_colony_id": None,
                 "owner_id": None,
+                "is_removal_blocked": False,
                 "hp": 100,
                 "position":[
                     850,
@@ -929,6 +937,7 @@ class Command(BaseCommand):
                 "type":"nest",
                 "from_colony_id":2,
                 "owner_id": 2,
+                "is_removal_blocked": False,
                 "is_main": True,
                 "hp": 1000,
                 "position":[
@@ -1222,6 +1231,7 @@ class Command(BaseCommand):
                 "type":"nest",
                 "from_colony_id":2,
                 "owner_id": 2,
+                "is_removal_blocked": False,
                 "is_main": False,
                 "hp": 100,
                 "position":[
@@ -1242,6 +1252,7 @@ class Command(BaseCommand):
                 "type":"nest",
                 "from_colony_id":1,
                 "owner_id": 2,
+                "is_removal_blocked": False,
                 "is_main": True,
                 "hp": 100,
                 "position":[
@@ -1264,6 +1275,7 @@ class Command(BaseCommand):
                 "type":"item_area",
                 "from_colony_id":None,
                 "owner_id": None,
+                "is_removal_blocked": False,
                 "hp": 100,
                 "position":[
                     450,
@@ -1283,6 +1295,7 @@ class Command(BaseCommand):
                 "type":"item_area",
                 "from_colony_id":None,
                 "owner_id": None,
+                "is_removal_blocked": False,
                 "hp": 100,
                 "position":[
                     1800,
@@ -1302,6 +1315,7 @@ class Command(BaseCommand):
                 "type":"item_area",
                 "from_colony_id":None,
                 "owner_id": None,
+                "is_removal_blocked": False,
                 "hp": 100,
                 "position":[
                     450,
@@ -1323,6 +1337,7 @@ class Command(BaseCommand):
                 "type":"item_source",
                 "from_colony_id": None,
                 "owner_id": None,
+                "is_removal_blocked": False,
                 "hp": 100,
                 "position":[
                     850,
@@ -1342,6 +1357,7 @@ class Command(BaseCommand):
             #     "type":"ground_beetle",
             #     "from_colony_id":3,
             #     "owner_id": None,
+            #     "is_removal_blocked": False,
             #     "hp": 800,
             #     "position":[
             #         950,

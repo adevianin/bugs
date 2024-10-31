@@ -18,8 +18,8 @@ class LiveEntity(Entity, iEnemy):
     body: LiveBody
     mind: Mind
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, ownership: OwnershipConfig, body: LiveBody, mind: Mind):
-        super().__init__(event_bus, events, id, type, ownership, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, ownership: OwnershipConfig, is_removal_blocked: bool, body: LiveBody, mind: Mind):
+        super().__init__(event_bus, events, id, type, ownership, is_removal_blocked, body)
         self._mind: Mind = mind
 
         self._body.events.add_listener('step', self._on_step)

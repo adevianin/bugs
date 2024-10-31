@@ -38,7 +38,10 @@ class Map:
     def get_entities(self, from_colony_id: int = None, entity_types: List[EntityTypes] = None, filter: Callable[[Entity], bool] = None) -> List[Entity]:
         found_entities = []
         for entity in self._entities_collection.get_entities():
-            if (not from_colony_id or entity.from_colony_id == from_colony_id) and (not entity_types or entity.type in entity_types) and (not filter or filter(entity)):
+            is_colony_suitable = not from_colony_id or entity.from_colony_id == from_colony_id
+            is_type_suitable = not entity_types or entity.type in entity_types
+            is_filter_passed = not filter or filter(entity)
+            if is_colony_suitable and is_type_suitable and is_filter_passed and not entity.is_pending_removal:
                 found_entities.append(entity)
         return found_entities
     
@@ -47,8 +50,9 @@ class Map:
         for entity in self._entities_collection.get_entities():
             dist = math.dist([entity.body.position.x, entity.body.position.y], [point.x, point.y])
             is_type_suitable = not entity_types or entity.type in entity_types
-
-            if (not entity.body.is_died and dist <= max_distance and is_type_suitable and (not filter or filter(entity))):
+            is_dist_suitable = dist <= max_distance
+            is_filter_suitable = not filter or filter(entity)
+            if (is_dist_suitable and is_type_suitable and is_filter_suitable and not entity.is_pending_removal):
                 found_entities.append(entity)
 
         return found_entities

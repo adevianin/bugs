@@ -30,8 +30,8 @@ class Nest(Entity):
     _body: NestBody
     stats: NestStats
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: NestBody):
-        super().__init__(event_bus, events, id, EntityTypes.NEST, ownership, body)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, is_removal_blocked: bool, body: NestBody):
+        super().__init__(event_bus, events, id, EntityTypes.NEST, ownership, is_removal_blocked, body)
 
         self._is_under_attack = False
 

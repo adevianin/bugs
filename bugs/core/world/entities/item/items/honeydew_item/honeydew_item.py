@@ -6,5 +6,6 @@ from core.world.entities.base.ownership_config import OwnershipConfig
 
 class HoneydewItem(Item):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, body: HoneydewItemBody, ownership: OwnershipConfig, strength: int, variety: int, life_span: int, is_picked: bool):
-        super().__init__(event_bus, events, id, body, ItemTypes.HONEYDEW, ownership, strength, variety, life_span, is_picked)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, body: HoneydewItemBody, ownership: OwnershipConfig, is_removal_blocked: bool,
+                 strength: int, variety: int, life_span: int, is_picked: bool):
+        super().__init__(event_bus, events, id, body, ItemTypes.HONEYDEW, ownership, is_removal_blocked, strength, variety, life_span, is_picked)
