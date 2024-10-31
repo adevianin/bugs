@@ -181,6 +181,7 @@ class PillageNestOperation(Operation):
     
     def _give_food_to_loot_nest_step(self):
         if self._nest_for_loot.is_died:
+            self._drop_picked_food()
             self.cancel()
             return
         
