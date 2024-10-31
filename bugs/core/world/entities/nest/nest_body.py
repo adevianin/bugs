@@ -7,6 +7,8 @@ from core.world.entities.item.items.base.item import Item
 from core.world.entities.ant.base.egg import Egg
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.base.damage_types import DamageTypes
+from core.world.entities.base.death_record.simple_death_record import SimpleDeathRecord
+from core.world.settings import NEST_MAX_NOT_BUILDING_STEPS
 
 from typing import List
 
@@ -23,6 +25,7 @@ class NestBody(Body):
         self._eggs = eggs
         self._build_progress = build_progress
         self._fortification = fortification
+        self._not_building_steps_counter = 0
 
     @property
     def area(self):
@@ -61,6 +64,12 @@ class NestBody(Body):
     def fortification(self, fortification: int):
         self._fortification = fortification
         self.events.emit('fortification_changed')
+
+    def count_not_building_steps(self):
+        if not self.is_built:
+            self._not_building_steps_counter += 1
+            if self._not_building_steps_counter > NEST_MAX_NOT_BUILDING_STEPS:
+                self.die(SimpleDeathRecord(self.position))
 
     def add_egg(self, egg: Egg):
         self.eggs.append(egg)
@@ -121,6 +130,7 @@ class NestBody(Body):
         return strength
         
     def build(self):
+        self._not_building_steps_counter = 0
         is_build_before = self.is_built
         build_step = 5
         hp_step = 5 * self.stats.max_hp / 100

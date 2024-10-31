@@ -45,6 +45,8 @@ class Nest(Entity):
         self._body.events.add_listener('egg_added', self._on_egg_added)
         self._body.events.add_listener('fortification_changed', self._on_fortification_changed)
 
+        self._not_building_steps_counter = 0
+
     @property
     def area(self):
         return self._body.area
@@ -76,6 +78,7 @@ class Nest(Entity):
     def do_step(self):
         self._body.feed_larvae()
         self._body.develop_eggs()
+        self._body.count_not_building_steps()
 
     def take_edible_item(self, item: Item):
         self._body.take_edible_item(item)
@@ -106,6 +109,7 @@ class Nest(Entity):
 
     def build(self):
         self._body.build()
+        self._not_building_steps_counter = 0
 
     def get_some_food(self, on_food_ready, food_count: int):
         strength = self._body.get_some_food(food_count)
