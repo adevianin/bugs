@@ -32,6 +32,7 @@ class TransportFoodOperation(Operation):
 
         self.events.add_listener('formation:go_to_nest_from:done', self._on_formation_go_to_nest_from_done)
         self.events.add_listener('formation:go_to_nest_to:done', self._on_formation_go_to_nest_to_done)
+        self.events.add_listener('formation:march_to_assemble_point_to_stop_operation:done', self.done)
 
         self.events.add_listener('fight_won:preparing', self._prepare_step)
         self.events.add_listener('fight_won:formation_to_nest_from', self._go_to_nest_from_step)
@@ -41,8 +42,8 @@ class TransportFoodOperation(Operation):
         self.events.add_listener('fight_start:getting_to_nest_to', self._drop_picked_food)
         self.events.add_listener('fight_won:getting_to_nest_to', self.cancel)
 
-        self._nest_from.events.add_listener('died', self.cancel)
-        self._nest_to.events.add_listener('died', self.cancel)
+        self._nest_from_removal_block_id = self._nest_from.block_removal()
+        self._nest_to_removal_block_id = self._nest_to.block_removal()
 
     @property
     def nest_from_id(self):
@@ -81,8 +82,8 @@ class TransportFoodOperation(Operation):
 
     def _on_operation_stop(self):
         super()._on_operation_stop()
-        self._nest_from.events.remove_listener('died', self.cancel)
-        self._nest_to.events.remove_listener('died', self.cancel)
+        self._nest_from.unblock_removal(self._nest_from_removal_block_id)
+        self._nest_to.unblock_removal(self._nest_to_removal_block_id)
 
     def _start_operation(self):
         super()._start_operation()
@@ -134,6 +135,10 @@ class TransportFoodOperation(Operation):
         return True
 
     def _get_in_nest_from_step(self):
+        if self._nest_from.is_died:
+            self._march_to_assemble_point_to_stop_operation_step()
+            return
+        
         for ant in self._workers:
             ant.get_in_nest(self._nest_from)
             self._write_flag(f'is_worker_{ant.id}_waited_in_nest_from', False)
@@ -185,6 +190,11 @@ class TransportFoodOperation(Operation):
         return True
 
     def _give_food_to_nest_to_step(self):
+        if self._nest_to.is_died:
+            self._drop_picked_food()
+            self._march_to_assemble_point_to_stop_operation_step()
+            return
+        
         for ant in self._workers:
             if ant.has_picked_item():
                 ant.get_in_nest(self._nest_to)
@@ -196,3 +206,7 @@ class TransportFoodOperation(Operation):
         for ant in self._workers:
             if ant.has_picked_item():
                 ant.drop_picked_item()
+
+    def _march_to_assemble_point_to_stop_operation_step(self):
+        formation = self._formation_factory.build_convoy_formation('march_to_assemble_point_to_stop_operation', self._warriors + self._workers, self._assemble_point)
+        self._register_formation(formation)
