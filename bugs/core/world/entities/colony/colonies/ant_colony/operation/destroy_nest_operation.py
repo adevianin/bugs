@@ -85,6 +85,11 @@ class DestroyNestOperation(Operation):
 
     def _destroy_step(self):
         self._stage = 'destroying'
+        
+        if self._nest.is_died:
+            self._on_nest_destroyed()
+            return
+
         for ant in self._warriors:
             ant.attack_nest(nest=self._nest, sayback='nest_destroyed')
 
