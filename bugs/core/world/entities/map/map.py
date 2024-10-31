@@ -17,6 +17,7 @@ class Map:
         self._entities_collection = entities_collection
 
         self._event_bus.add_listener('entity_died', self._on_entity_died)
+        self._event_bus.add_listener('entity_removal_unblocked', self._on_entity_removal_unblocked)
         self._event_bus.add_listener('entity_born', self._on_entity_born)
 
     @property
@@ -64,7 +65,12 @@ class Map:
         return self.get_entities(entity_types=EntityTypesPack.NOT_LIVE_ENTITIES)
     
     def _on_entity_died(self, entity: Entity):
-        self._entities_collection.delete_entity(entity.id)
+        if not entity.is_removal_blocked:
+            self._entities_collection.delete_entity(entity.id)
+
+    def _on_entity_removal_unblocked(self, entity: Entity):
+        if entity.is_died:
+            self._entities_collection.delete_entity(entity.id)
 
     def _on_entity_born(self, entity: Entity):
         self._entities_collection.add_entity(entity)

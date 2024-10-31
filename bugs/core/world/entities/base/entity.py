@@ -100,6 +100,7 @@ class Entity(ABC):
 
     def unblock_removal(self):
         self._is_removal_blocked = False
+        self._event_bus.emit('entity_removal_unblocked', self)
 
     def _on_body_died(self, death_record: BaseDeathRecord):
         self._emit_action(EntityDiedAction.build(self.id))
