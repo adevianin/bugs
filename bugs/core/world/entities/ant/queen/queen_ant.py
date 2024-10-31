@@ -21,8 +21,8 @@ class QueenAnt(Ant):
     _body: QueenAntBody
     body: QueenAntBody
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, name: str, ownership: OwnershipConfig, is_removal_blocked: bool, body: AntBody, mind: AntMind):
-        super().__init__(event_bus, events, id, name, ownership, is_removal_blocked, body, AntTypes.QUEEN, mind)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, name: str, ownership: OwnershipConfig, body: AntBody, mind: AntMind):
+        super().__init__(event_bus, events, id, name, ownership, body, AntTypes.QUEEN, mind)
 
         self._body.events.add_listener('flew_nuptial_flight', self._on_flew_nuptial_flight)
         self._body.events.add_listener('flew_nuptial_flight_back', self._on_flew_nuptial_flight_back)

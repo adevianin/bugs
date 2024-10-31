@@ -7,7 +7,6 @@ class EntityDeserializer():
         return {
             "id": json['id'],
             "ownership": OwnershipConfig(json['from_colony_id'], json['owner_id']),
-            "is_removal_blocked": json['is_removal_blocked'],
             "position": Point.from_json(json['position']),
             "angle": json['angle'],
             "hp": json['hp']

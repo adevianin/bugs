@@ -24,9 +24,9 @@ class Ant(LiveEntity):
     _body: AntBody
     body: AntBody
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, name: str, ownership: OwnershipConfig, is_removal_blocked: bool, body: AntBody, 
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, name: str, ownership: OwnershipConfig, body: AntBody, 
                  ant_type: AntTypes, mind: AntMind):
-        super().__init__(event_bus, events, id, EntityTypes.ANT, ownership, is_removal_blocked, body, mind)
+        super().__init__(event_bus, events, id, EntityTypes.ANT, ownership, body, mind)
         self._ant_type = ant_type
         self._name = name
 

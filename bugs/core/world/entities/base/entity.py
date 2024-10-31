@@ -17,7 +17,7 @@ class Entity(ABC):
 
     _body: Body
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, ownership: OwnershipConfig, is_removal_blocked: bool, body: Body):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, type: EntityTypes, ownership: OwnershipConfig, body: Body):
         self._event_bus = event_bus
         self._events = events
         self._id: int = id
@@ -25,7 +25,7 @@ class Entity(ABC):
         self._from_colony_id = ownership.owner_colony_id
         self._owner_id = ownership.owner_user_id
         self._body = body
-        self._is_removal_blocked = is_removal_blocked
+        self._is_removal_blocked = False
 
         self._body.events.add_listener('died', self._on_body_died)
         self._body.events.add_listener('angle_changed', self._on_angle_changed)

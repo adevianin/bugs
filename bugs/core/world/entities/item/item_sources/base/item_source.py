@@ -12,9 +12,9 @@ import random
 class ItemSource(Entity):
 
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, is_removal_blocked: bool, body: Body, item_type: ItemTypes, 
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: Body, item_type: ItemTypes, 
                  fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
-        super().__init__(event_bus, events, id, EntityTypes.ITEM_SOURCE, ownership, is_removal_blocked, body)
+        super().__init__(event_bus, events, id, EntityTypes.ITEM_SOURCE, ownership, body)
         self._item_type = item_type
         # move fertility to body
         self._fertility = fertility

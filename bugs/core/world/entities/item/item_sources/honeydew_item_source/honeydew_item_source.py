@@ -6,6 +6,6 @@ from core.world.entities.base.ownership_config import OwnershipConfig
 
 class HoneydewItemSource(ItemSource):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, is_removal_blocked: bool, body: HoneydewItemSourceBody, 
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: HoneydewItemSourceBody, 
                  fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int):
-        super().__init__(event_bus, events, id, ownership, is_removal_blocked, body, ItemTypes.HONEYDEW, fertility, accumulated, min_item_strength, max_item_strength)
+        super().__init__(event_bus, events, id, ownership, body, ItemTypes.HONEYDEW, fertility, accumulated, min_item_strength, max_item_strength)

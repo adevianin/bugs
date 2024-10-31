@@ -12,9 +12,9 @@ import random
 
 class ItemArea(Entity):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, is_removal_blocked: bool, body: Body, size: Size, 
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: Body, size: Size, 
                  item_type: ItemTypes, fertility: int, accumulated: int):
-        super().__init__(event_bus, events, id, EntityTypes.ITEM_AREA, ownership, is_removal_blocked, body)
+        super().__init__(event_bus, events, id, EntityTypes.ITEM_AREA, ownership, body)
         self._size = size
         self._item_type = item_type
         self._fertility = fertility

@@ -11,8 +11,8 @@ from core.world.entities.base.death_record.base_death_record import BaseDeathRec
 
 class GroundBeetle(LiveEntity):
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, is_removal_blocked: bool, body: LiveBody, mind: Mind):
-        super().__init__(event_bus, events, id, EntityTypes.GROUND_BEETLE, ownership, is_removal_blocked, body, mind)
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: LiveBody, mind: Mind):
+        super().__init__(event_bus, events, id, EntityTypes.GROUND_BEETLE, ownership, body, mind)
 
     def _on_body_died(self, death_record: BaseDeathRecord):
         super()._on_body_died(death_record)

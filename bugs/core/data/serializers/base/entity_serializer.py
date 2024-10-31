@@ -9,7 +9,6 @@ class EntitySerializer():
             'type': entity.type,
             'from_colony_id': entity.from_colony_id,
             'owner_id': entity.owner_id,
-            'is_removal_blocked': entity.is_removal_blocked,
             'hp': entity.body.hp,
             'position': entity.position,
             'angle': entity.body.angle
