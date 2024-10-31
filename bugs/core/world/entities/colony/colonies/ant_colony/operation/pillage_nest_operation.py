@@ -41,6 +41,9 @@ class PillageNestOperation(Operation):
         self.events.add_listener('fight_start:approach_nest_for_loot', self._drop_picked_food)
         self.events.add_listener('fight_won:approach_nest_for_loot', self.cancel)
 
+        self._nest_to_pillage_removal_block_id = self._nest_to_pillage.block_removal()
+        self._nest_for_loot_removal_block_id = self._nest_for_loot.block_removal()
+
     @property
     def nest_to_pillage_id(self):
         return self._nest_to_pillage.id
@@ -64,6 +67,11 @@ class PillageNestOperation(Operation):
     @property
     def _workers(self) -> List[WorkerAnt]:
         return self.get_hired_ants(AntTypes.WORKER)
+    
+    def _on_operation_stop(self):
+        super()._on_operation_stop()
+        self._nest_to_pillage.unblock_removal(self._nest_to_pillage_removal_block_id)
+        self._nest_for_loot.unblock_removal(self._nest_for_loot_removal_block_id)
     
     def _is_aggressive_now(self):
         return self._read_flag('is_agressive')
@@ -117,6 +125,10 @@ class PillageNestOperation(Operation):
             ant.walk_to(self._nest_to_pillage.position, 'worker_is_approached_nest_to_pillage')
 
     def _on_worker_is_approached_nest_to_pillage(self, ant: Ant):
+        if self._nest_to_pillage.is_died:
+            self._march_to_nest_for_loot()
+            return
+        
         ant.get_in_nest(self._nest_to_pillage)
         self._write_flag(f'is_worker_{ant.id}_waited_in_nest_to_pillage', False)
         ant.wait_step(1, 'worker_waited_in_nest_to_pillage')
@@ -168,6 +180,10 @@ class PillageNestOperation(Operation):
         return True
     
     def _give_food_to_loot_nest_step(self):
+        if self._nest_for_loot.is_died:
+            self.cancel()
+            return
+        
         for ant in self._workers:
             if ant.has_picked_item():
                 ant.get_in_nest(self._nest_for_loot)
