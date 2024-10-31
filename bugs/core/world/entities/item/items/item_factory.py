@@ -27,7 +27,7 @@ class ItemFactory():
     def build_new_item(self, id: int, item_type: ItemTypes, position: Point, strength: int) -> Item:
         ownership = OwnershipConfig(None, None)
         hp = StatsLibrary.GHOST_DEFAULT.max_hp
-        return self.build_item(id, item_type, position, 0, strength, None, None, False, ownership, False, hp)
+        return self.build_item(id, item_type, position, 0, strength, None, None, False, ownership, hp)
 
     def build_item(self, id: int, item_type: ItemTypes, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool, 
                    ownership: OwnershipConfig, hp: int) -> Item:

@@ -82,7 +82,7 @@ class Entity(ABC):
     
     @property
     def is_pending_removal(self):
-        return self.is_died and self._is_removal_blocked
+        return self.is_died
     
     @property
     def is_removal_blocked(self):

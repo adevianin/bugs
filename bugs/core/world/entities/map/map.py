@@ -40,10 +40,21 @@ class Map:
         found_entities = []
         for entity in self._entities_collection.get_entities():
             is_colony_suitable = not from_colony_id or entity.from_colony_id == from_colony_id
+            if not is_colony_suitable:
+                continue
+
             is_type_suitable = not entity_types or entity.type in entity_types
+            if not is_type_suitable:
+                continue
+
             is_filter_passed = not filter or filter(entity)
-            if is_colony_suitable and is_type_suitable and is_filter_passed and not entity.is_pending_removal:
-                found_entities.append(entity)
+            if not is_filter_passed:
+                continue
+
+            if entity.is_pending_removal:
+                continue
+
+            found_entities.append(entity)
         return found_entities
     
     def find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes] = None, filter: Callable[[Entity], bool] = None) -> List[Entity]:
@@ -51,10 +62,21 @@ class Map:
         for entity in self._entities_collection.get_entities():
             dist = math.dist([entity.body.position.x, entity.body.position.y], [point.x, point.y])
             is_type_suitable = not entity_types or entity.type in entity_types
+            if not is_type_suitable:
+                continue
+
             is_dist_suitable = dist <= max_distance
+            if not is_dist_suitable:
+                continue
+
             is_filter_suitable = not filter or filter(entity)
-            if (is_dist_suitable and is_type_suitable and is_filter_suitable and not entity.is_pending_removal):
-                found_entities.append(entity)
+            if not is_filter_suitable:
+                continue
+
+            if entity.is_pending_removal:
+                continue
+
+            found_entities.append(entity)
 
         return found_entities
     
@@ -69,7 +91,7 @@ class Map:
             self._entities_collection.delete_entity(entity.id)
 
     def _on_entity_removal_unblocked(self, entity: Entity):
-        if entity.is_died:
+        if entity.is_pending_removal:
             self._entities_collection.delete_entity(entity.id)
 
     def _on_entity_born(self, entity: Entity):

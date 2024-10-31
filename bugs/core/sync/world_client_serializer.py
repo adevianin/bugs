@@ -16,7 +16,8 @@ class WorldClientSerializer(iWorldClientSerializer):
         entities = world.map.get_all_entities()
         
         for entity in entities:
-            entities_json.append(self._common_entity_serializer.serialize(entity))
+            if not entity.is_pending_removal:
+                entities_json.append(self._common_entity_serializer.serialize(entity))
 
         colonies_json = []
         for colony in world.ant_colonies:

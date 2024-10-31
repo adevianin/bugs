@@ -53,7 +53,7 @@ class OperationDeserializer():
     
     def _build_destory_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
         props = self._deserialize_basic_operation_props(operation_json, entities_collection)
-        nest = entities_collection.get_entity_by_id(operation_json['nest_id']) if operation_json['nest_id'] else None
+        nest = entities_collection.get_entity_by_id(operation_json['nest_id'])
         props.update({
             'nest': nest,
             'warriors_count': operation_json['warriors_count']

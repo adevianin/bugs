@@ -22,10 +22,9 @@ class DestroyNestOperation(Operation):
         super().__init__(event_bus, events, formation_factory, fight_factory, id, OperationTypes.DESTROY_NEST, hired_ants, flags, formation, fight)
         self._name = 'знищення мурашника'
         self._open_vacancies(AntTypes.WARRIOR, self._warriors_count)
+        self._add_marker(MarkerTypes.CROSS, nest.position)
 
-        if self._nest:
-            self._add_marker(MarkerTypes.CROSS, nest.position)
-            self._aggression_targets_filter = lambda entity: entity.from_colony_id == self._nest.from_colony_id
+        self._aggression_targets_filter = lambda entity: entity.from_colony_id == self._nest.from_colony_id
 
         self.events.add_listener('formation:march_to_nest_to_destroy:done', self._destroy_step)
         self.events.add_listener('formation:march_to_assemble_point:done', self.done)
@@ -35,9 +34,11 @@ class DestroyNestOperation(Operation):
         self.events.add_listener('fight_won:destroying', self._destroy_step)
         self.events.add_listener('fight_won:march_to_assemble_point', self._march_to_assemble_point)
 
+        self._nest.block_removal()
+
     @property
     def nest_id(self):
-        return self._nest.id if self._nest and not self._nest.is_died else None
+        return self._nest.id
     
     @property
     def warriors_count(self):
@@ -49,6 +50,10 @@ class DestroyNestOperation(Operation):
     
     def _is_aggressive_now(self):
         return self._read_flag('is_agressive')
+    
+    def _on_operation_stop(self):
+        super()._on_operation_stop()
+        self._nest.unblock_removal()
     
     def _setup_operation(self):
         super()._setup_operation()
@@ -87,7 +92,6 @@ class DestroyNestOperation(Operation):
         if not self._read_flag('nest_destroyed'):
             self._write_flag('nest_destroyed', True)
             self._write_flag('is_agressive', False)
-            self._nest = None
             self._march_to_assemble_point()
 
     def _march_to_assemble_point(self):

@@ -15,7 +15,7 @@ class Body():
         self.stats = stats
         self._position = position
         self._angle = angle
-        self._hp = hp or stats.max_hp
+        self._hp = hp
 
     @property
     def is_died(self):
