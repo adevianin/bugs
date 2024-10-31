@@ -61,6 +61,7 @@ class AntFactory():
         visual_sensor = VisualSensor()
         temperature_sensor = TemperatureSensor()
         stats = AntStats.build(AntTypes.WARRIOR, genome)
+        hp = stats.max_hp if hp is None else hp
         body = WarriorAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, birth_step, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
         mind = WarrirorAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation, guardian_behavior, is_cooperative)
         ant = WarriorAnt(self._event_bus, EventEmitter(), id, name, ownership, body, mind)
@@ -74,6 +75,7 @@ class AntFactory():
         visual_sensor = VisualSensor()
         temperature_sensor = TemperatureSensor()
         stats = AntStats.build(AntTypes.WORKER, genome)
+        hp = stats.max_hp if hp is None else hp
         body = WorkerAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, birth_step, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
         mind = WorkerAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation, guardian_behavior, is_cooperative)
         ant = WorkerAnt(self._event_bus, EventEmitter(), id, name, ownership, body, mind)
@@ -87,6 +89,7 @@ class AntFactory():
         visual_sensor = VisualSensor()
         temperature_sensor = TemperatureSensor()
         stats = AntStats.build(AntTypes.QUEEN, genome)
+        hp = stats.max_hp if hp is None else hp
         body = QueenAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, birth_step, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome, male_chromosomes_set, is_in_nuptial_flight)
         mind = QueenAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation, guardian_behavior, is_cooperative)
         ant = QueenAnt(self._event_bus, EventEmitter(), id, name, ownership, body, mind)
@@ -100,6 +103,7 @@ class AntFactory():
         visual_sensor = VisualSensor()
         temperature_sensor = TemperatureSensor()
         stats = AntStats.build(AntTypes.MALE, genome)
+        hp = stats.max_hp if hp is None else hp
         body = MaleAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, birth_step, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
         mind = MaleAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation, guardian_behavior, is_cooperative)
         ant = MaleAnt(self._event_bus, EventEmitter(), id, name, ownership, body, mind)
