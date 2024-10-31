@@ -34,7 +34,7 @@ class DestroyNestOperation(Operation):
         self.events.add_listener('fight_won:destroying', self._destroy_step)
         self.events.add_listener('fight_won:march_to_assemble_point', self._march_to_assemble_point)
 
-        self._nest.block_removal()
+        self._nest_removel_block_id = self._nest.block_removal()
 
     @property
     def nest_id(self):
@@ -53,7 +53,7 @@ class DestroyNestOperation(Operation):
     
     def _on_operation_stop(self):
         super()._on_operation_stop()
-        self._nest.unblock_removal()
+        self._nest.unblock_removal(self._nest_removel_block_id)
     
     def _setup_operation(self):
         super()._setup_operation()

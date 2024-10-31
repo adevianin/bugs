@@ -12,6 +12,7 @@ from .ownership_config import OwnershipConfig
 from core.world.entities.world.notification.notifications.notification import Notification
 from .death_record.base_death_record import BaseDeathRecord
 from .death_record.simple_death_record import SimpleDeathRecord
+import uuid
 
 class Entity(ABC):
 
@@ -26,6 +27,7 @@ class Entity(ABC):
         self._owner_id = ownership.owner_user_id
         self._body = body
         self._is_removal_blocked = False
+        self._removal_block_ids = []
 
         self._body.events.add_listener('died', self._on_body_died)
         self._body.events.add_listener('angle_changed', self._on_angle_changed)
@@ -96,11 +98,16 @@ class Entity(ABC):
         pass
 
     def block_removal(self):
+        block_id = uuid.uuid4().hex
+        self._removal_block_ids.append(block_id)
         self._is_removal_blocked = True
+        return block_id
 
-    def unblock_removal(self):
-        self._is_removal_blocked = False
-        self._event_bus.emit('entity_removal_unblocked', self)
+    def unblock_removal(self, block_id: str):
+        self._removal_block_ids.remove(block_id)
+        if len(self._removal_block_ids) == 0:
+            self._is_removal_blocked = False
+            self._event_bus.emit('entity_removal_unblocked', self)
 
     def _on_body_died(self, death_record: BaseDeathRecord):
         self._emit_action(EntityDiedAction.build(self.id))
