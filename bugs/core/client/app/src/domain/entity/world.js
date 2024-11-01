@@ -86,6 +86,10 @@ class World {
         return this._colonies.filter(colony => colony.ownerId == ownerId);
     }
 
+    isAnyColonyByOwnerId(ownerId) {
+        return this._colonies.some(colony => colony.ownerId == ownerId);
+    }
+
     findColonyByOwnerId(ownerId) {
         return this._colonies.find(colony => colony.ownerId == ownerId);
     }

@@ -123,11 +123,6 @@ class DomainFacade {
         return this._worldService.world.size;
     }
 
-    findMyColonies() {
-        let userData = this.getUserData();
-        return this._worldService.world.findColoniesByOwnerId(userData.id);
-    }
-
     getNestsFromColony(colonyId) {
         return this._worldService.world.findNestsFromColony(colonyId);
     }
@@ -148,6 +143,16 @@ class DomainFacade {
     isColonyMy(colony) {
         let userData = this.getUserData();
         return colony.ownerId == userData.id;
+    }
+
+    findMyColonies() {
+        let userData = this.getUserData();
+        return this._worldService.world.findColoniesByOwnerId(userData.id);
+    }
+
+    isAnyMyColony() {
+        let userData = this.getUserData();
+        return this._worldService.world.isAnyColonyByOwnerId(userData.id);
     }
 
     getMyQueensInNuptialFlight() {
@@ -2076,6 +2081,10 @@ class World {
 
     findColoniesByOwnerId(ownerId) {
         return this._colonies.filter(colony => colony.ownerId == ownerId);
+    }
+
+    isAnyColonyByOwnerId(ownerId) {
+        return this._colonies.some(colony => colony.ownerId == ownerId);
     }
 
     findColonyByOwnerId(ownerId) {
@@ -4805,7 +4814,10 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         
         this._render();
 
-        this._coloniesList.events.addListener('selectedColonyChanged', this._manageSelectedColony.bind(this));
+        this._stopListenSelectedColonyChanged = this._coloniesList.events.on('selectedColonyChanged', this._manageSelectedColony.bind(this));
+        this._stopListenColonyBorn = this.$domainFacade.events.on('colonyBorn', this._renderMode.bind(this));
+        this._stopListenColonyDied = this.$domainFacade.events.on('colonyDied', this._renderMode.bind(this));
+
     }
 
     showNestManagerFor(nest){
@@ -4816,19 +4828,39 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
     _render() {
         this._el.innerHTML = _coloniesTab_html__WEBPACK_IMPORTED_MODULE_2__["default"];
 
+        this._noColoniesPlaceholderEl = this._el.querySelector('[data-no-colonies-space-holder]');
+
         this._coloniesList = new _coloniesList__WEBPACK_IMPORTED_MODULE_3__.ColoniesListView(this._el.querySelector('[data-colonies-list]'));
         this._colonyManager = new _colonyManager__WEBPACK_IMPORTED_MODULE_4__.ColonyManager(this._el.querySelector('[data-colony-manager]'));
+
         this._manageSelectedColony();
+        this._renderMode();
     }
 
     _manageSelectedColony() {
         this._colonyManager.manageColony(this._coloniesList.selectedColony);
     }
 
+    _renderMode() {
+        let isEmpty = !this.$domainFacade.isAnyMyColony();
+        if (isEmpty) {
+            this._coloniesList.toggle(false);
+            this._colonyManager.toggle(false);
+            this._noColoniesPlaceholderEl.classList.remove('hidden');
+        } else {
+            this._coloniesList.toggle(true);
+            this._colonyManager.toggle(true);
+            this._noColoniesPlaceholderEl.classList.add('hidden');
+        }
+    }
+
     remove() {
         super.remove();
         this._coloniesList.remove();
         this._colonyManager.remove();
+        this._stopListenColonyBorn();
+        this._stopListenColonyDied();
+        this._stopListenSelectedColonyChanged();
     }
 
 }
@@ -5209,6 +5241,10 @@ class ColonyManager extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__
     }
 
     manageColony(colony, nestToSelect){
+        if (!colony) {
+            return 
+        }
+        
         this._colony = colony;
         this._colonyNameEl.innerHTML = `colony: ${this._colony.id}`;
         this._operationsTab.manageColony(colony);
@@ -12074,7 +12110,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<ul data-colonies-list class=\"colonies-list\"></ul>\r\n<div data-colony-manager class=\"colony_manager\" ></div>";
+var code = "<ul data-colonies-list class=\"colonies-list\"></ul>\r\n<div data-colony-manager class=\"colony_manager\" ></div>\r\n<div data-no-colonies-space-holder>немає колоній</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

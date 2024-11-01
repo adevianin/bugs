@@ -15,6 +15,10 @@ class ColonyManager extends BaseHTMLView {
     }
 
     manageColony(colony, nestToSelect){
+        if (!colony) {
+            return 
+        }
+        
         this._colony = colony;
         this._colonyNameEl.innerHTML = `colony: ${this._colony.id}`;
         this._operationsTab.manageColony(colony);

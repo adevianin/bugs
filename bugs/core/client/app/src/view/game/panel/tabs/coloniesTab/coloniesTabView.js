@@ -11,7 +11,10 @@ class ColoniesTabView extends BaseHTMLView {
         
         this._render();
 
-        this._coloniesList.events.addListener('selectedColonyChanged', this._manageSelectedColony.bind(this));
+        this._stopListenSelectedColonyChanged = this._coloniesList.events.on('selectedColonyChanged', this._manageSelectedColony.bind(this));
+        this._stopListenColonyBorn = this.$domainFacade.events.on('colonyBorn', this._renderMode.bind(this));
+        this._stopListenColonyDied = this.$domainFacade.events.on('colonyDied', this._renderMode.bind(this));
+
     }
 
     showNestManagerFor(nest){
@@ -22,19 +25,39 @@ class ColoniesTabView extends BaseHTMLView {
     _render() {
         this._el.innerHTML = coloniesTabTmpl;
 
+        this._noColoniesPlaceholderEl = this._el.querySelector('[data-no-colonies-space-holder]');
+
         this._coloniesList = new ColoniesListView(this._el.querySelector('[data-colonies-list]'));
         this._colonyManager = new ColonyManager(this._el.querySelector('[data-colony-manager]'));
+
         this._manageSelectedColony();
+        this._renderMode();
     }
 
     _manageSelectedColony() {
         this._colonyManager.manageColony(this._coloniesList.selectedColony);
     }
 
+    _renderMode() {
+        let isEmpty = !this.$domainFacade.isAnyMyColony();
+        if (isEmpty) {
+            this._coloniesList.toggle(false);
+            this._colonyManager.toggle(false);
+            this._noColoniesPlaceholderEl.classList.remove('hidden');
+        } else {
+            this._coloniesList.toggle(true);
+            this._colonyManager.toggle(true);
+            this._noColoniesPlaceholderEl.classList.add('hidden');
+        }
+    }
+
     remove() {
         super.remove();
         this._coloniesList.remove();
         this._colonyManager.remove();
+        this._stopListenColonyBorn();
+        this._stopListenColonyDied();
+        this._stopListenSelectedColonyChanged();
     }
 
 }
