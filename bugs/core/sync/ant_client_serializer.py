@@ -37,7 +37,7 @@ class AntClientSerializer(LiveEntityClientSerializer):
             'picked_item_id': ant.body.picked_item_id,
             'ant_type': ant.ant_type,
             'located_in_nest_id': ant.body.located_in_nest_id,
-            'home_nest_id': ant.mind.home_nest.id,
+            'home_nest_id': ant.home_nest_id,
             'stats': self._stats_serializer.serialize(ant._body.stats),
             'genome': self._genome_client_serializer.serialize_genome(ant.body.genome),
             'behavior': {

@@ -27,7 +27,7 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let colonyService = new ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
     let nuptialService = new NuptialService(apis.nuptialApi, worldFactory);
     let specieBuilderService = new SpecieBuilderService(mainEventBus, apis.specieBuilderApi, specieFactory, initialData.specie);
-    let userService = new UserService(notificationsContainer);
+    let userService = new UserService(apis.userApi, notificationsContainer);
     let messageHandlerService = new MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService);
 
     let domainFacade = new DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService, userService);

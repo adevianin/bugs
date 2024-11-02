@@ -90,6 +90,10 @@ class World {
         return this._colonies.some(colony => colony.ownerId == ownerId);
     }
 
+    isAnyAntByOwnerId(ownerId) {
+        return this._entities.some(entity => entity.type == EntityTypes.ANT && entity.ownerId == ownerId);
+    }
+
     findColonyByOwnerId(ownerId) {
         return this._colonies.find(colony => colony.ownerId == ownerId);
     }

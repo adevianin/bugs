@@ -1,3 +1,5 @@
+import { EntityTypes } from "./enum/entityTypes";
+
 class DomainFacade {
 
     constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService, userService) {
@@ -90,6 +92,10 @@ class DomainFacade {
         return entity.ownerId == userData.id;
     }
 
+    isMyAnt(entity) {
+        return this.isEntityMy(entity) && entity.type == EntityTypes.ANT;
+    }
+
     isColonyMy(colony) {
         let userData = this.getUserData();
         return colony.ownerId == userData.id;
@@ -103,6 +109,11 @@ class DomainFacade {
     isAnyMyColony() {
         let userData = this.getUserData();
         return this._worldService.world.isAnyColonyByOwnerId(userData.id);
+    }
+
+    isAnyMyAnt() {
+        let userData = this.getUserData();
+        return this._worldService.world.isAnyAntByOwnerId(userData.id);
     }
 
     getMyQueensInNuptialFlight() {
@@ -160,6 +171,10 @@ class DomainFacade {
 
     getMySpecie() {
         return this._specieBuilderService.getMySpecie();
+    }
+
+    prepareStarterPack() {
+        this._userService.prepareStarterPack();
     }
 
     _tryConnectMessageHandler() {

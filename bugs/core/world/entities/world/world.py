@@ -5,6 +5,7 @@ from core.world.entities.map.map import Map
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME
 from core.world.entities.colony.base.colony import Colony
+from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 from core.world.entities.base.entity_collection import EntityCollection
 from core.world.id_generator import IdGenerator
 from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
@@ -101,17 +102,15 @@ class World():
         
         return None
     
+    def get_ant_colonies_by_owner(self, owner_id: int):
+        ant_colonies = self.ant_colonies
+        owner_filter: Callable[[AntColony], bool] = lambda colony: colony.owner_id == owner_id
+        return list(filter(owner_filter, ant_colonies))
+    
     def get_nuptial_environment_by_owner(self, owner_id: int) -> NuptialEnvironment:
         for environment in self._nuptial_environments:
             if environment.owner_id == owner_id:
                 return environment
-            
-        return None
-    
-    def get_colony_owned_by_user(self, user_id: int):
-        for colony in self._colonies:
-            if colony.member_type == EntityTypes.ANT and colony.owner_id == user_id:
-                return colony
             
         return None
     
@@ -148,6 +147,8 @@ class World():
 
         not_live_entities = self._map.get_not_live_entities()
         for entity in not_live_entities:
+            if entity.type == EntityTypes.NEST and self._current_step > 115 and self._current_step < 117:
+                entity.simple_die()
             entity.do_step()
         
         entities = self._map.get_live_entities()

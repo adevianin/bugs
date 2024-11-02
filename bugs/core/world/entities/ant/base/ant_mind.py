@@ -93,10 +93,12 @@ class AntMind(Mind):
         self._is_in_opearetion = is_in_operation
 
     def _listen_home_nest(self):
-        self.home_nest.events.add_listener('is_under_attack', self._on_home_nest_is_under_attack)
+        if self.home_nest:
+            self.home_nest.events.add_listener('is_under_attack', self._on_home_nest_is_under_attack)
 
     def _stop_listen_home_nest(self):
-        self.home_nest.events.remove_listener('is_under_attack', self._on_home_nest_is_under_attack)
+        if self.home_nest:
+            self.home_nest.events.remove_listener('is_under_attack', self._on_home_nest_is_under_attack)
 
     def _calc_assemble_point(self):
         return Point(self.home_nest.position.x, self.home_nest.position.y + 40)

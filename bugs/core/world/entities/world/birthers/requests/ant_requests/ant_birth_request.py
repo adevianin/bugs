@@ -1,22 +1,19 @@
 from core.world.entities.base.entity_types import EntityTypes
-from .birth_request import BirthRequest
+from ..birth_request import BirthRequest
 from core.world.entities.ant.base.larva import Larva
+from .ant_birth_request_types import AntBirthRequestTypes
 
 class AntBirthRequest(BirthRequest):
 
-    @classmethod
-    def build(cls, nest_id: int, larva: Larva):
-        return AntBirthRequest(nest_id, larva)
-
-    def __init__(self, nest_id: int, larva: Larva):
+    def __init__(self, type: AntBirthRequestTypes, larva: Larva):
         super().__init__(EntityTypes.ANT)
-        self._nest_id = nest_id
+        self._type = type
         self._larva = larva
 
     @property
-    def nest_id(self):
-        return self._nest_id
-    
+    def type(self):
+        return self._type
+
     @property
     def larva(self):
         return self._larva

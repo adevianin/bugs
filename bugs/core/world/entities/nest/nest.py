@@ -4,7 +4,7 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.base.entity import Entity
 from core.world.entities.item.items.base.item_types import ItemTypes
-from core.world.entities.world.birthers.requests.ant_birth_request import AntBirthRequest
+from core.world.entities.world.birthers.requests.ant_requests.ant_birth_from_nest_request import AntBirthFromNestRequest
 from core.world.entities.world.birthers.requests.item_birth_request import ItemBirthRequest
 from core.world.entities.action.nest_stored_calories_changed_action import NestStoredCaloriesChangedAction
 from core.world.entities.action.nest_build_status_changed_action import NestBuildStatusChangedAction
@@ -142,7 +142,7 @@ class Nest(Entity):
 
     def _on_larva_is_ready(self, larva: Larva):
         self._emit_action(NestLarvaIsReadyAction.build(self.id, larva, self._owner_id))
-        self._event_bus.emit('ant_birth_request', AntBirthRequest.build(self._id, larva))
+        self._event_bus.emit('ant_birth_request', AntBirthFromNestRequest(larva, self._id))
 
     def _on_larva_fed(self, larva: Larva):
         self._emit_action(NestLarvaFedAction.build(self.id, larva, self._owner_id))

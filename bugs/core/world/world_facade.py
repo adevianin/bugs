@@ -93,9 +93,6 @@ class WorldFacade:
     def remove_listener(self, event_name: str, callback: Callable):
         self._events.remove_listener(event_name, callback)
 
-    # def get_my_colony(self, user_id: int):
-    #     return self._world.get_colony_owned_by_user(user_id)
-    
     def build_user_starter_pack(self, user_id: int):
         self._player_service.build_player_starter_pack(user_id)
 
@@ -140,6 +137,9 @@ class WorldFacade:
 
     def found_colony_command(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point):
         self._nuptial_environment_service.found_new_colony(user_id, queen_id, nuptial_male_id, nest_building_site)
+
+    def prepare_starter_pack_command(self, user_id: int):
+        self._player_service.prepare_starter_pack(user_id)
 
     def fly_nuptial_flight_command(self, user_id: int, ant_id: int):
         self._ant_service.fly_nuptial_flight(user_id, ant_id)

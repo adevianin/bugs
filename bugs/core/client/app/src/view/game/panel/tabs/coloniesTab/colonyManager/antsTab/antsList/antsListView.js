@@ -63,12 +63,18 @@ class AntsListView extends BaseHTMLView {
     }
 
     _onSomeoneDied(entity) {
+        if (!this._isActive()) {
+            return;
+        }
         if (this._isMyAnt(entity)) {
             this._removeAntFromList(entity.id);
         }
     }
 
     _onSomeoneBorn(entity) {
+        if (!this._isActive()) {
+            return;
+        }
         if (this._isMyAnt(entity)) {
             this._ants.push(entity);
             this._renderAntView(entity);
@@ -76,6 +82,9 @@ class AntsListView extends BaseHTMLView {
     }
 
     _onSomeoneFlewNuptialFlight(ant) {
+        if (!this._isActive()) {
+            return;
+        }
         if (this._isAntInList(ant)) {
             this._removeAntFromList(ant.id);
         }
@@ -93,6 +102,10 @@ class AntsListView extends BaseHTMLView {
         }
 
         return false;
+    }
+
+    _isActive() {
+        return !!this._colony;
     }
 }
 

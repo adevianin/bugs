@@ -48,6 +48,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "DomainFacade": () => (/* binding */ DomainFacade)
 /* harmony export */ });
+/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+
+
 class DomainFacade {
 
     constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService, userService) {
@@ -140,6 +143,10 @@ class DomainFacade {
         return entity.ownerId == userData.id;
     }
 
+    isMyAnt(entity) {
+        return this.isEntityMy(entity) && entity.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT;
+    }
+
     isColonyMy(colony) {
         let userData = this.getUserData();
         return colony.ownerId == userData.id;
@@ -153,6 +160,11 @@ class DomainFacade {
     isAnyMyColony() {
         let userData = this.getUserData();
         return this._worldService.world.isAnyColonyByOwnerId(userData.id);
+    }
+
+    isAnyMyAnt() {
+        let userData = this.getUserData();
+        return this._worldService.world.isAnyAntByOwnerId(userData.id);
     }
 
     getMyQueensInNuptialFlight() {
@@ -210,6 +222,10 @@ class DomainFacade {
 
     getMySpecie() {
         return this._specieBuilderService.getMySpecie();
+    }
+
+    prepareStarterPack() {
+        this._userService.prepareStarterPack();
     }
 
     _tryConnectMessageHandler() {
@@ -2087,6 +2103,10 @@ class World {
         return this._colonies.some(colony => colony.ownerId == ownerId);
     }
 
+    isAnyAntByOwnerId(ownerId) {
+        return this._entities.some(entity => entity.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT && entity.ownerId == ownerId);
+    }
+
     findColonyByOwnerId(ownerId) {
         return this._colonies.find(colony => colony.ownerId == ownerId);
     }
@@ -2377,7 +2397,7 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
     let nuptialService = new _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__.NuptialService(apis.nuptialApi, worldFactory);
     let specieBuilderService = new _service_specieBuilderService__WEBPACK_IMPORTED_MODULE_9__.SpecieBuilderService(mainEventBus, apis.specieBuilderApi, specieFactory, initialData.specie);
-    let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_8__.UserService(notificationsContainer);
+    let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_8__.UserService(apis.userApi, notificationsContainer);
     let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService);
 
     let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService, userService);
@@ -2712,7 +2732,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class UserService {
 
-    constructor(notificationsContainer) {
+    constructor(userApi, notificationsContainer) {
+        this._userApi = userApi;
         this._notificationsContainer = notificationsContainer
     }
 
@@ -2726,6 +2747,10 @@ class UserService {
 
     playUserAction(action) {
         this._notificationsContainer.pushNewNotification(action.notification);
+    }
+
+    prepareStarterPack() {
+        this._userApi.prepareStarterPack();
     }
 
 }
@@ -3209,6 +3234,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _antApi__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./antApi */ "./bugs/core/client/app/src/sync/antApi.js");
 /* harmony import */ var _nuptialApi__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./nuptialApi */ "./bugs/core/client/app/src/sync/nuptialApi.js");
 /* harmony import */ var _specieBuilderApi__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./specieBuilderApi */ "./bugs/core/client/app/src/sync/specieBuilderApi.js");
+/* harmony import */ var _userApi__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./userApi */ "./bugs/core/client/app/src/sync/userApi.js");
+
 
 
 
@@ -3228,6 +3255,7 @@ function initSyncLayer() {
     let antApi = new _antApi__WEBPACK_IMPORTED_MODULE_5__.AntApi(requester);
     let nuptialApi = new _nuptialApi__WEBPACK_IMPORTED_MODULE_6__.NuptialApi(requester);
     let specieBuilderApi = new _specieBuilderApi__WEBPACK_IMPORTED_MODULE_7__.SpecieBuilderApi(requester);
+    let userApi = new _userApi__WEBPACK_IMPORTED_MODULE_8__.UserApi(requester);
 
     return {
         apis: {
@@ -3236,7 +3264,8 @@ function initSyncLayer() {
             colonyApi,
             antApi,
             nuptialApi,
-            specieBuilderApi
+            specieBuilderApi,
+            userApi
         },
         serverConnection,
     };
@@ -3407,6 +3436,33 @@ class SpecieBuilderApi {
         });
     }
     
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/sync/userApi.js":
+/*!**************************************************!*\
+  !*** ./bugs/core/client/app/src/sync/userApi.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "UserApi": () => (/* binding */ UserApi)
+/* harmony export */ });
+class UserApi {
+
+    constructor(requester) {
+        this._requester = requester;
+    }
+
+    prepareStarterPack() {
+        return this._requester.post(`world/player/prepare_starter_pack`);
+    }
+
 }
 
 
@@ -4475,6 +4531,7 @@ class Panel extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTM
         super(el);
 
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
+        this.$eventBus.on('prepareStarterPackBtnClick', this._onPrepareStarterPackBtnClick.bind(this));
     }
 
     turnOn() {
@@ -4515,6 +4572,10 @@ class Panel extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTM
     _onNestManageRequest(nest) {
         this._tabSwitcher.activateTab('colonies');
         this._coloniesTab.showNestManagerFor(nest);
+    }
+
+    _onPrepareStarterPackBtnClick() {
+        this._tabSwitcher.activateTab('nuptial_flight');
     }
 
 }
@@ -4801,6 +4862,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _coloniesTab_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./coloniesTab.html */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/coloniesTab.html");
 /* harmony import */ var _coloniesList__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./coloniesList */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/coloniesList/index.js");
 /* harmony import */ var _colonyManager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./colonyManager */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/index.js");
+/* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+
 
 
 
@@ -4817,6 +4880,9 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         this._stopListenSelectedColonyChanged = this._coloniesList.events.on('selectedColonyChanged', this._manageSelectedColony.bind(this));
         this._stopListenColonyBorn = this.$domainFacade.events.on('colonyBorn', this._renderMode.bind(this));
         this._stopListenColonyDied = this.$domainFacade.events.on('colonyDied', this._renderMode.bind(this));
+        this._prepareStarterPackBtn.addEventListener('click', this._onPrepareStarterPackBtnClick.bind(this));
+        this._stopListenEntityDied = this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this._stopListenEntityBorn = this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
 
     }
 
@@ -4829,12 +4895,14 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         this._el.innerHTML = _coloniesTab_html__WEBPACK_IMPORTED_MODULE_2__["default"];
 
         this._noColoniesPlaceholderEl = this._el.querySelector('[data-no-colonies-space-holder]');
+        this._prepareStarterPackBtn = this._el.querySelector('[data-prepare-starter-pack]');
 
         this._coloniesList = new _coloniesList__WEBPACK_IMPORTED_MODULE_3__.ColoniesListView(this._el.querySelector('[data-colonies-list]'));
         this._colonyManager = new _colonyManager__WEBPACK_IMPORTED_MODULE_4__.ColonyManager(this._el.querySelector('[data-colony-manager]'));
 
         this._manageSelectedColony();
         this._renderMode();
+        this._renderPrepareStarterPackBtnState();
     }
 
     _manageSelectedColony() {
@@ -4854,6 +4922,11 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         }
     }
 
+    _renderPrepareStarterPackBtnState() {
+        console.log('wqeqwewqe', this.$domainFacade.isAnyMyAnt());
+        this._prepareStarterPackBtn.classList.toggle('hidden', this.$domainFacade.isAnyMyAnt());
+    }
+
     remove() {
         super.remove();
         this._coloniesList.remove();
@@ -4861,6 +4934,25 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         this._stopListenColonyBorn();
         this._stopListenColonyDied();
         this._stopListenSelectedColonyChanged();
+        this._stopListenEntityDied();
+        this._stopListenEntityBorn();
+    }
+
+    _onPrepareStarterPackBtnClick() {
+        this.$domainFacade.prepareStarterPack();
+        this.$eventBus.emit('prepareStarterPackBtnClick');
+    }
+
+    _onSomeoneDied(entity) {
+        if (this.$domainFacade.isMyAnt(entity) ) {
+            this._renderPrepareStarterPackBtnState();
+        }
+    }
+
+    _onSomeoneBorn(entity) {
+        if (this.$domainFacade.isMyAnt(entity) ) {
+            this._renderPrepareStarterPackBtnState();
+        }
     }
 
 }
@@ -5087,12 +5179,18 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
     }
 
     _onSomeoneDied(entity) {
+        if (!this._isActive()) {
+            return;
+        }
         if (this._isMyAnt(entity)) {
             this._removeAntFromList(entity.id);
         }
     }
 
     _onSomeoneBorn(entity) {
+        if (!this._isActive()) {
+            return;
+        }
         if (this._isMyAnt(entity)) {
             this._ants.push(entity);
             this._renderAntView(entity);
@@ -5100,6 +5198,9 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
     }
 
     _onSomeoneFlewNuptialFlight(ant) {
+        if (!this._isActive()) {
+            return;
+        }
         if (this._isAntInList(ant)) {
             this._removeAntFromList(ant.id);
         }
@@ -5117,6 +5218,10 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
         }
 
         return false;
+    }
+
+    _isActive() {
+        return !!this._colony;
     }
 }
 
@@ -12110,7 +12215,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<ul data-colonies-list class=\"colonies-list\"></ul>\r\n<div data-colony-manager class=\"colony_manager\" ></div>\r\n<div data-no-colonies-space-holder>немає колоній</div>";
+var code = "<ul data-colonies-list class=\"colonies-list\"></ul>\r\n<div data-colony-manager class=\"colony_manager\" ></div>\r\n<div data-no-colonies-space-holder>\r\n    немає колоній\r\n    <button data-prepare-starter-pack>народить нову королеву</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

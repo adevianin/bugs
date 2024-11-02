@@ -1,6 +1,7 @@
 class UserService {
 
-    constructor(notificationsContainer) {
+    constructor(userApi, notificationsContainer) {
+        this._userApi = userApi;
         this._notificationsContainer = notificationsContainer
     }
 
@@ -14,6 +15,10 @@ class UserService {
 
     playUserAction(action) {
         this._notificationsContainer.pushNewNotification(action.notification);
+    }
+
+    prepareStarterPack() {
+        this._userApi.prepareStarterPack();
     }
 
 }
