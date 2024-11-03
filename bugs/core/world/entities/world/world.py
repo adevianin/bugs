@@ -147,8 +147,6 @@ class World():
 
         not_live_entities = self._map.get_not_live_entities()
         for entity in not_live_entities:
-            if entity.type == EntityTypes.NEST and self._current_step > 115 and self._current_step < 117:
-                entity.simple_die()
             entity.do_step()
         
         entities = self._map.get_live_entities()
