@@ -130,7 +130,7 @@ class LiveBody(Body):
         enemy_body.receive_combat_damage(self.stats.attack)
 
     def damage_nest(self, nest_body: Body):
-        nest_body.receive_damage(10, DamageTypes.COMBAT)
+        nest_body.receive_damage(self.stats.attack, DamageTypes.COMBAT)
 
     def receive_combat_damage(self, damage: int):
         self._stun_effect()
