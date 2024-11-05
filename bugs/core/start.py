@@ -67,6 +67,7 @@ from core.world.entities.item.item_sources.item_source_factory import ItemSource
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory
 from core.world.entities.climate.climate_factory import ClimateFactory
 from core.world.entities.world.player_stats_factory import PlayerStatsFactory
+from core.world.entities.ant.base.nuptial_environment.nuptial_environment_factory import NuptialEnvironmentFactory
 
 from core.world.services.player_service import PlayerService
 from core.world.services.colony_service import ColonyService
@@ -116,6 +117,7 @@ def start():
     map_factory = MapFactory(event_bus)
     climate_factory = ClimateFactory(event_bus)
     player_stats_factory = PlayerStatsFactory(event_bus)
+    nuptial_environment_factory = NuptialEnvironmentFactory(event_bus)
     world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ground_beetle_factory)
     
     genes_serializer = GenesSerializer()
@@ -159,7 +161,7 @@ def start():
     item_deserializer = ItemDeserializer(item_factory)
     item_source_deserializer = ItemSourceDeserializer(item_source_factory)
     item_area_deserializer = ItemAreaDeserializer(item_area_factory)
-    nuptial_environment_deserializer = NuptialEnvironmentDeserializer(gene_deserializer)
+    nuptial_environment_deserializer = NuptialEnvironmentDeserializer(gene_deserializer, nuptial_environment_factory)
     climate_deserializer = ClimateDeserializer(climate_factory)
     death_record_deserializer = DeathRecordDeserializer()
     notification_deserializer = NotificationDeserializer(death_record_deserializer)

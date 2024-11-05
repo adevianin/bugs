@@ -91,17 +91,18 @@ class WorldDeserializer():
             colony = self._colony_deserializer.deserialize_colony(colony_json, entities_collection, map, colony_relations_table)
             colonies.append(colony)
 
+        player_stats_json_list = world_json['player_stats']
+        player_stats_dict = {}
+        for player_stats_json in player_stats_json_list:
+            player_stats = self._player_stats_deserializer.deserialize(player_stats_json)
+            player_stats_dict[player_stats.owner_id] = player_stats
+
         nuptial_environments_json = world_json['nuptial_environments']
         nuptial_environments = []
         for nuptial_environment_json in nuptial_environments_json:
-            nuptial_environment = self._nuptial_environment_deserializer.deserialize_nuptial_environment(nuptial_environment_json)
+            player_stats = player_stats_dict[nuptial_environment_json['owner_id']]
+            nuptial_environment = self._nuptial_environment_deserializer.deserialize_nuptial_environment(nuptial_environment_json, player_stats)
             nuptial_environments.append(nuptial_environment)
-
-        player_stats_json_list = world_json['player_stats']
-        player_stats_list = []
-        for player_stats_json in player_stats_json_list:
-            player_stats = self._player_stats_deserializer.deserialize(player_stats_json)
-            player_stats_list.append(player_stats)
 
         climate = self._climate_deserializer.deserialize_climate(world_json['climate'])
 
@@ -111,6 +112,7 @@ class WorldDeserializer():
 
         notifications = [self._notification_deserializer.deserialize(notification_json) for notification_json in world_json['notifications']]
 
-        world = self._world_factory.build_world(last_used_id, entities_collection, map, colonies, colony_relations_table, nuptial_environments, player_stats_list, climate, current_step, notifications)
+        world = self._world_factory.build_world(last_used_id, entities_collection, map, colonies, colony_relations_table, nuptial_environments, player_stats_dict.values(), climate, 
+                                                current_step, notifications)
 
         return world

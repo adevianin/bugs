@@ -5,18 +5,21 @@ from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chro
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chromosome import SpecieChromosome
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_gene import SpecieGene
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
+from core.world.entities.ant.base.nuptial_environment.nuptial_environment_factory import NuptialEnvironmentFactory
+from core.world.entities.world.player_stats import PlayerStats
 
 from typing import List
 
 class NuptialEnvironmentDeserializer():
 
-    def __init__(self, gene_deserializer: GeneDeserializer):
+    def __init__(self, gene_deserializer: GeneDeserializer, nuptial_environment_factory: NuptialEnvironmentFactory):
         self._gene_deserializer = gene_deserializer
+        self._nuptial_environment_factory = nuptial_environment_factory
 
-    def deserialize_nuptial_environment(self, json: dict):
+    def deserialize_nuptial_environment(self, json: dict, player_stats: PlayerStats):
         owner_id = json['owner_id']
         specie = self._build_specie(json['specie'])
-        return NuptialEnvironment.build(owner_id, specie)
+        return self._nuptial_environment_factory.build_nuptial_environment(owner_id, specie, player_stats)
     
     def _build_specie(self, specie_json: dict):
         chromosomes_set = self._build_specie_chromosome_set(specie_json['chromosomes_set'])
