@@ -14,6 +14,7 @@ from .climate_serializer import ClimateSerializer
 from .thought_serializer import ThoughtSerializer
 from .notification_serializer import NotificationSerializer
 from core.world.entities.base.entity import Entity
+from .player_stats_serializer import PlayerStatsSerializer
 
 from typing import List, Dict
 
@@ -22,7 +23,7 @@ class WorldSerializer():
     def __init__(self, nest_serializer: NestSerializer, ant_serializer: AntSerializer, item_serializer: ItemSerializer, item_area_serializer: ItemAreaSerializer, 
                  item_source_serializer: ItemSourceSerializer, colony_serializer: ColonySerializer, colony_relations_table_serializer: ColonyRelationsTableSerializer, 
                  ground_beetle_serializer: GroundBeetleSerializer, nuptial_environment_serializer: NuptialEnvironmentSerializer, climate_serializer: ClimateSerializer, 
-                 thought_serializer: ThoughtSerializer, notification_serializer: NotificationSerializer):
+                 thought_serializer: ThoughtSerializer, notification_serializer: NotificationSerializer, player_stats_serializer: PlayerStatsSerializer):
         self._nest_serializer = nest_serializer
         self._ant_serializer = ant_serializer
         self._colony_serializer = colony_serializer
@@ -35,6 +36,7 @@ class WorldSerializer():
         self._climate_serializer = climate_serializer
         self._thought_serializer = thought_serializer
         self._notification_serializer = notification_serializer
+        self._player_stats_serializer = player_stats_serializer
 
     def serialize(self, world: World):
         json = {
@@ -55,7 +57,8 @@ class WorldSerializer():
             },
             'last_used_id': world.last_used_id,
             'current_step': world.current_step,
-            'notifications': []
+            'notifications': [],
+            'player_stats': []
         }
 
         entities = world.map.get_all_entities()
@@ -107,6 +110,8 @@ class WorldSerializer():
 
         notifications = world.get_all_notifications()
         json['notifications'] = [self._notification_serializer.serialize(notification) for notification in notifications ]
+
+        json['player_stats'] = [self._player_stats_serializer.serialize(player_stats) for player_stats in world.player_stats_list]
 
         return json
     

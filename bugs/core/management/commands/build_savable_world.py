@@ -1437,7 +1437,14 @@ class Command(BaseCommand):
             }
         ],
         "thought_packs": [],
-        "notifications": []
+        "notifications": [],
+        "player_stats": [
+            {
+                "owner_id": 2,
+                "ants_count": 7,
+                "colonies_count": 2
+            }
+        ]
     }
 
     def handle(self, *args, **options):

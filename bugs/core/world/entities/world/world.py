@@ -18,6 +18,7 @@ from .sensor_handlers.visual_sensor_handler import VisualSensorHandler
 from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
 from .notification.notification_manager import NotificationManager
 from .notification.notifications.notification import Notification
+from .player_stats import PlayerStats
 
 from typing import List, Callable
 
@@ -25,7 +26,7 @@ class World():
 
     def __init__(self, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: List[Colony], id_generator: IdGenerator, 
                  colony_relations_table: ColonyRelationsTable, birthers, ground_beetle_spawner: GroundBeetleSpawner, nuptial_environments: List[NuptialEnvironment], 
-                 climate: Climate, sensor_handlers, current_step: int, notification_manager: NotificationManager):
+                 player_stats_list: List[PlayerStats], climate: Climate, sensor_handlers, current_step: int, notification_manager: NotificationManager):
         self._entities_collection = entities_collection
         self._map = map
         self._event_bus = event_bus
@@ -38,6 +39,7 @@ class World():
         self._birthers = birthers
         self._ground_beetle_spawner = ground_beetle_spawner
         self._nuptial_environments = nuptial_environments
+        self._player_stats_list = player_stats_list
         self._climate = climate
         self._visual_sensor_handler: VisualSensorHandler = sensor_handlers['visual_sensor_handler']
         self._temperature_sensor_handler: TemperatureSensorHandler = sensor_handlers['temperature_sensor_handler']
@@ -79,8 +81,19 @@ class World():
         return self._nuptial_environments
     
     @property
+    def player_stats_list(self):
+        return self._player_stats_list
+    
+    @property
     def climate(self) -> Climate:
         return self._climate
+    
+    def get_player_stats_for_owner(self, owner_id: int) -> PlayerStats:
+        for player_stats in self._player_stats_list:
+            if player_stats.owner_id == owner_id:
+                return player_stats
+            
+        return None
     
     def get_all_notifications(self) -> List[Notification]:
         return self._notification_manager.get_all_notifications()
@@ -93,6 +106,7 @@ class World():
     
     def add_new_colony(self, colony: Colony):
         self._colonies.append(colony)
+        self._event_bus.emit('colony_born', colony)
         self._event_bus.emit('action', ColonyBornAction.build(colony))
 
     def get_colony_by_id(self, colony_id: int) -> Colony:

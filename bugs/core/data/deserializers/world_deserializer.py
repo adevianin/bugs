@@ -15,13 +15,15 @@ from core.data.deserializers.thought_deserializer import ThoughtDeserializer
 from core.data.deserializers.ground_beetle_deserializer import GroundBeetleDeserializer
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 from .notification_deserializer import NotificationDeserializer
+from .player_stats_deserializer import PlayerStatsDeserializer
 
 class WorldDeserializer():
 
     def __init__(self, world_factory: WorldFactory, nest_deserializer: NestDeserializer, ant_deserializer: AntDeserializer, colony_deserializer: ColonyDeserializer, 
                  thought_deserializer: ThoughtDeserializer, map_deserializer: MapDeserializer, ground_beetle_deserializer: GroundBeetleDeserializer, 
                  item_deserializer: ItemDeserializer, item_source_deserializer: ItemSourceDeserializer, item_area_deserializer: ItemAreaDeserializer, 
-                 nuptial_environment_deserializer: NuptialEnvironmentDeserializer, climate_deserializer: ClimateDeserializer, notification_deserializer: NotificationDeserializer):
+                 nuptial_environment_deserializer: NuptialEnvironmentDeserializer, climate_deserializer: ClimateDeserializer, notification_deserializer: NotificationDeserializer,
+                 player_stats_deserializer: PlayerStatsDeserializer):
         self._nest_deserializer = nest_deserializer
         self._ant_deserializer = ant_deserializer
         self._colony_deserializer = colony_deserializer
@@ -34,6 +36,7 @@ class WorldDeserializer():
         self._nuptial_environment_deserializer = nuptial_environment_deserializer
         self._climate_deserializer = climate_deserializer
         self._notification_deserializer = notification_deserializer
+        self._player_stats_deserializer = player_stats_deserializer
         self._world_factory = world_factory
         
 
@@ -94,6 +97,12 @@ class WorldDeserializer():
             nuptial_environment = self._nuptial_environment_deserializer.deserialize_nuptial_environment(nuptial_environment_json)
             nuptial_environments.append(nuptial_environment)
 
+        player_stats_json_list = world_json['player_stats']
+        player_stats_list = []
+        for player_stats_json in player_stats_json_list:
+            player_stats = self._player_stats_deserializer.deserialize(player_stats_json)
+            player_stats_list.append(player_stats)
+
         climate = self._climate_deserializer.deserialize_climate(world_json['climate'])
 
         last_used_id = world_json['last_used_id']
@@ -102,6 +111,6 @@ class WorldDeserializer():
 
         notifications = [self._notification_deserializer.deserialize(notification_json) for notification_json in world_json['notifications']]
 
-        world = self._world_factory.build_world(last_used_id, entities_collection, map, colonies, colony_relations_table, nuptial_environments, climate, current_step, notifications)
+        world = self._world_factory.build_world(last_used_id, entities_collection, map, colonies, colony_relations_table, nuptial_environments, player_stats_list, climate, current_step, notifications)
 
         return world

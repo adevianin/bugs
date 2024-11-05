@@ -22,6 +22,7 @@ from core.data.deserializers.genome_deserializer import GenomeDeserializer
 from core.data.deserializers.climate_deserializer import ClimateDeserializer
 from core.data.deserializers.notification_deserializer import NotificationDeserializer
 from core.data.deserializers.death_record_deserializer import DeathRecordDeserializer
+from core.data.deserializers.player_stats_deserializer import PlayerStatsDeserializer
 from core.data.deserializers.world_deserializer import WorldDeserializer
 
 from core.data.serializers.larva_serializer import LarvaSerializer
@@ -45,6 +46,7 @@ from core.data.serializers.genome_serializer import GenomeSerializer
 from core.data.serializers.climate_serializer import ClimateSerializer
 from core.data.serializers.notification_serializer import NotificationSerializer
 from core.data.serializers.death_record_serializer import DeathRecordSerializer
+from core.data.serializers.player_stats_serializer import PlayerStatsSerializer
 
 from core.world.world_facade import WorldFacade
 from core.world.utils.event_emiter import EventEmitter
@@ -64,6 +66,7 @@ from core.world.entities.item.items.item_factory import ItemFactory
 from core.world.entities.item.item_sources.item_source_factory import ItemSourceFactory
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory
 from core.world.entities.climate.climate_factory import ClimateFactory
+from core.world.entities.world.player_stats_factory import PlayerStatsFactory
 
 from core.world.services.player_service import PlayerService
 from core.world.services.colony_service import ColonyService
@@ -112,6 +115,7 @@ def start():
     colony_factory = ColonyFactory(event_bus, operation_factory)
     map_factory = MapFactory(event_bus)
     climate_factory = ClimateFactory(event_bus)
+    player_stats_factory = PlayerStatsFactory(event_bus)
     world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ground_beetle_factory)
     
     genes_serializer = GenesSerializer()
@@ -134,9 +138,10 @@ def start():
     climate_serializer = ClimateSerializer()
     death_record_serializer = DeathRecordSerializer()
     notification_serializer = NotificationSerializer(death_record_serializer)
+    player_stats_serializer = PlayerStatsSerializer()
     world_serializer = WorldSerializer(nest_serializer, ant_serializer, item_serializer, item_area_serializer, item_source_serializer, colony_serializer, 
                                        colony_relations_table_serializer, ground_beetle_serializer, nuptial_environment_serializer, climate_serializer, 
-                                       thought_serializer, notification_serializer)
+                                       thought_serializer, notification_serializer, player_stats_serializer)
 
     gene_deserializer = GeneDeserializer()
     genome_deserializer = GenomeDeserializer(gene_deserializer)
@@ -158,9 +163,10 @@ def start():
     climate_deserializer = ClimateDeserializer(climate_factory)
     death_record_deserializer = DeathRecordDeserializer()
     notification_deserializer = NotificationDeserializer(death_record_deserializer)
+    player_stats_deserializer = PlayerStatsDeserializer(player_stats_factory)
     world_deserializer = WorldDeserializer(world_factory, nest_deserializer, ant_deserializer, colony_deserializer, thought_deserializer, map_deserializer, 
                                            ground_beetle_deserializer, item_deserializer, item_source_deserializer, item_area_deserializer, nuptial_environment_deserializer, 
-                                           climate_deserializer, notification_deserializer)
+                                           climate_deserializer, notification_deserializer, player_stats_deserializer)
     
     world_data_repository = WorldDataRepository()
     world_repository = WorldRepository(world_data_repository, world_serializer, world_deserializer)
