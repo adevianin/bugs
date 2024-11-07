@@ -19,7 +19,13 @@ class NuptialEnvironmentDeserializer():
     def deserialize_nuptial_environment(self, json: dict, player_stats: PlayerStats):
         owner_id = json['owner_id']
         specie = self._build_specie(json['specie'])
-        return self._nuptial_environment_factory.build_nuptial_environment(owner_id, specie, player_stats)
+        weights_pack_json = json['weights_pack']
+        combat_damage_done_weight = weights_pack_json['combat_damage_done_weight']
+        combat_damage_received_weight = weights_pack_json['combat_damage_received_weight']
+        cold_damage_received_weight = weights_pack_json['cold_damage_received_weight']
+        building_weight = weights_pack_json['building_weight']
+        return self._nuptial_environment_factory.build_nuptial_environment(owner_id, specie, player_stats, combat_damage_done_weight, 
+                                                                           combat_damage_received_weight, cold_damage_received_weight, building_weight)
     
     def _build_specie(self, specie_json: dict):
         chromosomes_set = self._build_specie_chromosome_set(specie_json['chromosomes_set'])

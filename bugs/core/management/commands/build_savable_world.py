@@ -1384,6 +1384,12 @@ class Command(BaseCommand):
         "nuptial_environments": [
             {
                 "owner_id": 2,
+                "weights_pack": {
+                    "combat_damage_done_weight": 10,
+                    "combat_damage_received_weight": 12,
+                    "cold_damage_received_weight": 0,
+                    "building_weight": 0
+                },
                 "specie": {
                     "chromosomes_set": [
                         {

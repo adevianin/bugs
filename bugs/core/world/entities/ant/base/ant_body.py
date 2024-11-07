@@ -99,6 +99,7 @@ class AntBody(LiveBody):
     
     def build_nest(self, nest: Nest):
         nest.build()
+        self.events.emit('built_nest')
 
     def pick_up_item(self, item: Item):
         self._picked_item = item
@@ -123,6 +124,7 @@ class AntBody(LiveBody):
         nest.take_fortificating_item(self._picked_item)
         self._picked_item = None
         self.events.emit('dropped_picked_item')
+        self.events.emit('gave_fortification_item')
 
     def step_to(self, destination_point: Point) -> bool:
         if self.is_in_nest:

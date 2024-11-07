@@ -3,6 +3,7 @@ from .genes_serializer import GenesSerializer
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie import Specie
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chromosome import SpecieChromosome
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_gene import SpecieGene
+from core.world.entities.ant.base.nuptial_environment.nuptial_environment_weights_pack import NuptialEnvironmentWeightsPack
 
 class NuptialEnvironmentSerializer():
 
@@ -12,7 +13,16 @@ class NuptialEnvironmentSerializer():
     def serialize(self, nuptial_environment: NuptialEnvironment):
         return {
             'owner_id': nuptial_environment.owner_id,
+            'weights_pack': self._serialize_weights_pack(nuptial_environment.weights_pack),
             'specie': self._serialize_specie(nuptial_environment.specie)
+        }
+    
+    def _serialize_weights_pack(self, weights_pack: NuptialEnvironmentWeightsPack):
+        return {
+            "combat_damage_done_weight": weights_pack.combat_damage_done_weight,
+            "combat_damage_received_weight": weights_pack.combat_damage_received_weight,
+            "cold_damage_received_weight": weights_pack.cold_damage_received_weight,
+            "building_weight": weights_pack.building_weight
         }
     
     def _serialize_specie(self, specie: Specie):

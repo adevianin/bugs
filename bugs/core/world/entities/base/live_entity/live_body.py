@@ -127,6 +127,7 @@ class LiveBody(Body):
     
     def damage_another_body(self, body: Body):
         body.receive_damage(self.stats.attack, DamageTypes.COMBAT)
+        self.events.emit('damaged_another_body')
 
     def receive_damage(self, damage: int, damage_type: DamageTypes):
         super().receive_damage(damage, damage_type)

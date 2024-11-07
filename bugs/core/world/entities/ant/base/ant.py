@@ -1,3 +1,4 @@
+from core.world.entities.base.damage_types import DamageTypes
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
@@ -34,6 +35,8 @@ class Ant(LiveEntity):
         self._body.events.add_listener('got_out_of_nest', self._on_got_out_of_nest)
         self._body.events.add_listener('picked_up_item', self._on_picked_up_item)
         self._body.events.add_listener('dropped_picked_item', self._on_dropped_picked_item)
+        self._body.events.add_listener('gave_fortification_item', self._on_gave_fortification_item)
+        self._body.events.add_listener('built_nest', self._on_built_nest)
 
     @property
     def name(self):
@@ -175,5 +178,19 @@ class Ant(LiveEntity):
     def _on_body_died(self, death_record: BaseDeathRecord):
         super()._on_body_died(death_record)
         self._emit_notification(DiedAntNotification(self.owner_id, self._name, death_record))
+
+    def _on_received_damage(self, damage_type: DamageTypes):
+        super()._on_received_damage(damage_type)
+        self._event_bus.emit('ant_received_damage_stat', damage_type, self)
+
+    def _on_damaged_another_body(self):
+        super()._on_damaged_another_body()
+        self._event_bus.emit('ant_damaged_another_body_stat', self)
+
+    def _on_gave_fortification_item(self):
+        self._event_bus.emit('ant_gave_fortification_item_stat', self)
+
+    def _on_built_nest(self):
+        self._event_bus.emit('ant_built_nest_stat', self)
 
         

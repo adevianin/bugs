@@ -25,6 +25,7 @@ class LiveEntity(Entity, iEnemy):
 
         self._body.events.add_listener('step', self._on_step)
         self._body.events.add_listener('received_damage', self._on_received_damage)
+        self._body.events.add_listener('damaged_another_body', self._on_damaged_another_body)
 
     @property
     def birth_step(self):
@@ -81,3 +82,6 @@ class LiveEntity(Entity, iEnemy):
 
     def _on_received_damage(self, damage_type: DamageTypes):
         self.events.emit('received_damage', damage_type)
+
+    def _on_damaged_another_body(self):
+        pass

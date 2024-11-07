@@ -20,6 +20,9 @@ from .notification.notification_manager import NotificationManager
 from .notification.notifications.notification import Notification
 from .player_stats import PlayerStats
 
+from core.world.my_test_env import MY_TEST_ENV
+from core.world.entities.ant.base.ant import Ant
+
 from typing import List, Callable
 
 class World():
@@ -171,7 +174,15 @@ class World():
 
         self._event_bus.emit('step_done', self._current_step)
 
+        # self._my_test_code()
+
         self._current_step += 1
 
     def _on_colony_died(self, colony: Colony):
         self._colonies.remove(colony)
+
+    def _my_test_code(self):
+        if self._current_step == 163:
+           ant: Ant = MY_TEST_ENV['attacker']
+           oper_ant: Ant = self._map.get_entity_by_id(94)
+           ant.fight_enemy(oper_ant)
