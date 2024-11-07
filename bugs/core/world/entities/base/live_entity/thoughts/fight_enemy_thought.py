@@ -42,7 +42,7 @@ class FightEnemyThought(Thought):
                 self._damage_enemy()
 
     def _damage_enemy(self):
-        self._body.damage_enemy(self._enemy.body)
+        self._body.damage_another_body(self._enemy.body)
         if self._enemy.is_died:
             self.done()
 

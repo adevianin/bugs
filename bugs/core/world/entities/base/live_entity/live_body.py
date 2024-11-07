@@ -125,18 +125,14 @@ class LiveBody(Body):
 
         return food.is_died or self.calc_how_much_calories_is_need() == 0
     
-    # ----------------------------------
-    def damage_enemy(self, enemy_body: 'LiveBody'):
-        enemy_body.receive_combat_damage(self.stats.attack)
+    def damage_another_body(self, body: Body):
+        body.receive_damage(self.stats.attack, DamageTypes.COMBAT)
 
-    def damage_nest(self, nest_body: Body):
-        nest_body.receive_damage(self.stats.attack, DamageTypes.COMBAT)
-
-    def receive_combat_damage(self, damage: int):
-        self._stun_effect()
-        self.receive_damage(damage, DamageTypes.COMBAT)
-        self.events.emit('received_combat_damage')
-    # -----------------------------------
+    def receive_damage(self, damage: int, damage_type: DamageTypes):
+        super().receive_damage(damage, damage_type)
+        if damage_type == DamageTypes.COMBAT:
+            self._stun_effect()
+            self.events.emit('received_combat_damage')
 
     def is_near_to_attack(self, point: Point):
         dist = self.position.dist(point)

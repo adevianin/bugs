@@ -28,7 +28,7 @@ class AttackNestThought(Thought):
         
         is_near_nest = self._body.is_near_to_attack(self._nest.position)
         if is_near_nest:
-            self._body.damage_nest(self._nest.body)
+            self._body.damage_another_body(self._nest.body)
             if self._nest.is_died:
                 self.done()
         else:
