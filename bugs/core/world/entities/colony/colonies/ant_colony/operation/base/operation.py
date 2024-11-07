@@ -15,6 +15,7 @@ from core.world.entities.colony.colonies.ant_colony.operation.base.formation.for
 from core.world.entities.colony.colonies.ant_colony.operation.base.fight.fight_factory import FightFactory
 from core.world.entities.colony.colonies.ant_colony.operation.base.fight.fight import Fight
 from core.world.entities.base.live_entity.live_entity import LiveEntity
+from core.world.entities.base.damage_types import DamageTypes
 
 class Operation(ABC):
 
@@ -190,14 +191,14 @@ class Operation(ABC):
         self._ants_listeners[ant]['died'] = died_listener
         ant.events.add_listener('died', died_listener)
 
-        received_combat_damage_listener = partial(self._on_hired_ant_received_combat_damage, ant)
-        self._ants_listeners[ant]['received_combat_damage'] = received_combat_damage_listener
-        ant.events.add_listener('received_combat_damage', received_combat_damage_listener)
+        received_combat_damage_listener = partial(self._on_hired_ant_received_damage, ant)
+        self._ants_listeners[ant]['received_damage'] = received_combat_damage_listener
+        ant.events.add_listener('received_damage', received_combat_damage_listener)
 
     def _stop_listen_ant(self, ant: Ant):
         ant_listeners = self._ants_listeners[ant]
         ant.events.remove_listener('died', ant_listeners['died'])
-        ant.events.remove_listener('received_combat_damage', ant_listeners['received_combat_damage'])
+        ant.events.remove_listener('received_damage', ant_listeners['received_damage'])
         del self._ants_listeners[ant]
 
     def _register_formation(self, formation: BaseFormation):
@@ -347,8 +348,8 @@ class Operation(ABC):
             self.cancel()
         self.events.emit('hired_ant_died', ant)
 
-    def _on_hired_ant_received_combat_damage(self, ant: Ant):
-        if not self._fight:
+    def _on_hired_ant_received_damage(self, ant: Ant, damage_type: DamageTypes):
+        if not self._fight and damage_type == DamageTypes.COMBAT:
             self._init_fight(self._hired_ants)
 
     def _on_operation_stop(self):

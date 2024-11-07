@@ -130,9 +130,10 @@ class LiveBody(Body):
 
     def receive_damage(self, damage: int, damage_type: DamageTypes):
         super().receive_damage(damage, damage_type)
+        self.events.emit('received_damage', damage_type)
         if damage_type == DamageTypes.COMBAT:
             self._stun_effect()
-            self.events.emit('received_combat_damage')
+            
 
     def is_near_to_attack(self, point: Point):
         dist = self.position.dist(point)

@@ -9,6 +9,7 @@ from core.world.entities.action.entity_walk_action import EntityWalkAction
 from core.world.entities.base.live_entity.visual_sensor import VisualSensor
 from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.thought.thought import Thought
+from core.world.entities.base.damage_types import DamageTypes
 
 from typing import List
 
@@ -23,7 +24,7 @@ class LiveEntity(Entity, iEnemy):
         self._mind: Mind = mind
 
         self._body.events.add_listener('step', self._on_step)
-        self._body.events.add_listener('received_combat_damage', self._on_received_combat_damage)
+        self._body.events.add_listener('received_damage', self._on_received_damage)
 
     @property
     def birth_step(self):
@@ -78,5 +79,5 @@ class LiveEntity(Entity, iEnemy):
     def _on_step(self, position: Point):
         self._emit_action(EntityWalkAction.build(self.id, position))
 
-    def _on_received_combat_damage(self):
-        self.events.emit('received_combat_damage')
+    def _on_received_damage(self, damage_type: DamageTypes):
+        self.events.emit('received_damage', damage_type)
