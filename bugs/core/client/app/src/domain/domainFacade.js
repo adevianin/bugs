@@ -157,12 +157,12 @@ class DomainFacade {
 
     /*========================*/
 
-    searchNuptialMales() {
-        return this._nuptialService.searchNuptialMales();
-    }
-
     foundColony(queenId, nuptialMaleId, nestBuildingSite) {
         this._nuptialService.foundColony(queenId, nuptialMaleId, nestBuildingSite);
+    }
+
+    getMyNuptialMales() {
+        return this._nuptialService.nuptialMales;
     }
 
     findNearestNestForOffensiveOperation(performingColonyId, point) {

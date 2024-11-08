@@ -9,7 +9,7 @@ from .views.admin import admin_panel, world_status_check, stop_world, run_world,
 from .views.nest import add_egg, change_egg_caste, change_egg_name, move_egg_to_larva_chamber, delete_egg, delete_larva
 from .views.colony import stop_operation, build_new_sub_nest, destroy_nest, pillage_nest, transport_food, build_fortification, bring_bug
 from .views.ant import fly_nuptial_flight, change_ant_guardian_behavior, change_ant_cooperative_behavior, relocate_ant
-from .views.nuptial import search_nuptial_males, found_colony, save_specie_schema
+from .views.nuptial import found_colony, save_specie_schema
 from .views.player import prepare_starter_pack
 
 urlpatterns = [
@@ -46,7 +46,6 @@ urlpatterns = [
     path('world/ants/<int:ant_id>/cooperative_behavior', change_ant_cooperative_behavior, name='change_ant_cooperative_behavior'),
     path('world/ants/<int:ant_id>/relocate', relocate_ant, name='relocate_ant'),
 
-    path('world/nuptial_environment/search_nuptial_males', search_nuptial_males, name='search_nuptial_males'),
     path('world/nuptial_environment/found_colony', found_colony, name='found_colony'),
     # path('world/nuptial_environment/specie', get_my_specie, name='get_my_specie'),
     path('world/nuptial_environment/specie/specie_schema', save_specie_schema, name='save_specie_schema'),

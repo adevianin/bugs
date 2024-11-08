@@ -5,6 +5,7 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.base.damage_types import DamageTypes
 from core.world.entities.ant.base.ant import Ant
 from .specie_activity_weights_pack import SpecieActivityWeightsPack
+from core.world.entities.action.nuptial_males_changed_action import NuptialMalesChangedAction
 from typing import List
 
 class NuptialEnvironment():
@@ -54,14 +55,16 @@ class NuptialEnvironment():
         
         return None
     
-    def search_males(self) -> List[NuptialMale]:
-        return self._males
-    
     def _generate_males(self, count = 3):
         self._males = []
         for i in range(count):
             male = self._generate_nuptial_male()
             self._males.append(male)
+        self._emit_males_changed_action()
+
+    def _clear_males(self):
+        self._males = []
+        self._emit_males_changed_action() 
     
     def _generate_nuptial_male(self) -> NuptialMale:
         genome = self._specie.generate_male_genome(20, 1, 60)
@@ -91,4 +94,7 @@ class NuptialEnvironment():
         self._generate_males()
 
     def _on_nuptial_season_stop(self):
-        self._males = []
+        self._clear_males()
+
+    def _emit_males_changed_action(self):
+        self._event_bus.emit('action', NuptialMalesChangedAction(self._males, self._owner_id))

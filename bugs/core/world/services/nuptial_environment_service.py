@@ -17,10 +17,6 @@ class NuptialEnvironmentService():
     def set_world(self, world: World):
         self._world = world
 
-    def search_nuptial_males_for(self, user_id: int) -> List[NuptialMale]:
-        nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
-        return nuptial_environment.search_males()
-    
     def found_new_colony(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point):
         queen: QueenAnt = self._world.map.get_entity_by_id(queen_id)
 

@@ -208,12 +208,12 @@ class DomainFacade {
 
     /*========================*/
 
-    searchNuptialMales() {
-        return this._nuptialService.searchNuptialMales();
-    }
-
     foundColony(queenId, nuptialMaleId, nestBuildingSite) {
         this._nuptialService.foundColony(queenId, nuptialMaleId, nestBuildingSite);
+    }
+
+    getMyNuptialMales() {
+        return this._nuptialService.nuptialMales;
     }
 
     findNearestNestForOffensiveOperation(performingColonyId, point) {
@@ -280,7 +280,8 @@ const ACTION_TYPES = {
     NEST_EGG_BECAME_LARVA: 'nest_egg_became_larva',
     NEST_EGG_ADDED: 'nest_egg_added',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
-    NEST_FORTIFICATION_CHANGED: 'nest_fortification_changed'
+    NEST_FORTIFICATION_CHANGED: 'nest_fortification_changed',
+    NUPTIAL_MALES_CHANGED: 'nuptial_males_changed'
 };
 
 
@@ -1801,6 +1802,41 @@ class NuptialMale {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/domain/entity/nuptialMalesContainer.js":
+/*!*************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/nuptialMalesContainer.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NuptialMalesContainer": () => (/* binding */ NuptialMalesContainer)
+/* harmony export */ });
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+
+
+class NuptialMalesContainer extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+
+    constructor() {
+        super();
+        this._nuptialMales = [];
+    }
+
+    get males() {
+        return this._nuptialMales;
+    }
+
+    setMales(males) {
+        this._nuptialMales = males;
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/entity/ratingContainer.js":
 /*!*******************************************************************!*\
   !*** ./bugs/core/client/app/src/domain/entity/ratingContainer.js ***!
@@ -2368,6 +2404,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_specieBuilder_specieFactory__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entity/specieBuilder/specieFactory */ "./bugs/core/client/app/src/domain/entity/specieBuilder/specieFactory.js");
 /* harmony import */ var _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/notificationsContainer */ "./bugs/core/client/app/src/domain/entity/notificationsContainer.js");
 /* harmony import */ var _entity_ratingContainer__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./entity/ratingContainer */ "./bugs/core/client/app/src/domain/entity/ratingContainer.js");
+/* harmony import */ var _entity_nuptialMalesContainer__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./entity/nuptialMalesContainer */ "./bugs/core/client/app/src/domain/entity/nuptialMalesContainer.js");
+
 
 
 
@@ -2389,16 +2427,17 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let specieFactory = new _entity_specieBuilder_specieFactory__WEBPACK_IMPORTED_MODULE_10__.SpecieFactory();
 
     let notificationsContainer = new _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_11__.NotificationsContainer();
+    let nuptialMalesContainer = new _entity_nuptialMalesContainer__WEBPACK_IMPORTED_MODULE_13__.NuptialMalesContainer();
     let ratingContainer = new _entity_ratingContainer__WEBPACK_IMPORTED_MODULE_12__.RatingContainer();
     let world = worldFactory.buildWorld();
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus, ratingContainer);
     let accountService = new _service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user, mainEventBus);
     let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
-    let nuptialService = new _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__.NuptialService(apis.nuptialApi, worldFactory);
-    let specieBuilderService = new _service_specieBuilderService__WEBPACK_IMPORTED_MODULE_9__.SpecieBuilderService(mainEventBus, apis.specieBuilderApi, specieFactory, initialData.specie);
+    let nuptialService = new _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__.NuptialService(mainEventBus, apis.nuptialApi, worldFactory, nuptialMalesContainer);
+    let specieBuilderService = new _service_specieBuilderService__WEBPACK_IMPORTED_MODULE_9__.SpecieBuilderService(mainEventBus, apis.specieBuilderApi, specieFactory);
     let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_8__.UserService(apis.userApi, notificationsContainer);
-    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService);
+    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService, nuptialService);
 
     let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService, userService);
 
@@ -2565,13 +2604,14 @@ __webpack_require__.r(__webpack_exports__);
 
 class MessageHandlerService {
 
-    constructor(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService) {
+    constructor(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService, nuptialService) {
         this._mainEventBus = mainEventBus;
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._colonyService = colonyService;
         this._specieBuilderService = specieBuilderService;
         this._userService = userService;
+        this._nuptialService = nuptialService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
@@ -2601,6 +2641,7 @@ class MessageHandlerService {
         this._userService.initNotifications(msg.notifications)
         this._worldService.initWorld(msg.world);
         this._worldService.setRating(msg.rating);
+        this._nuptialService.initEnvironment(msg.nuptialMales);
         this._specieBuilderService.initBuilder(msg.specie);
         this._mainEventBus.emit('initStepDone');
     }
@@ -2624,6 +2665,9 @@ class MessageHandlerService {
                 case 'rating':
                     this._worldService.playRatingAction(action);
                     break;
+                case 'nuptial':
+                    this._nuptialService.playNuptialAction(action);
+                    break;
             }
         }
     }
@@ -2645,28 +2689,66 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "NuptialService": () => (/* binding */ NuptialService)
 /* harmony export */ });
+/* harmony import */ var _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/entity/action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+
+
 class NuptialService {
 
-    constructor(nuptialApi, worldFactory) {
+    constructor(mainEventBus, nuptialApi, worldFactory, nuptialMalesContainer) {
+        this._mainEventBus = mainEventBus;
         this._nuptialApi = nuptialApi;
         this._worldFactory = worldFactory;
+        this._nuptialMalesContainer = nuptialMalesContainer;
+        this._males = [];
     }
 
-    searchNuptialMales() {
-        return this._nuptialApi.searchNuptialMales().then((malesJson) => {
-            let males = [];
-            for (let maleJson of malesJson) {
-                let male = this._worldFactory.buildNuptialMale(maleJson);
-                males.push(male);
-            }
+    get nuptialMales() {
+        return this._males;
+    }
 
-            return males;
-        });
-        
+    initEnvironment(nuptialMalesJson) {
+        this._initMales(nuptialMalesJson);
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite) {
         this._nuptialApi.foundColony(queenId, nuptialMaleId, nestBuildingSite);
+        this._removeMale(nuptialMaleId);
+    }
+
+    playNuptialAction(action) {
+        switch(action.type) {
+            case _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.NUPTIAL_MALES_CHANGED:
+                this._playChangedMalesAction(action);
+                break;
+            default:
+                throw 'unknown type of action';
+        }
+    }
+
+    _removeMale(maleId) {
+        let index = this._males.findIndex(male => male.id == maleId);
+        if (index !== -1) {
+            this._males.splice(index, 1);
+        }
+        this._emitMalesChanged();
+    }
+
+
+    _initMales(nuptialMalesJson) {
+        this._males = [];
+        for (let maleJson of nuptialMalesJson) {
+            let male = this._worldFactory.buildNuptialMale(maleJson);
+            this._males.push(male);
+        }
+    }
+
+    _playChangedMalesAction(action) {
+        this._initMales(action.males);
+        this._emitMalesChanged();
+    }
+
+    _emitMalesChanged() {
+        this._mainEventBus.emit('nuptialMalesChanged', this._males);
     }
 
 }
@@ -3344,12 +3426,6 @@ class NuptialApi {
 
     constructor(requester) {
         this._requester = requester;
-    }
-
-    searchNuptialMales() {
-        return this._requester.get('world/nuptial_environment/search_nuptial_males').then((response) => {
-            return response.data.nuptial_males;
-        })
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite) { 
@@ -4862,8 +4938,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _coloniesTab_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./coloniesTab.html */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/coloniesTab.html");
 /* harmony import */ var _coloniesList__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./coloniesList */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/coloniesList/index.js");
 /* harmony import */ var _colonyManager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./colonyManager */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/index.js");
-/* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
-
 
 
 
@@ -4923,7 +4997,6 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
     }
 
     _renderPrepareStarterPackBtnState() {
-        console.log('wqeqwewqe', this.$domainFacade.isAnyMyAnt());
         this._prepareStarterPackBtn.classList.toggle('hidden', this.$domainFacade.isAnyMyAnt());
     }
 
@@ -7450,11 +7523,11 @@ class MalesSearchView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
 
     constructor(el) {
         super(el);
-        this._males = [];
+        this._males = this.$domainFacade.getMyNuptialMales();
 
         this._render();
 
-        this._searchBtn.addEventListener('click', this._onSearchBtnClick.bind(this));
+        this.$domainFacade.events.on('nuptialMalesChanged', this._onNuptialMalesChanged.bind(this));
         this._nextMaleBtn.addEventListener('click', this._onNextMaleBtnClick.bind(this));
         this._prevMaleBtn.addEventListener('click', this._onPrevMaleBtnClick.bind(this));
     }
@@ -7467,11 +7540,6 @@ class MalesSearchView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
         return this._males[this._selectedMaleIndex];
     }
 
-    reset() {
-        this._selectedMaleIndex = 0;
-        this._males = [];
-    }
-
     remove() {
         super.remove();
         this._maleProfile.remove();
@@ -7480,21 +7548,33 @@ class MalesSearchView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
     _render() {
         this._el.innerHTML = _malesSearchTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this._searchBtn = this._el.querySelector('[data-search-btn]');
+        this._malesPlaceholder = this._el.querySelector('[data-males-place-holder]');
+        this._malesEl = this._el.querySelector('[data-males]');
         this._nextMaleBtn = this._el.querySelector('[data-next-btn]');
         this._prevMaleBtn = this._el.querySelector('[data-previous-btn]');
         this._maleProfile = new _nuptialMaleProfileView__WEBPACK_IMPORTED_MODULE_2__.NuptialMaleProfileView(this._el.querySelector('[data-male-profile]'));
+
+        this._renderMales();
     }
 
-    _onSearchBtnClick() {
-        this.$domainFacade.searchNuptialMales().then((nuptialMales) => {
-            this._setMales(nuptialMales);
-        });
+    _renderMales() {
+        if (this._males.length > 0) {
+            this._renderEmptyState(false);
+            this._selectMale(0);
+            this._renderChoosingMaleBtnsStatus();
+        } else {
+            this._renderEmptyState(true);
+        }
     }
 
-    _setMales(nuptialMales) {
-        this._males = nuptialMales;
-        this._selectMale(0);
+    _renderEmptyState(isEmpty) {
+        this._malesPlaceholder.classList.toggle('hidden', !isEmpty);
+        this._malesEl.classList.toggle('hidden', isEmpty);
+    }
+
+    _renderChoosingMaleBtnsStatus() {
+        this._nextMaleBtn.disabled = this._selectedMaleIndex + 1 == this._males.length;
+        this._prevMaleBtn.disabled = this._selectedMaleIndex == 0;
     }
 
     _selectMale(index) {
@@ -7511,9 +7591,9 @@ class MalesSearchView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
         this._selectMale(this._selectedMaleIndex - 1);
     }
 
-    _renderChoosingMaleBtnsStatus() {
-        this._nextMaleBtn.disabled = this._selectedMaleIndex + 1 == this._males.length;
-        this._prevMaleBtn.disabled = this._selectedMaleIndex == 0;
+    _onNuptialMalesChanged(males) {
+        this._males = males;
+        this._renderMales();
     }
 
 }
@@ -7619,7 +7699,7 @@ class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._queen = queen;
         this._buildingSite = null;
 
-        this._malesSearch.reset();
+        // this._malesSearch.reset();
         this._renderQueen();
         this._renderBuildingSite();
     }
@@ -12755,7 +12835,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<button data-search-btn>пошук</button>\r\n<div data-male-profile></div>\r\n<button data-previous-btn>попередній</button>\r\n<button data-next-btn>наступний</button>\r\n";
+var code = "<div data-males>\r\n    <div data-male-profile></div>\r\n    <button data-previous-btn>попередній</button>\r\n    <button data-next-btn>наступний</button>\r\n</div>\r\n<div data-males-place-holder> самців немає</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

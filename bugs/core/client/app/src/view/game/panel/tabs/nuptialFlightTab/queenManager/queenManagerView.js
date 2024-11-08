@@ -19,7 +19,7 @@ class QueenManagerView extends BaseHTMLView {
         this._queen = queen;
         this._buildingSite = null;
 
-        this._malesSearch.reset();
+        // this._malesSearch.reset();
         this._renderQueen();
         this._renderBuildingSite();
     }

@@ -32,12 +32,15 @@ from core.world.entities.action.climate_temperature_change_action import Climate
 from core.world.entities.action.nest_fortification_changed_action import NestFortificationChangedAction
 from core.world.entities.action.user_notification_action import UserNotificationAction
 from core.world.entities.action.rating_updated_action import RatingUpdatedAction
+from core.world.entities.action.nuptial_males_changed_action import NuptialMalesChangedAction
 from .notification_client_serializer import NotificationClientSerializer
+from .nuptial_environment_client_serializer import NuptialEnvironmentClientSerializer
 
 class ActionClientSerializer(iActionClientSerializer):
 
     def __init__(self, common_entity_serializer: CommonEntityClientSerializer, util_serializer: UtilClientSerializer, larva_serializer: LarvaClientSerializer, egg_serializer: EggClientSerializer,
-                 colony_serializer: ColonyClientSerializer, operation_serializer: OperationClientSerializer, notification_serializer: NotificationClientSerializer):
+                 colony_serializer: ColonyClientSerializer, operation_serializer: OperationClientSerializer, notification_serializer: NotificationClientSerializer, 
+                 nuptial_environment_serializer: NuptialEnvironmentClientSerializer):
         self._common_entity_serializer = common_entity_serializer
         self._util_serializer = util_serializer
         self._larva_serializer = larva_serializer
@@ -45,6 +48,7 @@ class ActionClientSerializer(iActionClientSerializer):
         self._colony_serializer = colony_serializer
         self._operation_serializer = operation_serializer
         self._notification_serializer = notification_serializer
+        self._nuptial_environment_serializer = nuptial_environment_serializer
 
     def serialize(self, action: Action):
         match(action.action_type):
@@ -110,6 +114,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._serialize_user_notification(action)
             case ActionTypes.RATING_UPDATED:
                 return self._serialize_rating_updated(action)
+            case ActionTypes.NUPTIAL_MALES_CHANGED:
+                return self._serialize_nuptial_males_changed(action)
             case _:
                 raise Exception('unknown type of action')
             
@@ -355,6 +361,15 @@ class ActionClientSerializer(iActionClientSerializer):
 
         json.update({
             'ratingPlaces': action.rating_places
+        })
+
+        return json
+    
+    def _serialize_nuptial_males_changed(self, action: NuptialMalesChangedAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'males': self._nuptial_environment_serializer.serialize_nuptial_males(action.males)
         })
 
         return json

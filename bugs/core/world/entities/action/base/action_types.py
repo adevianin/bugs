@@ -32,3 +32,4 @@ class ActionTypes(StrEnum):
     CLIMATE_TEMPERATURE_CHANGE = 'climate_temperature_change'
     USER_NOTIFICATION = 'user_notification'
     RATING_UPDATED = 'rating_updated'
+    NUPTIAL_MALES_CHANGED = 'nuptial_males_changed'

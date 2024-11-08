@@ -2,13 +2,14 @@ import { initConts } from "@domain/consts";
 
 class MessageHandlerService {
 
-    constructor(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService) {
+    constructor(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService, nuptialService) {
         this._mainEventBus = mainEventBus;
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._colonyService = colonyService;
         this._specieBuilderService = specieBuilderService;
         this._userService = userService;
+        this._nuptialService = nuptialService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
@@ -38,6 +39,7 @@ class MessageHandlerService {
         this._userService.initNotifications(msg.notifications)
         this._worldService.initWorld(msg.world);
         this._worldService.setRating(msg.rating);
+        this._nuptialService.initEnvironment(msg.nuptialMales);
         this._specieBuilderService.initBuilder(msg.specie);
         this._mainEventBus.emit('initStepDone');
     }
@@ -60,6 +62,9 @@ class MessageHandlerService {
                     break;
                 case 'rating':
                     this._worldService.playRatingAction(action);
+                    break;
+                case 'nuptial':
+                    this._nuptialService.playNuptialAction(action);
                     break;
             }
         }

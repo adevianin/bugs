@@ -6,3 +6,4 @@ class ActorTypes(StrEnum):
     CLIMATE = 'climate'
     USER = 'user'
     RATING = 'rating'
+    NUPTIAL = 'nuptial'

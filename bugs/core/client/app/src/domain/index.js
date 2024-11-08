@@ -11,6 +11,7 @@ import { SpecieBuilderService } from './service/specieBuilderService';
 import { SpecieFactory } from './entity/specieBuilder/specieFactory';
 import { NotificationsContainer } from './entity/notificationsContainer';
 import { RatingContainer } from './entity/ratingContainer';
+import { NuptialMalesContainer } from './entity/nuptialMalesContainer';
 
 function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new EventEmitter();
@@ -19,16 +20,17 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let specieFactory = new SpecieFactory();
 
     let notificationsContainer = new NotificationsContainer();
+    let nuptialMalesContainer = new NuptialMalesContainer();
     let ratingContainer = new RatingContainer();
     let world = worldFactory.buildWorld();
 
     let worldService = new WorldService(world, worldFactory, mainEventBus, ratingContainer);
     let accountService = new AccountService(apis.accountApi, initialData.user, mainEventBus);
     let colonyService = new ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
-    let nuptialService = new NuptialService(apis.nuptialApi, worldFactory);
-    let specieBuilderService = new SpecieBuilderService(mainEventBus, apis.specieBuilderApi, specieFactory, initialData.specie);
+    let nuptialService = new NuptialService(mainEventBus, apis.nuptialApi, worldFactory, nuptialMalesContainer);
+    let specieBuilderService = new SpecieBuilderService(mainEventBus, apis.specieBuilderApi, specieFactory);
     let userService = new UserService(apis.userApi, notificationsContainer);
-    let messageHandlerService = new MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService);
+    let messageHandlerService = new MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService, nuptialService);
 
     let domainFacade = new DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService, userService);
 

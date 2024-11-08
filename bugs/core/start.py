@@ -200,9 +200,9 @@ def start():
     world_client_serializer = WorldClientSerializer(common_entity_client_serializer, colony_client_serializer, climate_client_serializer)
     death_record_client_serializer = DeathRecordClientSerializer(util_client_serializer)
     notification_client_serializer = NotificationClientSerializer(util_client_serializer, death_record_client_serializer)
-    action_client_serializer = ActionClientSerializer(common_entity_client_serializer, util_client_serializer, larva_client_serializer, egg_client_serializer, colony_client_serializer, 
-                                                      operation_client_serializer, notification_client_serializer)
     nuptial_environment_client_serializer = NuptialEnvironmentClientSerializer(genome_client_serializer, genes_client_serializer, stats_client_serializer)
+    action_client_serializer = ActionClientSerializer(common_entity_client_serializer, util_client_serializer, larva_client_serializer, egg_client_serializer, colony_client_serializer, 
+                                                      operation_client_serializer, notification_client_serializer, nuptial_environment_client_serializer)
     constants_client_serializer = ConstantsClientSerializer()
 
     action_accumulator = ActionAccumulator(event_bus)

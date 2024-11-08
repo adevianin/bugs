@@ -7,17 +7,6 @@ from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeType
 
 import json
 
-@require_GET
-@login_required     
-def search_nuptial_males(request: HttpRequest):
-    wf = WorldFacade.get_instance()
-
-    nuptial_males = wf.generate_nuptial_males_for_client(request.user.id)
-
-    return JsonResponse({ 
-        'nuptial_males': nuptial_males
-    }, status=200)
-
 @require_POST
 @login_required     
 def found_colony(request: HttpRequest):

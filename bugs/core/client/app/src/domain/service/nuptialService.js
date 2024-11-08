@@ -1,25 +1,62 @@
+import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
+
 class NuptialService {
 
-    constructor(nuptialApi, worldFactory) {
+    constructor(mainEventBus, nuptialApi, worldFactory, nuptialMalesContainer) {
+        this._mainEventBus = mainEventBus;
         this._nuptialApi = nuptialApi;
         this._worldFactory = worldFactory;
+        this._nuptialMalesContainer = nuptialMalesContainer;
+        this._males = [];
     }
 
-    searchNuptialMales() {
-        return this._nuptialApi.searchNuptialMales().then((malesJson) => {
-            let males = [];
-            for (let maleJson of malesJson) {
-                let male = this._worldFactory.buildNuptialMale(maleJson);
-                males.push(male);
-            }
+    get nuptialMales() {
+        return this._males;
+    }
 
-            return males;
-        });
-        
+    initEnvironment(nuptialMalesJson) {
+        this._initMales(nuptialMalesJson);
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite) {
         this._nuptialApi.foundColony(queenId, nuptialMaleId, nestBuildingSite);
+        this._removeMale(nuptialMaleId);
+    }
+
+    playNuptialAction(action) {
+        switch(action.type) {
+            case ACTION_TYPES.NUPTIAL_MALES_CHANGED:
+                this._playChangedMalesAction(action);
+                break;
+            default:
+                throw 'unknown type of action';
+        }
+    }
+
+    _removeMale(maleId) {
+        let index = this._males.findIndex(male => male.id == maleId);
+        if (index !== -1) {
+            this._males.splice(index, 1);
+        }
+        this._emitMalesChanged();
+    }
+
+
+    _initMales(nuptialMalesJson) {
+        this._males = [];
+        for (let maleJson of nuptialMalesJson) {
+            let male = this._worldFactory.buildNuptialMale(maleJson);
+            this._males.push(male);
+        }
+    }
+
+    _playChangedMalesAction(action) {
+        this._initMales(action.males);
+        this._emitMalesChanged();
+    }
+
+    _emitMalesChanged() {
+        this._mainEventBus.emit('nuptialMalesChanged', this._males);
     }
 
 }
