@@ -1,5 +1,6 @@
-from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
+from core.world.entities.ant.base.nuptial_environment.nuptial_male import NuptialMale
 from .gene_deserializer import GeneDeserializer
+from .genome_deserializer import GenomeDeserializer
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie import Specie
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chromosome_set import SpecieChromosomeSet
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chromosome import SpecieChromosome
@@ -7,12 +8,13 @@ from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_gene
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment_factory import NuptialEnvironmentFactory
 
-from typing import List
+from typing import List, Dict
 
 class NuptialEnvironmentDeserializer():
 
-    def __init__(self, gene_deserializer: GeneDeserializer, nuptial_environment_factory: NuptialEnvironmentFactory):
+    def __init__(self, gene_deserializer: GeneDeserializer, genome_deserializer: GenomeDeserializer, nuptial_environment_factory: NuptialEnvironmentFactory):
         self._gene_deserializer = gene_deserializer
+        self._genome_deserializer = genome_deserializer
         self._nuptial_environment_factory = nuptial_environment_factory
 
     def deserialize_nuptial_environment(self, json: dict):
@@ -23,7 +25,12 @@ class NuptialEnvironmentDeserializer():
         defense_weight = specie_activity_json['defense_weight']
         cold_resistance_weight = specie_activity_json['cold_resistance_weight']
         building_weight = specie_activity_json['building_weight']
-        return self._nuptial_environment_factory.build_nuptial_environment(owner_id, specie, attack_weight, defense_weight, cold_resistance_weight, building_weight)
+        males = [self._deserialize_nuptial_male(male_json) for male_json in json['males']]
+        return self._nuptial_environment_factory.build_nuptial_environment(owner_id, specie, males, attack_weight, defense_weight, cold_resistance_weight, building_weight)
+    
+    def _deserialize_nuptial_male(self, json: Dict):
+        genome = self._genome_deserializer.deserialize_genome(json['genome'])
+        return NuptialMale(json['id'], genome)
     
     def _build_specie(self, specie_json: dict):
         chromosomes_set = self._build_specie_chromosome_set(specie_json['chromosomes_set'])

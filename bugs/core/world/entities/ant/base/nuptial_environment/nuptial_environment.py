@@ -9,17 +9,19 @@ from typing import List
 
 class NuptialEnvironment():
 
-    def __init__(self, event_bus: EventEmitter, owner_id: int, specie: Specie, specie_activity: SpecieActivityWeightsPack):
+    def __init__(self, event_bus: EventEmitter, owner_id: int, specie: Specie, specie_activity: SpecieActivityWeightsPack, males: List[NuptialMale]):
         self._event_bus = event_bus
         self._specie = specie
         self._owner_id = owner_id
-        self._males: List[NuptialMale] = []
+        self._males: List[NuptialMale] = males
         self._specie_activity = specie_activity
 
         self._event_bus.add_listener('ant_received_damage_stat', self._on_ant_received_damaged)
         self._event_bus.add_listener('ant_damaged_another_body_stat', self._on_ant_damaged_another_body)
         self._event_bus.add_listener('ant_gave_fortification_item_stat', self._on_ant_gave_fortification_item)
         self._event_bus.add_listener('ant_built_nest_stat', self._on_ant_built_nest)
+
+        self._generate_males()
 
     @property
     def owner_id(self):
@@ -32,6 +34,10 @@ class NuptialEnvironment():
     @property
     def specie_activity(self) -> SpecieActivityWeightsPack:
         return self._specie_activity
+    
+    @property
+    def males(self) -> List[NuptialMale]:
+        return self._males
     
     @property
     def _activity_weight(self):
@@ -62,7 +68,7 @@ class NuptialEnvironment():
     
     def _generate_nuptial_male(self) -> NuptialMale:
         genome = self._specie.generate_male_genome(20, 1, 60)
-        return NuptialMale.build(genome)
+        return NuptialMale.build_new(genome)
     
     def _on_ant_received_damaged(self, damage_type: DamageTypes, ant: Ant):
         if ant.owner_id == self.owner_id:

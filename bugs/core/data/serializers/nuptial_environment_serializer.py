@@ -4,17 +4,27 @@ from core.world.entities.ant.base.nuptial_environment.specie_builder.specie impo
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chromosome import SpecieChromosome
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_gene import SpecieGene
 from core.world.entities.ant.base.nuptial_environment.specie_activity_weights_pack import SpecieActivityWeightsPack
+from core.world.entities.ant.base.nuptial_environment.nuptial_male import NuptialMale
+from .genome_serializer import GenomeSerializer
 
 class NuptialEnvironmentSerializer():
 
-    def __init__(self, genes_serializer: GenesSerializer):
+    def __init__(self, genes_serializer: GenesSerializer, genome_serializer: GenomeSerializer):
         self._genes_serializer = genes_serializer
+        self._genome_serializer = genome_serializer
 
     def serialize(self, nuptial_environment: NuptialEnvironment):
         return {
             'owner_id': nuptial_environment.owner_id,
             'specie_activity': self._serialize_specie_activity(nuptial_environment.specie_activity),
-            'specie': self._serialize_specie(nuptial_environment.specie)
+            'specie': self._serialize_specie(nuptial_environment.specie),
+            'males': [self._serialize_nuptial_male(male) for male in nuptial_environment.males]
+        }
+    
+    def _serialize_nuptial_male(self, nuptial_male: NuptialMale):
+        return {
+            'id': nuptial_male.id,
+            'genome': self._genome_serializer.serialize_genome(nuptial_male.genome)
         }
     
     def _serialize_specie_activity(self, specie_activity: SpecieActivityWeightsPack):

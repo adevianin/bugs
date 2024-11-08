@@ -6,7 +6,7 @@ import uuid
 class NuptialMale():
 
     @classmethod
-    def build(cls, genome: Genome):
+    def build_new(cls, genome: Genome):
         id = uuid.uuid4().hex
         return NuptialMale(id, genome)
 

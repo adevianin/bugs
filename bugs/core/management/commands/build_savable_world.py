@@ -1384,6 +1384,7 @@ class Command(BaseCommand):
         "nuptial_environments": [
             {
                 "owner_id": 2,
+                "males": [],
                 "specie_activity": {
                     "attack_weight": 10,
                     "defense_weight": 12,
