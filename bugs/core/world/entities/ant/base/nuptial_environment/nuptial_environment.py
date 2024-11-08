@@ -20,8 +20,8 @@ class NuptialEnvironment():
         self._event_bus.add_listener('ant_damaged_another_body_stat', self._on_ant_damaged_another_body)
         self._event_bus.add_listener('ant_gave_fortification_item_stat', self._on_ant_gave_fortification_item)
         self._event_bus.add_listener('ant_built_nest_stat', self._on_ant_built_nest)
-
-        self._generate_males()
+        self._event_bus.add_listener('nuptial_season_start', self._on_nuptial_season_start)
+        self._event_bus.add_listener('nuptial_season_stop', self._on_nuptial_season_stop)
 
     @property
     def owner_id(self):
@@ -55,9 +55,6 @@ class NuptialEnvironment():
         return None
     
     def search_males(self) -> List[NuptialMale]:
-        if len(self._males) == 0:
-            self._generate_males()
-
         return self._males
     
     def _generate_males(self, count = 3):
@@ -89,3 +86,9 @@ class NuptialEnvironment():
     def _on_ant_built_nest(self, ant: Ant):
         if ant.owner_id == self.owner_id:
             self._specie_activity.building_weight += self._activity_weight
+
+    def _on_nuptial_season_start(self):
+        self._generate_males()
+
+    def _on_nuptial_season_stop(self):
+        self._males = []
