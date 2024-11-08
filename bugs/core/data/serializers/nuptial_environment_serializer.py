@@ -3,7 +3,7 @@ from .genes_serializer import GenesSerializer
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie import Specie
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chromosome import SpecieChromosome
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_gene import SpecieGene
-from core.world.entities.ant.base.nuptial_environment.nuptial_environment_weights_pack import NuptialEnvironmentWeightsPack
+from core.world.entities.ant.base.nuptial_environment.specie_activity_weights_pack import SpecieActivityWeightsPack
 
 class NuptialEnvironmentSerializer():
 
@@ -13,16 +13,16 @@ class NuptialEnvironmentSerializer():
     def serialize(self, nuptial_environment: NuptialEnvironment):
         return {
             'owner_id': nuptial_environment.owner_id,
-            'weights_pack': self._serialize_weights_pack(nuptial_environment.weights_pack),
+            'specie_activity': self._serialize_specie_activity(nuptial_environment.specie_activity),
             'specie': self._serialize_specie(nuptial_environment.specie)
         }
     
-    def _serialize_weights_pack(self, weights_pack: NuptialEnvironmentWeightsPack):
+    def _serialize_specie_activity(self, specie_activity: SpecieActivityWeightsPack):
         return {
-            "combat_damage_done_weight": weights_pack.combat_damage_done_weight,
-            "combat_damage_received_weight": weights_pack.combat_damage_received_weight,
-            "cold_damage_received_weight": weights_pack.cold_damage_received_weight,
-            "building_weight": weights_pack.building_weight
+            "attack_weight": specie_activity.attack_weight,
+            "defense_weight": specie_activity.defense_weight,
+            "cold_resistance_weight": specie_activity.cold_resistance_weight,
+            "building_weight": specie_activity.building_weight
         }
     
     def _serialize_specie(self, specie: Specie):

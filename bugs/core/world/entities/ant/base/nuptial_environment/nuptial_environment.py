@@ -5,18 +5,18 @@ from core.world.entities.world.player_stats import PlayerStats
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.base.damage_types import DamageTypes
 from core.world.entities.ant.base.ant import Ant
-from .nuptial_environment_weights_pack import NuptialEnvironmentWeightsPack
+from .specie_activity_weights_pack import SpecieActivityWeightsPack
 from typing import List
 
 class NuptialEnvironment():
 
-    def __init__(self, event_bus: EventEmitter, owner_id: int, specie: Specie, player_stats: PlayerStats, weights_pack: NuptialEnvironmentWeightsPack):
+    def __init__(self, event_bus: EventEmitter, owner_id: int, specie: Specie, player_stats: PlayerStats, specie_activity: SpecieActivityWeightsPack):
         self._event_bus = event_bus
         self._specie = specie
         self._player_stats = player_stats
         self._owner_id = owner_id
         self._males: List[NuptialMale] = []
-        self._weights_pack = weights_pack
+        self._specie_activity = specie_activity
 
         self._event_bus.add_listener('ant_received_damage_stat', self._on_ant_received_damaged)
         self._event_bus.add_listener('ant_damaged_another_body_stat', self._on_ant_damaged_another_body)
@@ -32,12 +32,12 @@ class NuptialEnvironment():
         return self._specie
     
     @property
-    def weights_pack(self) -> NuptialEnvironmentWeightsPack:
-        return self._weights_pack
+    def specie_activity(self) -> SpecieActivityWeightsPack:
+        return self._specie_activity
     
     @property
-    def _action_weight(self):
-        return 1/self._player_stats.ants_count
+    def _activity_weight(self):
+        return 1
     
     def fly_in_male(self, male: MaleAnt):
         self._specie.accept_male_genome(male.body.genome)
@@ -70,18 +70,18 @@ class NuptialEnvironment():
         if ant.owner_id == self.owner_id:
             match(damage_type):
                 case DamageTypes.COMBAT:
-                    self._weights_pack.combat_damage_received_weight += self._action_weight
+                    self._specie_activity.defense_weight += self._activity_weight
                 case DamageTypes.COLD:
-                    self._weights_pack.cold_damage_received_weight += self._action_weight
+                    self._specie_activity.cold_resistance_weight += self._activity_weight
 
     def _on_ant_damaged_another_body(self, ant: Ant):
         if ant.owner_id == self.owner_id:
-            self._weights_pack.combat_damage_done_weight += self._action_weight
+            self._specie_activity.attack_weight += self._activity_weight
 
     def _on_ant_gave_fortification_item(self, ant: Ant):
         if ant.owner_id == self.owner_id:
-            self._weights_pack.building_weight += self._action_weight
+            self._specie_activity.building_weight += self._activity_weight
 
     def _on_ant_built_nest(self, ant: Ant):
         if ant.owner_id == self.owner_id:
-            self._weights_pack.building_weight += self._action_weight
+            self._specie_activity.building_weight += self._activity_weight
