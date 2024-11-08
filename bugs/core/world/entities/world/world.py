@@ -3,7 +3,7 @@ import time
 
 from core.world.entities.map.map import Map
 from core.world.utils.event_emiter import EventEmitter
-from core.world.settings import STEP_TIME
+from core.world.settings import STEP_TIME, STEPS_IN_YEAR, NUPTIAL_SEASON_START_STEP, NUPTIAL_SEASON_STOP_STEP
 from core.world.entities.colony.base.colony import Colony
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 from core.world.entities.base.entity_collection import EntityCollection
@@ -91,6 +91,22 @@ class World():
     def climate(self) -> Climate:
         return self._climate
     
+    @property
+    def _is_new_year_step(self):
+        return self._current_step % STEPS_IN_YEAR == 0
+    
+    @property
+    def _current_year(self):
+        return self._current_step // STEPS_IN_YEAR
+    
+    @property
+    def _is_nuptial_season_start_step(self):
+        return self._current_step % STEPS_IN_YEAR ==  NUPTIAL_SEASON_START_STEP
+    
+    @property
+    def _is_nuptial_season_stop_step(self):
+        return self._current_step % STEPS_IN_YEAR ==  NUPTIAL_SEASON_STOP_STEP
+    
     def get_player_stats_for_owner(self, owner_id: int) -> PlayerStats:
         for player_stats in self._player_stats_list:
             if player_stats.owner_id == owner_id:
@@ -159,6 +175,14 @@ class World():
 
     def _do_step(self):
         print(f'step { self._current_step }')
+
+        if self._is_new_year_step:
+            self._event_bus.emit('new_year', self._current_year)
+
+        if self._is_nuptial_season_start_step:
+            self._event_bus.emit('nuptial_season_start')
+        elif self._is_nuptial_season_stop_step:
+            self._event_bus.emit('nuptial_season_stop')
 
         self._event_bus.emit('step_start', self._current_step)
 
