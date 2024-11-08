@@ -1,7 +1,6 @@
 from .nuptial_male import NuptialMale
 from core.world.entities.ant.male.male_ant import MaleAnt
 from .specie_builder.specie import Specie
-from core.world.entities.world.player_stats import PlayerStats
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.base.damage_types import DamageTypes
 from core.world.entities.ant.base.ant import Ant
@@ -10,10 +9,9 @@ from typing import List
 
 class NuptialEnvironment():
 
-    def __init__(self, event_bus: EventEmitter, owner_id: int, specie: Specie, player_stats: PlayerStats, specie_activity: SpecieActivityWeightsPack):
+    def __init__(self, event_bus: EventEmitter, owner_id: int, specie: Specie, specie_activity: SpecieActivityWeightsPack):
         self._event_bus = event_bus
         self._specie = specie
-        self._player_stats = player_stats
         self._owner_id = owner_id
         self._males: List[NuptialMale] = []
         self._specie_activity = specie_activity

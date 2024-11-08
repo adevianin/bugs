@@ -6,7 +6,6 @@ from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chro
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_gene import SpecieGene
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment_factory import NuptialEnvironmentFactory
-from core.world.entities.world.player_stats import PlayerStats
 
 from typing import List
 
@@ -16,7 +15,7 @@ class NuptialEnvironmentDeserializer():
         self._gene_deserializer = gene_deserializer
         self._nuptial_environment_factory = nuptial_environment_factory
 
-    def deserialize_nuptial_environment(self, json: dict, player_stats: PlayerStats):
+    def deserialize_nuptial_environment(self, json: dict):
         owner_id = json['owner_id']
         specie = self._build_specie(json['specie'])
         specie_activity_json = json['specie_activity']
@@ -24,7 +23,7 @@ class NuptialEnvironmentDeserializer():
         defense_weight = specie_activity_json['defense_weight']
         cold_resistance_weight = specie_activity_json['cold_resistance_weight']
         building_weight = specie_activity_json['building_weight']
-        return self._nuptial_environment_factory.build_nuptial_environment(owner_id, specie, player_stats, attack_weight, defense_weight, cold_resistance_weight, building_weight)
+        return self._nuptial_environment_factory.build_nuptial_environment(owner_id, specie, attack_weight, defense_weight, cold_resistance_weight, building_weight)
     
     def _build_specie(self, specie_json: dict):
         chromosomes_set = self._build_specie_chromosome_set(specie_json['chromosomes_set'])
