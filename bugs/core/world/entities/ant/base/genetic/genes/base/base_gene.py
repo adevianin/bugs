@@ -2,6 +2,7 @@ from .genes_types import GenesTypes
 from abc import ABC, abstractmethod, abstractclassmethod
 from ...phenotype import Phenotype
 from .domination_codes import DominationCodes
+from core.world.utils.probability_check import probability_check
 import random
 
 class BaseGene(ABC):
@@ -45,7 +46,7 @@ class BaseGene(ABC):
         pass
 
     def _deviate_value(self, value, percent, super_deviation_chance, super_deviation_percent):
-        is_super_deviation = random.random() <= super_deviation_chance / 100
+        is_super_deviation = probability_check(super_deviation_chance)
         if is_super_deviation:
             percent = super_deviation_percent
 
