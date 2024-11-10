@@ -1385,13 +1385,13 @@ class Command(BaseCommand):
             {
                 "owner_id": 2,
                 "males": [],
-                "specie_activity": {
-                    "attack_weight": 10,
-                    "defense_weight": 12,
-                    "cold_resistance_weight": 0,
-                    "building_weight": 0
-                },
                 "specie": {
+                    "activity_weights": {
+                        "attack_weight": 10,
+                        "defense_weight": 12,
+                        "cold_resistance_weight": 0,
+                        "building_weight": 0
+                    },
                     "chromosomes_set": [
                         {
                             "type": "body",

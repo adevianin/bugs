@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod, abstractclassmethod
 from ...phenotype import Phenotype
 from .domination_codes import DominationCodes
 from core.world.utils.probability_check import probability_check
+from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 import random
 
 class BaseGene(ABC):
@@ -11,14 +12,24 @@ class BaseGene(ABC):
     def build(cls, domination_code: DominationCodes):
         pass
 
-    def __init__(self, type: GenesTypes, domination_code: DominationCodes, is_required: bool):
+    @staticmethod
+    @abstractmethod
+    def build_new_for_specie_gene():
+        pass
+
+    def __init__(self, type: GenesTypes, chromosome_type: ChromosomeTypes, domination_code: DominationCodes, is_required: bool):
         self._type = type
+        self._chromosome_type = chromosome_type
         self._domination_code = domination_code
         self._is_required = is_required
 
     @property
     def type(self):
         return self._type
+
+    @property
+    def chromosome_type(self):
+        return self._chromosome_type
     
     @property
     def domination_code(self):
@@ -43,6 +54,10 @@ class BaseGene(ABC):
         
     @abstractmethod
     def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> 'BaseGene':
+        pass
+
+    @abstractmethod
+    def upgrade(self) -> 'BaseGene':
         pass
 
     def _deviate_value(self, value, percent, super_deviation_chance, super_deviation_percent):

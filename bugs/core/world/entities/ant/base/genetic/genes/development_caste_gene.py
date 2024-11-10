@@ -3,6 +3,8 @@ from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
 from abc import abstractclassmethod
+from core.world.settings import SUPER_GENE_UPGRADE_MULTIPLIER
+from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class DevelopmentCasteGene(BaseGene):
 
@@ -11,7 +13,7 @@ class DevelopmentCasteGene(BaseGene):
         pass
 
     def __init__(self, type: GenesTypes, domination_code: DominationCodes, strength: int, defense: int, max_hp: int, hp_regen_rate: int, speed: int, is_required: bool):
-        super().__init__(type, domination_code, is_required)
+        super().__init__(type, ChromosomeTypes.DEVELOPMENT, domination_code, is_required)
         self._strength = strength
         self._defense = defense
         self._max_hp = max_hp
@@ -63,6 +65,14 @@ class DevelopmentCasteGene(BaseGene):
         max_hp = self._deviate_value(self.max_hp, percent, super_mutate_chance, super_mutate_percent)
         hp_regen_rate = self._deviate_value(self.hp_regen_rate, percent, super_mutate_chance, super_mutate_percent)
         speed = self._deviate_value(self.speed, percent, super_mutate_chance, super_mutate_percent)
+        return self.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed)
+    
+    def upgrade(self) -> 'DevelopmentCasteGene':
+        strength = self.strength * SUPER_GENE_UPGRADE_MULTIPLIER
+        defense = self.defense * SUPER_GENE_UPGRADE_MULTIPLIER
+        max_hp = self.max_hp * SUPER_GENE_UPGRADE_MULTIPLIER
+        hp_regen_rate = self.hp_regen_rate * SUPER_GENE_UPGRADE_MULTIPLIER
+        speed = self.speed * SUPER_GENE_UPGRADE_MULTIPLIER
         return self.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed)
 
         

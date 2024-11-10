@@ -2,15 +2,21 @@ from .base.genes_types import GenesTypes
 from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
+from core.world.settings import SUPER_GENE_UPGRADE_MULTIPLIER
+from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class BodyLifeSpanGene(BaseGene):
 
     @classmethod
     def build(cls, domination_code: DominationCodes, life_span: int):
         return BodyLifeSpanGene(domination_code, life_span)
+    
+    @staticmethod
+    def build_new_for_specie_gene():
+        return BodyLifeSpanGene.build(DominationCodes.random(), 10000)
 
     def __init__(self, domination_code: DominationCodes, life_span: int):
-        super().__init__(GenesTypes.BODY_LIFE_SPAN, domination_code, True)
+        super().__init__(GenesTypes.BODY_LIFE_SPAN, ChromosomeTypes.BODY, domination_code, True)
         self.life_span = life_span
 
     def affect(self, phenotype: Phenotype):
@@ -28,4 +34,7 @@ class BodyLifeSpanGene(BaseGene):
         life_span = self._deviate_value(self.life_span, percent, super_mutate_chance, super_mutate_percent)
         life_span = round(life_span)
         return BodyLifeSpanGene.build(DominationCodes.random(), life_span)
+    
+    def upgrade(self) -> 'BodyLifeSpanGene':
+        return BodyLifeSpanGene.build(DominationCodes.random(), self.life_span * SUPER_GENE_UPGRADE_MULTIPLIER)
         

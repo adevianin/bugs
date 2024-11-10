@@ -2,6 +2,8 @@ from .base.genes_types import GenesTypes
 from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
+from core.world.settings import SUPER_GENE_UPGRADE_MULTIPLIER
+from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class AdaptationColdGene(BaseGene):
 
@@ -11,9 +13,13 @@ class AdaptationColdGene(BaseGene):
     @classmethod
     def build(cls, domination_code: DominationCodes, resistance_points: int):
         return AdaptationColdGene(domination_code, resistance_points)
+    
+    @staticmethod
+    def build_new_for_specie_gene():
+        return AdaptationColdGene.build(DominationCodes.random(), 10)
 
     def __init__(self, domination_code: DominationCodes, resistance_points: int):
-        super().__init__(GenesTypes.ADAPTATION_COLD, domination_code, True)
+        super().__init__(GenesTypes.ADAPTATION_COLD, ChromosomeTypes.ADAPTATION, domination_code, True)
         self._resistance_points = resistance_points
 
     @property
@@ -34,4 +40,7 @@ class AdaptationColdGene(BaseGene):
     
     def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
         return AdaptationColdGene.build(DominationCodes.random(), self._deviate_value(self.resistance_points, percent, super_mutate_chance, super_mutate_percent))
+    
+    def upgrade(self) -> 'AdaptationColdGene':
+        return AdaptationColdGene.build(DominationCodes.random(), self._resistance_points * SUPER_GENE_UPGRADE_MULTIPLIER)
         

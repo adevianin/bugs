@@ -2,6 +2,7 @@ from core.world.entities.ant.base.nuptial_environment.nuptial_male import Nuptia
 from .gene_deserializer import GeneDeserializer
 from .genome_deserializer import GenomeDeserializer
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie import Specie
+from core.world.entities.ant.base.nuptial_environment.specie_builder.activity_weights_pack import ActivityWeightsPack
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chromosome_set import SpecieChromosomeSet
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_chromosome import SpecieChromosome
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_gene import SpecieGene
@@ -19,22 +20,25 @@ class NuptialEnvironmentDeserializer():
 
     def deserialize_nuptial_environment(self, json: dict):
         owner_id = json['owner_id']
-        specie = self._build_specie(json['specie'])
-        specie_activity_json = json['specie_activity']
-        attack_weight = specie_activity_json['attack_weight']
-        defense_weight = specie_activity_json['defense_weight']
-        cold_resistance_weight = specie_activity_json['cold_resistance_weight']
-        building_weight = specie_activity_json['building_weight']
+        specie = self._deserialize_specie(json['specie'])
         males = [self._deserialize_nuptial_male(male_json) for male_json in json['males']]
-        return self._nuptial_environment_factory.build_nuptial_environment(owner_id, specie, males, attack_weight, defense_weight, cold_resistance_weight, building_weight)
+        return self._nuptial_environment_factory.build_nuptial_environment(owner_id, specie, males)
     
     def _deserialize_nuptial_male(self, json: Dict):
         genome = self._genome_deserializer.deserialize_genome(json['genome'])
         return NuptialMale(json['id'], genome)
     
-    def _build_specie(self, specie_json: dict):
+    def _deserialize_specie(self, specie_json: dict):
         chromosomes_set = self._build_specie_chromosome_set(specie_json['chromosomes_set'])
-        return Specie.build(chromosomes_set)
+        activity_weights = self._deserialize_activity_weights(specie_json['activity_weights'])
+        return Specie.build(chromosomes_set, activity_weights)
+    
+    def _deserialize_activity_weights(self, json):
+        attack_weight = json['attack_weight']
+        defense_weight = json['defense_weight']
+        cold_resistance_weight = json['cold_resistance_weight']
+        building_weight = json['building_weight']
+        return ActivityWeightsPack(attack_weight, defense_weight, cold_resistance_weight, building_weight)
 
     def _build_specie_chromosome_set(self, specie_chromosomes_json: List[dict]):
         specie_chromosomes = [self._build_specie_chromosome(specie_chromosome_json) for specie_chromosome_json in specie_chromosomes_json]

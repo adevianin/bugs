@@ -3,15 +3,21 @@ from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
 import math 
+from core.world.settings import SUPER_GENE_UPGRADE_MULTIPLIER
+from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class BodyDefenseGene(BaseGene):
 
     @classmethod
     def build(cls, domination_code: DominationCodes, defense: int):
         return BodyDefenseGene(domination_code, defense)
+    
+    @staticmethod
+    def build_new_for_specie_gene():
+        return BodyDefenseGene.build(DominationCodes.random(), 5)
 
     def __init__(self, domination_code: DominationCodes, defense: int):
-        super().__init__(GenesTypes.BODY_DEFENSE, domination_code, True)
+        super().__init__(GenesTypes.BODY_DEFENSE, ChromosomeTypes.BODY, domination_code, True)
         self._defense = defense
 
     @property
@@ -31,4 +37,7 @@ class BodyDefenseGene(BaseGene):
     
     def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
         return BodyDefenseGene.build(DominationCodes.random(), self._deviate_value(self.defense, percent, super_mutate_chance, super_mutate_percent))
+    
+    def upgrade(self) -> 'BodyDefenseGene':
+        return BodyDefenseGene.build(DominationCodes.random(), self._defense * SUPER_GENE_UPGRADE_MULTIPLIER)
         

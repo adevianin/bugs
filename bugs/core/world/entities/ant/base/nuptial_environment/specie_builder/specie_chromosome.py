@@ -1,6 +1,8 @@
 from .specie_gene import SpecieGene
 from core.world.entities.ant.base.genetic.chromosome import Chromosome
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
+from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
+from core.world.entities.ant.base.genetic.genes.base.base_gene import BaseGene
 from typing import List
 
 class SpecieChromosome():
@@ -34,11 +36,15 @@ class SpecieChromosome():
             specie_gene = SpecieGene.build_new(gene)
             self._specie_genes.append(specie_gene)
     
-    def generate_chromosome(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> Chromosome:
+    def generate_chromosome(self, percent: int, super_mutate_chance: int, super_mutate_percent: int, super_gene: BaseGene) -> Chromosome:
         activated_genes = self._get_activated_specie_genes()
         generated_genes = []
         for specie_gene in activated_genes:
-            generated_genes.append(specie_gene.generate_gene(percent, super_mutate_chance, super_mutate_percent))
+            if super_gene and super_gene.type == specie_gene.gene.type:
+                generated_gene = super_gene
+            else:
+                generated_gene = specie_gene.generate_gene(percent, super_mutate_chance, super_mutate_percent)
+            generated_genes.append(generated_gene)
 
         return Chromosome.build(self.type, generated_genes)
     
@@ -65,6 +71,20 @@ class SpecieChromosome():
             genes_types.add(type)
 
         return True
+    
+    def check_gene_presence(self, gene_type: GenesTypes):
+        for specie_gene in self._specie_genes:
+            if specie_gene.gene.type == gene_type:
+                return True
+        
+        return False
+    
+    def get_activated_specie_gene_by_type(self, gene_type: GenesTypes):
+        for specie_gene in self._specie_genes:
+            if specie_gene.gene.type == gene_type and specie_gene.id in self._activated_specie_genes_ids:
+                return specie_gene
+        
+        return None
     
     def _get_activated_specie_genes(self) -> List[SpecieGene]:
         activated_genes = []

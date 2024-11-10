@@ -1,4 +1,4 @@
-class SpecieActivityWeightsPack():
+class ActivityWeightsPack():
 
     def __init__(self, attack_weight: int, defense_weight: int, cold_resistance_weight: int, building_weight: int):
         self.attack_weight = attack_weight

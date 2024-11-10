@@ -2,15 +2,20 @@ from .base.genes_types import GenesTypes
 from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
+from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class AdjustingDevelopmentAppetiteGene(BaseGene):
 
     @classmethod
     def build(cls, domination_code: DominationCodes):
         return AdjustingDevelopmentAppetiteGene(domination_code)
+    
+    @staticmethod
+    def build_new_for_specie_gene():
+        return AdjustingDevelopmentAppetiteGene.build(DominationCodes.random())
 
     def __init__(self, domination_code: DominationCodes):
-        super().__init__(GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE, domination_code, True)
+        super().__init__(GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE, ChromosomeTypes.ADJUSTING, domination_code, True)
 
     def affect(self, phenotype: Phenotype):
         phenotype.required_food = 2 * (phenotype.strength + phenotype.defense + phenotype.speed/2)
@@ -20,5 +25,8 @@ class AdjustingDevelopmentAppetiteGene(BaseGene):
         return dominating_gene or another_gene
     
     def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
+        return AdjustingDevelopmentAppetiteGene.build(DominationCodes.random())
+    
+    def upgrade(self) -> 'AdjustingDevelopmentAppetiteGene':
         return AdjustingDevelopmentAppetiteGene.build(DominationCodes.random())
         

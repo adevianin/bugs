@@ -4,6 +4,7 @@ from core.world.entities.ant.base.ant_types import AntTypes
 from .genes.base.genes_types import GenesTypes
 from .chromosome_types import ChromosomeTypes
 from .chromosome import Chromosome
+from .genes.base.base_gene import BaseGene
 
 from typing import List, Dict
 import random
