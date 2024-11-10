@@ -26,7 +26,6 @@ class SpecieChromosomeSet():
     def generate_chorosome_set(self, percent: int, super_mutate_chance: int, super_mutate_percent: int, super_gene: BaseGene) -> ChromosomesSet:
         generated_chromosomes = []
         for specie_chromosome in self._specie_chromosomes:
-            super_gene = super_gene if super_gene and specie_chromosome.type == super_gene.chromosome_type else None
             chromosome = specie_chromosome.generate_chromosome(percent, super_mutate_chance, super_mutate_percent, super_gene)
             generated_chromosomes.append(chromosome)
 
