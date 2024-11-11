@@ -4,12 +4,72 @@ from core.world.entities.ant.base.genetic.genes.base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
 from .chromosome_types import ChromosomeTypes
 from .phenotype import Phenotype
+from core.world.entities.ant.base.genetic.genes.body_strength_gene import BodyStrengthGene
+from core.world.entities.ant.base.genetic.genes.body_defense_gene import BodyDefenseGene
+from core.world.entities.ant.base.genetic.genes.body_max_hp_gene import BodyMaxHpGene
+from core.world.entities.ant.base.genetic.genes.body_hp_regen_rate_gene import BodyHpRegenRateGene
+from core.world.entities.ant.base.genetic.genes.body_sight_distance_gene import BodySightDistanceGene
+from core.world.entities.ant.base.genetic.genes.body_speed_gene import BodySpeedGene
+from core.world.entities.ant.base.genetic.genes.body_life_span_gene import BodyLifeSpanGene
+from core.world.entities.ant.base.genetic.genes.development_queen_caste_gene import DevelopmentQueenCasteGene
+from core.world.entities.ant.base.genetic.genes.development_male_caste_gene import DevelopmentMaleCasteGene
+from core.world.entities.ant.base.genetic.genes.development_worker_caste_gene import DevelopmentWorkerCasteGene
+from core.world.entities.ant.base.genetic.genes.adaptation_cold_gene import AdaptationColdGene
+from core.world.entities.ant.base.genetic.genes.adjusting_appetite_gene import AdjustingAppetiteGene
+from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdjustingDevelopmentAppetiteGene
 
 class Chromosome(ABC):
 
     @classmethod
     def build(cls, type: ChromosomeTypes, genes: List[BaseGene]):
         return Chromosome(type, genes)
+    
+    @staticmethod
+    def build_new_for_specie_body_chromosome():
+        genes = [
+            BodyStrengthGene.build_new_for_specie_gene(),
+            BodyDefenseGene.build_new_for_specie_gene(),
+            BodyMaxHpGene.build_new_for_specie_gene(),
+            BodyHpRegenRateGene.build_new_for_specie_gene(),
+            BodySightDistanceGene.build_new_for_specie_gene(),
+            BodySpeedGene.build_new_for_specie_gene(),
+            BodyLifeSpanGene.build_new_for_specie_gene()
+        ]
+        return Chromosome(ChromosomeTypes.BODY, genes)
+    
+    @staticmethod
+    def build_new_for_specie_development_chromosome():
+        genes = [
+            DevelopmentQueenCasteGene.build_new_for_specie_gene(),
+            DevelopmentMaleCasteGene.build_new_for_specie_gene(),
+            DevelopmentWorkerCasteGene.build_new_for_specie_gene()
+        ]
+        return Chromosome(ChromosomeTypes.DEVELOPMENT, genes)
+    
+    @staticmethod
+    def build_new_for_specie_adaptation_chromosome():
+        genes = [
+            AdaptationColdGene.build_new_for_specie_gene()
+        ]
+        return Chromosome(ChromosomeTypes.ADAPTATION, genes)
+    
+    @staticmethod
+    def build_new_for_specie_building_chromosome():
+        genes = []
+        return Chromosome(ChromosomeTypes.BUILDING, genes)
+    
+    @staticmethod
+    def build_new_for_specie_combat_chromosome():
+        genes = []
+        return Chromosome(ChromosomeTypes.COMBAT, genes)
+    
+    @staticmethod
+    def build_new_for_specie_adjusting_chromosome():
+        genes = [
+            AdjustingAppetiteGene.build_new_for_specie_gene(),
+            AdjustingDevelopmentAppetiteGene.build_new_for_specie_gene()
+        ]
+        return Chromosome(ChromosomeTypes.ADJUSTING, genes)
 
     def __init__(self, type: ChromosomeTypes, genes: List[BaseGene]):
         self._type = type

@@ -9,6 +9,17 @@ class ChromosomesSet():
     @classmethod
     def build(cls, chromosomes: List[Chromosome]):
         return ChromosomesSet(chromosomes)
+    
+    @staticmethod
+    def build_new_for_specie():
+        return ChromosomesSet([
+            Chromosome.build_new_for_specie_body_chromosome(),
+            Chromosome.build_new_for_specie_development_chromosome(),
+            Chromosome.build_new_for_specie_adaptation_chromosome(),
+            Chromosome.build_new_for_specie_building_chromosome(),
+            Chromosome.build_new_for_specie_combat_chromosome(),
+            Chromosome.build_new_for_specie_adjusting_chromosome()
+        ])
 
     def __init__(self, chromosomes: List[Chromosome]):
         self._chromosomes = chromosomes

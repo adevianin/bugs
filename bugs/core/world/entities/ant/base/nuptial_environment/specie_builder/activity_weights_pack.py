@@ -1,5 +1,9 @@
 class ActivityWeightsPack():
 
+    @staticmethod
+    def build_empty():
+        return ActivityWeightsPack(0,0,0,0)
+
     def __init__(self, attack_weight: int, defense_weight: int, cold_resistance_weight: int, building_weight: int):
         self.attack_weight = attack_weight
         self.defense_weight = defense_weight
