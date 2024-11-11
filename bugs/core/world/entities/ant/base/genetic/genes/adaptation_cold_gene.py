@@ -16,7 +16,7 @@ class AdaptationColdGene(BaseGene):
     
     @staticmethod
     def build_new_for_specie_gene():
-        return AdaptationColdGene.build(DominationCodes.random(), 10)
+        return AdaptationColdGene.build(DominationCodes.random(), 80)
 
     def __init__(self, domination_code: DominationCodes, resistance_points: int):
         super().__init__(GenesTypes.ADAPTATION_COLD, ChromosomeTypes.ADAPTATION, domination_code, True)
