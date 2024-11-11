@@ -20,8 +20,8 @@ from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_g
 
 class Chromosome(ABC):
 
-    @classmethod
-    def build(cls, type: ChromosomeTypes, genes: List[BaseGene]):
+    @staticmethod
+    def build(type: ChromosomeTypes, genes: List[BaseGene]):
         return Chromosome(type, genes)
     
     @staticmethod
@@ -124,4 +124,4 @@ class Chromosome(ABC):
         for gene in self._genes:
             mutated_genes.append(gene.mutate(percent, super_mutate_chance, super_mutate_percent))
 
-        return Chromosome.build(mutated_genes)
+        return Chromosome.build(self.type, mutated_genes)

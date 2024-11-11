@@ -175,7 +175,7 @@ def start():
     usernames_repository = UsernamesRepository()
 
     colony_service = ColonyService(operation_factory)
-    player_service = PlayerService(event_bus, colony_factory, ant_factory)
+    player_service = PlayerService(event_bus, colony_factory, ant_factory, nuptial_environment_factory, player_stats_factory)
     nuptial_environment_service = NuptialEnvironmentService(colony_factory)
     ant_service = AntService()
     rating_service = RatingService(event_bus, usernames_repository)

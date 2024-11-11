@@ -10,6 +10,12 @@ class SpecieChromosome():
     @classmethod
     def build(self, type: ChromosomeTypes, activated_specie_genes_ids: List[str], specie_genes: List[SpecieGene]):
         return SpecieChromosome(type, activated_specie_genes_ids, specie_genes)
+    
+    @staticmethod
+    def build_new(chromosome: Chromosome) -> 'SpecieChromosome':
+        specie_genes = [SpecieGene.build_new(gene) for gene in chromosome.genes]
+        activated_specie_genes_ids = [specie_gene.id for specie_gene in specie_genes]
+        return SpecieChromosome(chromosome.type, activated_specie_genes_ids, specie_genes)
 
     def __init__(self, type: ChromosomeTypes, activated_specie_genes_ids: List[str], specie_genes: List[SpecieGene]):
         self._type = type

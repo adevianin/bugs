@@ -10,6 +10,11 @@ class SpecieChromosomeSet():
     @classmethod
     def build(self, specie_chromosomes: List[SpecieChromosome]):
         return SpecieChromosomeSet(specie_chromosomes)
+    
+    @staticmethod
+    def build_new(chromosomes_set: ChromosomesSet):
+        specie_chromosomes = [SpecieChromosome.build_new(chromosome) for chromosome in chromosomes_set.chromosomes]
+        return SpecieChromosomeSet(specie_chromosomes)
 
     def __init__(self, specie_chromosomes: List[SpecieChromosome]):
         self._specie_chromosomes = specie_chromosomes

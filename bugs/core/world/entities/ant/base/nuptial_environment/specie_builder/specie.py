@@ -17,6 +17,12 @@ class Specie():
     @classmethod
     def build(self, chromosome_set: SpecieChromosomeSet, activity_weights: ActivityWeightsPack):
         return Specie(chromosome_set, activity_weights)
+    
+    def build_new() -> 'Specie':
+        chromosome_set = ChromosomesSet.build_new_for_specie().mutate(10, 10, 15)
+        specie_chromosome_set = SpecieChromosomeSet.build_new(chromosome_set)
+        activity_weights = ActivityWeightsPack.build_empty()
+        return Specie(specie_chromosome_set, activity_weights)
 
     def __init__(self, chromosome_set: SpecieChromosomeSet, activity_weights: ActivityWeightsPack):
         self._chromosome_set = chromosome_set

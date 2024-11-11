@@ -123,6 +123,12 @@ class World():
     def generate_id(self):
         return self._id_generator.generate_id()
     
+    def add_new_nuptial_environment(self, nuptial_environment: NuptialEnvironment):
+        self._nuptial_environments.append(nuptial_environment)
+
+    def add_new_player_stats(self, player_stats: PlayerStats):
+        self._player_stats_list.append(player_stats)
+    
     def add_new_colony(self, colony: Colony):
         self._colonies.append(colony)
         self._event_bus.emit('colony_born', colony)
