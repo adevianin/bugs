@@ -112,7 +112,6 @@ class AntFactory():
         return ant
     
     def build_starter_queen_larva(self):
-        print('!!!!!!!!!!!!!!!!!!!!!!!')
         maternal_chromosome_set = ChromosomesSet.build_new_for_specie()
         paternal_chromosome_set = ChromosomesSet.build_new_for_specie()
 
