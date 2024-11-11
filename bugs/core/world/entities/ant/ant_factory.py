@@ -111,14 +111,3 @@ class AntFactory():
 
         return ant
     
-    def build_starter_queen_larva(self):
-        maternal_chromosome_set = ChromosomesSet.build_new_for_specie()
-        paternal_chromosome_set = ChromosomesSet.build_new_for_specie()
-
-        genome = Genome.build(maternal_chromosome_set, paternal_chromosome_set)
-        larva = Larva.build_new('Antara', AntTypes.QUEEN, genome)
-
-        return larva
-    
-    
-    

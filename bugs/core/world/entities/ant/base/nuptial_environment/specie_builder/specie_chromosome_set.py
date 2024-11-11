@@ -23,7 +23,7 @@ class SpecieChromosomeSet():
             specie_chromosome = self.get_specie_chromosome_by_type(chromosome.type)
             specie_chromosome.accept_chromosome(chromosome)
     
-    def generate_chorosome_set(self, percent: int, super_mutate_chance: int, super_mutate_percent: int, super_gene: BaseGene) -> ChromosomesSet:
+    def generate_chorosome_set(self, percent: int, super_mutate_chance: int, super_mutate_percent: int, super_gene: BaseGene = None) -> ChromosomesSet:
         generated_chromosomes = []
         for specie_chromosome in self._specie_chromosomes:
             chromosome = specie_chromosome.generate_chromosome(percent, super_mutate_chance, super_mutate_percent, super_gene)

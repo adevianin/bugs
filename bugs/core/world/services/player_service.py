@@ -2,7 +2,6 @@ from core.world.entities.world.world import World
 from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.ant.ant_factory import AntFactory
 from core.world.utils.event_emiter import EventEmitter
-from core.world.entities.world.birthers.requests.ant_requests.ant_birth_from_system_request import AntBirthFromSystemRequest
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.ant.base.ant import Ant
 from core.world.utils.point import Point
@@ -20,7 +19,7 @@ class PlayerService():
     def set_world(self, world: World):
         self._world = world
 
-    def prepare_starter_pack(self, player_id: int):
+    def born_new_antara(self, player_id: int):
         player_ant_colonies = self._world.get_ant_colonies_by_owner(player_id)
 
         if len(player_ant_colonies) > 0:
@@ -31,12 +30,10 @@ class PlayerService():
 
         if len(player_ants) > 0:
             return
-
-        position = Point(-100, -100)
-        larva = self._ant_factory.build_starter_queen_larva()
-        def on_queen_born(queen: QueenAnt):
+        
+        def on_antara_born(queen: QueenAnt):
             queen.fly_nuptial_flight()
-            
-        self._event_bus.emit('ant_birth_request', AntBirthFromSystemRequest(larva, player_id, position, on_queen_born))
 
+        nuptial_env = self._world.get_nuptial_environment_by_owner(player_id)
+        nuptial_env.born_antara(on_antara_born)
     

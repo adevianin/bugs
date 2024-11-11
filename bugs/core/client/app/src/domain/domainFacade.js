@@ -173,8 +173,8 @@ class DomainFacade {
         return this._specieBuilderService.getMySpecie();
     }
 
-    prepareStarterPack() {
-        this._userService.prepareStarterPack();
+    bornNewAntara() {
+        this._userService.bornNewAntara();
     }
 
     _tryConnectMessageHandler() {

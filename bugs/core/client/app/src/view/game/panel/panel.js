@@ -17,7 +17,7 @@ class Panel extends BaseHTMLView {
         super(el);
 
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
-        this.$eventBus.on('prepareStarterPackBtnClick', this._onPrepareStarterPackBtnClick.bind(this));
+        this.$eventBus.on('bornNewAntaraBtnClick', this._onBornNewAntaraBtnClick.bind(this));
     }
 
     turnOn() {
@@ -60,7 +60,7 @@ class Panel extends BaseHTMLView {
         this._coloniesTab.showNestManagerFor(nest);
     }
 
-    _onPrepareStarterPackBtnClick() {
+    _onBornNewAntaraBtnClick() {
         this._tabSwitcher.activateTab('nuptial_flight');
     }
 

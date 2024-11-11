@@ -7,8 +7,11 @@ from core.world.entities.ant.base.ant import Ant
 from core.world.entities.action.nuptial_males_changed_action import NuptialMalesChangedAction
 from core.world.entities.ant.base.genetic.genome import Genome
 from core.world.settings import MUTATITON_PERCENT, SUPER_MUTATION_CHANCE_PERCENT, SUPER_MUTATION_PERCENT
-from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
-from typing import List
+from core.world.entities.ant.base.larva import Larva
+from core.world.entities.ant.base.ant_types import AntTypes
+from core.world.entities.world.birthers.requests.ant_requests.ant_birth_from_system_request import AntBirthFromSystemRequest
+from core.world.utils.point import Point
+from typing import List, Callable
 import random
 
 class NuptialEnvironment():
@@ -48,6 +51,12 @@ class NuptialEnvironment():
                 return male
         
         return None
+    
+    def born_antara(self, on_antara_born: Callable):
+        genome = self._specie.generate_antara_genome()
+        larva = Larva.build_new('Antara', AntTypes.QUEEN, genome)
+        position = Point(-100, -100)
+        self._event_bus.emit('ant_birth_request', AntBirthFromSystemRequest(larva, self._owner_id, position, callback=on_antara_born))
     
     def _generate_males(self, count = 3):
         self._males = []

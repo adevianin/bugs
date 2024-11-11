@@ -4,8 +4,8 @@ class UserApi {
         this._requester = requester;
     }
 
-    prepareStarterPack() {
-        return this._requester.post(`world/player/prepare_starter_pack`);
+    bornNewAntara() {
+        return this._requester.post(`world/player/born_new_antara`);
     }
 
 }

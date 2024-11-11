@@ -5,9 +5,9 @@ from core.world.world_facade import WorldFacade
 
 @require_POST
 @login_required     
-def prepare_starter_pack(request: HttpRequest):
+def born_new_antara(request: HttpRequest):
     wf = WorldFacade.get_instance()
 
-    wf.prepare_starter_pack_command(request.user.id)
+    wf.born_new_antara_command(request.user.id)
 
     return HttpResponse(status=200)

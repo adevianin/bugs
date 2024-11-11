@@ -224,8 +224,8 @@ class DomainFacade {
         return this._specieBuilderService.getMySpecie();
     }
 
-    prepareStarterPack() {
-        this._userService.prepareStarterPack();
+    bornNewAntara() {
+        this._userService.bornNewAntara();
     }
 
     _tryConnectMessageHandler() {
@@ -2831,8 +2831,8 @@ class UserService {
         this._notificationsContainer.pushNewNotification(action.notification);
     }
 
-    prepareStarterPack() {
-        this._userApi.prepareStarterPack();
+    bornNewAntara() {
+        this._userApi.bornNewAntara();
     }
 
 }
@@ -3535,8 +3535,8 @@ class UserApi {
         this._requester = requester;
     }
 
-    prepareStarterPack() {
-        return this._requester.post(`world/player/prepare_starter_pack`);
+    bornNewAntara() {
+        return this._requester.post(`world/player/born_new_antara`);
     }
 
 }
@@ -4607,7 +4607,7 @@ class Panel extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTM
         super(el);
 
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
-        this.$eventBus.on('prepareStarterPackBtnClick', this._onPrepareStarterPackBtnClick.bind(this));
+        this.$eventBus.on('bornNewAntaraBtnClick', this._onBornNewAntaraBtnClick.bind(this));
     }
 
     turnOn() {
@@ -4650,7 +4650,7 @@ class Panel extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTM
         this._coloniesTab.showNestManagerFor(nest);
     }
 
-    _onPrepareStarterPackBtnClick() {
+    _onBornNewAntaraBtnClick() {
         this._tabSwitcher.activateTab('nuptial_flight');
     }
 
@@ -4954,7 +4954,7 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         this._stopListenSelectedColonyChanged = this._coloniesList.events.on('selectedColonyChanged', this._manageSelectedColony.bind(this));
         this._stopListenColonyBorn = this.$domainFacade.events.on('colonyBorn', this._renderMode.bind(this));
         this._stopListenColonyDied = this.$domainFacade.events.on('colonyDied', this._renderMode.bind(this));
-        this._prepareStarterPackBtn.addEventListener('click', this._onPrepareStarterPackBtnClick.bind(this));
+        this._bornNewAntaraBtn.addEventListener('click', this._onBornNewAntaraBtnClick.bind(this));
         this._stopListenEntityDied = this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
         this._stopListenEntityBorn = this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
 
@@ -4969,14 +4969,14 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         this._el.innerHTML = _coloniesTab_html__WEBPACK_IMPORTED_MODULE_2__["default"];
 
         this._noColoniesPlaceholderEl = this._el.querySelector('[data-no-colonies-space-holder]');
-        this._prepareStarterPackBtn = this._el.querySelector('[data-prepare-starter-pack]');
+        this._bornNewAntaraBtn = this._el.querySelector('[data-born-new-antara]');
 
         this._coloniesList = new _coloniesList__WEBPACK_IMPORTED_MODULE_3__.ColoniesListView(this._el.querySelector('[data-colonies-list]'));
         this._colonyManager = new _colonyManager__WEBPACK_IMPORTED_MODULE_4__.ColonyManager(this._el.querySelector('[data-colony-manager]'));
 
         this._manageSelectedColony();
         this._renderMode();
-        this._renderPrepareStarterPackBtnState();
+        this._renderBornNewAntaraBtnState();
     }
 
     _manageSelectedColony() {
@@ -4996,8 +4996,8 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         }
     }
 
-    _renderPrepareStarterPackBtnState() {
-        this._prepareStarterPackBtn.classList.toggle('hidden', this.$domainFacade.isAnyMyAnt());
+    _renderBornNewAntaraBtnState() {
+        this._bornNewAntaraBtn.classList.toggle('hidden', this.$domainFacade.isAnyMyAnt());
     }
 
     remove() {
@@ -5011,20 +5011,20 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         this._stopListenEntityBorn();
     }
 
-    _onPrepareStarterPackBtnClick() {
-        this.$domainFacade.prepareStarterPack();
-        this.$eventBus.emit('prepareStarterPackBtnClick');
+    _onBornNewAntaraBtnClick() {
+        this.$domainFacade.bornNewAntara();
+        this.$eventBus.emit('bornNewAntaraBtnClick');
     }
 
     _onSomeoneDied(entity) {
         if (this.$domainFacade.isMyAnt(entity) ) {
-            this._renderPrepareStarterPackBtnState();
+            this._renderBornNewAntaraBtnState();
         }
     }
 
     _onSomeoneBorn(entity) {
         if (this.$domainFacade.isMyAnt(entity) ) {
-            this._renderPrepareStarterPackBtnState();
+            this._renderBornNewAntaraBtnState();
         }
     }
 
@@ -12295,7 +12295,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<ul data-colonies-list class=\"colonies-list\"></ul>\r\n<div data-colony-manager class=\"colony_manager\" ></div>\r\n<div data-no-colonies-space-holder>\r\n    немає колоній\r\n    <button data-prepare-starter-pack>народить нову королеву</button>\r\n</div>";
+var code = "<ul data-colonies-list class=\"colonies-list\"></ul>\r\n<div data-colony-manager class=\"colony_manager\" ></div>\r\n<div data-no-colonies-space-holder>\r\n    немає колоній\r\n    <button data-born-new-antara>народить нову королеву</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

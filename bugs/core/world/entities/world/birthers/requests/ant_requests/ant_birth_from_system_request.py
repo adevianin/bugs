@@ -2,16 +2,15 @@ from .ant_birth_request_types import AntBirthRequestTypes
 from .ant_birth_request import AntBirthRequest
 from core.world.entities.ant.base.larva import Larva
 from core.world.utils.point import Point
-
-from typing import Callable
+from core.world.entities.base.entity import Entity
+from typing import Callable, Any
 
 class AntBirthFromSystemRequest(AntBirthRequest):
 
-    def __init__(self, larva: Larva, owner_id: int, position: Point, callback: Callable):
-        super().__init__(AntBirthRequestTypes.FROM_SYSTEM, larva)
+    def __init__(self, larva: Larva, owner_id: int, position: Point, preborn_callback: Callable[[Entity], Any] = None, callback: Callable[[Entity], Any] = None):
+        super().__init__(AntBirthRequestTypes.FROM_SYSTEM, larva, preborn_callback, callback)
         self._owner_id = owner_id
         self._position = position
-        self._callback = callback
 
     @property
     def owner_id(self):

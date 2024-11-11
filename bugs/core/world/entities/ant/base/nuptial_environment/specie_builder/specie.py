@@ -43,6 +43,14 @@ class Specie():
         maternal_chromosome = self._chromosome_set.generate_chorosome_set(percent, super_mutate_chance, super_mutate_percent, super_gene)
         return Genome.build(maternal_chromosome, None)
     
+    def generate_antara_genome(self) -> Genome:
+        percent = 5
+        super_mutate_chance = 0
+        super_mutate_percent = 0
+        maternal_chromosome = self._chromosome_set.generate_chorosome_set(percent, super_mutate_chance, super_mutate_percent)
+        paternal_chromosome = self._chromosome_set.generate_chorosome_set(percent, super_mutate_chance, super_mutate_percent)
+        return Genome.build(maternal_chromosome, paternal_chromosome)
+    
     def apply_schema(self, schema: Dict[ChromosomeTypes, List[str]]):
         for chromosome_type in schema:
             ids = schema[chromosome_type]

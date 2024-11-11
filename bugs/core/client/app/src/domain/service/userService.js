@@ -17,8 +17,8 @@ class UserService {
         this._notificationsContainer.pushNewNotification(action.notification);
     }
 
-    prepareStarterPack() {
-        this._userApi.prepareStarterPack();
+    bornNewAntara() {
+        this._userApi.bornNewAntara();
     }
 
 }
