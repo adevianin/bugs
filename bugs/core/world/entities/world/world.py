@@ -8,7 +8,7 @@ from core.world.entities.colony.base.colony import Colony
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 from core.world.entities.base.entity_collection import EntityCollection
 from core.world.id_generator import IdGenerator
-from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
+from core.world.entities.colony.base.colony_relations_manager import ColonyRelationsManager
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.ground_beetle.ground_beetle_spawner import GroundBeetleSpawner
 from core.world.entities.action.colony_born_action import ColonyBornAction
@@ -28,8 +28,8 @@ from typing import List, Callable
 class World():
 
     def __init__(self, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: List[Colony], id_generator: IdGenerator, 
-                 colony_relations_table: ColonyRelationsTable, birthers, ground_beetle_spawner: GroundBeetleSpawner, nuptial_environments: List[NuptialEnvironment], 
-                 player_stats_list: List[PlayerStats], climate: Climate, sensor_handlers, current_step: int, notification_manager: NotificationManager):
+                 birthers, ground_beetle_spawner: GroundBeetleSpawner, nuptial_environments: List[NuptialEnvironment], 
+                 player_stats_list: List[PlayerStats], climate: Climate, sensor_handlers, current_step: int, managers):
         self._entities_collection = entities_collection
         self._map = map
         self._event_bus = event_bus
@@ -38,7 +38,7 @@ class World():
         self._world_loop_stop_flag = False
         self._is_world_running = False
         self._current_step = current_step
-        self._colony_relations_table = colony_relations_table
+        self._colony_relations_manager: ColonyRelationsManager = managers['colony_relations_manager']
         self._birthers = birthers
         self._ground_beetle_spawner = ground_beetle_spawner
         self._nuptial_environments = nuptial_environments
@@ -46,7 +46,7 @@ class World():
         self._climate = climate
         self._visual_sensor_handler: VisualSensorHandler = sensor_handlers['visual_sensor_handler']
         self._temperature_sensor_handler: TemperatureSensorHandler = sensor_handlers['temperature_sensor_handler']
-        self._notification_manager = notification_manager
+        self._notification_manager: NotificationManager = managers['notification_manager']
 
         self._event_bus.add_listener('colony_died', self._on_colony_died)
 
@@ -77,7 +77,7 @@ class World():
 
     @property
     def colony_relations_table(self):
-        return self._colony_relations_table
+        return self._colony_relations_manager.relations_table
     
     @property
     def nuptial_environments(self):

@@ -89,6 +89,7 @@ class PillageNestOperation(Operation):
 
     def _start_operation(self):
         super()._start_operation()
+        self._event_bus.emit('offensive_operation', self._hired_ants[0].from_colony_id, self._nest_to_pillage.from_colony_id)
         self._prepare_step()
 
     def _prepare_step(self):

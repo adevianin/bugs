@@ -20,6 +20,7 @@ from .sensor_handlers.visual_sensor_handler import VisualSensorHandler
 from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
 from .notification.notifications.notification import Notification
 from .notification.notification_manager import NotificationManager
+from core.world.entities.colony.base.colony_relations_manager import ColonyRelationsManager
 from .player_stats import PlayerStats
 
 from typing import List
@@ -48,8 +49,11 @@ class WorldFactory():
             'visual_sensor_handler': VisualSensorHandler(self._event_bus, map),
             'temperature_sensor_handler': TemperatureSensorHandler(climate)
         }
-        notification_manager = NotificationManager(self._event_bus, notifications)
-        
-        return World(entities_collection, map, self._event_bus, colonies, id_generator, colony_relations_table, birthers, ground_beetle_spawner, nuptial_environments, 
-                    player_stats_list, climate, sensor_handlers, current_step, notification_manager)
+        managers = {
+            'colony_relations_manager': ColonyRelationsManager(self._event_bus, colony_relations_table),
+            'notification_manager': NotificationManager(self._event_bus, notifications)
+        }
+
+        return World(entities_collection, map, self._event_bus, colonies, id_generator, birthers, ground_beetle_spawner, nuptial_environments, 
+                    player_stats_list, climate, sensor_handlers, current_step, managers)
     
