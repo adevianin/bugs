@@ -1,10 +1,12 @@
-from core.world.utils.event_emiter import EventEmitter
-from typing import List
+from typing import List, Dict
 
 class ColonyRelationsTable():
 
-    def __init__(self, event_bus: EventEmitter, relations_data: dict):
-        self._event_bus = event_bus
+    @staticmethod
+    def build(relations_data: Dict):
+        return ColonyRelationsTable(relations_data)
+
+    def __init__(self, relations_data: Dict):
         self._relations_data: List = relations_data
 
     @property

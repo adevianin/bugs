@@ -16,7 +16,7 @@ from core.data.deserializers.ground_beetle_deserializer import GroundBeetleDeser
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 from .notification_deserializer import NotificationDeserializer
 from .player_stats_deserializer import PlayerStatsDeserializer
-from .colony_relations_table_deserializer import ColonyRelationsDeserializer
+from .colony_relations_table_deserializer import ColonyRelationsTableDeserializer
 
 class WorldDeserializer():
 
@@ -24,7 +24,7 @@ class WorldDeserializer():
                  thought_deserializer: ThoughtDeserializer, map_deserializer: MapDeserializer, ground_beetle_deserializer: GroundBeetleDeserializer, 
                  item_deserializer: ItemDeserializer, item_source_deserializer: ItemSourceDeserializer, item_area_deserializer: ItemAreaDeserializer, 
                  nuptial_environment_deserializer: NuptialEnvironmentDeserializer, climate_deserializer: ClimateDeserializer, notification_deserializer: NotificationDeserializer,
-                 player_stats_deserializer: PlayerStatsDeserializer, colony_relations_table_deserializer: ColonyRelationsDeserializer):
+                 player_stats_deserializer: PlayerStatsDeserializer, colony_relations_table_deserializer: ColonyRelationsTableDeserializer):
         self._nest_deserializer = nest_deserializer
         self._ant_deserializer = ant_deserializer
         self._colony_deserializer = colony_deserializer
