@@ -23,6 +23,7 @@ from core.data.deserializers.climate_deserializer import ClimateDeserializer
 from core.data.deserializers.notification_deserializer import NotificationDeserializer
 from core.data.deserializers.death_record_deserializer import DeathRecordDeserializer
 from core.data.deserializers.player_stats_deserializer import PlayerStatsDeserializer
+from core.data.deserializers.colony_relations_table_deserializer import ColonyRelationsDeserializer
 from core.data.deserializers.world_deserializer import WorldDeserializer
 
 from core.data.serializers.larva_serializer import LarvaSerializer
@@ -67,6 +68,7 @@ from core.world.entities.item.item_sources.item_source_factory import ItemSource
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory
 from core.world.entities.climate.climate_factory import ClimateFactory
 from core.world.entities.world.player_stats_factory import PlayerStatsFactory
+from core.world.entities.colony.base.colony_relations_table_factory import ColonyRelationsTableFactory
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment_factory import NuptialEnvironmentFactory
 
 from core.world.services.player_service import PlayerService
@@ -118,6 +120,7 @@ def start():
     climate_factory = ClimateFactory(event_bus)
     player_stats_factory = PlayerStatsFactory(event_bus)
     nuptial_environment_factory = NuptialEnvironmentFactory(event_bus)
+    colony_relations_table_factory = ColonyRelationsTableFactory(event_bus)
     world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ground_beetle_factory)
     
     genes_serializer = GenesSerializer()
@@ -166,9 +169,10 @@ def start():
     death_record_deserializer = DeathRecordDeserializer()
     notification_deserializer = NotificationDeserializer(death_record_deserializer)
     player_stats_deserializer = PlayerStatsDeserializer(player_stats_factory)
+    colony_relations_table_deserializer = ColonyRelationsDeserializer(colony_relations_table_factory)
     world_deserializer = WorldDeserializer(world_factory, nest_deserializer, ant_deserializer, colony_deserializer, thought_deserializer, map_deserializer, 
                                            ground_beetle_deserializer, item_deserializer, item_source_deserializer, item_area_deserializer, nuptial_environment_deserializer, 
-                                           climate_deserializer, notification_deserializer, player_stats_deserializer)
+                                           climate_deserializer, notification_deserializer, player_stats_deserializer, colony_relations_table_deserializer)
     
     world_data_repository = WorldDataRepository()
     world_repository = WorldRepository(world_data_repository, world_serializer, world_deserializer)

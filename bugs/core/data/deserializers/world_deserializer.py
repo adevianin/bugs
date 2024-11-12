@@ -16,6 +16,7 @@ from core.data.deserializers.ground_beetle_deserializer import GroundBeetleDeser
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 from .notification_deserializer import NotificationDeserializer
 from .player_stats_deserializer import PlayerStatsDeserializer
+from .colony_relations_table_deserializer import ColonyRelationsDeserializer
 
 class WorldDeserializer():
 
@@ -23,7 +24,7 @@ class WorldDeserializer():
                  thought_deserializer: ThoughtDeserializer, map_deserializer: MapDeserializer, ground_beetle_deserializer: GroundBeetleDeserializer, 
                  item_deserializer: ItemDeserializer, item_source_deserializer: ItemSourceDeserializer, item_area_deserializer: ItemAreaDeserializer, 
                  nuptial_environment_deserializer: NuptialEnvironmentDeserializer, climate_deserializer: ClimateDeserializer, notification_deserializer: NotificationDeserializer,
-                 player_stats_deserializer: PlayerStatsDeserializer):
+                 player_stats_deserializer: PlayerStatsDeserializer, colony_relations_table_deserializer: ColonyRelationsDeserializer):
         self._nest_deserializer = nest_deserializer
         self._ant_deserializer = ant_deserializer
         self._colony_deserializer = colony_deserializer
@@ -37,6 +38,7 @@ class WorldDeserializer():
         self._climate_deserializer = climate_deserializer
         self._notification_deserializer = notification_deserializer
         self._player_stats_deserializer = player_stats_deserializer
+        self._colony_relations_table_deserializer = colony_relations_table_deserializer
         self._world_factory = world_factory
         
 
@@ -83,7 +85,7 @@ class WorldDeserializer():
             entity.set_thoughts(thoughts)
 
         map = self._map_deserializer.deserialize_map(world_json['map'], entities_collection)
-        colony_relations_table = ColonyRelationsTable.build_colony_relations_table(world_json['colonies_relations'])
+        colony_relations_table = self._colony_relations_table_deserializer.deserialize(world_json['colonies_relations'])
 
         colonies_json = world_json['colonies']
         colonies = []
