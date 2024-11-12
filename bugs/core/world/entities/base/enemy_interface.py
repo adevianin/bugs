@@ -15,6 +15,16 @@ class iEnemy(ABC):
 
     @property
     @abstractmethod
+    def from_colony_id(self):
+        pass
+
+    @property
+    @abstractmethod
+    def type(self):
+        pass
+
+    @property
+    @abstractmethod
     def is_died(self):
         pass
 

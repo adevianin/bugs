@@ -4,7 +4,7 @@ from core.world.entities.colony.base.relation_tester import RelationTester
 from core.world.entities.map.map import Map
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.colony.base.colony import Colony
-from core.world.entities.base.entity_types import EntityTypes
+from core.world.entities.base.entity_types import EntityTypes, EntityTypesPack
 from core.world.entities.base.entity import Entity
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.base.enemy_interface import iEnemy
@@ -116,7 +116,7 @@ class AntColony(Colony):
         all_enemies_positions = []
         for nest in my_nests:
             enemies_filter: Callable[[Entity], bool] = lambda entity: self._relation_tester.is_enemy(entity)
-            enemies: List[iEnemy] = self._map.find_entities_near(point=nest.position, max_distance=nest.area, filter=enemies_filter)
+            enemies: List[iEnemy] = self._map.find_entities_near(entity_types=EntityTypesPack.LIVE_ENTITIES, point=nest.position, max_distance=nest.area, filter=enemies_filter)
 
             enemies_count = len(enemies)
             enemies_positions = [enemy.position for enemy in enemies]
