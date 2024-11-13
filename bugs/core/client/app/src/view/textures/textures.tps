@@ -310,6 +310,21 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">images/tree_summer.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>116,125,231,250</rect>
+                <key>scale9Paddings</key>
+                <rect>116,125,231,250</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
         </map>
         <key>fileLists</key>
         <map type="SpriteSheetMap">
@@ -384,6 +399,7 @@
                     <filename>images/ant_male_dead.png</filename>
                     <filename>images/item_stick_1v.png</filename>
                     <filename>images/item_stick_2v.png</filename>
+                    <filename>images/tree_summer.png</filename>
                 </array>
             </struct>
         </map>

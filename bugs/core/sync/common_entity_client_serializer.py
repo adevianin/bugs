@@ -6,17 +6,20 @@ from .ground_beetle_client_serializer import GroundBeetleClientSerializer
 from .ant_client_serializer import AntClientSerializer
 from core.world.entities.base.entity import Entity
 from core.world.entities.base.entity_types import EntityTypes
+from .tree_client_serializer import TreeClientSerializer
 
 class CommonEntityClientSerializer():
 
     def __init__(self, item_serializer: ItemClientSerializer, item_source_serializer: ItemSourceClientSerializer, item_area_serializer: ItemAreaClientSerializer, 
-                 nest_serializer: NestClientSerializer, ground_beetle_serializer: GroundBeetleClientSerializer, ant_serializer: AntClientSerializer) :
+                 nest_serializer: NestClientSerializer, ground_beetle_serializer: GroundBeetleClientSerializer, ant_serializer: AntClientSerializer, 
+                 tree_serializer: TreeClientSerializer) :
         self._item_serializer = item_serializer
         self._item_source_serializer = item_source_serializer
         self._item_area_serializer = item_area_serializer
         self._nest_serializer = nest_serializer
         self._ground_beetle_serializer = ground_beetle_serializer
         self._ant_serializer = ant_serializer
+        self._tree_serializer = tree_serializer
 
     def serialize(self, entity: Entity):
          match(entity.type):
@@ -32,5 +35,7 @@ class CommonEntityClientSerializer():
                 return self._ground_beetle_serializer.serialize(entity)
             case EntityTypes.ANT:
                 return self._ant_serializer.serialize(entity)
+            case EntityTypes.TREE:
+                return self._tree_serializer.serialize(entity)
             case _:
                 raise Exception('unknown entity type')

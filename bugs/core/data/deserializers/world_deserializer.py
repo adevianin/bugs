@@ -17,6 +17,7 @@ from core.world.entities.base.live_entity.live_entity import LiveEntity
 from .notification_deserializer import NotificationDeserializer
 from .player_stats_deserializer import PlayerStatsDeserializer
 from .colony_relations_table_deserializer import ColonyRelationsTableDeserializer
+from .tree_deserializer import TreeDeserializer
 
 class WorldDeserializer():
 
@@ -24,7 +25,7 @@ class WorldDeserializer():
                  thought_deserializer: ThoughtDeserializer, map_deserializer: MapDeserializer, ground_beetle_deserializer: GroundBeetleDeserializer, 
                  item_deserializer: ItemDeserializer, item_source_deserializer: ItemSourceDeserializer, item_area_deserializer: ItemAreaDeserializer, 
                  nuptial_environment_deserializer: NuptialEnvironmentDeserializer, climate_deserializer: ClimateDeserializer, notification_deserializer: NotificationDeserializer,
-                 player_stats_deserializer: PlayerStatsDeserializer, colony_relations_table_deserializer: ColonyRelationsTableDeserializer):
+                 player_stats_deserializer: PlayerStatsDeserializer, colony_relations_table_deserializer: ColonyRelationsTableDeserializer, tree_deserializer: TreeDeserializer):
         self._nest_deserializer = nest_deserializer
         self._ant_deserializer = ant_deserializer
         self._colony_deserializer = colony_deserializer
@@ -39,11 +40,17 @@ class WorldDeserializer():
         self._notification_deserializer = notification_deserializer
         self._player_stats_deserializer = player_stats_deserializer
         self._colony_relations_table_deserializer = colony_relations_table_deserializer
+        self._tree_deserializer = tree_deserializer
         self._world_factory = world_factory
         
 
     def deserialize(self, world_json: dict) -> World:
         entities_collection = EntityCollection.build_entity_collection()
+
+        trees_data = world_json['trees']
+        for tree_data in trees_data:
+            tree = self._tree_deserializer.deserialize(tree_data)
+            entities_collection.add_entity(tree)
 
         nests_data = world_json['nests']
         for nest_data in nests_data:

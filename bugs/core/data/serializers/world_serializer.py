@@ -15,6 +15,7 @@ from .thought_serializer import ThoughtSerializer
 from .notification_serializer import NotificationSerializer
 from core.world.entities.base.entity import Entity
 from .player_stats_serializer import PlayerStatsSerializer
+from .tree_serializer import TreeSerializer
 
 from typing import List, Dict
 
@@ -23,7 +24,8 @@ class WorldSerializer():
     def __init__(self, nest_serializer: NestSerializer, ant_serializer: AntSerializer, item_serializer: ItemSerializer, item_area_serializer: ItemAreaSerializer, 
                  item_source_serializer: ItemSourceSerializer, colony_serializer: ColonySerializer, colony_relations_table_serializer: ColonyRelationsTableSerializer, 
                  ground_beetle_serializer: GroundBeetleSerializer, nuptial_environment_serializer: NuptialEnvironmentSerializer, climate_serializer: ClimateSerializer, 
-                 thought_serializer: ThoughtSerializer, notification_serializer: NotificationSerializer, player_stats_serializer: PlayerStatsSerializer):
+                 thought_serializer: ThoughtSerializer, notification_serializer: NotificationSerializer, player_stats_serializer: PlayerStatsSerializer, 
+                 tree_serializer: TreeSerializer):
         self._nest_serializer = nest_serializer
         self._ant_serializer = ant_serializer
         self._colony_serializer = colony_serializer
@@ -37,9 +39,11 @@ class WorldSerializer():
         self._thought_serializer = thought_serializer
         self._notification_serializer = notification_serializer
         self._player_stats_serializer = player_stats_serializer
+        self._tree_serializer = tree_serializer
 
     def serialize(self, world: World):
         json = {
+            'trees': [],
             'nests': [],
             'ants': [],
             'ground_beetles': [],
@@ -63,6 +67,10 @@ class WorldSerializer():
 
         entities = world.map.get_all_entities()
         entities = self._sort_entities_by_type(entities)
+
+        trees = entities.get(EntityTypes.TREE, [])
+        for tree in trees:
+            json['trees'].append(self._tree_serializer.serialize(tree))
 
         nests = entities.get(EntityTypes.NEST, [])
         for nest in nests:

@@ -8,6 +8,7 @@ import { GroundBeetleView } from './entitiesViews/groundBeetleView';
 import { ItemView } from './entitiesViews/itemView';
 import { ItemSourceView } from './entitiesViews/itemSourceView';
 import { ItemAreaView } from './entitiesViews/itemAreaView';
+import { TreeView } from './entitiesViews/treeView';
 
 class WorldView extends BaseGraphicView {
 
@@ -40,6 +41,7 @@ class WorldView extends BaseGraphicView {
         this._nestContainer = new PIXI.Container();
         this._itemAreaContainer = new PIXI.Container();
         this._itemSourceContainer = new PIXI.Container();
+        this._treesContainer = new PIXI.Container();
         this._markersContainer = new PIXI.Container();
 
         this._container.addChild(this._bg);
@@ -50,6 +52,7 @@ class WorldView extends BaseGraphicView {
         this._container.addChild(this._groundBeetleContainer);
         this._container.addChild(this._bigContainer);
         this._container.addChild(this._itemSourceContainer);
+        this._container.addChild(this._treesContainer);
         this._container.addChild(this._markersContainer);
 
         this._markerManager = new MarkerManagerView(this._markersContainer);
@@ -95,6 +98,9 @@ class WorldView extends BaseGraphicView {
                 break;
             case EntityTypes.ITEM_AREA:
                 view = new ItemAreaView(entity, this._itemAreaContainer);
+                break;
+            case EntityTypes.TREE:
+                view = new TreeView(entity, this._treesContainer);
                 break;
             default:
                 throw 'unknown type of entity';

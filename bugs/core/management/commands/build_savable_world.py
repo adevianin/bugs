@@ -1355,6 +1355,20 @@ class Command(BaseCommand):
             #     "is_auto_thought_generation": True
             # },
         ],
+        "trees": [
+            {
+                "id": 70,
+                "type":"tree",
+                "from_colony_id":None,
+                "owner_id": None,
+                "hp": 1000,
+                "position":[
+                    400,
+                    500
+                ],
+                "angle": 0
+            }
+        ],
         "colonies":[
             {
                 "id":1,

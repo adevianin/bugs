@@ -4,7 +4,8 @@ const EntityTypes = {
     NEST: 'nest',
     ITEM: 'item',
     ITEM_SOURCE: 'item_source',
-    ITEM_AREA: 'item_area'
+    ITEM_AREA: 'item_area',
+    TREE: 'tree'
 }
 
 export {

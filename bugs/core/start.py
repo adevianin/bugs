@@ -24,6 +24,7 @@ from core.data.deserializers.notification_deserializer import NotificationDeseri
 from core.data.deserializers.death_record_deserializer import DeathRecordDeserializer
 from core.data.deserializers.player_stats_deserializer import PlayerStatsDeserializer
 from core.data.deserializers.colony_relations_table_deserializer import ColonyRelationsTableDeserializer
+from core.data.deserializers.tree_deserializer import TreeDeserializer
 from core.data.deserializers.world_deserializer import WorldDeserializer
 
 from core.data.serializers.larva_serializer import LarvaSerializer
@@ -48,6 +49,7 @@ from core.data.serializers.climate_serializer import ClimateSerializer
 from core.data.serializers.notification_serializer import NotificationSerializer
 from core.data.serializers.death_record_serializer import DeathRecordSerializer
 from core.data.serializers.player_stats_serializer import PlayerStatsSerializer
+from core.data.serializers.tree_serializer import TreeSerializer
 
 from core.world.world_facade import WorldFacade
 from core.world.utils.event_emiter import EventEmitter
@@ -69,6 +71,7 @@ from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactor
 from core.world.entities.climate.climate_factory import ClimateFactory
 from core.world.entities.world.player_stats_factory import PlayerStatsFactory
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment_factory import NuptialEnvironmentFactory
+from core.world.entities.tree.tree_factory import TreeFactory
 
 from core.world.services.player_service import PlayerService
 from core.world.services.colony_service import ColonyService
@@ -98,6 +101,7 @@ from core.sync.climate_client_serializer import ClimateClientSerializer
 from core.sync.constants_client_serializer import ConstantsClientSerializer
 from core.sync.notification_client_serializer import NotificationClientSerializer
 from core.sync.death_record_client_serializer import DeathRecordClientSerializer
+from core.sync.tree_client_serializer import TreeClientSerializer
 
 from core.world.my_test_env import MY_TEST_ENV
 
@@ -119,6 +123,7 @@ def start():
     climate_factory = ClimateFactory(event_bus)
     player_stats_factory = PlayerStatsFactory(event_bus)
     nuptial_environment_factory = NuptialEnvironmentFactory(event_bus)
+    tree_factory = TreeFactory(event_bus)
     world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ground_beetle_factory)
     
     genes_serializer = GenesSerializer()
@@ -142,9 +147,10 @@ def start():
     death_record_serializer = DeathRecordSerializer()
     notification_serializer = NotificationSerializer(death_record_serializer)
     player_stats_serializer = PlayerStatsSerializer()
+    tree_serializer = TreeSerializer()
     world_serializer = WorldSerializer(nest_serializer, ant_serializer, item_serializer, item_area_serializer, item_source_serializer, colony_serializer, 
                                        colony_relations_table_serializer, ground_beetle_serializer, nuptial_environment_serializer, climate_serializer, 
-                                       thought_serializer, notification_serializer, player_stats_serializer)
+                                       thought_serializer, notification_serializer, player_stats_serializer, tree_serializer)
 
     gene_deserializer = GeneDeserializer()
     genome_deserializer = GenomeDeserializer(gene_deserializer)
@@ -168,9 +174,10 @@ def start():
     notification_deserializer = NotificationDeserializer(death_record_deserializer)
     player_stats_deserializer = PlayerStatsDeserializer(player_stats_factory)
     colony_relations_table_deserializer = ColonyRelationsTableDeserializer()
+    tree_deserializer = TreeDeserializer(tree_factory)
     world_deserializer = WorldDeserializer(world_factory, nest_deserializer, ant_deserializer, colony_deserializer, thought_deserializer, map_deserializer, 
                                            ground_beetle_deserializer, item_deserializer, item_source_deserializer, item_area_deserializer, nuptial_environment_deserializer, 
-                                           climate_deserializer, notification_deserializer, player_stats_deserializer, colony_relations_table_deserializer)
+                                           climate_deserializer, notification_deserializer, player_stats_deserializer, colony_relations_table_deserializer, tree_deserializer)
     
     world_data_repository = WorldDataRepository()
     world_repository = WorldRepository(world_data_repository, world_serializer, world_deserializer)
@@ -196,8 +203,9 @@ def start():
     nest_client_serializer = NestClientSerializer(util_client_serializer, larva_client_serializer, egg_client_serializer)
     ground_beetle_client_serializer = GroundBeetleClientSerializer(util_client_serializer)
     ant_client_serializer = AntClientSerializer(util_client_serializer, stats_client_serializer, genome_client_serializer)
+    tree_client_serializer = TreeClientSerializer(util_client_serializer)
     common_entity_client_serializer = CommonEntityClientSerializer(item_client_serializer, item_source_client_serializer, item_area_client_serializer, nest_client_serializer, 
-                                                                   ground_beetle_client_serializer, ant_client_serializer)
+                                                                   ground_beetle_client_serializer, ant_client_serializer, tree_client_serializer)
     climate_client_serializer = ClimateClientSerializer()
     world_client_serializer = WorldClientSerializer(common_entity_client_serializer, colony_client_serializer, climate_client_serializer)
     death_record_client_serializer = DeathRecordClientSerializer(util_client_serializer)

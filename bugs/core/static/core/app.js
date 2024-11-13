@@ -8,7 +8,7 @@
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
-module.exports = __webpack_require__.p + "73ab50ce492f152974ab.png";
+module.exports = __webpack_require__.p + "4f75389932a82535a0d2.png";
 
 /***/ }),
 
@@ -2035,6 +2035,33 @@ class SpecieFactory {
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/domain/entity/tree.js":
+/*!********************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/tree.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Tree": () => (/* binding */ Tree)
+/* harmony export */ });
+/* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./bugs/core/client/app/src/domain/entity/entity.js");
+/* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+
+
+
+class Tree extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
+
+    constructor(eventBus, id, position, angle, fromColony, ownerId, hp, maxHp) {
+        super(eventBus, id, position, angle, _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.TREE, fromColony, ownerId, hp, maxHp);
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/entity/world.js":
 /*!*********************************************************!*\
   !*** ./bugs/core/client/app/src/domain/entity/world.js ***!
@@ -2316,7 +2343,8 @@ const EntityTypes = {
     NEST: 'nest',
     ITEM: 'item',
     ITEM_SOURCE: 'item_source',
-    ITEM_AREA: 'item_area'
+    ITEM_AREA: 'item_area',
+    TREE: 'tree'
 }
 
 
@@ -2985,6 +3013,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_genetic_genome__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./entity/genetic/genome */ "./bugs/core/client/app/src/domain/entity/genetic/genome.js");
 /* harmony import */ var _entity_nuptialMale__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./entity/nuptialMale */ "./bugs/core/client/app/src/domain/entity/nuptialMale.js");
 /* harmony import */ var _entity_climate__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./entity/climate */ "./bugs/core/client/app/src/domain/entity/climate.js");
+/* harmony import */ var _entity_tree__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./entity/tree */ "./bugs/core/client/app/src/domain/entity/tree.js");
+
 
 
 
@@ -3026,6 +3056,8 @@ class WorldFactory {
                     entityJson.item_type, entityJson.is_fertile);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM_AREA:
                 return this.buildItemArea(entityJson.id, entityJson.position, entityJson.angle, entityJson.hp, entityJson.max_hp);
+            case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.TREE:
+                return this.buildTree(entityJson);
             default:
                 throw 'unknown type of entity';
         }
@@ -3110,6 +3142,17 @@ class WorldFactory {
             default:
                 throw 'unknown type of ant';
         }
+    }
+
+    buildTree(treeJson) {
+        let id = treeJson.id;
+        let position = treeJson.position;
+        let angle = treeJson.angle;
+        let fromColony = treeJson.fromColony;
+        let ownerId = treeJson.ownerId;
+        let hp = treeJson.hp;
+        let maxHp = treeJson.maxHp;
+        return new _entity_tree__WEBPACK_IMPORTED_MODULE_15__.Tree(this._mainEventBus, id, position, angle, fromColony, ownerId, hp, maxHp);
     }
 
     buildAntColony(id, owner_id, operations, queenId) {
@@ -8998,6 +9041,61 @@ class PickedItemView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/game/world/entitiesViews/treeView.js":
+/*!****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/world/entitiesViews/treeView.js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "TreeView": () => (/* binding */ TreeView)
+/* harmony export */ });
+/* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/entityView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
+
+
+class TreeView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
+
+    constructor(entity, entityContainer) {
+        super(entity, entityContainer);
+
+        this._render();
+
+        this._bodyContainer.on('mouseover', this._onMouseover.bind(this));
+        this._bodyContainer.on('mouseout', this._onMouseout.bind(this));
+    }
+
+    _render() {
+        this._bodyContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._bodyContainer.eventMode = 'static';
+        this._entityContainer.addChild(this._bodyContainer);
+
+        this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`tree_summer.png`));
+        this._bodyContainer.addChild(this._sprite);
+
+        this._entityContainer.x = this._entity.position.x;
+        this._entityContainer.y = this._entity.position.y;
+
+        this._entityContainer.pivot.x = this._sprite.width / 2;
+        this._entityContainer.pivot.y = this._sprite.height;
+    }
+
+    _onMouseover() {
+        this._bodyContainer.alpha = 0.5;
+    }
+
+    _onMouseout() {
+        this._bodyContainer.alpha = 1;
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/game/world/index.js":
 /*!***********************************************************!*\
   !*** ./bugs/core/client/app/src/view/game/world/index.js ***!
@@ -9392,6 +9490,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entitiesViews_itemView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entitiesViews/itemView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/itemView.js");
 /* harmony import */ var _entitiesViews_itemSourceView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entitiesViews/itemSourceView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/itemSourceView.js");
 /* harmony import */ var _entitiesViews_itemAreaView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entitiesViews/itemAreaView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/itemAreaView.js");
+/* harmony import */ var _entitiesViews_treeView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entitiesViews/treeView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/treeView.js");
+
 
 
 
@@ -9434,6 +9534,7 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._nestContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._itemAreaContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._itemSourceContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+        this._treesContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._markersContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
 
         this._container.addChild(this._bg);
@@ -9444,6 +9545,7 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._container.addChild(this._groundBeetleContainer);
         this._container.addChild(this._bigContainer);
         this._container.addChild(this._itemSourceContainer);
+        this._container.addChild(this._treesContainer);
         this._container.addChild(this._markersContainer);
 
         this._markerManager = new _markerManager_markerManagerView__WEBPACK_IMPORTED_MODULE_5__.MarkerManagerView(this._markersContainer);
@@ -9489,6 +9591,9 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.ITEM_AREA:
                 view = new _entitiesViews_itemAreaView__WEBPACK_IMPORTED_MODULE_9__.ItemAreaView(entity, this._itemAreaContainer);
+                break;
+            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.TREE:
+                view = new _entitiesViews_treeView__WEBPACK_IMPORTED_MODULE_10__.TreeView(entity, this._treesContainer);
                 break;
             default:
                 throw 'unknown type of entity';
@@ -51129,7 +51234,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"frames":{"ant_male_1.png":{"frame":{"x":0,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_2.png":{"frame":{"x":32,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_3.png":{"frame":{"x":64,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_4.png":{"frame":{"x":96,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_5.png":{"frame":{"x":0,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_6.png":{"frame":{"x":32,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_7.png":{"frame":{"x":64,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_8.png":{"frame":{"x":96,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_dead.png":{"frame":{"x":0,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_1.png":{"frame":{"x":32,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_2.png":{"frame":{"x":64,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_3.png":{"frame":{"x":96,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_4.png":{"frame":{"x":0,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_5.png":{"frame":{"x":32,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_6.png":{"frame":{"x":64,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_7.png":{"frame":{"x":96,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_8.png":{"frame":{"x":0,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_dead.png":{"frame":{"x":32,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_1.png":{"frame":{"x":64,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_2.png":{"frame":{"x":96,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_3.png":{"frame":{"x":0,"y":160,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_4.png":{"frame":{"x":32,"y":160,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_5.png":{"frame":{"x":64,"y":160,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_6.png":{"frame":{"x":96,"y":160,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_7.png":{"frame":{"x":0,"y":192,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_8.png":{"frame":{"x":32,"y":192,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_dead.png":{"frame":{"x":64,"y":192,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_1.png":{"frame":{"x":96,"y":192,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_2.png":{"frame":{"x":0,"y":224,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_3.png":{"frame":{"x":32,"y":224,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_4.png":{"frame":{"x":64,"y":224,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_5.png":{"frame":{"x":96,"y":224,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_6.png":{"frame":{"x":0,"y":256,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_7.png":{"frame":{"x":32,"y":256,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_8.png":{"frame":{"x":64,"y":256,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_dead.png":{"frame":{"x":96,"y":256,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"grass.png":{"frame":{"x":0,"y":585,"w":64,"h":64},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":64,"h":64},"sourceSize":{"w":64,"h":64}},"ground_beetle_1.png":{"frame":{"x":0,"y":288,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_2.png":{"frame":{"x":32,"y":288,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_3.png":{"frame":{"x":64,"y":288,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_4.png":{"frame":{"x":96,"y":288,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_5.png":{"frame":{"x":0,"y":320,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_6.png":{"frame":{"x":32,"y":320,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_7.png":{"frame":{"x":64,"y":320,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_8.png":{"frame":{"x":96,"y":320,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_dead.png":{"frame":{"x":0,"y":352,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_ant_food_1v.png":{"frame":{"x":32,"y":352,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_flower_1v.png":{"frame":{"x":64,"y":352,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_flower_2v.png":{"frame":{"x":96,"y":352,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_flower_3v.png":{"frame":{"x":0,"y":384,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_ground_beetle_corpse_1v.png":{"frame":{"x":40,"y":520,"w":45,"h":65},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":45,"h":65},"sourceSize":{"w":45,"h":65}},"item_honeydew_1v.png":{"frame":{"x":32,"y":384,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_1v.png":{"frame":{"x":64,"y":384,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_2v.png":{"frame":{"x":96,"y":384,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_3v.png":{"frame":{"x":0,"y":416,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_4v.png":{"frame":{"x":32,"y":416,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_source_honeydew.png":{"frame":{"x":0,"y":649,"w":90,"h":110},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":90,"h":110},"sourceSize":{"w":90,"h":110}},"item_source_honeydew_not_fertile.png":{"frame":{"x":0,"y":759,"w":90,"h":110},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":90,"h":110},"sourceSize":{"w":90,"h":110}},"item_stick_1v.png":{"frame":{"x":0,"y":480,"w":38,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":38,"h":32},"sourceSize":{"w":38,"h":32}},"item_stick_2v.png":{"frame":{"x":64,"y":416,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_cross.png":{"frame":{"x":96,"y":416,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_eat.png":{"frame":{"x":0,"y":448,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_pillage.png":{"frame":{"x":32,"y":448,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_pointer.png":{"frame":{"x":64,"y":448,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"nest.png":{"frame":{"x":38,"y":480,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}},"nest_building.png":{"frame":{"x":78,"y":480,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}},"nest_destroyed.png":{"frame":{"x":0,"y":520,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}}},"animations":{"ant_male":["ant_male_1.png","ant_male_2.png","ant_male_3.png","ant_male_4.png","ant_male_5.png","ant_male_6.png","ant_male_7.png","ant_male_8.png"],"ant_queen":["ant_queen_1.png","ant_queen_2.png","ant_queen_3.png","ant_queen_4.png","ant_queen_5.png","ant_queen_6.png","ant_queen_7.png","ant_queen_8.png"],"ant_warrior":["ant_warrior_1.png","ant_warrior_2.png","ant_warrior_3.png","ant_warrior_4.png","ant_warrior_5.png","ant_warrior_6.png","ant_warrior_7.png","ant_warrior_8.png"],"ant_worker":["ant_worker_1.png","ant_worker_2.png","ant_worker_3.png","ant_worker_4.png","ant_worker_5.png","ant_worker_6.png","ant_worker_7.png","ant_worker_8.png"],"ground_beetle":["ground_beetle_1.png","ground_beetle_2.png","ground_beetle_3.png","ground_beetle_4.png","ground_beetle_5.png","ground_beetle_6.png","ground_beetle_7.png","ground_beetle_8.png"]},"meta":{"app":"https://www.codeandweb.com/texturepacker","version":"1.1","image":"world_spritesheet.png","format":"RGBA8888","size":{"w":128,"h":869},"scale":"1","smartupdate":"$TexturePacker:SmartUpdate:aae97e026c918f94386d3b98528e46f3:2aa0ffc56ef2bcb4edfd09098b78a6b3:2b831dbdc2ad4f91b77d89d68a6c0718$"}}');
+module.exports = JSON.parse('{"frames":{"ant_male_1.png":{"frame":{"x":0,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_2.png":{"frame":{"x":32,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_3.png":{"frame":{"x":64,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_4.png":{"frame":{"x":96,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_5.png":{"frame":{"x":128,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_6.png":{"frame":{"x":160,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_7.png":{"frame":{"x":192,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_8.png":{"frame":{"x":224,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_dead.png":{"frame":{"x":256,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_1.png":{"frame":{"x":288,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_2.png":{"frame":{"x":320,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_3.png":{"frame":{"x":352,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_4.png":{"frame":{"x":384,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_5.png":{"frame":{"x":416,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_6.png":{"frame":{"x":448,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_7.png":{"frame":{"x":0,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_8.png":{"frame":{"x":32,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_dead.png":{"frame":{"x":64,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_1.png":{"frame":{"x":96,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_2.png":{"frame":{"x":128,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_3.png":{"frame":{"x":160,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_4.png":{"frame":{"x":192,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_5.png":{"frame":{"x":224,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_6.png":{"frame":{"x":256,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_7.png":{"frame":{"x":288,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_8.png":{"frame":{"x":320,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_dead.png":{"frame":{"x":352,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_1.png":{"frame":{"x":384,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_2.png":{"frame":{"x":416,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_3.png":{"frame":{"x":448,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_4.png":{"frame":{"x":0,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_5.png":{"frame":{"x":32,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_6.png":{"frame":{"x":64,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_7.png":{"frame":{"x":96,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_8.png":{"frame":{"x":128,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_dead.png":{"frame":{"x":160,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"grass.png":{"frame":{"x":203,"y":128,"w":64,"h":64},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":64,"h":64},"sourceSize":{"w":64,"h":64}},"ground_beetle_1.png":{"frame":{"x":192,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_2.png":{"frame":{"x":224,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_3.png":{"frame":{"x":256,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_4.png":{"frame":{"x":288,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_5.png":{"frame":{"x":320,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_6.png":{"frame":{"x":352,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_7.png":{"frame":{"x":384,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_8.png":{"frame":{"x":416,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_dead.png":{"frame":{"x":448,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_ant_food_1v.png":{"frame":{"x":0,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_flower_1v.png":{"frame":{"x":32,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_flower_2v.png":{"frame":{"x":64,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_flower_3v.png":{"frame":{"x":96,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_ground_beetle_corpse_1v.png":{"frame":{"x":158,"y":128,"w":45,"h":65},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":45,"h":65},"sourceSize":{"w":45,"h":65}},"item_honeydew_1v.png":{"frame":{"x":128,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_1v.png":{"frame":{"x":160,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_2v.png":{"frame":{"x":192,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_3v.png":{"frame":{"x":224,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_4v.png":{"frame":{"x":256,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_source_honeydew.png":{"frame":{"x":267,"y":128,"w":90,"h":110},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":90,"h":110},"sourceSize":{"w":90,"h":110}},"item_source_honeydew_not_fertile.png":{"frame":{"x":357,"y":128,"w":90,"h":110},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":90,"h":110},"sourceSize":{"w":90,"h":110}},"item_stick_1v.png":{"frame":{"x":0,"y":128,"w":38,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":38,"h":32},"sourceSize":{"w":38,"h":32}},"item_stick_2v.png":{"frame":{"x":288,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_cross.png":{"frame":{"x":320,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_eat.png":{"frame":{"x":352,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_pillage.png":{"frame":{"x":384,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_pointer.png":{"frame":{"x":416,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"nest.png":{"frame":{"x":38,"y":128,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}},"nest_building.png":{"frame":{"x":78,"y":128,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}},"nest_destroyed.png":{"frame":{"x":118,"y":128,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}},"tree_summer.png":{"frame":{"x":0,"y":238,"w":462,"h":500},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":462,"h":500},"sourceSize":{"w":462,"h":500}}},"animations":{"ant_male":["ant_male_1.png","ant_male_2.png","ant_male_3.png","ant_male_4.png","ant_male_5.png","ant_male_6.png","ant_male_7.png","ant_male_8.png"],"ant_queen":["ant_queen_1.png","ant_queen_2.png","ant_queen_3.png","ant_queen_4.png","ant_queen_5.png","ant_queen_6.png","ant_queen_7.png","ant_queen_8.png"],"ant_warrior":["ant_warrior_1.png","ant_warrior_2.png","ant_warrior_3.png","ant_warrior_4.png","ant_warrior_5.png","ant_warrior_6.png","ant_warrior_7.png","ant_warrior_8.png"],"ant_worker":["ant_worker_1.png","ant_worker_2.png","ant_worker_3.png","ant_worker_4.png","ant_worker_5.png","ant_worker_6.png","ant_worker_7.png","ant_worker_8.png"],"ground_beetle":["ground_beetle_1.png","ground_beetle_2.png","ground_beetle_3.png","ground_beetle_4.png","ground_beetle_5.png","ground_beetle_6.png","ground_beetle_7.png","ground_beetle_8.png"]},"meta":{"app":"https://www.codeandweb.com/texturepacker","version":"1.1","image":"world_spritesheet.png","format":"RGBA8888","size":{"w":480,"h":738},"scale":"1","smartupdate":"$TexturePacker:SmartUpdate:f85c81f6f602c0023b9e2e7847b7714d:97a31ac1602bec52e3326e3e65380ce0:2b831dbdc2ad4f91b77d89d68a6c0718$"}}');
 
 /***/ })
 

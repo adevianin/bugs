@@ -13,6 +13,7 @@ import { Egg } from './entity/egg';
 import { Genome } from './entity/genetic/genome';
 import { NuptialMale } from './entity/nuptialMale';
 import { Climate } from './entity/climate';
+import { Tree } from './entity/tree';
 
 class WorldFactory {
 
@@ -39,6 +40,8 @@ class WorldFactory {
                     entityJson.item_type, entityJson.is_fertile);
             case EntityTypes.ITEM_AREA:
                 return this.buildItemArea(entityJson.id, entityJson.position, entityJson.angle, entityJson.hp, entityJson.max_hp);
+            case EntityTypes.TREE:
+                return this.buildTree(entityJson);
             default:
                 throw 'unknown type of entity';
         }
@@ -123,6 +126,17 @@ class WorldFactory {
             default:
                 throw 'unknown type of ant';
         }
+    }
+
+    buildTree(treeJson) {
+        let id = treeJson.id;
+        let position = treeJson.position;
+        let angle = treeJson.angle;
+        let fromColony = treeJson.fromColony;
+        let ownerId = treeJson.ownerId;
+        let hp = treeJson.hp;
+        let maxHp = treeJson.maxHp;
+        return new Tree(this._mainEventBus, id, position, angle, fromColony, ownerId, hp, maxHp);
     }
 
     buildAntColony(id, owner_id, operations, queenId) {
