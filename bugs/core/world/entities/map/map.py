@@ -84,7 +84,8 @@ class Map:
         return self.get_entities(entity_types=EntityTypesPack.LIVE_ENTITIES)
     
     def get_not_live_entities(self) -> List[Entity]:
-        return self.get_entities(entity_types=EntityTypesPack.NOT_LIVE_ENTITIES)
+        not_live_filter: Callable[[Entity], bool] = lambda entity: entity.type not in EntityTypesPack.LIVE_ENTITIES
+        return self.get_entities(filter=not_live_filter)
     
     def _on_entity_died(self, entity: Entity):
         if not entity.is_removal_blocked:
