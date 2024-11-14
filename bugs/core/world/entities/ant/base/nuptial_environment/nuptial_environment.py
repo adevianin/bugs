@@ -5,14 +5,13 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.base.damage_types import DamageTypes
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.action.nuptial_males_changed_action import NuptialMalesChangedAction
-from core.world.entities.ant.base.genetic.genome import Genome
 from core.world.settings import MUTATITON_PERCENT, SUPER_MUTATION_CHANCE_PERCENT, SUPER_MUTATION_PERCENT
 from core.world.entities.ant.base.larva import Larva
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.world.birthers.requests.ant_requests.ant_birth_from_system_request import AntBirthFromSystemRequest
 from core.world.utils.point import Point
+from core.world.entities.world.season_types import SeasonTypes
 from typing import List, Callable
-import random
 
 class NuptialEnvironment():
 
@@ -26,8 +25,7 @@ class NuptialEnvironment():
         self._event_bus.add_listener('ant_damaged_another_body_stat', self._on_ant_damaged_another_body)
         self._event_bus.add_listener('ant_gave_fortification_item_stat', self._on_ant_gave_fortification_item)
         self._event_bus.add_listener('ant_built_nest_stat', self._on_ant_built_nest)
-        self._event_bus.add_listener('nuptial_season_start', self._on_nuptial_season_start)
-        self._event_bus.add_listener('nuptial_season_stop', self._on_nuptial_season_stop)
+        self._event_bus.add_listener('season_changed', self._on_season_changed)
 
     @property
     def owner_id(self):
@@ -90,11 +88,11 @@ class NuptialEnvironment():
         if ant.owner_id == self.owner_id:
             self._specie.register_building_activity()
 
-    def _on_nuptial_season_start(self):
-        self._generate_males()
-
-    def _on_nuptial_season_stop(self):
-        self._clear_males()
-
     def _emit_males_changed_action(self):
         self._event_bus.emit('action', NuptialMalesChangedAction(self._males, self._owner_id))
+
+    def _on_season_changed(self, season: SeasonTypes):
+        if season == SeasonTypes.SUMMER:
+            self._generate_males()
+        elif season == SeasonTypes.WINTER:
+            self._clear_males()
