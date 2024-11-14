@@ -24,7 +24,7 @@ class ColonyRelationsManager():
     def _on_colony_died(self, colony: Colony):
         self._relations_table.clear_relations_for_colony(colony.id)
 
-    def _on_step_done(self, step_number: int):
+    def _on_step_done(self, step_number: int, season):
         self._relations_table.improve_relations([GROUND_BEETLE_COLONY_ID])
 
     def _on_offensive_operation(self, attacking_colony_id: int, defending_colony_id: int):

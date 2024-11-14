@@ -34,7 +34,7 @@ class NotificationManager():
         notification_pack.append(notification)
         self._notification_packs[notification.owner_id] = notification_pack
 
-    def _on_step_start(self, step_number: int):
+    def _on_step_start(self, step_number: int, season):
         self._current_step = step_number
 
     def _on_notification(self, notification: Notification):

@@ -165,7 +165,7 @@ class Operation(ABC):
         most_common_nest = nests_counts.most_common(1)[0][0]
         self._assemble_point = Point(most_common_nest.position.x, most_common_nest.position.y + 40) 
 
-    def _on_step_done(self, step_number):
+    def _on_step_done(self, step_number, season):
         if not self._fight and self._is_aggressive_now() and self._check_for_aggression_targets():
             self._init_fight(self._hired_ants)
 

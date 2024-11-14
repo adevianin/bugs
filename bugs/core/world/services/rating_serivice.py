@@ -26,7 +26,7 @@ class RatingService():
         self._world = world
         self._generate_rating()
 
-    def _on_step_done(self, step_number: int):
+    def _on_step_done(self, step_number: int, season):
         if step_number % STEPS_IN_YEAR == 0:
             self._generate_rating()
             self._event_bus.emit('action', RatingUpdatedAction(self.rating))

@@ -39,7 +39,6 @@ class World():
         self._world_loop_stop_flag = False
         self._is_world_running = False
         self._current_step = current_step
-        self._current_season = self._calc_current_season()
         self._colony_relations_manager: ColonyRelationsManager = managers['colony_relations_manager']
         self._birthers = birthers
         self._ground_beetle_spawner = ground_beetle_spawner
@@ -58,7 +57,7 @@ class World():
 
     @property
     def current_season(self):
-        return self._current_season
+        return self._calc_current_season()
 
     @property
     def last_used_id(self):
@@ -180,9 +179,9 @@ class World():
     def _do_step(self):
         print(f'step { self._current_step }')
 
-        self._set_current_season(self._calc_current_season()) 
+        current_season = self._calc_current_season()
 
-        self._event_bus.emit('step_start', self._current_step)
+        self._event_bus.emit('step_start', self._current_step, current_season)
 
         not_live_entities = self._map.get_not_live_entities()
         for entity in not_live_entities:
@@ -194,7 +193,7 @@ class World():
             self._visual_sensor_handler.handle_sensor(entity)
             entity.do_step(self._current_step)
 
-        self._event_bus.emit('step_done', self._current_step)
+        self._event_bus.emit('step_done', self._current_step, current_season)
 
         # self._my_test_code()
 
@@ -213,11 +212,6 @@ class World():
             return SeasonTypes.AUTUMN
         elif year_step >= WINTER_START_STEP:
             return SeasonTypes.WINTER
-
-    def _set_current_season(self, season: SeasonTypes):
-        if season != self._current_season:
-            self._event_bus.emit('season_changed', season)
-        self._current_season = season
 
     def _my_test_code(self):
         if self._current_step == 163:
