@@ -1336,7 +1336,8 @@ class Command(BaseCommand):
                 "item_type":"honeydew",
                 "accumulated": 10,
                 "min_item_strength": 10,
-                "max_item_strength": 50
+                "max_item_strength": 50,
+                "is_active": False
             },
         ],
         "ground_beetles": [

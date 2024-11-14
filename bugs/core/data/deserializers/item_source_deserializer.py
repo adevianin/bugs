@@ -20,5 +20,6 @@ class ItemSourceDeserializer(EntityDeserializer):
             'accumulated': item_source_factory_json['accumulated'],
             'min_item_strength': item_source_factory_json['min_item_strength'],
             'max_item_strength': item_source_factory_json['max_item_strength'],
+            'is_active': item_source_factory_json['is_active']
         })
         return props

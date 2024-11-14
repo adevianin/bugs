@@ -12,7 +12,7 @@ class ItemSourceFactory():
         self._event_bus = event_bus
 
     def build_item_source(self, id: int, ownership: OwnershipConfig, hp: int, position: Point, angle: int, item_type: ItemTypes, fertility: int, accumulated: int, 
-                          min_item_strength: int, max_item_strength: int):
+                          min_item_strength: int, max_item_strength: int, is_active: bool):
         stats = StatsLibrary.ITEM_SOURCE_DEFAULT
         body = ItemSourceBody(EventEmitter(), stats, position, angle, hp)
-        return ItemSource(self._event_bus, EventEmitter(), id, ownership, body, item_type, fertility, accumulated, min_item_strength, max_item_strength)
+        return ItemSource(self._event_bus, EventEmitter(), id, ownership, body, item_type, fertility, accumulated, min_item_strength, max_item_strength, is_active)

@@ -33,6 +33,7 @@ from core.world.entities.action.nest_fortification_changed_action import NestFor
 from core.world.entities.action.user_notification_action import UserNotificationAction
 from core.world.entities.action.rating_updated_action import RatingUpdatedAction
 from core.world.entities.action.nuptial_males_changed_action import NuptialMalesChangedAction
+from core.world.entities.action.item_source_fertility_changed_action import ItemSourceFertilityChangeAction
 from .notification_client_serializer import NotificationClientSerializer
 from .nuptial_environment_client_serializer import NuptialEnvironmentClientSerializer
 
@@ -100,6 +101,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._default_action_serialize(action)
             case ActionTypes.ITEM_WAS_DROPPED:
                 return self._serialize_item_was_dropped(action)
+            case ActionTypes.ITEM_SOURCE_FERTILITY_CHANGED:
+                return self._serialize_item_source_fertility_changed(action)
             case ActionTypes.ITEM_BEING_BRINGED:
                 return self._serialize_item_being_bringed(action)
             case ActionTypes.COLONY_BORN:
@@ -291,6 +294,14 @@ class ActionClientSerializer(iActionClientSerializer):
         serialized_position = self._util_serializer.serialize_point(action.position)
         json.update({
             'actionData': { 'position': serialized_position }
+        })
+
+        return json
+    
+    def _serialize_item_source_fertility_changed(self, action: ItemSourceFertilityChangeAction):
+        json = self._serialize_common(action)
+        json.update({
+            'isFertile': action.is_fertile
         })
 
         return json

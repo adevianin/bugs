@@ -1393,7 +1393,7 @@ class ItemSource extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _playFertilityChangedAction(action) {
         return new Promise((res) => {
-            this.isFertile = action.actionData.is_fertile
+            this.isFertile = action.isFertile
             res();
         });
     }

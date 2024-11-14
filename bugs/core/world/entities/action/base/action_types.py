@@ -26,6 +26,7 @@ class ActionTypes(StrEnum):
     ITEM_WAS_PICKED_UP = 'item_was_picked_up'
     ITEM_WAS_DROPPED = 'item_was_dropped'
     ITEM_BEING_BRINGED = 'item_being_bringed'
+    ITEM_SOURCE_FERTILITY_CHANGED = 'item_source_fertility_changed'
     COLONY_BORN = 'colony_born'
     COLONY_DIED = 'colony_died'
     COLONY_OPERATIONS_CHANGED = 'colony_operations_change'

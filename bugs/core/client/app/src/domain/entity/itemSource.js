@@ -38,7 +38,7 @@ class ItemSource extends Entity {
 
     _playFertilityChangedAction(action) {
         return new Promise((res) => {
-            this.isFertile = action.actionData.is_fertile
+            this.isFertile = action.isFertile
             res();
         });
     }
