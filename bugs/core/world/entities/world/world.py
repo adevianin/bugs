@@ -3,7 +3,7 @@ import time
 
 from core.world.entities.map.map import Map
 from core.world.utils.event_emiter import EventEmitter
-from core.world.settings import STEP_TIME, STEPS_IN_YEAR, NUPTIAL_SEASON_START_STEP, NUPTIAL_SEASON_STOP_STEP
+from core.world.settings import STEP_TIME, STEPS_IN_YEAR, SPRING_START_STEP, SUMMER_START_STEP, AUTUMN_START_STEP, WINTER_START_STEP
 from core.world.entities.colony.base.colony import Colony
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 from core.world.entities.base.entity_collection import EntityCollection
@@ -19,6 +19,7 @@ from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
 from .notification.notification_manager import NotificationManager
 from .notification.notifications.notification import Notification
 from .player_stats import PlayerStats
+from .season_types import SeasonTypes
 
 from core.world.my_test_env import MY_TEST_ENV
 from core.world.entities.ant.base.ant import Ant
@@ -38,6 +39,7 @@ class World():
         self._world_loop_stop_flag = False
         self._is_world_running = False
         self._current_step = current_step
+        self._current_season = self._calc_current_season()
         self._colony_relations_manager: ColonyRelationsManager = managers['colony_relations_manager']
         self._birthers = birthers
         self._ground_beetle_spawner = ground_beetle_spawner
@@ -53,6 +55,10 @@ class World():
     @property
     def current_step(self):
         return self._current_step
+
+    @property
+    def current_season(self):
+        return self._current_season
 
     @property
     def last_used_id(self):
@@ -98,14 +104,6 @@ class World():
     @property
     def _current_year(self):
         return self._current_step // STEPS_IN_YEAR
-    
-    @property
-    def _is_nuptial_season_start_step(self):
-        return self._current_step % STEPS_IN_YEAR ==  NUPTIAL_SEASON_START_STEP
-    
-    @property
-    def _is_nuptial_season_stop_step(self):
-        return self._current_step % STEPS_IN_YEAR ==  NUPTIAL_SEASON_STOP_STEP
     
     def get_player_stats_for_owner(self, owner_id: int) -> PlayerStats:
         for player_stats in self._player_stats_list:
@@ -182,13 +180,7 @@ class World():
     def _do_step(self):
         print(f'step { self._current_step }')
 
-        if self._is_new_year_step:
-            self._event_bus.emit('new_year', self._current_year)
-
-        if self._is_nuptial_season_start_step:
-            self._event_bus.emit('nuptial_season_start')
-        elif self._is_nuptial_season_stop_step:
-            self._event_bus.emit('nuptial_season_stop')
+        self._set_current_season(self._calc_current_season()) 
 
         self._event_bus.emit('step_start', self._current_step)
 
@@ -210,6 +202,22 @@ class World():
 
     def _on_colony_died(self, colony: Colony):
         self._colonies.remove(colony)
+
+    def _calc_current_season(self) -> SeasonTypes:
+        year_step = self._current_step % STEPS_IN_YEAR
+        if year_step >= SPRING_START_STEP and year_step < SUMMER_START_STEP:
+            return SeasonTypes.SPRING
+        elif year_step >= SUMMER_START_STEP and year_step < AUTUMN_START_STEP:
+            return SeasonTypes.SUMMER
+        elif year_step >= AUTUMN_START_STEP and year_step < WINTER_START_STEP:
+            return SeasonTypes.AUTUMN
+        elif year_step >= WINTER_START_STEP:
+            return SeasonTypes.WINTER
+
+    def _set_current_season(self, season: SeasonTypes):
+        if season != self._current_season:
+            self._event_bus.emit('season_changed', season)
+        self._current_season = season
 
     def _my_test_code(self):
         if self._current_step == 163:
