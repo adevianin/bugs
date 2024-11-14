@@ -97,6 +97,7 @@ class ItemSource(Entity):
         self._body.restore_hp_step()
 
     def _on_hp_changed(self):
+        super()._on_hp_changed()
         self._update_is_fertile()
 
     def _on_season_changed(self, season: SeasonTypes):
