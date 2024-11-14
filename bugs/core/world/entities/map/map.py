@@ -25,9 +25,9 @@ class Map:
         return self._size
     
     def generate_random_point(self):
-        return Point(200, 100)
-        x = random.randint(0, self._size.width)
-        y = random.randint(0, self._size.height)
+        padding = 10
+        x = random.randint(padding, self._size.width - padding)
+        y = random.randint(padding, self._size.height - padding)
         return Point(x, y)
     
     def get_entity_by_id(self, id: int) -> Entity:
