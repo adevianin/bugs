@@ -15,7 +15,7 @@ from typing import List, Dict
 
 class ItemArea(Entity):
 
-    FERTILE_SEASONS: Dict[ItemTypes, List[SeasonTypes]] = {
+    ACTIVE_SEASONS: Dict[ItemTypes, List[SeasonTypes]] = {
         ItemTypes.FLOWER: [SeasonTypes.SPRING, SeasonTypes.SUMMER],
         ItemTypes.LEAF: [SeasonTypes.SUMMER, SeasonTypes.AUTUMN],
         ItemTypes.STICK: [SeasonTypes.SUMMER, SeasonTypes.AUTUMN]
@@ -82,7 +82,7 @@ class ItemArea(Entity):
         self._event_bus.emit('item_birth_request', ItemBirthRequest.build(self._generate_spawn_point(), self._accumulated, self._item_type))
 
     def _on_season_changed(self, season: SeasonTypes):
-        fertile_seasons = ItemArea.FERTILE_SEASONS.get(self._item_type, [])
+        fertile_seasons = ItemArea.ACTIVE_SEASONS.get(self._item_type, [])
         self._is_active = season in fertile_seasons
 
 
