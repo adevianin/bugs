@@ -41,5 +41,5 @@ class AntBirther(EntityBirther):
         ownership = OwnershipConfig(nest.from_colony_id, nest.owner_id)
         return self._ant_factory.build_new_ant(id, larva.name, ownership, larva.genome, larva.ant_type, nest.position, self._current_step, nest)
         
-    def _on_step_start(self, step_number: int, season):
+    def _on_step_start(self, step_number: int):
         self._current_step = step_number

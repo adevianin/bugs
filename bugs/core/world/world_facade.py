@@ -183,7 +183,7 @@ class WorldFacade:
     def get_rating(self):
         return self._rating_service.rating
     
-    def _on_step_done(self, step_number: int, season):
+    def _on_step_done(self, step_number: int):
         self._serialize_common_actions()
         self._events.emit('step', step_number)
 

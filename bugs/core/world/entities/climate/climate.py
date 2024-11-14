@@ -42,6 +42,6 @@ class Climate():
         self._event_bus.emit('action', action)
         self._last_emited_temp = self.daily_temperature
 
-    def _on_step_done(self, step_number, season):
+    def _on_step_done(self, step_number):
         self._do_step()
     
