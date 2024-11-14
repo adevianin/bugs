@@ -20,4 +20,4 @@ class GroundBeetleBody(LiveBody):
         if honeydew_item_source.item_type != ItemTypes.HONEYDEW:
             raise Exception('is is not aphid')
         
-        honeydew_item_source.body.receive_damage(10)
+        self.damage_another_body(honeydew_item_source.body)
