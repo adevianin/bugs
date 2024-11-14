@@ -182,7 +182,7 @@ class World():
 
         self._set_current_season(self._calc_current_season()) 
 
-        self._event_bus.emit('step_start', self._current_step)
+        self._event_bus.emit('step_start', self._current_step, self._current_season)
 
         not_live_entities = self._map.get_not_live_entities()
         for entity in not_live_entities:
@@ -194,7 +194,7 @@ class World():
             self._visual_sensor_handler.handle_sensor(entity)
             entity.do_step(self._current_step)
 
-        self._event_bus.emit('step_done', self._current_step)
+        self._event_bus.emit('step_done', self._current_step, self._current_season)
 
         # self._my_test_code()
 

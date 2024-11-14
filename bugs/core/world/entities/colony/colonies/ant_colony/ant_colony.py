@@ -69,7 +69,7 @@ class AntColony(Colony):
         if entity.type == EntityTypes.NEST:
             self._on_colony_nest_destroyed(entity)
     
-    def _on_start_step(self, step_number: int):
+    def _on_start_step(self, step_number: int, season):
         self._check_enemies_in_colony_area()
         self._clean_completed_operations()
         self._hire_for_operations()
