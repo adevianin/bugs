@@ -10,7 +10,8 @@ class ItemAreaSerializer(EntitySerializer):
             'size': item_area.size,
             'item_type': item_area.item_type,
             'fertility': item_area.fertility,
-            'accumulated': item_area.accumulated
+            'accumulated': item_area.accumulated,
+            'is_active': item_area.is_active
         })
 
         return json

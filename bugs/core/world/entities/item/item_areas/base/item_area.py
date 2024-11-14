@@ -1,3 +1,4 @@
+from core.world.entities.base.death_record.base_death_record import BaseDeathRecord
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.utils.event_emiter import EventEmitter
 from core.world.utils.point import Point
@@ -7,18 +8,33 @@ from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
 from core.world.entities.world.birthers.requests.item_birth_request import ItemBirthRequest
 from core.world.entities.base.ownership_config import OwnershipConfig
+from core.world.entities.world.season_types import SeasonTypes
 
 import random
+from typing import List, Dict
 
 class ItemArea(Entity):
 
+    FERTILE_SEASONS: Dict[ItemTypes, List[SeasonTypes]] = {
+        ItemTypes.FLOWER: [SeasonTypes.SPRING, SeasonTypes.SUMMER],
+        ItemTypes.LEAF: [SeasonTypes.SUMMER, SeasonTypes.AUTUMN],
+        ItemTypes.STICK: [SeasonTypes.SUMMER, SeasonTypes.AUTUMN]
+    }
+
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: Body, size: Size, 
-                 item_type: ItemTypes, fertility: int, accumulated: int):
+                 item_type: ItemTypes, fertility: int, accumulated: int, is_active: bool):
         super().__init__(event_bus, events, id, EntityTypes.ITEM_AREA, ownership, body)
         self._size = size
         self._item_type = item_type
         self._fertility = fertility
         self._accumulated = accumulated
+        self._is_active = is_active
+
+        self._event_bus.add_listener('season_changed', self._on_season_changed)
+
+    def _on_body_died(self, death_record: BaseDeathRecord):
+        self._event_bus.remove_listener('season_changed', self._on_season_changed)
+        super()._on_body_died(death_record)
 
     @property
     def size(self):
@@ -27,6 +43,10 @@ class ItemArea(Entity):
     @property
     def fertility(self):
         return self._fertility
+    
+    @property
+    def is_active(self):
+        return self._is_active
 
     @property
     def item_type(self):
@@ -37,10 +57,11 @@ class ItemArea(Entity):
         return self._accumulated
     
     def do_step(self):
-        self._accumulated += self._fertility
-        if self._should_spawn():
-            self._request_birth()
-            self._accumulated = 0
+        if self._is_active:
+            self._accumulated += self._fertility
+            if self._should_spawn():
+                self._request_birth()
+                self._accumulated = 0
     
     def _generate_spawn_point(self):
         half_width = self._size.width / 2
@@ -59,4 +80,9 @@ class ItemArea(Entity):
     
     def _request_birth(self):
         self._event_bus.emit('item_birth_request', ItemBirthRequest.build(self._generate_spawn_point(), self._accumulated, self._item_type))
+
+    def _on_season_changed(self, season: SeasonTypes):
+        fertile_seasons = ItemArea.FERTILE_SEASONS.get(self._item_type, [])
+        self._is_active = season in fertile_seasons
+
 

@@ -18,6 +18,7 @@ class ItemAreaDeserializer(EntityDeserializer):
             'size': Size.from_json(json['position']),
             'item_type': ItemTypes(json['item_type']),
             'fertility': json['fertility'],
-            'accumulated': json['accumulated']
+            'accumulated': json['accumulated'],
+            'is_active': json['is_active']
         })
         return props

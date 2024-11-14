@@ -12,6 +12,7 @@ class ItemAreaFactory():
     def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus
 
-    def build_item_area(self, id: int, ownership: OwnershipConfig, hp: int, position: Point, angle: int, size: Size, item_type: ItemTypes, fertility: int, accumulated: int):
+    def build_item_area(self, id: int, ownership: OwnershipConfig, hp: int, position: Point, angle: int, size: Size, item_type: ItemTypes, fertility: int, accumulated: int, 
+                        is_active: bool):
         body = Body(EventEmitter(), StatsLibrary.GHOST_DEFAULT, position, angle, hp)
-        return ItemArea(self._event_bus, EventEmitter(), id, ownership, body, size, item_type, fertility, accumulated)
+        return ItemArea(self._event_bus, EventEmitter(), id, ownership, body, size, item_type, fertility, accumulated, is_active)

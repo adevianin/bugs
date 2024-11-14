@@ -17,7 +17,7 @@ class Command(BaseCommand):
             "direction_of_change": -1,
             "current_temperature": 5
         },
-        "current_step": 100,
+        "current_step": 190,
         "ants":[
             {
                 "id":1,
@@ -1276,7 +1276,8 @@ class Command(BaseCommand):
                 ],
                 "fertility":1,
                 "item_type":"leaf",
-                "accumulated": 0
+                "accumulated": 0,
+                "is_active": False
             },
             {
                 "id":41,
@@ -1295,7 +1296,8 @@ class Command(BaseCommand):
                 ],
                 "fertility":5,
                 "item_type":"flower",
-                "accumulated": 0
+                "accumulated": 0,
+                "is_active": True
             },
             {
                 "id":42,
@@ -1314,7 +1316,8 @@ class Command(BaseCommand):
                 ],
                 "fertility":1,
                 "item_type":"stick",
-                "accumulated": 0
+                "accumulated": 0,
+                "is_active": False
             }
         ],
         "item_sources": [
