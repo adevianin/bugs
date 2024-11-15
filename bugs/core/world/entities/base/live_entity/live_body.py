@@ -93,7 +93,7 @@ class LiveBody(Body):
         return self._calories / (self._max_calories / 100) < 30
     
     def check_urge_to_hibernate(self) -> bool:
-        return self._temperature_sensor.temperature + 1 <= self.stats.min_temperature and not self._temperature_sensor.is_warming
+        return self._temperature_sensor.temperature + 1 <= self.stats.min_temperature
 
     def check_urge_to_exit_hibernation(self) -> bool:
         return self._temperature_sensor.temperature >= self.stats.min_temperature and self._temperature_sensor.is_warming
