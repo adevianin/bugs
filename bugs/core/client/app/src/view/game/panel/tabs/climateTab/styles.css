@@ -1,0 +1,34 @@
+.season-bar {
+    height: 20px;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+}
+
+.season-bar__marker {
+    position: absolute;
+    height: 26px;
+    width: 6px;
+    margin-left: -3px;
+    margin-top: -3px;
+    background-color: black;
+}
+
+.season-bar__season {
+    height: 100%;
+}
+
+.season-bar__season--spring {
+    background-color: green;
+}
+
+.season-bar__season--summer {
+    background-color: red;
+}
+.season-bar__season--autumn {
+    background-color: yellow;
+}
+
+.season-bar__season--winer {
+    background-color: white;
+}

@@ -1,5 +1,7 @@
+import './styles.css';
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import climateTabTmpl from './climateTabTmpl.html';
+import { SeasonBarView } from "./seasonBarView";
 
 class ClimateTabView extends BaseHTMLView {
 
@@ -19,12 +21,19 @@ class ClimateTabView extends BaseHTMLView {
         this._temperatureEl = this._el.querySelector('[data-temperature]');
         this._changeDirectionEl = this._el.querySelector('[data-change-direction]');
 
+        this._seasonBarView = new SeasonBarView(this._el.querySelector('[data-season-bar]'));
+
         this._renderTemperatureChange();
     }
 
     _renderTemperatureChange() {
         this._temperatureEl.innerHTML = this._climate.dailyTemperature;
         this._changeDirectionEl.innerHTML = this._climate.directionOfChange > 0 ? 'потепління' : 'похолодання';
+    }
+
+    remove() {
+        super.remove();
+        this._seasonBarView.remove();
     }
 
 }

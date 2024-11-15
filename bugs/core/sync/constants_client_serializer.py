@@ -1,9 +1,13 @@
-from core.world.settings import NEW_EGG_FOOD_COST, STEPS_IN_YEAR
+from core.world.settings import (NEW_EGG_FOOD_COST, STEPS_IN_YEAR, SPRING_START_YEAR_STEP, SUMMER_START_YEAR_STEP, AUTUMN_START_YEAR_STEP, WINTER_START_YEAR_STEP)
 
 class ConstantsClientSerializer():
 
     def serialize_constants(self):
         return {
             'NEW_EGG_FOOD_COST': NEW_EGG_FOOD_COST,
-            'STEPS_IN_YEAR': STEPS_IN_YEAR
+            'STEPS_IN_YEAR': STEPS_IN_YEAR,
+            'SPRING_START_YEAR_STEP': SPRING_START_YEAR_STEP,
+            'SUMMER_START_YEAR_STEP': SUMMER_START_YEAR_STEP,
+            'AUTUMN_START_YEAR_STEP': AUTUMN_START_YEAR_STEP,
+            'WINTER_START_YEAR_STEP': WINTER_START_YEAR_STEP,
         }

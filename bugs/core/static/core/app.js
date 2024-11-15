@@ -26,7 +26,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 const CONSTS = {
     NEW_EGG_FOOD_COST: null,
-    STEPS_IN_YEAR: null
+    STEPS_IN_YEAR: null,
+    SPRING_START_YEAR_STEP: null,
+    SUMMER_START_YEAR_STEP: null,
+    AUTUMN_START_YEAR_STEP: null,
+    WINTER_START_YEAR_STEP: null,
 }
 
 function initConts(constsValues) {
@@ -4728,12 +4732,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ClimateTabView": () => (/* binding */ ClimateTabView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
-/* harmony import */ var _climateTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./climateTabTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/climateTabTmpl.html");
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/styles.css");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _climateTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./climateTabTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/climateTabTmpl.html");
+/* harmony import */ var _seasonBarView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./seasonBarView */ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/seasonBarView.js");
 
 
 
-class ClimateTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+
+class ClimateTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
 
     constructor(el) {
         super(el);
@@ -4746,10 +4754,12 @@ class ClimateTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0_
     }
 
     _render() {
-        this._el.innerHTML = _climateTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.innerHTML = _climateTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
 
         this._temperatureEl = this._el.querySelector('[data-temperature]');
         this._changeDirectionEl = this._el.querySelector('[data-change-direction]');
+
+        this._seasonBarView = new _seasonBarView__WEBPACK_IMPORTED_MODULE_3__.SeasonBarView(this._el.querySelector('[data-season-bar]'));
 
         this._renderTemperatureChange();
     }
@@ -4757,6 +4767,11 @@ class ClimateTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0_
     _renderTemperatureChange() {
         this._temperatureEl.innerHTML = this._climate.dailyTemperature;
         this._changeDirectionEl.innerHTML = this._climate.directionOfChange > 0 ? 'потепління' : 'похолодання';
+    }
+
+    remove() {
+        super.remove();
+        this._seasonBarView.remove();
     }
 
 }
@@ -4778,6 +4793,76 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _climateTabView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./climateTabView */ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/climateTabView.js");
 
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/seasonBarView.js":
+/*!***********************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/climateTab/seasonBarView.js ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "SeasonBarView": () => (/* binding */ SeasonBarView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _seasonBarTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./seasonBarTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/seasonBarTmpl.html");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/consts */ "./bugs/core/client/app/src/domain/consts.js");
+
+
+
+
+class SeasonBarView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+        this._percentsPerStep = 100 / _domain_consts__WEBPACK_IMPORTED_MODULE_2__.CONSTS.STEPS_IN_YEAR;
+        this._springStepsLength = _domain_consts__WEBPACK_IMPORTED_MODULE_2__.CONSTS.SUMMER_START_YEAR_STEP - _domain_consts__WEBPACK_IMPORTED_MODULE_2__.CONSTS.SPRING_START_YEAR_STEP;
+        this._summerStepsLength = _domain_consts__WEBPACK_IMPORTED_MODULE_2__.CONSTS.AUTUMN_START_YEAR_STEP - _domain_consts__WEBPACK_IMPORTED_MODULE_2__.CONSTS.SUMMER_START_YEAR_STEP;
+        this._autumnStepsLength = _domain_consts__WEBPACK_IMPORTED_MODULE_2__.CONSTS.WINTER_START_YEAR_STEP - _domain_consts__WEBPACK_IMPORTED_MODULE_2__.CONSTS.AUTUMN_START_YEAR_STEP;
+        this._winterStepsLength = _domain_consts__WEBPACK_IMPORTED_MODULE_2__.CONSTS.STEPS_IN_YEAR - _domain_consts__WEBPACK_IMPORTED_MODULE_2__.CONSTS.WINTER_START_YEAR_STEP;
+
+        this._render();
+
+        this.$domainFacade.events.on('currentStepChanged', this._onCurrentStepChanged.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = _seasonBarTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._springEl = this._el.querySelector('[data-spring]');
+        this._summerEl = this._el.querySelector('[data-summer]');
+        this._autumnEl = this._el.querySelector('[data-autumn]');
+        this._winterEl = this._el.querySelector('[data-winter]');
+        this._markerEl = this._el.querySelector('[data-marker]');
+
+        this._springEl.setAttribute('title', 'весна');
+        this._summerEl.setAttribute('title', 'літо');
+        this._autumnEl.setAttribute('title', 'осінь');
+        this._winterEl.setAttribute('title', 'зима');
+
+        this._springEl.style.width = this._springStepsLength * this._percentsPerStep + '%';
+        this._summerEl.style.width = this._summerStepsLength * this._percentsPerStep + '%';
+        this._autumnEl.style.width = this._autumnStepsLength * this._percentsPerStep + '%';
+        this._winterEl.style.width = this._winterStepsLength * this._percentsPerStep + '%';
+
+        this._renderMarker();
+    }
+
+    _renderMarker() {
+        let yearStep = this.$domainFacade.currentStep % _domain_consts__WEBPACK_IMPORTED_MODULE_2__.CONSTS.STEPS_IN_YEAR;
+        this._markerEl.style.left = this._percentsPerStep * yearStep + '%';
+    }
+
+    _onCurrentStepChanged() {
+        this._renderMarker();
+    }
+
+}
 
 
 
@@ -10140,6 +10225,33 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".panel {\r\n    background-color: beig
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/tabs/climateTab/styles.css":
+/*!*******************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/tabs/climateTab/styles.css ***!
+  \*******************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".season-bar {\r\n    height: 20px;\r\n    display: flex;\r\n    flex-direction: row;\r\n    position: relative;\r\n}\r\n\r\n.season-bar__marker {\r\n    position: absolute;\r\n    height: 26px;\r\n    width: 6px;\r\n    margin-left: -3px;\r\n    margin-top: -3px;\r\n    background-color: black;\r\n}\r\n\r\n.season-bar__season {\r\n    height: 100%;\r\n}\r\n\r\n.season-bar__season--spring {\r\n    background-color: green;\r\n}\r\n\r\n.season-bar__season--summer {\r\n    background-color: red;\r\n}\r\n.season-bar__season--autumn {\r\n    background-color: yellow;\r\n}\r\n\r\n.season-bar__season--winer {\r\n    background-color: white;\r\n}", "",{"version":3,"sources":["webpack://./bugs/core/client/app/src/view/game/panel/tabs/climateTab/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,aAAa;IACb,mBAAmB;IACnB,kBAAkB;AACtB;;AAEA;IACI,kBAAkB;IAClB,YAAY;IACZ,UAAU;IACV,iBAAiB;IACjB,gBAAgB;IAChB,uBAAuB;AAC3B;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,uBAAuB;AAC3B;;AAEA;IACI,qBAAqB;AACzB;AACA;IACI,wBAAwB;AAC5B;;AAEA;IACI,uBAAuB;AAC3B","sourcesContent":[".season-bar {\r\n    height: 20px;\r\n    display: flex;\r\n    flex-direction: row;\r\n    position: relative;\r\n}\r\n\r\n.season-bar__marker {\r\n    position: absolute;\r\n    height: 26px;\r\n    width: 6px;\r\n    margin-left: -3px;\r\n    margin-top: -3px;\r\n    background-color: black;\r\n}\r\n\r\n.season-bar__season {\r\n    height: 100%;\r\n}\r\n\r\n.season-bar__season--spring {\r\n    background-color: green;\r\n}\r\n\r\n.season-bar__season--summer {\r\n    background-color: red;\r\n}\r\n.season-bar__season--autumn {\r\n    background-color: yellow;\r\n}\r\n\r\n.season-bar__season--winer {\r\n    background-color: white;\r\n}"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/coloniesList/styles.css":
 /*!*********************************************************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/coloniesList/styles.css ***!
@@ -12396,7 +12508,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>температура: <span data-temperature></span></div>\r\n<div>зміни: <span data-change-direction></span></div>";
+var code = "<div>температура: <span data-temperature></span></div>\r\n<div>зміни: <span data-change-direction></span></div>\r\n<div class=\"season-bar\" data-season-bar></div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/seasonBarTmpl.html":
+/*!*************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/climateTab/seasonBarTmpl.html ***!
+  \*************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div class=\"season-bar__marker\" data-marker></div>\r\n<div class=\"season-bar__season season-bar__season--spring\" data-spring></div>\r\n<div class=\"season-bar__season season-bar__season--summer\" data-summer></div>\r\n<div class=\"season-bar__season season-bar__season--autumn\" data-autumn></div>\r\n<div class=\"season-bar__season season-bar__season--winer\" data-winter></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -13777,6 +13907,61 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/styles.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/climateTab/styles.css":
+/*!*****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/climateTab/styles.css ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./bugs/core/client/app/src/view/game/panel/tabs/climateTab/styles.css");
 
       
       
