@@ -107,10 +107,10 @@ class AntMind(Mind):
         super()._auto_generate_thoughts()
 
         if (self._body.check_am_i_hungry() and not self._is_thought_in_stack(ThoughtTypes.FEED_MYSELF)):
-            self.feed_myself()
+            self.feed_myself(asap=True)
 
         if (self._body.check_urge_to_hibernate() and not self._is_thought_in_stack(ThoughtTypes.HIBERNATION)):
-            self.hibernate()
+            self.hibernate(asap=True)
 
         if not self._has_thoughts_to_do() and self._am_i_far_away_from_home():
             self.go_home()
