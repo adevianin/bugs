@@ -9,6 +9,7 @@ import bodySightDistanceTmpl from './bodySightDistanceTmpl.html';
 import bodySpeedTmpl from './bodySpeedTmpl.html';
 import devCasteGeneTmpl from './developmentCasteGeneTmpl.html';
 import bodyLifeSpanTmpl from './bodyLifeSpanTmpl.html';
+import adaptationColdTmpl from './adaptationColdTmpl.html';
 import { AntTypes } from "@domain/enum/antTypes";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
 
@@ -63,6 +64,9 @@ class GeneView extends BaseHTMLView {
                 break;
             case GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE:
                 this._renderAdjustingDevelopmentAppetiteGene();
+                break;
+            case GenesTypes.ADAPTATION_COLD:
+                this._renderAdaptationColdGene();
                 break;
             default:
                 throw 'unknown body gene type';
@@ -137,6 +141,11 @@ class GeneView extends BaseHTMLView {
 
     _renderAdjustingDevelopmentAppetiteGene() {
         this._geneEl.innerHTML = 'ген підстройки апетиту розвитку';
+    }
+
+    _renderAdaptationColdGene(gene) {
+        this._geneEl.innerHTML = adaptationColdTmpl;
+        this._geneEl.querySelector('[data-resistance-points]').innerHTML = this._gene.resistancePoints;
     }
 
 }

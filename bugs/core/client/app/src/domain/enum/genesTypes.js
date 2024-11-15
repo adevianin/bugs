@@ -12,8 +12,12 @@ const GenesTypes = {
     DEVELOPMENT_WARRIOR_CASTE: 'development_warrior_caste',
     DEVELOPMENT_MALE_CASTE: 'development_male_caste',
 
+    BUILDING_SUBNEST: 'building_subnest',
+
     ADJUSTING_APPETITE: 'adjusting_appetite',
-    ADJUSTING_DEVELOPMENT_APPETITE: 'adjusting_development_appetite'
+    ADJUSTING_DEVELOPMENT_APPETITE: 'adjusting_development_appetite',
+
+    ADAPTATION_COLD: 'adaptation_cold'
 }
 
 export {

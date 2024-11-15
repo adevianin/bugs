@@ -145,7 +145,7 @@ class GenesClientSerializer():
     def _serialize_adaptation_cold_gene(self, gene: AdaptationColdGene):
         json = self._serialize_base_gene(gene)
         json.update({
-            'resistance_points': round(gene.resistance_points, self.NDIGITS),
+            'resistancePoints': round(gene.resistance_points, self.NDIGITS),
         })
         return json
     
