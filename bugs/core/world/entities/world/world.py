@@ -3,7 +3,7 @@ import time
 
 from core.world.entities.map.map import Map
 from core.world.utils.event_emiter import EventEmitter
-from core.world.settings import STEP_TIME, STEPS_IN_YEAR, SPRING_START_STEP, SUMMER_START_STEP, AUTUMN_START_STEP, WINTER_START_STEP
+from core.world.settings import STEP_TIME, STEPS_IN_YEAR, SPRING_START_YEAR_STEP, SUMMER_START_YEAR_STEP, AUTUMN_START_YEAR_STEP, WINTER_START_YEAR_STEP
 from core.world.entities.colony.base.colony import Colony
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 from core.world.entities.base.entity_collection import EntityCollection
@@ -205,13 +205,13 @@ class World():
 
     def _calc_current_season(self) -> SeasonTypes:
         year_step = self._current_step % STEPS_IN_YEAR
-        if year_step >= SPRING_START_STEP and year_step < SUMMER_START_STEP:
+        if year_step >= SPRING_START_YEAR_STEP and year_step < SUMMER_START_YEAR_STEP:
             return SeasonTypes.SPRING
-        elif year_step >= SUMMER_START_STEP and year_step < AUTUMN_START_STEP:
+        elif year_step >= SUMMER_START_YEAR_STEP and year_step < AUTUMN_START_YEAR_STEP:
             return SeasonTypes.SUMMER
-        elif year_step >= AUTUMN_START_STEP and year_step < WINTER_START_STEP:
+        elif year_step >= AUTUMN_START_YEAR_STEP and year_step < WINTER_START_YEAR_STEP:
             return SeasonTypes.AUTUMN
-        elif year_step >= WINTER_START_STEP:
+        elif year_step >= WINTER_START_YEAR_STEP:
             return SeasonTypes.WINTER
 
     def _set_current_season(self, season: SeasonTypes):
