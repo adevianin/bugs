@@ -15,7 +15,7 @@ class Command(BaseCommand):
         "last_used_id":70,
         "climate": {
             "direction_of_change": 1,
-            "current_temperature": 5
+            "current_temperature": -6
         },
         "current_step": 0,
         "ants":[
