@@ -14,10 +14,10 @@ class Command(BaseCommand):
         },
         "last_used_id":70,
         "climate": {
-            "direction_of_change": -1,
+            "direction_of_change": 1,
             "current_temperature": 5
         },
-        "current_step": 190,
+        "current_step": 0,
         "ants":[
             {
                 "id":1,
@@ -1437,7 +1437,9 @@ class Command(BaseCommand):
                         {
                             "type": "adaptation",
                             "activated_specie_genes_ids": [],
-                            "specie_genes": []
+                            "specie_genes": [
+                                {'id': 'key8', 'gene': { "type": "adaptation_cold",  "domination_code": "E", "resistance_points": 50 } }
+                            ]
                         },
                         {
                             "type": "building",
