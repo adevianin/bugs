@@ -1407,7 +1407,7 @@ class Command(BaseCommand):
                     "activity_weights": {
                         "attack_weight": 10,
                         "defense_weight": 12,
-                        "cold_resistance_weight": 0,
+                        "cold_resistance_weight": 300,
                         "building_weight": 0
                     },
                     "chromosomes_set": [
@@ -1436,7 +1436,7 @@ class Command(BaseCommand):
                         },
                         {
                             "type": "adaptation",
-                            "activated_specie_genes_ids": [],
+                            "activated_specie_genes_ids": ['key8'],
                             "specie_genes": [
                                 {'id': 'key8', 'gene': { "type": "adaptation_cold",  "domination_code": "E", "resistance_points": 50 } }
                             ]
