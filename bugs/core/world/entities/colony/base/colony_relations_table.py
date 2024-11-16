@@ -5,6 +5,10 @@ class ColonyRelationsTable():
     DEFAULT_RELATION_VALUE = 1
 
     @staticmethod
+    def build_empty():
+        return ColonyRelationsTable([])
+
+    @staticmethod
     def build(relations_data: Dict):
         return ColonyRelationsTable(relations_data)
 
