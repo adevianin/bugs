@@ -26,21 +26,10 @@ class WorldFacade:
     WORLD_ID = 1
 
     @classmethod
-    def init(cls, event_bus: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
-             nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer, notification_client_serializer: NotificationClientSerializer,
-             world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, 
-             ant_service: AntService, action_accumulator: ActionAccumulator, rating_service: RatingService):
-        events = EventEmitter()
-        world_facade = WorldFacade(event_bus, events, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, notification_client_serializer,
-                                   world_repository, colony_service, player_service, nuptial_environment_service, ant_service, action_accumulator, rating_service)
-        WorldFacade._instance = world_facade
-        return world_facade
-
-    @classmethod
     def get_instance(cls) -> 'WorldFacade':
         return WorldFacade._instance
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
+    def __init__(self, event_bus: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
                  nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer, notification_client_serializer: NotificationClientSerializer,
                  world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, 
                  ant_service: AntService, action_accumulator: ActionAccumulator, rating_service: RatingService):
@@ -49,7 +38,7 @@ class WorldFacade:
         else:
             WorldFacade._instance = self
 
-        self._events = events
+        self._events = EventEmitter()
         self._event_bus = event_bus
         self._world_repository = world_repository
         self._world_client_serializer = world_client_serializer

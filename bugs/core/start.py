@@ -217,7 +217,7 @@ def start():
 
     action_accumulator = ActionAccumulator(event_bus)
 
-    world_facade = WorldFacade.init(event_bus, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, notification_client_serializer, 
+    world_facade = WorldFacade(event_bus, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, notification_client_serializer, 
                                     world_repository, colony_service, player_service, nuptial_environment_service, ant_service, action_accumulator, rating_service)
 
     world_facade.init_world()
