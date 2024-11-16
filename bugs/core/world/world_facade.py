@@ -6,7 +6,6 @@ from core.world.utils.point import Point
 from core.world.world_repository_interface import iWorldRepository
 from .world_client_serializer_interface import iWorldClientSerializer
 from .action_client_serializer_interface import iActionClientSerializer
-from core.world.entities.action.base.action import Action
 from core.world.entities.ant.base.ant_types import AntTypes
 from .nuptial_environment_client_serializer_interface import iNuptialEnvironmentClientSerializer
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
@@ -17,22 +16,23 @@ from core.world.action_accumulator import ActionAccumulator
 # make interface
 from core.sync.notification_client_serializer import NotificationClientSerializer
 from core.world.services.rating_serivice import RatingService
-from core.world.entities.world.world import World
+from core.world.services.world_service import WorldService
 
 from typing import Callable, List, Dict
 
 class WorldFacade:
     _instance = None
-    WORLD_ID = 1
+    WORLD_ID = 2
 
     @classmethod
     def get_instance(cls) -> 'WorldFacade':
         return WorldFacade._instance
 
     def __init__(self, event_bus: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
-                 nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer, notification_client_serializer: NotificationClientSerializer,
-                 world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, 
-                 ant_service: AntService, action_accumulator: ActionAccumulator, rating_service: RatingService):
+                 nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer, 
+                 notification_client_serializer: NotificationClientSerializer, world_repository: iWorldRepository, colony_service: ColonyService, 
+                 player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, ant_service: AntService, action_accumulator: ActionAccumulator, 
+                 rating_service: RatingService, world_service: WorldService):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
@@ -52,6 +52,7 @@ class WorldFacade:
         self._nuptial_environment_service = nuptial_environment_service
         self._ant_service = ant_service
         self._rating_service = rating_service
+        self._world_service = world_service
 
         self._action_accumulator = action_accumulator
         self._serialized_common_actions = []
@@ -61,7 +62,7 @@ class WorldFacade:
     def init_world(self):
         self._world = self._world_repository.get(self.WORLD_ID)
         if not self._world:
-            raise Exception('not ready yet')
+            self._world = self._world_service.generate_new_world()
 
     def save_world(self):
         self._world_repository.push(self._world, self.WORLD_ID)

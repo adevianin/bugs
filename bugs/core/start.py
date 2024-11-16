@@ -78,6 +78,7 @@ from core.world.services.colony_service import ColonyService
 from core.world.services.nuptial_environment_service import NuptialEnvironmentService
 from core.world.services.ant_service import AntService
 from core.world.services.rating_serivice import RatingService
+from core.world.services.world_service import WorldService
 
 from core.sync.world_client_serializer import WorldClientSerializer
 from core.sync.colony_client_serializer import ColonyClientSerializer
@@ -188,6 +189,7 @@ def start():
     nuptial_environment_service = NuptialEnvironmentService(colony_factory)
     ant_service = AntService()
     rating_service = RatingService(event_bus, usernames_repository)
+    world_service = WorldService(world_factory, map_factory, colony_factory, climate_factory)
 
     stats_client_serializer = StatsClientSerializer()
     genes_client_serializer = GenesClientSerializer()
@@ -217,8 +219,9 @@ def start():
 
     action_accumulator = ActionAccumulator(event_bus)
 
-    world_facade = WorldFacade(event_bus, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, notification_client_serializer, 
-                                    world_repository, colony_service, player_service, nuptial_environment_service, ant_service, action_accumulator, rating_service)
+    world_facade = WorldFacade(event_bus, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, 
+                               notification_client_serializer, world_repository, colony_service, player_service, nuptial_environment_service, ant_service, 
+                               action_accumulator, rating_service, world_service)
 
     world_facade.init_world()
 
