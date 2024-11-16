@@ -1375,7 +1375,7 @@ class Command(BaseCommand):
         ],
         "colonies":[
             {
-                "id":1,
+                "id":3,
                 "owner_id":2,
                 "queen_id": 4,
                 "member_type": "ant",
@@ -1389,7 +1389,7 @@ class Command(BaseCommand):
                 "operations":[]
             },
             {
-                "id":3,
+                "id":1,
                 "owner_id": None,
                 "member_type": "ground_beetle"
             }
