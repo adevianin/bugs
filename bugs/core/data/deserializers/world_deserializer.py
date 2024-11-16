@@ -45,7 +45,7 @@ class WorldDeserializer():
         
 
     def deserialize(self, world_json: dict) -> World:
-        entities_collection = EntityCollection.build_entity_collection()
+        entities_collection = EntityCollection.build()
 
         trees_data = world_json['trees']
         for tree_data in trees_data:

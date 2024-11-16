@@ -3,8 +3,7 @@ from .entity import Entity
 
 class EntityCollection():
 
-    @classmethod
-    def build_entity_collection(cls):
+    def build():
         return EntityCollection()
 
     def __init__(self):
