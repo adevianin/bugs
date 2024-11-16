@@ -34,10 +34,9 @@ class WorldFactory():
         self._nest_factory = nest_factory
         self._ground_beetle_factory = ground_beetle_factory
 
-    def build_world(self, last_used_id: int, entities_collection: EntityCollection, map: Map, colonies: List[Colony], colony_relations_table: ColonyRelationsTable, 
+    def build_world(self, id_generator: IdGenerator, entities_collection: EntityCollection, map: Map, colonies: List[Colony], colony_relations_table: ColonyRelationsTable, 
                     nuptial_environments: List[NuptialEnvironment], player_stats_list: List[PlayerStats], climate: Climate, current_step: int, 
                     notifications: List[Notification]) -> World:
-        id_generator = IdGenerator.build_id_generator(last_used_id)
         ground_beetle_spawner = GroundBeetleSpawner(self._event_bus, map)
         birthers = {
             'ant_birther': AntBirther(self._event_bus, id_generator, map, self._ant_factory),
