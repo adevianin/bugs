@@ -21,7 +21,6 @@ def user_register(request):
 
     try:
         user = User.objects.create_user(username, password=password)
-        WorldFacade.get_instance().build_user_starter_pack(user_id=user.id)
         login(request, user)
         
         return JsonResponse({

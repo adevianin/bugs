@@ -14,7 +14,7 @@ class WorldRepository(iWorldRepository):
 
     def get(self, world_id: int) -> World:
         world_data = self._world_data_repository.get(world_id)
-        return self._world_deserializer.deserialize(world_data)
+        return self._world_deserializer.deserialize(world_data) if world_data else None
 
     def push(self, world: World, world_id: int):
         world_json = self._world_serializer.serialize(world)

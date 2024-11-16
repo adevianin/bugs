@@ -12,6 +12,7 @@ class MainSocketConsumer(WebsocketConsumer):
         self._user = self.scope["user"]
 
         if self._user.is_authenticated:
+            self._world_facade.ensure_starter_pack_built_for_player(self._user.id)
             self.accept()
         else:
             self.close()

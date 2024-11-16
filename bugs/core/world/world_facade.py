@@ -17,6 +17,7 @@ from core.world.action_accumulator import ActionAccumulator
 # make interface
 from core.sync.notification_client_serializer import NotificationClientSerializer
 from core.world.services.rating_serivice import RatingService
+from core.world.entities.world.world import World
 
 from typing import Callable, List, Dict
 
@@ -70,6 +71,8 @@ class WorldFacade:
         
     def init_world(self):
         self._world = self._world_repository.get(self.WORLD_ID)
+        if not self._world:
+            raise Exception('not ready yet')
 
     def save_world(self):
         self._world_repository.push(self._world, self.WORLD_ID)
@@ -93,8 +96,8 @@ class WorldFacade:
     def remove_listener(self, event_name: str, callback: Callable):
         self._events.remove_listener(event_name, callback)
 
-    def build_user_starter_pack(self, user_id: int):
-        self._player_service.build_player_starter_pack(user_id)
+    def ensure_starter_pack_built_for_player(self, user_id: int):
+        self._player_service.ensure_starter_pack_built_for_player(user_id)
 
     def stop_operation_command(self, user_id: int, colony_id: int, operation_id: int):
         self._colony_service.stop_operation(user_id, colony_id, operation_id)

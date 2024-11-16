@@ -24,12 +24,10 @@ class PlayerService():
     def set_world(self, world: World):
         self._world = world
 
-    def build_player_starter_pack(self, player_id: int):
-        specie = Specie.build_new()
-        nuptial_env = self._nuptial_env_factory.build_nuptial_environment(player_id, specie, [])
-        player_stats = self._player_stats_factory.build_player_stats(player_id, 0, 0)
-        self._world.add_new_nuptial_environment(nuptial_env)
-        self._world.add_new_player_stats(player_stats)
+    def ensure_starter_pack_built_for_player(self, player_id: int):
+        is_built = self._check_starter_pack_for_player(player_id)
+        if not is_built:
+            self._build_starter_pack_for_player(player_id)
 
     def born_new_antara(self, player_id: int):
         player_ant_colonies = self._world.get_ant_colonies_by_owner(player_id)
@@ -48,4 +46,15 @@ class PlayerService():
 
         nuptial_env = self._world.get_nuptial_environment_by_owner(player_id)
         nuptial_env.born_antara(on_antara_born)
+
+    def _build_starter_pack_for_player(self, player_id: int):
+        specie = Specie.build_new()
+        nuptial_env = self._nuptial_env_factory.build_nuptial_environment(player_id, specie, [])
+        player_stats = self._player_stats_factory.build_player_stats(player_id, 0, 0)
+        self._world.add_new_nuptial_environment(nuptial_env)
+        self._world.add_new_player_stats(player_stats)
+
+    def _check_starter_pack_for_player(self, player_id: int) -> bool:
+        nuptial_env = self._world.get_nuptial_environment_by_owner(player_id)
+        return bool(nuptial_env)
     
