@@ -21,6 +21,11 @@ class ItemArea(Entity):
         ItemTypes.STICK: [SeasonTypes.SUMMER, SeasonTypes.AUTUMN]
     }
 
+    @staticmethod
+    def check_is_fertile_season_for_item_type(season: SeasonTypes, item_type: ItemTypes):
+        fertile_seasons = ItemArea.ACTIVE_SEASONS.get(item_type, [])
+        return season in fertile_seasons
+
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: Body, size: Size, 
                  item_type: ItemTypes, fertility: int, accumulated: int, is_active: bool):
         super().__init__(event_bus, events, id, EntityTypes.ITEM_AREA, ownership, body)
@@ -76,13 +81,12 @@ class ItemArea(Entity):
         return Point(x, y)
     
     def _should_spawn(self) -> bool:
-        return self._accumulated > 5 and random.choice([True, False, False, False])
+        return self._accumulated > 10 and random.choice([True, False, False, False])
     
     def _request_birth(self):
         self._event_bus.emit('item_birth_request', ItemBirthRequest.build(self._generate_spawn_point(), self._accumulated, self._item_type))
 
     def _on_season_changed(self, season: SeasonTypes):
-        fertile_seasons = ItemArea.ACTIVE_SEASONS.get(self._item_type, [])
-        self._is_active = season in fertile_seasons
+        self._is_active = ItemArea.check_is_fertile_season_for_item_type(season, self._item_type )
 
 

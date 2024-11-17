@@ -9169,7 +9169,7 @@ class TreeView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
     _render() {
         this._bodyContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._bodyContainer.eventMode = 'static';
+        this._bodyContainer.eventMode = 'none';
         this._entityContainer.addChild(this._bodyContainer);
 
         this._sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`tree_summer.png`));

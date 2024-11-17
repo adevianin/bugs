@@ -24,11 +24,13 @@ class Map:
     def size(self):
         return self._size
     
-    def generate_random_point(self):
-        padding = 10
+    def generate_random_point(self, padding: int = 10):
         x = random.randint(padding, self._size.width - padding)
         y = random.randint(padding, self._size.height - padding)
         return Point(x, y)
+    
+    def add_entity(self, entity: Entity):
+        self._entities_collection.add_entity(entity)
     
     def get_entity_by_id(self, id: int) -> Entity:
         return self._entities_collection.get_entity_by_id(id)

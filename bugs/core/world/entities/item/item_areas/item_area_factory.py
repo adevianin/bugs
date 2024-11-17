@@ -6,11 +6,18 @@ from core.world.entities.item.item_areas.base.item_area import ItemArea
 from core.world.entities.base.body import Body
 from core.world.entities.base.stats_library import StatsLibrary
 from core.world.entities.base.ownership_config import OwnershipConfig
+from core.world.entities.world.season_types import SeasonTypes
 
 class ItemAreaFactory():
 
     def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus
+
+    def build_new_item_area(self, id: int, position: Point, size: Size, item_type: ItemTypes, fertility: int, current_season: SeasonTypes):
+        ownership = OwnershipConfig.build_empty()
+        hp = StatsLibrary.GHOST_DEFAULT.max_hp
+        is_active = ItemArea.check_is_fertile_season_for_item_type(current_season, item_type)
+        return self.build_item_area(id, ownership, hp, position, 0, size, item_type, fertility, 0, is_active)
 
     def build_item_area(self, id: int, ownership: OwnershipConfig, hp: int, position: Point, angle: int, size: Size, item_type: ItemTypes, fertility: int, accumulated: int, 
                         is_active: bool):

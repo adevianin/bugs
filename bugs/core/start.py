@@ -189,7 +189,7 @@ def start():
     nuptial_environment_service = NuptialEnvironmentService(colony_factory)
     ant_service = AntService()
     rating_service = RatingService(event_bus, usernames_repository)
-    world_service = WorldService(world_factory, map_factory, colony_factory, climate_factory)
+    world_service = WorldService(world_factory, map_factory, colony_factory, climate_factory, tree_factory, item_area_factory)
 
     stats_client_serializer = StatsClientSerializer()
     genes_client_serializer = GenesClientSerializer()

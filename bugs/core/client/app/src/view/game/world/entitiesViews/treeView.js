@@ -14,7 +14,7 @@ class TreeView extends EntityView {
 
     _render() {
         this._bodyContainer = new PIXI.Container();
-        this._bodyContainer.eventMode = 'static';
+        this._bodyContainer.eventMode = 'none';
         this._entityContainer.addChild(this._bodyContainer);
 
         this._sprite = new PIXI.Sprite(this.$textureManager.getTexture(`tree_summer.png`));
