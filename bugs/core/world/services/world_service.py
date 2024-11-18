@@ -12,6 +12,7 @@ from core.world.entities.tree.tree_factory import TreeFactory
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory
 from core.world.utils.point import Point
 from core.world.entities.item.items.base.item_types import ItemTypes
+from core.world.entities.item.item_sources.item_source_factory import ItemSourceFactory
 import random
 from typing import Dict
 
@@ -19,15 +20,18 @@ class WorldService():
 
     TREE_HEIGHT = 500
     TREE_WIDTH = 462
+    HONEYDEW_SOURCE_HEIGHT = 110
+    HONEYDEW_SOURCE_WIDTH = 90
 
     def __init__(self, world_factory: WorldFactory, map_factory: MapFactory, colony_factory: ColonyFactory, climate_factory: ClimateFactory, tree_factory: TreeFactory, 
-                 item_area_factory: ItemAreaFactory):
+                 item_area_factory: ItemAreaFactory, item_source_factory: ItemSourceFactory):
         self._world_factory = world_factory
         self._map_factory = map_factory
         self._colony_factory = colony_factory
         self._climate_factory = climate_factory
         self._tree_factory = tree_factory
         self._item_area_factory = item_area_factory
+        self._item_source_factory = item_source_factory
 
     def generate_new_world(self) -> World:
         chunk_size = Size(1000, 1000)
@@ -61,18 +65,69 @@ class WorldService():
         return world
     
     def _generate_chunk(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict):
-        trees_count = 0 if any(edge_info.values()) else random.randint(0, 2)
-        match(trees_count):
+        chunk_type = 0 if any(edge_info.values()) else random.randint(0, 0)
+        match(chunk_type):
             case 0:
-                pass
+                self._generate_chunk_type_0(chunk_pos, chunk_size, world, edge_info)
             case 1:
-                self._generate_tree_pack(chunk_pos, chunk_size, world)
+                pass
+                # self._generate_tree_pack(chunk_pos, chunk_size, world)
             case 2:
-                self._generate_tree_pack(chunk_pos, chunk_size, world, 0)
-                self._generate_tree_pack(chunk_pos, chunk_size, world, WorldService.TREE_WIDTH + 10)
+                pass
+                # self._generate_tree_pack(chunk_pos, chunk_size, world, 0)
+                # self._generate_tree_pack(chunk_pos, chunk_size, world, WorldService.TREE_WIDTH + 10)
 
-    def _generate_tree_pack(self, chunk_pos: Point, chunk_size: Size, world: World, x: int = None, y: int = None):
-        tree_pos = self._generate_tree_position(chunk_pos, chunk_size, x, y)
+    def _generate_chunk_type_0(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict):
+        pass
+        # min_y = chunk_pos.y + WorldService.HONEYDEW_SOURCE_HEIGHT + 10
+        # max_y = chunk_pos.y + chunk_size.height - 5
+
+        # min_x = chunk_pos.x + int(WorldService.HONEYDEW_SOURCE_WIDTH / 2) + 5
+        # max_x = chunk_pos.x + int(chunk_size.width / 2 - WorldService.HONEYDEW_SOURCE_WIDTH / 2) - 5
+        # x = random.randint(min_x, max_x)
+        # y = random.randint(min_y, max_y)
+        # position = self._randomly_place_obj_in_rect(chunk_pos, )
+        # self._build_honeydew_item_source(world, position)
+
+        # min_x = chunk_pos.x + int(chunk_size.width / 2) + 5
+        # max_x = chunk_pos.x + chunk_size.width - int(WorldService.HONEYDEW_SOURCE_WIDTH / 2) - 5
+        # x = random.randint(min_x, max_x)
+        # y = random.randint(min_y, max_y)
+        # position = Point(x, y)
+        # self._build_honeydew_item_source(world, position)
+
+    def _generate_chunk_type_1(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict): 
+        min_x = chunk_pos.x + int(WorldService.TREE_WIDTH / 2) + 10
+        max_x = chunk_pos.x + int(chunk_size.width / 2 - WorldService.TREE_WIDTH / 2) - 10
+        min_y = chunk_pos.y + WorldService.TREE_HEIGHT + 10
+        max_y = chunk_pos.y + chunk_size.height - 5
+
+    # def _generate_chunk(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict):
+    #     trees_count = 0 if any(edge_info.values()) else random.randint(0, 2)
+    #     match(trees_count):
+    #         case 0:
+    #             pass
+    #         case 1:
+    #             self._generate_tree_pack(chunk_pos, chunk_size, world)
+    #         case 2:
+    #             self._generate_tree_pack(chunk_pos, chunk_size, world, 0)
+    #             self._generate_tree_pack(chunk_pos, chunk_size, world, WorldService.TREE_WIDTH + 10)
+
+    def _randomly_place_obj_in_rect(self, rect_pos: Point, rect_size: Size, obj_size: Size, padding: int = 10):
+        if obj_size.width + 2 * padding > rect_size.width or obj_size.height + 2 * padding > rect_size.height:
+            raise Exception('not corect rect size or obj size')
+        min_x = rect_pos.x + int(obj_size.width / 2) + padding
+        max_x = rect_pos.x + int(rect_size.width - obj_size.width / 2) - padding
+        min_y = rect_pos.y + obj_size.height + padding
+        max_y = rect_pos.y + rect_size.height - padding
+        return Point(random.randint(min_x, max_x), random.randint(min_y, max_y))
+
+    def _build_honeydew_item_source(self, world: World, position: Point):
+        fertility = random.randint(1, 7)
+        item_source = self._item_source_factory.build_new_item_source(world.generate_id(), position, ItemTypes.HONEYDEW, fertility, 10, 40, world.current_season)
+        world.map.add_entity(item_source)
+
+    def _build_tree_pack(self, world: World, tree_pos: Point):
         tree = self._tree_factory.build_new_tree(world.generate_id(), tree_pos)
         world.map.add_entity(tree)
 
@@ -97,15 +152,3 @@ class WorldService():
             x = random.randint(min_x, max_x)
 
         return Point(chunk_pos.x + x, chunk_pos.y + y)
-
-    # def _generate_trees(self, world: World, id_generator: IdGenerator):
-    #     world_size = world.map.size
-    #     padding = 500
-    #     area_per_tree = 1000000
-    #     trees_area = (world_size.width - padding) * (world_size.height - padding)
-    #     trees_count = round(trees_area / area_per_tree)
-    #     for i in range(trees_count - 1):
-    #         id = id_generator.generate_id()
-    #         position = world.map.generate_random_point(padding)
-    #         tree = self._tree_factory.build_new_tree(id, position)
-    #         world.map.add_entity(tree)

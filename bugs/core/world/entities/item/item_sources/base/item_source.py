@@ -18,6 +18,11 @@ class ItemSource(Entity):
         ItemTypes.HONEYDEW: [SeasonTypes.SUMMER, SeasonTypes.AUTUMN]
     }
 
+    @staticmethod
+    def check_is_fertile_season_for_item_type(season: SeasonTypes, item_type: ItemTypes):
+        fertile_seasons = ItemSource.ACTIVE_SEASONS.get(item_type, [])
+        return season in fertile_seasons
+
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: Body, item_type: ItemTypes, 
                  fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int, is_active: bool):
         super().__init__(event_bus, events, id, EntityTypes.ITEM_SOURCE, ownership, body)
@@ -101,8 +106,7 @@ class ItemSource(Entity):
         self._update_is_fertile()
 
     def _on_season_changed(self, season: SeasonTypes):
-        fertile_seasons = ItemSource.ACTIVE_SEASONS.get(self._item_type, [])
-        self._is_active = season in fertile_seasons
+        self._is_active = ItemSource.check_is_fertile_season_for_item_type(season, self._item_type)
         self._update_is_fertile()
 
     def _check_fertility(self) -> bool:
