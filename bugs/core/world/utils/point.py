@@ -57,6 +57,12 @@ class Point(namedtuple('Point', ['x', 'y'])):
     def from_json(cls, point_json: List[int]):
         return Point(point_json[0], point_json[1])
     
+    def mirror_x_axis(self, mirror_x: int):
+        return Point(2 * mirror_x - self.x, self.y)
+    
+    def mirror_y_axis(self, mirror_y: int):
+        return Point(self.x, 2 * mirror_y - self.y)
+    
     def dist(self, another_point: 'Point'):
         return math.dist([self.x, self.y], [another_point.x, another_point.y])
     

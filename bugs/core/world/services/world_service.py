@@ -13,6 +13,8 @@ from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactor
 from core.world.utils.point import Point
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.item.item_sources.item_source_factory import ItemSourceFactory
+from core.world.entities.item.item_sources.honeydew_item_source.honeydew_item_source_body import HoneydewItemSourceBody
+from core.world.entities.tree.tree_body import TreeBody
 import random
 from typing import Dict
 
@@ -65,53 +67,66 @@ class WorldService():
         return world
     
     def _generate_chunk(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict):
-        chunk_type = 0 if any(edge_info.values()) else random.randint(0, 0)
+        chunk_type = 0 if any(edge_info.values()) else random.randint(0, 2)
         match(chunk_type):
             case 0:
                 self._generate_chunk_type_0(chunk_pos, chunk_size, world, edge_info)
             case 1:
-                pass
-                # self._generate_tree_pack(chunk_pos, chunk_size, world)
+                self._generate_chunk_type_1(chunk_pos, chunk_size, world, edge_info)
             case 2:
-                pass
-                # self._generate_tree_pack(chunk_pos, chunk_size, world, 0)
-                # self._generate_tree_pack(chunk_pos, chunk_size, world, WorldService.TREE_WIDTH + 10)
+                self._generate_chunk_type_2(chunk_pos, chunk_size, world, edge_info)
 
     def _generate_chunk_type_0(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict):
-        pass
-        # min_y = chunk_pos.y + WorldService.HONEYDEW_SOURCE_HEIGHT + 10
-        # max_y = chunk_pos.y + chunk_size.height - 5
+        half_chunk_width = int(chunk_size.width / 2)
+        honeydew_count = random.randint(1, 2)
 
-        # min_x = chunk_pos.x + int(WorldService.HONEYDEW_SOURCE_WIDTH / 2) + 5
-        # max_x = chunk_pos.x + int(chunk_size.width / 2 - WorldService.HONEYDEW_SOURCE_WIDTH / 2) - 5
-        # x = random.randint(min_x, max_x)
-        # y = random.randint(min_y, max_y)
-        # position = self._randomly_place_obj_in_rect(chunk_pos, )
-        # self._build_honeydew_item_source(world, position)
+        rect_size = Size(half_chunk_width, chunk_size.height)
+        position = self._randomly_place_obj_in_rect(chunk_pos, rect_size, HoneydewItemSourceBody.SIZE)
+        self._build_honeydew_item_source(world, position)
 
-        # min_x = chunk_pos.x + int(chunk_size.width / 2) + 5
-        # max_x = chunk_pos.x + chunk_size.width - int(WorldService.HONEYDEW_SOURCE_WIDTH / 2) - 5
-        # x = random.randint(min_x, max_x)
-        # y = random.randint(min_y, max_y)
-        # position = Point(x, y)
-        # self._build_honeydew_item_source(world, position)
+        if honeydew_count > 1:
+            rect_size = Size(half_chunk_width, chunk_size.height)
+            rect_pos = Point(chunk_pos.x + half_chunk_width, chunk_pos.y)
+            position = self._randomly_place_obj_in_rect(rect_pos, rect_size, HoneydewItemSourceBody.SIZE)
+            self._build_honeydew_item_source(world, position)
 
     def _generate_chunk_type_1(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict): 
-        min_x = chunk_pos.x + int(WorldService.TREE_WIDTH / 2) + 10
-        max_x = chunk_pos.x + int(chunk_size.width / 2 - WorldService.TREE_WIDTH / 2) - 10
-        min_y = chunk_pos.y + WorldService.TREE_HEIGHT + 10
-        max_y = chunk_pos.y + chunk_size.height - 5
+        half_chunk_width = int(chunk_size.width / 2)
+        half_chunk_height = int(chunk_size.height / 2)
+        is_mirror = random.choice([True, False])
+        mirror_x = chunk_pos.x + half_chunk_width
 
-    # def _generate_chunk(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict):
-    #     trees_count = 0 if any(edge_info.values()) else random.randint(0, 2)
-    #     match(trees_count):
-    #         case 0:
-    #             pass
-    #         case 1:
-    #             self._generate_tree_pack(chunk_pos, chunk_size, world)
-    #         case 2:
-    #             self._generate_tree_pack(chunk_pos, chunk_size, world, 0)
-    #             self._generate_tree_pack(chunk_pos, chunk_size, world, WorldService.TREE_WIDTH + 10)
+        rect_size = Size(half_chunk_width, chunk_size.height)
+        tree_pos = self._randomly_place_obj_in_rect(chunk_pos, rect_size, TreeBody.SIZE)
+        if is_mirror:
+            tree_pos = tree_pos.mirror_x_axis(mirror_x)
+        self._build_tree_pack(world, tree_pos)
+
+        rect_size = Size(half_chunk_width, half_chunk_height)
+        rect_pos = Point(chunk_pos.x + half_chunk_width, chunk_pos.y)
+        position = self._randomly_place_obj_in_rect(rect_pos, rect_size, HoneydewItemSourceBody.SIZE)
+        if is_mirror:
+            position = position.mirror_x_axis(mirror_x)
+        self._build_honeydew_item_source(world, position)
+
+        rect_size = Size(half_chunk_width, half_chunk_height)
+        rect_pos = Point(chunk_pos.x + half_chunk_width, chunk_pos.y + half_chunk_height)
+        position = self._randomly_place_obj_in_rect(rect_pos, rect_size, HoneydewItemSourceBody.SIZE)
+        if is_mirror:
+            position = position.mirror_x_axis(mirror_x)
+        self._build_honeydew_item_source(world, position)
+
+    def _generate_chunk_type_2(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict):
+        half_chunk_height = int(chunk_size.height / 2)
+
+        rect_size = Size(chunk_size.width, half_chunk_height + 50)
+        tree_pos = self._randomly_place_obj_in_rect(chunk_pos, rect_size, TreeBody.SIZE)
+        self._build_tree_pack(world, tree_pos)
+
+        rect_size = Size(chunk_size.width, half_chunk_height - 50)
+        rect_pos = Point(chunk_pos.x, chunk_pos.y + half_chunk_height + 50)
+        position = self._randomly_place_obj_in_rect(rect_pos, rect_size, HoneydewItemSourceBody.SIZE)
+        self._build_honeydew_item_source(world, position)
 
     def _randomly_place_obj_in_rect(self, rect_pos: Point, rect_size: Size, obj_size: Size, padding: int = 10):
         if obj_size.width + 2 * padding > rect_size.width or obj_size.height + 2 * padding > rect_size.height:
@@ -124,7 +139,7 @@ class WorldService():
 
     def _build_honeydew_item_source(self, world: World, position: Point):
         fertility = random.randint(1, 7)
-        item_source = self._item_source_factory.build_new_item_source(world.generate_id(), position, ItemTypes.HONEYDEW, fertility, 10, 40, world.current_season)
+        item_source = self._item_source_factory.build_new_honeydew_item_source(world.generate_id(), position, ItemTypes.HONEYDEW, fertility, 10, 40, world.current_season)
         world.map.add_entity(item_source)
 
     def _build_tree_pack(self, world: World, tree_pos: Point):
