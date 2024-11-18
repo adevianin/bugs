@@ -78,6 +78,7 @@ class WorldService():
 
     def _generate_chunk_type_0(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict):
         half_chunk_width = int(chunk_size.width / 2)
+        half_chunk_height = int(chunk_size.height / 2)
         honeydew_count = random.randint(1, 2)
 
         rect_size = Size(half_chunk_width, chunk_size.height)
@@ -89,6 +90,9 @@ class WorldService():
             rect_pos = Point(chunk_pos.x + half_chunk_width, chunk_pos.y)
             position = self._randomly_place_obj_in_rect(rect_pos, rect_size, HoneydewItemSourceBody.SIZE)
             self._build_honeydew_item_source(world, position)
+
+        position = Point(chunk_pos.x + half_chunk_width, chunk_pos.y + half_chunk_height)
+        self._build_flower_item_area(world, position, chunk_size)
 
     def _generate_chunk_type_1(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict): 
         half_chunk_width = int(chunk_size.width / 2)
@@ -136,6 +140,11 @@ class WorldService():
         min_y = rect_pos.y + obj_size.height + padding
         max_y = rect_pos.y + rect_size.height - padding
         return Point(random.randint(min_x, max_x), random.randint(min_y, max_y))
+    
+    def _build_flower_item_area(self, world: World, position: Point, size: Size):
+        fertility = random.randint(1, 4)
+        flower_area = self._item_area_factory.build_new_item_area(world.generate_id(), position, size, ItemTypes.FLOWER, fertility, world.current_season)
+        world.map.add_entity(flower_area)
 
     def _build_honeydew_item_source(self, world: World, position: Point):
         fertility = random.randint(1, 7)
