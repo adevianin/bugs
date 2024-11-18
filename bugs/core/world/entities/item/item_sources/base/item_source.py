@@ -14,14 +14,11 @@ import random
 
 class ItemSource(Entity):
 
-    ACTIVE_SEASONS: Dict[ItemTypes, List[SeasonTypes]] = {
-        ItemTypes.HONEYDEW: [SeasonTypes.SUMMER, SeasonTypes.AUTUMN]
-    }
+    ACTIVE_SEASONS = []
 
-    @staticmethod
-    def check_is_fertile_season_for_item_type(season: SeasonTypes, item_type: ItemTypes):
-        fertile_seasons = ItemSource.ACTIVE_SEASONS.get(item_type, [])
-        return season in fertile_seasons
+    @classmethod
+    def check_is_fertile_season(cls, season: SeasonTypes):
+        return season in cls.ACTIVE_SEASONS
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: Body, item_type: ItemTypes, 
                  fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int, is_active: bool):
@@ -106,7 +103,7 @@ class ItemSource(Entity):
         self._update_is_fertile()
 
     def _on_season_changed(self, season: SeasonTypes):
-        self._is_active = ItemSource.check_is_fertile_season_for_item_type(season, self._item_type)
+        self._is_active = self.check_is_fertile_season(season)
         self._update_is_fertile()
 
     def _check_fertility(self) -> bool:
