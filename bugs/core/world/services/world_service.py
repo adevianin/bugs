@@ -20,11 +20,6 @@ from typing import Dict
 
 class WorldService():
 
-    TREE_HEIGHT = 500
-    TREE_WIDTH = 462
-    HONEYDEW_SOURCE_HEIGHT = 110
-    HONEYDEW_SOURCE_WIDTH = 90
-
     def __init__(self, world_factory: WorldFactory, map_factory: MapFactory, colony_factory: ColonyFactory, climate_factory: ClimateFactory, tree_factory: TreeFactory, 
                  item_area_factory: ItemAreaFactory, item_source_factory: ItemSourceFactory):
         self._world_factory = world_factory
@@ -155,24 +150,10 @@ class WorldService():
         tree = self._tree_factory.build_new_tree(world.generate_id(), tree_pos)
         world.map.add_entity(tree)
 
-        area_size = Size(WorldService.TREE_WIDTH, WorldService.TREE_HEIGHT)
-
         fertility = random.randint(1, 4)
-        stick_area = self._item_area_factory.build_new_item_area(world.generate_id(), tree_pos, area_size, ItemTypes.STICK, fertility, world.current_season)
+        stick_area = self._item_area_factory.build_new_item_area(world.generate_id(), tree_pos, TreeBody.SIZE, ItemTypes.STICK, fertility, world.current_season)
         world.map.add_entity(stick_area)
 
         fertility = random.randint(1, 5)
-        leaf_area = self._item_area_factory.build_new_item_area(world.generate_id(), tree_pos, area_size, ItemTypes.LEAF, fertility, world.current_season)
+        leaf_area = self._item_area_factory.build_new_item_area(world.generate_id(), tree_pos, TreeBody.SIZE, ItemTypes.LEAF, fertility, world.current_season)
         world.map.add_entity(leaf_area)
-
-    def _generate_tree_position(self, chunk_pos: Point, chunk_size: Size, x: int, y: int):
-        if y is None:
-            min_y = chunk_size.height - WorldService.TREE_HEIGHT + 10
-            max_y = chunk_size.height - 10
-            y = random.randint(min_y, max_y)
-        if x is None:
-            min_x = 0
-            max_x = chunk_size.width - WorldService.TREE_WIDTH - 10
-            x = random.randint(min_x, max_x)
-
-        return Point(chunk_pos.x + x, chunk_pos.y + y)
