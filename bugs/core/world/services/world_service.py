@@ -20,6 +20,8 @@ from typing import Dict
 
 class WorldService():
 
+    CHUNK_SIZE = Size(1000, 1000)
+
     def __init__(self, world_factory: WorldFactory, map_factory: MapFactory, colony_factory: ColonyFactory, climate_factory: ClimateFactory, tree_factory: TreeFactory, 
                  item_area_factory: ItemAreaFactory, item_source_factory: ItemSourceFactory):
         self._world_factory = world_factory
@@ -30,11 +32,8 @@ class WorldService():
         self._item_area_factory = item_area_factory
         self._item_source_factory = item_source_factory
 
-    def generate_new_world(self) -> World:
-        chunk_size = Size(1000, 1000)
-        chunk_rows_count = 8
-        chunk_cols_count = 8
-        map_size = Size(chunk_size.width * chunk_rows_count, chunk_size.height * chunk_cols_count)
+    def generate_new_world(self, chunk_rows_count: int, chunk_cols_count: int) -> World:
+        map_size = Size(WorldService.CHUNK_SIZE.width * chunk_rows_count, WorldService.CHUNK_SIZE.height * chunk_cols_count)
         entities_collection = EntityCollection.build()
         map = self._map_factory.build_map(map_size, entities_collection)
         colony_relations_table = ColonyRelationsTable.build_empty()
@@ -51,8 +50,8 @@ class WorldService():
         
         for chunk_col_index in range(chunk_cols_count):
             for chunk_row_index in range(chunk_rows_count):
-                chunk_pos = Point(chunk_col_index * chunk_size.width, chunk_row_index * chunk_size.height)
-                self._generate_chunk(chunk_pos, chunk_size, world, {
+                chunk_pos = Point(chunk_col_index * WorldService.CHUNK_SIZE.width, chunk_row_index * WorldService.CHUNK_SIZE.height)
+                self._generate_chunk(chunk_pos, world, {
                     'is_left_edge': chunk_col_index == 0,
                     'is_right_edge': chunk_col_index + 1 == chunk_cols_count,
                     'is_top_edge': chunk_row_index == 0,
@@ -61,41 +60,41 @@ class WorldService():
 
         return world
     
-    def _generate_chunk(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict):
+    def _generate_chunk(self, chunk_pos: Point, world: World, edge_info: Dict):
         chunk_type = 0 if any(edge_info.values()) else random.randint(0, 2)
         match(chunk_type):
             case 0:
-                self._generate_chunk_type_0(chunk_pos, chunk_size, world, edge_info)
+                self._generate_chunk_type_0(chunk_pos, world, edge_info)
             case 1:
-                self._generate_chunk_type_1(chunk_pos, chunk_size, world, edge_info)
+                self._generate_chunk_type_1(chunk_pos, world, edge_info)
             case 2:
-                self._generate_chunk_type_2(chunk_pos, chunk_size, world, edge_info)
+                self._generate_chunk_type_2(chunk_pos, world, edge_info)
 
-    def _generate_chunk_type_0(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict):
-        half_chunk_width = int(chunk_size.width / 2)
-        half_chunk_height = int(chunk_size.height / 2)
+    def _generate_chunk_type_0(self, chunk_pos: Point, world: World, edge_info: Dict):
+        half_chunk_width = int(WorldService.CHUNK_SIZE.width / 2)
+        half_chunk_height = int(WorldService.CHUNK_SIZE.height / 2)
         honeydew_count = random.randint(1, 2)
 
-        rect_size = Size(half_chunk_width, chunk_size.height)
+        rect_size = Size(half_chunk_width, WorldService.CHUNK_SIZE.height)
         position = self._randomly_place_obj_in_rect(chunk_pos, rect_size, HoneydewItemSourceBody.SIZE)
         self._build_honeydew_item_source(world, position)
 
         if honeydew_count > 1:
-            rect_size = Size(half_chunk_width, chunk_size.height)
+            rect_size = Size(half_chunk_width, WorldService.CHUNK_SIZE.height)
             rect_pos = Point(chunk_pos.x + half_chunk_width, chunk_pos.y)
             position = self._randomly_place_obj_in_rect(rect_pos, rect_size, HoneydewItemSourceBody.SIZE)
             self._build_honeydew_item_source(world, position)
 
         position = Point(chunk_pos.x + half_chunk_width, chunk_pos.y + half_chunk_height)
-        self._build_flower_item_area(world, position, chunk_size)
+        self._build_flower_item_area(world, position, WorldService.CHUNK_SIZE)
 
-    def _generate_chunk_type_1(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict): 
-        half_chunk_width = int(chunk_size.width / 2)
-        half_chunk_height = int(chunk_size.height / 2)
+    def _generate_chunk_type_1(self, chunk_pos: Point, world: World, edge_info: Dict): 
+        half_chunk_width = int(WorldService.CHUNK_SIZE.width / 2)
+        half_chunk_height = int(WorldService.CHUNK_SIZE.height / 2)
         is_mirror = random.choice([True, False])
         mirror_x = chunk_pos.x + half_chunk_width
 
-        rect_size = Size(half_chunk_width, chunk_size.height)
+        rect_size = Size(half_chunk_width, WorldService.CHUNK_SIZE.height)
         tree_pos = self._randomly_place_obj_in_rect(chunk_pos, rect_size, TreeBody.SIZE)
         if is_mirror:
             tree_pos = tree_pos.mirror_x_axis(mirror_x)
@@ -115,14 +114,14 @@ class WorldService():
             position = position.mirror_x_axis(mirror_x)
         self._build_honeydew_item_source(world, position)
 
-    def _generate_chunk_type_2(self, chunk_pos: Point, chunk_size: Size, world: World, edge_info: Dict):
-        half_chunk_height = int(chunk_size.height / 2)
+    def _generate_chunk_type_2(self, chunk_pos: Point, world: World, edge_info: Dict):
+        half_chunk_height = int(WorldService.CHUNK_SIZE.height / 2)
 
-        rect_size = Size(chunk_size.width, half_chunk_height + 50)
+        rect_size = Size(WorldService.CHUNK_SIZE.width, half_chunk_height + 50)
         tree_pos = self._randomly_place_obj_in_rect(chunk_pos, rect_size, TreeBody.SIZE)
         self._build_tree_pack(world, tree_pos)
 
-        rect_size = Size(chunk_size.width, half_chunk_height - 50)
+        rect_size = Size(WorldService.CHUNK_SIZE.width, half_chunk_height - 50)
         rect_pos = Point(chunk_pos.x, chunk_pos.y + half_chunk_height + 50)
         position = self._randomly_place_obj_in_rect(rect_pos, rect_size, HoneydewItemSourceBody.SIZE)
         self._build_honeydew_item_source(world, position)

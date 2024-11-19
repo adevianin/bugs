@@ -62,7 +62,7 @@ class WorldFacade:
     def init_world(self):
         self._world = self._world_repository.get(self.WORLD_ID)
         if not self._world:
-            self._world = self._world_service.generate_new_world()
+            self._world = self._world_service.generate_new_world(8, 8)
 
     def save_world(self):
         self._world_repository.push(self._world, self.WORLD_ID)
