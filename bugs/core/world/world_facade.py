@@ -64,17 +64,17 @@ class WorldFacade:
         if not self._world:
             self._world = self._world_service.generate_new_world(8, 8)
 
-    def save_world(self):
-        self._world_repository.push(self._world, self.WORLD_ID)
-
     @property
     def world(self):
         return self._world
     
-    def run(self):
+    def save_world_admin_command(self):
+        self._world_repository.push(self._world, self.WORLD_ID)
+    
+    def run_world_admin_command(self):
         self._world.run()
 
-    def stop(self):
+    def stop_world_admin_command(self):
         self._world.stop()
 
     def is_world_running(self):

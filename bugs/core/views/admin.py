@@ -22,7 +22,7 @@ def world_status_check(request):
 @require_POST
 def stop_world(request):
     worldFacade = WorldFacade.get_instance()
-    worldFacade.stop()
+    worldFacade.stop_world_admin_command()
     return JsonResponse({
         'status': worldFacade.is_world_running()
     }) 
@@ -31,7 +31,7 @@ def stop_world(request):
 @require_POST
 def run_world(request):
     worldFacade = WorldFacade.get_instance()
-    worldFacade.run()
+    worldFacade.run_world_admin_command()
     return JsonResponse({
         'status': worldFacade.is_world_running()
     }) 
@@ -40,7 +40,7 @@ def run_world(request):
 @require_POST
 def save_world(request):
     worldFacade = WorldFacade.get_instance()
-    worldFacade.save_world()
+    worldFacade.save_world_admin_command()
     return JsonResponse({
         'status': 'saved'
     }) 
