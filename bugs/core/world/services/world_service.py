@@ -61,7 +61,7 @@ class WorldService():
         return world
     
     def _generate_chunk(self, chunk_pos: Point, world: World, edge_info: Dict):
-        chunk_type = 0 if any(edge_info.values()) else random.randint(0, 2)
+        chunk_type = 0 if any(edge_info.values()) else random.randint(0, 3)
         match(chunk_type):
             case 0:
                 self._generate_chunk_type_0(chunk_pos, world, edge_info)
@@ -69,8 +69,18 @@ class WorldService():
                 self._generate_chunk_type_1(chunk_pos, world, edge_info)
             case 2:
                 self._generate_chunk_type_2(chunk_pos, world, edge_info)
+            case 3:
+                self._generate_chunk_type_3(chunk_pos, world, edge_info)
 
     def _generate_chunk_type_0(self, chunk_pos: Point, world: World, edge_info: Dict):
+        half_chunk_width = int(WorldService.CHUNK_SIZE.width / 2)
+        half_chunk_height = int(WorldService.CHUNK_SIZE.height / 2)
+
+        position = Point(chunk_pos.x + half_chunk_width, chunk_pos.y + half_chunk_height)
+        size = Size(WorldService.CHUNK_SIZE.width - 10, WorldService.CHUNK_SIZE.height - 10)
+        self._build_flower_item_area(world, position, size)
+
+    def _generate_chunk_type_1(self, chunk_pos: Point, world: World, edge_info: Dict):
         half_chunk_width = int(WorldService.CHUNK_SIZE.width / 2)
         half_chunk_height = int(WorldService.CHUNK_SIZE.height / 2)
         honeydew_count = random.randint(1, 2)
@@ -86,9 +96,10 @@ class WorldService():
             self._build_honeydew_item_source(world, position)
 
         position = Point(chunk_pos.x + half_chunk_width, chunk_pos.y + half_chunk_height)
-        self._build_flower_item_area(world, position, WorldService.CHUNK_SIZE)
+        size = Size(WorldService.CHUNK_SIZE.width - 10, WorldService.CHUNK_SIZE.height - 10)
+        self._build_flower_item_area(world, position, size)
 
-    def _generate_chunk_type_1(self, chunk_pos: Point, world: World, edge_info: Dict): 
+    def _generate_chunk_type_2(self, chunk_pos: Point, world: World, edge_info: Dict): 
         half_chunk_width = int(WorldService.CHUNK_SIZE.width / 2)
         half_chunk_height = int(WorldService.CHUNK_SIZE.height / 2)
         is_mirror = random.choice([True, False])
@@ -114,7 +125,7 @@ class WorldService():
             position = position.mirror_x_axis(mirror_x)
         self._build_honeydew_item_source(world, position)
 
-    def _generate_chunk_type_2(self, chunk_pos: Point, world: World, edge_info: Dict):
+    def _generate_chunk_type_3(self, chunk_pos: Point, world: World, edge_info: Dict):
         half_chunk_height = int(WorldService.CHUNK_SIZE.height / 2)
 
         rect_size = Size(WorldService.CHUNK_SIZE.width, half_chunk_height + 50)
