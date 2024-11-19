@@ -16,7 +16,7 @@ class GroundBeetle(LiveEntity):
 
     def _on_body_died(self, death_record: BaseDeathRecord):
         super()._on_body_died(death_record)
-        def preborn_corpse_item(item: Item):
+        def on_corpse_item_born(item: Item):
             item.body.angle = self._body.angle
 
-        self._event_bus.emit('item_birth_request', ItemBirthRequest.build(self.position, 500, ItemTypes.GROUND_BEETLE_CORPSE, preborn_corpse_item))
+        self._event_bus.emit('item_birth_request', ItemBirthRequest.build(self.position, 500, ItemTypes.GROUND_BEETLE_CORPSE, None, on_corpse_item_born))
