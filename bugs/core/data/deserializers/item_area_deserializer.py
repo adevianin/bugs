@@ -15,7 +15,7 @@ class ItemAreaDeserializer(EntityDeserializer):
     def _parse_props(self, json: dict): 
         props = self.parse_entity_props(json)
         props.update({
-            'size': Size.from_json(json['position']),
+            'size': Size.from_json(json['size']),
             'item_type': ItemTypes(json['item_type']),
             'fertility': json['fertility'],
             'accumulated': json['accumulated'],

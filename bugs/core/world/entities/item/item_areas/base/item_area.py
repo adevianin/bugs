@@ -71,10 +71,10 @@ class ItemArea(Entity):
     def _generate_spawn_point(self):
         half_width = self._size.width / 2
         half_height = self._size.height / 2
-        minX = self._body.position.x - half_width if self._body.position.x - half_width > 0 else 0
+        minX = self._body.position.x - half_width
         maxX = self._body.position.x + half_width
         x = random.randint(minX, maxX)
-        minY = self._body.position.y - half_height if self._body.position.y - half_height > 0 else 0
+        minY = self._body.position.y - half_height
         maxY = self._body.position.y + half_height
         y = random.randint(minY, maxY)
 
