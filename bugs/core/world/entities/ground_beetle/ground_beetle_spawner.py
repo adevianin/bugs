@@ -26,7 +26,7 @@ class GroundBeetleSpawner():
 
     def _is_lack_of_beetles(self):
         beetles_count = len(self._map.get_entities(entity_types=[EntityTypes.GROUND_BEETLE]))
-        if beetles_count == 0:
+        if beetles_count < 10:
             return True
         ants_count = len(self._map.get_entities(entity_types=[EntityTypes.ANT]))
         return ants_count / beetles_count < ANTS_PER_GROUND_BEETLE
