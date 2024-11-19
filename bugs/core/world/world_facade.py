@@ -58,16 +58,23 @@ class WorldFacade:
         self._serialized_common_actions = []
 
         self._event_bus.add_listener('step_done', self._on_step_done)
+
+    @property
+    def world(self):
+        return self._world
         
     def init_world(self):
         self._world = self._world_repository.get(self.WORLD_ID)
         if not self._world:
             self._world = self._world_service.generate_new_world(8, 8)
 
-    @property
-    def world(self):
-        return self._world
+    def add_listener(self, event_name: str, callback: Callable):
+        self._events.add_listener(event_name, callback)
+
+    def remove_listener(self, event_name: str, callback: Callable):
+        self._events.remove_listener(event_name, callback)
     
+    # <ADMIN_COMMANDS>
     def save_world_admin_command(self):
         self._world_repository.push(self._world, self.WORLD_ID)
     
@@ -79,16 +86,9 @@ class WorldFacade:
 
     def is_world_running(self):
         return self._world.is_world_running
+    # </ADMIN_COMMANDS>
 
-    def add_listener(self, event_name: str, callback: Callable):
-        self._events.add_listener(event_name, callback)
-
-    def remove_listener(self, event_name: str, callback: Callable):
-        self._events.remove_listener(event_name, callback)
-
-    def ensure_starter_pack_built_for_player(self, user_id: int):
-        self._player_service.ensure_starter_pack_built_for_player(user_id)
-
+    # <PLAYER_COMMANDS>
     def stop_operation_command(self, user_id: int, colony_id: int, operation_id: int):
         self._colony_service.stop_operation(user_id, colony_id, operation_id)
     
@@ -146,6 +146,13 @@ class WorldFacade:
     def relocate_ant_command(self, user_id: int, ant_id: int, nest_id: int):
         self._ant_service.relocate_ant(user_id, ant_id, nest_id)
 
+    def change_specie_schema_command(self, user_id: int, specie_schema: Dict[ChromosomeTypes, List[str]]):
+        self._nuptial_environment_service.change_specie_schema(user_id, specie_schema)
+    # </PLAYER_COMMANDS>
+
+    def ensure_starter_pack_built_for_player(self, user_id: int):
+        self._player_service.ensure_starter_pack_built_for_player(user_id)
+
     def get_specie_for_client(self, user_id: int) -> Dict:
         specie = self._nuptial_environment_service.get_specie_for(user_id)
         return self._nuptial_environment_client_serializer.serialize_specie(specie)
@@ -154,9 +161,6 @@ class WorldFacade:
         nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
         return self._nuptial_environment_client_serializer.serialize_nuptial_males(nuptial_environment.males)
     
-    def change_specie_schema(self, user_id: int, specie_schema: Dict[ChromosomeTypes, List[str]]):
-        self._nuptial_environment_service.change_specie_schema(user_id, specie_schema)
-
     def get_world_for_client(self):
         return self._world_client_serializer.serialize(self._world)
     

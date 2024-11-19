@@ -33,6 +33,6 @@ def save_specie_schema(request: HttpRequest):
         ids = data['specie_schema'][chromosome_type]
         specie_schema[type] = ids
 
-    wf.change_specie_schema(request.user.id, specie_schema)
+    wf.change_specie_schema_command(request.user.id, specie_schema)
 
     return HttpResponse(status=200)
