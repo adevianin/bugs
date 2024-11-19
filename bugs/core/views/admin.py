@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import user_passes_test
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpRequest
 from django.views.decorators.http import require_POST
 from core.world.world_facade import WorldFacade
+import json
 
 def is_superuser(user):
     return user.is_superuser
@@ -44,3 +45,24 @@ def save_world(request):
     return JsonResponse({
         'status': 'saved'
     }) 
+
+@user_passes_test(is_superuser)
+@require_POST
+def expand_map(request: HttpRequest):
+    wf = WorldFacade.get_instance()
+    data = json.loads(request.body)
+    
+    chunk_rows = int(data['chunk_rows'])
+    chunk_cols = int(data['chunk_cols'])
+
+    error_msg = wf.expand_map_admin_command(chunk_rows, chunk_cols)
+
+    if error_msg:
+        return JsonResponse({
+            'status': 'error',
+            'msg': error_msg
+        }, status=409)
+    else:
+        return JsonResponse({
+            'status': 'success'
+        }, status=200)

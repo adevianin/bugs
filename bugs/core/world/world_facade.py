@@ -84,6 +84,9 @@ class WorldFacade:
     def stop_world_admin_command(self):
         self._world.stop()
 
+    def expand_map_admin_command(self, chunk_rows: int, chunk_cols: int):
+        return self._world_service.expand_current_map(chunk_rows, chunk_cols)
+
     def is_world_running(self):
         return self._world.is_world_running
     # </ADMIN_COMMANDS>

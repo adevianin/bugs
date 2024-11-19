@@ -29,6 +29,19 @@
             .button-section button {
                 margin-right: 10px;
             }
+
+            .expanding-map-section {
+                display: flex;
+                flex-direction: column;
+                margin-top: 10px;
+            }
+            .expanding-map-section input {
+                width: 40px;
+            }
+            .expanding-map-section_button {
+                width: 65px;
+                margin-top: 5px;
+            }
         </style>
     </head>
     <body>
@@ -43,6 +56,17 @@
             </div>
             <div class="button-section">
                 <button data-save-world>Save World</button>
+            </div>
+            <div class="expanding-map-section">
+                <div>
+                    <label for="row-chunks">add row chunks:</label>
+                    <input id="row-chunks" type="number" value="2" min="1" data-chunk-rows>
+                </div>
+                <div>
+                    <label for="col-chunks">add col chunks:</label>
+                    <input id="col-chunks" type="number" value="2" min="1" data-chunk-cols>
+                </div>
+                <button class="expanding-map-section_button" data-expand-map-btn>expand</button>
             </div>
         </div>
     </body>

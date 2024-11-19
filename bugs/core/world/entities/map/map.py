@@ -24,6 +24,10 @@ class Map:
     def size(self):
         return self._size
     
+    @size.setter
+    def size(self, size: Size):
+        self._size = size
+    
     def generate_random_point(self, padding: int = 10):
         x = random.randint(padding, self._size.width - padding)
         y = random.randint(padding, self._size.height - padding)

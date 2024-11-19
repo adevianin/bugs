@@ -6,7 +6,7 @@ class ItemAreaView extends EntityView {
     constructor(entity, entitiesContainer) {
         super(entity, entitiesContainer);
 
-        // this._render();
+        this._render();
     }
 
     _render() {

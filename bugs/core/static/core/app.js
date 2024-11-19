@@ -8723,7 +8723,7 @@ class ItemAreaView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     constructor(entity, entitiesContainer) {
         super(entity, entitiesContainer);
 
-        // this._render();
+        this._render();
     }
 
     _render() {

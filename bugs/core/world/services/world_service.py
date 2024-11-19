@@ -15,8 +15,10 @@ from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.item.item_sources.item_source_factory import ItemSourceFactory
 from core.world.entities.item.item_sources.honeydew_item_source.honeydew_item_source_body import HoneydewItemSourceBody
 from core.world.entities.tree.tree_body import TreeBody
+from core.world.entities.base.entity_types import EntityTypes
+from core.world.entities.item.item_areas.base.item_area import ItemArea
 import random
-from typing import Dict
+from typing import Dict, Callable, Iterator, Tuple
 
 class WorldService():
 
@@ -32,8 +34,35 @@ class WorldService():
         self._item_area_factory = item_area_factory
         self._item_source_factory = item_source_factory
 
-    def generate_new_world(self, chunk_rows_count: int, chunk_cols_count: int) -> World:
-        map_size = Size(WorldService.CHUNK_SIZE.width * chunk_rows_count, WorldService.CHUNK_SIZE.height * chunk_cols_count)
+    def set_world(self, world: World):
+        self._world = world
+
+    def expand_current_map(self, expand_chunk_rows: int, expand_chunk_cols: int):
+        if self._world.is_world_running:
+            return 'world must be stopped before expanding'
+        
+        before_expand_chunk_rows_count = int(self._world.map.size.width / WorldService.CHUNK_SIZE.width)
+        before_expand_chunk_cols_count = int(self._world.map.size.height / WorldService.CHUNK_SIZE.height)
+        before_expand_last_row_index = before_expand_chunk_rows_count - 1
+        before_expand_last_col_index = before_expand_chunk_cols_count - 1
+        after_expand_chunk_rows_count = before_expand_chunk_rows_count + expand_chunk_rows
+        after_expand_chunk_cols_count = before_expand_chunk_cols_count + expand_chunk_cols
+
+        for chunk_position, indexes, edge_info in self._chunks_positions(before_expand_chunk_rows_count, before_expand_chunk_cols_count):
+            if edge_info['is_right_edge'] or edge_info['is_bottom_edge']:
+                self._clear_flower_item_area_in_chunk(chunk_position, self._world)
+                self._generate_chunk(chunk_position, self._world, edge_info)
+
+        for chunk_position, indexes, edge_info in self._chunks_positions(after_expand_chunk_rows_count, after_expand_chunk_cols_count):
+            if indexes['row_index'] > before_expand_last_row_index or indexes['col_index'] > before_expand_last_col_index:
+                self._generate_chunk(chunk_position, self._world, edge_info)
+
+        self._world.map.size = self._calc_map_size(after_expand_chunk_cols_count, after_expand_chunk_rows_count)
+
+        return None
+
+    def generate_new_world(self, chunk_cols_count: int, chunk_rows_count: int) -> World:
+        map_size = self._calc_map_size(chunk_cols_count, chunk_rows_count)
         entities_collection = EntityCollection.build()
         map = self._map_factory.build_map(map_size, entities_collection)
         colony_relations_table = ColonyRelationsTable.build_empty()
@@ -48,17 +77,32 @@ class WorldService():
         world = self._world_factory.build_world(id_generator, entities_collection, map, colonies, colony_relations_table, nuptial_environments, player_stats_list, climate, 
                                                 0, notifications)
         
+        for chunk_position, indexes, edge_info in self._chunks_positions(chunk_rows_count, chunk_cols_count):
+            self._generate_chunk(chunk_position, world, edge_info)
+
+        return world
+    
+    def _chunks_positions(self, chunk_rows_count: int, chunk_cols_count: int) -> Iterator[Tuple[Point, Dict, Dict]]:
         for chunk_col_index in range(chunk_cols_count):
             for chunk_row_index in range(chunk_rows_count):
-                chunk_pos = Point(chunk_col_index * WorldService.CHUNK_SIZE.width, chunk_row_index * WorldService.CHUNK_SIZE.height)
-                self._generate_chunk(chunk_pos, world, {
+                chunk_position = Point(chunk_col_index * WorldService.CHUNK_SIZE.width, chunk_row_index * WorldService.CHUNK_SIZE.height)
+                edge_info = {
                     'is_left_edge': chunk_col_index == 0,
                     'is_right_edge': chunk_col_index + 1 == chunk_cols_count,
                     'is_top_edge': chunk_row_index == 0,
                     'is_bottom_edge': chunk_row_index + 1 == chunk_rows_count
-                })
+                }
+                indexes = {
+                    'row_index': chunk_row_index,
+                    'col_index': chunk_col_index
+                }
+                yield (chunk_position, indexes, edge_info)
 
-        return world
+    def _clear_flower_item_area_in_chunk(self, chunk_pos: Point, world: World):
+        flower_area_filter: Callable[[ItemArea], bool] = lambda item_area: item_area.item_type == ItemTypes.FLOWER and self._check_is_point_inside_chunk(item_area.position, chunk_pos)
+        item_areas = world.map.get_entities(entity_types=[EntityTypes.ITEM_AREA], filter=flower_area_filter)
+        for item_area in item_areas:
+            item_area.simple_die()
     
     def _generate_chunk(self, chunk_pos: Point, world: World, edge_info: Dict):
         chunk_type = 0 if any(edge_info.values()) else random.randint(0, 3)
@@ -167,3 +211,11 @@ class WorldService():
         fertility = random.randint(1, 5)
         leaf_area = self._item_area_factory.build_new_item_area(world.generate_id(), tree_pos, TreeBody.SIZE, ItemTypes.LEAF, fertility, world.current_season)
         world.map.add_entity(leaf_area)
+
+    def _check_is_point_inside_chunk(self, point: Point, chunk_pos: Point):
+        is_x_inside = point.x >= chunk_pos.x and point.x <= chunk_pos.x + WorldService.CHUNK_SIZE.width
+        is_y_inside = point.y >= chunk_pos.y and point.y <= chunk_pos.y + WorldService.CHUNK_SIZE.height
+        return is_x_inside and is_y_inside
+    
+    def _calc_map_size(self, chunk_cols_count: int, chunk_rows_count: int):
+        return Size(WorldService.CHUNK_SIZE.width * chunk_cols_count, WorldService.CHUNK_SIZE.height * chunk_rows_count)
