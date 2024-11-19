@@ -8714,13 +8714,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ItemAreaView": () => (/* binding */ ItemAreaView)
 /* harmony export */ });
 /* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/entityView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
 
 
 class ItemAreaView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView { 
 
     constructor(entity, entitiesContainer) {
         super(entity, entitiesContainer);
+
+        // this._render();
     }
+
+    _render() {
+        const graphics = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Graphics();
+        graphics.beginFill(0xFF0000);
+        graphics.drawRect(this._entity.position.x, this._entity.position.y, 6, 6);
+        graphics.endFill();
+        this._entityContainer.addChild(graphics);
+    }
+
 }
 
 
@@ -9638,7 +9651,6 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
 
         this._container.addChild(this._bg);
         this._container.addChild(this._nestContainer);
-        this._container.addChild(this._itemAreaContainer);
         this._container.addChild(this._itemContainer);
         this._container.addChild(this._antContainer);
         this._container.addChild(this._groundBeetleContainer);
@@ -9646,6 +9658,7 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._container.addChild(this._itemSourceContainer);
         this._container.addChild(this._treesContainer);
         this._container.addChild(this._markersContainer);
+        this._container.addChild(this._itemAreaContainer);
 
         this._markerManager = new _markerManager_markerManagerView__WEBPACK_IMPORTED_MODULE_5__.MarkerManagerView(this._markersContainer);
 

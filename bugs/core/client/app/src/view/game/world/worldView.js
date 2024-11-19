@@ -46,7 +46,6 @@ class WorldView extends BaseGraphicView {
 
         this._container.addChild(this._bg);
         this._container.addChild(this._nestContainer);
-        this._container.addChild(this._itemAreaContainer);
         this._container.addChild(this._itemContainer);
         this._container.addChild(this._antContainer);
         this._container.addChild(this._groundBeetleContainer);
@@ -54,6 +53,7 @@ class WorldView extends BaseGraphicView {
         this._container.addChild(this._itemSourceContainer);
         this._container.addChild(this._treesContainer);
         this._container.addChild(this._markersContainer);
+        this._container.addChild(this._itemAreaContainer);
 
         this._markerManager = new MarkerManagerView(this._markersContainer);
 
