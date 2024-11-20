@@ -190,9 +190,10 @@ class World():
         
         entities = self._map.get_live_entities()
         for entity in entities:
-            self._temperature_sensor_handler.handle_sensor(entity)
-            self._visual_sensor_handler.handle_sensor(entity)
-            entity.do_step(self._current_step)
+            if not entity.is_died: #in case if first entity in list killed next entity
+                self._temperature_sensor_handler.handle_sensor(entity)
+                self._visual_sensor_handler.handle_sensor(entity)
+                entity.do_step(self._current_step)
 
         self._event_bus.emit('step_done', self._current_step, self._current_season)
 
