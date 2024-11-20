@@ -71,11 +71,12 @@ class LiveEntity(Entity, iEnemy):
     def do_step(self, step_number: int):
         super().do_step()
 
-        self._mind.do_step()
-
         self._body.handle_temperature()
         self._body.handle_aging(step_number)
         # self._body.handle_calories()
+
+        if not self.is_died:
+            self._mind.do_step()
 
     def _on_step(self, position: Point):
         self._emit_action(EntityWalkAction.build(self.id, position))
