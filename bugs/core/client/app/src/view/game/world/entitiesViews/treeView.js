@@ -25,6 +25,8 @@ class TreeView extends EntityView {
 
         this._entityContainer.pivot.x = this._sprite.width / 2;
         this._entityContainer.pivot.y = this._sprite.height;
+
+        this._bodyContainer.alpha = 0.5;
     }
 
     _onMouseover() {

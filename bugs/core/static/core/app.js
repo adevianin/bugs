@@ -9187,6 +9187,8 @@ class TreeView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
         this._entityContainer.pivot.x = this._sprite.width / 2;
         this._entityContainer.pivot.y = this._sprite.height;
+
+        this._bodyContainer.alpha = 0.5;
     }
 
     _onMouseover() {
