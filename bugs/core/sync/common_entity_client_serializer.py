@@ -36,7 +36,7 @@ class CommonEntityClientSerializer():
             case EntityTypes.GROUND_BEETLE:
                 return self._ladybug_serializer.serialize(entity)
             case EntityTypes.LADYBUG:
-                return self._ground_beetle_serializer.serialize(entity)
+                return self._ladybug_serializer.serialize(entity)
             case EntityTypes.ANT:
                 return self._ant_serializer.serialize(entity)
             case EntityTypes.TREE:
