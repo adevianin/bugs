@@ -14,6 +14,7 @@ import { Genome } from './entity/genetic/genome';
 import { NuptialMale } from './entity/nuptialMale';
 import { Climate } from './entity/climate';
 import { Tree } from './entity/tree';
+import { Ladybug } from './entity/ladybug';
 
 class WorldFactory {
 
@@ -30,6 +31,8 @@ class WorldFactory {
             case EntityTypes.GROUND_BEETLE:
                 return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
                     entityJson.max_hp);
+            case EntityTypes.LADYBUG:
+                return this.buildLadybug(entityJson);
             case EntityTypes.NEST:
                 return this.buildNest(entityJson);
             case EntityTypes.ITEM:
@@ -62,6 +65,10 @@ class WorldFactory {
     buildWorld() {
         let climate = new Climate();
         return new World(this._mainEventBus, climate);
+    }
+
+    buildLadybug(json) {
+        return new Ladybug(this._mainEventBus, json.id, json.position, json.angle, json.from_colony_id, json.user_speed, json.hp, json.max_hp);
     }
 
     buildNest(nestJson) {

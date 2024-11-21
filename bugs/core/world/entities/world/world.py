@@ -10,7 +10,6 @@ from core.world.entities.base.entity_collection import EntityCollection
 from core.world.id_generator import IdGenerator
 from core.world.entities.colony.base.colony_relations_manager import ColonyRelationsManager
 from core.world.entities.base.entity_types import EntityTypes
-from core.world.entities.ground_beetle.ground_beetle_spawner import GroundBeetleSpawner
 from core.world.entities.action.colony_born_action import ColonyBornAction
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 from core.world.entities.climate.climate import Climate
@@ -29,8 +28,8 @@ from typing import List, Callable
 class World():
 
     def __init__(self, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: List[Colony], id_generator: IdGenerator, 
-                 birthers, ground_beetle_spawner: GroundBeetleSpawner, nuptial_environments: List[NuptialEnvironment], 
-                 player_stats_list: List[PlayerStats], climate: Climate, sensor_handlers, current_step: int, managers):
+                 birthers, spawners, nuptial_environments: List[NuptialEnvironment], player_stats_list: List[PlayerStats], climate: Climate, 
+                 sensor_handlers, current_step: int, managers):
         self._entities_collection = entities_collection
         self._map = map
         self._event_bus = event_bus
@@ -42,7 +41,7 @@ class World():
         self._current_season = self._calc_current_season()
         self._colony_relations_manager: ColonyRelationsManager = managers['colony_relations_manager']
         self._birthers = birthers
-        self._ground_beetle_spawner = ground_beetle_spawner
+        self._spawners = spawners
         self._nuptial_environments = nuptial_environments
         self._player_stats_list = player_stats_list
         self._climate = climate

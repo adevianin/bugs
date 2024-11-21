@@ -72,6 +72,7 @@ from core.world.entities.climate.climate_factory import ClimateFactory
 from core.world.entities.world.player_stats_factory import PlayerStatsFactory
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment_factory import NuptialEnvironmentFactory
 from core.world.entities.tree.tree_factory import TreeFactory
+from core.world.entities.ladybug.ladybug_factory import LadybugFactory
 
 from core.world.services.player_service import PlayerService
 from core.world.services.colony_service import ColonyService
@@ -103,6 +104,7 @@ from core.sync.constants_client_serializer import ConstantsClientSerializer
 from core.sync.notification_client_serializer import NotificationClientSerializer
 from core.sync.death_record_client_serializer import DeathRecordClientSerializer
 from core.sync.tree_client_serializer import TreeClientSerializer
+from core.sync.ladybug_client_serializer import LadybugClientSerializer
 
 from core.world.my_test_env import MY_TEST_ENV
 
@@ -125,7 +127,8 @@ def start():
     player_stats_factory = PlayerStatsFactory(event_bus)
     nuptial_environment_factory = NuptialEnvironmentFactory(event_bus)
     tree_factory = TreeFactory(event_bus)
-    world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ground_beetle_factory)
+    ladybug_factory = LadybugFactory(event_bus, thought_factory)
+    world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ground_beetle_factory, ladybug_factory)
     
     genes_serializer = GenesSerializer()
     genome_serializer = GenomeSerializer(genes_serializer)
@@ -206,8 +209,9 @@ def start():
     ground_beetle_client_serializer = GroundBeetleClientSerializer(util_client_serializer)
     ant_client_serializer = AntClientSerializer(util_client_serializer, stats_client_serializer, genome_client_serializer)
     tree_client_serializer = TreeClientSerializer(util_client_serializer)
+    ladybug_client_serializer = LadybugClientSerializer(util_client_serializer)
     common_entity_client_serializer = CommonEntityClientSerializer(item_client_serializer, item_source_client_serializer, item_area_client_serializer, nest_client_serializer, 
-                                                                   ground_beetle_client_serializer, ant_client_serializer, tree_client_serializer)
+                                                                   ground_beetle_client_serializer, ant_client_serializer, tree_client_serializer, ladybug_client_serializer)
     climate_client_serializer = ClimateClientSerializer()
     world_client_serializer = WorldClientSerializer(common_entity_client_serializer, colony_client_serializer, climate_client_serializer)
     death_record_client_serializer = DeathRecordClientSerializer(util_client_serializer)
