@@ -8,12 +8,9 @@ from core.world.entities.colony.base.colony_relations_table import ColonyRelatio
 from core.world.entities.ant.ant_factory import AntFactory
 from core.world.entities.item.items.item_factory import ItemFactory
 from core.world.entities.nest.nest_factory import NestFactory
-from core.world.entities.ground_beetle.ground_beetle_spawner import GroundBeetleSpawner
-from core.world.entities.ground_beetle.ground_beetle_factory import GroundBeetleFactory
 from core.world.entities.world.birthers.ant_birther import AntBirther
 from core.world.entities.world.birthers.item_birther import ItemBirther
 from core.world.entities.world.birthers.nest_birther import NestBirther
-from core.world.entities.world.birthers.ground_beetle_birther import GroundBeetleBirther
 from core.world.entities.world.birthers.ladybug_birther import LadybugBirther
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 from core.world.entities.climate.climate import Climate
@@ -30,27 +27,23 @@ from typing import List
 
 class WorldFactory():
 
-    def __init__(self, event_bus: EventEmitter, ant_factory: AntFactory, item_factory: ItemFactory, nest_factory: NestFactory, ground_beetle_factory: GroundBeetleFactory, 
-                 ladybug_factory: LadybugFactory):
+    def __init__(self, event_bus: EventEmitter, ant_factory: AntFactory, item_factory: ItemFactory, nest_factory: NestFactory, ladybug_factory: LadybugFactory):
         self._event_bus = event_bus
         self._ant_factory = ant_factory
         self._item_factory = item_factory
         self._nest_factory = nest_factory
-        self._ground_beetle_factory = ground_beetle_factory
         self._ladybug_factory = ladybug_factory
 
     def build_world(self, id_generator: IdGenerator, entities_collection: EntityCollection, map: Map, colonies: List[Colony], colony_relations_table: ColonyRelationsTable, 
                     nuptial_environments: List[NuptialEnvironment], player_stats_list: List[PlayerStats], climate: Climate, current_step: int, 
                     notifications: List[Notification]) -> World:
         spawners = {
-            # 'ground_beetle_spawner': GroundBeetleSpawner(self._event_bus, map),
             'ladybug_spawner': LadybugSpawner(self._event_bus, map)
         }
         birthers = {
             'ant_birther': AntBirther(self._event_bus, id_generator, map, self._ant_factory),
             'item_birther': ItemBirther(self._event_bus, id_generator, map, self._item_factory),
             'nest_birther': NestBirther(self._event_bus, id_generator, map, self._nest_factory),
-            'ground_beetle_birther': GroundBeetleBirther(self._event_bus, id_generator, map, self._ground_beetle_factory),
             'ladybug_birther': LadybugBirther(self._event_bus, id_generator, map, self._ladybug_factory)
         }
         sensor_handlers = {

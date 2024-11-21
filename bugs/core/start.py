@@ -7,7 +7,6 @@ from core.data.deserializers.ant_deserializer import AntDeserializer
 from core.data.deserializers.colony_deserializer import ColonyDeserializer
 from core.data.deserializers.thought_deserializer import ThoughtDeserializer
 from core.data.deserializers.operation_deserializer import OperationDeserializer
-from core.data.deserializers.ground_beetle_deserializer import GroundBeetleDeserializer
 from core.data.deserializers.item_source_deserializer import ItemSourceDeserializer
 from core.data.deserializers.item_area_deserializer import ItemAreaDeserializer
 from core.data.deserializers.formation_deserializer import FormationDeserializer
@@ -37,7 +36,6 @@ from core.data.serializers.thought_serializer import ThoughtSerializer
 from core.data.serializers.colony_serializer import ColonySerializer
 from core.data.serializers.operation_serializer import OperationSerializer
 from core.data.serializers.colony_relations_table_serializer import ColonyRelationsTableSerializer
-from core.data.serializers.ground_beetle_serializer import GroundBeetleSerializer
 from core.data.serializers.item_serializer import ItemSerializer
 from core.data.serializers.item_area_serializer import ItemAreaSerializer
 from core.data.serializers.item_source_serializer import ItemSourceSerializer
@@ -58,7 +56,6 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.action_accumulator import ActionAccumulator
 
 from core.world.entities.ant.ant_factory import AntFactory
-from core.world.entities.ground_beetle.ground_beetle_factory import GroundBeetleFactory
 from core.world.entities.world.world_factory import WorldFactory
 from core.world.entities.nest.nest_factory import NestFactory
 from core.world.entities.colony.colony_factory import ColonyFactory
@@ -94,7 +91,6 @@ from core.sync.item_client_serializer import ItemClientSerializer
 from core.sync.item_source_client_serializer import ItemSourceClientSerializer
 from core.sync.item_area_client_serializer import ItemAreaClientSerializer
 from core.sync.nest_client_serializer import NestClientSerializer
-from core.sync.ground_beetle_client_serializer import GroundBeetleClientSerializer
 from core.sync.ant_client_serializer import AntClientSerializer
 from core.sync.action_client_serializer import ActionClientSerializer
 from core.sync.common_entity_client_serializer import CommonEntityClientSerializer
@@ -120,7 +116,6 @@ def start():
     fight_factory = FightFactory()
     thought_factory = ThoughtFactory()
     ant_factory = AntFactory(event_bus, thought_factory)
-    ground_beetle_factory = GroundBeetleFactory(event_bus, thought_factory)
     nest_factory = NestFactory(event_bus)
     operation_factory = OperationFactory(event_bus, formation_factory, fight_factory)
     colony_factory = ColonyFactory(event_bus, operation_factory)
@@ -130,7 +125,7 @@ def start():
     nuptial_environment_factory = NuptialEnvironmentFactory(event_bus)
     tree_factory = TreeFactory(event_bus)
     ladybug_factory = LadybugFactory(event_bus, thought_factory)
-    world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ground_beetle_factory, ladybug_factory)
+    world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ladybug_factory)
     
     genes_serializer = GenesSerializer()
     genome_serializer = GenomeSerializer(genes_serializer)
@@ -144,7 +139,6 @@ def start():
     operation_serializer = OperationSerializer(formation_serializer, fight_serializer)
     colony_serializer = ColonySerializer(operation_serializer)
     colony_relations_table_serializer = ColonyRelationsTableSerializer()
-    ground_beetle_serializer = GroundBeetleSerializer()
     item_serializer = ItemSerializer()
     item_area_serializer = ItemAreaSerializer()
     item_source_serializer = ItemSourceSerializer()
@@ -156,7 +150,7 @@ def start():
     tree_serializer = TreeSerializer()
     ladybug_serializer = LadybugSerializer()
     world_serializer = WorldSerializer(nest_serializer, ant_serializer, item_serializer, item_area_serializer, item_source_serializer, colony_serializer, 
-                                       colony_relations_table_serializer, ground_beetle_serializer, nuptial_environment_serializer, climate_serializer, 
+                                       colony_relations_table_serializer, nuptial_environment_serializer, climate_serializer, 
                                        thought_serializer, notification_serializer, player_stats_serializer, tree_serializer, ladybug_serializer)
 
     gene_deserializer = GeneDeserializer()
@@ -165,7 +159,6 @@ def start():
     egg_deserializer = EggDeserializer(genome_deserializer)
     nest_deserializer = NestDeserializer(larva_deserializer, egg_deserializer, nest_factory)
     ant_deserializer = AntDeserializer(genome_deserializer, ant_factory)
-    ground_beetle_deserializer = GroundBeetleDeserializer(ground_beetle_factory)
     formation_deserializer = FormationDeserializer(formation_factory)
     fight_deserializer = FightDeserializer(fight_factory)
     operation_deserializer = OperationDeserializer(operation_factory, formation_deserializer, fight_deserializer)
@@ -184,7 +177,7 @@ def start():
     tree_deserializer = TreeDeserializer(tree_factory)
     ladybug_deserializer = LadybugDeserializer(ladybug_factory)
     world_deserializer = WorldDeserializer(world_factory, nest_deserializer, ant_deserializer, colony_deserializer, thought_deserializer, map_deserializer, 
-                                           ground_beetle_deserializer, item_deserializer, item_source_deserializer, item_area_deserializer, nuptial_environment_deserializer, 
+                                           item_deserializer, item_source_deserializer, item_area_deserializer, nuptial_environment_deserializer, 
                                            climate_deserializer, notification_deserializer, player_stats_deserializer, colony_relations_table_deserializer, tree_deserializer,
                                            ladybug_deserializer)
     
@@ -211,12 +204,11 @@ def start():
     item_source_client_serializer = ItemSourceClientSerializer(util_client_serializer)
     item_area_client_serializer = ItemAreaClientSerializer(util_client_serializer)
     nest_client_serializer = NestClientSerializer(util_client_serializer, larva_client_serializer, egg_client_serializer)
-    ground_beetle_client_serializer = GroundBeetleClientSerializer(util_client_serializer)
     ant_client_serializer = AntClientSerializer(util_client_serializer, stats_client_serializer, genome_client_serializer)
     tree_client_serializer = TreeClientSerializer(util_client_serializer)
     ladybug_client_serializer = LadybugClientSerializer(util_client_serializer)
     common_entity_client_serializer = CommonEntityClientSerializer(item_client_serializer, item_source_client_serializer, item_area_client_serializer, nest_client_serializer, 
-                                                                   ground_beetle_client_serializer, ant_client_serializer, tree_client_serializer, ladybug_client_serializer)
+                                                                   ant_client_serializer, tree_client_serializer, ladybug_client_serializer)
     climate_client_serializer = ClimateClientSerializer()
     world_client_serializer = WorldClientSerializer(common_entity_client_serializer, colony_client_serializer, climate_client_serializer)
     death_record_client_serializer = DeathRecordClientSerializer(util_client_serializer)

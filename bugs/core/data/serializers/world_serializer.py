@@ -4,7 +4,6 @@ from .nest_serializer import NestSerializer
 from .ant_serializer import AntSerializer
 from .colony_serializer import ColonySerializer
 from .colony_relations_table_serializer import ColonyRelationsTableSerializer
-from .ground_beetle_serializer import GroundBeetleSerializer
 from .item_serializer import ItemSerializer
 from core.data.serializers.item_area_serializer import ItemAreaSerializer
 from core.data.serializers.item_source_serializer import ItemSourceSerializer
@@ -24,14 +23,13 @@ class WorldSerializer():
 
     def __init__(self, nest_serializer: NestSerializer, ant_serializer: AntSerializer, item_serializer: ItemSerializer, item_area_serializer: ItemAreaSerializer, 
                  item_source_serializer: ItemSourceSerializer, colony_serializer: ColonySerializer, colony_relations_table_serializer: ColonyRelationsTableSerializer, 
-                 ground_beetle_serializer: GroundBeetleSerializer, nuptial_environment_serializer: NuptialEnvironmentSerializer, climate_serializer: ClimateSerializer, 
+                 nuptial_environment_serializer: NuptialEnvironmentSerializer, climate_serializer: ClimateSerializer, 
                  thought_serializer: ThoughtSerializer, notification_serializer: NotificationSerializer, player_stats_serializer: PlayerStatsSerializer, 
                  tree_serializer: TreeSerializer, ladybug_serializer: LadybugSerializer):
         self._nest_serializer = nest_serializer
         self._ant_serializer = ant_serializer
         self._colony_serializer = colony_serializer
         self._colony_relations_table_serializer: ColonyRelationsTableSerializer = colony_relations_table_serializer
-        self._ground_beetle_serializer = ground_beetle_serializer
         self._item_serializer = item_serializer
         self._item_area_serializer = item_area_serializer
         self._item_source_serializer = item_source_serializer
@@ -48,7 +46,6 @@ class WorldSerializer():
             'trees': [],
             'nests': [],
             'ants': [],
-            'ground_beetles': [],
             'ladybugs': [],
             'items': [],
             'item_areas': [],
@@ -82,10 +79,6 @@ class WorldSerializer():
         ants = entities.get(EntityTypes.ANT, [])
         for ant in ants:
             json['ants'].append(self._ant_serializer.serialize(ant))
-
-        ground_beetles = entities.get(EntityTypes.GROUND_BEETLE, [])
-        for ground_beetle in ground_beetles:
-            json['ground_beetles'].append(self._ground_beetle_serializer.serialize(ground_beetle))
 
         ladybugs = entities.get(EntityTypes.LADYBUG, [])
         for ladybug in ladybugs:

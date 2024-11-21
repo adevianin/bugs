@@ -1,6 +1,5 @@
 const EntityTypes = {
     ANT: 'ant',
-    GROUND_BEETLE: 'ground_beetle',
     LADYBUG: 'ladybug',
     NEST: 'nest',
     ITEM: 'item',

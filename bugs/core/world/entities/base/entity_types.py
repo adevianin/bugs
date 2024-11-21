@@ -2,7 +2,6 @@ from enum import StrEnum
 
 class EntityTypes(StrEnum):
     ANT = 'ant'
-    GROUND_BEETLE = 'ground_beetle'
     LADYBUG = 'ladybug'
     NEST = 'nest'
     ITEM = 'item'
@@ -11,4 +10,4 @@ class EntityTypes(StrEnum):
     TREE = 'tree'
 
 class EntityTypesPack():
-    LIVE_ENTITIES = [EntityTypes.ANT, EntityTypes.GROUND_BEETLE, EntityTypes.LADYBUG]
+    LIVE_ENTITIES = [EntityTypes.ANT, EntityTypes.LADYBUG]

@@ -6,7 +6,7 @@ from core.world.utils.size import Size
 from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.id_generator import IdGenerator
 from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
-from core.world.settings import GROUND_BEETLE_COLONY_ID, LADYBUG_COLONY_ID
+from core.world.settings import LADYBUG_COLONY_ID
 from core.world.entities.climate.climate_factory import ClimateFactory
 from core.world.entities.tree.tree_factory import TreeFactory
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory
@@ -66,10 +66,9 @@ class WorldService():
         entities_collection = EntityCollection.build()
         map = self._map_factory.build_map(map_size, entities_collection)
         colony_relations_table = ColonyRelationsTable.build_empty()
-        ground_beetle_colony = self._colony_factory.build_ground_beetle_colony(GROUND_BEETLE_COLONY_ID, map, colony_relations_table)
         ladybug_colony = self._colony_factory.build_ladybug_colony(LADYBUG_COLONY_ID, map, colony_relations_table)
         last_used_id = LADYBUG_COLONY_ID
-        colonies = [ladybug_colony, ground_beetle_colony]
+        colonies = [ladybug_colony]
         id_generator = IdGenerator.build_id_generator(last_used_id)
         nuptial_environments = []
         player_stats_list = []

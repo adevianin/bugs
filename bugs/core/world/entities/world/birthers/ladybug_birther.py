@@ -1,4 +1,3 @@
-from core.world.entities.ground_beetle.ground_beetle import GroundBeetle
 from core.world.entities.map.map import Map
 from core.world.id_generator import IdGenerator
 from core.world.utils.event_emiter import EventEmitter
@@ -12,5 +11,5 @@ class LadybugBirther(EntityBirther):
         super().__init__(event_bus, id_generator, 'ladybug_birth_request', map)
         self._ladybug_factory = ladybug_factory
 
-    def _build_entity(self, id, request: LadybugBirthRequest) -> GroundBeetle:
+    def _build_entity(self, id, request: LadybugBirthRequest):
         return self._ladybug_factory.build_new_ladybug(id, request.position, 0)

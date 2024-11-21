@@ -12,7 +12,6 @@ from core.data.deserializers.nest_deserializer import NestDeserializer
 from core.data.deserializers.ant_deserializer import AntDeserializer
 from core.data.deserializers.colony_deserializer import ColonyDeserializer
 from core.data.deserializers.thought_deserializer import ThoughtDeserializer
-from core.data.deserializers.ground_beetle_deserializer import GroundBeetleDeserializer
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 from .notification_deserializer import NotificationDeserializer
 from .player_stats_deserializer import PlayerStatsDeserializer
@@ -24,7 +23,7 @@ from .ladybug_deserializer import LadybugDeserializer
 class WorldDeserializer():
 
     def __init__(self, world_factory: WorldFactory, nest_deserializer: NestDeserializer, ant_deserializer: AntDeserializer, colony_deserializer: ColonyDeserializer, 
-                 thought_deserializer: ThoughtDeserializer, map_deserializer: MapDeserializer, ground_beetle_deserializer: GroundBeetleDeserializer, 
+                 thought_deserializer: ThoughtDeserializer, map_deserializer: MapDeserializer, 
                  item_deserializer: ItemDeserializer, item_source_deserializer: ItemSourceDeserializer, item_area_deserializer: ItemAreaDeserializer, 
                  nuptial_environment_deserializer: NuptialEnvironmentDeserializer, climate_deserializer: ClimateDeserializer, notification_deserializer: NotificationDeserializer,
                  player_stats_deserializer: PlayerStatsDeserializer, colony_relations_table_deserializer: ColonyRelationsTableDeserializer, tree_deserializer: TreeDeserializer,
@@ -34,7 +33,6 @@ class WorldDeserializer():
         self._colony_deserializer = colony_deserializer
         self._thought_deserializer = thought_deserializer
         self._map_deserializer = map_deserializer
-        self._ground_beetle_deserializer = ground_beetle_deserializer
         self._item_deserializer = item_deserializer
         self._item_source_deserializer = item_source_deserializer
         self._item_area_deserializer = item_area_deserializer
@@ -75,11 +73,6 @@ class WorldDeserializer():
         for item_source_json in item_sources_json:
             item_source = self._item_source_deserializer.deserialize_item_source(item_source_json)
             entities_collection.add_entity(item_source)
-
-        ground_beetles_json = world_json['ground_beetles']
-        for ground_beetle_json in ground_beetles_json:
-            ground_beetle = self._ground_beetle_deserializer.deserialize_ground_beetle(ground_beetle_json, entities_collection)
-            entities_collection.add_entity(ground_beetle)
 
         ladybugs_json = world_json['ladybugs']
         for ladybug_json in ladybugs_json:

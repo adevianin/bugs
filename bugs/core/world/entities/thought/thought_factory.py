@@ -14,7 +14,7 @@ from core.world.entities.base.live_entity.thoughts.fight_enemy_thought import Fi
 from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
 from core.world.entities.ant.base.thoughts.defend_nest_thought import DefendNestThought
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
-from core.world.entities.ground_beetle.thoughts.hunt_for_aphid import HuntForAphid
+from core.world.entities.ladybug.thoughts.hunt_for_aphid import HuntForAphid
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.item.item_sources.base.item_source import ItemSource
 from core.world.entities.ant.warrior.thoughts.keep_clear_territory_thought import KeepClearTerritoryThought

@@ -5,7 +5,6 @@ from core.world.entities.colony.colonies.ant_colony.operation.base.operation imp
 from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
 from core.world.entities.colony.base.relation_tester import RelationTester
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
-from core.world.entities.colony.colonies.ground_beetle_colony.ground_beetle_colony import GroundBeetleColony
 from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
 from .colonies.ladybug_colony.ladybug_colony import LadybugColony
 
@@ -21,10 +20,6 @@ class ColonyFactory():
     def build_ant_colony(self, id: int, owner_id: int, map: Map, operations: List[Operation], colony_relations_table: ColonyRelationsTable, queen_id: int) -> AntColony:
         relation_tester = self._build_relation_tester(colony_relations_table, id)
         return AntColony(id, self._event_bus, self._operation_factory, owner_id, map, operations, relation_tester, queen_id)
-    
-    def build_ground_beetle_colony(self, id: int, map: Map, colony_relations_table: ColonyRelationsTable):
-        relation_tester = self._build_relation_tester(colony_relations_table, id)
-        return GroundBeetleColony(id, self._event_bus, map, relation_tester)
     
     def build_ladybug_colony(self, id: int, map: Map, colony_relations_table: ColonyRelationsTable):
         relation_tester = self._build_relation_tester(colony_relations_table, id)

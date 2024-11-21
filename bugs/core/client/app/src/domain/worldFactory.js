@@ -3,7 +3,6 @@ import { World } from './entity/world';
 import { Nest } from './entity/nest';
 import { Larva } from './entity/larva';
 import { AntColony } from './entity/antColony';
-import { GroundBeetle } from './entity/groundBeetle';
 import { Item } from './entity/item';
 import { ItemSource } from './entity/itemSource';
 import { ItemArea } from './entity/itemArea';
@@ -28,9 +27,6 @@ class WorldFactory {
         switch(entityJson.type) {
             case EntityTypes.ANT: 
                 return this.buildAnt(entityJson)
-            case EntityTypes.GROUND_BEETLE:
-                return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
-                    entityJson.max_hp);
             case EntityTypes.LADYBUG:
                 return this.buildLadybug(entityJson);
             case EntityTypes.NEST:
@@ -148,10 +144,6 @@ class WorldFactory {
 
     buildAntColony(id, owner_id, operations, queenId) {
         return new AntColony(this._mainEventBus, id, owner_id, operations, queenId);
-    }
-
-    buildGroundBeetle(id, position, angle, fromColony, userSpeed, hp, maxHp) {
-        return new GroundBeetle(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp);
     }
 
     buildNuptialMale(nuptialMaleJson) {

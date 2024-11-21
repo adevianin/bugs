@@ -15,8 +15,6 @@ class ColonyDeserializer():
         match(colony_json['member_type']):
             case EntityTypes.ANT:
                 return self._build_ant_colony(colony_json, entities_collection, map, colony_relations_table)
-            case EntityTypes.GROUND_BEETLE:
-                return self._build_ground_beetle_colony(colony_json, map, colony_relations_table)
             case EntityTypes.LADYBUG:
                 return self._build_ladybug_colony(colony_json, map, colony_relations_table)
             case _:
@@ -28,9 +26,6 @@ class ColonyDeserializer():
         owner_id = colony_json['owner_id']
         queen_id = colony_json["queen_id"]
         return self._colony_factory.build_ant_colony(id, owner_id, map, operations, colony_relations_table, queen_id)
-    
-    def _build_ground_beetle_colony(self, colony_json, map: Map, colony_relations_table: ColonyRelationsTable):
-        return self._colony_factory.build_ground_beetle_colony(colony_json['id'], map, colony_relations_table)
     
     def _build_ladybug_colony(self, colony_json, map: Map, colony_relations_table: ColonyRelationsTable):
         return self._colony_factory.build_ladybug_colony(colony_json['id'], map, colony_relations_table)

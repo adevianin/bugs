@@ -1340,25 +1340,6 @@ class Command(BaseCommand):
                 "is_active": False
             },
         ],
-        "ground_beetles": [
-            # {
-            #     "id":60,
-            #     "type":"ground_beetle",
-            #     "from_colony_id":3,
-            #     "owner_id": None,
-            #     "hp": 800,
-            #     "position":[
-            #         950,
-            #         450
-            #     ],
-            #     "angle": 0,
-            #     "thoughts":[
-            #     ],
-            #     "memory": {},
-            #     "birth_step": 0,
-            #     "is_auto_thought_generation": True
-            # },
-        ],
         "ladybugs": [],
         "trees": [
             {

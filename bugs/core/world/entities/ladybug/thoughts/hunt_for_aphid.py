@@ -1,4 +1,4 @@
-from core.world.entities.ground_beetle.ground_beetle_body import GroundBeetleBody
+from core.world.entities.ladybug.ladybug_body import LadybugBody
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.thought.thought import Thought
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
@@ -8,7 +8,7 @@ from core.world.entities.item.item_sources.base.item_source import ItemSource
 
 class HuntForAphid(Thought):
 
-    _body: GroundBeetleBody
+    _body: LadybugBody
 
     def __init__(self, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_food_source: ItemSource, flags: dict, sayback: str):
         super().__init__(ThoughtTypes.HUNT_FOR_APHID, flags, sayback)

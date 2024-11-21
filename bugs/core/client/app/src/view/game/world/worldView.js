@@ -4,7 +4,6 @@ import { AntView } from './entitiesViews/antView';
 import { NestView } from './entitiesViews/nestView';
 import { EntityTypes } from "@domain/enum/entityTypes";
 import { MarkerManagerView } from './markerManager/markerManagerView';
-import { GroundBeetleView } from './entitiesViews/groundBeetleView';
 import { ItemView } from './entitiesViews/itemView';
 import { ItemSourceView } from './entitiesViews/itemSourceView';
 import { ItemAreaView } from './entitiesViews/itemAreaView';
@@ -36,7 +35,6 @@ class WorldView extends BaseGraphicView {
     _render() {
         this._bg = new PIXI.TilingSprite(this.$textureManager.getTexture('grass.png'));
         this._antContainer = new PIXI.Container();
-        this._groundBeetleContainer = new PIXI.Container();
         this._ladybugContainer = new PIXI.Container();
         this._itemContainer = new PIXI.Container();
         this._bigContainer = new PIXI.Container();
@@ -50,7 +48,6 @@ class WorldView extends BaseGraphicView {
         this._container.addChild(this._nestContainer);
         this._container.addChild(this._itemContainer);
         this._container.addChild(this._antContainer);
-        this._container.addChild(this._groundBeetleContainer);
         this._container.addChild(this._ladybugContainer);
         this._container.addChild(this._bigContainer);
         this._container.addChild(this._itemSourceContainer);
@@ -86,9 +83,6 @@ class WorldView extends BaseGraphicView {
         switch (entity.type) {
             case EntityTypes.ANT:
                 view = new AntView(entity, this._antContainer);
-                break;
-            case EntityTypes.GROUND_BEETLE:
-                view = new GroundBeetleView(entity, this._groundBeetleContainer);
                 break;
             case EntityTypes.LADYBUG:
                 view = new LadybugView(entity, this._ladybugContainer);

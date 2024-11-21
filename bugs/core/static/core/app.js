@@ -1185,41 +1185,6 @@ class Genome {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/entity/groundBeetle.js":
-/*!****************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/groundBeetle.js ***!
-  \****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "GroundBeetle": () => (/* binding */ GroundBeetle)
-/* harmony export */ });
-/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
-/* harmony import */ var _liveEntity__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./liveEntity */ "./bugs/core/client/app/src/domain/entity/liveEntity.js");
-
-
-
-class GroundBeetle extends _liveEntity__WEBPACK_IMPORTED_MODULE_1__.LiveEntity {
-
-    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp) {
-        super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.GROUND_BEETLE, fromColony, null, userSpeed, hp, maxHp);
-
-        this._setState('standing');
-    }
-
-    _playEntityDied(action) {
-        this._setState('dead');
-        this.die();
-        return Promise.resolve();
-    }
-}
-
-
-
-/***/ }),
-
 /***/ "./bugs/core/client/app/src/domain/entity/item.js":
 /*!********************************************************!*\
   !*** ./bugs/core/client/app/src/domain/entity/item.js ***!
@@ -2373,7 +2338,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 const EntityTypes = {
     ANT: 'ant',
-    GROUND_BEETLE: 'ground_beetle',
     LADYBUG: 'ladybug',
     NEST: 'nest',
     ITEM: 'item',
@@ -3042,19 +3006,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_nest__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./entity/nest */ "./bugs/core/client/app/src/domain/entity/nest.js");
 /* harmony import */ var _entity_larva__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./entity/larva */ "./bugs/core/client/app/src/domain/entity/larva.js");
 /* harmony import */ var _entity_antColony__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./entity/antColony */ "./bugs/core/client/app/src/domain/entity/antColony.js");
-/* harmony import */ var _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/groundBeetle */ "./bugs/core/client/app/src/domain/entity/groundBeetle.js");
-/* harmony import */ var _entity_item__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entity/item */ "./bugs/core/client/app/src/domain/entity/item.js");
-/* harmony import */ var _entity_itemSource__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entity/itemSource */ "./bugs/core/client/app/src/domain/entity/itemSource.js");
-/* harmony import */ var _entity_itemArea__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entity/itemArea */ "./bugs/core/client/app/src/domain/entity/itemArea.js");
-/* harmony import */ var _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
-/* harmony import */ var _entity_ant__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entity/ant */ "./bugs/core/client/app/src/domain/entity/ant/index.js");
-/* harmony import */ var _entity_egg__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/egg */ "./bugs/core/client/app/src/domain/entity/egg.js");
-/* harmony import */ var _entity_genetic_genome__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./entity/genetic/genome */ "./bugs/core/client/app/src/domain/entity/genetic/genome.js");
-/* harmony import */ var _entity_nuptialMale__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./entity/nuptialMale */ "./bugs/core/client/app/src/domain/entity/nuptialMale.js");
-/* harmony import */ var _entity_climate__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./entity/climate */ "./bugs/core/client/app/src/domain/entity/climate.js");
-/* harmony import */ var _entity_tree__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./entity/tree */ "./bugs/core/client/app/src/domain/entity/tree.js");
-/* harmony import */ var _entity_ladybug__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./entity/ladybug */ "./bugs/core/client/app/src/domain/entity/ladybug.js");
-
+/* harmony import */ var _entity_item__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entity/item */ "./bugs/core/client/app/src/domain/entity/item.js");
+/* harmony import */ var _entity_itemSource__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entity/itemSource */ "./bugs/core/client/app/src/domain/entity/itemSource.js");
+/* harmony import */ var _entity_itemArea__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entity/itemArea */ "./bugs/core/client/app/src/domain/entity/itemArea.js");
+/* harmony import */ var _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+/* harmony import */ var _entity_ant__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entity/ant */ "./bugs/core/client/app/src/domain/entity/ant/index.js");
+/* harmony import */ var _entity_egg__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entity/egg */ "./bugs/core/client/app/src/domain/entity/egg.js");
+/* harmony import */ var _entity_genetic_genome__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/genetic/genome */ "./bugs/core/client/app/src/domain/entity/genetic/genome.js");
+/* harmony import */ var _entity_nuptialMale__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./entity/nuptialMale */ "./bugs/core/client/app/src/domain/entity/nuptialMale.js");
+/* harmony import */ var _entity_climate__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./entity/climate */ "./bugs/core/client/app/src/domain/entity/climate.js");
+/* harmony import */ var _entity_tree__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./entity/tree */ "./bugs/core/client/app/src/domain/entity/tree.js");
+/* harmony import */ var _entity_ladybug__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./entity/ladybug */ "./bugs/core/client/app/src/domain/entity/ladybug.js");
 
 
 
@@ -3084,9 +3046,6 @@ class WorldFactory {
         switch(entityJson.type) {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT: 
                 return this.buildAnt(entityJson)
-            case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.GROUND_BEETLE:
-                return this.buildGroundBeetle(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.user_speed, entityJson.hp, 
-                    entityJson.max_hp);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.LADYBUG:
                 return this.buildLadybug(entityJson);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
@@ -3107,30 +3066,30 @@ class WorldFactory {
     }
 
     buildItemArea(id, position, angle, hp, maxHp) {
-        return new _entity_itemArea__WEBPACK_IMPORTED_MODULE_8__.ItemArea(this._mainEventBus, id, position, angle, hp, maxHp);
+        return new _entity_itemArea__WEBPACK_IMPORTED_MODULE_7__.ItemArea(this._mainEventBus, id, position, angle, hp, maxHp);
     }
 
     buildItemSource(id, position, angle, fromColony, hp, maxHp, itemType, isFertile) {
-        return new _entity_itemSource__WEBPACK_IMPORTED_MODULE_7__.ItemSource(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, isFertile);
+        return new _entity_itemSource__WEBPACK_IMPORTED_MODULE_6__.ItemSource(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, isFertile);
     }
 
     buildItem(id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
-        return new _entity_item__WEBPACK_IMPORTED_MODULE_6__.Item(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked);
+        return new _entity_item__WEBPACK_IMPORTED_MODULE_5__.Item(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked);
     }
 
     buildWorld() {
-        let climate = new _entity_climate__WEBPACK_IMPORTED_MODULE_14__.Climate();
+        let climate = new _entity_climate__WEBPACK_IMPORTED_MODULE_13__.Climate();
         return new _entity_world__WEBPACK_IMPORTED_MODULE_1__.World(this._mainEventBus, climate);
     }
 
     buildLadybug(json) {
-        return new _entity_ladybug__WEBPACK_IMPORTED_MODULE_16__.Ladybug(this._mainEventBus, json.id, json.position, json.angle, json.from_colony_id, json.user_speed, json.hp, json.max_hp);
+        return new _entity_ladybug__WEBPACK_IMPORTED_MODULE_15__.Ladybug(this._mainEventBus, json.id, json.position, json.angle, json.from_colony_id, json.user_speed, json.hp, json.max_hp);
     }
 
     buildNest(nestJson) {
         let eggs = [];
         for (let eggJson of nestJson.eggs) {
-            let egg = _entity_egg__WEBPACK_IMPORTED_MODULE_11__.Egg.buildFromJson(eggJson);
+            let egg = _entity_egg__WEBPACK_IMPORTED_MODULE_10__.Egg.buildFromJson(eggJson);
             eggs.push(egg);
         }
 
@@ -3174,18 +3133,18 @@ class WorldFactory {
         let birthStep = antJson.birthStep;
 
         switch (antJson.ant_type) {
-            case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.QUEEN:
+            case _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__.AntTypes.QUEEN:
                 let isFertilized = antJson.is_fertilized;
                 let isInNuptialFlight = antJson.is_in_nuptial_flight;
                 let genes = antJson.genes;
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.QueenAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.QueenAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
                     genome, birthStep, isFertilized, isInNuptialFlight, genes);
-            case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.WARRIOR:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WarriorAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
-            case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.WORKER:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.WorkerAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
-            case _enum_antTypes__WEBPACK_IMPORTED_MODULE_9__.AntTypes.MALE:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_10__.MaleAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+            case _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__.AntTypes.WARRIOR:
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.WarriorAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+            case _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__.AntTypes.WORKER:
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.WorkerAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+            case _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__.AntTypes.MALE:
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.MaleAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
             default:
                 throw 'unknown type of ant';
         }
@@ -3199,20 +3158,16 @@ class WorldFactory {
         let ownerId = treeJson.ownerId;
         let hp = treeJson.hp;
         let maxHp = treeJson.maxHp;
-        return new _entity_tree__WEBPACK_IMPORTED_MODULE_15__.Tree(this._mainEventBus, id, position, angle, fromColony, ownerId, hp, maxHp);
+        return new _entity_tree__WEBPACK_IMPORTED_MODULE_14__.Tree(this._mainEventBus, id, position, angle, fromColony, ownerId, hp, maxHp);
     }
 
     buildAntColony(id, owner_id, operations, queenId) {
         return new _entity_antColony__WEBPACK_IMPORTED_MODULE_4__.AntColony(this._mainEventBus, id, owner_id, operations, queenId);
     }
 
-    buildGroundBeetle(id, position, angle, fromColony, userSpeed, hp, maxHp) {
-        return new _entity_groundBeetle__WEBPACK_IMPORTED_MODULE_5__.GroundBeetle(this._mainEventBus, id, position, angle, fromColony, userSpeed, hp, maxHp);
-    }
-
     buildNuptialMale(nuptialMaleJson) {
-        let genome = _entity_genetic_genome__WEBPACK_IMPORTED_MODULE_12__.Genome.buildFromJson(nuptialMaleJson.genome);
-        return new _entity_nuptialMale__WEBPACK_IMPORTED_MODULE_13__.NuptialMale(nuptialMaleJson.id, genome, nuptialMaleJson.stats, nuptialMaleJson.isLocal);
+        let genome = _entity_genetic_genome__WEBPACK_IMPORTED_MODULE_11__.Genome.buildFromJson(nuptialMaleJson.genome);
+        return new _entity_nuptialMale__WEBPACK_IMPORTED_MODULE_12__.NuptialMale(nuptialMaleJson.id, genome, nuptialMaleJson.stats, nuptialMaleJson.isLocal);
     }
 
 }
@@ -8632,51 +8587,6 @@ class EntityView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/game/world/entitiesViews/groundBeetleView.js":
-/*!************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/game/world/entitiesViews/groundBeetleView.js ***!
-  \************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "GroundBeetleView": () => (/* binding */ GroundBeetleView)
-/* harmony export */ });
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-/* harmony import */ var _liveEntityView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./liveEntityView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/liveEntityView.js");
-
-
-
-class GroundBeetleView extends _liveEntityView__WEBPACK_IMPORTED_MODULE_1__.LiveEntityView {
-
-    constructor(entity, entityContainer) {
-        super(entity, entityContainer);
-
-        this._render();
-    }
-
-    _buildStandSprite() {
-        return new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(this.$textureManager.getTexture(`ground_beetle_4.png`));
-    }
-
-    _buildWalkSprite() {
-        let sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.AnimatedSprite(this.$textureManager.getAnimatedTextures(`ground_beetle`));
-        sprite.animationSpeed = 0.2;
-        return sprite;
-    }
-
-    _buildDeadSprite() {
-        return new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Sprite(this.$textureManager.getTexture(`ground_beetle_dead.png`));
-    }
-    
-
-}
-
-
-
-/***/ }),
-
 /***/ "./bugs/core/client/app/src/view/game/world/entitiesViews/hpLine.js":
 /*!**************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/game/world/entitiesViews/hpLine.js ***!
@@ -9682,13 +9592,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entitiesViews_nestView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./entitiesViews/nestView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/nestView.js");
 /* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
 /* harmony import */ var _markerManager_markerManagerView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./markerManager/markerManagerView */ "./bugs/core/client/app/src/view/game/world/markerManager/markerManagerView.js");
-/* harmony import */ var _entitiesViews_groundBeetleView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entitiesViews/groundBeetleView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/groundBeetleView.js");
-/* harmony import */ var _entitiesViews_itemView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entitiesViews/itemView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/itemView.js");
-/* harmony import */ var _entitiesViews_itemSourceView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entitiesViews/itemSourceView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/itemSourceView.js");
-/* harmony import */ var _entitiesViews_itemAreaView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entitiesViews/itemAreaView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/itemAreaView.js");
-/* harmony import */ var _entitiesViews_treeView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entitiesViews/treeView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/treeView.js");
-/* harmony import */ var _entitiesViews_ladybugView__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entitiesViews/ladybugView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/ladybugView.js");
-
+/* harmony import */ var _entitiesViews_itemView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entitiesViews/itemView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/itemView.js");
+/* harmony import */ var _entitiesViews_itemSourceView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entitiesViews/itemSourceView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/itemSourceView.js");
+/* harmony import */ var _entitiesViews_itemAreaView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entitiesViews/itemAreaView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/itemAreaView.js");
+/* harmony import */ var _entitiesViews_treeView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entitiesViews/treeView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/treeView.js");
+/* harmony import */ var _entitiesViews_ladybugView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entitiesViews/ladybugView */ "./bugs/core/client/app/src/view/game/world/entitiesViews/ladybugView.js");
 
 
 
@@ -9726,7 +9634,6 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
     _render() {
         this._bg = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TilingSprite(this.$textureManager.getTexture('grass.png'));
         this._antContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
-        this._groundBeetleContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._ladybugContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._itemContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._bigContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
@@ -9740,7 +9647,6 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._container.addChild(this._nestContainer);
         this._container.addChild(this._itemContainer);
         this._container.addChild(this._antContainer);
-        this._container.addChild(this._groundBeetleContainer);
         this._container.addChild(this._ladybugContainer);
         this._container.addChild(this._bigContainer);
         this._container.addChild(this._itemSourceContainer);
@@ -9777,26 +9683,23 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.ANT:
                 view = new _entitiesViews_antView__WEBPACK_IMPORTED_MODULE_2__.AntView(entity, this._antContainer);
                 break;
-            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.GROUND_BEETLE:
-                view = new _entitiesViews_groundBeetleView__WEBPACK_IMPORTED_MODULE_6__.GroundBeetleView(entity, this._groundBeetleContainer);
-                break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.LADYBUG:
-                view = new _entitiesViews_ladybugView__WEBPACK_IMPORTED_MODULE_11__.LadybugView(entity, this._ladybugContainer);
+                view = new _entitiesViews_ladybugView__WEBPACK_IMPORTED_MODULE_10__.LadybugView(entity, this._ladybugContainer);
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.NEST:
                 view = new _entitiesViews_nestView__WEBPACK_IMPORTED_MODULE_3__.NestView(entity, this._nestContainer);
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.ITEM:
-                view = new _entitiesViews_itemView__WEBPACK_IMPORTED_MODULE_7__.ItemView(entity, this._bigContainer);
+                view = new _entitiesViews_itemView__WEBPACK_IMPORTED_MODULE_6__.ItemView(entity, this._bigContainer);
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.ITEM_SOURCE:
-                view = new _entitiesViews_itemSourceView__WEBPACK_IMPORTED_MODULE_8__.ItemSourceView(entity, this._itemSourceContainer);
+                view = new _entitiesViews_itemSourceView__WEBPACK_IMPORTED_MODULE_7__.ItemSourceView(entity, this._itemSourceContainer);
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.ITEM_AREA:
-                view = new _entitiesViews_itemAreaView__WEBPACK_IMPORTED_MODULE_9__.ItemAreaView(entity, this._itemAreaContainer);
+                view = new _entitiesViews_itemAreaView__WEBPACK_IMPORTED_MODULE_8__.ItemAreaView(entity, this._itemAreaContainer);
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.TREE:
-                view = new _entitiesViews_treeView__WEBPACK_IMPORTED_MODULE_10__.TreeView(entity, this._treesContainer);
+                view = new _entitiesViews_treeView__WEBPACK_IMPORTED_MODULE_9__.TreeView(entity, this._treesContainer);
                 break;
             default:
                 throw 'unknown type of entity';
