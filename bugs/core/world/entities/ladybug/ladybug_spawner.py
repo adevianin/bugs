@@ -4,6 +4,9 @@ from core.world.entities.world.birthers.requests.ladybug_birth_request import La
 from core.world.entities.world.season_types import SeasonTypes
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.settings import ANTS_PER_LADYBUG
+from core.world.utils.point import Point
+from core.world.entities.tree.tree import Tree
+import random
 
 class LadybugSpawner():
 
@@ -21,7 +24,7 @@ class LadybugSpawner():
                 self._spawn()
 
     def _spawn(self):
-        pos = self._map.generate_random_point()
+        pos = self._generate_spawn_point()
         self._event_bus.emit('ladybug_birth_request', LadybugBirthRequest(pos))
 
     def _is_lack_of_bugs(self):
@@ -31,3 +34,7 @@ class LadybugSpawner():
         ants_count = len(self._map.get_entities(entity_types=[EntityTypes.ANT]))
         return ants_count / ladybugs_count < ANTS_PER_LADYBUG
     
+    def _generate_spawn_point(self):
+        trees = self._map.get_entities(entity_types=[EntityTypes.TREE])
+        tree: Tree = random.choice(trees)
+        return Point(tree.position.x, tree.position.y - 100)
