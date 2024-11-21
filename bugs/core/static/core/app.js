@@ -5383,7 +5383,9 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
     }
 
     _removeAntFromList(antId) {
-        this._antViews[antId].remove();
+        if (this._antViews[antId]) { //if ant died before colony_id changed
+            this._antViews[antId].remove();
+        }
         this._ants = this._ants.filter(ant => ant.id != antId);
     }
 

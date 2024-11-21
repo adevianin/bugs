@@ -58,7 +58,9 @@ class AntsListView extends BaseHTMLView {
     }
 
     _removeAntFromList(antId) {
-        this._antViews[antId].remove();
+        if (this._antViews[antId]) { //if ant died before colony_id changed
+            this._antViews[antId].remove();
+        }
         this._ants = this._ants.filter(ant => ant.id != antId);
     }
 
