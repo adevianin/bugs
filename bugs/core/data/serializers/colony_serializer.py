@@ -3,6 +3,7 @@ from .operation_serializer import OperationSerializer
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.colony.colonies.ground_beetle_colony.ground_beetle_colony import GroundBeetleColony
+from core.world.entities.colony.colonies.ladybug_colony.ladybug_colony import LadybugColony
 
 class ColonySerializer():
 
@@ -15,6 +16,8 @@ class ColonySerializer():
                 return self._serialize_ant_colony(colony)
             case EntityTypes.GROUND_BEETLE:
                 return self._serialize_ground_beetle_colony(colony)
+            case EntityTypes.LADYBUG:
+                return self._serialize_ladybug_colony(colony)
             case _:
                 raise Exception('unknown type of colony')
 
@@ -36,6 +39,13 @@ class ColonySerializer():
         return json
     
     def _serialize_ground_beetle_colony(self, colony: GroundBeetleColony):
+        json = self._serialize_colony(colony)
+
+        json.update({
+        })
+        return json
+    
+    def _serialize_ladybug_colony(self, colony: LadybugColony):
         json = self._serialize_colony(colony)
 
         json.update({

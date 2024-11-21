@@ -1359,6 +1359,7 @@ class Command(BaseCommand):
             #     "is_auto_thought_generation": True
             # },
         ],
+        "ladybugs": [],
         "trees": [
             {
                 "id": 70,

@@ -19,6 +19,7 @@ from .player_stats_deserializer import PlayerStatsDeserializer
 from .colony_relations_table_deserializer import ColonyRelationsTableDeserializer
 from .tree_deserializer import TreeDeserializer
 from core.world.id_generator import IdGenerator
+from .ladybug_deserializer import LadybugDeserializer
 
 class WorldDeserializer():
 
@@ -26,7 +27,8 @@ class WorldDeserializer():
                  thought_deserializer: ThoughtDeserializer, map_deserializer: MapDeserializer, ground_beetle_deserializer: GroundBeetleDeserializer, 
                  item_deserializer: ItemDeserializer, item_source_deserializer: ItemSourceDeserializer, item_area_deserializer: ItemAreaDeserializer, 
                  nuptial_environment_deserializer: NuptialEnvironmentDeserializer, climate_deserializer: ClimateDeserializer, notification_deserializer: NotificationDeserializer,
-                 player_stats_deserializer: PlayerStatsDeserializer, colony_relations_table_deserializer: ColonyRelationsTableDeserializer, tree_deserializer: TreeDeserializer):
+                 player_stats_deserializer: PlayerStatsDeserializer, colony_relations_table_deserializer: ColonyRelationsTableDeserializer, tree_deserializer: TreeDeserializer,
+                 ladybug_deserializer: LadybugDeserializer):
         self._nest_deserializer = nest_deserializer
         self._ant_deserializer = ant_deserializer
         self._colony_deserializer = colony_deserializer
@@ -42,6 +44,7 @@ class WorldDeserializer():
         self._player_stats_deserializer = player_stats_deserializer
         self._colony_relations_table_deserializer = colony_relations_table_deserializer
         self._tree_deserializer = tree_deserializer
+        self._ladybug_deserializer = ladybug_deserializer
         self._world_factory = world_factory
         
 
@@ -77,6 +80,11 @@ class WorldDeserializer():
         for ground_beetle_json in ground_beetles_json:
             ground_beetle = self._ground_beetle_deserializer.deserialize_ground_beetle(ground_beetle_json, entities_collection)
             entities_collection.add_entity(ground_beetle)
+
+        ladybugs_json = world_json['ladybugs']
+        for ladybug_json in ladybugs_json:
+            ladybug = self._ladybug_deserializer.deserialize(ladybug_json, entities_collection)
+            entities_collection.add_entity(ladybug)
 
         ants_json = world_json['ants']
         for ant_json in ants_json:

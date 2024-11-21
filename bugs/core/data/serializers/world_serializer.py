@@ -16,6 +16,7 @@ from .notification_serializer import NotificationSerializer
 from core.world.entities.base.entity import Entity
 from .player_stats_serializer import PlayerStatsSerializer
 from .tree_serializer import TreeSerializer
+from .ladybug_serializer import LadybugSerializer
 
 from typing import List, Dict
 
@@ -25,7 +26,7 @@ class WorldSerializer():
                  item_source_serializer: ItemSourceSerializer, colony_serializer: ColonySerializer, colony_relations_table_serializer: ColonyRelationsTableSerializer, 
                  ground_beetle_serializer: GroundBeetleSerializer, nuptial_environment_serializer: NuptialEnvironmentSerializer, climate_serializer: ClimateSerializer, 
                  thought_serializer: ThoughtSerializer, notification_serializer: NotificationSerializer, player_stats_serializer: PlayerStatsSerializer, 
-                 tree_serializer: TreeSerializer):
+                 tree_serializer: TreeSerializer, ladybug_serializer: LadybugSerializer):
         self._nest_serializer = nest_serializer
         self._ant_serializer = ant_serializer
         self._colony_serializer = colony_serializer
@@ -40,6 +41,7 @@ class WorldSerializer():
         self._notification_serializer = notification_serializer
         self._player_stats_serializer = player_stats_serializer
         self._tree_serializer = tree_serializer
+        self._ladybug_serializer = ladybug_serializer
 
     def serialize(self, world: World):
         json = {
@@ -47,6 +49,7 @@ class WorldSerializer():
             'nests': [],
             'ants': [],
             'ground_beetles': [],
+            'ladybugs': [],
             'items': [],
             'item_areas': [],
             'item_sources': [],
@@ -83,6 +86,10 @@ class WorldSerializer():
         ground_beetles = entities.get(EntityTypes.GROUND_BEETLE, [])
         for ground_beetle in ground_beetles:
             json['ground_beetles'].append(self._ground_beetle_serializer.serialize(ground_beetle))
+
+        ladybugs = entities.get(EntityTypes.LADYBUG, [])
+        for ladybug in ladybugs:
+            json['ladybugs'].append(self._ladybug_serializer.serialize(ladybug))
 
         items = entities.get(EntityTypes.ITEM, [])
         for item in items:

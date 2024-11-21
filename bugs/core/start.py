@@ -25,6 +25,7 @@ from core.data.deserializers.death_record_deserializer import DeathRecordDeseria
 from core.data.deserializers.player_stats_deserializer import PlayerStatsDeserializer
 from core.data.deserializers.colony_relations_table_deserializer import ColonyRelationsTableDeserializer
 from core.data.deserializers.tree_deserializer import TreeDeserializer
+from core.data.deserializers.ladybug_deserializer import LadybugDeserializer
 from core.data.deserializers.world_deserializer import WorldDeserializer
 
 from core.data.serializers.larva_serializer import LarvaSerializer
@@ -50,6 +51,7 @@ from core.data.serializers.notification_serializer import NotificationSerializer
 from core.data.serializers.death_record_serializer import DeathRecordSerializer
 from core.data.serializers.player_stats_serializer import PlayerStatsSerializer
 from core.data.serializers.tree_serializer import TreeSerializer
+from core.data.serializers.ladybug_serializer import LadybugSerializer
 
 from core.world.world_facade import WorldFacade
 from core.world.utils.event_emiter import EventEmitter
@@ -152,9 +154,10 @@ def start():
     notification_serializer = NotificationSerializer(death_record_serializer)
     player_stats_serializer = PlayerStatsSerializer()
     tree_serializer = TreeSerializer()
+    ladybug_serializer = LadybugSerializer()
     world_serializer = WorldSerializer(nest_serializer, ant_serializer, item_serializer, item_area_serializer, item_source_serializer, colony_serializer, 
                                        colony_relations_table_serializer, ground_beetle_serializer, nuptial_environment_serializer, climate_serializer, 
-                                       thought_serializer, notification_serializer, player_stats_serializer, tree_serializer)
+                                       thought_serializer, notification_serializer, player_stats_serializer, tree_serializer, ladybug_serializer)
 
     gene_deserializer = GeneDeserializer()
     genome_deserializer = GenomeDeserializer(gene_deserializer)
@@ -179,9 +182,11 @@ def start():
     player_stats_deserializer = PlayerStatsDeserializer(player_stats_factory)
     colony_relations_table_deserializer = ColonyRelationsTableDeserializer()
     tree_deserializer = TreeDeserializer(tree_factory)
+    ladybug_deserializer = LadybugDeserializer(ladybug_factory)
     world_deserializer = WorldDeserializer(world_factory, nest_deserializer, ant_deserializer, colony_deserializer, thought_deserializer, map_deserializer, 
                                            ground_beetle_deserializer, item_deserializer, item_source_deserializer, item_area_deserializer, nuptial_environment_deserializer, 
-                                           climate_deserializer, notification_deserializer, player_stats_deserializer, colony_relations_table_deserializer, tree_deserializer)
+                                           climate_deserializer, notification_deserializer, player_stats_deserializer, colony_relations_table_deserializer, tree_deserializer,
+                                           ladybug_deserializer)
     
     world_data_repository = WorldDataRepository()
     world_repository = WorldRepository(world_data_repository, world_serializer, world_deserializer)
