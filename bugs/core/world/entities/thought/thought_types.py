@@ -22,5 +22,6 @@ class ThoughtTypes(StrEnum):
     KEEP_CLEAR_TERRITORY = 'keep_clear_territory'
     WAIT_STEP = 'wait_step'
     HIBERNATION = 'hibernation'
+    LADYBUG_HIBERNATION = 'ladybug_hibernation'
     # GET_STAHED_ITEM_BACK = 'get_stashed_item_back'
     BUILD_FORTIFICATION = 'build_fortification'

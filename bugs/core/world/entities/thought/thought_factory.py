@@ -1,6 +1,7 @@
 from core.world.utils.point import Point
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.enemy_interface import iEnemy
+from core.world.entities.tree.tree import Tree
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.base.live_entity.thoughts.walk_to_thought import WalkToThought
 from core.world.entities.ant.base.thoughts.find_food_thought import FindFoodThought
@@ -25,6 +26,9 @@ from core.world.entities.ant.base.thoughts.shelter_in_nest import ShelterInNestT
 from core.world.entities.ant.base.thoughts.build_fortification_thought import BuildFortificationThought
 from core.world.entities.ant.base.thoughts.defend_colony_thought import DefendColonyThought
 from core.world.entities.ant.base.thoughts.defend_myself_thought import DefendMyselfThought
+from core.world.entities.ladybug.thoughts.ladybug_hibernation_thought import LadybugHibernationThought
+
+from typing import Dict
 
 class ThoughtFactory:
 
@@ -93,6 +97,9 @@ class ThoughtFactory:
     
     def build_defend_myself(self, fight_near_enemies_thought: FightNearEnemiesThought, flags: dict = None, sayback: str = None):
         return DefendMyselfThought(fight_near_enemies_thought, flags, sayback)
+    
+    def build_ladybug_hibernation_thought(self, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_tree: Tree, flags: dict = None, sayback: str = None):
+        return LadybugHibernationThought(random_walk_thought, fight_near_enemies_thought, found_tree, flags, sayback)
 
     def build_feed_myself_full(self, home_nest: Nest, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(home_nest.position, home_nest.area)
@@ -159,3 +166,8 @@ class ThoughtFactory:
     def build_defend_myself_full(self, sayback: str = None) -> DefendMyselfThought:
         fight_near_enemies_thought = self.build_fight_near_enemies_thought_full()
         return self.build_defend_myself(fight_near_enemies_thought, sayback=sayback)
+    
+    def build_ladybug_hibernation_thought_full(self, found_tree: Tree = None, flags: Dict = None, sayback: str = None):
+        random_walk_thought = self.build_random_walk_thought(None, None)
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full()
+        return self.build_ladybug_hibernation_thought(random_walk_thought, fight_near_enemies_thought, found_tree, flags, sayback)

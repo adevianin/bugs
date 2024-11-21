@@ -47,6 +47,10 @@ class LiveEntity(Entity, iEnemy):
     def is_auto_thought_generation(self):
         return self._mind.is_auto_thought_generation
     
+    @property
+    def is_detectable(self):
+        return super().is_detectable and not self._body.am_i_in_hibernation()
+    
     def set_thoughts(self, thoughts: List[Thought]):
         self._mind.set_thoughts(thoughts)
 
@@ -69,14 +73,14 @@ class LiveEntity(Entity, iEnemy):
         return self._body.sort_by_distance(entities)
     
     def do_step(self, step_number: int):
-        super().do_step()
-
-        self._body.handle_temperature()
         self._body.handle_aging(step_number)
-        # self._body.handle_calories()
+        self._body.handle_exit_hibernation()
 
-        if not self.is_died:
-            self._mind.do_step()
+        if not self._body.am_i_in_hibernation():
+            self._body.handle_temperature()
+            # self._body.handle_calories()
+            if not self.is_died:
+                self._mind.do_step()
 
     def _on_step(self, position: Point):
         self._emit_action(EntityWalkAction.build(self.id, position))

@@ -20,6 +20,7 @@ from core.world.entities.ant.base.thoughts.shelter_in_nest import ShelterInNestT
 from core.world.entities.ant.base.thoughts.build_fortification_thought import BuildFortificationThought
 from core.world.entities.ant.base.thoughts.defend_colony_thought import DefendColonyThought
 from core.world.entities.ant.base.thoughts.defend_myself_thought import DefendMyselfThought
+from core.world.entities.ladybug.thoughts.ladybug_hibernation_thought import LadybugHibernationThought
 
 class ThoughtSerializer():
 
@@ -57,6 +58,8 @@ class ThoughtSerializer():
                 return self._serialize_patrol_nest_territory(thought)
             case ThoughtTypes.HIBERNATION:
                 return self._serialize_hibernation(thought)
+            case ThoughtTypes.LADYBUG_HIBERNATION:
+                return self._serialize_ladybug_hibernation(thought)
             case ThoughtTypes.SHELTER_IN_NEST:
                 return self._serialize_shelter_in_nest(thought)
             # case ThoughtTypes.GET_STAHED_ITEM_BACK:
@@ -236,6 +239,20 @@ class ThoughtSerializer():
         go_home_thought_json = self.serialize(thought.go_home_thought)
         json.update({
             'go_home_thought': go_home_thought_json
+        })
+
+        return json
+    
+    def _serialize_ladybug_hibernation(self, thought: LadybugHibernationThought):
+        json = self._serialize_thought(thought)
+
+        random_walk_thought_json = self.serialize(thought.random_walk_thought)
+        fight_near_enemies_thought_json = self.serialize(thought.fight_near_enemies_thought)
+        
+        json.update({
+            'found_tree_id': thought.found_tree_id,
+            'random_walk_thought': random_walk_thought_json,
+            'fight_near_enemies_thought': fight_near_enemies_thought_json
         })
 
         return json

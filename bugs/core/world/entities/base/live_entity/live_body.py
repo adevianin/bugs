@@ -22,6 +22,7 @@ from typing import List, Callable
 class LiveBody(Body):
 
     stats: LiveStats
+    HIBERNATION_THRESHOLD = 1
 
     def __init__(self, events: EventEmitter, stats: LiveStats, memory: Memory, position: Point, angle: int, hp: int, birth_step: int, visual_sensor: VisualSensor, 
                  temperature_sensor: TemperatureSensor):
@@ -93,7 +94,7 @@ class LiveBody(Body):
         return self._calories / (self._max_calories / 100) < 30
     
     def check_urge_to_hibernate(self) -> bool:
-        return self._temperature_sensor.temperature + 1 <= self.stats.min_temperature
+        return self._temperature_sensor.temperature - self.HIBERNATION_THRESHOLD <= self.stats.min_temperature and not self.am_i_in_hibernation()
 
     def check_urge_to_exit_hibernation(self) -> bool:
         return self._temperature_sensor.temperature >= self.stats.min_temperature and self._temperature_sensor.is_warming
@@ -192,6 +193,10 @@ class LiveBody(Body):
         if self._calories <= 0:
             self.die(HungerDeathRecord(self.position))
 
+    def handle_exit_hibernation(self):
+        if self.am_i_in_hibernation() and self.check_urge_to_exit_hibernation():
+            self.exit_hibernation()
+
     def _look_at(self, point: Point):
         self.angle = (math.atan2(point.y - self.position.y, point.x - self.position.x) * 180 / math.pi) + 90
 
@@ -203,7 +208,7 @@ class LiveBody(Body):
         return bool(self.memory.read('stun_effect'))
     
     def _check_am_i_freezing(self) -> bool:
-        return self._temperature_sensor.temperature < self.stats.min_temperature and not self.am_i_in_hibernation()
+        return self._temperature_sensor.temperature < self.stats.min_temperature
     
     
     

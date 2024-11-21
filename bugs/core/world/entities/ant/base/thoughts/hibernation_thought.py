@@ -27,8 +27,5 @@ class HibernationThought(Thought):
         
         if self._read_flag('ate_well') and not self._body.am_i_in_hibernation():
             self._body.enter_hibernation()
-            return
-        
-        if self._body.am_i_in_hibernation() and self._body.check_urge_to_exit_hibernation():
-            self._body.exit_hibernation()
             self.done()
+        

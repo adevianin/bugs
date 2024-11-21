@@ -43,6 +43,8 @@ class ThoughtDeserializer():
                 return self._build_patrol_nest_territory(thought_json, entities_collection)
             case ThoughtTypes.HIBERNATION:
                 return self._build_hibernation(thought_json, entities_collection)
+            case ThoughtTypes.LADYBUG_HIBERNATION:
+                return self._build_ladybug_hibernation(thought_json, entities_collection)
             case ThoughtTypes.SHELTER_IN_NEST:
                 return self._build_shelter_in_nest(thought_json, entities_collection)
             # case ThoughtTypes.GET_STAHED_ITEM_BACK:
@@ -142,6 +144,12 @@ class ThoughtDeserializer():
         flags = thought_json['flags']
         sayback = thought_json['sayback']
         return self._thought_factory.build_hibernation(go_home_thought, flags, sayback)
+    
+    def _build_ladybug_hibernation(self, thought_json, entities_collection: EntityCollection):
+        random_walk_thought = self.deserialize_thougth(thought_json['random_walk_thought'], entities_collection)
+        fight_near_enemies_thought = self.deserialize_thougth(thought_json['fight_near_enemies_thought'], entities_collection)
+        found_tree = entities_collection.get_entity_by_id(thought_json['found_tree_id']) if thought_json['found_tree_id'] else None
+        return self._thought_factory.build_ladybug_hibernation_thought(random_walk_thought, fight_near_enemies_thought, found_tree)
     
     def _build_shelter_in_nest(self, thought_json, entities_collection: EntityCollection):
         go_home_thought = self.deserialize_thougth(thought_json['go_home_thought'], entities_collection)
