@@ -37,7 +37,7 @@ class MessageHandlerService {
     _handleInitStepMsg(msg) {
         initConts(msg.consts);
         this._userService.initNotifications(msg.notifications)
-        this._worldService.initWorld(msg.world);
+        this._worldService.initWorld(msg.world, msg.step, msg.season);
         this._worldService.setRating(msg.rating);
         this._nuptialService.initEnvironment(msg.nuptialMales);
         this._specieBuilderService.initBuilder(msg.specie);
@@ -45,7 +45,7 @@ class MessageHandlerService {
     }
 
     _handleStepMsg(msg) {
-        this._worldService.setCurrentStep(msg.step);
+        this._worldService.setCurrentStep(msg.step, msg.season);
         for (let action of msg.actions) {
             switch(action.actorType) {
                 case 'entity':

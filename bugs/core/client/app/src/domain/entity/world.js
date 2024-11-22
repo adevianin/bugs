@@ -1,4 +1,5 @@
 import { EntityTypes } from "../enum/entityTypes";
+import { CONSTS } from "@domain/consts";
 
 class World {
     constructor(mainEventBus, climate) {
@@ -7,6 +8,7 @@ class World {
         this._colonies = [];
         this._climate = climate;
         this._currentStep = 0;
+        this._currentSeason = null;
 
         this._mainEventBus.on('entityDied', this._onEntityDied.bind(this));
         this._mainEventBus.on('colonyDied', this._onColonyDied.bind(this));
@@ -19,6 +21,18 @@ class World {
     set currentStep(stepNumber) {
         this._currentStep = stepNumber;
         this._mainEventBus.emit('currentStepChanged', stepNumber);
+    }
+
+    get currentSeason() {
+        return this._currentSeason
+    }
+
+    set currentSeason(season) {
+        let oldSeasonValue = this._currentSeason;
+        this._currentSeason = season;
+        if (oldSeasonValue != season) {
+            this._mainEventBus.emit('currentSeasonChanged', season);
+        }
     }
 
     get entities() {
@@ -35,6 +49,10 @@ class World {
 
     get climate() {
         return this._climate;
+    }
+
+    get isSeasonForLayingEggs() {
+        return CONSTS.LAY_EGG_SEASONS.includes(this._currentSeason);
     }
 
     getAnts() {

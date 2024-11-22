@@ -8,7 +8,7 @@ from core.world.entities.colony.colonies.ant_colony.operation.operation_factory 
 from core.world.utils.point import Point
 from core.world.entities.item.items.base.item import Item 
 from core.world.entities.item.items.base.item_types import ItemTypes 
-from core.world.settings import NEW_EGG_FOOD_COST
+from core.world.settings import NEW_EGG_FOOD_COST, LAY_EGG_SEASONS
 
 from typing import Callable
 
@@ -39,6 +39,9 @@ class ColonyService():
         
         if nest.stored_calories < NEW_EGG_FOOD_COST:
             raise Exception('not enought food')
+        
+        if not self._world.current_season in LAY_EGG_SEASONS:
+            raise Exception('not lay egg season')
         
         egg = queen.produce_egg(name, is_fertilized)
         nest.give_calories(NEW_EGG_FOOD_COST)

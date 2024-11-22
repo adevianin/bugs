@@ -33,7 +33,7 @@ class Nest extends Entity {
         this.emit('fortificationChanged');
     }
 
-    checkCanAddNewEgg() {
+    checkHaveEnoughtFoodForNewEgg() {
         return this.storedCalories >= CONSTS.NEW_EGG_FOOD_COST;
     }
 

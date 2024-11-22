@@ -5,6 +5,7 @@ const CONSTS = {
     SUMMER_START_YEAR_STEP: null,
     AUTUMN_START_YEAR_STEP: null,
     WINTER_START_YEAR_STEP: null,
+    LAY_EGG_SEASONS: null
 }
 
 function initConts(constsValues) {

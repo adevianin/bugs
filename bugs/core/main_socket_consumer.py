@@ -26,16 +26,19 @@ class MainSocketConsumer(WebsocketConsumer):
     def receive(self, text_data=None, bytes_data=None):
         msg = json.loads(text_data)
 
-    def _on_step_done(self, step_number: int):
+    def _on_step_done(self, step_number: int, season):
         if self._inited:
             self.send(json.dumps({
                 'type': 'step',
                 'step': step_number,
+                'season': season,
                 'actions': self._world_facade.get_current_actions_pack_for_client(self._user.id)
             }))
         else:
             self.send(json.dumps({
                 'type': 'init_step',
+                'step': step_number,
+                'season': season,
                 'world': self._world_facade.get_world_for_client(),
                 'specie': self._world_facade.get_specie_for_client(self._user.id),
                 'nuptialMales': self._world_facade.get_nuptial_males_for_client(self._user.id),

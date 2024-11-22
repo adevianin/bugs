@@ -29,6 +29,10 @@ class DomainFacade {
         return this._worldService.ratingContainer;
     }
 
+    get world() {
+        return this._worldService.world;
+    }
+
     getEntities() {
         return this._worldService.world.entities;
     }

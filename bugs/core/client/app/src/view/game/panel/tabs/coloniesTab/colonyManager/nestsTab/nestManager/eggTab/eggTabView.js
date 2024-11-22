@@ -11,6 +11,7 @@ class EggTabView extends BaseHTMLView {
         this._render();
 
         this._addEggBtn.addEventListener('click', this._onAddEggBtnClick.bind(this));
+        this.$domainFacade.events.addListener('currentSeasonChanged', this._onSeasonChanged.bind(this));
     }
 
     remove() {
@@ -25,6 +26,7 @@ class EggTabView extends BaseHTMLView {
         this._addEggBtn = this._el.querySelector('[data-add-egg]');
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
         this._notEnoughFoodMsg = this._el.querySelector('[data-not-enough-food-msg]');
+        this._notSuitableSeasonMsg = this._el.querySelector('[data-not-suitable-season-msg]');
     }
 
     manageNest(nest) {
@@ -102,10 +104,17 @@ class EggTabView extends BaseHTMLView {
         this._nest.addNewEgg(name, isFertilized);
     }
 
+    _onSeasonChanged() {
+        this._renderCanAddNewEgg();
+    }
+
     _renderCanAddNewEgg() {
-        let canAdd = this._nest.checkCanAddNewEgg();
+        let haveFood = this._nest.checkHaveEnoughtFoodForNewEgg();
+        let isSuitableSeason = this.$domainFacade.world.isSeasonForLayingEggs;
+        let canAdd = haveFood && isSuitableSeason;
         this._addEggBtn.disabled = !canAdd;
-        this._notEnoughFoodMsg.classList.toggle('hidden', canAdd);
+        this._notEnoughFoodMsg.classList.toggle('hidden', haveFood);
+        this._notSuitableSeasonMsg.classList.toggle('hidden', isSuitableSeason);
     }
 
     _generateAntName() {

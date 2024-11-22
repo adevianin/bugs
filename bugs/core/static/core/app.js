@@ -1,6 +1,17 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png":
+/*!****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/textures/build/world_spritesheet.png ***!
+  \****************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+module.exports = __webpack_require__.p + "29a76d23a5d58a698934.png";
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/domain/consts.js":
 /*!***************************************************!*\
   !*** ./bugs/core/client/app/src/domain/consts.js ***!
@@ -20,6 +31,7 @@ const CONSTS = {
     SUMMER_START_YEAR_STEP: null,
     AUTUMN_START_YEAR_STEP: null,
     WINTER_START_YEAR_STEP: null,
+    LAY_EGG_SEASONS: null
 }
 
 function initConts(constsValues) {
@@ -71,6 +83,10 @@ class DomainFacade {
 
     get ratingContainer() {
         return this._worldService.ratingContainer;
+    }
+
+    get world() {
+        return this._worldService.world;
     }
 
     getEntities() {
@@ -1569,7 +1585,7 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this.emit('fortificationChanged');
     }
 
-    checkCanAddNewEgg() {
+    checkHaveEnoughtFoodForNewEgg() {
         return this.storedCalories >= _domain_consts__WEBPACK_IMPORTED_MODULE_5__.CONSTS.NEW_EGG_FOOD_COST;
     }
 
@@ -2062,6 +2078,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "World": () => (/* binding */ World)
 /* harmony export */ });
 /* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../enum/entityTypes */ "./bugs/core/client/app/src/domain/enum/entityTypes.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/consts */ "./bugs/core/client/app/src/domain/consts.js");
+
 
 
 class World {
@@ -2071,6 +2089,7 @@ class World {
         this._colonies = [];
         this._climate = climate;
         this._currentStep = 0;
+        this._currentSeason = null;
 
         this._mainEventBus.on('entityDied', this._onEntityDied.bind(this));
         this._mainEventBus.on('colonyDied', this._onColonyDied.bind(this));
@@ -2083,6 +2102,18 @@ class World {
     set currentStep(stepNumber) {
         this._currentStep = stepNumber;
         this._mainEventBus.emit('currentStepChanged', stepNumber);
+    }
+
+    get currentSeason() {
+        return this._currentSeason
+    }
+
+    set currentSeason(season) {
+        let oldSeasonValue = this._currentSeason;
+        this._currentSeason = season;
+        if (oldSeasonValue != season) {
+            this._mainEventBus.emit('currentSeasonChanged', season);
+        }
     }
 
     get entities() {
@@ -2099,6 +2130,10 @@ class World {
 
     get climate() {
         return this._climate;
+    }
+
+    get isSeasonForLayingEggs() {
+        return _domain_consts__WEBPACK_IMPORTED_MODULE_1__.CONSTS.LAY_EGG_SEASONS.includes(this._currentSeason);
     }
 
     getAnts() {
@@ -2659,7 +2694,7 @@ class MessageHandlerService {
     _handleInitStepMsg(msg) {
         (0,_domain_consts__WEBPACK_IMPORTED_MODULE_0__.initConts)(msg.consts);
         this._userService.initNotifications(msg.notifications)
-        this._worldService.initWorld(msg.world);
+        this._worldService.initWorld(msg.world, msg.step, msg.season);
         this._worldService.setRating(msg.rating);
         this._nuptialService.initEnvironment(msg.nuptialMales);
         this._specieBuilderService.initBuilder(msg.specie);
@@ -2667,7 +2702,7 @@ class MessageHandlerService {
     }
 
     _handleStepMsg(msg) {
-        this._worldService.setCurrentStep(msg.step);
+        this._worldService.setCurrentStep(msg.step, msg.season);
         for (let action of msg.actions) {
             switch(action.actorType) {
                 case 'entity':
@@ -2874,6 +2909,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
 /* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/distance */ "./bugs/core/client/utils/distance.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/consts */ "./bugs/core/client/app/src/domain/consts.js");
+
 
 
 
@@ -2897,8 +2934,9 @@ class WorldService {
         return this._ratingContainer;
     }
 
-    setCurrentStep(currentStep) {
+    setCurrentStep(currentStep, currentSeason) {
         this._world.currentStep = currentStep;
+        this._world.currentSeason = currentSeason;
     }
 
     setRating(ratingData) {
@@ -2924,7 +2962,7 @@ class WorldService {
         this._world.climate.playAction(action);
     }
 
-    initWorld(worldJson) {
+    initWorld(worldJson, step, season) {
         worldJson.entities.forEach(entityJson => { 
             let entity = this._worldFactory.buildEntity(entityJson);
             this._world.addEntity(entity); 
@@ -2938,6 +2976,9 @@ class WorldService {
         this._world.size = worldJson.size;
 
         this._world.climate.setTemperatureChange(worldJson.climate.dailyTemperature, worldJson.climate.directionOfChange);
+
+        this._world.currentStep = step;
+        this._world.currentSeason = season;
     }
 
     _clearWorld() {
@@ -5647,6 +5688,7 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._render();
 
         this._addEggBtn.addEventListener('click', this._onAddEggBtnClick.bind(this));
+        this.$domainFacade.events.addListener('currentSeasonChanged', this._onSeasonChanged.bind(this));
     }
 
     remove() {
@@ -5661,6 +5703,7 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._addEggBtn = this._el.querySelector('[data-add-egg]');
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
         this._notEnoughFoodMsg = this._el.querySelector('[data-not-enough-food-msg]');
+        this._notSuitableSeasonMsg = this._el.querySelector('[data-not-suitable-season-msg]');
     }
 
     manageNest(nest) {
@@ -5738,10 +5781,17 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._nest.addNewEgg(name, isFertilized);
     }
 
+    _onSeasonChanged() {
+        this._renderCanAddNewEgg();
+    }
+
     _renderCanAddNewEgg() {
-        let canAdd = this._nest.checkCanAddNewEgg();
+        let haveFood = this._nest.checkHaveEnoughtFoodForNewEgg();
+        let isSuitableSeason = this.$domainFacade.world.isSeasonForLayingEggs;
+        let canAdd = haveFood && isSuitableSeason;
         this._addEggBtn.disabled = !canAdd;
-        this._notEnoughFoodMsg.classList.toggle('hidden', canAdd);
+        this._notEnoughFoodMsg.classList.toggle('hidden', haveFood);
+        this._notSuitableSeasonMsg.classList.toggle('hidden', isSuitableSeason);
     }
 
     _generateAntName() {
@@ -12652,7 +12702,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n    <span data-not-enough-food-msg>не вистачає їжі</span>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>стан</td>\r\n            <td>каста</td>\r\n            <td>дії</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
+var code = "<div>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n    <span data-not-enough-food-msg>не вистачає їжі</span>\r\n    <span data-not-suitable-season-msg>не підходящий сезон</span>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>стан</td>\r\n            <td>каста</td>\r\n            <td>дії</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -16058,17 +16108,6 @@ module.exports = {
   }
 };
 
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png":
-/*!****************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/textures/build/world_spritesheet.png ***!
-  \****************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "29a76d23a5d58a698934.png";
 
 /***/ }),
 

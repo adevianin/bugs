@@ -17,6 +17,7 @@ from core.world.action_accumulator import ActionAccumulator
 from core.sync.notification_client_serializer import NotificationClientSerializer
 from core.world.services.rating_serivice import RatingService
 from core.world.services.world_service import WorldService
+from core.world.entities.world.season_types import SeasonTypes
 from core.world.settings import WORLD_ID
 
 from typing import Callable, List, Dict
@@ -183,9 +184,9 @@ class WorldFacade:
     def get_rating(self):
         return self._rating_service.rating
     
-    def _on_step_done(self, step_number: int, season):
+    def _on_step_done(self, step_number: int, season: SeasonTypes):
         self._serialize_common_actions()
-        self._events.emit('step', step_number)
+        self._events.emit('step', step_number, season)
 
     def _serialize_common_actions(self):
         actions = self._action_accumulator.pull_common_actions()

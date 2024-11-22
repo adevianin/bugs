@@ -1,5 +1,6 @@
 import { AntTypes } from '@domain/enum/antTypes';
 import { distance } from '@utils/distance';
+import { CONSTS } from '@domain/consts';
 
 class WorldService {
 
@@ -21,8 +22,9 @@ class WorldService {
         return this._ratingContainer;
     }
 
-    setCurrentStep(currentStep) {
+    setCurrentStep(currentStep, currentSeason) {
         this._world.currentStep = currentStep;
+        this._world.currentSeason = currentSeason;
     }
 
     setRating(ratingData) {
@@ -48,7 +50,7 @@ class WorldService {
         this._world.climate.playAction(action);
     }
 
-    initWorld(worldJson) {
+    initWorld(worldJson, step, season) {
         worldJson.entities.forEach(entityJson => { 
             let entity = this._worldFactory.buildEntity(entityJson);
             this._world.addEntity(entity); 
@@ -62,6 +64,9 @@ class WorldService {
         this._world.size = worldJson.size;
 
         this._world.climate.setTemperatureChange(worldJson.climate.dailyTemperature, worldJson.climate.directionOfChange);
+
+        this._world.currentStep = step;
+        this._world.currentSeason = season;
     }
 
     _clearWorld() {
