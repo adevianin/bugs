@@ -409,7 +409,7 @@ class Command(BaseCommand):
                 "id":4,
                 "name": 'ant 4 super',
                 "type":"ant",
-                "from_colony_id":1,
+                "from_colony_id":3,
                 "owner_id": 2,
                 "hp": 300,
                 "position":[
@@ -565,7 +565,7 @@ class Command(BaseCommand):
                 "id":5,
                 "name": 'ant 5 band',
                 "type":"ant",
-                "from_colony_id":1,
+                "from_colony_id":3,
                 "owner_id": 2,
                 "hp": 1000,
                 "position":[
@@ -679,7 +679,7 @@ class Command(BaseCommand):
                 "id":6,
                 "name": 'ninja',
                 "type":"ant",
-                "from_colony_id":1,
+                "from_colony_id":3,
                 "owner_id": 2,
                 "hp": 300,
                 "position":[
@@ -793,7 +793,7 @@ class Command(BaseCommand):
                 "id":7,
                 "name": 'hidden',
                 "type":"ant",
-                "from_colony_id":1,
+                "from_colony_id":3,
                 "owner_id": 2,
                 "hp": 300,
                 "position":[
@@ -905,23 +905,6 @@ class Command(BaseCommand):
             },
         ],
         "items": [
-            {
-                "id":20,
-                "type":"item",
-                "from_colony_id": None,
-                "owner_id": None,
-                "hp": 100,
-                "position":[
-                    850,
-                    450
-                ],
-                "angle": 45,
-                "strength":150,
-                "item_type":"ground_beetle_corpse",
-                "variety":1,
-                "is_picked": False,
-                "life_span": -1
-            },
         ],
         "nests":[
             {
@@ -1240,7 +1223,7 @@ class Command(BaseCommand):
             {
                 "id":32,
                 "type":"nest",
-                "from_colony_id":1,
+                "from_colony_id":3,
                 "owner_id": 2,
                 "is_main": True,
                 "hp": 100,
@@ -1373,7 +1356,7 @@ class Command(BaseCommand):
             {
                 "id":1,
                 "owner_id": None,
-                "member_type": "ground_beetle"
+                "member_type":"ladybug"
             }
         ],
         "colonies_relations": [
