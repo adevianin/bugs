@@ -14,6 +14,7 @@ from core.world.utils.point import Point
 from core.world.entities.ant.base.nuptial_environment.nuptial_male import NuptialMale
 from core.world.entities.action.ant_got_fertilized_action import AntGotFertilizedAction
 from core.world.entities.base.ownership_config import OwnershipConfig
+from core.world.entities.base.damage_types import DamageTypes
 
 class QueenAnt(Ant):
 
@@ -52,7 +53,10 @@ class QueenAnt(Ant):
         self._emit_action(AntGotFertilizedAction.build(self.id))
 
     def do_step(self, step_number: int):
-        if not self._body.is_in_nuptial_flight:
+        if self._body.is_in_nuptial_flight:
+            if self._body.check_am_i_freezing():
+                self._body.receive_damage(self._body.hp, DamageTypes.COLD)
+        else:
             super().do_step(step_number)
     
     def _on_flew_nuptial_flight(self):

@@ -185,7 +185,7 @@ class LiveBody(Body):
             self.die(AgeDeathRecord(self.position))
 
     def handle_temperature(self):
-        if self._check_am_i_freezing():
+        if self.check_am_i_freezing():
             self.receive_damage(COLD_DAMAGE, DamageTypes.COLD)
 
     def handle_calories(self):
@@ -207,7 +207,7 @@ class LiveBody(Body):
     def _has_stun_effect(self):
         return bool(self.memory.read('stun_effect'))
     
-    def _check_am_i_freezing(self) -> bool:
+    def check_am_i_freezing(self) -> bool:
         return self._temperature_sensor.temperature < self.stats.min_temperature
     
     
