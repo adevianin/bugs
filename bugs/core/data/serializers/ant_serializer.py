@@ -39,8 +39,7 @@ class AntSerializer(LiveEntitySerializer):
         male_chromosomes_set_json = self._genome_serializer.serialize_chromosomes_set(ant.body.male_chromosomes_set) if ant.body.male_chromosomes_set else None
 
         json.update({
-            "male_chromosomes_set": male_chromosomes_set_json,
-            "is_in_nuptial_flight": ant.body.is_in_nuptial_flight
+            "male_chromosomes_set": male_chromosomes_set_json
         })
 
         return json

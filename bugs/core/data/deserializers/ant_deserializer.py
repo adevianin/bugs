@@ -43,8 +43,7 @@ class AntDeserializer(LiveEntityDeserializer):
         ant_props = self._parse_common_ant_props(ant_json, entities_collection)
         male_chromosomes_set = self._genome_deserializer.deserialize_chromosomes_set(ant_json['male_chromosomes_set']) if ant_json['male_chromosomes_set'] else None
         ant_props.update({
-            "male_chromosomes_set": male_chromosomes_set,
-            "is_in_nuptial_flight": ant_json['is_in_nuptial_flight']
+            "male_chromosomes_set": male_chromosomes_set
         })
         
         return self._ant_factory.build_queen_ant(**ant_props)

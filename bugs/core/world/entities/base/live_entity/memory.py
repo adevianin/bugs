@@ -6,6 +6,12 @@ class Memory():
     @property
     def records(self):
         return self._records
+    
+    def save_flag(self, flag_name: str, value: bool):
+        self.save(flag_name, bool(value))
+
+    def read_flag(self, flag_name: str):
+        return bool(self.read(flag_name))
 
     def save(self, record_name: str, data, expired_in: int = None):
         self._records[record_name] = { 'data': data,  'expired_in': expired_in}

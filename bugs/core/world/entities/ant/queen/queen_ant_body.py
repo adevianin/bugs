@@ -14,11 +14,9 @@ from core.world.entities.ant.base.egg import Egg
 class QueenAntBody(AntBody):
 
     def __init__(self, events: EventEmitter, stats: AntStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, birth_step: int, located_in_nest: Nest, 
-                 picked_item: Item, visual_sensor: VisualSensor, temperature_sensor: TemperatureSensor, genome: Genome, male_chromosomes_set: ChromosomesSet, 
-                 is_in_nuptial_flight: bool):
+                 picked_item: Item, visual_sensor: VisualSensor, temperature_sensor: TemperatureSensor, genome: Genome, male_chromosomes_set: ChromosomesSet):
         super().__init__(events, stats, sayer, memory, position, angle, hp, birth_step, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
         self._male_chromosomes_set = male_chromosomes_set
-        self._is_in_nuptial_flight = is_in_nuptial_flight
 
     @property
     def is_fertilized(self):
@@ -30,7 +28,7 @@ class QueenAntBody(AntBody):
     
     @property
     def is_in_nuptial_flight(self):
-        return self._is_in_nuptial_flight
+        return self.memory.read_flag('is_in_nuptial_flight')
     
     @property
     def can_fly_nuptial_flight(self):
@@ -52,11 +50,11 @@ class QueenAntBody(AntBody):
     def fly_nuptial_flight(self):
         if self.is_in_nest:
             self.get_out_of_nest()
-        
-        self._is_in_nuptial_flight = True
+
+        self.memory.save_flag('is_in_nuptial_flight', True)
         self.events.emit('flew_nuptial_flight')
 
     def fly_nuptial_flight_back(self, landing_position: Point):
         self._position = landing_position
-        self._is_in_nuptial_flight = False
+        self.memory.save_flag('is_in_nuptial_flight', False)
         self.events.emit('flew_nuptial_flight_back', self._position)
