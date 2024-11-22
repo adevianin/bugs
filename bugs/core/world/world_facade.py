@@ -17,12 +17,12 @@ from core.world.action_accumulator import ActionAccumulator
 from core.sync.notification_client_serializer import NotificationClientSerializer
 from core.world.services.rating_serivice import RatingService
 from core.world.services.world_service import WorldService
+from core.world.settings import WORLD_ID
 
 from typing import Callable, List, Dict
 
 class WorldFacade:
     _instance = None
-    WORLD_ID = 2
 
     @classmethod
     def get_instance(cls) -> 'WorldFacade':
@@ -64,7 +64,7 @@ class WorldFacade:
         return self._world
         
     def init_world(self):
-        self._world = self._world_repository.get(self.WORLD_ID)
+        self._world = self._world_repository.get(WORLD_ID)
         if not self._world:
             self._world = self._world_service.generate_new_world(2, 2)
 
@@ -76,7 +76,7 @@ class WorldFacade:
     
     # <ADMIN_COMMANDS>
     def save_world_admin_command(self):
-        self._world_repository.push(self._world, self.WORLD_ID)
+        self._world_repository.push(self._world, WORLD_ID)
     
     def run_world_admin_command(self):
         self._world.run()
