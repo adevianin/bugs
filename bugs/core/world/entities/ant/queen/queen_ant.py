@@ -28,13 +28,16 @@ class QueenAnt(Ant):
         self._body.events.add_listener('flew_nuptial_flight_back', self._on_flew_nuptial_flight_back)
 
     @property
+    def is_detectable(self):
+        return super().is_detectable and not self._body.is_in_nuptial_flight
+
+    @property
     def can_fly_nuptial_flight(self):
         return self._body.can_fly_nuptial_flight
     
     def fly_nuptial_flight(self):
         self.from_colony_id = None
         self._mind.free_mind()
-        self._mind.toggle_auto_thought_generation(False)
         self._body.fly_nuptial_flight()
 
     def fly_nuptial_flight_back(self, landing_position: Point):
@@ -47,6 +50,10 @@ class QueenAnt(Ant):
     def fertilize(self, male: NuptialMale):
         self._body.fertilize(male.genome.maternal_chromosomes_set)
         self._emit_action(AntGotFertilizedAction.build(self.id))
+
+    def do_step(self, step_number: int):
+        if not self._body.is_in_nuptial_flight:
+            super().do_step(step_number)
     
     def _on_flew_nuptial_flight(self):
         self._emit_action(AntFlewNuptialFlightAction.build(self.id))
