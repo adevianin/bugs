@@ -172,7 +172,7 @@ class ColonyService():
         if not nest or nest.owner_id != user_id:
             raise Exception('wrong nest id')
         
-        filter: Callable[[Item], bool] = lambda item: item.item_type == ItemTypes.GROUND_BEETLE_CORPSE
+        filter: Callable[[Item], bool] = lambda item: item.item_type == ItemTypes.BUG_CORPSE
         items = self._world.map.find_entities_near(nest.position, nest.area, EntityTypes.ITEM, filter)
 
         if not items:

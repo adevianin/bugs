@@ -222,7 +222,6 @@
             <key type="filename">images/item_flower_1v.png</key>
             <key type="filename">images/item_flower_2v.png</key>
             <key type="filename">images/item_flower_3v.png</key>
-            <key type="filename">images/item_ground_beetle_corpse_1v.png</key>
             <key type="filename">images/item_honeydew_1v.png</key>
             <key type="filename">images/item_leaf_1v.png</key>
             <key type="filename">images/item_leaf_2v.png</key>
@@ -268,6 +267,22 @@
                 <rect>16,16,32,32</rect>
                 <key>scale9Paddings</key>
                 <rect>16,16,32,32</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">images/item_bug_corpse_1v.png</key>
+            <key type="filename">images/item_bug_corpse_2v.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>11,16,23,33</rect>
+                <key>scale9Paddings</key>
+                <rect>11,16,23,33</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -393,7 +408,6 @@
                     <filename>images/item_flower_1v.png</filename>
                     <filename>images/item_flower_2v.png</filename>
                     <filename>images/item_flower_3v.png</filename>
-                    <filename>images/item_ground_beetle_corpse_1v.png</filename>
                     <filename>images/marker_eat.png</filename>
                     <filename>images/marker_pillage.png</filename>
                     <filename>images/item_ant_food_1v.png</filename>
@@ -418,6 +432,8 @@
                     <filename>images/ladybug_7.png</filename>
                     <filename>images/ladybug_8.png</filename>
                     <filename>images/ladybug_dead.png</filename>
+                    <filename>images/item_bug_corpse_1v.png</filename>
+                    <filename>images/item_bug_corpse_2v.png</filename>
                 </array>
             </struct>
         </map>

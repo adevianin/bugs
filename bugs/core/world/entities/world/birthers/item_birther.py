@@ -13,4 +13,4 @@ class ItemBirther(EntityBirther):
         self._item_factory = item_factory
 
     def _build_entity(self, id, request: ItemBirthRequest) -> Item:
-        return self._item_factory.build_new_item(id, request.item_type, request.position, request.strength)
+        return self._item_factory.build_new_item(id, request.item_type, request.position, request.strength, request.angle)

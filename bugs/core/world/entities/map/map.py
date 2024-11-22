@@ -33,6 +33,22 @@ class Map:
         y = random.randint(padding, self._size.height - padding)
         return Point(x, y)
     
+    def generate_random_point_on_circle(self, center: Point, radius: int, map_padding: int = 10):
+        point = Point.generate_random_point_on_circle(center, radius)
+        x = point.x 
+        y = point.y
+        if x > self._size.width:
+            x = self._size.width - map_padding
+        elif x < 0:
+            x = 0 + map_padding
+
+        if y > self._size.height:
+            y = self._size.height - map_padding
+        elif y < 0:
+            y = 0 + map_padding  
+
+        return Point(x, y)
+    
     def add_entity(self, entity: Entity):
         self._entities_collection.add_entity(entity)
     

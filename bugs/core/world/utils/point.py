@@ -1,6 +1,6 @@
 from collections import namedtuple
 from typing import List, Tuple
-import math
+import math, random
 
 class Point(namedtuple('Point', ['x', 'y'])):
 
@@ -52,6 +52,13 @@ class Point(namedtuple('Point', ['x', 'y'])):
             angle_degrees += 360
 
         return angle_degrees
+    
+    @staticmethod
+    def generate_random_point_on_circle(center: 'Point', radius: int):
+        angle = random.uniform(0, 2 * math.pi)
+        x = center.x + radius * math.cos(angle)
+        y = center.y + radius * math.sin(angle)
+        return Point(x, y)
 
     @classmethod
     def from_json(cls, point_json: List[int]):

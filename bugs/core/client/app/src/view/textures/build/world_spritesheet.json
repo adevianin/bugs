@@ -290,7 +290,7 @@
 },
 "grass.png":
 {
-	"frame": {"x":125,"y":168,"w":64,"h":64},
+	"frame": {"x":170,"y":168,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
@@ -376,6 +376,22 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
+"item_bug_corpse_1v.png":
+{
+	"frame": {"x":80,"y":168,"w":45,"h":65},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":65},
+	"sourceSize": {"w":45,"h":65}
+},
+"item_bug_corpse_2v.png":
+{
+	"frame": {"x":125,"y":168,"w":45,"h":65},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":65},
+	"sourceSize": {"w":45,"h":65}
+},
 "item_flower_1v.png":
 {
 	"frame": {"x":128,"y":96,"w":32,"h":32},
@@ -399,14 +415,6 @@
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
-},
-"item_ground_beetle_corpse_1v.png":
-{
-	"frame": {"x":80,"y":168,"w":45,"h":65},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":65},
-	"sourceSize": {"w":45,"h":65}
 },
 "item_honeydew_1v.png":
 {
@@ -450,7 +458,7 @@
 },
 "item_source_honeydew.png":
 {
-	"frame": {"x":189,"y":168,"w":90,"h":110},
+	"frame": {"x":234,"y":168,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -458,7 +466,7 @@
 },
 "item_source_honeydew_not_fertile.png":
 {
-	"frame": {"x":279,"y":168,"w":90,"h":110},
+	"frame": {"x":324,"y":168,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -631,6 +639,6 @@
 	"format": "RGBA8888",
 	"size": {"w":462,"h":778},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:397c3570dd97325956a9a2b231cab7d0:2cbcd6a0fd3fcb0f14e9ee88abe6a56c:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:04dca8e2d98850fb63a24cbd816c687c:5c7af8fca119f70793f5e352d94b5ce3:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }

@@ -22,6 +22,7 @@ from core.world.entities.colony.base.colony_relations_manager import ColonyRelat
 from .player_stats import PlayerStats
 from core.world.entities.ladybug.ladybug_factory import LadybugFactory
 from core.world.entities.ladybug.ladybug_spawner import LadybugSpawner
+from core.world.entities.item.items.bug_corpse.bug_corpse_spawner import BugCorpseSpawner
 
 from typing import List
 
@@ -38,7 +39,8 @@ class WorldFactory():
                     nuptial_environments: List[NuptialEnvironment], player_stats_list: List[PlayerStats], climate: Climate, current_step: int, 
                     notifications: List[Notification]) -> World:
         spawners = {
-            'ladybug_spawner': LadybugSpawner(self._event_bus, map)
+            'ladybug_spawner': LadybugSpawner(self._event_bus, map),
+            'bug_corpse_spawner': BugCorpseSpawner(self._event_bus, map)
         }
         birthers = {
             'ant_birther': AntBirther(self._event_bus, id_generator, map, self._ant_factory),

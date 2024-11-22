@@ -114,7 +114,7 @@ class Nest(Entity):
     def get_some_food(self, on_food_ready, food_count: int):
         strength = self._body.get_some_food(food_count)
         if strength > 0:
-            self._event_bus.emit('item_birth_request', ItemBirthRequest.build(self._body.position, strength, ItemTypes.ANT_FOOD, None, on_food_ready))
+            self._event_bus.emit('item_birth_request', ItemBirthRequest(self._body.position, strength, ItemTypes.ANT_FOOD, 0, None, on_food_ready))
             return True
         else:
             return False
