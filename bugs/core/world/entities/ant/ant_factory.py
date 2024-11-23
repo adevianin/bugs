@@ -50,7 +50,7 @@ class AntFactory():
         return self.build_warrior_ant(id, name, ownership, position, 0, None, birth_step, home_nest, None, Memory(), True, None, False, genome, GuardianBehaviors.COLONY, True)
     
     def build_new_queen_ant(self, id: int, name: str, ownership: OwnershipConfig, genome: Genome, position: Point, home_nest: Nest, birth_step: int):
-        return self.build_queen_ant(id, name, ownership, position, 0, None, birth_step, home_nest, None, Memory(), True, None, False, genome, None, False, GuardianBehaviors.NONE)
+        return self.build_queen_ant(id, name, ownership, position, 0, None, birth_step, home_nest, None, Memory(), True, None, False, genome, None, GuardianBehaviors.NONE, False)
     
     def build_new_male_ant(self, id: int, name: str, ownership: OwnershipConfig, genome: Genome, position: Point, home_nest: Nest, birth_step: int):
         return self.build_male_ant(id, name, ownership, position, 0, None, birth_step, home_nest, None, Memory(), True, None, False, genome, GuardianBehaviors.NONE, False)
