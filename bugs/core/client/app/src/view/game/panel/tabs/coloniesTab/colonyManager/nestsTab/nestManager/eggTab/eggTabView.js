@@ -27,12 +27,17 @@ class EggTabView extends BaseHTMLView {
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
         this._notEnoughFoodMsg = this._el.querySelector('[data-not-enough-food-msg]');
         this._notSuitableSeasonMsg = this._el.querySelector('[data-not-suitable-season-msg]');
+        this._queenIsNotInNestMsg = this._el.querySelector('[data-queen-is-not-in-nest-msg]');
     }
 
     manageNest(nest) {
         this._stopListenNest();
         this._nest = nest;
         this._listenNest();
+
+        this._stopListenQueenOfColony();
+        this._queenOfColony = this.$domainFacade.getQueenOfColony(nest.fromColony);
+        this._listenQueenOfColony();
 
         this._renderEggsList();
         this._renderCanAddNewEgg();
@@ -54,6 +59,24 @@ class EggTabView extends BaseHTMLView {
         this._stopListenEggDeleted();
         this._stopListenEggAdded();
         this._stopListenStoredCaloriesChanged();
+    }
+
+    _listenQueenOfColony() {
+        if (!this._queenOfColony) {
+            return;
+        }
+
+        this._stopListenQueenLocatedInNestChanged = this._queenOfColony.on('locatedInNestChanged', this._onQueenLocatedInNestChanged.bind(this));
+        this._stopListenQueenDied = this._queenOfColony.on('died', this._onQueenDied.bind(this));
+    }
+
+    _stopListenQueenOfColony() {
+        if (!this._queenOfColony) {
+            return;
+        }
+
+        this._stopListenQueenLocatedInNestChanged();
+        this._stopListenQueenDied();
     }
 
     _renderEggsList() {
@@ -111,10 +134,12 @@ class EggTabView extends BaseHTMLView {
     _renderCanAddNewEgg() {
         let haveFood = this._nest.checkHaveEnoughtFoodForNewEgg();
         let isSuitableSeason = this.$domainFacade.world.isSeasonForLayingEggs;
-        let canAdd = haveFood && isSuitableSeason;
+        let isQueenInNest = this._queenOfColony && this._queenOfColony.locatedInNestId == this._nest.id;
+        let canAdd = haveFood && isSuitableSeason && isQueenInNest;
         this._addEggBtn.disabled = !canAdd;
         this._notEnoughFoodMsg.classList.toggle('hidden', haveFood);
         this._notSuitableSeasonMsg.classList.toggle('hidden', isSuitableSeason);
+        this._queenIsNotInNestMsg.classList.toggle('hidden', isQueenInNest);
     }
 
     _generateAntName() {
@@ -125,6 +150,16 @@ class EggTabView extends BaseHTMLView {
         let randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
 
         return `${randomAdjective} ${randomNoun}`;
+    }
+
+    _onQueenLocatedInNestChanged() {
+        this._renderCanAddNewEgg();
+    }
+
+    _onQueenDied() {
+        this._stopListenQueenOfColony();
+        this._queenOfColony = null;
+        this._renderCanAddNewEgg();
     }
 
 }

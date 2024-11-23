@@ -5724,12 +5724,17 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
         this._notEnoughFoodMsg = this._el.querySelector('[data-not-enough-food-msg]');
         this._notSuitableSeasonMsg = this._el.querySelector('[data-not-suitable-season-msg]');
+        this._queenIsNotInNestMsg = this._el.querySelector('[data-queen-is-not-in-nest-msg]');
     }
 
     manageNest(nest) {
         this._stopListenNest();
         this._nest = nest;
         this._listenNest();
+
+        this._stopListenQueenOfColony();
+        this._queenOfColony = this.$domainFacade.getQueenOfColony(nest.fromColony);
+        this._listenQueenOfColony();
 
         this._renderEggsList();
         this._renderCanAddNewEgg();
@@ -5751,6 +5756,24 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._stopListenEggDeleted();
         this._stopListenEggAdded();
         this._stopListenStoredCaloriesChanged();
+    }
+
+    _listenQueenOfColony() {
+        if (!this._queenOfColony) {
+            return;
+        }
+
+        this._stopListenQueenLocatedInNestChanged = this._queenOfColony.on('locatedInNestChanged', this._onQueenLocatedInNestChanged.bind(this));
+        this._stopListenQueenDied = this._queenOfColony.on('died', this._onQueenDied.bind(this));
+    }
+
+    _stopListenQueenOfColony() {
+        if (!this._queenOfColony) {
+            return;
+        }
+
+        this._stopListenQueenLocatedInNestChanged();
+        this._stopListenQueenDied();
     }
 
     _renderEggsList() {
@@ -5808,10 +5831,12 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
     _renderCanAddNewEgg() {
         let haveFood = this._nest.checkHaveEnoughtFoodForNewEgg();
         let isSuitableSeason = this.$domainFacade.world.isSeasonForLayingEggs;
-        let canAdd = haveFood && isSuitableSeason;
+        let isQueenInNest = this._queenOfColony && this._queenOfColony.locatedInNestId == this._nest.id;
+        let canAdd = haveFood && isSuitableSeason && isQueenInNest;
         this._addEggBtn.disabled = !canAdd;
         this._notEnoughFoodMsg.classList.toggle('hidden', haveFood);
         this._notSuitableSeasonMsg.classList.toggle('hidden', isSuitableSeason);
+        this._queenIsNotInNestMsg.classList.toggle('hidden', isQueenInNest);
     }
 
     _generateAntName() {
@@ -5822,6 +5847,16 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         let randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
 
         return `${randomAdjective} ${randomNoun}`;
+    }
+
+    _onQueenLocatedInNestChanged() {
+        this._renderCanAddNewEgg();
+    }
+
+    _onQueenDied() {
+        this._stopListenQueenOfColony();
+        this._queenOfColony = null;
+        this._renderCanAddNewEgg();
     }
 
 }
@@ -12722,7 +12757,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n    <span data-not-enough-food-msg>не вистачає їжі</span>\r\n    <span data-not-suitable-season-msg>не підходящий сезон</span>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>стан</td>\r\n            <td>каста</td>\r\n            <td>дії</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
+var code = "<div>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n    <span data-not-enough-food-msg>не вистачає їжі</span>\r\n    <span data-not-suitable-season-msg>не підходящий сезон</span>\r\n    <span data-queen-is-not-in-nest-msg>королеви немає в гнізді</span>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>стан</td>\r\n            <td>каста</td>\r\n            <td>дії</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
