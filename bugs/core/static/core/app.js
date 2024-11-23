@@ -1497,10 +1497,32 @@ class LiveEntity extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         return null;
     }
 
+    _calcWalkAnimationTimeReducer() {
+        let walkActionsCount = 0;
+        for (let action of this._actionStack) {
+            if (action.type == _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_WALK) {
+                walkActionsCount++;
+            }
+        }
+        switch(walkActionsCount) {
+            case 0:
+                return 0.97;
+            case 1:
+                return 0.7;
+            case 2:
+                return 0.5;
+            case 3:
+                return 0.4;
+            default:
+                return 0.2;
+        }
+    }
+
     _playWalkAction(action) {
         let destPosition = action.actionData.position;
         let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_1__.distance)(this.position.x, this.position.y, destPosition.x, destPosition.y);
-        let wholeWalkTime = (dist / this._userSpeed) * 1000;
+        let walkTimeReducer = this._calcWalkAnimationTimeReducer();
+        let wholeWalkTime = (dist / this._userSpeed) * 1000 * walkTimeReducer;
         let walkStartAt = Date.now();
         let startPosition = this.position;
         this._setState('walking');
