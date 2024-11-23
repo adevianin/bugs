@@ -62,4 +62,4 @@ class AntService():
         if ant.from_colony_id != nest.from_colony_id:
             raise Exception('wrong nest')
         
-        ant.relocate_to_nest(nest)
+        ant.relocate_to_nest(nest, True)

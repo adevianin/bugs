@@ -18,6 +18,7 @@ from core.world.entities.world.notification.notifications.died_ant_notification 
 from core.world.entities.base.death_record.base_death_record import BaseDeathRecord
 from core.world.entities.base.death_record.no_home_death_record import NoHomeDeathRecord
 from core.world.entities.ant.base.ant_stats import AntStats
+from core.world.entities.action.ant_home_nest_changed import AntHomeNestChangedAction
 
 class Ant(LiveEntity):
 
@@ -94,8 +95,10 @@ class Ant(LiveEntity):
     def collect_food(self, sayback: str = None):
         self._mind.collect_food(sayback)
     
-    def relocate_to_nest(self, nest: Nest):
+    def relocate_to_nest(self, nest: Nest, silent: bool = False):
         self._mind.relocate_to_nest(nest)
+        if not silent:
+            self._emit_action(AntHomeNestChangedAction(self.id, nest.id))
 
     def found_nest(self, building_site: Point, callback):
         self._event_bus.emit('nest_birth_request', NestBirthRequest.build(building_site, self.from_colony_id, self.owner_id, callback))

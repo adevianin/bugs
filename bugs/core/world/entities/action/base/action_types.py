@@ -14,6 +14,7 @@ class ActionTypes(StrEnum):
     ANT_FLEW_NUPTIAL_FLIGHT = 'ant_flew_nuptial_flight'
     ANT_FLEW_NUPTIAL_FLIGHT_BACK = 'ant_flew_nuptial_flight_back'
     ANT_GOT_FERTILIZED = 'ant_got_fertilized'
+    ANT_HOME_NEST_CHANGED = 'ant_home_nest_changed'
     NEST_STORED_CALORIES_CHANGED = 'nest_stored_calories_changed'
     NEST_LARVA_FED = 'nest_larva_fed'
     NEST_LARVA_IS_READY = 'nest_larva_is_ready'

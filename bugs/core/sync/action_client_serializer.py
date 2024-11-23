@@ -36,6 +36,7 @@ from core.world.entities.action.nuptial_males_changed_action import NuptialMales
 from core.world.entities.action.item_source_fertility_changed_action import ItemSourceFertilityChangeAction
 from .notification_client_serializer import NotificationClientSerializer
 from .nuptial_environment_client_serializer import NuptialEnvironmentClientSerializer
+from core.world.entities.action.ant_home_nest_changed import AntHomeNestChangedAction
 from core.world.utils.distance_per_step_to_user_speed import distance_per_step_to_user_speed
 
 class ActionClientSerializer(iActionClientSerializer):
@@ -80,6 +81,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._serialize_ant_flew_nuptial_flight_back(action)
             case ActionTypes.ANT_GOT_FERTILIZED:
                 return self._default_action_serialize(action)
+            case ActionTypes.ANT_HOME_NEST_CHANGED:
+                return self._serialize_ant_home_nest_changed(action)
             case ActionTypes.NEST_STORED_CALORIES_CHANGED:
                 return self._serialize_nest_stored_calories_changed(action)
             case ActionTypes.NEST_LARVA_FED:
@@ -203,6 +206,15 @@ class ActionClientSerializer(iActionClientSerializer):
 
         json.update({
             'landingPosition': serialized_landing_position
+        })
+
+        return json
+    
+    def _serialize_ant_home_nest_changed(self, action: AntHomeNestChangedAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'nestId': action.nest_id
         })
 
         return json

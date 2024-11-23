@@ -269,6 +269,7 @@ const ACTION_TYPES = {
     ANT_FLEW_NUPTIAL_FLIGHT: 'ant_flew_nuptial_flight',
     ANT_FLEW_NUPTIAL_FLIGHT_BACK: 'ant_flew_nuptial_flight_back',
     ANT_GOT_FERTILIZED: 'ant_got_fertilized',
+    ANT_HOME_NEST_CHANGED: 'ant_home_nest_changed',
     ENTITY_DIED: 'entity_died',
     ENTITY_BORN: 'entity_born',
     ENTITY_WALK: 'entity_walk',
@@ -478,6 +479,7 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
     relocateToNest(nestId) {
         this._antApi.relocateToNest(this.id, nestId);
+        this._homeNestId = nestId;
     }
 
     playAction(action) {
@@ -490,6 +492,8 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
                 return this._playItemPickingAction(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_DROPPED_PICKED_ITEM:
                 return this._playItemDroped(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_HOME_NEST_CHANGED:
+                return this._playHomeNestChanged(action);
             // case ACTION_TYPES.ENTITY_EAT_FOOD:
             //     return this._playEatFoodAction(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_IN_NEST:
@@ -533,6 +537,11 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         this._setState('standing');
         this.locatedInNestId = null;
         this.emit('locatedInNestChanged');
+        return Promise.resolve();
+    }
+
+    _playHomeNestChanged(action) {
+        this._homeNestId = action.nestId;
         return Promise.resolve();
     }
 

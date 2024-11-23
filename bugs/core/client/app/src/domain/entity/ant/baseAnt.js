@@ -93,6 +93,7 @@ class BaseAnt extends LiveEntity {
 
     relocateToNest(nestId) {
         this._antApi.relocateToNest(this.id, nestId);
+        this._homeNestId = nestId;
     }
 
     playAction(action) {
@@ -105,6 +106,8 @@ class BaseAnt extends LiveEntity {
                 return this._playItemPickingAction(action);
             case ACTION_TYPES.ANT_DROPPED_PICKED_ITEM:
                 return this._playItemDroped(action);
+            case ACTION_TYPES.ANT_HOME_NEST_CHANGED:
+                return this._playHomeNestChanged(action);
             // case ACTION_TYPES.ENTITY_EAT_FOOD:
             //     return this._playEatFoodAction(action);
             case ACTION_TYPES.ENTITY_GOT_IN_NEST:
@@ -148,6 +151,11 @@ class BaseAnt extends LiveEntity {
         this._setState('standing');
         this.locatedInNestId = null;
         this.emit('locatedInNestChanged');
+        return Promise.resolve();
+    }
+
+    _playHomeNestChanged(action) {
+        this._homeNestId = action.nestId;
         return Promise.resolve();
     }
 
