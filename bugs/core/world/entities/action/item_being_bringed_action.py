@@ -5,11 +5,7 @@ from core.world.utils.point import Point
 
 class ItemBeingBringedAction(Action):
 
-    @classmethod
-    def build(cls, actor_id: int, new_position: Point, bring_user_speed: int):
-        return ItemBeingBringedAction(actor_id, ActionTypes.ITEM_BEING_BRINGED, ActorTypes.ENTITY, new_position, bring_user_speed)
-
-    def __init__(self, actor_id: int, action_type: ActionTypes, actor_type: str, new_position: Point, bring_user_speed: int):
-        super().__init__(actor_id, action_type, actor_type)
+    def __init__(self, actor_id: int, new_position: Point, bringing_dist_per_step: int):
+        super().__init__(actor_id, ActionTypes.ITEM_BEING_BRINGED, ActorTypes.ENTITY)
         self.new_position = new_position
-        self.bring_user_speed = bring_user_speed
+        self.bringing_dist_per_step = bringing_dist_per_step

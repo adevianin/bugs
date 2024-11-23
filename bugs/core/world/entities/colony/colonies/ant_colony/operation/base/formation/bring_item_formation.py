@@ -12,10 +12,8 @@ class BringItemFormation(BaseFormation):
         super().__init__(events, FormationTypes.BRING_ITEM, name, units, current_position, destination_point)
         self._item = item
         self._item_size = item.body.SIZE
-        self._item_bringing_speed = self._get_item_bringing_speed(units)
-        self._listening_ant = None
 
-        self._setup_item_bringing()
+        self._set_item_bringing()
 
     @property
     def item_id(self):
@@ -23,7 +21,7 @@ class BringItemFormation(BaseFormation):
     
     def _order_units_move_on_positions(self):
         super()._order_units_move_on_positions()
-        self._setup_item_bringing()
+        self._set_item_bringing()
     
     def destroy(self):
         super().destroy()
@@ -46,10 +44,5 @@ class BringItemFormation(BaseFormation):
 
         return p
     
-    def _get_item_bringing_speed(self, units: List[Ant]):
-        user_speeds = (unit.body.user_speed for unit in units)
-        user_speed = min(user_speeds)
-        return user_speed
-    
-    def _setup_item_bringing(self):
-        self._item.setup_bringing(self._current_position, self._item_bringing_speed)
+    def _set_item_bringing(self):
+        self._item.setup_bringing(self._current_position, self._units[0].formation_distance_per_step)

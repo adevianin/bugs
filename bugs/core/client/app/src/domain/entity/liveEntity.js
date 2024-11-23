@@ -4,9 +4,8 @@ import { ACTION_TYPES } from './action/actionTypes';
 
 class LiveEntity extends Entity {
 
-    constructor(eventBus, id, position, angle, entityType, fromColony, ownerId, userSpeed, hp, maxHp) {
+    constructor(eventBus, id, position, angle, entityType, fromColony, ownerId, hp, maxHp) {
         super(eventBus, id, position, angle, entityType, fromColony, ownerId, hp, maxHp);
-        this._userSpeed = userSpeed;
     }
 
     playAction(action) {
@@ -44,10 +43,10 @@ class LiveEntity extends Entity {
     }
 
     _playWalkAction(action) {
-        let destPosition = action.actionData.position;
+        let destPosition = action.position;
         let dist = distance(this.position.x, this.position.y, destPosition.x, destPosition.y);
         let walkTimeReducer = this._calcWalkAnimationTimeReducer();
-        let wholeWalkTime = (dist / this._userSpeed) * 1000 * walkTimeReducer;
+        let wholeWalkTime = (dist / action.userSpeed) * 1000 * walkTimeReducer;
         let walkStartAt = Date.now();
         let startPosition = this.position;
         this._setState('walking');

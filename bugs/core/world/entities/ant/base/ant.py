@@ -17,6 +17,7 @@ from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.world.notification.notifications.died_ant_notification import DiedAntNotification
 from core.world.entities.base.death_record.base_death_record import BaseDeathRecord
 from core.world.entities.base.death_record.no_home_death_record import NoHomeDeathRecord
+from core.world.entities.ant.base.ant_stats import AntStats
 
 class Ant(LiveEntity):
 
@@ -24,6 +25,7 @@ class Ant(LiveEntity):
     mind: AntMind
     _body: AntBody
     body: AntBody
+    stats: AntStats
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, name: str, ownership: OwnershipConfig, body: AntBody, 
                  ant_type: AntTypes, mind: AntMind):

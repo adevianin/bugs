@@ -4,9 +4,9 @@ import { ACTION_TYPES } from '../action/actionTypes';
 
 class BaseAnt extends LiveEntity {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, 
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, 
             genome, birthStep) {
-        super(eventBus, id, position, angle, EntityTypes.ANT, fromColony, ownerId, userSpeed, hp, maxHp);
+        super(eventBus, id, position, angle, EntityTypes.ANT, fromColony, ownerId, hp, maxHp);
         this._name = name;
         this._pickedItemId = pickedItemId;
         this._antType = antType;

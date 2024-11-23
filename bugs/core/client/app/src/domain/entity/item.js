@@ -67,8 +67,8 @@ class Item extends Entity {
     }
 
     _playItemBeingBringed(action) {
-        let newPos = action.actionData.new_position;
-        let userSpeed = action.actionData.bring_user_speed;
+        let newPos = action.new_position;
+        let userSpeed = action.bring_user_speed;
         return walker(this._position, newPos, userSpeed, (x, y) => {
             this.setPosition(x, y);
         });

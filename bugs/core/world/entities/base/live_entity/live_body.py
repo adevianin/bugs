@@ -1,6 +1,6 @@
 from core.world.utils.point import Point
 from core.world.utils.event_emiter import EventEmitter
-from core.world.settings import STEP_TIME, MAX_ATTACK_DISTANCE
+from core.world.settings import MAX_ATTACK_DISTANCE
 from core.world.entities.base.live_entity.visual_sensor import VisualSensor
 from core.world.entities.base.live_entity.temperature_sensor import TemperatureSensor
 from core.world.entities.base.enemy_interface import iEnemy
@@ -33,9 +33,9 @@ class LiveBody(Body):
         self._calories = self._max_calories
         # self._distance_per_calorie = 2
         self._can_eat_calories_per_step = 20
-        self._user_speed = stats.distance_per_step / STEP_TIME
         self._visual_sensor = visual_sensor
         self._temperature_sensor = temperature_sensor
+        self._formation_distance_per_step = None
 
     @property
     def birth_step(self):
@@ -50,10 +50,6 @@ class LiveBody(Body):
         return self._temperature_sensor
 
     @property
-    def user_speed(self):
-        return self._user_speed
-
-    @property
     def is_no_calories(self):
         return self._calories <= 0
     
@@ -64,22 +60,29 @@ class LiveBody(Body):
     @is_in_fight.setter
     def is_in_fight(self, value: bool):
         self.memory.save('is_in_fight', bool(value))
+
+    @property
+    def formation_distance_per_step(self):
+        return self._formation_distance_per_step
+    
+    @formation_distance_per_step.setter
+    def formation_distance_per_step(self, val: int):
+        self._formation_distance_per_step = val
     
     def step_to(self, destination_point: Point) -> bool:
         if self._has_stun_effect:
             return
         self._look_at(destination_point)
 
-        new_position, passed_dist, is_walk_done = Point.do_step_on_path(self.position, destination_point, self.stats.distance_per_step)
+        dist_per_step = self.formation_distance_per_step or self.stats.distance_per_step
+        new_position, passed_dist, is_walk_done = Point.do_step_on_path(self.position, destination_point, dist_per_step)
 
         if (passed_dist == 0):
             return True
 
-        # investing_calories = round(passed_dist / self._distance_per_calorie)
-        # self._consume_calories(investing_calories)
         self.position = new_position
 
-        self.events.emit('step', new_position)
+        self.events.emit('step', new_position, dist_per_step)
         
         return is_walk_done
     

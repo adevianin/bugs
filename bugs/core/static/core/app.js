@@ -389,9 +389,9 @@ __webpack_require__.r(__webpack_exports__);
 
 class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, 
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, 
             genome, birthStep) {
-        super(eventBus, id, position, angle, _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony, ownerId, userSpeed, hp, maxHp);
+        super(eventBus, id, position, angle, _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony, ownerId, hp, maxHp);
         this._name = name;
         this._pickedItemId = pickedItemId;
         this._antType = antType;
@@ -609,8 +609,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class MaleAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep) {
-        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
     }
 
     playAction(action) {
@@ -668,8 +668,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, isFertilized, isInNuptialFlight, genes) {
-        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, isFertilized, isInNuptialFlight, genes) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
         this._isFertilized = isFertilized;
         this.isInNuptialFlight = isInNuptialFlight;
         this._genes = genes;
@@ -766,8 +766,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class WarriorAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep) {
-        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
     }
 }
 
@@ -793,8 +793,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class WorkerAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep) {
-        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WORKER, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WORKER, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
     }
 
 }
@@ -1274,8 +1274,8 @@ class Item extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     _playItemBeingBringed(action) {
-        let newPos = action.actionData.new_position;
-        let userSpeed = action.actionData.bring_user_speed;
+        let newPos = action.new_position;
+        let userSpeed = action.bring_user_speed;
         return (0,_utils_walker__WEBPACK_IMPORTED_MODULE_3__.walker)(this._position, newPos, userSpeed, (x, y) => {
             this.setPosition(x, y);
         });
@@ -1395,8 +1395,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class Ladybug extends _liveEntity__WEBPACK_IMPORTED_MODULE_1__.LiveEntity {
 
-    constructor(eventBus, id, position, angle, fromColony, userSpeed, hp, maxHp) {
-        super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.LADYBUG, fromColony, null, userSpeed, hp, maxHp);
+    constructor(eventBus, id, position, angle, fromColony, hp, maxHp) {
+        super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.LADYBUG, fromColony, null, hp, maxHp);
 
         this._setState('standing');
     }
@@ -1479,9 +1479,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class LiveEntity extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, id, position, angle, entityType, fromColony, ownerId, userSpeed, hp, maxHp) {
+    constructor(eventBus, id, position, angle, entityType, fromColony, ownerId, hp, maxHp) {
         super(eventBus, id, position, angle, entityType, fromColony, ownerId, hp, maxHp);
-        this._userSpeed = userSpeed;
     }
 
     playAction(action) {
@@ -1519,10 +1518,10 @@ class LiveEntity extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     }
 
     _playWalkAction(action) {
-        let destPosition = action.actionData.position;
+        let destPosition = action.position;
         let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_1__.distance)(this.position.x, this.position.y, destPosition.x, destPosition.y);
         let walkTimeReducer = this._calcWalkAnimationTimeReducer();
-        let wholeWalkTime = (dist / this._userSpeed) * 1000 * walkTimeReducer;
+        let wholeWalkTime = (dist / action.userSpeed) * 1000 * walkTimeReducer;
         let walkStartAt = Date.now();
         let startPosition = this.position;
         this._setState('walking');
@@ -3173,7 +3172,6 @@ class WorldFactory {
         let angle = antJson.angle;
         let fromColony = antJson.from_colony_id;
         let ownerId = antJson.owner_id;
-        let userSpeed = antJson.user_speed;
         let hp = antJson.hp;
         let maxHp = antJson.max_hp;
         let pickedItemId = antJson.picked_item_id;
@@ -3189,14 +3187,14 @@ class WorldFactory {
                 let isFertilized = antJson.is_fertilized;
                 let isInNuptialFlight = antJson.is_in_nuptial_flight;
                 let genes = antJson.genes;
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.QueenAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.QueenAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
                     genome, birthStep, isFertilized, isInNuptialFlight, genes);
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__.AntTypes.WARRIOR:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.WarriorAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.WarriorAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__.AntTypes.WORKER:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.WorkerAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.WorkerAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__.AntTypes.MALE:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.MaleAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, userSpeed, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.MaleAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
             default:
                 throw 'unknown type of ant';
         }

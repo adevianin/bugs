@@ -36,6 +36,7 @@ from core.world.entities.action.nuptial_males_changed_action import NuptialMales
 from core.world.entities.action.item_source_fertility_changed_action import ItemSourceFertilityChangeAction
 from .notification_client_serializer import NotificationClientSerializer
 from .nuptial_environment_client_serializer import NuptialEnvironmentClientSerializer
+from core.world.utils.distance_per_step_to_user_speed import distance_per_step_to_user_speed
 
 class ActionClientSerializer(iActionClientSerializer):
 
@@ -171,7 +172,8 @@ class ActionClientSerializer(iActionClientSerializer):
         json = self._serialize_common(action)
         serialized_position = self._util_serializer.serialize_point(action.position)
         json.update({
-            'actionData': { 'position': serialized_position }
+            'position': serialized_position,
+            'userSpeed': distance_per_step_to_user_speed(action.distance_per_step)
         })
 
         return json
@@ -310,10 +312,8 @@ class ActionClientSerializer(iActionClientSerializer):
         json = self._serialize_common(action)
         serialized_new_position = self._util_serializer.serialize_point(action.new_position)
         json.update({
-            'actionData': { 
-                'new_position': serialized_new_position, 
-                'bring_user_speed': action.bring_user_speed
-            }
+            'new_position': serialized_new_position, 
+            'bring_user_speed': distance_per_step_to_user_speed(action.bringing_dist_per_step)
         })
 
         return json

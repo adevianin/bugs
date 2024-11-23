@@ -21,6 +21,7 @@ class BaseFormation(ABC):
 
         current_position = current_position if current_position else self._generate_formation_position()
         self._set_current_position(current_position)
+        self._setup_formation_distance_per_step()
 
     @property
     def name(self):
@@ -60,8 +61,11 @@ class BaseFormation(ABC):
     
     def destroy(self):
         self.events.remove_all_listeners()
+        self._clear_formation_distance_per_step()
 
     def remove_ant(self, ant: Ant):
+        if not ant.is_died:
+            ant.formation_distance_per_step = None
         self._units.remove(ant)
         self._regroup_walking_units()
         if len(self._units) == 0:
@@ -155,4 +159,17 @@ class BaseFormation(ABC):
                 far_away_units_count += 1
         
         return far_away_units_count > len(self._units) / 2
+    
+    def _setup_formation_distance_per_step(self):
+        min_dist_per_step = self._units[0].stats.distance_per_step
+        for unit in self._units:
+            if unit.stats.distance_per_step < min_dist_per_step:
+                min_dist_per_step = unit.stats.distance_per_step
+
+        for unit in self._units:
+            unit.formation_distance_per_step = min_dist_per_step
+
+    def _clear_formation_distance_per_step(self):
+        for unit in self._units:
+            unit.formation_distance_per_step = None
     

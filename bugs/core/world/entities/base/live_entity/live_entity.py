@@ -48,6 +48,14 @@ class LiveEntity(Entity, iEnemy):
         return self._mind.is_auto_thought_generation
     
     @property
+    def formation_distance_per_step(self):
+        return self._body.formation_distance_per_step
+    
+    @formation_distance_per_step.setter
+    def formation_distance_per_step(self, val: int):
+        self._body.formation_distance_per_step = val
+    
+    @property
     def is_detectable(self):
         return super().is_detectable and not self._body.am_i_in_hibernation()
     
@@ -82,8 +90,8 @@ class LiveEntity(Entity, iEnemy):
             if not self.is_died:
                 self._mind.do_step()
 
-    def _on_step(self, position: Point):
-        self._emit_action(EntityWalkAction.build(self.id, position))
+    def _on_step(self, position: Point, dist_per_step: int):
+        self._emit_action(EntityWalkAction(self.id, position, dist_per_step))
 
     def _on_received_damage(self, damage_type: DamageTypes):
         self.events.emit('received_damage', damage_type)

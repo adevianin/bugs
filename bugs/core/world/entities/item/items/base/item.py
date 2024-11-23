@@ -24,7 +24,7 @@ class Item(Entity):
         self._strength = strength
         self._life_span = life_span
         self._bringing_position = None
-        self._bringing_speed = None
+        self._bringing_dist_per_step = None
 
     @property
     def item_type(self):
@@ -85,17 +85,17 @@ class Item(Entity):
         self._body.position = position
         self._emit_action(ItemWasDroppedAction.build(self.id, self.position))
 
-    def setup_bringing(self, position: Point, bringing_speed: int):
+    def setup_bringing(self, position: Point, bringing_dist_per_step: int):
         self._bringing_position = position
-        self._bringing_speed = bringing_speed
+        self._bringing_dist_per_step = bringing_dist_per_step
 
     def clear_bringing(self):
         self._bringing_position = None
-        self._bringing_speed = None
+        self._bringing_dist_per_step = None
 
     def _be_bringed(self):
         self._body.position = self._bringing_position
-        self._emit_action(ItemBeingBringedAction.build(self.id, self._body.position, self._bringing_speed))
+        self._emit_action(ItemBeingBringedAction(self.id, self._body.position, self._bringing_dist_per_step))
 
     def _almost_die(self):
         self._life_span = random.randint(3, 6)
