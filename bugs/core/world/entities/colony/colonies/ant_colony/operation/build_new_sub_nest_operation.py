@@ -29,11 +29,13 @@ class BuildNewSubNestOperation(Operation):
         self._add_marker(MarkerTypes.POINTER, self._building_site)
 
         self.events.add_listener('formation:march_to_building_site:done', self._on_formation_march_to_building_site_done)
+        self.events.add_listener('formation:march_to_assemble_point_to_stop_operation:done', self.done)
 
         self.events.add_listener('fight_won:preparing', self._prepare_step)
         self.events.add_listener('fight_won:march_to_building_site', self._march_to_building_site_step)
         self.events.add_listener('fight_won:approach_building_site', self._approach_building_site_step)
         self.events.add_listener('fight_won:building_nest', self._approach_building_site_step)
+        self.events.add_listener('fight_won:march_to_assemble_point', self._march_to_assemble_point_to_stop_operation_step)
 
     @property
     def building_site(self):
@@ -125,4 +127,12 @@ class BuildNewSubNestOperation(Operation):
     def _finalization_step(self):
         self._write_flag(f'finalization_step_started', True)
         self._building_nest.take_calories(500)
-        self.done()
+        self._march_to_assemble_point_to_stop_operation_step()
+
+    def _march_to_assemble_point_to_stop_operation_step(self):
+        self._stage = 'march_to_assemble_point'
+        if BaseFormation.check_is_formation_needed(self._workers, self._assemble_point):
+            formation = self._formation_factory.build_convoy_formation('march_to_assemble_point_to_stop_operation', self._workers, self._assemble_point)
+            self._register_formation(formation)
+        else:
+            self.done()
