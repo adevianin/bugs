@@ -81,20 +81,14 @@ class TransportFoodOperation(Operation):
     def _prepare_step(self):
         self._stage = 'preparing'
         for ant in self._hired_ants:
-            self._write_flag(f'ant_{ant.id}_prepared', False)
+            self._write_ant_flag(ant, 'prepared', False)
             ant.prepare_for_operation(self._assemble_point, 'prepared')
 
     def _on_ant_prepared(self, ant: Ant):
-        self._write_flag(f'ant_{ant.id}_prepared', True)
-        if self._check_are_all_ants_prepared():
+        self._write_ant_flag(ant, 'prepared', True)
+        if self._check_ant_flag_for_ants(self._hired_ants, 'prepared'):
             self._go_to_nest_from_step()
 
-    def _check_are_all_ants_prepared(self):
-        for ant in self._hired_ants:
-            if not self._read_flag(f'ant_{ant.id}_prepared'):
-                return False
-        return True
-    
     def _go_to_nest_from_step(self):
         self._stage = 'formation_to_nest_from'
         units = self._warriors + self._workers
@@ -110,22 +104,16 @@ class TransportFoodOperation(Operation):
     def _getting_to_nest_from_step(self):
         self._stage = 'getting_to_nest_from'
         for ant in self._workers:
-            self._write_flag(f'worker_{ant.id}_is_near_nest_from', False)
+            self._write_ant_flag(ant, 'near_nest_from', False)
             ant.walk_to(self._nest_from.position, 'worker_is_near_nest_from')
 
         for ant in self._warriors:
             ant.keep_clear_territory(self._nest_from.position, 100)
 
     def _on_worker_is_near_nest_from(self, ant: Ant):
-        self._write_flag(f'worker_{ant.id}_is_near_nest_from', True)
-        if self._check_are_all_workers_near_nest_from():
+        self._write_ant_flag(ant, 'near_nest_from', True)
+        if self._check_ant_flag_for_ants(self._workers, 'near_nest_from'):
             self._get_in_nest_from_step()
-
-    def _check_are_all_workers_near_nest_from(self):
-        for ant in self._workers:
-            if not self._read_flag(f'worker_{ant.id}_is_near_nest_from'):
-                return False
-        return True
 
     def _get_in_nest_from_step(self):
         if self._nest_from.is_died:
@@ -134,20 +122,14 @@ class TransportFoodOperation(Operation):
         
         for ant in self._workers:
             ant.get_in_nest(self._nest_from)
-            self._write_flag(f'is_worker_{ant.id}_waited_in_nest_from', False)
+            self._write_ant_flag(ant, 'waited_in_nest_from', False)
             ant.wait_step(1, 'worker_waited_in_nest_from')
 
     def _on_worker_waited_in_nest_from(self, ant: Ant):
-        self._write_flag(f'is_worker_{ant.id}_waited_in_nest_from', True)
-        if self._check_are_all_workers_waited_in_nest_from():
+        self._write_ant_flag(ant, 'waited_in_nest_from', True)
+        if self._check_ant_flag_for_ants(self._workers, 'waited_in_nest_from'):
             self._get_food_from_nest_step()
 
-    def _check_are_all_workers_waited_in_nest_from(self):
-        for ant in self._workers:
-            if not self._read_flag(f'is_worker_{ant.id}_waited_in_nest_from'):
-                return False
-        return True
-    
     def _get_food_from_nest_step(self):
         self._stage = 'got_food'
         for ant in self._workers:
@@ -169,7 +151,7 @@ class TransportFoodOperation(Operation):
     def _getting_to_nest_to_step(self):
         self._stage = 'getting_to_nest_to'
         for ant in self._workers:
-            self._write_flag(f'is_worker_{ant.id}_near_nest_to', False)
+            self._write_ant_flag(ant, 'near_nest_to', False)
             ant.walk_to(self._nest_to.position, 'worker_is_near_nest_to')
 
         for ant in self._warriors:
@@ -179,15 +161,9 @@ class TransportFoodOperation(Operation):
         self._getting_to_nest_to_step()
 
     def _on_worker_is_near_nest_to(self, ant: Ant):
-        self._write_flag(f'is_worker_{ant.id}_near_nest_to', True)
-        if self._check_are_all_workers_near_nest_to():
+        self._write_ant_flag(ant, 'near_nest_to', True)
+        if self._check_ant_flag_for_ants(self._workers, 'near_nest_to'):
             self._give_food_to_nest_to_step()
-
-    def _check_are_all_workers_near_nest_to(self):
-        for ant in self._workers:
-            if not self._read_flag(f'is_worker_{ant.id}_near_nest_to'):
-                return False
-        return True
 
     def _give_food_to_nest_to_step(self):
         if self._nest_to.is_died:
