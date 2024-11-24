@@ -4,6 +4,19 @@ import math, random
 
 class Point(namedtuple('Point', ['x', 'y'])):
 
+    @staticmethod
+    def cacl_centroid(points: List['Point']) -> 'Point':
+        x_sum = 0
+        y_sum = 0
+        for point in points:
+            x_sum = x_sum + point.x
+            y_sum = y_sum + point.y
+
+        x = int(x_sum / len(points))
+        y = int(y_sum / len(points))
+
+        return Point(x, y)
+
     @classmethod
     def generate_points_around(self, point: 'Point', points_count: int, distance: int) -> List['Point']:
         points = []

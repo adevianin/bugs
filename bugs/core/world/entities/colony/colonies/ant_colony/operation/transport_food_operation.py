@@ -11,6 +11,7 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
 from .base.fight.fight_factory import FightFactory
 from .base.fight.fight import Fight
+from core.world.settings import MIN_DISTANCE_FOR_FORMATION
 
 from typing import List
 from functools import partial
@@ -108,8 +109,12 @@ class TransportFoodOperation(Operation):
     
     def _go_to_nest_from_step(self):
         self._stage = 'formation_to_nest_from'
-        formation = self._formation_factory.build_convoy_formation('go_to_nest_from', self._warriors + self._workers, self._nest_from.position)
-        self._register_formation(formation)
+        units = self._warriors + self._workers
+        if BaseFormation.check_is_formation_needed(units, self._nest_from.position):
+            formation = self._formation_factory.build_convoy_formation('go_to_nest_from', units, self._nest_from.position)
+            self._register_formation(formation)
+        else:
+            self._getting_to_nest_from_step()
 
     def _on_formation_go_to_nest_from_done(self):
         self._getting_to_nest_from_step()
@@ -166,10 +171,14 @@ class TransportFoodOperation(Operation):
         self._go_to_nest_to_step()
 
     def _go_to_nest_to_step(self):
-        formation = self._formation_factory.build_convoy_formation('go_to_nest_to', self._warriors + self._workers, self._nest_to.position)
-        self._register_formation(formation)
+        units = self._warriors + self._workers
+        if BaseFormation.check_is_formation_needed(units, self._nest_to.position):
+            formation = self._formation_factory.build_convoy_formation('go_to_nest_to', units, self._nest_to.position)
+            self._register_formation(formation)
+        else:
+            self._getting_to_nest_to_step()
 
-    def _on_formation_go_to_nest_to_done(self):
+    def _getting_to_nest_to_step(self):
         self._stage = 'getting_to_nest_to'
         for ant in self._workers:
             self._write_flag(f'is_worker_{ant.id}_near_nest_to', False)
@@ -177,6 +186,9 @@ class TransportFoodOperation(Operation):
 
         for ant in self._warriors:
             ant.keep_clear_territory(self._nest_to.position, 100)
+
+    def _on_formation_go_to_nest_to_done(self):
+        self._getting_to_nest_to_step()
 
     def _on_worker_is_near_nest_to(self, ant: Ant):
         self._write_flag(f'is_worker_{ant.id}_near_nest_to', True)

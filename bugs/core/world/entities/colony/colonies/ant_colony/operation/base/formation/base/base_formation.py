@@ -9,6 +9,12 @@ from .formation_types import FormationTypes
 class BaseFormation(ABC):
 
     FORMATION_ARRIVAL_THRESHOLD = 10
+    MIN_FORMATION_DIST = 250
+
+    @staticmethod
+    def check_is_formation_needed(units: List[Ant], destination_point: Point):
+        centroid = Point.cacl_centroid([unit.position for unit in units])
+        return centroid.dist(destination_point) > BaseFormation.MIN_FORMATION_DIST
 
     def __init__(self, events: EventEmitter, type: FormationTypes, name: str, units: List[Ant], current_position: Point, destination_point: Point):
         self.events = events
@@ -119,16 +125,7 @@ class BaseFormation(ABC):
         return units[0].body.SIZE
     
     def _generate_formation_position(self) -> Point:
-        x_list = []
-        y_list = []
-        for unit in self._units:
-            x_list.append(unit.position.x)
-            y_list.append(unit.position.y)
-
-        x = sum(x_list) / len(self._units)
-        y = sum(y_list) / len(self._units)
-
-        return Point(x, y)
+        return Point.cacl_centroid([unit.position for unit in self._units])
     
     def _search_enemy(self) -> iEnemy:
         enemies = []
