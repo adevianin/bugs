@@ -37,7 +37,7 @@ class TransportFoodOperation(Operation):
         self.events.add_listener('fight_start:got_food', self._drop_picked_food)
         self.events.add_listener('fight_won:got_food', self._go_to_nest_to_step)
         self.events.add_listener('fight_start:getting_to_nest_to', self._drop_picked_food)
-        self.events.add_listener('fight_won:getting_to_nest_to', self.cancel)
+        self.events.add_listener('fight_won:getting_to_nest_to', self._march_to_assemble_point_to_done_operation_step)
 
         self._nest_from_removal_block_id = self._nest_from.block_removal()
         self._nest_to_removal_block_id = self._nest_to.block_removal()
