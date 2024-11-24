@@ -62,6 +62,7 @@ class BaseFormation(ABC):
                 self._do_next_step()
     
     def destroy(self):
+        self._order_units_to_free_mind()
         self.events.remove_all_listeners()
         self._clear_formation_distance_per_step()
 
