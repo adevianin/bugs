@@ -8,6 +8,8 @@ from .formation_types import FormationTypes
 
 class BaseFormation(ABC):
 
+    FORMATION_ARRIVAL_THRESHOLD = 30
+
     def __init__(self, events: EventEmitter, type: FormationTypes, name: str, units: List[Ant], current_position: Point, destination_point: Point):
         self.events = events
         self._units = units
@@ -100,7 +102,7 @@ class BaseFormation(ABC):
         self._update_angle()
 
     def _check_is_formation_reached_destionation(self):
-        return self._current_position.is_equal(self._destination_point)
+        return self._current_position.dist(self._destination_point) < self.FORMATION_ARRIVAL_THRESHOLD
     
     def _done(self):
         self.events.emit('done')
