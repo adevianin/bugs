@@ -46,15 +46,10 @@ class BringItemToNestOperation(Operation):
     def item_id(self):
         return self._item.id
 
-    @property
-    def _workers(self) -> List[WorkerAnt]:
-        return self.get_hired_ants(AntTypes.WORKER)
-    
     def _setup_operation(self):
         super()._setup_operation()
-        ants = self._workers
 
-        for ant in ants:
+        for ant in self._workers:
             ant.body.sayer.add_listener('prepared', partial(self._on_worker_prepared, ant))
             ant.body.sayer.add_listener('on_position', partial(self._on_worker_on_position, ant))
 
