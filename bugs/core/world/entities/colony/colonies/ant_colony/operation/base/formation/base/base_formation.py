@@ -95,13 +95,12 @@ class BaseFormation(ABC):
         return True
     
     def _update_angle(self):
-        if self._destination_point.is_equal(self._current_position): #to not update angle to 0
-            return
         self._angle = Point.calculate_angle_to_x_axis(self._current_position, self._destination_point)
 
     def _set_current_position(self, position: Point):
         self._current_position = position
-        self._update_angle()
+        if not self._destination_point.is_equal(self._current_position): #to not update angle to 0
+            self._update_angle()
 
     def _check_is_formation_reached_destionation(self):
         return self._current_position.dist(self._destination_point) < self.FORMATION_ARRIVAL_THRESHOLD
