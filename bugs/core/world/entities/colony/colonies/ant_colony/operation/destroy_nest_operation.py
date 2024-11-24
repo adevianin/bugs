@@ -27,12 +27,10 @@ class DestroyNestOperation(Operation):
         self._aggression_targets_filter = lambda entity: entity.from_colony_id == self._nest.from_colony_id
 
         self.events.add_listener('formation:march_to_nest_to_destroy:done', self._destroy_step)
-        self.events.add_listener('formation:march_to_assemble_point:done', self.done)
 
         self.events.add_listener('fight_won:preparing', self._prepare_step)
         self.events.add_listener('fight_won:march_to_nest_to_destroy', self._march_to_nest_to_destroy_step)
         self.events.add_listener('fight_won:destroying', self._destroy_step)
-        self.events.add_listener('fight_won:march_to_assemble_point', self._march_to_assemble_point)
 
         self._nest_removel_block_id = self._nest.block_removal()
 
@@ -98,10 +96,4 @@ class DestroyNestOperation(Operation):
         if not self._read_flag('nest_destroyed'):
             self._write_flag('nest_destroyed', True)
             self._write_flag('is_agressive', False)
-            self._march_to_assemble_point()
-
-    def _march_to_assemble_point(self):
-        self._stage = 'march_to_assemble_point'
-        formation = self._formation_factory.build_attack_formation('march_to_assemble_point', self._warriors, self._assemble_point)
-        self._register_formation(formation)
-    
+            self._march_to_assemble_point_to_done_operation_step()
