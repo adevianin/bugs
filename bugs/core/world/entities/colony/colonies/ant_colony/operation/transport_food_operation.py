@@ -11,7 +11,6 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
 from .base.fight.fight_factory import FightFactory
 from .base.fight.fight import Fight
-from core.world.settings import MIN_DISTANCE_FOR_FORMATION
 
 from typing import List
 from functools import partial
@@ -212,7 +211,7 @@ class TransportFoodOperation(Operation):
                 ant.get_in_nest(self._nest_to)
                 ant.give_food(self._nest_to)
         
-        self.done()
+        self._march_to_assemble_point_to_stop_operation_step()
 
     def _drop_picked_food(self):
         for ant in self._workers:
@@ -220,5 +219,9 @@ class TransportFoodOperation(Operation):
                 ant.drop_picked_item()
 
     def _march_to_assemble_point_to_stop_operation_step(self):
-        formation = self._formation_factory.build_convoy_formation('march_to_assemble_point_to_stop_operation', self._warriors + self._workers, self._assemble_point)
-        self._register_formation(formation)
+        units = self._warriors + self._workers
+        if BaseFormation.check_is_formation_needed(units, self._assemble_point):
+            formation = self._formation_factory.build_convoy_formation('march_to_assemble_point_to_stop_operation', units, self._assemble_point)
+            self._register_formation(formation)
+        else:
+            self.done()
