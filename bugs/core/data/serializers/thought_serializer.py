@@ -20,6 +20,7 @@ from core.world.entities.ant.base.thoughts.shelter_in_nest import ShelterInNestT
 from core.world.entities.ant.base.thoughts.build_fortification_thought import BuildFortificationThought
 from core.world.entities.ant.base.thoughts.defend_colony_thought import DefendColonyThought
 from core.world.entities.ant.base.thoughts.defend_myself_thought import DefendMyselfThought
+from core.world.entities.ant.warrior.thoughts.keep_clear_territory_thought import KeepClearTerritoryThought
 from core.world.entities.ladybug.thoughts.ladybug_hibernation_thought import LadybugHibernationThought
 
 class ThoughtSerializer():
@@ -70,6 +71,8 @@ class ThoughtSerializer():
                 return self._serialize_defend_colony(thought)
             case ThoughtTypes.DEFEND_MYSELF:
                 return self._serialize_defend_myself(thought)
+            case ThoughtTypes.KEEP_CLEAR_TERRITORY:
+                return self._serialize_keep_clear_territory(thought)
             case _:
                 raise Exception('unknown type of thought')
 
@@ -295,6 +298,18 @@ class ThoughtSerializer():
         fight_near_enemies_thought_json = self.serialize(thought.fight_near_enemies_thought)
         json.update({
             'fight_near_enemies_thought': fight_near_enemies_thought_json
+        })
+
+        return json
+    
+    def _serialize_keep_clear_territory(self, thought: KeepClearTerritoryThought):
+        json = self._serialize_thought(thought)
+
+        fight_near_enemies_thought_json = self.serialize(thought.fight_near_enemies_thought)
+        random_walk_thought_json = self.serialize(thought.random_walk_thought)
+        json.update({
+            'fight_near_enemies_thought': fight_near_enemies_thought_json,
+            'random_walk_thought': random_walk_thought_json
         })
 
         return json
