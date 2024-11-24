@@ -8,7 +8,7 @@ from .formation_types import FormationTypes
 
 class BaseFormation(ABC):
 
-    FORMATION_ARRIVAL_THRESHOLD = 30
+    FORMATION_ARRIVAL_THRESHOLD = 10
 
     def __init__(self, events: EventEmitter, type: FormationTypes, name: str, units: List[Ant], current_position: Point, destination_point: Point):
         self.events = events
@@ -95,6 +95,8 @@ class BaseFormation(ABC):
         return True
     
     def _update_angle(self):
+        if self._destination_point.is_equal(self._current_position): #to not update angle to 0
+            return
         self._angle = Point.calculate_angle_to_x_axis(self._current_position, self._destination_point)
 
     def _set_current_position(self, position: Point):
