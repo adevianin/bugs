@@ -16,6 +16,8 @@ from core.world.entities.colony.colonies.ant_colony.operation.base.fight.fight_f
 from core.world.entities.colony.colonies.ant_colony.operation.base.fight.fight import Fight
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 from core.world.entities.base.damage_types import DamageTypes
+from core.world.entities.ant.worker.worker_ant import WorkerAnt
+from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
 
 class Operation(ABC):
 
@@ -42,6 +44,9 @@ class Operation(ABC):
 
         if (self._read_flag('is_operation_started')):
             self._setup_operation()
+
+        self.events.add_listener('formation:march_to_assemble_point_to_done_operation:done', self.done)
+        self.events.add_listener('fight_won:march_to_assemble_point_step', self._march_to_assemble_point_to_done_operation_step)
 
     @property
     def formation(self) -> BaseFormation:
@@ -91,6 +96,14 @@ class Operation(ABC):
     @property
     def flags(self):
         return self._flags
+    
+    @property
+    def _workers(self) -> List[WorkerAnt]:
+        return self.get_hired_ants(AntTypes.WORKER)
+    
+    @property
+    def _warriors(self) -> List[WarriorAnt]:
+        return self.get_hired_ants(AntTypes.WARRIOR)
     
     @property
     def _stage(self):
@@ -366,3 +379,12 @@ class Operation(ABC):
             ant.leave_operation()
 
         self.events.remove_all_listeners()
+
+    def _march_to_assemble_point_to_done_operation_step(self):
+        self._stage = 'march_to_assemble_point_step'
+        units = self._warriors + self._workers
+        if BaseFormation.check_is_formation_needed(units, self._assemble_point):
+            formation = self._formation_factory.build_convoy_formation('march_to_assemble_point_to_done_operation', units, self._assemble_point)
+            self._register_formation(formation)
+        else:
+            self.done()

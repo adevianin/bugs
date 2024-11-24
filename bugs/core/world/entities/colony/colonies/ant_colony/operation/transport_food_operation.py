@@ -4,8 +4,6 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.formation_factory import FormationFactory
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.base.base_formation import BaseFormation
 from core.world.entities.ant.base.ant import Ant
-from core.world.entities.ant.worker.worker_ant import WorkerAnt
-from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.operation.base.marker_types import MarkerTypes
@@ -32,7 +30,6 @@ class TransportFoodOperation(Operation):
 
         self.events.add_listener('formation:go_to_nest_from:done', self._on_formation_go_to_nest_from_done)
         self.events.add_listener('formation:go_to_nest_to:done', self._on_formation_go_to_nest_to_done)
-        self.events.add_listener('formation:march_to_assemble_point_to_stop_operation:done', self.done)
 
         self.events.add_listener('fight_won:preparing', self._prepare_step)
         self.events.add_listener('fight_won:formation_to_nest_from', self._go_to_nest_from_step)
@@ -41,7 +38,6 @@ class TransportFoodOperation(Operation):
         self.events.add_listener('fight_won:got_food', self._go_to_nest_to_step)
         self.events.add_listener('fight_start:getting_to_nest_to', self._drop_picked_food)
         self.events.add_listener('fight_won:getting_to_nest_to', self.cancel)
-        self.events.add_listener('fight_won:march_to_assemble_point', self._march_to_assemble_point_to_stop_operation_step)
 
         self._nest_from_removal_block_id = self._nest_from.block_removal()
         self._nest_to_removal_block_id = self._nest_to.block_removal()
@@ -62,14 +58,6 @@ class TransportFoodOperation(Operation):
     def warriors_count(self):
         return self._warriors_count
 
-    @property
-    def _workers(self) -> List[WorkerAnt]:
-        return self.get_hired_ants(AntTypes.WORKER)
-    
-    @property
-    def _warriors(self) -> List[WarriorAnt]:
-        return self.get_hired_ants(AntTypes.WARRIOR)
-    
     def _setup_operation(self):
         super()._setup_operation()
 
@@ -141,7 +129,7 @@ class TransportFoodOperation(Operation):
 
     def _get_in_nest_from_step(self):
         if self._nest_from.is_died:
-            self._march_to_assemble_point_to_stop_operation_step()
+            self._march_to_assemble_point_to_done_operation_step()
             return
         
         for ant in self._workers:
@@ -204,26 +192,15 @@ class TransportFoodOperation(Operation):
     def _give_food_to_nest_to_step(self):
         if self._nest_to.is_died:
             self._drop_picked_food()
-            self._march_to_assemble_point_to_stop_operation_step()
-            return
+        else:
+            for ant in self._workers:
+                if ant.has_picked_item():
+                    ant.get_in_nest(self._nest_to)
+                    ant.give_food(self._nest_to)
         
-        for ant in self._workers:
-            if ant.has_picked_item():
-                ant.get_in_nest(self._nest_to)
-                ant.give_food(self._nest_to)
-        
-        self._march_to_assemble_point_to_stop_operation_step()
+        self._march_to_assemble_point_to_done_operation_step()
 
     def _drop_picked_food(self):
         for ant in self._workers:
             if ant.has_picked_item():
                 ant.drop_picked_item()
-
-    def _march_to_assemble_point_to_stop_operation_step(self):
-        self._stage = 'march_to_assemble_point'
-        units = self._warriors + self._workers
-        if BaseFormation.check_is_formation_needed(units, self._assemble_point):
-            formation = self._formation_factory.build_convoy_formation('march_to_assemble_point_to_stop_operation', units, self._assemble_point)
-            self._register_formation(formation)
-        else:
-            self.done()
