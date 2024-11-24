@@ -41,6 +41,7 @@ class TransportFoodOperation(Operation):
         self.events.add_listener('fight_won:got_food', self._go_to_nest_to_step)
         self.events.add_listener('fight_start:getting_to_nest_to', self._drop_picked_food)
         self.events.add_listener('fight_won:getting_to_nest_to', self.cancel)
+        self.events.add_listener('fight_won:march_to_assemble_point', self._march_to_assemble_point_to_stop_operation_step)
 
         self._nest_from_removal_block_id = self._nest_from.block_removal()
         self._nest_to_removal_block_id = self._nest_to.block_removal()
@@ -219,6 +220,7 @@ class TransportFoodOperation(Operation):
                 ant.drop_picked_item()
 
     def _march_to_assemble_point_to_stop_operation_step(self):
+        self._stage = 'march_to_assemble_point'
         units = self._warriors + self._workers
         if BaseFormation.check_is_formation_needed(units, self._assemble_point):
             formation = self._formation_factory.build_convoy_formation('march_to_assemble_point_to_stop_operation', units, self._assemble_point)
