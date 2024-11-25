@@ -82,9 +82,7 @@ class OperationDeserializer():
         props = self._deserialize_basic_operation_props(operation_json, entities_collection)
         props.update({
             'nest_from': entities_collection.get_entity_by_id(operation_json['nest_from_id']),
-            'nest_to': entities_collection.get_entity_by_id(operation_json['nest_to_id']),
-            'workers_count': operation_json['workers_count'],
-            'warriors_count': operation_json['warriors_count']
+            'nest_to': entities_collection.get_entity_by_id(operation_json['nest_to_id'])
         })
         
         return self._operation_factory.build_transport_food_operation(**props)

@@ -88,9 +88,7 @@ class OperationSerializer():
 
         json.update({
             'nest_from_id': operation.nest_from_id,
-            'nest_to_id': operation.nest_to_id,
-            'workers_count': operation.workers_count,
-            'warriors_count': operation.warriors_count
+            'nest_to_id': operation.nest_to_id
         })
 
         return json
