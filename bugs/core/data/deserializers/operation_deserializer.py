@@ -37,7 +37,9 @@ class OperationDeserializer():
             'hired_ants': entities_collection.get_entities(operation_json['hired_ants']),
             'flags': operation_json['flags'],
             'formation': formation,
-            'fight': fight
+            'fight': fight,
+            'worker_vacancies_count': operation_json['worker_vacancies_count'],
+            'warrior_vacancies_count': operation_json['warrior_vacancies_count']
         }
 
     def _build_build_new_sub_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
@@ -72,9 +74,7 @@ class OperationDeserializer():
         props = self._deserialize_basic_operation_props(operation_json, entities_collection)
         props.update({
             'nest_to_pillage': entities_collection.get_entity_by_id(operation_json['nest_to_pillage_id']),
-            'nest_for_loot': entities_collection.get_entity_by_id(operation_json['nest_for_loot_id']),
-            'workers_count': operation_json['workers_count'],
-            'warriors_count': operation_json['warriors_count']
+            'nest_for_loot': entities_collection.get_entity_by_id(operation_json['nest_for_loot_id'])
         })
         
         return self._operation_factory.build_pillage_nest_operation(**props)

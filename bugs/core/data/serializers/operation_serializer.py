@@ -32,18 +32,20 @@ class OperationSerializer():
             case _:
                 raise Exception('unknown type of operation')
 
-    def _serialize_operation(self, operation: Operation):
+    def _serialize_operation_props(self, operation: Operation):
         return {
             'id': operation.id,
             'hired_ants': [ant.id for ant in operation.get_hired_ants()],
             'flags': operation.flags,
             'type': operation.type,
             'formation': self._formation_serializer.serialize(operation.formation) if operation.formation else None,
-            'fight': self._fight_serializer.serialize(operation.fight) if operation.fight else None
+            'fight': self._fight_serializer.serialize(operation.fight) if operation.fight else None,
+            'worker_vacancies_count': operation.worker_vacancies_count,
+            'warrior_vacancies_count': operation.warrior_vacancies_count
         }
 
     def _serialize_build_new_sub_nest(self, operation: BuildNewSubNestOperation):
-        json = self._serialize_operation(operation)
+        json = self._serialize_operation_props(operation)
         json.update({
             'building_site': operation.building_site,
             'building_nest_id': operation.building_nest_id,
@@ -53,7 +55,7 @@ class OperationSerializer():
         return json
     
     def _serialize_destroy_nest(self, operation: DestroyNestOperation):
-        json = self._serialize_operation(operation)
+        json = self._serialize_operation_props(operation)
 
         json.update({
             'nest_id': operation.nest_id,
@@ -63,7 +65,7 @@ class OperationSerializer():
         return json
     
     def _serialize_bring_item_to_nest(self, operation: BringItemToNestOperation):
-        json = self._serialize_operation(operation)
+        json = self._serialize_operation_props(operation)
 
         json.update({
             'nest_id': operation.nest_id,
@@ -73,19 +75,17 @@ class OperationSerializer():
         return json
     
     def _serialize_pillage_nest(self, operation: PillageNestOperation):
-        json = self._serialize_operation(operation)
+        json = self._serialize_operation_props(operation)
 
         json.update({
             'nest_to_pillage_id': operation.nest_to_pillage_id,
-            'nest_for_loot_id': operation.nest_for_loot_id,
-            'warriors_count': operation.warriors_count,
-            'workers_count': operation.workers_count
+            'nest_for_loot_id': operation.nest_for_loot_id
         })
 
         return json
     
     def _serialize_transport_food(self, operation: TransportFoodOperation):
-        json = self._serialize_operation(operation)
+        json = self._serialize_operation_props(operation)
 
         json.update({
             'nest_from_id': operation.nest_from_id,
@@ -97,7 +97,7 @@ class OperationSerializer():
         return json
     
     def _serialize_build_fortification(self, operation: BuildFortificationOperation):
-        json = self._serialize_operation(operation)
+        json = self._serialize_operation_props(operation)
 
         json.update({
             'nest_id': operation.nest_id,

@@ -22,7 +22,7 @@ from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
 class Operation(ABC):
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, formation_factory: FormationFactory, fight_factory: FightFactory, id: int, type: OperationTypes, hired_ants: List[Ant], 
-                 flags: dict, formation: BaseFormation, fight: Fight):
+                 flags: dict, formation: BaseFormation, fight: Fight, worker_vacancies_count: int = 0, warrior_vacancies_count: int = 0):
         self._event_bus = event_bus
         self.events = events
         self._formation_factory = formation_factory
@@ -41,6 +41,8 @@ class Operation(ABC):
         self._fight = fight
         self._ants_listeners = {}
         self._aggression_targets_filter: Callable[[LiveEntity], bool] = None
+        self._worker_vacancies_count = worker_vacancies_count
+        self._warrior_vacancies_count = warrior_vacancies_count
 
         for ant in self._hired_ants:
             self._listen_ant(ant)
@@ -55,6 +57,14 @@ class Operation(ABC):
     @property
     def fight(self) -> Fight:
         return self._fight
+    
+    @property
+    def worker_vacancies_count(self):
+        return self._worker_vacancies_count
+    
+    @property
+    def warrior_vacancies_count(self):
+        return self._warrior_vacancies_count
     
     @property
     def is_hiring(self):
@@ -115,6 +125,7 @@ class Operation(ABC):
     
     @_stage.setter
     def _stage(self, name: str):
+        print('stage', name)
         self._flags['stage'] = name
 
     def _is_aggressive_now(self):
@@ -249,6 +260,7 @@ class Operation(ABC):
         self.events.emit(f'formation:{formation.name}:no_units')
 
     def _init_fight(self, ants: List[Ant]):
+        print('init fight on stage =', self._stage)
         if self._fight:
             raise Exception('fight already inited')
         if self._formation:
