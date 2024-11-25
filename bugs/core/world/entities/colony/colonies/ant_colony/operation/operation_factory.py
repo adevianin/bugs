@@ -32,7 +32,7 @@ class OperationFactory():
         return BringItemToNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, nest, item)
     
     def build_pillage_nest_operation(self, nest_to_pillage: Nest, nest_for_loot: Nest, worker_vacancies_count: int, warrior_vacancies_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
-        return PillageNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, nest_to_pillage, nest_for_loot, worker_vacancies_count, warrior_vacancies_count)
+        return PillageNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, worker_vacancies_count, warrior_vacancies_count, nest_to_pillage, nest_for_loot)
     
     def build_transport_food_operation(self, nest_from: Nest, nest_to: Nest, workers_count: int, warriors_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
         return TransportFoodOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, nest_from, nest_to, workers_count, warriors_count)

@@ -15,7 +15,7 @@ from .base.fight.fight import Fight
 class PillageNestOperation(Operation):
     
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, formation_factory: FormationFactory, fight_factory: FightFactory, id: int, hired_ants: List[Ant], 
-                 flags: dict, formation: BaseFormation, fight: Fight, nest_to_pillage: Nest, nest_for_loot: Nest, worker_vacancies_count: int, warrior_vacancies_count: int):
+                 flags: dict, formation: BaseFormation, fight: Fight, worker_vacancies_count: int, warrior_vacancies_count: int, nest_to_pillage: Nest, nest_for_loot: Nest):
         super().__init__(event_bus, events, formation_factory, fight_factory, id, OperationTypes.PILLAGE_NEST, hired_ants, flags, formation, fight, worker_vacancies_count, warrior_vacancies_count)
         self._name = 'грабьож мурашника'
         self._open_vacancies(AntTypes.WARRIOR, self._warrior_vacancies_count)
