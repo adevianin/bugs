@@ -22,6 +22,7 @@ from core.world.entities.ant.base.thoughts.defend_colony_thought import DefendCo
 from core.world.entities.ant.base.thoughts.defend_myself_thought import DefendMyselfThought
 from core.world.entities.ant.warrior.thoughts.keep_clear_territory_thought import KeepClearTerritoryThought
 from core.world.entities.ladybug.thoughts.ladybug_hibernation_thought import LadybugHibernationThought
+from core.world.entities.base.live_entity.thoughts.wait_step_thought import WaitStepThought
 
 class ThoughtSerializer():
 
@@ -73,6 +74,8 @@ class ThoughtSerializer():
                 return self._serialize_defend_myself(thought)
             case ThoughtTypes.KEEP_CLEAR_TERRITORY:
                 return self._serialize_keep_clear_territory(thought)
+            case ThoughtTypes.WAIT_STEP:
+                return self._serialize_wait_step(thought)
             case _:
                 raise Exception('unknown type of thought')
 
@@ -310,6 +313,15 @@ class ThoughtSerializer():
         json.update({
             'fight_near_enemies_thought': fight_near_enemies_thought_json,
             'random_walk_thought': random_walk_thought_json
+        })
+
+        return json
+    
+    def _serialize_wait_step(self, thought: WaitStepThought):
+        json = self._serialize_thought(thought)
+
+        json.update({
+            'step_count': thought.step_count
         })
 
         return json
