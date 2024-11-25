@@ -57,8 +57,7 @@ class OperationDeserializer():
         props = self._deserialize_basic_operation_props(operation_json, entities_collection)
         nest = entities_collection.get_entity_by_id(operation_json['nest_id'])
         props.update({
-            'nest': nest,
-            'warriors_count': operation_json['warriors_count']
+            'nest': nest
         })
         return self._operation_factory.build_destroy_nest_operation(**props)
     

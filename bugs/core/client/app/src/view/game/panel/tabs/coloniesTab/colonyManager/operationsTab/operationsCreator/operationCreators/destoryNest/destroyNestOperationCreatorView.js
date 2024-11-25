@@ -18,6 +18,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         this._chooseNestBtn = this._el.querySelector('[data-choose-nest-btn]');
         this._startBtn = this._el.querySelector('[data-start-btn]');
         this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
+        this._workersCountEl = this._el.querySelector('[data-workers-count]');
         this._renderChoosedNest();
     }
 
@@ -37,7 +38,8 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
             return
         }
         let warriorsCount = parseInt(this._warriorsCountEl.value);
-        this.$domainFacade.destroyNestOperation(this._performingColony.id, warriorsCount, this._choosedNest);
+        let workersCount = parseInt(this._workersCountEl.value);
+        this.$domainFacade.destroyNestOperation(this._performingColony.id, warriorsCount, workersCount, this._choosedNest);
         this._onDone();
     }
 }

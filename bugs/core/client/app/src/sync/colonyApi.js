@@ -15,9 +15,10 @@ class ColonyApi {
         })
     }
 
-    destroyNestOperation(colonyId, warriorsCount, nest) {
+    destroyNestOperation(colonyId, warriorsCount, workersCount, nest) {
         return this._requester.post(`world/colonies/${ colonyId }/operations/destroy_nest`, {
             warriors_count: warriorsCount,
+            workers_count: workersCount,
             nest_id: nest.id
         })
     }

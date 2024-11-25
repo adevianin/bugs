@@ -104,7 +104,7 @@ class ColonyService():
         operation = self._operation_factory.build_build_new_sub_nest_operation(building_site=position, workers_count=workers_count)
         colony.add_operation(operation)
         
-    def destroy_nest_operation(self, user_id: int, performing_colony_id: int, nest_id: int, warriors_count: int):
+    def destroy_nest_operation(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int, warriors_count: int):
         performing_colony: AntColony = self._world.get_colony_by_id(performing_colony_id)
 
         if performing_colony.owner_id != user_id:
@@ -113,7 +113,7 @@ class ColonyService():
         nest: Nest = self._world.map.get_entity_by_id(nest_id)
 
         if nest.from_colony_id != performing_colony.id:
-            operation = self._operation_factory.build_destroy_nest_operation(nest, warriors_count)
+            operation = self._operation_factory.build_destroy_nest_operation(nest, workers_count, warriors_count)
             performing_colony.add_operation(operation)
 
     def pillage_nest_operation(self, user_id: int, performing_colony_id: int, nest_to_pillage_id: int, nest_for_loot_id: int, workers_count: int, warriors_count: int):

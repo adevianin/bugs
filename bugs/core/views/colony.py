@@ -33,8 +33,9 @@ def destroy_nest(request: HttpRequest, colony_id: int):
 
     nest_id = int(data['nest_id'])
     warriors_count = int(data['warriors_count'])
+    workers_count = int(data['workers_count'])
 
-    wf.destroy_nest_operation_command(request.user.id, colony_id, nest_id, warriors_count)
+    wf.destroy_nest_operation_command(request.user.id, colony_id, nest_id, workers_count, warriors_count)
     return HttpResponse(status=200)
 
 @require_POST

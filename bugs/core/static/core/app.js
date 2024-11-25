@@ -195,8 +195,8 @@ class DomainFacade {
         this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount);
     }
 
-    destroyNestOperation(performingColonyId, warriorsCount, nest) {
-        this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, nest);
+    destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
+        this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
     }
 
     pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
@@ -2647,8 +2647,8 @@ class ColonyService {
         this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount);
     }
 
-    destroyNestOperation(performingColonyId, warriorsCount, nest) {
-        this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, nest);
+    destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
+        this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
     }
 
     pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
@@ -3358,9 +3358,10 @@ class ColonyApi {
         })
     }
 
-    destroyNestOperation(colonyId, warriorsCount, nest) {
+    destroyNestOperation(colonyId, warriorsCount, workersCount, nest) {
         return this._requester.post(`world/colonies/${ colonyId }/operations/destroy_nest`, {
             warriors_count: warriorsCount,
+            workers_count: workersCount,
             nest_id: nest.id
         })
     }
@@ -6784,6 +6785,7 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         this._chooseNestBtn = this._el.querySelector('[data-choose-nest-btn]');
         this._startBtn = this._el.querySelector('[data-start-btn]');
         this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
+        this._workersCountEl = this._el.querySelector('[data-workers-count]');
         this._renderChoosedNest();
     }
 
@@ -6803,7 +6805,8 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
             return
         }
         let warriorsCount = parseInt(this._warriorsCountEl.value);
-        this.$domainFacade.destroyNestOperation(this._performingColony.id, warriorsCount, this._choosedNest);
+        let workersCount = parseInt(this._workersCountEl.value);
+        this.$domainFacade.destroyNestOperation(this._performingColony.id, warriorsCount, workersCount, this._choosedNest);
         this._onDone();
     }
 }
@@ -12946,7 +12949,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "зруйнувати гніздо\r\n<div>\r\n    гніздо: <span data-choosed-nest></span>\r\n    <button data-choose-nest-btn>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість воїнів: <input data-warriors-count type=\"number\" min=\"1\" max=\"10\" value=\"2\">\r\n</div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>\r\n";
+var code = "зруйнувати гніздо\r\n<div>\r\n    гніздо: <span data-choosed-nest></span>\r\n    <button data-choose-nest-btn>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість робочих: <input data-workers-count type=\"number\" min=\"1\" max=\"10\" value=\"1\">\r\n</div>\r\n<div>\r\n    кількість воїнів: <input data-warriors-count type=\"number\" min=\"1\" max=\"10\" value=\"1\">\r\n</div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
