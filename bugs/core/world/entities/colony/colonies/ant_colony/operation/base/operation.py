@@ -42,11 +42,11 @@ class Operation(ABC):
         self._ants_listeners = {}
         self._aggression_targets_filter: Callable[[LiveEntity], bool] = None
 
+        for ant in self._hired_ants:
+            self._listen_ant(ant)
+
         if (self._read_flag('is_operation_started')):
             self._setup_operation()
-
-        self.events.add_listener('formation:march_to_assemble_point_to_done_operation:done', self.done)
-        self.events.add_listener('fight_won:march_to_assemble_point_step', self._march_to_assemble_point_to_done_operation_step)
 
     @property
     def formation(self) -> BaseFormation:
@@ -106,6 +106,10 @@ class Operation(ABC):
         return self.get_hired_ants(AntTypes.WARRIOR)
     
     @property
+    def _all_ants_for_march(self):
+        return self._warriors + self._workers
+    
+    @property
     def _stage(self):
         return self._flags['stage']
     
@@ -133,7 +137,6 @@ class Operation(ABC):
         is_ant_good = self._check_hiring_ant(ant)
 
         if is_ant_good:
-            ant.join_operation()
             self._hire_ant(ant)
     
     def done(self):
@@ -167,10 +170,15 @@ class Operation(ABC):
         if self._formation:
             self._listen_formation(self._formation)
 
-        for ant in self._hired_ants:
-            self._listen_ant(ant)
-
         self._event_bus.add_listener('step_done', self._on_step_done)
+
+        self.events.add_listener('formation:march_to_assemble_point_to_done_operation:done', self.done)
+
+        self.events.add_listener('fight_won:preparing', self._prepare_step)
+        self.events.add_listener('fight_won:march_to_assemble_point_step', self._march_to_assemble_point_to_done_operation_step)
+
+        for ant in self._hired_ants:
+            ant.body.sayer.add_listener('prepared', partial(self._on_ant_prepared, ant))
 
     def _init_assemble_point(self):
         nests = [ant.home_nest for ant in self._hired_ants]
@@ -292,10 +300,12 @@ class Operation(ABC):
 
     def _hire_ant(self, ant: Ant):
         self._hired_ants.append(ant)
+        ant.join_operation()
+        self._listen_ant(ant)
 
         if not self.is_hiring:
             self._on_hired_all()
-        
+
         self.events.emit('change')
 
     def _on_hired_all(self):
@@ -322,9 +332,6 @@ class Operation(ABC):
                 return False
         return True
         
-    def _build_ant_flag(self, ant: Ant, flag_name: str):
-        return f'ant_flag_{ant.id}_{flag_name}'
-
     def _count_hired_ants(self, ant_type: AntTypes):
         count = 0
         for ant in self._hired_ants:
@@ -362,11 +369,15 @@ class Operation(ABC):
         self.events.emit('hired_ant_died', ant)
 
     def _on_hired_ant_received_damage(self, ant: Ant, damage_type: DamageTypes):
+        if not self._read_flag('is_operation_started'):
+            return
+        
         if not self._fight and damage_type == DamageTypes.COMBAT:
             self._init_fight(self._hired_ants)
 
     def _on_operation_stop(self):
-        self._event_bus.remove_listener('step_done', self._on_step_done)
+        if (self._read_flag('is_operation_started')):
+            self._event_bus.remove_listener('step_done', self._on_step_done)
 
         if self._formation:
             self._destroy_formation()
@@ -380,11 +391,35 @@ class Operation(ABC):
 
         self.events.remove_all_listeners()
 
+    # <PREDEFINED_STEPS>
+    def _prepare_step(self):
+        self._stage = 'preparing_step'
+
+        for ant in self._hired_ants:
+            self._write_ant_flag(ant, 'prepared', False)
+            ant.prepare_for_operation(self._assemble_point, 'prepared')
+
+    def _on_ant_prepared(self, ant: Ant):
+        self._write_ant_flag(ant, 'prepared', True)
+        if self._check_ant_flag_for_ants(self._hired_ants, 'prepared'):
+            self._on_all_ants_prepared()
+
+    @abstractmethod
+    def _on_all_ants_prepared(self):
+        pass
+
     def _march_to_assemble_point_to_done_operation_step(self):
         self._stage = 'march_to_assemble_point_step'
-        units = self._warriors + self._workers
+        units = self._all_ants_for_march
         if BaseFormation.check_is_formation_needed(units, self._assemble_point):
             formation = self._formation_factory.build_convoy_formation('march_to_assemble_point_to_done_operation', units, self._assemble_point)
             self._register_formation(formation)
         else:
             self.done()
+    # </PREDEFINED_STEPS>
+
+    def _check_is_formation_needed(self, units: List[Ant], destination_point: Point) -> bool:
+        return BaseFormation.check_is_formation_needed(units, destination_point)
+    
+    def _build_ant_flag(self, ant: Ant, flag_name: str):
+        return f'ant_flag_{ant.id}_{flag_name}'
