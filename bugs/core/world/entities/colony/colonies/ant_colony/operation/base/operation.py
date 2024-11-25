@@ -174,7 +174,7 @@ class Operation(ABC):
 
         self.events.add_listener('formation:march_to_assemble_point_to_done_operation:done', self.done)
 
-        self.events.add_listener('fight_won:preparing', self._prepare_step)
+        self.events.add_listener('fight_won:preparing_step', self._prepare_step)
         self.events.add_listener('fight_won:march_to_assemble_point_step', self._march_to_assemble_point_to_done_operation_step)
 
         for ant in self._hired_ants:
