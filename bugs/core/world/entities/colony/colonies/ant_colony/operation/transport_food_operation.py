@@ -44,7 +44,7 @@ class TransportFoodOperation(Operation):
         return self._nest_to.id
     
     def cancel(self):
-        self._workers_drop_picked_food()
+        self._workers_drop_picked_item()
         super().cancel()
     
     def _setup_operation(self):
@@ -56,9 +56,9 @@ class TransportFoodOperation(Operation):
         self.events.add_listener('fight_won:preparing', self._prepare_step)
         self.events.add_listener('fight_won:march_to_nest_from', self._march_to_nest_from_step)
         self.events.add_listener('fight_won:approaching_nest_from', self._approaching_nest_from_step)
-        self.events.add_listener('fight_start:march_to_nest_to', self._workers_drop_picked_food)
+        self.events.add_listener('fight_start:march_to_nest_to', self._workers_drop_picked_item)
         self.events.add_listener('fight_won:march_to_nest_to', self._march_to_assemble_point_to_done_operation_step)
-        self.events.add_listener('fight_start:approaching_nest_to', self._workers_drop_picked_food)
+        self.events.add_listener('fight_start:approaching_nest_to', self._workers_drop_picked_item)
         self.events.add_listener('fight_won:approaching_nest_to', self._march_to_assemble_point_to_done_operation_step)
 
         for ant in self._workers: 
@@ -148,7 +148,7 @@ class TransportFoodOperation(Operation):
 
     def _getting_inside_nest_to_step(self):
         if self._nest_to.is_died:
-            self._workers_drop_picked_food()
+            self._workers_drop_picked_item()
             self._march_to_assemble_point_to_done_operation_step()
             return
         

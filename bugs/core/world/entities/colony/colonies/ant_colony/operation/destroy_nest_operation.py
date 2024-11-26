@@ -13,6 +13,9 @@ from .base.fight.fight import Fight
 
 class DestroyNestOperation(Operation):
 
+    class Flags(Operation.Flags):
+        pass
+
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, formation_factory: FormationFactory, fight_factory: FightFactory, id: int, hired_ants: List[Ant],
                   flags: dict, formation: BaseFormation, fight: Fight, worker_vacancies_count: int, warrior_vacancies_count: int, nest: Nest):
         super().__init__(event_bus, events, formation_factory, fight_factory, id, OperationTypes.DESTROY_NEST, hired_ants, flags, formation, fight, worker_vacancies_count, warrior_vacancies_count)
@@ -29,9 +32,6 @@ class DestroyNestOperation(Operation):
     @property
     def nest_id(self):
         return self._nest.id
-    
-    def _is_aggressive_now(self):
-        return self._read_flag('is_agressive')
     
     def _on_operation_stop(self):
         super()._on_operation_stop()
@@ -58,7 +58,7 @@ class DestroyNestOperation(Operation):
     
     def _march_to_nest_to_destroy_step(self):
         self._stage = 'march_to_nest_to_destroy'
-        self._write_flag('is_agressive', True)
+        self._write_flag(self.Flags.IS_AGGRESSIVE, True)
         units = self._all_ants_for_march
         if self._check_is_formation_needed(units, self._nest.position):
             formation = self._formation_factory.build_attack_formation('march_to_nest_to_destroy', units, self._nest.position)
@@ -82,5 +82,5 @@ class DestroyNestOperation(Operation):
 
     def _go_back_home_step(self):
         self._stage = 'go_back_home'
-        self._write_flag('is_agressive', False)
+        self._write_flag(self.Flags.IS_AGGRESSIVE, False)
         self._march_to_assemble_point_to_done_operation_step()

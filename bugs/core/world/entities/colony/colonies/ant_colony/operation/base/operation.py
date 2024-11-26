@@ -447,7 +447,7 @@ class Operation(ABC):
     def _build_ant_flag(self, ant: Ant, flag_name: str):
         return f'ant_flag_{ant.id}_{flag_name}'
     
-    def _workers_drop_picked_food(self):
+    def _workers_drop_picked_item(self):
         for ant in self._workers:
             if ant.has_picked_item():
                 ant.drop_picked_item()
