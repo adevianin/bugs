@@ -51,9 +51,9 @@ class PillageNestOperation(Operation):
 
         self.events.add_listener('fight_won:march_to_nest_to_pillage', self._march_to_nest_to_pillage_step)
         self.events.add_listener('fight_won:approaching_nest_to_pillage', self._approaching_nest_to_pillage_step)
-        self.events.add_listener('fight_start:march_to_nest_for_loot', self._drop_picked_food)
+        self.events.add_listener('fight_start:march_to_nest_for_loot', self._workers_drop_picked_food)
         self.events.add_listener('fight_won:march_to_nest_for_loot', self._march_to_assemble_point_to_done_operation_step)
-        self.events.add_listener('fight_start:approach_nest_for_loot', self._drop_picked_food)
+        self.events.add_listener('fight_start:approach_nest_for_loot', self._workers_drop_picked_food)
         self.events.add_listener('fight_won:approach_nest_for_loot', self._march_to_assemble_point_to_done_operation_step)
 
         for ant in self._workers:
@@ -139,7 +139,7 @@ class PillageNestOperation(Operation):
 
     def _get_in_loot_nest_step(self):
         if self._nest_for_loot.is_died:
-            self._drop_picked_food()
+            self._workers_drop_picked_food()
             self._march_to_assemble_point_to_done_operation_step()
             return
 
@@ -160,8 +160,3 @@ class PillageNestOperation(Operation):
 
         self._march_to_assemble_point_to_done_operation_step()
         
-    def _drop_picked_food(self):
-        for ant in self._workers:
-            if ant.has_picked_item():
-                ant.drop_picked_item()
-    
