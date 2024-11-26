@@ -21,7 +21,7 @@ from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
 
 class Operation(ABC):
 
-    class OperationFlags():
+    class Flags():
         STAGE = 'stage'
         IS_OPERATION_STARTED = 'is_operation_started'
         MUST_RESPOND_TO_AGGRESSION = 'must_respond_to_aggression'
@@ -54,7 +54,7 @@ class Operation(ABC):
         for ant in self._hired_ants:
             self._listen_ant(ant)
         
-        if (self._read_flag(self.OperationFlags.IS_OPERATION_STARTED)):
+        if (self._read_flag(self.Flags.IS_OPERATION_STARTED)):
             self._setup_operation()
 
     @property
@@ -76,7 +76,7 @@ class Operation(ABC):
     @property
     def is_hiring(self):
         is_all_vacancies_taken = len(self._hired_ants) >= self._total_hiring_ants_count
-        is_hiring_stopped = is_all_vacancies_taken or self._read_flag(self.OperationFlags.IS_OPERATION_STARTED)
+        is_hiring_stopped = is_all_vacancies_taken or self._read_flag(self.Flags.IS_OPERATION_STARTED)
         return not is_hiring_stopped
     
     @property
@@ -128,15 +128,15 @@ class Operation(ABC):
     
     @property
     def _stage(self):
-        return self._flags[self.OperationFlags.STAGE]
+        return self._flags[self.Flags.STAGE]
     
     @_stage.setter
     def _stage(self, name: str):
         print('stage', name)
-        self._flags[self.OperationFlags.STAGE] = name
+        self._flags[self.Flags.STAGE] = name
 
     def _is_aggressive_now(self):
-        return self._read_flag(self.OperationFlags.IS_AGGRESSIVE)
+        return self._read_flag(self.Flags.IS_AGGRESSIVE)
 
     def get_hired_ants(self, ant_type: AntTypes = None):
         if (ant_type):
@@ -172,7 +172,7 @@ class Operation(ABC):
         self._on_operation_stop()
 
     def _start_operation(self):
-        self._write_flag(self.OperationFlags.IS_OPERATION_STARTED, True)
+        self._write_flag(self.Flags.IS_OPERATION_STARTED, True)
         self._stage = 'start'
         self._setup_operation()
         for ant in self._hired_ants:
@@ -206,8 +206,8 @@ class Operation(ABC):
 
     def _on_step_start(self, step_number, season):
         if not self._fight:
-            if self._read_flag(self.OperationFlags.MUST_RESPOND_TO_AGGRESSION):
-                self._write_flag(self.OperationFlags.MUST_RESPOND_TO_AGGRESSION, False)
+            if self._read_flag(self.Flags.MUST_RESPOND_TO_AGGRESSION):
+                self._write_flag(self.Flags.MUST_RESPOND_TO_AGGRESSION, False)
                 self._init_fight(self._hired_ants)
             elif self._is_aggressive_now() and self._check_for_aggression_targets():
                 self._init_fight(self._hired_ants)
@@ -392,14 +392,14 @@ class Operation(ABC):
         self.events.emit('hired_ant_died', ant)
 
     def _on_hired_ant_received_damage(self, ant: Ant, damage_type: DamageTypes):
-        if not self._read_flag(self.OperationFlags.IS_OPERATION_STARTED):
+        if not self._read_flag(self.Flags.IS_OPERATION_STARTED):
             return
         
         if not self._fight and damage_type == DamageTypes.COMBAT:
-            self._write_flag(self.OperationFlags.MUST_RESPOND_TO_AGGRESSION, True)
+            self._write_flag(self.Flags.MUST_RESPOND_TO_AGGRESSION, True)
 
     def _on_operation_stop(self):
-        if (self._read_flag(self.OperationFlags.IS_OPERATION_STARTED)):
+        if (self._read_flag(self.Flags.IS_OPERATION_STARTED)):
             self._event_bus.remove_listener('step_start', self._on_step_start)
 
         if self._formation:
@@ -419,12 +419,12 @@ class Operation(ABC):
         self._stage = 'preparing_step'
 
         for ant in self._hired_ants:
-            self._write_ant_flag(ant, self.OperationFlags.ANT_FLAG_PREPARED, False)
+            self._write_ant_flag(ant, self.Flags.ANT_FLAG_PREPARED, False)
             ant.prepare_for_operation(self._assemble_point, 'prepared')
 
     def _on_ant_prepared(self, ant: Ant):
-        self._write_ant_flag(ant, self.OperationFlags.ANT_FLAG_PREPARED, True)
-        if self._check_ant_flag_for_ants(self._hired_ants, self.OperationFlags.ANT_FLAG_PREPARED):
+        self._write_ant_flag(ant, self.Flags.ANT_FLAG_PREPARED, True)
+        if self._check_ant_flag_for_ants(self._hired_ants, self.Flags.ANT_FLAG_PREPARED):
             self._on_all_ants_prepared()
 
     @abstractmethod

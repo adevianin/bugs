@@ -15,7 +15,7 @@ from functools import partial
 
 class TransportFoodOperation(Operation):
 
-    class TransportFoodOperationFlags(Operation.OperationFlags):
+    class Flags(Operation.Flags):
         ANT_FLAG_NEAR_NEST_FROM = 'near_nest_from'
         ANT_FLAG_WAITED_IN_NEST_FROM = 'waited_in_nest_from'
         ANT_FLAG_NEAR_NEST_TO = 'near_nest_to'
@@ -87,15 +87,15 @@ class TransportFoodOperation(Operation):
     def _approaching_nest_from_step(self):
         self._stage = 'approaching_nest_from'
         for ant in self._workers:
-            self._write_ant_flag(ant, self.TransportFoodOperationFlags.ANT_FLAG_NEAR_NEST_FROM, False)
+            self._write_ant_flag(ant, self.Flags.ANT_FLAG_NEAR_NEST_FROM, False)
             ant.walk_to(self._nest_from.position, 'worker_is_near_nest_from')
 
         for ant in self._warriors:
             ant.keep_clear_territory(self._nest_from.position, 100)
 
     def _on_worker_is_near_nest_from(self, ant: Ant):
-        self._write_ant_flag(ant, self.TransportFoodOperationFlags.ANT_FLAG_NEAR_NEST_FROM, True)
-        if self._check_ant_flag_for_ants(self._workers, self.TransportFoodOperationFlags.ANT_FLAG_NEAR_NEST_FROM):
+        self._write_ant_flag(ant, self.Flags.ANT_FLAG_NEAR_NEST_FROM, True)
+        if self._check_ant_flag_for_ants(self._workers, self.Flags.ANT_FLAG_NEAR_NEST_FROM):
             self._get_in_nest_from_step()
 
     def _get_in_nest_from_step(self):
@@ -105,12 +105,12 @@ class TransportFoodOperation(Operation):
         
         for ant in self._workers:
             ant.get_in_nest(self._nest_from)
-            self._write_ant_flag(ant, self.TransportFoodOperationFlags.ANT_FLAG_WAITED_IN_NEST_FROM, False)
+            self._write_ant_flag(ant, self.Flags.ANT_FLAG_WAITED_IN_NEST_FROM, False)
             ant.wait_step(1, 'worker_waited_in_nest_from')
 
     def _on_worker_waited_in_nest_from(self, ant: Ant):
-        self._write_ant_flag(ant, self.TransportFoodOperationFlags.ANT_FLAG_WAITED_IN_NEST_FROM, True)
-        if self._check_ant_flag_for_ants(self._workers, self.TransportFoodOperationFlags.ANT_FLAG_WAITED_IN_NEST_FROM):
+        self._write_ant_flag(ant, self.Flags.ANT_FLAG_WAITED_IN_NEST_FROM, True)
+        if self._check_ant_flag_for_ants(self._workers, self.Flags.ANT_FLAG_WAITED_IN_NEST_FROM):
             self._get_food_from_nest_step()
 
     def _get_food_from_nest_step(self):
@@ -131,15 +131,15 @@ class TransportFoodOperation(Operation):
     def _approaching_nest_to_step(self):
         self._stage = 'approaching_nest_to'
         for ant in self._workers:
-            self._write_ant_flag(ant, self.TransportFoodOperationFlags.ANT_FLAG_NEAR_NEST_TO, False)
+            self._write_ant_flag(ant, self.Flags.ANT_FLAG_NEAR_NEST_TO, False)
             ant.walk_to(self._nest_to.position, 'worker_is_near_nest_to')
 
         for ant in self._warriors:
             ant.keep_clear_territory(self._nest_to.position, 100)
 
     def _on_worker_is_near_nest_to(self, ant: Ant):
-        self._write_ant_flag(ant, self.TransportFoodOperationFlags.ANT_FLAG_NEAR_NEST_TO, True)
-        if self._check_ant_flag_for_ants(self._workers, self.TransportFoodOperationFlags.ANT_FLAG_NEAR_NEST_TO):
+        self._write_ant_flag(ant, self.Flags.ANT_FLAG_NEAR_NEST_TO, True)
+        if self._check_ant_flag_for_ants(self._workers, self.Flags.ANT_FLAG_NEAR_NEST_TO):
             self._getting_inside_nest_to_step()
 
     def _getting_inside_nest_to_step(self):
@@ -150,12 +150,12 @@ class TransportFoodOperation(Operation):
         
         for ant in self._workers:
             ant.get_in_nest(self._nest_to)
-            self._write_ant_flag(ant, self.TransportFoodOperationFlags.ANT_FLAG_WAITED_IN_NEST_TO, False)
+            self._write_ant_flag(ant, self.Flags.ANT_FLAG_WAITED_IN_NEST_TO, False)
             ant.wait_step(1, 'worker_waited_in_nest_to')
 
     def _on_worker_waited_in_nest_to(self, ant: Ant):
-        self._write_ant_flag(ant, self.TransportFoodOperationFlags.ANT_FLAG_WAITED_IN_NEST_TO, True)
-        if self._check_ant_flag_for_ants(self._workers, self.TransportFoodOperationFlags.ANT_FLAG_WAITED_IN_NEST_TO):
+        self._write_ant_flag(ant, self.Flags.ANT_FLAG_WAITED_IN_NEST_TO, True)
+        if self._check_ant_flag_for_ants(self._workers, self.Flags.ANT_FLAG_WAITED_IN_NEST_TO):
             self._give_food_to_nest_to_step()
 
     def _give_food_to_nest_to_step(self):
