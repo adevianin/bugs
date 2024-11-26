@@ -43,6 +43,10 @@ class TransportFoodOperation(Operation):
     def nest_to_id(self):
         return self._nest_to.id
     
+    def cancel(self):
+        self._workers_drop_picked_food()
+        super().cancel()
+    
     def _setup_operation(self):
         super()._setup_operation()
 
