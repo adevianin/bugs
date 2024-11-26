@@ -136,7 +136,7 @@ class Operation(ABC):
         self._flags[self.OperationFlags.STAGE] = name
 
     def _is_aggressive_now(self):
-        return False
+        return self._read_flag(self.OperationFlags.IS_AGGRESSIVE)
 
     def get_hired_ants(self, ant_type: AntTypes = None):
         if (ant_type):

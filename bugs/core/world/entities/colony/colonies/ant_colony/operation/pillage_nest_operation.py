@@ -46,9 +46,6 @@ class PillageNestOperation(Operation):
         self._nest_to_pillage.unblock_removal(self._nest_to_pillage_removal_block_id)
         self._nest_for_loot.unblock_removal(self._nest_for_loot_removal_block_id)
     
-    def _is_aggressive_now(self):
-        return self._read_flag(self.PillageNestOperationFlags.IS_AGGRESSIVE)
-    
     def _setup_operation(self):
         super()._setup_operation()
 
