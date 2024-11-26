@@ -13,6 +13,12 @@ from .base.fight.fight_factory import FightFactory
 from .base.fight.fight import Fight
 
 class PillageNestOperation(Operation):
+
+    class PillageNestOperationFlags(Operation.OperationFlags):
+        ANT_FLAG_APPROACHED_NEST_TO_PILLAGE = 'approached_nest_to_pillage'
+        ANT_FLAG_WAITED_IN_NEST_TO_PILLAGE = 'waited_in_nest_to_pillage'
+        ANT_FLAG_NEAR_LOOT_NEST = 'near_loot_nest'
+        ANT_FLAG_WAITED_IN_LOOT_NEST = 'waited_in_loot_nest'
     
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, formation_factory: FormationFactory, fight_factory: FightFactory, id: int, hired_ants: List[Ant], 
                  flags: dict, formation: BaseFormation, fight: Fight, worker_vacancies_count: int, warrior_vacancies_count: int, nest_to_pillage: Nest, nest_for_loot: Nest):
@@ -41,7 +47,7 @@ class PillageNestOperation(Operation):
         self._nest_for_loot.unblock_removal(self._nest_for_loot_removal_block_id)
     
     def _is_aggressive_now(self):
-        return self._read_flag('is_agressive')
+        return self._read_flag(self.PillageNestOperationFlags.IS_AGGRESSIVE)
     
     def _setup_operation(self):
         super()._setup_operation()
@@ -65,7 +71,7 @@ class PillageNestOperation(Operation):
     def _start_operation(self):
         super()._start_operation()
         self._event_bus.emit('offensive_operation', self._hired_ants[0].from_colony_id, self._nest_to_pillage.from_colony_id)
-        self._write_flag('is_agressive', False)
+        self._write_flag(self.PillageNestOperationFlags.IS_AGGRESSIVE, False)
         self._prepare_step()
 
     def _on_all_ants_prepared(self):
@@ -73,7 +79,7 @@ class PillageNestOperation(Operation):
 
     def _march_to_nest_to_pillage_step(self):
         self._stage = 'march_to_nest_to_pillage'
-        self._write_flag('is_agressive', True)
+        self._write_flag(self.PillageNestOperationFlags.IS_AGGRESSIVE, True)
         attack_units = self._all_ants_for_march
         if self._check_is_formation_needed(attack_units, self._nest_to_pillage.position):
             formation = self._formation_factory.build_attack_formation('march_to_nest_to_pillage', attack_units, self._nest_to_pillage.position)
@@ -86,12 +92,12 @@ class PillageNestOperation(Operation):
         for ant in self._warriors:
             ant.keep_clear_territory(position=self._nest_to_pillage.position, area=100)
         for ant in self._workers:
-            self._write_ant_flag(ant, 'approached_nest_to_pillage', False)
+            self._write_ant_flag(ant, self.PillageNestOperationFlags.ANT_FLAG_APPROACHED_NEST_TO_PILLAGE, False)
             ant.walk_to(self._nest_to_pillage.position, 'worker_is_approached_nest_to_pillage')
 
     def _on_worker_is_approached_nest_to_pillage(self, ant: Ant):
-        self._write_ant_flag(ant, 'approached_nest_to_pillage', True)
-        if self._check_ant_flag_for_ants(self._workers, 'approached_nest_to_pillage'):
+        self._write_ant_flag(ant, self.PillageNestOperationFlags.ANT_FLAG_APPROACHED_NEST_TO_PILLAGE, True)
+        if self._check_ant_flag_for_ants(self._workers, self.PillageNestOperationFlags.ANT_FLAG_APPROACHED_NEST_TO_PILLAGE):
             self._get_in_nest_to_pillage_step()
 
     def _get_in_nest_to_pillage_step(self):
@@ -101,12 +107,12 @@ class PillageNestOperation(Operation):
         
         for ant in self._workers:
             ant.get_in_nest(self._nest_to_pillage)
-            self._write_ant_flag(ant, 'waited_in_nest_to_pillage', False)
+            self._write_ant_flag(ant, self.PillageNestOperationFlags.ANT_FLAG_WAITED_IN_NEST_TO_PILLAGE, False)
             ant.wait_step(1, 'ant_waited_in_nest_to_pillage')
 
     def _on_ant_waited_in_nest_to_pillage(self, ant: Ant):
-        self._write_ant_flag(ant, 'waited_in_nest_to_pillage', True)
-        if self._check_ant_flag_for_ants(self._workers, 'waited_in_nest_to_pillage'):
+        self._write_ant_flag(ant, self.PillageNestOperationFlags.ANT_FLAG_WAITED_IN_NEST_TO_PILLAGE, True)
+        if self._check_ant_flag_for_ants(self._workers, self.PillageNestOperationFlags.ANT_FLAG_WAITED_IN_NEST_TO_PILLAGE):
             self._get_food_from_pillaging_nest_step()
 
     def _get_food_from_pillaging_nest_step(self):
@@ -127,14 +133,14 @@ class PillageNestOperation(Operation):
     def _approach_nest_for_loot_step(self):
         self._stage = 'approach_nest_for_loot'
         for ant in self._workers:
-            self._write_ant_flag(ant, 'near_loot_nest', False)
+            self._write_ant_flag(ant, self.PillageNestOperationFlags.ANT_FLAG_NEAR_LOOT_NEST, False)
             ant.walk_to(self._nest_for_loot.position, 'worker_is_near_loot_nest')
         for ant in self._warriors:
             ant.keep_clear_territory(self._nest_for_loot.position, 100)
 
     def _on_worker_is_near_loot_nest(self, ant: Ant):
-        self._write_ant_flag(ant, 'near_loot_nest', True)
-        if self._check_ant_flag_for_ants(self._workers, 'near_loot_nest'):
+        self._write_ant_flag(ant, self.PillageNestOperationFlags.ANT_FLAG_NEAR_LOOT_NEST, True)
+        if self._check_ant_flag_for_ants(self._workers, self.PillageNestOperationFlags.ANT_FLAG_NEAR_LOOT_NEST):
             self._get_in_loot_nest_step()
 
     def _get_in_loot_nest_step(self):
@@ -145,12 +151,12 @@ class PillageNestOperation(Operation):
 
         for ant in self._workers:
             ant.get_in_nest(self._nest_for_loot)
-            self._write_ant_flag(ant, 'waited_in_loot_nest', False)
+            self._write_ant_flag(ant, self.PillageNestOperationFlags.ANT_FLAG_WAITED_IN_LOOT_NEST, False)
             ant.wait_step(1, 'ant_waited_in_loot_nest')
 
     def _on_ant_waited_in_loot_nest(self, ant: Ant):
-        self._write_ant_flag(ant, 'waited_in_loot_nest', True)
-        if self._check_ant_flag_for_ants(self._workers, 'waited_in_loot_nest'):
+        self._write_ant_flag(ant, self.PillageNestOperationFlags.ANT_FLAG_WAITED_IN_LOOT_NEST, True)
+        if self._check_ant_flag_for_ants(self._workers, self.PillageNestOperationFlags.ANT_FLAG_WAITED_IN_LOOT_NEST):
             self._give_food_to_loot_nest_step()
 
     def _give_food_to_loot_nest_step(self):
