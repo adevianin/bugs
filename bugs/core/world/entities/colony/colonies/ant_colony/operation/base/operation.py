@@ -181,7 +181,7 @@ class Operation(ABC):
         if self._formation:
             self._listen_formation(self._formation)
 
-        self._event_bus.add_listener('step_done', self._on_step_done)
+        self._event_bus.add_listener('step_start', self._on_step_start) # on step start to have ability do something before walking
 
         self.events.add_listener('formation:march_to_assemble_point_to_done_operation:done', self.done)
 
@@ -197,9 +197,13 @@ class Operation(ABC):
         most_common_nest = nests_counts.most_common(1)[0][0]
         self._assemble_point = Point(most_common_nest.position.x, most_common_nest.position.y + 40) 
 
-    def _on_step_done(self, step_number, season):
-        if not self._fight and self._is_aggressive_now() and self._check_for_aggression_targets():
-            self._init_fight(self._hired_ants)
+    def _on_step_start(self, step_number, season):
+        if not self._fight:
+            if self._read_flag('must_respond_to_aggression'):
+                self._write_flag('must_respond_to_aggression', False)
+                self._init_fight(self._hired_ants)
+            elif self._is_aggressive_now() and self._check_for_aggression_targets():
+                self._init_fight(self._hired_ants)
 
         if self._fight:
             self._fight.step_pulse()
@@ -385,11 +389,11 @@ class Operation(ABC):
             return
         
         if not self._fight and damage_type == DamageTypes.COMBAT:
-            self._init_fight(self._hired_ants)
+            self._write_flag('must_respond_to_aggression', True)
 
     def _on_operation_stop(self):
         if (self._read_flag('is_operation_started')):
-            self._event_bus.remove_listener('step_done', self._on_step_done)
+            self._event_bus.remove_listener('step_start', self._on_step_start)
 
         if self._formation:
             self._destroy_formation()
@@ -436,10 +440,7 @@ class Operation(ABC):
     def _build_ant_flag(self, ant: Ant, flag_name: str):
         return f'ant_flag_{ant.id}_{flag_name}'
     
-    def _workers_drop_picked_food_on_next_step(self):
-        def on_next_step(step_number, season): # to render corrent drop animation after walking 
-            for ant in self._workers:
-                if ant.has_picked_item():
-                    ant.drop_picked_item()
-        
-        self._event_bus.once('step_start', on_next_step)
+    def _workers_drop_picked_food(self):
+        for ant in self._workers:
+            if ant.has_picked_item():
+                ant.drop_picked_item()
