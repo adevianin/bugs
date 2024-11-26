@@ -6,6 +6,7 @@ from core.world.utils.point import Point
 from core.world.entities.thought.thought_types import ThoughtTypes
 from .guardian_behaviors import GuardianBehaviors
 from core.world.entities.base.death_record.base_death_record import BaseDeathRecord
+from core.world.entities.base.damage_types import DamageTypes
 
 import math
 from typing import List
@@ -23,7 +24,7 @@ class AntMind(Mind):
 
         self._body.events.add_listener('died', self._on_body_died)
         self._body.events.add_listener('colony_signal:enemy_spotted_in_colony_area', self._on_enemy_spotted_in_colony_area)
-        self._body.events.add_listener('received_combat_damage', self._on_received_combat_damage)
+        self._body.events.add_listener('received_damage', self._on_received_damage)
 
         self._listen_home_nest()
 
@@ -140,8 +141,8 @@ class AntMind(Mind):
         nearest_enemy_pos = self._body.calc_nearest_point(signal['enemies_positions'])
         self.defend_colony(nearest_enemy_pos)
 
-    def _on_received_combat_damage(self):
-        if self._is_in_opearetion or self._body.is_in_fight:
+    def _on_received_damage(self, damage_type: DamageTypes):
+        if damage_type != DamageTypes.COMBAT or self._is_in_opearetion or self._body.is_in_fight:
             return
 
         self.defend_myself()
