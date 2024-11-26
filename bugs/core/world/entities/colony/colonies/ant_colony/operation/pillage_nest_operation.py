@@ -41,6 +41,10 @@ class PillageNestOperation(Operation):
     def nest_for_loot_id(self):
         return self._nest_for_loot.id
     
+    def cancel(self):
+        self._workers_drop_picked_food()
+        super().cancel()
+    
     def _on_operation_stop(self):
         super()._on_operation_stop()
         self._nest_to_pillage.unblock_removal(self._nest_to_pillage_removal_block_id)
