@@ -191,8 +191,8 @@ class DomainFacade {
         this._colonyService.stopOperation(colonyId, operationId);
     }
 
-    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount) {
-        this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount);
+    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount) {
+        this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount);
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
@@ -2643,8 +2643,8 @@ class ColonyService {
         this._colonyApi.stopOperation(colonyId, operationId);
     }
 
-    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount) {
-        this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount);
+    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount) {
+        this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount);
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
@@ -3351,10 +3351,11 @@ class ColonyApi {
         return this._requester.post(`world/colonies/${ colonyId }/operations/${ operationId }/stop_operation`)
     }
 
-    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
+    buildNewSubNestOperation(colonyId, buildingSite, workersCount, warriorsCount) {
         return this._requester.post(`world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
             building_site: [buildingSite.x, buildingSite.y],
-            workers_count: workersCount
+            workers_count: workersCount,
+            warriors_count: warriorsCount,
         })
     }
 
@@ -6882,6 +6883,7 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
         this._chooseBuildingSiteBtn = this._el.querySelector('[data-choose-nest-position]');
         this._startBtn = this._el.querySelector('[data-start]');
         this._workersCountEl = this._el.querySelector('[data-workers-count]');
+        this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
 
         this._renderBuildingSite();
@@ -6907,7 +6909,8 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
             return
         }
         let workersCount = parseInt(this._workersCountEl.value);
-        this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingSite, workersCount);
+        let warriorsCount = parseInt(this._warriorsCountEl.value);
+        this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingSite, workersCount, warriorsCount);
         this._onDone();
     }
 
@@ -12967,7 +12970,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість робочих(із геном BUILDING_SUBNEST): \r\n    <input data-workers-count type=\"number\" min=\"1\" max=\"3\" value=\"1\" required>\r\n</div>\r\n<button data-start>старт</button>";
+var code = "<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість робочих(із геном BUILDING_SUBNEST): \r\n    <input data-workers-count type=\"number\" min=\"1\" max=\"3\" value=\"1\" required>\r\n</div>\r\n<div>\r\n    кількість воїнів: \r\n    <input data-warriors-count type=\"number\" min=\"0\" max=\"3\" value=\"0\" required>\r\n</div>\r\n<button data-start>старт</button>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

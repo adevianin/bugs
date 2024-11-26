@@ -135,8 +135,8 @@ class DomainFacade {
         this._colonyService.stopOperation(colonyId, operationId);
     }
 
-    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount) {
-        this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount);
+    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount) {
+        this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount);
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {

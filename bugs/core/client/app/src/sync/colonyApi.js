@@ -8,10 +8,11 @@ class ColonyApi {
         return this._requester.post(`world/colonies/${ colonyId }/operations/${ operationId }/stop_operation`)
     }
 
-    buildNewSubNestOperation(colonyId, buildingSite, workersCount) {
+    buildNewSubNestOperation(colonyId, buildingSite, workersCount, warriorsCount) {
         return this._requester.post(`world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
             building_site: [buildingSite.x, buildingSite.y],
-            workers_count: workersCount
+            workers_count: workersCount,
+            warriors_count: warriorsCount,
         })
     }
 

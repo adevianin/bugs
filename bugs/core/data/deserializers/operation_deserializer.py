@@ -48,8 +48,7 @@ class OperationDeserializer():
         building_nest = entities_collection.get_entity_by_id(operation_json['building_nest_id']) if operation_json['building_nest_id'] else None
         props.update({
             'building_site': building_site,
-            'building_nest': building_nest,
-            'workers_count': operation_json['workers_count']
+            'building_nest': building_nest
         })
         return self._operation_factory.build_build_new_sub_nest_operation(**props)
     

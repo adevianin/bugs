@@ -22,8 +22,8 @@ class OperationFactory():
         self._formation_factory = formation_factory
         self._fight_factory = fight_factory
 
-    def build_build_new_sub_nest_operation(self, building_site: Point, workers_count: int, building_nest: Nest = None, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
-        return BuildNewSubNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, building_site, workers_count, building_nest)
+    def build_build_new_sub_nest_operation(self, building_site: Point, worker_vacancies_count: int, warrior_vacancies_count: int, building_nest: Nest = None, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
+        return BuildNewSubNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, worker_vacancies_count, warrior_vacancies_count, building_site, building_nest)
     
     def build_destroy_nest_operation(self, nest: Nest, worker_vacancies_count: int, warrior_vacancies_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
         return DestroyNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, worker_vacancies_count, warrior_vacancies_count, nest)
