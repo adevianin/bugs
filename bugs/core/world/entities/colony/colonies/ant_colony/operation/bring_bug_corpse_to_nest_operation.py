@@ -140,8 +140,4 @@ class BringBugCorpseToNestOperation(Operation):
         self._found_bug_corpse_item = None
 
     def _on_ant_died(self, ant: Ant):
-        if not self._fight and not self._check_is_enought_workers():
-            if self._formation:
-                self._destroy_formation()
-
-            self._march_to_assemble_point_to_done_operation_step()
+        self.cancel()
