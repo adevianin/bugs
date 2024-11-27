@@ -57,6 +57,8 @@ class BringBugCorpseToNestOperation(Operation):
         self.events.add_listener('fight_start:bringing_bug_corpse_stage', self._on_bringing_stopped)
         self.events.add_listener('fight_won:bringing_bug_corpse_stage', self._repeat_march_to_search_bug_corpse_location_step)
 
+        self.events.add_listener('hired_ant_died', self._on_ant_died)
+
         for ant in self._workers:
             ant.body.sayer.add_listener('ant_near_search_bug_corpse_location', partial(self._on_ant_near_search_bug_corpse_position, ant))
 
@@ -136,3 +138,10 @@ class BringBugCorpseToNestOperation(Operation):
     def _on_bringing_stopped(self):
         self._search_bug_corpse_location = self._found_bug_corpse_item.position
         self._found_bug_corpse_item = None
+
+    def _on_ant_died(self, ant: Ant):
+        if not self._fight and not self._check_is_enought_workers():
+            if self._formation:
+                self._destroy_formation()
+
+            self._march_to_assemble_point_to_done_operation_step()
