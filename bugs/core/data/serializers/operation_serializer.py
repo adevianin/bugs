@@ -2,7 +2,7 @@ from core.world.entities.colony.colonies.ant_colony.operation.base.operation imp
 from core.world.entities.colony.colonies.ant_colony.operation.base.operation_types import OperationTypes
 from core.world.entities.colony.colonies.ant_colony.operation.build_new_sub_nest_operation import BuildNewSubNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.destroy_nest_operation import DestroyNestOperation
-from core.world.entities.colony.colonies.ant_colony.operation.bring_item_to_nest_operation import BringItemToNestOperation
+from core.world.entities.colony.colonies.ant_colony.operation.bring_bug_corpse_to_nest_operation import BringBugCorpseToNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.pillage_nest_operation import PillageNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.transport_food_operation import TransportFoodOperation
 from core.world.entities.colony.colonies.ant_colony.operation.build_fortification_operation import BuildFortificationOperation
@@ -21,8 +21,8 @@ class OperationSerializer():
                 return self._serialize_build_new_sub_nest(operation)
             case OperationTypes.DESTROY_NEST:
                 return self._serialize_destroy_nest(operation)
-            case OperationTypes.BRING_ITEM_TO_NEST:
-                return self._serialize_bring_item_to_nest(operation)
+            case OperationTypes.BRING_BUG_CORPSE_TO_NEST:
+                return self._serialize_bring_bug_corpse_to_nest(operation)
             case OperationTypes.PILLAGE_NEST:
                 return self._serialize_pillage_nest(operation)
             case OperationTypes.TRANSPORT_FOOD:
@@ -62,12 +62,13 @@ class OperationSerializer():
 
         return json
     
-    def _serialize_bring_item_to_nest(self, operation: BringItemToNestOperation):
+    def _serialize_bring_bug_corpse_to_nest(self, operation: BringBugCorpseToNestOperation):
         json = self._serialize_operation_props(operation)
 
         json.update({
             'nest_id': operation.nest_id,
-            'item_id': operation.item_id
+            'search_bug_corpse_location': operation.search_bug_corpse_location,
+            'found_bug_corpse_item_id': operation.found_bug_corpse_item_id
         })
 
         return json

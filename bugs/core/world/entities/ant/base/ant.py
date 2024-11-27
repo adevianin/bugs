@@ -19,6 +19,8 @@ from core.world.entities.base.death_record.base_death_record import BaseDeathRec
 from core.world.entities.base.death_record.no_home_death_record import NoHomeDeathRecord
 from core.world.entities.ant.base.ant_stats import AntStats
 from core.world.entities.action.ant_home_nest_changed import AntHomeNestChangedAction
+from core.world.entities.item.items.bug_corpse.bug_corpse_item import BugCorpseItem
+from typing import List
 
 class Ant(LiveEntity):
 
@@ -167,6 +169,9 @@ class Ant(LiveEntity):
 
     def no_home_die(self):
         self._body.die(NoHomeDeathRecord(self.position))
+
+    def look_around_for_bug_corpses(self) -> List[BugCorpseItem]:
+        return self._body.look_around_for_bug_corpses()
 
     def _on_got_in_nest(self, nest_id: int):
         self._emit_action(EntityGotInNestAction.build(self.id, nest_id))

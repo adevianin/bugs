@@ -18,8 +18,8 @@ class OperationDeserializer():
                 return self._build_build_new_sub_nest_operation_from_json(operation_json, entities_collection)
             case OperationTypes.DESTROY_NEST:
                 return self._build_destory_nest_operation_from_json(operation_json, entities_collection)
-            case OperationTypes.BRING_ITEM_TO_NEST:
-                return self._build_bring_item_to_nest_operation_from_json(operation_json, entities_collection)
+            case OperationTypes.BRING_BUG_CORPSE_TO_NEST:
+                return self._build_bring_bug_corpse_to_nest_operation_from_json(operation_json, entities_collection)
             case OperationTypes.PILLAGE_NEST:
                 return self._build_pillage_nest_operation_from_json(operation_json, entities_collection)
             case OperationTypes.TRANSPORT_FOOD:
@@ -60,13 +60,14 @@ class OperationDeserializer():
         })
         return self._operation_factory.build_destroy_nest_operation(**props)
     
-    def _build_bring_item_to_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
+    def _build_bring_bug_corpse_to_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
         props = self._deserialize_basic_operation_props(operation_json, entities_collection)
         props.update({
             'nest': entities_collection.get_entity_by_id(operation_json['nest_id']),
-            'item': entities_collection.get_entity_by_id(operation_json['item_id'])
+            'search_bug_corpse_location': Point.from_json(operation_json['search_bug_corpse_location']),
+            'found_bug_corpse': entities_collection.get_entity_by_id(operation_json['found_bug_corpse_item_id']) if operation_json['found_bug_corpse_item_id'] else None
         })
-        return self._operation_factory.build_bring_item_to_nest_operation(**props)
+        return self._operation_factory.build_bring_bug_corpse_to_nest_operation(**props)
 
     def _build_pillage_nest_operation_from_json(self, operation_json: dict, entities_collection: EntityCollection):
         props = self._deserialize_basic_operation_props(operation_json, entities_collection)

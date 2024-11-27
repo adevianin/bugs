@@ -15,6 +15,7 @@ from .genetic.genome import Genome
 from .ant_stats import AntStats
 from core.world.entities.base.entity import Entity
 from core.world.entities.base.death_record.base_death_record import BaseDeathRecord
+from core.world.entities.item.items.bug_corpse.bug_corpse_item import BugCorpseItem
 
 
 from typing import List, Callable
@@ -96,6 +97,11 @@ class AntBody(LiveBody):
             return items[0]
         else:
             return None
+        
+    def look_around_for_bug_corpses(self) -> List[BugCorpseItem]:
+        big_corpse_filter: Callable[[Item], bool] = lambda entity: entity.item_type == ItemTypes.BUG_CORPSE
+        items = self.look_around(types_list=[EntityTypes.ITEM], filter=big_corpse_filter, nearest_first=True)
+        return items
     
     def build_nest(self, nest: Nest):
         nest.build()

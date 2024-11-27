@@ -35,6 +35,10 @@ class Item(Entity):
         return self._is_picked
     
     @property
+    def is_bringing(self):
+        return self._bringing_position is not None
+    
+    @property
     def variety(self):
         return self._variety
     
@@ -48,23 +52,17 @@ class Item(Entity):
     
     @property
     def is_detectable(self):
-        return not self.is_picked
+        return super().is_detectable and not self.is_picked and not self.is_bringing
     
     def do_step(self):
-        if self._life_span != -1:
+        if not self._is_picked and not self.is_bringing:
             self._life_span -= 1
-            if self._life_span == 0 and not self._is_picked:
+            if self._life_span == 0:
                 self.simple_die()
 
-        if self._bringing_position:
+        if self.is_bringing:
             self._be_bringed()
 
-    def please_do_not_die(self):
-        self._life_span != -1
-
-    def refresh_life_span(self):
-        self._life_span = self._body.LIFE_SPAN
-    
     def use(self, using_strength: int = None) -> int:
         if (using_strength is None):
             using_strength = self._strength

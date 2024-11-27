@@ -6,7 +6,7 @@ from typing import List
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.formation_factory import FormationFactory
-from core.world.entities.colony.colonies.ant_colony.operation.bring_item_to_nest_operation import BringItemToNestOperation
+from core.world.entities.colony.colonies.ant_colony.operation.bring_bug_corpse_to_nest_operation import BringBugCorpseToNestOperation
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.colony.colonies.ant_colony.operation.pillage_nest_operation import PillageNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.base.base_formation import BaseFormation
@@ -14,6 +14,7 @@ from core.world.entities.colony.colonies.ant_colony.operation.transport_food_ope
 from .build_fortification_operation import BuildFortificationOperation
 from .base.fight.fight_factory import FightFactory
 from .base.fight.fight import Fight
+from core.world.entities.item.items.bug_corpse.bug_corpse_item import BugCorpseItem
 
 class OperationFactory():
 
@@ -28,8 +29,8 @@ class OperationFactory():
     def build_destroy_nest_operation(self, nest: Nest, worker_vacancies_count: int, warrior_vacancies_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
         return DestroyNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, worker_vacancies_count, warrior_vacancies_count, nest)
     
-    def build_bring_item_to_nest_operation(self, nest: Nest, item: Item, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
-        return BringItemToNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, nest, item)
+    def build_bring_bug_corpse_to_nest_operation(self, nest: Nest, search_bug_corpse_location: Point, found_bug_corpse: BugCorpseItem = None, worker_vacancies_count: int = 0, warrior_vacancies_count: int = 0, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
+        return BringBugCorpseToNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, nest, search_bug_corpse_location, found_bug_corpse)
     
     def build_pillage_nest_operation(self, nest_to_pillage: Nest, nest_for_loot: Nest, worker_vacancies_count: int, warrior_vacancies_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
         return PillageNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, worker_vacancies_count, warrior_vacancies_count, nest_to_pillage, nest_for_loot)

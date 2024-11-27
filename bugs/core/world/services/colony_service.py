@@ -181,7 +181,7 @@ class ColonyService():
         if not items:
             raise Exception('no bug in nest area')
         
-        operation = self._operation_factory.build_bring_item_to_nest_operation(nest, items[0])
+        operation = self._operation_factory.build_bring_bug_corpse_to_nest_operation(nest, items[0].position)
         performing_colony.add_operation(operation)
 
     
