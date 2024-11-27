@@ -66,7 +66,10 @@ class BuildFortificationThought(Thought):
             return
 
         if self._read_flag('near_nest'):
-            self._body.give_fortificating_item(self._nest)
+            if not self._nest.is_died:
+                self._body.give_fortificating_item(self._nest)
+            else:
+                self._body.drop_picked_item()
             self.done()
 
     def _forget_found_item(self):

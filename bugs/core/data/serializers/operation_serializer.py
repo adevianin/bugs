@@ -96,8 +96,7 @@ class OperationSerializer():
         json = self._serialize_operation_props(operation)
 
         json.update({
-            'nest_id': operation.nest_id,
-            'workers_count': operation.workers_count
+            'nest_id': operation.nest_id
         })
 
         return json

@@ -89,8 +89,7 @@ class OperationDeserializer():
     def _build_build_fortification_operation(self, operation_json: dict, entities_collection: EntityCollection):
         props = self._deserialize_basic_operation_props(operation_json, entities_collection)
         props.update({
-            'nest': entities_collection.get_entity_by_id(operation_json['nest_id']),
-            'workers_count': operation_json['workers_count']
+            'nest': entities_collection.get_entity_by_id(operation_json['nest_id'])
         })
         
         return self._operation_factory.build_build_fortification(**props)
