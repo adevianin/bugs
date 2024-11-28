@@ -13,9 +13,9 @@ from core.world.entities.ant.base.egg import Egg
 
 class QueenAntBody(AntBody):
 
-    def __init__(self, events: EventEmitter, stats: AntStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, birth_step: int, located_in_nest: Nest, 
+    def __init__(self, events: EventEmitter, stats: AntStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, birth_step: int, calories: int, located_in_nest: Nest, 
                  picked_item: Item, visual_sensor: VisualSensor, temperature_sensor: TemperatureSensor, genome: Genome, male_chromosomes_set: ChromosomesSet):
-        super().__init__(events, stats, sayer, memory, position, angle, hp, birth_step, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
+        super().__init__(events, stats, sayer, memory, position, angle, hp, birth_step, calories, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
         self._male_chromosomes_set = male_chromosomes_set
 
     @property

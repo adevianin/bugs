@@ -26,9 +26,9 @@ class AntBody(LiveBody):
 
     stats: AntStats
 
-    def __init__(self, events: EventEmitter, stats: AntStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, birth_step: int, located_in_nest: Nest, 
+    def __init__(self, events: EventEmitter, stats: AntStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, birth_step: int, calories: int, located_in_nest: Nest, 
                  picked_item: Item, visual_sensor: VisualSensor, temperature_sensor: TemperatureSensor, genome: Genome):
-        super().__init__(events, stats, memory, position, angle, hp, birth_step, visual_sensor, temperature_sensor)
+        super().__init__(events, stats, memory, position, angle, hp, birth_step, calories, visual_sensor, temperature_sensor)
         self.sayer = sayer
         self._located_inside_nest = located_in_nest
         self._picked_item = picked_item

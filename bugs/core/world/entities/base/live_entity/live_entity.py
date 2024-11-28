@@ -59,6 +59,13 @@ class LiveEntity(Entity, iEnemy):
     def is_detectable(self):
         return super().is_detectable and not self._body.am_i_in_hibernation()
     
+    @property
+    def calories(self):
+        return self._body.calories
+    
+    def born(self):
+        self._body.born()
+    
     def set_thoughts(self, thoughts: List[Thought]):
         self._mind.set_thoughts(thoughts)
 
@@ -86,7 +93,7 @@ class LiveEntity(Entity, iEnemy):
 
         if not self._body.am_i_in_hibernation():
             self._body.handle_temperature()
-            # self._body.handle_calories()
+            self._body.handle_calories()
             if not self.is_died:
                 self._mind.do_step()
 

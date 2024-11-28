@@ -8,6 +8,7 @@ class LiveEntityDeserializer(EntityDeserializer):
         props.update({
             'memory': Memory(json['memory']),
             'birth_step': json['birth_step'],
+            "calories": json['calories'],
             'is_auto_thought_generation': json['is_auto_thought_generation']
         })
 

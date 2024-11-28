@@ -9,6 +9,7 @@ class LiveEntitySerializer(EntitySerializer):
         json.update({
             'memory': entity.body.memory.records,
             'birth_step': entity.birth_step,
+            'calories': entity.calories,
             'is_auto_thought_generation': entity.is_auto_thought_generation,
         })
 

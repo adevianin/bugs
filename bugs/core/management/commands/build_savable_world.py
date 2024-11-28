@@ -34,6 +34,7 @@ class Command(BaseCommand):
                 "located_in_nest_id":None,
                 "picked_item_id":None,
                 "ant_type":"worker",
+                "calories": 1000,
                 "from_nest":30,
                 "thoughts":[
                 ],
@@ -145,6 +146,7 @@ class Command(BaseCommand):
                 "located_in_nest_id":30,
                 "picked_item_id":None,
                 "ant_type":"queen",
+                "calories": 20000,
                 "from_nest":30,
                 "thoughts":[
                     
@@ -304,6 +306,7 @@ class Command(BaseCommand):
                 "located_in_nest_id":30,
                 "picked_item_id":None,
                 "ant_type":"warrior",
+                "calories": 1000,
                 "from_nest":30,
                 "thoughts":[
                     
@@ -420,6 +423,7 @@ class Command(BaseCommand):
                 "located_in_nest_id":32,
                 "picked_item_id":None,
                 "ant_type":"queen",
+                "calories": 1000,
                 "from_nest":32,
                 "thoughts":[
                     
@@ -576,6 +580,7 @@ class Command(BaseCommand):
                 "located_in_nest_id":None,
                 "picked_item_id":None,
                 "ant_type":"warrior",
+                "calories": 1000,
                 "from_nest":32,
                 "thoughts":[
                     
@@ -690,6 +695,7 @@ class Command(BaseCommand):
                 "located_in_nest_id":None,
                 "picked_item_id":None,
                 "ant_type":"warrior",
+                "calories": 1000,
                 "from_nest":32,
                 "thoughts":[
                     
@@ -804,6 +810,7 @@ class Command(BaseCommand):
                 "located_in_nest_id":None,
                 "picked_item_id":None,
                 "ant_type":"warrior",
+                "calories": 1000,
                 "from_nest":32,
                 "thoughts":[
                     
@@ -919,7 +926,7 @@ class Command(BaseCommand):
                     350
                 ],
                 "angle": 0,
-                "stored_calories":1000,
+                "stored_calories":2000000,
                 "larvae":[
                     {
                         "id": 'id1id1',
@@ -1212,7 +1219,7 @@ class Command(BaseCommand):
                     450
                 ],
                 "angle": 0,
-                "stored_calories":1000,
+                "stored_calories":2000000,
                 "larvae":[
                 ],
                 "eggs": [],
@@ -1232,7 +1239,7 @@ class Command(BaseCommand):
                     1000
                 ],
                 "angle": 0,
-                "stored_calories":1000,
+                "stored_calories":2000000,
                 "larvae":[
                 ],
                 "eggs": [],

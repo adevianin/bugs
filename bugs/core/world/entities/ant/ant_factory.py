@@ -24,7 +24,6 @@ from .male.male_ant_body import MaleAntBody
 from .male.male_ant import MaleAnt
 from .base.guardian_behaviors import GuardianBehaviors
 from core.world.entities.base.ownership_config import OwnershipConfig
-from core.world.entities.ant.base.larva import Larva
 
 class AntFactory():
 
@@ -35,77 +34,83 @@ class AntFactory():
     def build_new_ant(self, id: int, name: str, ownership: OwnershipConfig, genome: Genome, ant_type: AntTypes, position: Point, birth_step: int, home_nest: Nest = None):
         match(ant_type):
             case AntTypes.WORKER:
-                return self.build_new_worker_ant(id, name, ownership, genome, position, home_nest, birth_step)
+                return self._build_new_worker_ant(id, name, ownership, genome, position, home_nest, birth_step)
             case AntTypes.WARRIOR:    
-                return self.build_new_warrior_ant(id, name, ownership, genome, position, home_nest, birth_step)
+                return self._build_new_warrior_ant(id, name, ownership, genome, position, home_nest, birth_step)
             case AntTypes.QUEEN:    
-                return self.build_new_queen_ant(id, name, ownership, genome, position, home_nest, birth_step)
+                return self._build_new_queen_ant(id, name, ownership, genome, position, home_nest, birth_step)
             case AntTypes.MALE:    
-                return self.build_new_male_ant(id, name, ownership, genome, position, home_nest, birth_step)
+                return self._build_new_male_ant(id, name, ownership, genome, position, home_nest, birth_step)
+            case _:
+                raise Exception('unknown type of ant')
 
-    def build_new_worker_ant(self, id: int, name: str, ownership: OwnershipConfig, genome: Genome, position: Point, home_nest: Nest, birth_step: int):
-        return self.build_worker_ant(id, name, ownership, position, 0, None, birth_step, home_nest, None, Memory(), True, None, False, genome, GuardianBehaviors.NEST, True)
+    def _build_new_worker_ant(self, id: int, name: str, ownership: OwnershipConfig, genome: Genome, position: Point, home_nest: Nest, birth_step: int):
+        new_ant = self.build_worker_ant(id, name, ownership, position, 0, 0, birth_step, 0, home_nest, home_nest, Memory(), True, None, False, genome, GuardianBehaviors.NEST, True)
+        new_ant.born()
+        return new_ant
     
-    def build_new_warrior_ant(self, id: int, name: str, ownership: OwnershipConfig, genome: Genome, position: Point, home_nest: Nest, birth_step: int):
-        return self.build_warrior_ant(id, name, ownership, position, 0, None, birth_step, home_nest, None, Memory(), True, None, False, genome, GuardianBehaviors.COLONY, True)
+    def _build_new_warrior_ant(self, id: int, name: str, ownership: OwnershipConfig, genome: Genome, position: Point, home_nest: Nest, birth_step: int):
+        new_ant = self.build_warrior_ant(id, name, ownership, position, 0, None, birth_step, 0, home_nest, home_nest, Memory(), True, None, False, genome, GuardianBehaviors.COLONY, True)
+        new_ant.born()
+        return new_ant
     
-    def build_new_queen_ant(self, id: int, name: str, ownership: OwnershipConfig, genome: Genome, position: Point, home_nest: Nest, birth_step: int):
-        return self.build_queen_ant(id, name, ownership, position, 0, None, birth_step, home_nest, None, Memory(), True, None, False, genome, None, GuardianBehaviors.NONE, False)
+    def _build_new_queen_ant(self, id: int, name: str, ownership: OwnershipConfig, genome: Genome, position: Point, home_nest: Nest, birth_step: int):
+        new_ant = self.build_queen_ant(id, name, ownership, position, 0, None, birth_step, 0, home_nest, home_nest, Memory(), True, None, False, genome, None, GuardianBehaviors.NONE, False)
+        new_ant.born()
+        return new_ant
     
-    def build_new_male_ant(self, id: int, name: str, ownership: OwnershipConfig, genome: Genome, position: Point, home_nest: Nest, birth_step: int):
-        return self.build_male_ant(id, name, ownership, position, 0, None, birth_step, home_nest, None, Memory(), True, None, False, genome, GuardianBehaviors.NONE, False)
+    def _build_new_male_ant(self, id: int, name: str, ownership: OwnershipConfig, genome: Genome, position: Point, home_nest: Nest, birth_step: int):
+        new_ant = self.build_male_ant(id, name, ownership, position, 0, None, birth_step, 0, home_nest, home_nest, Memory(), True, None, False, genome, GuardianBehaviors.NONE, False)
+        new_ant.born()
+        return new_ant
 
-    def build_warrior_ant(self, id: int, name: str, ownership: OwnershipConfig, position: Point, angle: int, hp: int, birth_step: int, nest: Nest, 
+    def build_warrior_ant(self, id: int, name: str, ownership: OwnershipConfig, position: Point, angle: int, hp: int, birth_step: int, calories: int, nest: Nest, 
                           located_in_nest: Nest, memory: Memory, is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genome: Genome,
-                          guardian_behavior: GuardianBehaviors, is_cooperative: bool):
+                          guardian_behavior: GuardianBehaviors, is_cooperative: bool) -> WarriorAnt:
         sayer = EventEmitter()
         visual_sensor = VisualSensor()
         temperature_sensor = TemperatureSensor()
         stats = AntStats.build(AntTypes.WARRIOR, genome)
-        hp = stats.max_hp if hp is None else hp
-        body = WarriorAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, birth_step, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
+        body = WarriorAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, birth_step, calories, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
         mind = WarrirorAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation, guardian_behavior, is_cooperative)
         ant = WarriorAnt(self._event_bus, EventEmitter(), id, name, ownership, body, mind)
 
         return ant
     
-    def build_worker_ant(self, id: int, name: str, ownership: OwnershipConfig, position: Point, angle: int, hp: int, birth_step: int, nest: Nest, 
+    def build_worker_ant(self, id: int, name: str, ownership: OwnershipConfig, position: Point, angle: int, hp: int, birth_step: int, calories: int, nest: Nest, 
                          located_in_nest: Nest, memory: Memory, is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genome: Genome,
-                         guardian_behavior: GuardianBehaviors, is_cooperative: bool):
+                         guardian_behavior: GuardianBehaviors, is_cooperative: bool) -> WorkerAnt:
         sayer = EventEmitter()
         visual_sensor = VisualSensor()
         temperature_sensor = TemperatureSensor()
         stats = AntStats.build(AntTypes.WORKER, genome)
-        hp = stats.max_hp if hp is None else hp
-        body = WorkerAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, birth_step, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
+        body = WorkerAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, birth_step, calories, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
         mind = WorkerAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation, guardian_behavior, is_cooperative)
         ant = WorkerAnt(self._event_bus, EventEmitter(), id, name, ownership, body, mind)
 
         return ant
     
-    def build_queen_ant(self, id: int, name: str, ownership: OwnershipConfig, position: Point, angle: int, hp: int, birth_step: int, nest: Nest, 
+    def build_queen_ant(self, id: int, name: str, ownership: OwnershipConfig, position: Point, angle: int, hp: int, birth_step: int, calories: int, nest: Nest, 
                         located_in_nest: Nest, memory: Memory, is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genome: Genome, 
-                        male_chromosomes_set: ChromosomesSet, guardian_behavior: GuardianBehaviors, is_cooperative: bool):
+                        male_chromosomes_set: ChromosomesSet, guardian_behavior: GuardianBehaviors, is_cooperative: bool) -> QueenAnt:
         sayer = EventEmitter()
         visual_sensor = VisualSensor()
         temperature_sensor = TemperatureSensor()
         stats = AntStats.build(AntTypes.QUEEN, genome)
-        hp = stats.max_hp if hp is None else hp
-        body = QueenAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, birth_step, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome, male_chromosomes_set)
+        body = QueenAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, birth_step, calories, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome, male_chromosomes_set)
         mind = QueenAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation, guardian_behavior, is_cooperative)
         ant = QueenAnt(self._event_bus, EventEmitter(), id, name, ownership, body, mind)
 
         return ant
     
-    def build_male_ant(self, id: int, name: str, ownership: OwnershipConfig, position: Point, angle: int, hp: int, birth_step: int, nest: Nest, located_in_nest: Nest, 
+    def build_male_ant(self, id: int, name: str, ownership: OwnershipConfig, position: Point, angle: int, hp: int, birth_step: int, calories: int, nest: Nest, located_in_nest: Nest, 
                        memory: Memory, is_auto_thought_generation: bool, picked_item: Item, is_in_operation: bool, genome: Genome, guardian_behavior: GuardianBehaviors, 
-                       is_cooperative: bool):
+                       is_cooperative: bool) -> MaleAnt:
         sayer = EventEmitter()
         visual_sensor = VisualSensor()
         temperature_sensor = TemperatureSensor()
         stats = AntStats.build(AntTypes.MALE, genome)
-        hp = stats.max_hp if hp is None else hp
-        body = MaleAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, birth_step, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
+        body = MaleAntBody(EventEmitter(), stats, sayer, memory, position, angle, hp, birth_step, calories, located_in_nest, picked_item, visual_sensor, temperature_sensor, genome)
         mind = MaleAntMind(body, self._thought_factory, is_auto_thought_generation, nest, is_in_operation, guardian_behavior, is_cooperative)
         ant = MaleAnt(self._event_bus, EventEmitter(), id, name, ownership, body, mind)
 

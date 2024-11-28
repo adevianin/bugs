@@ -1,6 +1,6 @@
 from core.world.utils.point import Point
 from core.world.utils.event_emiter import EventEmitter
-from core.world.settings import MAX_ATTACK_DISTANCE
+from core.world.settings import COLD_DAMAGE, MAX_ATTACK_DISTANCE, HUNGER_THRESHOLD_PERCENTAGE, CALORIES_RESERVE_STEPS
 from core.world.entities.base.live_entity.visual_sensor import VisualSensor
 from core.world.entities.base.live_entity.temperature_sensor import TemperatureSensor
 from core.world.entities.base.enemy_interface import iEnemy
@@ -12,7 +12,6 @@ from core.world.entities.item.items.base.item import Item
 from core.world.entities.base.body import Body
 from .live_stats import LiveStats
 from core.world.entities.base.damage_types import DamageTypes
-from core.world.settings import COLD_DAMAGE
 from core.world.entities.base.death_record.age_death_record import AgeDeathRecord
 from core.world.entities.base.death_record.hunger_death_record import HungerDeathRecord
 
@@ -24,18 +23,21 @@ class LiveBody(Body):
     stats: LiveStats
     HIBERNATION_THRESHOLD = 1
 
-    def __init__(self, events: EventEmitter, stats: LiveStats, memory: Memory, position: Point, angle: int, hp: int, birth_step: int, visual_sensor: VisualSensor, 
+    def __init__(self, events: EventEmitter, stats: LiveStats, memory: Memory, position: Point, angle: int, hp: int, birth_step: int, calories: int, visual_sensor: VisualSensor, 
                  temperature_sensor: TemperatureSensor):
         super().__init__(events, stats, position, angle, hp)
         self._birth_step = birth_step
         self.memory = memory
-        self._max_calories = 1000
-        self._calories = self._max_calories
-        # self._distance_per_calorie = 2
-        self._can_eat_calories_per_step = 20
+        self._max_calories = 1 if self.stats.appetite == 0 else self.stats.appetite * CALORIES_RESERVE_STEPS
+        self._calories = calories
+        # self._can_eat_calories_per_step = 20
         self._visual_sensor = visual_sensor
         self._temperature_sensor = temperature_sensor
         self._formation_distance_per_step = None
+
+    @property
+    def calories(self):
+        return self._calories
 
     @property
     def birth_step(self):
@@ -68,6 +70,10 @@ class LiveBody(Body):
     @formation_distance_per_step.setter
     def formation_distance_per_step(self, val: int):
         self._formation_distance_per_step = val
+
+    def born(self):
+        self._calories = self._max_calories
+        self._hp = self.stats.max_hp
     
     def step_to(self, destination_point: Point) -> bool:
         if self._has_stun_effect:
@@ -94,7 +100,10 @@ class LiveBody(Body):
         return self.step_to(near_point)
     
     def check_am_i_hungry(self):
-        return self._calories / (self._max_calories / 100) < 30
+        if self.stats.appetite == 0:
+            return False
+        else:
+            return self._calories / (self._max_calories / 100) < HUNGER_THRESHOLD_PERCENTAGE
     
     def check_urge_to_hibernate(self) -> bool:
         return self._temperature_sensor.temperature - self.HIBERNATION_THRESHOLD <= self.stats.min_temperature and not self.am_i_in_hibernation()
@@ -118,16 +127,16 @@ class LiveBody(Body):
         self._calories += count
         return self._calories >= self._max_calories
     
-    def eat_edible_item(self, food: Item) -> bool:
-        if (food.is_died):
-            return True
+    # def eat_edible_item(self, food: Item) -> bool:
+    #     if (food.is_died):
+    #         return True
         
-        calories_i_need = self.calc_how_much_calories_is_need()
-        calories_to_eat = min([calories_i_need, self._can_eat_calories_per_step, food.strength])
+    #     calories_i_need = self.calc_how_much_calories_is_need()
+    #     calories_to_eat = min([calories_i_need, self._can_eat_calories_per_step, food.strength])
 
-        self._calories += food.use(calories_to_eat)
+    #     self._calories += food.use(calories_to_eat)
 
-        return food.is_died or self.calc_how_much_calories_is_need() == 0
+    #     return food.is_died or self.calc_how_much_calories_is_need() == 0
     
     def damage_another_body(self, body: Body):
         body.receive_damage(self.stats.attack, DamageTypes.COMBAT)

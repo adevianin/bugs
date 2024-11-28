@@ -19,16 +19,16 @@ class LadybugFactory():
 
     def build_new_ladybug(self, id: int, position: Point, birth_step: int):
         ownership = OwnershipConfig(LADYBUG_COLONY_ID, None) 
-        hp = StatsLibrary.LADYBUG_DEFAULT.max_hp
-        return self.build_ladybug(id=id, ownership=ownership, position=position, angle=0, hp=hp, memory=Memory(), 
-                                        is_auto_thought_generation=True, birth_step=birth_step)
+        ladybug = self.build_ladybug(id=id, ownership=ownership, position=position, angle=0, hp=0, memory=Memory(), is_auto_thought_generation=True, birth_step=birth_step, calories=0)
+        ladybug.born()
+        return ladybug
 
-    def build_ladybug(self, id: int, ownership: OwnershipConfig, position: Point, angle: int, hp: int, birth_step: int, memory: Memory, 
+    def build_ladybug(self, id: int, ownership: OwnershipConfig, position: Point, angle: int, hp: int, birth_step: int, calories: int, memory: Memory, 
                             is_auto_thought_generation: bool):
         visual_sensor = VisualSensor()
         temperature_sensor = TemperatureSensor()
         stats = StatsLibrary.LADYBUG_DEFAULT
-        body = LadybugBody(EventEmitter(), stats, memory, position, angle, hp, birth_step, visual_sensor, temperature_sensor)
+        body = LadybugBody(EventEmitter(), stats, memory, position, angle, hp, birth_step, calories, visual_sensor, temperature_sensor)
         mind = LadybugMind(body, self._thought_factory, is_auto_thought_generation)
 
         return Ladybug(self._event_bus, EventEmitter(), id, ownership, body, mind)
