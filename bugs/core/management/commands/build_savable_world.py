@@ -306,7 +306,7 @@ class Command(BaseCommand):
                 "located_in_nest_id":30,
                 "picked_item_id":None,
                 "ant_type":"warrior",
-                "calories": 1000,
+                "calories": 20000,
                 "from_nest":30,
                 "thoughts":[
                     
@@ -423,7 +423,7 @@ class Command(BaseCommand):
                 "located_in_nest_id":32,
                 "picked_item_id":None,
                 "ant_type":"queen",
-                "calories": 1000,
+                "calories": 20000,
                 "from_nest":32,
                 "thoughts":[
                     
@@ -580,7 +580,7 @@ class Command(BaseCommand):
                 "located_in_nest_id":None,
                 "picked_item_id":None,
                 "ant_type":"warrior",
-                "calories": 1000,
+                "calories": 20000,
                 "from_nest":32,
                 "thoughts":[
                     
@@ -695,7 +695,7 @@ class Command(BaseCommand):
                 "located_in_nest_id":None,
                 "picked_item_id":None,
                 "ant_type":"warrior",
-                "calories": 1000,
+                "calories": 20000,
                 "from_nest":32,
                 "thoughts":[
                     
@@ -810,7 +810,7 @@ class Command(BaseCommand):
                 "located_in_nest_id":None,
                 "picked_item_id":None,
                 "ant_type":"warrior",
-                "calories": 1000,
+                "calories": 20000,
                 "from_nest":32,
                 "thoughts":[
                     
