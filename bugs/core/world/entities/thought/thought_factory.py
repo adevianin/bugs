@@ -101,73 +101,68 @@ class ThoughtFactory:
     def build_ladybug_hibernation_thought(self, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_tree: Tree, flags: dict = None, sayback: str = None):
         return LadybugHibernationThought(random_walk_thought, fight_near_enemies_thought, found_tree, flags, sayback)
 
-    def build_feed_myself_full(self, home_nest: Nest, sayback: str = None):
+    def build_feed_myself_new(self, home_nest: Nest, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(home_nest.position, home_nest.area)
         find_food_thought = self.build_find_food_thought(random_walk_thought)
         go_home_thought = self.build_go_in_nest_thought( home_nest)
         return self.build_feed_myself_thought(home=home_nest, find_food_thought=find_food_thought, go_home_thought=go_home_thought, sayback=sayback)
     
-    def build_collect_food_full(self, home_nest: Nest, sayback: str = None):
+    def build_collect_food_new(self, home_nest: Nest, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(home_nest.position, home_nest.area)
         go_home_thought = self.build_go_in_nest_thought( home_nest)
         return self.build_collect_food_thought(home_nest, random_walk_thought, go_home_thought, sayback=sayback)
     
-    def build_prepare_for_operation_full(self, home_nest: Nest, assemble_point: Point, sayback: str = None):
-        feed_myself_thought = self.build_feed_myself_full(home_nest=home_nest)
+    def build_prepare_for_operation_new(self, home_nest: Nest, assemble_point: Point, sayback: str = None):
+        feed_myself_thought = self.build_feed_myself_new(home_nest=home_nest)
         return self.build_prepare_for_operation_thought(feed_myself_thought=feed_myself_thought, assemble_point=assemble_point, sayback=sayback)
     
-    # def build_defend_nest_territory_full(self, nest: Nest, sayback: str = None):
-    #     random_walk_thought = self.build_random_walk_thought( nest.position, nest.area)
-    #     fight_near_enemies_thought = self.build_fight_near_enemies_thought_full()
-    #     return self.build_defend_teritory(fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, defending_nest=nest, sayback=sayback)
-    
-    def build_attack_nest_thought_full(self, nest: Nest, sayback: str = None):
-        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full()
+    def build_attack_nest_thought_new(self, nest: Nest, sayback: str = None):
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_new()
         return self.build_attack_nest_thought(fight_near_enemies_thought=fight_near_enemies_thought, nest=nest, sayback=sayback)
     
-    def build_defend_nest_thought_full(self, nest: Nest, point_to_check: Point, sayback: str = None):
-        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full()
+    def build_defend_nest_thought_new(self, nest: Nest, point_to_check: Point, sayback: str = None):
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_new()
         return self.build_defend_nest_thought(fight_near_enemies_thought=fight_near_enemies_thought, defending_nest=nest, point_to_check=point_to_check, sayback=sayback)
 
-    def build_fight_near_enemies_thought_full(self):
+    def build_fight_near_enemies_thought_new(self):
         fight_enemy_thought = self.build_fight_enemy_thought(None)
         return self.build_fight_near_enemies_thought(fight_enemy_thought=fight_enemy_thought)
 
-    def build_hunt_for_aphid_thought_full(self, sayback: str = None):
+    def build_hunt_for_aphid_thought_new(self, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(None, None)
-        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full()
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_new()
         return self.build_hunt_for_aphid(random_walk_thought=random_walk_thought, fight_near_enemies_thought=fight_near_enemies_thought, found_food_source=None, sayback=sayback)
     
-    def build_keep_clear_territory_full(self, position: Point, area: int, sayback: str = None):
+    def build_keep_clear_territory_new(self, position: Point, area: int, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(position, area)
-        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full()
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_new()
         return self.build_keep_clear_territory(fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, sayback=sayback)
     
-    def build_patrol_nest_territory_full(self, nest: Nest, step_count: int = 0, flags: dict = None, sayback: str = None) -> PatrolNestTerritoryThought:
+    def build_patrol_nest_territory_new(self, nest: Nest, step_count: int = 0, flags: dict = None, sayback: str = None) -> PatrolNestTerritoryThought:
         random_walk_thought = self.build_random_walk_thought(nest.position, nest.area)
         return self.build_patrol_nest_territory(random_walk_thought, nest, step_count, flags, sayback)
     
-    def build_hibernation_full(self, home: Nest, flags: dict = None, sayback: str = None) -> HibernationThought:
+    def build_hibernation_new(self, home: Nest, flags: dict = None, sayback: str = None) -> HibernationThought:
         go_home_thought = self.build_go_in_nest_thought(home)
         return HibernationThought(go_home_thought, flags, sayback)
     
-    def build_shelter_in_nest_full(self, shelter_nest: Nest, flags: dict = None, sayback: str = None) -> ShelterInNestThought:
+    def build_shelter_in_nest_new(self, shelter_nest: Nest, flags: dict = None, sayback: str = None) -> ShelterInNestThought:
         go_home_thought = self.build_go_in_nest_thought(shelter_nest)
         return self.build_shelter_in_nest(go_home_thought, shelter_nest, flags, sayback)
     
-    def build_build_fortification_full(self, nest: Nest, flags: dict = None, sayback: str = None) -> BuildFortificationThought:
+    def build_build_fortification_new(self, nest: Nest, flags: dict = None, sayback: str = None) -> BuildFortificationThought:
         random_walk_thought = self.build_random_walk_thought(nest.position, nest.area)
         return self.build_build_fortification(random_walk_thought, nest, flags, sayback)
     
-    def build_defend_colony_full(self, point_to_check: Point, sayback: str = None) -> DefendColonyThought:
-        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full()
+    def build_defend_colony_new(self, point_to_check: Point, sayback: str = None) -> DefendColonyThought:
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_new()
         return self.build_defend_colony(fight_near_enemies_thought, point_to_check, sayback=sayback)
     
-    def build_defend_myself_full(self, sayback: str = None) -> DefendMyselfThought:
-        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full()
+    def build_defend_myself_new(self, sayback: str = None) -> DefendMyselfThought:
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_new()
         return self.build_defend_myself(fight_near_enemies_thought, sayback=sayback)
     
-    def build_ladybug_hibernation_thought_full(self, found_tree: Tree = None, flags: Dict = None, sayback: str = None):
+    def build_ladybug_hibernation_thought_new(self, found_tree: Tree = None, flags: Dict = None, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(None, None)
-        fight_near_enemies_thought = self.build_fight_near_enemies_thought_full()
+        fight_near_enemies_thought = self.build_fight_near_enemies_thought_new()
         return self.build_ladybug_hibernation_thought(random_walk_thought, fight_near_enemies_thought, found_tree, flags, sayback)
