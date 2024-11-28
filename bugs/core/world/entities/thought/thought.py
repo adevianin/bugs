@@ -1,24 +1,28 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from ..base.live_entity.live_body import LiveBody
 from .thought_types import ThoughtTypes
 from typing import Callable
 
 class Thought(ABC):
 
+    class Flags():
+        IS_DONE = 'is_done'
+        IS_CANCELED = 'is_canceled'
+
     def __init__(self, type: ThoughtTypes, flags: dict, sayback: str):
         self._type = type
         self._results = None
         self._sayback = sayback
-        self._flags = flags or self._default_flags
+        self._flags = flags or {}
         self._nested_thoughts = {}
 
     @property
     def is_done(self):
-        return self._read_flag('is_done')
+        return self._read_flag(self.Flags.IS_DONE)
     
     @property
     def is_canceled(self):
-        return self._read_flag('is_canceled')
+        return self._read_flag(self.Flags.IS_CANCELED)
     
     @property
     def is_completed(self):
@@ -48,7 +52,7 @@ class Thought(ABC):
         if self.is_completed:
             return
         self._iterate_nested_thoughts(lambda thought: thought.done())
-        self._write_flag('is_done', True)
+        self._write_flag(self.Flags.IS_DONE, True)
         self._results = results
         self._on_stop_thinking()
 
@@ -56,7 +60,7 @@ class Thought(ABC):
         if self.is_completed:
             return
         self._iterate_nested_thoughts(lambda thought: thought.cancel())
-        self._write_flag('is_canceled', True)
+        self._write_flag(self.Flags.IS_CANCELED, True)
         self._results = None
         self._on_stop_thinking()
 
@@ -67,7 +71,7 @@ class Thought(ABC):
         pass
 
     def restart(self):
-        self._flags = self._default_flags
+        self._flags = {}
         self._results = None
         self._iterate_nested_thoughts(lambda thought: thought.restart())
 
@@ -89,12 +93,3 @@ class Thought(ABC):
 
     def _on_stop_thinking(self):
         pass
-
-    @property
-    def _default_flags(self):
-        return {
-            'is_done': False,
-            'is_canceled': False
-        }
-
-
