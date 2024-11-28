@@ -7,9 +7,7 @@ from core.world.entities.base.live_entity.thoughts.walk_to_thought import WalkTo
 from core.world.entities.ant.base.thoughts.find_food_thought import FindFoodThought
 from core.world.entities.ant.base.thoughts.collect_food_thought import CollectFoodThought
 from core.world.entities.ant.base.thoughts.feed_myself_thought import FeedMyselfThought
-from core.world.entities.ant.base.thoughts.prepare_for_opertation_thought import PrepareForOperationThought
 from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestThought
-# from core.world.entities.ant.warrior.thoughts.defend_territory_thought import DefendTerritoryThought
 from core.world.entities.ant.base.thoughts.attack_nest_thought import AttackNestThought
 from core.world.entities.base.live_entity.thoughts.fight_enemy_thought import FightEnemyThought
 from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
@@ -47,14 +45,8 @@ class ThoughtFactory:
     def build_feed_myself_thought(self, home: Nest, go_home_thought: GoInNestThought, flags: dict = None, sayback: str = None):
         return FeedMyselfThought(home=home, go_home_thought=go_home_thought, flags=flags, sayback=sayback)
 
-    def build_prepare_for_operation_thought(self, feed_myself_thought: FeedMyselfThought, assemble_point: Point, flags: dict = None, sayback: str = None):
-        return PrepareForOperationThought(feed_myself_thought=feed_myself_thought, assemble_point=assemble_point, flags=flags, sayback=sayback)
-    
     def build_build_nest_thought(self, building_nest: Nest, get_inside_once_done: bool, flags: dict = None, sayback: str = None):
         return BuildNestThought(building_nest=building_nest, get_inside_once_done=get_inside_once_done, flags=flags, sayback=sayback)
-    
-    # def build_defend_teritory(self, fight_near_enemies_thought: FightNearEnemiesThought, random_walk_thought: RandomWalkThought, defending_nest: Nest, point_to_check: Point = None, flags: dict = None, sayback: str = None):
-    #     return DefendTerritoryThought(fight_near_enemies_thought=fight_near_enemies_thought, random_walk_thought=random_walk_thought, defending_nest=defending_nest, point_to_check=point_to_check, flags=flags, sayback=sayback)
     
     def build_attack_nest_thought(self, fight_near_enemies_thought: FightNearEnemiesThought, nest: Nest, flags: dict = None, sayback: str = None):
         return AttackNestThought(fight_near_enemies_thought=fight_near_enemies_thought, nest=nest, flags=flags, sayback=sayback)
@@ -109,10 +101,6 @@ class ThoughtFactory:
         random_walk_thought = self.build_random_walk_thought(home_nest.position, home_nest.area)
         go_home_thought = self.build_go_in_nest_thought( home_nest)
         return self.build_collect_food_thought(home_nest, random_walk_thought, go_home_thought, sayback=sayback)
-    
-    def build_prepare_for_operation_new(self, home_nest: Nest, assemble_point: Point, sayback: str = None):
-        feed_myself_thought = self.build_feed_myself_new(home_nest=home_nest)
-        return self.build_prepare_for_operation_thought(feed_myself_thought=feed_myself_thought, assemble_point=assemble_point, sayback=sayback)
     
     def build_attack_nest_thought_new(self, nest: Nest, sayback: str = None):
         fight_near_enemies_thought = self.build_fight_near_enemies_thought_new()

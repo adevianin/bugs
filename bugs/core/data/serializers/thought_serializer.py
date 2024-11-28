@@ -5,9 +5,7 @@ from core.world.entities.base.live_entity.thoughts.walk_to_thought import WalkTo
 from core.world.entities.ant.base.thoughts.find_food_thought import FindFoodThought
 from core.world.entities.ant.base.thoughts.collect_food_thought import CollectFoodThought
 from core.world.entities.ant.base.thoughts.feed_myself_thought import FeedMyselfThought
-from core.world.entities.ant.base.thoughts.prepare_for_opertation_thought import PrepareForOperationThought
 from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestThought
-# from core.world.entities.ant.warrior.thoughts.defend_territory_thought import DefendTerritoryThought
 from core.world.entities.base.live_entity.thoughts.fight_enemy_thought import FightEnemyThought
 from core.world.entities.ant.base.thoughts.attack_nest_thought import AttackNestThought
 from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
@@ -38,8 +36,6 @@ class ThoughtSerializer():
                 return self._serialize_collect_food(thought)
             case ThoughtTypes.FEED_MYSELF:
                 return self._serialize_feed_myself(thought)
-            case ThoughtTypes.PREPARE_FOR_OPERATION:
-                return self._serialize_prepare_for_operation(thought)
             case ThoughtTypes.BUILD_NEST:
                 return self._serialize_build_nest(thought)
             # case ThoughtTypes.DEFEND_TERRITORY:
@@ -130,16 +126,6 @@ class ThoughtSerializer():
         json.update({
             'home_id': thought.home_id,
             'go_home_thought': go_home_thought_json
-        })
-
-        return json
-    
-    def _serialize_prepare_for_operation(self, thought: PrepareForOperationThought):
-        json = self._serialize_thought(thought)
-        feed_myself_thought_json = self.serialize(thought.feed_myself_thought)
-        json.update({
-            'feed_myself_thought': feed_myself_thought_json,
-            'assemble_point': thought.assemble_point
         })
 
         return json

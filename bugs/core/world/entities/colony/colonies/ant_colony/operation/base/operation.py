@@ -308,6 +308,9 @@ class Operation(ABC):
         
         if ant.ant_type not in self._vacancies:
             return False
+        
+        if ant.is_hungry:
+            return False
 
         vacancie = self._vacancies[ant.ant_type]
 
@@ -420,7 +423,7 @@ class Operation(ABC):
 
         for ant in self._hired_ants:
             self._write_ant_flag(ant, self.Flags.ANT_FLAG_PREPARED, False)
-            ant.prepare_for_operation(self._assemble_point, 'prepared')
+            ant.walk_to(self._assemble_point, 'prepared')
 
     def _on_ant_prepared(self, ant: Ant):
         self._write_ant_flag(ant, self.Flags.ANT_FLAG_PREPARED, True)

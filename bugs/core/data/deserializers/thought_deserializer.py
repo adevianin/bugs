@@ -21,12 +21,8 @@ class ThoughtDeserializer():
                 return self._build_collect_food_thought(thought_json, entities_collection)
             case ThoughtTypes.FEED_MYSELF:
                 return self._build_feed_myself_thought(thought_json, entities_collection)
-            case ThoughtTypes.PREPARE_FOR_OPERATION:
-                return self._build_prepare_for_operation_thought(thought_json, entities_collection)
             case ThoughtTypes.BUILD_NEST:
                 return self._build_build_nest_thought(thought_json, entities_collection)
-            # case ThoughtTypes.DEFEND_TERRITORY:
-            #     return self._build_defend_territory(thought_json, entities_collection)
             case ThoughtTypes.ATTACK_NEST:
                 return self._build_attack_nest_thought(thought_json, entities_collection)
             case ThoughtTypes.FIGHT_ENEMY:
@@ -47,8 +43,6 @@ class ThoughtDeserializer():
                 return self._build_ladybug_hibernation(thought_json, entities_collection)
             case ThoughtTypes.SHELTER_IN_NEST:
                 return self._build_shelter_in_nest(thought_json, entities_collection)
-            # case ThoughtTypes.GET_STAHED_ITEM_BACK:
-            #     return self._build_get_stashed_item_back(thought_json, entities_collection)
             case ThoughtTypes.BUILD_FORTIFICATION:
                 return self._build_build_fortification(thought_json, entities_collection)
             case ThoughtTypes.DEFEND_COLONY:
@@ -85,11 +79,6 @@ class ThoughtDeserializer():
         home = entities_collection.get_entity_by_id(thought_json['home_id'])
         go_home_thought = self.deserialize_thougth(thought_json['go_home_thought'], entities_collection)
         return self._thought_factory.build_feed_myself_thought(home, go_home_thought, thought_json['flags'], thought_json['sayback'])
-    
-    def _build_prepare_for_operation_thought(self, thought_json, entities_collection: EntityCollection):
-        feed_myself_thought = self.deserialize_thougth(thought_json['feed_myself_thought'], entities_collection)
-        assemble_point = Point(thought_json['assemble_point'][0], thought_json['assemble_point'][1])
-        return self._thought_factory.build_prepare_for_operation_thought(feed_myself_thought=feed_myself_thought, assemble_point=assemble_point, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_build_nest_thought(self, thought_json, entities_collection: EntityCollection):
         building_nest = entities_collection.get_entity_by_id(thought_json['building_nest_id'])

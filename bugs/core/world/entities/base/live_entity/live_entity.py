@@ -63,6 +63,10 @@ class LiveEntity(Entity, iEnemy):
     def calories(self):
         return self._body.calories
     
+    @property
+    def is_hungry(self):
+        return self._body.check_am_i_hungry()
+    
     def born(self):
         self._body.born()
     
