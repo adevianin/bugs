@@ -83,10 +83,8 @@ class ThoughtDeserializer():
 
     def _build_feed_myself_thought(self, thought_json, entities_collection: EntityCollection):
         home = entities_collection.get_entity_by_id(thought_json['home_id'])
-        found_food = entities_collection.get_entity_by_id(thought_json['found_food_id']) if thought_json['found_food_id'] else None
-        find_food_thought = self.deserialize_thougth(thought_json['find_food_thought'], entities_collection)
         go_home_thought = self.deserialize_thougth(thought_json['go_home_thought'], entities_collection)
-        return self._thought_factory.build_feed_myself_thought(home=home, find_food_thought=find_food_thought, go_home_thought=go_home_thought, found_food=found_food, flags=thought_json['flags'], sayback=thought_json['sayback'])
+        return self._thought_factory.build_feed_myself_thought(home, go_home_thought, thought_json['flags'], thought_json['sayback'])
     
     def _build_prepare_for_operation_thought(self, thought_json, entities_collection: EntityCollection):
         feed_myself_thought = self.deserialize_thougth(thought_json['feed_myself_thought'], entities_collection)

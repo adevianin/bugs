@@ -7,8 +7,8 @@ class Memory():
     def records(self):
         return self._records
     
-    def save_flag(self, flag_name: str, value: bool):
-        self.save(flag_name, bool(value))
+    def save_flag(self, flag_name: str, value: bool, expired_in: int = None):
+        self.save(flag_name, bool(value), expired_in)
 
     def read_flag(self, flag_name: str):
         return bool(self.read(flag_name))

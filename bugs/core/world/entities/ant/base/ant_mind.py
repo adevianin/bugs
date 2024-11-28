@@ -33,8 +33,9 @@ class AntMind(Mind):
         return self._is_in_opearetion
     
     def feed_myself(self, sayback: str = None, asap: bool = False):
-        thought = self._thought_factory.build_feed_myself_new(home_nest=self.home_nest, sayback=sayback)
-        self._register_thought(thought, asap)
+        if not self._body.memory.read_flag(self._body.MemoryKeys.NO_MORE_FOOD_AT_HOME):
+            thought = self._thought_factory.build_feed_myself_new(home_nest=self.home_nest, sayback=sayback)
+            self._register_thought(thought, asap)
 
     def go_home(self, sayback: str = None, asap: bool = False):
         go_home_thought = self._thought_factory.build_go_in_nest_thought(nest=self.home_nest)

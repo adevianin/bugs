@@ -126,12 +126,9 @@ class ThoughtSerializer():
     
     def _serialize_feed_myself(self, thought: FeedMyselfThought):
         json = self._serialize_thought(thought)
-        find_food_thought_json = self.serialize(thought.find_food_thought)
         go_home_thought_json = self.serialize(thought.go_home_thought)
         json.update({
             'home_id': thought.home_id,
-            'found_food_id': thought.found_food_id,
-            'find_food_thought': find_food_thought_json,
             'go_home_thought': go_home_thought_json
         })
 

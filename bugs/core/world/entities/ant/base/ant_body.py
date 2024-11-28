@@ -22,6 +22,9 @@ from typing import List, Callable
 
 class AntBody(LiveBody):
 
+    class MemoryKeys(LiveBody.MemoryKeys):
+        NO_MORE_FOOD_AT_HOME = 'no_more_food_at_home'
+
     SIZE = Size(32, 32)
 
     stats: AntStats

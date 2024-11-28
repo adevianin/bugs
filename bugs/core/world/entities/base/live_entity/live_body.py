@@ -20,6 +20,9 @@ from typing import List, Callable
 
 class LiveBody(Body):
 
+    class MemoryKeys():
+        pass
+
     stats: LiveStats
     HIBERNATION_THRESHOLD = 1
 

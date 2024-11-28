@@ -44,8 +44,8 @@ class ThoughtFactory:
     def build_collect_food_thought(self, nest: Nest, random_walk_thought: RandomWalkThought, go_gome_thought: GoInNestThought, found_food: Item = None, flags: dict = None, sayback: str = None):
         return CollectFoodThought(nest=nest, random_walk_thought=random_walk_thought, go_home_thought=go_gome_thought, found_food=found_food, flags=flags, sayback=sayback)
     
-    def build_feed_myself_thought(self, home: Nest, find_food_thought: FindFoodThought, go_home_thought: GoInNestThought, found_food: Item = None, flags: dict = None, sayback: str = None):
-        return FeedMyselfThought(home=home, find_food_thought=find_food_thought, go_home_thought=go_home_thought, found_food=found_food, flags=flags, sayback=sayback)
+    def build_feed_myself_thought(self, home: Nest, go_home_thought: GoInNestThought, flags: dict = None, sayback: str = None):
+        return FeedMyselfThought(home=home, go_home_thought=go_home_thought, flags=flags, sayback=sayback)
 
     def build_prepare_for_operation_thought(self, feed_myself_thought: FeedMyselfThought, assemble_point: Point, flags: dict = None, sayback: str = None):
         return PrepareForOperationThought(feed_myself_thought=feed_myself_thought, assemble_point=assemble_point, flags=flags, sayback=sayback)
@@ -102,10 +102,8 @@ class ThoughtFactory:
         return LadybugHibernationThought(random_walk_thought, fight_near_enemies_thought, found_tree, flags, sayback)
 
     def build_feed_myself_new(self, home_nest: Nest, sayback: str = None):
-        random_walk_thought = self.build_random_walk_thought(home_nest.position, home_nest.area)
-        find_food_thought = self.build_find_food_thought(random_walk_thought)
-        go_home_thought = self.build_go_in_nest_thought( home_nest)
-        return self.build_feed_myself_thought(home=home_nest, find_food_thought=find_food_thought, go_home_thought=go_home_thought, sayback=sayback)
+        go_home_thought = self.build_go_in_nest_thought(home_nest)
+        return self.build_feed_myself_thought(home=home_nest, go_home_thought=go_home_thought, sayback=sayback)
     
     def build_collect_food_new(self, home_nest: Nest, sayback: str = None):
         random_walk_thought = self.build_random_walk_thought(home_nest.position, home_nest.area)
