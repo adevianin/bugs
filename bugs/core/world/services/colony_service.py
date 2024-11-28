@@ -101,7 +101,7 @@ class ColonyService():
         if colony.owner_id != user_id:
             raise Exception('user is not colony owner')
 
-        operation = self._operation_factory.build_build_new_sub_nest_operation(building_site=position, workers_count=workers_count, warriors_count=warriors_count)
+        operation = self._operation_factory.build_build_new_sub_nest_operation(position, workers_count, warriors_count)
         colony.add_operation(operation)
         
     def destroy_nest_operation(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int, warriors_count: int):
