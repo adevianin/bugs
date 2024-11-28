@@ -3,7 +3,7 @@ from core.world.entities.map.map import Map
 from core.world.entities.world.birthers.requests.ladybug_birth_request import LadybugBirthRequest
 from core.world.entities.world.season_types import SeasonTypes
 from core.world.entities.base.entity_types import EntityTypes
-from core.world.settings import ANTS_PER_LADYBUG
+from core.world.settings import ANTS_PER_LADYBUG, SPAWN_LADYBUGS
 from core.world.utils.point import Point
 from core.world.entities.tree.tree import Tree
 import random
@@ -19,7 +19,7 @@ class LadybugSpawner():
         self._event_bus.add_listener('step_done', self._on_step_done)
 
     def _on_step_done(self, step_number: int, season: SeasonTypes):
-        if step_number % 20 == 0 and season in LadybugSpawner.ACTIVE_SEASONS:
+        if SPAWN_LADYBUGS and step_number % 20 == 0 and season in LadybugSpawner.ACTIVE_SEASONS:
             if self._is_lack_of_bugs():
                 self._spawn()
 
