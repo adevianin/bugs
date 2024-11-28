@@ -4,7 +4,6 @@ from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.tree.tree import Tree
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.base.live_entity.thoughts.walk_to_thought import WalkToThought
-from core.world.entities.ant.base.thoughts.find_food_thought import FindFoodThought
 from core.world.entities.ant.base.thoughts.collect_food_thought import CollectFoodThought
 from core.world.entities.ant.base.thoughts.feed_myself_thought import FeedMyselfThought
 from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestThought
@@ -35,9 +34,6 @@ class ThoughtFactory:
     
     def build_walk_to_thought(self, position: Point, flags: dict = None, sayback: str = None):
         return WalkToThought(flags=flags, sayback=sayback, position=position)
-    
-    def build_find_food_thought(self, random_walk_thought: RandomWalkThought, flags: dict = None, sayback: str = None):
-        return FindFoodThought(random_walk_thought=random_walk_thought, flags=flags, sayback=sayback)
     
     def build_collect_food_thought(self, nest: Nest, random_walk_thought: RandomWalkThought, go_gome_thought: GoInNestThought, found_food: Item = None, flags: dict = None, sayback: str = None):
         return CollectFoodThought(nest=nest, random_walk_thought=random_walk_thought, go_home_thought=go_gome_thought, found_food=found_food, flags=flags, sayback=sayback)

@@ -2,7 +2,6 @@ from core.world.entities.thought.thought import Thought
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.base.live_entity.thoughts.walk_to_thought import WalkToThought
-from core.world.entities.ant.base.thoughts.find_food_thought import FindFoodThought
 from core.world.entities.ant.base.thoughts.collect_food_thought import CollectFoodThought
 from core.world.entities.ant.base.thoughts.feed_myself_thought import FeedMyselfThought
 from core.world.entities.ant.base.thoughts.build_nest_thought import BuildNestThought
@@ -30,16 +29,12 @@ class ThoughtSerializer():
                 return self._serialize_go_in_nest(thought)
             case ThoughtTypes.WALK_TO:
                 return self._serialize_walk_to(thought)
-            case ThoughtTypes.FIND_FOOD:
-                return self._serialize_find_food(thought)
             case ThoughtTypes.COLLECT_FOOD:
                 return self._serialize_collect_food(thought)
             case ThoughtTypes.FEED_MYSELF:
                 return self._serialize_feed_myself(thought)
             case ThoughtTypes.BUILD_NEST:
                 return self._serialize_build_nest(thought)
-            # case ThoughtTypes.DEFEND_TERRITORY:
-            #     return self._serialize_defend_territory(thought)
             case ThoughtTypes.ATTACK_NEST:
                 return self._serialize_attack_nest(thought)
             case ThoughtTypes.FIGHT_ENEMY:
@@ -94,15 +89,6 @@ class ThoughtSerializer():
         json = self._serialize_thought(thought)
         json.update({
             'position': thought.position
-        })
-
-        return json
-    
-    def _serialize_find_food(self, thought: FindFoodThought):
-        json = self._serialize_thought(thought)
-        random_walk_thought_json = self.serialize(thought.random_walk_thought)
-        json.update({
-            'random_walk_thought': random_walk_thought_json
         })
 
         return json

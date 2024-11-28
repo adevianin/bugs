@@ -4,7 +4,6 @@ class ThoughtTypes(StrEnum):
     GO_IN_NEST = 'go_in_nest'
     WALK_TO = 'walk_to'
     RANDOM_WALK = 'random_walk'
-    FIND_FOOD = 'find_food'
     COLLECT_FOOD = 'collect_food'
     FEED_MYSELF = 'feed_myself'
     BUILD_NEST = 'build_nest'
