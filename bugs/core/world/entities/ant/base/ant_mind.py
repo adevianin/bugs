@@ -92,10 +92,12 @@ class AntMind(Mind):
     def _listen_home_nest(self):
         if self.home_nest:
             self.home_nest.events.add_listener('is_under_attack', self._on_home_nest_is_under_attack)
+            self.home_nest.events.add_listener('died', self._on_home_nest_died)
 
     def _stop_listen_home_nest(self):
         if self.home_nest:
             self.home_nest.events.remove_listener('is_under_attack', self._on_home_nest_is_under_attack)
+            self.home_nest.events.remove_listener('died', self._on_home_nest_died)
 
     def _calc_assemble_point(self):
         return Point(self.home_nest.position.x, self.home_nest.position.y + 40)
@@ -119,6 +121,10 @@ class AntMind(Mind):
     def _on_body_died(self, death_record: BaseDeathRecord):
         self._stop_listen_home_nest()
         self.free_mind()
+
+    def _on_home_nest_died(self):
+        if self._body.am_i_in_hibernation():
+            self._body.exit_hibernation()
 
     def _on_home_nest_is_under_attack(self, enemies_positions: List[Point]):
         if self._is_in_opearetion or self._is_thought_in_stack(ThoughtTypes.DEFEND_NEST) or self._is_thought_in_stack(ThoughtTypes.SHELTER_IN_NEST):
