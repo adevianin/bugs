@@ -18,7 +18,8 @@ class NestSerializer(EntitySerializer):
             'eggs':  self._egg_serializer.serialize_eggs(entity.eggs),
             'area': entity.area,
             'build_progress': entity.build_progress,
-            'fortification': entity.fortification
+            'fortification': entity.fortification,
+            'nearby_food_sources_data': entity.nearby_food_sources_data_manager.data
         })
 
         return json

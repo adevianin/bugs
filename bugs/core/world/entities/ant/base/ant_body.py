@@ -87,7 +87,7 @@ class AntBody(LiveBody):
     
     def look_around_for_food_sources(self) -> List[ItemSource]:
         honeydew_filter: Callable[[ItemSource], bool] = lambda item_source: item_source.item_type == ItemTypes.HONEYDEW
-        return self.look_around(types_list=[EntityTypes.ITEM_SOURCE], filter=honeydew_filter)
+        return self.look_around(types_list=[EntityTypes.ITEM_SOURCE], filter=honeydew_filter, nearest_first=True)
     
     def look_around_for_building_items(self) -> List[Item]:
         building_item: Callable[[Item], bool] = lambda item: item.item_type in ItemTypesPack.BUILDING_ITEMS

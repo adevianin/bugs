@@ -100,7 +100,6 @@ class ThoughtSerializer():
         json.update({
             'random_walk_thought': random_walk_thought_json,
             'go_home_thought': go_home_thought_json,
-            'found_food_id': thought.found_food_id,
             'nest_id': thought.nest_id
         })
 

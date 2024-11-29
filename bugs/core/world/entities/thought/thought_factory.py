@@ -36,7 +36,7 @@ class ThoughtFactory:
         return WalkToThought(flags=flags, sayback=sayback, position=position)
     
     def build_collect_food_thought(self, nest: Nest, random_walk_thought: RandomWalkThought, go_gome_thought: GoInNestThought, found_food: Item = None, flags: dict = None, sayback: str = None):
-        return CollectFoodThought(nest=nest, random_walk_thought=random_walk_thought, go_home_thought=go_gome_thought, found_food=found_food, flags=flags, sayback=sayback)
+        return CollectFoodThought(nest=nest, random_walk_thought=random_walk_thought, go_home_thought=go_gome_thought, flags=flags, sayback=sayback)
     
     def build_feed_myself_thought(self, home: Nest, go_home_thought: GoInNestThought, flags: dict = None, sayback: str = None):
         return FeedMyselfThought(home=home, go_home_thought=go_home_thought, flags=flags, sayback=sayback)

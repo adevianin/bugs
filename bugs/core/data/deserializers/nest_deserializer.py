@@ -2,6 +2,8 @@ from core.world.entities.nest.nest_factory import NestFactory
 from .larva_deserializer import LarvaDeserializer
 from .egg_deserializer import EggDeserializer
 from .base.entity_deserializer import EntityDeserializer
+from core.world.utils.point import Point
+from typing import Dict
 
 class NestDeserializer(EntityDeserializer):
 
@@ -22,7 +24,12 @@ class NestDeserializer(EntityDeserializer):
             'build_progress': nest_json['build_progress'],
             'fortification': nest_json['fortification'],
             'larvae': [self._larva_deserializer.deserialize_larva(larva_json) for larva_json in nest_json['larvae']],
-            'eggs': [self._egg_deserializer.deserialize_egg(egg_json) for egg_json in nest_json['eggs']]
+            'eggs': [self._egg_deserializer.deserialize_egg(egg_json) for egg_json in nest_json['eggs']],
+            'nearby_food_sources_data': self._deserialize_food_sources_data(nest_json['nearby_food_sources_data'])
         })
         return props
+    
+    def _deserialize_food_sources_data(self, data: Dict):
+        return {int(id): Point.from_json(position_json) for id, position_json in data.items()}
+
     

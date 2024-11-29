@@ -24,14 +24,16 @@ from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.world.notification.notifications.died_nest_notification import DiedNestNotification
 from core.world.entities.world.notification.notifications.nest_alarm_raised_notification import NestAlarmRaisedNotification
 from core.world.entities.world.notification.notifications.nest_alarm_canceled_notification import NestAlarmCanceledNotification
+from .food_sources_data_manager import FoodSourcesDataManager
 
 class Nest(Entity):
 
     _body: NestBody
     stats: NestStats
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: NestBody):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: NestBody, nearby_food_sources_data_manager: FoodSourcesDataManager):
         super().__init__(event_bus, events, id, EntityTypes.NEST, ownership, body)
+        self._nearby_food_sources_data_manager = nearby_food_sources_data_manager
 
         self._is_under_attack = False
 
@@ -74,6 +76,10 @@ class Nest(Entity):
     @property
     def fortification(self):
         return self._body.fortification
+    
+    @property
+    def nearby_food_sources_data_manager(self):
+        return self._nearby_food_sources_data_manager
 
     def do_step(self):
         self._body.feed_larvae()
