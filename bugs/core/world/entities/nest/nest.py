@@ -80,6 +80,10 @@ class Nest(Entity):
     @property
     def nearby_food_sources_data_manager(self):
         return self._nearby_food_sources_data_manager
+    
+    @property
+    def is_under_attack(self):
+        return self._is_under_attack
 
     def do_step(self):
         self._body.feed_larvae()

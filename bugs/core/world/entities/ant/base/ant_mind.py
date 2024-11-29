@@ -79,6 +79,7 @@ class AntMind(Mind):
         self._register_thought(thought=thought, asap=asap)
 
     def shelter_in_home_nest(self):
+        self.free_mind()
         thought = self._thought_factory.build_shelter_in_nest_new(self.home_nest)
         self._register_thought(thought=thought, immediately=True)
 

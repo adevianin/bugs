@@ -29,6 +29,10 @@ class Thought(ABC):
         return self.is_canceled or self.is_done
     
     @property
+    def is_in_progress(self):
+        return not self.is_canceled and not self.is_done
+    
+    @property
     def results(self):
         return self._results
     

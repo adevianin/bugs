@@ -13,7 +13,7 @@ class ShelterInNestThought(Thought):
         self._nested_thoughts['go_home_thought'] = go_home_thought
         self._shelter_nest = shelter_nest
 
-        self._shelter_nest.events.add_listener('attack_is_over', self._on_attack_is_over)
+        self._nest_removal_block_id = self._shelter_nest.block_removal()
 
     @property
     def go_home_thought(self) -> GoInNestThought:
@@ -22,18 +22,22 @@ class ShelterInNestThought(Thought):
     @property
     def shelter_nest_id(self):
         return self._shelter_nest.id
-
-    def do_step(self) -> bool:
-        if not self.go_home_thought.is_done:
-            self.go_home_thought.do_step()
-            return  
-        
-    def _on_attack_is_over(self):
-        self.done()
-
+    
     def _on_stop_thinking(self):
         super()._on_stop_thinking()
+        self._shelter_nest.unblock_removal(self._nest_removal_block_id)
 
-        self._shelter_nest.events.remove_listener('attack_is_over', self._on_attack_is_over)
-        
-        
+    def do_step(self) -> bool:
+        if self._shelter_nest.is_under_attack:
+            if self.go_home_thought.is_in_progress:
+                self.go_home_thought.do_step()
+            elif self.go_home_thought.is_canceled:
+                self.cancel()
+            elif self.go_home_thought.is_done:
+                if self._shelter_nest.is_died:
+                    self.cancel()
+        else:
+            self.done()
+
+    def _on_attack_is_over(self):
+        self.done()
