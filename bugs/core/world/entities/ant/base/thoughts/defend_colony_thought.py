@@ -13,9 +13,6 @@ class DefendColonyThought(Thought):
         self._nested_thoughts['fight_near_enemies_thought'] = fight_near_enemies_thought
         self._point_to_check = point_to_check
 
-        self._body.events.add_listener('colony_signal:enemy_spotted_in_colony_area', self._on_enemy_spotted)
-        self._body.events.add_listener('colony_signal:no_enemies_in_colony_area', self._on_no_enemies)
-
     @property
     def fight_near_enemies_thought(self) -> FightNearEnemiesThought:
         return self._nested_thoughts['fight_near_enemies_thought']
@@ -23,6 +20,16 @@ class DefendColonyThought(Thought):
     @property
     def point_to_check(self):
         return self._point_to_check
+    
+    def _on_start_thinking(self):
+        super()._on_start_thinking()
+        self._body.events.add_listener('colony_signal:enemy_spotted_in_colony_area', self._on_enemy_spotted)
+        self._body.events.add_listener('colony_signal:no_enemies_in_colony_area', self._on_no_enemies)
+
+    def _on_stop_thinking(self):
+        super()._on_stop_thinking()
+        self._body.events.remove_listener('colony_signal:enemy_spotted_in_colony_area', self._on_enemy_spotted)
+        self._body.events.remove_listener('colony_signal:no_enemies_in_colony_area', self._on_no_enemies)
     
     def do_step(self):
         self.fight_near_enemies_thought.do_step()
@@ -36,12 +43,6 @@ class DefendColonyThought(Thought):
             return
         
         self.done()
-
-    def _on_stop_thinking(self):
-        super()._on_stop_thinking()
-
-        self._body.events.remove_listener('colony_signal:enemy_spotted_in_colony_area', self._on_enemy_spotted)
-        self._body.events.remove_listener('colony_signal:no_enemies_in_colony_area', self._on_no_enemies)
 
     def _on_enemy_spotted(self, signal):
         self._point_to_check = self._body.calc_nearest_point(signal['enemies_positions'])

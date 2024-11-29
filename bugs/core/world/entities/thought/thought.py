@@ -44,9 +44,10 @@ class Thought(ABC):
     def flags(self):
         return self._flags
     
-    def set_body(self, body: LiveBody):
-        self._body = body
-        self._iterate_nested_thoughts(lambda thought: thought.set_body(body))
+    def setup(self, body: LiveBody):
+        self._set_body(body)
+        self._iterate_nested_thoughts(lambda thought: thought.setup(body))
+        self._on_start_thinking()
     
     def done(self, results = None):
         if self.is_completed:
@@ -91,5 +92,11 @@ class Thought(ABC):
         for thought_name in self._nested_thoughts.keys():
             callback(self._nested_thoughts[thought_name])
 
+    def _set_body(self, body: LiveBody):
+        self._body = body
+
     def _on_stop_thinking(self):
+        pass
+
+    def _on_start_thinking(self):
         pass

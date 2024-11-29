@@ -85,7 +85,7 @@ class Mind(ABC):
             elif asap:
                 self._thoughts_stack.insert(1, thought)
         
-        thought.set_body(self._body)
+        thought.setup(self._body)
                 
     def _get_current_thought(self) -> Thought:
         for thought in self._thoughts_stack:
