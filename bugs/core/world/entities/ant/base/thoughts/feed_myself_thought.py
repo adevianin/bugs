@@ -7,6 +7,7 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 class FeedMyselfThought(Thought):
 
     _body: AntBody
+    FOOD_CHECK_DELAY: 50
 
     def __init__(self, home: Nest, go_home_thought: GoInNestThought, flags: dict = None, sayback: str = None):
         super().__init__(type=ThoughtTypes.FEED_MYSELF, flags=flags, sayback=sayback)
@@ -37,7 +38,7 @@ class FeedMyselfThought(Thought):
             self._body.eat_calories(calories)
             self._body.get_out_of_nest()
             if (self._body.check_am_i_hungry()):
-                self._body.memory.save_flag(self._body.MemoryKeys.NO_MORE_FOOD_AT_HOME, True, 50)
+                self._body.memory.save_flag(self._body.MemoryKeys.NO_MORE_FOOD_AT_HOME, True, self.FOOD_CHECK_DELAY)
             self.done()
         elif self.go_home_thought.is_canceled:
             self.cancel()
