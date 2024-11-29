@@ -53,8 +53,8 @@ class ThoughtFactory:
     def build_fight_near_enemies_thought(self, fight_enemy_thought: FightEnemyThought, flags: dict = None, sayback: str = None):
         return FightNearEnemiesThought(fight_enemy_thought=fight_enemy_thought, flags=flags, sayback=sayback)
     
-    def build_defend_nest_thought(self, fight_near_enemies_thought: FightNearEnemiesThought, defending_nest: Nest, point_to_check: Point, flags: dict = None, sayback: str = None):
-        return DefendNestThought(fight_near_enemies_thought=fight_near_enemies_thought, defending_nest=defending_nest, point_to_check=point_to_check, flags=flags, sayback=sayback)
+    def build_defend_nest_thought(self, fight_near_enemies_thought: FightNearEnemiesThought, defending_nest: Nest, flags: dict = None, sayback: str = None):
+        return DefendNestThought(fight_near_enemies_thought=fight_near_enemies_thought, defending_nest=defending_nest, flags=flags, sayback=sayback)
     
     def build_random_walk_thought(self, center: Point, radius: int, flags: dict = None, sayback: str = None):
         return RandomWalkThought(center=center, radius=radius, flags=flags, sayback=sayback)
@@ -102,9 +102,9 @@ class ThoughtFactory:
         fight_near_enemies_thought = self.build_fight_near_enemies_thought_new()
         return self.build_attack_nest_thought(fight_near_enemies_thought=fight_near_enemies_thought, nest=nest, sayback=sayback)
     
-    def build_defend_nest_thought_new(self, nest: Nest, point_to_check: Point, sayback: str = None):
+    def build_defend_nest_thought_new(self, nest: Nest, sayback: str = None):
         fight_near_enemies_thought = self.build_fight_near_enemies_thought_new()
-        return self.build_defend_nest_thought(fight_near_enemies_thought=fight_near_enemies_thought, defending_nest=nest, point_to_check=point_to_check, sayback=sayback)
+        return self.build_defend_nest_thought(fight_near_enemies_thought=fight_near_enemies_thought, defending_nest=nest, sayback=sayback)
 
     def build_fight_near_enemies_thought_new(self):
         fight_enemy_thought = self.build_fight_enemy_thought(None)

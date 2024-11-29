@@ -926,6 +926,7 @@ class Command(BaseCommand):
                     350
                 ],
                 "nearby_food_sources_data": {},
+                "nearby_enemy_positions": [],
                 "angle": 0,
                 "stored_calories":2000000,
                 "larvae":[
@@ -1220,6 +1221,7 @@ class Command(BaseCommand):
                     450
                 ],
                 "nearby_food_sources_data": {},
+                "nearby_enemy_positions": [],
                 "angle": 0,
                 "stored_calories":2000000,
                 "larvae":[
@@ -1241,6 +1243,7 @@ class Command(BaseCommand):
                     1000
                 ],
                 "nearby_food_sources_data": {},
+                "nearby_enemy_positions": [],
                 "angle": 0,
                 "stored_calories":2000000,
                 "larvae":[

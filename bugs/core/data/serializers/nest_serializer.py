@@ -19,7 +19,8 @@ class NestSerializer(EntitySerializer):
             'area': entity.area,
             'build_progress': entity.build_progress,
             'fortification': entity.fortification,
-            'nearby_food_sources_data': entity.nearby_food_sources_data_manager.data
+            'nearby_food_sources_data': entity.nearby_food_sources_data_manager.data,
+            'nearby_enemy_positions': entity.nearby_enemy_positions
         })
 
         return json

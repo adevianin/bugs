@@ -169,8 +169,7 @@ class ThoughtSerializer():
         fight_near_enemies_thought_json = self.serialize(thought.fight_near_enemies_thought)
         json.update({
             'fight_near_enemies_thought': fight_near_enemies_thought_json,
-            'defending_nest_id': thought.defending_nest_id,
-            'point_to_check': thought.point_to_check
+            'defending_nest_id': thought.defending_nest_id
         })
 
         return json

@@ -25,17 +25,19 @@ from core.world.entities.world.notification.notifications.died_nest_notification
 from core.world.entities.world.notification.notifications.nest_alarm_raised_notification import NestAlarmRaisedNotification
 from core.world.entities.world.notification.notifications.nest_alarm_canceled_notification import NestAlarmCanceledNotification
 from .food_sources_data_manager import FoodSourcesDataManager
+from core.world.utils.point import Point
+
+from typing import List
 
 class Nest(Entity):
 
     _body: NestBody
     stats: NestStats
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: NestBody, nearby_food_sources_data_manager: FoodSourcesDataManager):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: NestBody, nearby_food_sources_data_manager: FoodSourcesDataManager, nearby_enemy_positions: List[Point]):
         super().__init__(event_bus, events, id, EntityTypes.NEST, ownership, body)
         self._nearby_food_sources_data_manager = nearby_food_sources_data_manager
-
-        self._is_under_attack = False
+        self._nearby_enemy_positions = nearby_enemy_positions
 
         self._body.events.add_listener('stored_calories_changed', self._on_stored_calories_changed)
         self._body.events.add_listener('build_status_changed', self._on_build_status_changed)
@@ -83,7 +85,11 @@ class Nest(Entity):
     
     @property
     def is_under_attack(self):
-        return self._is_under_attack
+        return len(self._nearby_enemy_positions) > 0
+    
+    @property
+    def nearby_enemy_positions(self) -> List[Point]:
+        return self._nearby_enemy_positions
 
     def do_step(self):
         self._body.feed_larvae()
@@ -133,16 +139,17 @@ class Nest(Entity):
         self._body.take_fortificating_item(item)
 
     def raise_attack_alarm(self, enemies_positions):
+        is_notification_needed = not self.is_under_attack and len(enemies_positions) > 0
+        self._nearby_enemy_positions = enemies_positions
         self.events.emit('is_under_attack', enemies_positions)
-        if not self._is_under_attack:
+        if is_notification_needed:
             self._emit_notification(NestAlarmRaisedNotification(self.owner_id, self.position))
-        self._is_under_attack = True
 
     def cancel_attack_alarm(self):
-        if self._is_under_attack:
+        self._nearby_enemy_positions = []
+        if self.is_under_attack:
             self.events.emit('attack_is_over')
             self._emit_notification(NestAlarmCanceledNotification(self.owner_id, self.position))
-        self._is_under_attack = False
 
     def _on_stored_calories_changed(self):
         self._emit_action(NestStoredCaloriesChangedAction.build(self.id, self._body.stored_calories))

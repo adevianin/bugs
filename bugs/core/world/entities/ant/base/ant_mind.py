@@ -62,8 +62,8 @@ class AntMind(Mind):
         thought = self._thought_factory.build_build_fortification_new(nest=nest, sayback=sayback)
         self._register_thought(thought)
 
-    def defend_nest(self, nest: Nest, point_to_check: Point, sayback: str = None):
-        thought = self._thought_factory.build_defend_nest_thought_new(nest=nest, point_to_check=point_to_check, sayback=sayback)
+    def defend_nest(self, nest: Nest, sayback: str = None):
+        thought = self._thought_factory.build_defend_nest_thought_new(nest=nest, sayback=sayback)
         self._register_thought(thought=thought, immediately=True)
 
     def defend_colony(self, point_to_check: Point, sayback: str = None):
@@ -132,8 +132,7 @@ class AntMind(Mind):
             return
         
         if self.guardian_behavior == GuardianBehaviors.NEST:
-            nearest_enemy_pos = self._body.calc_nearest_point(enemies_positions)
-            self.defend_nest(self.home_nest, nearest_enemy_pos)
+            self.defend_nest(self.home_nest)
         elif self.guardian_behavior == GuardianBehaviors.NONE:
             self.shelter_in_home_nest()
 

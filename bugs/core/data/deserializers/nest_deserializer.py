@@ -25,7 +25,8 @@ class NestDeserializer(EntityDeserializer):
             'fortification': nest_json['fortification'],
             'larvae': [self._larva_deserializer.deserialize_larva(larva_json) for larva_json in nest_json['larvae']],
             'eggs': [self._egg_deserializer.deserialize_egg(egg_json) for egg_json in nest_json['eggs']],
-            'nearby_food_sources_data': self._deserialize_food_sources_data(nest_json['nearby_food_sources_data'])
+            'nearby_food_sources_data': self._deserialize_food_sources_data(nest_json['nearby_food_sources_data']),
+            'nearby_enemy_positions': [Point.from_json(position_json) for position_json in nest_json['nearby_enemy_positions']]
         })
         return props
     
