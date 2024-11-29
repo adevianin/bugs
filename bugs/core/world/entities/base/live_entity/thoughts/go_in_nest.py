@@ -17,6 +17,10 @@ class GoInNestThought(Thought):
         self._nest_removal_block_id = self._nest.block_removal()
 
     @property
+    def nest(self) -> Nest:
+        return self._nest
+
+    @property
     def nest_id(self):
         return self._nest.id
     
