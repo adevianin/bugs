@@ -38,6 +38,3 @@ class ShelterInNestThought(Thought):
                     self.cancel()
         else:
             self.done()
-
-    def _on_attack_is_over(self):
-        self.done()
