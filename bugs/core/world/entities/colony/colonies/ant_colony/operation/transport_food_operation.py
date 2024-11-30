@@ -53,12 +53,12 @@ class TransportFoodOperation(Operation):
         self.events.add_listener('formation:march_to_nest_from:done', self._approaching_nest_from_step)
         self.events.add_listener('formation:march_to_nest_to:done', self._approaching_nest_to_step)
 
-        self.events.add_listener('fight_won:march_to_nest_from', self._check_is_enought_workers_to_continue_operation(self._march_to_nest_from_step))
-        self.events.add_listener('fight_won:approaching_nest_from', self._check_is_enought_workers_to_continue_operation(self._approaching_nest_from_step))
+        self.events.add_listener('fight_won:march_to_nest_from', self._has_sufficient_workers_step_decorator(self._march_to_nest_from_step))
+        self.events.add_listener('fight_won:approaching_nest_from', self._has_sufficient_workers_step_decorator(self._approaching_nest_from_step))
         self.events.add_listener('fight_start:march_to_nest_to', self._workers_drop_picked_item)
-        self.events.add_listener('fight_won:march_to_nest_to', self._march_to_assemble_point_to_done_operation_step)
+        self.events.add_listener('fight_won:march_to_nest_to', self._march_to_assemble_point_for_completion_step)
         self.events.add_listener('fight_start:approaching_nest_to', self._workers_drop_picked_item)
-        self.events.add_listener('fight_won:approaching_nest_to', self._march_to_assemble_point_to_done_operation_step)
+        self.events.add_listener('fight_won:approaching_nest_to', self._march_to_assemble_point_for_completion_step)
 
         for ant in self._workers: 
             ant.body.sayer.add_listener('worker_is_near_nest_from', partial(self._on_worker_is_near_nest_from, ant))
@@ -103,7 +103,7 @@ class TransportFoodOperation(Operation):
 
     def _get_in_nest_from_step(self):
         if self._nest_from.is_died:
-            self._march_to_assemble_point_to_done_operation_step()
+            self._march_to_assemble_point_for_completion_step()
             return
         
         for ant in self._workers:
@@ -148,7 +148,7 @@ class TransportFoodOperation(Operation):
     def _getting_inside_nest_to_step(self):
         if self._nest_to.is_died:
             self._workers_drop_picked_item()
-            self._march_to_assemble_point_to_done_operation_step()
+            self._march_to_assemble_point_for_completion_step()
             return
         
         for ant in self._workers:
@@ -167,4 +167,4 @@ class TransportFoodOperation(Operation):
                 ant.get_in_nest(self._nest_to)
                 ant.give_food(self._nest_to)
         
-        self._march_to_assemble_point_to_done_operation_step()
+        self._march_to_assemble_point_for_completion_step()

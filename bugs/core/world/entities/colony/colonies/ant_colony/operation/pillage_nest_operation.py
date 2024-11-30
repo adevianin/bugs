@@ -56,12 +56,12 @@ class PillageNestOperation(Operation):
         self.events.add_listener('formation:march_to_nest_to_pillage:done', self._approaching_nest_to_pillage_step)
         self.events.add_listener('formation:march_to_nest_for_loot:done', self._approach_nest_for_loot_step)
 
-        self.events.add_listener('fight_won:march_to_nest_to_pillage', self._check_is_enought_workers_to_continue_operation(self._march_to_nest_to_pillage_step))
-        self.events.add_listener('fight_won:approaching_nest_to_pillage', self._check_is_enought_workers_to_continue_operation(self._approaching_nest_to_pillage_step))
+        self.events.add_listener('fight_won:march_to_nest_to_pillage', self._has_sufficient_workers_step_decorator(self._march_to_nest_to_pillage_step))
+        self.events.add_listener('fight_won:approaching_nest_to_pillage', self._has_sufficient_workers_step_decorator(self._approaching_nest_to_pillage_step))
         self.events.add_listener('fight_start:march_to_nest_for_loot', self._workers_drop_picked_item)
-        self.events.add_listener('fight_won:march_to_nest_for_loot', self._march_to_assemble_point_to_done_operation_step)
+        self.events.add_listener('fight_won:march_to_nest_for_loot', self._march_to_assemble_point_for_completion_step)
         self.events.add_listener('fight_start:approach_nest_for_loot', self._workers_drop_picked_item)
-        self.events.add_listener('fight_won:approach_nest_for_loot', self._march_to_assemble_point_to_done_operation_step)
+        self.events.add_listener('fight_won:approach_nest_for_loot', self._march_to_assemble_point_for_completion_step)
 
         for ant in self._workers:
             ant.body.sayer.add_listener('worker_is_approached_nest_to_pillage', partial(self._on_worker_is_approached_nest_to_pillage, ant))
@@ -103,7 +103,7 @@ class PillageNestOperation(Operation):
 
     def _get_in_nest_to_pillage_step(self):
         if self._nest_to_pillage.is_died:
-            self._march_to_assemble_point_to_done_operation_step()
+            self._march_to_assemble_point_for_completion_step()
             return
         
         for ant in self._workers:
@@ -147,7 +147,7 @@ class PillageNestOperation(Operation):
     def _get_in_loot_nest_step(self):
         if self._nest_for_loot.is_died:
             self._workers_drop_picked_item()
-            self._march_to_assemble_point_to_done_operation_step()
+            self._march_to_assemble_point_for_completion_step()
             return
 
         for ant in self._workers:
@@ -165,5 +165,5 @@ class PillageNestOperation(Operation):
             if ant.has_picked_item():
                 ant.give_food(self._nest_for_loot)
 
-        self._march_to_assemble_point_to_done_operation_step()
+        self._march_to_assemble_point_for_completion_step()
         

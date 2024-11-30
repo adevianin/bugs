@@ -96,4 +96,4 @@ class BuildFortificationOperation(Operation):
     def _finish_step(self):
         self._write_flag(self.Flags.IS_FINISH_STEP_STARTED, True)
         self._workers_drop_picked_item()
-        self._march_to_assemble_point_to_done_operation_step()
+        self._march_to_assemble_point_for_completion_step()

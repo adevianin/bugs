@@ -83,4 +83,4 @@ class DestroyNestOperation(Operation):
     def _go_back_home_step(self):
         self._stage = 'go_back_home'
         self._write_flag(self.Flags.IS_AGGRESSIVE, False)
-        self._march_to_assemble_point_to_done_operation_step()
+        self._march_to_assemble_point_for_completion_step()

@@ -195,7 +195,7 @@ class Operation(ABC):
         self.events.add_listener('formation:march_to_assemble_point_to_done_operation:done', self.done)
 
         self.events.add_listener('fight_won:preparing_step', self._prepare_step)
-        self.events.add_listener('fight_won:march_to_assemble_point_step', self._march_to_assemble_point_to_done_operation_step)
+        self.events.add_listener('fight_won:march_to_assemble_point_step', self._march_to_assemble_point_for_completion_step)
 
         for ant in self._hired_ants:
             ant.body.sayer.add_listener('prepared', partial(self._on_ant_prepared, ant))
@@ -436,7 +436,7 @@ class Operation(ABC):
     def _on_all_ants_prepared(self):
         pass
 
-    def _march_to_assemble_point_to_done_operation_step(self):
+    def _march_to_assemble_point_for_completion_step(self):
         self._stage = 'march_to_assemble_point_step'
         units = self._all_ants_for_march
         if BaseFormation.check_is_formation_needed(units, self._assemble_point):
@@ -457,12 +457,12 @@ class Operation(ABC):
             if ant.has_picked_item():
                 ant.drop_picked_item()
 
-    def _check_is_enought_workers_to_continue_operation(self, step: Callable, min_count: int = None):
+    def _has_sufficient_workers_step_decorator(self, step: Callable, min_count: int = None):
         min_count = min_count or self.MIN_WORKERS_COUNT_TO_CONTINUE_OPERATION
         def func():
             if len(self._workers) >= min_count:
                 step()
             else:
-                self._march_to_assemble_point_to_done_operation_step()
+                self._march_to_assemble_point_for_completion_step()
 
         return func

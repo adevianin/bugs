@@ -86,7 +86,7 @@ class BringBugCorpseToNestOperation(Operation):
         if self._check_is_enought_workers():
             self._march_to_search_bug_corpse_location_step()
         else:
-            self._march_to_assemble_point_to_done_operation_step()
+            self._march_to_assemble_point_for_completion_step()
 
     def _approach_search_bug_corpse_location_step(self):
         for ant in self._workers:
@@ -102,7 +102,7 @@ class BringBugCorpseToNestOperation(Operation):
         found_bug_corpse = self._find_bug_corpse()
 
         if not found_bug_corpse:
-            self._march_to_assemble_point_to_done_operation_step()
+            self._march_to_assemble_point_for_completion_step()
             return
 
         if found_bug_corpse.position.is_equal(self._search_bug_corpse_location):
@@ -119,11 +119,11 @@ class BringBugCorpseToNestOperation(Operation):
 
     def _give_corpse_to_nest_step(self):
         if self._nest.is_died:
-            self._march_to_assemble_point_to_done_operation_step()
+            self._march_to_assemble_point_for_completion_step()
             return
         
         self._nest.take_edible_item(self._found_bug_corpse_item)
-        self._march_to_assemble_point_to_done_operation_step()
+        self._march_to_assemble_point_for_completion_step()
 
     def _find_bug_corpse(self) -> BugCorpseItem:
         bug_corpse_items = self._workers[0].look_around_for_bug_corpses()
