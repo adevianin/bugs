@@ -53,12 +53,14 @@ class TransportFoodOperation(Operation):
         self.events.add_listener('formation:march_to_nest_from:done', self._approaching_nest_from_step)
         self.events.add_listener('formation:march_to_nest_to:done', self._approaching_nest_to_step)
 
-        self.events.add_listener('fight_won:march_to_nest_from', self._has_sufficient_workers_step_decorator(self._march_to_nest_from_step))
-        self.events.add_listener('fight_won:approaching_nest_from', self._has_sufficient_workers_step_decorator(self._approaching_nest_from_step))
+        self.events.add_listener('fight_won:march_to_nest_from', self._march_to_nest_from_step)
+        self.events.add_listener('fight_won:approaching_nest_from', self._approaching_nest_from_step)
         self.events.add_listener('fight_start:march_to_nest_to', self._workers_drop_picked_item)
         self.events.add_listener('fight_won:march_to_nest_to', self._march_to_assemble_point_for_completion_step)
         self.events.add_listener('fight_start:approaching_nest_to', self._workers_drop_picked_item)
         self.events.add_listener('fight_won:approaching_nest_to', self._march_to_assemble_point_for_completion_step)
+
+        self.events.add_listener('hired_ant_died', self._on_ant_died)
 
         for ant in self._workers: 
             ant.body.sayer.add_listener('worker_is_near_nest_from', partial(self._on_worker_is_near_nest_from, ant))
@@ -168,3 +170,7 @@ class TransportFoodOperation(Operation):
                 ant.give_food(self._nest_to)
         
         self._march_to_assemble_point_for_completion_step()
+
+    def _on_ant_died(self, ant: Ant):
+        if len(self._workers) == 0:
+            self._march_to_assemble_point_for_completion_step()
