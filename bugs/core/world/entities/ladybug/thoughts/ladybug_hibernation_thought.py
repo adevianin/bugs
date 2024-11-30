@@ -8,6 +8,10 @@ from core.world.utils.point import Point
 
 class LadybugHibernationThought(Thought):
 
+    class Flags(Thought.Flags):
+        FOUND_TREE = 'found_tree'
+        IS_NEAR_HIBERNATION_POINT = 'is_near_hibernation_point'
+
     _body: LadybugBody
 
     def __init__(self, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_tree: Tree, flags: dict, sayback: str):
@@ -34,24 +38,24 @@ class LadybugHibernationThought(Thought):
             if self.fight_near_enemies_thought.is_fighting:
                 return
         
-        if not self._read_flag('found_tree'):
+        if not self._read_flag(self.Flags.FOUND_TREE):
             trees = self._body.look_aroung_for_trees()
             if len(trees) > 0:
                 self._found_tree = trees[0]
-                self._write_flag('found_tree', True)
+                self._write_flag(self.Flags.FOUND_TREE, True)
 
-        if not self._read_flag('found_tree'):
+        if not self._read_flag(self.Flags.FOUND_TREE):
             self.random_walk_thought.do_step()
             return
             
-        if self._read_flag('found_tree') and not self._read_flag('is_near_hibernation_point'):
+        if self._read_flag(self.Flags.FOUND_TREE) and not self._read_flag(self.Flags.IS_NEAR_HIBERNATION_POINT):
             hibernation_point = Point(self._found_tree.position.x, self._found_tree.position.y - 100)
             is_walk_done = self._body.step_to(hibernation_point)
             if is_walk_done:
-                self._write_flag('is_near_hibernation_point', True)
+                self._write_flag(self.Flags.IS_NEAR_HIBERNATION_POINT, True)
             return
         
-        if not self._body.am_i_in_hibernation() and self._read_flag('is_near_hibernation_point'):
+        if not self._body.am_i_in_hibernation() and self._read_flag(self.Flags.IS_NEAR_HIBERNATION_POINT):
             self._body.enter_hibernation()
             self.done() 
         
