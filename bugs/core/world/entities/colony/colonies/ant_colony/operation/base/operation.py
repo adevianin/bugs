@@ -450,7 +450,7 @@ class Operation(ABC):
                 self._destroy_formation()
             
         units = self._all_ants_for_march
-        if BaseFormation.check_is_formation_needed(units, self._assemble_point):
+        if self._check_is_formation_needed(units, self._assemble_point):
             formation = self._formation_factory.build_convoy_formation(formation_name, units, self._assemble_point)
             self._register_formation(formation)
         else:
