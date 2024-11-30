@@ -219,8 +219,12 @@ class World():
             self._event_bus.emit('season_changed', season)
         self._current_season = season
 
-    def _my_test_code(self):
-        if self._current_step == 163:
-           ant: Ant = MY_TEST_ENV['attacker']
-           oper_ant: Ant = self._map.get_entity_by_id(94)
-           ant.fight_enemy(oper_ant)
+    def _my_test_code(self, s):
+        from core.world.utils.point import Point
+        from core.world.entities.nest.nest import Nest
+        ant: Ant = MY_TEST_ENV['attacker2']
+        if s == 1:
+           ant.walk_to(Point(1518,461))
+
+        if s == 2:
+            ant.attack_nest(self._map.get_entity_by_id(30))
