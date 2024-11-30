@@ -12,6 +12,8 @@ import random
 
 class BugCorpseSpawner():
 
+    MIN_DISTANCE_TO_NEST = 80
+
     ACTIVE_SEASONS = [SeasonTypes.SUMMER, SeasonTypes.AUTUMN]
 
     def __init__(self, event_bus: EventEmitter, map: Map):
@@ -29,7 +31,8 @@ class BugCorpseSpawner():
             bug_corpses_count = len(bug_corpses)
             if nests_count > 0 and bug_corpses_count < nests_count:
                 nest = random.choice(nests)
-                spawn_point = self._map.generate_random_point_on_circle(nest.position, nest.area)
+                # nest = self._map.get_entity_by_id(30)
+                spawn_point = self._map.generate_random_point_within_circle(nest.position, nest.area - 2, self.MIN_DISTANCE_TO_NEST)
                 strength = random.randint(80, 200)
                 self._event_bus.emit('item_birth_request', ItemBirthRequest(spawn_point, strength, ItemTypes.BUG_CORPSE, random.randint(0, 360)))
 

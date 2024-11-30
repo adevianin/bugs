@@ -67,10 +67,13 @@ class Point(namedtuple('Point', ['x', 'y'])):
         return angle_degrees
     
     @staticmethod
-    def generate_random_point_on_circle(center: 'Point', radius: int):
+    def generate_random_point_within_circle(center: 'Point', radius: int, min_distance_to_center: int = 0):
+        if radius < min_distance_to_center:
+            raise Exception('min distance cannot be greater than radius of circle')
+        radius = random.uniform(min_distance_to_center, radius)
         angle = random.uniform(0, 2 * math.pi)
-        x = center.x + radius * math.cos(angle)
-        y = center.y + radius * math.sin(angle)
+        x = int(center.x + radius * math.cos(angle))
+        y = int(center.y + radius * math.sin(angle))
         return Point(x, y)
 
     @classmethod
