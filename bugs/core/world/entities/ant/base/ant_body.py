@@ -76,7 +76,7 @@ class AntBody(LiveBody):
         self.events.emit('got_out_of_nest')
     
     def say(self, phrase: str, data: dict):
-        if (data):
+        if (data is not None):
             self.sayer.emit(phrase, data)
         else:
             self.sayer.emit(phrase)
