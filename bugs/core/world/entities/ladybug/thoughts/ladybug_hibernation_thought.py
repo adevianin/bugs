@@ -33,6 +33,11 @@ class LadybugHibernationThought(Thought):
         return self._found_tree.id if self._found_tree else None
     
     def do_step(self) -> bool:
+        super().do_step()
+        self.fight_near_enemies_thought.do_step()
+        if self.fight_near_enemies_thought.is_fighting:
+            return
+        
         if not self._body.am_i_in_hibernation():
             self.fight_near_enemies_thought.do_step()
             if self.fight_near_enemies_thought.is_fighting:

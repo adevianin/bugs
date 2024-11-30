@@ -3,10 +3,14 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.thought.thought import Thought
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
-from typing import Callable, List
 from core.world.entities.item.item_sources.base.item_source import ItemSource
 
 class HuntForAphid(Thought):
+
+    class Flags(Thought.Flags):
+        FOUND_APHID = 'found_aphid'
+        IS_NEAR_FOUND_APHID = 'is_near_found_aphid'
+        IS_FOUND_APID_EATED = 'is_found_aphid_eated'
 
     _body: LadybugBody
 
@@ -34,25 +38,25 @@ class HuntForAphid(Thought):
         if self.fight_near_enemies_thought.is_fighting:
             return
         
-        if not self._body.memory.read('found_aphid'):
+        if not self._body.memory.read_flag(self.Flags.FOUND_APHID):
             food_sources = self._body.look_around_for_honeydew_food_sources()
 
             for food_source in food_sources:
                 if food_source.is_fertile:
                     self._found_food_source = food_source
-                    self._body.memory.save('found_aphid', True)
+                    self._body.memory.save_flag(self.Flags.FOUND_APHID, True)
                     break
 
-        if self._body.memory.read('found_aphid') and not self._body.memory.read('is_near_found_aphid'):
+        if self._body.memory.read_flag(self.Flags.FOUND_APHID) and not self._body.memory.read_flag(self.Flags.IS_NEAR_FOUND_APHID):
             is_walk_done = self._body.step_to(self._found_food_source.position)
-            self._body.memory.save('is_near_found_aphid', is_walk_done)
+            self._body.memory.save_flag(self.Flags.IS_NEAR_FOUND_APHID, is_walk_done)
             return
         
-        if self._body.memory.read('is_near_found_aphid') and not self._body.memory.read('is_found_aphid_eated'):
+        if self._body.memory.read_flag(self.Flags.IS_NEAR_FOUND_APHID) and not self._body.memory.read_flag(self.Flags.IS_FOUND_APID_EATED):
             if self._found_food_source.is_fertile:
                 self._body.eat_aphid(self._found_food_source)
             if not self._found_food_source.is_fertile:
-                self._body.memory.save('is_found_aphid_eated', True)
+                self._body.memory.save_flag(self.Flags.IS_FOUND_APID_EATED, True)
                 self.done()
             return
         
