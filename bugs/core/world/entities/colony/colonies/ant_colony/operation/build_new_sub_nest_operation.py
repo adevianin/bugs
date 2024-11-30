@@ -98,7 +98,7 @@ class BuildNewSubNestOperation(Operation):
             self._write_ant_flag(worker, self.Flags.ANT_FLAG_FINISHED_BUILDING_NEST, False)
             worker.build_nest(self._building_nest, False, 'nest_is_built')
 
-    def _on_nest_built(self, worker: Ant):
+    def _on_nest_built(self, worker: Ant, is_built: bool):
         self._write_ant_flag(worker, self.Flags.ANT_FLAG_FINISHED_BUILDING_NEST, True)
         if self._check_ant_flag_for_ants(self._workers, self.Flags.ANT_FLAG_FINISHED_BUILDING_NEST):
             self._march_to_assemble_point_to_done_operation_step()
