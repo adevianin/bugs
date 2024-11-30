@@ -191,8 +191,8 @@ class DomainFacade {
         this._colonyService.stopOperation(colonyId, operationId);
     }
 
-    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount) {
-        this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount);
+    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
+        this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName);
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
@@ -217,8 +217,8 @@ class DomainFacade {
 
     /*========================*/
 
-    foundColony(queenId, nuptialMaleId, nestBuildingSite) {
-        this._nuptialService.foundColony(queenId, nuptialMaleId, nestBuildingSite);
+    foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
+        this._nuptialService.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
     }
 
     getMyNuptialMales() {
@@ -1589,8 +1589,7 @@ __webpack_require__.r(__webpack_exports__);
 
 class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, isBuilt, hp, maxHp, 
-        fortification, maxFortification) {
+    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, isBuilt, hp, maxHp, fortification, maxFortification, name, isMain) {
         super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST, fromColony, ownerId, hp, maxHp);
         this._nestApi = nestApi;
         this.storedCalories = storedCalories;
@@ -1598,8 +1597,14 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this.eggs = eggs;
         this._fortification = fortification;
         this.maxFortification = maxFortification;
+        this._name = name;
+        this.isMain = isMain;
 
         this._setIsBuilt(isBuilt)
+    }
+
+    get name() {
+        return this._name;
     }
 
     get takenChildPlacesCount() {
@@ -1615,6 +1620,13 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this.emit('fortificationChanged');
     }
 
+
+    rename(newName) {
+        this._name = newName;
+        this._nestApi.renameNest(this.id, newName);
+        this.emit('nameChanged');
+    }
+    
     checkHaveEnoughtFoodForNewEgg() {
         return this.storedCalories >= _domain_consts__WEBPACK_IMPORTED_MODULE_5__.CONSTS.NEW_EGG_FOOD_COST;
     }
@@ -2643,8 +2655,8 @@ class ColonyService {
         this._colonyApi.stopOperation(colonyId, operationId);
     }
 
-    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount) {
-        this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount);
+    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
+        this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName);
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
@@ -2795,8 +2807,8 @@ class NuptialService {
         this._initMales(nuptialMalesJson);
     }
 
-    foundColony(queenId, nuptialMaleId, nestBuildingSite) {
-        this._nuptialApi.foundColony(queenId, nuptialMaleId, nestBuildingSite);
+    foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
+        this._nuptialApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
         this._removeMale(nuptialMaleId);
     }
 
@@ -3170,8 +3182,10 @@ class WorldFactory {
         let maxHp = nestJson.max_hp;
         let maxFortification = nestJson.maxFortification;
         let fortification = nestJson.fortification;
+        let name = nestJson.name;
+        let isMain = nestJson.isMain;
         return new _entity_nest__WEBPACK_IMPORTED_MODULE_2__.Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, isBuilt, 
-            hp, maxHp, fortification, maxFortification);
+            hp, maxHp, fortification, maxFortification, name, isMain);
     }
 
     buildAnt(antJson) {
@@ -3351,11 +3365,12 @@ class ColonyApi {
         return this._requester.post(`world/colonies/${ colonyId }/operations/${ operationId }/stop_operation`)
     }
 
-    buildNewSubNestOperation(colonyId, buildingSite, workersCount, warriorsCount) {
+    buildNewSubNestOperation(colonyId, buildingSite, workersCount, warriorsCount, nestName) {
         return this._requester.post(`world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
             building_site: [buildingSite.x, buildingSite.y],
             workers_count: workersCount,
             warriors_count: warriorsCount,
+            nest_name: nestName
         })
     }
 
@@ -3511,6 +3526,12 @@ class NestApi {
         return this._requester.post(`world/nests/${nestId}/larvae/${larvaId}/delete`);
     }
 
+    renameNest(nestId, name) {
+        return this._requester.post(`world/nests/${nestId}/rename`, {
+            name: name
+        });
+    }
+
 }
 
 
@@ -3534,11 +3555,12 @@ class NuptialApi {
         this._requester = requester;
     }
 
-    foundColony(queenId, nuptialMaleId, nestBuildingSite) { 
+    foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) { 
         return this._requester.post('world/nuptial_environment/found_colony', {
             queen_id: queenId,
             nuptial_male_id: nuptialMaleId,
-            nest_building_site: [nestBuildingSite.x, nestBuildingSite.y]
+            nest_building_site: [nestBuildingSite.x, nestBuildingSite.y],
+            colony_name: colonyName
         })
     }
 
@@ -4542,7 +4564,7 @@ class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     _renderNestOption(nest) {
         let optionEl = document.createElement('option');
         optionEl.setAttribute('value', nest.id);
-        optionEl.innerHTML = `nest ${nest.id}`;
+        optionEl.innerHTML = nest.name;
         this._el.append(optionEl);
     }
 
@@ -5989,75 +6011,6 @@ class EggView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/foodTab/foodTabView.js":
-/*!*****************************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/foodTab/foodTabView.js ***!
-  \*****************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "FoodTabView": () => (/* binding */ FoodTabView)
-/* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
-/* harmony import */ var _foodTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foodTabTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/foodTab/foodTabTmpl.html");
-
-
-
-class FoodTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
-
-    constructor(el) {
-        super(el);
-
-        this._render();
-    }
-
-    manageNest(nest) {
-        this._stopListenNest();
-        this._nest = nest;
-        this._listenNest();
-
-        this._renderStoredClalories();
-    }
-
-    remove() {
-        super.remove();
-        this._stopListenNest();
-    }
-
-    _listenNest() {
-        this._stopListenStoredCaloriesChanged = this._nest.on('storedCaloriesChanged', this._onStoredCaloriesChanged.bind(this));
-    }
-
-    _stopListenNest() {
-        if (!this._nest) {
-            return
-        }
-
-        this._stopListenStoredCaloriesChanged();
-    }
-
-    _render() {
-        this._el.innerHTML = _foodTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-
-        this._storedCaloriesEl = this._el.querySelector('[data-stored-calories]');
-    }
-
-    _renderStoredClalories() {
-        this._storedCaloriesEl.innerHTML = this._nest.storedCalories;
-    }
-
-    _onStoredCaloriesChanged() {
-        this._renderStoredClalories();
-    }
-
-}
-
-
-
-/***/ }),
-
 /***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/index.js":
 /*!***************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/index.js ***!
@@ -6259,6 +6212,87 @@ class LarvaView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Bas
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/mainTab/mainTabView.js":
+/*!*****************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/mainTab/mainTabView.js ***!
+  \*****************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "MainTabView": () => (/* binding */ MainTabView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _mainTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./mainTabTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/mainTab/mainTabTmpl.html");
+
+
+
+class MainTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+
+        this._render();
+
+        this._nameEl.addEventListener('change', this._onChangedNestName.bind(this));
+    }
+
+    manageNest(nest) {
+        this._stopListenNest();
+        this._nest = nest;
+        this._listenNest();
+
+        this._renderStoredClalories();
+        this._renderName();
+    }
+
+    remove() {
+        super.remove();
+        this._stopListenNest();
+    }
+
+    _listenNest() {
+        this._stopListenStoredCaloriesChanged = this._nest.on('storedCaloriesChanged', this._onStoredCaloriesChanged.bind(this));
+    }
+
+    _stopListenNest() {
+        if (!this._nest) {
+            return
+        }
+
+        this._stopListenStoredCaloriesChanged();
+    }
+
+    _render() {
+        this._el.innerHTML = _mainTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._storedCaloriesEl = this._el.querySelector('[data-stored-calories]');
+        this._nameEl = this._el.querySelector('[data-name]');
+    }
+
+    _renderStoredClalories() {
+        this._storedCaloriesEl.innerHTML = this._nest.storedCalories;
+    }
+
+    _renderName() {
+        this._nameEl.value = this._nest.name;
+    }
+
+    _onStoredCaloriesChanged() {
+        this._renderStoredClalories();
+    }
+
+    _onChangedNestName() {
+        this._nest.rename(this._nameEl.value);
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/nestManagerView.js":
 /*!*************************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/nestManagerView.js ***!
@@ -6275,7 +6309,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_game_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/tabSwitcher */ "./bugs/core/client/app/src/view/game/panel/base/tabSwitcher/index.js");
 /* harmony import */ var _eggTab_eggTabView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./eggTab/eggTabView */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/eggTab/eggTabView.js");
 /* harmony import */ var _larvaTab_larvaTabView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./larvaTab/larvaTabView */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTabView.js");
-/* harmony import */ var _foodTab_foodTabView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./foodTab/foodTabView */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/foodTab/foodTabView.js");
+/* harmony import */ var _mainTab_mainTabView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./mainTab/mainTabView */ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/mainTab/mainTabView.js");
 
 
 
@@ -6300,70 +6334,20 @@ class NestManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
     manageNest(nest) {
         this._eggTab.manageNest(nest);
         this._larvaTab.manageNest(nest);
-        this._foodTab.manageNest(nest);
-        // if (this._nest) {
-        //     this._stopListenNest();
-        // }
-        // if (this._queen) {
-        //     this._stopListenQueen();
-        // }
-
-        // this._nest = nest;
-        // this._listenNest();
-        
-        // this._queen = this.$domainFacade.getQueenOfColony(nest.fromColony);
-        // this._listenQueen();
-
-        // this._larvaManager.manageNest(nest);
-
-        // this._renderCalories();
-        // this._renderIsQueenInsideNest();
+        this._mainTab.manageNest(nest);
     }
-
-    // _listenNest() {
-    //     this._unbindStoredCaloriesChangedListener = this._nest.on('storedCaloriesChanged', this._renderCalories.bind(this))
-    // }
-
-    // _listenQueen() {
-    //     if (this._queen) {
-    //         this._unbindQueenLocatedInNestListener = this._queen.on('locatedInNestChanged', this._renderIsQueenInsideNest.bind(this));
-    //     }
-    // }
-
-    // _stopListenQueen() {
-    //     if (this._queen) {
-    //         this._unbindQueenLocatedInNestListener();
-    //     }
-    // }
-
-    // _stopListenNest() {
-    //     this._unbindStoredCaloriesChangedListener();
-    // }
 
     _render() {
         this._el.innerHTML = _nestManagerTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        // this._storedCaloriesEl = this._el.querySelector('[data-stored-calories]');
-        // this._isQueenInsideIndicatorEl = this._el.querySelector('[data-is-queen-inside]');
-        // this._larvaManager = new LarvaManager(this._el.querySelector('[data-larva-manager]'));
         this._eggTab = new _eggTab_eggTabView__WEBPACK_IMPORTED_MODULE_3__.EggTabView(this._el.querySelector('[data-egg-tab]'));
         this._larvaTab = new _larvaTab_larvaTabView__WEBPACK_IMPORTED_MODULE_4__.LarvaTabView(this._el.querySelector('[data-larva-tab]'));
-        this._foodTab = new _foodTab_foodTabView__WEBPACK_IMPORTED_MODULE_5__.FoodTabView(this._el.querySelector('[data-food-tab]'));
+        this._mainTab = new _mainTab_mainTabView__WEBPACK_IMPORTED_MODULE_5__.MainTabView(this._el.querySelector('[data-main-tab]'));
         this._tabSwitcher = new _view_game_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_2__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+            { name: 'main', label: 'основне', tab: this._mainTab },
             { name: 'egg', label: 'яйця', tab: this._eggTab },
-            { name: 'larva', label: 'личинки', tab: this._larvaTab },
-            { name: 'food', label: 'їжа', tab: this._foodTab }
+            { name: 'larva', label: 'личинки', tab: this._larvaTab }
         ]);
     }
-
-    // _renderCalories() {
-    //     this._storedCaloriesEl.innerHTML = this._nest.storedCalories;
-    // }
-
-    // _renderIsQueenInsideNest() {
-    //     let isQueenInNest = this._queen && this._queen.locatedInNestId == this._nest.id;
-    //     this._isQueenInsideIndicatorEl.innerHTML = isQueenInNest ? '+' : '-';
-    //     this._larvaManager.toggle(isQueenInNest);
-    // }
 
 }
 
@@ -6424,7 +6408,7 @@ class NestView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
         this._el.innerHTML = _nestTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
         this._el.classList.add('colony-manager__nest_item');
 
-        this._el.querySelector('[data-nest-name]').innerHTML = this._nest.id;
+        this._el.querySelector('[data-nest-name]').innerHTML = this._nest.name;
     }
 
     _onClick() {
@@ -6885,6 +6869,7 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
         this._workersCountEl = this._el.querySelector('[data-workers-count]');
         this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
+        this._nestNameEl = this._el.querySelector('[data-nest-name]');
 
         this._renderBuildingSite();
     }
@@ -6910,7 +6895,8 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
         }
         let workersCount = parseInt(this._workersCountEl.value);
         let warriorsCount = parseInt(this._warriorsCountEl.value);
-        this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingSite, workersCount, warriorsCount);
+        let nestName = this._nestNameEl.value;
+        this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingSite, workersCount, warriorsCount, nestName);
         this._onDone();
     }
 
@@ -7961,6 +7947,7 @@ class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._malesSearch = new _malesSearch__WEBPACK_IMPORTED_MODULE_3__.MalesSearchView(this._el.querySelector('[data-males-search]'));
         this._chooseNestPositionBtn = this._el.querySelector('[data-choose-nest-position]');
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
+        this._colonyNameEl = this._el.querySelector('[data-colony-name]');
         this._startBtn = this._el.querySelector('[data-start]');
     }
 
@@ -7984,8 +7971,8 @@ class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     }
 
     _onStartBtnClick() {
-        if (this._malesSearch.selectedMale && this._buildingSite) {
-            this.$domainFacade.foundColony(this._queen.id, this._malesSearch.selectedMale.id, this._buildingSite);
+        if (this._malesSearch.selectedMale && this._buildingSite && this._colonyNameEl.value) {
+            this.$domainFacade.foundColony(this._queen.id, this._malesSearch.selectedMale.id, this._buildingSite, this._colonyNameEl.value);
         }
     }
 }
@@ -12796,24 +12783,6 @@ var code = "<td>\r\n    <input data-name />\r\n</td>\r\n<td data-genome></td>\r\
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/foodTab/foodTabTmpl.html":
-/*!*******************************************************************************************************************************!*\
-  !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/foodTab/foodTabTmpl.html ***!
-  \*******************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "їжі всередині:<span data-stored-calories></span>";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
 /***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTabTmpl.html":
 /*!*********************************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTabTmpl.html ***!
@@ -12850,6 +12819,24 @@ var code = "<td data-name></td>\r\n<td data-genome></td>\r\n<td data-progress></
 
 /***/ }),
 
+/***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/mainTab/mainTabTmpl.html":
+/*!*******************************************************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/mainTab/mainTabTmpl.html ***!
+  \*******************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div>\r\n    їжі всередині:<span data-stored-calories></span>\r\n</div>\r\n<div>\r\n    назва: <input type=\"text\" data-name/>\r\n</div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/nestManagerTmpl.html":
 /*!***************************************************************************************************************************!*\
   !*** ./bugs/core/client/app/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/nestManagerTmpl.html ***!
@@ -12862,7 +12849,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switcher></div>\r\n<div>\r\n    <div data-egg-tab></div>\r\n    <div data-larva-tab></div>\r\n    <div data-food-tab></div>\r\n</div>\r\n";
+var code = "<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switcher></div>\r\n<div>\r\n    <div data-egg-tab></div>\r\n    <div data-larva-tab></div>\r\n    <div data-main-tab></div>\r\n</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -12880,7 +12867,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<span>nest: <span data-nest-name></span></span>";
+var code = "<span><span data-nest-name></span></span>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -12970,7 +12957,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість робочих(із геном BUILDING_SUBNEST): \r\n    <input data-workers-count type=\"number\" min=\"1\" max=\"3\" value=\"1\" required>\r\n</div>\r\n<div>\r\n    кількість воїнів: \r\n    <input data-warriors-count type=\"number\" min=\"0\" max=\"3\" value=\"0\" required>\r\n</div>\r\n<button data-start>старт</button>";
+var code = "<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість робочих(із геном BUILDING_SUBNEST): \r\n    <input data-workers-count type=\"number\" min=\"1\" max=\"3\" value=\"1\" required>\r\n</div>\r\n<div>\r\n    кількість воїнів: \r\n    <input data-warriors-count type=\"number\" min=\"0\" max=\"3\" value=\"0\" required>\r\n</div>\r\n<div>\r\n    назва гнізда: \r\n    <input data-nest-name required>\r\n</div>\r\n<button data-start>старт</button>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

@@ -91,8 +91,10 @@ class WorldFactory {
         let maxHp = nestJson.max_hp;
         let maxFortification = nestJson.maxFortification;
         let fortification = nestJson.fortification;
+        let name = nestJson.name;
+        let isMain = nestJson.isMain;
         return new Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, isBuilt, 
-            hp, maxHp, fortification, maxFortification);
+            hp, maxHp, fortification, maxFortification, name, isMain);
     }
 
     buildAnt(antJson) {

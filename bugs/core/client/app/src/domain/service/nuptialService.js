@@ -18,8 +18,8 @@ class NuptialService {
         this._initMales(nuptialMalesJson);
     }
 
-    foundColony(queenId, nuptialMaleId, nestBuildingSite) {
-        this._nuptialApi.foundColony(queenId, nuptialMaleId, nestBuildingSite);
+    foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
+        this._nuptialApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
         this._removeMale(nuptialMaleId);
     }
 

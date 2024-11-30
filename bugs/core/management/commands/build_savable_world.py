@@ -929,6 +929,8 @@ class Command(BaseCommand):
                 "nearby_enemy_positions": [],
                 "angle": 0,
                 "stored_calories":2000000,
+                "name": "Super Nest",
+                "is_main": True,
                 "larvae":[
                     {
                         "id": 'id1id1',
@@ -1224,6 +1226,8 @@ class Command(BaseCommand):
                 "nearby_enemy_positions": [],
                 "angle": 0,
                 "stored_calories":2000000,
+                "name": "Super Sub Nest",
+                "is_main": False,
                 "larvae":[
                 ],
                 "eggs": [],
@@ -1246,6 +1250,8 @@ class Command(BaseCommand):
                 "nearby_enemy_positions": [],
                 "angle": 0,
                 "stored_calories":2000000,
+                "name": "Enemy Nest",
+                "is_main": True,
                 "larvae":[
                 ],
                 "eggs": [],

@@ -34,6 +34,7 @@ class QueenManagerView extends BaseHTMLView {
         this._malesSearch = new MalesSearchView(this._el.querySelector('[data-males-search]'));
         this._chooseNestPositionBtn = this._el.querySelector('[data-choose-nest-position]');
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
+        this._colonyNameEl = this._el.querySelector('[data-colony-name]');
         this._startBtn = this._el.querySelector('[data-start]');
     }
 
@@ -57,8 +58,8 @@ class QueenManagerView extends BaseHTMLView {
     }
 
     _onStartBtnClick() {
-        if (this._malesSearch.selectedMale && this._buildingSite) {
-            this.$domainFacade.foundColony(this._queen.id, this._malesSearch.selectedMale.id, this._buildingSite);
+        if (this._malesSearch.selectedMale && this._buildingSite && this._colonyNameEl.value) {
+            this.$domainFacade.foundColony(this._queen.id, this._malesSearch.selectedMale.id, this._buildingSite, this._colonyNameEl.value);
         }
     }
 }

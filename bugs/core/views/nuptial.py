@@ -16,8 +16,9 @@ def found_colony(request: HttpRequest):
     queen_id = data['queen_id']
     nuptial_male_id = data['nuptial_male_id']
     nest_building_site = Point.from_json(data['nest_building_site'])
+    colony_name = data['colony_name']
 
-    wf.found_colony_command(request.user.id, queen_id, nuptial_male_id, nest_building_site)
+    wf.found_colony_command(request.user.id, queen_id, nuptial_male_id, nest_building_site, colony_name)
 
     return HttpResponse(status=200)
 

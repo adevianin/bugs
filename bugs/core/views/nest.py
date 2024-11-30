@@ -8,6 +8,17 @@ import json
 
 @require_POST
 @login_required     
+def rename_nest(request: HttpRequest, nest_id: int):
+    data = json.loads(request.body)
+    name = data['name']
+
+    wf = WorldFacade.get_instance()
+    wf.rename_nest_command(request.user.id, nest_id, name)
+
+    return HttpResponse(status=200)
+
+@require_POST
+@login_required     
 def add_egg(request: HttpRequest, nest_id: int):
     data = json.loads(request.body)
     name = data['name']

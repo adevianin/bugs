@@ -1,12 +1,14 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
-import foodTabTmpl from './foodTabTmpl.html';
+import mainTabTmpl from './mainTabTmpl.html';
 
-class FoodTabView extends BaseHTMLView {
+class MainTabView extends BaseHTMLView {
 
     constructor(el) {
         super(el);
 
         this._render();
+
+        this._nameEl.addEventListener('change', this._onChangedNestName.bind(this));
     }
 
     manageNest(nest) {
@@ -15,6 +17,7 @@ class FoodTabView extends BaseHTMLView {
         this._listenNest();
 
         this._renderStoredClalories();
+        this._renderName();
     }
 
     remove() {
@@ -35,21 +38,30 @@ class FoodTabView extends BaseHTMLView {
     }
 
     _render() {
-        this._el.innerHTML = foodTabTmpl;
+        this._el.innerHTML = mainTabTmpl;
 
         this._storedCaloriesEl = this._el.querySelector('[data-stored-calories]');
+        this._nameEl = this._el.querySelector('[data-name]');
     }
 
     _renderStoredClalories() {
         this._storedCaloriesEl.innerHTML = this._nest.storedCalories;
     }
 
+    _renderName() {
+        this._nameEl.value = this._nest.name;
+    }
+
     _onStoredCaloriesChanged() {
         this._renderStoredClalories();
+    }
+
+    _onChangedNestName() {
+        this._nest.rename(this._nameEl.value);
     }
 
 }
 
 export {
-    FoodTabView
+    MainTabView
 }

@@ -15,4 +15,4 @@ class NestBirther(EntityBirther):
 
     def _build_entity(self, id, request: NestBirthRequest) -> Nest:
         ownership = OwnershipConfig(request.colony_id, request.owner_id)
-        return self._nest_factory.build_new_nest(id, request.position, ownership)
+        return self._nest_factory.build_new_nest(id, request.position, ownership, request.name, request.is_main)

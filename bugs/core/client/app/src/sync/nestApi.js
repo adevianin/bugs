@@ -35,6 +35,12 @@ class NestApi {
         return this._requester.post(`world/nests/${nestId}/larvae/${larvaId}/delete`);
     }
 
+    renameNest(nestId, name) {
+        return this._requester.post(`world/nests/${nestId}/rename`, {
+            name: name
+        });
+    }
+
 }
 
 export {

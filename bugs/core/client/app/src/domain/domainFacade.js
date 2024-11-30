@@ -135,8 +135,8 @@ class DomainFacade {
         this._colonyService.stopOperation(colonyId, operationId);
     }
 
-    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount) {
-        this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount);
+    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
+        this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName);
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
@@ -161,8 +161,8 @@ class DomainFacade {
 
     /*========================*/
 
-    foundColony(queenId, nuptialMaleId, nestBuildingSite) {
-        this._nuptialService.foundColony(queenId, nuptialMaleId, nestBuildingSite);
+    foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
+        this._nuptialService.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
     }
 
     getMyNuptialMales() {

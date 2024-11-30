@@ -23,15 +23,20 @@ class BuildNewSubNestOperation(Operation):
         ANT_FLAG_FINISHED_BUILDING_NEST = 'finished_building_nest'
     
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, formation_factory: FormationFactory, fight_factory: FightFactory, id: int, hired_ants: List[Ant], flags: dict, 
-                 formation: BaseFormation, fight: Fight, worker_vacancies_count: int, warrior_vacancies_count: int, building_site: Point, building_nest: Nest = None):
+                 formation: BaseFormation, fight: Fight, worker_vacancies_count: int, warrior_vacancies_count: int, nest_name: str, building_site: Point, building_nest: Nest = None):
         super().__init__(event_bus, events, formation_factory, fight_factory, id, OperationTypes.BUILD_NEW_SUB_NEST, hired_ants, flags, formation, fight, worker_vacancies_count, warrior_vacancies_count)
+        self._nest_name = nest_name
         self._building_site = building_site
         self._building_nest = building_nest
-        self._name = 'новий мурашник'
+        self._name = f'новий під мурашник "{self._nest_name}"'
         self._open_vacancies(AntTypes.WORKER, self._worker_vacancies_count, [GenesTypes.BUILDING_SUBNEST])
         self._open_vacancies(AntTypes.WARRIOR, self._warrior_vacancies_count)
         self._add_marker(MarkerTypes.POINTER, self._building_site)
 
+    @property
+    def nest_name(self):
+        return self._nest_name
+    
     @property
     def building_site(self):
         return self._building_site
@@ -86,7 +91,7 @@ class BuildNewSubNestOperation(Operation):
     
     def _found_nest_step(self):
         if not self._building_nest or self._building_nest.is_died: #for repeating step
-            self._workers[0].found_nest(self._building_site, self._on_nest_found)
+            self._workers[0].found_nest(self._nest_name, False, self._building_site, self._on_nest_found)
         else:
             self._build_nest_step()
     

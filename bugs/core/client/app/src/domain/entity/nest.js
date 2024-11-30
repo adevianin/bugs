@@ -7,8 +7,7 @@ import { CONSTS } from '@domain/consts';
 
 class Nest extends Entity {
 
-    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, isBuilt, hp, maxHp, 
-        fortification, maxFortification) {
+    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, isBuilt, hp, maxHp, fortification, maxFortification, name, isMain) {
         super(eventBus, id, position, angle, EntityTypes.NEST, fromColony, ownerId, hp, maxHp);
         this._nestApi = nestApi;
         this.storedCalories = storedCalories;
@@ -16,8 +15,14 @@ class Nest extends Entity {
         this.eggs = eggs;
         this._fortification = fortification;
         this.maxFortification = maxFortification;
+        this._name = name;
+        this.isMain = isMain;
 
         this._setIsBuilt(isBuilt)
+    }
+
+    get name() {
+        return this._name;
     }
 
     get takenChildPlacesCount() {
@@ -33,6 +38,13 @@ class Nest extends Entity {
         this.emit('fortificationChanged');
     }
 
+
+    rename(newName) {
+        this._name = newName;
+        this._nestApi.renameNest(this.id, newName);
+        this.emit('nameChanged');
+    }
+    
     checkHaveEnoughtFoodForNewEgg() {
         return this.storedCalories >= CONSTS.NEW_EGG_FOOD_COST;
     }

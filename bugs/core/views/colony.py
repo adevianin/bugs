@@ -22,8 +22,9 @@ def build_new_sub_nest(request: HttpRequest, colony_id: int):
     building_site = Point.from_json(data['building_site'])
     workers_count = int(data['workers_count'])
     warriors_count = int(data['warriors_count'])
+    nest_name = data['nest_name']
 
-    wf.build_new_sub_nest_operation_command(request.user.id, colony_id, building_site, workers_count, warriors_count)
+    wf.build_new_sub_nest_operation_command(request.user.id, colony_id, building_site, workers_count, warriors_count, nest_name)
     return HttpResponse(status=200)
 
 @require_POST

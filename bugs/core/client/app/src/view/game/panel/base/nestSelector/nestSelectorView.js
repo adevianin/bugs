@@ -34,7 +34,7 @@ class NestSelectorView extends BaseHTMLView {
     _renderNestOption(nest) {
         let optionEl = document.createElement('option');
         optionEl.setAttribute('value', nest.id);
-        optionEl.innerHTML = `nest ${nest.id}`;
+        optionEl.innerHTML = nest.name;
         this._el.append(optionEl);
     }
 

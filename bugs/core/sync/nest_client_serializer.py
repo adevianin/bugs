@@ -24,7 +24,9 @@ class NestClientSerializer(EntityClientSerializer):
             'eggs': self._egg_serializer.serialize_eggs(nest.eggs),
             'isBuilt': nest.is_built,
             'fortification': nest.fortification,
-            'maxFortification': nest.stats.max_fortification
+            'maxFortification': nest.stats.max_fortification,
+            'name': nest.name,
+            'isMain': nest.is_main
         })
 
         return json

@@ -4,11 +4,12 @@ class NuptialApi {
         this._requester = requester;
     }
 
-    foundColony(queenId, nuptialMaleId, nestBuildingSite) { 
+    foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) { 
         return this._requester.post('world/nuptial_environment/found_colony', {
             queen_id: queenId,
             nuptial_male_id: nuptialMaleId,
-            nest_building_site: [nestBuildingSite.x, nestBuildingSite.y]
+            nest_building_site: [nestBuildingSite.x, nestBuildingSite.y],
+            colony_name: colonyName
         })
     }
 

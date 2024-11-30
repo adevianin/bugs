@@ -96,8 +96,8 @@ class WorldFacade:
     def stop_operation_command(self, user_id: int, colony_id: int, operation_id: int):
         self._colony_service.stop_operation(user_id, colony_id, operation_id)
     
-    def build_new_sub_nest_operation_command(self, user_id: int, performing_colony_id: int, building_site: Point, workers_count: int, warriors_count: int):
-        self._colony_service.build_new_sub_nest(user_id, performing_colony_id, building_site, workers_count, warriors_count)
+    def build_new_sub_nest_operation_command(self, user_id: int, performing_colony_id: int, building_site: Point, workers_count: int, warriors_count: int, nest_name: str):
+        self._colony_service.build_new_sub_nest(user_id, performing_colony_id, building_site, workers_count, warriors_count, nest_name)
     
     def destroy_nest_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int, warriors_count: int):
         self._colony_service.destroy_nest_operation(user_id, performing_colony_id, nest_id, workers_count, warriors_count)
@@ -132,8 +132,8 @@ class WorldFacade:
     def delete_larva_command(self, user_id: int, nest_id: int, larva_id: str):
         self._colony_service.delete_larva(user_id, nest_id, larva_id)
 
-    def found_colony_command(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point):
-        self._nuptial_environment_service.found_new_colony(user_id, queen_id, nuptial_male_id, nest_building_site)
+    def found_colony_command(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point, colony_name: str):
+        self._nuptial_environment_service.found_new_colony(user_id, queen_id, nuptial_male_id, nest_building_site, colony_name)
 
     def born_new_antara_command(self, user_id: int):
         self._player_service.born_new_antara(user_id)
@@ -152,6 +152,9 @@ class WorldFacade:
 
     def change_specie_schema_command(self, user_id: int, specie_schema: Dict[ChromosomeTypes, List[str]]):
         self._nuptial_environment_service.change_specie_schema(user_id, specie_schema)
+
+    def rename_nest_command(self, user_id: int, nest_id: int, name: str):
+        self._colony_service.rename_nest(user_id, nest_id, name)
     # </PLAYER_COMMANDS>
 
     def ensure_starter_pack_built_for_player(self, user_id: int):

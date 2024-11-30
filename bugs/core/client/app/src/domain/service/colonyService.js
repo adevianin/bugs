@@ -28,8 +28,8 @@ class ColonyService {
         this._colonyApi.stopOperation(colonyId, operationId);
     }
 
-    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount) {
-        this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount);
+    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
+        this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName);
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {

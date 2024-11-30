@@ -17,7 +17,7 @@ class NuptialEnvironmentService():
     def set_world(self, world: World):
         self._world = world
 
-    def found_new_colony(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point):
+    def found_new_colony(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point, colony_name: str):
         queen: QueenAnt = self._world.map.get_entity_by_id(queen_id)
 
         if queen.owner_id != user_id:
@@ -38,7 +38,7 @@ class NuptialEnvironmentService():
             nest.take_calories(1000)
             self._world.add_new_colony(new_colony) # found nest before new colony
 
-        queen.found_nest(nest_building_site, on_nest_found)
+        queen.found_nest(colony_name, True, nest_building_site, on_nest_found)
 
     def get_specie_for(self, user_id: int) -> Specie:
         nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)

@@ -34,10 +34,13 @@ class Nest(Entity):
     _body: NestBody
     stats: NestStats
 
-    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: NestBody, nearby_food_sources_data_manager: FoodSourcesDataManager, nearby_enemy_positions: List[Point]):
+    def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, ownership: OwnershipConfig, body: NestBody, nearby_food_sources_data_manager: FoodSourcesDataManager, 
+                 nearby_enemy_positions: List[Point], name: str, is_main: bool):
         super().__init__(event_bus, events, id, EntityTypes.NEST, ownership, body)
         self._nearby_food_sources_data_manager = nearby_food_sources_data_manager
         self._nearby_enemy_positions = nearby_enemy_positions
+        self._name = name
+        self._is_main = is_main
 
         self._body.events.add_listener('stored_calories_changed', self._on_stored_calories_changed)
         self._body.events.add_listener('build_status_changed', self._on_build_status_changed)
@@ -90,7 +93,19 @@ class Nest(Entity):
     @property
     def nearby_enemy_positions(self) -> List[Point]:
         return self._nearby_enemy_positions
-
+    
+    @property
+    def name(self) -> str:
+        return self._name
+        
+    @name.setter
+    def name(self, value: str):
+        self._name = value
+    
+    @property
+    def is_main(self) -> bool:
+        return self._is_main
+    
     def do_step(self):
         self._body.feed_larvae()
         self._body.develop_eggs()

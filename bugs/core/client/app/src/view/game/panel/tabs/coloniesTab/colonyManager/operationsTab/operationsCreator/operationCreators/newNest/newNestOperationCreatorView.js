@@ -21,6 +21,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         this._workersCountEl = this._el.querySelector('[data-workers-count]');
         this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
+        this._nestNameEl = this._el.querySelector('[data-nest-name]');
 
         this._renderBuildingSite();
     }
@@ -46,7 +47,8 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         }
         let workersCount = parseInt(this._workersCountEl.value);
         let warriorsCount = parseInt(this._warriorsCountEl.value);
-        this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingSite, workersCount, warriorsCount);
+        let nestName = this._nestNameEl.value;
+        this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingSite, workersCount, warriorsCount, nestName);
         this._onDone();
     }
 

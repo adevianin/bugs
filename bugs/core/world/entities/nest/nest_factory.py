@@ -14,14 +14,14 @@ class NestFactory():
     def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus
 
-    def build_new_nest(self, id: int, position: Point, ownership: OwnershipConfig):
+    def build_new_nest(self, id: int, position: Point, ownership: OwnershipConfig, name: str, is_main: bool):
         return self.build_nest(id=id, position=position, angle=0, hp=100, ownership=ownership, larvae=[], eggs=[], stored_calories=0, area=300, 
-                               build_progress=0, fortification=0, nearby_food_sources_data={}, nearby_enemy_positions=[])
+                               build_progress=0, fortification=0, nearby_food_sources_data={}, nearby_enemy_positions=[], name=name, is_main=is_main)
     
     def build_nest(self, id: int, position: Point, angle: int, ownership: OwnershipConfig, hp: int, larvae: List[Larva], eggs: List[Egg], stored_calories: int, area: int, 
-                   build_progress: int, fortification: int, nearby_food_sources_data: Dict, nearby_enemy_positions: List[Point]):
+                   build_progress: int, fortification: int, nearby_food_sources_data: Dict, nearby_enemy_positions: List[Point], name: str, is_main: bool):
         food_sources_data_manager = FoodSourcesDataManager(nearby_food_sources_data)
         stats = StatsLibrary.NEST_DEFAULT
         body = NestBody(EventEmitter(), stats, position, angle, hp, larvae, eggs, stored_calories, area, build_progress, fortification)
-        return Nest(self._event_bus, EventEmitter(), id, ownership, body, food_sources_data_manager, nearby_enemy_positions)
+        return Nest(self._event_bus, EventEmitter(), id, ownership, body, food_sources_data_manager, nearby_enemy_positions, name, is_main)
     
