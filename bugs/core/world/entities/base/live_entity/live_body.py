@@ -212,6 +212,9 @@ class LiveBody(Body):
         if self.am_i_in_hibernation() and self.check_urge_to_exit_hibernation():
             self.exit_hibernation()
 
+    def say(self, phrase: str, data: dict):
+        pass
+
     def _look_at(self, point: Point):
         self.angle = (math.atan2(point.y - self.position.y, point.x - self.position.x) * 180 / math.pi) + 90
 
