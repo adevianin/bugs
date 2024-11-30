@@ -23,23 +23,44 @@ class OperationsListView extends BaseHTMLView {
     }
 
     _listenColony(colony) {
-        this._stopListeningOperationsChanges = colony.on('operationsChanged', this._renderColonyOperations.bind(this));
+        this._stopListeningAddedOperation = colony.on('addedOperation', this._onOperationAdded.bind(this));
+        this._stopListeningOperationChanged = colony.on('operationChanged', this._onOperationChanged.bind(this));
+        this._stopListeningOperationDeleted = colony.on('operationDeleted', this._onOperationDeleted.bind(this));
+    }
+
+    _onOperationAdded(operation) {
+        this._renderOperation(operation);
+    }
+
+    _onOperationChanged(operation) {
+        this._operationViews[operation.id].update();
+    }
+
+    _onOperationDeleted(operationId) {
+        this._operationViews[operationId].remove();
+        delete this._operationViews[operationId];
     }
 
     _stopListenColony() {
         if (this._colony) {
-            this._stopListeningOperationsChanges();
+            this._stopListeningAddedOperation();
+            this._stopListeningOperationChanged();
+            this._stopListeningOperationDeleted();
         }
     }
 
     _renderColonyOperations() {
         this._removeOperationViews();
         this._colony.operations.forEach(operation => {
-            let el = document.createElement('li');
-            let view = new OperationView(el, operation, this._colony.id);
-            this._operationViews[operation.id] = view;
-            this._el.append(el);
+            this._renderOperation(operation);
         });
+    }
+
+    _renderOperation(operation) {
+        let el = document.createElement('li');
+        let view = new OperationView(el, operation, this._colony.id);
+        this._operationViews[operation.id] = view;
+        this._el.append(el);
     }
 
     _removeOperationViews() {

@@ -8,7 +8,7 @@ import json
 
 @require_POST
 @login_required     
-def stop_operation(request: HttpRequest, colony_id: int, operation_id: int):
+def stop_operation(request: HttpRequest, colony_id: int, operation_id: str):
     wf = WorldFacade.get_instance()
     wf.stop_operation_command(request.user.id, colony_id, operation_id)
     return HttpResponse(status=200)

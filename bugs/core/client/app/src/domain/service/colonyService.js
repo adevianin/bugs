@@ -1,3 +1,5 @@
+import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
+
 class ColonyService {
 
     constructor(colonyApi, world, worldFactory, mainEventBus) {
@@ -9,7 +11,7 @@ class ColonyService {
 
     playColonyAction(action) {
         switch(action.type) {
-            case 'colony_born':
+            case ACTION_TYPES.COLONY_BORN:
                 this.giveBirthToColony(action.actionData.colony);
                 break;
             default:

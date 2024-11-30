@@ -26,7 +26,12 @@ const ACTION_TYPES = {
     NEST_EGG_ADDED: 'nest_egg_added',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
     NEST_FORTIFICATION_CHANGED: 'nest_fortification_changed',
-    NUPTIAL_MALES_CHANGED: 'nuptial_males_changed'
+    NUPTIAL_MALES_CHANGED: 'nuptial_males_changed',
+    COLONY_BORN: 'colony_born',
+    COLONY_DIED: 'colony_died',
+    COLONY_OPERATION_CHANGED: 'colony_operation_changed',
+    COLONY_OPERATION_CREATED: 'colony_operation_created',
+    COLONY_OPERATION_DELETED: 'colony_operation_deleted'
 };
 
 export {

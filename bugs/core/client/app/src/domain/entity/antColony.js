@@ -1,3 +1,4 @@
+import { ACTION_TYPES } from "./action/actionTypes";
 import { EventEmitter } from "@utils/eventEmitter";
 
 class AntColony extends EventEmitter {
@@ -29,23 +30,58 @@ class AntColony extends EventEmitter {
 
     playAction(action) {
         switch(action.type) {
-            case 'colony_died':
+            case ACTION_TYPES.COLONY_DIED:
                 this._playColonyDiedAction(action);
                 break;
-            case 'colony_operations_change':
-                this._playOperationsChangedAction(action);
+            case ACTION_TYPES.COLONY_OPERATION_CREATED:
+                this._playColonyOperationCreated(action)
                 break;
+            case ACTION_TYPES.COLONY_OPERATION_CHANGED:
+                this._playColonyOperationChanged(action)
+                break;
+            case ACTION_TYPES.COLONY_OPERATION_DELETED:
+                this._playColonyOperationDeleted(action)
+                break;
+            default:
+                throw 'unknown colony action type';
         }
     }
 
-    _playOperationsChangedAction(action) {
-        this._operations = action.actionData.operations;
-        this.emit('operationsChanged');
+    _playColonyOperationCreated(action) {
+        this._operations.push(action.operation);
+        this.emit('addedOperation', action.operation);
     }
+
+    _playColonyOperationChanged(action) {
+        let operation = this._findOperationById(action.operation.id);
+        Object.assign(operation, action.operation);
+        this.emit('operationChanged', operation);
+    }
+
+    _playColonyOperationDeleted(action) {
+        let deletedOperationId = action.operationId;
+        this._operations = this._operations.filter(operation => operation.id != deletedOperationId);
+        this.emit('operationDeleted', deletedOperationId);
+    }
+
+    // _playOperationsChangedAction(action) {
+    //     this._operations = action.actionData.operations;
+    //     this.emit('operationsChanged');
+    // }
 
     _playColonyDiedAction(action) {
         this._emitToEventBus('colonyDied'); //to delete colony from world
         // this.emit('died');//to delete view
+    }
+
+    _findOperationById(id) {
+        for (let operation of this._operations) {
+            if (operation.id == id) {
+                return operation;
+            }
+        }
+
+        return null;
     }
 
     _emitToEventBus(eventName, data) {

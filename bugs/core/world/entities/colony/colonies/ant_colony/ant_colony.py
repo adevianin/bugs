@@ -10,9 +10,14 @@ from core.world.entities.ant.base.ant import Ant
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
-from core.world.entities.action.colony_operations_changed_action import ColonyOperationsChangedAction
 from core.world.entities.action.colony_died_action import ColonyDiedAction
 from core.world.entities.world.notification.notifications.died_colony_notification import DiedColonyNotification
+from core.world.entities.action.colony_operation_changed_action import ColonyOperationChangedAction
+from core.world.entities.action.colony_operation_created_action import ColonyOperationCreatedAction
+from core.world.entities.action.colony_operation_deleted_action import ColonyOperationDeletedAction
+from core.world.utils.generate_id import generate_id
+
+from functools import partial
 
 class AntColony(Colony):
 
@@ -20,14 +25,13 @@ class AntColony(Colony):
         super().__init__(id, EntityTypes.ANT, event_bus, map, relation_tester)
         self._operation_factory = operation_factory
         self._operations: List[Operation] = operations or []
-        self._operation_has_changes = False
         self._owner_id = owner_id
         self._queen_id = queen_id
 
         for operation in self._operations:
             self._listen_operation(operation)
 
-        event_bus.add_listener('step_done', self._on_start_step)
+        event_bus.add_listener('step_done', self._on_step_done)
 
     @property
     def owner_id(self):
@@ -45,11 +49,11 @@ class AntColony(Colony):
         return self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.NEST])
     
     def add_operation(self, operation: Operation):
-        operation.id = self._generate_operation_id()
+        operation.id = generate_id()
         self._operations.append(operation)
 
         self._listen_operation(operation)
-        self._emit_operation_change()
+        self._on_operation_created(operation)
 
     def cancel_operation(self, operation_id: int):
         operation = next(filter(lambda op: op.id == operation_id, self._operations), None)
@@ -69,32 +73,29 @@ class AntColony(Colony):
         if entity.type == EntityTypes.NEST:
             self._on_colony_nest_destroyed(entity)
     
-    def _on_start_step(self, step_number: int, season):
+    def _on_step_done(self, step_number: int, season):
         self._check_enemies_in_colony_area()
         self._clean_completed_operations()
         self._hire_for_operations()
-        if self._operation_has_changes:
-            self._emit_operation_change()
 
     def _listen_operation(self, operation: Operation):
-        operation.events.add_listener('change', self._on_operation_change)
+        operation.events.add_listener('change', partial(self._on_operation_change, operation))
+
+    def _on_operation_change(self, operation: Operation):
+        self._emit_action(ColonyOperationChangedAction(self.id, operation, self.owner_id))
+
+    def _on_operation_removed(self, operation: Operation):
+        self._emit_action(ColonyOperationDeletedAction(self.id, operation.id, self.owner_id))
+
+    def _on_operation_created(self, operation: Operation):
+        self._emit_action(ColonyOperationCreatedAction(self.id, operation, self.owner_id))
 
     def _hire_for_operations(self):
         ants = self.get_my_members()
         for operation in self._operations:
-            for ant in ants:
-                if not operation.is_hiring:
-                    break
-                operation.try_hire_ant(ant)
+            if operation.is_hiring:
+                operation.try_hire_ants(ants)
 
-    def _generate_operation_id(self):
-        last_used_id = 0
-        for operation in self._operations:
-            if operation.id > last_used_id:
-                last_used_id = operation.id
-
-        return last_used_id + 1
-    
     def _clean_completed_operations(self):
         completed_operations = []
         for operation in self._operations:
@@ -103,13 +104,14 @@ class AntColony(Colony):
         
         for operation in completed_operations:
             self._operations.remove(operation)
+            self._on_operation_removed(operation)
     
-    def _on_operation_change(self):
-        self._operation_has_changes = True
+    # def _on_operation_change(self):
+    #     self._operation_has_changes = True
 
-    def _emit_operation_change(self):
-        self._emit_action(ColonyOperationsChangedAction.build(self.id, self._operations))
-        self._operation_has_changes = False
+    # def _emit_operation_change(self):
+    #     self._emit_action(ColonyOperationsChangedAction.build(self.id, self._operations))
+    #     self._operation_has_changes = False
     
     def _check_enemies_in_colony_area(self):
         my_nests = self.get_my_nests()

@@ -35,7 +35,7 @@ urlpatterns = [
 
     path('world/nests/<int:nest_id>/larvae/<str:larva_id>/delete', delete_larva, name='delete-larva'),
 
-    path('world/colonies/<int:colony_id>/operations/<int:operation_id>/stop_operation', stop_operation, name='stop_operation'),
+    path('world/colonies/<int:colony_id>/operations/<str:operation_id>/stop_operation', stop_operation, name='stop_operation'),
     path('world/colonies/<int:colony_id>/operations/build_new_sub_nest', build_new_sub_nest, name='build_new_sub_nest'),
     path('world/colonies/<int:colony_id>/operations/destroy_nest', destroy_nest, name='destroy_nest'),
     path('world/colonies/<int:colony_id>/operations/pillage_nest', pillage_nest, name='pillage_nest'),

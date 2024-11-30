@@ -75,9 +75,7 @@ class Operation(ABC):
     
     @property
     def is_hiring(self):
-        is_all_vacancies_taken = len(self._hired_ants) >= self._total_hiring_ants_count
-        is_hiring_stopped = is_all_vacancies_taken or self._read_flag(self.Flags.IS_OPERATION_STARTED)
-        return not is_hiring_stopped
+        return not self._read_flag(self.Flags.IS_OPERATION_STARTED) and len(self._hired_ants) < self._total_hiring_ants_count
     
     @property
     def is_done(self):
@@ -115,6 +113,14 @@ class Operation(ABC):
         return self._flags
     
     @property
+    def hired_workers_count(self):
+        return len(self.get_hired_ants(AntTypes.WORKER))
+    
+    @property
+    def hired_warriors_count(self):
+        return len(self.get_hired_ants(AntTypes.WARRIOR))
+    
+    @property
     def _workers(self) -> List[WorkerAnt]:
         return self.get_hired_ants(AntTypes.WORKER)
     
@@ -148,27 +154,31 @@ class Operation(ABC):
         else:
             return self._hired_ants
         
-    def try_hire_ant(self, ant: Ant):
+    def try_hire_ants(self, ants: List[Ant]):
         if (not self.is_hiring):
             raise Exception('operation is not hiring')
-        
-        is_ant_good = self._check_hiring_ant(ant)
+        is_hired_someone = False
+        for ant in ants:
+            if self.is_hiring and self._check_hiring_ant(ant):
+                self._hire_ant(ant)
+                is_hired_someone = True
 
-        if is_ant_good:
-            self._hire_ant(ant)
+        if not self.is_hiring:
+            self._start_operation()
+
+        if is_hired_someone:
+            self.events.emit('change')
     
     def done(self):
         if self.is_completed:
             return
         self._is_done = True
-        self.events.emit('change')
         self._on_operation_stop()
     
     def cancel(self):
         if self.is_completed:
             return
         self._is_canceled = True
-        self.events.emit('change')
         self._on_operation_stop()
 
     def _start_operation(self):
@@ -328,14 +338,6 @@ class Operation(ABC):
         self._hired_ants.append(ant)
         ant.join_operation()
         self._listen_ant(ant)
-
-        if not self.is_hiring:
-            self._on_hired_all()
-
-        self.events.emit('change')
-
-    def _on_hired_all(self):
-        self._start_operation()
 
     def _read_flag(self, flag_name: str) -> bool:
         if flag_name in self._flags:

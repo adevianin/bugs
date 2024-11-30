@@ -21,7 +21,6 @@ from core.world.entities.action.item_was_dropped_action import ItemWasDroppedAct
 from core.world.entities.action.item_being_bringed_action import ItemBeingBringedAction
 from core.world.entities.action.colony_born_action import ColonyBornAction
 from core.world.entities.action.colony_died_action import ColonyDiedAction
-from core.world.entities.action.colony_operations_changed_action import ColonyOperationsChangedAction
 from core.world.entities.action.ant_flew_nuptial_flight_back_action import AntFlewNuptialFlightBackAction
 from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
 from core.world.entities.action.nest_egg_became_larva import NestEggBecameLarvaAction
@@ -38,6 +37,9 @@ from .notification_client_serializer import NotificationClientSerializer
 from .nuptial_environment_client_serializer import NuptialEnvironmentClientSerializer
 from core.world.entities.action.ant_home_nest_changed import AntHomeNestChangedAction
 from core.world.utils.distance_per_step_to_user_speed import distance_per_step_to_user_speed
+from core.world.entities.action.colony_operation_created_action import ColonyOperationCreatedAction
+from core.world.entities.action.colony_operation_changed_action import ColonyOperationChangedAction
+from core.world.entities.action.colony_operation_deleted_action import ColonyOperationDeletedAction
 
 class ActionClientSerializer(iActionClientSerializer):
 
@@ -113,8 +115,12 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._serialize_colony_born(action)
             case ActionTypes.COLONY_DIED:
                 return self._serialize_colony_died(action)
-            case ActionTypes.COLONY_OPERATIONS_CHANGED:
-                return self._serialize_operations_changed(action)
+            case ActionTypes.COLONY_OPERATION_CREATED:
+                return self._serialize_colony_operation_created(action)
+            case ActionTypes.COLONY_OPERATION_CHANGED:
+                return self._serialize_colony_operation_changed(action)
+            case ActionTypes.COLONY_OPERATION_DELETED:
+                return self._serialize_colony_operation_deleted(action)
             case ActionTypes.CLIMATE_TEMPERATURE_CHANGE:
                 return self._serialize_climate_temperature_changed(action)
             case ActionTypes.USER_NOTIFICATION:
@@ -345,19 +351,25 @@ class ActionClientSerializer(iActionClientSerializer):
         json = self._serialize_common(action)
         return json
     
-    def _serialize_operations_changed(self, action: ColonyOperationsChangedAction):
+    def _serialize_colony_operation_created(self, action: ColonyOperationCreatedAction):
         json = self._serialize_common(action)
-
-        serialized_operations = []
-        for operation in action.operations:
-            serialized_operations.append(self._operation_serializer.serialize(operation))
-
         json.update({
-            'actionData': {
-                'operations': serialized_operations
-            }
+            'operation': self._operation_serializer.serialize(action.operation) 
         })
-
+        return json
+    
+    def _serialize_colony_operation_changed(self, action: ColonyOperationChangedAction):
+        json = self._serialize_common(action)
+        json.update({
+            'operation': self._operation_serializer.serialize(action.operation) 
+        })
+        return json
+    
+    def _serialize_colony_operation_deleted(self, action: ColonyOperationDeletedAction):
+        json = self._serialize_common(action)
+        json.update({
+            'operationId': action.operation_id
+        })
         return json
     
     def _serialize_climate_temperature_changed(self, action: ClimateTemperatureChangeAction):

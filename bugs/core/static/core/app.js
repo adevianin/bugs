@@ -291,7 +291,12 @@ const ACTION_TYPES = {
     NEST_EGG_ADDED: 'nest_egg_added',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
     NEST_FORTIFICATION_CHANGED: 'nest_fortification_changed',
-    NUPTIAL_MALES_CHANGED: 'nuptial_males_changed'
+    NUPTIAL_MALES_CHANGED: 'nuptial_males_changed',
+    COLONY_BORN: 'colony_born',
+    COLONY_DIED: 'colony_died',
+    COLONY_OPERATION_CHANGED: 'colony_operation_changed',
+    COLONY_OPERATION_CREATED: 'colony_operation_created',
+    COLONY_OPERATION_DELETED: 'colony_operation_deleted'
 };
 
 
@@ -309,10 +314,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "AntColony": () => (/* binding */ AntColony)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+/* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
 
 
-class AntColony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+
+class AntColony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_1__.EventEmitter {
 
     constructor(eventBus, id, onwerId, operations, queenId) {
         super();
@@ -341,23 +348,58 @@ class AntColony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEm
 
     playAction(action) {
         switch(action.type) {
-            case 'colony_died':
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.COLONY_DIED:
                 this._playColonyDiedAction(action);
                 break;
-            case 'colony_operations_change':
-                this._playOperationsChangedAction(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.COLONY_OPERATION_CREATED:
+                this._playColonyOperationCreated(action)
                 break;
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.COLONY_OPERATION_CHANGED:
+                this._playColonyOperationChanged(action)
+                break;
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.COLONY_OPERATION_DELETED:
+                this._playColonyOperationDeleted(action)
+                break;
+            default:
+                throw 'unknown colony action type';
         }
     }
 
-    _playOperationsChangedAction(action) {
-        this._operations = action.actionData.operations;
-        this.emit('operationsChanged');
+    _playColonyOperationCreated(action) {
+        this._operations.push(action.operation);
+        this.emit('addedOperation', action.operation);
     }
+
+    _playColonyOperationChanged(action) {
+        let operation = this._findOperationById(action.operation.id);
+        Object.assign(operation, action.operation);
+        this.emit('operationChanged', operation);
+    }
+
+    _playColonyOperationDeleted(action) {
+        let deletedOperationId = action.operationId;
+        this._operations = this._operations.filter(operation => operation.id != deletedOperationId);
+        this.emit('operationDeleted', deletedOperationId);
+    }
+
+    // _playOperationsChangedAction(action) {
+    //     this._operations = action.actionData.operations;
+    //     this.emit('operationsChanged');
+    // }
 
     _playColonyDiedAction(action) {
         this._emitToEventBus('colonyDied'); //to delete colony from world
         // this.emit('died');//to delete view
+    }
+
+    _findOperationById(id) {
+        for (let operation of this._operations) {
+            if (operation.id == id) {
+                return operation;
+            }
+        }
+
+        return null;
     }
 
     _emitToEventBus(eventName, data) {
@@ -2625,6 +2667,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ColonyService": () => (/* binding */ ColonyService)
 /* harmony export */ });
+/* harmony import */ var _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/entity/action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+
+
 class ColonyService {
 
     constructor(colonyApi, world, worldFactory, mainEventBus) {
@@ -2636,7 +2681,7 @@ class ColonyService {
 
     playColonyAction(action) {
         switch(action.type) {
-            case 'colony_born':
+            case _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.COLONY_BORN:
                 this.giveBirthToColony(action.actionData.colony);
                 break;
             default:
@@ -7210,11 +7255,27 @@ class OperationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._stopBtn.addEventListener('click', this._onStopBtnClick.bind(this));
     }
 
+    update() {
+        this._renderOperation();
+    }
+
     _render() {
         this._el.innerHTML = _operationTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        this._el.querySelector('[data-name]').innerHTML = this._operation.name;
-        this._el.querySelector('[data-status]').innerHTML = this._operation.status;
+        this._nameEl = this._el.querySelector('[data-name]')
+        this._statusEl = this._el.querySelector('[data-status]')
         this._stopBtn = this._el.querySelector('[data-stop-btn]');
+        this._hiringProgressEl = this._el.querySelector('[data-hiring-progress]');
+
+        this._renderOperation();
+    }
+
+    _renderOperation() {
+        this._nameEl.innerHTML = this._operation.name;
+        this._statusEl.innerHTML = this._operation.status;
+        this._hiringProgressEl.classList.toggle('hidden', this._operation.status == 'in_progress');
+        let warriorsText = `warriors(${this._operation.hiredWarriorsCount}/${this._operation.warriorVacanciesCount})`
+        let workersText = `workers(${this._operation.hiredWorkersCount}/${this._operation.workerVacanciesCount})`;
+        this._hiringProgressEl.innerHTML = `${workersText} ${warriorsText}`;
     }
 
     _onStopBtnClick() {
@@ -7265,23 +7326,44 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
     }
 
     _listenColony(colony) {
-        this._stopListeningOperationsChanges = colony.on('operationsChanged', this._renderColonyOperations.bind(this));
+        this._stopListeningAddedOperation = colony.on('addedOperation', this._onOperationAdded.bind(this));
+        this._stopListeningOperationChanged = colony.on('operationChanged', this._onOperationChanged.bind(this));
+        this._stopListeningOperationDeleted = colony.on('operationDeleted', this._onOperationDeleted.bind(this));
+    }
+
+    _onOperationAdded(operation) {
+        this._renderOperation(operation);
+    }
+
+    _onOperationChanged(operation) {
+        this._operationViews[operation.id].update();
+    }
+
+    _onOperationDeleted(operationId) {
+        this._operationViews[operationId].remove();
+        delete this._operationViews[operationId];
     }
 
     _stopListenColony() {
         if (this._colony) {
-            this._stopListeningOperationsChanges();
+            this._stopListeningAddedOperation();
+            this._stopListeningOperationChanged();
+            this._stopListeningOperationDeleted();
         }
     }
 
     _renderColonyOperations() {
         this._removeOperationViews();
         this._colony.operations.forEach(operation => {
-            let el = document.createElement('li');
-            let view = new _operationView__WEBPACK_IMPORTED_MODULE_1__.OperationView(el, operation, this._colony.id);
-            this._operationViews[operation.id] = view;
-            this._el.append(el);
+            this._renderOperation(operation);
         });
+    }
+
+    _renderOperation(operation) {
+        let el = document.createElement('li');
+        let view = new _operationView__WEBPACK_IMPORTED_MODULE_1__.OperationView(el, operation, this._colony.id);
+        this._operationViews[operation.id] = view;
+        this._el.append(el);
     }
 
     _removeOperationViews() {
@@ -13029,7 +13111,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<span data-name></span>\r\n<span data-status></span>\r\n<button data-stop-btn>X</button>";
+var code = "<span data-name></span>\r\n<span data-status></span>\r\n<span data-hiring-progress></span>\r\n<button data-stop-btn>X</button>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
