@@ -53,9 +53,9 @@ class BringBugCorpseToNestOperation(Operation):
         self.events.add_listener('formation:march_to_bug_corpse:done', self._approach_search_bug_corpse_location_step)
         self.events.add_listener('formation:bringing_bug_corpse:done', self._give_corpse_to_nest_step)
 
-        self.events.add_listener('fight_won:march_to_bug_corpse_location_stage', self._has_sufficient_workers_step_decorator(self._march_to_search_bug_corpse_location_step, self.WORKERS_COUNT))
+        self.events.add_listener('fight_won:march_to_bug_corpse_location_stage', self._march_to_search_bug_corpse_location_step)
         self.events.add_listener('fight_start:bringing_bug_corpse_stage', self._on_bringing_stopped)
-        self.events.add_listener('fight_won:bringing_bug_corpse_stage', self._has_sufficient_workers_step_decorator(self._march_to_search_bug_corpse_location_step, self.WORKERS_COUNT))
+        self.events.add_listener('fight_won:bringing_bug_corpse_stage', self._march_to_search_bug_corpse_location_step)
 
         self.events.add_listener('hired_ant_died', self._on_ant_died)
 
@@ -131,4 +131,5 @@ class BringBugCorpseToNestOperation(Operation):
         self._found_bug_corpse_item = None
 
     def _on_ant_died(self, ant: Ant):
-        self.cancel()
+        if len(self._workers) < self.WORKERS_COUNT:
+            self._march_to_assemble_point_for_completion_step()

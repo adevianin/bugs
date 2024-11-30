@@ -467,12 +467,3 @@ class Operation(ABC):
         for ant in self._workers:
             if ant.has_picked_item():
                 ant.drop_picked_item()
-
-    def _has_sufficient_workers_step_decorator(self, step: Callable, min_count: int = 1):
-        def func():
-            if len(self._workers) >= min_count:
-                step()
-            else:
-                self._march_to_assemble_point_for_completion_step()
-
-        return func
