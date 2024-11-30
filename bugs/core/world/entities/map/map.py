@@ -33,8 +33,9 @@ class Map:
         y = random.randint(padding, self._size.height - padding)
         return Point(x, y)
     
-    def generate_random_point_on_circle(self, center: Point, radius: int, map_padding: int = 10):
-        point = Point.generate_random_point_on_circle(center, radius)
+    def generate_random_point_within_circle(self, center: Point, radius: int, min_distance_to_center: int, map_padding: int = 10):
+        radius = radius - 2
+        point = Point.generate_random_point_within_circle(center, radius, min_distance_to_center)
         x = point.x 
         y = point.y
         if x > self._size.width:
