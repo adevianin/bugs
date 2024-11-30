@@ -45,9 +45,11 @@ class BuildNewSubNestOperation(Operation):
 
         self.events.add_listener('formation:march_to_building_site:done', self._approach_building_site_step)
 
-        self.events.add_listener('fight_won:march_to_building_site', self._has_sufficient_workers_step_decorator(self._march_to_building_site_step))
-        self.events.add_listener('fight_won:approach_building_site', self._has_sufficient_workers_step_decorator(self._approach_building_site_step))
-        self.events.add_listener('fight_won:building_nest', self._has_sufficient_workers_step_decorator(self._approach_building_site_step))
+        self.events.add_listener('fight_won:march_to_building_site', self._march_to_building_site_step)
+        self.events.add_listener('fight_won:approach_building_site', self._approach_building_site_step)
+        self.events.add_listener('fight_won:building_nest', self._approach_building_site_step)
+
+        self.events.add_listener('hired_ant_died', self._on_ant_died)
 
         for worker in self._workers:
             worker.sayer.add_listener('approached_building_site', partial(self._on_worker_approached_building_site, worker))
@@ -101,4 +103,8 @@ class BuildNewSubNestOperation(Operation):
     def _on_nest_built(self, worker: Ant, is_built: bool):
         self._write_ant_flag(worker, self.Flags.ANT_FLAG_FINISHED_BUILDING_NEST, True)
         if self._check_ant_flag_for_ants(self._workers, self.Flags.ANT_FLAG_FINISHED_BUILDING_NEST):
+            self._march_to_assemble_point_for_completion_step()
+
+    def _on_ant_died(self, ant: Ant):
+        if len(self._workers) == 0:
             self._march_to_assemble_point_for_completion_step()
