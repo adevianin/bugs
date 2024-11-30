@@ -45,9 +45,9 @@ class BuildNewSubNestOperation(Operation):
 
         self.events.add_listener('formation:march_to_building_site:done', self._approach_building_site_step)
 
-        self.events.add_listener('fight_won:march_to_building_site', self._march_to_building_site_step)
-        self.events.add_listener('fight_won:approach_building_site', self._approach_building_site_step)
-        self.events.add_listener('fight_won:building_nest', self._approach_building_site_step)
+        self.events.add_listener('fight_won:march_to_building_site', self._check_is_enought_workers_to_continue_operation(self._march_to_building_site_step))
+        self.events.add_listener('fight_won:approach_building_site', self._check_is_enought_workers_to_continue_operation(self._approach_building_site_step))
+        self.events.add_listener('fight_won:building_nest', self._check_is_enought_workers_to_continue_operation(self._approach_building_site_step))
 
         for worker in self._workers:
             worker.sayer.add_listener('approached_building_site', partial(self._on_worker_approached_building_site, worker))

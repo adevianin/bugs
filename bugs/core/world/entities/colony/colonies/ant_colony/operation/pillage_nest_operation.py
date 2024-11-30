@@ -56,8 +56,8 @@ class PillageNestOperation(Operation):
         self.events.add_listener('formation:march_to_nest_to_pillage:done', self._approaching_nest_to_pillage_step)
         self.events.add_listener('formation:march_to_nest_for_loot:done', self._approach_nest_for_loot_step)
 
-        self.events.add_listener('fight_won:march_to_nest_to_pillage', self._march_to_nest_to_pillage_step)
-        self.events.add_listener('fight_won:approaching_nest_to_pillage', self._approaching_nest_to_pillage_step)
+        self.events.add_listener('fight_won:march_to_nest_to_pillage', self._check_is_enought_workers_to_continue_operation(self._march_to_nest_to_pillage_step))
+        self.events.add_listener('fight_won:approaching_nest_to_pillage', self._check_is_enought_workers_to_continue_operation(self._approaching_nest_to_pillage_step))
         self.events.add_listener('fight_start:march_to_nest_for_loot', self._workers_drop_picked_item)
         self.events.add_listener('fight_won:march_to_nest_for_loot', self._march_to_assemble_point_to_done_operation_step)
         self.events.add_listener('fight_start:approach_nest_for_loot', self._workers_drop_picked_item)

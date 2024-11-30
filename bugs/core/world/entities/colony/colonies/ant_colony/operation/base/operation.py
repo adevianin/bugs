@@ -21,6 +21,8 @@ from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
 
 class Operation(ABC):
 
+    MIN_WORKERS_COUNT_TO_CONTINUE_OPERATION = 1
+
     class Flags():
         STAGE = 'stage'
         IS_OPERATION_STARTED = 'is_operation_started'
@@ -454,3 +456,13 @@ class Operation(ABC):
         for ant in self._workers:
             if ant.has_picked_item():
                 ant.drop_picked_item()
+
+    def _check_is_enought_workers_to_continue_operation(self, step: Callable, min_count: int = None):
+        min_count = min_count or self.MIN_WORKERS_COUNT_TO_CONTINUE_OPERATION
+        def func():
+            if len(self._workers) >= min_count:
+                step()
+            else:
+                self._march_to_assemble_point_to_done_operation_step()
+
+        return func
