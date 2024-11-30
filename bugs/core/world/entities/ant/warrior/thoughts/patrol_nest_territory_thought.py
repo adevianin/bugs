@@ -15,6 +15,8 @@ class PatrolNestTerritoryThought(Thought):
         self._nest = nest
         self._step_count = step_count
 
+        self._nest_removal_block_id = self._nest.block_removal()
+
     @property
     def random_walk_thought(self) -> RandomWalkThought:
         return self._nested_thoughts['random_walk_thought']
@@ -26,6 +28,10 @@ class PatrolNestTerritoryThought(Thought):
     @property
     def step_count(self):
         return self._step_count
+    
+    def _on_stop_thinking(self):
+        super()._on_stop_thinking()
+        self._nest.unblock_removal(self._nest_removal_block_id)
     
     def do_step(self):
         if self._nest.is_died:
