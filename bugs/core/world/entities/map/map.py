@@ -82,20 +82,20 @@ class Map:
     def find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes] = None, filter: Callable[[Entity], bool] = None) -> List[Entity]:
         found_entities = []
         for entity in self._entities_collection.get_entities():
-            dist = math.dist([entity.body.position.x, entity.body.position.y], [point.x, point.y])
+            if entity.is_pending_removal:
+                continue
+            
             is_type_suitable = not entity_types or entity.type in entity_types
             if not is_type_suitable:
                 continue
-
+            
+            dist = math.dist([entity.body.position.x, entity.body.position.y], [point.x, point.y])
             is_dist_suitable = dist <= max_distance
             if not is_dist_suitable:
                 continue
 
             is_filter_suitable = not filter or filter(entity)
             if not is_filter_suitable:
-                continue
-
-            if entity.is_pending_removal:
                 continue
 
             found_entities.append(entity)
