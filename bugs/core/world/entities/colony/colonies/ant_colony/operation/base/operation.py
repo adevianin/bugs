@@ -193,7 +193,7 @@ class Operation(ABC):
         self.events.add_listener('formation:march_to_assemble_point_to_done_operation:done', self.done)
 
         self.events.add_listener('fight_won:preparing_step', self._prepare_step)
-        self.events.add_listener('fight_won:march_to_assemble_point_step', self._march_to_assemble_point_for_completion_step)
+        self.events.add_listener('fight_won:march_to_assemble_point_for_completion_step', self._march_to_assemble_point_for_completion_step)
 
         for ant in self._hired_ants:
             ant.body.sayer.add_listener('prepared', partial(self._on_ant_prepared, ant))
@@ -435,10 +435,23 @@ class Operation(ABC):
         pass
 
     def _march_to_assemble_point_for_completion_step(self):
-        self._stage = 'march_to_assemble_point_step'
+        # step should be able to be called at any moment during operation
+        self._stage = 'march_to_assemble_point_for_completion_step'
+        formation_name = 'march_to_assemble_point_to_done_operation'
+
+        if self._fight:
+            return
+        
+        if self._formation: 
+            if self._formation.name == formation_name:
+                print('already created formation')
+                return
+            else:
+                self._destroy_formation()
+            
         units = self._all_ants_for_march
         if BaseFormation.check_is_formation_needed(units, self._assemble_point):
-            formation = self._formation_factory.build_convoy_formation('march_to_assemble_point_to_done_operation', units, self._assemble_point)
+            formation = self._formation_factory.build_convoy_formation(formation_name, units, self._assemble_point)
             self._register_formation(formation)
         else:
             self.done()
