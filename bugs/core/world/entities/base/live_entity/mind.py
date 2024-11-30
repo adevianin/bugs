@@ -9,6 +9,8 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 
 class Mind(ABC):
 
+    _body: LiveBody
+
     def __init__(self, body: LiveBody, thought_factory: ThoughtFactory, is_auto_thought_generation: bool):
         self._body = body
         self._thought_factory = thought_factory
