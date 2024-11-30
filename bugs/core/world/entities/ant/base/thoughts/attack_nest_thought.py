@@ -13,6 +13,8 @@ class AttackNestThought(Thought):
         self._nested_thoughts['fight_near_enemies_thought'] = fight_near_enemies_thought
         self._nest = nest
 
+        self._nest_removal_block_id = self._nest.block_removal()
+
     @property
     def fight_near_enemies_thought(self) -> FightNearEnemiesThought:
         return self._nested_thoughts['fight_near_enemies_thought']
@@ -20,6 +22,10 @@ class AttackNestThought(Thought):
     @property
     def nest_id(self):
         return self._nest.id
+    
+    def _on_stop_thinking(self):
+        super()._on_stop_thinking()
+        self._nest.unblock_removal(self._nest_removal_block_id)
     
     def do_step(self):
         self.fight_near_enemies_thought.do_step()
@@ -29,11 +35,10 @@ class AttackNestThought(Thought):
         is_near_nest = self._body.is_near_to_attack(self._nest.position)
         if is_near_nest:
             self._body.damage_another_body(self._nest.body)
-            if self._nest.is_died:
-                self.done()
         else:
             self._body.step_to(self._nest.position)
 
-        return
+        if self._nest.is_died:
+            self.done()
 
 
