@@ -87,8 +87,7 @@ class ThoughtDeserializer():
     
     def _build_attack_nest_thought(self, thought_json, entities_collection: EntityCollection):
         nest = entities_collection.get_entity_by_id(thought_json['nest_id'])
-        fight_near_enemies_thought = self.deserialize_thougth(thought_json['fight_near_enemies_thought'], entities_collection)
-        return self._thought_factory.build_attack_nest_thought(fight_near_enemies_thought=fight_near_enemies_thought, nest=nest, flags=thought_json['flags'], sayback=thought_json['sayback'])
+        return self._thought_factory.build_attack_nest_thought(nest=nest, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_fight_enemy_thought(self, thought_json, entities_collection: EntityCollection):
         enemy = entities_collection.get_entity_by_id(thought_json['enemy_id']) if thought_json['enemy_id'] else None

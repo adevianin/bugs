@@ -44,8 +44,8 @@ class ThoughtFactory:
     def build_build_nest_thought(self, building_nest: Nest, get_inside_once_done: bool, flags: dict = None, sayback: str = None):
         return BuildNestThought(building_nest=building_nest, get_inside_once_done=get_inside_once_done, flags=flags, sayback=sayback)
     
-    def build_attack_nest_thought(self, fight_near_enemies_thought: FightNearEnemiesThought, nest: Nest, flags: dict = None, sayback: str = None):
-        return AttackNestThought(fight_near_enemies_thought=fight_near_enemies_thought, nest=nest, flags=flags, sayback=sayback)
+    def build_attack_nest_thought(self, nest: Nest, flags: dict = None, sayback: str = None):
+        return AttackNestThought(nest=nest, flags=flags, sayback=sayback)
     
     def build_fight_enemy_thought(self, enemy: iEnemy, flags: dict = None, sayback: str = None):
         return FightEnemyThought(enemy=enemy, flags=flags, sayback=sayback)
@@ -99,8 +99,7 @@ class ThoughtFactory:
         return self.build_collect_food_thought(home_nest, random_walk_thought, go_home_thought, sayback=sayback)
     
     def build_attack_nest_thought_new(self, nest: Nest, sayback: str = None):
-        fight_near_enemies_thought = self.build_fight_near_enemies_thought_new()
-        return self.build_attack_nest_thought(fight_near_enemies_thought=fight_near_enemies_thought, nest=nest, sayback=sayback)
+        return self.build_attack_nest_thought(nest=nest, sayback=sayback)
     
     def build_defend_nest_thought_new(self, nest: Nest, sayback: str = None):
         fight_near_enemies_thought = self.build_fight_near_enemies_thought_new()

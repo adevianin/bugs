@@ -2,22 +2,17 @@ from core.world.entities.thought.thought import Thought
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.ant_body import AntBody
-from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
+from core.world.settings import MAX_NEST_ATTACK_DISTANCE
 
 class AttackNestThought(Thought):
 
     _body: AntBody
 
-    def __init__(self, nest: Nest, fight_near_enemies_thought: FightNearEnemiesThought, flags: dict, sayback: str):
+    def __init__(self, nest: Nest, flags: dict, sayback: str):
         super().__init__(type=ThoughtTypes.ATTACK_NEST, flags=flags, sayback=sayback)
-        self._nested_thoughts['fight_near_enemies_thought'] = fight_near_enemies_thought
         self._nest = nest
 
         self._nest_removal_block_id = self._nest.block_removal()
-
-    @property
-    def fight_near_enemies_thought(self) -> FightNearEnemiesThought:
-        return self._nested_thoughts['fight_near_enemies_thought']
 
     @property
     def nest_id(self):
@@ -28,11 +23,7 @@ class AttackNestThought(Thought):
         self._nest.unblock_removal(self._nest_removal_block_id)
     
     def do_step(self):
-        self.fight_near_enemies_thought.do_step()
-        if self.fight_near_enemies_thought.is_fighting:
-            return
-        
-        is_near_nest = self._body.is_near_to_attack(self._nest.position)
+        is_near_nest = self._body.position.dist(self._nest.position) < MAX_NEST_ATTACK_DISTANCE
         if is_near_nest:
             self._body.damage_another_body(self._nest.body)
         else:
