@@ -7607,7 +7607,7 @@ class NotificationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
             case _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__.DeathTypes.SIMPLE:
                 return 'помер з невідомих причин';
             case _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__.DeathTypes.BURIED_IN_DESTRUCTED_NEST:
-                return 'загинув у зруйнованому гнізді';
+                return 'загинув в зруйнованому гнізді';
         }
     }
 

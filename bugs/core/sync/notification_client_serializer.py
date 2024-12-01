@@ -50,7 +50,7 @@ class NotificationClientSerializer():
         props = self._serialize_common(notification)
 
         props.update({
-            'nestName': 'nest_name',
+            'nestName': notification.nest_name,
             'deathRecord': self._death_record_client_serializer.serialize(notification.death_record)
         })
 

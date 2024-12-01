@@ -49,6 +49,7 @@ class NotificationSerializer():
 
         props.update({
             'nest_position': notification.nest_position,
+            'nest_name': notification.nest_name,
             'death_record': self._death_record_serializer.serialize(notification.death_record)
         })
 

@@ -35,8 +35,9 @@ class NotificationDeserializer():
     
     def _build_died_nest_notification(self, json: dict):
         nest_position = Point.from_json(json['nest_position'])
+        nest_name = json['nest_name']
         death_record = self._death_record_deserializer.deserialize(json['death_record'])
-        return DiedNestNotification(json['owner_id'], nest_position, death_record, json['step'])
+        return DiedNestNotification(json['owner_id'], nest_position, nest_name, death_record, json['step'])
     
     def _build_nest_alarm_raised(self, json: dict):
         nest_position = Point.from_json(json['nest_position'])
