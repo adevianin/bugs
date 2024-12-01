@@ -22,8 +22,10 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
         this._nestNameEl = this._el.querySelector('[data-nest-name]');
+        this._errorContainerEl = this._el.querySelector('[data-error-container]');
 
         this._renderBuildingSite();
+        this._checkQueenExisting();
     }
 
     _renderBuildingSite() {
@@ -48,8 +50,24 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         let workersCount = parseInt(this._workersCountEl.value);
         let warriorsCount = parseInt(this._warriorsCountEl.value);
         let nestName = this._nestNameEl.value;
-        this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingSite, workersCount, warriorsCount, nestName);
-        this._onDone();
+        this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingSite, workersCount, warriorsCount, nestName)
+            .then(() => {
+                this._onDone();
+            })
+            .catch((errId) => {
+                this._renderError(errId);
+            })
+    }
+
+    _checkQueenExisting() {
+        let queen = this.$domainFacade.getQueenOfColony(this._performingColony.id);
+        if (!queen) {
+            this._renderError('CANT_BUILD_SUB_NEST_WITHOUT_QUEEN');
+        }
+    }
+
+    _renderError(messageId) {
+        this._errorContainerEl.innerHTML = this.$messages[messageId];
     }
 
 }

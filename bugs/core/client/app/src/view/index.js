@@ -5,8 +5,9 @@ import { BaseGraphicView } from './base/baseGraphicView';
 import { BaseHTMLView } from './base/baseHTMLView';
 import { PopupManager } from './popups/popupManager';
 import { EventEmitter } from '@utils/eventEmitter.js';
+import { uaMessages } from './messages/uaMessagesLib';
 import worldSpriteSheetAtlas from './textures/build/world_spritesheet.json';
-import worldSpriteSheetUrl from './textures/build/world_spritesheet.png'
+import worldSpriteSheetUrl from './textures/build/world_spritesheet.png';
 
 async function initViewLayer(domainFacade) {
     let requester = new Requester();
@@ -20,6 +21,7 @@ async function initViewLayer(domainFacade) {
     BaseGraphicView.useEventBus(eventBus);
     BaseHTMLView.useDomainFacade(domainFacade);
     BaseHTMLView.useEventBus(eventBus);
+    BaseHTMLView.useMessages(uaMessages);
 
     await spritesheetManager.prepareTextures();
 

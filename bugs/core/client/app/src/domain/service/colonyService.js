@@ -1,4 +1,6 @@
 import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
+import { CONSTS } from "@domain/consts";
+import { distance } from "@utils/distance";
 
 class ColonyService {
 
@@ -31,7 +33,7 @@ class ColonyService {
     }
 
     buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
-        this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName);
+        return this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName)
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {

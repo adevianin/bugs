@@ -13,6 +13,10 @@ class BaseHTMLView {
         BaseHTMLView.eventBus = eventBus;
     }
 
+    static useMessages(messages) {
+        BaseHTMLView.messages = messages;
+    }
+
     constructor(el) {
         this._el = el;
         this.events = new EventEmitter();
@@ -28,6 +32,10 @@ class BaseHTMLView {
 
     get $eventBus() {
         return BaseHTMLView.eventBus;
+    }
+
+    get $messages() {
+        return BaseHTMLView.messages;
     }
 
     toggle(isEnabled) {

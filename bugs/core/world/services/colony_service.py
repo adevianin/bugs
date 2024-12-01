@@ -8,7 +8,8 @@ from core.world.entities.colony.colonies.ant_colony.operation.operation_factory 
 from core.world.utils.point import Point
 from core.world.entities.item.items.base.item import Item 
 from core.world.entities.item.items.base.item_types import ItemTypes 
-from core.world.settings import NEW_EGG_FOOD_COST, LAY_EGG_SEASONS
+from core.world.settings import NEW_EGG_FOOD_COST, LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT
+from core.world.messages import Messages
 
 from typing import Callable
 
@@ -32,14 +33,11 @@ class ColonyService():
         if colony.owner_id != user_id:
             raise Exception(f'user dont have this colony')
         
-        colony_queen_filter: Callable[[QueenAnt], bool] = lambda ant: ant.is_queen_of_colony
-        queens = self._world.map.get_entities(colony.id, [EntityTypes.ANT], colony_queen_filter)
-
-        if len(queens) == 0:
+        queen = self._find_queen_of_colony(colony.id)
+        
+        if not queen:
             raise Exception('no queen')
         
-        queen: QueenAnt = queens[0]
-
         if queen.located_in_nest_id != nest_id:
             raise Exception('queen is not in nest')
         
@@ -106,7 +104,21 @@ class ColonyService():
 
         if colony.owner_id != user_id:
             raise Exception('user is not colony owner')
+        
+        queen = self._find_queen_of_colony(colony.id)
 
+        if not queen:
+            return Messages.CANT_BUILD_SUB_NEST_WITHOUT_QUEEN
+        
+        if queen.position.dist(position) > MAX_DISTANCE_TO_SUB_NEST:
+            return Messages.CANT_BUILD_SUB_NEST_FAR_AWAY
+        
+        sub_nest_filter: Callable[[Nest], bool] = lambda nest: not nest.is_main
+        sub_nests = self._world.map.get_entities(colony.id, [EntityTypes.NEST], sub_nest_filter)
+
+        if len(sub_nests) >= MAX_SUB_NEST_COUNT:
+            return Messages.CANT_BUILD_MORE_SUB_NEST
+        
         operation = self._operation_factory.build_build_new_sub_nest_operation(nest_name, position, workers_count, warriors_count)
         colony.add_operation(operation)
         
@@ -198,4 +210,13 @@ class ColonyService():
         
         nest.name = name
     
+
+    def _find_queen_of_colony(self, colony_id: int) -> QueenAnt:
+        colony_queen_filter: Callable[[QueenAnt], bool] = lambda ant: ant.is_queen_of_colony
+        queens = self._world.map.get_entities(colony_id, [EntityTypes.ANT], colony_queen_filter)
+
+        if len(queens) > 0:
+            return queens[0]
+        else:
+            return None
     

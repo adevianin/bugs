@@ -1,5 +1,5 @@
 from core.world.settings import (NEW_EGG_FOOD_COST, STEPS_IN_YEAR, SPRING_START_YEAR_STEP, SUMMER_START_YEAR_STEP, AUTUMN_START_YEAR_STEP, WINTER_START_YEAR_STEP,
-                                 LAY_EGG_SEASONS)
+                                 LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT)
 
 class ConstantsClientSerializer():
 
@@ -11,5 +11,7 @@ class ConstantsClientSerializer():
             'SUMMER_START_YEAR_STEP': SUMMER_START_YEAR_STEP,
             'AUTUMN_START_YEAR_STEP': AUTUMN_START_YEAR_STEP,
             'WINTER_START_YEAR_STEP': WINTER_START_YEAR_STEP,
-            'LAY_EGG_SEASONS': LAY_EGG_SEASONS
+            'LAY_EGG_SEASONS': LAY_EGG_SEASONS,
+            'MAX_DISTANCE_TO_SUB_NEST': MAX_DISTANCE_TO_SUB_NEST,
+            'MAX_SUB_NEST_COUNT': MAX_SUB_NEST_COUNT
         }

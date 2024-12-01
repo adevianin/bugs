@@ -31,7 +31,9 @@ const CONSTS = {
     SUMMER_START_YEAR_STEP: null,
     AUTUMN_START_YEAR_STEP: null,
     WINTER_START_YEAR_STEP: null,
-    LAY_EGG_SEASONS: null
+    LAY_EGG_SEASONS: null,
+    MAX_DISTANCE_TO_SUB_NEST: null,
+    MAX_SUB_NEST_COUNT: null 
 }
 
 function initConts(constsValues) {
@@ -192,7 +194,7 @@ class DomainFacade {
     }
 
     buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
-        this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName);
+        return this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName);
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
@@ -2677,6 +2679,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ColonyService": () => (/* binding */ ColonyService)
 /* harmony export */ });
 /* harmony import */ var _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/entity/action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/consts */ "./bugs/core/client/app/src/domain/consts.js");
+/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @utils/distance */ "./bugs/core/client/utils/distance.js");
+
+
 
 
 class ColonyService {
@@ -2710,7 +2716,7 @@ class ColonyService {
     }
 
     buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
-        this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName);
+        return this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName)
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
@@ -3420,12 +3426,17 @@ class ColonyApi {
     }
 
     buildNewSubNestOperation(colonyId, buildingSite, workersCount, warriorsCount, nestName) {
-        return this._requester.post(`world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
-            building_site: [buildingSite.x, buildingSite.y],
-            workers_count: workersCount,
-            warriors_count: warriorsCount,
-            nest_name: nestName
+        return new Promise((res, rej) => {
+            this._requester.post(`world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
+                building_site: [buildingSite.x, buildingSite.y],
+                workers_count: workersCount,
+                warriors_count: warriorsCount,
+                nest_name: nestName
+            })
+            .then(axiosResp => res(null))
+            .catch(axiosResp => rej(axiosResp.response.data))
         })
+        
     }
 
     destroyNestOperation(colonyId, warriorsCount, workersCount, nest) {
@@ -4030,6 +4041,10 @@ class BaseHTMLView {
         BaseHTMLView.eventBus = eventBus;
     }
 
+    static useMessages(messages) {
+        BaseHTMLView.messages = messages;
+    }
+
     constructor(el) {
         this._el = el;
         this.events = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
@@ -4045,6 +4060,10 @@ class BaseHTMLView {
 
     get $eventBus() {
         return BaseHTMLView.eventBus;
+    }
+
+    get $messages() {
+        return BaseHTMLView.messages;
     }
 
     toggle(isEnabled) {
@@ -6936,8 +6955,10 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
         this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
         this._nestNameEl = this._el.querySelector('[data-nest-name]');
+        this._errorContainerEl = this._el.querySelector('[data-error-container]');
 
         this._renderBuildingSite();
+        this._checkQueenExisting();
     }
 
     _renderBuildingSite() {
@@ -6962,8 +6983,24 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
         let workersCount = parseInt(this._workersCountEl.value);
         let warriorsCount = parseInt(this._warriorsCountEl.value);
         let nestName = this._nestNameEl.value;
-        this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingSite, workersCount, warriorsCount, nestName);
-        this._onDone();
+        this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingSite, workersCount, warriorsCount, nestName)
+            .then(() => {
+                this._onDone();
+            })
+            .catch((errId) => {
+                this._renderError(errId);
+            })
+    }
+
+    _checkQueenExisting() {
+        let queen = this.$domainFacade.getQueenOfColony(this._performingColony.id);
+        if (!queen) {
+            this._renderError('CANT_BUILD_SUB_NEST_WITHOUT_QUEEN');
+        }
+    }
+
+    _renderError(messageId) {
+        this._errorContainerEl.innerHTML = this.$messages[messageId];
     }
 
 }
@@ -9945,8 +9982,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _popups_popupManager__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./popups/popupManager */ "./bugs/core/client/app/src/view/popups/popupManager.js");
 /* harmony import */ var _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @utils/eventEmitter.js */ "./bugs/core/client/utils/eventEmitter.js");
-/* harmony import */ var _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./textures/build/world_spritesheet.json */ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.json");
-/* harmony import */ var _textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./textures/build/world_spritesheet.png */ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png");
+/* harmony import */ var _messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./messages/uaMessagesLib */ "./bugs/core/client/app/src/view/messages/uaMessagesLib.js");
+/* harmony import */ var _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./textures/build/world_spritesheet.json */ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.json");
+/* harmony import */ var _textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./textures/build/world_spritesheet.png */ "./bugs/core/client/app/src/view/textures/build/world_spritesheet.png");
+
 
 
 
@@ -9960,7 +9999,7 @@ __webpack_require__.r(__webpack_exports__);
 async function initViewLayer(domainFacade) {
     let requester = new _utils_requester__WEBPACK_IMPORTED_MODULE_1__.Requester();
     let eventBus = new _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__.EventEmitter();
-    let spritesheetManager = new _game_world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__.WorldSpritesheetManager(_textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_8__, _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_7__, requester);
+    let spritesheetManager = new _game_world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__.WorldSpritesheetManager(_textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_9__, _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_8__, requester);
     let popupManager = new _popups_popupManager__WEBPACK_IMPORTED_MODULE_5__.PopupManager(document.querySelector('[data-popup-container]'));
 
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useTextureManager(spritesheetManager);
@@ -9969,6 +10008,7 @@ async function initViewLayer(domainFacade) {
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useEventBus(eventBus);
     _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.useDomainFacade(domainFacade);
     _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.useEventBus(eventBus);
+    _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.useMessages(_messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_7__.uaMessages);
 
     await spritesheetManager.prepareTextures();
 
@@ -10023,6 +10063,27 @@ let eggStatesLabels = {
     [_domain_enum_eggStates__WEBPACK_IMPORTED_MODULE_0__.EggStates.READY]: 'Готове',
     [_domain_enum_eggStates__WEBPACK_IMPORTED_MODULE_0__.EggStates.SPOILED]: 'Зіпсоване'
 };
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/messages/uaMessagesLib.js":
+/*!*****************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/messages/uaMessagesLib.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "uaMessages": () => (/* binding */ uaMessages)
+/* harmony export */ });
+const uaMessages = {
+    CANT_BUILD_SUB_NEST_WITHOUT_QUEEN: 'Не можна будувати гніздо сателіт в колонії без королеви.',
+    CANT_BUILD_MORE_SUB_NEST: 'Досягнуто максимальну кількість гнізд сателітів.',
+    CANT_BUILD_SUB_NEST_FAR_AWAY: 'Не можна будувати гніздо сателіт так далеко центрального.'
+}
 
 
 
@@ -13064,7 +13125,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість робочих(із геном BUILDING_SUBNEST): \r\n    <input data-workers-count type=\"number\" min=\"1\" max=\"3\" value=\"1\" required>\r\n</div>\r\n<div>\r\n    кількість воїнів: \r\n    <input data-warriors-count type=\"number\" min=\"0\" max=\"3\" value=\"0\" required>\r\n</div>\r\n<div>\r\n    назва гнізда: \r\n    <input data-nest-name required>\r\n</div>\r\n<button data-start>старт</button>";
+var code = "<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість робочих(із геном BUILDING_SUBNEST): \r\n    <input data-workers-count type=\"number\" min=\"1\" max=\"3\" value=\"1\" required>\r\n</div>\r\n<div>\r\n    кількість воїнів: \r\n    <input data-warriors-count type=\"number\" min=\"0\" max=\"3\" value=\"0\" required>\r\n</div>\r\n<div>\r\n    назва гнізда: \r\n    <input data-nest-name required>\r\n</div>\r\n<div data-error-container></div>\r\n<button data-start>старт</button>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

@@ -9,12 +9,17 @@ class ColonyApi {
     }
 
     buildNewSubNestOperation(colonyId, buildingSite, workersCount, warriorsCount, nestName) {
-        return this._requester.post(`world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
-            building_site: [buildingSite.x, buildingSite.y],
-            workers_count: workersCount,
-            warriors_count: warriorsCount,
-            nest_name: nestName
+        return new Promise((res, rej) => {
+            this._requester.post(`world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
+                building_site: [buildingSite.x, buildingSite.y],
+                workers_count: workersCount,
+                warriors_count: warriorsCount,
+                nest_name: nestName
+            })
+            .then(axiosResp => res(null))
+            .catch(axiosResp => rej(axiosResp.response.data))
         })
+        
     }
 
     destroyNestOperation(colonyId, warriorsCount, workersCount, nest) {
