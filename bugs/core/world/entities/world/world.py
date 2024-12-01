@@ -224,7 +224,7 @@ class World():
         from core.world.entities.nest.nest import Nest
         ant: Ant = MY_TEST_ENV['attacker2']
         if s == 1:
-           ant.walk_to(Point(1518,461))
+           ant.walk_to(Point(677,342))
 
         if s == 2:
-            ant.attack_nest(self._map.get_entity_by_id(30))
+            ant.walk_to(Point(550,797))

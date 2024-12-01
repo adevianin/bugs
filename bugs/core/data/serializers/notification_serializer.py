@@ -59,7 +59,8 @@ class NotificationSerializer():
         props = self._serialize_common(notification)
 
         props.update({
-            'nest_position': notification.nest_position
+            'nest_position': notification.nest_position,
+            'nest_name': notification.nest_name
         })
 
         return props
@@ -69,7 +70,8 @@ class NotificationSerializer():
         props = self._serialize_common(notification)
 
         props.update({
-            'nest_position': notification.nest_position
+            'nest_position': notification.nest_position,
+            'nest_name': notification.nest_name
         })
 
         return props

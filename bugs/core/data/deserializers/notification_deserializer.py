@@ -41,11 +41,13 @@ class NotificationDeserializer():
     
     def _build_nest_alarm_raised(self, json: dict):
         nest_position = Point.from_json(json['nest_position'])
-        return NestAlarmRaisedNotification(json['owner_id'], nest_position, json['step'])
+        nest_name = json['nest_name']
+        return NestAlarmRaisedNotification(json['owner_id'], nest_position, nest_name, json['step'])
     
     def _build_nest_alarm_canceled(self, json: dict):
         nest_position = Point.from_json(json['nest_position'])
-        return NestAlarmCanceledNotification(json['owner_id'], nest_position, json['step'])
+        nest_name = json['nest_name']
+        return NestAlarmCanceledNotification(json['owner_id'], nest_position, nest_name, json['step'])
     
     def _build_died_colony(self, json: dict):
         return DiedColonyNotification(json['owner_id'], json['colony_name'], json['step'])
