@@ -3,6 +3,7 @@ import antTmpl from './antTmpl.html';
 import { NestSelectorView } from "@view/game/panel/base/nestSelector";
 import { AntTypes } from "@domain/enum/antTypes";
 import { CONSTS } from "@domain/consts";
+import { antTypesLabels } from "@view/labels/antTypesLabels";
 
 class AntView extends BaseHTMLView {
 
@@ -37,7 +38,7 @@ class AntView extends BaseHTMLView {
         this._el.innerHTML = antTmpl;
         this._el.querySelector('[data-id]').innerHTML = this._ant.id;
         this._el.querySelector('[data-name]').innerHTML = this._ant.name;
-        this._el.querySelector('[data-type]').innerHTML = this._ant.antType;
+        this._el.querySelector('[data-type]').innerHTML = antTypesLabels[this._ant.antType];
         this._el.querySelector('[data-attack]').innerHTML = this._ant.stats.attack;
         this._el.querySelector('[data-defence]').innerHTML = this._ant.stats.defence;
         this._el.querySelector('[data-max-hp]').innerHTML = this._ant.maxHp;
@@ -98,7 +99,7 @@ class AntView extends BaseHTMLView {
 
     _checkCanFlyNuptialFlight(ant) {
         if (ant.antType == AntTypes.QUEEN) {
-            return ant.canFlyNuptialFlight;
+            return !ant.isQueenOfColony;
         } else if (ant.antType == AntTypes.MALE) {
             return true;
         }

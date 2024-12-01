@@ -747,12 +747,20 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
         return this._isInNuptialFlight;
     }
 
-    get canFlyNuptialFlight() {
-        return !this._isFertilized;
-    }
+    // get canFlyNuptialFlight() {
+    //     return !this._isFertilized;
+    // }
 
     get genes() {
         return this._genes;
+    }
+
+    get isQueenOfColony() {
+        return this._isFertilized;
+    }
+
+    get antType() {
+        return this.isQueenOfColony ? _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN_OF_COLONY : this._antType;
     }
 
     playAction(action) {
@@ -2337,6 +2345,7 @@ const AntTypes = {
     WORKER: 'worker',
     WARRIOR: 'warrior',
     QUEEN: 'queen',
+    QUEEN_OF_COLONY: 'queen_of_colony', // this type is only on client
     MALE: 'male'
 }
 
@@ -5314,6 +5323,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/nestSelector */ "./bugs/core/client/app/src/view/game/panel/base/nestSelector/index.js");
 /* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/consts */ "./bugs/core/client/app/src/domain/consts.js");
+/* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./bugs/core/client/app/src/view/labels/antTypesLabels.js");
+
 
 
 
@@ -5353,7 +5364,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._el.innerHTML = _antTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
         this._el.querySelector('[data-id]').innerHTML = this._ant.id;
         this._el.querySelector('[data-name]').innerHTML = this._ant.name;
-        this._el.querySelector('[data-type]').innerHTML = this._ant.antType;
+        this._el.querySelector('[data-type]').innerHTML = _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_5__.antTypesLabels[this._ant.antType];
         this._el.querySelector('[data-attack]').innerHTML = this._ant.stats.attack;
         this._el.querySelector('[data-defence]').innerHTML = this._ant.stats.defence;
         this._el.querySelector('[data-max-hp]').innerHTML = this._ant.maxHp;
@@ -5414,7 +5425,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
 
     _checkCanFlyNuptialFlight(ant) {
         if (ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__.AntTypes.QUEEN) {
-            return ant.canFlyNuptialFlight;
+            return !ant.isQueenOfColony;
         } else if (ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__.AntTypes.MALE) {
             return true;
         }
@@ -9971,8 +9982,9 @@ __webpack_require__.r(__webpack_exports__);
 let antTypesLabels = {
     [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WORKER]: 'Робітник',
     [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WARRIOR]: 'Воїн',
-    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN]: 'Цариця',
+    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN]: 'Самка',
     [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.MALE]: 'Самець',
+    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN_OF_COLONY]: 'Королева'
 };
 
 
