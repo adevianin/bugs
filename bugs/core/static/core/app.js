@@ -505,6 +505,14 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         return this._birthStep;
     }
 
+    get isQueenOfColony() {
+        return false;
+    }
+
+    get canFlyNuptialFlight() {
+        return false;
+    }
+
     changeGuardianBehavior(behaviorValue) {
         this._behavior.guardianBehavior = behaviorValue;
         this._antApi.changeGuardianBehavior(this.id, behaviorValue);
@@ -664,6 +672,10 @@ class MaleAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
         super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
     }
 
+    get canFlyNuptialFlight() {
+        return true;
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {
@@ -759,8 +771,8 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
         return this._isFertilized;
     }
 
-    get antType() {
-        return this.isQueenOfColony ? _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN_OF_COLONY : this._antType;
+    get canFlyNuptialFlight() {
+        return !this.isQueenOfColony;
     }
 
     playAction(action) {
@@ -2345,7 +2357,6 @@ const AntTypes = {
     WORKER: 'worker',
     WARRIOR: 'warrior',
     QUEEN: 'queen',
-    QUEEN_OF_COLONY: 'queen_of_colony', // this type is only on client
     MALE: 'male'
 }
 
@@ -4591,6 +4602,7 @@ class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         let el = document.createElement('select');
         super(el);
         this._colonyId = colonyId;
+        this._isDisabled = false;
 
         this._stopListenEntityDied = this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
         this._stopListenEntityBorn = this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
@@ -4605,6 +4617,15 @@ class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
     set nestId(nestId) {
         this._el.value = nestId;
+    }
+
+    set disabled(isDisabled) {
+        this._isDisabled = isDisabled;
+        this._el.disabled = isDisabled;
+    }
+
+    get disabled() {
+        return this._isDisabled;
     }
 
     _render() {
@@ -5362,24 +5383,31 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
 
     _render() {
         this._el.innerHTML = _antTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
+        this._flyAwayActionBtn = this._el.querySelector('[data-fly-away]');
+
         this._el.querySelector('[data-id]').innerHTML = this._ant.id;
         this._el.querySelector('[data-name]').innerHTML = this._ant.name;
-        this._el.querySelector('[data-type]').innerHTML = _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_5__.antTypesLabels[this._ant.antType];
+        this._el.querySelector('[data-type]').innerHTML = this._ant.isQueenOfColony ? 'Королева' : _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_5__.antTypesLabels[this._ant.antType];
         this._el.querySelector('[data-attack]').innerHTML = this._ant.stats.attack;
         this._el.querySelector('[data-defence]').innerHTML = this._ant.stats.defence;
         this._el.querySelector('[data-max-hp]').innerHTML = this._ant.maxHp;
 
         this._nestSelector = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._ant.fromColony);
         this._nestSelector.nestId = this._ant.homeNestId;
+        this._nestSelector.disabled = this._ant.isQueenOfColony;
         this._el.querySelector('[data-nest]').append(this._nestSelector.el);
 
         this._renderActionBtns();
 
         this._guardianTypeSelector = this._el.querySelector('[data-guardian-type]');
         this._guardianTypeSelector.value = this._ant.guardianBehavior;
+        this._guardianTypeSelector.disabled = this._ant.isQueenOfColony;
 
         this._cooperativeBehaviorTogglerEl = this._el.querySelector('[data-is-cooperactive]');
         this._cooperativeBehaviorTogglerEl.checked = this._ant.isCooperativeBehavior;
+        this._cooperativeBehaviorTogglerEl.disabled = this._ant.isQueenOfColony;
 
         this._el.querySelector('[data-genome-debug]').addEventListener('click', () => {
             console.log(this._ant.genome);
@@ -5405,11 +5433,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
     }
 
     _renderActionBtns() {
-        this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
-        this._flyAwayActionBtn = this._el.querySelector('[data-fly-away]');
-        
-        let canFlyNuptialFlight = this._checkCanFlyNuptialFlight(this._ant);
-        this._nuptialFlightActionBtn.classList.toggle('hidden', !canFlyNuptialFlight);
+        this._nuptialFlightActionBtn.classList.toggle('hidden', !this._ant.canFlyNuptialFlight);
     }
 
     _renderAge() {
@@ -5421,14 +5445,6 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
     _renderProfileState() {
         this._profileEl.classList.toggle('hidden', !this._profileState);
         this._profileBtn.innerHTML = this._profileState ? '-' : '+';
-    }
-
-    _checkCanFlyNuptialFlight(ant) {
-        if (ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__.AntTypes.QUEEN) {
-            return !ant.isQueenOfColony;
-        } else if (ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__.AntTypes.MALE) {
-            return true;
-        }
     }
 
     _onNestChanged() {
@@ -5503,7 +5519,12 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
 
     _renderAnts() {
         this._clearAntViews();
-        for (let ant of this._ants) {
+        let ants = this._ants.sort((a,b) => {
+            if (a.isQueenOfColony) return -1;
+            if (b.isQueenOfColony) return 1;
+            return 0;
+        });
+        for (let ant of ants) {
             this._renderAntView(ant);
         }
     }
@@ -9983,8 +10004,7 @@ let antTypesLabels = {
     [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WORKER]: 'Робітник',
     [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.WARRIOR]: 'Воїн',
     [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN]: 'Самка',
-    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.MALE]: 'Самець',
-    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN_OF_COLONY]: 'Королева'
+    [_domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.MALE]: 'Самець'
 };
 
 
@@ -12781,7 +12801,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<tr>\r\n    <td data-id rowspan=\"2\"></td>\r\n    <td data-name></td>\r\n    <td data-type></td>\r\n    <td data-attack></td>\r\n    <td data-defence></td>\r\n    <td data-role>\r\n        <select>\r\n        </select>\r\n    </td>\r\n    <td data-max-hp></td>\r\n    <td data-nest></td>\r\n    <td>\r\n        <select data-guardian-type>\r\n            <option value=\"none\">не захищає</option>\r\n            <option value=\"nest\">тільки гніздо</option>\r\n            <option value=\"colony\">вся колонія</option>\r\n        </select>\r\n    </td>\r\n    <td>\r\n        <input data-is-cooperactive type=\"checkbox\">\r\n    </td>\r\n    <td data-actions>\r\n        <button data-fly-away>X</button>\r\n        <button data-nuptial-flight>шлюбний політ</button>\r\n        <button data-genome-debug>геном</button>\r\n        <button data-profile-btn>+</button>\r\n    </td>\r\n</tr>\r\n<tr data-ant-profile>\r\n    <td colspan=\"11\">\r\n        <div>age: <span data-age></span></div>\r\n    </td>\r\n</tr>";
+var code = "<tr>\r\n    <td data-id rowspan=\"2\"></td>\r\n    <td data-name></td>\r\n    <td data-type></td>\r\n    <td data-attack></td>\r\n    <td data-defence></td>\r\n    <td data-max-hp></td>\r\n    <td data-nest></td>\r\n    <td>\r\n        <select data-guardian-type>\r\n            <option value=\"none\">не захищає</option>\r\n            <option value=\"nest\">тільки гніздо</option>\r\n            <option value=\"colony\">вся колонія</option>\r\n        </select>\r\n    </td>\r\n    <td>\r\n        <input data-is-cooperactive type=\"checkbox\">\r\n    </td>\r\n    <td data-actions>\r\n        <button data-fly-away>X</button>\r\n        <button data-nuptial-flight>шлюбний політ</button>\r\n        <button data-genome-debug>геном</button>\r\n        <button data-profile-btn>+</button>\r\n    </td>\r\n</tr>\r\n<tr data-ant-profile>\r\n    <td colspan=\"11\">\r\n        <div>age: <span data-age></span></div>\r\n    </td>\r\n</tr>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -12799,7 +12819,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<thead>\r\n    <tr>\r\n        <td>id</td>\r\n        <td>імя</td>\r\n        <td>тип</td>\r\n        <td>атака</td>\r\n        <td>захист</td>\r\n        <td>роль</td>\r\n        <td>макс хп</td>\r\n        <td>гніздо</td>\r\n        <td>guardian</td>\r\n        <td>cooperative</td>\r\n        <td>дії</td>\r\n    </tr>\r\n</thead>";
+var code = "<thead>\r\n    <tr>\r\n        <td>id</td>\r\n        <td>імя</td>\r\n        <td>тип</td>\r\n        <td>атака</td>\r\n        <td>захист</td>\r\n        <td>макс хп</td>\r\n        <td>гніздо</td>\r\n        <td>guardian</td>\r\n        <td>cooperative</td>\r\n        <td>дії</td>\r\n    </tr>\r\n</thead>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

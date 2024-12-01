@@ -8,6 +8,10 @@ class MaleAnt extends BaseAnt {
         super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
     }
 
+    get canFlyNuptialFlight() {
+        return true;
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {

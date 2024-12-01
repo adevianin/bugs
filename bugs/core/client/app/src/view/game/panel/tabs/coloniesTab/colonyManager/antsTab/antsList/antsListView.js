@@ -39,7 +39,12 @@ class AntsListView extends BaseHTMLView {
 
     _renderAnts() {
         this._clearAntViews();
-        for (let ant of this._ants) {
+        let ants = this._ants.sort((a,b) => {
+            if (a.isQueenOfColony) return -1;
+            if (b.isQueenOfColony) return 1;
+            return 0;
+        });
+        for (let ant of ants) {
             this._renderAntView(ant);
         }
     }

@@ -4,8 +4,7 @@ let antTypesLabels = {
     [AntTypes.WORKER]: 'Робітник',
     [AntTypes.WARRIOR]: 'Воїн',
     [AntTypes.QUEEN]: 'Самка',
-    [AntTypes.MALE]: 'Самець',
-    [AntTypes.QUEEN_OF_COLONY]: 'Королева'
+    [AntTypes.MALE]: 'Самець'
 };
 
 export {

@@ -36,24 +36,31 @@ class AntView extends BaseHTMLView {
 
     _render() {
         this._el.innerHTML = antTmpl;
+
+        this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
+        this._flyAwayActionBtn = this._el.querySelector('[data-fly-away]');
+
         this._el.querySelector('[data-id]').innerHTML = this._ant.id;
         this._el.querySelector('[data-name]').innerHTML = this._ant.name;
-        this._el.querySelector('[data-type]').innerHTML = antTypesLabels[this._ant.antType];
+        this._el.querySelector('[data-type]').innerHTML = this._ant.isQueenOfColony ? 'Королева' : antTypesLabels[this._ant.antType];
         this._el.querySelector('[data-attack]').innerHTML = this._ant.stats.attack;
         this._el.querySelector('[data-defence]').innerHTML = this._ant.stats.defence;
         this._el.querySelector('[data-max-hp]').innerHTML = this._ant.maxHp;
 
         this._nestSelector = new NestSelectorView(this._ant.fromColony);
         this._nestSelector.nestId = this._ant.homeNestId;
+        this._nestSelector.disabled = this._ant.isQueenOfColony;
         this._el.querySelector('[data-nest]').append(this._nestSelector.el);
 
         this._renderActionBtns();
 
         this._guardianTypeSelector = this._el.querySelector('[data-guardian-type]');
         this._guardianTypeSelector.value = this._ant.guardianBehavior;
+        this._guardianTypeSelector.disabled = this._ant.isQueenOfColony;
 
         this._cooperativeBehaviorTogglerEl = this._el.querySelector('[data-is-cooperactive]');
         this._cooperativeBehaviorTogglerEl.checked = this._ant.isCooperativeBehavior;
+        this._cooperativeBehaviorTogglerEl.disabled = this._ant.isQueenOfColony;
 
         this._el.querySelector('[data-genome-debug]').addEventListener('click', () => {
             console.log(this._ant.genome);
@@ -79,11 +86,7 @@ class AntView extends BaseHTMLView {
     }
 
     _renderActionBtns() {
-        this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
-        this._flyAwayActionBtn = this._el.querySelector('[data-fly-away]');
-        
-        let canFlyNuptialFlight = this._checkCanFlyNuptialFlight(this._ant);
-        this._nuptialFlightActionBtn.classList.toggle('hidden', !canFlyNuptialFlight);
+        this._nuptialFlightActionBtn.classList.toggle('hidden', !this._ant.canFlyNuptialFlight);
     }
 
     _renderAge() {
@@ -95,14 +98,6 @@ class AntView extends BaseHTMLView {
     _renderProfileState() {
         this._profileEl.classList.toggle('hidden', !this._profileState);
         this._profileBtn.innerHTML = this._profileState ? '-' : '+';
-    }
-
-    _checkCanFlyNuptialFlight(ant) {
-        if (ant.antType == AntTypes.QUEEN) {
-            return !ant.isQueenOfColony;
-        } else if (ant.antType == AntTypes.MALE) {
-            return true;
-        }
     }
 
     _onNestChanged() {

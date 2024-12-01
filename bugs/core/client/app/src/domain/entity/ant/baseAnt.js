@@ -77,6 +77,14 @@ class BaseAnt extends LiveEntity {
         return this._birthStep;
     }
 
+    get isQueenOfColony() {
+        return false;
+    }
+
+    get canFlyNuptialFlight() {
+        return false;
+    }
+
     changeGuardianBehavior(behaviorValue) {
         this._behavior.guardianBehavior = behaviorValue;
         this._antApi.changeGuardianBehavior(this.id, behaviorValue);

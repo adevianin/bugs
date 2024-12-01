@@ -44,8 +44,8 @@ class QueenAnt extends BaseAnt {
         return this._isFertilized;
     }
 
-    get antType() {
-        return this.isQueenOfColony ? AntTypes.QUEEN_OF_COLONY : this._antType;
+    get canFlyNuptialFlight() {
+        return !this.isQueenOfColony;
     }
 
     playAction(action) {

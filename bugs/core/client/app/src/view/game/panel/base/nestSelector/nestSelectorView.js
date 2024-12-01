@@ -7,6 +7,7 @@ class NestSelectorView extends BaseHTMLView {
         let el = document.createElement('select');
         super(el);
         this._colonyId = colonyId;
+        this._isDisabled = false;
 
         this._stopListenEntityDied = this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
         this._stopListenEntityBorn = this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
@@ -21,6 +22,15 @@ class NestSelectorView extends BaseHTMLView {
 
     set nestId(nestId) {
         this._el.value = nestId;
+    }
+
+    set disabled(isDisabled) {
+        this._isDisabled = isDisabled;
+        this._el.disabled = isDisabled;
+    }
+
+    get disabled() {
+        return this._isDisabled;
     }
 
     _render() {
