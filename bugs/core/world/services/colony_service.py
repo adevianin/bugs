@@ -10,7 +10,7 @@ from core.world.entities.item.items.base.item import Item
 from core.world.entities.item.items.base.item_types import ItemTypes 
 from core.world.settings import NEW_EGG_FOOD_COST, LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT
 from core.world.messages import Messages
-from core.world.utils.remove_non_alphanumeric import remove_non_alphanumeric
+from core.world.utils.remove_non_alphanumeric_and_spaces import remove_non_alphanumeric_and_spaces
 
 from typing import Callable
 
@@ -120,7 +120,7 @@ class ColonyService():
         if len(sub_nests) >= MAX_SUB_NEST_COUNT:
             return Messages.CANT_BUILD_MORE_SUB_NEST
         
-        nest_name = remove_non_alphanumeric(nest_name)
+        nest_name = remove_non_alphanumeric_and_spaces(nest_name)
         
         operation = self._operation_factory.build_build_new_sub_nest_operation(nest_name, position, workers_count, warriors_count)
         colony.add_operation(operation)

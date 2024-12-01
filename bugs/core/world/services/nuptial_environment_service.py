@@ -5,7 +5,7 @@ from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie import Specie
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
-from core.world.utils.remove_non_alphanumeric import remove_non_alphanumeric
+from core.world.utils.remove_non_alphanumeric_and_spaces import remove_non_alphanumeric_and_spaces
 
 from typing import List, Dict
 
@@ -38,7 +38,7 @@ class NuptialEnvironmentService():
             nest.take_calories(1000)
             self._world.add_new_colony(new_colony) # found nest before new colony
 
-        colony_name = remove_non_alphanumeric(colony_name)
+        colony_name = remove_non_alphanumeric_and_spaces(colony_name)
 
         queen.found_nest(colony_name, True, nest_building_site, on_nest_found)
 
