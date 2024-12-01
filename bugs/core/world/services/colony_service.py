@@ -32,7 +32,13 @@ class ColonyService():
         if colony.owner_id != user_id:
             raise Exception(f'user dont have this colony')
         
-        queen: QueenAnt = self._world.map.get_entity_by_id(colony.queen_id)
+        colony_queen_filter: Callable[[QueenAnt], bool] = lambda ant: ant.is_queen_of_colony
+        queens = self._world.map.get_entities(colony.id, [EntityTypes.ANT], colony_queen_filter)
+
+        if len(queens) == 0:
+            raise Exception('no queen')
+        
+        queen: QueenAnt = queens[0]
 
         if queen.located_in_nest_id != nest_id:
             raise Exception('queen is not in nest')

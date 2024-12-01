@@ -34,7 +34,11 @@ class QueenAnt(Ant):
 
     @property
     def can_fly_nuptial_flight(self):
-        return self._body.can_fly_nuptial_flight
+        return not self._body.is_fertilized
+    
+    @property
+    def is_queen_of_colony(self):
+        return self._body.is_fertilized
     
     def fly_nuptial_flight(self):
         self.from_colony_id = None

@@ -18,25 +18,26 @@ class AntService():
         if not ant or ant.owner_id != user_id:
             raise Exception('user dont have this ant')
         
+        if not ant.can_fly_nuptial_flight:
+            raise Exception('ant cant fly nuptial flight')
+        
         if ant.ant_type == AntTypes.QUEEN:
             queen: QueenAnt = ant
-            if queen.can_fly_nuptial_flight:
-                queen.fly_nuptial_flight()
-                return
+            queen.fly_nuptial_flight()
         elif ant.ant_type == AntTypes.MALE:
             male: MaleAnt = ant
             male.fly_nuptial_flight()
             nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
             nuptial_environment.fly_in_male(male)
-            return
             
-        raise Exception('cant fly nuptial flight')
-    
     def change_ant_guardian_behavior(self, user_id: int, ant_id: int, guaridan_behavior: GuardianBehaviors):
         ant: Ant = self._world.map.get_entity_by_id(ant_id)
         
         if not ant or ant.owner_id != user_id:
             raise Exception('user dont have this ant')
+        
+        if ant.is_queen_of_colony:
+            raise Exception('queen of colony cant change guardian behavior')
         
         ant.guardian_behavior = guaridan_behavior
 
@@ -46,6 +47,9 @@ class AntService():
         if not ant or ant.owner_id != user_id:
             raise Exception('user dont have this ant')
         
+        if ant.is_queen_of_colony:
+            raise Exception('queen of colony cant change cooperative')
+        
         ant.is_cooperative = is_enabled
 
     def relocate_ant(self, user_id: int, ant_id: int, nest_id: int):
@@ -53,6 +57,9 @@ class AntService():
         
         if not ant or ant.owner_id != user_id or ant.type != EntityTypes.ANT:
             raise Exception('user dont have this ant')
+        
+        if ant.is_queen_of_colony:
+            raise Exception('queen of colony cant relocate')
         
         nest: Nest = self._world.map.get_entity_by_id(nest_id)
 

@@ -21,12 +21,11 @@ from functools import partial
 
 class AntColony(Colony):
 
-    def __init__(self, id: int, event_bus: EventEmitter, operation_factory: OperationFactory, owner_id: int, map: Map, operations: List[Operation], relation_tester: RelationTester, queen_id: int):
+    def __init__(self, id: int, event_bus: EventEmitter, operation_factory: OperationFactory, owner_id: int, map: Map, operations: List[Operation], relation_tester: RelationTester):
         super().__init__(id, EntityTypes.ANT, event_bus, map, relation_tester)
         self._operation_factory = operation_factory
         self._operations: List[Operation] = operations or []
         self._owner_id = owner_id
-        self._queen_id = queen_id
 
         for operation in self._operations:
             self._listen_operation(operation)
@@ -40,10 +39,6 @@ class AntColony(Colony):
     @property
     def operations(self):
         return self._operations
-    
-    @property
-    def queen_id(self):
-        return self._queen_id
     
     def get_my_nests(self) -> List[Nest]:
         return self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.NEST])

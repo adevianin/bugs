@@ -321,13 +321,12 @@ __webpack_require__.r(__webpack_exports__);
 
 class AntColony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_1__.EventEmitter {
 
-    constructor(eventBus, id, onwerId, operations, queenId) {
+    constructor(eventBus, id, onwerId, operations) {
         super();
         this._eventBus = eventBus;
         this._id = id;
         this._onwerId = onwerId;
         this._operations = operations;
-        this._queenId = queenId
     }
 
     get id() {
@@ -340,10 +339,6 @@ class AntColony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_1__.EventEm
 
     get operations() {
         return this._operations;
-    }
-
-    get queenId() {
-        return this._queenId;
     }
 
     playAction(action) {
@@ -532,6 +527,10 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         this._homeNestId = nestId;
     }
 
+    flyNuptialFlight() {
+        this._antApi.flyNuptialFlight(this.id);
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {
@@ -687,10 +686,6 @@ class MaleAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
         }
     }
 
-    flyNuptialFlight() {
-        this._antApi.flyNuptialFlight(this.id);
-    }
-
     _playFlyNuptialFlight() {
         return this._flyAwayAnimation().then(() => {
             this.isHidden = true;
@@ -759,10 +754,6 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
         return this._isInNuptialFlight;
     }
 
-    // get canFlyNuptialFlight() {
-    //     return !this._isFertilized;
-    // }
-
     get genes() {
         return this._genes;
     }
@@ -788,10 +779,6 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_GOT_FERTILIZED:
                 return this._playGotFertilized(action)
         }
-    }
-
-    flyNuptialFlight() {
-        this._antApi.flyNuptialFlight(this.id);
     }
 
     _playFlyNuptialFlight() {
@@ -2310,13 +2297,14 @@ class World {
     }
 
     getQueenOfColony(colonyId) {
-        let colony = this.findColonyById(colonyId);
-        let queen = null;
-        if (colony.queenId) {
-            queen = this.findEntityById(colony.queenId);
+        let ants = this.findAntsFromColony(colonyId);
+        for (let ant of ants) {
+            if (ant.isQueenOfColony) {
+                return ant;
+            }
         }
 
-        return queen;
+        return null;
     }
 
     findEntityByType(type) {
@@ -3076,7 +3064,7 @@ class WorldService {
         });
         
         worldJson.ant_colonies.forEach(colonyJson => {
-            let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations, colonyJson.queen_id);
+            let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
             this._world.addColony(colony);
         });
         
@@ -3299,8 +3287,8 @@ class WorldFactory {
         return new _entity_tree__WEBPACK_IMPORTED_MODULE_14__.Tree(this._mainEventBus, id, position, angle, fromColony, ownerId, hp, maxHp);
     }
 
-    buildAntColony(id, owner_id, operations, queenId) {
-        return new _entity_antColony__WEBPACK_IMPORTED_MODULE_4__.AntColony(this._mainEventBus, id, owner_id, operations, queenId);
+    buildAntColony(id, owner_id, operations) {
+        return new _entity_antColony__WEBPACK_IMPORTED_MODULE_4__.AntColony(this._mainEventBus, id, owner_id, operations);
     }
 
     buildNuptialMale(nuptialMaleJson) {

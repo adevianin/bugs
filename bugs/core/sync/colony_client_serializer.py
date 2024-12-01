@@ -18,6 +18,5 @@ class ColonyClientSerializer():
         return {
             'id': colony.id,
             'owner_id': colony.owner_id,
-            'queen_id': colony.queen_id,
             'operations': operations_json
         }

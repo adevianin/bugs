@@ -17,9 +17,9 @@ class ColonyFactory():
     def build_new_ant_colony(self, id: int, owner_id: int, map: Map, colony_relations_table: ColonyRelationsTable, queen_id: int) -> AntColony:
         return self.build_ant_colony(id=id, owner_id=owner_id, map=map, operations=[], colony_relations_table=colony_relations_table, queen_id=queen_id)
 
-    def build_ant_colony(self, id: int, owner_id: int, map: Map, operations: List[Operation], colony_relations_table: ColonyRelationsTable, queen_id: int) -> AntColony:
+    def build_ant_colony(self, id: int, owner_id: int, map: Map, operations: List[Operation], colony_relations_table: ColonyRelationsTable) -> AntColony:
         relation_tester = self._build_relation_tester(colony_relations_table, id)
-        return AntColony(id, self._event_bus, self._operation_factory, owner_id, map, operations, relation_tester, queen_id)
+        return AntColony(id, self._event_bus, self._operation_factory, owner_id, map, operations, relation_tester)
     
     def build_ladybug_colony(self, id: int, map: Map, colony_relations_table: ColonyRelationsTable):
         relation_tester = self._build_relation_tester(colony_relations_table, id)

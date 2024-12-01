@@ -1361,14 +1361,12 @@ class Command(BaseCommand):
             {
                 "id":3,
                 "owner_id":2,
-                "queen_id": 4,
                 "member_type": "ant",
                 "operations":[]
             },
             {
                 "id":2,
                 "owner_id":2,
-                "queen_id": 2,
                 "member_type": "ant",
                 "operations":[]
             },

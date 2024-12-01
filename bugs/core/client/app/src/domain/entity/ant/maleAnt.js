@@ -23,10 +23,6 @@ class MaleAnt extends BaseAnt {
         }
     }
 
-    flyNuptialFlight() {
-        this._antApi.flyNuptialFlight(this.id);
-    }
-
     _playFlyNuptialFlight() {
         return this._flyAwayAnimation().then(() => {
             this.isHidden = true;

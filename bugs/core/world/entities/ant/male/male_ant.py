@@ -21,6 +21,10 @@ class MaleAnt(Ant):
         super().__init__(event_bus, events, id, name, ownership, body, AntTypes.MALE, mind)
 
         self._body.events.add_listener('flew_nuptial_flight', self._on_flew_nuptial_flight)
+
+    @property
+    def can_fly_nuptial_flight(self):
+        return True
     
     def fly_nuptial_flight(self):
         self.from_colony_id = None

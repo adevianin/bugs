@@ -104,6 +104,10 @@ class BaseAnt extends LiveEntity {
         this._homeNestId = nestId;
     }
 
+    flyNuptialFlight() {
+        this._antApi.flyNuptialFlight(this.id);
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {

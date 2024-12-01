@@ -143,8 +143,8 @@ class WorldFactory {
         return new Tree(this._mainEventBus, id, position, angle, fromColony, ownerId, hp, maxHp);
     }
 
-    buildAntColony(id, owner_id, operations, queenId) {
-        return new AntColony(this._mainEventBus, id, owner_id, operations, queenId);
+    buildAntColony(id, owner_id, operations) {
+        return new AntColony(this._mainEventBus, id, owner_id, operations);
     }
 
     buildNuptialMale(nuptialMaleJson) {

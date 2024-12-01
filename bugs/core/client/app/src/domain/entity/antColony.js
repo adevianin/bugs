@@ -3,13 +3,12 @@ import { EventEmitter } from "@utils/eventEmitter";
 
 class AntColony extends EventEmitter {
 
-    constructor(eventBus, id, onwerId, operations, queenId) {
+    constructor(eventBus, id, onwerId, operations) {
         super();
         this._eventBus = eventBus;
         this._id = id;
         this._onwerId = onwerId;
         this._operations = operations;
-        this._queenId = queenId
     }
 
     get id() {
@@ -22,10 +21,6 @@ class AntColony extends EventEmitter {
 
     get operations() {
         return this._operations;
-    }
-
-    get queenId() {
-        return this._queenId;
     }
 
     playAction(action) {

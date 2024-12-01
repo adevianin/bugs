@@ -90,7 +90,15 @@ class Ant(LiveEntity):
     @guardian_behavior.setter
     def guardian_behavior(self, behavior: GuardianBehaviors):
         self._mind.guardian_behavior = behavior
+
+    @property
+    def can_fly_nuptial_flight(self):
+        return False
     
+    @property
+    def is_queen_of_colony(self):
+        return False
+
     def collect_food(self, sayback: str = None):
         self._mind.collect_food(sayback)
     

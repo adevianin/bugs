@@ -29,8 +29,7 @@ class ColonySerializer():
         
         json.update({
             'owner_id': colony.owner_id,
-            'operations': [self._operation_serializer.serialize(operation) for operation in colony.operations],
-            'queen_id': colony.queen_id
+            'operations': [self._operation_serializer.serialize(operation) for operation in colony.operations]
         })
 
         return json

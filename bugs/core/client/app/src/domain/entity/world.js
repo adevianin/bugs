@@ -125,13 +125,14 @@ class World {
     }
 
     getQueenOfColony(colonyId) {
-        let colony = this.findColonyById(colonyId);
-        let queen = null;
-        if (colony.queenId) {
-            queen = this.findEntityById(colony.queenId);
+        let ants = this.findAntsFromColony(colonyId);
+        for (let ant of ants) {
+            if (ant.isQueenOfColony) {
+                return ant;
+            }
         }
 
-        return queen;
+        return null;
     }
 
     findEntityByType(type) {

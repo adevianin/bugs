@@ -31,10 +31,6 @@ class QueenAntBody(AntBody):
         return self.memory.read_flag('is_in_nuptial_flight')
     
     @property
-    def can_fly_nuptial_flight(self):
-        return not self.is_fertilized
-    
-    @property
     def male_chromosomes_set(self):
         return self._male_chromosomes_set
     

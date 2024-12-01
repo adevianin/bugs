@@ -32,10 +32,6 @@ class QueenAnt extends BaseAnt {
         return this._isInNuptialFlight;
     }
 
-    // get canFlyNuptialFlight() {
-    //     return !this._isFertilized;
-    // }
-
     get genes() {
         return this._genes;
     }
@@ -61,10 +57,6 @@ class QueenAnt extends BaseAnt {
             case ACTION_TYPES.ANT_GOT_FERTILIZED:
                 return this._playGotFertilized(action)
         }
-    }
-
-    flyNuptialFlight() {
-        this._antApi.flyNuptialFlight(this.id);
     }
 
     _playFlyNuptialFlight() {
