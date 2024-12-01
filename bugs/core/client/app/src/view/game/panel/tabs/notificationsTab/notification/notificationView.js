@@ -94,6 +94,10 @@ class NotificationView extends BaseHTMLView {
                 return 'помер в шлюбному льоті';
             case DeathTypes.SIMPLE:
                 return 'помер з невідомих причин';
+            case DeathTypes.SIMPLE:
+                return 'помер з невідомих причин';
+            case DeathTypes.BURIED_IN_DESTRUCTED_NEST:
+                return 'загинув в зруйнованому гнізді';
         }
     }
 

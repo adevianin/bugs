@@ -144,7 +144,10 @@ class AntColony(Colony):
         if (len(remaining_nests) > 0):
             relocate_nest = remaining_nests[0]
             for ant in ants_from_destroyed_nest:
-                ant.relocate_to_nest(relocate_nest)
+                if ant.is_queen_of_colony:
+                    ant.buried_in_destructed_nest_die()
+                else:
+                    ant.relocate_to_nest(relocate_nest)
         else:
             for ant in ants_from_destroyed_nest:
                 ant.no_home_die()

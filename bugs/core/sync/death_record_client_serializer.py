@@ -7,6 +7,7 @@ from core.world.entities.base.death_record.no_home_death_record import NoHomeDea
 from core.world.entities.base.death_record.age_death_record import AgeDeathRecord
 from core.world.entities.base.death_record.hunger_death_record import HungerDeathRecord
 from core.world.entities.base.death_record.simple_death_record import SimpleDeathRecord
+from core.world.entities.base.death_record.buried_in_destructed_nest_death_record import BuriedInDestructedNestDeathRecord
 
 class DeathRecordClientSerializer():
 
@@ -27,6 +28,8 @@ class DeathRecordClientSerializer():
                 return self._serialize_hunger_death_record(death_record)
             case DeathRecordTypes.SIMPLE:
                 return self._serialize_simple_death_record(death_record)
+            case DeathRecordTypes.BURIED_IN_DESTRUCTED_NEST:
+                return self._serialize_buried_in_destructed_nest_death_record(death_record)
             case _:
                 raise('unknown type of death record')
     
@@ -60,5 +63,9 @@ class DeathRecordClientSerializer():
         return props
     
     def _serialize_simple_death_record(self, death_record: SimpleDeathRecord):
+        props = self._serialize_common_props(death_record)
+        return props
+    
+    def _serialize_buried_in_destructed_nest_death_record(self, death_record: BuriedInDestructedNestDeathRecord):
         props = self._serialize_common_props(death_record)
         return props

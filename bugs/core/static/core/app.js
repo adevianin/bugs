@@ -2411,6 +2411,7 @@ const DeathTypes = {
     DAMAGE: 'damage',
     NUPTIAL_FLY: 'nuptial_fly',
     NO_HOME: 'no_home',
+    BURIED_IN_DESTRUCTED_NEST: 'buried_in_destructed_nest',
     AGED: 'aged',
     HUNGER: 'hunger',
     SIMPLE: 'simple'
@@ -7603,6 +7604,10 @@ class NotificationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
                 return 'помер в шлюбному льоті';
             case _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__.DeathTypes.SIMPLE:
                 return 'помер з невідомих причин';
+            case _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__.DeathTypes.SIMPLE:
+                return 'помер з невідомих причин';
+            case _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__.DeathTypes.BURIED_IN_DESTRUCTED_NEST:
+                return 'загинув у зруйнованому гнізді';
         }
     }
 
