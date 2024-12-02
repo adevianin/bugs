@@ -28,12 +28,18 @@ def save_specie_schema(request: HttpRequest):
     data = json.loads(request.body)
     wf = WorldFacade.get_instance()
 
-    specie_schema = {}
-    for chromosome_type in data['specie_schema']:
-        type = ChromosomeTypes(chromosome_type)
-        ids = data['specie_schema'][chromosome_type]
-        specie_schema[type] = ids
+    try:
+        specie_schema = {}
+        for chromosome_type in data['specie_schema']:
+            type = ChromosomeTypes(chromosome_type)
+            ids = data['specie_schema'][chromosome_type]
+            specie_schema[type] = ids
+    except Exception as e:
+        return HttpResponse(status=400)
+    
+    error = wf.change_specie_schema_command(request.user.id, specie_schema)
 
-    wf.change_specie_schema_command(request.user.id, specie_schema)
-
-    return HttpResponse(status=200)
+    if not error:
+        return HttpResponse(status=200)
+    else:
+        return HttpResponse(error, status=400)

@@ -51,6 +51,7 @@ class NuptialEnvironmentService():
         nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
         if nuptial_environment.specie.validate_schema(specie_schema):
             nuptial_environment.specie.apply_schema(specie_schema)
+            return None
         else:
-            raise Exception('schema is not valid')
+            return 'specie schema is not valid'
         

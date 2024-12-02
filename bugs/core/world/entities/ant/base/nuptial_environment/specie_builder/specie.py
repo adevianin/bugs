@@ -9,6 +9,7 @@ from core.world.settings import (PROBABILITY_OF_SUPER_GENE, SUPER_GENE_THRESHOLD
 from core.world.utils.probability_check import probability_check
 from core.world.entities.ant.base.genetic.genes.development_warrior_caste_gene import DevelopmentWarriorCasteGene
 from core.world.entities.ant.base.genetic.genes.building_subnest_gene import BuildingSubnestGene
+from .required_genes_list import REQUIRED_GENES
 from typing import List, Dict
 import random
 
@@ -64,11 +65,18 @@ class Specie():
             specie_chromosome.apply_schema(ids)
         
     def validate_schema(self, schema: Dict[ChromosomeTypes, List[str]]):
+        validating_chromosome_types = []
+
         for chromosome_type in schema:
+            validating_chromosome_types.append(chromosome_type)
             schema_ids = schema[chromosome_type]
             specie_chromosome = self._chromosome_set.get_specie_chromosome_by_type(chromosome_type)
 
             if not specie_chromosome.validate_schema(schema_ids):
+                return False
+            
+        for chromosome_type in REQUIRED_GENES.keys():
+            if chromosome_type not in validating_chromosome_types:
                 return False
 
         return True

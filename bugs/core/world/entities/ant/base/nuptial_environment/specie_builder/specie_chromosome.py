@@ -3,6 +3,7 @@ from core.world.entities.ant.base.genetic.chromosome import Chromosome
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
 from core.world.entities.ant.base.genetic.genes.base.base_gene import BaseGene
+from .required_genes_list import REQUIRED_GENES
 from typing import List
 
 class SpecieChromosome():
@@ -62,19 +63,22 @@ class SpecieChromosome():
         return None
     
     def validate_schema(self, validating_ids: List[str]) -> bool:
-        chromosome_genes_ids = [specie_gene.id for specie_gene in self._specie_genes]
-
-        for id in validating_ids:
-            if id not in chromosome_genes_ids:
-                return False
-            
-        genes_types = set()
+        validating_genes_types = []
         for id in validating_ids:
             specie_gene = self.get_specie_gene_by_id(id)
-            type = specie_gene.gene.type
-            if type in genes_types:
+
+            if not specie_gene:
                 return False
-            genes_types.add(type)
+            
+            type = specie_gene.gene.type
+            if type in validating_genes_types:
+                return False
+            
+            validating_genes_types.append(type)
+
+        for gene_type in REQUIRED_GENES[self._type]:
+            if gene_type not in validating_genes_types:
+                return False
 
         return True
     
