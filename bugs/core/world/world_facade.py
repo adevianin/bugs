@@ -67,7 +67,7 @@ class WorldFacade:
     def init_world(self):
         self._world = self._world_repository.get(WORLD_ID)
         if not self._world:
-            self._world = self._world_service.generate_new_world(2, 2)
+            self._world = self._world_service.generate_new_world(4, 4)
 
     def add_listener(self, event_name: str, callback: Callable):
         self._events.add_listener(event_name, callback)
@@ -151,7 +151,7 @@ class WorldFacade:
         self._ant_service.relocate_ant(user_id, ant_id, nest_id)
 
     def change_specie_schema_command(self, user_id: int, specie_schema: Dict[ChromosomeTypes, List[str]]):
-        self._nuptial_environment_service.change_specie_schema(user_id, specie_schema)
+        return self._nuptial_environment_service.change_specie_schema(user_id, specie_schema)
 
     def rename_nest_command(self, user_id: int, nest_id: int, name: str):
         self._colony_service.rename_nest(user_id, nest_id, name)
