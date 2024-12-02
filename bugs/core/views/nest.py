@@ -25,10 +25,12 @@ def add_egg(request: HttpRequest, nest_id: int):
     is_fertilized = data['is_fertilized']
 
     wf = WorldFacade.get_instance()
+    error = wf.add_egg_command(request.user.id, nest_id, name, is_fertilized)
 
-    wf.add_egg_command(request.user.id, nest_id, name, is_fertilized)
-
-    return HttpResponse(status=200)
+    if error:
+        return HttpResponse(error, status=409)
+    else:
+        return HttpResponse(status=200)
 
 @require_POST
 @login_required     

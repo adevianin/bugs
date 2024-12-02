@@ -1678,12 +1678,8 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this.emit('nameChanged');
     }
     
-    checkHaveEnoughtFoodForNewEgg() {
-        return this.storedCalories >= _domain_consts__WEBPACK_IMPORTED_MODULE_5__.CONSTS.NEW_EGG_FOOD_COST;
-    }
-
     addNewEgg(name, isFertilized) {
-        this._nestApi.addNewEgg(this.id, name, isFertilized);
+        return this._nestApi.addNewEgg(this.id, name, isFertilized);
     }
 
     eggToLarvaChamber(eggId) {
@@ -2223,10 +2219,6 @@ class World {
 
     get climate() {
         return this._climate;
-    }
-
-    get isSeasonForLayingEggs() {
-        return _domain_consts__WEBPACK_IMPORTED_MODULE_1__.CONSTS.LAY_EGG_SEASONS.includes(this._currentSeason);
     }
 
     getAnts() {
@@ -3561,10 +3553,14 @@ class NestApi {
     }
 
     addNewEgg(nestId, name, isFertilized) {
-        return this._requester.post(`world/nests/${nestId}/add_egg`, {
-            name,
-            is_fertilized: isFertilized
-        });
+        return new Promise((res, rej) => {
+            this._requester.post(`world/nests/${nestId}/add_egg`, {
+                name,
+                is_fertilized: isFertilized
+            })
+            .then(axiosResp => res(null))
+            .catch(axiosResp => rej(axiosResp.response.data))
+        })
     }
 
     changeEggCaste(nestId, eggId, antType) {
@@ -5826,7 +5822,6 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._render();
 
         this._addEggBtn.addEventListener('click', this._onAddEggBtnClick.bind(this));
-        this.$domainFacade.events.addListener('currentSeasonChanged', this._onSeasonChanged.bind(this));
     }
 
     remove() {
@@ -5840,9 +5835,7 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._eggsListEl = this._el.querySelector('[data-eggs-list]');
         this._addEggBtn = this._el.querySelector('[data-add-egg]');
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
-        this._notEnoughFoodMsg = this._el.querySelector('[data-not-enough-food-msg]');
-        this._notSuitableSeasonMsg = this._el.querySelector('[data-not-suitable-season-msg]');
-        this._queenIsNotInNestMsg = this._el.querySelector('[data-queen-is-not-in-nest-msg]');
+        this._errorContainerEl = this._el.querySelector('[data-error-container]');
     }
 
     manageNest(nest) {
@@ -5850,19 +5843,14 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._nest = nest;
         this._listenNest();
 
-        this._stopListenQueenOfColony();
-        this._queenOfColony = this.$domainFacade.getQueenOfColony(nest.fromColony);
-        this._listenQueenOfColony();
-
         this._renderEggsList();
-        this._renderCanAddNewEgg();
+        this._renderError('');
     }
 
     _listenNest() {
         this._stopListenEggBecameLarva = this._nest.on('eggBecameLarva', this._onEggBecameLarva.bind(this));
         this._stopListenEggDeleted = this._nest.on('eggDeleted', this._onEggDeleted.bind(this));
         this._stopListenEggAdded = this._nest.on('eggAdded', this._onEggAdded.bind(this));
-        this._stopListenStoredCaloriesChanged = this._nest.on('storedCaloriesChanged', this._onStoredCaloriesChanged.bind(this));
     }
 
     _stopListenNest() {
@@ -5873,25 +5861,6 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._stopListenEggBecameLarva();
         this._stopListenEggDeleted();
         this._stopListenEggAdded();
-        this._stopListenStoredCaloriesChanged();
-    }
-
-    _listenQueenOfColony() {
-        if (!this._queenOfColony) {
-            return;
-        }
-
-        this._stopListenQueenLocatedInNestChanged = this._queenOfColony.on('locatedInNestChanged', this._onQueenLocatedInNestChanged.bind(this));
-        this._stopListenQueenDied = this._queenOfColony.on('died', this._onQueenDied.bind(this));
-    }
-
-    _stopListenQueenOfColony() {
-        if (!this._queenOfColony) {
-            return;
-        }
-
-        this._stopListenQueenLocatedInNestChanged();
-        this._stopListenQueenDied();
     }
 
     _renderEggsList() {
@@ -5932,29 +5901,16 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._renderEgg(egg);
     }
 
-    _onStoredCaloriesChanged() {
-        this._renderCanAddNewEgg();
-    }
-
     _onAddEggBtnClick() {
         let name = this._generateAntName();
         let isFertilized = this._isFertilizeCheckbox.checked;
-        this._nest.addNewEgg(name, isFertilized);
-    }
-
-    _onSeasonChanged() {
-        this._renderCanAddNewEgg();
-    }
-
-    _renderCanAddNewEgg() {
-        let haveFood = this._nest.checkHaveEnoughtFoodForNewEgg();
-        let isSuitableSeason = this.$domainFacade.world.isSeasonForLayingEggs;
-        let isQueenInNest = this._queenOfColony && this._queenOfColony.locatedInNestId == this._nest.id;
-        let canAdd = haveFood && isSuitableSeason && isQueenInNest;
-        this._addEggBtn.disabled = !canAdd;
-        this._notEnoughFoodMsg.classList.toggle('hidden', haveFood);
-        this._notSuitableSeasonMsg.classList.toggle('hidden', isSuitableSeason);
-        this._queenIsNotInNestMsg.classList.toggle('hidden', isQueenInNest);
+        this._nest.addNewEgg(name, isFertilized)
+            .then(() => {
+                this._renderError();
+            })
+            .catch((errId) => {
+                this._renderError(errId);
+            });
     }
 
     _generateAntName() {
@@ -5967,14 +5923,8 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         return `${randomAdjective} ${randomNoun}`;
     }
 
-    _onQueenLocatedInNestChanged() {
-        this._renderCanAddNewEgg();
-    }
-
-    _onQueenDied() {
-        this._stopListenQueenOfColony();
-        this._queenOfColony = null;
-        this._renderCanAddNewEgg();
+    _renderError(messageId) {
+        this._errorContainerEl.innerHTML = messageId ? this.$messages[messageId] : '';
     }
 
 }
@@ -10082,7 +10032,10 @@ __webpack_require__.r(__webpack_exports__);
 const uaMessages = {
     CANT_BUILD_SUB_NEST_WITHOUT_QUEEN: 'Не можна будувати гніздо сателіт в колонії без королеви.',
     CANT_BUILD_MORE_SUB_NEST: 'Досягнуто максимальну кількість гнізд сателітів.',
-    CANT_BUILD_SUB_NEST_FAR_AWAY: 'Не можна будувати гніздо сателіт так далеко центрального.'
+    CANT_BUILD_SUB_NEST_FAR_AWAY: 'Не можна будувати гніздо сателіт так далеко центрального.',
+    CANT_LAY_EGG_WITHOUT_QUEEN_IN_NEST: 'Королеви немає в гнізді для відкладення яєць',
+    NOT_ENOUGHT_FOOD_IN_NEST_TO_LAY_EGG: 'Не достатньо їжі для відкладення яєць',
+    NOT_SUITABLE_SEASON_TO_LAY_EGG: 'Непідходящий сезон для відкладення яєць'
 }
 
 
@@ -12927,7 +12880,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n    <span data-not-enough-food-msg>не вистачає їжі</span>\r\n    <span data-not-suitable-season-msg>не підходящий сезон</span>\r\n    <span data-queen-is-not-in-nest-msg>королеви немає в гнізді</span>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>стан</td>\r\n            <td>каста</td>\r\n            <td>дії</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
+var code = "<div>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n    <div data-error-container></div>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>стан</td>\r\n            <td>каста</td>\r\n            <td>дії</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

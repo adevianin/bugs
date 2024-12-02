@@ -36,17 +36,14 @@ class ColonyService():
         
         queen = self._find_queen_of_colony(colony.id)
         
-        if not queen:
-            raise Exception('no queen')
-        
-        if queen.located_in_nest_id != nest_id:
-            raise Exception('queen is not in nest')
+        if not queen or queen.located_in_nest_id != nest_id:
+            return Messages.CANT_LAY_EGG_WITHOUT_QUEEN_IN_NEST
         
         if nest.stored_calories < NEW_EGG_FOOD_COST:
-            raise Exception('not enought food')
+            return Messages.NOT_ENOUGHT_FOOD_IN_NEST_TO_LAY_EGG
         
         if not self._world.current_season in LAY_EGG_SEASONS:
-            raise Exception('not lay egg season')
+            return Messages.NOT_SUITABLE_SEASON_TO_LAY_EGG
         
         egg = queen.produce_egg(name, is_fertilized)
         nest.give_calories(NEW_EGG_FOOD_COST)

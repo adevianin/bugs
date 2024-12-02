@@ -45,12 +45,8 @@ class Nest extends Entity {
         this.emit('nameChanged');
     }
     
-    checkHaveEnoughtFoodForNewEgg() {
-        return this.storedCalories >= CONSTS.NEW_EGG_FOOD_COST;
-    }
-
     addNewEgg(name, isFertilized) {
-        this._nestApi.addNewEgg(this.id, name, isFertilized);
+        return this._nestApi.addNewEgg(this.id, name, isFertilized);
     }
 
     eggToLarvaChamber(eggId) {

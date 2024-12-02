@@ -115,7 +115,7 @@ class WorldFacade:
         self._colony_service.bring_bug_operation(user_id, performing_colony_id, nest_id)
 
     def add_egg_command(self, user_id: int, nest_id: int, name: str, is_fertilized: bool):
-        self._colony_service.add_egg(user_id, nest_id, name, is_fertilized)
+        return self._colony_service.add_egg(user_id, nest_id, name, is_fertilized)
 
     def change_egg_caste_command(self, user_id: int, nest_id: int, egg_id: str, ant_type: AntTypes):
         self._colony_service.change_egg_caste(user_id, nest_id, egg_id, ant_type)

@@ -5,10 +5,14 @@ class NestApi {
     }
 
     addNewEgg(nestId, name, isFertilized) {
-        return this._requester.post(`world/nests/${nestId}/add_egg`, {
-            name,
-            is_fertilized: isFertilized
-        });
+        return new Promise((res, rej) => {
+            this._requester.post(`world/nests/${nestId}/add_egg`, {
+                name,
+                is_fertilized: isFertilized
+            })
+            .then(axiosResp => res(null))
+            .catch(axiosResp => rej(axiosResp.response.data))
+        })
     }
 
     changeEggCaste(nestId, eggId, antType) {

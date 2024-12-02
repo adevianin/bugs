@@ -11,7 +11,6 @@ class EggTabView extends BaseHTMLView {
         this._render();
 
         this._addEggBtn.addEventListener('click', this._onAddEggBtnClick.bind(this));
-        this.$domainFacade.events.addListener('currentSeasonChanged', this._onSeasonChanged.bind(this));
     }
 
     remove() {
@@ -25,9 +24,7 @@ class EggTabView extends BaseHTMLView {
         this._eggsListEl = this._el.querySelector('[data-eggs-list]');
         this._addEggBtn = this._el.querySelector('[data-add-egg]');
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
-        this._notEnoughFoodMsg = this._el.querySelector('[data-not-enough-food-msg]');
-        this._notSuitableSeasonMsg = this._el.querySelector('[data-not-suitable-season-msg]');
-        this._queenIsNotInNestMsg = this._el.querySelector('[data-queen-is-not-in-nest-msg]');
+        this._errorContainerEl = this._el.querySelector('[data-error-container]');
     }
 
     manageNest(nest) {
@@ -35,19 +32,14 @@ class EggTabView extends BaseHTMLView {
         this._nest = nest;
         this._listenNest();
 
-        this._stopListenQueenOfColony();
-        this._queenOfColony = this.$domainFacade.getQueenOfColony(nest.fromColony);
-        this._listenQueenOfColony();
-
         this._renderEggsList();
-        this._renderCanAddNewEgg();
+        this._renderError('');
     }
 
     _listenNest() {
         this._stopListenEggBecameLarva = this._nest.on('eggBecameLarva', this._onEggBecameLarva.bind(this));
         this._stopListenEggDeleted = this._nest.on('eggDeleted', this._onEggDeleted.bind(this));
         this._stopListenEggAdded = this._nest.on('eggAdded', this._onEggAdded.bind(this));
-        this._stopListenStoredCaloriesChanged = this._nest.on('storedCaloriesChanged', this._onStoredCaloriesChanged.bind(this));
     }
 
     _stopListenNest() {
@@ -58,25 +50,6 @@ class EggTabView extends BaseHTMLView {
         this._stopListenEggBecameLarva();
         this._stopListenEggDeleted();
         this._stopListenEggAdded();
-        this._stopListenStoredCaloriesChanged();
-    }
-
-    _listenQueenOfColony() {
-        if (!this._queenOfColony) {
-            return;
-        }
-
-        this._stopListenQueenLocatedInNestChanged = this._queenOfColony.on('locatedInNestChanged', this._onQueenLocatedInNestChanged.bind(this));
-        this._stopListenQueenDied = this._queenOfColony.on('died', this._onQueenDied.bind(this));
-    }
-
-    _stopListenQueenOfColony() {
-        if (!this._queenOfColony) {
-            return;
-        }
-
-        this._stopListenQueenLocatedInNestChanged();
-        this._stopListenQueenDied();
     }
 
     _renderEggsList() {
@@ -117,29 +90,16 @@ class EggTabView extends BaseHTMLView {
         this._renderEgg(egg);
     }
 
-    _onStoredCaloriesChanged() {
-        this._renderCanAddNewEgg();
-    }
-
     _onAddEggBtnClick() {
         let name = this._generateAntName();
         let isFertilized = this._isFertilizeCheckbox.checked;
-        this._nest.addNewEgg(name, isFertilized);
-    }
-
-    _onSeasonChanged() {
-        this._renderCanAddNewEgg();
-    }
-
-    _renderCanAddNewEgg() {
-        let haveFood = this._nest.checkHaveEnoughtFoodForNewEgg();
-        let isSuitableSeason = this.$domainFacade.world.isSeasonForLayingEggs;
-        let isQueenInNest = this._queenOfColony && this._queenOfColony.locatedInNestId == this._nest.id;
-        let canAdd = haveFood && isSuitableSeason && isQueenInNest;
-        this._addEggBtn.disabled = !canAdd;
-        this._notEnoughFoodMsg.classList.toggle('hidden', haveFood);
-        this._notSuitableSeasonMsg.classList.toggle('hidden', isSuitableSeason);
-        this._queenIsNotInNestMsg.classList.toggle('hidden', isQueenInNest);
+        this._nest.addNewEgg(name, isFertilized)
+            .then(() => {
+                this._renderError();
+            })
+            .catch((errId) => {
+                this._renderError(errId);
+            });
     }
 
     _generateAntName() {
@@ -152,14 +112,8 @@ class EggTabView extends BaseHTMLView {
         return `${randomAdjective} ${randomNoun}`;
     }
 
-    _onQueenLocatedInNestChanged() {
-        this._renderCanAddNewEgg();
-    }
-
-    _onQueenDied() {
-        this._stopListenQueenOfColony();
-        this._queenOfColony = null;
-        this._renderCanAddNewEgg();
+    _renderError(messageId) {
+        this._errorContainerEl.innerHTML = messageId ? this.$messages[messageId] : '';
     }
 
 }

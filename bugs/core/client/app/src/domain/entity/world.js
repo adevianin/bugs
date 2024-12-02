@@ -51,10 +51,6 @@ class World {
         return this._climate;
     }
 
-    get isSeasonForLayingEggs() {
-        return CONSTS.LAY_EGG_SEASONS.includes(this._currentSeason);
-    }
-
     getAnts() {
         return this.findEntityByType(EntityTypes.ANT);
     }
