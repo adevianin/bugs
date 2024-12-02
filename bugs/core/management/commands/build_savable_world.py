@@ -1362,11 +1362,13 @@ class Command(BaseCommand):
                 "id":3,
                 "owner_id":2,
                 "member_type": "ant",
+                "name": 'My Colony',
                 "operations":[]
             },
             {
                 "id":2,
                 "owner_id":2,
+                "name": 'My another Colony',
                 "member_type": "ant",
                 "operations":[]
             },

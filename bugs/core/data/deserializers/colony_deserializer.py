@@ -24,7 +24,8 @@ class ColonyDeserializer():
         operations = [self._operation_deserializer.deserialize_operation(operation_json, entities_collection) for operation_json in colony_json['operations']]
         id = colony_json['id']
         owner_id = colony_json['owner_id']
-        return self._colony_factory.build_ant_colony(id, owner_id, map, operations, colony_relations_table)
+        name = colony_json['name']
+        return self._colony_factory.build_ant_colony(id, owner_id, map, name, operations, colony_relations_table)
     
     def _build_ladybug_colony(self, colony_json, map: Map, colony_relations_table: ColonyRelationsTable):
         return self._colony_factory.build_ladybug_colony(colony_json['id'], map, colony_relations_table)

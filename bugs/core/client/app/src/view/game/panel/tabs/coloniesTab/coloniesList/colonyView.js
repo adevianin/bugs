@@ -18,7 +18,7 @@ class ColonyView extends BaseHTMLView {
 
     _render() {
         this._el.innerHTML = colonyTmpl;
-        this._el.querySelector('[data-colony-id]').innerHTML = this._colony.id;
+        this._el.querySelector('[data-colony-name]').innerHTML = this._colony.name;
         this._colonyEl = this._el.querySelector('[data-colony]');
     }
 

@@ -17,6 +17,7 @@ class ColonyClientSerializer():
         operations_json = [self._operation_serializer.serialize(operation) for operation in colony.operations]
         return {
             'id': colony.id,
+            'name': colony.name,
             'owner_id': colony.owner_id,
             'operations': operations_json
         }

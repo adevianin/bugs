@@ -27,7 +27,9 @@ class NuptialEnvironmentService():
         male = nuptial_environment.get_male(nuptial_male_id)
         queen.fertilize(male)
 
-        new_colony = self._colony_factory.build_new_ant_colony(self._world.generate_id(), user_id, self._world.map, self._world.colony_relations_table, queen.id)
+        colony_name = remove_non_alphanumeric_and_spaces(colony_name)
+
+        new_colony = self._colony_factory.build_new_ant_colony(self._world.generate_id(), user_id, self._world.map, self._world.colony_relations_table, colony_name)
 
         queen.from_colony_id = new_colony.id
         queen.fly_nuptial_flight_back(nest_building_site)
@@ -37,8 +39,6 @@ class NuptialEnvironmentService():
             queen.build_nest(nest, True)
             nest.take_calories(1000)
             self._world.add_new_colony(new_colony) # found nest before new colony
-
-        colony_name = remove_non_alphanumeric_and_spaces(colony_name)
 
         queen.found_nest(colony_name, True, nest_building_site, on_nest_found)
 

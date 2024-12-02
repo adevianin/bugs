@@ -3,12 +3,13 @@ import { EventEmitter } from "@utils/eventEmitter";
 
 class AntColony extends EventEmitter {
 
-    constructor(eventBus, id, onwerId, operations) {
+    constructor(eventBus, id, onwerId, name, operations) {
         super();
         this._eventBus = eventBus;
         this._id = id;
         this._onwerId = onwerId;
         this._operations = operations;
+        this._name = name;
     }
 
     get id() {
@@ -17,6 +18,10 @@ class AntColony extends EventEmitter {
 
     get ownerId() {
         return this._onwerId;
+    }
+
+    get name() {
+        return this._name;
     }
 
     get operations() {

@@ -29,6 +29,7 @@ class ColonySerializer():
         
         json.update({
             'owner_id': colony.owner_id,
+            'name': colony.name,
             'operations': [self._operation_serializer.serialize(operation) for operation in colony.operations]
         })
 

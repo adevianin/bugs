@@ -23,7 +23,7 @@ class ColonyService {
     
     }
     giveBirthToColony(colonyJson) {
-        let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
+        let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.name, colonyJson.operations);
         this._world.addColony(colony);
         this._mainEventBus.emit('colonyBorn', colony);
     }

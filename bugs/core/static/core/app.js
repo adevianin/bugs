@@ -323,12 +323,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class AntColony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_1__.EventEmitter {
 
-    constructor(eventBus, id, onwerId, operations) {
+    constructor(eventBus, id, onwerId, name, operations) {
         super();
         this._eventBus = eventBus;
         this._id = id;
         this._onwerId = onwerId;
         this._operations = operations;
+        this._name = name;
     }
 
     get id() {
@@ -337,6 +338,10 @@ class AntColony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_1__.EventEm
 
     get ownerId() {
         return this._onwerId;
+    }
+
+    get name() {
+        return this._name;
     }
 
     get operations() {
@@ -2698,7 +2703,7 @@ class ColonyService {
     
     }
     giveBirthToColony(colonyJson) {
-        let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
+        let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.name, colonyJson.operations);
         this._world.addColony(colony);
         this._mainEventBus.emit('colonyBorn', colony);
     }
@@ -3063,7 +3068,7 @@ class WorldService {
         });
         
         worldJson.ant_colonies.forEach(colonyJson => {
-            let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.operations);
+            let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.name, colonyJson.operations);
             this._world.addColony(colony);
         });
         
@@ -3286,8 +3291,8 @@ class WorldFactory {
         return new _entity_tree__WEBPACK_IMPORTED_MODULE_14__.Tree(this._mainEventBus, id, position, angle, fromColony, ownerId, hp, maxHp);
     }
 
-    buildAntColony(id, owner_id, operations) {
-        return new _entity_antColony__WEBPACK_IMPORTED_MODULE_4__.AntColony(this._mainEventBus, id, owner_id, operations);
+    buildAntColony(id, owner_id, name, operations) {
+        return new _entity_antColony__WEBPACK_IMPORTED_MODULE_4__.AntColony(this._mainEventBus, id, owner_id, name, operations);
     }
 
     buildNuptialMale(nuptialMaleJson) {
@@ -5196,7 +5201,7 @@ class ColonyView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
 
     _render() {
         this._el.innerHTML = _colony_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        this._el.querySelector('[data-colony-id]').innerHTML = this._colony.id;
+        this._el.querySelector('[data-colony-name]').innerHTML = this._colony.name;
         this._colonyEl = this._el.querySelector('[data-colony]');
     }
 
@@ -12794,7 +12799,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<span class=\"colonies-list__colony\" data-colony>colony <span data-colony-id></span></span>";
+var code = "<span class=\"colonies-list__colony\" data-colony>\r\n    <span data-colony-name></span>\r\n</span>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
