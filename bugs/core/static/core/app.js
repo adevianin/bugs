@@ -4398,6 +4398,9 @@ class GeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_MALE_CASTE:
                 this._renderCasteDevelopmentGene();
                 break;
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.BUILDING_SUBNEST:
+                this._renderBuildingSubnestGene();
+                break;
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.ADJUSTING_APPETITE:
                 this._renderAdjustingAppetiteGene();
                 break;
@@ -4472,6 +4475,10 @@ class GeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
             default:
                 throw 'unknown development gene type';
         }
+    }
+
+    _renderBuildingSubnestGene() {
+        this._geneEl.innerHTML = 'ген будування гнізд сателітів';
     }
 
     _renderAdjustingAppetiteGene() {

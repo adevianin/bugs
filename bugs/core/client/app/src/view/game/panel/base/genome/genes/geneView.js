@@ -59,6 +59,9 @@ class GeneView extends BaseHTMLView {
             case GenesTypes.DEVELOPMENT_MALE_CASTE:
                 this._renderCasteDevelopmentGene();
                 break;
+            case GenesTypes.BUILDING_SUBNEST:
+                this._renderBuildingSubnestGene();
+                break;
             case GenesTypes.ADJUSTING_APPETITE:
                 this._renderAdjustingAppetiteGene();
                 break;
@@ -133,6 +136,10 @@ class GeneView extends BaseHTMLView {
             default:
                 throw 'unknown development gene type';
         }
+    }
+
+    _renderBuildingSubnestGene() {
+        this._geneEl.innerHTML = 'ген будування гнізд сателітів';
     }
 
     _renderAdjustingAppetiteGene() {
