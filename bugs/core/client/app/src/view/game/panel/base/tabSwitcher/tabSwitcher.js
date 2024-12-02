@@ -42,6 +42,10 @@ class TabSwitcher extends BaseHTMLView {
         });
     }
 
+    toggleTabDisabling(tabName, isDisabled) {
+        this._el.querySelector(`[data-tab-activator="${tabName}"]`).disabled = isDisabled;
+    }
+
     _onTabActivatorClick(event) {
         let btn = event.target;
         let tabName = btn.getAttribute('data-tab-activator');

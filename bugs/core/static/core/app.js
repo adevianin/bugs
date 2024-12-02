@@ -4757,6 +4757,10 @@ class TabSwitcher extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.B
         });
     }
 
+    toggleTabDisabling(tabName, isDisabled) {
+        this._el.querySelector(`[data-tab-activator="${tabName}"]`).disabled = isDisabled;
+    }
+
     _onTabActivatorClick(event) {
         let btn = event.target;
         let tabName = btn.getAttribute('data-tab-activator');
@@ -6360,7 +6364,6 @@ class NestManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
 
     constructor(el) {
         super(el);
-        this._nest = null;
 
         this._render();
     }
@@ -6374,6 +6377,10 @@ class NestManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
         this._eggTab.manageNest(nest);
         this._larvaTab.manageNest(nest);
         this._mainTab.manageNest(nest);
+
+        this._tabSwitcher.toggleTabDisabling('egg', !nest.isMain);
+        this._tabSwitcher.toggleTabDisabling('larva', !nest.isMain);
+        this._tabSwitcher.activateTab('main');
     }
 
     _render() {

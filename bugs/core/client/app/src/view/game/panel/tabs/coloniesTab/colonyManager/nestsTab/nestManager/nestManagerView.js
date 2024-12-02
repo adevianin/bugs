@@ -9,7 +9,6 @@ class NestManagerView extends BaseHTMLView {
 
     constructor(el) {
         super(el);
-        this._nest = null;
 
         this._render();
     }
@@ -23,6 +22,10 @@ class NestManagerView extends BaseHTMLView {
         this._eggTab.manageNest(nest);
         this._larvaTab.manageNest(nest);
         this._mainTab.manageNest(nest);
+
+        this._tabSwitcher.toggleTabDisabling('egg', !nest.isMain);
+        this._tabSwitcher.toggleTabDisabling('larva', !nest.isMain);
+        this._tabSwitcher.activateTab('main');
     }
 
     _render() {
