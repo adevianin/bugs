@@ -85,7 +85,7 @@ class BaseFormation(ABC):
         self._order_units_move_on_positions()
 
     def _do_next_step(self):
-        new_pos, passed_dist, is_walk_done = Point.do_step_on_path(self._current_position, self._destination_point, self._unit_step_size)
+        new_pos, is_walk_done = Point.do_step_on_line(self._current_position, self._destination_point, self._unit_step_size)
         self._set_current_position(new_pos)
         self._order_units_move_on_positions()
 

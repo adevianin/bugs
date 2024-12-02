@@ -32,29 +32,51 @@ class Point(namedtuple('Point', ['x', 'y'])):
 
         return points
 
-    @classmethod
-    def do_step_on_path(cls, start_point: 'Point', dest_point: 'Point', step_size: int) -> Tuple['Point', int, bool]:
+    @staticmethod
+    def do_step_on_line(start_point: 'Point', dest_point: 'Point', step_size: int) -> Tuple['Point', bool]:
         distance = start_point.dist(dest_point)
         if distance <= step_size:
-            passed_dist = distance
             is_walk_done = True
-            return dest_point, passed_dist, is_walk_done
+            return dest_point, is_walk_done
         else:
-            x_distance = dest_point.x - start_point.x 
-            y_distance = dest_point.y - start_point.y
-            path_percent_to_walk = (step_size * 100) / distance
+            dx = dest_point.x - start_point.x 
+            dy = dest_point.y - start_point.y
 
-            x_shift = x_distance * path_percent_to_walk / 100
-            y_shift = y_distance * path_percent_to_walk / 100
+            vector_length = math.sqrt(dx**2 + dy**2)
 
-            new_pos = Point(start_point.x + x_shift, start_point.y + y_shift)
+            unit_dx = dx / vector_length
+            unit_dy = dy / vector_length
+
+            new_pos = Point(start_point.x + unit_dx * step_size, start_point.y + unit_dy * step_size)
+
             is_walk_done = new_pos.is_equal(dest_point)
             if is_walk_done:
                 new_pos = dest_point
-            passed_dist = step_size
 
-            return new_pos, passed_dist, is_walk_done
+            return new_pos, is_walk_done
+    
+    # old version
+    # @staticmethod
+    # def do_step_on_line(start_point: 'Point', dest_point: 'Point', step_size: int) -> Tuple['Point', int, bool]:
+    #     distance = start_point.dist(dest_point)
+    #     if distance <= step_size:
+    #         is_walk_done = True
+    #         return dest_point, is_walk_done
+    #     else:
+    #         x_distance = dest_point.x - start_point.x 
+    #         y_distance = dest_point.y - start_point.y
+    #         path_percent_to_walk = (step_size * 100) / distance
 
+    #         x_shift = x_distance * path_percent_to_walk / 100
+    #         y_shift = y_distance * path_percent_to_walk / 100
+
+    #         new_pos = Point(start_point.x + x_shift, start_point.y + y_shift)
+    #         is_walk_done = new_pos.is_equal(dest_point)
+    #         if is_walk_done:
+    #             new_pos = dest_point
+
+    #         return new_pos, is_walk_done
+        
     @classmethod
     def calculate_angle_to_x_axis(cls, point1: 'Point', point2: 'Point'):
         delta_x = point2.x - point1.x

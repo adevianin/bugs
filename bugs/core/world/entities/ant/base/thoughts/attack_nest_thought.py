@@ -2,9 +2,11 @@ from core.world.entities.thought.thought import Thought
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.ant_body import AntBody
-from core.world.settings import MAX_NEST_ATTACK_DISTANCE
 
 class AttackNestThought(Thought):
+
+    MAX_NEST_ATTACK_DISTANCE = 50
+    MIN_APPROACH_DISTANCE = 30
 
     _body: AntBody
 
@@ -23,8 +25,11 @@ class AttackNestThought(Thought):
         self._nest.unblock_removal(self._nest_removal_block_id)
     
     def do_step(self):
-        is_near_nest = self._body.position.dist(self._nest.position) < MAX_NEST_ATTACK_DISTANCE
-        if is_near_nest:
+        dist_to_nest = self._body.position.dist(self._nest.position)
+        if dist_to_nest < self.MAX_NEST_ATTACK_DISTANCE:
+            if dist_to_nest > self.MIN_APPROACH_DISTANCE:
+                self._body.move_to_best_position(self._nest.position)
+
             self._body.damage_another_body(self._nest.body)
         else:
             self._body.step_to(self._nest.position)

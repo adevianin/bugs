@@ -1,6 +1,6 @@
 from core.world.utils.point import Point
 from core.world.utils.event_emiter import EventEmitter
-from core.world.settings import COLD_DAMAGE, MAX_ATTACK_DISTANCE, HUNGER_THRESHOLD_PERCENTAGE, CALORIES_RESERVE_STEPS
+from core.world.settings import COLD_DAMAGE, HUNGER_THRESHOLD_PERCENTAGE, CALORIES_RESERVE_STEPS
 from core.world.entities.base.live_entity.visual_sensor import VisualSensor
 from core.world.entities.base.live_entity.temperature_sensor import TemperatureSensor
 from core.world.entities.base.enemy_interface import iEnemy
@@ -79,15 +79,12 @@ class LiveBody(Body):
         self._hp = self.stats.max_hp
     
     def step_to(self, destination_point: Point) -> bool:
-        if self._has_stun_effect:
+        if self._has_stun_effect or self.position.is_equal(destination_point):
             return
         self._look_at(destination_point)
 
         dist_per_step = self.formation_distance_per_step or self.stats.distance_per_step
-        new_position, passed_dist, is_walk_done = Point.do_step_on_path(self.position, destination_point, dist_per_step)
-
-        if (passed_dist == 0):
-            return True
+        new_position, is_walk_done = Point.do_step_on_line(self.position, destination_point, dist_per_step)
 
         self.position = new_position
 
@@ -130,17 +127,6 @@ class LiveBody(Body):
         self._calories += count
         return self._calories >= self._max_calories
     
-    # def eat_edible_item(self, food: Item) -> bool:
-    #     if (food.is_died):
-    #         return True
-        
-    #     calories_i_need = self.calc_how_much_calories_is_need()
-    #     calories_to_eat = min([calories_i_need, self._can_eat_calories_per_step, food.strength])
-
-    #     self._calories += food.use(calories_to_eat)
-
-    #     return food.is_died or self.calc_how_much_calories_is_need() == 0
-    
     def damage_another_body(self, body: Body):
         body.receive_damage(self.stats.attack, DamageTypes.COMBAT)
         self.events.emit('damaged_another_body')
@@ -150,14 +136,6 @@ class LiveBody(Body):
         self.events.emit('received_damage', damage_type)
         if damage_type == DamageTypes.COMBAT:
             self._stun_effect()
-            
-
-    def is_near_to_attack(self, point: Point):
-        dist = self.position.dist(point)
-        return dist <= MAX_ATTACK_DISTANCE
-    
-    # def calc_distance_to(self, point: Point):
-    #     return self.position.dist(point)
 
     def calc_nearest_point(self, points: List[Point]):
         nearest_dist = None
@@ -214,6 +192,33 @@ class LiveBody(Body):
 
     def say(self, phrase: str, data: dict):
         pass
+
+    def move_to_best_position(self, enemy_pos: Point):
+        if self._has_stun_effect:
+            return
+        dist_to_enemy = self.position.dist(enemy_pos)
+        dist_to_circle = dist_to_enemy / 2 if dist_to_enemy < self.stats.distance_per_step else self.stats.distance_per_step / 2
+        circle_pos, is_walk_done = Point.do_step_on_line(self.position, enemy_pos, dist_to_circle)
+        circle_radius = dist_to_circle
+        live_entities_nearby = self.visual_sensor.get_nearby_entities(EntityTypesPack.LIVE_ENTITIES)
+        generated_points = []
+        for i in range(3):
+            point = Point.generate_random_point_within_circle(circle_pos, circle_radius)
+            generated_points.append(point)
+
+        choosed_point = None
+        entities_near_choosed_point = None
+        for generated_point in generated_points:
+            entities_counter = 0
+            for entity in live_entities_nearby:
+                if entity.position.dist(generated_point) < 10:
+                    entities_counter += 1
+
+            if entities_near_choosed_point is None or entities_counter < entities_near_choosed_point:
+                entities_near_choosed_point = entities_counter
+                choosed_point = generated_point
+
+        self.step_to(choosed_point)
 
     def _look_at(self, point: Point):
         self.angle = (math.atan2(point.y - self.position.y, point.x - self.position.x) * 180 / math.pi) + 90
