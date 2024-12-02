@@ -18,6 +18,8 @@ from functools import partial
 
 class BuildNewSubNestOperation(Operation):
 
+    MIN_WORKERS_COUNT = 1
+
     class Flags(Operation.Flags):
         ANT_FLAG_APPROACHED_BUILDING_SITE = 'approached_to_building_site'
         ANT_FLAG_FINISHED_BUILDING_NEST = 'finished_building_nest'

@@ -14,6 +14,8 @@ from .base.fight.fight import Fight
 
 class PillageNestOperation(Operation):
 
+    MIN_WORKERS_COUNT = 1
+
     class Flags(Operation.Flags):
         ANT_FLAG_APPROACHED_NEST_TO_PILLAGE = 'approached_nest_to_pillage'
         ANT_FLAG_WAITED_IN_NEST_TO_PILLAGE = 'waited_in_nest_to_pillage'

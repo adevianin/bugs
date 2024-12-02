@@ -120,6 +120,10 @@ class ColonyService():
         nest_name = remove_non_alphanumeric_and_spaces(nest_name)
         
         operation = self._operation_factory.build_build_new_sub_nest_operation(nest_name, position, workers_count, warriors_count)
+
+        if not operation.validate():
+            raise Exception('operation is not valid')
+        
         colony.add_operation(operation)
         
     def destroy_nest_operation(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int, warriors_count: int):
@@ -130,9 +134,18 @@ class ColonyService():
         
         nest: Nest = self._world.map.get_entity_by_id(nest_id)
 
-        if nest.from_colony_id != performing_colony.id:
-            operation = self._operation_factory.build_destroy_nest_operation(nest, workers_count, warriors_count)
-            performing_colony.add_operation(operation)
+        if not nest:
+            raise Exception('no nest to destroy')
+        
+        if nest.from_colony_id == performing_colony.id:
+            raise Exception('colony cant destroy its nest')
+
+        operation = self._operation_factory.build_destroy_nest_operation(nest, workers_count, warriors_count)
+
+        if not operation.validate():
+            raise Exception('operation is not valid')
+
+        performing_colony.add_operation(operation)
 
     def pillage_nest_operation(self, user_id: int, performing_colony_id: int, nest_to_pillage_id: int, nest_for_loot_id: int, workers_count: int, warriors_count: int):
         performing_colony: AntColony = self._world.get_colony_by_id(performing_colony_id)
@@ -143,9 +156,18 @@ class ColonyService():
         nest_to_pillage = self._world.map.get_entity_by_id(nest_to_pillage_id)
         nest_for_loot = self._world.map.get_entity_by_id(nest_for_loot_id)
 
-        if nest_to_pillage.from_colony_id != performing_colony.id and nest_for_loot.from_colony_id == performing_colony.id:
-            operation = self._operation_factory.build_pillage_nest_operation(nest_to_pillage, nest_for_loot, workers_count, warriors_count)
-            performing_colony.add_operation(operation)
+        if nest_to_pillage.from_colony_id == performing_colony.id:
+            raise Exception('colony cant pillage its nests')
+        
+        if nest_for_loot.from_colony_id != performing_colony.id:
+            raise Exception('nest for loot can be only from performing colony')
+
+        operation = self._operation_factory.build_pillage_nest_operation(nest_to_pillage, nest_for_loot, workers_count, warriors_count)
+
+        if not operation.validate():
+            raise Exception('operation is not valid')
+        
+        performing_colony.add_operation(operation)
 
     def transfer_food_operation(self, user_id: int, performing_colony_id: int, from_nest_id: int, to_nest_id: int, workers_count: int, warriors_count: int):
         performing_colony: AntColony = self._world.get_colony_by_id(performing_colony_id)
@@ -166,6 +188,10 @@ class ColonyService():
             raise Exception('wrong nest id')
         
         operation = self._operation_factory.build_transport_food_operation(from_nest, to_nest, workers_count, warriors_count)
+
+        if not operation.validate():
+            raise Exception('operation is not valid')
+
         performing_colony.add_operation(operation)
 
     def build_fortification_operation(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int):
@@ -180,6 +206,10 @@ class ColonyService():
             raise Exception('wrong nest id')
         
         operation = self._operation_factory.build_build_fortification(nest, workers_count)
+
+        if not operation.validate():
+            raise Exception('operation is not valid')
+        
         performing_colony.add_operation(operation)
 
     def bring_bug_operation(self, user_id: int, performing_colony_id: int, nest_id: int):
@@ -200,6 +230,10 @@ class ColonyService():
             return Messages.NO_BUG_CORPSE_IN_NEST_AREA
         
         operation = self._operation_factory.build_bring_bug_corpse_to_nest_operation(nest, items[0].position)
+
+        if not operation.validate():
+            raise Exception('operation is not valid')
+
         performing_colony.add_operation(operation)
 
     def rename_nest(self, user_id: int, nest_id: int, name: str):

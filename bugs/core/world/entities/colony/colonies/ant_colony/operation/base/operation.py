@@ -21,6 +21,12 @@ from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
 
 class Operation(ABC):
 
+    MAX_WARRIORS_COUNT = 5
+    MIN_WARRIORS_COUNT = 0
+    MAX_WORKERS_COUNT = 5
+    MIN_WORKERS_COUNT = 0
+    MIN_ANTS_COUNT = 1
+
     class Flags():
         STAGE = 'stage'
         IS_OPERATION_STARTED = 'is_operation_started'
@@ -143,6 +149,18 @@ class Operation(ABC):
 
     def _is_aggressive_now(self):
         return self._read_flag(self.Flags.IS_AGGRESSIVE)
+    
+    def validate(self):
+        if self._worker_vacancies_count < self.MIN_WORKERS_COUNT or self._worker_vacancies_count > self.MAX_WORKERS_COUNT:
+            return False
+        
+        if self._warrior_vacancies_count < self.MIN_WARRIORS_COUNT or self._warrior_vacancies_count > self.MAX_WARRIORS_COUNT:
+            return False
+        
+        if self._worker_vacancies_count + self._warrior_vacancies_count < self.MIN_ANTS_COUNT:
+            return False
+        
+        return True
 
     def get_hired_ants(self, ant_type: AntTypes = None):
         if (ant_type):

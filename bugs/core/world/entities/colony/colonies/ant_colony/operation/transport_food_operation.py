@@ -15,6 +15,8 @@ from functools import partial
 
 class TransportFoodOperation(Operation):
 
+    MIN_WORKERS_COUNT = 1
+
     class Flags(Operation.Flags):
         ANT_FLAG_NEAR_NEST_FROM = 'near_nest_from'
         ANT_FLAG_WAITED_IN_NEST_FROM = 'waited_in_nest_from'

@@ -15,6 +15,10 @@ from functools import partial
 
 class BuildFortificationOperation(Operation):
 
+    MIN_WORKERS_COUNT = 1
+    MAX_WARRIORS_COUNT = 0
+    MIN_WARRIORS_COUNT = 0
+
     class Flags(Operation.Flags):
         ANT_FLAG_NEAR_NEST = 'near_nest'
         IS_FINISH_STEP_STARTED = 'is_finish_step_started'

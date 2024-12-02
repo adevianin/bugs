@@ -18,6 +18,11 @@ from functools import partial
 
 class BringBugCorpseToNestOperation(Operation):
 
+    MIN_WORKERS_COUNT = 3
+    MAX_WORKERS_COUNT = 3
+    MIN_WARRIORS_COUNT = 0
+    MAX_WARRIORS_COUNT = 0
+
     WORKERS_COUNT = 3
 
     class Flags(Operation.Flags):
