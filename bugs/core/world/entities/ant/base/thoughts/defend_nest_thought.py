@@ -41,8 +41,7 @@ class DefendNestThought(Thought):
             self.cancel()
             return
         
-        if not self._point_to_check:
-            self._point_to_check = self._body.calc_nearest_point(self._defending_nest.nearby_enemy_positions)
+        self._point_to_check = self._body.calc_nearest_point(self._defending_nest.nearby_enemy_positions)
         
         if self._point_to_check:
             is_walk_done = self._body.step_to(self._point_to_check)
