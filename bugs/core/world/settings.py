@@ -1,6 +1,6 @@
 from core.world.entities.world.season_types import SeasonTypes
 
-WORLD_ID = 1
+WORLD_ID = 2
 STEP_TIME = 1
 LADYBUG_COLONY_ID = 1
 ANT_COLONY_ENEMIES_IDS = [LADYBUG_COLONY_ID]
