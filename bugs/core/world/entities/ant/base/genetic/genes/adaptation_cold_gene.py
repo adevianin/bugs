@@ -19,7 +19,7 @@ class AdaptationColdGene(BaseGene):
         return AdaptationColdGene.build(DominationCodes.random(), 80)
 
     def __init__(self, domination_code: DominationCodes, resistance_points: int):
-        super().__init__(GenesTypes.ADAPTATION_COLD, ChromosomeTypes.ADAPTATION, domination_code, True)
+        super().__init__(GenesTypes.ADAPTATION_COLD, ChromosomeTypes.ADAPTATION, domination_code)
         self._resistance_points = resistance_points
 
     @property

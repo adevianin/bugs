@@ -16,7 +16,7 @@ class BodyLifeSpanGene(BaseGene):
         return BodyLifeSpanGene.build(DominationCodes.random(), 10000)
 
     def __init__(self, domination_code: DominationCodes, life_span: int):
-        super().__init__(GenesTypes.BODY_LIFE_SPAN, ChromosomeTypes.BODY, domination_code, True)
+        super().__init__(GenesTypes.BODY_LIFE_SPAN, ChromosomeTypes.BODY, domination_code)
         self.life_span = life_span
 
     def affect(self, phenotype: Phenotype):

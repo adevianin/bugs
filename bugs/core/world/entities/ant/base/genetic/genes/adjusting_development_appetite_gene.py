@@ -15,7 +15,7 @@ class AdjustingDevelopmentAppetiteGene(BaseGene):
         return AdjustingDevelopmentAppetiteGene.build(DominationCodes.random())
 
     def __init__(self, domination_code: DominationCodes):
-        super().__init__(GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE, ChromosomeTypes.ADJUSTING, domination_code, True)
+        super().__init__(GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE, ChromosomeTypes.ADJUSTING, domination_code)
 
     def affect(self, phenotype: Phenotype):
         phenotype.required_food = 2 * (phenotype.strength + phenotype.defense + phenotype.speed/2)

@@ -7,7 +7,8 @@ const CONSTS = {
     WINTER_START_YEAR_STEP: null,
     LAY_EGG_SEASONS: null,
     MAX_DISTANCE_TO_SUB_NEST: null,
-    MAX_SUB_NEST_COUNT: null 
+    MAX_SUB_NEST_COUNT: null,
+    REQUIRED_GENES: null 
 }
 
 function initConts(constsValues) {

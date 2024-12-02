@@ -17,7 +17,7 @@ class BodyDefenseGene(BaseGene):
         return BodyDefenseGene.build(DominationCodes.random(), 5)
 
     def __init__(self, domination_code: DominationCodes, defense: int):
-        super().__init__(GenesTypes.BODY_DEFENSE, ChromosomeTypes.BODY, domination_code, True)
+        super().__init__(GenesTypes.BODY_DEFENSE, ChromosomeTypes.BODY, domination_code)
         self._defense = defense
 
     @property

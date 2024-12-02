@@ -17,7 +17,7 @@ class BodySightDistanceGene(BaseGene):
         return BodySightDistanceGene.build(DominationCodes.random(), 200)
 
     def __init__(self, domination_code: DominationCodes, sight_distance: int):
-        super().__init__(GenesTypes.BODY_SIGHT_DISTANCE, ChromosomeTypes.BODY, domination_code, True)
+        super().__init__(GenesTypes.BODY_SIGHT_DISTANCE, ChromosomeTypes.BODY, domination_code)
         self._sight_distance = sight_distance
 
     @property

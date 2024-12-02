@@ -17,7 +17,7 @@ class BodyMaxHpGene(BaseGene):
         return BodyMaxHpGene.build(DominationCodes.random(), 100)
 
     def __init__(self, domination_code: DominationCodes, max_hp: int):
-        super().__init__(GenesTypes.BODY_MAX_HP, ChromosomeTypes.BODY, domination_code, True)
+        super().__init__(GenesTypes.BODY_MAX_HP, ChromosomeTypes.BODY, domination_code)
         self._max_hp = max_hp
 
     @property

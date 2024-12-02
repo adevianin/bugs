@@ -33,7 +33,8 @@ const CONSTS = {
     WINTER_START_YEAR_STEP: null,
     LAY_EGG_SEASONS: null,
     MAX_DISTANCE_TO_SUB_NEST: null,
-    MAX_SUB_NEST_COUNT: null 
+    MAX_SUB_NEST_COUNT: null,
+    REQUIRED_GENES: null 
 }
 
 function initConts(constsValues) {
@@ -8444,7 +8445,7 @@ class ChromosomeEditorTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
     _renderSpecieGene(specieGene) {
         let isActivated = this._chromosome.checkIsGeneActivated(specieGene.id);
         let el = document.createElement('li');
-        let view = new _specieGeneView__WEBPACK_IMPORTED_MODULE_2__.SpecieGeneView(el, specieGene, isActivated);
+        let view = new _specieGeneView__WEBPACK_IMPORTED_MODULE_2__.SpecieGeneView(el, specieGene, isActivated, this._chromosome.type);
         view.events.on('actiovationGene', this._onActivationGene.bind(this));
         view.events.on('deactiovationGene', this._onDeactivationGene.bind(this));
         this._specieGeneViews[specieGene.id] = view;
@@ -8581,16 +8582,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./bugs/core/client/app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _specieGeneTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieGeneTmpl.html */ "./bugs/core/client/app/src/view/game/panel/tabs/specieBuilderTab/specieGeneTmpl.html");
 /* harmony import */ var _base_genome_genes_geneView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../base/genome/genes/geneView */ "./bugs/core/client/app/src/view/game/panel/base/genome/genes/geneView.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/consts */ "./bugs/core/client/app/src/domain/consts.js");
+
 
 
 
 
 class SpecieGeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    constructor(el, specieGene, isActivated) {
+    constructor(el, specieGene, isActivated, chromosomeType) {
         super(el);
         this._specieGene = specieGene;
         this._isActivated = isActivated;
+        this._chromosomeType = chromosomeType;
 
         this._render();
 
@@ -8604,7 +8608,8 @@ class SpecieGeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0_
         this._activateBtn = this._el.querySelector('[data-activate-btn]');
         this._deactivateBtn = this._el.querySelector('[data-deactivate-btn]');
         this._toggleActivationBtn(!this._isActivated);
-        this._toggleDeactivationBtn(this._isActivated && !this._specieGene.isRequired);
+        let isReuqired = _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.REQUIRED_GENES[this._chromosomeType].includes(this._specieGene.gene.type)
+        this._toggleDeactivationBtn(this._isActivated && !isReuqired);
     }
 
     remove() {

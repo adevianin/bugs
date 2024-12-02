@@ -1,13 +1,15 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import specieGeneTmpl from './specieGeneTmpl.html';
 import { GeneView } from "../../base/genome/genes/geneView";
+import { CONSTS } from "@domain/consts";
 
 class SpecieGeneView extends BaseHTMLView {
 
-    constructor(el, specieGene, isActivated) {
+    constructor(el, specieGene, isActivated, chromosomeType) {
         super(el);
         this._specieGene = specieGene;
         this._isActivated = isActivated;
+        this._chromosomeType = chromosomeType;
 
         this._render();
 
@@ -21,7 +23,8 @@ class SpecieGeneView extends BaseHTMLView {
         this._activateBtn = this._el.querySelector('[data-activate-btn]');
         this._deactivateBtn = this._el.querySelector('[data-deactivate-btn]');
         this._toggleActivationBtn(!this._isActivated);
-        this._toggleDeactivationBtn(this._isActivated && !this._specieGene.isRequired);
+        let isReuqired = CONSTS.REQUIRED_GENES[this._chromosomeType].includes(this._specieGene.gene.type)
+        this._toggleDeactivationBtn(this._isActivated && !isReuqired);
     }
 
     remove() {

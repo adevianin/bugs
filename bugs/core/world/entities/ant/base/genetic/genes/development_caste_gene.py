@@ -12,8 +12,8 @@ class DevelopmentCasteGene(BaseGene):
     def build(cls, domination_code: DominationCodes, strength: int, defense: int, max_hp: int, hp_regen_rate: int, speed: int):
         pass
 
-    def __init__(self, type: GenesTypes, domination_code: DominationCodes, strength: int, defense: int, max_hp: int, hp_regen_rate: int, speed: int, is_required: bool):
-        super().__init__(type, ChromosomeTypes.DEVELOPMENT, domination_code, is_required)
+    def __init__(self, type: GenesTypes, domination_code: DominationCodes, strength: int, defense: int, max_hp: int, hp_regen_rate: int, speed: int):
+        super().__init__(type, ChromosomeTypes.DEVELOPMENT, domination_code)
         self._strength = strength
         self._defense = defense
         self._max_hp = max_hp

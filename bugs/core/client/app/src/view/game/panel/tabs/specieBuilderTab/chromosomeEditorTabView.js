@@ -33,7 +33,7 @@ class ChromosomeEditorTab extends BaseHTMLView {
     _renderSpecieGene(specieGene) {
         let isActivated = this._chromosome.checkIsGeneActivated(specieGene.id);
         let el = document.createElement('li');
-        let view = new SpecieGeneView(el, specieGene, isActivated);
+        let view = new SpecieGeneView(el, specieGene, isActivated, this._chromosome.type);
         view.events.on('actiovationGene', this._onActivationGene.bind(this));
         view.events.on('deactiovationGene', this._onDeactivationGene.bind(this));
         this._specieGeneViews[specieGene.id] = view;

@@ -15,7 +15,7 @@ class DevelopmentMaleCasteGene(DevelopmentCasteGene):
         return DevelopmentMaleCasteGene.build(DominationCodes.random(), 0.8, 0.8, 0.8, 0.8, 1)
 
     def __init__(self, domination_code: DominationCodes, strength: int, defense: int, max_hp: int, hp_regen_rate: int, speed: int):
-        super().__init__(GenesTypes.DEVELOPMENT_MALE_CASTE, domination_code, strength, defense, max_hp, hp_regen_rate, speed, True)
+        super().__init__(GenesTypes.DEVELOPMENT_MALE_CASTE, domination_code, strength, defense, max_hp, hp_regen_rate, speed)
 
     def affect(self, phenotype: Phenotype):
         if phenotype.ant_type == AntTypes.MALE:

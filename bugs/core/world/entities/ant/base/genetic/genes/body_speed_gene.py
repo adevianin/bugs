@@ -17,7 +17,7 @@ class BodySpeedGene(BaseGene):
         return BodySpeedGene.build(DominationCodes.random(), 32)
 
     def __init__(self, domination_code: DominationCodes, speed: int):
-        super().__init__(GenesTypes.BODY_SPEED, ChromosomeTypes.BODY, domination_code, True)
+        super().__init__(GenesTypes.BODY_SPEED, ChromosomeTypes.BODY, domination_code)
         self._speed = speed
 
     @property

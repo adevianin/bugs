@@ -17,7 +17,7 @@ class BodyStrengthGene(BaseGene):
         return BodyStrengthGene.build(DominationCodes.random(), 10)
 
     def __init__(self, domination_code: DominationCodes, strength: int):
-        super().__init__(GenesTypes.BODY_STRENGTH, ChromosomeTypes.BODY, domination_code, True)
+        super().__init__(GenesTypes.BODY_STRENGTH, ChromosomeTypes.BODY, domination_code)
         self._strength = strength
 
     @property

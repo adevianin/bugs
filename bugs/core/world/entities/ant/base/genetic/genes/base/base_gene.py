@@ -17,11 +17,10 @@ class BaseGene(ABC):
     def build_new_for_specie_gene():
         pass
 
-    def __init__(self, type: GenesTypes, chromosome_type: ChromosomeTypes, domination_code: DominationCodes, is_required: bool):
+    def __init__(self, type: GenesTypes, chromosome_type: ChromosomeTypes, domination_code: DominationCodes):
         self._type = type
         self._chromosome_type = chromosome_type
         self._domination_code = domination_code
-        self._is_required = is_required
 
     @property
     def type(self):
@@ -34,10 +33,6 @@ class BaseGene(ABC):
     @property
     def domination_code(self):
         return self._domination_code
-    
-    @property
-    def is_required(self):
-        return self._is_required
 
     @abstractmethod
     def affect(self, phenotype: Phenotype):

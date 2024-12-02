@@ -15,7 +15,7 @@ class BuildingSubnestGene(BaseGene):
         return BuildingSubnestGene.build(DominationCodes.random())
 
     def __init__(self, domination_code: DominationCodes):
-        super().__init__(GenesTypes.BUILDING_SUBNEST, ChromosomeTypes.BUILDING, domination_code, False)
+        super().__init__(GenesTypes.BUILDING_SUBNEST, ChromosomeTypes.BUILDING, domination_code)
 
 
     def affect(self, phenotype: Phenotype):

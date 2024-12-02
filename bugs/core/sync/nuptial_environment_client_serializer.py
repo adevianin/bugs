@@ -40,6 +40,6 @@ class NuptialEnvironmentClientSerializer(iNuptialEnvironmentClientSerializer):
     def _serialize_specie_gene(self, specie_gene: SpecieGene):
         return {
             'id': specie_gene.id,
-            'gene': self._genes_serializer.serialize(specie_gene.gene),
-            'isRequired': specie_gene.gene.is_required
+            'gene': self._genes_serializer.serialize(specie_gene.gene)
         }
+    
