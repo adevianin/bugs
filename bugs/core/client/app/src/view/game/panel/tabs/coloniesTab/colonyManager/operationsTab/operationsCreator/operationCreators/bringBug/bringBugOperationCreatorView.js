@@ -22,14 +22,24 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
 
         this._nestSelector = new NestSelectorView(this._performingColony.id);
         this._el.querySelector('[data-nest-selector]').append(this._nestSelector.el);
+        this._errorContainerEl = this._el.querySelector('[data-error-container]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
     }
 
     _onStartBtnClick() {
         let nestId = this._nestSelector.nestId;
-        this.$domainFacade.bringBugOpearation(this._performingColony.id, nestId);
-        this._onDone();
+        this.$domainFacade.bringBugOpearation(this._performingColony.id, nestId)
+            .then(() => {
+                this._onDone();
+            })
+            .catch((errId) => {
+                this._renderError(errId);
+            })
+    }
+
+    _renderError(messageId) {
+        this._errorContainerEl.innerHTML = this.$messages[messageId];
     }
 
 }

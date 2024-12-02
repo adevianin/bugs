@@ -197,7 +197,7 @@ class ColonyService():
         items = self._world.map.find_entities_near(nest.position, nest.area, EntityTypes.ITEM, filter)
 
         if not items:
-            raise Exception('no bug in nest area')
+            return Messages.NO_BUG_CORPSE_IN_NEST_AREA
         
         operation = self._operation_factory.build_bring_bug_corpse_to_nest_operation(nest, items[0].position)
         performing_colony.add_operation(operation)

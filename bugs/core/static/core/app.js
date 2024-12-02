@@ -214,7 +214,7 @@ class DomainFacade {
     }
 
     bringBugOpearation(performingColonyId, nestId) {
-        this._colonyService.bringBugOpearation(performingColonyId, nestId);
+        return this._colonyService.bringBugOpearation(performingColonyId, nestId);
     }
 
     /*========================*/
@@ -2728,7 +2728,7 @@ class ColonyService {
     }
 
     bringBugOpearation(performingColonyId, nestId) {
-        this._colonyApi.bringBugOpearation(performingColonyId, nestId);
+        return this._colonyApi.bringBugOpearation(performingColonyId, nestId);
     }
 
 }
@@ -3465,9 +3465,13 @@ class ColonyApi {
     }
 
     bringBugOpearation(colonyId, nestId) {
-        return this._requester.post(`world/colonies/${ colonyId }/operations/bring_bug`, {
-            nest_id: nestId
-        });
+        return new Promise((res, rej) => {
+            this._requester.post(`world/colonies/${ colonyId }/operations/bring_bug`, {
+                nest_id: nestId
+            })
+            .then(axiosResp => res(null))
+            .catch(axiosResp => rej(axiosResp.response.data))
+        })
     }
 }
 
@@ -6698,14 +6702,24 @@ class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IM
 
         this._nestSelector = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id);
         this._el.querySelector('[data-nest-selector]').append(this._nestSelector.el);
+        this._errorContainerEl = this._el.querySelector('[data-error-container]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
     }
 
     _onStartBtnClick() {
         let nestId = this._nestSelector.nestId;
-        this.$domainFacade.bringBugOpearation(this._performingColony.id, nestId);
-        this._onDone();
+        this.$domainFacade.bringBugOpearation(this._performingColony.id, nestId)
+            .then(() => {
+                this._onDone();
+            })
+            .catch((errId) => {
+                this._renderError(errId);
+            })
+    }
+
+    _renderError(messageId) {
+        this._errorContainerEl.innerHTML = this.$messages[messageId];
     }
 
 }
@@ -10035,7 +10049,8 @@ const uaMessages = {
     CANT_BUILD_SUB_NEST_FAR_AWAY: 'Не можна будувати гніздо сателіт так далеко центрального.',
     CANT_LAY_EGG_WITHOUT_QUEEN_IN_NEST: 'Королеви немає в гнізді для відкладення яєць',
     NOT_ENOUGHT_FOOD_IN_NEST_TO_LAY_EGG: 'Не достатньо їжі для відкладення яєць',
-    NOT_SUITABLE_SEASON_TO_LAY_EGG: 'Непідходящий сезон для відкладення яєць'
+    NOT_SUITABLE_SEASON_TO_LAY_EGG: 'Непідходящий сезон для відкладення яєць',
+    NO_BUG_CORPSE_IN_NEST_AREA: 'Не видно трупів жуків на території гнізда'
 }
 
 
@@ -13024,7 +13039,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "принести жука\r\n<div>\r\n    гніздо:\r\n    <div data-nest-selector></div>\r\n</div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
+var code = "принести жука\r\n<div>\r\n    гніздо:\r\n    <div data-nest-selector></div>\r\n</div>\r\n<div data-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

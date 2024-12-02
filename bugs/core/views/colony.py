@@ -91,5 +91,8 @@ def bring_bug(request: HttpRequest, colony_id: int):
 
     nest_id = int(data['nest_id'])
 
-    wf.bring_bug_operation_command(request.user.id, colony_id, nest_id)
-    return HttpResponse(status=200)
+    err = wf.bring_bug_operation_command(request.user.id, colony_id, nest_id)
+    if err:
+        return HttpResponse(err, status=409)
+    else:
+        return HttpResponse(status=200)

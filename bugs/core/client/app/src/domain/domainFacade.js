@@ -156,7 +156,7 @@ class DomainFacade {
     }
 
     bringBugOpearation(performingColonyId, nestId) {
-        this._colonyService.bringBugOpearation(performingColonyId, nestId);
+        return this._colonyService.bringBugOpearation(performingColonyId, nestId);
     }
 
     /*========================*/

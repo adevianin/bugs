@@ -112,7 +112,7 @@ class WorldFacade:
         self._colony_service.build_fortification_operation(user_id, performing_colony_id, nest_id, workers_count)
         
     def bring_bug_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int):
-        self._colony_service.bring_bug_operation(user_id, performing_colony_id, nest_id)
+        return self._colony_service.bring_bug_operation(user_id, performing_colony_id, nest_id)
 
     def add_egg_command(self, user_id: int, nest_id: int, name: str, is_fertilized: bool):
         return self._colony_service.add_egg(user_id, nest_id, name, is_fertilized)

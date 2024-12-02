@@ -56,9 +56,13 @@ class ColonyApi {
     }
 
     bringBugOpearation(colonyId, nestId) {
-        return this._requester.post(`world/colonies/${ colonyId }/operations/bring_bug`, {
-            nest_id: nestId
-        });
+        return new Promise((res, rej) => {
+            this._requester.post(`world/colonies/${ colonyId }/operations/bring_bug`, {
+                nest_id: nestId
+            })
+            .then(axiosResp => res(null))
+            .catch(axiosResp => rej(axiosResp.response.data))
+        })
     }
 }
 

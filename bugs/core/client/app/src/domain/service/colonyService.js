@@ -53,7 +53,7 @@ class ColonyService {
     }
 
     bringBugOpearation(performingColonyId, nestId) {
-        this._colonyApi.bringBugOpearation(performingColonyId, nestId);
+        return this._colonyApi.bringBugOpearation(performingColonyId, nestId);
     }
 
 }
