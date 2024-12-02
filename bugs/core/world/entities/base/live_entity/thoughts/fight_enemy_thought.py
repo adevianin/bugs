@@ -5,9 +5,7 @@ from core.world.entities.base.enemy_interface import iEnemy
 
 class FightEnemyThought(Thought):
 
-    MAX_ATTACK_DISTANCE = 80
     MIN_APPROACH_DISTANCE = 15
-
 
     _body: LiveBody
 
@@ -37,7 +35,7 @@ class FightEnemyThought(Thought):
         self._body.is_in_fight = True
         
         dist_to_enemy = self._body.position.dist(self._enemy.position)
-        if dist_to_enemy <= self.MAX_ATTACK_DISTANCE:
+        if dist_to_enemy <= self._body.stats.distance_per_step * 1.5:
 
             if dist_to_enemy > self.MIN_APPROACH_DISTANCE:
                 self._body.move_to_best_position(self._enemy.position)
