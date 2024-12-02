@@ -25,9 +25,9 @@ class BringBugCorpseToNestOperation(Operation):
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, formation_factory: FormationFactory, fight_factory: FightFactory, id: int, hired_ants: List[Ant], 
                  flags: dict, formation: BaseFormation, fight: Fight, nest: Nest, search_bug_corpse_location: Point, found_bug_corpse: BugCorpseItem):
-        super().__init__(event_bus, events, formation_factory, fight_factory, id, OperationTypes.BRING_BUG_CORPSE_TO_NEST, hired_ants, flags, formation, fight)
+        super().__init__(event_bus, events, formation_factory, fight_factory, id, OperationTypes.BRING_BUG_CORPSE_TO_NEST, hired_ants, flags, formation, fight, self.WORKERS_COUNT)
         self._name = 'перенести в гніздо'
-        self._open_vacancies(AntTypes.WORKER, self.WORKERS_COUNT)
+        self._open_vacancies(AntTypes.WORKER, self._worker_vacancies_count)
         self._add_marker(MarkerTypes.EAT, search_bug_corpse_location)
         self._nest = nest
         self._search_bug_corpse_location = search_bug_corpse_location
