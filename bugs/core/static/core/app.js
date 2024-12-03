@@ -2785,7 +2785,7 @@ class MessageHandlerService {
                 case 'rating':
                     this._worldService.playRatingAction(action);
                     break;
-                case 'nuptial':
+                case 'nuptial_environment':
                     this._nuptialEnvironmentService.playAction(action);
                     break;
             }
