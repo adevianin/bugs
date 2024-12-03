@@ -31,7 +31,7 @@ from core.world.entities.action.climate_temperature_change_action import Climate
 from core.world.entities.action.nest_fortification_changed_action import NestFortificationChangedAction
 from core.world.entities.action.user_notification_action import UserNotificationAction
 from core.world.entities.action.rating_updated_action import RatingUpdatedAction
-from core.world.entities.action.nuptial_males_changed_action import NuptialMalesChangedAction
+from core.world.entities.action.nuptial_environment_males_changed_action import NuptialEnvironmentMalesChangedAction
 from core.world.entities.action.item_source_fertility_changed_action import ItemSourceFertilityChangeAction
 from .notification_client_serializer import NotificationClientSerializer
 from .nuptial_environment_client_serializer import NuptialEnvironmentClientSerializer
@@ -400,7 +400,7 @@ class ActionClientSerializer(iActionClientSerializer):
 
         return json
     
-    def _serialize_nuptial_environment_males_changed(self, action: NuptialMalesChangedAction):
+    def _serialize_nuptial_environment_males_changed(self, action: NuptialEnvironmentMalesChangedAction):
         json = self._serialize_common(action)
 
         json.update({

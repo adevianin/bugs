@@ -4,7 +4,7 @@ from .specie_builder.specie import Specie
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.base.damage_types import DamageTypes
 from core.world.entities.ant.base.ant import Ant
-from core.world.entities.action.nuptial_males_changed_action import NuptialMalesChangedAction
+from core.world.entities.action.nuptial_environment_males_changed_action import NuptialEnvironmentMalesChangedAction
 from core.world.settings import MUTATITON_PERCENT, SUPER_MUTATION_CHANCE_PERCENT, SUPER_MUTATION_PERCENT
 from core.world.entities.ant.base.larva import Larva
 from core.world.entities.ant.base.ant_types import AntTypes
@@ -89,7 +89,7 @@ class NuptialEnvironment():
             self._specie.register_building_activity()
 
     def _emit_males_changed_action(self):
-        self._event_bus.emit('action', NuptialMalesChangedAction(self._males, self._owner_id))
+        self._event_bus.emit('action', NuptialEnvironmentMalesChangedAction(self._males, self._owner_id))
 
     def _on_season_changed(self, season: SeasonTypes):
         if season == SeasonTypes.SUMMER:
