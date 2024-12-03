@@ -6,12 +6,14 @@ from core.world.entities.base.enemy_interface import iEnemy
 class FightEnemyThought(Thought):
 
     MIN_APPROACH_DISTANCE = 15
+    MAX_STEPS_TO_ENEMY = 5
 
     _body: LiveBody
 
     def __init__(self, flags, sayback: str, enemy: iEnemy = None):
         super().__init__(type=ThoughtTypes.FIGHT_ENEMY, flags=flags, sayback=sayback)
         self._enemy = enemy
+        self._steps_to_enemy_count = 0
 
     @property
     def enemy_id(self):
@@ -26,6 +28,7 @@ class FightEnemyThought(Thought):
             self.restart()
         self._enemy = enemy
         self._body.is_in_fight = True
+        self._steps_to_enemy_count = 0
 
     def do_step(self):
         if not self.has_enemy_to_fight:
@@ -45,7 +48,10 @@ class FightEnemyThought(Thought):
             if self._enemy.is_died:
                 self.done()
         else:
+            if self._steps_to_enemy_count > self.MAX_STEPS_TO_ENEMY:
+                self.cancel()
             self._body.step_to_near(self._enemy.position)
+            self._steps_to_enemy_count += 1
 
     def _on_stop_thinking(self):
         super()._on_stop_thinking()
