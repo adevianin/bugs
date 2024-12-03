@@ -2,10 +2,10 @@ import { EventEmitter } from "@utils/eventEmitter";
 
 class NuptialEnvironmentService extends EventEmitter {
 
-    constructor(mainEventBus, nuptialFactory, nuptialEnvironmentApi) {
+    constructor(mainEventBus, nuptialEnvironmentFactory, nuptialEnvironmentApi) {
         super();
         this._mainEventBus = mainEventBus;
-        this._nuptialFactory = nuptialFactory;
+        this._nuptialEnvironmentFactory = nuptialEnvironmentFactory;
         this._nuptialEnvironmentApi = nuptialEnvironmentApi;
         this._nuptialMales = [];
         this._specie = null;
@@ -33,7 +33,7 @@ class NuptialEnvironmentService extends EventEmitter {
 
     playAction(action) {
         switch(action.type) {
-            case ACTION_TYPES.NUPTIAL_MALES_CHANGED:
+            case ACTION_TYPES.NUPTIAL_ENVIRONMENT_MALES_CHANGED:
                 this._playChangedMalesAction(action);
                 break;
             default:
@@ -42,13 +42,13 @@ class NuptialEnvironmentService extends EventEmitter {
     }
 
     _initSpecie(specieJson) {
-        this._specie = this._nuptialFactory.buildSpecie(specieJson);
+        this._specie = this._nuptialEnvironmentFactory.buildSpecie(specieJson);
         this._stopListenSpecieChange = this._specie.on('specieSchemaChanged', this._onSpecieSchemaChanged.bind(this));
     }
 
     _initMales(nuptialMalesJson) {
         for (let maleJson of nuptialMalesJson) {
-            let male = this._nuptialFactory.buildNuptialMale(maleJson);
+            let male = this._nuptialEnvironmentFactory.buildNuptialMale(maleJson);
             this._nuptialMales.push(male);
         }
     }

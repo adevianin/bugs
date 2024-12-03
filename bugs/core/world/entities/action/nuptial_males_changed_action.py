@@ -8,5 +8,5 @@ from typing import List
 class NuptialMalesChangedAction(Action):
 
     def __init__(self, males: List[NuptialMale], for_user_id: int):
-        super().__init__(None, ActionTypes.NUPTIAL_MALES_CHANGED, ActorTypes.NUPTIAL, for_user_id)
+        super().__init__(None, ActionTypes.NUPTIAL_ENVIRONMENT_MALES_CHANGED, ActorTypes.NUPTIAL, for_user_id)
         self.males = males

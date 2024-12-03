@@ -3,7 +3,7 @@ import { SpecieChromosome } from "./specieChromosome";
 import { Genome } from "../genetic/genome";
 import { NuptialMale } from "./nuptialMale";
 
-class NuptialFactory {
+class NuptialEnvironmentFactory {
 
     buildSpecie(specieJson) {
         let chromosomes = []
@@ -26,5 +26,5 @@ class NuptialFactory {
 }
 
 export {
-    NuptialFactory
+    NuptialEnvironmentFactory
 }

@@ -127,8 +127,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._serialize_user_notification(action)
             case ActionTypes.RATING_UPDATED:
                 return self._serialize_rating_updated(action)
-            case ActionTypes.NUPTIAL_MALES_CHANGED:
-                return self._serialize_nuptial_males_changed(action)
+            case ActionTypes.NUPTIAL_ENVIRONMENT_MALES_CHANGED:
+                return self._serialize_nuptial_environment_males_changed(action)
             case _:
                 raise Exception('unknown type of action')
             
@@ -400,7 +400,7 @@ class ActionClientSerializer(iActionClientSerializer):
 
         return json
     
-    def _serialize_nuptial_males_changed(self, action: NuptialMalesChangedAction):
+    def _serialize_nuptial_environment_males_changed(self, action: NuptialMalesChangedAction):
         json = self._serialize_common(action)
 
         json.update({
