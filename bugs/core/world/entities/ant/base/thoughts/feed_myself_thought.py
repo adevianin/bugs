@@ -34,7 +34,7 @@ class FeedMyselfThought(Thought):
     def do_step(self):
         if self.go_home_thought.is_done:
             self._body.eat_from_nest(self._home)
-            self._body.get_out_of_nest()
+            # self._body.get_out_of_nest()
             if (self._body.check_am_i_hungry()):
                 self._body.memory.save_flag(self._body.MemoryKeys.NO_MORE_FOOD_AT_HOME, True, self.FOOD_CHECK_DELAY)
             self.done()
