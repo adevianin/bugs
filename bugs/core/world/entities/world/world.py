@@ -222,9 +222,19 @@ class World():
     def _my_test_code(self, s):
         from core.world.utils.point import Point
         from core.world.entities.nest.nest import Nest
-        ant: Ant = MY_TEST_ENV['attacker2']
+        ant1: Ant = self._map.get_entity_by_id(240)
+        ant2: Ant = self._map.get_entity_by_id(431)
+
         if s == 1:
-           ant.walk_to(Point(677,342))
+            ant1.join_operation()
+            ant1.free_mind()
+            ant1.toggle_auto_thought_generation(False)
+            ant2.join_operation()
+            ant2.free_mind()
+            ant2.toggle_auto_thought_generation(False)
+            ant1.walk_to(Point(930,1843))
+            ant2.walk_to(Point(870,1843))
 
         if s == 2:
-            ant.walk_to(Point(550,797))
+            ant1.walk_to(Point(2000,1843))
+            ant2.fight_enemy(ant1)
