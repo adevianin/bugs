@@ -1,6 +1,11 @@
 from ..base.ant_mind import AntMind
-from core.world.entities.nest.nest import Nest
-from core.world.utils.point import Point
+from .queen_ant_body import QueenAntBody
 
 class QueenAntMind(AntMind):
-    pass
+
+    _body: QueenAntBody
+
+    def _auto_generate_thoughts(self):
+        super()._auto_generate_thoughts()
+        if not self._body.is_fertilized and not self._has_thoughts_to_do():
+            self.patrol_home_territory()

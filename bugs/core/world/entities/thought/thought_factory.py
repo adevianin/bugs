@@ -17,7 +17,7 @@ from core.world.entities.item.items.base.item import Item
 from core.world.entities.item.item_sources.base.item_source import ItemSource
 from core.world.entities.ant.warrior.thoughts.keep_clear_territory_thought import KeepClearTerritoryThought
 from core.world.entities.base.live_entity.thoughts.wait_step_thought import WaitStepThought
-from core.world.entities.ant.warrior.thoughts.patrol_nest_territory_thought import PatrolNestTerritoryThought
+from core.world.entities.ant.base.thoughts.patrol_nest_territory_thought import PatrolNestTerritoryThought
 from core.world.entities.ant.base.thoughts.hibernation_thought import HibernationThought
 from core.world.entities.ant.base.thoughts.shelter_in_nest import ShelterInNestThought
 from core.world.entities.ant.base.thoughts.build_fortification_thought import BuildFortificationThought

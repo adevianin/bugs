@@ -219,22 +219,9 @@ class World():
             self._event_bus.emit('season_changed', season)
         self._current_season = season
 
-    def _my_test_code(self, s):
+    def _my_test_code(self, id):
         from core.world.utils.point import Point
         from core.world.entities.nest.nest import Nest
-        ant1: Ant = self._map.get_entity_by_id(240)
-        ant2: Ant = self._map.get_entity_by_id(431)
+        ant1: Ant = self._map.get_entity_by_id(id)
+        ant1.walk_to(Point(930,1843))
 
-        if s == 1:
-            ant1.join_operation()
-            ant1.free_mind()
-            ant1.toggle_auto_thought_generation(False)
-            ant2.join_operation()
-            ant2.free_mind()
-            ant2.toggle_auto_thought_generation(False)
-            ant1.walk_to(Point(930,1843))
-            ant2.walk_to(Point(870,1843))
-
-        if s == 2:
-            ant1.walk_to(Point(2000,1843))
-            ant2.fight_enemy(ant1)

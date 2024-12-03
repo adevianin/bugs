@@ -7,10 +7,6 @@ from core.world.utils.point import Point
 
 class WarrirorAntMind(AntMind):
 
-    def patrol_home_territory(self, sayback: str = None):
-        thought = self._thought_factory.build_patrol_nest_territory_new(self.home_nest, sayback=sayback)
-        self._register_thought(thought)
-
     def keep_clear_territory(self, position: Point, area: int, sayback: str = None):
         thought = self._thought_factory.build_keep_clear_territory_new(position=position, area=area, sayback=sayback)
         self._register_thought(thought)

@@ -83,6 +83,10 @@ class AntMind(Mind):
         thought = self._thought_factory.build_shelter_in_nest_new(self.home_nest)
         self._register_thought(thought=thought, immediately=True)
 
+    def patrol_home_territory(self, sayback: str = None):
+        thought = self._thought_factory.build_patrol_nest_territory_new(self.home_nest, sayback=sayback)
+        self._register_thought(thought)
+
     # def get_stashed_item_back(self, sayback: str = None):
     #     thought = self._thought_factory.build_get_stashed_item_back(sayback=sayback)
     #     self._register_thought(thought=thought)

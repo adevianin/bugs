@@ -1,4 +1,4 @@
-from ..warrior_ant_body import WarriorAntBody
+from core.world.entities.ant.base.ant_body import AntBody
 from core.world.entities.thought.thought import Thought
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
@@ -6,7 +6,7 @@ from core.world.entities.nest.nest import Nest
 
 class PatrolNestTerritoryThought(Thought):
 
-    _body: WarriorAntBody
+    _body: AntBody
     MAX_STEP_COUNT = 10
 
     def __init__(self, random_walk_thought: RandomWalkThought, nest: Nest, step_count: int, flags: dict = None, sayback: str = None):

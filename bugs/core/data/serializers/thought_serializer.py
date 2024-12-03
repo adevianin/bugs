@@ -11,7 +11,7 @@ from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought im
 from core.world.entities.ant.base.thoughts.defend_nest_thought import DefendNestThought
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 from core.world.entities.ladybug.thoughts.hunt_for_aphid import HuntForAphid
-from core.world.entities.ant.warrior.thoughts.patrol_nest_territory_thought import PatrolNestTerritoryThought
+from core.world.entities.ant.base.thoughts.patrol_nest_territory_thought import PatrolNestTerritoryThought
 from core.world.entities.ant.base.thoughts.hibernation_thought import HibernationThought
 from core.world.entities.ant.base.thoughts.shelter_in_nest import ShelterInNestThought
 from core.world.entities.ant.base.thoughts.build_fortification_thought import BuildFortificationThought
