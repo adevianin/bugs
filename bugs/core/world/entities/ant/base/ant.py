@@ -99,6 +99,9 @@ class Ant(LiveEntity):
     @property
     def is_queen_of_colony(self):
         return False
+    
+    def cold_die(self):
+        self._body.receive_damage(self._body.hp, DamageTypes.COLD)
 
     def collect_food(self, sayback: str = None):
         self._mind.collect_food(sayback)

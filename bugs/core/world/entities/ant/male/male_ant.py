@@ -31,7 +31,11 @@ class MaleAnt(Ant):
         self._mind.free_mind()
         self._mind.toggle_auto_thought_generation(False)
         self._body.fly_nuptial_flight()
+        if self._body.check_am_i_freezing():
+            self.cold_die()
+            return False
         self._body.die(NuptialFlyDeathRecord(self.position))
+        return True
 
     def _on_flew_nuptial_flight(self):
         self._emit_action(AntFlewNuptialFlightAction.build(self.id))

@@ -59,7 +59,7 @@ class QueenAnt(Ant):
     def do_step(self, step_number: int):
         if self._body.is_in_nuptial_flight:
             if self._body.check_am_i_freezing():
-                self._body.receive_damage(self._body.hp, DamageTypes.COLD)
+                self.cold_die()
         else:
             super().do_step(step_number)
     
