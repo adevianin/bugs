@@ -9,8 +9,6 @@ import { ItemArea } from './entity/itemArea';
 import { AntTypes } from './enum/antTypes';
 import { WarriorAnt, WorkerAnt, QueenAnt, MaleAnt } from './entity/ant';
 import { Egg } from './entity/egg';
-import { Genome } from './entity/genetic/genome';
-import { NuptialMale } from './entity/nuptialMale';
 import { Climate } from './entity/climate';
 import { Tree } from './entity/tree';
 import { Ladybug } from './entity/ladybug';
@@ -145,11 +143,6 @@ class WorldFactory {
 
     buildAntColony(id, owner_id, name, operations) {
         return new AntColony(this._mainEventBus, id, owner_id, name, operations);
-    }
-
-    buildNuptialMale(nuptialMaleJson) {
-        let genome = Genome.buildFromJson(nuptialMaleJson.genome);
-        return new NuptialMale(nuptialMaleJson.id, genome, nuptialMaleJson.stats, nuptialMaleJson.isLocal);
     }
 
 }

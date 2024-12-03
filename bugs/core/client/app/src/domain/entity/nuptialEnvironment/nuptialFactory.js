@@ -1,9 +1,11 @@
 import { Specie } from "./specie";
 import { SpecieChromosome } from "./specieChromosome";
+import { Genome } from "../genetic/genome";
+import { NuptialMale } from "./nuptialMale";
 
-class SpecieFactory {
+class NuptialFactory {
 
-    buildSpecieFromJson(specieJson) {
+    buildSpecie(specieJson) {
         let chromosomes = []
 
         for (let specieChromosomeJson of specieJson['specieChromosomesSet']) {
@@ -13,11 +15,16 @@ class SpecieFactory {
         return new Specie(chromosomes);
     }
 
+    buildNuptialMale(nuptialMaleJson) {
+        let genome = Genome.buildFromJson(nuptialMaleJson.genome);
+        return new NuptialMale(nuptialMaleJson.id, genome, nuptialMaleJson.stats, nuptialMaleJson.isLocal);
+    }
+
     _buildChromosome(chromosomeJson) {
         return new SpecieChromosome(chromosomeJson.type, chromosomeJson.activatedGenesIds, chromosomeJson.genes);
     }
 }
 
 export {
-    SpecieFactory
+    NuptialFactory
 }

@@ -61,15 +61,14 @@ __webpack_require__.r(__webpack_exports__);
 
 class DomainFacade {
 
-    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService, userService) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._accountService = accountService;
         this._messageHandlerService = messageHandlerService;
         this._colonyService = colonyService;
-        this._nuptialService = nuptialService;
-        this._specieBuilderService = specieBuilderService;
         this._userService = userService;
+        this._nuptialEnvironmentService = nuptialEnvironmentService;
     }
 
     get currentStep() {
@@ -221,11 +220,11 @@ class DomainFacade {
     /*========================*/
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
-        this._nuptialService.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
+        this._nuptialEnvironmentService.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
     }
 
     getMyNuptialMales() {
-        return this._nuptialService.nuptialMales;
+        return this._nuptialEnvironmentService.nuptialMales;
     }
 
     findNearestNestForOffensiveOperation(performingColonyId, point) {
@@ -233,7 +232,7 @@ class DomainFacade {
     }
 
     getMySpecie() {
-        return this._specieBuilderService.getMySpecie();
+        return this._nuptialEnvironmentService.specie;
     }
 
     bornNewAntara() {
@@ -1876,10 +1875,56 @@ class NotificationsContainer extends _utils_eventEmitter__WEBPACK_IMPORTED_MODUL
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/entity/nuptialMale.js":
-/*!***************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/nuptialMale.js ***!
-  \***************************************************************/
+/***/ "./bugs/core/client/app/src/domain/entity/nuptialEnvironment/nuptialFactory.js":
+/*!*************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/nuptialEnvironment/nuptialFactory.js ***!
+  \*************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NuptialFactory": () => (/* binding */ NuptialFactory)
+/* harmony export */ });
+/* harmony import */ var _specie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./specie */ "./bugs/core/client/app/src/domain/entity/nuptialEnvironment/specie.js");
+/* harmony import */ var _specieChromosome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieChromosome */ "./bugs/core/client/app/src/domain/entity/nuptialEnvironment/specieChromosome.js");
+/* harmony import */ var _genetic_genome__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../genetic/genome */ "./bugs/core/client/app/src/domain/entity/genetic/genome.js");
+/* harmony import */ var _nuptialMale__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nuptialMale */ "./bugs/core/client/app/src/domain/entity/nuptialEnvironment/nuptialMale.js");
+
+
+
+
+
+class NuptialFactory {
+
+    buildSpecie(specieJson) {
+        let chromosomes = []
+
+        for (let specieChromosomeJson of specieJson['specieChromosomesSet']) {
+            chromosomes.push(this._buildChromosome(specieChromosomeJson));
+        }
+
+        return new _specie__WEBPACK_IMPORTED_MODULE_0__.Specie(chromosomes);
+    }
+
+    buildNuptialMale(nuptialMaleJson) {
+        let genome = _genetic_genome__WEBPACK_IMPORTED_MODULE_2__.Genome.buildFromJson(nuptialMaleJson.genome);
+        return new _nuptialMale__WEBPACK_IMPORTED_MODULE_3__.NuptialMale(nuptialMaleJson.id, genome, nuptialMaleJson.stats, nuptialMaleJson.isLocal);
+    }
+
+    _buildChromosome(chromosomeJson) {
+        return new _specieChromosome__WEBPACK_IMPORTED_MODULE_1__.SpecieChromosome(chromosomeJson.type, chromosomeJson.activatedGenesIds, chromosomeJson.genes);
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/domain/entity/nuptialEnvironment/nuptialMale.js":
+/*!**********************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/nuptialEnvironment/nuptialMale.js ***!
+  \**********************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1901,75 +1946,10 @@ class NuptialMale {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/entity/nuptialMalesContainer.js":
-/*!*************************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/nuptialMalesContainer.js ***!
-  \*************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "NuptialMalesContainer": () => (/* binding */ NuptialMalesContainer)
-/* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
-
-
-class NuptialMalesContainer extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
-
-    constructor() {
-        super();
-        this._nuptialMales = [];
-    }
-
-    get males() {
-        return this._nuptialMales;
-    }
-
-    setMales(males) {
-        this._nuptialMales = males;
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/domain/entity/ratingContainer.js":
-/*!*******************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/ratingContainer.js ***!
-  \*******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "RatingContainer": () => (/* binding */ RatingContainer)
-/* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
-
-
-class RatingContainer extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
-
-    get ratingPlaces() {
-        return this._ratingPlaces;
-    }
-
-    setRatingPlaces(ratingPlaces) {
-        this._ratingPlaces = ratingPlaces;
-        this.emit('changed');
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/domain/entity/specieBuilder/specie.js":
-/*!************************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/specieBuilder/specie.js ***!
-  \************************************************************************/
+/***/ "./bugs/core/client/app/src/domain/entity/nuptialEnvironment/specie.js":
+/*!*****************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/nuptialEnvironment/specie.js ***!
+  \*****************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2022,10 +2002,10 @@ class Specie extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/entity/specieBuilder/specieChromosome.js":
-/*!**********************************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/specieBuilder/specieChromosome.js ***!
-  \**********************************************************************************/
+/***/ "./bugs/core/client/app/src/domain/entity/nuptialEnvironment/specieChromosome.js":
+/*!***************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/nuptialEnvironment/specieChromosome.js ***!
+  \***************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2097,36 +2077,29 @@ class SpecieChromosome extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/entity/specieBuilder/specieFactory.js":
-/*!*******************************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/entity/specieBuilder/specieFactory.js ***!
-  \*******************************************************************************/
+/***/ "./bugs/core/client/app/src/domain/entity/ratingContainer.js":
+/*!*******************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/entity/ratingContainer.js ***!
+  \*******************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "SpecieFactory": () => (/* binding */ SpecieFactory)
+/* harmony export */   "RatingContainer": () => (/* binding */ RatingContainer)
 /* harmony export */ });
-/* harmony import */ var _specie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./specie */ "./bugs/core/client/app/src/domain/entity/specieBuilder/specie.js");
-/* harmony import */ var _specieChromosome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieChromosome */ "./bugs/core/client/app/src/domain/entity/specieBuilder/specieChromosome.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
 
 
+class RatingContainer extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
-class SpecieFactory {
-
-    buildSpecieFromJson(specieJson) {
-        let chromosomes = []
-
-        for (let specieChromosomeJson of specieJson['specieChromosomesSet']) {
-            chromosomes.push(this._buildChromosome(specieChromosomeJson));
-        }
-
-        return new _specie__WEBPACK_IMPORTED_MODULE_0__.Specie(chromosomes);
+    get ratingPlaces() {
+        return this._ratingPlaces;
     }
 
-    _buildChromosome(chromosomeJson) {
-        return new _specieChromosome__WEBPACK_IMPORTED_MODULE_1__.SpecieChromosome(chromosomeJson.type, chromosomeJson.activatedGenesIds, chromosomeJson.genes);
+    setRatingPlaces(ratingPlaces) {
+        this._ratingPlaces = ratingPlaces;
+        this.emit('changed');
     }
 }
 
@@ -2546,15 +2519,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _worldFactory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./worldFactory */ "./bugs/core/client/app/src/domain/worldFactory.js");
 /* harmony import */ var _service_worldService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./service/worldService */ "./bugs/core/client/app/src/domain/service/worldService.js");
 /* harmony import */ var _service_colonyService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/colonyService */ "./bugs/core/client/app/src/domain/service/colonyService.js");
-/* harmony import */ var _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./service/nuptialService */ "./bugs/core/client/app/src/domain/service/nuptialService.js");
-/* harmony import */ var _service_userService__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./service/userService */ "./bugs/core/client/app/src/domain/service/userService.js");
-/* harmony import */ var _service_specieBuilderService__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./service/specieBuilderService */ "./bugs/core/client/app/src/domain/service/specieBuilderService.js");
-/* harmony import */ var _entity_specieBuilder_specieFactory__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entity/specieBuilder/specieFactory */ "./bugs/core/client/app/src/domain/entity/specieBuilder/specieFactory.js");
-/* harmony import */ var _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/notificationsContainer */ "./bugs/core/client/app/src/domain/entity/notificationsContainer.js");
-/* harmony import */ var _entity_ratingContainer__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./entity/ratingContainer */ "./bugs/core/client/app/src/domain/entity/ratingContainer.js");
-/* harmony import */ var _entity_nuptialMalesContainer__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./entity/nuptialMalesContainer */ "./bugs/core/client/app/src/domain/entity/nuptialMalesContainer.js");
-
-
+/* harmony import */ var _service_userService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./service/userService */ "./bugs/core/client/app/src/domain/service/userService.js");
+/* harmony import */ var _service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./service/nuptialEnvironmentService */ "./bugs/core/client/app/src/domain/service/nuptialEnvironmentService.js");
+/* harmony import */ var _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entity/notificationsContainer */ "./bugs/core/client/app/src/domain/entity/notificationsContainer.js");
+/* harmony import */ var _entity_ratingContainer__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entity/ratingContainer */ "./bugs/core/client/app/src/domain/entity/ratingContainer.js");
+/* harmony import */ var _entity_nuptialEnvironment_nuptialFactory__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/nuptialEnvironment/nuptialFactory */ "./bugs/core/client/app/src/domain/entity/nuptialEnvironment/nuptialFactory.js");
 
 
 
@@ -2572,22 +2541,20 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
 
     let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.nestApi, apis.antApi);
-    let specieFactory = new _entity_specieBuilder_specieFactory__WEBPACK_IMPORTED_MODULE_10__.SpecieFactory();
+    let nuptialFactory = new _entity_nuptialEnvironment_nuptialFactory__WEBPACK_IMPORTED_MODULE_11__.NuptialFactory();
 
-    let notificationsContainer = new _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_11__.NotificationsContainer();
-    let nuptialMalesContainer = new _entity_nuptialMalesContainer__WEBPACK_IMPORTED_MODULE_13__.NuptialMalesContainer();
-    let ratingContainer = new _entity_ratingContainer__WEBPACK_IMPORTED_MODULE_12__.RatingContainer();
+    let notificationsContainer = new _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_9__.NotificationsContainer();
+    let ratingContainer = new _entity_ratingContainer__WEBPACK_IMPORTED_MODULE_10__.RatingContainer();
     let world = worldFactory.buildWorld();
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus, ratingContainer);
     let accountService = new _service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user, mainEventBus);
     let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
-    let nuptialService = new _service_nuptialService__WEBPACK_IMPORTED_MODULE_7__.NuptialService(mainEventBus, apis.nuptialApi, worldFactory, nuptialMalesContainer);
-    let specieBuilderService = new _service_specieBuilderService__WEBPACK_IMPORTED_MODULE_9__.SpecieBuilderService(mainEventBus, apis.specieBuilderApi, specieFactory);
-    let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_8__.UserService(apis.userApi, notificationsContainer);
-    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService, nuptialService);
+    let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_7__.UserService(apis.userApi, notificationsContainer);
+    let nuptialEnvironmentService = new _service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_8__.NuptialEnvironmentService(mainEventBus, nuptialFactory, apis.nuptialEnvironmentApi);
+    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService);
 
-    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService, userService);
+    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService);
 
     return domainFacade;
 }
@@ -2759,14 +2726,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class MessageHandlerService {
 
-    constructor(mainEventBus, serverConnection, worldService, colonyService, specieBuilderService, userService, nuptialService) {
+    constructor(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService) {
         this._mainEventBus = mainEventBus;
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._colonyService = colonyService;
-        this._specieBuilderService = specieBuilderService;
         this._userService = userService;
-        this._nuptialService = nuptialService;
+        this._nuptialEnvironmentService = nuptialEnvironmentService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
@@ -2796,8 +2762,7 @@ class MessageHandlerService {
         this._userService.initNotifications(msg.notifications)
         this._worldService.initWorld(msg.world, msg.step, msg.season);
         this._worldService.setRating(msg.rating);
-        this._nuptialService.initEnvironment(msg.nuptialMales);
-        this._specieBuilderService.initBuilder(msg.specie);
+        this._nuptialEnvironmentService.init(msg.specie, msg.nuptialMales);
         this._mainEventBus.emit('initStepDone');
     }
 
@@ -2821,7 +2786,7 @@ class MessageHandlerService {
                     this._worldService.playRatingAction(action);
                     break;
                 case 'nuptial':
-                    this._nuptialService.playNuptialAction(action);
+                    this._nuptialEnvironmentService.playAction(action);
                     break;
             }
         }
@@ -2833,46 +2798,54 @@ class MessageHandlerService {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/domain/service/nuptialService.js":
-/*!*******************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/service/nuptialService.js ***!
-  \*******************************************************************/
+/***/ "./bugs/core/client/app/src/domain/service/nuptialEnvironmentService.js":
+/*!******************************************************************************!*\
+  !*** ./bugs/core/client/app/src/domain/service/nuptialEnvironmentService.js ***!
+  \******************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "NuptialService": () => (/* binding */ NuptialService)
+/* harmony export */   "NuptialEnvironmentService": () => (/* binding */ NuptialEnvironmentService)
 /* harmony export */ });
-/* harmony import */ var _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/entity/action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
 
 
-class NuptialService {
+class NuptialEnvironmentService extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
-    constructor(mainEventBus, nuptialApi, worldFactory, nuptialMalesContainer) {
+    constructor(mainEventBus, nuptialFactory, nuptialEnvironmentApi) {
+        super();
         this._mainEventBus = mainEventBus;
-        this._nuptialApi = nuptialApi;
-        this._worldFactory = worldFactory;
-        this._nuptialMalesContainer = nuptialMalesContainer;
-        this._males = [];
+        this._nuptialFactory = nuptialFactory;
+        this._nuptialEnvironmentApi = nuptialEnvironmentApi;
+        this._nuptialMales = [];
+        this._specie = null;
+
+        this._mainEventBus.on('userLogout', this._onUserLogout.bind(this));
     }
 
     get nuptialMales() {
-        return this._males;
+        return this._nuptialMales;
     }
 
-    initEnvironment(nuptialMalesJson) {
+    get specie() {
+        return this._specie;
+    }
+
+    init(specieJson, nuptialMalesJson) {
+        this._initSpecie(specieJson);
         this._initMales(nuptialMalesJson);
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
-        this._nuptialApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
+        this._nuptialEnvironmentApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
         this._removeMale(nuptialMaleId);
     }
 
-    playNuptialAction(action) {
+    playAction(action) {
         switch(action.type) {
-            case _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_0__.ACTION_TYPES.NUPTIAL_MALES_CHANGED:
+            case ACTION_TYPES.NUPTIAL_MALES_CHANGED:
                 this._playChangedMalesAction(action);
                 break;
             default:
@@ -2880,21 +2853,24 @@ class NuptialService {
         }
     }
 
-    _removeMale(maleId) {
-        let index = this._males.findIndex(male => male.id == maleId);
-        if (index !== -1) {
-            this._males.splice(index, 1);
-        }
-        this._emitMalesChanged();
+    _initSpecie(specieJson) {
+        this._specie = this._nuptialFactory.buildSpecie(specieJson);
+        this._stopListenSpecieChange = this._specie.on('specieSchemaChanged', this._onSpecieSchemaChanged.bind(this));
     }
 
-
     _initMales(nuptialMalesJson) {
-        this._males = [];
         for (let maleJson of nuptialMalesJson) {
-            let male = this._worldFactory.buildNuptialMale(maleJson);
-            this._males.push(male);
+            let male = this._nuptialFactory.buildNuptialMale(maleJson);
+            this._nuptialMales.push(male);
         }
+    }
+
+    _removeMale(maleId) {
+        let index = this._nuptialMales.findIndex(male => male.id == maleId);
+        if (index !== -1) {
+            this._nuptialMales.splice(index, 1);
+        }
+        this._emitMalesChanged();
     }
 
     _playChangedMalesAction(action) {
@@ -2903,51 +2879,17 @@ class NuptialService {
     }
 
     _emitMalesChanged() {
-        this._mainEventBus.emit('nuptialMalesChanged', this._males);
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/domain/service/specieBuilderService.js":
-/*!*************************************************************************!*\
-  !*** ./bugs/core/client/app/src/domain/service/specieBuilderService.js ***!
-  \*************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "SpecieBuilderService": () => (/* binding */ SpecieBuilderService)
-/* harmony export */ });
-class SpecieBuilderService {
-    constructor(mainEventBus, specieBuilderApi, specieFactory) {
-        this._mainEventBus = mainEventBus;
-        this._specieBuilderApi = specieBuilderApi;
-        this._specieFactory = specieFactory;
-
-        this._mainEventBus.on('userLogout', this._onUserLogout.bind(this));
-    }
-
-    getMySpecie() {
-        return this._specie;
-    }
-
-    initBuilder(specieJson) {
-        this._specie = this._specieFactory.buildSpecieFromJson(specieJson);
-        this._stopListenSpecieChange = this._specie.on('specieSchemaChanged', this._onSpecieSchemaChanged.bind(this));
+        this._mainEventBus.emit('nuptialMalesChanged', this._nuptialMales);
     }
 
     _onUserLogout() {
         this._stopListenSpecieChange();
         this._specie = null;
+        this._nuptialMales = [];
     }
 
     _onSpecieSchemaChanged() {
-        this._specieBuilderApi.saveSpecieSchema(this._specie);
+        this._nuptialEnvironmentApi.saveSpecieSchema(this._specie);
     }
 
 }
@@ -3142,13 +3084,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
 /* harmony import */ var _entity_ant__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entity/ant */ "./bugs/core/client/app/src/domain/entity/ant/index.js");
 /* harmony import */ var _entity_egg__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entity/egg */ "./bugs/core/client/app/src/domain/entity/egg.js");
-/* harmony import */ var _entity_genetic_genome__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/genetic/genome */ "./bugs/core/client/app/src/domain/entity/genetic/genome.js");
-/* harmony import */ var _entity_nuptialMale__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./entity/nuptialMale */ "./bugs/core/client/app/src/domain/entity/nuptialMale.js");
-/* harmony import */ var _entity_climate__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./entity/climate */ "./bugs/core/client/app/src/domain/entity/climate.js");
-/* harmony import */ var _entity_tree__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./entity/tree */ "./bugs/core/client/app/src/domain/entity/tree.js");
-/* harmony import */ var _entity_ladybug__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./entity/ladybug */ "./bugs/core/client/app/src/domain/entity/ladybug.js");
-
-
+/* harmony import */ var _entity_climate__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/climate */ "./bugs/core/client/app/src/domain/entity/climate.js");
+/* harmony import */ var _entity_tree__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./entity/tree */ "./bugs/core/client/app/src/domain/entity/tree.js");
+/* harmony import */ var _entity_ladybug__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./entity/ladybug */ "./bugs/core/client/app/src/domain/entity/ladybug.js");
 
 
 
@@ -3208,12 +3146,12 @@ class WorldFactory {
     }
 
     buildWorld() {
-        let climate = new _entity_climate__WEBPACK_IMPORTED_MODULE_13__.Climate();
+        let climate = new _entity_climate__WEBPACK_IMPORTED_MODULE_11__.Climate();
         return new _entity_world__WEBPACK_IMPORTED_MODULE_1__.World(this._mainEventBus, climate);
     }
 
     buildLadybug(json) {
-        return new _entity_ladybug__WEBPACK_IMPORTED_MODULE_15__.Ladybug(this._mainEventBus, json.id, json.position, json.angle, json.from_colony_id, json.user_speed, json.hp, json.max_hp);
+        return new _entity_ladybug__WEBPACK_IMPORTED_MODULE_13__.Ladybug(this._mainEventBus, json.id, json.position, json.angle, json.from_colony_id, json.user_speed, json.hp, json.max_hp);
     }
 
     buildNest(nestJson) {
@@ -3289,16 +3227,11 @@ class WorldFactory {
         let ownerId = treeJson.ownerId;
         let hp = treeJson.hp;
         let maxHp = treeJson.maxHp;
-        return new _entity_tree__WEBPACK_IMPORTED_MODULE_14__.Tree(this._mainEventBus, id, position, angle, fromColony, ownerId, hp, maxHp);
+        return new _entity_tree__WEBPACK_IMPORTED_MODULE_12__.Tree(this._mainEventBus, id, position, angle, fromColony, ownerId, hp, maxHp);
     }
 
     buildAntColony(id, owner_id, name, operations) {
         return new _entity_antColony__WEBPACK_IMPORTED_MODULE_4__.AntColony(this._mainEventBus, id, owner_id, name, operations);
-    }
-
-    buildNuptialMale(nuptialMaleJson) {
-        let genome = _entity_genetic_genome__WEBPACK_IMPORTED_MODULE_11__.Genome.buildFromJson(nuptialMaleJson.genome);
-        return new _entity_nuptialMale__WEBPACK_IMPORTED_MODULE_12__.NuptialMale(nuptialMaleJson.id, genome, nuptialMaleJson.stats, nuptialMaleJson.isLocal);
     }
 
 }
@@ -3502,10 +3435,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _nestApi__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestApi */ "./bugs/core/client/app/src/sync/nestApi.js");
 /* harmony import */ var _colonyApi__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./colonyApi */ "./bugs/core/client/app/src/sync/colonyApi.js");
 /* harmony import */ var _antApi__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./antApi */ "./bugs/core/client/app/src/sync/antApi.js");
-/* harmony import */ var _nuptialApi__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./nuptialApi */ "./bugs/core/client/app/src/sync/nuptialApi.js");
-/* harmony import */ var _specieBuilderApi__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./specieBuilderApi */ "./bugs/core/client/app/src/sync/specieBuilderApi.js");
-/* harmony import */ var _userApi__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./userApi */ "./bugs/core/client/app/src/sync/userApi.js");
-
+/* harmony import */ var _userApi__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./userApi */ "./bugs/core/client/app/src/sync/userApi.js");
+/* harmony import */ var _nuptialEnvironmentApi__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./nuptialEnvironmentApi */ "./bugs/core/client/app/src/sync/nuptialEnvironmentApi.js");
 
 
 
@@ -3523,9 +3454,8 @@ function initSyncLayer() {
     let nestApi = new _nestApi__WEBPACK_IMPORTED_MODULE_3__.NestApi(requester);
     let colonyApi = new _colonyApi__WEBPACK_IMPORTED_MODULE_4__.ColonyApi(requester);
     let antApi = new _antApi__WEBPACK_IMPORTED_MODULE_5__.AntApi(requester);
-    let nuptialApi = new _nuptialApi__WEBPACK_IMPORTED_MODULE_6__.NuptialApi(requester);
-    let specieBuilderApi = new _specieBuilderApi__WEBPACK_IMPORTED_MODULE_7__.SpecieBuilderApi(requester);
-    let userApi = new _userApi__WEBPACK_IMPORTED_MODULE_8__.UserApi(requester);
+    let userApi = new _userApi__WEBPACK_IMPORTED_MODULE_6__.UserApi(requester);
+    let nuptialEnvironmentApi = new _nuptialEnvironmentApi__WEBPACK_IMPORTED_MODULE_7__.NuptialEnvironmentApi(requester)
 
     return {
         apis: {
@@ -3533,9 +3463,8 @@ function initSyncLayer() {
             nestApi,
             colonyApi,
             antApi,
-            nuptialApi,
-            specieBuilderApi,
-            userApi
+            userApi,
+            nuptialEnvironmentApi
         },
         serverConnection,
     };
@@ -3609,21 +3538,27 @@ class NestApi {
 
 /***/ }),
 
-/***/ "./bugs/core/client/app/src/sync/nuptialApi.js":
-/*!*****************************************************!*\
-  !*** ./bugs/core/client/app/src/sync/nuptialApi.js ***!
-  \*****************************************************/
+/***/ "./bugs/core/client/app/src/sync/nuptialEnvironmentApi.js":
+/*!****************************************************************!*\
+  !*** ./bugs/core/client/app/src/sync/nuptialEnvironmentApi.js ***!
+  \****************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "NuptialApi": () => (/* binding */ NuptialApi)
+/* harmony export */   "NuptialEnvironmentApi": () => (/* binding */ NuptialEnvironmentApi)
 /* harmony export */ });
-class NuptialApi {
+class NuptialEnvironmentApi {
 
     constructor(requester) {
         this._requester = requester;
+    }
+
+    saveSpecieSchema(specie) {
+        this._requester.post('world/nuptial_environment/specie/specie_schema', {
+            specie_schema: specie.schema
+        });
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) { 
@@ -3634,7 +3569,7 @@ class NuptialApi {
             colony_name: colonyName
         })
     }
-
+    
 }
 
 
@@ -3682,35 +3617,6 @@ class ServerConnection {
     _emitMessage(event) {
         this.events.emit('message', JSON.parse(event.data));
     }
-}
-
-
-
-/***/ }),
-
-/***/ "./bugs/core/client/app/src/sync/specieBuilderApi.js":
-/*!***********************************************************!*\
-  !*** ./bugs/core/client/app/src/sync/specieBuilderApi.js ***!
-  \***********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "SpecieBuilderApi": () => (/* binding */ SpecieBuilderApi)
-/* harmony export */ });
-class SpecieBuilderApi {
-
-    constructor(requester) {
-        this._requester = requester;
-    }
-
-    saveSpecieSchema(specie) {
-        this._requester.post('world/nuptial_environment/specie/specie_schema', {
-            specie_schema: specie.schema
-        });
-    }
-    
 }
 
 
@@ -8608,8 +8514,8 @@ class SpecieGeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0_
         this._activateBtn = this._el.querySelector('[data-activate-btn]');
         this._deactivateBtn = this._el.querySelector('[data-deactivate-btn]');
         this._toggleActivationBtn(!this._isActivated);
-        let isReuqired = _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.REQUIRED_GENES[this._chromosomeType].includes(this._specieGene.gene.type)
-        this._toggleDeactivationBtn(this._isActivated && !isReuqired);
+        let isRequired = _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.REQUIRED_GENES[this._chromosomeType].includes(this._specieGene.gene.type)
+        this._toggleDeactivationBtn(this._isActivated && !isRequired);
     }
 
     remove() {

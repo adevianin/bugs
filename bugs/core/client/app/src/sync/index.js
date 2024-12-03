@@ -4,9 +4,8 @@ import { ServerConnection } from "./serverConnection";
 import { NestApi } from "./nestApi";
 import { ColonyApi } from "./colonyApi";
 import { AntApi } from "./antApi";
-import { NuptialApi } from "./nuptialApi";
-import { SpecieBuilderApi } from "./specieBuilderApi";
 import { UserApi } from "./userApi";
+import { NuptialEnvironmentApi } from "./nuptialEnvironmentApi";
 
 function initSyncLayer() {
     let requester = new Requester();
@@ -16,9 +15,8 @@ function initSyncLayer() {
     let nestApi = new NestApi(requester);
     let colonyApi = new ColonyApi(requester);
     let antApi = new AntApi(requester);
-    let nuptialApi = new NuptialApi(requester);
-    let specieBuilderApi = new SpecieBuilderApi(requester);
     let userApi = new UserApi(requester);
+    let nuptialEnvironmentApi = new NuptialEnvironmentApi(requester)
 
     return {
         apis: {
@@ -26,9 +24,8 @@ function initSyncLayer() {
             nestApi,
             colonyApi,
             antApi,
-            nuptialApi,
-            specieBuilderApi,
-            userApi
+            userApi,
+            nuptialEnvironmentApi
         },
         serverConnection,
     };

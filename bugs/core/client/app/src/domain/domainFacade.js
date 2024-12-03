@@ -2,15 +2,14 @@ import { EntityTypes } from "./enum/entityTypes";
 
 class DomainFacade {
 
-    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, nuptialService, specieBuilderService, userService) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._accountService = accountService;
         this._messageHandlerService = messageHandlerService;
         this._colonyService = colonyService;
-        this._nuptialService = nuptialService;
-        this._specieBuilderService = specieBuilderService;
         this._userService = userService;
+        this._nuptialEnvironmentService = nuptialEnvironmentService;
     }
 
     get currentStep() {
@@ -162,11 +161,11 @@ class DomainFacade {
     /*========================*/
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
-        this._nuptialService.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
+        this._nuptialEnvironmentService.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
     }
 
     getMyNuptialMales() {
-        return this._nuptialService.nuptialMales;
+        return this._nuptialEnvironmentService.nuptialMales;
     }
 
     findNearestNestForOffensiveOperation(performingColonyId, point) {
@@ -174,7 +173,7 @@ class DomainFacade {
     }
 
     getMySpecie() {
-        return this._specieBuilderService.getMySpecie();
+        return this._nuptialEnvironmentService.specie;
     }
 
     bornNewAntara() {
