@@ -21,7 +21,7 @@ from typing import List, Callable
 class LiveBody(Body):
 
     class MemoryKeys():
-        pass
+        AM_I_IN_HIBERNATION = 'am_in_hibernation'
 
     stats: LiveStats
     HIBERNATION_THRESHOLD = 1
@@ -79,8 +79,12 @@ class LiveBody(Body):
         self._hp = self.stats.max_hp
     
     def step_to(self, destination_point: Point) -> bool:
-        if self._has_stun_effect or self.position.is_equal(destination_point):
+        if self._has_stun_effect:
             return
+        
+        if self.position.is_equal(destination_point):
+            return True
+        
         self._look_at(destination_point)
 
         dist_per_step = self.formation_distance_per_step or self.stats.distance_per_step
@@ -112,13 +116,15 @@ class LiveBody(Body):
         return self._temperature_sensor.temperature >= self.stats.min_temperature and self._temperature_sensor.is_warming
     
     def enter_hibernation(self):
-        self.memory.save('am_in_hibernation', True)
+        self.memory.save_flag(self.MemoryKeys.AM_I_IN_HIBERNATION, True)
+        self.events.emit('enter_hibernation')
 
     def exit_hibernation(self):
-        self.memory.save('am_in_hibernation', False)
+        self.memory.save_flag(self.MemoryKeys.AM_I_IN_HIBERNATION, False)
+        self.events.emit('exit_hibernation')
 
     def am_i_in_hibernation(self) -> bool:
-        return bool(self.memory.read('am_in_hibernation'))
+        return self.memory.read_flag(self.MemoryKeys.AM_I_IN_HIBERNATION)
     
     def calc_how_much_calories_is_need(self):
         return self._max_calories - self._calories
