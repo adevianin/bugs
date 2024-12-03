@@ -62,6 +62,9 @@ class Map:
     def get_entities(self, from_colony_id: int = None, entity_types: List[EntityTypes] = None, filter: Callable[[Entity], bool] = None) -> List[Entity]:
         found_entities = []
         for entity in self._entities_collection.get_entities():
+            if entity.is_pending_removal:
+                continue
+
             is_colony_suitable = not from_colony_id or entity.from_colony_id == from_colony_id
             if not is_colony_suitable:
                 continue
@@ -72,9 +75,6 @@ class Map:
 
             is_filter_passed = not filter or filter(entity)
             if not is_filter_passed:
-                continue
-
-            if entity.is_pending_removal:
                 continue
 
             found_entities.append(entity)
