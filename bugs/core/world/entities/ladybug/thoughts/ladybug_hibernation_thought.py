@@ -34,8 +34,9 @@ class LadybugHibernationThought(Thought):
     
     def do_step(self) -> bool:
         super().do_step()
-        self.fight_near_enemies_thought.do_step()
-        if self.fight_near_enemies_thought.is_fighting:
+
+        if self._body.check_urge_to_exit_hibernation():
+            self.cancel()
             return
         
         if not self._body.am_i_in_hibernation():
