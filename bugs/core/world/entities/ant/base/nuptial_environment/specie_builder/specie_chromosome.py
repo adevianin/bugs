@@ -35,6 +35,15 @@ class SpecieChromosome():
     def type(self):
         return self._type
     
+    def clear_not_activated_specie_genes(self):
+        not_activated_genes = []
+        for specie_gene in self._specie_genes:
+            if specie_gene.id not in self._activated_specie_genes_ids:
+                not_activated_genes.append(specie_gene)
+
+        for specie_gene in not_activated_genes:
+            self._specie_genes.remove(specie_gene)
+    
     def apply_schema(self, ids: List[str]):
         self._activated_specie_genes_ids = ids
     

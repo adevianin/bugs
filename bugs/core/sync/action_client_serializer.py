@@ -40,6 +40,7 @@ from core.world.utils.distance_per_step_to_user_speed import distance_per_step_t
 from core.world.entities.action.colony_operation_created_action import ColonyOperationCreatedAction
 from core.world.entities.action.colony_operation_changed_action import ColonyOperationChangedAction
 from core.world.entities.action.colony_operation_deleted_action import ColonyOperationDeletedAction
+from core.world.entities.action.nuptial_environment_specie_genes_changed_action import NuptialEnvironmentSpecieGenesChangedAction
 
 class ActionClientSerializer(iActionClientSerializer):
 
@@ -129,6 +130,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._serialize_rating_updated(action)
             case ActionTypes.NUPTIAL_ENVIRONMENT_MALES_CHANGED:
                 return self._serialize_nuptial_environment_males_changed(action)
+            case ActionTypes.NUPTIAL_ENVIRONMENT_SPECIE_GENES_CHANGED:
+                return self._serialize_nuptial_environment_specie_genes_changed(action)
             case _:
                 raise Exception('unknown type of action')
             
@@ -405,6 +408,20 @@ class ActionClientSerializer(iActionClientSerializer):
 
         json.update({
             'males': self._nuptial_environment_serializer.serialize_nuptial_males(action.males)
+        })
+
+        return json
+    
+    def _serialize_nuptial_environment_specie_genes_changed(self, action: NuptialEnvironmentSpecieGenesChangedAction):
+        json = self._serialize_common(action)
+        
+        chromosome_genes_json = {}
+        for specie_chromosome in action.specie_chromosome_set.specie_chromosomes:
+            serialized_specie_genes = [self._nuptial_environment_serializer.serialize_specie_gene(specie_gene) for specie_gene in specie_chromosome.specie_genes]
+            chromosome_genes_json[specie_chromosome.type] = serialized_specie_genes
+
+        json.update({
+            'chromosomeSpecieGenes': chromosome_genes_json
         })
 
         return json

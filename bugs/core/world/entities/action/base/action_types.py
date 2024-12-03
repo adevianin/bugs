@@ -37,3 +37,4 @@ class ActionTypes(StrEnum):
     USER_NOTIFICATION = 'user_notification'
     RATING_UPDATED = 'rating_updated'
     NUPTIAL_ENVIRONMENT_MALES_CHANGED = 'nuptial_environment_males_changed'
+    NUPTIAL_ENVIRONMENT_SPECIE_GENES_CHANGED = 'nuptial_environment_specie_genes_changed'

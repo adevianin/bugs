@@ -1,4 +1,5 @@
 import { EventEmitter } from "@utils/eventEmitter";
+import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
 
 class NuptialEnvironmentService extends EventEmitter {
 
@@ -36,6 +37,9 @@ class NuptialEnvironmentService extends EventEmitter {
             case ACTION_TYPES.NUPTIAL_ENVIRONMENT_MALES_CHANGED:
                 this._playChangedMalesAction(action);
                 break;
+            case ACTION_TYPES.NUPTIAL_ENVIRONMENT_SPECIE_GENES_CHANGED:
+                this._playSpecieGenesChanged(action);
+                break;
             default:
                 throw 'unknown type of action';
         }
@@ -64,6 +68,15 @@ class NuptialEnvironmentService extends EventEmitter {
     _playChangedMalesAction(action) {
         this._initMales(action.males);
         this._emitMalesChanged();
+    }
+
+    _playSpecieGenesChanged(action) {
+        let chromosomeSpecieGenesJson = action.chromosomeSpecieGenes;
+        for (let chromosomeType in chromosomeSpecieGenesJson) {
+            let specieChromosome = this._specie.getChromosomeByType(chromosomeType);
+            specieChromosome.updateGenes(chromosomeSpecieGenesJson[chromosomeType]);
+        }
+
     }
 
     _emitMalesChanged() {

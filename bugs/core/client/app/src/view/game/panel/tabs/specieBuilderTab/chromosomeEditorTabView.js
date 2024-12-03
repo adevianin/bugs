@@ -9,6 +9,7 @@ class ChromosomeEditorTab extends BaseHTMLView {
         this._chromosome = chromosome;
 
         this._chromosome.on('specieGeneActiveStatusChanged', this._onSpecieGeneActiveStatusChanged.bind(this));
+        this._chromosome.on('specieGenesUpdated', this._onSpecieGenesUpdated.bind(this));
 
         this._specieGeneViews = {};
 
@@ -65,6 +66,11 @@ class ChromosomeEditorTab extends BaseHTMLView {
         this._specieGeneViews[specieGene.id].remove();
         delete this._specieGeneViews[specieGene.id];
         this._renderSpecieGene(specieGene);
+    }
+
+    _onSpecieGenesUpdated() {
+        this._clearSpecieGenesList();
+        this._renderSpecieGenesList();
     }
 
 }

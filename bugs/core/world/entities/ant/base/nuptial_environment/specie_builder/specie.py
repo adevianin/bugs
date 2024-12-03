@@ -44,6 +44,10 @@ class Specie():
     def accept_male_genome(self, genome: Genome):
         maternal_chromosome_set = genome.maternal_chromosomes_set
         self._chromosome_set.accept_chromosome_set(maternal_chromosome_set)
+
+    def clear_not_activated_specie_genes(self):
+        for specie_chromosome in self._chromosome_set.specie_chromosomes:
+            specie_chromosome.clear_not_activated_specie_genes()
     
     def generate_nuptial_male_genome(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> Genome:
         super_gene = self._build_super_gene_by_specie_activity() if probability_check(PROBABILITY_OF_SUPER_GENE) else None

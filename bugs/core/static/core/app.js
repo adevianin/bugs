@@ -294,6 +294,7 @@ const ACTION_TYPES = {
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
     NEST_FORTIFICATION_CHANGED: 'nest_fortification_changed',
     NUPTIAL_ENVIRONMENT_MALES_CHANGED: 'nuptial_environment_males_changed',
+    NUPTIAL_ENVIRONMENT_SPECIE_GENES_CHANGED: 'nuptial_environment_specie_genes_changed',
     COLONY_BORN: 'colony_born',
     COLONY_DIED: 'colony_died',
     COLONY_OPERATION_CHANGED: 'colony_operation_changed',
@@ -2025,6 +2026,11 @@ class SpecieChromosome extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.
         this.specieGenes = specieGenes;
     }
 
+    updateGenes(specieGenes) {
+        this.specieGenes = specieGenes;
+        this.emit('specieGenesUpdated');
+    }
+
     checkIsGeneActivated(specieGeneId) {
         let index = this.activatedSpecieGenesIds.indexOf(specieGeneId);
         return index >= 0;
@@ -2810,6 +2816,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "NuptialEnvironmentService": () => (/* binding */ NuptialEnvironmentService)
 /* harmony export */ });
 /* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./bugs/core/client/utils/eventEmitter.js");
+/* harmony import */ var _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/entity/action/actionTypes */ "./bugs/core/client/app/src/domain/entity/action/actionTypes.js");
+
 
 
 class NuptialEnvironmentService extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
@@ -2845,8 +2853,11 @@ class NuptialEnvironmentService extends _utils_eventEmitter__WEBPACK_IMPORTED_MO
 
     playAction(action) {
         switch(action.type) {
-            case ACTION_TYPES.NUPTIAL_ENVIRONMENT_MALES_CHANGED:
+            case _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_1__.ACTION_TYPES.NUPTIAL_ENVIRONMENT_MALES_CHANGED:
                 this._playChangedMalesAction(action);
+                break;
+            case _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_1__.ACTION_TYPES.NUPTIAL_ENVIRONMENT_SPECIE_GENES_CHANGED:
+                this._playSpecieGenesChanged(action);
                 break;
             default:
                 throw 'unknown type of action';
@@ -2876,6 +2887,15 @@ class NuptialEnvironmentService extends _utils_eventEmitter__WEBPACK_IMPORTED_MO
     _playChangedMalesAction(action) {
         this._initMales(action.males);
         this._emitMalesChanged();
+    }
+
+    _playSpecieGenesChanged(action) {
+        let chromosomeSpecieGenesJson = action.chromosomeSpecieGenes;
+        for (let chromosomeType in chromosomeSpecieGenesJson) {
+            let specieChromosome = this._specie.getChromosomeByType(chromosomeType);
+            specieChromosome.updateGenes(chromosomeSpecieGenesJson[chromosomeType]);
+        }
+
     }
 
     _emitMalesChanged() {
@@ -8327,6 +8347,7 @@ class ChromosomeEditorTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
         this._chromosome = chromosome;
 
         this._chromosome.on('specieGeneActiveStatusChanged', this._onSpecieGeneActiveStatusChanged.bind(this));
+        this._chromosome.on('specieGenesUpdated', this._onSpecieGenesUpdated.bind(this));
 
         this._specieGeneViews = {};
 
@@ -8383,6 +8404,11 @@ class ChromosomeEditorTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
         this._specieGeneViews[specieGene.id].remove();
         delete this._specieGeneViews[specieGene.id];
         this._renderSpecieGene(specieGene);
+    }
+
+    _onSpecieGenesUpdated() {
+        this._clearSpecieGenesList();
+        this._renderSpecieGenesList();
     }
 
 }

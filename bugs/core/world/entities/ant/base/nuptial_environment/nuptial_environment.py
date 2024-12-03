@@ -5,6 +5,7 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.base.damage_types import DamageTypes
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.action.nuptial_environment_males_changed_action import NuptialEnvironmentMalesChangedAction
+from core.world.entities.action.nuptial_environment_specie_genes_changed_action import NuptialEnvironmentSpecieGenesChangedAction
 from core.world.settings import MUTATITON_PERCENT, SUPER_MUTATION_CHANCE_PERCENT, SUPER_MUTATION_PERCENT
 from core.world.entities.ant.base.larva import Larva
 from core.world.entities.ant.base.ant_types import AntTypes
@@ -41,6 +42,7 @@ class NuptialEnvironment():
     
     def fly_in_male(self, male: MaleAnt):
         self._specie.accept_male_genome(male.body.genome)
+        self._emit_specie_genes_changed_action()
     
     def get_male(self, male_id: str) -> NuptialMale:
         for male in self._males:
@@ -67,7 +69,11 @@ class NuptialEnvironment():
     def _clear_males(self):
         self._males = []
         self._emit_males_changed_action() 
-    
+
+    def _clear_not_activated_specie_genes(self):
+        self._specie.clear_not_activated_specie_genes()
+        self._emit_specie_genes_changed_action()
+
     def _on_ant_received_damaged(self, damage_type: DamageTypes, ant: Ant):
         if ant.owner_id == self.owner_id:
             match(damage_type):
@@ -91,8 +97,12 @@ class NuptialEnvironment():
     def _emit_males_changed_action(self):
         self._event_bus.emit('action', NuptialEnvironmentMalesChangedAction(self._males, self._owner_id))
 
+    def _emit_specie_genes_changed_action(self):
+        self._event_bus.emit('action', NuptialEnvironmentSpecieGenesChangedAction(self._specie.specie_chromosome_set, self._owner_id))
+
     def _on_season_changed(self, season: SeasonTypes):
         if season == SeasonTypes.SUMMER:
             self._generate_males()
         elif season == SeasonTypes.WINTER:
             self._clear_males()
+            self._clear_not_activated_specie_genes()

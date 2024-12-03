@@ -9,6 +9,11 @@ class SpecieChromosome extends EventEmitter {
         this.specieGenes = specieGenes;
     }
 
+    updateGenes(specieGenes) {
+        this.specieGenes = specieGenes;
+        this.emit('specieGenesUpdated');
+    }
+
     checkIsGeneActivated(specieGeneId) {
         let index = this.activatedSpecieGenesIds.indexOf(specieGeneId);
         return index >= 0;
