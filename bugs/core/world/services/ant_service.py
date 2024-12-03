@@ -37,8 +37,8 @@ class AntService():
         if not ant or ant.owner_id != user_id:
             raise Exception('user dont have this ant')
         
-        if ant.is_queen_of_colony:
-            raise Exception('queen of colony cant change guardian behavior')
+        if ant.ant_type == AntTypes.QUEEN or ant.ant_type == AntTypes.MALE:
+            raise Exception('females and males cant change guardian behavior')
         
         ant.guardian_behavior = guaridan_behavior
 
@@ -48,7 +48,7 @@ class AntService():
         if not ant or ant.owner_id != user_id:
             raise Exception('user dont have this ant')
         
-        if ant.is_queen_of_colony:
+        if ant.ant_type == AntTypes.QUEEN or ant.ant_type == AntTypes.MALE:
             raise Exception('queen of colony cant change cooperative')
         
         ant.is_cooperative = is_enabled

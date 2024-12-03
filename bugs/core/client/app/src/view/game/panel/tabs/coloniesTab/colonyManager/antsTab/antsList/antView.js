@@ -56,11 +56,11 @@ class AntView extends BaseHTMLView {
 
         this._guardianTypeSelector = this._el.querySelector('[data-guardian-type]');
         this._guardianTypeSelector.value = this._ant.guardianBehavior;
-        this._guardianTypeSelector.disabled = this._ant.isQueenOfColony;
+        this._guardianTypeSelector.disabled = !this._ant.canBeGuardian;
 
         this._cooperativeBehaviorTogglerEl = this._el.querySelector('[data-is-cooperactive]');
         this._cooperativeBehaviorTogglerEl.checked = this._ant.isCooperativeBehavior;
-        this._cooperativeBehaviorTogglerEl.disabled = this._ant.isQueenOfColony;
+        this._cooperativeBehaviorTogglerEl.disabled = !this._ant.canBeCooperative;
 
         this._el.querySelector('[data-genome-debug]').addEventListener('click', () => {
             console.log(this._ant.genome);

@@ -12,6 +12,14 @@ class MaleAnt extends BaseAnt {
         return true;
     }
 
+    get canBeCooperative() {
+        return false;
+    }
+
+    get canBeGuardian() {
+        return false;
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {

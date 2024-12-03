@@ -94,6 +94,14 @@ class BaseAnt extends LiveEntity {
         return this._isInNuptialFlight;
     }
 
+    get canBeCooperative() {
+        return true;
+    }
+
+    get canBeGuardian() {
+        return true;
+    }
+
     changeGuardianBehavior(behaviorValue) {
         this._behavior.guardianBehavior = behaviorValue;
         this._antApi.changeGuardianBehavior(this.id, behaviorValue);

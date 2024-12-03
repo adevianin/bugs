@@ -35,6 +35,14 @@ class QueenAnt extends BaseAnt {
         return !this.isQueenOfColony;
     }
 
+    get canBeCooperative() {
+        return false;
+    }
+
+    get canBeGuardian() {
+        return false;
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {

@@ -526,6 +526,14 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         return this._isInNuptialFlight;
     }
 
+    get canBeCooperative() {
+        return true;
+    }
+
+    get canBeGuardian() {
+        return true;
+    }
+
     changeGuardianBehavior(behaviorValue) {
         this._behavior.guardianBehavior = behaviorValue;
         this._antApi.changeGuardianBehavior(this.id, behaviorValue);
@@ -693,6 +701,14 @@ class MaleAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
         return true;
     }
 
+    get canBeCooperative() {
+        return false;
+    }
+
+    get canBeGuardian() {
+        return false;
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {
@@ -773,6 +789,14 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
     get canFlyNuptialFlight() {
         return !this.isQueenOfColony;
+    }
+
+    get canBeCooperative() {
+        return false;
+    }
+
+    get canBeGuardian() {
+        return false;
     }
 
     playAction(action) {
@@ -5367,11 +5391,11 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
 
         this._guardianTypeSelector = this._el.querySelector('[data-guardian-type]');
         this._guardianTypeSelector.value = this._ant.guardianBehavior;
-        this._guardianTypeSelector.disabled = this._ant.isQueenOfColony;
+        this._guardianTypeSelector.disabled = !this._ant.canBeGuardian;
 
         this._cooperativeBehaviorTogglerEl = this._el.querySelector('[data-is-cooperactive]');
         this._cooperativeBehaviorTogglerEl.checked = this._ant.isCooperativeBehavior;
-        this._cooperativeBehaviorTogglerEl.disabled = this._ant.isQueenOfColony;
+        this._cooperativeBehaviorTogglerEl.disabled = !this._ant.canBeCooperative;
 
         this._el.querySelector('[data-genome-debug]').addEventListener('click', () => {
             console.log(this._ant.genome);
