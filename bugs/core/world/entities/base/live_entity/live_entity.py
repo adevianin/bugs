@@ -93,6 +93,7 @@ class LiveEntity(Entity, iEnemy):
     
     def do_step(self, step_number: int):
         self._body.handle_aging(step_number)
+        self._body.handle_regeneration()
         self._body.handle_exit_hibernation()
 
         if not self._body.am_i_in_hibernation():

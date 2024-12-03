@@ -172,6 +172,10 @@ class LiveBody(Body):
     def receive_colony_signal(self, signal: dict):
         self.events.emit(f'colony_signal:{ signal["type"] }', signal)
 
+    def handle_regeneration(self):
+        if self.hp < self.stats.max_hp:
+            self.hp += self.stats.hp_regen_rate
+
     def handle_aging(self, current_step: int):
         lived_steps = current_step - self.birth_step
         if lived_steps >= self.stats.life_span:
