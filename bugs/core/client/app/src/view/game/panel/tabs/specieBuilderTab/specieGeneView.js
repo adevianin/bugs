@@ -23,8 +23,8 @@ class SpecieGeneView extends BaseHTMLView {
         this._activateBtn = this._el.querySelector('[data-activate-btn]');
         this._deactivateBtn = this._el.querySelector('[data-deactivate-btn]');
         this._toggleActivationBtn(!this._isActivated);
-        let isReuqired = CONSTS.REQUIRED_GENES[this._chromosomeType].includes(this._specieGene.gene.type)
-        this._toggleDeactivationBtn(this._isActivated && !isReuqired);
+        let isRequired = CONSTS.REQUIRED_GENES[this._chromosomeType].includes(this._specieGene.gene.type)
+        this._toggleDeactivationBtn(this._isActivated && !isRequired);
     }
 
     remove() {
