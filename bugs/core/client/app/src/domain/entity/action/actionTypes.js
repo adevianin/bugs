@@ -10,6 +10,7 @@ const ACTION_TYPES = {
     ENTITY_WALK: 'entity_walk',
     ENTITY_GOT_IN_NEST: 'entity_got_in_nest',
     ENTITY_GOT_OUT_OF_NEST: 'entity_got_out_of_nest',
+    ENTITY_HIBERNATION_STATUS_CHANGED: 'entity_hibernation_status_changed',
     ENTITY_HP_CHANGE: 'entity_hp_change',
     ENTITY_ROTATED: 'entity_rotated',
     ENTITY_COLONY_CHANGED: 'entity_colony_changed',

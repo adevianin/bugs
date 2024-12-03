@@ -9,6 +9,7 @@ class ActionTypes(StrEnum):
     ENTITY_WALK = 'entity_walk'
     ENTITY_GOT_IN_NEST = 'entity_got_in_nest'
     ENTITY_GOT_OUT_OF_NEST = 'entity_got_out_of_nest'
+    ENTITY_HIBERNATION_STATUS_CHANGED = 'entity_hibernation_status_changed'
     ANT_PICKED_UP_ITEM = 'ant_picked_up_item'
     ANT_DROPPED_PICKED_ITEM = 'ant_dropped_picked_item'
     ANT_FLEW_NUPTIAL_FLIGHT = 'ant_flew_nuptial_flight'

@@ -62,7 +62,7 @@ class WorldFactory {
     }
 
     buildLadybug(json) {
-        return new Ladybug(this._mainEventBus, json.id, json.position, json.angle, json.from_colony_id, json.user_speed, json.hp, json.max_hp);
+        return new Ladybug(this._mainEventBus, json.id, json.position, json.angle, json.from_colony_id, json.hp, json.max_hp, json.isInHibernation);
     }
 
     buildNest(nestJson) {
@@ -104,6 +104,7 @@ class WorldFactory {
         let ownerId = antJson.owner_id;
         let hp = antJson.hp;
         let maxHp = antJson.max_hp;
+        let isInHibernation = antJson.isInHibernation;
         let pickedItemId = antJson.picked_item_id;
         let locatedInNestId = antJson.located_in_nest_id;
         let homeNestId = antJson.home_nest_id;
@@ -117,14 +118,14 @@ class WorldFactory {
                 let isFertilized = antJson.is_fertilized;
                 let isInNuptialFlight = antJson.is_in_nuptial_flight;
                 let genes = antJson.genes;
-                return new QueenAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
+                return new QueenAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
                     genome, birthStep, isFertilized, isInNuptialFlight, genes);
             case AntTypes.WARRIOR:
-                return new WarriorAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+                return new WarriorAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
             case AntTypes.WORKER:
-                return new WorkerAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+                return new WorkerAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
             case AntTypes.MALE:
-                return new MaleAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+                return new MaleAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
             default:
                 throw 'unknown type of ant';
         }

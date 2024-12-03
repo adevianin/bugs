@@ -10,6 +10,7 @@ class LiveEntityView extends EntityView {
         this._unbindPositionChangedListener = this._entity.on('positionChanged', this._renderPosition.bind(this));
         this._unbindAngleChangedListener = this._entity.on('angleChanged', this._renderAngle.bind(this));
         this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderState.bind(this));
+        this._unbindHibernationStateListener = this._entity.on('isInHibernationChanged', this._renderVisibility.bind(this));
     }
 
     _render() {
@@ -44,6 +45,7 @@ class LiveEntityView extends EntityView {
         this._renderPosition();
         this._renderAngle();
         this._renderState();
+        this._renderVisibility();
     }
 
     remove() {
@@ -51,6 +53,7 @@ class LiveEntityView extends EntityView {
         this._unbindPositionChangedListener();
         this._unbindAngleChangedListener();
         this._unbindStateChangeListener();
+        this._unbindHibernationStateListener();
         this._hpLineView.remove();
     }
 
@@ -85,6 +88,10 @@ class LiveEntityView extends EntityView {
         this._toggleStandingState(state == 'standing');
         this._toggleWalkingState(state == 'walking');
         this._toggleDeadState(state == 'dead');
+    }
+
+    _renderVisibility() {
+        this._entityContainer.renderable = this._entity.isVisible;
     }
 
     _toggleWalkingState(isEnabling) {

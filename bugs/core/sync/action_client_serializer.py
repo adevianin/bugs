@@ -41,6 +41,7 @@ from core.world.entities.action.colony_operation_created_action import ColonyOpe
 from core.world.entities.action.colony_operation_changed_action import ColonyOperationChangedAction
 from core.world.entities.action.colony_operation_deleted_action import ColonyOperationDeletedAction
 from core.world.entities.action.nuptial_environment_specie_genes_changed_action import NuptialEnvironmentSpecieGenesChangedAction
+from core.world.entities.action.entity_hibernation_status_chenged_action import EntityHibernationStatusChangedAction
 
 class ActionClientSerializer(iActionClientSerializer):
 
@@ -74,6 +75,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._serialize_entity_got_in_nest(action)
             case ActionTypes.ENTITY_GOT_OUT_OF_NEST:
                 return self._default_action_serialize(action)
+            case ActionTypes.ENTITY_HIBERNATION_STATUS_CHANGED:
+                return self._serialize_hibernation_status_changed(action)
             case ActionTypes.ANT_PICKED_UP_ITEM:
                 return self._serialize_ant_picked_up_item(action)
             case ActionTypes.ANT_DROPPED_PICKED_ITEM:
@@ -195,6 +198,15 @@ class ActionClientSerializer(iActionClientSerializer):
 
         json.update({
             'actionData': { 'nest_id': action.nest_id }
+        })
+
+        return json
+    
+    def _serialize_hibernation_status_changed(self, action: EntityHibernationStatusChangedAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'isInHibernation': action.is_in_hibernation
         })
 
         return json

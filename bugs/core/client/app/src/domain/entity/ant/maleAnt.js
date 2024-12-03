@@ -4,8 +4,8 @@ import { ACTION_TYPES } from "../action/actionTypes";
 
 class MaleAnt extends BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep) {
-        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
     }
 
     get canFlyNuptialFlight() {
@@ -25,16 +25,16 @@ class MaleAnt extends BaseAnt {
 
     _playFlyNuptialFlight() {
         return this._flyAwayAnimation().then(() => {
-            this.isHidden = true;
+            this.isInNuptialFlight = true;
         });
     }
 
     _playEntityDied(action) {
-        if (this.isHidden) {
+        if (this.isInNuptialFlight) {
             this.die();
             return Promise.resolve();
         } else {
-            super._playEntityDied(action);
+            return super._playEntityDied(action);
         }
     }
 }

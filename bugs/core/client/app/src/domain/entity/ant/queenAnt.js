@@ -4,15 +4,15 @@ import { ACTION_TYPES } from "../action/actionTypes";
 
 class QueenAnt extends BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, isFertilized, isInNuptialFlight, genes) {
-        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, isFertilized, isInNuptialFlight, genes) {
+        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep);
         this._isFertilized = isFertilized;
-        this.isInNuptialFlight = isInNuptialFlight;
+        this._isInNuptialFlight = isInNuptialFlight;
         this._genes = genes;
     }
 
-    updateIsHidden() {
-        this.isHidden = this.isInNest || this.isInNuptialFlight;
+    get isVisible() {
+        return super.isVisible && !this._isInNuptialFlight;
     }
 
     set isFertilized(val) {
@@ -21,15 +21,6 @@ class QueenAnt extends BaseAnt {
 
     get isFertilized() {
         return this._isFertilized;
-    }
-
-    set isInNuptialFlight(isInNuptialFlight) {
-        this._isInNuptialFlight = isInNuptialFlight;
-        this.updateIsHidden();
-    }
-
-    get isInNuptialFlight() {
-        return this._isInNuptialFlight;
     }
 
     get genes() {

@@ -6,5 +6,6 @@ class LiveEntityClientSerializer(EntityClientSerializer):
     def serialize(self, entity: LiveEntity):
         json = super().serialize(entity)
         json.update({
+            'isInHibernation': entity.is_in_hibernation
         })
         return json

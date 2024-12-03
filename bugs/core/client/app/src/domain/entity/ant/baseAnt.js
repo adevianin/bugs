@@ -4,9 +4,9 @@ import { ACTION_TYPES } from '../action/actionTypes';
 
 class BaseAnt extends LiveEntity {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, 
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, 
             genome, birthStep) {
-        super(eventBus, id, position, angle, EntityTypes.ANT, fromColony, ownerId, hp, maxHp);
+        super(eventBus, id, position, angle, EntityTypes.ANT, fromColony, ownerId, hp, maxHp, isInHibernation);
         this._name = name;
         this._pickedItemId = pickedItemId;
         this._antType = antType;
@@ -20,8 +20,8 @@ class BaseAnt extends LiveEntity {
         this._birthStep = birthStep;
     }
 
-    updateIsHidden() {
-        this.isHidden = this.isInNest;
+    get isVisible() {
+        return super.isVisible && !this.isInNest;
     }
 
     get name() {
@@ -42,7 +42,7 @@ class BaseAnt extends LiveEntity {
 
     set locatedInNestId(nestId) {
         this._locatedInNestId = nestId;
-        this.updateIsHidden();
+        this.emit('locatedInNestChanged');
     }
 
     get pickedItemId() {
@@ -83,6 +83,15 @@ class BaseAnt extends LiveEntity {
 
     get canFlyNuptialFlight() {
         return false;
+    }
+
+    set isInNuptialFlight(isInNuptialFlight) {
+        this._isInNuptialFlight = isInNuptialFlight;
+        this.emit('isInNuptialFlightChanged');
+    }
+
+    get isInNuptialFlight() {
+        return this._isInNuptialFlight;
     }
 
     changeGuardianBehavior(behaviorValue) {

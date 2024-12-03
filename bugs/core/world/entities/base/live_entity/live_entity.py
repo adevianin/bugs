@@ -10,6 +10,7 @@ from core.world.entities.base.live_entity.visual_sensor import VisualSensor
 from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.thought.thought import Thought
 from core.world.entities.base.damage_types import DamageTypes
+from core.world.entities.action.entity_hibernation_status_chenged_action import EntityHibernationStatusChangedAction
 
 from typing import List
 
@@ -26,6 +27,8 @@ class LiveEntity(Entity, iEnemy):
         self._body.events.add_listener('step', self._on_step)
         self._body.events.add_listener('received_damage', self._on_received_damage)
         self._body.events.add_listener('damaged_another_body', self._on_damaged_another_body)
+        self._body.events.add_listener('enter_hibernation', self._on_enter_hibernation)
+        self._body.events.add_listener('exit_hibernation', self._on_exit_hibernation)
 
     @property
     def birth_step(self):
@@ -66,6 +69,10 @@ class LiveEntity(Entity, iEnemy):
     @property
     def is_hungry(self):
         return self._body.check_am_i_hungry()
+    
+    @property
+    def is_in_hibernation(self):
+        return self._body.am_i_in_hibernation()
     
     def born(self):
         self._body.born()
@@ -110,3 +117,9 @@ class LiveEntity(Entity, iEnemy):
 
     def _on_damaged_another_body(self):
         pass
+
+    def _on_enter_hibernation(self):
+        self._emit_action(EntityHibernationStatusChangedAction(self.id, True))
+
+    def _on_exit_hibernation(self):
+        self._emit_action(EntityHibernationStatusChangedAction(self.id, False))

@@ -4,8 +4,22 @@ import { ACTION_TYPES } from './action/actionTypes';
 
 class LiveEntity extends Entity {
 
-    constructor(eventBus, id, position, angle, entityType, fromColony, ownerId, hp, maxHp) {
+    constructor(eventBus, id, position, angle, entityType, fromColony, ownerId, hp, maxHp, isInHibernation) {
         super(eventBus, id, position, angle, entityType, fromColony, ownerId, hp, maxHp);
+        this._isInHibernation = isInHibernation;
+    }
+
+    get isInHibernation() {
+        return this._isInHibernation;
+    }
+
+    set isInHibernation(val) {
+        this._isInHibernation = val;
+        this.emit('isInHibernationChanged');
+    }
+
+    get isVisible() {
+        return super.isVisible && !this._isInHibernation;
     }
 
     playAction(action) {
@@ -16,6 +30,8 @@ class LiveEntity extends Entity {
         switch (action.type) {
             case ACTION_TYPES.ENTITY_WALK:
                 return this._playWalkAction(action);
+            case ACTION_TYPES.ENTITY_HIBERNATION_STATUS_CHANGED:
+                return this._playHibernationStatusChanged(action);
         }
 
         return null;
@@ -66,6 +82,11 @@ class LiveEntity extends Entity {
                 }
             }, 50)
         });
+    }
+
+    _playHibernationStatusChanged(action) {
+        this.isInHibernation = action.isInHibernation;
+        return Promise.resolve();
     }
 
     _calcCoordForWalkedPercent(startCoord, endCoord, flayedPercent) {

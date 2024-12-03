@@ -13,23 +13,13 @@ class Entity extends EventEmitter {
         this._ownerId = ownerId;
         this._actionStack = [];
         this._isPlaying = false;
-        this._isHidden = false;
         this._angle = angle;
         this._hp = hp;
         this._maxHp = maxHp;
     }
 
-    get isHidden() {
-        return this._isHidden;
-    }
-
-    set isHidden(isHidden) {
-        this._isHidden = isHidden;
-        this.emit('isHiddenChanged');
-    }
-
-    updateIsHidden() {
-        this.isHidden = false;
+    get isVisible() {
+        return true;
     }
 
     get state() {
