@@ -80,10 +80,13 @@ class Map:
             found_entities.append(entity)
         return found_entities
     
-    def find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes] = None, filter: Callable[[Entity], bool] = None) -> List[Entity]:
+    def find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes] = None, filter: Callable[[Entity], bool] = None, is_detectable_only: bool = True) -> List[Entity]:
         found_entities = []
         for entity in self._entities_collection.get_entities():
             if entity.is_pending_removal:
+                continue
+
+            if is_detectable_only and not entity.is_detectable:
                 continue
             
             is_type_suitable = not entity_types or entity.type in entity_types
