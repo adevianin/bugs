@@ -7,7 +7,7 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 class FeedMyselfThought(Thought):
 
     _body: AntBody
-    FOOD_CHECK_DELAY: 50
+    FOOD_CHECK_DELAY = 50
 
     def __init__(self, home: Nest, go_home_thought: GoInNestThought, flags: dict = None, sayback: str = None):
         super().__init__(type=ThoughtTypes.FEED_MYSELF, flags=flags, sayback=sayback)
