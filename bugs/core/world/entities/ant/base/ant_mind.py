@@ -50,7 +50,7 @@ class AntMind(Mind):
         self.home_nest = nest
         self._listen_home_nest()
 
-    def build_nest(self, nest: Nest, get_inside_once_done: bool, sayback: str):
+    def build_nest(self, nest: Nest, get_inside_once_done: bool, sayback: str = None):
         thought = self._thought_factory.build_build_nest_thought(building_nest=nest, get_inside_once_done=get_inside_once_done, sayback=sayback)
         self._register_thought(thought)
 

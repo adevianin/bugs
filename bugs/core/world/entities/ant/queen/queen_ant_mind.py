@@ -7,5 +7,14 @@ class QueenAntMind(AntMind):
 
     def _auto_generate_thoughts(self):
         super()._auto_generate_thoughts()
-        if not self._body.is_fertilized and not self._has_thoughts_to_do():
-            self.patrol_home_territory()
+        
+        if not self._has_thoughts_to_do():
+            if not self.home_nest.is_built:
+                self.walk_to(self.home_nest.position)
+                self.build_nest(self.home_nest, True)
+                return
+            
+            if not self._body.is_fertilized:
+                self.patrol_home_territory()
+                return
+            
