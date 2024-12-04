@@ -110,7 +110,7 @@ class LiveBody(Body):
             return self._calories / (self._max_calories / 100) < HUNGER_THRESHOLD_PERCENTAGE
     
     def check_urge_to_hibernate(self) -> bool:
-        return self._temperature_sensor.temperature - self.HIBERNATION_THRESHOLD <= self.stats.min_temperature and not self.am_i_in_hibernation()
+        return not self.am_i_in_hibernation() and (self._temperature_sensor.temperature <= self.stats.min_temperature + self.HIBERNATION_THRESHOLD) and self._temperature_sensor.is_cooling
 
     def check_urge_to_exit_hibernation(self) -> bool:
         return self._temperature_sensor.temperature >= self.stats.min_temperature and self._temperature_sensor.is_warming
