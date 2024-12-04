@@ -47,14 +47,8 @@ class QueenAntBody(AntBody):
         return Egg.build_new(name, genome)
     
     def fly_nuptial_flight(self):
-        if self.am_i_in_hibernation():
-            self.exit_hibernation()
-            
-        if self.is_in_nest:
-            self.get_out_of_nest()
-
+        super().fly_nuptial_flight()
         self.memory.save_flag(self.MemoryKeys.IS_IN_NUPTIAL_FLIGHT, True)
-        self.events.emit('flew_nuptial_flight')
 
     def fly_nuptial_flight_back(self, landing_position: Point):
         self._position = landing_position

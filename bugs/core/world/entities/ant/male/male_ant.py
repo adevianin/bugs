@@ -27,10 +27,7 @@ class MaleAnt(Ant):
         return True
     
     def fly_nuptial_flight(self):
-        self.from_colony_id = None
-        self._mind.free_mind()
-        self._mind.toggle_auto_thought_generation(False)
-        self._body.fly_nuptial_flight()
+        super().fly_nuptial_flight()
         if self._body.check_am_i_freezing():
             self.cold_die()
             return False

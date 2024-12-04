@@ -66,6 +66,15 @@ class AntBody(LiveBody):
     def genome(self) -> Genome:
         return self._genome
     
+    def fly_nuptial_flight(self):
+        if self.am_i_in_hibernation():
+            self.exit_hibernation()
+            
+        if self.is_in_nest:
+            self.get_out_of_nest()
+
+        self.events.emit('flew_nuptial_flight')
+    
     def get_in_nest(self, nest: Nest):
         self._located_inside_nest = nest
 

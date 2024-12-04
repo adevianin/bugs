@@ -100,6 +100,15 @@ class Ant(LiveEntity):
     def is_queen_of_colony(self):
         return False
     
+    def fly_nuptial_flight(self):
+        if not self.can_fly_nuptial_flight:
+            raise Exception('cant fly nuptial flight')
+        
+        self.from_colony_id = None
+        self._mind.toggle_auto_thought_generation(False)
+        self._mind.free_mind()
+        self._body.fly_nuptial_flight()
+    
     def cold_die(self):
         self._body.receive_damage(self._body.hp, DamageTypes.COLD)
 

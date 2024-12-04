@@ -40,11 +40,6 @@ class QueenAnt(Ant):
     def is_queen_of_colony(self):
         return self._body.is_fertilized
     
-    def fly_nuptial_flight(self):
-        self.from_colony_id = None
-        self._mind.free_mind()
-        self._body.fly_nuptial_flight()
-
     def fly_nuptial_flight_back(self, landing_position: Point):
         self._mind.toggle_auto_thought_generation(True)
         self._body.fly_nuptial_flight_back(landing_position)
