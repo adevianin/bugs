@@ -136,6 +136,9 @@ class GenesClientSerializer():
     
     def _serialize_adjusting_appetite_gene(self, gene: AdjustingAppetiteGene):
         json = self._serialize_base_gene(gene)
+        json.update({
+            'multiplier': gene.multiplier
+        })
         return json
     
     def _serialize_adjusting_development_appetite_gene(self, gene: AdjustingDevelopmentAppetiteGene):

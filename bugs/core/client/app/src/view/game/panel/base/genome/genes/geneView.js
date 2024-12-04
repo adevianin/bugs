@@ -10,6 +10,7 @@ import bodySpeedTmpl from './bodySpeedTmpl.html';
 import devCasteGeneTmpl from './developmentCasteGeneTmpl.html';
 import bodyLifeSpanTmpl from './bodyLifeSpanTmpl.html';
 import adaptationColdTmpl from './adaptationColdTmpl.html';
+import adjustingAppetiteTmpl from './adjustingAppetiteTmpl.html';
 import { AntTypes } from "@domain/enum/antTypes";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
 
@@ -143,7 +144,8 @@ class GeneView extends BaseHTMLView {
     }
 
     _renderAdjustingAppetiteGene() {
-        this._geneEl.innerHTML = 'ген підстройки апетиту';
+        this._geneEl.innerHTML = adjustingAppetiteTmpl;
+        this._geneEl.querySelector('[data-multiplier]').innerHTML = this._gene.multiplier;
     }
 
     _renderAdjustingDevelopmentAppetiteGene() {

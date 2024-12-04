@@ -4300,8 +4300,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _developmentCasteGeneTmpl_html__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./developmentCasteGeneTmpl.html */ "./bugs/core/client/app/src/view/game/panel/base/genome/genes/developmentCasteGeneTmpl.html");
 /* harmony import */ var _bodyLifeSpanTmpl_html__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./bodyLifeSpanTmpl.html */ "./bugs/core/client/app/src/view/game/panel/base/genome/genes/bodyLifeSpanTmpl.html");
 /* harmony import */ var _adaptationColdTmpl_html__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./adaptationColdTmpl.html */ "./bugs/core/client/app/src/view/game/panel/base/genome/genes/adaptationColdTmpl.html");
-/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
-/* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./bugs/core/client/app/src/view/labels/antTypesLabels.js");
+/* harmony import */ var _adjustingAppetiteTmpl_html__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./adjustingAppetiteTmpl.html */ "./bugs/core/client/app/src/view/game/panel/base/genome/genes/adjustingAppetiteTmpl.html");
+/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @domain/enum/antTypes */ "./bugs/core/client/app/src/domain/enum/antTypes.js");
+/* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./bugs/core/client/app/src/view/labels/antTypesLabels.js");
+
 
 
 
@@ -4419,7 +4421,7 @@ class GeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
         let antType = this._figureOutAntTypeOfDevelopmentGene();
 
         this._geneEl.innerHTML = _developmentCasteGeneTmpl_html__WEBPACK_IMPORTED_MODULE_9__["default"];
-        this._geneEl.querySelector('[data-ant-type]').innerHTML = _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_13__.antTypesLabels[antType];
+        this._geneEl.querySelector('[data-ant-type]').innerHTML = _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_14__.antTypesLabels[antType];
         this._geneEl.querySelector('[data-dev-strength]').innerHTML = this._gene.strength;
         this._geneEl.querySelector('[data-dev-defense]').innerHTML = this._gene.defense;
         this._geneEl.querySelector('[data-dev-max-hp]').innerHTML = this._gene.maxHp;
@@ -4430,13 +4432,13 @@ class GeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
     _figureOutAntTypeOfDevelopmentGene() {
         switch(this._gene.type) {
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_QUEEN_CASTE:
-                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_12__.AntTypes.QUEEN;
+                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_13__.AntTypes.QUEEN;
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_WORKER_CASTE:
-                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_12__.AntTypes.WORKER;
+                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_13__.AntTypes.WORKER;
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_MALE_CASTE:
-                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_12__.AntTypes.MALE;
+                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_13__.AntTypes.MALE;
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_WARRIOR_CASTE:
-                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_12__.AntTypes.WARRIOR;
+                return _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_13__.AntTypes.WARRIOR;
             default:
                 throw 'unknown development gene type';
         }
@@ -4447,7 +4449,8 @@ class GeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
     }
 
     _renderAdjustingAppetiteGene() {
-        this._geneEl.innerHTML = 'ген підстройки апетиту';
+        this._geneEl.innerHTML = _adjustingAppetiteTmpl_html__WEBPACK_IMPORTED_MODULE_12__["default"];
+        this._geneEl.querySelector('[data-multiplier]').innerHTML = this._gene.multiplier;
     }
 
     _renderAdjustingDevelopmentAppetiteGene() {
@@ -12537,6 +12540,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Module
 var code = "ген адаптації холоду: <span data-resistance-points></span>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./bugs/core/client/app/src/view/game/panel/base/genome/genes/adjustingAppetiteTmpl.html":
+/*!***********************************************************************************************!*\
+  !*** ./bugs/core/client/app/src/view/game/panel/base/genome/genes/adjustingAppetiteTmpl.html ***!
+  \***********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "ген апетиту: <span data-multiplier></span>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
