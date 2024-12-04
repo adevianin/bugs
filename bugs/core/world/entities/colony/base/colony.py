@@ -32,6 +32,10 @@ class Colony(ABC):
     def member_type(self):
         return self._member_type
     
+    def add_new_member(self, entity: LiveEntity):
+        entity.from_colony_id = self.id
+        self._handle_my_member(entity)
+    
     def get_my_members(self) -> List[LiveEntity]:
         return self._map.get_entities(from_colony_id=self.id, entity_types=[self._member_type])
     

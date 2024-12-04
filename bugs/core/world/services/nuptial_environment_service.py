@@ -31,7 +31,7 @@ class NuptialEnvironmentService():
 
         new_colony = self._colony_factory.build_new_ant_colony(self._world.generate_id(), user_id, self._world.map, self._world.colony_relations_table, colony_name)
 
-        queen.from_colony_id = new_colony.id
+        new_colony.add_new_member(queen)
         queen.fly_nuptial_flight_back(nest_building_site)
 
         def on_nest_found(nest: Nest):
