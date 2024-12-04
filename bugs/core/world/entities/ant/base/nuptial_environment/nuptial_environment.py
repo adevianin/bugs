@@ -57,6 +57,13 @@ class NuptialEnvironment():
         larva = Larva.build_new('Antara', AntTypes.QUEEN, genome)
         position = Point(-100, -100)
         self._event_bus.emit('ant_birth_request', AntBirthFromSystemRequest(larva, self._owner_id, position, callback=on_antara_born))
+
+    def handle_season(self, season: SeasonTypes):
+        if season == SeasonTypes.SUMMER:
+            self._generate_males()
+        elif season == SeasonTypes.WINTER:
+            self._clear_males()
+            self._clear_not_activated_specie_genes()
     
     def _generate_males(self, count = 3):
         self._males = []
@@ -101,8 +108,4 @@ class NuptialEnvironment():
         self._event_bus.emit('action', NuptialEnvironmentSpecieGenesChangedAction(self._specie.specie_chromosome_set, self._owner_id))
 
     def _on_season_changed(self, season: SeasonTypes):
-        if season == SeasonTypes.SUMMER:
-            self._generate_males()
-        elif season == SeasonTypes.WINTER:
-            self._clear_males()
-            self._clear_not_activated_specie_genes()
+        self.handle_season(season)
