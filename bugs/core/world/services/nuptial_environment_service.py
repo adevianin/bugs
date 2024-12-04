@@ -32,10 +32,10 @@ class NuptialEnvironmentService():
         new_colony = self._colony_factory.build_new_ant_colony(self._world.generate_id(), user_id, self._world.map, self._world.colony_relations_table, colony_name)
 
         new_colony.add_new_member(queen)
-        queen.fly_nuptial_flight_back(nest_building_site)
 
         def on_nest_found(nest: Nest):
             queen.relocate_to_nest(nest)
+            queen.fly_nuptial_flight_back(nest.position)
             queen.build_nest(nest, True)
             nest.take_calories(1000)
             self._world.add_new_colony(new_colony) # found nest before new colony
