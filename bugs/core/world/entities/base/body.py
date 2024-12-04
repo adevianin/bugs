@@ -45,6 +45,8 @@ class Body():
 
     @hp.setter
     def hp(self, hp: int):
+        if hp < 0:
+            hp = 0
         self._hp = hp
         self.events.emit('hp_changed')
 

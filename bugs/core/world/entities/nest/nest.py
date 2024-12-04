@@ -109,7 +109,7 @@ class Nest(Entity):
     def do_step(self):
         self._body.feed_larvae()
         self._body.develop_eggs()
-        self._body.count_not_building_steps()
+        self._body.handle_not_building_steps()
 
     def take_edible_item(self, item: Item):
         self._body.take_edible_item(item)

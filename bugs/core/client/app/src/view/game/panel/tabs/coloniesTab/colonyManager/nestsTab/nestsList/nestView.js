@@ -20,7 +20,7 @@ class NestView extends BaseHTMLView {
         this._el.innerHTML = nestTmpl;
         this._el.classList.add('colony-manager__nest_item');
 
-        this._el.querySelector('[data-nest-name]').innerHTML = this._nest.name;
+        this._el.querySelector('[data-nest-name]').innerHTML = this._nest.name + `(${this._nest.id})`;
     }
 
     _onClick() {

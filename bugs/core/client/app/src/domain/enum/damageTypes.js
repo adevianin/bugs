@@ -1,6 +1,7 @@
 const DamageTypes = {
     COLD: 'cold',
-    COMBAT: 'combat'
+    COMBAT: 'combat',
+    SYSTEM: 'system'
 }
 
 export {

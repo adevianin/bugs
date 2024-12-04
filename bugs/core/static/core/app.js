@@ -2404,7 +2404,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 const DamageTypes = {
     COLD: 'cold',
-    COMBAT: 'combat'
+    COMBAT: 'combat',
+    SYSTEM: 'system'
 }
 
 
@@ -6430,7 +6431,7 @@ class NestView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
         this._el.innerHTML = _nestTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
         this._el.classList.add('colony-manager__nest_item');
 
-        this._el.querySelector('[data-nest-name]').innerHTML = this._nest.name;
+        this._el.querySelector('[data-nest-name]').innerHTML = this._nest.name + `(${this._nest.id})`;
     }
 
     _onClick() {
