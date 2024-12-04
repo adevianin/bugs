@@ -64,7 +64,7 @@ class Larva():
         if self._ate_food + food_count > self._phenotype.required_food:
             self._ate_food = self._phenotype.required_food
         else:
-            self._ate_food += food_count
+            self._ate_food += int(food_count)
 
     def _die(self):
         self._ate_food = -1

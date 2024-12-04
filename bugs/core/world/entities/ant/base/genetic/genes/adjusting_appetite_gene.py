@@ -18,7 +18,7 @@ class AdjustingAppetiteGene(BaseGene):
         super().__init__(GenesTypes.ADJUSTING_APPETITE, ChromosomeTypes.ADJUSTING, domination_code)
 
     def affect(self, phenotype: Phenotype):
-        phenotype.appetite = phenotype.strength + phenotype.defense + phenotype.speed/2
+        phenotype.appetite = int(phenotype.strength + phenotype.defense + phenotype.speed/2)
 
     def merge(self, another_gene: 'AdjustingAppetiteGene') -> BaseGene:
         dominating_gene = super().merge(another_gene)

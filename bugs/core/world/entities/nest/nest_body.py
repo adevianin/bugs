@@ -36,7 +36,7 @@ class NestBody(Body):
     
     @stored_calories.setter
     def stored_calories(self, value: int):
-        self._stored_calories = value
+        self._stored_calories = int(value)
         self.events.emit('stored_calories_changed')
     
     @property

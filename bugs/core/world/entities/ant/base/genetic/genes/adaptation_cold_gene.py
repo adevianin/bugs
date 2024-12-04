@@ -27,7 +27,7 @@ class AdaptationColdGene(BaseGene):
         return self._resistance_points
 
     def affect(self, phenotype: Phenotype):
-        resistance_temperature = self._resistance_points / self.POINTS_PER_TEMP_UNIT
+        resistance_temperature = int(self._resistance_points / self.POINTS_PER_TEMP_UNIT)
         phenotype.min_temperature = self.RAW_MIN_TEMPERATURE - resistance_temperature
 
     def merge(self, another_gene: 'AdaptationColdGene') -> BaseGene:

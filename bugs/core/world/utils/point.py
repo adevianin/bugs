@@ -102,6 +102,9 @@ class Point(namedtuple('Point', ['x', 'y'])):
     def from_json(cls, point_json: List[int]):
         return Point(point_json[0], point_json[1])
     
+    def __new__(cls, x, y):
+        return super(Point, cls).__new__(cls, int(x), int(y))
+    
     def mirror_x_axis(self, mirror_x: int):
         return Point(2 * mirror_x - self.x, self.y)
     
