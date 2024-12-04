@@ -132,7 +132,8 @@ class GeneDeserializer():
     
     def _build_adjusting_development_appetite_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])
-        return AdjustingDevelopmentAppetiteGene.build(domination_code)
+        multiplier = gene_json['multiplier']
+        return AdjustingDevelopmentAppetiteGene.build(domination_code, multiplier)
     
     def _build_adaptation_cold_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])
