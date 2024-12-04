@@ -6,6 +6,7 @@ from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie import Specie
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 from core.world.utils.remove_non_alphanumeric_and_spaces import remove_non_alphanumeric_and_spaces
+from core.world.settings import FOOD_IN_NEW_COLONY_MAIN_NEST
 
 from typing import List, Dict
 
@@ -37,7 +38,7 @@ class NuptialEnvironmentService():
             queen.relocate_to_nest(nest)
             queen.fly_nuptial_flight_back(nest.position)
             queen.build_nest(nest, True)
-            nest.take_calories(1000)
+            nest.take_calories(FOOD_IN_NEW_COLONY_MAIN_NEST)
             self._world.add_new_colony(new_colony) # found nest before new colony
 
         queen.found_nest(colony_name, True, nest_building_site, on_nest_found)
