@@ -7,6 +7,7 @@ from core.world.entities.base.stats_library import StatsLibrary
 from core.world.entities.ant.base.egg import Egg
 from core.world.entities.base.ownership_config import OwnershipConfig
 from .food_sources_data_manager import FoodSourcesDataManager
+from core.world.id_generator import IdGenerator
 from typing import List, Dict
 
 class NestFactory():
@@ -14,7 +15,8 @@ class NestFactory():
     def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus
 
-    def build_new_nest(self, id: int, position: Point, ownership: OwnershipConfig, name: str, is_main: bool):
+    def build_new_nest(self, position: Point, ownership: OwnershipConfig, name: str, is_main: bool):
+        id = IdGenerator.generate_id()
         return self.build_nest(id=id, position=position, angle=0, hp=100, ownership=ownership, larvae=[], eggs=[], stored_calories=0, area=300, 
                                build_progress=0, fortification=0, nearby_food_sources_data={}, nearby_enemy_positions=[], name=name, is_main=is_main)
     

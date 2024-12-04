@@ -1,21 +1,21 @@
 from .genetic.genome import Genome
 from .ant_types import AntTypes
 from .egg_states import EggStates
-import uuid
+from core.world.id_generator import IdGenerator
 
 class Egg():
 
     @classmethod
     def build_new(cls, name: str, genome: Genome):
-        id = uuid.uuid4().hex
+        id = IdGenerator.generate_id()
         ant_types = genome.get_avaliable_ant_types()
         return Egg.build(id, name, genome, 0, ant_types[0])
     
     @classmethod
-    def build(cls, id: str, name: str, genome: Genome, progress: int, ant_type: AntTypes):
+    def build(cls, id: int, name: str, genome: Genome, progress: int, ant_type: AntTypes):
         return Egg(id, name, genome, progress, ant_type)
 
-    def __init__(self, id: str, name: str, genome: Genome, progress: int, ant_type: AntTypes):
+    def __init__(self, id: int, name: str, genome: Genome, progress: int, ant_type: AntTypes):
         self._id = id
         self._name = name
         self._genome = genome

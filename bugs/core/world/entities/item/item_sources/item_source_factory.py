@@ -6,14 +6,16 @@ from core.world.entities.item.item_sources.honeydew_item_source.honeydew_item_so
 from core.world.entities.base.stats_library import StatsLibrary
 from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.world.season_types import SeasonTypes
+from core.world.id_generator import IdGenerator
 
 class ItemSourceFactory():
 
     def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus
 
-    def build_new_honeydew_item_source(self, id: int, position: Point, item_type: ItemTypes, fertility: int, min_item_strength: int, max_item_strength: int, 
+    def build_new_honeydew_item_source(self, position: Point, item_type: ItemTypes, fertility: int, min_item_strength: int, max_item_strength: int, 
                                        current_season: SeasonTypes):
+        id = IdGenerator.generate_id()
         ownership = OwnershipConfig.build_empty()
         hp = StatsLibrary.ITEM_SOURCE_DEFAULT.max_hp
         is_active = HoneydewItemSource.check_is_fertile_season(current_season)

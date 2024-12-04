@@ -29,7 +29,7 @@ class NuptialEnvironmentService():
 
         colony_name = remove_non_alphanumeric_and_spaces(colony_name)
 
-        new_colony = self._colony_factory.build_new_ant_colony(self._world.generate_id(), user_id, self._world.map, self._world.colony_relations_table, colony_name)
+        new_colony = self._colony_factory.build_new_ant_colony(user_id, self._world.map, self._world.colony_relations_table, colony_name)
 
         new_colony.add_new_member(queen)
 

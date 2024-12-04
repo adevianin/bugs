@@ -15,6 +15,7 @@ from .build_fortification_operation import BuildFortificationOperation
 from .base.fight.fight_factory import FightFactory
 from .base.fight.fight import Fight
 from core.world.entities.item.items.bug_corpse.bug_corpse_item import BugCorpseItem
+from core.world.id_generator import IdGenerator
 
 class OperationFactory():
 
@@ -24,19 +25,25 @@ class OperationFactory():
         self._fight_factory = fight_factory
 
     def build_build_new_sub_nest_operation(self, nest_name: str, building_site: Point, worker_vacancies_count: int, warrior_vacancies_count: int, building_nest: Nest = None, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
+        id = id if id else IdGenerator.generate_id()
         return BuildNewSubNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, worker_vacancies_count, warrior_vacancies_count, nest_name, building_site, building_nest)
     
     def build_destroy_nest_operation(self, nest: Nest, worker_vacancies_count: int, warrior_vacancies_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
+        id = id if id else IdGenerator.generate_id()
         return DestroyNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, worker_vacancies_count, warrior_vacancies_count, nest)
     
     def build_bring_bug_corpse_to_nest_operation(self, nest: Nest, search_bug_corpse_location: Point, found_bug_corpse: BugCorpseItem = None, worker_vacancies_count: int = 0, warrior_vacancies_count: int = 0, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
+        id = id if id else IdGenerator.generate_id()
         return BringBugCorpseToNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, nest, search_bug_corpse_location, found_bug_corpse)
     
     def build_pillage_nest_operation(self, nest_to_pillage: Nest, nest_for_loot: Nest, worker_vacancies_count: int, warrior_vacancies_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
+        id = id if id else IdGenerator.generate_id()
         return PillageNestOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, worker_vacancies_count, warrior_vacancies_count, nest_to_pillage, nest_for_loot)
     
     def build_transport_food_operation(self, nest_from: Nest, nest_to: Nest, worker_vacancies_count: int, warrior_vacancies_count: int, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
+        id = id if id else IdGenerator.generate_id()
         return TransportFoodOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, worker_vacancies_count, warrior_vacancies_count, nest_from, nest_to)
     
     def build_build_fortification(self, nest: Nest, worker_vacancies_count: int, warrior_vacancies_count: int = 0, id: int = None, hired_ants: List[Ant] = None, flags: dict = None, formation: BaseFormation = None, fight: Fight = None):
+        id = id if id else IdGenerator.generate_id()
         return BuildFortificationOperation(self._event_bus, EventEmitter(), self._formation_factory, self._fight_factory, id, hired_ants, flags, formation, fight, worker_vacancies_count, nest)

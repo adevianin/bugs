@@ -2,19 +2,24 @@ import threading
 
 class IdGenerator():
 
+    _lock = threading.Lock()
+    _instance = None
+    last_used_id = 0
+    _is_inited = False
+
     @classmethod
-    def build_id_generator(cls, last_used_id: int):
-        return IdGenerator(last_used_id)
-
-    def __init__(self, last_id: int):
-        self._lock = threading.Lock()
-        self._last_used_id = last_id
-
-    @property
-    def last_used_id(self):
-        return self._last_used_id
+    def init(cls, last_used_id: int):
+        cls.last_used_id = last_used_id
+        cls._is_inited = True
     
-    def generate_id(self):
-        with self._lock:
-            self._last_used_id += 1
-            return self._last_used_id
+    @classmethod
+    def generate_id(cls):
+        if not cls._is_inited:
+            raise Exception('generator is not inited')
+        
+        with cls._lock:
+            cls.last_used_id += 1
+            return cls.last_used_id
+        
+    def __new__(cls, *args, **kwargs):
+        raise Exception('instance cant be created')

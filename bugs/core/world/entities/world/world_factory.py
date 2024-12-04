@@ -35,7 +35,7 @@ class WorldFactory():
         self._nest_factory = nest_factory
         self._ladybug_factory = ladybug_factory
 
-    def build_world(self, id_generator: IdGenerator, entities_collection: EntityCollection, map: Map, colonies: List[Colony], colony_relations_table: ColonyRelationsTable, 
+    def build_world(self, entities_collection: EntityCollection, map: Map, colonies: List[Colony], colony_relations_table: ColonyRelationsTable, 
                     nuptial_environments: List[NuptialEnvironment], player_stats_list: List[PlayerStats], climate: Climate, current_step: int, 
                     notifications: List[Notification]) -> World:
         spawners = {
@@ -43,10 +43,10 @@ class WorldFactory():
             'bug_corpse_spawner': BugCorpseSpawner(self._event_bus, map)
         }
         birthers = {
-            'ant_birther': AntBirther(self._event_bus, id_generator, map, self._ant_factory),
-            'item_birther': ItemBirther(self._event_bus, id_generator, map, self._item_factory),
-            'nest_birther': NestBirther(self._event_bus, id_generator, map, self._nest_factory),
-            'ladybug_birther': LadybugBirther(self._event_bus, id_generator, map, self._ladybug_factory)
+            'ant_birther': AntBirther(self._event_bus, map, self._ant_factory),
+            'item_birther': ItemBirther(self._event_bus, map, self._item_factory),
+            'nest_birther': NestBirther(self._event_bus, map, self._nest_factory),
+            'ladybug_birther': LadybugBirther(self._event_bus, map, self._ladybug_factory)
         }
         sensor_handlers = {
             'visual_sensor_handler': VisualSensorHandler(self._event_bus, map),
@@ -57,6 +57,6 @@ class WorldFactory():
             'notification_manager': NotificationManager(self._event_bus, notifications)
         }
 
-        return World(entities_collection, map, self._event_bus, colonies, id_generator, birthers, spawners, nuptial_environments, 
+        return World(entities_collection, map, self._event_bus, colonies, birthers, spawners, nuptial_environments, 
                     player_stats_list, climate, sensor_handlers, current_step, managers)
     

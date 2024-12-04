@@ -10,6 +10,7 @@ from core.world.entities.base.ownership_config import OwnershipConfig
 from .ladybug_body import LadybugBody
 from .ladybug_mind import LadybugMind
 from .ladybug import Ladybug
+from core.world.id_generator import IdGenerator
 
 class LadybugFactory():
 
@@ -17,7 +18,8 @@ class LadybugFactory():
         self._event_bus = event_bus
         self._thought_factory = thought_factory
 
-    def build_new_ladybug(self, id: int, position: Point, birth_step: int):
+    def build_new_ladybug(self, position: Point, birth_step: int):
+        id = IdGenerator.generate_id()
         ownership = OwnershipConfig(LADYBUG_COLONY_ID, None) 
         ladybug = self.build_ladybug(id=id, ownership=ownership, position=position, angle=0, hp=0, memory=Memory(), is_auto_thought_generation=True, birth_step=birth_step, calories=0)
         ladybug.born()

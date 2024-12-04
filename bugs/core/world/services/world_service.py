@@ -69,12 +69,12 @@ class WorldService():
         ladybug_colony = self._colony_factory.build_ladybug_colony(LADYBUG_COLONY_ID, map, colony_relations_table)
         last_used_id = LADYBUG_COLONY_ID
         colonies = [ladybug_colony]
-        id_generator = IdGenerator.build_id_generator(last_used_id)
+        id_generator = IdGenerator.init(last_used_id)
         nuptial_environments = []
         player_stats_list = []
         climate = self._climate_factory.build_climate(1, +1)
         notifications = []
-        world = self._world_factory.build_world(id_generator, entities_collection, map, colonies, colony_relations_table, nuptial_environments, player_stats_list, climate, 
+        world = self._world_factory.build_world(entities_collection, map, colonies, colony_relations_table, nuptial_environments, player_stats_list, climate, 
                                                 0, notifications)
         
         for chunk_position, indexes, edge_info in self._chunks_positions(chunk_rows_count, chunk_cols_count):
@@ -192,24 +192,24 @@ class WorldService():
     
     def _build_flower_item_area(self, world: World, position: Point, size: Size):
         fertility = random.randint(1, 4)
-        flower_area = self._item_area_factory.build_new_item_area(world.generate_id(), position, size, ItemTypes.FLOWER, fertility, world.current_season)
+        flower_area = self._item_area_factory.build_new_item_area(position, size, ItemTypes.FLOWER, fertility, world.current_season)
         world.map.add_entity(flower_area)
 
     def _build_honeydew_item_source(self, world: World, position: Point):
         fertility = random.randint(1, 7)
-        item_source = self._item_source_factory.build_new_honeydew_item_source(world.generate_id(), position, ItemTypes.HONEYDEW, fertility, 10, 40, world.current_season)
+        item_source = self._item_source_factory.build_new_honeydew_item_source(position, ItemTypes.HONEYDEW, fertility, 10, 40, world.current_season)
         world.map.add_entity(item_source)
 
     def _build_tree_pack(self, world: World, tree_pos: Point):
-        tree = self._tree_factory.build_new_tree(world.generate_id(), tree_pos)
+        tree = self._tree_factory.build_new_tree(tree_pos)
         world.map.add_entity(tree)
 
         fertility = random.randint(1, 4)
-        stick_area = self._item_area_factory.build_new_item_area(world.generate_id(), tree_pos, TreeBody.SIZE, ItemTypes.STICK, fertility, world.current_season)
+        stick_area = self._item_area_factory.build_new_item_area(tree_pos, TreeBody.SIZE, ItemTypes.STICK, fertility, world.current_season)
         world.map.add_entity(stick_area)
 
         fertility = random.randint(1, 5)
-        leaf_area = self._item_area_factory.build_new_item_area(world.generate_id(), tree_pos, TreeBody.SIZE, ItemTypes.LEAF, fertility, world.current_season)
+        leaf_area = self._item_area_factory.build_new_item_area(tree_pos, TreeBody.SIZE, ItemTypes.LEAF, fertility, world.current_season)
         world.map.add_entity(leaf_area)
 
     def _check_is_point_inside_chunk(self, point: Point, chunk_pos: Point):

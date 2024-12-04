@@ -1,19 +1,19 @@
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.genetic.genome import Genome
-import uuid
+from core.world.id_generator import IdGenerator
 
 class Larva():
 
     @classmethod
     def build_new(cls, name: str, ant_type: AntTypes, genome: Genome):
-        id = uuid.uuid4().hex
+        id = IdGenerator.generate_id()
         return Larva.build(id, name, ant_type, 0, genome)
     
     @classmethod
-    def build(cls, id: str, name: str, ant_type: AntTypes, ate_food: int, genome: Genome):
+    def build(cls, id: int, name: str, ant_type: AntTypes, ate_food: int, genome: Genome):
         return Larva(id, name, ant_type, ate_food, genome)
     
-    def __init__(self, id: str, name: str, ant_type: AntTypes, ate_food: int, genome: Genome):
+    def __init__(self, id: int, name: str, ant_type: AntTypes, ate_food: int, genome: Genome):
         self._id = id
         self._name = name
         self._ant_type = ant_type

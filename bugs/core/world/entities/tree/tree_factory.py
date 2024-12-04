@@ -4,13 +4,15 @@ from .tree_body import TreeBody
 from core.world.entities.base.stats_library import StatsLibrary
 from core.world.utils.point import Point
 from core.world.entities.base.ownership_config import OwnershipConfig
+from core.world.id_generator import IdGenerator
 
 class TreeFactory():
 
     def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus
 
-    def build_new_tree(self, id: int, position: Point):
+    def build_new_tree(self, position: Point):
+        id = IdGenerator.generate_id()
         ownership = OwnershipConfig.build_empty()
         hp = StatsLibrary.GHOST_DEFAULT.max_hp
         return self.build_tree(id, ownership, position, 0, hp)

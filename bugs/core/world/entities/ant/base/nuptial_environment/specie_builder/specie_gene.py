@@ -1,11 +1,11 @@
 from core.world.entities.ant.base.genetic.genes.base.base_gene import BaseGene
-import uuid
+from core.world.id_generator import IdGenerator
 
 class SpecieGene():
 
     @classmethod
     def build_new(cls, gene: BaseGene):
-        id = uuid.uuid4().hex
+        id = IdGenerator.generate_id()
         return SpecieGene(id, gene)
     
     @classmethod

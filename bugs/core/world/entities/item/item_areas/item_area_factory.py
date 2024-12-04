@@ -7,13 +7,15 @@ from core.world.entities.base.body import Body
 from core.world.entities.base.stats_library import StatsLibrary
 from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.world.season_types import SeasonTypes
+from core.world.id_generator import IdGenerator
 
 class ItemAreaFactory():
 
     def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus
 
-    def build_new_item_area(self, id: int, position: Point, size: Size, item_type: ItemTypes, fertility: int, current_season: SeasonTypes):
+    def build_new_item_area(self, position: Point, size: Size, item_type: ItemTypes, fertility: int, current_season: SeasonTypes):
+        id = IdGenerator.generate_id()
         ownership = OwnershipConfig.build_empty()
         hp = StatsLibrary.GHOST_DEFAULT.max_hp
         is_active = ItemArea.check_is_fertile_season_for_item_type(current_season, item_type)

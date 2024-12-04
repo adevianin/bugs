@@ -49,7 +49,7 @@ class ColonyService():
         nest.give_calories(NEW_EGG_FOOD_COST)
         nest.add_egg(egg)
 
-    def change_egg_caste(self, user_id: int, nest_id: int, egg_id: str, ant_type: AntTypes):
+    def change_egg_caste(self, user_id: int, nest_id: int, egg_id: int, ant_type: AntTypes):
         nest: Nest = self._world.map.get_entity_by_id(nest_id)
 
         if nest.owner_id != user_id:
@@ -57,7 +57,7 @@ class ColonyService():
         
         nest.change_egg_caste(egg_id, ant_type)
 
-    def change_egg_name(self, user_id: int, nest_id: int, egg_id: str, name: str):
+    def change_egg_name(self, user_id: int, nest_id: int, egg_id: int, name: str):
         nest: Nest = self._world.map.get_entity_by_id(nest_id)
 
         if nest.owner_id != user_id:
@@ -65,7 +65,7 @@ class ColonyService():
         
         nest.change_egg_name(egg_id, name)
 
-    def move_egg_to_larva_chamber(self, user_id: int, nest_id: int, egg_id: str):
+    def move_egg_to_larva_chamber(self, user_id: int, nest_id: int, egg_id: int):
         nest: Nest = self._world.map.get_entity_by_id(nest_id)
 
         if nest.owner_id != user_id:
@@ -73,7 +73,7 @@ class ColonyService():
         
         nest.move_egg_to_larva_chamber(egg_id)
 
-    def delete_egg(self, user_id: int, nest_id: int, egg_id: str):
+    def delete_egg(self, user_id: int, nest_id: int, egg_id: int):
         nest: Nest = self._world.map.get_entity_by_id(nest_id)
 
         if nest.owner_id != user_id:
@@ -81,7 +81,7 @@ class ColonyService():
         
         nest.delete_egg(egg_id)
 
-    def delete_larva(self, user_id: int, nest_id: int, larva_id: str):
+    def delete_larva(self, user_id: int, nest_id: int, larva_id: int):
         nest: Nest = self._world.map.get_entity_by_id(nest_id)
 
         if nest.owner_id != user_id:

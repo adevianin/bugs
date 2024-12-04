@@ -15,7 +15,6 @@ from core.world.entities.world.notification.notifications.died_colony_notificati
 from core.world.entities.action.colony_operation_changed_action import ColonyOperationChangedAction
 from core.world.entities.action.colony_operation_created_action import ColonyOperationCreatedAction
 from core.world.entities.action.colony_operation_deleted_action import ColonyOperationDeletedAction
-from core.world.utils.generate_id import generate_id
 
 from functools import partial
 
@@ -49,7 +48,6 @@ class AntColony(Colony):
         return self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.NEST])
     
     def add_operation(self, operation: Operation):
-        operation.id = generate_id()
         self._operations.append(operation)
 
         self._listen_operation(operation)

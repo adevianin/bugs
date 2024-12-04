@@ -16,6 +16,7 @@ from core.world.entities.item.items.stick_item.stick_item_body import StickItemB
 from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.item.items.bug_corpse.bug_corpse_item import BugCorpseItem
 from core.world.entities.item.items.bug_corpse.bug_corpse_item_body import BugCorpseItemBody
+from core.world.id_generator import IdGenerator
 
 import random
 
@@ -24,7 +25,8 @@ class ItemFactory():
     def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus
 
-    def build_new_item(self, id: int, item_type: ItemTypes, position: Point, strength: int, angle: int = 0) -> Item:
+    def build_new_item(self, item_type: ItemTypes, position: Point, strength: int, angle: int = 0) -> Item:
+        id = IdGenerator.generate_id()
         ownership = OwnershipConfig(None, None)
         hp = StatsLibrary.GHOST_DEFAULT.max_hp
         return self.build_item(id, item_type, position, angle, strength, None, None, False, ownership, hp)

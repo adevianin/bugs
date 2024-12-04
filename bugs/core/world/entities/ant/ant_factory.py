@@ -24,6 +24,7 @@ from .male.male_ant_body import MaleAntBody
 from .male.male_ant import MaleAnt
 from .base.guardian_behaviors import GuardianBehaviors
 from core.world.entities.base.ownership_config import OwnershipConfig
+from core.world.id_generator import IdGenerator
 
 class AntFactory():
 
@@ -31,7 +32,8 @@ class AntFactory():
         self._event_bus = event_bus
         self._thought_factory = thought_factory
 
-    def build_new_ant(self, id: int, name: str, ownership: OwnershipConfig, genome: Genome, ant_type: AntTypes, position: Point, birth_step: int, home_nest: Nest = None):
+    def build_new_ant(self, name: str, ownership: OwnershipConfig, genome: Genome, ant_type: AntTypes, position: Point, birth_step: int, home_nest: Nest = None):
+        id = IdGenerator.generate_id()
         match(ant_type):
             case AntTypes.WORKER:
                 return self._build_new_worker_ant(id, name, ownership, genome, position, home_nest, birth_step)

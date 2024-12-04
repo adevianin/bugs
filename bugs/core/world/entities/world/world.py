@@ -27,14 +27,13 @@ from typing import List, Callable
 
 class World():
 
-    def __init__(self, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: List[Colony], id_generator: IdGenerator, 
+    def __init__(self, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: List[Colony],  
                  birthers, spawners, nuptial_environments: List[NuptialEnvironment], player_stats_list: List[PlayerStats], climate: Climate, 
                  sensor_handlers, current_step: int, managers):
         self._entities_collection = entities_collection
         self._map = map
         self._event_bus = event_bus
         self._colonies: List[Colony] = colonies
-        self._id_generator = id_generator
         self._world_loop_stop_flag = False
         self._is_world_running = False
         self._current_step = current_step
@@ -59,10 +58,6 @@ class World():
     def current_season(self):
         return self._current_season
 
-    @property
-    def last_used_id(self):
-        return self._id_generator.last_used_id
-        
     @property
     def map(self):
         return self._map
@@ -116,9 +111,6 @@ class World():
     
     def get_notifications_for_owner(self, owner_id: int):
         return self._notification_manager.get_notifications_for_owner(owner_id)
-    
-    def generate_id(self):
-        return self._id_generator.generate_id()
     
     def add_new_nuptial_environment(self, nuptial_environment: NuptialEnvironment):
         self._nuptial_environments.append(nuptial_environment)

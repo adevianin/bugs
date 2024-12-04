@@ -28,14 +28,14 @@ urlpatterns = [
 
     path('world/nests/<int:nest_id>/rename', rename_nest, name='rename-nest'),
     path('world/nests/<int:nest_id>/add_egg', add_egg, name='add_egg'),
-    path('world/nests/<int:nest_id>/eggs/<str:egg_id>/change_caste', change_egg_caste, name='change-egg-caste'),
-    path('world/nests/<int:nest_id>/eggs/<str:egg_id>/change_name', change_egg_name, name='change-egg-name'),
-    path('world/nests/<int:nest_id>/eggs/<str:egg_id>/move_to_larva_chamber', move_egg_to_larva_chamber, name='move-egg-to-larva-chamber'),
-    path('world/nests/<int:nest_id>/eggs/<str:egg_id>/delete', delete_egg, name='delete-egg'),
+    path('world/nests/<int:nest_id>/eggs/<int:egg_id>/change_caste', change_egg_caste, name='change-egg-caste'),
+    path('world/nests/<int:nest_id>/eggs/<int:egg_id>/change_name', change_egg_name, name='change-egg-name'),
+    path('world/nests/<int:nest_id>/eggs/<int:egg_id>/move_to_larva_chamber', move_egg_to_larva_chamber, name='move-egg-to-larva-chamber'),
+    path('world/nests/<int:nest_id>/eggs/<int:egg_id>/delete', delete_egg, name='delete-egg'),
 
-    path('world/nests/<int:nest_id>/larvae/<str:larva_id>/delete', delete_larva, name='delete-larva'),
+    path('world/nests/<int:nest_id>/larvae/<int:larva_id>/delete', delete_larva, name='delete-larva'),
 
-    path('world/colonies/<int:colony_id>/operations/<str:operation_id>/stop_operation', stop_operation, name='stop_operation'),
+    path('world/colonies/<int:colony_id>/operations/<int:operation_id>/stop_operation', stop_operation, name='stop_operation'),
     path('world/colonies/<int:colony_id>/operations/build_new_sub_nest', build_new_sub_nest, name='build_new_sub_nest'),
     path('world/colonies/<int:colony_id>/operations/destroy_nest', destroy_nest, name='destroy_nest'),
     path('world/colonies/<int:colony_id>/operations/pillage_nest', pillage_nest, name='pillage_nest'),
