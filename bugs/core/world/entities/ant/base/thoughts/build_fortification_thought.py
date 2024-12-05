@@ -80,6 +80,9 @@ class BuildFortificationThought(Thought):
         if self._read_flag(self.Flags.NEAR_NEST):
             if not self._nest.is_died:
                 self._body.give_fortificating_item(self._nest)
+                if self._body.check_am_i_hungry():
+                    self._body.get_in_nest(self._nest)
+                    self._body.eat_from_nest(self._nest)
             else:
                 self._body.drop_picked_item()
             self.done()
