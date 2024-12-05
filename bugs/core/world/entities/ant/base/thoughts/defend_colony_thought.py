@@ -3,6 +3,7 @@ from core.world.entities.thought.thought import Thought
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
 from core.world.utils.point import Point
+from core.world.entities.ant.base.ant_activity_types import AntActivityTypes
 
 class DefendColonyThought(Thought):
 
@@ -32,6 +33,8 @@ class DefendColonyThought(Thought):
         self._body.events.remove_listener('colony_signal:no_enemies_in_colony_area', self._on_no_enemies)
     
     def do_step(self):
+        self._body.set_current_activity(AntActivityTypes.DEFENDING_COLONY)
+
         self.fight_near_enemies_thought.do_step()
         if self.fight_near_enemies_thought.is_fighting:
             return

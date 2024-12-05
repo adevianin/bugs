@@ -37,7 +37,7 @@ class NuptialEnvironmentService():
         def on_nest_found(nest: Nest):
             queen.relocate_to_nest(nest)
             queen.fly_nuptial_flight_back(nest.position)
-            queen.build_nest(nest, True)
+            # queen.build_nest(nest, True)
             nest.take_calories(FOOD_IN_NEW_COLONY_MAIN_NEST)
             self._world.add_new_colony(new_colony) # found nest before new colony
 

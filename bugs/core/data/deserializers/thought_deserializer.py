@@ -13,6 +13,8 @@ class ThoughtDeserializer():
         match thought_json['type']:
             case ThoughtTypes.GO_IN_NEST:
                 return self._build_go_in_nest_thought(thought_json, entities_collection)
+            case ThoughtTypes.GO_HOME:
+                return self._build_go_home_thought(thought_json, entities_collection)
             case ThoughtTypes.WALK_TO:
                 return self._build_walk_to_thought(thought_json, entities_collection)
             case ThoughtTypes.COLLECT_FOOD:
@@ -57,6 +59,10 @@ class ThoughtDeserializer():
     def _build_go_in_nest_thought(self, thought_json, entities_collection: EntityCollection):
         nest = entities_collection.get_entity_by_id(thought_json['nest_id'])
         return self._thought_factory.build_go_in_nest_thought(nest=nest, flags=thought_json['flags'], sayback=thought_json['sayback'])
+    
+    def _build_go_home_thought(self, thought_json, entities_collection: EntityCollection):
+        go_in_nest_thought = self.deserialize_thougth(thought_json['go_in_nest_thought'], entities_collection)
+        return self._thought_factory.build_go_home_thought(go_in_nest_thought, flags=thought_json['flags'], sayback=thought_json['sayback'])
     
     def _build_walk_to_thought(self, thought_json, entities_collection: EntityCollection):
         position = Point(thought_json['position'][0], thought_json['position'][1])

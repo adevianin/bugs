@@ -21,6 +21,8 @@ from core.world.entities.ant.base.ant_stats import AntStats
 from core.world.entities.action.ant_home_nest_changed import AntHomeNestChangedAction
 from core.world.entities.item.items.bug_corpse.bug_corpse_item import BugCorpseItem
 from core.world.entities.base.death_record.buried_in_destructed_nest_death_record import BuriedInDestructedNestDeathRecord
+from core.world.entities.action.ant_current_activity_changed_action import AntCurrentActivityChangedAction
+from core.world.entities.ant.base.ant_activity_types import AntActivityTypes
 from typing import List
 
 class Ant(LiveEntity):
@@ -43,6 +45,7 @@ class Ant(LiveEntity):
         self._body.events.add_listener('dropped_picked_item', self._on_dropped_picked_item)
         self._body.events.add_listener('gave_fortification_item', self._on_gave_fortification_item)
         self._body.events.add_listener('built_nest', self._on_built_nest)
+        self._body.events.add_listener('current_activity_changed', self._on_current_activity_changed)
 
     @property
     def name(self):
@@ -99,6 +102,13 @@ class Ant(LiveEntity):
     @property
     def is_queen_of_colony(self):
         return False
+    
+    @property
+    def current_activity(self):
+        return self._body.current_activity
+    
+    def prepare_for_operation(self):
+        self._body.set_current_activity(AntActivityTypes.IN_OPERATION)
     
     def fly_nuptial_flight(self):
         if not self.can_fly_nuptial_flight:
@@ -223,5 +233,8 @@ class Ant(LiveEntity):
 
     def _on_built_nest(self):
         self._event_bus.emit('ant_built_nest_stat', self)
+
+    def _on_current_activity_changed(self):
+        self._emit_action(AntCurrentActivityChangedAction(self.id, self._body.current_activity, self.owner_id))
 
         

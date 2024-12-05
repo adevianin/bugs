@@ -5,7 +5,7 @@ import { ACTION_TYPES } from '../action/actionTypes';
 class BaseAnt extends LiveEntity {
 
     constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, 
-            genome, birthStep) {
+            genome, birthStep, currentActivity) {
         super(eventBus, id, position, angle, EntityTypes.ANT, fromColony, ownerId, hp, maxHp, isInHibernation);
         this._name = name;
         this._pickedItemId = pickedItemId;
@@ -18,6 +18,7 @@ class BaseAnt extends LiveEntity {
         this._antApi = antApi;
         this._genome = genome
         this._birthStep = birthStep;
+        this._currentActivity = currentActivity;
     }
 
     get isVisible() {
@@ -102,6 +103,10 @@ class BaseAnt extends LiveEntity {
         return true;
     }
 
+    get currentActivity() {
+        return this._currentActivity;
+    }
+
     changeGuardianBehavior(behaviorValue) {
         this._behavior.guardianBehavior = behaviorValue;
         this._antApi.changeGuardianBehavior(this.id, behaviorValue);
@@ -143,6 +148,8 @@ class BaseAnt extends LiveEntity {
                 return this._playGotInNest(action);
             case ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
                 return this._playGotOutOfNest(action);
+            case ACTION_TYPES.ANT_CURRENT_ACTIVITY_CHANGED:
+                return this._playCurrentActivityChanged(action);
         }
     }
 
@@ -191,6 +198,12 @@ class BaseAnt extends LiveEntity {
     // _toggleIsInNest(isInNest) {
     //     this._isInNest = isInNest;
     // }
+
+    _playCurrentActivityChanged(action) {
+        this._currentActivity = action.activity;
+        this.emit('currentActivityChanged');
+        return Promise.resolve();
+    }
 
     _flyAwayAnimation() {
         let stepCount = 100;

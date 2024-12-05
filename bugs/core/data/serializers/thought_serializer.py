@@ -20,6 +20,7 @@ from core.world.entities.ant.base.thoughts.defend_myself_thought import DefendMy
 from core.world.entities.ant.warrior.thoughts.keep_clear_territory_thought import KeepClearTerritoryThought
 from core.world.entities.ladybug.thoughts.ladybug_hibernation_thought import LadybugHibernationThought
 from core.world.entities.base.live_entity.thoughts.wait_step_thought import WaitStepThought
+from core.world.entities.ant.base.thoughts.go_home_thought import GoHomeThought
 
 class ThoughtSerializer():
 
@@ -27,6 +28,8 @@ class ThoughtSerializer():
         match(thought.type):
             case ThoughtTypes.GO_IN_NEST:
                 return self._serialize_go_in_nest(thought)
+            case ThoughtTypes.GO_HOME:
+                return self._serialize_go_home(thought)
             case ThoughtTypes.WALK_TO:
                 return self._serialize_walk_to(thought)
             case ThoughtTypes.COLLECT_FOOD:
@@ -81,6 +84,15 @@ class ThoughtSerializer():
         json = self._serialize_thought(thought)
         json.update({
             'nest_id': thought.nest_id
+        })
+
+        return json
+
+    def _serialize_go_home(self, thought: GoHomeThought):
+        json = self._serialize_thought(thought)
+        go_home_thought_json = self.serialize(thought.go_in_nest_thought)
+        json.update({
+            'go_in_nest_thought': go_home_thought_json
         })
 
         return json

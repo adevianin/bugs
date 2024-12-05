@@ -2,6 +2,7 @@ from core.world.entities.thought.thought import Thought
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.ant.base.ant_body import AntBody
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
+from core.world.entities.ant.base.ant_activity_types import AntActivityTypes
 
 class HibernationThought(Thought):
 
@@ -26,6 +27,8 @@ class HibernationThought(Thought):
         self._nest.unblock_removal(self._nest_removal_block_id)
 
     def do_step(self) -> bool:
+        self._body.set_current_activity(AntActivityTypes.PREPARING_FOR_HIBERNATION)
+
         if self.go_home_thought.is_done:
             if not self._read_flag(self.Flags.ATE_WELL):
                 self._body.eat_from_nest(self._nest)
@@ -34,6 +37,7 @@ class HibernationThought(Thought):
             
             if not self._body.am_i_in_hibernation():
                 self._body.enter_hibernation()
+                self._body.set_current_activity(AntActivityTypes.HIBERNATION)
                 self.done()
         elif self.go_home_thought.is_canceled:
             self.cancel()

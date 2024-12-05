@@ -24,10 +24,14 @@ from core.world.entities.ant.base.thoughts.build_fortification_thought import Bu
 from core.world.entities.ant.base.thoughts.defend_colony_thought import DefendColonyThought
 from core.world.entities.ant.base.thoughts.defend_myself_thought import DefendMyselfThought
 from core.world.entities.ladybug.thoughts.ladybug_hibernation_thought import LadybugHibernationThought
+from core.world.entities.ant.base.thoughts.go_home_thought import GoHomeThought
 
 from typing import Dict
 
 class ThoughtFactory:
+
+    def build_go_home_thought(self, go_in_nest_thought: GoInNestThought, flags: dict = None, sayback: str = None):
+        return GoHomeThought(go_in_nest_thought, flags, sayback)
 
     def build_go_in_nest_thought(self, nest: Nest, flags: dict = None, sayback: str = None):
         return GoInNestThought(flags=flags, sayback=sayback, nest=nest)
@@ -88,6 +92,10 @@ class ThoughtFactory:
     
     def build_ladybug_hibernation_thought(self, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_tree: Tree, flags: dict = None, sayback: str = None):
         return LadybugHibernationThought(random_walk_thought, fight_near_enemies_thought, found_tree, flags, sayback)
+
+    def build_go_home_new(self, home_nest: Nest, sayback: str = None):
+        go_in_nest_thought = self.build_go_in_nest_thought(home_nest)
+        return self.build_go_home_thought(go_in_nest_thought, sayback=sayback)
 
     def build_feed_myself_new(self, home_nest: Nest, sayback: str = None):
         go_home_thought = self.build_go_in_nest_thought(home_nest)

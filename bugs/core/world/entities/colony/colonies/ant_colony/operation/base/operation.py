@@ -443,6 +443,7 @@ class Operation(ABC):
 
         for ant in self._hired_ants:
             self._write_ant_flag(ant, self.Flags.ANT_FLAG_PREPARED, False)
+            ant.prepare_for_operation()
             ant.walk_to(self._assemble_point, 'prepared')
 
     def _on_ant_prepared(self, ant: Ant):

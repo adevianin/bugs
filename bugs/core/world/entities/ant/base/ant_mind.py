@@ -38,7 +38,7 @@ class AntMind(Mind):
             self._register_thought(thought, asap)
 
     def go_home(self, sayback: str = None, asap: bool = False):
-        go_home_thought = self._thought_factory.build_go_in_nest_thought(nest=self.home_nest)
+        go_home_thought = self._thought_factory.build_go_home_new(self.home_nest)
         self._register_thought(go_home_thought)
 
     def collect_food(self, sayback: str = None):

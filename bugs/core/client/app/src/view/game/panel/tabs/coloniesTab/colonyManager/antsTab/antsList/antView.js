@@ -13,8 +13,6 @@ class AntView extends BaseHTMLView {
         this._ant = ant;
         this._profileState = false;
 
-        this._ant.on('died', this.remove.bind(this));
-
         this._render();
 
         this._nuptialFlightActionBtn.addEventListener('click', this._onNuptialFlightBtnClick.bind(this));
@@ -22,6 +20,9 @@ class AntView extends BaseHTMLView {
         this._cooperativeBehaviorTogglerEl.addEventListener('change', this._onCooperativeBehaviorTogglerChange.bind(this));
         this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
         this._profileBtn.addEventListener('click', this._onProfileBtnClick.bind(this));
+
+        this._stopListenAntDied = this._ant.on('died', this.remove.bind(this));
+        this._stopListenCurrentActivityChanged = this._ant.on('currentActivityChanged', this._renderCurrentActivity.bind(this));
 
         this._stopListenCurrentStepChanged = this.$domainFacade.events.on('currentStepChanged', this._renderAge.bind(this));
     }
@@ -72,11 +73,16 @@ class AntView extends BaseHTMLView {
 
         this._ageEl = this._el.querySelector('[data-age]');
         this._renderAge();
+
+        this._currentActivityEl = this._el.querySelector('[data-current-activity]');
+        this._renderCurrentActivity();
         
     }
 
     remove() {
         this._stopListenCurrentStepChanged();
+        this._stopListenAntDied();
+        this._stopListenCurrentActivityChanged();
         this._nestSelector.remove();
         super.remove();
     }
@@ -98,6 +104,11 @@ class AntView extends BaseHTMLView {
     _renderProfileState() {
         this._profileEl.classList.toggle('hidden', !this._profileState);
         this._profileBtn.innerHTML = this._profileState ? '-' : '+';
+    }
+
+    _renderCurrentActivity() {
+        let messageId = `${this._ant.currentActivity}_activity`;
+        this._currentActivityEl.innerHTML = this._ant.currentActivity ? this.$messages[messageId] : this.$messages.nothing_activity;
     }
 
     _onNestChanged() {

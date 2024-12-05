@@ -16,6 +16,7 @@ from .ant_stats import AntStats
 from core.world.entities.base.entity import Entity
 from core.world.entities.base.death_record.base_death_record import BaseDeathRecord
 from core.world.entities.item.items.bug_corpse.bug_corpse_item import BugCorpseItem
+from .ant_activity_types import AntActivityTypes
 
 
 from typing import List, Callable
@@ -24,6 +25,7 @@ class AntBody(LiveBody):
 
     class MemoryKeys(LiveBody.MemoryKeys):
         NO_MORE_FOOD_AT_HOME = 'no_more_food_at_home'
+        CURRENT_ACTIVITY_ID = 'current_activity_id'
 
     SIZE = Size(32, 32)
 
@@ -66,6 +68,17 @@ class AntBody(LiveBody):
     def genome(self) -> Genome:
         return self._genome
     
+    @property
+    def current_activity(self):
+        saved_activity_id = self.memory.read(self.MemoryKeys.CURRENT_ACTIVITY_ID)
+        return AntActivityTypes(saved_activity_id) if saved_activity_id else None
+    
+    def set_current_activity(self, activity: AntActivityTypes):
+        prev_activity = self.memory.read(self.MemoryKeys.CURRENT_ACTIVITY_ID)
+        self.memory.save(self.MemoryKeys.CURRENT_ACTIVITY_ID, activity.value)
+        if prev_activity != activity.value:
+            self.events.emit('current_activity_changed')
+
     def fly_nuptial_flight(self):
         if self.am_i_in_hibernation():
             self.exit_hibernation()

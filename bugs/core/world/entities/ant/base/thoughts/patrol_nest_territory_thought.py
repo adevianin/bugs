@@ -3,6 +3,7 @@ from core.world.entities.thought.thought import Thought
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 from core.world.entities.nest.nest import Nest
+from core.world.entities.ant.base.ant_activity_types import AntActivityTypes
 
 class PatrolNestTerritoryThought(Thought):
 
@@ -34,6 +35,8 @@ class PatrolNestTerritoryThought(Thought):
         self._nest.unblock_removal(self._nest_removal_block_id)
     
     def do_step(self):
+        self._body.set_current_activity(AntActivityTypes.PATROLING_NEST_TERRITORY)
+
         if self._nest.is_died:
             self.cancel()
             return

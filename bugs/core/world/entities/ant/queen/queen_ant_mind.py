@@ -1,5 +1,6 @@
 from ..base.ant_mind import AntMind
 from .queen_ant_body import QueenAntBody
+from core.world.entities.ant.base.ant_activity_types import AntActivityTypes
 
 class QueenAntMind(AntMind):
 
@@ -11,10 +12,14 @@ class QueenAntMind(AntMind):
         if not self._has_thoughts_to_do():
             if not self.home_nest.is_built:
                 self.walk_to(self.home_nest.position)
+                self._body.set_current_activity(AntActivityTypes.FOUNDING_MAIN_NEST)
                 self.build_nest(self.home_nest, True)
                 return
             
             if not self._body.is_fertilized:
                 self.patrol_home_territory()
                 return
+            
+            if self._body.is_fertilized:
+                self._body.set_current_activity(AntActivityTypes.WATCHING_NEST)
             

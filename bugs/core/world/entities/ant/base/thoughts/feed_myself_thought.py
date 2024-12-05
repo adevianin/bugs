@@ -3,6 +3,7 @@ from core.world.entities.thought.thought import Thought
 from core.world.entities.nest.nest import Nest
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.thought.thought_types import ThoughtTypes
+from core.world.entities.ant.base.ant_activity_types import AntActivityTypes
 
 class FeedMyselfThought(Thought):
 
@@ -32,6 +33,8 @@ class FeedMyselfThought(Thought):
         self._home.unblock_removal(self._nest_removal_block_id)
 
     def do_step(self):
+        self._body.set_current_activity(AntActivityTypes.FEEDING_MYSELF)
+        
         if self.go_home_thought.is_done:
             self._body.eat_from_nest(self._home)
             # self._body.get_out_of_nest()

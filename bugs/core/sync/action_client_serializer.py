@@ -42,6 +42,7 @@ from core.world.entities.action.colony_operation_changed_action import ColonyOpe
 from core.world.entities.action.colony_operation_deleted_action import ColonyOperationDeletedAction
 from core.world.entities.action.nuptial_environment_specie_genes_changed_action import NuptialEnvironmentSpecieGenesChangedAction
 from core.world.entities.action.entity_hibernation_status_chenged_action import EntityHibernationStatusChangedAction
+from core.world.entities.action.ant_current_activity_changed_action import AntCurrentActivityChangedAction
 
 class ActionClientSerializer(iActionClientSerializer):
 
@@ -89,6 +90,8 @@ class ActionClientSerializer(iActionClientSerializer):
                 return self._default_action_serialize(action)
             case ActionTypes.ANT_HOME_NEST_CHANGED:
                 return self._serialize_ant_home_nest_changed(action)
+            case ActionTypes.ANT_CURRENT_ACTIVITY_CHANGED:
+                return self._serialize_ant_current_activity_changed(action)
             case ActionTypes.NEST_STORED_CALORIES_CHANGED:
                 return self._serialize_nest_stored_calories_changed(action)
             case ActionTypes.NEST_LARVA_FED:
@@ -236,6 +239,15 @@ class ActionClientSerializer(iActionClientSerializer):
 
         json.update({
             'nestId': action.nest_id
+        })
+
+        return json
+    
+    def _serialize_ant_current_activity_changed(self, action: AntCurrentActivityChangedAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'activity': action.activity
         })
 
         return json

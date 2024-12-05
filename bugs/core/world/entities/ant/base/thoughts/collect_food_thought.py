@@ -5,6 +5,7 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.ant.base.ant_body import AntBody
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 from core.world.entities.item.items.base.item import Item
+from core.world.entities.ant.base.ant_activity_types import AntActivityTypes
 
 class CollectFoodThought(Thought):
 
@@ -56,6 +57,8 @@ class CollectFoodThought(Thought):
             self._body.drop_picked_item()
 
     def do_step(self):
+        self._body.set_current_activity(AntActivityTypes.COLLECTING_FOOD)
+
         if not self._read_flag(self.Flags.AM_I_GOT_FOOD):
 
             if not self._check_has_target_food_source():

@@ -3,6 +3,7 @@ from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.ant.base.ant_body import AntBody
 from core.world.entities.base.live_entity.thoughts.go_in_nest import GoInNestThought
 from core.world.entities.nest.nest import Nest
+from core.world.entities.ant.base.ant_activity_types import AntActivityTypes
 
 class ShelterInNestThought(Thought):
 
@@ -28,6 +29,8 @@ class ShelterInNestThought(Thought):
         self._shelter_nest.unblock_removal(self._nest_removal_block_id)
 
     def do_step(self) -> bool:
+        self._body.set_current_activity(AntActivityTypes.SHELTERING_IN_NEST)
+
         if self._shelter_nest.is_under_attack:
             if self.go_home_thought.is_in_progress:
                 self.go_home_thought.do_step()

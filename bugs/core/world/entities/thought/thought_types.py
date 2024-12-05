@@ -2,6 +2,7 @@ from enum import StrEnum
 
 class ThoughtTypes(StrEnum):
     GO_IN_NEST = 'go_in_nest'
+    GO_HOME = 'go_home'
     WALK_TO = 'walk_to'
     RANDOM_WALK = 'random_walk'
     COLLECT_FOOD = 'collect_food'

@@ -3,6 +3,7 @@ from core.world.entities.thought.thought import Thought
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.base.live_entity.thoughts.fight_near_enemies_thought import FightNearEnemiesThought
 from core.world.entities.nest.nest import Nest
+from core.world.entities.ant.base.ant_activity_types import AntActivityTypes
 
 class DefendNestThought(Thought):
 
@@ -29,6 +30,8 @@ class DefendNestThought(Thought):
         self._defending_nest.unblock_removal(self._nest_removal_block_id)
     
     def do_step(self):
+        self._body.set_current_activity(AntActivityTypes.DEFENDING_HOME_NEST)
+
         self.fight_near_enemies_thought.do_step()
         if self.fight_near_enemies_thought.is_fighting:
             return
