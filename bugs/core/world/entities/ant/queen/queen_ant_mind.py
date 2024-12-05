@@ -16,10 +16,8 @@ class QueenAntMind(AntMind):
                 self.build_nest(self.home_nest, True)
                 return
             
-            if not self._body.is_fertilized:
-                self.patrol_home_territory()
-                return
-            
-            if self._body.is_fertilized:
+            if self._body.is_queen_of_colony:
                 self._body.set_current_activity(AntActivityTypes.WATCHING_NEST)
+            else:
+                self.patrol_home_territory()
             

@@ -15,6 +15,7 @@ class QueenAntBody(AntBody):
 
     class MemoryKeys(AntBody.MemoryKeys):
         IS_IN_NUPTIAL_FLIGHT = 'is_in_nuptial_flight'
+        IS_QUEEN_OF_COLONY = 'is_queen_of_colony'
 
     def __init__(self, events: EventEmitter, stats: AntStats, sayer: EventEmitter, memory: Memory, position: Point, angle: int, hp: int, birth_step: int, calories: int, located_in_nest: Nest, 
                  picked_item: Item, visual_sensor: VisualSensor, temperature_sensor: TemperatureSensor, genome: Genome, male_chromosomes_set: ChromosomesSet):
@@ -34,11 +35,16 @@ class QueenAntBody(AntBody):
         return self.memory.read_flag(self.MemoryKeys.IS_IN_NUPTIAL_FLIGHT)
     
     @property
+    def is_queen_of_colony(self):
+        return self.memory.read_flag(self.MemoryKeys.IS_QUEEN_OF_COLONY)
+    
+    @property
     def male_chromosomes_set(self):
         return self._male_chromosomes_set
     
     def fertilize(self, chromosome_set: ChromosomesSet):
         self._male_chromosomes_set = chromosome_set
+        self.memory.save_flag(self.MemoryKeys.IS_QUEEN_OF_COLONY, True)
     
     def produce_egg(self, name: str, is_fertilized: bool) -> Egg:
         maternal_chromosome_set = self._genome.meiosis()

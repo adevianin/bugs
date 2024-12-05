@@ -38,7 +38,7 @@ class QueenAnt(Ant):
     
     @property
     def is_queen_of_colony(self):
-        return self._body.is_fertilized
+        return self._body.is_queen_of_colony
     
     def fly_nuptial_flight_back(self, landing_position: Point):
         self._mind.toggle_auto_thought_generation(True)
