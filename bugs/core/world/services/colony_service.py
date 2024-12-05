@@ -8,7 +8,7 @@ from core.world.entities.colony.colonies.ant_colony.operation.operation_factory 
 from core.world.utils.point import Point
 from core.world.entities.item.items.base.item import Item 
 from core.world.entities.item.items.base.item_types import ItemTypes 
-from core.world.settings import NEW_EGG_FOOD_COST, LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT
+from core.world.settings import NEW_EGG_FOOD_COST, LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT, MAX_DISTANCE_TO_OPERATION_TARGET
 from core.world.messages import Messages
 from core.world.utils.remove_non_alphanumeric_and_spaces import remove_non_alphanumeric_and_spaces
 
@@ -139,7 +139,14 @@ class ColonyService():
         
         if nest.from_colony_id == performing_colony.id:
             raise Exception('colony cant destroy its nest')
-
+        
+        queen_of_colony = self._find_queen_of_colony(performing_colony.id)
+        if not queen_of_colony:
+            raise Exception('cant destroy nest operation when no queen of colony')
+        
+        if queen_of_colony.position.dist(nest.position) > MAX_DISTANCE_TO_OPERATION_TARGET:
+            raise Exception('nest to destroy is too far away')
+        
         operation = self._operation_factory.build_destroy_nest_operation(nest, workers_count, warriors_count)
 
         if not operation.validate():
@@ -161,6 +168,13 @@ class ColonyService():
         
         if nest_for_loot.from_colony_id != performing_colony.id:
             raise Exception('nest for loot can be only from performing colony')
+        
+        queen_of_colony = self._find_queen_of_colony(performing_colony.id)
+        if not queen_of_colony:
+            raise Exception('cant destroy nest operation when no queen of colony')
+        
+        if queen_of_colony.position.dist(nest_to_pillage.position) > MAX_DISTANCE_TO_OPERATION_TARGET:
+            raise Exception('nest_to_pillage to destroy is too far away')
 
         operation = self._operation_factory.build_pillage_nest_operation(nest_to_pillage, nest_for_loot, workers_count, warriors_count)
 
