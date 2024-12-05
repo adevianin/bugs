@@ -94,71 +94,93 @@ class WorldFacade:
 
     # <PLAYER_COMMANDS>
     def stop_operation_command(self, user_id: int, colony_id: int, operation_id: int):
-        self._colony_service.stop_operation(user_id, colony_id, operation_id)
+        with self._world.lock:
+            self._colony_service.stop_operation(user_id, colony_id, operation_id)
     
     def build_new_sub_nest_operation_command(self, user_id: int, performing_colony_id: int, building_site: Point, workers_count: int, warriors_count: int, nest_name: str):
-        return self._colony_service.build_new_sub_nest(user_id, performing_colony_id, building_site, workers_count, warriors_count, nest_name)
+        with self._world.lock:
+            return self._colony_service.build_new_sub_nest(user_id, performing_colony_id, building_site, workers_count, warriors_count, nest_name)
     
     def destroy_nest_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int, warriors_count: int):
-        self._colony_service.destroy_nest_operation(user_id, performing_colony_id, nest_id, workers_count, warriors_count)
+        with self._world.lock:
+            self._colony_service.destroy_nest_operation(user_id, performing_colony_id, nest_id, workers_count, warriors_count)
 
     def pillage_nest_operation_command(self, user_id: int, performing_colony_id: int, nest_to_pillage_id: int, nest_for_loot_id: int, workers_count: int, warriors_count: int):
-        self._colony_service.pillage_nest_operation(user_id, performing_colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
+        with self._world.lock:
+            self._colony_service.pillage_nest_operation(user_id, performing_colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
 
     def transfer_food_operation_command(self, user_id: int, performing_colony_id: int, from_nest_id: int, to_nest_id: int, workers_count: int, warriors_count: int):
-        self._colony_service.transfer_food_operation(user_id, performing_colony_id, from_nest_id, to_nest_id, workers_count, warriors_count)
+        with self._world.lock:
+            self._colony_service.transfer_food_operation(user_id, performing_colony_id, from_nest_id, to_nest_id, workers_count, warriors_count)
 
     def build_fortification_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int):
-        self._colony_service.build_fortification_operation(user_id, performing_colony_id, nest_id, workers_count)
+        with self._world.lock:
+            self._colony_service.build_fortification_operation(user_id, performing_colony_id, nest_id, workers_count)
         
     def bring_bug_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int):
-        return self._colony_service.bring_bug_operation(user_id, performing_colony_id, nest_id)
+        with self._world.lock:
+            return self._colony_service.bring_bug_operation(user_id, performing_colony_id, nest_id)
 
     def add_egg_command(self, user_id: int, nest_id: int, name: str, is_fertilized: bool):
-        return self._colony_service.add_egg(user_id, nest_id, name, is_fertilized)
+        with self._world.lock:
+            return self._colony_service.add_egg(user_id, nest_id, name, is_fertilized)
 
     def change_egg_caste_command(self, user_id: int, nest_id: int, egg_id: str, ant_type: AntTypes):
-        self._colony_service.change_egg_caste(user_id, nest_id, egg_id, ant_type)
+        with self._world.lock:
+            self._colony_service.change_egg_caste(user_id, nest_id, egg_id, ant_type)
 
     def change_egg_name_command(self, user_id: int, nest_id: int, egg_id: str, name: str):
-        self._colony_service.change_egg_name(user_id, nest_id, egg_id, name)
+        with self._world.lock:
+            self._colony_service.change_egg_name(user_id, nest_id, egg_id, name)
 
     def move_egg_to_larva_chamber_command(self, user_id: int, nest_id: int, egg_id: str):
-        self._colony_service.move_egg_to_larva_chamber(user_id, nest_id, egg_id)
+        with self._world.lock:
+            self._colony_service.move_egg_to_larva_chamber(user_id, nest_id, egg_id)
 
     def delete_egg_command(self, user_id: int, nest_id: int, egg_id: str):
-        self._colony_service.delete_egg(user_id, nest_id, egg_id)
+        with self._world.lock:
+            self._colony_service.delete_egg(user_id, nest_id, egg_id)
 
     def delete_larva_command(self, user_id: int, nest_id: int, larva_id: str):
-        self._colony_service.delete_larva(user_id, nest_id, larva_id)
+        with self._world.lock:
+            self._colony_service.delete_larva(user_id, nest_id, larva_id)
 
     def found_colony_command(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point, colony_name: str):
-        self._nuptial_environment_service.found_new_colony(user_id, queen_id, nuptial_male_id, nest_building_site, colony_name)
+        with self._world.lock:
+            self._nuptial_environment_service.found_new_colony(user_id, queen_id, nuptial_male_id, nest_building_site, colony_name)
 
     def born_new_antara_command(self, user_id: int):
-        self._player_service.born_new_antara(user_id)
+        with self._world.lock:
+            self._player_service.born_new_antara(user_id)
 
     def fly_nuptial_flight_command(self, user_id: int, ant_id: int):
-        self._ant_service.fly_nuptial_flight(user_id, ant_id)
+        with self._world.lock:
+            self._ant_service.fly_nuptial_flight(user_id, ant_id)
 
     def change_ant_guardian_behavior_command(self, user_id: int, ant_id: int, guaridan_behavior: GuardianBehaviors):
-        self._ant_service.change_ant_guardian_behavior(user_id, ant_id, guaridan_behavior)
+        with self._world.lock:
+            self._ant_service.change_ant_guardian_behavior(user_id, ant_id, guaridan_behavior)
 
     def change_ant_cooperative_behavior_command(self, user_id: int, ant_id: int, is_enabled: bool):
-        self._ant_service.change_ant_cooperative_behavior(user_id, ant_id, is_enabled)
+        with self._world.lock:
+            self._ant_service.change_ant_cooperative_behavior(user_id, ant_id, is_enabled)
 
     def relocate_ant_command(self, user_id: int, ant_id: int, nest_id: int):
-        self._ant_service.relocate_ant(user_id, ant_id, nest_id)
+        with self._world.lock:
+            self._ant_service.relocate_ant(user_id, ant_id, nest_id)
 
     def change_specie_schema_command(self, user_id: int, specie_schema: Dict[ChromosomeTypes, List[str]]):
-        return self._nuptial_environment_service.change_specie_schema(user_id, specie_schema)
+        with self._world.lock:
+            return self._nuptial_environment_service.change_specie_schema(user_id, specie_schema)
 
     def rename_nest_command(self, user_id: int, nest_id: int, name: str):
-        self._colony_service.rename_nest(user_id, nest_id, name)
-    # </PLAYER_COMMANDS>
+        with self._world.lock:
+            self._colony_service.rename_nest(user_id, nest_id, name)
 
     def ensure_starter_pack_built_for_player(self, user_id: int):
-        self._player_service.ensure_starter_pack_built_for_player(user_id)
+        with self._world.lock:
+            self._player_service.ensure_starter_pack_built_for_player(user_id)
+    # </PLAYER_COMMANDS>
 
     def get_specie_for_client(self, user_id: int) -> Dict:
         specie = self._nuptial_environment_service.get_specie_for(user_id)
