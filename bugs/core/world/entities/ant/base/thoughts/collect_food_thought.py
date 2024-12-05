@@ -44,6 +44,8 @@ class CollectFoodThought(Thought):
 
     def delay(self):
         self.restart()
+        if self._body.is_item_picked:
+            self._body.drop_picked_item()
 
     def can_be_delayed(self):
         return not self._read_flag(self.Flags.AM_I_GOT_FOOD)
