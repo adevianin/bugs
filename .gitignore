@@ -6,3 +6,5 @@ pyvenv.cfg
 __pycache__/
 bugs/db.sqlite3
 bugs/static
+game_errors.log
+request_errors.log
