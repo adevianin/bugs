@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import user_passes_test
-from django.http import JsonResponse, HttpRequest
+from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.views.decorators.http import require_POST
 from core.world.world_facade import WorldFacade
 import json
@@ -50,10 +50,12 @@ def save_world(request):
 @require_POST
 def expand_map(request: HttpRequest):
     wf = WorldFacade.get_instance()
-    data = json.loads(request.body)
-    
-    chunk_rows = int(data['chunk_rows'])
-    chunk_cols = int(data['chunk_cols'])
+    try:
+        data = json.loads(request.body)
+        chunk_rows = int(data['chunk_rows'])
+        chunk_cols = int(data['chunk_cols'])
+    except Exception as e:
+        return HttpResponse(status=400)
 
     error_msg = wf.expand_map_admin_command(chunk_rows, chunk_cols)
 

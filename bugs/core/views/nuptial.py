@@ -10,13 +10,16 @@ import json
 @require_POST
 @login_required     
 def found_colony(request: HttpRequest):
-    data = json.loads(request.body)
     wf = WorldFacade.get_instance()
 
-    queen_id = data['queen_id']
-    nuptial_male_id = data['nuptial_male_id']
-    nest_building_site = Point.from_json(data['nest_building_site'])
-    colony_name = data['colony_name']
+    try:
+        data = json.loads(request.body)
+        queen_id = data['queen_id']
+        nuptial_male_id = data['nuptial_male_id']
+        nest_building_site = Point.from_json(data['nest_building_site'])
+        colony_name = data['colony_name']
+    except Exception as e:
+        return HttpResponse(status=400)
 
     wf.found_colony_command(request.user.id, queen_id, nuptial_male_id, nest_building_site, colony_name)
 
@@ -25,10 +28,10 @@ def found_colony(request: HttpRequest):
 @require_POST
 @login_required     
 def save_specie_schema(request: HttpRequest):
-    data = json.loads(request.body)
     wf = WorldFacade.get_instance()
 
     try:
+        data = json.loads(request.body)
         specie_schema = {}
         for chromosome_type in data['specie_schema']:
             type = ChromosomeTypes(chromosome_type)

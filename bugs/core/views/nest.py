@@ -9,8 +9,11 @@ import json
 @require_POST
 @login_required     
 def rename_nest(request: HttpRequest, nest_id: int):
-    data = json.loads(request.body)
-    name = data['name']
+    try:
+        data = json.loads(request.body)
+        name = data['name']
+    except Exception as e:
+        return HttpResponse(status=400)
 
     wf = WorldFacade.get_instance()
     wf.rename_nest_command(request.user.id, nest_id, name)
@@ -20,9 +23,12 @@ def rename_nest(request: HttpRequest, nest_id: int):
 @require_POST
 @login_required     
 def add_egg(request: HttpRequest, nest_id: int):
-    data = json.loads(request.body)
-    name = data['name']
-    is_fertilized = data['is_fertilized']
+    try:
+        data = json.loads(request.body)
+        name = data['name']
+        is_fertilized = data['is_fertilized']
+    except Exception as e:
+        return HttpResponse(status=400)
 
     wf = WorldFacade.get_instance()
     error = wf.add_egg_command(request.user.id, nest_id, name, is_fertilized)
@@ -35,8 +41,11 @@ def add_egg(request: HttpRequest, nest_id: int):
 @require_POST
 @login_required     
 def change_egg_caste(request: HttpRequest, nest_id: int, egg_id: int):
-    data = json.loads(request.body)
-    ant_type = AntTypes(data['ant_type'])
+    try:
+        data = json.loads(request.body)
+        ant_type = AntTypes(data['ant_type'])
+    except Exception as e:
+        return HttpResponse(status=400)
 
     wf = WorldFacade.get_instance()
 
@@ -47,8 +56,11 @@ def change_egg_caste(request: HttpRequest, nest_id: int, egg_id: int):
 @require_POST
 @login_required     
 def change_egg_name(request: HttpRequest, nest_id: int, egg_id: int):
-    data = json.loads(request.body)
-    name = data['name']
+    try:
+        data = json.loads(request.body)
+        name = data['name']
+    except Exception as e:
+        return HttpResponse(status=400)
 
     wf = WorldFacade.get_instance()
 

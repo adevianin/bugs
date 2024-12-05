@@ -16,25 +16,40 @@ def fly_nuptial_flight(request: HttpRequest, ant_id: int):
 @login_required     
 def change_ant_guardian_behavior(request: HttpRequest, ant_id: int):
     wf = WorldFacade.get_instance()
-    data = json.loads(request.body)
-    guaridan_behavior = GuardianBehaviors(data['guaridan_behavior'])
+    try:
+        data = json.loads(request.body)
+        guaridan_behavior = GuardianBehaviors(data['guaridan_behavior'])
+    except Exception as e:
+        return HttpResponse(status=400)
+    
     wf.change_ant_guardian_behavior_command(request.user.id, ant_id, guaridan_behavior)
+    
     return HttpResponse(status=200)
 
 @require_POST
 @login_required     
 def change_ant_cooperative_behavior(request: HttpRequest, ant_id: int):
     wf = WorldFacade.get_instance()
-    data = json.loads(request.body)
-    is_enabled = bool(data['is_enabled'])
+    try:
+        data = json.loads(request.body)
+        is_enabled = bool(data['is_enabled'])
+    except Exception as e:
+        return HttpResponse(status=400)
+    
     wf.change_ant_cooperative_behavior_command(request.user.id, ant_id, is_enabled)
+    
     return HttpResponse(status=200)
 
 @require_POST
 @login_required     
 def relocate_ant(request: HttpRequest, ant_id: int):
     wf = WorldFacade.get_instance()
-    data = json.loads(request.body)
-    nest_id = int(data['nest_id'])
+    try:
+        data = json.loads(request.body)
+        nest_id = int(data['nest_id'])
+    except Exception as e:
+        return HttpResponse(status=400)
+    
     wf.relocate_ant_command(request.user.id, ant_id, nest_id)
+    
     return HttpResponse(status=200)

@@ -6,7 +6,10 @@ from core.world.world_facade import WorldFacade
 
 @require_POST 
 def check_username(request):
-    username = request.json['username']
+    try:
+        username = request.json['username']
+    except Exception as e:
+        return HttpResponse(status=400)
 
     is_unique = not User.objects.filter(username=username).exists()
 
@@ -16,8 +19,11 @@ def check_username(request):
     
 @require_POST        
 def user_register(request):
-    username = request.json['username']
-    password = request.json['password']
+    try:
+        username = request.json['username']
+        password = request.json['password']
+    except Exception as e:
+        return HttpResponse(status=400)
 
     try:
         user = User.objects.create_user(username, password=password)
@@ -31,8 +37,12 @@ def user_register(request):
 
 @require_POST    
 def user_login(request):
-    username = request.json['username']
-    password = request.json['password']
+    try:
+        username = request.json['username']
+        password = request.json['password']
+    except Exception as e:
+        return HttpResponse(status=400)
+    
     user = authenticate(username=username, password=password)
 
     if user is not None:
