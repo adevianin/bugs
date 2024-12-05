@@ -104,9 +104,11 @@ from core.sync.death_record_client_serializer import DeathRecordClientSerializer
 from core.sync.tree_client_serializer import TreeClientSerializer
 from core.sync.ladybug_client_serializer import LadybugClientSerializer
 
-from core.world.my_test_env import MY_TEST_ENV
+import logging
 
 def start():
+    game_logger = logging.getLogger('game_logger')
+
     event_bus = EventEmitter()
 
     item_factory = ItemFactory(event_bus)
@@ -232,6 +234,8 @@ def start():
     ant_service.set_world(world_facade.world)
     rating_service.set_world(world_facade.world)
     world_service.set_world(world_facade.world)
+
+    world_facade.world.set_logger(game_logger)
 
     # MY_TEST_ENV['attacker'] = world_facade.world.map.get_entity_by_id(5)
     # MY_TEST_ENV['attacker2'] = world_facade.world.map.get_entity_by_id(6)

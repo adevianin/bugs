@@ -19,9 +19,8 @@ from .notification.notification_manager import NotificationManager
 from .notification.notifications.notification import Notification
 from .player_stats import PlayerStats
 from .season_types import SeasonTypes
-
-from core.world.my_test_env import MY_TEST_ENV
 from core.world.entities.ant.base.ant import Ant
+from logging import Logger
 
 from typing import List, Callable
 
@@ -99,6 +98,9 @@ class World():
     def _current_year(self):
         return self._current_step // STEPS_IN_YEAR
     
+    def set_logger(self, logger: Logger):
+        self._logger = logger
+    
     def get_player_stats_for_owner(self, owner_id: int) -> PlayerStats:
         for player_stats in self._player_stats_list:
             if player_stats.owner_id == owner_id:
@@ -160,18 +162,24 @@ class World():
     def _run_world_loop(self):
         while not self._world_loop_stop_flag:
             iteration_start = time.time()
-
-            self._do_step()
+            step_number = self._current_step
+            self._logger.info(f'step start: { step_number }')
+            try:
+                self._do_step()
+            except Exception as e:
+                self._logger.error(str(e))
+                raise e
 
             iteration_end = time.time()
             iteration_time = iteration_end - iteration_start
-            
+
+            self._logger.info(f'step time: { iteration_time }')
+            self._logger.info(f'step done: { step_number }')
+
             if (STEP_TIME - iteration_time > 0):
                 time.sleep(STEP_TIME - iteration_time)
 
     def _do_step(self):
-        print(f'step { self._current_step }')
-
         self._set_current_season(self._calc_current_season()) 
 
         self._event_bus.emit('step_start', self._current_step, self._current_season)

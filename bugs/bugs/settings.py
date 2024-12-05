@@ -51,7 +51,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.middlewares.convertJsonMiddleware.ConvertJSONMiddleware'
+    'core.middlewares.convertJsonMiddleware.ConvertJSONMiddleware',
+    'core.middlewares.logHttpRequestErrorsMiddleware.LogHttpRequestErrorsMiddleware'
 ]
 
 ROOT_URLCONF = 'bugs.urls'
@@ -131,3 +132,44 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ASGI_APPLICATION = 'bugs.asgi.application'
 
 AUTH_USER_MODEL = 'core.User'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'game_file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'game_errors.log',
+            'formatter': 'detailed',
+        },
+        'game_console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+        },
+        'request_file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'request_errors.log',
+            'formatter': 'detailed',
+        },
+    },
+    'formatters': {
+        'detailed': {
+            'format': '%(asctime)s %(levelname)s: %(message)s',
+        },
+    },
+    'loggers': {
+        'game_logger': {
+            'handlers': ['game_file', 'game_console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'request_logger': {
+            'handlers': ['request_file'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}
+
