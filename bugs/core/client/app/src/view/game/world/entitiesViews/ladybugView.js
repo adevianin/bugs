@@ -10,7 +10,6 @@ class LadybugView extends LiveEntityView {
     }
 
     _renderVisibility() {
-        console.log('render ladybug visibility', this._entity, this._entity.isVisible);
         this._entityContainer.renderable = this._entity.isVisible;
     }
 
