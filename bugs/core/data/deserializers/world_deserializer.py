@@ -1,7 +1,6 @@
 from core.world.entities.base.entity_collection import EntityCollection
 from core.world.entities.world.world import World
 from core.world.entities.world.world_factory import WorldFactory
-from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
 from core.data.deserializers.map_deserializer import MapDeserializer
 from core.data.deserializers.item_deserializer import ItemDeserializer
 from core.data.deserializers.item_source_deserializer import ItemSourceDeserializer
@@ -17,7 +16,6 @@ from .notification_deserializer import NotificationDeserializer
 from .player_stats_deserializer import PlayerStatsDeserializer
 from .colony_relations_table_deserializer import ColonyRelationsTableDeserializer
 from .tree_deserializer import TreeDeserializer
-from core.world.id_generator import IdGenerator
 from .ladybug_deserializer import LadybugDeserializer
 
 class WorldDeserializer():
@@ -115,15 +113,11 @@ class WorldDeserializer():
             nuptial_environments.append(nuptial_environment)
 
         climate = self._climate_deserializer.deserialize_climate(world_json['climate'])
-
         last_used_id = world_json['last_used_id']
-        IdGenerator.init(last_used_id)
-
         current_step = world_json['current_step']
-
         notifications = [self._notification_deserializer.deserialize(notification_json) for notification_json in world_json['notifications']]
 
         world = self._world_factory.build_world(entities_collection, map, colonies, colony_relations_table, nuptial_environments, player_stats_list, climate, 
-                                                current_step, notifications)
+                                                current_step, notifications, last_used_id)
 
         return world

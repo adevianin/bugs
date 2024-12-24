@@ -23,6 +23,7 @@ from .player_stats import PlayerStats
 from core.world.entities.ladybug.ladybug_factory import LadybugFactory
 from core.world.entities.ladybug.ladybug_spawner import LadybugSpawner
 from core.world.entities.item.items.bug_corpse.bug_corpse_spawner import BugCorpseSpawner
+from core.world.id_generator import IdGenerator
 
 from typing import List
 
@@ -37,7 +38,8 @@ class WorldFactory():
 
     def build_world(self, entities_collection: EntityCollection, map: Map, colonies: List[Colony], colony_relations_table: ColonyRelationsTable, 
                     nuptial_environments: List[NuptialEnvironment], player_stats_list: List[PlayerStats], climate: Climate, current_step: int, 
-                    notifications: List[Notification]) -> World:
+                    notifications: List[Notification], last_used_id: int) -> World:
+        IdGenerator.init(last_used_id)
         spawners = {
             'ladybug_spawner': LadybugSpawner(self._event_bus, map),
             'bug_corpse_spawner': BugCorpseSpawner(self._event_bus, map)
