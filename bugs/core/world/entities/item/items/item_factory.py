@@ -16,6 +16,8 @@ from core.world.entities.item.items.stick_item.stick_item_body import StickItemB
 from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.item.items.bug_corpse.bug_corpse_item import BugCorpseItem
 from core.world.entities.item.items.bug_corpse.bug_corpse_item_body import BugCorpseItemBody
+from .nectar_item.nectar_item import NectarItem
+from .nectar_item.nectar_item_body import NectarItemBody
 from core.world.id_generator import IdGenerator
 
 import random
@@ -46,6 +48,8 @@ class ItemFactory():
                 return self._build_stick_item(id, position, angle, strength, variety, life_span, is_picked, ownership, hp)
             case ItemTypes.BUG_CORPSE:
                 return self._build_bug_corpse_item(id, position, angle, strength, variety, life_span, is_picked, ownership, hp)
+            case ItemTypes.NECTAR:
+                return self._build_nectar_item(id, position, angle, strength, variety, life_span, is_picked, ownership, hp)
             case _:
                 raise Exception('unknown item type')
 
@@ -93,6 +97,13 @@ class ItemFactory():
         variety = variety or self._generate_variety(BugCorpseItemBody.VARIETY_COUNT)
         life_span = life_span or BugCorpseItemBody.LIFE_SPAN
         return BugCorpseItem(self._event_bus, EventEmitter(), id, body, ownership, strength, variety, life_span, is_picked)
+    
+    def _build_nectar_item(self, id: int, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool, ownership: OwnershipConfig, hp: int):
+        stats = StatsLibrary.GHOST_DEFAULT
+        body = NectarItemBody(EventEmitter(), stats, position, angle, hp)
+        variety = variety or self._generate_variety(NectarItemBody.VARIETY_COUNT)
+        life_span = life_span or NectarItemBody.LIFE_SPAN
+        return NectarItem(self._event_bus, EventEmitter(), id, body, ownership, strength, variety, life_span, is_picked)
     
     def _generate_variety(self, variety_count: int):
         return random.randint(1, variety_count)

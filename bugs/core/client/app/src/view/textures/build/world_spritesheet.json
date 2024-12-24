@@ -114,7 +114,7 @@
 },
 "ant_queen_6.png":
 {
-	"frame": {"x":0,"y":32,"w":32,"h":32},
+	"frame": {"x":448,"y":0,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -122,7 +122,7 @@
 },
 "ant_queen_7.png":
 {
-	"frame": {"x":32,"y":32,"w":32,"h":32},
+	"frame": {"x":0,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -130,7 +130,7 @@
 },
 "ant_queen_8.png":
 {
-	"frame": {"x":64,"y":32,"w":32,"h":32},
+	"frame": {"x":32,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -138,7 +138,7 @@
 },
 "ant_queen_dead.png":
 {
-	"frame": {"x":96,"y":32,"w":32,"h":32},
+	"frame": {"x":64,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -146,7 +146,7 @@
 },
 "ant_warrior_1.png":
 {
-	"frame": {"x":128,"y":32,"w":32,"h":32},
+	"frame": {"x":96,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -154,7 +154,7 @@
 },
 "ant_warrior_2.png":
 {
-	"frame": {"x":160,"y":32,"w":32,"h":32},
+	"frame": {"x":128,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -162,7 +162,7 @@
 },
 "ant_warrior_3.png":
 {
-	"frame": {"x":192,"y":32,"w":32,"h":32},
+	"frame": {"x":160,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -170,7 +170,7 @@
 },
 "ant_warrior_4.png":
 {
-	"frame": {"x":224,"y":32,"w":32,"h":32},
+	"frame": {"x":192,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -178,7 +178,7 @@
 },
 "ant_warrior_5.png":
 {
-	"frame": {"x":256,"y":32,"w":32,"h":32},
+	"frame": {"x":224,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -186,7 +186,7 @@
 },
 "ant_warrior_6.png":
 {
-	"frame": {"x":288,"y":32,"w":32,"h":32},
+	"frame": {"x":256,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -194,7 +194,7 @@
 },
 "ant_warrior_7.png":
 {
-	"frame": {"x":320,"y":32,"w":32,"h":32},
+	"frame": {"x":288,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -202,7 +202,7 @@
 },
 "ant_warrior_8.png":
 {
-	"frame": {"x":352,"y":32,"w":32,"h":32},
+	"frame": {"x":320,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -210,7 +210,7 @@
 },
 "ant_warrior_dead.png":
 {
-	"frame": {"x":384,"y":32,"w":32,"h":32},
+	"frame": {"x":352,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -218,7 +218,7 @@
 },
 "ant_worker_1.png":
 {
-	"frame": {"x":416,"y":32,"w":32,"h":32},
+	"frame": {"x":384,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -226,7 +226,7 @@
 },
 "ant_worker_2.png":
 {
-	"frame": {"x":0,"y":64,"w":32,"h":32},
+	"frame": {"x":416,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -234,7 +234,7 @@
 },
 "ant_worker_3.png":
 {
-	"frame": {"x":32,"y":64,"w":32,"h":32},
+	"frame": {"x":448,"y":32,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -242,7 +242,7 @@
 },
 "ant_worker_4.png":
 {
-	"frame": {"x":64,"y":64,"w":32,"h":32},
+	"frame": {"x":0,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -250,7 +250,7 @@
 },
 "ant_worker_5.png":
 {
-	"frame": {"x":96,"y":64,"w":32,"h":32},
+	"frame": {"x":32,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -258,7 +258,7 @@
 },
 "ant_worker_6.png":
 {
-	"frame": {"x":128,"y":64,"w":32,"h":32},
+	"frame": {"x":64,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -266,7 +266,7 @@
 },
 "ant_worker_7.png":
 {
-	"frame": {"x":160,"y":64,"w":32,"h":32},
+	"frame": {"x":96,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -274,7 +274,7 @@
 },
 "ant_worker_8.png":
 {
-	"frame": {"x":192,"y":64,"w":32,"h":32},
+	"frame": {"x":128,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -282,7 +282,7 @@
 },
 "ant_worker_dead.png":
 {
-	"frame": {"x":224,"y":64,"w":32,"h":32},
+	"frame": {"x":160,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -290,7 +290,7 @@
 },
 "grass.png":
 {
-	"frame": {"x":170,"y":168,"w":64,"h":64},
+	"frame": {"x":45,"y":193,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
@@ -298,7 +298,7 @@
 },
 "ground_beetle_1.png":
 {
-	"frame": {"x":256,"y":64,"w":32,"h":32},
+	"frame": {"x":192,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -306,7 +306,7 @@
 },
 "ground_beetle_2.png":
 {
-	"frame": {"x":288,"y":64,"w":32,"h":32},
+	"frame": {"x":224,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -314,7 +314,7 @@
 },
 "ground_beetle_3.png":
 {
-	"frame": {"x":320,"y":64,"w":32,"h":32},
+	"frame": {"x":256,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -322,7 +322,7 @@
 },
 "ground_beetle_4.png":
 {
-	"frame": {"x":352,"y":64,"w":32,"h":32},
+	"frame": {"x":288,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -330,7 +330,7 @@
 },
 "ground_beetle_5.png":
 {
-	"frame": {"x":384,"y":64,"w":32,"h":32},
+	"frame": {"x":320,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -338,7 +338,7 @@
 },
 "ground_beetle_6.png":
 {
-	"frame": {"x":416,"y":64,"w":32,"h":32},
+	"frame": {"x":352,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -346,7 +346,7 @@
 },
 "ground_beetle_7.png":
 {
-	"frame": {"x":0,"y":96,"w":32,"h":32},
+	"frame": {"x":384,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -354,7 +354,7 @@
 },
 "ground_beetle_8.png":
 {
-	"frame": {"x":32,"y":96,"w":32,"h":32},
+	"frame": {"x":416,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -362,7 +362,7 @@
 },
 "ground_beetle_dead.png":
 {
-	"frame": {"x":64,"y":96,"w":32,"h":32},
+	"frame": {"x":448,"y":64,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -370,7 +370,7 @@
 },
 "item_ant_food_1v.png":
 {
-	"frame": {"x":96,"y":96,"w":32,"h":32},
+	"frame": {"x":0,"y":96,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -378,7 +378,7 @@
 },
 "item_bug_corpse_1v.png":
 {
-	"frame": {"x":80,"y":168,"w":45,"h":65},
+	"frame": {"x":446,"y":128,"w":45,"h":65},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":65},
@@ -386,7 +386,7 @@
 },
 "item_bug_corpse_2v.png":
 {
-	"frame": {"x":125,"y":168,"w":45,"h":65},
+	"frame": {"x":0,"y":193,"w":45,"h":65},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":65},
@@ -394,7 +394,7 @@
 },
 "item_flower_1v.png":
 {
-	"frame": {"x":128,"y":96,"w":32,"h":32},
+	"frame": {"x":32,"y":96,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -402,7 +402,7 @@
 },
 "item_flower_2v.png":
 {
-	"frame": {"x":160,"y":96,"w":32,"h":32},
+	"frame": {"x":64,"y":96,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -410,7 +410,7 @@
 },
 "item_flower_3v.png":
 {
-	"frame": {"x":192,"y":96,"w":32,"h":32},
+	"frame": {"x":96,"y":96,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -418,7 +418,7 @@
 },
 "item_honeydew_1v.png":
 {
-	"frame": {"x":224,"y":96,"w":32,"h":32},
+	"frame": {"x":128,"y":96,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -426,7 +426,7 @@
 },
 "item_leaf_1v.png":
 {
-	"frame": {"x":256,"y":96,"w":32,"h":32},
+	"frame": {"x":160,"y":96,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -434,7 +434,7 @@
 },
 "item_leaf_2v.png":
 {
-	"frame": {"x":288,"y":96,"w":32,"h":32},
+	"frame": {"x":192,"y":96,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -442,7 +442,7 @@
 },
 "item_leaf_3v.png":
 {
-	"frame": {"x":320,"y":96,"w":32,"h":32},
+	"frame": {"x":224,"y":96,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -450,7 +450,15 @@
 },
 "item_leaf_4v.png":
 {
-	"frame": {"x":352,"y":96,"w":32,"h":32},
+	"frame": {"x":256,"y":96,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"item_nectar_1v.png":
+{
+	"frame": {"x":288,"y":96,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -458,7 +466,7 @@
 },
 "item_source_honeydew.png":
 {
-	"frame": {"x":234,"y":168,"w":90,"h":110},
+	"frame": {"x":109,"y":193,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -466,7 +474,23 @@
 },
 "item_source_honeydew_not_fertile.png":
 {
-	"frame": {"x":324,"y":168,"w":90,"h":110},
+	"frame": {"x":199,"y":193,"w":90,"h":110},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
+	"sourceSize": {"w":90,"h":110}
+},
+"item_source_nectar.png":
+{
+	"frame": {"x":289,"y":193,"w":90,"h":110},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
+	"sourceSize": {"w":90,"h":110}
+},
+"item_source_nectar_not_fertile.png":
+{
+	"frame": {"x":379,"y":193,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -474,7 +498,7 @@
 },
 "item_stick_1v.png":
 {
-	"frame": {"x":384,"y":128,"w":38,"h":32},
+	"frame": {"x":288,"y":128,"w":38,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":38,"h":32},
@@ -482,7 +506,7 @@
 },
 "item_stick_2v.png":
 {
-	"frame": {"x":384,"y":96,"w":32,"h":32},
+	"frame": {"x":320,"y":96,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -490,7 +514,7 @@
 },
 "ladybug_1.png":
 {
-	"frame": {"x":416,"y":96,"w":32,"h":32},
+	"frame": {"x":352,"y":96,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -498,7 +522,7 @@
 },
 "ladybug_2.png":
 {
-	"frame": {"x":0,"y":128,"w":32,"h":32},
+	"frame": {"x":384,"y":96,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -506,7 +530,7 @@
 },
 "ladybug_3.png":
 {
-	"frame": {"x":32,"y":128,"w":32,"h":32},
+	"frame": {"x":416,"y":96,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -514,7 +538,7 @@
 },
 "ladybug_4.png":
 {
-	"frame": {"x":64,"y":128,"w":32,"h":32},
+	"frame": {"x":448,"y":96,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -522,7 +546,7 @@
 },
 "ladybug_5.png":
 {
-	"frame": {"x":96,"y":128,"w":32,"h":32},
+	"frame": {"x":0,"y":128,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -530,7 +554,7 @@
 },
 "ladybug_6.png":
 {
-	"frame": {"x":128,"y":128,"w":32,"h":32},
+	"frame": {"x":32,"y":128,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -538,7 +562,7 @@
 },
 "ladybug_7.png":
 {
-	"frame": {"x":160,"y":128,"w":32,"h":32},
+	"frame": {"x":64,"y":128,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -546,7 +570,7 @@
 },
 "ladybug_8.png":
 {
-	"frame": {"x":192,"y":128,"w":32,"h":32},
+	"frame": {"x":96,"y":128,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -554,7 +578,7 @@
 },
 "ladybug_dead.png":
 {
-	"frame": {"x":224,"y":128,"w":32,"h":32},
+	"frame": {"x":128,"y":128,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -562,7 +586,7 @@
 },
 "marker_cross.png":
 {
-	"frame": {"x":256,"y":128,"w":32,"h":32},
+	"frame": {"x":160,"y":128,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -570,7 +594,7 @@
 },
 "marker_eat.png":
 {
-	"frame": {"x":288,"y":128,"w":32,"h":32},
+	"frame": {"x":192,"y":128,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -578,7 +602,7 @@
 },
 "marker_pillage.png":
 {
-	"frame": {"x":320,"y":128,"w":32,"h":32},
+	"frame": {"x":224,"y":128,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -586,7 +610,7 @@
 },
 "marker_pointer.png":
 {
-	"frame": {"x":352,"y":128,"w":32,"h":32},
+	"frame": {"x":256,"y":128,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -594,7 +618,7 @@
 },
 "nest.png":
 {
-	"frame": {"x":422,"y":128,"w":40,"h":40},
+	"frame": {"x":326,"y":128,"w":40,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
@@ -602,7 +626,7 @@
 },
 "nest_building.png":
 {
-	"frame": {"x":0,"y":168,"w":40,"h":40},
+	"frame": {"x":366,"y":128,"w":40,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
@@ -610,7 +634,7 @@
 },
 "nest_destroyed.png":
 {
-	"frame": {"x":40,"y":168,"w":40,"h":40},
+	"frame": {"x":406,"y":128,"w":40,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
@@ -618,7 +642,7 @@
 },
 "tree_summer.png":
 {
-	"frame": {"x":0,"y":278,"w":462,"h":500},
+	"frame": {"x":0,"y":303,"w":462,"h":500},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":462,"h":500},
@@ -637,8 +661,8 @@
 	"version": "1.1",
 	"image": "world_spritesheet.png",
 	"format": "RGBA8888",
-	"size": {"w":462,"h":778},
+	"size": {"w":491,"h":803},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:04dca8e2d98850fb63a24cbd816c687c:5c7af8fca119f70793f5e352d94b5ce3:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:2f88ff5d7dcc68db6c109ed63c7c7353:34255ce69d57e254aecda97a526a4a99:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }

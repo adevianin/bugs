@@ -103,12 +103,12 @@ class AntBody(LiveBody):
         else:
             self.sayer.emit(phrase)
     
-    def look_around_for_food(self):
-        honeydew_filter: Callable[[ItemSource], bool] = lambda item_source: item_source.item_type == ItemTypes.HONEYDEW
-        return self.look_around(types_list=[EntityTypes.ITEM], filter=honeydew_filter)
+    # def look_around_for_food(self):
+    #     honeydew_filter: Callable[[ItemSource], bool] = lambda item_source: item_source.item_type == ItemTypes.HONEYDEW
+    #     return self.look_around(types_list=[EntityTypes.ITEM], filter=honeydew_filter)
     
     def look_around_for_food_sources(self) -> List[ItemSource]:
-        honeydew_filter: Callable[[ItemSource], bool] = lambda item_source: item_source.item_type == ItemTypes.HONEYDEW
+        honeydew_filter: Callable[[ItemSource], bool] = lambda item_source: item_source.item_type == ItemTypes.HONEYDEW or item_source.item_type == ItemTypes.NECTAR
         return self.look_around(types_list=[EntityTypes.ITEM_SOURCE], filter=honeydew_filter, nearest_first=True)
     
     def look_around_for_building_items(self) -> List[Item]:

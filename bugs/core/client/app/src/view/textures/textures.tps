@@ -227,6 +227,7 @@
             <key type="filename">images/item_leaf_2v.png</key>
             <key type="filename">images/item_leaf_3v.png</key>
             <key type="filename">images/item_leaf_4v.png</key>
+            <key type="filename">images/item_nectar_1v.png</key>
             <key type="filename">images/item_stick_2v.png</key>
             <key type="filename">images/ladybug_1.png</key>
             <key type="filename">images/ladybug_2.png</key>
@@ -288,6 +289,8 @@
             </struct>
             <key type="filename">images/item_source_honeydew.png</key>
             <key type="filename">images/item_source_honeydew_not_fertile.png</key>
+            <key type="filename">images/item_source_nectar.png</key>
+            <key type="filename">images/item_source_nectar_not_fertile.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -434,6 +437,9 @@
                     <filename>images/ladybug_dead.png</filename>
                     <filename>images/item_bug_corpse_1v.png</filename>
                     <filename>images/item_bug_corpse_2v.png</filename>
+                    <filename>images/item_nectar_1v.png</filename>
+                    <filename>images/item_source_nectar.png</filename>
+                    <filename>images/item_source_nectar_not_fertile.png</filename>
                 </array>
             </struct>
         </map>

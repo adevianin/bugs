@@ -131,13 +131,13 @@ class WorldService():
 
         rect_size = Size(half_chunk_width, WorldService.CHUNK_SIZE.height)
         position = self._randomly_place_obj_in_rect(chunk_pos, rect_size, HoneydewItemSourceBody.SIZE)
-        self._build_honeydew_item_source(world, position)
+        self._build_random_food_source(world, position)
 
         if honeydew_count > 1:
             rect_size = Size(half_chunk_width, WorldService.CHUNK_SIZE.height)
             rect_pos = Point(chunk_pos.x + half_chunk_width, chunk_pos.y)
             position = self._randomly_place_obj_in_rect(rect_pos, rect_size, HoneydewItemSourceBody.SIZE)
-            self._build_honeydew_item_source(world, position)
+            self._build_random_food_source(world, position)
 
         position = Point(chunk_pos.x + half_chunk_width, chunk_pos.y + half_chunk_height)
         size = Size(WorldService.CHUNK_SIZE.width - 10, WorldService.CHUNK_SIZE.height - 10)
@@ -160,14 +160,14 @@ class WorldService():
         position = self._randomly_place_obj_in_rect(rect_pos, rect_size, HoneydewItemSourceBody.SIZE)
         if is_mirror:
             position = position.mirror_x_axis(mirror_x)
-        self._build_honeydew_item_source(world, position)
+        self._build_random_food_source(world, position)
 
         rect_size = Size(half_chunk_width, half_chunk_height)
         rect_pos = Point(chunk_pos.x + half_chunk_width, chunk_pos.y + half_chunk_height)
         position = self._randomly_place_obj_in_rect(rect_pos, rect_size, HoneydewItemSourceBody.SIZE)
         if is_mirror:
             position = position.mirror_x_axis(mirror_x)
-        self._build_honeydew_item_source(world, position)
+        self._build_random_food_source(world, position)
 
     def _generate_chunk_type_3(self, chunk_pos: Point, world: World, edge_info: Dict):
         half_chunk_height = int(WorldService.CHUNK_SIZE.height / 2)
@@ -179,7 +179,7 @@ class WorldService():
         rect_size = Size(WorldService.CHUNK_SIZE.width, half_chunk_height - 50)
         rect_pos = Point(chunk_pos.x, chunk_pos.y + half_chunk_height + 50)
         position = self._randomly_place_obj_in_rect(rect_pos, rect_size, HoneydewItemSourceBody.SIZE)
-        self._build_honeydew_item_source(world, position)
+        self._build_random_food_source(world, position)
 
     def _randomly_place_obj_in_rect(self, rect_pos: Point, rect_size: Size, obj_size: Size, padding: int = 10):
         if obj_size.width + 2 * padding > rect_size.width or obj_size.height + 2 * padding > rect_size.height:
@@ -196,9 +196,18 @@ class WorldService():
         world.map.add_entity(flower_area)
 
     def _build_honeydew_item_source(self, world: World, position: Point):
-        fertility = random.randint(1, 7)
-        item_source = self._item_source_factory.build_new_honeydew_item_source(position, ItemTypes.HONEYDEW, fertility, 10, 40, world.current_season)
+        fertility = random.randint(1, 14)
+        item_source = self._item_source_factory.build_new_item_source(position, ItemTypes.HONEYDEW, fertility, 10, 40, world.current_season)
         world.map.add_entity(item_source)
+
+    def _build_nectar_item_source(self, world: World, position: Point):
+        fertility = random.randint(1, 7)
+        item_source = self._item_source_factory.build_new_item_source(position, ItemTypes.NECTAR, fertility, 10, 40, world.current_season)
+        world.map.add_entity(item_source)
+
+    def _build_random_food_source(self, world: World, position: Point):
+        methods = [self._build_honeydew_item_source, self._build_nectar_item_source]
+        return random.choice(methods)(world, position)
 
     def _build_tree_pack(self, world: World, tree_pos: Point):
         tree = self._tree_factory.build_new_tree(tree_pos)
