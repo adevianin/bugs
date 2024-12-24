@@ -69,13 +69,12 @@ class WorldService():
         ladybug_colony = self._colony_factory.build_ladybug_colony(LADYBUG_COLONY_ID, map, colony_relations_table)
         last_used_id = LADYBUG_COLONY_ID
         colonies = [ladybug_colony]
-        id_generator = IdGenerator.init(last_used_id)
         nuptial_environments = []
         player_stats_list = []
         climate = self._climate_factory.build_climate(1, +1)
         notifications = []
         world = self._world_factory.build_world(entities_collection, map, colonies, colony_relations_table, nuptial_environments, player_stats_list, climate, 
-                                                0, notifications)
+                                                0, notifications, last_used_id)
         
         for chunk_position, indexes, edge_info in self._chunks_positions(chunk_rows_count, chunk_cols_count):
             self._generate_chunk(chunk_position, world, edge_info)
