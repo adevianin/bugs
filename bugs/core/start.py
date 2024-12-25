@@ -226,5 +226,19 @@ def start():
                                notification_client_serializer, world_repository, colony_service, player_service, nuptial_environment_service, ant_service, 
                                action_accumulator, rating_service, world_service)
 
-    world = world_facade.init_world(game_logger)
+    world = world_facade.init_world()
+
+    colony_service.set_world(world)
+    player_service.set_world(world)
+    nuptial_environment_service.set_world(world)
+    ant_service.set_world(world)
+    rating_service.set_world(world)
+    world_service.set_world(world)
+
+    world.set_logger(game_logger)
+
+    # MY_TEST_ENV['attacker'] = world_facade.world.map.get_entity_by_id(5)
+    # MY_TEST_ENV['attacker2'] = world_facade.world.map.get_entity_by_id(6)
+    # MY_TEST_ENV['attacker3'] = world_facade.world.map.get_entity_by_id(7)
+
     world.run()
