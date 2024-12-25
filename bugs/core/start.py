@@ -237,8 +237,4 @@ def start():
 
     world.set_logger(game_logger)
 
-    # MY_TEST_ENV['attacker'] = world_facade.world.map.get_entity_by_id(5)
-    # MY_TEST_ENV['attacker2'] = world_facade.world.map.get_entity_by_id(6)
-    # MY_TEST_ENV['attacker3'] = world_facade.world.map.get_entity_by_id(7)
-
     world.run()
