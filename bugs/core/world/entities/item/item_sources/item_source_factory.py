@@ -8,7 +8,7 @@ from core.world.entities.item.item_sources.nectar_item_source.nectart_item_sourc
 from core.world.entities.base.stats_library import StatsLibrary
 from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.world.season_types import SeasonTypes
-from core.world.id_generator import IdGenerator
+from core.world.entities.world.id_generator import IdGenerator
 
 class ItemSourceFactory():
 

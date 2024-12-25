@@ -20,6 +20,7 @@ from core.world.services.world_service import WorldService
 from core.world.entities.world.season_types import SeasonTypes
 from core.world.settings import WORLD_ID
 from core.world.entities.world.world import World
+from core.world.entities.world.id_generator import IdGenerator
 
 from typing import Callable, List, Dict
 
@@ -66,9 +67,16 @@ class WorldFacade:
         return self._world
         
     def init_world(self) -> World:
+        is_world_newly_generated = False
         self._world = self._world_repository.get(WORLD_ID)
         if not self._world:
-            self._world = self._world_service.generate_new_world(4, 4)
+            self._world = self._world_service.build_new_empty_world(4, 4)
+            is_world_newly_generated = True
+
+        IdGenerator.set_global_generator(self._world.id_generator)
+
+        if is_world_newly_generated:
+            self._world_service.populate_empty_world(self._world)
 
         return self._world
 

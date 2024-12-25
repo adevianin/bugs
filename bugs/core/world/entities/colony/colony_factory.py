@@ -7,7 +7,7 @@ from core.world.entities.colony.base.relation_tester import RelationTester
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
 from .colonies.ladybug_colony.ladybug_colony import LadybugColony
-from core.world.id_generator import IdGenerator
+from core.world.entities.world.id_generator import IdGenerator
 
 class ColonyFactory():
 

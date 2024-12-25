@@ -24,7 +24,7 @@ from .male.male_ant_body import MaleAntBody
 from .male.male_ant import MaleAnt
 from .base.guardian_behaviors import GuardianBehaviors
 from core.world.entities.base.ownership_config import OwnershipConfig
-from core.world.id_generator import IdGenerator
+from core.world.entities.world.id_generator import IdGenerator
 
 class AntFactory():
 

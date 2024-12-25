@@ -4,7 +4,6 @@ from core.world.entities.base.entity_collection import EntityCollection
 from core.world.entities.map.map_factory import MapFactory
 from core.world.utils.size import Size
 from core.world.entities.colony.colony_factory import ColonyFactory
-from core.world.id_generator import IdGenerator
 from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
 from core.world.settings import LADYBUG_COLONY_ID
 from core.world.entities.climate.climate_factory import ClimateFactory
@@ -60,8 +59,8 @@ class WorldService():
         self._world.map.size = self._calc_map_size(after_expand_chunk_cols_count, after_expand_chunk_rows_count)
 
         return None
-
-    def generate_new_world(self, chunk_cols_count: int, chunk_rows_count: int) -> World:
+    
+    def build_new_empty_world(self, chunk_cols_count: int, chunk_rows_count: int) -> World:
         map_size = self._calc_map_size(chunk_cols_count, chunk_rows_count)
         entities_collection = EntityCollection.build()
         map = self._map_factory.build_map(map_size, entities_collection)
@@ -75,6 +74,12 @@ class WorldService():
         notifications = []
         world = self._world_factory.build_world(entities_collection, map, colonies, colony_relations_table, nuptial_environments, player_stats_list, climate, 
                                                 0, notifications, last_used_id)
+        
+        return world
+
+    def populate_empty_world(self, world: World):
+        chunk_rows_count = int(world.map.size.width / self.CHUNK_SIZE.width)
+        chunk_cols_count = int(world.map.size.height / self.CHUNK_SIZE.height)
         
         for chunk_position, indexes, edge_info in self._chunks_positions(chunk_rows_count, chunk_cols_count):
             self._generate_chunk(chunk_position, world, edge_info)

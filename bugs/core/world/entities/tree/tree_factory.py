@@ -4,7 +4,7 @@ from .tree_body import TreeBody
 from core.world.entities.base.stats_library import StatsLibrary
 from core.world.utils.point import Point
 from core.world.entities.base.ownership_config import OwnershipConfig
-from core.world.id_generator import IdGenerator
+from core.world.entities.world.id_generator import IdGenerator
 
 class TreeFactory():
 

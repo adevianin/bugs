@@ -18,7 +18,7 @@ from core.world.entities.item.items.bug_corpse.bug_corpse_item import BugCorpseI
 from core.world.entities.item.items.bug_corpse.bug_corpse_item_body import BugCorpseItemBody
 from .nectar_item.nectar_item import NectarItem
 from .nectar_item.nectar_item_body import NectarItemBody
-from core.world.id_generator import IdGenerator
+from core.world.entities.world.id_generator import IdGenerator
 
 import random
 

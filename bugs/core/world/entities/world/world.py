@@ -1,13 +1,9 @@
-from threading import Thread
-import time
-
 from core.world.entities.map.map import Map
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME, STEPS_IN_YEAR, SPRING_START_YEAR_STEP, SUMMER_START_YEAR_STEP, AUTUMN_START_YEAR_STEP, WINTER_START_YEAR_STEP
 from core.world.entities.colony.base.colony import Colony
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 from core.world.entities.base.entity_collection import EntityCollection
-from core.world.id_generator import IdGenerator
 from core.world.entities.colony.base.colony_relations_manager import ColonyRelationsManager
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.action.colony_born_action import ColonyBornAction
@@ -20,16 +16,18 @@ from .notification.notifications.notification import Notification
 from .player_stats import PlayerStats
 from .season_types import SeasonTypes
 from core.world.entities.ant.base.ant import Ant
-from logging import Logger
-import threading
+from core.world.entities.world.id_generator import IdGenerator
 
+from logging import Logger
 from typing import List, Callable
+import threading
+import time
 
 class World():
 
     def __init__(self, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: List[Colony],  
                  birthers, spawners, nuptial_environments: List[NuptialEnvironment], player_stats_list: List[PlayerStats], climate: Climate, 
-                 sensor_handlers, current_step: int, managers):
+                 sensor_handlers, current_step: int, managers, id_generator: IdGenerator):
         self.lock = threading.Lock()
         self._entities_collection = entities_collection
         self._map = map
@@ -48,8 +46,13 @@ class World():
         self._visual_sensor_handler: VisualSensorHandler = sensor_handlers['visual_sensor_handler']
         self._temperature_sensor_handler: TemperatureSensorHandler = sensor_handlers['temperature_sensor_handler']
         self._notification_manager: NotificationManager = managers['notification_manager']
+        self._id_generator = id_generator
 
         self._event_bus.add_listener('colony_died', self._on_colony_died)
+
+    @property
+    def id_generator(self):
+        return self._id_generator
 
     @property
     def current_step(self):
@@ -156,7 +159,7 @@ class World():
     def run(self):
         if (self._is_world_running):
             return
-        world_thread = Thread(target=self._run_world_loop)
+        world_thread = threading.Thread(target=self._run_world_loop)
         world_thread.start()
         self._world_loop_stop_flag = False
         self._is_world_running = True

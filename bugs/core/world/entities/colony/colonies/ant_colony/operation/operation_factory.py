@@ -15,7 +15,7 @@ from .build_fortification_operation import BuildFortificationOperation
 from .base.fight.fight_factory import FightFactory
 from .base.fight.fight import Fight
 from core.world.entities.item.items.bug_corpse.bug_corpse_item import BugCorpseItem
-from core.world.id_generator import IdGenerator
+from core.world.entities.world.id_generator import IdGenerator
 
 class OperationFactory():
 

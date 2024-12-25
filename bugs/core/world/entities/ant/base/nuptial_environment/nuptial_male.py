@@ -1,7 +1,7 @@
 from core.world.entities.ant.base.genetic.genome import Genome
 from core.world.entities.ant.base.ant_stats import AntStats
 from core.world.entities.ant.base.ant_types import AntTypes
-from core.world.id_generator import IdGenerator
+from core.world.entities.world.id_generator import IdGenerator
 
 class NuptialMale():
 

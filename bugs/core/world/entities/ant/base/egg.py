@@ -1,7 +1,7 @@
 from .genetic.genome import Genome
 from .ant_types import AntTypes
 from .egg_states import EggStates
-from core.world.id_generator import IdGenerator
+from core.world.entities.world.id_generator import IdGenerator
 
 class Egg():
 

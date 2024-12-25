@@ -10,7 +10,7 @@ from core.world.entities.base.ownership_config import OwnershipConfig
 from .ladybug_body import LadybugBody
 from .ladybug_mind import LadybugMind
 from .ladybug import Ladybug
-from core.world.id_generator import IdGenerator
+from core.world.entities.world.id_generator import IdGenerator
 
 class LadybugFactory():
 

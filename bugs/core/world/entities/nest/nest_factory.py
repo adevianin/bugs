@@ -7,7 +7,7 @@ from core.world.entities.base.stats_library import StatsLibrary
 from core.world.entities.ant.base.egg import Egg
 from core.world.entities.base.ownership_config import OwnershipConfig
 from .food_sources_data_manager import FoodSourcesDataManager
-from core.world.id_generator import IdGenerator
+from core.world.entities.world.id_generator import IdGenerator
 from typing import List, Dict
 
 class NestFactory():

@@ -7,7 +7,7 @@ from core.world.entities.base.body import Body
 from core.world.entities.base.stats_library import StatsLibrary
 from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.world.season_types import SeasonTypes
-from core.world.id_generator import IdGenerator
+from core.world.entities.world.id_generator import IdGenerator
 
 class ItemAreaFactory():
 

@@ -16,7 +16,6 @@ from core.world.entities.base.entity import Entity
 from .player_stats_serializer import PlayerStatsSerializer
 from .tree_serializer import TreeSerializer
 from .ladybug_serializer import LadybugSerializer
-from core.world.id_generator import IdGenerator
 
 from typing import List, Dict
 
@@ -60,7 +59,7 @@ class WorldSerializer():
                     'height': world.map.size.height
                 }
             },
-            'last_used_id': IdGenerator.last_used_id,
+            'last_used_id': world.id_generator.last_used_id,
             'current_step': world.current_step,
             'notifications': [],
             'player_stats': []

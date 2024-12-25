@@ -1,5 +1,5 @@
 from core.world.entities.ant.base.genetic.genes.base.base_gene import BaseGene
-from core.world.id_generator import IdGenerator
+from core.world.entities.world.id_generator import IdGenerator
 
 class SpecieGene():
 

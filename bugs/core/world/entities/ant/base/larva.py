@@ -1,6 +1,6 @@
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.ant.base.genetic.genome import Genome
-from core.world.id_generator import IdGenerator
+from core.world.entities.world.id_generator import IdGenerator
 
 class Larva():
 
