@@ -19,6 +19,7 @@ from core.world.services.rating_serivice import RatingService
 from core.world.services.world_service import WorldService
 from core.world.entities.world.season_types import SeasonTypes
 from core.world.settings import WORLD_ID
+from core.world.entities.world.world import World
 
 from typing import Callable, List, Dict
 
@@ -64,10 +65,12 @@ class WorldFacade:
     def world(self):
         return self._world
         
-    def init_world(self):
+    def init_world(self) -> World:
         self._world = self._world_repository.get(WORLD_ID)
         if not self._world:
             self._world = self._world_service.generate_new_world(4, 4)
+
+        return self._world
 
     def add_listener(self, event_name: str, callback: Callable):
         self._events.add_listener(event_name, callback)
