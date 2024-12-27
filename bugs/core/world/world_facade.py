@@ -66,7 +66,7 @@ class WorldFacade:
     def world(self):
         return self._world
         
-    def init_world(self) -> World:
+    def init_world(self, logger) -> World:
         is_world_newly_generated = False
         self._world = self._world_repository.get(WORLD_ID)
         if not self._world:
@@ -77,6 +77,15 @@ class WorldFacade:
 
         if is_world_newly_generated:
             self._world_service.populate_empty_world(self._world)
+
+        self._world.set_logger(logger)
+
+        self._colony_service.set_world(self._world)
+        self._player_service.set_world(self._world)
+        self._nuptial_environment_service.set_world(self._world)
+        self._ant_service.set_world(self._world)
+        self._rating_service.set_world(self._world)
+        self._world_service.set_world(self._world)
 
         return self._world
 
