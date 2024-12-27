@@ -72,7 +72,7 @@ class WorldService():
         player_stats_list = []
         climate = self._climate_factory.build_climate(1, +1)
         notifications = []
-        world = self._world_factory.build_world(entities_collection, map, colonies, colony_relations_table, nuptial_environments, player_stats_list, climate, 
+        world = self._world_factory.build_world(map, colonies, colony_relations_table, nuptial_environments, player_stats_list, climate, 
                                                 0, notifications, last_used_id)
         
         return world

@@ -35,7 +35,7 @@ class WorldFactory():
         self._nest_factory = nest_factory
         self._ladybug_factory = ladybug_factory
 
-    def build_world(self, entities_collection: EntityCollection, map: Map, colonies: List[Colony], colony_relations_table: ColonyRelationsTable, 
+    def build_world(self, map: Map, colonies: List[Colony], colony_relations_table: ColonyRelationsTable, 
                     nuptial_environments: List[NuptialEnvironment], player_stats_list: List[PlayerStats], climate: Climate, current_step: int, 
                     notifications: List[Notification], last_used_id: int) -> World:
         id_generator = IdGenerator(last_used_id)
@@ -58,6 +58,6 @@ class WorldFactory():
             'notification_manager': NotificationManager(self._event_bus, notifications)
         }
 
-        return World(entities_collection, map, self._event_bus, colonies, birthers, spawners, nuptial_environments, 
+        return World(map, self._event_bus, colonies, birthers, spawners, nuptial_environments, 
                     player_stats_list, climate, sensor_handlers, current_step, managers, id_generator)
     

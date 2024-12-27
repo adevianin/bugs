@@ -117,7 +117,7 @@ class WorldDeserializer():
         current_step = world_json['current_step']
         notifications = [self._notification_deserializer.deserialize(notification_json) for notification_json in world_json['notifications']]
 
-        world = self._world_factory.build_world(entities_collection, map, colonies, colony_relations_table, nuptial_environments, player_stats_list, climate, 
+        world = self._world_factory.build_world(map, colonies, colony_relations_table, nuptial_environments, player_stats_list, climate, 
                                                 current_step, notifications, last_used_id)
 
         return world

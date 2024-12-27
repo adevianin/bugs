@@ -25,11 +25,10 @@ import time
 
 class World():
 
-    def __init__(self, entities_collection: EntityCollection, map: Map, event_bus: EventEmitter, colonies: List[Colony],  
+    def __init__(self, map: Map, event_bus: EventEmitter, colonies: List[Colony],  
                  birthers, spawners, nuptial_environments: List[NuptialEnvironment], player_stats_list: List[PlayerStats], climate: Climate, 
                  sensor_handlers, current_step: int, managers, id_generator: IdGenerator):
         self.lock = threading.Lock()
-        self._entities_collection = entities_collection
         self._map = map
         self._event_bus = event_bus
         self._colonies: List[Colony] = colonies
