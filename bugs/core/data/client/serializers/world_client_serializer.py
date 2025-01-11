@@ -1,10 +1,9 @@
 from core.world.entities.world.world import World
-from core.world.world_client_serializer_interface import iWorldClientSerializer
 from .colony_client_serializer import ColonyClientSerializer
 from .climate_client_serializer import ClimateClientSerializer
 from .common_entity_client_serializer import CommonEntityClientSerializer
 
-class WorldClientSerializer(iWorldClientSerializer):
+class WorldClientSerializer():
 
     def __init__(self, common_entity_serializer: CommonEntityClientSerializer, colony_serializer: ColonyClientSerializer, climate_serializer: ClimateClientSerializer):
         self._common_entity_serializer = common_entity_serializer

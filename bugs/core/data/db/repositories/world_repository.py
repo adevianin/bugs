@@ -1,8 +1,8 @@
 from core.world.world_repository_interface import iWorldRepository
 from core.world.entities.world.world import World
 from .world_data_repository import WorldDataRepository
-from core.data.serializers.world_serializer import WorldSerializer
-from core.data.deserializers.world_deserializer import WorldDeserializer
+from core.data.db.serializers.world_serializer import WorldSerializer
+from core.data.db.deserializers.world_deserializer import WorldDeserializer
 
 
 class WorldRepository(iWorldRepository):

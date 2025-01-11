@@ -1,4 +1,3 @@
-from core.world.action_client_serializer_interface import iActionClientSerializer
 from .util_client_serializer import UtilClientSerializer
 from .common_entity_client_serializer import CommonEntityClientSerializer
 from .larva_client_serializer import LarvaClientSerializer
@@ -44,7 +43,7 @@ from core.world.entities.action.nuptial_environment_specie_genes_changed_action 
 from core.world.entities.action.entity_hibernation_status_chenged_action import EntityHibernationStatusChangedAction
 from core.world.entities.action.ant_current_activity_changed_action import AntCurrentActivityChangedAction
 
-class ActionClientSerializer(iActionClientSerializer):
+class ActionClientSerializer():
 
     def __init__(self, common_entity_serializer: CommonEntityClientSerializer, util_serializer: UtilClientSerializer, larva_serializer: LarvaClientSerializer, egg_serializer: EggClientSerializer,
                  colony_serializer: ColonyClientSerializer, operation_serializer: OperationClientSerializer, notification_serializer: NotificationClientSerializer, 

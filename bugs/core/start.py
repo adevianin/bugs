@@ -1,59 +1,58 @@
-from core.data.repositories.world_data_repository import WorldDataRepository
-from core.data.repositories.world_repository import WorldRepository
-from core.data.repositories.usernames_repository import UsernamesRepository
+from core.data.db.repositories.world_data_repository import WorldDataRepository
+from core.data.db.repositories.world_repository import WorldRepository
+from core.data.db.repositories.usernames_repository import UsernamesRepository
 
-from core.data.deserializers.nest_deserializer import NestDeserializer
-from core.data.deserializers.ant_deserializer import AntDeserializer
-from core.data.deserializers.colony_deserializer import ColonyDeserializer
-from core.data.deserializers.thought_deserializer import ThoughtDeserializer
-from core.data.deserializers.operation_deserializer import OperationDeserializer
-from core.data.deserializers.item_source_deserializer import ItemSourceDeserializer
-from core.data.deserializers.item_area_deserializer import ItemAreaDeserializer
-from core.data.deserializers.formation_deserializer import FormationDeserializer
-from core.data.deserializers.fight_deserializer import FightDeserializer
-from core.data.deserializers.item_deserializer import ItemDeserializer
-from core.data.deserializers.map_deserializer import MapDeserializer
-from core.data.deserializers.gene_deserializer import GeneDeserializer
-from core.data.deserializers.larva_deserializer import LarvaDeserializer
-from core.data.deserializers.egg_deserializer import EggDeserializer
-from core.data.deserializers.nuptial_environment_deserializer import NuptialEnvironmentDeserializer
-from core.data.deserializers.genome_deserializer import GenomeDeserializer
-from core.data.deserializers.climate_deserializer import ClimateDeserializer
-from core.data.deserializers.notification_deserializer import NotificationDeserializer
-from core.data.deserializers.death_record_deserializer import DeathRecordDeserializer
-from core.data.deserializers.player_stats_deserializer import PlayerStatsDeserializer
-from core.data.deserializers.colony_relations_table_deserializer import ColonyRelationsTableDeserializer
-from core.data.deserializers.tree_deserializer import TreeDeserializer
-from core.data.deserializers.ladybug_deserializer import LadybugDeserializer
-from core.data.deserializers.world_deserializer import WorldDeserializer
+from core.data.db.deserializers.nest_deserializer import NestDeserializer
+from core.data.db.deserializers.ant_deserializer import AntDeserializer
+from core.data.db.deserializers.colony_deserializer import ColonyDeserializer
+from core.data.db.deserializers.thought_deserializer import ThoughtDeserializer
+from core.data.db.deserializers.operation_deserializer import OperationDeserializer
+from core.data.db.deserializers.item_source_deserializer import ItemSourceDeserializer
+from core.data.db.deserializers.item_area_deserializer import ItemAreaDeserializer
+from core.data.db.deserializers.formation_deserializer import FormationDeserializer
+from core.data.db.deserializers.fight_deserializer import FightDeserializer
+from core.data.db.deserializers.item_deserializer import ItemDeserializer
+from core.data.db.deserializers.map_deserializer import MapDeserializer
+from core.data.db.deserializers.gene_deserializer import GeneDeserializer
+from core.data.db.deserializers.larva_deserializer import LarvaDeserializer
+from core.data.db.deserializers.egg_deserializer import EggDeserializer
+from core.data.db.deserializers.nuptial_environment_deserializer import NuptialEnvironmentDeserializer
+from core.data.db.deserializers.genome_deserializer import GenomeDeserializer
+from core.data.db.deserializers.climate_deserializer import ClimateDeserializer
+from core.data.db.deserializers.notification_deserializer import NotificationDeserializer
+from core.data.db.deserializers.death_record_deserializer import DeathRecordDeserializer
+from core.data.db.deserializers.player_stats_deserializer import PlayerStatsDeserializer
+from core.data.db.deserializers.colony_relations_table_deserializer import ColonyRelationsTableDeserializer
+from core.data.db.deserializers.tree_deserializer import TreeDeserializer
+from core.data.db.deserializers.ladybug_deserializer import LadybugDeserializer
+from core.data.db.deserializers.world_deserializer import WorldDeserializer
 
-from core.data.serializers.larva_serializer import LarvaSerializer
-from core.data.serializers.egg_serializer import EggSerializer
-from core.data.serializers.nest_serializer import NestSerializer
-from core.data.serializers.world_serializer import WorldSerializer
-from core.data.serializers.ant_serializer import AntSerializer
-from core.data.serializers.thought_serializer import ThoughtSerializer
-from core.data.serializers.colony_serializer import ColonySerializer
-from core.data.serializers.operation_serializer import OperationSerializer
-from core.data.serializers.colony_relations_table_serializer import ColonyRelationsTableSerializer
-from core.data.serializers.item_serializer import ItemSerializer
-from core.data.serializers.item_area_serializer import ItemAreaSerializer
-from core.data.serializers.item_source_serializer import ItemSourceSerializer
-from core.data.serializers.formation_serializer import FormationSerializer
-from core.data.serializers.fight_serializer import FightSerializer
-from core.data.serializers.genes_serializer import GenesSerializer
-from core.data.serializers.nuptial_environment_serializer import NuptialEnvironmentSerializer
-from core.data.serializers.genome_serializer import GenomeSerializer
-from core.data.serializers.climate_serializer import ClimateSerializer
-from core.data.serializers.notification_serializer import NotificationSerializer
-from core.data.serializers.death_record_serializer import DeathRecordSerializer
-from core.data.serializers.player_stats_serializer import PlayerStatsSerializer
-from core.data.serializers.tree_serializer import TreeSerializer
-from core.data.serializers.ladybug_serializer import LadybugSerializer
+from core.data.db.serializers.larva_serializer import LarvaSerializer
+from core.data.db.serializers.egg_serializer import EggSerializer
+from core.data.db.serializers.nest_serializer import NestSerializer
+from core.data.db.serializers.world_serializer import WorldSerializer
+from core.data.db.serializers.ant_serializer import AntSerializer
+from core.data.db.serializers.thought_serializer import ThoughtSerializer
+from core.data.db.serializers.colony_serializer import ColonySerializer
+from core.data.db.serializers.operation_serializer import OperationSerializer
+from core.data.db.serializers.colony_relations_table_serializer import ColonyRelationsTableSerializer
+from core.data.db.serializers.item_serializer import ItemSerializer
+from core.data.db.serializers.item_area_serializer import ItemAreaSerializer
+from core.data.db.serializers.item_source_serializer import ItemSourceSerializer
+from core.data.db.serializers.formation_serializer import FormationSerializer
+from core.data.db.serializers.fight_serializer import FightSerializer
+from core.data.db.serializers.genes_serializer import GenesSerializer
+from core.data.db.serializers.nuptial_environment_serializer import NuptialEnvironmentSerializer
+from core.data.db.serializers.genome_serializer import GenomeSerializer
+from core.data.db.serializers.climate_serializer import ClimateSerializer
+from core.data.db.serializers.notification_serializer import NotificationSerializer
+from core.data.db.serializers.death_record_serializer import DeathRecordSerializer
+from core.data.db.serializers.player_stats_serializer import PlayerStatsSerializer
+from core.data.db.serializers.tree_serializer import TreeSerializer
+from core.data.db.serializers.ladybug_serializer import LadybugSerializer
 
 from core.world.world_facade import WorldFacade
 from core.world.utils.event_emiter import EventEmitter
-from core.world.action_accumulator import ActionAccumulator
 
 from core.world.entities.ant.ant_factory import AntFactory
 from core.world.entities.world.world_factory import WorldFactory
@@ -80,29 +79,30 @@ from core.world.services.ant_service import AntService
 from core.world.services.rating_serivice import RatingService
 from core.world.services.world_service import WorldService
 
-from core.sync.world_client_serializer import WorldClientSerializer
-from core.sync.colony_client_serializer import ColonyClientSerializer
-from core.sync.operation_client_serializer import OperationClientSerializer
-from core.sync.util_client_serializer import UtilClientSerializer
-from core.sync.larva_client_serializer import LarvaClientSerializer
-from core.sync.egg_client_serializer import EggClientSerializer
-from core.sync.stats_client_serializer import StatsClientSerializer
-from core.sync.item_client_serializer import ItemClientSerializer
-from core.sync.item_source_client_serializer import ItemSourceClientSerializer
-from core.sync.item_area_client_serializer import ItemAreaClientSerializer
-from core.sync.nest_client_serializer import NestClientSerializer
-from core.sync.ant_client_serializer import AntClientSerializer
-from core.sync.action_client_serializer import ActionClientSerializer
-from core.sync.common_entity_client_serializer import CommonEntityClientSerializer
-from core.sync.genes_client_serializer import GenesClientSerializer
-from core.sync.genome_client_serializer import GenomeClientSerializer
-from core.sync.nuptial_environment_client_serializer import NuptialEnvironmentClientSerializer
-from core.sync.climate_client_serializer import ClimateClientSerializer
-from core.sync.constants_client_serializer import ConstantsClientSerializer
-from core.sync.notification_client_serializer import NotificationClientSerializer
-from core.sync.death_record_client_serializer import DeathRecordClientSerializer
-from core.sync.tree_client_serializer import TreeClientSerializer
-from core.sync.ladybug_client_serializer import LadybugClientSerializer
+from core.data.client.serializers.world_client_serializer import WorldClientSerializer
+from core.data.client.serializers.colony_client_serializer import ColonyClientSerializer
+from core.data.client.serializers.operation_client_serializer import OperationClientSerializer
+from core.data.client.serializers.util_client_serializer import UtilClientSerializer
+from core.data.client.serializers.larva_client_serializer import LarvaClientSerializer
+from core.data.client.serializers.egg_client_serializer import EggClientSerializer
+from core.data.client.serializers.stats_client_serializer import StatsClientSerializer
+from core.data.client.serializers.item_client_serializer import ItemClientSerializer
+from core.data.client.serializers.item_source_client_serializer import ItemSourceClientSerializer
+from core.data.client.serializers.item_area_client_serializer import ItemAreaClientSerializer
+from core.data.client.serializers.nest_client_serializer import NestClientSerializer
+from core.data.client.serializers.ant_client_serializer import AntClientSerializer
+from core.data.client.serializers.action_client_serializer import ActionClientSerializer
+from core.data.client.serializers.common_entity_client_serializer import CommonEntityClientSerializer
+from core.data.client.serializers.genes_client_serializer import GenesClientSerializer
+from core.data.client.serializers.genome_client_serializer import GenomeClientSerializer
+from core.data.client.serializers.nuptial_environment_client_serializer import NuptialEnvironmentClientSerializer
+from core.data.client.serializers.climate_client_serializer import ClimateClientSerializer
+from core.data.client.serializers.constants_client_serializer import ConstantsClientSerializer
+from core.data.client.serializers.notification_client_serializer import NotificationClientSerializer
+from core.data.client.serializers.death_record_client_serializer import DeathRecordClientSerializer
+from core.data.client.serializers.tree_client_serializer import TreeClientSerializer
+from core.data.client.serializers.ladybug_client_serializer import LadybugClientSerializer
+from core.data.client.step_data_manager import StepDataManager
 
 import logging
 
@@ -194,6 +194,8 @@ def start():
     rating_service = RatingService(event_bus, usernames_repository)
     world_service = WorldService(world_factory, map_factory, colony_factory, climate_factory, tree_factory, item_area_factory, item_source_factory)
 
+    world_facade = WorldFacade(event_bus, world_repository, colony_service, player_service, nuptial_environment_service, ant_service, rating_service, world_service)
+
     stats_client_serializer = StatsClientSerializer()
     genes_client_serializer = GenesClientSerializer()
     genome_client_serializer = GenomeClientSerializer(genes_client_serializer)
@@ -209,8 +211,7 @@ def start():
     ant_client_serializer = AntClientSerializer(util_client_serializer, stats_client_serializer, genome_client_serializer)
     tree_client_serializer = TreeClientSerializer(util_client_serializer)
     ladybug_client_serializer = LadybugClientSerializer(util_client_serializer)
-    common_entity_client_serializer = CommonEntityClientSerializer(item_client_serializer, item_source_client_serializer, item_area_client_serializer, nest_client_serializer, 
-                                                                   ant_client_serializer, tree_client_serializer, ladybug_client_serializer)
+    common_entity_client_serializer = CommonEntityClientSerializer(item_client_serializer, item_source_client_serializer, item_area_client_serializer, nest_client_serializer, ant_client_serializer, tree_client_serializer, ladybug_client_serializer)
     climate_client_serializer = ClimateClientSerializer()
     world_client_serializer = WorldClientSerializer(common_entity_client_serializer, colony_client_serializer, climate_client_serializer)
     death_record_client_serializer = DeathRecordClientSerializer(util_client_serializer)
@@ -219,12 +220,7 @@ def start():
     action_client_serializer = ActionClientSerializer(common_entity_client_serializer, util_client_serializer, larva_client_serializer, egg_client_serializer, colony_client_serializer, 
                                                       operation_client_serializer, notification_client_serializer, nuptial_environment_client_serializer)
     constants_client_serializer = ConstantsClientSerializer()
-
-    action_accumulator = ActionAccumulator(event_bus)
-
-    world_facade = WorldFacade(event_bus, world_client_serializer, action_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, 
-                               notification_client_serializer, world_repository, colony_service, player_service, nuptial_environment_service, ant_service, 
-                               action_accumulator, rating_service, world_service)
+    step_data_manager = StepDataManager(world_facade, world_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, notification_client_serializer, action_client_serializer)
 
     world = world_facade.init_world(game_logger)
     world.run()

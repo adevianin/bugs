@@ -6,10 +6,9 @@ from core.world.entities.ant.base.nuptial_environment.specie_builder.specie_gene
 from .genome_client_serializer import GenomeClientSerializer
 from .genes_client_serializer import GenesClientSerializer
 from .stats_client_serializer import StatsClientSerializer
-from core.world.nuptial_environment_client_serializer_interface import iNuptialEnvironmentClientSerializer
 from typing import List
 
-class NuptialEnvironmentClientSerializer(iNuptialEnvironmentClientSerializer):
+class NuptialEnvironmentClientSerializer():
 
     def __init__(self, genome_serializer: GenomeClientSerializer, genes_serializer: GenesClientSerializer, stats_serializer: StatsClientSerializer):
         self._genome_serializer = genome_serializer

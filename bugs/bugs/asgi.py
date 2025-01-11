@@ -14,7 +14,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 from channels.security.websocket import AllowedHostsOriginValidator
 from channels.auth import AuthMiddlewareStack
-import core.main_socket_consumer
+from core.data.client.main_socket_consumer import MainSocketConsumer
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bugs.settings')
 
@@ -24,7 +24,7 @@ application = ProtocolTypeRouter({
     # AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter([
-                re_path('mainsocket', core.main_socket_consumer.MainSocketConsumer.as_asgi()),
+                re_path('mainsocket', MainSocketConsumer.as_asgi()),
             ])
         )
     # )

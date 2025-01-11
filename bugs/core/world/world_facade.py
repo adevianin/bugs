@@ -4,23 +4,17 @@ from .services.player_service import PlayerService
 from .services.nuptial_environment_service import NuptialEnvironmentService
 from core.world.utils.point import Point
 from core.world.world_repository_interface import iWorldRepository
-from .world_client_serializer_interface import iWorldClientSerializer
-from .action_client_serializer_interface import iActionClientSerializer
 from core.world.entities.ant.base.ant_types import AntTypes
-from .nuptial_environment_client_serializer_interface import iNuptialEnvironmentClientSerializer
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 from core.world.services.ant_service import AntService
 from core.world.entities.ant.base.guardian_behaviors import GuardianBehaviors
-from core.sync.constants_client_serializer import ConstantsClientSerializer
-from core.world.action_accumulator import ActionAccumulator
-# make interface
-from core.sync.notification_client_serializer import NotificationClientSerializer
 from core.world.services.rating_serivice import RatingService
 from core.world.services.world_service import WorldService
 from core.world.entities.world.season_types import SeasonTypes
 from core.world.settings import WORLD_ID
 from core.world.entities.world.world import World
 from core.world.entities.world.id_generator import IdGenerator
+from core.world.entities.action.base.action import Action
 
 from typing import Callable, List, Dict
 
@@ -31,11 +25,8 @@ class WorldFacade:
     def get_instance(cls) -> 'WorldFacade':
         return WorldFacade._instance
 
-    def __init__(self, event_bus: EventEmitter, world_client_serializer: iWorldClientSerializer, action_client_serializer: iActionClientSerializer, 
-                 nuptial_environment_client_serializer: iNuptialEnvironmentClientSerializer, constants_client_serializer: ConstantsClientSerializer, 
-                 notification_client_serializer: NotificationClientSerializer, world_repository: iWorldRepository, colony_service: ColonyService, 
-                 player_service: PlayerService, nuptial_environment_service: NuptialEnvironmentService, ant_service: AntService, action_accumulator: ActionAccumulator, 
-                 rating_service: RatingService, world_service: WorldService):
+    def __init__(self, event_bus: EventEmitter, world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, 
+                 nuptial_environment_service: NuptialEnvironmentService, ant_service: AntService, rating_service: RatingService, world_service: WorldService):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
@@ -44,11 +35,6 @@ class WorldFacade:
         self._events = EventEmitter()
         self._event_bus = event_bus
         self._world_repository = world_repository
-        self._world_client_serializer = world_client_serializer
-        self._action_client_serializer = action_client_serializer
-        self._nuptial_environment_client_serializer = nuptial_environment_client_serializer
-        self._constants_client_serializer = constants_client_serializer
-        self._notification_client_serializer = notification_client_serializer
 
         self._colony_service = colony_service
         self._player_service = player_service
@@ -57,10 +43,8 @@ class WorldFacade:
         self._rating_service = rating_service
         self._world_service = world_service
 
-        self._action_accumulator = action_accumulator
-        self._serialized_common_actions = []
-
         self._event_bus.add_listener('step_done', self._on_step_done)
+        self._event_bus.add_listener('action', self._on_action)
 
     @property
     def world(self):
@@ -202,37 +186,21 @@ class WorldFacade:
             self._player_service.ensure_starter_pack_built_for_player(user_id)
     # </PLAYER_COMMANDS>
 
-    def get_specie_for_client(self, user_id: int) -> Dict:
-        specie = self._nuptial_environment_service.get_specie_for(user_id)
-        return self._nuptial_environment_client_serializer.serialize_specie(specie)
+    def get_specie_for_client(self, user_id: int):
+        return self._nuptial_environment_service.get_specie_for(user_id)
     
     def get_nuptial_males_for_client(self, user_id: int):
         nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
-        return self._nuptial_environment_client_serializer.serialize_nuptial_males(nuptial_environment.males)
-    
-    def get_world_for_client(self):
-        return self._world_client_serializer.serialize(self._world)
-    
-    def get_consts_for_client(self):
-        return self._constants_client_serializer.serialize_constants()
-    
-    def get_current_actions_pack_for_client(self, user_id: int):
-        personal_actions = self._action_accumulator.pull_personal_actions(user_id)
-        serialized_personal_actions = [self._action_client_serializer.serialize(action) for action in personal_actions]
-        return self._serialized_common_actions + serialized_personal_actions
+        return nuptial_environment.males
     
     def get_notifications_for_client(self, user_id: int):
-        notifications = self._world.get_notifications_for_owner(user_id)
-        serialized_notifications = [self._notification_client_serializer.serialize(notification) for notification in notifications]
-        return serialized_notifications
+        return self._world.get_notifications_for_owner(user_id)
     
     def get_rating(self):
         return self._rating_service.rating
     
     def _on_step_done(self, step_number: int, season: SeasonTypes):
-        self._serialize_common_actions()
-        self._events.emit('step', step_number, season)
+        self._events.emit('step_done')
 
-    def _serialize_common_actions(self):
-        actions = self._action_accumulator.pull_common_actions()
-        self._serialized_common_actions = [self._action_client_serializer.serialize(action) for action in actions]
+    def _on_action(self, action: Action):
+        self._events.emit('action', action)
