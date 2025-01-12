@@ -6,7 +6,7 @@ from core.world.entities.colony.colonies.ant_colony.operation.bring_bug_corpse_t
 from core.world.entities.colony.colonies.ant_colony.operation.pillage_nest_operation import PillageNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.transport_food_operation import TransportFoodOperation
 from core.world.entities.colony.colonies.ant_colony.operation.build_fortification_operation import BuildFortificationOperation
-from core.data.db.serializers.formation_serializer import FormationSerializer
+from core.infrastructure.db.serializers.formation_serializer import FormationSerializer
 from .fight_serializer import FightSerializer
 
 class OperationSerializer():

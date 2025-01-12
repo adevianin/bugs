@@ -1,6 +1,6 @@
 from channels.generic.websocket import WebsocketConsumer
 from core.world.world_facade import WorldFacade
-from core.data.client.step_data_manager import StepDataManager
+from core.infrastructure.client.step_data_manager import StepDataManager
 import json
 
 class MainSocketConsumer(WebsocketConsumer):

@@ -1,4 +1,4 @@
-from core.data.client.serializers.util_client_serializer import UtilClientSerializer
+from core.infrastructure.client.serializers.util_client_serializer import UtilClientSerializer
 from core.world.entities.nest.nest import Nest
 from .base.entity_client_serializer import EntityClientSerializer
 from .larva_client_serializer import LarvaClientSerializer

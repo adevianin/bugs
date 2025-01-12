@@ -4,7 +4,7 @@ from .serializers.nuptial_environment_client_serializer import NuptialEnvironmen
 from .serializers.constants_client_serializer import ConstantsClientSerializer
 from .serializers.notification_client_serializer import NotificationClientSerializer
 from core.world.entities.action.base.action import Action
-from core.data.client.serializers.action_client_serializer import ActionClientSerializer
+from core.infrastructure.client.serializers.action_client_serializer import ActionClientSerializer
 from core.world.utils.event_emiter import EventEmitter
 from typing import List, Callable
 
