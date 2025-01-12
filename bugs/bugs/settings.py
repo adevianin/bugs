@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core.apps.CoreConfig'
+    'client.apps.ClientConfig',
+    'core.apps.CoreConfig',
+    'infrastructure.apps.InfrastructureConfig',
+    'main.apps.MainConfig'
 ]
 
 MIDDLEWARE = [
@@ -51,8 +54,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.middlewares.convertJsonMiddleware.ConvertJSONMiddleware',
-    'core.middlewares.logHttpRequestErrorsMiddleware.LogHttpRequestErrorsMiddleware'
+    'infrastructure.middlewares.convertJsonMiddleware.ConvertJSONMiddleware',
+    'infrastructure.middlewares.logHttpRequestErrorsMiddleware.LogHttpRequestErrorsMiddleware'
 ]
 
 ROOT_URLCONF = 'bugs.urls'
@@ -131,7 +134,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ASGI_APPLICATION = 'bugs.asgi.application'
 
-AUTH_USER_MODEL = 'core.User'
+AUTH_USER_MODEL = 'infrastructure.User'
 
 LOGGING = {
     'version': 1,

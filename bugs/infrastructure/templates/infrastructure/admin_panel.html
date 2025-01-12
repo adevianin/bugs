@@ -1,0 +1,74 @@
+{% load static %}
+<html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                padding: 20px;
+            }
+            
+            .admin-panel {
+                background-color: #f1f1f1;
+                padding: 20px;
+                border-radius: 5px;
+                margin-bottom: 20px;
+            }
+            
+            .status-section {
+                margin-bottom: 10px;
+            }
+            
+            .status-label {
+                font-weight: bold;
+            }
+            
+            .button-section {
+                margin-top: 10px;
+            }
+            
+            .button-section button {
+                margin-right: 10px;
+            }
+
+            .expanding-map-section {
+                display: flex;
+                flex-direction: column;
+                margin-top: 10px;
+            }
+            .expanding-map-section input {
+                width: 40px;
+            }
+            .expanding-map-section_button {
+                width: 65px;
+                margin-top: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="admin-panel" data-world-status>
+            <div class="status-section">
+                <span class="status-label">Is world running:</span>
+                <span data-is-world-running></span>
+            </div>
+            <div class="button-section">
+                <button data-run-world>Run</button>
+                <button data-stop-world>Stop</button>
+            </div>
+            <div class="button-section">
+                <button data-save-world>Save World</button>
+            </div>
+            <div class="expanding-map-section">
+                <div>
+                    <label for="row-chunks">add row chunks:</label>
+                    <input id="row-chunks" type="number" value="2" min="1" data-chunk-rows>
+                </div>
+                <div>
+                    <label for="col-chunks">add col chunks:</label>
+                    <input id="col-chunks" type="number" value="2" min="1" data-chunk-cols>
+                </div>
+                <button class="expanding-map-section_button" data-expand-map-btn>expand</button>
+            </div>
+        </div>
+    </body>
+    <script src="{% static 'client/adminApp.js' %}"></script>
+</html>
