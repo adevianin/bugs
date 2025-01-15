@@ -1,10 +1,6 @@
 node_modules
-bugs-env
-Lib
-Scripts
-pyvenv.cfg
+venv
 __pycache__/
 bugs/db.sqlite3
-bugs/static
 game_errors.log
 request_errors.log
