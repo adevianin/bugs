@@ -4,20 +4,20 @@ module.exports = {
     mode: 'development',
     devtool: "source-map",
     entry: {
-        app: './bugs/client/app/src/index.js',
-        adminApp: './bugs/client/adminApp/src/index.js'
+        app: './app/src/index.js',
+        adminApp: './adminApp/src/index.js'
     },
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'bugs/client/static/client'),
+        path: path.resolve(__dirname, 'static/client'),
         assetModuleFilename: '[hash][ext]',
         clean: true
     },
     resolve: {
         alias: {
-          "@utils": path.resolve(__dirname, './bugs/client/utils'),
-          "@view": path.resolve(__dirname, './bugs/client/app/src/view'),
-          "@domain": path.resolve(__dirname, './bugs/client/app/src/domain'),
+          "@utils": path.resolve(__dirname, './utils'),
+          "@view": path.resolve(__dirname, './app/src/view'),
+          "@domain": path.resolve(__dirname, './app/src/domain'),
         },
     },
     module: {

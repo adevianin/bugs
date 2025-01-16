@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "baseUrl": "./bugs/core/client",
+        "baseUrl": "./",
         "paths": {
             "@utils/*": ["utils/*"],
             "@view/*": ["app/src/view/*"],
@@ -8,4 +8,4 @@
         }
     },
     "exclude": ["node_modules"]
-  }
+}

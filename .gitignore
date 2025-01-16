@@ -1,4 +1,4 @@
-node_modules
+bugs/client/node_modules
 venv
 __pycache__/
 bugs/db.sqlite3
