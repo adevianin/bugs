@@ -7,7 +7,7 @@
         
         {
             "name": "Python: Django",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}\\bugs\\manage.py",
             "args": [
@@ -19,7 +19,7 @@
         },
         {
             "name": "Python: Django ubuntu",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/bugs/manage.py",
             "args": [
