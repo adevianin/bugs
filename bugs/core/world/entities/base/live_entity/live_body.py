@@ -110,10 +110,10 @@ class LiveBody(Body):
             return self._calories / (self._max_calories / 100) < HUNGER_THRESHOLD_PERCENTAGE
     
     def check_urge_to_hibernate(self) -> bool:
-        return not self.am_i_in_hibernation() and (self._temperature_sensor.temperature <= self.stats.min_temperature + self.HIBERNATION_THRESHOLD) and self._temperature_sensor.is_cooling
+        return not self.am_i_in_hibernation() and (self._temperature_sensor.temperature <= self.stats.min_temperature + self.HIBERNATION_THRESHOLD)
 
     def check_urge_to_exit_hibernation(self) -> bool:
-        return self._temperature_sensor.temperature >= self.stats.min_temperature and self._temperature_sensor.is_warming
+        return self.am_i_in_hibernation() and (self._temperature_sensor.temperature > self.stats.min_temperature + self.HIBERNATION_THRESHOLD) and self._temperature_sensor.is_warming
     
     def enter_hibernation(self):
         self.memory.save_flag(self.MemoryKeys.AM_I_IN_HIBERNATION, True)
@@ -197,7 +197,7 @@ class LiveBody(Body):
             self.die(HungerDeathRecord(self.position))
 
     def handle_exit_hibernation(self):
-        if self.am_i_in_hibernation() and self.check_urge_to_exit_hibernation():
+        if self.check_urge_to_exit_hibernation():
             self.exit_hibernation()
 
     def say(self, phrase: str, data: dict):
