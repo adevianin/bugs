@@ -6,4 +6,4 @@ def index(request):
         'user': request.user.get_general_data() if request.user.is_authenticated else None
     }
     
-    return render(request, 'infrastructure/home.html', {'initial_data': initial_data})
+    return render(request, 'client/home.html', {'initial_data': initial_data})

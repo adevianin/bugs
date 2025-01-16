@@ -17,7 +17,7 @@ def _build_world_status():
 
 @user_passes_test(is_superuser)
 def admin_panel(request):
-    return render(request, 'infrastructure/admin_panel.html')
+    return render(request, 'client/admin_panel.html')
 
 @user_passes_test(is_superuser)
 @require_POST
