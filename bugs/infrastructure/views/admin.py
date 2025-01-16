@@ -8,6 +8,13 @@ import json
 def is_superuser(user):
     return user.is_superuser
 
+def _build_world_status():
+    wf = WorldFacade.get_instance()
+    return {
+        'isInited': wf.is_world_inited,
+        'isRunning': wf.is_world_running
+    }
+
 @user_passes_test(is_superuser)
 def admin_panel(request):
     return render(request, 'infrastructure/admin_panel.html')
@@ -16,8 +23,17 @@ def admin_panel(request):
 @require_POST
 def world_status_check(request):
     return JsonResponse({
-        'status': WorldFacade.get_instance().is_world_running()
+        'status': _build_world_status()
     })
+
+@user_passes_test(is_superuser)
+@require_POST
+def init_world(request):
+    worldFacade = WorldFacade.get_instance()
+    worldFacade.init_world_admin_command()
+    return JsonResponse({
+        'status': _build_world_status()
+    }) 
 
 @user_passes_test(is_superuser)
 @require_POST
@@ -25,7 +41,7 @@ def stop_world(request):
     worldFacade = WorldFacade.get_instance()
     worldFacade.stop_world_admin_command()
     return JsonResponse({
-        'status': worldFacade.is_world_running()
+        'status': _build_world_status()
     }) 
 
 @user_passes_test(is_superuser)
@@ -34,7 +50,7 @@ def run_world(request):
     worldFacade = WorldFacade.get_instance()
     worldFacade.run_world_admin_command()
     return JsonResponse({
-        'status': worldFacade.is_world_running()
+        'status': _build_world_status()
     }) 
 
 @user_passes_test(is_superuser)

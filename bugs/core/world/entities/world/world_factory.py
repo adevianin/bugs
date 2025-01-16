@@ -28,12 +28,13 @@ from typing import List
 
 class WorldFactory():
 
-    def __init__(self, event_bus: EventEmitter, ant_factory: AntFactory, item_factory: ItemFactory, nest_factory: NestFactory, ladybug_factory: LadybugFactory):
+    def __init__(self, event_bus: EventEmitter, ant_factory: AntFactory, item_factory: ItemFactory, nest_factory: NestFactory, ladybug_factory: LadybugFactory, game_logger):
         self._event_bus = event_bus
         self._ant_factory = ant_factory
         self._item_factory = item_factory
         self._nest_factory = nest_factory
         self._ladybug_factory = ladybug_factory
+        self._game_logger = game_logger
 
     def build_world(self, map: Map, colonies: List[Colony], colony_relations_table: ColonyRelationsTable, 
                     nuptial_environments: List[NuptialEnvironment], player_stats_list: List[PlayerStats], climate: Climate, current_step: int, 
@@ -59,5 +60,5 @@ class WorldFactory():
         }
 
         return World(map, self._event_bus, colonies, birthers, spawners, nuptial_environments, 
-                    player_stats_list, climate, sensor_handlers, current_step, managers, id_generator)
+                    player_stats_list, climate, sensor_handlers, current_step, managers, id_generator, self._game_logger)
     

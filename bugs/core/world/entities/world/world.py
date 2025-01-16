@@ -27,7 +27,7 @@ class World():
 
     def __init__(self, map: Map, event_bus: EventEmitter, colonies: List[Colony],  
                  birthers, spawners, nuptial_environments: List[NuptialEnvironment], player_stats_list: List[PlayerStats], climate: Climate, 
-                 sensor_handlers, current_step: int, managers, id_generator: IdGenerator):
+                 sensor_handlers, current_step: int, managers, id_generator: IdGenerator, logger: Logger):
         self.lock = threading.Lock()
         self._map = map
         self._event_bus = event_bus
@@ -46,6 +46,7 @@ class World():
         self._temperature_sensor_handler: TemperatureSensorHandler = sensor_handlers['temperature_sensor_handler']
         self._notification_manager: NotificationManager = managers['notification_manager']
         self._id_generator = id_generator
+        self._logger = logger
 
         self._event_bus.add_listener('colony_died', self._on_colony_died)
 
@@ -102,9 +103,6 @@ class World():
     def _current_year(self):
         return self._current_step // STEPS_IN_YEAR
     
-    def set_logger(self, logger: Logger):
-        self._logger = logger
-    
     def get_player_stats_for_owner(self, owner_id: int) -> PlayerStats:
         for player_stats in self._player_stats_list:
             if player_stats.owner_id == owner_id:
@@ -158,7 +156,7 @@ class World():
     def run(self):
         if (self._is_world_running):
             return
-        world_thread = threading.Thread(target=self._run_world_loop)
+        world_thread = threading.Thread(target=self._run_world_loop, daemon=True)
         world_thread.start()
         self._world_loop_stop_flag = False
         self._is_world_running = True

@@ -106,7 +106,7 @@ from infrastructure.websocket.step_data_manager import StepDataManager
 
 import logging
 
-def start():
+def init():
     game_logger = logging.getLogger('game_logger')
 
     event_bus = EventEmitter()
@@ -127,7 +127,7 @@ def start():
     nuptial_environment_factory = NuptialEnvironmentFactory(event_bus)
     tree_factory = TreeFactory(event_bus)
     ladybug_factory = LadybugFactory(event_bus, thought_factory)
-    world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ladybug_factory)
+    world_factory = WorldFactory(event_bus, ant_factory, item_factory, nest_factory, ladybug_factory, game_logger)
     
     genes_serializer = GenesSerializer()
     genome_serializer = GenomeSerializer(genes_serializer)
@@ -221,7 +221,4 @@ def start():
                                                       operation_client_serializer, notification_client_serializer, nuptial_environment_client_serializer)
     constants_client_serializer = ConstantsClientSerializer()
     step_data_manager = StepDataManager(world_facade, world_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, notification_client_serializer, action_client_serializer)
-
-    world = world_facade.init_world(game_logger)
-    world.run()
     

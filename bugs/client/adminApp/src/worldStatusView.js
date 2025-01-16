@@ -3,13 +3,17 @@ class WorldStatusView {
         this._requester = requester;
         this._el = el;
         this._isWorldRunningStatusEl = this._el.querySelector('[data-is-world-running]');
+        this._isWorldInitedStatusEl = this._el.querySelector('[data-is-world-inited]');
+        this._initWorldBtnEl = this._el.querySelector('[data-init-world]');
         this._stopWorldBtnEl = this._el.querySelector('[data-stop-world]');
         this._runWorldBtnEl = this._el.querySelector('[data-run-world]');
         this._saveWorldBtnEl = this._el.querySelector('[data-save-world]');
         this._expandMapBtnEl = this._el.querySelector('[data-expand-map-btn]');
         this._expandMapChunkRowsEl = this._el.querySelector('[data-chunk-rows]');
         this._expandMapChunkColsEl = this._el.querySelector('[data-chunk-cols]');
+        this._worldControlsEl = this._el.querySelector('[data-world-controls]');
 
+        this._initWorldBtnEl.addEventListener('click', this._initWorld.bind(this));
         this._stopWorldBtnEl.addEventListener('click', this._stopWorld.bind(this));
         this._runWorldBtnEl.addEventListener('click', this._runWorld.bind(this));
         this._saveWorldBtnEl.addEventListener('click', this._saveWorld.bind(this));
@@ -22,24 +26,40 @@ class WorldStatusView {
     _checkWorldStatus() {
         this._requester.post('admin/world/status').then((resp) => {
             this._renderWorldStatus(resp.data.status);
+        }).catch(() => {
+            alert('server is not responding!!!');
+        });
+    }
+
+    _initWorld() {
+        this._requester.post('admin/world/init').then((resp) => {
+            this._renderWorldStatus(resp.data.status);
+        }).catch(() => {
+            alert('something went wrong');
         });
     }
 
     _stopWorld() {
         this._requester.post('admin/world/stop').then((resp) => {
             this._renderWorldStatus(resp.data.status);
+        }).catch(() => {
+            alert('something went wrong');
         });
     }
 
     _runWorld() {
         this._requester.post('admin/world/run').then((resp) => {
             this._renderWorldStatus(resp.data.status);
+        }).catch(() => {
+            alert('something went wrong');
         });
     }
 
     _saveWorld() {
         this._requester.post('admin/world/save').then((resp) => {
             alert('saved')
+        }).catch(() => {
+            alert('something went wrong');
         });
     }
 
@@ -61,7 +81,15 @@ class WorldStatusView {
     }
 
     _renderWorldStatus(status) {
-        this._isWorldRunningStatusEl.innerText = status;
+        this._isWorldRunningStatusEl.innerText = status.isRunning;
+        this._isWorldInitedStatusEl.innerText = status.isInited;
+        
+        this._worldControlsEl.disabled = !status.isInited;
+        this._initWorldBtnEl.disabled = status.isInited;
+        this._saveWorldBtnEl.disabled = status.isRunning;
+        this._expandMapBtnEl.disabled = status.isRunning;
+        this._runWorldBtnEl.disabled = status.isRunning;
+        this._stopWorldBtnEl.disabled = !status.isRunning;
     }
 }
 

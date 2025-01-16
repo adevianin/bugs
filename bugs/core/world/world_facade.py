@@ -43,36 +43,23 @@ class WorldFacade:
         self._rating_service = rating_service
         self._world_service = world_service
 
+        self._world = None
+
         self._event_bus.add_listener('step_done', self._on_step_done)
         self._event_bus.add_listener('action', self._on_action)
 
     @property
     def world(self):
         return self._world
-        
-    def init_world(self, logger) -> World:
-        is_world_newly_generated = False
-        self._world = self._world_repository.get(WORLD_ID)
-        if not self._world:
-            self._world = self._world_service.build_new_empty_world(4, 4)
-            is_world_newly_generated = True
-
-        IdGenerator.set_global_generator(self._world.id_generator)
-
-        if is_world_newly_generated:
-            self._world_service.populate_empty_world(self._world)
-
-        self._world.set_logger(logger)
-
-        self._colony_service.set_world(self._world)
-        self._player_service.set_world(self._world)
-        self._nuptial_environment_service.set_world(self._world)
-        self._ant_service.set_world(self._world)
-        self._rating_service.set_world(self._world)
-        self._world_service.set_world(self._world)
-
-        return self._world
-
+    
+    @property
+    def is_world_inited(self):
+        return bool(self._world)
+    
+    @property
+    def is_world_running(self):
+        return self.is_world_inited and self._world.is_world_running
+    
     def add_listener(self, event_name: str, callback: Callable):
         self._events.add_listener(event_name, callback)
 
@@ -80,6 +67,9 @@ class WorldFacade:
         self._events.remove_listener(event_name, callback)
     
     # <ADMIN_COMMANDS>
+    def init_world_admin_command(self):
+        self._init_world()
+
     def save_world_admin_command(self):
         self._world_repository.push(self._world, WORLD_ID)
     
@@ -91,9 +81,6 @@ class WorldFacade:
 
     def expand_map_admin_command(self, chunk_rows: int, chunk_cols: int):
         return self._world_service.expand_current_map(chunk_rows, chunk_cols)
-
-    def is_world_running(self):
-        return self._world.is_world_running
     # </ADMIN_COMMANDS>
 
     # <PLAYER_COMMANDS>
@@ -198,6 +185,25 @@ class WorldFacade:
     
     def get_rating(self):
         return self._rating_service.rating
+    
+    def _init_world(self) -> World:
+        is_world_newly_generated = False
+        self._world = self._world_repository.get(WORLD_ID)
+        if not self._world:
+            self._world = self._world_service.build_new_empty_world(4, 4)
+            is_world_newly_generated = True
+
+        IdGenerator.set_global_generator(self._world.id_generator)
+
+        if is_world_newly_generated:
+            self._world_service.populate_empty_world(self._world)
+
+        self._colony_service.set_world(self._world)
+        self._player_service.set_world(self._world)
+        self._nuptial_environment_service.set_world(self._world)
+        self._ant_service.set_world(self._world)
+        self._rating_service.set_world(self._world)
+        self._world_service.set_world(self._world)
     
     def _on_step_done(self, step_number: int, season: SeasonTypes):
         self._events.emit('step_done')

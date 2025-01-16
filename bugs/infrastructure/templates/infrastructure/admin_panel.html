@@ -15,6 +15,7 @@
             }
             
             .status-section {
+                margin-top: 10px;
                 margin-bottom: 10px;
             }
             
@@ -42,32 +43,46 @@
                 width: 65px;
                 margin-top: 5px;
             }
+            .world-controls-fieldset {
+                border: 0;
+                margin: 0;
+                padding: 0;
+            }
         </style>
     </head>
     <body>
         <div class="admin-panel" data-world-status>
             <div class="status-section">
-                <span class="status-label">Is world running:</span>
-                <span data-is-world-running></span>
+                <span class="status-label">Is world inited:</span>
+                <span data-is-world-inited></span>
             </div>
             <div class="button-section">
-                <button data-run-world>Run</button>
-                <button data-stop-world>Stop</button>
+                <button data-init-world>Init</button>
             </div>
-            <div class="button-section">
-                <button data-save-world>Save World</button>
-            </div>
-            <div class="expanding-map-section">
-                <div>
-                    <label for="row-chunks">add row chunks:</label>
-                    <input id="row-chunks" type="number" value="2" min="1" data-chunk-rows>
+            <fieldset class="world-controls-fieldset" data-world-controls>
+                <div class="status-section">
+                    <span class="status-label">Is world running:</span>
+                    <span data-is-world-running></span>
                 </div>
-                <div>
-                    <label for="col-chunks">add col chunks:</label>
-                    <input id="col-chunks" type="number" value="2" min="1" data-chunk-cols>
+                <div class="button-section">
+                    <button data-run-world>Run</button>
+                    <button data-stop-world>Stop</button>
                 </div>
-                <button class="expanding-map-section_button" data-expand-map-btn>expand</button>
-            </div>
+                <div class="button-section">
+                    <button data-save-world>Save World</button>
+                </div>
+                <div class="expanding-map-section">
+                    <div>
+                        <label for="row-chunks">add row chunks:</label>
+                        <input id="row-chunks" type="number" value="2" min="1" data-chunk-rows>
+                    </div>
+                    <div>
+                        <label for="col-chunks">add col chunks:</label>
+                        <input id="col-chunks" type="number" value="2" min="1" data-chunk-cols>
+                    </div>
+                    <button class="expanding-map-section_button" data-expand-map-btn>expand</button>
+                </div>
+            </fieldset>
         </div>
     </body>
     <script src="{% static 'client/adminApp.js' %}"></script>
