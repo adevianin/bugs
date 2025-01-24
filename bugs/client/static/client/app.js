@@ -8860,8 +8860,8 @@ class HpLineView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__
             color = 0xff0000;
         }
         this._hpLine.clear();
-        this._hpLine.beginFill(color);
-        this._hpLine.drawRect(0, 0, lineWidth, 5);
+        this._hpLine.fill(color);
+        this._hpLine.rect(0, 0, lineWidth, 5);
     }
 
 }
@@ -8896,9 +8896,9 @@ class ItemAreaView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
     _render() {
         const graphics = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Graphics();
-        graphics.beginFill(0xFF0000);
-        graphics.drawRect(this._entity.position.x, this._entity.position.y, 6, 6);
-        graphics.endFill();
+        graphics.fill(0xFF0000);
+        graphics.rect(this._entity.position.x, this._entity.position.y, 6, 6);
+        graphics.fill();
         this._entityContainer.addChild(graphics);
     }
 
@@ -9319,8 +9319,8 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
 
         let color = 0x800080;
         this._fortificationLine.clear();
-        this._fortificationLine.beginFill(color);
-        this._fortificationLine.drawRect(0, 0, lineWidth, 5);
+        this._fortificationLine.fill(color);
+        this._fortificationLine.rect(0, 0, lineWidth, 5);
     }
 
     _onClick() {
@@ -25543,7 +25543,7 @@ const DIV_HOOK_SIZE = 1;
 const DIV_HOOK_POS_X = -1e3;
 const DIV_HOOK_POS_Y = -1e3;
 const DIV_HOOK_ZINDEX = 2;
-class AccessibilitySystem {
+const _AccessibilitySystem = class _AccessibilitySystem {
   // 2fps
   // eslint-disable-next-line jsdoc/require-param
   /**
@@ -25551,12 +25551,18 @@ class AccessibilitySystem {
    */
   constructor(renderer, _mobileInfo = _utils_browser_isMobile_mjs__WEBPACK_IMPORTED_MODULE_0__.isMobile) {
     this._mobileInfo = _mobileInfo;
-    /** Setting this to true will visually show the divs. */
+    /** Whether accessibility divs are visible for debugging */
     this.debug = false;
+    /** Whether to activate on tab key press */
+    this._activateOnTab = true;
+    /** Whether to deactivate accessibility when mouse moves */
+    this._deactivateOnMouseMove = true;
     /** Internal variable, see isActive getter. */
     this._isActive = false;
     /** Internal variable, see isMobileAccessibility getter. */
     this._isMobileAccessibility = false;
+    /** This is the dom element that will sit over the PixiJS element. This is where the div overlays will go. */
+    this._div = null;
     /** A simple pool for storing divs. */
     this._pool = [];
     /** This is a tick used to check if an object is no longer being rendered. */
@@ -25571,18 +25577,7 @@ class AccessibilitySystem {
     if (_mobileInfo.tablet || _mobileInfo.phone) {
       this._createTouchHook();
     }
-    const div = document.createElement("div");
-    div.style.width = `${DIV_TOUCH_SIZE}px`;
-    div.style.height = `${DIV_TOUCH_SIZE}px`;
-    div.style.position = "absolute";
-    div.style.top = `${DIV_TOUCH_POS_X}px`;
-    div.style.left = `${DIV_TOUCH_POS_Y}px`;
-    div.style.zIndex = DIV_TOUCH_ZINDEX.toString();
-    this._div = div;
     this._renderer = renderer;
-    this._onKeyDown = this._onKeyDown.bind(this);
-    this._onMouseMove = this._onMouseMove.bind(this);
-    globalThis.addEventListener("keydown", this._onKeyDown, false);
   }
   /**
    * Value of `true` if accessibility is currently active and accessibility layers are showing.
@@ -25646,14 +25641,48 @@ class AccessibilitySystem {
       return;
     }
     this._isActive = true;
-    globalThis.document.addEventListener("mousemove", this._onMouseMove, true);
-    globalThis.removeEventListener("keydown", this._onKeyDown, false);
+    if (!this._div) {
+      this._div = document.createElement("div");
+      this._div.style.width = `${DIV_TOUCH_SIZE}px`;
+      this._div.style.height = `${DIV_TOUCH_SIZE}px`;
+      this._div.style.position = "absolute";
+      this._div.style.top = `${DIV_TOUCH_POS_X}px`;
+      this._div.style.left = `${DIV_TOUCH_POS_Y}px`;
+      this._div.style.zIndex = DIV_TOUCH_ZINDEX.toString();
+      this._div.style.pointerEvents = "none";
+    }
+    if (this._activateOnTab) {
+      this._onKeyDown = this._onKeyDown.bind(this);
+      globalThis.addEventListener("keydown", this._onKeyDown, false);
+    }
+    if (this._deactivateOnMouseMove) {
+      this._onMouseMove = this._onMouseMove.bind(this);
+      globalThis.document.addEventListener("mousemove", this._onMouseMove, true);
+    }
+    const canvas = this._renderer.view.canvas;
+    if (!canvas.parentNode) {
+      const observer = new MutationObserver(() => {
+        if (canvas.parentNode) {
+          canvas.parentNode.appendChild(this._div);
+          observer.disconnect();
+          this._initAccessibilitySetup();
+        }
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    } else {
+      canvas.parentNode.appendChild(this._div);
+      this._initAccessibilitySetup();
+    }
+  }
+  // New method to handle initialization after div is ready
+  _initAccessibilitySetup() {
     this._renderer.runners.postrender.add(this);
-    this._renderer.view.canvas.parentNode?.appendChild(this._div);
+    if (this._renderer.lastObjectRendered) {
+      this._updateAccessibleObjects(this._renderer.lastObjectRendered);
+    }
   }
   /**
-   * Deactivating will cause the Accessibility layer to be hidden.
-   * This is called when a user moves the mouse.
+   * Deactivates the accessibility system. Removes listeners and accessibility elements.
    * @private
    */
   _deactivate() {
@@ -25662,9 +25691,27 @@ class AccessibilitySystem {
     }
     this._isActive = false;
     globalThis.document.removeEventListener("mousemove", this._onMouseMove, true);
-    globalThis.addEventListener("keydown", this._onKeyDown, false);
+    if (this._activateOnTab) {
+      globalThis.addEventListener("keydown", this._onKeyDown, false);
+    }
     this._renderer.runners.postrender.remove(this);
-    this._div.parentNode?.removeChild(this._div);
+    for (const child of this._children) {
+      if (child._accessibleDiv && child._accessibleDiv.parentNode) {
+        child._accessibleDiv.parentNode.removeChild(child._accessibleDiv);
+        child._accessibleDiv = null;
+      }
+      child._accessibleActive = false;
+    }
+    this._pool.forEach((div) => {
+      if (div.parentNode) {
+        div.parentNode.removeChild(div);
+      }
+    });
+    if (this._div && this._div.parentNode) {
+      this._div.parentNode.removeChild(this._div);
+    }
+    this._pool = [];
+    this._children = [];
   }
   /**
    * This recursive function will run through the scene graph and add any new accessible objects to the DOM layer.
@@ -25675,7 +25722,7 @@ class AccessibilitySystem {
     if (!container.visible || !container.accessibleChildren) {
       return;
     }
-    if (container.accessible && container.isInteractive()) {
+    if (container.accessible) {
       if (!container._accessibleActive) {
         this._addChild(container);
       }
@@ -25693,12 +25740,30 @@ class AccessibilitySystem {
    * @ignore
    */
   init(options) {
-    this.debug = options?.debug ?? this.debug;
+    const defaultOpts = _AccessibilitySystem.defaultOptions;
+    const mergedOptions = {
+      accessibilityOptions: {
+        ...defaultOpts,
+        ...options?.accessibilityOptions || {}
+      }
+    };
+    this.debug = mergedOptions.accessibilityOptions.debug;
+    this._activateOnTab = mergedOptions.accessibilityOptions.activateOnTab;
+    this._deactivateOnMouseMove = mergedOptions.accessibilityOptions.deactivateOnMouseMove;
+    if (mergedOptions.accessibilityOptions.enabledByDefault) {
+      this._activate();
+    } else if (this._activateOnTab) {
+      this._onKeyDown = this._onKeyDown.bind(this);
+      globalThis.addEventListener("keydown", this._onKeyDown, false);
+    }
     this._renderer.runners.postrender.remove(this);
   }
   /**
-   * Runner postrender was called, ensure that all divs are mapped correctly to their Containers.
-   * Only fires while active.
+   * Updates the accessibility layer during rendering.
+   * - Removes divs for containers no longer in the scene
+   * - Updates the position and dimensions of the root div
+   * - Updates positions of active accessibility divs
+   * Only fires while the accessibility system is active.
    * @ignore
    */
   postrender() {
@@ -25710,57 +25775,58 @@ class AccessibilitySystem {
     if (!this._renderer.renderingToScreen || !this._renderer.view.canvas) {
       return;
     }
+    const activeIds = /* @__PURE__ */ new Set();
     if (this._renderer.lastObjectRendered) {
       this._updateAccessibleObjects(this._renderer.lastObjectRendered);
+      for (const child of this._children) {
+        if (child._renderId === this._renderId) {
+          activeIds.add(this._children.indexOf(child));
+        }
+      }
     }
-    const { x, y, width, height } = this._renderer.view.canvas.getBoundingClientRect();
-    const { width: viewWidth, height: viewHeight, resolution } = this._renderer;
-    const sx = width / viewWidth * resolution;
-    const sy = height / viewHeight * resolution;
-    let div = this._div;
-    div.style.left = `${x}px`;
-    div.style.top = `${y}px`;
-    div.style.width = `${viewWidth}px`;
-    div.style.height = `${viewHeight}px`;
-    for (let i = 0; i < this._children.length; i++) {
+    for (let i = this._children.length - 1; i >= 0; i--) {
       const child = this._children[i];
-      if (child._renderId !== this._renderId) {
+      if (!activeIds.has(i)) {
+        if (child._accessibleDiv && child._accessibleDiv.parentNode) {
+          child._accessibleDiv.parentNode.removeChild(child._accessibleDiv);
+          this._pool.push(child._accessibleDiv);
+          child._accessibleDiv = null;
+        }
         child._accessibleActive = false;
         (0,_utils_data_removeItems_mjs__WEBPACK_IMPORTED_MODULE_1__.removeItems)(this._children, i, 1);
-        this._div.removeChild(child._accessibleDiv);
-        this._pool.push(child._accessibleDiv);
-        child._accessibleDiv = null;
-        i--;
-      } else {
-        div = child._accessibleDiv;
-        let hitArea = child.hitArea;
+      }
+    }
+    if (this._renderer.renderingToScreen) {
+      const { x, y, width: viewWidth, height: viewHeight } = this._renderer.screen;
+      const div = this._div;
+      div.style.left = `${x}px`;
+      div.style.top = `${y}px`;
+      div.style.width = `${viewWidth}px`;
+      div.style.height = `${viewHeight}px`;
+    }
+    for (let i = 0; i < this._children.length; i++) {
+      const child = this._children[i];
+      if (!child._accessibleActive || !child._accessibleDiv) {
+        continue;
+      }
+      const div = child._accessibleDiv;
+      const hitArea = child.hitArea || child.getBounds().rectangle;
+      if (child.hitArea) {
         const wt = child.worldTransform;
-        if (child.hitArea) {
-          div.style.left = `${(wt.tx + hitArea.x * wt.a) * sx}px`;
-          div.style.top = `${(wt.ty + hitArea.y * wt.d) * sy}px`;
-          div.style.width = `${hitArea.width * wt.a * sx}px`;
-          div.style.height = `${hitArea.height * wt.d * sy}px`;
-        } else {
-          hitArea = child.getBounds().rectangle;
-          this._capHitArea(hitArea);
-          div.style.left = `${hitArea.x * sx}px`;
-          div.style.top = `${hitArea.y * sy}px`;
-          div.style.width = `${hitArea.width * sx}px`;
-          div.style.height = `${hitArea.height * sy}px`;
-          if (div.title !== child.accessibleTitle && child.accessibleTitle !== null) {
-            div.title = child.accessibleTitle || "";
-          }
-          if (div.getAttribute("aria-label") !== child.accessibleHint && child.accessibleHint !== null) {
-            div.setAttribute("aria-label", child.accessibleHint || "");
-          }
-        }
-        if (child.accessibleTitle !== div.title || child.tabIndex !== div.tabIndex) {
-          div.title = child.accessibleTitle || "";
-          div.tabIndex = child.tabIndex;
-          if (this.debug) {
-            this._updateDebugHTML(div);
-          }
-        }
+        const sx = this._renderer.resolution;
+        const sy = this._renderer.resolution;
+        div.style.left = `${(wt.tx + hitArea.x * wt.a) * sx}px`;
+        div.style.top = `${(wt.ty + hitArea.y * wt.d) * sy}px`;
+        div.style.width = `${hitArea.width * wt.a * sx}px`;
+        div.style.height = `${hitArea.height * wt.d * sy}px`;
+      } else {
+        this._capHitArea(hitArea);
+        const sx = this._renderer.resolution;
+        const sy = this._renderer.resolution;
+        div.style.left = `${hitArea.x * sx}px`;
+        div.style.top = `${hitArea.y * sy}px`;
+        div.style.width = `${hitArea.width * sx}px`;
+        div.style.height = `${hitArea.height * sy}px`;
       }
     }
     this._renderId++;
@@ -25795,14 +25861,36 @@ class AccessibilitySystem {
     }
   }
   /**
-   * Adds a Container to the accessibility manager
+   * Creates or reuses a div element for a Container and adds it to the accessibility layer.
+   * Sets up ARIA attributes, event listeners, and positioning based on the container's properties.
    * @private
    * @param {Container} container - The child to make accessible.
    */
   _addChild(container) {
     let div = this._pool.pop();
     if (!div) {
-      div = document.createElement("button");
+      if (container.accessibleType === "button") {
+        div = document.createElement("button");
+      } else {
+        div = document.createElement(container.accessibleType);
+        div.style.cssText = `
+                        color: transparent;
+                        pointer-events: none;
+                        padding: 0;
+                        margin: 0;
+                        border: 0;
+                        outline: 0;
+                        background: transparent;
+                        box-sizing: border-box;
+                        user-select: none;
+                        -webkit-user-select: none;
+                        -moz-user-select: none;
+                        -ms-user-select: none;
+                    `;
+        if (container.accessibleText) {
+          div.innerText = container.accessibleText;
+        }
+      }
       div.style.width = `${DIV_TOUCH_SIZE}px`;
       div.style.height = `${DIV_TOUCH_SIZE}px`;
       div.style.backgroundColor = this.debug ? "rgba(255,255,255,0.5)" : "transparent";
@@ -25841,7 +25929,9 @@ class AccessibilitySystem {
     div.container = container;
     this._children.push(container);
     this._div.appendChild(container._accessibleDiv);
-    container._accessibleDiv.tabIndex = container.tabIndex;
+    if (container.interactive) {
+      container._accessibleDiv.tabIndex = container.tabIndex;
+    }
   }
   /**
    * Dispatch events with the EventSystem.
@@ -25892,7 +25982,7 @@ class AccessibilitySystem {
    * @param {KeyboardEvent} e - The keydown event.
    */
   _onKeyDown(e) {
-    if (e.keyCode !== KEY_CODE_TAB) {
+    if (e.keyCode !== KEY_CODE_TAB || !this._activateOnTab) {
       return;
     }
     this._activate();
@@ -25908,25 +25998,62 @@ class AccessibilitySystem {
     }
     this._deactivate();
   }
-  /** Destroys the accessibility manager */
+  /** Destroys the accessibility system. Removes all elements and listeners. */
   destroy() {
+    this._deactivate();
     this._destroyTouchHook();
     this._div = null;
-    globalThis.document.removeEventListener("mousemove", this._onMouseMove, true);
-    globalThis.removeEventListener("keydown", this._onKeyDown);
     this._pool = null;
     this._children = null;
     this._renderer = null;
+    if (this._activateOnTab) {
+      globalThis.removeEventListener("keydown", this._onKeyDown);
+    }
   }
-}
+  /**
+   * Enables or disables the accessibility system.
+   * @param enabled - Whether to enable or disable accessibility.
+   */
+  setAccessibilityEnabled(enabled) {
+    if (enabled) {
+      this._activate();
+    } else {
+      this._deactivate();
+    }
+  }
+};
 /** @ignore */
-AccessibilitySystem.extension = {
+_AccessibilitySystem.extension = {
   type: [
     _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_3__.ExtensionType.WebGLSystem,
     _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_3__.ExtensionType.WebGPUSystem
   ],
   name: "accessibility"
 };
+/** default options used by the system */
+_AccessibilitySystem.defaultOptions = {
+  /**
+   * Whether to enable accessibility features on initialization
+   * @default false
+   */
+  enabledByDefault: false,
+  /**
+   * Whether to visually show the accessibility divs for debugging
+   * @default false
+   */
+  debug: false,
+  /**
+   * Whether to activate accessibility when tab key is pressed
+   * @default true
+   */
+  activateOnTab: true,
+  /**
+   * Whether to deactivate accessibility when mouse moves
+   * @default true
+   */
+  deactivateOnMouseMove: true
+};
+let AccessibilitySystem = _AccessibilitySystem;
 
 
 //# sourceMappingURL=AccessibilitySystem.mjs.map
@@ -25992,6 +26119,12 @@ const accessibilityTarget = {
    * @default 'button'
    */
   accessibleType: "button",
+  /**
+   * Sets the text content of the shadow div
+   * @member {string}
+   * @memberof scene.Container#
+   */
+  accessibleText: null,
   /**
    * Specify the pointer-events the accessible div will use
    * Defaults to auto.
@@ -27618,17 +27751,11 @@ const _Application = class _Application {
    * @param options - The optional application and renderer parameters.
    */
   async init(options) {
-    console.log('init===================1')
     options = { ...options };
-    console.log('init===================2')
     this.renderer = await (0,_rendering_renderers_autoDetectRenderer_mjs__WEBPACK_IMPORTED_MODULE_2__.autoDetectRenderer)(options);
-    console.log('init===================3')
     _Application._plugins.forEach((plugin) => {
-      console.log('init plugin ===================4', plugin)
       plugin.init.call(this, options);
-      console.log('init===================5')
     });
-    console.log('init===================6')
   }
   /** Render the current stage. */
   render() {
@@ -29415,7 +29542,7 @@ const loadSvg = {
     return (0,_utils_checkDataUrl_mjs__WEBPACK_IMPORTED_MODULE_2__.checkDataUrl)(url, validSVGMIME) || (0,_utils_checkExtension_mjs__WEBPACK_IMPORTED_MODULE_3__.checkExtension)(url, validSVGExtension);
   },
   async load(url, asset, loader) {
-    if (asset.data.parseAsGraphicsContext ?? this.config.parseAsGraphicsContext) {
+    if (asset.data?.parseAsGraphicsContext ?? this.config.parseAsGraphicsContext) {
       return loadAsGraphics(url);
     }
     return loadAsTexture(url, asset, loader, this.config.crossOrigin);
@@ -29441,7 +29568,7 @@ async function loadAsTexture(url, asset, loader, crossOrigin) {
   canvas.width = width * resolution;
   canvas.height = height * resolution;
   context.drawImage(image, 0, 0, width * resolution, height * resolution);
-  const { parseAsGraphicsContext: _p, ...rest } = asset.data;
+  const { parseAsGraphicsContext: _p, ...rest } = asset.data ?? {};
   const base = new _rendering_renderers_shared_texture_sources_ImageSource_mjs__WEBPACK_IMPORTED_MODULE_6__.ImageSource({
     resource: canvas,
     alphaMode: "premultiply-alpha-on-upload",
@@ -29535,7 +29662,7 @@ const loadTextures = {
         src = await loadImageBitmap(url, asset);
       }
     } else {
-      src = await new Promise((resolve) => {
+      src = await new Promise((resolve, reject) => {
         src = new Image();
         src.crossOrigin = this.config.crossOrigin;
         src.src = url;
@@ -29545,6 +29672,7 @@ const loadTextures = {
           src.onload = () => {
             resolve(src);
           };
+          src.onerror = reject;
         }
       });
     }
@@ -30365,7 +30493,7 @@ class Resolver {
    */
   _getPreferredOrder(assets) {
     for (let i = 0; i < assets.length; i++) {
-      const asset = assets[0];
+      const asset = assets[i];
       const preferred = this._preferredOrder.find((preference) => preference.params.format.includes(asset.format));
       if (preferred) {
         return preferred;
@@ -31796,7 +31924,9 @@ function getMipmapLevelBuffers(format, width, height, dataOffset, mipmapCount, a
   let mipHeight = height;
   let offset = dataOffset;
   for (let level = 0; level < mipmapCount; ++level) {
-    const byteLength = blockBytes ? Math.max(4, mipWidth) / 4 * Math.max(4, mipHeight) / 4 * blockBytes : mipWidth * mipHeight * 4;
+    const alignedWidth = Math.ceil(Math.max(4, mipWidth) / 4) * 4;
+    const alignedHeight = Math.ceil(Math.max(4, mipHeight) / 4) * 4;
+    const byteLength = blockBytes ? alignedWidth / 4 * alignedHeight / 4 * blockBytes : mipWidth * mipHeight * 4;
     const levelBuffer = new Uint8Array(arrayBuffer, offset, byteLength);
     levelBuffers.push(levelBuffer);
     offset += byteLength;
@@ -36220,20 +36350,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FilterSystem: () => (/* binding */ FilterSystem)
 /* harmony export */ });
-/* harmony import */ var _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../extensions/Extensions.mjs */ "./node_modules/pixi.js/lib/extensions/Extensions.mjs");
-/* harmony import */ var _maths_matrix_Matrix_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../maths/matrix/Matrix.mjs */ "./node_modules/pixi.js/lib/maths/matrix/Matrix.mjs");
-/* harmony import */ var _maths_point_Point_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../maths/point/Point.mjs */ "./node_modules/pixi.js/lib/maths/point/Point.mjs");
+/* harmony import */ var _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../extensions/Extensions.mjs */ "./node_modules/pixi.js/lib/extensions/Extensions.mjs");
+/* harmony import */ var _maths_matrix_Matrix_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../maths/matrix/Matrix.mjs */ "./node_modules/pixi.js/lib/maths/matrix/Matrix.mjs");
+/* harmony import */ var _maths_point_Point_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../maths/point/Point.mjs */ "./node_modules/pixi.js/lib/maths/point/Point.mjs");
 /* harmony import */ var _rendering_renderers_gpu_shader_BindGroup_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../rendering/renderers/gpu/shader/BindGroup.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/gpu/shader/BindGroup.mjs");
 /* harmony import */ var _rendering_renderers_shared_geometry_Geometry_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../rendering/renderers/shared/geometry/Geometry.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/geometry/Geometry.mjs");
 /* harmony import */ var _rendering_renderers_shared_shader_UniformGroup_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../rendering/renderers/shared/shader/UniformGroup.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/shader/UniformGroup.mjs");
-/* harmony import */ var _rendering_renderers_shared_texture_Texture_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../rendering/renderers/shared/texture/Texture.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/texture/Texture.mjs");
-/* harmony import */ var _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../rendering/renderers/shared/texture/TexturePool.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/texture/TexturePool.mjs");
-/* harmony import */ var _rendering_renderers_types_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../rendering/renderers/types.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/types.mjs");
-/* harmony import */ var _scene_container_bounds_Bounds_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../scene/container/bounds/Bounds.mjs */ "./node_modules/pixi.js/lib/scene/container/bounds/Bounds.mjs");
-/* harmony import */ var _scene_container_bounds_getFastGlobalBounds_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../scene/container/bounds/getFastGlobalBounds.mjs */ "./node_modules/pixi.js/lib/scene/container/bounds/getFastGlobalBounds.mjs");
+/* harmony import */ var _rendering_renderers_shared_texture_Texture_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../rendering/renderers/shared/texture/Texture.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/texture/Texture.mjs");
+/* harmony import */ var _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../rendering/renderers/shared/texture/TexturePool.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/texture/TexturePool.mjs");
+/* harmony import */ var _rendering_renderers_types_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../rendering/renderers/types.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/types.mjs");
+/* harmony import */ var _scene_container_bounds_Bounds_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../scene/container/bounds/Bounds.mjs */ "./node_modules/pixi.js/lib/scene/container/bounds/Bounds.mjs");
 /* harmony import */ var _scene_container_bounds_getRenderableBounds_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../scene/container/bounds/getRenderableBounds.mjs */ "./node_modules/pixi.js/lib/scene/container/bounds/getRenderableBounds.mjs");
-/* harmony import */ var _utils_logging_warn_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/logging/warn.mjs */ "./node_modules/pixi.js/lib/utils/logging/warn.mjs");
-
+/* harmony import */ var _utils_logging_warn_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/logging/warn.mjs */ "./node_modules/pixi.js/lib/utils/logging/warn.mjs");
 
 
 
@@ -36301,7 +36429,7 @@ class FilterSystem {
       bounds.addRect(instruction.filterEffect.filterArea);
       bounds.applyMatrix(instruction.container.worldTransform);
     } else {
-      (0,_scene_container_bounds_getFastGlobalBounds_mjs__WEBPACK_IMPORTED_MODULE_4__.getFastGlobalBounds)(instruction.container, bounds);
+      instruction.container.getFastGlobalBounds(true, bounds);
     }
     if (instruction.container) {
       const renderGroup = instruction.container.renderGroup || instruction.container.parentRenderGroup;
@@ -36335,7 +36463,7 @@ class FilterSystem {
         break;
       }
       if (filter.blendRequired && !(renderer.backBuffer?.useBackBuffer ?? true)) {
-        (0,_utils_logging_warn_mjs__WEBPACK_IMPORTED_MODULE_5__.warn)("Blend filter requires backBuffer on WebGL renderer to be enabled. Set `useBackBuffer: true` in the renderer options.");
+        (0,_utils_logging_warn_mjs__WEBPACK_IMPORTED_MODULE_4__.warn)("Blend filter requires backBuffer on WebGL renderer to be enabled. Set `useBackBuffer: true` in the renderer options.");
         enabled = false;
         break;
       }
@@ -36362,7 +36490,7 @@ class FilterSystem {
     filterData.container = instruction.container;
     filterData.filterEffect = instruction.filterEffect;
     filterData.previousRenderSurface = renderer.renderTarget.renderSurface;
-    filterData.inputTexture = _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_6__.TexturePool.getOptimalTexture(
+    filterData.inputTexture = _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_5__.TexturePool.getOptimalTexture(
       bounds.width,
       bounds.height,
       resolution,
@@ -36383,7 +36511,7 @@ class FilterSystem {
     this._activeFilterData = filterData;
     const inputTexture = filterData.inputTexture;
     const bounds = filterData.bounds;
-    let backTexture = _rendering_renderers_shared_texture_Texture_mjs__WEBPACK_IMPORTED_MODULE_7__.Texture.EMPTY;
+    let backTexture = _rendering_renderers_shared_texture_Texture_mjs__WEBPACK_IMPORTED_MODULE_6__.Texture.EMPTY;
     renderer.renderTarget.finishRenderPass();
     if (filterData.blendRequired) {
       const previousBounds = this._filterStackIndex > 0 ? this._filterStack[this._filterStackIndex - 1].bounds : null;
@@ -36397,10 +36525,10 @@ class FilterSystem {
     renderer.globalUniforms.pop();
     if (filters.length === 1) {
       filters[0].apply(this, inputTexture, filterData.previousRenderSurface, false);
-      _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_6__.TexturePool.returnTexture(inputTexture);
+      _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_5__.TexturePool.returnTexture(inputTexture);
     } else {
       let flip = filterData.inputTexture;
-      let flop = _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_6__.TexturePool.getOptimalTexture(
+      let flop = _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_5__.TexturePool.getOptimalTexture(
         bounds.width,
         bounds.height,
         flip.source._resolution,
@@ -36415,16 +36543,16 @@ class FilterSystem {
         flop = t;
       }
       filters[i].apply(this, flip, filterData.previousRenderSurface, false);
-      _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_6__.TexturePool.returnTexture(flip);
-      _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_6__.TexturePool.returnTexture(flop);
+      _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_5__.TexturePool.returnTexture(flip);
+      _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_5__.TexturePool.returnTexture(flop);
     }
     if (filterData.blendRequired) {
-      _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_6__.TexturePool.returnTexture(backTexture);
+      _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_5__.TexturePool.returnTexture(backTexture);
     }
   }
   getBackTexture(lastRenderSurface, bounds, previousBounds) {
     const backgroundResolution = lastRenderSurface.colorTexture.source._resolution;
-    const backTexture = _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_6__.TexturePool.getOptimalTexture(
+    const backTexture = _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_5__.TexturePool.getOptimalTexture(
       bounds.width,
       bounds.height,
       backgroundResolution,
@@ -36453,7 +36581,7 @@ class FilterSystem {
     const renderer = this.renderer;
     const filterData = this._filterStack[this._filterStackIndex];
     const bounds = filterData.bounds;
-    const offset = _maths_point_Point_mjs__WEBPACK_IMPORTED_MODULE_8__.Point.shared;
+    const offset = _maths_point_Point_mjs__WEBPACK_IMPORTED_MODULE_7__.Point.shared;
     const previousRenderSurface = filterData.previousRenderSurface;
     const isFinalTarget = previousRenderSurface === output;
     let resolution = this.renderer.renderTarget.rootRenderTarget.colorTexture.source._resolution;
@@ -36510,7 +36638,7 @@ class FilterSystem {
     globalFrame[3] = rootTexture.source.height * resolution;
     const renderTarget = this.renderer.renderTarget.getRenderTarget(output);
     renderer.renderTarget.bind(output, !!clear);
-    if (output instanceof _rendering_renderers_shared_texture_Texture_mjs__WEBPACK_IMPORTED_MODULE_7__.Texture) {
+    if (output instanceof _rendering_renderers_shared_texture_Texture_mjs__WEBPACK_IMPORTED_MODULE_6__.Texture) {
       outputTexture[0] = output.frame.width;
       outputTexture[1] = output.frame.height;
     } else {
@@ -36534,7 +36662,7 @@ class FilterSystem {
       state: filter._state,
       topology: "triangle-list"
     });
-    if (renderer.type === _rendering_renderers_types_mjs__WEBPACK_IMPORTED_MODULE_9__.RendererType.WEBGL) {
+    if (renderer.type === _rendering_renderers_types_mjs__WEBPACK_IMPORTED_MODULE_8__.RendererType.WEBGL) {
       renderer.renderTarget.finishRenderPass();
     }
   }
@@ -36542,7 +36670,7 @@ class FilterSystem {
     return {
       skip: false,
       inputTexture: null,
-      bounds: new _scene_container_bounds_Bounds_mjs__WEBPACK_IMPORTED_MODULE_10__.Bounds(),
+      bounds: new _scene_container_bounds_Bounds_mjs__WEBPACK_IMPORTED_MODULE_9__.Bounds(),
       container: null,
       filterEffect: null,
       blendRequired: false,
@@ -36567,7 +36695,7 @@ class FilterSystem {
       data.bounds.minX,
       data.bounds.minY
     );
-    const worldTransform = sprite.worldTransform.copyTo(_maths_matrix_Matrix_mjs__WEBPACK_IMPORTED_MODULE_11__.Matrix.shared);
+    const worldTransform = sprite.worldTransform.copyTo(_maths_matrix_Matrix_mjs__WEBPACK_IMPORTED_MODULE_10__.Matrix.shared);
     const renderGroup = sprite.renderGroup || sprite.parentRenderGroup;
     if (renderGroup && renderGroup.cacheToLocalTransform) {
       worldTransform.prepend(renderGroup.cacheToLocalTransform);
@@ -36585,8 +36713,8 @@ class FilterSystem {
 /** @ignore */
 FilterSystem.extension = {
   type: [
-    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_12__.ExtensionType.WebGLSystem,
-    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_12__.ExtensionType.WebGPUSystem
+    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_11__.ExtensionType.WebGLSystem,
+    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_11__.ExtensionType.WebGPUSystem
   ],
   name: "filter"
 };
@@ -39034,16 +39162,16 @@ var source = "struct GlobalFilterUniforms {\n  uInputSize:vec4<f32>,\n  uInputPi
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   AbstractBitmapFont: () => (/* reexport safe */ _scene_text_bitmap_AbstractBitmapFont_mjs__WEBPACK_IMPORTED_MODULE_466__.AbstractBitmapFont),
+/* harmony export */   AbstractBitmapFont: () => (/* reexport safe */ _scene_text_bitmap_AbstractBitmapFont_mjs__WEBPACK_IMPORTED_MODULE_469__.AbstractBitmapFont),
 /* harmony export */   AbstractRenderer: () => (/* reexport safe */ _rendering_renderers_shared_system_AbstractRenderer_mjs__WEBPACK_IMPORTED_MODULE_326__.AbstractRenderer),
-/* harmony export */   AbstractText: () => (/* reexport safe */ _scene_text_AbstractText_mjs__WEBPACK_IMPORTED_MODULE_492__.AbstractText),
+/* harmony export */   AbstractText: () => (/* reexport safe */ _scene_text_AbstractText_mjs__WEBPACK_IMPORTED_MODULE_495__.AbstractText),
 /* harmony export */   AccessibilitySystem: () => (/* reexport safe */ _accessibility_AccessibilitySystem_mjs__WEBPACK_IMPORTED_MODULE_3__.AccessibilitySystem),
 /* harmony export */   AlphaFilter: () => (/* reexport safe */ _filters_defaults_alpha_AlphaFilter_mjs__WEBPACK_IMPORTED_MODULE_120__.AlphaFilter),
 /* harmony export */   AlphaMask: () => (/* reexport safe */ _rendering_mask_alpha_AlphaMask_mjs__WEBPACK_IMPORTED_MODULE_182__.AlphaMask),
 /* harmony export */   AlphaMaskPipe: () => (/* reexport safe */ _rendering_mask_alpha_AlphaMaskPipe_mjs__WEBPACK_IMPORTED_MODULE_183__.AlphaMaskPipe),
-/* harmony export */   AnimatedSprite: () => (/* reexport safe */ _scene_sprite_animated_AnimatedSprite_mjs__WEBPACK_IMPORTED_MODULE_451__.AnimatedSprite),
+/* harmony export */   AnimatedSprite: () => (/* reexport safe */ _scene_sprite_animated_AnimatedSprite_mjs__WEBPACK_IMPORTED_MODULE_454__.AnimatedSprite),
 /* harmony export */   Application: () => (/* reexport safe */ _app_Application_mjs__WEBPACK_IMPORTED_MODULE_26__.Application),
-/* harmony export */   ApplicationInitHook: () => (/* reexport safe */ _utils_global_globalHooks_mjs__WEBPACK_IMPORTED_MODULE_526__.ApplicationInitHook),
+/* harmony export */   ApplicationInitHook: () => (/* reexport safe */ _utils_global_globalHooks_mjs__WEBPACK_IMPORTED_MODULE_530__.ApplicationInitHook),
 /* harmony export */   Assets: () => (/* reexport safe */ _assets_Assets_mjs__WEBPACK_IMPORTED_MODULE_29__.Assets),
 /* harmony export */   AssetsClass: () => (/* reexport safe */ _assets_Assets_mjs__WEBPACK_IMPORTED_MODULE_29__.AssetsClass),
 /* harmony export */   BLEND_TO_NPM: () => (/* reexport safe */ _rendering_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_323__.BLEND_TO_NPM),
@@ -39053,18 +39181,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Batch: () => (/* reexport safe */ _rendering_batcher_shared_Batcher_mjs__WEBPACK_IMPORTED_MODULE_161__.Batch),
 /* harmony export */   BatchGeometry: () => (/* reexport safe */ _rendering_batcher_shared_BatchGeometry_mjs__WEBPACK_IMPORTED_MODULE_163__.BatchGeometry),
 /* harmony export */   BatchTextureArray: () => (/* reexport safe */ _rendering_batcher_shared_BatchTextureArray_mjs__WEBPACK_IMPORTED_MODULE_164__.BatchTextureArray),
-/* harmony export */   BatchableGraphics: () => (/* reexport safe */ _scene_graphics_shared_BatchableGraphics_mjs__WEBPACK_IMPORTED_MODULE_394__.BatchableGraphics),
-/* harmony export */   BatchableMesh: () => (/* reexport safe */ _scene_mesh_shared_BatchableMesh_mjs__WEBPACK_IMPORTED_MODULE_434__.BatchableMesh),
-/* harmony export */   BatchableSprite: () => (/* reexport safe */ _scene_sprite_BatchableSprite_mjs__WEBPACK_IMPORTED_MODULE_463__.BatchableSprite),
+/* harmony export */   BatchableGraphics: () => (/* reexport safe */ _scene_graphics_shared_BatchableGraphics_mjs__WEBPACK_IMPORTED_MODULE_396__.BatchableGraphics),
+/* harmony export */   BatchableMesh: () => (/* reexport safe */ _scene_mesh_shared_BatchableMesh_mjs__WEBPACK_IMPORTED_MODULE_437__.BatchableMesh),
+/* harmony export */   BatchableSprite: () => (/* reexport safe */ _scene_sprite_BatchableSprite_mjs__WEBPACK_IMPORTED_MODULE_466__.BatchableSprite),
 /* harmony export */   Batcher: () => (/* reexport safe */ _rendering_batcher_shared_Batcher_mjs__WEBPACK_IMPORTED_MODULE_161__.Batcher),
 /* harmony export */   BatcherPipe: () => (/* reexport safe */ _rendering_batcher_shared_BatcherPipe_mjs__WEBPACK_IMPORTED_MODULE_162__.BatcherPipe),
-/* harmony export */   BigPool: () => (/* reexport safe */ _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_536__.BigPool),
+/* harmony export */   BigPool: () => (/* reexport safe */ _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_540__.BigPool),
 /* harmony export */   BindGroup: () => (/* reexport safe */ _rendering_renderers_gpu_shader_BindGroup_mjs__WEBPACK_IMPORTED_MODULE_269__.BindGroup),
 /* harmony export */   BindGroupSystem: () => (/* reexport safe */ _rendering_renderers_gpu_BindGroupSystem_mjs__WEBPACK_IMPORTED_MODULE_254__.BindGroupSystem),
-/* harmony export */   BitmapFont: () => (/* reexport safe */ _scene_text_bitmap_BitmapFont_mjs__WEBPACK_IMPORTED_MODULE_471__.BitmapFont),
-/* harmony export */   BitmapFontManager: () => (/* reexport safe */ _scene_text_bitmap_BitmapFontManager_mjs__WEBPACK_IMPORTED_MODULE_472__.BitmapFontManager),
-/* harmony export */   BitmapText: () => (/* reexport safe */ _scene_text_bitmap_BitmapText_mjs__WEBPACK_IMPORTED_MODULE_473__.BitmapText),
-/* harmony export */   BitmapTextPipe: () => (/* reexport safe */ _scene_text_bitmap_BitmapTextPipe_mjs__WEBPACK_IMPORTED_MODULE_474__.BitmapTextPipe),
+/* harmony export */   BitmapFont: () => (/* reexport safe */ _scene_text_bitmap_BitmapFont_mjs__WEBPACK_IMPORTED_MODULE_474__.BitmapFont),
+/* harmony export */   BitmapFontManager: () => (/* reexport safe */ _scene_text_bitmap_BitmapFontManager_mjs__WEBPACK_IMPORTED_MODULE_475__.BitmapFontManager),
+/* harmony export */   BitmapText: () => (/* reexport safe */ _scene_text_bitmap_BitmapText_mjs__WEBPACK_IMPORTED_MODULE_476__.BitmapText),
+/* harmony export */   BitmapTextPipe: () => (/* reexport safe */ _scene_text_bitmap_BitmapTextPipe_mjs__WEBPACK_IMPORTED_MODULE_477__.BitmapTextPipe),
 /* harmony export */   BlendModeFilter: () => (/* reexport safe */ _filters_blend_modes_BlendModeFilter_mjs__WEBPACK_IMPORTED_MODULE_117__.BlendModeFilter),
 /* harmony export */   BlendModePipe: () => (/* reexport safe */ _rendering_renderers_shared_blendModes_BlendModePipe_mjs__WEBPACK_IMPORTED_MODULE_292__.BlendModePipe),
 /* harmony export */   BlurFilter: () => (/* reexport safe */ _filters_defaults_blur_BlurFilter_mjs__WEBPACK_IMPORTED_MODULE_121__.BlurFilter),
@@ -39080,9 +39208,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   CanvasPool: () => (/* reexport safe */ _rendering_renderers_shared_texture_CanvasPool_mjs__WEBPACK_IMPORTED_MODULE_329__.CanvasPool),
 /* harmony export */   CanvasPoolClass: () => (/* reexport safe */ _rendering_renderers_shared_texture_CanvasPool_mjs__WEBPACK_IMPORTED_MODULE_329__.CanvasPoolClass),
 /* harmony export */   CanvasSource: () => (/* reexport safe */ _rendering_renderers_shared_texture_sources_CanvasSource_mjs__WEBPACK_IMPORTED_MODULE_334__.CanvasSource),
-/* harmony export */   CanvasTextMetrics: () => (/* reexport safe */ _scene_text_canvas_CanvasTextMetrics_mjs__WEBPACK_IMPORTED_MODULE_493__.CanvasTextMetrics),
-/* harmony export */   CanvasTextPipe: () => (/* reexport safe */ _scene_text_canvas_CanvasTextPipe_mjs__WEBPACK_IMPORTED_MODULE_494__.CanvasTextPipe),
-/* harmony export */   CanvasTextSystem: () => (/* reexport safe */ _scene_text_canvas_CanvasTextSystem_mjs__WEBPACK_IMPORTED_MODULE_495__.CanvasTextSystem),
+/* harmony export */   CanvasTextMetrics: () => (/* reexport safe */ _scene_text_canvas_CanvasTextMetrics_mjs__WEBPACK_IMPORTED_MODULE_496__.CanvasTextMetrics),
+/* harmony export */   CanvasTextPipe: () => (/* reexport safe */ _scene_text_canvas_CanvasTextPipe_mjs__WEBPACK_IMPORTED_MODULE_497__.CanvasTextPipe),
+/* harmony export */   CanvasTextSystem: () => (/* reexport safe */ _scene_text_canvas_CanvasTextSystem_mjs__WEBPACK_IMPORTED_MODULE_498__.CanvasTextSystem),
 /* harmony export */   Circle: () => (/* reexport safe */ _maths_shapes_Circle_mjs__WEBPACK_IMPORTED_MODULE_144__.Circle),
 /* harmony export */   Color: () => (/* reexport safe */ _color_Color_mjs__WEBPACK_IMPORTED_MODULE_60__.Color),
 /* harmony export */   ColorBlend: () => (/* reexport safe */ _advanced_blend_modes_ColorBlend_mjs__WEBPACK_IMPORTED_MODULE_5__.ColorBlend),
@@ -39092,13 +39220,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ColorMaskPipe: () => (/* reexport safe */ _rendering_mask_color_ColorMaskPipe_mjs__WEBPACK_IMPORTED_MODULE_185__.ColorMaskPipe),
 /* harmony export */   ColorMatrixFilter: () => (/* reexport safe */ _filters_defaults_color_matrix_ColorMatrixFilter_mjs__WEBPACK_IMPORTED_MODULE_128__.ColorMatrixFilter),
 /* harmony export */   CompressedSource: () => (/* reexport safe */ _rendering_renderers_shared_texture_sources_CompressedSource_mjs__WEBPACK_IMPORTED_MODULE_335__.CompressedSource),
-/* harmony export */   Container: () => (/* reexport safe */ _scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_372__.Container),
+/* harmony export */   Container: () => (/* reexport safe */ _scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_374__.Container),
 /* harmony export */   Culler: () => (/* reexport safe */ _culling_Culler_mjs__WEBPACK_IMPORTED_MODULE_84__.Culler),
 /* harmony export */   CullerPlugin: () => (/* reexport safe */ _culling_CullerPlugin_mjs__WEBPACK_IMPORTED_MODULE_85__.CullerPlugin),
-/* harmony export */   CustomRenderPipe: () => (/* reexport safe */ _scene_container_CustomRenderPipe_mjs__WEBPACK_IMPORTED_MODULE_373__.CustomRenderPipe),
+/* harmony export */   CustomRenderPipe: () => (/* reexport safe */ _scene_container_CustomRenderPipe_mjs__WEBPACK_IMPORTED_MODULE_375__.CustomRenderPipe),
 /* harmony export */   D3D10_RESOURCE_DIMENSION: () => (/* reexport safe */ _compressed_textures_dds_const_mjs__WEBPACK_IMPORTED_MODULE_67__.D3D10_RESOURCE_DIMENSION),
 /* harmony export */   D3DFMT: () => (/* reexport safe */ _compressed_textures_dds_const_mjs__WEBPACK_IMPORTED_MODULE_67__.D3DFMT),
-/* harmony export */   DATA_URI: () => (/* reexport safe */ _utils_const_mjs__WEBPACK_IMPORTED_MODULE_519__.DATA_URI),
+/* harmony export */   DATA_URI: () => (/* reexport safe */ _utils_const_mjs__WEBPACK_IMPORTED_MODULE_523__.DATA_URI),
 /* harmony export */   DDS: () => (/* reexport safe */ _compressed_textures_dds_const_mjs__WEBPACK_IMPORTED_MODULE_67__.DDS),
 /* harmony export */   DEG_TO_RAD: () => (/* reexport safe */ _maths_misc_const_mjs__WEBPACK_IMPORTED_MODULE_138__.DEG_TO_RAD),
 /* harmony export */   DEPRECATED_SCALE_MODES: () => (/* reexport safe */ _rendering_renderers_shared_texture_const_mjs__WEBPACK_IMPORTED_MODULE_330__.DEPRECATED_SCALE_MODES),
@@ -39113,10 +39241,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   DifferenceBlend: () => (/* reexport safe */ _advanced_blend_modes_DifferenceBlend_mjs__WEBPACK_IMPORTED_MODULE_9__.DifferenceBlend),
 /* harmony export */   DisplacementFilter: () => (/* reexport safe */ _filters_defaults_displacement_DisplacementFilter_mjs__WEBPACK_IMPORTED_MODULE_129__.DisplacementFilter),
 /* harmony export */   DivideBlend: () => (/* reexport safe */ _advanced_blend_modes_DivideBlend_mjs__WEBPACK_IMPORTED_MODULE_10__.DivideBlend),
-/* harmony export */   DynamicBitmapFont: () => (/* reexport safe */ _scene_text_bitmap_DynamicBitmapFont_mjs__WEBPACK_IMPORTED_MODULE_475__.DynamicBitmapFont),
+/* harmony export */   DynamicBitmapFont: () => (/* reexport safe */ _scene_text_bitmap_DynamicBitmapFont_mjs__WEBPACK_IMPORTED_MODULE_478__.DynamicBitmapFont),
 /* harmony export */   Ellipse: () => (/* reexport safe */ _maths_shapes_Ellipse_mjs__WEBPACK_IMPORTED_MODULE_145__.Ellipse),
 /* harmony export */   EventBoundary: () => (/* reexport safe */ _events_EventBoundary_mjs__WEBPACK_IMPORTED_MODULE_91__.EventBoundary),
-/* harmony export */   EventEmitter: () => (/* reexport safe */ eventemitter3__WEBPACK_IMPORTED_MODULE_520__["default"]),
+/* harmony export */   EventEmitter: () => (/* reexport safe */ eventemitter3__WEBPACK_IMPORTED_MODULE_524__["default"]),
 /* harmony export */   EventSystem: () => (/* reexport safe */ _events_EventSystem_mjs__WEBPACK_IMPORTED_MODULE_92__.EventSystem),
 /* harmony export */   EventsTicker: () => (/* reexport safe */ _events_EventTicker_mjs__WEBPACK_IMPORTED_MODULE_93__.EventsTicker),
 /* harmony export */   ExclusionBlend: () => (/* reexport safe */ _advanced_blend_modes_ExclusionBlend_mjs__WEBPACK_IMPORTED_MODULE_11__.ExclusionBlend),
@@ -39128,13 +39256,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   FederatedMouseEvent: () => (/* reexport safe */ _events_FederatedMouseEvent_mjs__WEBPACK_IMPORTED_MODULE_96__.FederatedMouseEvent),
 /* harmony export */   FederatedPointerEvent: () => (/* reexport safe */ _events_FederatedPointerEvent_mjs__WEBPACK_IMPORTED_MODULE_97__.FederatedPointerEvent),
 /* harmony export */   FederatedWheelEvent: () => (/* reexport safe */ _events_FederatedWheelEvent_mjs__WEBPACK_IMPORTED_MODULE_98__.FederatedWheelEvent),
-/* harmony export */   FillGradient: () => (/* reexport safe */ _scene_graphics_shared_fill_FillGradient_mjs__WEBPACK_IMPORTED_MODULE_407__.FillGradient),
-/* harmony export */   FillPattern: () => (/* reexport safe */ _scene_graphics_shared_fill_FillPattern_mjs__WEBPACK_IMPORTED_MODULE_408__.FillPattern),
+/* harmony export */   FillGradient: () => (/* reexport safe */ _scene_graphics_shared_fill_FillGradient_mjs__WEBPACK_IMPORTED_MODULE_409__.FillGradient),
+/* harmony export */   FillPattern: () => (/* reexport safe */ _scene_graphics_shared_fill_FillPattern_mjs__WEBPACK_IMPORTED_MODULE_410__.FillPattern),
 /* harmony export */   Filter: () => (/* reexport safe */ _filters_Filter_mjs__WEBPACK_IMPORTED_MODULE_131__.Filter),
 /* harmony export */   FilterEffect: () => (/* reexport safe */ _filters_FilterEffect_mjs__WEBPACK_IMPORTED_MODULE_132__.FilterEffect),
 /* harmony export */   FilterPipe: () => (/* reexport safe */ _filters_FilterPipe_mjs__WEBPACK_IMPORTED_MODULE_133__.FilterPipe),
 /* harmony export */   FilterSystem: () => (/* reexport safe */ _filters_FilterSystem_mjs__WEBPACK_IMPORTED_MODULE_134__.FilterSystem),
-/* harmony export */   FontStylePromiseCache: () => (/* reexport safe */ _scene_text_html_utils_getFontCss_mjs__WEBPACK_IMPORTED_MODULE_484__.FontStylePromiseCache),
+/* harmony export */   FontStylePromiseCache: () => (/* reexport safe */ _scene_text_html_utils_getFontCss_mjs__WEBPACK_IMPORTED_MODULE_487__.FontStylePromiseCache),
 /* harmony export */   GAUSSIAN_VALUES: () => (/* reexport safe */ _filters_defaults_blur_const_mjs__WEBPACK_IMPORTED_MODULE_123__.GAUSSIAN_VALUES),
 /* harmony export */   GL_FORMATS: () => (/* reexport safe */ _rendering_renderers_gl_texture_const_mjs__WEBPACK_IMPORTED_MODULE_239__.GL_FORMATS),
 /* harmony export */   GL_INTERNAL_FORMAT: () => (/* reexport safe */ _compressed_textures_ktx2_const_mjs__WEBPACK_IMPORTED_MODULE_72__.GL_INTERNAL_FORMAT),
@@ -39151,10 +39279,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   GlContextSystem: () => (/* reexport safe */ _rendering_renderers_gl_context_GlContextSystem_mjs__WEBPACK_IMPORTED_MODULE_197__.GlContextSystem),
 /* harmony export */   GlEncoderSystem: () => (/* reexport safe */ _rendering_renderers_gl_GlEncoderSystem_mjs__WEBPACK_IMPORTED_MODULE_202__.GlEncoderSystem),
 /* harmony export */   GlGeometrySystem: () => (/* reexport safe */ _rendering_renderers_gl_geometry_GlGeometrySystem_mjs__WEBPACK_IMPORTED_MODULE_198__.GlGeometrySystem),
-/* harmony export */   GlGraphicsAdaptor: () => (/* reexport safe */ _scene_graphics_gl_GlGraphicsAdaptor_mjs__WEBPACK_IMPORTED_MODULE_391__.GlGraphicsAdaptor),
-/* harmony export */   GlMeshAdaptor: () => (/* reexport safe */ _scene_mesh_gl_GlMeshAdaptor_mjs__WEBPACK_IMPORTED_MODULE_432__.GlMeshAdaptor),
-/* harmony export */   GlParticleContainerAdaptor: () => (/* reexport safe */ _scene_particle_container_gl_GlParticleContainerAdaptor_mjs__WEBPACK_IMPORTED_MODULE_439__.GlParticleContainerAdaptor),
-/* harmony export */   GlParticleContainerPipe: () => (/* reexport safe */ _scene_particle_container_shared_GlParticleContainerPipe_mjs__WEBPACK_IMPORTED_MODULE_441__.GlParticleContainerPipe),
+/* harmony export */   GlGraphicsAdaptor: () => (/* reexport safe */ _scene_graphics_gl_GlGraphicsAdaptor_mjs__WEBPACK_IMPORTED_MODULE_393__.GlGraphicsAdaptor),
+/* harmony export */   GlMeshAdaptor: () => (/* reexport safe */ _scene_mesh_gl_GlMeshAdaptor_mjs__WEBPACK_IMPORTED_MODULE_435__.GlMeshAdaptor),
+/* harmony export */   GlParticleContainerAdaptor: () => (/* reexport safe */ _scene_particle_container_gl_GlParticleContainerAdaptor_mjs__WEBPACK_IMPORTED_MODULE_442__.GlParticleContainerAdaptor),
+/* harmony export */   GlParticleContainerPipe: () => (/* reexport safe */ _scene_particle_container_shared_GlParticleContainerPipe_mjs__WEBPACK_IMPORTED_MODULE_444__.GlParticleContainerPipe),
 /* harmony export */   GlProgram: () => (/* reexport safe */ _rendering_renderers_gl_shader_GlProgram_mjs__WEBPACK_IMPORTED_MODULE_210__.GlProgram),
 /* harmony export */   GlProgramData: () => (/* reexport safe */ _rendering_renderers_gl_shader_GlProgramData_mjs__WEBPACK_IMPORTED_MODULE_211__.GlProgramData),
 /* harmony export */   GlRenderTarget: () => (/* reexport safe */ _rendering_renderers_gl_GlRenderTarget_mjs__WEBPACK_IMPORTED_MODULE_203__.GlRenderTarget),
@@ -39174,12 +39302,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   GpuColorMaskSystem: () => (/* reexport safe */ _rendering_renderers_gpu_GpuColorMaskSystem_mjs__WEBPACK_IMPORTED_MODULE_258__.GpuColorMaskSystem),
 /* harmony export */   GpuDeviceSystem: () => (/* reexport safe */ _rendering_renderers_gpu_GpuDeviceSystem_mjs__WEBPACK_IMPORTED_MODULE_259__.GpuDeviceSystem),
 /* harmony export */   GpuEncoderSystem: () => (/* reexport safe */ _rendering_renderers_gpu_GpuEncoderSystem_mjs__WEBPACK_IMPORTED_MODULE_260__.GpuEncoderSystem),
-/* harmony export */   GpuGraphicsAdaptor: () => (/* reexport safe */ _scene_graphics_gpu_GpuGraphicsAdaptor_mjs__WEBPACK_IMPORTED_MODULE_393__.GpuGraphicsAdaptor),
-/* harmony export */   GpuGraphicsContext: () => (/* reexport safe */ _scene_graphics_shared_GraphicsContextSystem_mjs__WEBPACK_IMPORTED_MODULE_411__.GpuGraphicsContext),
-/* harmony export */   GpuMeshAdapter: () => (/* reexport safe */ _scene_mesh_gpu_GpuMeshAdapter_mjs__WEBPACK_IMPORTED_MODULE_433__.GpuMeshAdapter),
+/* harmony export */   GpuGraphicsAdaptor: () => (/* reexport safe */ _scene_graphics_gpu_GpuGraphicsAdaptor_mjs__WEBPACK_IMPORTED_MODULE_395__.GpuGraphicsAdaptor),
+/* harmony export */   GpuGraphicsContext: () => (/* reexport safe */ _scene_graphics_shared_GraphicsContextSystem_mjs__WEBPACK_IMPORTED_MODULE_413__.GpuGraphicsContext),
+/* harmony export */   GpuMeshAdapter: () => (/* reexport safe */ _scene_mesh_gpu_GpuMeshAdapter_mjs__WEBPACK_IMPORTED_MODULE_436__.GpuMeshAdapter),
 /* harmony export */   GpuMipmapGenerator: () => (/* reexport safe */ _rendering_renderers_gpu_texture_utils_GpuMipmapGenerator_mjs__WEBPACK_IMPORTED_MODULE_289__.GpuMipmapGenerator),
-/* harmony export */   GpuParticleContainerAdaptor: () => (/* reexport safe */ _scene_particle_container_gpu_GpuParticleContainerAdaptor_mjs__WEBPACK_IMPORTED_MODULE_440__.GpuParticleContainerAdaptor),
-/* harmony export */   GpuParticleContainerPipe: () => (/* reexport safe */ _scene_particle_container_shared_GpuParticleContainerPipe_mjs__WEBPACK_IMPORTED_MODULE_442__.GpuParticleContainerPipe),
+/* harmony export */   GpuParticleContainerAdaptor: () => (/* reexport safe */ _scene_particle_container_gpu_GpuParticleContainerAdaptor_mjs__WEBPACK_IMPORTED_MODULE_443__.GpuParticleContainerAdaptor),
+/* harmony export */   GpuParticleContainerPipe: () => (/* reexport safe */ _scene_particle_container_shared_GpuParticleContainerPipe_mjs__WEBPACK_IMPORTED_MODULE_445__.GpuParticleContainerPipe),
 /* harmony export */   GpuProgram: () => (/* reexport safe */ _rendering_renderers_gpu_shader_GpuProgram_mjs__WEBPACK_IMPORTED_MODULE_270__.GpuProgram),
 /* harmony export */   GpuReadBuffer: () => (/* reexport safe */ _rendering_renderers_gpu_buffer_GpuReadBuffer_mjs__WEBPACK_IMPORTED_MODULE_256__.GpuReadBuffer),
 /* harmony export */   GpuRenderTarget: () => (/* reexport safe */ _rendering_renderers_gpu_renderTarget_GpuRenderTarget_mjs__WEBPACK_IMPORTED_MODULE_266__.GpuRenderTarget),
@@ -39192,17 +39320,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   GpuTextureSystem: () => (/* reexport safe */ _rendering_renderers_gpu_texture_GpuTextureSystem_mjs__WEBPACK_IMPORTED_MODULE_283__.GpuTextureSystem),
 /* harmony export */   GpuUboSystem: () => (/* reexport safe */ _rendering_renderers_gpu_GpuUboSystem_mjs__WEBPACK_IMPORTED_MODULE_262__.GpuUboSystem),
 /* harmony export */   GpuUniformBatchPipe: () => (/* reexport safe */ _rendering_renderers_gpu_GpuUniformBatchPipe_mjs__WEBPACK_IMPORTED_MODULE_263__.GpuUniformBatchPipe),
-/* harmony export */   Graphics: () => (/* reexport safe */ _scene_graphics_shared_Graphics_mjs__WEBPACK_IMPORTED_MODULE_409__.Graphics),
-/* harmony export */   GraphicsContext: () => (/* reexport safe */ _scene_graphics_shared_GraphicsContext_mjs__WEBPACK_IMPORTED_MODULE_410__.GraphicsContext),
-/* harmony export */   GraphicsContextRenderData: () => (/* reexport safe */ _scene_graphics_shared_GraphicsContextSystem_mjs__WEBPACK_IMPORTED_MODULE_411__.GraphicsContextRenderData),
-/* harmony export */   GraphicsContextSystem: () => (/* reexport safe */ _scene_graphics_shared_GraphicsContextSystem_mjs__WEBPACK_IMPORTED_MODULE_411__.GraphicsContextSystem),
-/* harmony export */   GraphicsPath: () => (/* reexport safe */ _scene_graphics_shared_path_GraphicsPath_mjs__WEBPACK_IMPORTED_MODULE_413__.GraphicsPath),
-/* harmony export */   GraphicsPipe: () => (/* reexport safe */ _scene_graphics_shared_GraphicsPipe_mjs__WEBPACK_IMPORTED_MODULE_412__.GraphicsPipe),
-/* harmony export */   HTMLText: () => (/* reexport safe */ _scene_text_html_HTMLText_mjs__WEBPACK_IMPORTED_MODULE_478__.HTMLText),
-/* harmony export */   HTMLTextPipe: () => (/* reexport safe */ _scene_text_html_HTMLTextPipe_mjs__WEBPACK_IMPORTED_MODULE_479__.HTMLTextPipe),
-/* harmony export */   HTMLTextRenderData: () => (/* reexport safe */ _scene_text_html_HTMLTextRenderData_mjs__WEBPACK_IMPORTED_MODULE_480__.HTMLTextRenderData),
-/* harmony export */   HTMLTextStyle: () => (/* reexport safe */ _scene_text_html_HTMLTextStyle_mjs__WEBPACK_IMPORTED_MODULE_481__.HTMLTextStyle),
-/* harmony export */   HTMLTextSystem: () => (/* reexport safe */ _scene_text_html_HTMLTextSystem_mjs__WEBPACK_IMPORTED_MODULE_482__.HTMLTextSystem),
+/* harmony export */   Graphics: () => (/* reexport safe */ _scene_graphics_shared_Graphics_mjs__WEBPACK_IMPORTED_MODULE_411__.Graphics),
+/* harmony export */   GraphicsContext: () => (/* reexport safe */ _scene_graphics_shared_GraphicsContext_mjs__WEBPACK_IMPORTED_MODULE_412__.GraphicsContext),
+/* harmony export */   GraphicsContextRenderData: () => (/* reexport safe */ _scene_graphics_shared_GraphicsContextSystem_mjs__WEBPACK_IMPORTED_MODULE_413__.GraphicsContextRenderData),
+/* harmony export */   GraphicsContextSystem: () => (/* reexport safe */ _scene_graphics_shared_GraphicsContextSystem_mjs__WEBPACK_IMPORTED_MODULE_413__.GraphicsContextSystem),
+/* harmony export */   GraphicsPath: () => (/* reexport safe */ _scene_graphics_shared_path_GraphicsPath_mjs__WEBPACK_IMPORTED_MODULE_415__.GraphicsPath),
+/* harmony export */   GraphicsPipe: () => (/* reexport safe */ _scene_graphics_shared_GraphicsPipe_mjs__WEBPACK_IMPORTED_MODULE_414__.GraphicsPipe),
+/* harmony export */   HTMLText: () => (/* reexport safe */ _scene_text_html_HTMLText_mjs__WEBPACK_IMPORTED_MODULE_481__.HTMLText),
+/* harmony export */   HTMLTextPipe: () => (/* reexport safe */ _scene_text_html_HTMLTextPipe_mjs__WEBPACK_IMPORTED_MODULE_482__.HTMLTextPipe),
+/* harmony export */   HTMLTextRenderData: () => (/* reexport safe */ _scene_text_html_HTMLTextRenderData_mjs__WEBPACK_IMPORTED_MODULE_483__.HTMLTextRenderData),
+/* harmony export */   HTMLTextStyle: () => (/* reexport safe */ _scene_text_html_HTMLTextStyle_mjs__WEBPACK_IMPORTED_MODULE_484__.HTMLTextStyle),
+/* harmony export */   HTMLTextSystem: () => (/* reexport safe */ _scene_text_html_HTMLTextSystem_mjs__WEBPACK_IMPORTED_MODULE_485__.HTMLTextSystem),
 /* harmony export */   HardLightBlend: () => (/* reexport safe */ _advanced_blend_modes_HardLightBlend_mjs__WEBPACK_IMPORTED_MODULE_12__.HardLightBlend),
 /* harmony export */   HardMixBlend: () => (/* reexport safe */ _advanced_blend_modes_HardMixBlend_mjs__WEBPACK_IMPORTED_MODULE_13__.HardMixBlend),
 /* harmony export */   HelloSystem: () => (/* reexport safe */ _rendering_renderers_shared_startup_HelloSystem_mjs__WEBPACK_IMPORTED_MODULE_322__.HelloSystem),
@@ -39222,82 +39350,84 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   MaskEffectManagerClass: () => (/* reexport safe */ _rendering_mask_MaskEffectManager_mjs__WEBPACK_IMPORTED_MODULE_186__.MaskEffectManagerClass),
 /* harmony export */   MaskFilter: () => (/* reexport safe */ _filters_mask_MaskFilter_mjs__WEBPACK_IMPORTED_MODULE_135__.MaskFilter),
 /* harmony export */   Matrix: () => (/* reexport safe */ _maths_matrix_Matrix_mjs__WEBPACK_IMPORTED_MODULE_137__.Matrix),
-/* harmony export */   Mesh: () => (/* reexport safe */ _scene_mesh_shared_Mesh_mjs__WEBPACK_IMPORTED_MODULE_436__.Mesh),
-/* harmony export */   MeshGeometry: () => (/* reexport safe */ _scene_mesh_shared_MeshGeometry_mjs__WEBPACK_IMPORTED_MODULE_437__.MeshGeometry),
-/* harmony export */   MeshPipe: () => (/* reexport safe */ _scene_mesh_shared_MeshPipe_mjs__WEBPACK_IMPORTED_MODULE_438__.MeshPipe),
-/* harmony export */   MeshPlane: () => (/* reexport safe */ _scene_mesh_plane_MeshPlane_mjs__WEBPACK_IMPORTED_MODULE_427__.MeshPlane),
-/* harmony export */   MeshRope: () => (/* reexport safe */ _scene_mesh_simple_MeshRope_mjs__WEBPACK_IMPORTED_MODULE_429__.MeshRope),
-/* harmony export */   MeshSimple: () => (/* reexport safe */ _scene_mesh_simple_MeshSimple_mjs__WEBPACK_IMPORTED_MODULE_430__.MeshSimple),
-/* harmony export */   NOOP: () => (/* reexport safe */ _utils_misc_NOOP_mjs__WEBPACK_IMPORTED_MODULE_531__.NOOP),
+/* harmony export */   Mesh: () => (/* reexport safe */ _scene_mesh_shared_Mesh_mjs__WEBPACK_IMPORTED_MODULE_439__.Mesh),
+/* harmony export */   MeshGeometry: () => (/* reexport safe */ _scene_mesh_shared_MeshGeometry_mjs__WEBPACK_IMPORTED_MODULE_440__.MeshGeometry),
+/* harmony export */   MeshPipe: () => (/* reexport safe */ _scene_mesh_shared_MeshPipe_mjs__WEBPACK_IMPORTED_MODULE_441__.MeshPipe),
+/* harmony export */   MeshPlane: () => (/* reexport safe */ _scene_mesh_plane_MeshPlane_mjs__WEBPACK_IMPORTED_MODULE_430__.MeshPlane),
+/* harmony export */   MeshRope: () => (/* reexport safe */ _scene_mesh_simple_MeshRope_mjs__WEBPACK_IMPORTED_MODULE_432__.MeshRope),
+/* harmony export */   MeshSimple: () => (/* reexport safe */ _scene_mesh_simple_MeshSimple_mjs__WEBPACK_IMPORTED_MODULE_433__.MeshSimple),
+/* harmony export */   NOOP: () => (/* reexport safe */ _utils_misc_NOOP_mjs__WEBPACK_IMPORTED_MODULE_535__.NOOP),
 /* harmony export */   NegationBlend: () => (/* reexport safe */ _advanced_blend_modes_NegationBlend_mjs__WEBPACK_IMPORTED_MODULE_19__.NegationBlend),
-/* harmony export */   NineSliceGeometry: () => (/* reexport safe */ _scene_sprite_nine_slice_NineSliceGeometry_mjs__WEBPACK_IMPORTED_MODULE_452__.NineSliceGeometry),
-/* harmony export */   NineSlicePlane: () => (/* reexport safe */ _scene_sprite_nine_slice_NineSliceSprite_mjs__WEBPACK_IMPORTED_MODULE_453__.NineSlicePlane),
-/* harmony export */   NineSliceSprite: () => (/* reexport safe */ _scene_sprite_nine_slice_NineSliceSprite_mjs__WEBPACK_IMPORTED_MODULE_453__.NineSliceSprite),
-/* harmony export */   NineSliceSpritePipe: () => (/* reexport safe */ _scene_sprite_nine_slice_NineSliceSpritePipe_mjs__WEBPACK_IMPORTED_MODULE_454__.NineSliceSpritePipe),
+/* harmony export */   NineSliceGeometry: () => (/* reexport safe */ _scene_sprite_nine_slice_NineSliceGeometry_mjs__WEBPACK_IMPORTED_MODULE_455__.NineSliceGeometry),
+/* harmony export */   NineSlicePlane: () => (/* reexport safe */ _scene_sprite_nine_slice_NineSliceSprite_mjs__WEBPACK_IMPORTED_MODULE_456__.NineSlicePlane),
+/* harmony export */   NineSliceSprite: () => (/* reexport safe */ _scene_sprite_nine_slice_NineSliceSprite_mjs__WEBPACK_IMPORTED_MODULE_456__.NineSliceSprite),
+/* harmony export */   NineSliceSpritePipe: () => (/* reexport safe */ _scene_sprite_nine_slice_NineSliceSpritePipe_mjs__WEBPACK_IMPORTED_MODULE_457__.NineSliceSpritePipe),
 /* harmony export */   NoiseFilter: () => (/* reexport safe */ _filters_defaults_noise_NoiseFilter_mjs__WEBPACK_IMPORTED_MODULE_130__.NoiseFilter),
 /* harmony export */   ObservablePoint: () => (/* reexport safe */ _maths_point_ObservablePoint_mjs__WEBPACK_IMPORTED_MODULE_141__.ObservablePoint),
 /* harmony export */   OverlayBlend: () => (/* reexport safe */ _advanced_blend_modes_OverlayBlend_mjs__WEBPACK_IMPORTED_MODULE_20__.OverlayBlend),
 /* harmony export */   PI_2: () => (/* reexport safe */ _maths_misc_const_mjs__WEBPACK_IMPORTED_MODULE_138__.PI_2),
-/* harmony export */   Particle: () => (/* reexport safe */ _scene_particle_container_shared_Particle_mjs__WEBPACK_IMPORTED_MODULE_443__.Particle),
-/* harmony export */   ParticleBuffer: () => (/* reexport safe */ _scene_particle_container_shared_ParticleBuffer_mjs__WEBPACK_IMPORTED_MODULE_444__.ParticleBuffer),
-/* harmony export */   ParticleContainer: () => (/* reexport safe */ _scene_particle_container_shared_ParticleContainer_mjs__WEBPACK_IMPORTED_MODULE_445__.ParticleContainer),
-/* harmony export */   ParticleContainerPipe: () => (/* reexport safe */ _scene_particle_container_shared_ParticleContainerPipe_mjs__WEBPACK_IMPORTED_MODULE_446__.ParticleContainerPipe),
-/* harmony export */   ParticleShader: () => (/* reexport safe */ _scene_particle_container_shared_shader_ParticleShader_mjs__WEBPACK_IMPORTED_MODULE_448__.ParticleShader),
-/* harmony export */   PerspectiveMesh: () => (/* reexport safe */ _scene_mesh_perspective_PerspectiveMesh_mjs__WEBPACK_IMPORTED_MODULE_423__.PerspectiveMesh),
-/* harmony export */   PerspectivePlaneGeometry: () => (/* reexport safe */ _scene_mesh_perspective_PerspectivePlaneGeometry_mjs__WEBPACK_IMPORTED_MODULE_424__.PerspectivePlaneGeometry),
+/* harmony export */   Particle: () => (/* reexport safe */ _scene_particle_container_shared_Particle_mjs__WEBPACK_IMPORTED_MODULE_446__.Particle),
+/* harmony export */   ParticleBuffer: () => (/* reexport safe */ _scene_particle_container_shared_ParticleBuffer_mjs__WEBPACK_IMPORTED_MODULE_447__.ParticleBuffer),
+/* harmony export */   ParticleContainer: () => (/* reexport safe */ _scene_particle_container_shared_ParticleContainer_mjs__WEBPACK_IMPORTED_MODULE_448__.ParticleContainer),
+/* harmony export */   ParticleContainerPipe: () => (/* reexport safe */ _scene_particle_container_shared_ParticleContainerPipe_mjs__WEBPACK_IMPORTED_MODULE_449__.ParticleContainerPipe),
+/* harmony export */   ParticleShader: () => (/* reexport safe */ _scene_particle_container_shared_shader_ParticleShader_mjs__WEBPACK_IMPORTED_MODULE_451__.ParticleShader),
+/* harmony export */   PerspectiveMesh: () => (/* reexport safe */ _scene_mesh_perspective_PerspectiveMesh_mjs__WEBPACK_IMPORTED_MODULE_426__.PerspectiveMesh),
+/* harmony export */   PerspectivePlaneGeometry: () => (/* reexport safe */ _scene_mesh_perspective_PerspectivePlaneGeometry_mjs__WEBPACK_IMPORTED_MODULE_427__.PerspectivePlaneGeometry),
 /* harmony export */   PinLightBlend: () => (/* reexport safe */ _advanced_blend_modes_PinLightBlend_mjs__WEBPACK_IMPORTED_MODULE_21__.PinLightBlend),
 /* harmony export */   PipelineSystem: () => (/* reexport safe */ _rendering_renderers_gpu_pipeline_PipelineSystem_mjs__WEBPACK_IMPORTED_MODULE_264__.PipelineSystem),
-/* harmony export */   PlaneGeometry: () => (/* reexport safe */ _scene_mesh_plane_PlaneGeometry_mjs__WEBPACK_IMPORTED_MODULE_428__.PlaneGeometry),
+/* harmony export */   PlaneGeometry: () => (/* reexport safe */ _scene_mesh_plane_PlaneGeometry_mjs__WEBPACK_IMPORTED_MODULE_431__.PlaneGeometry),
 /* harmony export */   Point: () => (/* reexport safe */ _maths_point_Point_mjs__WEBPACK_IMPORTED_MODULE_142__.Point),
 /* harmony export */   Polygon: () => (/* reexport safe */ _maths_shapes_Polygon_mjs__WEBPACK_IMPORTED_MODULE_146__.Polygon),
-/* harmony export */   Pool: () => (/* reexport safe */ _utils_pool_Pool_mjs__WEBPACK_IMPORTED_MODULE_535__.Pool),
-/* harmony export */   PoolGroupClass: () => (/* reexport safe */ _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_536__.PoolGroupClass),
+/* harmony export */   Pool: () => (/* reexport safe */ _utils_pool_Pool_mjs__WEBPACK_IMPORTED_MODULE_539__.Pool),
+/* harmony export */   PoolGroupClass: () => (/* reexport safe */ _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_540__.PoolGroupClass),
 /* harmony export */   PrepareBase: () => (/* reexport safe */ _prepare_PrepareBase_mjs__WEBPACK_IMPORTED_MODULE_150__.PrepareBase),
 /* harmony export */   PrepareQueue: () => (/* reexport safe */ _prepare_PrepareQueue_mjs__WEBPACK_IMPORTED_MODULE_151__.PrepareQueue),
 /* harmony export */   PrepareSystem: () => (/* reexport safe */ _prepare_PrepareSystem_mjs__WEBPACK_IMPORTED_MODULE_152__.PrepareSystem),
 /* harmony export */   PrepareUpload: () => (/* reexport safe */ _prepare_PrepareUpload_mjs__WEBPACK_IMPORTED_MODULE_153__.PrepareUpload),
-/* harmony export */   QuadGeometry: () => (/* reexport safe */ _scene_sprite_tiling_utils_QuadGeometry_mjs__WEBPACK_IMPORTED_MODULE_460__.QuadGeometry),
+/* harmony export */   QuadGeometry: () => (/* reexport safe */ _scene_sprite_tiling_utils_QuadGeometry_mjs__WEBPACK_IMPORTED_MODULE_463__.QuadGeometry),
 /* harmony export */   RAD_TO_DEG: () => (/* reexport safe */ _maths_misc_const_mjs__WEBPACK_IMPORTED_MODULE_138__.RAD_TO_DEG),
 /* harmony export */   Rectangle: () => (/* reexport safe */ _maths_shapes_Rectangle_mjs__WEBPACK_IMPORTED_MODULE_147__.Rectangle),
-/* harmony export */   RenderContainer: () => (/* reexport safe */ _scene_container_RenderContainer_mjs__WEBPACK_IMPORTED_MODULE_374__.RenderContainer),
-/* harmony export */   RenderGroup: () => (/* reexport safe */ _scene_container_RenderGroup_mjs__WEBPACK_IMPORTED_MODULE_375__.RenderGroup),
-/* harmony export */   RenderGroupPipe: () => (/* reexport safe */ _scene_container_RenderGroupPipe_mjs__WEBPACK_IMPORTED_MODULE_376__.RenderGroupPipe),
-/* harmony export */   RenderGroupSystem: () => (/* reexport safe */ _scene_container_RenderGroupSystem_mjs__WEBPACK_IMPORTED_MODULE_377__.RenderGroupSystem),
+/* harmony export */   RenderContainer: () => (/* reexport safe */ _scene_container_RenderContainer_mjs__WEBPACK_IMPORTED_MODULE_376__.RenderContainer),
+/* harmony export */   RenderGroup: () => (/* reexport safe */ _scene_container_RenderGroup_mjs__WEBPACK_IMPORTED_MODULE_377__.RenderGroup),
+/* harmony export */   RenderGroupPipe: () => (/* reexport safe */ _scene_container_RenderGroupPipe_mjs__WEBPACK_IMPORTED_MODULE_378__.RenderGroupPipe),
+/* harmony export */   RenderGroupSystem: () => (/* reexport safe */ _scene_container_RenderGroupSystem_mjs__WEBPACK_IMPORTED_MODULE_379__.RenderGroupSystem),
+/* harmony export */   RenderLayer: () => (/* reexport safe */ _scene_layers_RenderLayer_mjs__WEBPACK_IMPORTED_MODULE_425__.RenderLayer),
+/* harmony export */   RenderLayerClass: () => (/* reexport safe */ _scene_layers_RenderLayer_mjs__WEBPACK_IMPORTED_MODULE_425__.RenderLayerClass),
 /* harmony export */   RenderTarget: () => (/* reexport safe */ _rendering_renderers_shared_renderTarget_RenderTarget_mjs__WEBPACK_IMPORTED_MODULE_309__.RenderTarget),
 /* harmony export */   RenderTargetSystem: () => (/* reexport safe */ _rendering_renderers_shared_renderTarget_RenderTargetSystem_mjs__WEBPACK_IMPORTED_MODULE_310__.RenderTargetSystem),
 /* harmony export */   RenderTexture: () => (/* reexport safe */ _rendering_renderers_shared_texture_RenderTexture_mjs__WEBPACK_IMPORTED_MODULE_332__.RenderTexture),
 /* harmony export */   RenderableGCSystem: () => (/* reexport safe */ _rendering_renderers_shared_texture_RenderableGCSystem_mjs__WEBPACK_IMPORTED_MODULE_331__.RenderableGCSystem),
-/* harmony export */   RendererInitHook: () => (/* reexport safe */ _utils_global_globalHooks_mjs__WEBPACK_IMPORTED_MODULE_526__.RendererInitHook),
+/* harmony export */   RendererInitHook: () => (/* reexport safe */ _utils_global_globalHooks_mjs__WEBPACK_IMPORTED_MODULE_530__.RendererInitHook),
 /* harmony export */   RendererType: () => (/* reexport safe */ _rendering_renderers_types_mjs__WEBPACK_IMPORTED_MODULE_353__.RendererType),
 /* harmony export */   ResizePlugin: () => (/* reexport safe */ _app_ResizePlugin_mjs__WEBPACK_IMPORTED_MODULE_27__.ResizePlugin),
 /* harmony export */   Resolver: () => (/* reexport safe */ _assets_resolver_Resolver_mjs__WEBPACK_IMPORTED_MODULE_53__.Resolver),
-/* harmony export */   RopeGeometry: () => (/* reexport safe */ _scene_mesh_simple_RopeGeometry_mjs__WEBPACK_IMPORTED_MODULE_431__.RopeGeometry),
+/* harmony export */   RopeGeometry: () => (/* reexport safe */ _scene_mesh_simple_RopeGeometry_mjs__WEBPACK_IMPORTED_MODULE_434__.RopeGeometry),
 /* harmony export */   RoundedRectangle: () => (/* reexport safe */ _maths_shapes_RoundedRectangle_mjs__WEBPACK_IMPORTED_MODULE_148__.RoundedRectangle),
 /* harmony export */   SCALE_MODES: () => (/* reexport safe */ _rendering_renderers_shared_texture_const_mjs__WEBPACK_IMPORTED_MODULE_330__.SCALE_MODES),
 /* harmony export */   STENCIL_MODES: () => (/* reexport safe */ _rendering_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_323__.STENCIL_MODES),
-/* harmony export */   SVGParser: () => (/* reexport safe */ _scene_graphics_shared_svg_SVGParser_mjs__WEBPACK_IMPORTED_MODULE_416__.SVGParser),
-/* harmony export */   SVGToGraphicsPath: () => (/* reexport safe */ _scene_graphics_shared_svg_SVGToGraphicsPath_mjs__WEBPACK_IMPORTED_MODULE_417__.SVGToGraphicsPath),
+/* harmony export */   SVGParser: () => (/* reexport safe */ _scene_graphics_shared_svg_SVGParser_mjs__WEBPACK_IMPORTED_MODULE_418__.SVGParser),
+/* harmony export */   SVGToGraphicsPath: () => (/* reexport safe */ _scene_graphics_shared_svg_SVGToGraphicsPath_mjs__WEBPACK_IMPORTED_MODULE_419__.SVGToGraphicsPath),
 /* harmony export */   SaturationBlend: () => (/* reexport safe */ _advanced_blend_modes_SaturationBlend_mjs__WEBPACK_IMPORTED_MODULE_22__.SaturationBlend),
 /* harmony export */   SchedulerSystem: () => (/* reexport safe */ _rendering_renderers_shared_SchedulerSystem_mjs__WEBPACK_IMPORTED_MODULE_312__.SchedulerSystem),
 /* harmony export */   ScissorMask: () => (/* reexport safe */ _rendering_mask_scissor_ScissorMask_mjs__WEBPACK_IMPORTED_MODULE_187__.ScissorMask),
-/* harmony export */   SdfShader: () => (/* reexport safe */ _scene_text_sdfShader_SdfShader_mjs__WEBPACK_IMPORTED_MODULE_498__.SdfShader),
+/* harmony export */   SdfShader: () => (/* reexport safe */ _scene_text_sdfShader_SdfShader_mjs__WEBPACK_IMPORTED_MODULE_501__.SdfShader),
 /* harmony export */   Shader: () => (/* reexport safe */ _rendering_renderers_shared_shader_Shader_mjs__WEBPACK_IMPORTED_MODULE_314__.Shader),
 /* harmony export */   ShaderStage: () => (/* reexport safe */ _rendering_renderers_shared_shader_const_mjs__WEBPACK_IMPORTED_MODULE_313__.ShaderStage),
-/* harmony export */   ShapePath: () => (/* reexport safe */ _scene_graphics_shared_path_ShapePath_mjs__WEBPACK_IMPORTED_MODULE_415__.ShapePath),
+/* harmony export */   ShapePath: () => (/* reexport safe */ _scene_graphics_shared_path_ShapePath_mjs__WEBPACK_IMPORTED_MODULE_417__.ShapePath),
 /* harmony export */   SharedRenderPipes: () => (/* reexport safe */ _rendering_renderers_shared_system_SharedSystems_mjs__WEBPACK_IMPORTED_MODULE_327__.SharedRenderPipes),
 /* harmony export */   SharedSystems: () => (/* reexport safe */ _rendering_renderers_shared_system_SharedSystems_mjs__WEBPACK_IMPORTED_MODULE_327__.SharedSystems),
 /* harmony export */   SoftLightBlend: () => (/* reexport safe */ _advanced_blend_modes_SoftLightBlend_mjs__WEBPACK_IMPORTED_MODULE_23__.SoftLightBlend),
-/* harmony export */   Sprite: () => (/* reexport safe */ _scene_sprite_Sprite_mjs__WEBPACK_IMPORTED_MODULE_464__.Sprite),
-/* harmony export */   SpritePipe: () => (/* reexport safe */ _scene_sprite_SpritePipe_mjs__WEBPACK_IMPORTED_MODULE_465__.SpritePipe),
-/* harmony export */   Spritesheet: () => (/* reexport safe */ _spritesheet_Spritesheet_mjs__WEBPACK_IMPORTED_MODULE_507__.Spritesheet),
+/* harmony export */   Sprite: () => (/* reexport safe */ _scene_sprite_Sprite_mjs__WEBPACK_IMPORTED_MODULE_467__.Sprite),
+/* harmony export */   SpritePipe: () => (/* reexport safe */ _scene_sprite_SpritePipe_mjs__WEBPACK_IMPORTED_MODULE_468__.SpritePipe),
+/* harmony export */   Spritesheet: () => (/* reexport safe */ _spritesheet_Spritesheet_mjs__WEBPACK_IMPORTED_MODULE_511__.Spritesheet),
 /* harmony export */   State: () => (/* reexport safe */ _rendering_renderers_shared_state_State_mjs__WEBPACK_IMPORTED_MODULE_325__.State),
 /* harmony export */   StencilMask: () => (/* reexport safe */ _rendering_mask_stencil_StencilMask_mjs__WEBPACK_IMPORTED_MODULE_188__.StencilMask),
 /* harmony export */   StencilMaskPipe: () => (/* reexport safe */ _rendering_mask_stencil_StencilMaskPipe_mjs__WEBPACK_IMPORTED_MODULE_189__.StencilMaskPipe),
 /* harmony export */   SubtractBlend: () => (/* reexport safe */ _advanced_blend_modes_SubtractBlend_mjs__WEBPACK_IMPORTED_MODULE_24__.SubtractBlend),
 /* harmony export */   SystemRunner: () => (/* reexport safe */ _rendering_renderers_shared_system_SystemRunner_mjs__WEBPACK_IMPORTED_MODULE_328__.SystemRunner),
 /* harmony export */   TEXTURE_FORMAT_BLOCK_SIZE: () => (/* reexport safe */ _compressed_textures_dds_const_mjs__WEBPACK_IMPORTED_MODULE_67__.TEXTURE_FORMAT_BLOCK_SIZE),
-/* harmony export */   Text: () => (/* reexport safe */ _scene_text_Text_mjs__WEBPACK_IMPORTED_MODULE_501__.Text),
-/* harmony export */   TextStyle: () => (/* reexport safe */ _scene_text_TextStyle_mjs__WEBPACK_IMPORTED_MODULE_502__.TextStyle),
+/* harmony export */   Text: () => (/* reexport safe */ _scene_text_Text_mjs__WEBPACK_IMPORTED_MODULE_504__.Text),
+/* harmony export */   TextStyle: () => (/* reexport safe */ _scene_text_TextStyle_mjs__WEBPACK_IMPORTED_MODULE_505__.TextStyle),
 /* harmony export */   Texture: () => (/* reexport safe */ _rendering_renderers_shared_texture_Texture_mjs__WEBPACK_IMPORTED_MODULE_339__.Texture),
 /* harmony export */   TextureGCSystem: () => (/* reexport safe */ _rendering_renderers_shared_texture_TextureGCSystem_mjs__WEBPACK_IMPORTED_MODULE_340__.TextureGCSystem),
 /* harmony export */   TextureMatrix: () => (/* reexport safe */ _rendering_renderers_shared_texture_TextureMatrix_mjs__WEBPACK_IMPORTED_MODULE_341__.TextureMatrix),
@@ -39306,31 +39436,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   TextureSource: () => (/* reexport safe */ _rendering_renderers_shared_texture_sources_TextureSource_mjs__WEBPACK_IMPORTED_MODULE_337__.TextureSource),
 /* harmony export */   TextureStyle: () => (/* reexport safe */ _rendering_renderers_shared_texture_TextureStyle_mjs__WEBPACK_IMPORTED_MODULE_343__.TextureStyle),
 /* harmony export */   TextureUvs: () => (/* reexport safe */ _rendering_renderers_shared_texture_TextureUvs_mjs__WEBPACK_IMPORTED_MODULE_344__.TextureUvs),
-/* harmony export */   Ticker: () => (/* reexport safe */ _ticker_Ticker_mjs__WEBPACK_IMPORTED_MODULE_510__.Ticker),
-/* harmony export */   TickerListener: () => (/* reexport safe */ _ticker_TickerListener_mjs__WEBPACK_IMPORTED_MODULE_511__.TickerListener),
+/* harmony export */   Ticker: () => (/* reexport safe */ _ticker_Ticker_mjs__WEBPACK_IMPORTED_MODULE_514__.Ticker),
+/* harmony export */   TickerListener: () => (/* reexport safe */ _ticker_TickerListener_mjs__WEBPACK_IMPORTED_MODULE_515__.TickerListener),
 /* harmony export */   TickerPlugin: () => (/* reexport safe */ _app_TickerPlugin_mjs__WEBPACK_IMPORTED_MODULE_28__.TickerPlugin),
-/* harmony export */   TilingSprite: () => (/* reexport safe */ _scene_sprite_tiling_TilingSprite_mjs__WEBPACK_IMPORTED_MODULE_457__.TilingSprite),
-/* harmony export */   TilingSpritePipe: () => (/* reexport safe */ _scene_sprite_tiling_TilingSpritePipe_mjs__WEBPACK_IMPORTED_MODULE_458__.TilingSpritePipe),
-/* harmony export */   TilingSpriteShader: () => (/* reexport safe */ _scene_sprite_tiling_shader_TilingSpriteShader_mjs__WEBPACK_IMPORTED_MODULE_456__.TilingSpriteShader),
-/* harmony export */   Transform: () => (/* reexport safe */ _utils_misc_Transform_mjs__WEBPACK_IMPORTED_MODULE_532__.Transform),
+/* harmony export */   TilingSprite: () => (/* reexport safe */ _scene_sprite_tiling_TilingSprite_mjs__WEBPACK_IMPORTED_MODULE_460__.TilingSprite),
+/* harmony export */   TilingSpritePipe: () => (/* reexport safe */ _scene_sprite_tiling_TilingSpritePipe_mjs__WEBPACK_IMPORTED_MODULE_461__.TilingSpritePipe),
+/* harmony export */   TilingSpriteShader: () => (/* reexport safe */ _scene_sprite_tiling_shader_TilingSpriteShader_mjs__WEBPACK_IMPORTED_MODULE_459__.TilingSpriteShader),
+/* harmony export */   Transform: () => (/* reexport safe */ _utils_misc_Transform_mjs__WEBPACK_IMPORTED_MODULE_536__.Transform),
 /* harmony export */   Triangle: () => (/* reexport safe */ _maths_shapes_Triangle_mjs__WEBPACK_IMPORTED_MODULE_149__.Triangle),
 /* harmony export */   UNIFORM_TO_ARRAY_SETTERS: () => (/* reexport safe */ _rendering_renderers_gl_shader_utils_generateUniformsSyncTypes_mjs__WEBPACK_IMPORTED_MODULE_236__.UNIFORM_TO_ARRAY_SETTERS),
 /* harmony export */   UNIFORM_TO_SINGLE_SETTERS: () => (/* reexport safe */ _rendering_renderers_gl_shader_utils_generateUniformsSyncTypes_mjs__WEBPACK_IMPORTED_MODULE_236__.UNIFORM_TO_SINGLE_SETTERS),
 /* harmony export */   UNIFORM_TYPES_MAP: () => (/* reexport safe */ _rendering_renderers_shared_shader_types_mjs__WEBPACK_IMPORTED_MODULE_315__.UNIFORM_TYPES_MAP),
 /* harmony export */   UNIFORM_TYPES_VALUES: () => (/* reexport safe */ _rendering_renderers_shared_shader_types_mjs__WEBPACK_IMPORTED_MODULE_315__.UNIFORM_TYPES_VALUES),
-/* harmony export */   UPDATE_BLEND: () => (/* reexport safe */ _scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_372__.UPDATE_BLEND),
-/* harmony export */   UPDATE_COLOR: () => (/* reexport safe */ _scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_372__.UPDATE_COLOR),
-/* harmony export */   UPDATE_PRIORITY: () => (/* reexport safe */ _ticker_const_mjs__WEBPACK_IMPORTED_MODULE_509__.UPDATE_PRIORITY),
-/* harmony export */   UPDATE_TRANSFORM: () => (/* reexport safe */ _scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_372__.UPDATE_TRANSFORM),
-/* harmony export */   UPDATE_VISIBLE: () => (/* reexport safe */ _scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_372__.UPDATE_VISIBLE),
+/* harmony export */   UPDATE_BLEND: () => (/* reexport safe */ _scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_374__.UPDATE_BLEND),
+/* harmony export */   UPDATE_COLOR: () => (/* reexport safe */ _scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_374__.UPDATE_COLOR),
+/* harmony export */   UPDATE_PRIORITY: () => (/* reexport safe */ _ticker_const_mjs__WEBPACK_IMPORTED_MODULE_513__.UPDATE_PRIORITY),
+/* harmony export */   UPDATE_TRANSFORM: () => (/* reexport safe */ _scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_374__.UPDATE_TRANSFORM),
+/* harmony export */   UPDATE_VISIBLE: () => (/* reexport safe */ _scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_374__.UPDATE_VISIBLE),
 /* harmony export */   UboBatch: () => (/* reexport safe */ _rendering_renderers_gpu_buffer_UboBatch_mjs__WEBPACK_IMPORTED_MODULE_257__.UboBatch),
 /* harmony export */   UboSystem: () => (/* reexport safe */ _rendering_renderers_shared_shader_UboSystem_mjs__WEBPACK_IMPORTED_MODULE_316__.UboSystem),
 /* harmony export */   UniformGroup: () => (/* reexport safe */ _rendering_renderers_shared_shader_UniformGroup_mjs__WEBPACK_IMPORTED_MODULE_317__.UniformGroup),
-/* harmony export */   VERSION: () => (/* reexport safe */ _utils_const_mjs__WEBPACK_IMPORTED_MODULE_519__.VERSION),
+/* harmony export */   VERSION: () => (/* reexport safe */ _utils_const_mjs__WEBPACK_IMPORTED_MODULE_523__.VERSION),
 /* harmony export */   VideoSource: () => (/* reexport safe */ _rendering_renderers_shared_texture_sources_VideoSource_mjs__WEBPACK_IMPORTED_MODULE_338__.VideoSource),
-/* harmony export */   ViewContainer: () => (/* reexport safe */ _scene_view_ViewContainer_mjs__WEBPACK_IMPORTED_MODULE_506__.ViewContainer),
+/* harmony export */   ViewContainer: () => (/* reexport safe */ _scene_view_ViewContainer_mjs__WEBPACK_IMPORTED_MODULE_510__.ViewContainer),
 /* harmony export */   ViewSystem: () => (/* reexport safe */ _rendering_renderers_shared_view_ViewSystem_mjs__WEBPACK_IMPORTED_MODULE_352__.ViewSystem),
-/* harmony export */   ViewableBuffer: () => (/* reexport safe */ _utils_data_ViewableBuffer_mjs__WEBPACK_IMPORTED_MODULE_525__.ViewableBuffer),
+/* harmony export */   ViewableBuffer: () => (/* reexport safe */ _utils_data_ViewableBuffer_mjs__WEBPACK_IMPORTED_MODULE_529__.ViewableBuffer),
 /* harmony export */   VividLightBlend: () => (/* reexport safe */ _advanced_blend_modes_VividLightBlend_mjs__WEBPACK_IMPORTED_MODULE_25__.VividLightBlend),
 /* harmony export */   WGSL_ALIGN_SIZE_DATA: () => (/* reexport safe */ _rendering_renderers_gpu_shader_utils_createUboElementsWGSL_mjs__WEBPACK_IMPORTED_MODULE_272__.WGSL_ALIGN_SIZE_DATA),
 /* harmony export */   WGSL_TO_STD40_SIZE: () => (/* reexport safe */ _rendering_renderers_gl_shader_utils_createUboElementsSTD40_mjs__WEBPACK_IMPORTED_MODULE_232__.WGSL_TO_STD40_SIZE),
@@ -39340,7 +39470,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   WebWorkerAdapter: () => (/* reexport safe */ _environment_webworker_WebWorkerAdapter_mjs__WEBPACK_IMPORTED_MODULE_90__.WebWorkerAdapter),
 /* harmony export */   WorkerManager: () => (/* reexport safe */ _assets_loader_workers_WorkerManager_mjs__WEBPACK_IMPORTED_MODULE_50__.WorkerManager),
 /* harmony export */   _getGlobalBounds: () => (/* reexport safe */ _scene_container_bounds_getGlobalBounds_mjs__WEBPACK_IMPORTED_MODULE_359__._getGlobalBounds),
-/* harmony export */   _getGlobalBoundsRecursive: () => (/* reexport safe */ _scene_container_bounds_getFastGlobalBounds_mjs__WEBPACK_IMPORTED_MODULE_358__._getGlobalBoundsRecursive),
 /* harmony export */   accessibilityTarget: () => (/* reexport safe */ _accessibility_accessibilityTarget_mjs__WEBPACK_IMPORTED_MODULE_4__.accessibilityTarget),
 /* harmony export */   addBits: () => (/* reexport safe */ _rendering_high_shader_compiler_utils_addBits_mjs__WEBPACK_IMPORTED_MODULE_169__.addBits),
 /* harmony export */   addMaskBounds: () => (/* reexport safe */ _rendering_mask_utils_addMaskBounds_mjs__WEBPACK_IMPORTED_MODULE_190__.addMaskBounds),
@@ -39348,63 +39477,63 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   addProgramDefines: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_preprocessors_addProgramDefines_mjs__WEBPACK_IMPORTED_MODULE_227__.addProgramDefines),
 /* harmony export */   alphaFrag: () => (/* reexport safe */ _filters_defaults_alpha_alpha_frag_mjs__WEBPACK_IMPORTED_MODULE_103__["default"]),
 /* harmony export */   alphaWgsl: () => (/* reexport safe */ _filters_defaults_alpha_alpha_wgsl_mjs__WEBPACK_IMPORTED_MODULE_104__["default"]),
-/* harmony export */   applyMatrix: () => (/* reexport safe */ _scene_sprite_tiling_utils_applyMatrix_mjs__WEBPACK_IMPORTED_MODULE_459__.applyMatrix),
-/* harmony export */   applyProjectiveTransformationToPlane: () => (/* reexport safe */ _scene_mesh_perspective_utils_applyProjectiveTransformationToPlane_mjs__WEBPACK_IMPORTED_MODULE_425__.applyProjectiveTransformationToPlane),
+/* harmony export */   applyMatrix: () => (/* reexport safe */ _scene_sprite_tiling_utils_applyMatrix_mjs__WEBPACK_IMPORTED_MODULE_462__.applyMatrix),
+/* harmony export */   applyProjectiveTransformationToPlane: () => (/* reexport safe */ _scene_mesh_perspective_utils_applyProjectiveTransformationToPlane_mjs__WEBPACK_IMPORTED_MODULE_428__.applyProjectiveTransformationToPlane),
 /* harmony export */   applyStyleParams: () => (/* reexport safe */ _rendering_renderers_gl_texture_utils_applyStyleParams_mjs__WEBPACK_IMPORTED_MODULE_246__.applyStyleParams),
-/* harmony export */   assignWithIgnore: () => (/* reexport safe */ _scene_container_utils_assignWithIgnore_mjs__WEBPACK_IMPORTED_MODULE_378__.assignWithIgnore),
+/* harmony export */   assignWithIgnore: () => (/* reexport safe */ _scene_container_utils_assignWithIgnore_mjs__WEBPACK_IMPORTED_MODULE_380__.assignWithIgnore),
 /* harmony export */   autoDetectEnvironment: () => (/* reexport safe */ _environment_autoDetectEnvironment_mjs__WEBPACK_IMPORTED_MODULE_88__.autoDetectEnvironment),
 /* harmony export */   autoDetectRenderer: () => (/* reexport safe */ _rendering_renderers_autoDetectRenderer_mjs__WEBPACK_IMPORTED_MODULE_192__.autoDetectRenderer),
 /* harmony export */   autoDetectSource: () => (/* reexport safe */ _rendering_renderers_shared_texture_utils_textureFrom_mjs__WEBPACK_IMPORTED_MODULE_349__.autoDetectSource),
 /* harmony export */   basisTranscoderUrls: () => (/* reexport safe */ _compressed_textures_basis_utils_setBasisTranscoderPath_mjs__WEBPACK_IMPORTED_MODULE_65__.basisTranscoderUrls),
-/* harmony export */   bgr2rgb: () => (/* reexport safe */ _scene_container_container_mixins_getGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_367__.bgr2rgb),
-/* harmony export */   bitmapFontCachePlugin: () => (/* reexport safe */ _scene_text_bitmap_asset_loadBitmapFont_mjs__WEBPACK_IMPORTED_MODULE_470__.bitmapFontCachePlugin),
-/* harmony export */   bitmapFontTextParser: () => (/* reexport safe */ _scene_text_bitmap_asset_bitmapFontTextParser_mjs__WEBPACK_IMPORTED_MODULE_467__.bitmapFontTextParser),
-/* harmony export */   bitmapFontXMLParser: () => (/* reexport safe */ _scene_text_bitmap_asset_bitmapFontXMLParser_mjs__WEBPACK_IMPORTED_MODULE_468__.bitmapFontXMLParser),
-/* harmony export */   bitmapFontXMLStringParser: () => (/* reexport safe */ _scene_text_bitmap_asset_bitmapFontXMLStringParser_mjs__WEBPACK_IMPORTED_MODULE_469__.bitmapFontXMLStringParser),
+/* harmony export */   bgr2rgb: () => (/* reexport safe */ _scene_container_container_mixins_getGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_369__.bgr2rgb),
+/* harmony export */   bitmapFontCachePlugin: () => (/* reexport safe */ _scene_text_bitmap_asset_loadBitmapFont_mjs__WEBPACK_IMPORTED_MODULE_473__.bitmapFontCachePlugin),
+/* harmony export */   bitmapFontTextParser: () => (/* reexport safe */ _scene_text_bitmap_asset_bitmapFontTextParser_mjs__WEBPACK_IMPORTED_MODULE_470__.bitmapFontTextParser),
+/* harmony export */   bitmapFontXMLParser: () => (/* reexport safe */ _scene_text_bitmap_asset_bitmapFontXMLParser_mjs__WEBPACK_IMPORTED_MODULE_471__.bitmapFontXMLParser),
+/* harmony export */   bitmapFontXMLStringParser: () => (/* reexport safe */ _scene_text_bitmap_asset_bitmapFontXMLStringParser_mjs__WEBPACK_IMPORTED_MODULE_472__.bitmapFontXMLStringParser),
 /* harmony export */   blendTemplateFrag: () => (/* reexport safe */ _filters_blend_modes_blend_template_frag_mjs__WEBPACK_IMPORTED_MODULE_99__["default"]),
 /* harmony export */   blendTemplateVert: () => (/* reexport safe */ _filters_blend_modes_blend_template_vert_mjs__WEBPACK_IMPORTED_MODULE_100__["default"]),
 /* harmony export */   blendTemplateWgsl: () => (/* reexport safe */ _filters_blend_modes_blend_template_wgsl_mjs__WEBPACK_IMPORTED_MODULE_101__["default"]),
 /* harmony export */   blockDataMap: () => (/* reexport safe */ _rendering_renderers_gpu_texture_uploaders_gpuUploadCompressedTextureResource_mjs__WEBPACK_IMPORTED_MODULE_285__.blockDataMap),
 /* harmony export */   blurTemplateWgsl: () => (/* reexport safe */ _filters_defaults_blur_gpu_blur_template_wgsl_mjs__WEBPACK_IMPORTED_MODULE_105__["default"]),
 /* harmony export */   boundsPool: () => (/* reexport safe */ _scene_container_bounds_utils_matrixAndBoundsPool_mjs__WEBPACK_IMPORTED_MODULE_362__.boundsPool),
-/* harmony export */   browserExt: () => (/* reexport safe */ _environment_browser_browserExt_mjs__WEBPACK_IMPORTED_MODULE_539__.browserExt),
-/* harmony export */   buildAdaptiveBezier: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildAdaptiveBezier_mjs__WEBPACK_IMPORTED_MODULE_395__.buildAdaptiveBezier),
-/* harmony export */   buildAdaptiveQuadratic: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildAdaptiveQuadratic_mjs__WEBPACK_IMPORTED_MODULE_396__.buildAdaptiveQuadratic),
-/* harmony export */   buildArc: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildArc_mjs__WEBPACK_IMPORTED_MODULE_397__.buildArc),
-/* harmony export */   buildArcTo: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildArcTo_mjs__WEBPACK_IMPORTED_MODULE_398__.buildArcTo),
-/* harmony export */   buildArcToSvg: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildArcToSvg_mjs__WEBPACK_IMPORTED_MODULE_399__.buildArcToSvg),
-/* harmony export */   buildCircle: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildCircle_mjs__WEBPACK_IMPORTED_MODULE_400__.buildCircle),
-/* harmony export */   buildContextBatches: () => (/* reexport safe */ _scene_graphics_shared_utils_buildContextBatches_mjs__WEBPACK_IMPORTED_MODULE_418__.buildContextBatches),
-/* harmony export */   buildEllipse: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildCircle_mjs__WEBPACK_IMPORTED_MODULE_400__.buildEllipse),
-/* harmony export */   buildGeometryFromPath: () => (/* reexport safe */ _scene_graphics_shared_utils_buildGeometryFromPath_mjs__WEBPACK_IMPORTED_MODULE_419__.buildGeometryFromPath),
-/* harmony export */   buildInstructions: () => (/* reexport safe */ _scene_container_utils_buildInstructions_mjs__WEBPACK_IMPORTED_MODULE_379__.buildInstructions),
-/* harmony export */   buildLine: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildLine_mjs__WEBPACK_IMPORTED_MODULE_401__.buildLine),
-/* harmony export */   buildPixelLine: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildPixelLine_mjs__WEBPACK_IMPORTED_MODULE_402__.buildPixelLine),
-/* harmony export */   buildPolygon: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildPolygon_mjs__WEBPACK_IMPORTED_MODULE_403__.buildPolygon),
-/* harmony export */   buildRectangle: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildRectangle_mjs__WEBPACK_IMPORTED_MODULE_404__.buildRectangle),
-/* harmony export */   buildRoundedRectangle: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildCircle_mjs__WEBPACK_IMPORTED_MODULE_400__.buildRoundedRectangle),
+/* harmony export */   browserExt: () => (/* reexport safe */ _environment_browser_browserExt_mjs__WEBPACK_IMPORTED_MODULE_543__.browserExt),
+/* harmony export */   buildAdaptiveBezier: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildAdaptiveBezier_mjs__WEBPACK_IMPORTED_MODULE_397__.buildAdaptiveBezier),
+/* harmony export */   buildAdaptiveQuadratic: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildAdaptiveQuadratic_mjs__WEBPACK_IMPORTED_MODULE_398__.buildAdaptiveQuadratic),
+/* harmony export */   buildArc: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildArc_mjs__WEBPACK_IMPORTED_MODULE_399__.buildArc),
+/* harmony export */   buildArcTo: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildArcTo_mjs__WEBPACK_IMPORTED_MODULE_400__.buildArcTo),
+/* harmony export */   buildArcToSvg: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildArcToSvg_mjs__WEBPACK_IMPORTED_MODULE_401__.buildArcToSvg),
+/* harmony export */   buildCircle: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildCircle_mjs__WEBPACK_IMPORTED_MODULE_402__.buildCircle),
+/* harmony export */   buildContextBatches: () => (/* reexport safe */ _scene_graphics_shared_utils_buildContextBatches_mjs__WEBPACK_IMPORTED_MODULE_420__.buildContextBatches),
+/* harmony export */   buildEllipse: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildCircle_mjs__WEBPACK_IMPORTED_MODULE_402__.buildEllipse),
+/* harmony export */   buildGeometryFromPath: () => (/* reexport safe */ _scene_graphics_shared_utils_buildGeometryFromPath_mjs__WEBPACK_IMPORTED_MODULE_421__.buildGeometryFromPath),
+/* harmony export */   buildLine: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildLine_mjs__WEBPACK_IMPORTED_MODULE_403__.buildLine),
+/* harmony export */   buildPixelLine: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildPixelLine_mjs__WEBPACK_IMPORTED_MODULE_404__.buildPixelLine),
+/* harmony export */   buildPolygon: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildPolygon_mjs__WEBPACK_IMPORTED_MODULE_405__.buildPolygon),
+/* harmony export */   buildRectangle: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildRectangle_mjs__WEBPACK_IMPORTED_MODULE_406__.buildRectangle),
+/* harmony export */   buildRoundedRectangle: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildCircle_mjs__WEBPACK_IMPORTED_MODULE_402__.buildRoundedRectangle),
 /* harmony export */   buildSimpleUvs: () => (/* reexport safe */ _rendering_renderers_shared_geometry_utils_buildUvs_mjs__WEBPACK_IMPORTED_MODULE_301__.buildSimpleUvs),
-/* harmony export */   buildTriangle: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildTriangle_mjs__WEBPACK_IMPORTED_MODULE_405__.buildTriangle),
+/* harmony export */   buildTriangle: () => (/* reexport safe */ _scene_graphics_shared_buildCommands_buildTriangle_mjs__WEBPACK_IMPORTED_MODULE_407__.buildTriangle),
 /* harmony export */   buildUvs: () => (/* reexport safe */ _rendering_renderers_shared_geometry_utils_buildUvs_mjs__WEBPACK_IMPORTED_MODULE_301__.buildUvs),
 /* harmony export */   cacheAsTextureMixin: () => (/* reexport safe */ _scene_container_container_mixins_cacheAsTextureMixin_mjs__WEBPACK_IMPORTED_MODULE_363__.cacheAsTextureMixin),
 /* harmony export */   cacheTextureArray: () => (/* reexport safe */ _assets_cache_parsers_cacheTextureArray_mjs__WEBPACK_IMPORTED_MODULE_32__.cacheTextureArray),
 /* harmony export */   calculateProjection: () => (/* reexport safe */ _rendering_renderers_gpu_renderTarget_calculateProjection_mjs__WEBPACK_IMPORTED_MODULE_265__.calculateProjection),
-/* harmony export */   checkChildrenDidChange: () => (/* reexport safe */ _scene_container_utils_checkChildrenDidChange_mjs__WEBPACK_IMPORTED_MODULE_380__.checkChildrenDidChange),
+/* harmony export */   checkChildrenDidChange: () => (/* reexport safe */ _scene_container_utils_checkChildrenDidChange_mjs__WEBPACK_IMPORTED_MODULE_381__.checkChildrenDidChange),
 /* harmony export */   checkDataUrl: () => (/* reexport safe */ _assets_utils_checkDataUrl_mjs__WEBPACK_IMPORTED_MODULE_54__.checkDataUrl),
 /* harmony export */   checkExtension: () => (/* reexport safe */ _assets_utils_checkExtension_mjs__WEBPACK_IMPORTED_MODULE_55__.checkExtension),
 /* harmony export */   checkMaxIfStatementsInShader: () => (/* reexport safe */ _rendering_batcher_gl_utils_checkMaxIfStatementsInShader_mjs__WEBPACK_IMPORTED_MODULE_155__.checkMaxIfStatementsInShader),
 /* harmony export */   childrenHelperMixin: () => (/* reexport safe */ _scene_container_container_mixins_childrenHelperMixin_mjs__WEBPACK_IMPORTED_MODULE_364__.childrenHelperMixin),
-/* harmony export */   cleanArray: () => (/* reexport safe */ _utils_data_clean_mjs__WEBPACK_IMPORTED_MODULE_521__.cleanArray),
-/* harmony export */   cleanHash: () => (/* reexport safe */ _utils_data_clean_mjs__WEBPACK_IMPORTED_MODULE_521__.cleanHash),
-/* harmony export */   clearList: () => (/* reexport safe */ _scene_container_utils_clearList_mjs__WEBPACK_IMPORTED_MODULE_381__.clearList),
-/* harmony export */   closePointEps: () => (/* reexport safe */ _scene_graphics_shared_const_mjs__WEBPACK_IMPORTED_MODULE_406__.closePointEps),
-/* harmony export */   collectAllRenderables: () => (/* reexport safe */ _scene_container_utils_buildInstructions_mjs__WEBPACK_IMPORTED_MODULE_379__.collectAllRenderables),
-/* harmony export */   color32BitToUniform: () => (/* reexport safe */ _scene_graphics_gpu_colorToUniform_mjs__WEBPACK_IMPORTED_MODULE_392__.color32BitToUniform),
+/* harmony export */   cleanArray: () => (/* reexport safe */ _utils_data_clean_mjs__WEBPACK_IMPORTED_MODULE_525__.cleanArray),
+/* harmony export */   cleanHash: () => (/* reexport safe */ _utils_data_clean_mjs__WEBPACK_IMPORTED_MODULE_525__.cleanHash),
+/* harmony export */   clearList: () => (/* reexport safe */ _scene_container_utils_clearList_mjs__WEBPACK_IMPORTED_MODULE_382__.clearList),
+/* harmony export */   closePointEps: () => (/* reexport safe */ _scene_graphics_shared_const_mjs__WEBPACK_IMPORTED_MODULE_408__.closePointEps),
+/* harmony export */   collectAllRenderables: () => (/* reexport safe */ _scene_container_utils_collectAllRenderables_mjs__WEBPACK_IMPORTED_MODULE_383__.collectAllRenderables),
+/* harmony export */   collectRenderablesMixin: () => (/* reexport safe */ _scene_container_container_mixins_collectRenderablesMixin_mjs__WEBPACK_IMPORTED_MODULE_365__.collectRenderablesMixin),
+/* harmony export */   color32BitToUniform: () => (/* reexport safe */ _scene_graphics_gpu_colorToUniform_mjs__WEBPACK_IMPORTED_MODULE_394__.color32BitToUniform),
 /* harmony export */   colorBit: () => (/* reexport safe */ _rendering_high_shader_shader_bits_colorBit_mjs__WEBPACK_IMPORTED_MODULE_176__.colorBit),
 /* harmony export */   colorBitGl: () => (/* reexport safe */ _rendering_high_shader_shader_bits_colorBit_mjs__WEBPACK_IMPORTED_MODULE_176__.colorBitGl),
 /* harmony export */   colorMatrixFilterFrag: () => (/* reexport safe */ _filters_defaults_color_matrix_colorMatrixFilter_frag_mjs__WEBPACK_IMPORTED_MODULE_106__["default"]),
 /* harmony export */   colorMatrixFilterWgsl: () => (/* reexport safe */ _filters_defaults_color_matrix_colorMatrixFilter_wgsl_mjs__WEBPACK_IMPORTED_MODULE_107__["default"]),
-/* harmony export */   colorToUniform: () => (/* reexport safe */ _scene_graphics_gpu_colorToUniform_mjs__WEBPACK_IMPORTED_MODULE_392__.colorToUniform),
+/* harmony export */   colorToUniform: () => (/* reexport safe */ _scene_graphics_gpu_colorToUniform_mjs__WEBPACK_IMPORTED_MODULE_394__.colorToUniform),
 /* harmony export */   compareModeToGlCompare: () => (/* reexport safe */ _rendering_renderers_gl_texture_utils_pixiToGlMaps_mjs__WEBPACK_IMPORTED_MODULE_251__.compareModeToGlCompare),
 /* harmony export */   compileHighShader: () => (/* reexport safe */ _rendering_high_shader_compiler_compileHighShader_mjs__WEBPACK_IMPORTED_MODULE_168__.compileHighShader),
 /* harmony export */   compileHighShaderGl: () => (/* reexport safe */ _rendering_high_shader_compiler_compileHighShader_mjs__WEBPACK_IMPORTED_MODULE_168__.compileHighShaderGl),
@@ -39414,12 +39543,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   compileInputs: () => (/* reexport safe */ _rendering_high_shader_compiler_utils_compileInputs_mjs__WEBPACK_IMPORTED_MODULE_171__.compileInputs),
 /* harmony export */   compileOutputs: () => (/* reexport safe */ _rendering_high_shader_compiler_utils_compileOutputs_mjs__WEBPACK_IMPORTED_MODULE_172__.compileOutputs),
 /* harmony export */   compileShader: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_compileShader_mjs__WEBPACK_IMPORTED_MODULE_215__.compileShader),
-/* harmony export */   compute2DProjection: () => (/* reexport safe */ _scene_mesh_perspective_utils_compute2DProjections_mjs__WEBPACK_IMPORTED_MODULE_426__.compute2DProjection),
+/* harmony export */   compute2DProjection: () => (/* reexport safe */ _scene_mesh_perspective_utils_compute2DProjections_mjs__WEBPACK_IMPORTED_MODULE_429__.compute2DProjection),
 /* harmony export */   convertFormatIfRequired: () => (/* reexport safe */ _compressed_textures_ktx2_utils_convertFormatIfRequired_mjs__WEBPACK_IMPORTED_MODULE_74__.convertFormatIfRequired),
 /* harmony export */   convertToList: () => (/* reexport safe */ _assets_utils_convertToList_mjs__WEBPACK_IMPORTED_MODULE_56__.convertToList),
 /* harmony export */   copySearchParams: () => (/* reexport safe */ _assets_utils_copySearchParams_mjs__WEBPACK_IMPORTED_MODULE_57__.copySearchParams),
 /* harmony export */   createIdFromString: () => (/* reexport safe */ _rendering_renderers_shared_utils_createIdFromString_mjs__WEBPACK_IMPORTED_MODULE_350__.createIdFromString),
-/* harmony export */   createIndicesForQuads: () => (/* reexport safe */ _scene_particle_container_shared_utils_createIndicesForQuads_mjs__WEBPACK_IMPORTED_MODULE_449__.createIndicesForQuads),
+/* harmony export */   createIndicesForQuads: () => (/* reexport safe */ _scene_particle_container_shared_utils_createIndicesForQuads_mjs__WEBPACK_IMPORTED_MODULE_452__.createIndicesForQuads),
 /* harmony export */   createLevelBuffers: () => (/* reexport safe */ _compressed_textures_basis_utils_createLevelBuffers_mjs__WEBPACK_IMPORTED_MODULE_63__.createLevelBuffers),
 /* harmony export */   createLevelBuffersFromKTX: () => (/* reexport safe */ _compressed_textures_ktx2_utils_createLevelBuffersFromKTX_mjs__WEBPACK_IMPORTED_MODULE_75__.createLevelBuffersFromKTX),
 /* harmony export */   createStringVariations: () => (/* reexport safe */ _assets_utils_createStringVariations_mjs__WEBPACK_IMPORTED_MODULE_58__.createStringVariations),
@@ -39431,41 +39560,41 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   createUboSyncFunctionWGSL: () => (/* reexport safe */ _rendering_renderers_gpu_shader_utils_createUboSyncFunctionWGSL_mjs__WEBPACK_IMPORTED_MODULE_273__.createUboSyncFunctionWGSL),
 /* harmony export */   crossOrigin: () => (/* reexport safe */ _assets_loader_parsers_textures_loadVideoTextures_mjs__WEBPACK_IMPORTED_MODULE_48__.crossOrigin),
 /* harmony export */   cullingMixin: () => (/* reexport safe */ _culling_cullingMixin_mjs__WEBPACK_IMPORTED_MODULE_86__.cullingMixin),
-/* harmony export */   curveEps: () => (/* reexport safe */ _scene_graphics_shared_const_mjs__WEBPACK_IMPORTED_MODULE_406__.curveEps),
+/* harmony export */   curveEps: () => (/* reexport safe */ _scene_graphics_shared_const_mjs__WEBPACK_IMPORTED_MODULE_408__.curveEps),
 /* harmony export */   defaultFilterVert: () => (/* reexport safe */ _filters_defaults_defaultFilter_vert_mjs__WEBPACK_IMPORTED_MODULE_108__["default"]),
 /* harmony export */   defaultValue: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_defaultValue_mjs__WEBPACK_IMPORTED_MODULE_216__.defaultValue),
-/* harmony export */   definedProps: () => (/* reexport safe */ _scene_container_utils_definedProps_mjs__WEBPACK_IMPORTED_MODULE_382__.definedProps),
-/* harmony export */   deprecation: () => (/* reexport safe */ _utils_logging_deprecation_mjs__WEBPACK_IMPORTED_MODULE_527__.deprecation),
+/* harmony export */   definedProps: () => (/* reexport safe */ _scene_container_utils_definedProps_mjs__WEBPACK_IMPORTED_MODULE_384__.definedProps),
+/* harmony export */   deprecation: () => (/* reexport safe */ _utils_logging_deprecation_mjs__WEBPACK_IMPORTED_MODULE_531__.deprecation),
 /* harmony export */   detectAvif: () => (/* reexport safe */ _assets_detections_parsers_detectAvif_mjs__WEBPACK_IMPORTED_MODULE_33__.detectAvif),
 /* harmony export */   detectBasis: () => (/* reexport safe */ _compressed_textures_basis_detectBasis_mjs__WEBPACK_IMPORTED_MODULE_61__.detectBasis),
 /* harmony export */   detectCompressed: () => (/* reexport safe */ _compressed_textures_shared_detectCompressed_mjs__WEBPACK_IMPORTED_MODULE_82__.detectCompressed),
 /* harmony export */   detectDefaults: () => (/* reexport safe */ _assets_detections_parsers_detectDefaults_mjs__WEBPACK_IMPORTED_MODULE_34__.detectDefaults),
 /* harmony export */   detectMp4: () => (/* reexport safe */ _assets_detections_parsers_detectMp4_mjs__WEBPACK_IMPORTED_MODULE_35__.detectMp4),
 /* harmony export */   detectOgv: () => (/* reexport safe */ _assets_detections_parsers_detectOgv_mjs__WEBPACK_IMPORTED_MODULE_36__.detectOgv),
-/* harmony export */   detectVideoAlphaMode: () => (/* reexport safe */ _utils_browser_detectVideoAlphaMode_mjs__WEBPACK_IMPORTED_MODULE_512__.detectVideoAlphaMode),
+/* harmony export */   detectVideoAlphaMode: () => (/* reexport safe */ _utils_browser_detectVideoAlphaMode_mjs__WEBPACK_IMPORTED_MODULE_516__.detectVideoAlphaMode),
 /* harmony export */   detectWebm: () => (/* reexport safe */ _assets_detections_parsers_detectWebm_mjs__WEBPACK_IMPORTED_MODULE_37__.detectWebm),
 /* harmony export */   detectWebp: () => (/* reexport safe */ _assets_detections_parsers_detectWebp_mjs__WEBPACK_IMPORTED_MODULE_38__.detectWebp),
 /* harmony export */   determineCrossOrigin: () => (/* reexport safe */ _assets_loader_parsers_textures_loadVideoTextures_mjs__WEBPACK_IMPORTED_MODULE_48__.determineCrossOrigin),
 /* harmony export */   displacementFrag: () => (/* reexport safe */ _filters_defaults_displacement_displacement_frag_mjs__WEBPACK_IMPORTED_MODULE_109__["default"]),
 /* harmony export */   displacementVert: () => (/* reexport safe */ _filters_defaults_displacement_displacement_vert_mjs__WEBPACK_IMPORTED_MODULE_110__["default"]),
 /* harmony export */   displacementWgsl: () => (/* reexport safe */ _filters_defaults_displacement_displacement_wgsl_mjs__WEBPACK_IMPORTED_MODULE_111__["default"]),
-/* harmony export */   earcut: () => (/* reexport default export from named module */ earcut__WEBPACK_IMPORTED_MODULE_538__),
-/* harmony export */   effectsMixin: () => (/* reexport safe */ _scene_container_container_mixins_effectsMixin_mjs__WEBPACK_IMPORTED_MODULE_365__.effectsMixin),
+/* harmony export */   earcut: () => (/* reexport default export from named module */ earcut__WEBPACK_IMPORTED_MODULE_542__),
+/* harmony export */   effectsMixin: () => (/* reexport safe */ _scene_container_container_mixins_effectsMixin_mjs__WEBPACK_IMPORTED_MODULE_366__.effectsMixin),
 /* harmony export */   ensureAttributes: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_ensureAttributes_mjs__WEBPACK_IMPORTED_MODULE_217__.ensureAttributes),
 /* harmony export */   ensureIsBuffer: () => (/* reexport safe */ _rendering_renderers_shared_geometry_utils_ensureIsBuffer_mjs__WEBPACK_IMPORTED_MODULE_302__.ensureIsBuffer),
-/* harmony export */   ensureOptions: () => (/* reexport safe */ _scene_text_AbstractText_mjs__WEBPACK_IMPORTED_MODULE_492__.ensureOptions),
+/* harmony export */   ensureOptions: () => (/* reexport safe */ _scene_text_AbstractText_mjs__WEBPACK_IMPORTED_MODULE_495__.ensureOptions),
 /* harmony export */   ensurePrecision: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_preprocessors_ensurePrecision_mjs__WEBPACK_IMPORTED_MODULE_228__.ensurePrecision),
-/* harmony export */   ensureTextStyle: () => (/* reexport safe */ _scene_text_utils_ensureTextStyle_mjs__WEBPACK_IMPORTED_MODULE_503__.ensureTextStyle),
-/* harmony export */   executeInstructions: () => (/* reexport safe */ _scene_container_utils_executeInstructions_mjs__WEBPACK_IMPORTED_MODULE_383__.executeInstructions),
+/* harmony export */   ensureTextStyle: () => (/* reexport safe */ _scene_text_utils_ensureTextStyle_mjs__WEBPACK_IMPORTED_MODULE_506__.ensureTextStyle),
+/* harmony export */   executeInstructions: () => (/* reexport safe */ _scene_container_utils_executeInstructions_mjs__WEBPACK_IMPORTED_MODULE_385__.executeInstructions),
 /* harmony export */   extensions: () => (/* reexport safe */ _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_0__.extensions),
 /* harmony export */   extractAttributesFromGlProgram: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_extractAttributesFromGlProgram_mjs__WEBPACK_IMPORTED_MODULE_218__.extractAttributesFromGlProgram),
 /* harmony export */   extractAttributesFromGpuProgram: () => (/* reexport safe */ _rendering_renderers_gpu_shader_utils_extractAttributesFromGpuProgram_mjs__WEBPACK_IMPORTED_MODULE_274__.extractAttributesFromGpuProgram),
-/* harmony export */   extractFontFamilies: () => (/* reexport safe */ _scene_text_html_utils_extractFontFamilies_mjs__WEBPACK_IMPORTED_MODULE_483__.extractFontFamilies),
+/* harmony export */   extractFontFamilies: () => (/* reexport safe */ _scene_text_html_utils_extractFontFamilies_mjs__WEBPACK_IMPORTED_MODULE_486__.extractFontFamilies),
 /* harmony export */   extractStructAndGroups: () => (/* reexport safe */ _rendering_renderers_gpu_shader_utils_extractStructAndGroups_mjs__WEBPACK_IMPORTED_MODULE_275__.extractStructAndGroups),
 /* harmony export */   fastCopy: () => (/* reexport safe */ _rendering_renderers_shared_buffer_utils_fastCopy_mjs__WEBPACK_IMPORTED_MODULE_296__.fastCopy),
 /* harmony export */   findHooksRx: () => (/* reexport safe */ _rendering_high_shader_compiler_utils_compileHooks_mjs__WEBPACK_IMPORTED_MODULE_170__.findHooksRx),
-/* harmony export */   findMixin: () => (/* reexport safe */ _scene_container_container_mixins_findMixin_mjs__WEBPACK_IMPORTED_MODULE_366__.findMixin),
-/* harmony export */   fontStringFromTextStyle: () => (/* reexport safe */ _scene_text_canvas_utils_fontStringFromTextStyle_mjs__WEBPACK_IMPORTED_MODULE_496__.fontStringFromTextStyle),
+/* harmony export */   findMixin: () => (/* reexport safe */ _scene_container_container_mixins_findMixin_mjs__WEBPACK_IMPORTED_MODULE_367__.findMixin),
+/* harmony export */   fontStringFromTextStyle: () => (/* reexport safe */ _scene_text_canvas_utils_fontStringFromTextStyle_mjs__WEBPACK_IMPORTED_MODULE_499__.fontStringFromTextStyle),
 /* harmony export */   formatShader: () => (/* reexport safe */ _rendering_high_shader_compiler_utils_formatShader_mjs__WEBPACK_IMPORTED_MODULE_173__.formatShader),
 /* harmony export */   fragmentGPUTemplate: () => (/* reexport safe */ _rendering_high_shader_defaultProgramTemplate_mjs__WEBPACK_IMPORTED_MODULE_175__.fragmentGPUTemplate),
 /* harmony export */   fragmentGlTemplate: () => (/* reexport safe */ _rendering_high_shader_defaultProgramTemplate_mjs__WEBPACK_IMPORTED_MODULE_175__.fragmentGlTemplate),
@@ -39479,10 +39608,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   generateGpuLayoutGroups: () => (/* reexport safe */ _rendering_renderers_gpu_shader_utils_generateGpuLayoutGroups_mjs__WEBPACK_IMPORTED_MODULE_277__.generateGpuLayoutGroups),
 /* harmony export */   generateLayout: () => (/* reexport safe */ _rendering_batcher_gpu_generateLayout_mjs__WEBPACK_IMPORTED_MODULE_158__.generateLayout),
 /* harmony export */   generateLayoutHash: () => (/* reexport safe */ _rendering_renderers_gpu_shader_utils_generateLayoutHash_mjs__WEBPACK_IMPORTED_MODULE_278__.generateLayoutHash),
-/* harmony export */   generateParticleUpdateFunction: () => (/* reexport safe */ _scene_particle_container_shared_utils_generateParticleUpdateFunction_mjs__WEBPACK_IMPORTED_MODULE_450__.generateParticleUpdateFunction),
+/* harmony export */   generateParticleUpdateFunction: () => (/* reexport safe */ _scene_particle_container_shared_utils_generateParticleUpdateFunction_mjs__WEBPACK_IMPORTED_MODULE_453__.generateParticleUpdateFunction),
 /* harmony export */   generateProgram: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_generateProgram_mjs__WEBPACK_IMPORTED_MODULE_219__.generateProgram),
 /* harmony export */   generateShaderSyncCode: () => (/* reexport safe */ _rendering_renderers_gl_shader_GenerateShaderSyncCode_mjs__WEBPACK_IMPORTED_MODULE_208__.generateShaderSyncCode),
-/* harmony export */   generateTextStyleKey: () => (/* reexport safe */ _scene_text_utils_generateTextStyleKey_mjs__WEBPACK_IMPORTED_MODULE_504__.generateTextStyleKey),
+/* harmony export */   generateTextStyleKey: () => (/* reexport safe */ _scene_text_utils_generateTextStyleKey_mjs__WEBPACK_IMPORTED_MODULE_507__.generateTextStyleKey),
 /* harmony export */   generateTextureBatchBit: () => (/* reexport safe */ _rendering_high_shader_shader_bits_generateTextureBatchBit_mjs__WEBPACK_IMPORTED_MODULE_177__.generateTextureBatchBit),
 /* harmony export */   generateTextureBatchBitGl: () => (/* reexport safe */ _rendering_high_shader_shader_bits_generateTextureBatchBit_mjs__WEBPACK_IMPORTED_MODULE_177__.generateTextureBatchBitGl),
 /* harmony export */   generateUID: () => (/* reexport safe */ _rendering_renderers_shared_texture_utils_generateUID_mjs__WEBPACK_IMPORTED_MODULE_345__.generateUID),
@@ -39490,36 +39619,37 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getAdjustedBlendModeBlend: () => (/* reexport safe */ _rendering_renderers_shared_state_getAdjustedBlendModeBlend_mjs__WEBPACK_IMPORTED_MODULE_324__.getAdjustedBlendModeBlend),
 /* harmony export */   getAttributeInfoFromFormat: () => (/* reexport safe */ _rendering_renderers_shared_geometry_utils_getAttributeInfoFromFormat_mjs__WEBPACK_IMPORTED_MODULE_303__.getAttributeInfoFromFormat),
 /* harmony export */   getBatchSamplersUniformGroup: () => (/* reexport safe */ _rendering_renderers_gl_shader_getBatchSamplersUniformGroup_mjs__WEBPACK_IMPORTED_MODULE_209__.getBatchSamplersUniformGroup),
-/* harmony export */   getBitmapTextLayout: () => (/* reexport safe */ _scene_text_bitmap_utils_getBitmapTextLayout_mjs__WEBPACK_IMPORTED_MODULE_476__.getBitmapTextLayout),
-/* harmony export */   getCanvasBoundingBox: () => (/* reexport safe */ _utils_canvas_getCanvasBoundingBox_mjs__WEBPACK_IMPORTED_MODULE_518__.getCanvasBoundingBox),
-/* harmony export */   getCanvasFillStyle: () => (/* reexport safe */ _scene_text_canvas_utils_getCanvasFillStyle_mjs__WEBPACK_IMPORTED_MODULE_497__.getCanvasFillStyle),
+/* harmony export */   getBitmapTextLayout: () => (/* reexport safe */ _scene_text_bitmap_utils_getBitmapTextLayout_mjs__WEBPACK_IMPORTED_MODULE_479__.getBitmapTextLayout),
+/* harmony export */   getCanvasBoundingBox: () => (/* reexport safe */ _utils_canvas_getCanvasBoundingBox_mjs__WEBPACK_IMPORTED_MODULE_522__.getCanvasBoundingBox),
+/* harmony export */   getCanvasFillStyle: () => (/* reexport safe */ _scene_text_canvas_utils_getCanvasFillStyle_mjs__WEBPACK_IMPORTED_MODULE_500__.getCanvasFillStyle),
 /* harmony export */   getCanvasTexture: () => (/* reexport safe */ _rendering_renderers_shared_texture_utils_getCanvasTexture_mjs__WEBPACK_IMPORTED_MODULE_346__.getCanvasTexture),
 /* harmony export */   getDefaultUniformValue: () => (/* reexport safe */ _rendering_renderers_shared_shader_utils_getDefaultUniformValue_mjs__WEBPACK_IMPORTED_MODULE_319__.getDefaultUniformValue),
 /* harmony export */   getFastGlobalBounds: () => (/* reexport safe */ _scene_container_bounds_getFastGlobalBounds_mjs__WEBPACK_IMPORTED_MODULE_358__.getFastGlobalBounds),
-/* harmony export */   getFontCss: () => (/* reexport safe */ _scene_text_html_utils_getFontCss_mjs__WEBPACK_IMPORTED_MODULE_484__.getFontCss),
+/* harmony export */   getFastGlobalBoundsMixin: () => (/* reexport safe */ _scene_container_container_mixins_getFastGlobalBoundsMixin_mjs__WEBPACK_IMPORTED_MODULE_368__.getFastGlobalBoundsMixin),
+/* harmony export */   getFontCss: () => (/* reexport safe */ _scene_text_html_utils_getFontCss_mjs__WEBPACK_IMPORTED_MODULE_487__.getFontCss),
 /* harmony export */   getFontFamilyName: () => (/* reexport safe */ _assets_loader_parsers_loadWebFont_mjs__WEBPACK_IMPORTED_MODULE_45__.getFontFamilyName),
 /* harmony export */   getGeometryBounds: () => (/* reexport safe */ _rendering_renderers_shared_geometry_utils_getGeometryBounds_mjs__WEBPACK_IMPORTED_MODULE_304__.getGeometryBounds),
 /* harmony export */   getGlTypeFromFormat: () => (/* reexport safe */ _rendering_renderers_gl_geometry_utils_getGlTypeFromFormat_mjs__WEBPACK_IMPORTED_MODULE_199__.getGlTypeFromFormat),
 /* harmony export */   getGlobalBounds: () => (/* reexport safe */ _scene_container_bounds_getGlobalBounds_mjs__WEBPACK_IMPORTED_MODULE_359__.getGlobalBounds),
-/* harmony export */   getGlobalMixin: () => (/* reexport safe */ _scene_container_container_mixins_getGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_367__.getGlobalMixin),
+/* harmony export */   getGlobalMixin: () => (/* reexport safe */ _scene_container_container_mixins_getGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_369__.getGlobalMixin),
 /* harmony export */   getGlobalRenderableBounds: () => (/* reexport safe */ _scene_container_bounds_getRenderableBounds_mjs__WEBPACK_IMPORTED_MODULE_361__.getGlobalRenderableBounds),
 /* harmony export */   getLocalBounds: () => (/* reexport safe */ _scene_container_bounds_getLocalBounds_mjs__WEBPACK_IMPORTED_MODULE_360__.getLocalBounds),
 /* harmony export */   getMatrixRelativeToParent: () => (/* reexport safe */ _rendering_mask_utils_addMaskLocalBounds_mjs__WEBPACK_IMPORTED_MODULE_191__.getMatrixRelativeToParent),
 /* harmony export */   getMaxFragmentPrecision: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_getMaxFragmentPrecision_mjs__WEBPACK_IMPORTED_MODULE_220__.getMaxFragmentPrecision),
 /* harmony export */   getMaxTexturesPerBatch: () => (/* reexport safe */ _rendering_batcher_gl_utils_maxRecommendedTextures_mjs__WEBPACK_IMPORTED_MODULE_156__.getMaxTexturesPerBatch),
-/* harmony export */   getOrientationOfPoints: () => (/* reexport safe */ _scene_graphics_shared_utils_getOrientationOfPoints_mjs__WEBPACK_IMPORTED_MODULE_421__.getOrientationOfPoints),
+/* harmony export */   getOrientationOfPoints: () => (/* reexport safe */ _scene_graphics_shared_utils_getOrientationOfPoints_mjs__WEBPACK_IMPORTED_MODULE_423__.getOrientationOfPoints),
 /* harmony export */   getParent: () => (/* reexport safe */ _scene_container_bounds_getLocalBounds_mjs__WEBPACK_IMPORTED_MODULE_360__.getParent),
-/* harmony export */   getPo2TextureFromSource: () => (/* reexport safe */ _scene_text_utils_getPo2TextureFromSource_mjs__WEBPACK_IMPORTED_MODULE_505__.getPo2TextureFromSource),
-/* harmony export */   getResolutionOfUrl: () => (/* reexport safe */ _utils_network_getResolutionOfUrl_mjs__WEBPACK_IMPORTED_MODULE_533__.getResolutionOfUrl),
-/* harmony export */   getSVGUrl: () => (/* reexport safe */ _scene_text_html_utils_getSVGUrl_mjs__WEBPACK_IMPORTED_MODULE_485__.getSVGUrl),
+/* harmony export */   getPo2TextureFromSource: () => (/* reexport safe */ _scene_text_utils_getPo2TextureFromSource_mjs__WEBPACK_IMPORTED_MODULE_508__.getPo2TextureFromSource),
+/* harmony export */   getResolutionOfUrl: () => (/* reexport safe */ _utils_network_getResolutionOfUrl_mjs__WEBPACK_IMPORTED_MODULE_537__.getResolutionOfUrl),
+/* harmony export */   getSVGUrl: () => (/* reexport safe */ _scene_text_html_utils_getSVGUrl_mjs__WEBPACK_IMPORTED_MODULE_488__.getSVGUrl),
 /* harmony export */   getSupportedCompressedTextureFormats: () => (/* reexport safe */ _rendering_renderers_shared_texture_utils_getSupportedCompressedTextureFormats_mjs__WEBPACK_IMPORTED_MODULE_347__.getSupportedCompressedTextureFormats),
 /* harmony export */   getSupportedGPUCompressedTextureFormats: () => (/* reexport safe */ _rendering_renderers_gpu_texture_utils_getSupportedGPUCompressedTextureFormats_mjs__WEBPACK_IMPORTED_MODULE_288__.getSupportedGPUCompressedTextureFormats),
 /* harmony export */   getSupportedGlCompressedTextureFormats: () => (/* reexport safe */ _rendering_renderers_gl_texture_utils_getSupportedGlCompressedTextureFormats_mjs__WEBPACK_IMPORTED_MODULE_247__.getSupportedGlCompressedTextureFormats),
 /* harmony export */   getSupportedTextureFormats: () => (/* reexport safe */ _rendering_renderers_shared_texture_utils_getSupportedTextureFormats_mjs__WEBPACK_IMPORTED_MODULE_348__.getSupportedTextureFormats),
-/* harmony export */   getTemporaryCanvasFromImage: () => (/* reexport safe */ _scene_text_html_utils_getTemporaryCanvasFromImage_mjs__WEBPACK_IMPORTED_MODULE_486__.getTemporaryCanvasFromImage),
+/* harmony export */   getTemporaryCanvasFromImage: () => (/* reexport safe */ _scene_text_html_utils_getTemporaryCanvasFromImage_mjs__WEBPACK_IMPORTED_MODULE_489__.getTemporaryCanvasFromImage),
 /* harmony export */   getTestContext: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_getTestContext_mjs__WEBPACK_IMPORTED_MODULE_221__.getTestContext),
 /* harmony export */   getTextureBatchBindGroup: () => (/* reexport safe */ _rendering_batcher_gpu_getTextureBatchBindGroup_mjs__WEBPACK_IMPORTED_MODULE_159__.getTextureBatchBindGroup),
-/* harmony export */   getTextureDefaultMatrix: () => (/* reexport safe */ _scene_mesh_shared_getTextureDefaultMatrix_mjs__WEBPACK_IMPORTED_MODULE_435__.getTextureDefaultMatrix),
+/* harmony export */   getTextureDefaultMatrix: () => (/* reexport safe */ _scene_mesh_shared_getTextureDefaultMatrix_mjs__WEBPACK_IMPORTED_MODULE_438__.getTextureDefaultMatrix),
 /* harmony export */   getTextureFormatFromKTXTexture: () => (/* reexport safe */ _compressed_textures_ktx2_utils_getTextureFormatFromKTXTexture_mjs__WEBPACK_IMPORTED_MODULE_76__.getTextureFormatFromKTXTexture),
 /* harmony export */   getUboData: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_getUboData_mjs__WEBPACK_IMPORTED_MODULE_222__.getUboData),
 /* harmony export */   getUniformData: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_getUniformData_mjs__WEBPACK_IMPORTED_MODULE_223__.getUniformData),
@@ -39545,27 +39675,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   hslgpu: () => (/* reexport safe */ _filters_blend_modes_hls_GPUhls_mjs__WEBPACK_IMPORTED_MODULE_119__.hslgpu),
 /* harmony export */   injectBits: () => (/* reexport safe */ _rendering_high_shader_compiler_utils_injectBits_mjs__WEBPACK_IMPORTED_MODULE_174__.injectBits),
 /* harmony export */   insertVersion: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_preprocessors_insertVersion_mjs__WEBPACK_IMPORTED_MODULE_229__.insertVersion),
-/* harmony export */   isMobile: () => (/* reexport safe */ _utils_browser_isMobile_mjs__WEBPACK_IMPORTED_MODULE_513__.isMobile),
+/* harmony export */   isMobile: () => (/* reexport safe */ _utils_browser_isMobile_mjs__WEBPACK_IMPORTED_MODULE_517__.isMobile),
 /* harmony export */   isPow2: () => (/* reexport safe */ _maths_misc_pow2_mjs__WEBPACK_IMPORTED_MODULE_139__.isPow2),
 /* harmony export */   isRenderingToScreen: () => (/* reexport safe */ _rendering_renderers_shared_renderTarget_isRenderingToScreen_mjs__WEBPACK_IMPORTED_MODULE_308__.isRenderingToScreen),
-/* harmony export */   isSafari: () => (/* reexport safe */ _utils_browser_isSafari_mjs__WEBPACK_IMPORTED_MODULE_514__.isSafari),
+/* harmony export */   isSafari: () => (/* reexport safe */ _utils_browser_isSafari_mjs__WEBPACK_IMPORTED_MODULE_518__.isSafari),
 /* harmony export */   isSingleItem: () => (/* reexport safe */ _assets_utils_isSingleItem_mjs__WEBPACK_IMPORTED_MODULE_59__.isSingleItem),
-/* harmony export */   isWebGLSupported: () => (/* reexport safe */ _utils_browser_isWebGLSupported_mjs__WEBPACK_IMPORTED_MODULE_515__.isWebGLSupported),
-/* harmony export */   isWebGPUSupported: () => (/* reexport safe */ _utils_browser_isWebGPUSupported_mjs__WEBPACK_IMPORTED_MODULE_516__.isWebGPUSupported),
+/* harmony export */   isWebGLSupported: () => (/* reexport safe */ _utils_browser_isWebGLSupported_mjs__WEBPACK_IMPORTED_MODULE_519__.isWebGLSupported),
+/* harmony export */   isWebGPUSupported: () => (/* reexport safe */ _utils_browser_isWebGPUSupported_mjs__WEBPACK_IMPORTED_MODULE_520__.isWebGPUSupported),
 /* harmony export */   ktxTranscoderUrls: () => (/* reexport safe */ _compressed_textures_ktx2_utils_setKTXTranscoderPath_mjs__WEBPACK_IMPORTED_MODULE_79__.ktxTranscoderUrls),
 /* harmony export */   loadBasis: () => (/* reexport safe */ _compressed_textures_basis_loadBasis_mjs__WEBPACK_IMPORTED_MODULE_62__.loadBasis),
 /* harmony export */   loadBasisOnWorker: () => (/* reexport safe */ _compressed_textures_basis_worker_loadBasisOnWorker_mjs__WEBPACK_IMPORTED_MODULE_66__.loadBasisOnWorker),
-/* harmony export */   loadBitmapFont: () => (/* reexport safe */ _scene_text_bitmap_asset_loadBitmapFont_mjs__WEBPACK_IMPORTED_MODULE_470__.loadBitmapFont),
+/* harmony export */   loadBitmapFont: () => (/* reexport safe */ _scene_text_bitmap_asset_loadBitmapFont_mjs__WEBPACK_IMPORTED_MODULE_473__.loadBitmapFont),
 /* harmony export */   loadDDS: () => (/* reexport safe */ _compressed_textures_dds_loadDDS_mjs__WEBPACK_IMPORTED_MODULE_68__.loadDDS),
 /* harmony export */   loadEnvironmentExtensions: () => (/* reexport safe */ _environment_autoDetectEnvironment_mjs__WEBPACK_IMPORTED_MODULE_88__.loadEnvironmentExtensions),
-/* harmony export */   loadFontAsBase64: () => (/* reexport safe */ _scene_text_html_utils_loadFontAsBase64_mjs__WEBPACK_IMPORTED_MODULE_487__.loadFontAsBase64),
-/* harmony export */   loadFontCSS: () => (/* reexport safe */ _scene_text_html_utils_loadFontCSS_mjs__WEBPACK_IMPORTED_MODULE_488__.loadFontCSS),
+/* harmony export */   loadFontAsBase64: () => (/* reexport safe */ _scene_text_html_utils_loadFontAsBase64_mjs__WEBPACK_IMPORTED_MODULE_490__.loadFontAsBase64),
+/* harmony export */   loadFontCSS: () => (/* reexport safe */ _scene_text_html_utils_loadFontCSS_mjs__WEBPACK_IMPORTED_MODULE_491__.loadFontCSS),
 /* harmony export */   loadImageBitmap: () => (/* reexport safe */ _assets_loader_parsers_textures_loadTextures_mjs__WEBPACK_IMPORTED_MODULE_47__.loadImageBitmap),
 /* harmony export */   loadJson: () => (/* reexport safe */ _assets_loader_parsers_loadJson_mjs__WEBPACK_IMPORTED_MODULE_43__.loadJson),
 /* harmony export */   loadKTX: () => (/* reexport safe */ _compressed_textures_ktx_loadKTX_mjs__WEBPACK_IMPORTED_MODULE_70__.loadKTX),
 /* harmony export */   loadKTX2: () => (/* reexport safe */ _compressed_textures_ktx2_loadKTX2_mjs__WEBPACK_IMPORTED_MODULE_73__.loadKTX2),
 /* harmony export */   loadKTX2onWorker: () => (/* reexport safe */ _compressed_textures_ktx2_worker_loadKTX2onWorker_mjs__WEBPACK_IMPORTED_MODULE_81__.loadKTX2onWorker),
-/* harmony export */   loadSVGImage: () => (/* reexport safe */ _scene_text_html_utils_loadSVGImage_mjs__WEBPACK_IMPORTED_MODULE_489__.loadSVGImage),
+/* harmony export */   loadSVGImage: () => (/* reexport safe */ _scene_text_html_utils_loadSVGImage_mjs__WEBPACK_IMPORTED_MODULE_492__.loadSVGImage),
 /* harmony export */   loadSvg: () => (/* reexport safe */ _assets_loader_parsers_textures_loadSVG_mjs__WEBPACK_IMPORTED_MODULE_46__.loadSvg),
 /* harmony export */   loadTextures: () => (/* reexport safe */ _assets_loader_parsers_textures_loadTextures_mjs__WEBPACK_IMPORTED_MODULE_47__.loadTextures),
 /* harmony export */   loadTxt: () => (/* reexport safe */ _assets_loader_parsers_loadTxt_mjs__WEBPACK_IMPORTED_MODULE_44__.loadTxt),
@@ -39574,15 +39704,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   localUniformBit: () => (/* reexport safe */ _rendering_high_shader_shader_bits_localUniformBit_mjs__WEBPACK_IMPORTED_MODULE_179__.localUniformBit),
 /* harmony export */   localUniformBitGl: () => (/* reexport safe */ _rendering_high_shader_shader_bits_localUniformBit_mjs__WEBPACK_IMPORTED_MODULE_179__.localUniformBitGl),
 /* harmony export */   localUniformBitGroup2: () => (/* reexport safe */ _rendering_high_shader_shader_bits_localUniformBit_mjs__WEBPACK_IMPORTED_MODULE_179__.localUniformBitGroup2),
-/* harmony export */   localUniformMSDFBit: () => (/* reexport safe */ _scene_text_sdfShader_shader_bits_localUniformMSDFBit_mjs__WEBPACK_IMPORTED_MODULE_499__.localUniformMSDFBit),
-/* harmony export */   localUniformMSDFBitGl: () => (/* reexport safe */ _scene_text_sdfShader_shader_bits_localUniformMSDFBit_mjs__WEBPACK_IMPORTED_MODULE_499__.localUniformMSDFBitGl),
+/* harmony export */   localUniformMSDFBit: () => (/* reexport safe */ _scene_text_sdfShader_shader_bits_localUniformMSDFBit_mjs__WEBPACK_IMPORTED_MODULE_502__.localUniformMSDFBit),
+/* harmony export */   localUniformMSDFBitGl: () => (/* reexport safe */ _scene_text_sdfShader_shader_bits_localUniformMSDFBit_mjs__WEBPACK_IMPORTED_MODULE_502__.localUniformMSDFBitGl),
 /* harmony export */   log2: () => (/* reexport safe */ _maths_misc_pow2_mjs__WEBPACK_IMPORTED_MODULE_139__.log2),
-/* harmony export */   logDebugTexture: () => (/* reexport safe */ _utils_logging_logDebugTexture_mjs__WEBPACK_IMPORTED_MODULE_528__.logDebugTexture),
+/* harmony export */   logDebugTexture: () => (/* reexport safe */ _utils_logging_logDebugTexture_mjs__WEBPACK_IMPORTED_MODULE_532__.logDebugTexture),
 /* harmony export */   logProgramError: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_logProgramError_mjs__WEBPACK_IMPORTED_MODULE_224__.logProgramError),
-/* harmony export */   logRenderGroupScene: () => (/* reexport safe */ _utils_logging_logScene_mjs__WEBPACK_IMPORTED_MODULE_529__.logRenderGroupScene),
-/* harmony export */   logScene: () => (/* reexport safe */ _utils_logging_logScene_mjs__WEBPACK_IMPORTED_MODULE_529__.logScene),
-/* harmony export */   mSDFBit: () => (/* reexport safe */ _scene_text_sdfShader_shader_bits_mSDFBit_mjs__WEBPACK_IMPORTED_MODULE_500__.mSDFBit),
-/* harmony export */   mSDFBitGl: () => (/* reexport safe */ _scene_text_sdfShader_shader_bits_mSDFBit_mjs__WEBPACK_IMPORTED_MODULE_500__.mSDFBitGl),
+/* harmony export */   logRenderGroupScene: () => (/* reexport safe */ _utils_logging_logScene_mjs__WEBPACK_IMPORTED_MODULE_533__.logRenderGroupScene),
+/* harmony export */   logScene: () => (/* reexport safe */ _utils_logging_logScene_mjs__WEBPACK_IMPORTED_MODULE_533__.logScene),
+/* harmony export */   mSDFBit: () => (/* reexport safe */ _scene_text_sdfShader_shader_bits_mSDFBit_mjs__WEBPACK_IMPORTED_MODULE_503__.mSDFBit),
+/* harmony export */   mSDFBitGl: () => (/* reexport safe */ _scene_text_sdfShader_shader_bits_mSDFBit_mjs__WEBPACK_IMPORTED_MODULE_503__.mSDFBitGl),
 /* harmony export */   mapFormatToGlFormat: () => (/* reexport safe */ _rendering_renderers_gl_texture_utils_mapFormatToGlFormat_mjs__WEBPACK_IMPORTED_MODULE_248__.mapFormatToGlFormat),
 /* harmony export */   mapFormatToGlInternalFormat: () => (/* reexport safe */ _rendering_renderers_gl_texture_utils_mapFormatToGlInternalFormat_mjs__WEBPACK_IMPORTED_MODULE_249__.mapFormatToGlInternalFormat),
 /* harmony export */   mapFormatToGlType: () => (/* reexport safe */ _rendering_renderers_gl_texture_utils_mapFormatToGlType_mjs__WEBPACK_IMPORTED_MODULE_250__.mapFormatToGlType),
@@ -39594,95 +39724,96 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   maskVert: () => (/* reexport safe */ _filters_mask_mask_vert_mjs__WEBPACK_IMPORTED_MODULE_115__["default"]),
 /* harmony export */   maskWgsl: () => (/* reexport safe */ _filters_mask_mask_wgsl_mjs__WEBPACK_IMPORTED_MODULE_116__["default"]),
 /* harmony export */   matrixPool: () => (/* reexport safe */ _scene_container_bounds_utils_matrixAndBoundsPool_mjs__WEBPACK_IMPORTED_MODULE_362__.matrixPool),
-/* harmony export */   measureHtmlText: () => (/* reexport safe */ _scene_text_html_utils_measureHtmlText_mjs__WEBPACK_IMPORTED_MODULE_490__.measureHtmlText),
-/* harmony export */   measureMixin: () => (/* reexport safe */ _scene_container_container_mixins_measureMixin_mjs__WEBPACK_IMPORTED_MODULE_368__.measureMixin),
+/* harmony export */   measureHtmlText: () => (/* reexport safe */ _scene_text_html_utils_measureHtmlText_mjs__WEBPACK_IMPORTED_MODULE_493__.measureHtmlText),
+/* harmony export */   measureMixin: () => (/* reexport safe */ _scene_container_container_mixins_measureMixin_mjs__WEBPACK_IMPORTED_MODULE_370__.measureMixin),
 /* harmony export */   migrateFragmentFromV7toV8: () => (/* reexport safe */ _rendering_renderers_gl_shader_migrateFragmentFromV7toV8_mjs__WEBPACK_IMPORTED_MODULE_214__.migrateFragmentFromV7toV8),
 /* harmony export */   mipmapScaleModeToGlFilter: () => (/* reexport safe */ _rendering_renderers_gl_texture_utils_pixiToGlMaps_mjs__WEBPACK_IMPORTED_MODULE_251__.mipmapScaleModeToGlFilter),
-/* harmony export */   mixHexColors: () => (/* reexport safe */ _scene_container_utils_mixHexColors_mjs__WEBPACK_IMPORTED_MODULE_384__.mixHexColors),
-/* harmony export */   multiplyColors: () => (/* reexport safe */ _scene_container_utils_multiplyColors_mjs__WEBPACK_IMPORTED_MODULE_385__.multiplyColors),
-/* harmony export */   multiplyHexColors: () => (/* reexport safe */ _scene_container_utils_multiplyHexColors_mjs__WEBPACK_IMPORTED_MODULE_386__.multiplyHexColors),
+/* harmony export */   mixHexColors: () => (/* reexport safe */ _scene_container_utils_mixHexColors_mjs__WEBPACK_IMPORTED_MODULE_386__.mixHexColors),
+/* harmony export */   multiplyColors: () => (/* reexport safe */ _scene_container_utils_multiplyColors_mjs__WEBPACK_IMPORTED_MODULE_387__.multiplyColors),
+/* harmony export */   multiplyHexColors: () => (/* reexport safe */ _scene_container_utils_multiplyHexColors_mjs__WEBPACK_IMPORTED_MODULE_388__.multiplyHexColors),
 /* harmony export */   nextPow2: () => (/* reexport safe */ _maths_misc_pow2_mjs__WEBPACK_IMPORTED_MODULE_139__.nextPow2),
 /* harmony export */   noiseFrag: () => (/* reexport safe */ _filters_defaults_noise_noise_frag_mjs__WEBPACK_IMPORTED_MODULE_112__["default"]),
 /* harmony export */   noiseWgsl: () => (/* reexport safe */ _filters_defaults_noise_noise_wgsl_mjs__WEBPACK_IMPORTED_MODULE_113__["default"]),
 /* harmony export */   nonCompressedFormats: () => (/* reexport safe */ _rendering_renderers_shared_texture_utils_getSupportedTextureFormats_mjs__WEBPACK_IMPORTED_MODULE_348__.nonCompressedFormats),
 /* harmony export */   normalizeExtensionPriority: () => (/* reexport safe */ _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_0__.normalizeExtensionPriority),
-/* harmony export */   nssvg: () => (/* reexport safe */ _scene_text_html_HTMLTextRenderData_mjs__WEBPACK_IMPORTED_MODULE_480__.nssvg),
-/* harmony export */   nsxhtml: () => (/* reexport safe */ _scene_text_html_HTMLTextRenderData_mjs__WEBPACK_IMPORTED_MODULE_480__.nsxhtml),
-/* harmony export */   onRenderMixin: () => (/* reexport safe */ _scene_container_container_mixins_onRenderMixin_mjs__WEBPACK_IMPORTED_MODULE_369__.onRenderMixin),
+/* harmony export */   nssvg: () => (/* reexport safe */ _scene_text_html_HTMLTextRenderData_mjs__WEBPACK_IMPORTED_MODULE_483__.nssvg),
+/* harmony export */   nsxhtml: () => (/* reexport safe */ _scene_text_html_HTMLTextRenderData_mjs__WEBPACK_IMPORTED_MODULE_483__.nsxhtml),
+/* harmony export */   onRenderMixin: () => (/* reexport safe */ _scene_container_container_mixins_onRenderMixin_mjs__WEBPACK_IMPORTED_MODULE_371__.onRenderMixin),
 /* harmony export */   parseDDS: () => (/* reexport safe */ _compressed_textures_dds_parseDDS_mjs__WEBPACK_IMPORTED_MODULE_69__.parseDDS),
 /* harmony export */   parseFunctionBody: () => (/* reexport safe */ _rendering_renderers_shared_utils_parseFunctionBody_mjs__WEBPACK_IMPORTED_MODULE_351__.parseFunctionBody),
 /* harmony export */   parseKTX: () => (/* reexport safe */ _compressed_textures_ktx_parseKTX_mjs__WEBPACK_IMPORTED_MODULE_71__.parseKTX),
-/* harmony export */   particleData: () => (/* reexport safe */ _scene_particle_container_shared_particleData_mjs__WEBPACK_IMPORTED_MODULE_447__.particleData),
+/* harmony export */   particleData: () => (/* reexport safe */ _scene_particle_container_shared_particleData_mjs__WEBPACK_IMPORTED_MODULE_450__.particleData),
 /* harmony export */   particlesFrag: () => (/* reexport safe */ _scene_particle_container_shared_shader_particles_frag_mjs__WEBPACK_IMPORTED_MODULE_354__["default"]),
 /* harmony export */   particlesVert: () => (/* reexport safe */ _scene_particle_container_shared_shader_particles_vert_mjs__WEBPACK_IMPORTED_MODULE_355__["default"]),
 /* harmony export */   particlesWgsl: () => (/* reexport safe */ _scene_particle_container_shared_shader_particles_wgsl_mjs__WEBPACK_IMPORTED_MODULE_356__["default"]),
-/* harmony export */   path: () => (/* reexport safe */ _utils_path_mjs__WEBPACK_IMPORTED_MODULE_534__.path),
+/* harmony export */   path: () => (/* reexport safe */ _utils_path_mjs__WEBPACK_IMPORTED_MODULE_538__.path),
 /* harmony export */   pointInTriangle: () => (/* reexport safe */ _maths_point_pointInTriangle_mjs__WEBPACK_IMPORTED_MODULE_143__.pointInTriangle),
 /* harmony export */   preloadVideo: () => (/* reexport safe */ _assets_loader_parsers_textures_loadVideoTextures_mjs__WEBPACK_IMPORTED_MODULE_48__.preloadVideo),
-/* harmony export */   removeItems: () => (/* reexport safe */ _utils_data_removeItems_mjs__WEBPACK_IMPORTED_MODULE_522__.removeItems),
+/* harmony export */   removeItems: () => (/* reexport safe */ _utils_data_removeItems_mjs__WEBPACK_IMPORTED_MODULE_526__.removeItems),
 /* harmony export */   removeStructAndGroupDuplicates: () => (/* reexport safe */ _rendering_renderers_gpu_shader_utils_removeStructAndGroupDuplicates_mjs__WEBPACK_IMPORTED_MODULE_279__.removeStructAndGroupDuplicates),
-/* harmony export */   resetUids: () => (/* reexport safe */ _utils_data_uid_mjs__WEBPACK_IMPORTED_MODULE_523__.resetUids),
-/* harmony export */   resolveCharacters: () => (/* reexport safe */ _scene_text_bitmap_utils_resolveCharacters_mjs__WEBPACK_IMPORTED_MODULE_477__.resolveCharacters),
+/* harmony export */   resetUids: () => (/* reexport safe */ _utils_data_uid_mjs__WEBPACK_IMPORTED_MODULE_527__.resetUids),
+/* harmony export */   resolveCharacters: () => (/* reexport safe */ _scene_text_bitmap_utils_resolveCharacters_mjs__WEBPACK_IMPORTED_MODULE_480__.resolveCharacters),
 /* harmony export */   resolveCompressedTextureUrl: () => (/* reexport safe */ _compressed_textures_shared_resolveCompressedTextureUrl_mjs__WEBPACK_IMPORTED_MODULE_83__.resolveCompressedTextureUrl),
 /* harmony export */   resolveJsonUrl: () => (/* reexport safe */ _assets_resolver_parsers_resolveJsonUrl_mjs__WEBPACK_IMPORTED_MODULE_51__.resolveJsonUrl),
 /* harmony export */   resolveTextureUrl: () => (/* reexport safe */ _assets_resolver_parsers_resolveTextureUrl_mjs__WEBPACK_IMPORTED_MODULE_52__.resolveTextureUrl),
 /* harmony export */   resourceToTexture: () => (/* reexport safe */ _rendering_renderers_shared_texture_utils_textureFrom_mjs__WEBPACK_IMPORTED_MODULE_349__.resourceToTexture),
 /* harmony export */   roundPixelsBit: () => (/* reexport safe */ _rendering_high_shader_shader_bits_roundPixelsBit_mjs__WEBPACK_IMPORTED_MODULE_180__.roundPixelsBit),
 /* harmony export */   roundPixelsBitGl: () => (/* reexport safe */ _rendering_high_shader_shader_bits_roundPixelsBit_mjs__WEBPACK_IMPORTED_MODULE_180__.roundPixelsBitGl),
-/* harmony export */   roundedShapeArc: () => (/* reexport safe */ _scene_graphics_shared_path_roundShape_mjs__WEBPACK_IMPORTED_MODULE_414__.roundedShapeArc),
-/* harmony export */   roundedShapeQuadraticCurve: () => (/* reexport safe */ _scene_graphics_shared_path_roundShape_mjs__WEBPACK_IMPORTED_MODULE_414__.roundedShapeQuadraticCurve),
-/* harmony export */   sayHello: () => (/* reexport safe */ _utils_sayHello_mjs__WEBPACK_IMPORTED_MODULE_537__.sayHello),
+/* harmony export */   roundedShapeArc: () => (/* reexport safe */ _scene_graphics_shared_path_roundShape_mjs__WEBPACK_IMPORTED_MODULE_416__.roundedShapeArc),
+/* harmony export */   roundedShapeQuadraticCurve: () => (/* reexport safe */ _scene_graphics_shared_path_roundShape_mjs__WEBPACK_IMPORTED_MODULE_416__.roundedShapeQuadraticCurve),
+/* harmony export */   sayHello: () => (/* reexport safe */ _utils_sayHello_mjs__WEBPACK_IMPORTED_MODULE_541__.sayHello),
 /* harmony export */   scaleModeToGlFilter: () => (/* reexport safe */ _rendering_renderers_gl_texture_utils_pixiToGlMaps_mjs__WEBPACK_IMPORTED_MODULE_251__.scaleModeToGlFilter),
 /* harmony export */   setBasisTranscoderPath: () => (/* reexport safe */ _compressed_textures_basis_utils_setBasisTranscoderPath_mjs__WEBPACK_IMPORTED_MODULE_65__.setBasisTranscoderPath),
 /* harmony export */   setKTXTranscoderPath: () => (/* reexport safe */ _compressed_textures_ktx2_utils_setKTXTranscoderPath_mjs__WEBPACK_IMPORTED_MODULE_79__.setKTXTranscoderPath),
-/* harmony export */   setPositions: () => (/* reexport safe */ _scene_sprite_tiling_utils_setPositions_mjs__WEBPACK_IMPORTED_MODULE_461__.setPositions),
+/* harmony export */   setPositions: () => (/* reexport safe */ _scene_sprite_tiling_utils_setPositions_mjs__WEBPACK_IMPORTED_MODULE_464__.setPositions),
 /* harmony export */   setProgramName: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_preprocessors_setProgramName_mjs__WEBPACK_IMPORTED_MODULE_230__.setProgramName),
-/* harmony export */   setUvs: () => (/* reexport safe */ _scene_sprite_tiling_utils_setUvs_mjs__WEBPACK_IMPORTED_MODULE_462__.setUvs),
-/* harmony export */   shapeBuilders: () => (/* reexport safe */ _scene_graphics_shared_utils_buildContextBatches_mjs__WEBPACK_IMPORTED_MODULE_418__.shapeBuilders),
-/* harmony export */   sortMixin: () => (/* reexport safe */ _scene_container_container_mixins_sortMixin_mjs__WEBPACK_IMPORTED_MODULE_370__.sortMixin),
-/* harmony export */   spritesheetAsset: () => (/* reexport safe */ _spritesheet_spritesheetAsset_mjs__WEBPACK_IMPORTED_MODULE_508__.spritesheetAsset),
+/* harmony export */   setUvs: () => (/* reexport safe */ _scene_sprite_tiling_utils_setUvs_mjs__WEBPACK_IMPORTED_MODULE_465__.setUvs),
+/* harmony export */   shapeBuilders: () => (/* reexport safe */ _scene_graphics_shared_utils_buildContextBatches_mjs__WEBPACK_IMPORTED_MODULE_420__.shapeBuilders),
+/* harmony export */   sortMixin: () => (/* reexport safe */ _scene_container_container_mixins_sortMixin_mjs__WEBPACK_IMPORTED_MODULE_372__.sortMixin),
+/* harmony export */   spritesheetAsset: () => (/* reexport safe */ _spritesheet_spritesheetAsset_mjs__WEBPACK_IMPORTED_MODULE_512__.spritesheetAsset),
 /* harmony export */   squaredDistanceToLineSegment: () => (/* reexport safe */ _maths_misc_squaredDistanceToLineSegment_mjs__WEBPACK_IMPORTED_MODULE_140__.squaredDistanceToLineSegment),
 /* harmony export */   stripVersion: () => (/* reexport safe */ _rendering_renderers_gl_shader_program_preprocessors_stripVersion_mjs__WEBPACK_IMPORTED_MODULE_231__.stripVersion),
 /* harmony export */   testImageFormat: () => (/* reexport safe */ _assets_detections_utils_testImageFormat_mjs__WEBPACK_IMPORTED_MODULE_39__.testImageFormat),
 /* harmony export */   testVideoFormat: () => (/* reexport safe */ _assets_detections_utils_testVideoFormat_mjs__WEBPACK_IMPORTED_MODULE_40__.testVideoFormat),
-/* harmony export */   textStyleToCSS: () => (/* reexport safe */ _scene_text_html_utils_textStyleToCSS_mjs__WEBPACK_IMPORTED_MODULE_491__.textStyleToCSS),
+/* harmony export */   textStyleToCSS: () => (/* reexport safe */ _scene_text_html_utils_textStyleToCSS_mjs__WEBPACK_IMPORTED_MODULE_494__.textStyleToCSS),
 /* harmony export */   textureBit: () => (/* reexport safe */ _rendering_high_shader_shader_bits_textureBit_mjs__WEBPACK_IMPORTED_MODULE_181__.textureBit),
 /* harmony export */   textureBitGl: () => (/* reexport safe */ _rendering_high_shader_shader_bits_textureBit_mjs__WEBPACK_IMPORTED_MODULE_181__.textureBitGl),
 /* harmony export */   textureFrom: () => (/* reexport safe */ _rendering_renderers_shared_texture_utils_textureFrom_mjs__WEBPACK_IMPORTED_MODULE_349__.textureFrom),
-/* harmony export */   tilingBit: () => (/* reexport safe */ _scene_sprite_tiling_shader_tilingBit_mjs__WEBPACK_IMPORTED_MODULE_455__.tilingBit),
-/* harmony export */   tilingBitGl: () => (/* reexport safe */ _scene_sprite_tiling_shader_tilingBit_mjs__WEBPACK_IMPORTED_MODULE_455__.tilingBitGl),
-/* harmony export */   toFillStyle: () => (/* reexport safe */ _scene_graphics_shared_utils_convertFillInputToFillStyle_mjs__WEBPACK_IMPORTED_MODULE_420__.toFillStyle),
-/* harmony export */   toLocalGlobalMixin: () => (/* reexport safe */ _scene_container_container_mixins_toLocalGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_371__.toLocalGlobalMixin),
-/* harmony export */   toStrokeStyle: () => (/* reexport safe */ _scene_graphics_shared_utils_convertFillInputToFillStyle_mjs__WEBPACK_IMPORTED_MODULE_420__.toStrokeStyle),
+/* harmony export */   tilingBit: () => (/* reexport safe */ _scene_sprite_tiling_shader_tilingBit_mjs__WEBPACK_IMPORTED_MODULE_458__.tilingBit),
+/* harmony export */   tilingBitGl: () => (/* reexport safe */ _scene_sprite_tiling_shader_tilingBit_mjs__WEBPACK_IMPORTED_MODULE_458__.tilingBitGl),
+/* harmony export */   toFillStyle: () => (/* reexport safe */ _scene_graphics_shared_utils_convertFillInputToFillStyle_mjs__WEBPACK_IMPORTED_MODULE_422__.toFillStyle),
+/* harmony export */   toLocalGlobalMixin: () => (/* reexport safe */ _scene_container_container_mixins_toLocalGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_373__.toLocalGlobalMixin),
+/* harmony export */   toStrokeStyle: () => (/* reexport safe */ _scene_graphics_shared_utils_convertFillInputToFillStyle_mjs__WEBPACK_IMPORTED_MODULE_422__.toStrokeStyle),
 /* harmony export */   transformVertices: () => (/* reexport safe */ _rendering_renderers_shared_geometry_utils_transformVertices_mjs__WEBPACK_IMPORTED_MODULE_305__.transformVertices),
-/* harmony export */   triangulateWithHoles: () => (/* reexport safe */ _scene_graphics_shared_utils_triangulateWithHoles_mjs__WEBPACK_IMPORTED_MODULE_422__.triangulateWithHoles),
+/* harmony export */   triangulateWithHoles: () => (/* reexport safe */ _scene_graphics_shared_utils_triangulateWithHoles_mjs__WEBPACK_IMPORTED_MODULE_424__.triangulateWithHoles),
 /* harmony export */   uboSyncFunctionsSTD40: () => (/* reexport safe */ _rendering_renderers_shared_shader_utils_uboSyncFunctions_mjs__WEBPACK_IMPORTED_MODULE_320__.uboSyncFunctionsSTD40),
 /* harmony export */   uboSyncFunctionsWGSL: () => (/* reexport safe */ _rendering_renderers_shared_shader_utils_uboSyncFunctions_mjs__WEBPACK_IMPORTED_MODULE_320__.uboSyncFunctionsWGSL),
-/* harmony export */   uid: () => (/* reexport safe */ _utils_data_uid_mjs__WEBPACK_IMPORTED_MODULE_523__.uid),
+/* harmony export */   uid: () => (/* reexport safe */ _utils_data_uid_mjs__WEBPACK_IMPORTED_MODULE_527__.uid),
 /* harmony export */   uniformParsers: () => (/* reexport safe */ _rendering_renderers_shared_shader_utils_uniformParsers_mjs__WEBPACK_IMPORTED_MODULE_321__.uniformParsers),
 /* harmony export */   unpremultiplyAlpha: () => (/* reexport safe */ _rendering_renderers_gl_texture_utils_unpremultiplyAlpha_mjs__WEBPACK_IMPORTED_MODULE_252__.unpremultiplyAlpha),
-/* harmony export */   unsafeEvalSupported: () => (/* reexport safe */ _utils_browser_unsafeEvalSupported_mjs__WEBPACK_IMPORTED_MODULE_517__.unsafeEvalSupported),
-/* harmony export */   updateLocalTransform: () => (/* reexport safe */ _scene_container_utils_updateLocalTransform_mjs__WEBPACK_IMPORTED_MODULE_387__.updateLocalTransform),
-/* harmony export */   updateQuadBounds: () => (/* reexport safe */ _utils_data_updateQuadBounds_mjs__WEBPACK_IMPORTED_MODULE_524__.updateQuadBounds),
-/* harmony export */   updateRenderGroupTransform: () => (/* reexport safe */ _scene_container_utils_updateRenderGroupTransforms_mjs__WEBPACK_IMPORTED_MODULE_388__.updateRenderGroupTransform),
-/* harmony export */   updateRenderGroupTransforms: () => (/* reexport safe */ _scene_container_utils_updateRenderGroupTransforms_mjs__WEBPACK_IMPORTED_MODULE_388__.updateRenderGroupTransforms),
-/* harmony export */   updateTransformAndChildren: () => (/* reexport safe */ _scene_container_utils_updateRenderGroupTransforms_mjs__WEBPACK_IMPORTED_MODULE_388__.updateTransformAndChildren),
+/* harmony export */   unsafeEvalSupported: () => (/* reexport safe */ _utils_browser_unsafeEvalSupported_mjs__WEBPACK_IMPORTED_MODULE_521__.unsafeEvalSupported),
+/* harmony export */   updateLocalTransform: () => (/* reexport safe */ _scene_container_utils_updateLocalTransform_mjs__WEBPACK_IMPORTED_MODULE_389__.updateLocalTransform),
+/* harmony export */   updateQuadBounds: () => (/* reexport safe */ _utils_data_updateQuadBounds_mjs__WEBPACK_IMPORTED_MODULE_528__.updateQuadBounds),
+/* harmony export */   updateRenderGroupTransform: () => (/* reexport safe */ _scene_container_utils_updateRenderGroupTransforms_mjs__WEBPACK_IMPORTED_MODULE_390__.updateRenderGroupTransform),
+/* harmony export */   updateRenderGroupTransforms: () => (/* reexport safe */ _scene_container_utils_updateRenderGroupTransforms_mjs__WEBPACK_IMPORTED_MODULE_390__.updateRenderGroupTransforms),
+/* harmony export */   updateTextBounds: () => (/* reexport safe */ _scene_text_utils_updateTextBounds_mjs__WEBPACK_IMPORTED_MODULE_509__.updateTextBounds),
+/* harmony export */   updateTransformAndChildren: () => (/* reexport safe */ _scene_container_utils_updateRenderGroupTransforms_mjs__WEBPACK_IMPORTED_MODULE_390__.updateTransformAndChildren),
 /* harmony export */   updateTransformBackwards: () => (/* reexport safe */ _scene_container_bounds_getGlobalBounds_mjs__WEBPACK_IMPORTED_MODULE_359__.updateTransformBackwards),
-/* harmony export */   updateWorldTransform: () => (/* reexport safe */ _scene_container_utils_updateWorldTransform_mjs__WEBPACK_IMPORTED_MODULE_389__.updateWorldTransform),
-/* harmony export */   v8_0_0: () => (/* reexport safe */ _utils_logging_deprecation_mjs__WEBPACK_IMPORTED_MODULE_527__.v8_0_0),
-/* harmony export */   v8_3_4: () => (/* reexport safe */ _utils_logging_deprecation_mjs__WEBPACK_IMPORTED_MODULE_527__.v8_3_4),
+/* harmony export */   updateWorldTransform: () => (/* reexport safe */ _scene_container_utils_updateWorldTransform_mjs__WEBPACK_IMPORTED_MODULE_391__.updateWorldTransform),
+/* harmony export */   v8_0_0: () => (/* reexport safe */ _utils_logging_deprecation_mjs__WEBPACK_IMPORTED_MODULE_531__.v8_0_0),
+/* harmony export */   v8_3_4: () => (/* reexport safe */ _utils_logging_deprecation_mjs__WEBPACK_IMPORTED_MODULE_531__.v8_3_4),
 /* harmony export */   validFormats: () => (/* reexport safe */ _compressed_textures_shared_resolveCompressedTextureUrl_mjs__WEBPACK_IMPORTED_MODULE_83__.validFormats),
-/* harmony export */   validateRenderables: () => (/* reexport safe */ _scene_container_utils_validateRenderables_mjs__WEBPACK_IMPORTED_MODULE_390__.validateRenderables),
+/* harmony export */   validateRenderables: () => (/* reexport safe */ _scene_container_utils_validateRenderables_mjs__WEBPACK_IMPORTED_MODULE_392__.validateRenderables),
 /* harmony export */   vertexGPUTemplate: () => (/* reexport safe */ _rendering_high_shader_defaultProgramTemplate_mjs__WEBPACK_IMPORTED_MODULE_175__.vertexGPUTemplate),
 /* harmony export */   vertexGlTemplate: () => (/* reexport safe */ _rendering_high_shader_defaultProgramTemplate_mjs__WEBPACK_IMPORTED_MODULE_175__.vertexGlTemplate),
 /* harmony export */   viewportFromFrame: () => (/* reexport safe */ _rendering_renderers_shared_renderTarget_viewportFromFrame_mjs__WEBPACK_IMPORTED_MODULE_311__.viewportFromFrame),
 /* harmony export */   vkFormatToGPUFormat: () => (/* reexport safe */ _compressed_textures_ktx2_utils_vkFormatToGPUFormat_mjs__WEBPACK_IMPORTED_MODULE_80__.vkFormatToGPUFormat),
-/* harmony export */   warn: () => (/* reexport safe */ _utils_logging_warn_mjs__WEBPACK_IMPORTED_MODULE_530__.warn),
-/* harmony export */   webworkerExt: () => (/* reexport safe */ _environment_webworker_webworkerExt_mjs__WEBPACK_IMPORTED_MODULE_540__.webworkerExt),
+/* harmony export */   warn: () => (/* reexport safe */ _utils_logging_warn_mjs__WEBPACK_IMPORTED_MODULE_534__.warn),
+/* harmony export */   webworkerExt: () => (/* reexport safe */ _environment_webworker_webworkerExt_mjs__WEBPACK_IMPORTED_MODULE_544__.webworkerExt),
 /* harmony export */   wrapModeToGlAddress: () => (/* reexport safe */ _rendering_renderers_gl_texture_utils_pixiToGlMaps_mjs__WEBPACK_IMPORTED_MODULE_251__.wrapModeToGlAddress)
 /* harmony export */ });
-/* harmony import */ var _environment_browser_browserExt_mjs__WEBPACK_IMPORTED_MODULE_539__ = __webpack_require__(/*! ./environment-browser/browserExt.mjs */ "./node_modules/pixi.js/lib/environment-browser/browserExt.mjs");
-/* harmony import */ var _environment_webworker_webworkerExt_mjs__WEBPACK_IMPORTED_MODULE_540__ = __webpack_require__(/*! ./environment-webworker/webworkerExt.mjs */ "./node_modules/pixi.js/lib/environment-webworker/webworkerExt.mjs");
+/* harmony import */ var _environment_browser_browserExt_mjs__WEBPACK_IMPORTED_MODULE_543__ = __webpack_require__(/*! ./environment-browser/browserExt.mjs */ "./node_modules/pixi.js/lib/environment-browser/browserExt.mjs");
+/* harmony import */ var _environment_webworker_webworkerExt_mjs__WEBPACK_IMPORTED_MODULE_544__ = __webpack_require__(/*! ./environment-webworker/webworkerExt.mjs */ "./node_modules/pixi.js/lib/environment-webworker/webworkerExt.mjs");
 /* harmony import */ var _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./extensions/Extensions.mjs */ "./node_modules/pixi.js/lib/extensions/Extensions.mjs");
 /* harmony import */ var _rendering_init_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./rendering/init.mjs */ "./node_modules/pixi.js/lib/rendering/init.mjs");
 /* harmony import */ var _spritesheet_init_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./spritesheet/init.mjs */ "./node_modules/pixi.js/lib/spritesheet/init.mjs");
@@ -40048,180 +40179,188 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scene_container_bounds_utils_matrixAndBoundsPool_mjs__WEBPACK_IMPORTED_MODULE_362__ = __webpack_require__(/*! ./scene/container/bounds/utils/matrixAndBoundsPool.mjs */ "./node_modules/pixi.js/lib/scene/container/bounds/utils/matrixAndBoundsPool.mjs");
 /* harmony import */ var _scene_container_container_mixins_cacheAsTextureMixin_mjs__WEBPACK_IMPORTED_MODULE_363__ = __webpack_require__(/*! ./scene/container/container-mixins/cacheAsTextureMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/cacheAsTextureMixin.mjs");
 /* harmony import */ var _scene_container_container_mixins_childrenHelperMixin_mjs__WEBPACK_IMPORTED_MODULE_364__ = __webpack_require__(/*! ./scene/container/container-mixins/childrenHelperMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/childrenHelperMixin.mjs");
-/* harmony import */ var _scene_container_container_mixins_effectsMixin_mjs__WEBPACK_IMPORTED_MODULE_365__ = __webpack_require__(/*! ./scene/container/container-mixins/effectsMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/effectsMixin.mjs");
-/* harmony import */ var _scene_container_container_mixins_findMixin_mjs__WEBPACK_IMPORTED_MODULE_366__ = __webpack_require__(/*! ./scene/container/container-mixins/findMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/findMixin.mjs");
-/* harmony import */ var _scene_container_container_mixins_getGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_367__ = __webpack_require__(/*! ./scene/container/container-mixins/getGlobalMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/getGlobalMixin.mjs");
-/* harmony import */ var _scene_container_container_mixins_measureMixin_mjs__WEBPACK_IMPORTED_MODULE_368__ = __webpack_require__(/*! ./scene/container/container-mixins/measureMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/measureMixin.mjs");
-/* harmony import */ var _scene_container_container_mixins_onRenderMixin_mjs__WEBPACK_IMPORTED_MODULE_369__ = __webpack_require__(/*! ./scene/container/container-mixins/onRenderMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/onRenderMixin.mjs");
-/* harmony import */ var _scene_container_container_mixins_sortMixin_mjs__WEBPACK_IMPORTED_MODULE_370__ = __webpack_require__(/*! ./scene/container/container-mixins/sortMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/sortMixin.mjs");
-/* harmony import */ var _scene_container_container_mixins_toLocalGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_371__ = __webpack_require__(/*! ./scene/container/container-mixins/toLocalGlobalMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/toLocalGlobalMixin.mjs");
-/* harmony import */ var _scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_372__ = __webpack_require__(/*! ./scene/container/Container.mjs */ "./node_modules/pixi.js/lib/scene/container/Container.mjs");
-/* harmony import */ var _scene_container_CustomRenderPipe_mjs__WEBPACK_IMPORTED_MODULE_373__ = __webpack_require__(/*! ./scene/container/CustomRenderPipe.mjs */ "./node_modules/pixi.js/lib/scene/container/CustomRenderPipe.mjs");
-/* harmony import */ var _scene_container_RenderContainer_mjs__WEBPACK_IMPORTED_MODULE_374__ = __webpack_require__(/*! ./scene/container/RenderContainer.mjs */ "./node_modules/pixi.js/lib/scene/container/RenderContainer.mjs");
-/* harmony import */ var _scene_container_RenderGroup_mjs__WEBPACK_IMPORTED_MODULE_375__ = __webpack_require__(/*! ./scene/container/RenderGroup.mjs */ "./node_modules/pixi.js/lib/scene/container/RenderGroup.mjs");
-/* harmony import */ var _scene_container_RenderGroupPipe_mjs__WEBPACK_IMPORTED_MODULE_376__ = __webpack_require__(/*! ./scene/container/RenderGroupPipe.mjs */ "./node_modules/pixi.js/lib/scene/container/RenderGroupPipe.mjs");
-/* harmony import */ var _scene_container_RenderGroupSystem_mjs__WEBPACK_IMPORTED_MODULE_377__ = __webpack_require__(/*! ./scene/container/RenderGroupSystem.mjs */ "./node_modules/pixi.js/lib/scene/container/RenderGroupSystem.mjs");
-/* harmony import */ var _scene_container_utils_assignWithIgnore_mjs__WEBPACK_IMPORTED_MODULE_378__ = __webpack_require__(/*! ./scene/container/utils/assignWithIgnore.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/assignWithIgnore.mjs");
-/* harmony import */ var _scene_container_utils_buildInstructions_mjs__WEBPACK_IMPORTED_MODULE_379__ = __webpack_require__(/*! ./scene/container/utils/buildInstructions.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/buildInstructions.mjs");
-/* harmony import */ var _scene_container_utils_checkChildrenDidChange_mjs__WEBPACK_IMPORTED_MODULE_380__ = __webpack_require__(/*! ./scene/container/utils/checkChildrenDidChange.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/checkChildrenDidChange.mjs");
-/* harmony import */ var _scene_container_utils_clearList_mjs__WEBPACK_IMPORTED_MODULE_381__ = __webpack_require__(/*! ./scene/container/utils/clearList.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/clearList.mjs");
-/* harmony import */ var _scene_container_utils_definedProps_mjs__WEBPACK_IMPORTED_MODULE_382__ = __webpack_require__(/*! ./scene/container/utils/definedProps.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/definedProps.mjs");
-/* harmony import */ var _scene_container_utils_executeInstructions_mjs__WEBPACK_IMPORTED_MODULE_383__ = __webpack_require__(/*! ./scene/container/utils/executeInstructions.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/executeInstructions.mjs");
-/* harmony import */ var _scene_container_utils_mixHexColors_mjs__WEBPACK_IMPORTED_MODULE_384__ = __webpack_require__(/*! ./scene/container/utils/mixHexColors.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/mixHexColors.mjs");
-/* harmony import */ var _scene_container_utils_multiplyColors_mjs__WEBPACK_IMPORTED_MODULE_385__ = __webpack_require__(/*! ./scene/container/utils/multiplyColors.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/multiplyColors.mjs");
-/* harmony import */ var _scene_container_utils_multiplyHexColors_mjs__WEBPACK_IMPORTED_MODULE_386__ = __webpack_require__(/*! ./scene/container/utils/multiplyHexColors.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/multiplyHexColors.mjs");
-/* harmony import */ var _scene_container_utils_updateLocalTransform_mjs__WEBPACK_IMPORTED_MODULE_387__ = __webpack_require__(/*! ./scene/container/utils/updateLocalTransform.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/updateLocalTransform.mjs");
-/* harmony import */ var _scene_container_utils_updateRenderGroupTransforms_mjs__WEBPACK_IMPORTED_MODULE_388__ = __webpack_require__(/*! ./scene/container/utils/updateRenderGroupTransforms.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/updateRenderGroupTransforms.mjs");
-/* harmony import */ var _scene_container_utils_updateWorldTransform_mjs__WEBPACK_IMPORTED_MODULE_389__ = __webpack_require__(/*! ./scene/container/utils/updateWorldTransform.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/updateWorldTransform.mjs");
-/* harmony import */ var _scene_container_utils_validateRenderables_mjs__WEBPACK_IMPORTED_MODULE_390__ = __webpack_require__(/*! ./scene/container/utils/validateRenderables.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/validateRenderables.mjs");
-/* harmony import */ var _scene_graphics_gl_GlGraphicsAdaptor_mjs__WEBPACK_IMPORTED_MODULE_391__ = __webpack_require__(/*! ./scene/graphics/gl/GlGraphicsAdaptor.mjs */ "./node_modules/pixi.js/lib/scene/graphics/gl/GlGraphicsAdaptor.mjs");
-/* harmony import */ var _scene_graphics_gpu_colorToUniform_mjs__WEBPACK_IMPORTED_MODULE_392__ = __webpack_require__(/*! ./scene/graphics/gpu/colorToUniform.mjs */ "./node_modules/pixi.js/lib/scene/graphics/gpu/colorToUniform.mjs");
-/* harmony import */ var _scene_graphics_gpu_GpuGraphicsAdaptor_mjs__WEBPACK_IMPORTED_MODULE_393__ = __webpack_require__(/*! ./scene/graphics/gpu/GpuGraphicsAdaptor.mjs */ "./node_modules/pixi.js/lib/scene/graphics/gpu/GpuGraphicsAdaptor.mjs");
-/* harmony import */ var _scene_graphics_shared_BatchableGraphics_mjs__WEBPACK_IMPORTED_MODULE_394__ = __webpack_require__(/*! ./scene/graphics/shared/BatchableGraphics.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/BatchableGraphics.mjs");
-/* harmony import */ var _scene_graphics_shared_buildCommands_buildAdaptiveBezier_mjs__WEBPACK_IMPORTED_MODULE_395__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildAdaptiveBezier.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildAdaptiveBezier.mjs");
-/* harmony import */ var _scene_graphics_shared_buildCommands_buildAdaptiveQuadratic_mjs__WEBPACK_IMPORTED_MODULE_396__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildAdaptiveQuadratic.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildAdaptiveQuadratic.mjs");
-/* harmony import */ var _scene_graphics_shared_buildCommands_buildArc_mjs__WEBPACK_IMPORTED_MODULE_397__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildArc.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildArc.mjs");
-/* harmony import */ var _scene_graphics_shared_buildCommands_buildArcTo_mjs__WEBPACK_IMPORTED_MODULE_398__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildArcTo.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildArcTo.mjs");
-/* harmony import */ var _scene_graphics_shared_buildCommands_buildArcToSvg_mjs__WEBPACK_IMPORTED_MODULE_399__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildArcToSvg.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildArcToSvg.mjs");
-/* harmony import */ var _scene_graphics_shared_buildCommands_buildCircle_mjs__WEBPACK_IMPORTED_MODULE_400__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildCircle.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildCircle.mjs");
-/* harmony import */ var _scene_graphics_shared_buildCommands_buildLine_mjs__WEBPACK_IMPORTED_MODULE_401__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildLine.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildLine.mjs");
-/* harmony import */ var _scene_graphics_shared_buildCommands_buildPixelLine_mjs__WEBPACK_IMPORTED_MODULE_402__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildPixelLine.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildPixelLine.mjs");
-/* harmony import */ var _scene_graphics_shared_buildCommands_buildPolygon_mjs__WEBPACK_IMPORTED_MODULE_403__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildPolygon.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildPolygon.mjs");
-/* harmony import */ var _scene_graphics_shared_buildCommands_buildRectangle_mjs__WEBPACK_IMPORTED_MODULE_404__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildRectangle.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildRectangle.mjs");
-/* harmony import */ var _scene_graphics_shared_buildCommands_buildTriangle_mjs__WEBPACK_IMPORTED_MODULE_405__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildTriangle.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildTriangle.mjs");
-/* harmony import */ var _scene_graphics_shared_const_mjs__WEBPACK_IMPORTED_MODULE_406__ = __webpack_require__(/*! ./scene/graphics/shared/const.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/const.mjs");
-/* harmony import */ var _scene_graphics_shared_fill_FillGradient_mjs__WEBPACK_IMPORTED_MODULE_407__ = __webpack_require__(/*! ./scene/graphics/shared/fill/FillGradient.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/fill/FillGradient.mjs");
-/* harmony import */ var _scene_graphics_shared_fill_FillPattern_mjs__WEBPACK_IMPORTED_MODULE_408__ = __webpack_require__(/*! ./scene/graphics/shared/fill/FillPattern.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/fill/FillPattern.mjs");
-/* harmony import */ var _scene_graphics_shared_Graphics_mjs__WEBPACK_IMPORTED_MODULE_409__ = __webpack_require__(/*! ./scene/graphics/shared/Graphics.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/Graphics.mjs");
-/* harmony import */ var _scene_graphics_shared_GraphicsContext_mjs__WEBPACK_IMPORTED_MODULE_410__ = __webpack_require__(/*! ./scene/graphics/shared/GraphicsContext.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/GraphicsContext.mjs");
-/* harmony import */ var _scene_graphics_shared_GraphicsContextSystem_mjs__WEBPACK_IMPORTED_MODULE_411__ = __webpack_require__(/*! ./scene/graphics/shared/GraphicsContextSystem.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/GraphicsContextSystem.mjs");
-/* harmony import */ var _scene_graphics_shared_GraphicsPipe_mjs__WEBPACK_IMPORTED_MODULE_412__ = __webpack_require__(/*! ./scene/graphics/shared/GraphicsPipe.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/GraphicsPipe.mjs");
-/* harmony import */ var _scene_graphics_shared_path_GraphicsPath_mjs__WEBPACK_IMPORTED_MODULE_413__ = __webpack_require__(/*! ./scene/graphics/shared/path/GraphicsPath.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/path/GraphicsPath.mjs");
-/* harmony import */ var _scene_graphics_shared_path_roundShape_mjs__WEBPACK_IMPORTED_MODULE_414__ = __webpack_require__(/*! ./scene/graphics/shared/path/roundShape.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/path/roundShape.mjs");
-/* harmony import */ var _scene_graphics_shared_path_ShapePath_mjs__WEBPACK_IMPORTED_MODULE_415__ = __webpack_require__(/*! ./scene/graphics/shared/path/ShapePath.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/path/ShapePath.mjs");
-/* harmony import */ var _scene_graphics_shared_svg_SVGParser_mjs__WEBPACK_IMPORTED_MODULE_416__ = __webpack_require__(/*! ./scene/graphics/shared/svg/SVGParser.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/svg/SVGParser.mjs");
-/* harmony import */ var _scene_graphics_shared_svg_SVGToGraphicsPath_mjs__WEBPACK_IMPORTED_MODULE_417__ = __webpack_require__(/*! ./scene/graphics/shared/svg/SVGToGraphicsPath.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/svg/SVGToGraphicsPath.mjs");
-/* harmony import */ var _scene_graphics_shared_utils_buildContextBatches_mjs__WEBPACK_IMPORTED_MODULE_418__ = __webpack_require__(/*! ./scene/graphics/shared/utils/buildContextBatches.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/utils/buildContextBatches.mjs");
-/* harmony import */ var _scene_graphics_shared_utils_buildGeometryFromPath_mjs__WEBPACK_IMPORTED_MODULE_419__ = __webpack_require__(/*! ./scene/graphics/shared/utils/buildGeometryFromPath.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/utils/buildGeometryFromPath.mjs");
-/* harmony import */ var _scene_graphics_shared_utils_convertFillInputToFillStyle_mjs__WEBPACK_IMPORTED_MODULE_420__ = __webpack_require__(/*! ./scene/graphics/shared/utils/convertFillInputToFillStyle.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/utils/convertFillInputToFillStyle.mjs");
-/* harmony import */ var _scene_graphics_shared_utils_getOrientationOfPoints_mjs__WEBPACK_IMPORTED_MODULE_421__ = __webpack_require__(/*! ./scene/graphics/shared/utils/getOrientationOfPoints.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/utils/getOrientationOfPoints.mjs");
-/* harmony import */ var _scene_graphics_shared_utils_triangulateWithHoles_mjs__WEBPACK_IMPORTED_MODULE_422__ = __webpack_require__(/*! ./scene/graphics/shared/utils/triangulateWithHoles.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/utils/triangulateWithHoles.mjs");
-/* harmony import */ var _scene_mesh_perspective_PerspectiveMesh_mjs__WEBPACK_IMPORTED_MODULE_423__ = __webpack_require__(/*! ./scene/mesh-perspective/PerspectiveMesh.mjs */ "./node_modules/pixi.js/lib/scene/mesh-perspective/PerspectiveMesh.mjs");
-/* harmony import */ var _scene_mesh_perspective_PerspectivePlaneGeometry_mjs__WEBPACK_IMPORTED_MODULE_424__ = __webpack_require__(/*! ./scene/mesh-perspective/PerspectivePlaneGeometry.mjs */ "./node_modules/pixi.js/lib/scene/mesh-perspective/PerspectivePlaneGeometry.mjs");
-/* harmony import */ var _scene_mesh_perspective_utils_applyProjectiveTransformationToPlane_mjs__WEBPACK_IMPORTED_MODULE_425__ = __webpack_require__(/*! ./scene/mesh-perspective/utils/applyProjectiveTransformationToPlane.mjs */ "./node_modules/pixi.js/lib/scene/mesh-perspective/utils/applyProjectiveTransformationToPlane.mjs");
-/* harmony import */ var _scene_mesh_perspective_utils_compute2DProjections_mjs__WEBPACK_IMPORTED_MODULE_426__ = __webpack_require__(/*! ./scene/mesh-perspective/utils/compute2DProjections.mjs */ "./node_modules/pixi.js/lib/scene/mesh-perspective/utils/compute2DProjections.mjs");
-/* harmony import */ var _scene_mesh_plane_MeshPlane_mjs__WEBPACK_IMPORTED_MODULE_427__ = __webpack_require__(/*! ./scene/mesh-plane/MeshPlane.mjs */ "./node_modules/pixi.js/lib/scene/mesh-plane/MeshPlane.mjs");
-/* harmony import */ var _scene_mesh_plane_PlaneGeometry_mjs__WEBPACK_IMPORTED_MODULE_428__ = __webpack_require__(/*! ./scene/mesh-plane/PlaneGeometry.mjs */ "./node_modules/pixi.js/lib/scene/mesh-plane/PlaneGeometry.mjs");
-/* harmony import */ var _scene_mesh_simple_MeshRope_mjs__WEBPACK_IMPORTED_MODULE_429__ = __webpack_require__(/*! ./scene/mesh-simple/MeshRope.mjs */ "./node_modules/pixi.js/lib/scene/mesh-simple/MeshRope.mjs");
-/* harmony import */ var _scene_mesh_simple_MeshSimple_mjs__WEBPACK_IMPORTED_MODULE_430__ = __webpack_require__(/*! ./scene/mesh-simple/MeshSimple.mjs */ "./node_modules/pixi.js/lib/scene/mesh-simple/MeshSimple.mjs");
-/* harmony import */ var _scene_mesh_simple_RopeGeometry_mjs__WEBPACK_IMPORTED_MODULE_431__ = __webpack_require__(/*! ./scene/mesh-simple/RopeGeometry.mjs */ "./node_modules/pixi.js/lib/scene/mesh-simple/RopeGeometry.mjs");
-/* harmony import */ var _scene_mesh_gl_GlMeshAdaptor_mjs__WEBPACK_IMPORTED_MODULE_432__ = __webpack_require__(/*! ./scene/mesh/gl/GlMeshAdaptor.mjs */ "./node_modules/pixi.js/lib/scene/mesh/gl/GlMeshAdaptor.mjs");
-/* harmony import */ var _scene_mesh_gpu_GpuMeshAdapter_mjs__WEBPACK_IMPORTED_MODULE_433__ = __webpack_require__(/*! ./scene/mesh/gpu/GpuMeshAdapter.mjs */ "./node_modules/pixi.js/lib/scene/mesh/gpu/GpuMeshAdapter.mjs");
-/* harmony import */ var _scene_mesh_shared_BatchableMesh_mjs__WEBPACK_IMPORTED_MODULE_434__ = __webpack_require__(/*! ./scene/mesh/shared/BatchableMesh.mjs */ "./node_modules/pixi.js/lib/scene/mesh/shared/BatchableMesh.mjs");
-/* harmony import */ var _scene_mesh_shared_getTextureDefaultMatrix_mjs__WEBPACK_IMPORTED_MODULE_435__ = __webpack_require__(/*! ./scene/mesh/shared/getTextureDefaultMatrix.mjs */ "./node_modules/pixi.js/lib/scene/mesh/shared/getTextureDefaultMatrix.mjs");
-/* harmony import */ var _scene_mesh_shared_Mesh_mjs__WEBPACK_IMPORTED_MODULE_436__ = __webpack_require__(/*! ./scene/mesh/shared/Mesh.mjs */ "./node_modules/pixi.js/lib/scene/mesh/shared/Mesh.mjs");
-/* harmony import */ var _scene_mesh_shared_MeshGeometry_mjs__WEBPACK_IMPORTED_MODULE_437__ = __webpack_require__(/*! ./scene/mesh/shared/MeshGeometry.mjs */ "./node_modules/pixi.js/lib/scene/mesh/shared/MeshGeometry.mjs");
-/* harmony import */ var _scene_mesh_shared_MeshPipe_mjs__WEBPACK_IMPORTED_MODULE_438__ = __webpack_require__(/*! ./scene/mesh/shared/MeshPipe.mjs */ "./node_modules/pixi.js/lib/scene/mesh/shared/MeshPipe.mjs");
-/* harmony import */ var _scene_particle_container_gl_GlParticleContainerAdaptor_mjs__WEBPACK_IMPORTED_MODULE_439__ = __webpack_require__(/*! ./scene/particle-container/gl/GlParticleContainerAdaptor.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/gl/GlParticleContainerAdaptor.mjs");
-/* harmony import */ var _scene_particle_container_gpu_GpuParticleContainerAdaptor_mjs__WEBPACK_IMPORTED_MODULE_440__ = __webpack_require__(/*! ./scene/particle-container/gpu/GpuParticleContainerAdaptor.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/gpu/GpuParticleContainerAdaptor.mjs");
-/* harmony import */ var _scene_particle_container_shared_GlParticleContainerPipe_mjs__WEBPACK_IMPORTED_MODULE_441__ = __webpack_require__(/*! ./scene/particle-container/shared/GlParticleContainerPipe.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/GlParticleContainerPipe.mjs");
-/* harmony import */ var _scene_particle_container_shared_GpuParticleContainerPipe_mjs__WEBPACK_IMPORTED_MODULE_442__ = __webpack_require__(/*! ./scene/particle-container/shared/GpuParticleContainerPipe.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/GpuParticleContainerPipe.mjs");
-/* harmony import */ var _scene_particle_container_shared_Particle_mjs__WEBPACK_IMPORTED_MODULE_443__ = __webpack_require__(/*! ./scene/particle-container/shared/Particle.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/Particle.mjs");
-/* harmony import */ var _scene_particle_container_shared_ParticleBuffer_mjs__WEBPACK_IMPORTED_MODULE_444__ = __webpack_require__(/*! ./scene/particle-container/shared/ParticleBuffer.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/ParticleBuffer.mjs");
-/* harmony import */ var _scene_particle_container_shared_ParticleContainer_mjs__WEBPACK_IMPORTED_MODULE_445__ = __webpack_require__(/*! ./scene/particle-container/shared/ParticleContainer.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/ParticleContainer.mjs");
-/* harmony import */ var _scene_particle_container_shared_ParticleContainerPipe_mjs__WEBPACK_IMPORTED_MODULE_446__ = __webpack_require__(/*! ./scene/particle-container/shared/ParticleContainerPipe.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/ParticleContainerPipe.mjs");
-/* harmony import */ var _scene_particle_container_shared_particleData_mjs__WEBPACK_IMPORTED_MODULE_447__ = __webpack_require__(/*! ./scene/particle-container/shared/particleData.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/particleData.mjs");
-/* harmony import */ var _scene_particle_container_shared_shader_ParticleShader_mjs__WEBPACK_IMPORTED_MODULE_448__ = __webpack_require__(/*! ./scene/particle-container/shared/shader/ParticleShader.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/shader/ParticleShader.mjs");
-/* harmony import */ var _scene_particle_container_shared_utils_createIndicesForQuads_mjs__WEBPACK_IMPORTED_MODULE_449__ = __webpack_require__(/*! ./scene/particle-container/shared/utils/createIndicesForQuads.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/utils/createIndicesForQuads.mjs");
-/* harmony import */ var _scene_particle_container_shared_utils_generateParticleUpdateFunction_mjs__WEBPACK_IMPORTED_MODULE_450__ = __webpack_require__(/*! ./scene/particle-container/shared/utils/generateParticleUpdateFunction.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/utils/generateParticleUpdateFunction.mjs");
-/* harmony import */ var _scene_sprite_animated_AnimatedSprite_mjs__WEBPACK_IMPORTED_MODULE_451__ = __webpack_require__(/*! ./scene/sprite-animated/AnimatedSprite.mjs */ "./node_modules/pixi.js/lib/scene/sprite-animated/AnimatedSprite.mjs");
-/* harmony import */ var _scene_sprite_nine_slice_NineSliceGeometry_mjs__WEBPACK_IMPORTED_MODULE_452__ = __webpack_require__(/*! ./scene/sprite-nine-slice/NineSliceGeometry.mjs */ "./node_modules/pixi.js/lib/scene/sprite-nine-slice/NineSliceGeometry.mjs");
-/* harmony import */ var _scene_sprite_nine_slice_NineSliceSprite_mjs__WEBPACK_IMPORTED_MODULE_453__ = __webpack_require__(/*! ./scene/sprite-nine-slice/NineSliceSprite.mjs */ "./node_modules/pixi.js/lib/scene/sprite-nine-slice/NineSliceSprite.mjs");
-/* harmony import */ var _scene_sprite_nine_slice_NineSliceSpritePipe_mjs__WEBPACK_IMPORTED_MODULE_454__ = __webpack_require__(/*! ./scene/sprite-nine-slice/NineSliceSpritePipe.mjs */ "./node_modules/pixi.js/lib/scene/sprite-nine-slice/NineSliceSpritePipe.mjs");
-/* harmony import */ var _scene_sprite_tiling_shader_tilingBit_mjs__WEBPACK_IMPORTED_MODULE_455__ = __webpack_require__(/*! ./scene/sprite-tiling/shader/tilingBit.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/shader/tilingBit.mjs");
-/* harmony import */ var _scene_sprite_tiling_shader_TilingSpriteShader_mjs__WEBPACK_IMPORTED_MODULE_456__ = __webpack_require__(/*! ./scene/sprite-tiling/shader/TilingSpriteShader.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/shader/TilingSpriteShader.mjs");
-/* harmony import */ var _scene_sprite_tiling_TilingSprite_mjs__WEBPACK_IMPORTED_MODULE_457__ = __webpack_require__(/*! ./scene/sprite-tiling/TilingSprite.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/TilingSprite.mjs");
-/* harmony import */ var _scene_sprite_tiling_TilingSpritePipe_mjs__WEBPACK_IMPORTED_MODULE_458__ = __webpack_require__(/*! ./scene/sprite-tiling/TilingSpritePipe.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/TilingSpritePipe.mjs");
-/* harmony import */ var _scene_sprite_tiling_utils_applyMatrix_mjs__WEBPACK_IMPORTED_MODULE_459__ = __webpack_require__(/*! ./scene/sprite-tiling/utils/applyMatrix.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/utils/applyMatrix.mjs");
-/* harmony import */ var _scene_sprite_tiling_utils_QuadGeometry_mjs__WEBPACK_IMPORTED_MODULE_460__ = __webpack_require__(/*! ./scene/sprite-tiling/utils/QuadGeometry.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/utils/QuadGeometry.mjs");
-/* harmony import */ var _scene_sprite_tiling_utils_setPositions_mjs__WEBPACK_IMPORTED_MODULE_461__ = __webpack_require__(/*! ./scene/sprite-tiling/utils/setPositions.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/utils/setPositions.mjs");
-/* harmony import */ var _scene_sprite_tiling_utils_setUvs_mjs__WEBPACK_IMPORTED_MODULE_462__ = __webpack_require__(/*! ./scene/sprite-tiling/utils/setUvs.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/utils/setUvs.mjs");
-/* harmony import */ var _scene_sprite_BatchableSprite_mjs__WEBPACK_IMPORTED_MODULE_463__ = __webpack_require__(/*! ./scene/sprite/BatchableSprite.mjs */ "./node_modules/pixi.js/lib/scene/sprite/BatchableSprite.mjs");
-/* harmony import */ var _scene_sprite_Sprite_mjs__WEBPACK_IMPORTED_MODULE_464__ = __webpack_require__(/*! ./scene/sprite/Sprite.mjs */ "./node_modules/pixi.js/lib/scene/sprite/Sprite.mjs");
-/* harmony import */ var _scene_sprite_SpritePipe_mjs__WEBPACK_IMPORTED_MODULE_465__ = __webpack_require__(/*! ./scene/sprite/SpritePipe.mjs */ "./node_modules/pixi.js/lib/scene/sprite/SpritePipe.mjs");
-/* harmony import */ var _scene_text_bitmap_AbstractBitmapFont_mjs__WEBPACK_IMPORTED_MODULE_466__ = __webpack_require__(/*! ./scene/text-bitmap/AbstractBitmapFont.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/AbstractBitmapFont.mjs");
-/* harmony import */ var _scene_text_bitmap_asset_bitmapFontTextParser_mjs__WEBPACK_IMPORTED_MODULE_467__ = __webpack_require__(/*! ./scene/text-bitmap/asset/bitmapFontTextParser.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/asset/bitmapFontTextParser.mjs");
-/* harmony import */ var _scene_text_bitmap_asset_bitmapFontXMLParser_mjs__WEBPACK_IMPORTED_MODULE_468__ = __webpack_require__(/*! ./scene/text-bitmap/asset/bitmapFontXMLParser.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/asset/bitmapFontXMLParser.mjs");
-/* harmony import */ var _scene_text_bitmap_asset_bitmapFontXMLStringParser_mjs__WEBPACK_IMPORTED_MODULE_469__ = __webpack_require__(/*! ./scene/text-bitmap/asset/bitmapFontXMLStringParser.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/asset/bitmapFontXMLStringParser.mjs");
-/* harmony import */ var _scene_text_bitmap_asset_loadBitmapFont_mjs__WEBPACK_IMPORTED_MODULE_470__ = __webpack_require__(/*! ./scene/text-bitmap/asset/loadBitmapFont.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/asset/loadBitmapFont.mjs");
-/* harmony import */ var _scene_text_bitmap_BitmapFont_mjs__WEBPACK_IMPORTED_MODULE_471__ = __webpack_require__(/*! ./scene/text-bitmap/BitmapFont.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/BitmapFont.mjs");
-/* harmony import */ var _scene_text_bitmap_BitmapFontManager_mjs__WEBPACK_IMPORTED_MODULE_472__ = __webpack_require__(/*! ./scene/text-bitmap/BitmapFontManager.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/BitmapFontManager.mjs");
-/* harmony import */ var _scene_text_bitmap_BitmapText_mjs__WEBPACK_IMPORTED_MODULE_473__ = __webpack_require__(/*! ./scene/text-bitmap/BitmapText.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/BitmapText.mjs");
-/* harmony import */ var _scene_text_bitmap_BitmapTextPipe_mjs__WEBPACK_IMPORTED_MODULE_474__ = __webpack_require__(/*! ./scene/text-bitmap/BitmapTextPipe.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/BitmapTextPipe.mjs");
-/* harmony import */ var _scene_text_bitmap_DynamicBitmapFont_mjs__WEBPACK_IMPORTED_MODULE_475__ = __webpack_require__(/*! ./scene/text-bitmap/DynamicBitmapFont.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/DynamicBitmapFont.mjs");
-/* harmony import */ var _scene_text_bitmap_utils_getBitmapTextLayout_mjs__WEBPACK_IMPORTED_MODULE_476__ = __webpack_require__(/*! ./scene/text-bitmap/utils/getBitmapTextLayout.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/utils/getBitmapTextLayout.mjs");
-/* harmony import */ var _scene_text_bitmap_utils_resolveCharacters_mjs__WEBPACK_IMPORTED_MODULE_477__ = __webpack_require__(/*! ./scene/text-bitmap/utils/resolveCharacters.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/utils/resolveCharacters.mjs");
-/* harmony import */ var _scene_text_html_HTMLText_mjs__WEBPACK_IMPORTED_MODULE_478__ = __webpack_require__(/*! ./scene/text-html/HTMLText.mjs */ "./node_modules/pixi.js/lib/scene/text-html/HTMLText.mjs");
-/* harmony import */ var _scene_text_html_HTMLTextPipe_mjs__WEBPACK_IMPORTED_MODULE_479__ = __webpack_require__(/*! ./scene/text-html/HTMLTextPipe.mjs */ "./node_modules/pixi.js/lib/scene/text-html/HTMLTextPipe.mjs");
-/* harmony import */ var _scene_text_html_HTMLTextRenderData_mjs__WEBPACK_IMPORTED_MODULE_480__ = __webpack_require__(/*! ./scene/text-html/HTMLTextRenderData.mjs */ "./node_modules/pixi.js/lib/scene/text-html/HTMLTextRenderData.mjs");
-/* harmony import */ var _scene_text_html_HTMLTextStyle_mjs__WEBPACK_IMPORTED_MODULE_481__ = __webpack_require__(/*! ./scene/text-html/HTMLTextStyle.mjs */ "./node_modules/pixi.js/lib/scene/text-html/HTMLTextStyle.mjs");
-/* harmony import */ var _scene_text_html_HTMLTextSystem_mjs__WEBPACK_IMPORTED_MODULE_482__ = __webpack_require__(/*! ./scene/text-html/HTMLTextSystem.mjs */ "./node_modules/pixi.js/lib/scene/text-html/HTMLTextSystem.mjs");
-/* harmony import */ var _scene_text_html_utils_extractFontFamilies_mjs__WEBPACK_IMPORTED_MODULE_483__ = __webpack_require__(/*! ./scene/text-html/utils/extractFontFamilies.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/extractFontFamilies.mjs");
-/* harmony import */ var _scene_text_html_utils_getFontCss_mjs__WEBPACK_IMPORTED_MODULE_484__ = __webpack_require__(/*! ./scene/text-html/utils/getFontCss.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/getFontCss.mjs");
-/* harmony import */ var _scene_text_html_utils_getSVGUrl_mjs__WEBPACK_IMPORTED_MODULE_485__ = __webpack_require__(/*! ./scene/text-html/utils/getSVGUrl.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/getSVGUrl.mjs");
-/* harmony import */ var _scene_text_html_utils_getTemporaryCanvasFromImage_mjs__WEBPACK_IMPORTED_MODULE_486__ = __webpack_require__(/*! ./scene/text-html/utils/getTemporaryCanvasFromImage.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/getTemporaryCanvasFromImage.mjs");
-/* harmony import */ var _scene_text_html_utils_loadFontAsBase64_mjs__WEBPACK_IMPORTED_MODULE_487__ = __webpack_require__(/*! ./scene/text-html/utils/loadFontAsBase64.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/loadFontAsBase64.mjs");
-/* harmony import */ var _scene_text_html_utils_loadFontCSS_mjs__WEBPACK_IMPORTED_MODULE_488__ = __webpack_require__(/*! ./scene/text-html/utils/loadFontCSS.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/loadFontCSS.mjs");
-/* harmony import */ var _scene_text_html_utils_loadSVGImage_mjs__WEBPACK_IMPORTED_MODULE_489__ = __webpack_require__(/*! ./scene/text-html/utils/loadSVGImage.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/loadSVGImage.mjs");
-/* harmony import */ var _scene_text_html_utils_measureHtmlText_mjs__WEBPACK_IMPORTED_MODULE_490__ = __webpack_require__(/*! ./scene/text-html/utils/measureHtmlText.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/measureHtmlText.mjs");
-/* harmony import */ var _scene_text_html_utils_textStyleToCSS_mjs__WEBPACK_IMPORTED_MODULE_491__ = __webpack_require__(/*! ./scene/text-html/utils/textStyleToCSS.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/textStyleToCSS.mjs");
-/* harmony import */ var _scene_text_AbstractText_mjs__WEBPACK_IMPORTED_MODULE_492__ = __webpack_require__(/*! ./scene/text/AbstractText.mjs */ "./node_modules/pixi.js/lib/scene/text/AbstractText.mjs");
-/* harmony import */ var _scene_text_canvas_CanvasTextMetrics_mjs__WEBPACK_IMPORTED_MODULE_493__ = __webpack_require__(/*! ./scene/text/canvas/CanvasTextMetrics.mjs */ "./node_modules/pixi.js/lib/scene/text/canvas/CanvasTextMetrics.mjs");
-/* harmony import */ var _scene_text_canvas_CanvasTextPipe_mjs__WEBPACK_IMPORTED_MODULE_494__ = __webpack_require__(/*! ./scene/text/canvas/CanvasTextPipe.mjs */ "./node_modules/pixi.js/lib/scene/text/canvas/CanvasTextPipe.mjs");
-/* harmony import */ var _scene_text_canvas_CanvasTextSystem_mjs__WEBPACK_IMPORTED_MODULE_495__ = __webpack_require__(/*! ./scene/text/canvas/CanvasTextSystem.mjs */ "./node_modules/pixi.js/lib/scene/text/canvas/CanvasTextSystem.mjs");
-/* harmony import */ var _scene_text_canvas_utils_fontStringFromTextStyle_mjs__WEBPACK_IMPORTED_MODULE_496__ = __webpack_require__(/*! ./scene/text/canvas/utils/fontStringFromTextStyle.mjs */ "./node_modules/pixi.js/lib/scene/text/canvas/utils/fontStringFromTextStyle.mjs");
-/* harmony import */ var _scene_text_canvas_utils_getCanvasFillStyle_mjs__WEBPACK_IMPORTED_MODULE_497__ = __webpack_require__(/*! ./scene/text/canvas/utils/getCanvasFillStyle.mjs */ "./node_modules/pixi.js/lib/scene/text/canvas/utils/getCanvasFillStyle.mjs");
-/* harmony import */ var _scene_text_sdfShader_SdfShader_mjs__WEBPACK_IMPORTED_MODULE_498__ = __webpack_require__(/*! ./scene/text/sdfShader/SdfShader.mjs */ "./node_modules/pixi.js/lib/scene/text/sdfShader/SdfShader.mjs");
-/* harmony import */ var _scene_text_sdfShader_shader_bits_localUniformMSDFBit_mjs__WEBPACK_IMPORTED_MODULE_499__ = __webpack_require__(/*! ./scene/text/sdfShader/shader-bits/localUniformMSDFBit.mjs */ "./node_modules/pixi.js/lib/scene/text/sdfShader/shader-bits/localUniformMSDFBit.mjs");
-/* harmony import */ var _scene_text_sdfShader_shader_bits_mSDFBit_mjs__WEBPACK_IMPORTED_MODULE_500__ = __webpack_require__(/*! ./scene/text/sdfShader/shader-bits/mSDFBit.mjs */ "./node_modules/pixi.js/lib/scene/text/sdfShader/shader-bits/mSDFBit.mjs");
-/* harmony import */ var _scene_text_Text_mjs__WEBPACK_IMPORTED_MODULE_501__ = __webpack_require__(/*! ./scene/text/Text.mjs */ "./node_modules/pixi.js/lib/scene/text/Text.mjs");
-/* harmony import */ var _scene_text_TextStyle_mjs__WEBPACK_IMPORTED_MODULE_502__ = __webpack_require__(/*! ./scene/text/TextStyle.mjs */ "./node_modules/pixi.js/lib/scene/text/TextStyle.mjs");
-/* harmony import */ var _scene_text_utils_ensureTextStyle_mjs__WEBPACK_IMPORTED_MODULE_503__ = __webpack_require__(/*! ./scene/text/utils/ensureTextStyle.mjs */ "./node_modules/pixi.js/lib/scene/text/utils/ensureTextStyle.mjs");
-/* harmony import */ var _scene_text_utils_generateTextStyleKey_mjs__WEBPACK_IMPORTED_MODULE_504__ = __webpack_require__(/*! ./scene/text/utils/generateTextStyleKey.mjs */ "./node_modules/pixi.js/lib/scene/text/utils/generateTextStyleKey.mjs");
-/* harmony import */ var _scene_text_utils_getPo2TextureFromSource_mjs__WEBPACK_IMPORTED_MODULE_505__ = __webpack_require__(/*! ./scene/text/utils/getPo2TextureFromSource.mjs */ "./node_modules/pixi.js/lib/scene/text/utils/getPo2TextureFromSource.mjs");
-/* harmony import */ var _scene_view_ViewContainer_mjs__WEBPACK_IMPORTED_MODULE_506__ = __webpack_require__(/*! ./scene/view/ViewContainer.mjs */ "./node_modules/pixi.js/lib/scene/view/ViewContainer.mjs");
-/* harmony import */ var _spritesheet_Spritesheet_mjs__WEBPACK_IMPORTED_MODULE_507__ = __webpack_require__(/*! ./spritesheet/Spritesheet.mjs */ "./node_modules/pixi.js/lib/spritesheet/Spritesheet.mjs");
-/* harmony import */ var _spritesheet_spritesheetAsset_mjs__WEBPACK_IMPORTED_MODULE_508__ = __webpack_require__(/*! ./spritesheet/spritesheetAsset.mjs */ "./node_modules/pixi.js/lib/spritesheet/spritesheetAsset.mjs");
-/* harmony import */ var _ticker_const_mjs__WEBPACK_IMPORTED_MODULE_509__ = __webpack_require__(/*! ./ticker/const.mjs */ "./node_modules/pixi.js/lib/ticker/const.mjs");
-/* harmony import */ var _ticker_Ticker_mjs__WEBPACK_IMPORTED_MODULE_510__ = __webpack_require__(/*! ./ticker/Ticker.mjs */ "./node_modules/pixi.js/lib/ticker/Ticker.mjs");
-/* harmony import */ var _ticker_TickerListener_mjs__WEBPACK_IMPORTED_MODULE_511__ = __webpack_require__(/*! ./ticker/TickerListener.mjs */ "./node_modules/pixi.js/lib/ticker/TickerListener.mjs");
-/* harmony import */ var _utils_browser_detectVideoAlphaMode_mjs__WEBPACK_IMPORTED_MODULE_512__ = __webpack_require__(/*! ./utils/browser/detectVideoAlphaMode.mjs */ "./node_modules/pixi.js/lib/utils/browser/detectVideoAlphaMode.mjs");
-/* harmony import */ var _utils_browser_isMobile_mjs__WEBPACK_IMPORTED_MODULE_513__ = __webpack_require__(/*! ./utils/browser/isMobile.mjs */ "./node_modules/pixi.js/lib/utils/browser/isMobile.mjs");
-/* harmony import */ var _utils_browser_isSafari_mjs__WEBPACK_IMPORTED_MODULE_514__ = __webpack_require__(/*! ./utils/browser/isSafari.mjs */ "./node_modules/pixi.js/lib/utils/browser/isSafari.mjs");
-/* harmony import */ var _utils_browser_isWebGLSupported_mjs__WEBPACK_IMPORTED_MODULE_515__ = __webpack_require__(/*! ./utils/browser/isWebGLSupported.mjs */ "./node_modules/pixi.js/lib/utils/browser/isWebGLSupported.mjs");
-/* harmony import */ var _utils_browser_isWebGPUSupported_mjs__WEBPACK_IMPORTED_MODULE_516__ = __webpack_require__(/*! ./utils/browser/isWebGPUSupported.mjs */ "./node_modules/pixi.js/lib/utils/browser/isWebGPUSupported.mjs");
-/* harmony import */ var _utils_browser_unsafeEvalSupported_mjs__WEBPACK_IMPORTED_MODULE_517__ = __webpack_require__(/*! ./utils/browser/unsafeEvalSupported.mjs */ "./node_modules/pixi.js/lib/utils/browser/unsafeEvalSupported.mjs");
-/* harmony import */ var _utils_canvas_getCanvasBoundingBox_mjs__WEBPACK_IMPORTED_MODULE_518__ = __webpack_require__(/*! ./utils/canvas/getCanvasBoundingBox.mjs */ "./node_modules/pixi.js/lib/utils/canvas/getCanvasBoundingBox.mjs");
-/* harmony import */ var _utils_const_mjs__WEBPACK_IMPORTED_MODULE_519__ = __webpack_require__(/*! ./utils/const.mjs */ "./node_modules/pixi.js/lib/utils/const.mjs");
-/* harmony import */ var eventemitter3__WEBPACK_IMPORTED_MODULE_520__ = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.mjs");
-/* harmony import */ var _utils_data_clean_mjs__WEBPACK_IMPORTED_MODULE_521__ = __webpack_require__(/*! ./utils/data/clean.mjs */ "./node_modules/pixi.js/lib/utils/data/clean.mjs");
-/* harmony import */ var _utils_data_removeItems_mjs__WEBPACK_IMPORTED_MODULE_522__ = __webpack_require__(/*! ./utils/data/removeItems.mjs */ "./node_modules/pixi.js/lib/utils/data/removeItems.mjs");
-/* harmony import */ var _utils_data_uid_mjs__WEBPACK_IMPORTED_MODULE_523__ = __webpack_require__(/*! ./utils/data/uid.mjs */ "./node_modules/pixi.js/lib/utils/data/uid.mjs");
-/* harmony import */ var _utils_data_updateQuadBounds_mjs__WEBPACK_IMPORTED_MODULE_524__ = __webpack_require__(/*! ./utils/data/updateQuadBounds.mjs */ "./node_modules/pixi.js/lib/utils/data/updateQuadBounds.mjs");
-/* harmony import */ var _utils_data_ViewableBuffer_mjs__WEBPACK_IMPORTED_MODULE_525__ = __webpack_require__(/*! ./utils/data/ViewableBuffer.mjs */ "./node_modules/pixi.js/lib/utils/data/ViewableBuffer.mjs");
-/* harmony import */ var _utils_global_globalHooks_mjs__WEBPACK_IMPORTED_MODULE_526__ = __webpack_require__(/*! ./utils/global/globalHooks.mjs */ "./node_modules/pixi.js/lib/utils/global/globalHooks.mjs");
-/* harmony import */ var _utils_logging_deprecation_mjs__WEBPACK_IMPORTED_MODULE_527__ = __webpack_require__(/*! ./utils/logging/deprecation.mjs */ "./node_modules/pixi.js/lib/utils/logging/deprecation.mjs");
-/* harmony import */ var _utils_logging_logDebugTexture_mjs__WEBPACK_IMPORTED_MODULE_528__ = __webpack_require__(/*! ./utils/logging/logDebugTexture.mjs */ "./node_modules/pixi.js/lib/utils/logging/logDebugTexture.mjs");
-/* harmony import */ var _utils_logging_logScene_mjs__WEBPACK_IMPORTED_MODULE_529__ = __webpack_require__(/*! ./utils/logging/logScene.mjs */ "./node_modules/pixi.js/lib/utils/logging/logScene.mjs");
-/* harmony import */ var _utils_logging_warn_mjs__WEBPACK_IMPORTED_MODULE_530__ = __webpack_require__(/*! ./utils/logging/warn.mjs */ "./node_modules/pixi.js/lib/utils/logging/warn.mjs");
-/* harmony import */ var _utils_misc_NOOP_mjs__WEBPACK_IMPORTED_MODULE_531__ = __webpack_require__(/*! ./utils/misc/NOOP.mjs */ "./node_modules/pixi.js/lib/utils/misc/NOOP.mjs");
-/* harmony import */ var _utils_misc_Transform_mjs__WEBPACK_IMPORTED_MODULE_532__ = __webpack_require__(/*! ./utils/misc/Transform.mjs */ "./node_modules/pixi.js/lib/utils/misc/Transform.mjs");
-/* harmony import */ var _utils_network_getResolutionOfUrl_mjs__WEBPACK_IMPORTED_MODULE_533__ = __webpack_require__(/*! ./utils/network/getResolutionOfUrl.mjs */ "./node_modules/pixi.js/lib/utils/network/getResolutionOfUrl.mjs");
-/* harmony import */ var _utils_path_mjs__WEBPACK_IMPORTED_MODULE_534__ = __webpack_require__(/*! ./utils/path.mjs */ "./node_modules/pixi.js/lib/utils/path.mjs");
-/* harmony import */ var _utils_pool_Pool_mjs__WEBPACK_IMPORTED_MODULE_535__ = __webpack_require__(/*! ./utils/pool/Pool.mjs */ "./node_modules/pixi.js/lib/utils/pool/Pool.mjs");
-/* harmony import */ var _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_536__ = __webpack_require__(/*! ./utils/pool/PoolGroup.mjs */ "./node_modules/pixi.js/lib/utils/pool/PoolGroup.mjs");
-/* harmony import */ var _utils_sayHello_mjs__WEBPACK_IMPORTED_MODULE_537__ = __webpack_require__(/*! ./utils/sayHello.mjs */ "./node_modules/pixi.js/lib/utils/sayHello.mjs");
-/* harmony import */ var earcut__WEBPACK_IMPORTED_MODULE_538__ = __webpack_require__(/*! earcut */ "./node_modules/earcut/src/earcut.js");
+/* harmony import */ var _scene_container_container_mixins_collectRenderablesMixin_mjs__WEBPACK_IMPORTED_MODULE_365__ = __webpack_require__(/*! ./scene/container/container-mixins/collectRenderablesMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/collectRenderablesMixin.mjs");
+/* harmony import */ var _scene_container_container_mixins_effectsMixin_mjs__WEBPACK_IMPORTED_MODULE_366__ = __webpack_require__(/*! ./scene/container/container-mixins/effectsMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/effectsMixin.mjs");
+/* harmony import */ var _scene_container_container_mixins_findMixin_mjs__WEBPACK_IMPORTED_MODULE_367__ = __webpack_require__(/*! ./scene/container/container-mixins/findMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/findMixin.mjs");
+/* harmony import */ var _scene_container_container_mixins_getFastGlobalBoundsMixin_mjs__WEBPACK_IMPORTED_MODULE_368__ = __webpack_require__(/*! ./scene/container/container-mixins/getFastGlobalBoundsMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/getFastGlobalBoundsMixin.mjs");
+/* harmony import */ var _scene_container_container_mixins_getGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_369__ = __webpack_require__(/*! ./scene/container/container-mixins/getGlobalMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/getGlobalMixin.mjs");
+/* harmony import */ var _scene_container_container_mixins_measureMixin_mjs__WEBPACK_IMPORTED_MODULE_370__ = __webpack_require__(/*! ./scene/container/container-mixins/measureMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/measureMixin.mjs");
+/* harmony import */ var _scene_container_container_mixins_onRenderMixin_mjs__WEBPACK_IMPORTED_MODULE_371__ = __webpack_require__(/*! ./scene/container/container-mixins/onRenderMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/onRenderMixin.mjs");
+/* harmony import */ var _scene_container_container_mixins_sortMixin_mjs__WEBPACK_IMPORTED_MODULE_372__ = __webpack_require__(/*! ./scene/container/container-mixins/sortMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/sortMixin.mjs");
+/* harmony import */ var _scene_container_container_mixins_toLocalGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_373__ = __webpack_require__(/*! ./scene/container/container-mixins/toLocalGlobalMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/toLocalGlobalMixin.mjs");
+/* harmony import */ var _scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_374__ = __webpack_require__(/*! ./scene/container/Container.mjs */ "./node_modules/pixi.js/lib/scene/container/Container.mjs");
+/* harmony import */ var _scene_container_CustomRenderPipe_mjs__WEBPACK_IMPORTED_MODULE_375__ = __webpack_require__(/*! ./scene/container/CustomRenderPipe.mjs */ "./node_modules/pixi.js/lib/scene/container/CustomRenderPipe.mjs");
+/* harmony import */ var _scene_container_RenderContainer_mjs__WEBPACK_IMPORTED_MODULE_376__ = __webpack_require__(/*! ./scene/container/RenderContainer.mjs */ "./node_modules/pixi.js/lib/scene/container/RenderContainer.mjs");
+/* harmony import */ var _scene_container_RenderGroup_mjs__WEBPACK_IMPORTED_MODULE_377__ = __webpack_require__(/*! ./scene/container/RenderGroup.mjs */ "./node_modules/pixi.js/lib/scene/container/RenderGroup.mjs");
+/* harmony import */ var _scene_container_RenderGroupPipe_mjs__WEBPACK_IMPORTED_MODULE_378__ = __webpack_require__(/*! ./scene/container/RenderGroupPipe.mjs */ "./node_modules/pixi.js/lib/scene/container/RenderGroupPipe.mjs");
+/* harmony import */ var _scene_container_RenderGroupSystem_mjs__WEBPACK_IMPORTED_MODULE_379__ = __webpack_require__(/*! ./scene/container/RenderGroupSystem.mjs */ "./node_modules/pixi.js/lib/scene/container/RenderGroupSystem.mjs");
+/* harmony import */ var _scene_container_utils_assignWithIgnore_mjs__WEBPACK_IMPORTED_MODULE_380__ = __webpack_require__(/*! ./scene/container/utils/assignWithIgnore.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/assignWithIgnore.mjs");
+/* harmony import */ var _scene_container_utils_checkChildrenDidChange_mjs__WEBPACK_IMPORTED_MODULE_381__ = __webpack_require__(/*! ./scene/container/utils/checkChildrenDidChange.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/checkChildrenDidChange.mjs");
+/* harmony import */ var _scene_container_utils_clearList_mjs__WEBPACK_IMPORTED_MODULE_382__ = __webpack_require__(/*! ./scene/container/utils/clearList.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/clearList.mjs");
+/* harmony import */ var _scene_container_utils_collectAllRenderables_mjs__WEBPACK_IMPORTED_MODULE_383__ = __webpack_require__(/*! ./scene/container/utils/collectAllRenderables.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/collectAllRenderables.mjs");
+/* harmony import */ var _scene_container_utils_definedProps_mjs__WEBPACK_IMPORTED_MODULE_384__ = __webpack_require__(/*! ./scene/container/utils/definedProps.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/definedProps.mjs");
+/* harmony import */ var _scene_container_utils_executeInstructions_mjs__WEBPACK_IMPORTED_MODULE_385__ = __webpack_require__(/*! ./scene/container/utils/executeInstructions.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/executeInstructions.mjs");
+/* harmony import */ var _scene_container_utils_mixHexColors_mjs__WEBPACK_IMPORTED_MODULE_386__ = __webpack_require__(/*! ./scene/container/utils/mixHexColors.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/mixHexColors.mjs");
+/* harmony import */ var _scene_container_utils_multiplyColors_mjs__WEBPACK_IMPORTED_MODULE_387__ = __webpack_require__(/*! ./scene/container/utils/multiplyColors.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/multiplyColors.mjs");
+/* harmony import */ var _scene_container_utils_multiplyHexColors_mjs__WEBPACK_IMPORTED_MODULE_388__ = __webpack_require__(/*! ./scene/container/utils/multiplyHexColors.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/multiplyHexColors.mjs");
+/* harmony import */ var _scene_container_utils_updateLocalTransform_mjs__WEBPACK_IMPORTED_MODULE_389__ = __webpack_require__(/*! ./scene/container/utils/updateLocalTransform.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/updateLocalTransform.mjs");
+/* harmony import */ var _scene_container_utils_updateRenderGroupTransforms_mjs__WEBPACK_IMPORTED_MODULE_390__ = __webpack_require__(/*! ./scene/container/utils/updateRenderGroupTransforms.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/updateRenderGroupTransforms.mjs");
+/* harmony import */ var _scene_container_utils_updateWorldTransform_mjs__WEBPACK_IMPORTED_MODULE_391__ = __webpack_require__(/*! ./scene/container/utils/updateWorldTransform.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/updateWorldTransform.mjs");
+/* harmony import */ var _scene_container_utils_validateRenderables_mjs__WEBPACK_IMPORTED_MODULE_392__ = __webpack_require__(/*! ./scene/container/utils/validateRenderables.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/validateRenderables.mjs");
+/* harmony import */ var _scene_graphics_gl_GlGraphicsAdaptor_mjs__WEBPACK_IMPORTED_MODULE_393__ = __webpack_require__(/*! ./scene/graphics/gl/GlGraphicsAdaptor.mjs */ "./node_modules/pixi.js/lib/scene/graphics/gl/GlGraphicsAdaptor.mjs");
+/* harmony import */ var _scene_graphics_gpu_colorToUniform_mjs__WEBPACK_IMPORTED_MODULE_394__ = __webpack_require__(/*! ./scene/graphics/gpu/colorToUniform.mjs */ "./node_modules/pixi.js/lib/scene/graphics/gpu/colorToUniform.mjs");
+/* harmony import */ var _scene_graphics_gpu_GpuGraphicsAdaptor_mjs__WEBPACK_IMPORTED_MODULE_395__ = __webpack_require__(/*! ./scene/graphics/gpu/GpuGraphicsAdaptor.mjs */ "./node_modules/pixi.js/lib/scene/graphics/gpu/GpuGraphicsAdaptor.mjs");
+/* harmony import */ var _scene_graphics_shared_BatchableGraphics_mjs__WEBPACK_IMPORTED_MODULE_396__ = __webpack_require__(/*! ./scene/graphics/shared/BatchableGraphics.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/BatchableGraphics.mjs");
+/* harmony import */ var _scene_graphics_shared_buildCommands_buildAdaptiveBezier_mjs__WEBPACK_IMPORTED_MODULE_397__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildAdaptiveBezier.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildAdaptiveBezier.mjs");
+/* harmony import */ var _scene_graphics_shared_buildCommands_buildAdaptiveQuadratic_mjs__WEBPACK_IMPORTED_MODULE_398__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildAdaptiveQuadratic.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildAdaptiveQuadratic.mjs");
+/* harmony import */ var _scene_graphics_shared_buildCommands_buildArc_mjs__WEBPACK_IMPORTED_MODULE_399__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildArc.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildArc.mjs");
+/* harmony import */ var _scene_graphics_shared_buildCommands_buildArcTo_mjs__WEBPACK_IMPORTED_MODULE_400__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildArcTo.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildArcTo.mjs");
+/* harmony import */ var _scene_graphics_shared_buildCommands_buildArcToSvg_mjs__WEBPACK_IMPORTED_MODULE_401__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildArcToSvg.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildArcToSvg.mjs");
+/* harmony import */ var _scene_graphics_shared_buildCommands_buildCircle_mjs__WEBPACK_IMPORTED_MODULE_402__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildCircle.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildCircle.mjs");
+/* harmony import */ var _scene_graphics_shared_buildCommands_buildLine_mjs__WEBPACK_IMPORTED_MODULE_403__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildLine.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildLine.mjs");
+/* harmony import */ var _scene_graphics_shared_buildCommands_buildPixelLine_mjs__WEBPACK_IMPORTED_MODULE_404__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildPixelLine.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildPixelLine.mjs");
+/* harmony import */ var _scene_graphics_shared_buildCommands_buildPolygon_mjs__WEBPACK_IMPORTED_MODULE_405__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildPolygon.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildPolygon.mjs");
+/* harmony import */ var _scene_graphics_shared_buildCommands_buildRectangle_mjs__WEBPACK_IMPORTED_MODULE_406__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildRectangle.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildRectangle.mjs");
+/* harmony import */ var _scene_graphics_shared_buildCommands_buildTriangle_mjs__WEBPACK_IMPORTED_MODULE_407__ = __webpack_require__(/*! ./scene/graphics/shared/buildCommands/buildTriangle.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/buildCommands/buildTriangle.mjs");
+/* harmony import */ var _scene_graphics_shared_const_mjs__WEBPACK_IMPORTED_MODULE_408__ = __webpack_require__(/*! ./scene/graphics/shared/const.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/const.mjs");
+/* harmony import */ var _scene_graphics_shared_fill_FillGradient_mjs__WEBPACK_IMPORTED_MODULE_409__ = __webpack_require__(/*! ./scene/graphics/shared/fill/FillGradient.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/fill/FillGradient.mjs");
+/* harmony import */ var _scene_graphics_shared_fill_FillPattern_mjs__WEBPACK_IMPORTED_MODULE_410__ = __webpack_require__(/*! ./scene/graphics/shared/fill/FillPattern.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/fill/FillPattern.mjs");
+/* harmony import */ var _scene_graphics_shared_Graphics_mjs__WEBPACK_IMPORTED_MODULE_411__ = __webpack_require__(/*! ./scene/graphics/shared/Graphics.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/Graphics.mjs");
+/* harmony import */ var _scene_graphics_shared_GraphicsContext_mjs__WEBPACK_IMPORTED_MODULE_412__ = __webpack_require__(/*! ./scene/graphics/shared/GraphicsContext.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/GraphicsContext.mjs");
+/* harmony import */ var _scene_graphics_shared_GraphicsContextSystem_mjs__WEBPACK_IMPORTED_MODULE_413__ = __webpack_require__(/*! ./scene/graphics/shared/GraphicsContextSystem.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/GraphicsContextSystem.mjs");
+/* harmony import */ var _scene_graphics_shared_GraphicsPipe_mjs__WEBPACK_IMPORTED_MODULE_414__ = __webpack_require__(/*! ./scene/graphics/shared/GraphicsPipe.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/GraphicsPipe.mjs");
+/* harmony import */ var _scene_graphics_shared_path_GraphicsPath_mjs__WEBPACK_IMPORTED_MODULE_415__ = __webpack_require__(/*! ./scene/graphics/shared/path/GraphicsPath.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/path/GraphicsPath.mjs");
+/* harmony import */ var _scene_graphics_shared_path_roundShape_mjs__WEBPACK_IMPORTED_MODULE_416__ = __webpack_require__(/*! ./scene/graphics/shared/path/roundShape.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/path/roundShape.mjs");
+/* harmony import */ var _scene_graphics_shared_path_ShapePath_mjs__WEBPACK_IMPORTED_MODULE_417__ = __webpack_require__(/*! ./scene/graphics/shared/path/ShapePath.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/path/ShapePath.mjs");
+/* harmony import */ var _scene_graphics_shared_svg_SVGParser_mjs__WEBPACK_IMPORTED_MODULE_418__ = __webpack_require__(/*! ./scene/graphics/shared/svg/SVGParser.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/svg/SVGParser.mjs");
+/* harmony import */ var _scene_graphics_shared_svg_SVGToGraphicsPath_mjs__WEBPACK_IMPORTED_MODULE_419__ = __webpack_require__(/*! ./scene/graphics/shared/svg/SVGToGraphicsPath.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/svg/SVGToGraphicsPath.mjs");
+/* harmony import */ var _scene_graphics_shared_utils_buildContextBatches_mjs__WEBPACK_IMPORTED_MODULE_420__ = __webpack_require__(/*! ./scene/graphics/shared/utils/buildContextBatches.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/utils/buildContextBatches.mjs");
+/* harmony import */ var _scene_graphics_shared_utils_buildGeometryFromPath_mjs__WEBPACK_IMPORTED_MODULE_421__ = __webpack_require__(/*! ./scene/graphics/shared/utils/buildGeometryFromPath.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/utils/buildGeometryFromPath.mjs");
+/* harmony import */ var _scene_graphics_shared_utils_convertFillInputToFillStyle_mjs__WEBPACK_IMPORTED_MODULE_422__ = __webpack_require__(/*! ./scene/graphics/shared/utils/convertFillInputToFillStyle.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/utils/convertFillInputToFillStyle.mjs");
+/* harmony import */ var _scene_graphics_shared_utils_getOrientationOfPoints_mjs__WEBPACK_IMPORTED_MODULE_423__ = __webpack_require__(/*! ./scene/graphics/shared/utils/getOrientationOfPoints.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/utils/getOrientationOfPoints.mjs");
+/* harmony import */ var _scene_graphics_shared_utils_triangulateWithHoles_mjs__WEBPACK_IMPORTED_MODULE_424__ = __webpack_require__(/*! ./scene/graphics/shared/utils/triangulateWithHoles.mjs */ "./node_modules/pixi.js/lib/scene/graphics/shared/utils/triangulateWithHoles.mjs");
+/* harmony import */ var _scene_layers_RenderLayer_mjs__WEBPACK_IMPORTED_MODULE_425__ = __webpack_require__(/*! ./scene/layers/RenderLayer.mjs */ "./node_modules/pixi.js/lib/scene/layers/RenderLayer.mjs");
+/* harmony import */ var _scene_mesh_perspective_PerspectiveMesh_mjs__WEBPACK_IMPORTED_MODULE_426__ = __webpack_require__(/*! ./scene/mesh-perspective/PerspectiveMesh.mjs */ "./node_modules/pixi.js/lib/scene/mesh-perspective/PerspectiveMesh.mjs");
+/* harmony import */ var _scene_mesh_perspective_PerspectivePlaneGeometry_mjs__WEBPACK_IMPORTED_MODULE_427__ = __webpack_require__(/*! ./scene/mesh-perspective/PerspectivePlaneGeometry.mjs */ "./node_modules/pixi.js/lib/scene/mesh-perspective/PerspectivePlaneGeometry.mjs");
+/* harmony import */ var _scene_mesh_perspective_utils_applyProjectiveTransformationToPlane_mjs__WEBPACK_IMPORTED_MODULE_428__ = __webpack_require__(/*! ./scene/mesh-perspective/utils/applyProjectiveTransformationToPlane.mjs */ "./node_modules/pixi.js/lib/scene/mesh-perspective/utils/applyProjectiveTransformationToPlane.mjs");
+/* harmony import */ var _scene_mesh_perspective_utils_compute2DProjections_mjs__WEBPACK_IMPORTED_MODULE_429__ = __webpack_require__(/*! ./scene/mesh-perspective/utils/compute2DProjections.mjs */ "./node_modules/pixi.js/lib/scene/mesh-perspective/utils/compute2DProjections.mjs");
+/* harmony import */ var _scene_mesh_plane_MeshPlane_mjs__WEBPACK_IMPORTED_MODULE_430__ = __webpack_require__(/*! ./scene/mesh-plane/MeshPlane.mjs */ "./node_modules/pixi.js/lib/scene/mesh-plane/MeshPlane.mjs");
+/* harmony import */ var _scene_mesh_plane_PlaneGeometry_mjs__WEBPACK_IMPORTED_MODULE_431__ = __webpack_require__(/*! ./scene/mesh-plane/PlaneGeometry.mjs */ "./node_modules/pixi.js/lib/scene/mesh-plane/PlaneGeometry.mjs");
+/* harmony import */ var _scene_mesh_simple_MeshRope_mjs__WEBPACK_IMPORTED_MODULE_432__ = __webpack_require__(/*! ./scene/mesh-simple/MeshRope.mjs */ "./node_modules/pixi.js/lib/scene/mesh-simple/MeshRope.mjs");
+/* harmony import */ var _scene_mesh_simple_MeshSimple_mjs__WEBPACK_IMPORTED_MODULE_433__ = __webpack_require__(/*! ./scene/mesh-simple/MeshSimple.mjs */ "./node_modules/pixi.js/lib/scene/mesh-simple/MeshSimple.mjs");
+/* harmony import */ var _scene_mesh_simple_RopeGeometry_mjs__WEBPACK_IMPORTED_MODULE_434__ = __webpack_require__(/*! ./scene/mesh-simple/RopeGeometry.mjs */ "./node_modules/pixi.js/lib/scene/mesh-simple/RopeGeometry.mjs");
+/* harmony import */ var _scene_mesh_gl_GlMeshAdaptor_mjs__WEBPACK_IMPORTED_MODULE_435__ = __webpack_require__(/*! ./scene/mesh/gl/GlMeshAdaptor.mjs */ "./node_modules/pixi.js/lib/scene/mesh/gl/GlMeshAdaptor.mjs");
+/* harmony import */ var _scene_mesh_gpu_GpuMeshAdapter_mjs__WEBPACK_IMPORTED_MODULE_436__ = __webpack_require__(/*! ./scene/mesh/gpu/GpuMeshAdapter.mjs */ "./node_modules/pixi.js/lib/scene/mesh/gpu/GpuMeshAdapter.mjs");
+/* harmony import */ var _scene_mesh_shared_BatchableMesh_mjs__WEBPACK_IMPORTED_MODULE_437__ = __webpack_require__(/*! ./scene/mesh/shared/BatchableMesh.mjs */ "./node_modules/pixi.js/lib/scene/mesh/shared/BatchableMesh.mjs");
+/* harmony import */ var _scene_mesh_shared_getTextureDefaultMatrix_mjs__WEBPACK_IMPORTED_MODULE_438__ = __webpack_require__(/*! ./scene/mesh/shared/getTextureDefaultMatrix.mjs */ "./node_modules/pixi.js/lib/scene/mesh/shared/getTextureDefaultMatrix.mjs");
+/* harmony import */ var _scene_mesh_shared_Mesh_mjs__WEBPACK_IMPORTED_MODULE_439__ = __webpack_require__(/*! ./scene/mesh/shared/Mesh.mjs */ "./node_modules/pixi.js/lib/scene/mesh/shared/Mesh.mjs");
+/* harmony import */ var _scene_mesh_shared_MeshGeometry_mjs__WEBPACK_IMPORTED_MODULE_440__ = __webpack_require__(/*! ./scene/mesh/shared/MeshGeometry.mjs */ "./node_modules/pixi.js/lib/scene/mesh/shared/MeshGeometry.mjs");
+/* harmony import */ var _scene_mesh_shared_MeshPipe_mjs__WEBPACK_IMPORTED_MODULE_441__ = __webpack_require__(/*! ./scene/mesh/shared/MeshPipe.mjs */ "./node_modules/pixi.js/lib/scene/mesh/shared/MeshPipe.mjs");
+/* harmony import */ var _scene_particle_container_gl_GlParticleContainerAdaptor_mjs__WEBPACK_IMPORTED_MODULE_442__ = __webpack_require__(/*! ./scene/particle-container/gl/GlParticleContainerAdaptor.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/gl/GlParticleContainerAdaptor.mjs");
+/* harmony import */ var _scene_particle_container_gpu_GpuParticleContainerAdaptor_mjs__WEBPACK_IMPORTED_MODULE_443__ = __webpack_require__(/*! ./scene/particle-container/gpu/GpuParticleContainerAdaptor.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/gpu/GpuParticleContainerAdaptor.mjs");
+/* harmony import */ var _scene_particle_container_shared_GlParticleContainerPipe_mjs__WEBPACK_IMPORTED_MODULE_444__ = __webpack_require__(/*! ./scene/particle-container/shared/GlParticleContainerPipe.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/GlParticleContainerPipe.mjs");
+/* harmony import */ var _scene_particle_container_shared_GpuParticleContainerPipe_mjs__WEBPACK_IMPORTED_MODULE_445__ = __webpack_require__(/*! ./scene/particle-container/shared/GpuParticleContainerPipe.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/GpuParticleContainerPipe.mjs");
+/* harmony import */ var _scene_particle_container_shared_Particle_mjs__WEBPACK_IMPORTED_MODULE_446__ = __webpack_require__(/*! ./scene/particle-container/shared/Particle.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/Particle.mjs");
+/* harmony import */ var _scene_particle_container_shared_ParticleBuffer_mjs__WEBPACK_IMPORTED_MODULE_447__ = __webpack_require__(/*! ./scene/particle-container/shared/ParticleBuffer.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/ParticleBuffer.mjs");
+/* harmony import */ var _scene_particle_container_shared_ParticleContainer_mjs__WEBPACK_IMPORTED_MODULE_448__ = __webpack_require__(/*! ./scene/particle-container/shared/ParticleContainer.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/ParticleContainer.mjs");
+/* harmony import */ var _scene_particle_container_shared_ParticleContainerPipe_mjs__WEBPACK_IMPORTED_MODULE_449__ = __webpack_require__(/*! ./scene/particle-container/shared/ParticleContainerPipe.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/ParticleContainerPipe.mjs");
+/* harmony import */ var _scene_particle_container_shared_particleData_mjs__WEBPACK_IMPORTED_MODULE_450__ = __webpack_require__(/*! ./scene/particle-container/shared/particleData.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/particleData.mjs");
+/* harmony import */ var _scene_particle_container_shared_shader_ParticleShader_mjs__WEBPACK_IMPORTED_MODULE_451__ = __webpack_require__(/*! ./scene/particle-container/shared/shader/ParticleShader.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/shader/ParticleShader.mjs");
+/* harmony import */ var _scene_particle_container_shared_utils_createIndicesForQuads_mjs__WEBPACK_IMPORTED_MODULE_452__ = __webpack_require__(/*! ./scene/particle-container/shared/utils/createIndicesForQuads.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/utils/createIndicesForQuads.mjs");
+/* harmony import */ var _scene_particle_container_shared_utils_generateParticleUpdateFunction_mjs__WEBPACK_IMPORTED_MODULE_453__ = __webpack_require__(/*! ./scene/particle-container/shared/utils/generateParticleUpdateFunction.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/shared/utils/generateParticleUpdateFunction.mjs");
+/* harmony import */ var _scene_sprite_animated_AnimatedSprite_mjs__WEBPACK_IMPORTED_MODULE_454__ = __webpack_require__(/*! ./scene/sprite-animated/AnimatedSprite.mjs */ "./node_modules/pixi.js/lib/scene/sprite-animated/AnimatedSprite.mjs");
+/* harmony import */ var _scene_sprite_nine_slice_NineSliceGeometry_mjs__WEBPACK_IMPORTED_MODULE_455__ = __webpack_require__(/*! ./scene/sprite-nine-slice/NineSliceGeometry.mjs */ "./node_modules/pixi.js/lib/scene/sprite-nine-slice/NineSliceGeometry.mjs");
+/* harmony import */ var _scene_sprite_nine_slice_NineSliceSprite_mjs__WEBPACK_IMPORTED_MODULE_456__ = __webpack_require__(/*! ./scene/sprite-nine-slice/NineSliceSprite.mjs */ "./node_modules/pixi.js/lib/scene/sprite-nine-slice/NineSliceSprite.mjs");
+/* harmony import */ var _scene_sprite_nine_slice_NineSliceSpritePipe_mjs__WEBPACK_IMPORTED_MODULE_457__ = __webpack_require__(/*! ./scene/sprite-nine-slice/NineSliceSpritePipe.mjs */ "./node_modules/pixi.js/lib/scene/sprite-nine-slice/NineSliceSpritePipe.mjs");
+/* harmony import */ var _scene_sprite_tiling_shader_tilingBit_mjs__WEBPACK_IMPORTED_MODULE_458__ = __webpack_require__(/*! ./scene/sprite-tiling/shader/tilingBit.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/shader/tilingBit.mjs");
+/* harmony import */ var _scene_sprite_tiling_shader_TilingSpriteShader_mjs__WEBPACK_IMPORTED_MODULE_459__ = __webpack_require__(/*! ./scene/sprite-tiling/shader/TilingSpriteShader.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/shader/TilingSpriteShader.mjs");
+/* harmony import */ var _scene_sprite_tiling_TilingSprite_mjs__WEBPACK_IMPORTED_MODULE_460__ = __webpack_require__(/*! ./scene/sprite-tiling/TilingSprite.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/TilingSprite.mjs");
+/* harmony import */ var _scene_sprite_tiling_TilingSpritePipe_mjs__WEBPACK_IMPORTED_MODULE_461__ = __webpack_require__(/*! ./scene/sprite-tiling/TilingSpritePipe.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/TilingSpritePipe.mjs");
+/* harmony import */ var _scene_sprite_tiling_utils_applyMatrix_mjs__WEBPACK_IMPORTED_MODULE_462__ = __webpack_require__(/*! ./scene/sprite-tiling/utils/applyMatrix.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/utils/applyMatrix.mjs");
+/* harmony import */ var _scene_sprite_tiling_utils_QuadGeometry_mjs__WEBPACK_IMPORTED_MODULE_463__ = __webpack_require__(/*! ./scene/sprite-tiling/utils/QuadGeometry.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/utils/QuadGeometry.mjs");
+/* harmony import */ var _scene_sprite_tiling_utils_setPositions_mjs__WEBPACK_IMPORTED_MODULE_464__ = __webpack_require__(/*! ./scene/sprite-tiling/utils/setPositions.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/utils/setPositions.mjs");
+/* harmony import */ var _scene_sprite_tiling_utils_setUvs_mjs__WEBPACK_IMPORTED_MODULE_465__ = __webpack_require__(/*! ./scene/sprite-tiling/utils/setUvs.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/utils/setUvs.mjs");
+/* harmony import */ var _scene_sprite_BatchableSprite_mjs__WEBPACK_IMPORTED_MODULE_466__ = __webpack_require__(/*! ./scene/sprite/BatchableSprite.mjs */ "./node_modules/pixi.js/lib/scene/sprite/BatchableSprite.mjs");
+/* harmony import */ var _scene_sprite_Sprite_mjs__WEBPACK_IMPORTED_MODULE_467__ = __webpack_require__(/*! ./scene/sprite/Sprite.mjs */ "./node_modules/pixi.js/lib/scene/sprite/Sprite.mjs");
+/* harmony import */ var _scene_sprite_SpritePipe_mjs__WEBPACK_IMPORTED_MODULE_468__ = __webpack_require__(/*! ./scene/sprite/SpritePipe.mjs */ "./node_modules/pixi.js/lib/scene/sprite/SpritePipe.mjs");
+/* harmony import */ var _scene_text_bitmap_AbstractBitmapFont_mjs__WEBPACK_IMPORTED_MODULE_469__ = __webpack_require__(/*! ./scene/text-bitmap/AbstractBitmapFont.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/AbstractBitmapFont.mjs");
+/* harmony import */ var _scene_text_bitmap_asset_bitmapFontTextParser_mjs__WEBPACK_IMPORTED_MODULE_470__ = __webpack_require__(/*! ./scene/text-bitmap/asset/bitmapFontTextParser.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/asset/bitmapFontTextParser.mjs");
+/* harmony import */ var _scene_text_bitmap_asset_bitmapFontXMLParser_mjs__WEBPACK_IMPORTED_MODULE_471__ = __webpack_require__(/*! ./scene/text-bitmap/asset/bitmapFontXMLParser.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/asset/bitmapFontXMLParser.mjs");
+/* harmony import */ var _scene_text_bitmap_asset_bitmapFontXMLStringParser_mjs__WEBPACK_IMPORTED_MODULE_472__ = __webpack_require__(/*! ./scene/text-bitmap/asset/bitmapFontXMLStringParser.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/asset/bitmapFontXMLStringParser.mjs");
+/* harmony import */ var _scene_text_bitmap_asset_loadBitmapFont_mjs__WEBPACK_IMPORTED_MODULE_473__ = __webpack_require__(/*! ./scene/text-bitmap/asset/loadBitmapFont.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/asset/loadBitmapFont.mjs");
+/* harmony import */ var _scene_text_bitmap_BitmapFont_mjs__WEBPACK_IMPORTED_MODULE_474__ = __webpack_require__(/*! ./scene/text-bitmap/BitmapFont.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/BitmapFont.mjs");
+/* harmony import */ var _scene_text_bitmap_BitmapFontManager_mjs__WEBPACK_IMPORTED_MODULE_475__ = __webpack_require__(/*! ./scene/text-bitmap/BitmapFontManager.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/BitmapFontManager.mjs");
+/* harmony import */ var _scene_text_bitmap_BitmapText_mjs__WEBPACK_IMPORTED_MODULE_476__ = __webpack_require__(/*! ./scene/text-bitmap/BitmapText.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/BitmapText.mjs");
+/* harmony import */ var _scene_text_bitmap_BitmapTextPipe_mjs__WEBPACK_IMPORTED_MODULE_477__ = __webpack_require__(/*! ./scene/text-bitmap/BitmapTextPipe.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/BitmapTextPipe.mjs");
+/* harmony import */ var _scene_text_bitmap_DynamicBitmapFont_mjs__WEBPACK_IMPORTED_MODULE_478__ = __webpack_require__(/*! ./scene/text-bitmap/DynamicBitmapFont.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/DynamicBitmapFont.mjs");
+/* harmony import */ var _scene_text_bitmap_utils_getBitmapTextLayout_mjs__WEBPACK_IMPORTED_MODULE_479__ = __webpack_require__(/*! ./scene/text-bitmap/utils/getBitmapTextLayout.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/utils/getBitmapTextLayout.mjs");
+/* harmony import */ var _scene_text_bitmap_utils_resolveCharacters_mjs__WEBPACK_IMPORTED_MODULE_480__ = __webpack_require__(/*! ./scene/text-bitmap/utils/resolveCharacters.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/utils/resolveCharacters.mjs");
+/* harmony import */ var _scene_text_html_HTMLText_mjs__WEBPACK_IMPORTED_MODULE_481__ = __webpack_require__(/*! ./scene/text-html/HTMLText.mjs */ "./node_modules/pixi.js/lib/scene/text-html/HTMLText.mjs");
+/* harmony import */ var _scene_text_html_HTMLTextPipe_mjs__WEBPACK_IMPORTED_MODULE_482__ = __webpack_require__(/*! ./scene/text-html/HTMLTextPipe.mjs */ "./node_modules/pixi.js/lib/scene/text-html/HTMLTextPipe.mjs");
+/* harmony import */ var _scene_text_html_HTMLTextRenderData_mjs__WEBPACK_IMPORTED_MODULE_483__ = __webpack_require__(/*! ./scene/text-html/HTMLTextRenderData.mjs */ "./node_modules/pixi.js/lib/scene/text-html/HTMLTextRenderData.mjs");
+/* harmony import */ var _scene_text_html_HTMLTextStyle_mjs__WEBPACK_IMPORTED_MODULE_484__ = __webpack_require__(/*! ./scene/text-html/HTMLTextStyle.mjs */ "./node_modules/pixi.js/lib/scene/text-html/HTMLTextStyle.mjs");
+/* harmony import */ var _scene_text_html_HTMLTextSystem_mjs__WEBPACK_IMPORTED_MODULE_485__ = __webpack_require__(/*! ./scene/text-html/HTMLTextSystem.mjs */ "./node_modules/pixi.js/lib/scene/text-html/HTMLTextSystem.mjs");
+/* harmony import */ var _scene_text_html_utils_extractFontFamilies_mjs__WEBPACK_IMPORTED_MODULE_486__ = __webpack_require__(/*! ./scene/text-html/utils/extractFontFamilies.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/extractFontFamilies.mjs");
+/* harmony import */ var _scene_text_html_utils_getFontCss_mjs__WEBPACK_IMPORTED_MODULE_487__ = __webpack_require__(/*! ./scene/text-html/utils/getFontCss.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/getFontCss.mjs");
+/* harmony import */ var _scene_text_html_utils_getSVGUrl_mjs__WEBPACK_IMPORTED_MODULE_488__ = __webpack_require__(/*! ./scene/text-html/utils/getSVGUrl.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/getSVGUrl.mjs");
+/* harmony import */ var _scene_text_html_utils_getTemporaryCanvasFromImage_mjs__WEBPACK_IMPORTED_MODULE_489__ = __webpack_require__(/*! ./scene/text-html/utils/getTemporaryCanvasFromImage.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/getTemporaryCanvasFromImage.mjs");
+/* harmony import */ var _scene_text_html_utils_loadFontAsBase64_mjs__WEBPACK_IMPORTED_MODULE_490__ = __webpack_require__(/*! ./scene/text-html/utils/loadFontAsBase64.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/loadFontAsBase64.mjs");
+/* harmony import */ var _scene_text_html_utils_loadFontCSS_mjs__WEBPACK_IMPORTED_MODULE_491__ = __webpack_require__(/*! ./scene/text-html/utils/loadFontCSS.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/loadFontCSS.mjs");
+/* harmony import */ var _scene_text_html_utils_loadSVGImage_mjs__WEBPACK_IMPORTED_MODULE_492__ = __webpack_require__(/*! ./scene/text-html/utils/loadSVGImage.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/loadSVGImage.mjs");
+/* harmony import */ var _scene_text_html_utils_measureHtmlText_mjs__WEBPACK_IMPORTED_MODULE_493__ = __webpack_require__(/*! ./scene/text-html/utils/measureHtmlText.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/measureHtmlText.mjs");
+/* harmony import */ var _scene_text_html_utils_textStyleToCSS_mjs__WEBPACK_IMPORTED_MODULE_494__ = __webpack_require__(/*! ./scene/text-html/utils/textStyleToCSS.mjs */ "./node_modules/pixi.js/lib/scene/text-html/utils/textStyleToCSS.mjs");
+/* harmony import */ var _scene_text_AbstractText_mjs__WEBPACK_IMPORTED_MODULE_495__ = __webpack_require__(/*! ./scene/text/AbstractText.mjs */ "./node_modules/pixi.js/lib/scene/text/AbstractText.mjs");
+/* harmony import */ var _scene_text_canvas_CanvasTextMetrics_mjs__WEBPACK_IMPORTED_MODULE_496__ = __webpack_require__(/*! ./scene/text/canvas/CanvasTextMetrics.mjs */ "./node_modules/pixi.js/lib/scene/text/canvas/CanvasTextMetrics.mjs");
+/* harmony import */ var _scene_text_canvas_CanvasTextPipe_mjs__WEBPACK_IMPORTED_MODULE_497__ = __webpack_require__(/*! ./scene/text/canvas/CanvasTextPipe.mjs */ "./node_modules/pixi.js/lib/scene/text/canvas/CanvasTextPipe.mjs");
+/* harmony import */ var _scene_text_canvas_CanvasTextSystem_mjs__WEBPACK_IMPORTED_MODULE_498__ = __webpack_require__(/*! ./scene/text/canvas/CanvasTextSystem.mjs */ "./node_modules/pixi.js/lib/scene/text/canvas/CanvasTextSystem.mjs");
+/* harmony import */ var _scene_text_canvas_utils_fontStringFromTextStyle_mjs__WEBPACK_IMPORTED_MODULE_499__ = __webpack_require__(/*! ./scene/text/canvas/utils/fontStringFromTextStyle.mjs */ "./node_modules/pixi.js/lib/scene/text/canvas/utils/fontStringFromTextStyle.mjs");
+/* harmony import */ var _scene_text_canvas_utils_getCanvasFillStyle_mjs__WEBPACK_IMPORTED_MODULE_500__ = __webpack_require__(/*! ./scene/text/canvas/utils/getCanvasFillStyle.mjs */ "./node_modules/pixi.js/lib/scene/text/canvas/utils/getCanvasFillStyle.mjs");
+/* harmony import */ var _scene_text_sdfShader_SdfShader_mjs__WEBPACK_IMPORTED_MODULE_501__ = __webpack_require__(/*! ./scene/text/sdfShader/SdfShader.mjs */ "./node_modules/pixi.js/lib/scene/text/sdfShader/SdfShader.mjs");
+/* harmony import */ var _scene_text_sdfShader_shader_bits_localUniformMSDFBit_mjs__WEBPACK_IMPORTED_MODULE_502__ = __webpack_require__(/*! ./scene/text/sdfShader/shader-bits/localUniformMSDFBit.mjs */ "./node_modules/pixi.js/lib/scene/text/sdfShader/shader-bits/localUniformMSDFBit.mjs");
+/* harmony import */ var _scene_text_sdfShader_shader_bits_mSDFBit_mjs__WEBPACK_IMPORTED_MODULE_503__ = __webpack_require__(/*! ./scene/text/sdfShader/shader-bits/mSDFBit.mjs */ "./node_modules/pixi.js/lib/scene/text/sdfShader/shader-bits/mSDFBit.mjs");
+/* harmony import */ var _scene_text_Text_mjs__WEBPACK_IMPORTED_MODULE_504__ = __webpack_require__(/*! ./scene/text/Text.mjs */ "./node_modules/pixi.js/lib/scene/text/Text.mjs");
+/* harmony import */ var _scene_text_TextStyle_mjs__WEBPACK_IMPORTED_MODULE_505__ = __webpack_require__(/*! ./scene/text/TextStyle.mjs */ "./node_modules/pixi.js/lib/scene/text/TextStyle.mjs");
+/* harmony import */ var _scene_text_utils_ensureTextStyle_mjs__WEBPACK_IMPORTED_MODULE_506__ = __webpack_require__(/*! ./scene/text/utils/ensureTextStyle.mjs */ "./node_modules/pixi.js/lib/scene/text/utils/ensureTextStyle.mjs");
+/* harmony import */ var _scene_text_utils_generateTextStyleKey_mjs__WEBPACK_IMPORTED_MODULE_507__ = __webpack_require__(/*! ./scene/text/utils/generateTextStyleKey.mjs */ "./node_modules/pixi.js/lib/scene/text/utils/generateTextStyleKey.mjs");
+/* harmony import */ var _scene_text_utils_getPo2TextureFromSource_mjs__WEBPACK_IMPORTED_MODULE_508__ = __webpack_require__(/*! ./scene/text/utils/getPo2TextureFromSource.mjs */ "./node_modules/pixi.js/lib/scene/text/utils/getPo2TextureFromSource.mjs");
+/* harmony import */ var _scene_text_utils_updateTextBounds_mjs__WEBPACK_IMPORTED_MODULE_509__ = __webpack_require__(/*! ./scene/text/utils/updateTextBounds.mjs */ "./node_modules/pixi.js/lib/scene/text/utils/updateTextBounds.mjs");
+/* harmony import */ var _scene_view_ViewContainer_mjs__WEBPACK_IMPORTED_MODULE_510__ = __webpack_require__(/*! ./scene/view/ViewContainer.mjs */ "./node_modules/pixi.js/lib/scene/view/ViewContainer.mjs");
+/* harmony import */ var _spritesheet_Spritesheet_mjs__WEBPACK_IMPORTED_MODULE_511__ = __webpack_require__(/*! ./spritesheet/Spritesheet.mjs */ "./node_modules/pixi.js/lib/spritesheet/Spritesheet.mjs");
+/* harmony import */ var _spritesheet_spritesheetAsset_mjs__WEBPACK_IMPORTED_MODULE_512__ = __webpack_require__(/*! ./spritesheet/spritesheetAsset.mjs */ "./node_modules/pixi.js/lib/spritesheet/spritesheetAsset.mjs");
+/* harmony import */ var _ticker_const_mjs__WEBPACK_IMPORTED_MODULE_513__ = __webpack_require__(/*! ./ticker/const.mjs */ "./node_modules/pixi.js/lib/ticker/const.mjs");
+/* harmony import */ var _ticker_Ticker_mjs__WEBPACK_IMPORTED_MODULE_514__ = __webpack_require__(/*! ./ticker/Ticker.mjs */ "./node_modules/pixi.js/lib/ticker/Ticker.mjs");
+/* harmony import */ var _ticker_TickerListener_mjs__WEBPACK_IMPORTED_MODULE_515__ = __webpack_require__(/*! ./ticker/TickerListener.mjs */ "./node_modules/pixi.js/lib/ticker/TickerListener.mjs");
+/* harmony import */ var _utils_browser_detectVideoAlphaMode_mjs__WEBPACK_IMPORTED_MODULE_516__ = __webpack_require__(/*! ./utils/browser/detectVideoAlphaMode.mjs */ "./node_modules/pixi.js/lib/utils/browser/detectVideoAlphaMode.mjs");
+/* harmony import */ var _utils_browser_isMobile_mjs__WEBPACK_IMPORTED_MODULE_517__ = __webpack_require__(/*! ./utils/browser/isMobile.mjs */ "./node_modules/pixi.js/lib/utils/browser/isMobile.mjs");
+/* harmony import */ var _utils_browser_isSafari_mjs__WEBPACK_IMPORTED_MODULE_518__ = __webpack_require__(/*! ./utils/browser/isSafari.mjs */ "./node_modules/pixi.js/lib/utils/browser/isSafari.mjs");
+/* harmony import */ var _utils_browser_isWebGLSupported_mjs__WEBPACK_IMPORTED_MODULE_519__ = __webpack_require__(/*! ./utils/browser/isWebGLSupported.mjs */ "./node_modules/pixi.js/lib/utils/browser/isWebGLSupported.mjs");
+/* harmony import */ var _utils_browser_isWebGPUSupported_mjs__WEBPACK_IMPORTED_MODULE_520__ = __webpack_require__(/*! ./utils/browser/isWebGPUSupported.mjs */ "./node_modules/pixi.js/lib/utils/browser/isWebGPUSupported.mjs");
+/* harmony import */ var _utils_browser_unsafeEvalSupported_mjs__WEBPACK_IMPORTED_MODULE_521__ = __webpack_require__(/*! ./utils/browser/unsafeEvalSupported.mjs */ "./node_modules/pixi.js/lib/utils/browser/unsafeEvalSupported.mjs");
+/* harmony import */ var _utils_canvas_getCanvasBoundingBox_mjs__WEBPACK_IMPORTED_MODULE_522__ = __webpack_require__(/*! ./utils/canvas/getCanvasBoundingBox.mjs */ "./node_modules/pixi.js/lib/utils/canvas/getCanvasBoundingBox.mjs");
+/* harmony import */ var _utils_const_mjs__WEBPACK_IMPORTED_MODULE_523__ = __webpack_require__(/*! ./utils/const.mjs */ "./node_modules/pixi.js/lib/utils/const.mjs");
+/* harmony import */ var eventemitter3__WEBPACK_IMPORTED_MODULE_524__ = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.mjs");
+/* harmony import */ var _utils_data_clean_mjs__WEBPACK_IMPORTED_MODULE_525__ = __webpack_require__(/*! ./utils/data/clean.mjs */ "./node_modules/pixi.js/lib/utils/data/clean.mjs");
+/* harmony import */ var _utils_data_removeItems_mjs__WEBPACK_IMPORTED_MODULE_526__ = __webpack_require__(/*! ./utils/data/removeItems.mjs */ "./node_modules/pixi.js/lib/utils/data/removeItems.mjs");
+/* harmony import */ var _utils_data_uid_mjs__WEBPACK_IMPORTED_MODULE_527__ = __webpack_require__(/*! ./utils/data/uid.mjs */ "./node_modules/pixi.js/lib/utils/data/uid.mjs");
+/* harmony import */ var _utils_data_updateQuadBounds_mjs__WEBPACK_IMPORTED_MODULE_528__ = __webpack_require__(/*! ./utils/data/updateQuadBounds.mjs */ "./node_modules/pixi.js/lib/utils/data/updateQuadBounds.mjs");
+/* harmony import */ var _utils_data_ViewableBuffer_mjs__WEBPACK_IMPORTED_MODULE_529__ = __webpack_require__(/*! ./utils/data/ViewableBuffer.mjs */ "./node_modules/pixi.js/lib/utils/data/ViewableBuffer.mjs");
+/* harmony import */ var _utils_global_globalHooks_mjs__WEBPACK_IMPORTED_MODULE_530__ = __webpack_require__(/*! ./utils/global/globalHooks.mjs */ "./node_modules/pixi.js/lib/utils/global/globalHooks.mjs");
+/* harmony import */ var _utils_logging_deprecation_mjs__WEBPACK_IMPORTED_MODULE_531__ = __webpack_require__(/*! ./utils/logging/deprecation.mjs */ "./node_modules/pixi.js/lib/utils/logging/deprecation.mjs");
+/* harmony import */ var _utils_logging_logDebugTexture_mjs__WEBPACK_IMPORTED_MODULE_532__ = __webpack_require__(/*! ./utils/logging/logDebugTexture.mjs */ "./node_modules/pixi.js/lib/utils/logging/logDebugTexture.mjs");
+/* harmony import */ var _utils_logging_logScene_mjs__WEBPACK_IMPORTED_MODULE_533__ = __webpack_require__(/*! ./utils/logging/logScene.mjs */ "./node_modules/pixi.js/lib/utils/logging/logScene.mjs");
+/* harmony import */ var _utils_logging_warn_mjs__WEBPACK_IMPORTED_MODULE_534__ = __webpack_require__(/*! ./utils/logging/warn.mjs */ "./node_modules/pixi.js/lib/utils/logging/warn.mjs");
+/* harmony import */ var _utils_misc_NOOP_mjs__WEBPACK_IMPORTED_MODULE_535__ = __webpack_require__(/*! ./utils/misc/NOOP.mjs */ "./node_modules/pixi.js/lib/utils/misc/NOOP.mjs");
+/* harmony import */ var _utils_misc_Transform_mjs__WEBPACK_IMPORTED_MODULE_536__ = __webpack_require__(/*! ./utils/misc/Transform.mjs */ "./node_modules/pixi.js/lib/utils/misc/Transform.mjs");
+/* harmony import */ var _utils_network_getResolutionOfUrl_mjs__WEBPACK_IMPORTED_MODULE_537__ = __webpack_require__(/*! ./utils/network/getResolutionOfUrl.mjs */ "./node_modules/pixi.js/lib/utils/network/getResolutionOfUrl.mjs");
+/* harmony import */ var _utils_path_mjs__WEBPACK_IMPORTED_MODULE_538__ = __webpack_require__(/*! ./utils/path.mjs */ "./node_modules/pixi.js/lib/utils/path.mjs");
+/* harmony import */ var _utils_pool_Pool_mjs__WEBPACK_IMPORTED_MODULE_539__ = __webpack_require__(/*! ./utils/pool/Pool.mjs */ "./node_modules/pixi.js/lib/utils/pool/Pool.mjs");
+/* harmony import */ var _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_540__ = __webpack_require__(/*! ./utils/pool/PoolGroup.mjs */ "./node_modules/pixi.js/lib/utils/pool/PoolGroup.mjs");
+/* harmony import */ var _utils_sayHello_mjs__WEBPACK_IMPORTED_MODULE_541__ = __webpack_require__(/*! ./utils/sayHello.mjs */ "./node_modules/pixi.js/lib/utils/sayHello.mjs");
+/* harmony import */ var earcut__WEBPACK_IMPORTED_MODULE_542__ = __webpack_require__(/*! earcut */ "./node_modules/earcut/src/earcut.js");
+
+
+
+
 
 
 
@@ -40786,7 +40925,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 "use strict";
-_extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_0__.extensions.add(_environment_browser_browserExt_mjs__WEBPACK_IMPORTED_MODULE_539__.browserExt, _environment_webworker_webworkerExt_mjs__WEBPACK_IMPORTED_MODULE_540__.webworkerExt);
+_extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_0__.extensions.add(_environment_browser_browserExt_mjs__WEBPACK_IMPORTED_MODULE_543__.browserExt, _environment_webworker_webworkerExt_mjs__WEBPACK_IMPORTED_MODULE_544__.webworkerExt);
 
 
 //# sourceMappingURL=index.mjs.map
@@ -43255,24 +43394,33 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 class GlBatchAdaptor {
   constructor() {
-    this._didUpload = false;
     this._tempState = _renderers_shared_state_State_mjs__WEBPACK_IMPORTED_MODULE_0__.State.for2d();
+    /**
+     * We only want to sync the a batched shaders uniforms once on first use
+     * this is a hash of shader uids to a boolean value.  When the shader is first bound
+     * we set the value to true.  When the shader is bound again we check the value and
+     * if it is true we know that the uniforms have already been synced and we skip it.
+     */
+    this._didUploadHash = {};
   }
   init(batcherPipe) {
     batcherPipe.renderer.runners.contextChange.add(this);
   }
   contextChange() {
-    this._didUpload = false;
+    this._didUploadHash = {};
   }
   start(batchPipe, geometry, shader) {
     const renderer = batchPipe.renderer;
-    renderer.shader.bind(shader, this._didUpload);
+    const didUpload = this._didUploadHash[shader.uid];
+    renderer.shader.bind(shader, didUpload);
+    if (!didUpload) {
+      this._didUploadHash[shader.uid] = true;
+    }
     renderer.shader.updateUniformGroup(renderer.globalUniforms.uniformGroup);
     renderer.geometry.bind(geometry, shader.glProgram);
   }
   execute(batchPipe, batch) {
     const renderer = batchPipe.renderer;
-    this._didUpload = true;
     this._tempState.blendMode = batch.blendMode;
     renderer.state.set(this._tempState);
     const textures = batch.textures.textures;
@@ -45623,18 +45771,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AlphaMaskPipe: () => (/* binding */ AlphaMaskPipe)
 /* harmony export */ });
-/* harmony import */ var _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../extensions/Extensions.mjs */ "./node_modules/pixi.js/lib/extensions/Extensions.mjs");
+/* harmony import */ var _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../extensions/Extensions.mjs */ "./node_modules/pixi.js/lib/extensions/Extensions.mjs");
 /* harmony import */ var _filters_FilterEffect_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../filters/FilterEffect.mjs */ "./node_modules/pixi.js/lib/filters/FilterEffect.mjs");
 /* harmony import */ var _filters_mask_MaskFilter_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../filters/mask/MaskFilter.mjs */ "./node_modules/pixi.js/lib/filters/mask/MaskFilter.mjs");
 /* harmony import */ var _scene_container_bounds_Bounds_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../scene/container/bounds/Bounds.mjs */ "./node_modules/pixi.js/lib/scene/container/bounds/Bounds.mjs");
-/* harmony import */ var _scene_container_bounds_getGlobalBounds_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../scene/container/bounds/getGlobalBounds.mjs */ "./node_modules/pixi.js/lib/scene/container/bounds/getGlobalBounds.mjs");
-/* harmony import */ var _scene_container_utils_buildInstructions_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../scene/container/utils/buildInstructions.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/buildInstructions.mjs");
+/* harmony import */ var _scene_container_bounds_getGlobalBounds_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../scene/container/bounds/getGlobalBounds.mjs */ "./node_modules/pixi.js/lib/scene/container/bounds/getGlobalBounds.mjs");
 /* harmony import */ var _scene_sprite_Sprite_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../scene/sprite/Sprite.mjs */ "./node_modules/pixi.js/lib/scene/sprite/Sprite.mjs");
-/* harmony import */ var _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../utils/pool/PoolGroup.mjs */ "./node_modules/pixi.js/lib/utils/pool/PoolGroup.mjs");
+/* harmony import */ var _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../utils/pool/PoolGroup.mjs */ "./node_modules/pixi.js/lib/utils/pool/PoolGroup.mjs");
 /* harmony import */ var _renderers_shared_texture_Texture_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../renderers/shared/texture/Texture.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/texture/Texture.mjs");
-/* harmony import */ var _renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../renderers/shared/texture/TexturePool.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/texture/TexturePool.mjs");
-/* harmony import */ var _renderers_types_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../renderers/types.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/types.mjs");
-
+/* harmony import */ var _renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../renderers/shared/texture/TexturePool.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/texture/TexturePool.mjs");
+/* harmony import */ var _renderers_types_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../renderers/types.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/types.mjs");
 
 
 
@@ -45691,10 +45837,10 @@ class AlphaMaskPipe {
     if (mask.renderMaskToTexture) {
       const maskContainer = mask.mask;
       maskContainer.includeInBuild = true;
-      (0,_scene_container_utils_buildInstructions_mjs__WEBPACK_IMPORTED_MODULE_5__.collectAllRenderables)(
-        maskContainer,
+      maskContainer.collectRenderables(
         instructionSet,
-        renderer
+        renderer,
+        null
       );
       maskContainer.includeInBuild = false;
     }
@@ -45723,15 +45869,15 @@ class AlphaMaskPipe {
     const renderer = this._renderer;
     const renderMask = instruction.mask.renderMaskToTexture;
     if (instruction.action === "pushMaskBegin") {
-      const filterEffect = _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_6__.BigPool.get(AlphaMaskEffect);
+      const filterEffect = _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_5__.BigPool.get(AlphaMaskEffect);
       filterEffect.inverse = instruction.inverse;
       if (renderMask) {
         instruction.mask.mask.measurable = true;
-        const bounds = (0,_scene_container_bounds_getGlobalBounds_mjs__WEBPACK_IMPORTED_MODULE_7__.getGlobalBounds)(instruction.mask.mask, true, tempBounds);
+        const bounds = (0,_scene_container_bounds_getGlobalBounds_mjs__WEBPACK_IMPORTED_MODULE_6__.getGlobalBounds)(instruction.mask.mask, true, tempBounds);
         instruction.mask.mask.measurable = false;
         bounds.ceil();
         const colorTextureSource = renderer.renderTarget.renderTarget.colorTexture.source;
-        const filterTexture = _renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_8__.TexturePool.getOptimalTexture(
+        const filterTexture = _renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_7__.TexturePool.getOptimalTexture(
           bounds.width,
           bounds.height,
           colorTextureSource._resolution,
@@ -45761,7 +45907,7 @@ class AlphaMaskPipe {
     } else if (instruction.action === "pushMaskEnd") {
       const maskData = this._activeMaskStage[this._activeMaskStage.length - 1];
       if (renderMask) {
-        if (renderer.type === _renderers_types_mjs__WEBPACK_IMPORTED_MODULE_9__.RendererType.WEBGL) {
+        if (renderer.type === _renderers_types_mjs__WEBPACK_IMPORTED_MODULE_8__.RendererType.WEBGL) {
           renderer.renderTarget.finishRenderPass();
         }
         renderer.renderTarget.pop();
@@ -45778,9 +45924,9 @@ class AlphaMaskPipe {
       renderer.filter.pop();
       const maskData = this._activeMaskStage.pop();
       if (renderMask) {
-        _renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_8__.TexturePool.returnTexture(maskData.filterTexture);
+        _renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_7__.TexturePool.returnTexture(maskData.filterTexture);
       }
-      _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_6__.BigPool.return(maskData.filterEffect);
+      _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_5__.BigPool.return(maskData.filterEffect);
     }
   }
   destroy() {
@@ -45791,9 +45937,9 @@ class AlphaMaskPipe {
 /** @ignore */
 AlphaMaskPipe.extension = {
   type: [
-    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_10__.ExtensionType.WebGLPipes,
-    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_10__.ExtensionType.WebGPUPipes,
-    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_10__.ExtensionType.CanvasPipes
+    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_9__.ExtensionType.WebGLPipes,
+    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_9__.ExtensionType.WebGPUPipes,
+    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_9__.ExtensionType.CanvasPipes
   ],
   name: "alphaMask"
 };
@@ -46051,11 +46197,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   StencilMaskPipe: () => (/* binding */ StencilMaskPipe)
 /* harmony export */ });
-/* harmony import */ var _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../extensions/Extensions.mjs */ "./node_modules/pixi.js/lib/extensions/Extensions.mjs");
-/* harmony import */ var _scene_container_utils_buildInstructions_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../scene/container/utils/buildInstructions.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/buildInstructions.mjs");
-/* harmony import */ var _renderers_gl_const_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../renderers/gl/const.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/gl/const.mjs");
-/* harmony import */ var _renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../renderers/shared/state/const.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/state/const.mjs");
-
+/* harmony import */ var _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../extensions/Extensions.mjs */ "./node_modules/pixi.js/lib/extensions/Extensions.mjs");
+/* harmony import */ var _renderers_gl_const_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../renderers/gl/const.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/gl/const.mjs");
+/* harmony import */ var _renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../renderers/shared/state/const.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/state/const.mjs");
 
 
 
@@ -46091,10 +46235,10 @@ class StencilMaskPipe {
     }
     const maskData = this._maskHash.get(effect);
     maskData.instructionsStart = instructionSet.instructionSize;
-    (0,_scene_container_utils_buildInstructions_mjs__WEBPACK_IMPORTED_MODULE_0__.collectAllRenderables)(
-      maskContainer,
+    maskContainer.collectRenderables(
       instructionSet,
-      renderer
+      renderer,
+      null
     );
     maskContainer.includeInBuild = false;
     renderer.renderPipes.batch.break(instructionSet);
@@ -46138,30 +46282,30 @@ class StencilMaskPipe {
     let maskStackIndex = (_a = this._maskStackHash)[renderTargetUid] ?? (_a[renderTargetUid] = 0);
     if (instruction.action === "pushMaskBegin") {
       renderer.renderTarget.ensureDepthStencil();
-      renderer.stencil.setStencilMode(_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_1__.STENCIL_MODES.RENDERING_MASK_ADD, maskStackIndex);
+      renderer.stencil.setStencilMode(_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_0__.STENCIL_MODES.RENDERING_MASK_ADD, maskStackIndex);
       maskStackIndex++;
       renderer.colorMask.setMask(0);
     } else if (instruction.action === "pushMaskEnd") {
       if (instruction.inverse) {
-        renderer.stencil.setStencilMode(_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_1__.STENCIL_MODES.INVERSE_MASK_ACTIVE, maskStackIndex);
+        renderer.stencil.setStencilMode(_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_0__.STENCIL_MODES.INVERSE_MASK_ACTIVE, maskStackIndex);
       } else {
-        renderer.stencil.setStencilMode(_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_1__.STENCIL_MODES.MASK_ACTIVE, maskStackIndex);
+        renderer.stencil.setStencilMode(_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_0__.STENCIL_MODES.MASK_ACTIVE, maskStackIndex);
       }
       renderer.colorMask.setMask(15);
     } else if (instruction.action === "popMaskBegin") {
       renderer.colorMask.setMask(0);
       if (maskStackIndex !== 0) {
-        renderer.stencil.setStencilMode(_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_1__.STENCIL_MODES.RENDERING_MASK_REMOVE, maskStackIndex);
+        renderer.stencil.setStencilMode(_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_0__.STENCIL_MODES.RENDERING_MASK_REMOVE, maskStackIndex);
       } else {
-        renderer.renderTarget.clear(null, _renderers_gl_const_mjs__WEBPACK_IMPORTED_MODULE_2__.CLEAR.STENCIL);
-        renderer.stencil.setStencilMode(_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_1__.STENCIL_MODES.DISABLED, maskStackIndex);
+        renderer.renderTarget.clear(null, _renderers_gl_const_mjs__WEBPACK_IMPORTED_MODULE_1__.CLEAR.STENCIL);
+        renderer.stencil.setStencilMode(_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_0__.STENCIL_MODES.DISABLED, maskStackIndex);
       }
       maskStackIndex--;
     } else if (instruction.action === "popMaskEnd") {
       if (instruction.inverse) {
-        renderer.stencil.setStencilMode(_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_1__.STENCIL_MODES.INVERSE_MASK_ACTIVE, maskStackIndex);
+        renderer.stencil.setStencilMode(_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_0__.STENCIL_MODES.INVERSE_MASK_ACTIVE, maskStackIndex);
       } else {
-        renderer.stencil.setStencilMode(_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_1__.STENCIL_MODES.MASK_ACTIVE, maskStackIndex);
+        renderer.stencil.setStencilMode(_renderers_shared_state_const_mjs__WEBPACK_IMPORTED_MODULE_0__.STENCIL_MODES.MASK_ACTIVE, maskStackIndex);
       }
       renderer.colorMask.setMask(15);
     }
@@ -46175,9 +46319,9 @@ class StencilMaskPipe {
 }
 StencilMaskPipe.extension = {
   type: [
-    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_3__.ExtensionType.WebGLPipes,
-    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_3__.ExtensionType.WebGPUPipes,
-    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_3__.ExtensionType.CanvasPipes
+    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_2__.ExtensionType.WebGLPipes,
+    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_2__.ExtensionType.WebGPUPipes,
+    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_2__.ExtensionType.CanvasPipes
   ],
   name: "stencilMask"
 };
@@ -46291,10 +46435,8 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 const renderPriority = ["webgl", "webgpu", "canvas"];
 async function autoDetectRenderer(options) {
-  console.log('autoDetectRenderer===================1')
   let preferredOrder = [];
   if (options.preference) {
-    console.log('autoDetectRenderer===================2')
     preferredOrder.push(options.preference);
     renderPriority.forEach((item) => {
       if (item !== options.preference) {
@@ -46302,46 +46444,36 @@ async function autoDetectRenderer(options) {
       }
     });
   } else {
-    console.log('autoDetectRenderer===================3')
     preferredOrder = renderPriority.slice();
   }
   let RendererClass;
   let finalOptions = {};
-  console.log('autoDetectRenderer===================4')
   for (let i = 0; i < preferredOrder.length; i++) {
-    console.log('autoDetectRenderer===================5')
     const rendererType = preferredOrder[i];
     if (rendererType === "webgpu" && await (0,_utils_browser_isWebGPUSupported_mjs__WEBPACK_IMPORTED_MODULE_0__.isWebGPUSupported)()) {
-      console.log('autoDetectRenderer===================6')
       const { WebGPURenderer } = await Promise.resolve(/*! import() */).then(__webpack_require__.bind(__webpack_require__, /*! ./gpu/WebGPURenderer.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/gpu/WebGPURenderer.mjs"));
       RendererClass = WebGPURenderer;
       finalOptions = { ...options, ...options.webgpu };
-      console.log('autoDetectRenderer===================7')
       break;
     } else if (rendererType === "webgl" && (0,_utils_browser_isWebGLSupported_mjs__WEBPACK_IMPORTED_MODULE_1__.isWebGLSupported)(
       options.failIfMajorPerformanceCaveat ?? _shared_system_AbstractRenderer_mjs__WEBPACK_IMPORTED_MODULE_2__.AbstractRenderer.defaultOptions.failIfMajorPerformanceCaveat
     )) {
-      console.log('autoDetectRenderer===================8')
       const { WebGLRenderer } = await Promise.resolve(/*! import() */).then(__webpack_require__.bind(__webpack_require__, /*! ./gl/WebGLRenderer.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/gl/WebGLRenderer.mjs"));
       RendererClass = WebGLRenderer;
       finalOptions = { ...options, ...options.webgl };
       break;
     } else if (rendererType === "canvas") {
-      console.log('autoDetectRenderer===================9')
       finalOptions = { ...options };
       throw new Error("CanvasRenderer is not yet implemented");
     }
   }
-  console.log('autoDetectRenderer===================10')
   delete finalOptions.webgpu;
   delete finalOptions.webgl;
   if (!RendererClass) {
     throw new Error("No available renderer for the current environment");
   }
   const renderer = new RendererClass();
-  console.log('autoDetectRenderer===================11')
   await renderer.init(finalOptions);
-  console.log('autoDetectRenderer===================12')
   return renderer;
 }
 
@@ -47123,6 +47255,9 @@ class GlBufferSystem {
     buffer.on("destroy", this.onBufferDestroy, this);
     return glBuffer;
   }
+  resetState() {
+    this._boundBufferBases = /* @__PURE__ */ Object.create(null);
+  }
 }
 /** @ignore */
 GlBufferSystem.extension = {
@@ -47569,7 +47704,7 @@ class GlGeometrySystem {
     this.updateBuffers();
   }
   /** Reset and unbind any active VAO and geometry. */
-  reset() {
+  resetState() {
     this.unbind();
   }
   /** Update buffers of the currently bound geometry. */
@@ -48611,6 +48746,9 @@ class GlShaderSystem {
    */
   _generateShaderSync(shader, shaderSystem) {
     return (0,_GenerateShaderSyncCode_mjs__WEBPACK_IMPORTED_MODULE_2__.generateShaderSyncCode)(shader, shaderSystem);
+  }
+  resetState() {
+    this._activeProgram = null;
   }
 }
 /** @ignore */
@@ -50024,7 +50162,7 @@ const _GlStateSystem = class _GlStateSystem {
   contextChange(gl) {
     this.gl = gl;
     this.blendModesMap = (0,_mapWebGLBlendModesToPixi_mjs__WEBPACK_IMPORTED_MODULE_1__.mapWebGLBlendModesToPixi)(gl);
-    this.reset();
+    this.resetState();
   }
   /**
    * Sets the current state
@@ -50143,7 +50281,7 @@ const _GlStateSystem = class _GlStateSystem {
   }
   // used
   /** Resets all the logic and disables the VAOs. */
-  reset() {
+  resetState() {
     this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, false);
     this.forceState(this.defaultState);
     this._blendEq = true;
@@ -50339,6 +50477,7 @@ class GlTextureSystem {
       video: _uploaders_glUploadVideoResource_mjs__WEBPACK_IMPORTED_MODULE_2__.glUploadVideoResource,
       compressed: _uploaders_glUploadCompressedTextureResource_mjs__WEBPACK_IMPORTED_MODULE_3__.glUploadCompressedTextureResource
     };
+    this._premultiplyAlpha = false;
     // TODO - separate samplers will be a cool thing to add, but not right now!
     this._useSeparateSamplers = false;
     this._renderer = renderer;
@@ -50355,6 +50494,7 @@ class GlTextureSystem {
     this._glTextures = /* @__PURE__ */ Object.create(null);
     this._glSamplers = /* @__PURE__ */ Object.create(null);
     this._boundSamplers = /* @__PURE__ */ Object.create(null);
+    this._premultiplyAlpha = false;
     for (let i = 0; i < 16; i++) {
       this.bind(_shared_texture_Texture_mjs__WEBPACK_IMPORTED_MODULE_7__.Texture.EMPTY, i);
     }
@@ -50476,6 +50616,11 @@ class GlTextureSystem {
     const glTexture = this.getGlSource(source);
     gl.bindTexture(gl.TEXTURE_2D, glTexture.texture);
     this._boundTextures[this._activeTextureLocation] = source;
+    const premultipliedAlpha = source.alphaMode === "premultiply-alpha-on-upload";
+    if (this._premultiplyAlpha !== premultipliedAlpha) {
+      this._premultiplyAlpha = premultipliedAlpha;
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, premultipliedAlpha);
+    }
     if (this._uploads[source.uploadMethodId]) {
       this._uploads[source.uploadMethodId].upload(source, glTexture, gl, this._renderer.context.webGLVersion);
     } else {
@@ -50563,6 +50708,11 @@ class GlTextureSystem {
     this.managedTextures.slice().forEach((source) => this.onSourceDestroy(source));
     this.managedTextures = null;
     this._renderer = null;
+  }
+  resetState() {
+    this._activeTextureLocation = -1;
+    this._boundTextures.fill(_shared_texture_Texture_mjs__WEBPACK_IMPORTED_MODULE_7__.Texture.EMPTY.source);
+    this._boundSamplers = /* @__PURE__ */ Object.create(null);
   }
 }
 /** @ignore */
@@ -50834,8 +50984,6 @@ __webpack_require__.r(__webpack_exports__);
 const glUploadImageResource = {
   id: "image",
   upload(source, glTexture, gl, webGLVersion) {
-    const premultipliedAlpha = source.alphaMode === "premultiply-alpha-on-upload";
-    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, premultipliedAlpha);
     const glWidth = glTexture.width;
     const glHeight = glTexture.height;
     const textureWidth = source.pixelWidth;
@@ -56835,6 +56983,10 @@ class RenderTargetSystem {
   getGpuRenderTarget(renderTarget) {
     return this._gpuRenderTargetHash[renderTarget.uid] || (this._gpuRenderTargetHash[renderTarget.uid] = this.adaptor.initGpuRenderTarget(renderTarget));
   }
+  resetState() {
+    this.renderTarget = null;
+    this.renderSurface = null;
+  }
 }
 
 
@@ -56911,11 +57063,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Shader: () => (/* binding */ Shader)
 /* harmony export */ });
 /* harmony import */ var eventemitter3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.mjs");
-/* harmony import */ var _gl_shader_GlProgram_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../gl/shader/GlProgram.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/gl/shader/GlProgram.mjs");
-/* harmony import */ var _gpu_shader_BindGroup_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../gpu/shader/BindGroup.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/gpu/shader/BindGroup.mjs");
-/* harmony import */ var _gpu_shader_GpuProgram_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../gpu/shader/GpuProgram.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/gpu/shader/GpuProgram.mjs");
-/* harmony import */ var _types_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../types.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/types.mjs");
-/* harmony import */ var _UniformGroup_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./UniformGroup.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/shader/UniformGroup.mjs");
+/* harmony import */ var _gl_shader_GlProgram_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../gl/shader/GlProgram.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/gl/shader/GlProgram.mjs");
+/* harmony import */ var _gpu_shader_BindGroup_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../gpu/shader/BindGroup.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/gpu/shader/BindGroup.mjs");
+/* harmony import */ var _gpu_shader_GpuProgram_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../gpu/shader/GpuProgram.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/gpu/shader/GpuProgram.mjs");
+/* harmony import */ var _types_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../types.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/types.mjs");
+/* harmony import */ var _UniformGroup_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./UniformGroup.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/shader/UniformGroup.mjs");
+/* harmony import */ var _utils_data_uid_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../utils/data/uid.mjs */ "./node_modules/pixi.js/lib/utils/data/uid.mjs");
+
 
 
 
@@ -56927,6 +57081,8 @@ __webpack_require__.r(__webpack_exports__);
 class Shader extends eventemitter3__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor(options) {
     super();
+    /** A unique identifier for the shader */
+    this.uid = (0,_utils_data_uid_mjs__WEBPACK_IMPORTED_MODULE_1__.uid)("shader");
     /**
      * A record of the uniform groups and resources used by the shader.
      * This is used by WebGL renderer to sync uniform data.
@@ -56948,9 +57104,9 @@ class Shader extends eventemitter3__WEBPACK_IMPORTED_MODULE_0__["default"] {
     if (compatibleRenderers === void 0) {
       compatibleRenderers = 0;
       if (gpuProgram)
-        compatibleRenderers |= _types_mjs__WEBPACK_IMPORTED_MODULE_1__.RendererType.WEBGPU;
+        compatibleRenderers |= _types_mjs__WEBPACK_IMPORTED_MODULE_2__.RendererType.WEBGPU;
       if (glProgram)
-        compatibleRenderers |= _types_mjs__WEBPACK_IMPORTED_MODULE_1__.RendererType.WEBGL;
+        compatibleRenderers |= _types_mjs__WEBPACK_IMPORTED_MODULE_2__.RendererType.WEBGL;
     }
     this.compatibleRenderers = compatibleRenderers;
     const nameHash = {};
@@ -56996,7 +57152,7 @@ class Shader extends eventemitter3__WEBPACK_IMPORTED_MODULE_0__["default"] {
         if (nameHash[i])
           continue;
         if (!groups[99]) {
-          groups[99] = new _gpu_shader_BindGroup_mjs__WEBPACK_IMPORTED_MODULE_2__.BindGroup();
+          groups[99] = new _gpu_shader_BindGroup_mjs__WEBPACK_IMPORTED_MODULE_3__.BindGroup();
           this._ownedBindGroups.push(groups[99]);
         }
         nameHash[i] = { group: 99, binding: bindTick, name: i };
@@ -57008,12 +57164,12 @@ class Shader extends eventemitter3__WEBPACK_IMPORTED_MODULE_0__["default"] {
         const name = i;
         let value = resources[i];
         if (!value.source && !value._resourceType) {
-          value = new _UniformGroup_mjs__WEBPACK_IMPORTED_MODULE_3__.UniformGroup(value);
+          value = new _UniformGroup_mjs__WEBPACK_IMPORTED_MODULE_4__.UniformGroup(value);
         }
         const data = nameHash[name];
         if (data) {
           if (!groups[data.group]) {
-            groups[data.group] = new _gpu_shader_BindGroup_mjs__WEBPACK_IMPORTED_MODULE_2__.BindGroup();
+            groups[data.group] = new _gpu_shader_BindGroup_mjs__WEBPACK_IMPORTED_MODULE_3__.BindGroup();
             this._ownedBindGroups.push(groups[data.group]);
           }
           groups[data.group].setResource(value, data.binding);
@@ -57036,7 +57192,7 @@ class Shader extends eventemitter3__WEBPACK_IMPORTED_MODULE_0__["default"] {
     (_a = this._uniformBindMap)[groupIndex] || (_a[groupIndex] = {});
     (_b = this._uniformBindMap[groupIndex])[bindIndex] || (_b[bindIndex] = name);
     if (!this.groups[groupIndex]) {
-      this.groups[groupIndex] = new _gpu_shader_BindGroup_mjs__WEBPACK_IMPORTED_MODULE_2__.BindGroup();
+      this.groups[groupIndex] = new _gpu_shader_BindGroup_mjs__WEBPACK_IMPORTED_MODULE_3__.BindGroup();
       this._ownedBindGroups.push(this.groups[groupIndex]);
     }
   }
@@ -57083,10 +57239,10 @@ class Shader extends eventemitter3__WEBPACK_IMPORTED_MODULE_0__["default"] {
     let gpuProgram;
     let glProgram;
     if (gpu) {
-      gpuProgram = _gpu_shader_GpuProgram_mjs__WEBPACK_IMPORTED_MODULE_4__.GpuProgram.from(gpu);
+      gpuProgram = _gpu_shader_GpuProgram_mjs__WEBPACK_IMPORTED_MODULE_5__.GpuProgram.from(gpu);
     }
     if (gl) {
-      glProgram = _gl_shader_GlProgram_mjs__WEBPACK_IMPORTED_MODULE_5__.GlProgram.from(gl);
+      glProgram = _gl_shader_GlProgram_mjs__WEBPACK_IMPORTED_MODULE_6__.GlProgram.from(gl);
     }
     return new Shader({
       gpuProgram,
@@ -58053,7 +58209,7 @@ const defaultRunners = [
   "destroy",
   "contextChange",
   "resolutionChange",
-  "reset",
+  "resetState",
   "renderEnd",
   "renderStart",
   "render",
@@ -58086,9 +58242,7 @@ const _AbstractRenderer = class _AbstractRenderer extends eventemitter3__WEBPACK
    */
   async init(options = {}) {
     const skip = options.skipExtensionImports === true ? true : options.manageImports === false;
-    console.log('RendererInit===================1')
     await (0,_environment_autoDetectEnvironment_mjs__WEBPACK_IMPORTED_MODULE_1__.loadEnvironmentExtensions)(skip);
-    console.log('RendererInit===================2')
     this._addSystems(this.config.systems);
     this._addPipes(this.config.renderPipes, this.config.renderPipeAdaptors);
     for (const systemName in this._systemsHash) {
@@ -58115,7 +58269,8 @@ const _AbstractRenderer = class _AbstractRenderer extends eventemitter3__WEBPACK
     options.target || (options.target = this.view.renderTarget);
     if (options.target === this.view.renderTarget) {
       this._lastObjectRendered = options.container;
-      options.clearColor = this.background.colorRgba;
+      options.clearColor ?? (options.clearColor = this.background.colorRgba);
+      options.clear ?? (options.clear = this.background.clearBeforeRender);
     }
     if (options.clearColor) {
       const isRGBAArray = Array.isArray(options.clearColor) && options.clearColor.length === 4;
@@ -58297,6 +58452,30 @@ const _AbstractRenderer = class _AbstractRenderer extends eventemitter3__WEBPACK
     if (!(0,_utils_browser_unsafeEvalSupported_mjs__WEBPACK_IMPORTED_MODULE_7__.unsafeEvalSupported)()) {
       throw new Error("Current environment does not allow unsafe-eval, please use pixi.js/unsafe-eval module to enable support.");
     }
+  }
+  /**
+   * Resets the rendering state of the renderer.
+   * This is useful when you want to use the WebGL context directly and need to ensure PixiJS's internal state
+   * stays synchronized. When modifying the WebGL context state externally, calling this method before the next Pixi
+   * render will reset all internal caches and ensure it executes correctly.
+   *
+   * This is particularly useful when combining PixiJS with other rendering engines like Three.js:
+   * ```js
+   * // Reset Three.js state
+   * threeRenderer.resetState();
+   *
+   * // Render a Three.js scene
+   * threeRenderer.render(threeScene, threeCamera);
+   *
+   * // Reset PixiJS state since Three.js modified the WebGL context
+   * pixiRenderer.resetState();
+   *
+   * // Now render Pixi content
+   * pixiRenderer.render(pixiScene);
+   * ```
+   */
+  resetState() {
+    this.runners.resetState.emit();
   }
 };
 /** The default options for the renderer. */
@@ -59359,7 +59538,7 @@ class TexturePoolClass {
       height: pixelHeight,
       resolution: 1,
       antialias,
-      autoGarbageCollect: true
+      autoGarbageCollect: false
     });
     return new _Texture_mjs__WEBPACK_IMPORTED_MODULE_1__.Texture({
       source: textureSource,
@@ -61142,24 +61321,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var eventemitter3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.mjs");
 /* harmony import */ var _color_Color_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../color/Color.mjs */ "./node_modules/pixi.js/lib/color/Color.mjs");
-/* harmony import */ var _culling_cullingMixin_mjs__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../culling/cullingMixin.mjs */ "./node_modules/pixi.js/lib/culling/cullingMixin.mjs");
+/* harmony import */ var _culling_cullingMixin_mjs__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../culling/cullingMixin.mjs */ "./node_modules/pixi.js/lib/culling/cullingMixin.mjs");
 /* harmony import */ var _maths_matrix_Matrix_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../maths/matrix/Matrix.mjs */ "./node_modules/pixi.js/lib/maths/matrix/Matrix.mjs");
 /* harmony import */ var _maths_misc_const_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../maths/misc/const.mjs */ "./node_modules/pixi.js/lib/maths/misc/const.mjs");
 /* harmony import */ var _maths_point_ObservablePoint_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../maths/point/ObservablePoint.mjs */ "./node_modules/pixi.js/lib/maths/point/ObservablePoint.mjs");
 /* harmony import */ var _utils_data_uid_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../utils/data/uid.mjs */ "./node_modules/pixi.js/lib/utils/data/uid.mjs");
 /* harmony import */ var _utils_logging_deprecation_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils/logging/deprecation.mjs */ "./node_modules/pixi.js/lib/utils/logging/deprecation.mjs");
 /* harmony import */ var _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../utils/pool/PoolGroup.mjs */ "./node_modules/pixi.js/lib/utils/pool/PoolGroup.mjs");
-/* harmony import */ var _container_mixins_cacheAsTextureMixin_mjs__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./container-mixins/cacheAsTextureMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/cacheAsTextureMixin.mjs");
+/* harmony import */ var _container_mixins_cacheAsTextureMixin_mjs__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./container-mixins/cacheAsTextureMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/cacheAsTextureMixin.mjs");
 /* harmony import */ var _container_mixins_childrenHelperMixin_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./container-mixins/childrenHelperMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/childrenHelperMixin.mjs");
-/* harmony import */ var _container_mixins_effectsMixin_mjs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./container-mixins/effectsMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/effectsMixin.mjs");
-/* harmony import */ var _container_mixins_findMixin_mjs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./container-mixins/findMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/findMixin.mjs");
+/* harmony import */ var _container_mixins_collectRenderablesMixin_mjs__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./container-mixins/collectRenderablesMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/collectRenderablesMixin.mjs");
+/* harmony import */ var _container_mixins_effectsMixin_mjs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./container-mixins/effectsMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/effectsMixin.mjs");
+/* harmony import */ var _container_mixins_findMixin_mjs__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./container-mixins/findMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/findMixin.mjs");
+/* harmony import */ var _container_mixins_getFastGlobalBoundsMixin_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./container-mixins/getFastGlobalBoundsMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/getFastGlobalBoundsMixin.mjs");
 /* harmony import */ var _container_mixins_getGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./container-mixins/getGlobalMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/getGlobalMixin.mjs");
-/* harmony import */ var _container_mixins_measureMixin_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./container-mixins/measureMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/measureMixin.mjs");
-/* harmony import */ var _container_mixins_onRenderMixin_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./container-mixins/onRenderMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/onRenderMixin.mjs");
-/* harmony import */ var _container_mixins_sortMixin_mjs__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./container-mixins/sortMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/sortMixin.mjs");
-/* harmony import */ var _container_mixins_toLocalGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./container-mixins/toLocalGlobalMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/toLocalGlobalMixin.mjs");
+/* harmony import */ var _container_mixins_measureMixin_mjs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./container-mixins/measureMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/measureMixin.mjs");
+/* harmony import */ var _container_mixins_onRenderMixin_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./container-mixins/onRenderMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/onRenderMixin.mjs");
+/* harmony import */ var _container_mixins_sortMixin_mjs__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./container-mixins/sortMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/sortMixin.mjs");
+/* harmony import */ var _container_mixins_toLocalGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./container-mixins/toLocalGlobalMixin.mjs */ "./node_modules/pixi.js/lib/scene/container/container-mixins/toLocalGlobalMixin.mjs");
 /* harmony import */ var _RenderGroup_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./RenderGroup.mjs */ "./node_modules/pixi.js/lib/scene/container/RenderGroup.mjs");
 /* harmony import */ var _utils_assignWithIgnore_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils/assignWithIgnore.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/assignWithIgnore.mjs");
+
+
 
 
 
@@ -61394,6 +61577,7 @@ class Container extends eventemitter3__WEBPACK_IMPORTED_MODULE_0__["default"] {
   static mixin(source) {
     Object.defineProperties(Container.prototype, Object.getOwnPropertyDescriptors(source));
   }
+  // = 'default';
   /**
    * We now use the _didContainerChangeTick and _didViewChangeTick to track changes
    * @deprecated since 8.2.6
@@ -61474,6 +61658,9 @@ class Container extends eventemitter3__WEBPACK_IMPORTED_MODULE_0__["default"] {
         this.renderGroup.removeChild(child);
       } else if (this.parentRenderGroup) {
         this.parentRenderGroup.removeChild(child);
+      }
+      if (child.parentRenderLayer) {
+        child.parentRenderLayer.detach(child);
       }
       child.parent = null;
       this.emit("childRemoved", child, this, index);
@@ -61931,15 +62118,17 @@ class Container extends eventemitter3__WEBPACK_IMPORTED_MODULE_0__["default"] {
   }
 }
 Container.mixin(_container_mixins_childrenHelperMixin_mjs__WEBPACK_IMPORTED_MODULE_11__.childrenHelperMixin);
-Container.mixin(_container_mixins_toLocalGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_12__.toLocalGlobalMixin);
-Container.mixin(_container_mixins_onRenderMixin_mjs__WEBPACK_IMPORTED_MODULE_13__.onRenderMixin);
-Container.mixin(_container_mixins_measureMixin_mjs__WEBPACK_IMPORTED_MODULE_14__.measureMixin);
-Container.mixin(_container_mixins_effectsMixin_mjs__WEBPACK_IMPORTED_MODULE_15__.effectsMixin);
-Container.mixin(_container_mixins_findMixin_mjs__WEBPACK_IMPORTED_MODULE_16__.findMixin);
-Container.mixin(_container_mixins_sortMixin_mjs__WEBPACK_IMPORTED_MODULE_17__.sortMixin);
-Container.mixin(_culling_cullingMixin_mjs__WEBPACK_IMPORTED_MODULE_18__.cullingMixin);
-Container.mixin(_container_mixins_cacheAsTextureMixin_mjs__WEBPACK_IMPORTED_MODULE_19__.cacheAsTextureMixin);
+Container.mixin(_container_mixins_getFastGlobalBoundsMixin_mjs__WEBPACK_IMPORTED_MODULE_12__.getFastGlobalBoundsMixin);
+Container.mixin(_container_mixins_toLocalGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_13__.toLocalGlobalMixin);
+Container.mixin(_container_mixins_onRenderMixin_mjs__WEBPACK_IMPORTED_MODULE_14__.onRenderMixin);
+Container.mixin(_container_mixins_measureMixin_mjs__WEBPACK_IMPORTED_MODULE_15__.measureMixin);
+Container.mixin(_container_mixins_effectsMixin_mjs__WEBPACK_IMPORTED_MODULE_16__.effectsMixin);
+Container.mixin(_container_mixins_findMixin_mjs__WEBPACK_IMPORTED_MODULE_17__.findMixin);
+Container.mixin(_container_mixins_sortMixin_mjs__WEBPACK_IMPORTED_MODULE_18__.sortMixin);
+Container.mixin(_culling_cullingMixin_mjs__WEBPACK_IMPORTED_MODULE_19__.cullingMixin);
+Container.mixin(_container_mixins_cacheAsTextureMixin_mjs__WEBPACK_IMPORTED_MODULE_20__.cacheAsTextureMixin);
 Container.mixin(_container_mixins_getGlobalMixin_mjs__WEBPACK_IMPORTED_MODULE_10__.getGlobalMixin);
+Container.mixin(_container_mixins_collectRenderablesMixin_mjs__WEBPACK_IMPORTED_MODULE_21__.collectRenderablesMixin);
 
 
 //# sourceMappingURL=Container.mjs.map
@@ -62244,9 +62433,9 @@ class RenderGroup {
   removeOnRender(container) {
     this._onRenderContainers.splice(this._onRenderContainers.indexOf(container), 1);
   }
-  runOnRender() {
+  runOnRender(renderer) {
     for (let i = 0; i < this._onRenderContainers.length; i++) {
-      this._onRenderContainers[i]._onRender();
+      this._onRenderContainers[i]._onRender(renderer);
     }
   }
   destroy() {
@@ -62461,16 +62650,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   RenderGroupSystem: () => (/* binding */ RenderGroupSystem)
 /* harmony export */ });
-/* harmony import */ var _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../extensions/Extensions.mjs */ "./node_modules/pixi.js/lib/extensions/Extensions.mjs");
+/* harmony import */ var _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../extensions/Extensions.mjs */ "./node_modules/pixi.js/lib/extensions/Extensions.mjs");
 /* harmony import */ var _maths_matrix_Matrix_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../maths/matrix/Matrix.mjs */ "./node_modules/pixi.js/lib/maths/matrix/Matrix.mjs");
 /* harmony import */ var _rendering_renderers_shared_texture_TexturePool_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../rendering/renderers/shared/texture/TexturePool.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/texture/TexturePool.mjs");
 /* harmony import */ var _bounds_Bounds_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./bounds/Bounds.mjs */ "./node_modules/pixi.js/lib/scene/container/bounds/Bounds.mjs");
-/* harmony import */ var _utils_buildInstructions_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/buildInstructions.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/buildInstructions.mjs");
 /* harmony import */ var _utils_clearList_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./utils/clearList.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/clearList.mjs");
 /* harmony import */ var _utils_executeInstructions_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils/executeInstructions.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/executeInstructions.mjs");
 /* harmony import */ var _utils_updateRenderGroupTransforms_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils/updateRenderGroupTransforms.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/updateRenderGroupTransforms.mjs");
 /* harmony import */ var _utils_validateRenderables_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils/validateRenderables.mjs */ "./node_modules/pixi.js/lib/scene/container/utils/validateRenderables.mjs");
-
 
 
 
@@ -62561,7 +62748,7 @@ class RenderGroupSystem {
   _updateRenderGroups(renderGroup) {
     const renderer = this._renderer;
     const renderPipes = renderer.renderPipes;
-    renderGroup.runOnRender();
+    renderGroup.runOnRender(renderer);
     renderGroup.instructionSet.renderPipes = renderPipes;
     if (!renderGroup.structureDidChange) {
       (0,_utils_validateRenderables_mjs__WEBPACK_IMPORTED_MODULE_4__.validateRenderables)(renderGroup, renderPipes);
@@ -62571,7 +62758,7 @@ class RenderGroupSystem {
     (0,_utils_updateRenderGroupTransforms_mjs__WEBPACK_IMPORTED_MODULE_6__.updateRenderGroupTransforms)(renderGroup);
     if (renderGroup.structureDidChange) {
       renderGroup.structureDidChange = false;
-      (0,_utils_buildInstructions_mjs__WEBPACK_IMPORTED_MODULE_7__.buildInstructions)(renderGroup, renderer);
+      this._buildInstructions(renderGroup, renderer);
     } else {
       this._updateRenderables(renderGroup);
     }
@@ -62593,13 +62780,29 @@ class RenderGroupSystem {
     }
     (0,_utils_clearList_mjs__WEBPACK_IMPORTED_MODULE_5__.clearList)(list, index);
   }
+  _buildInstructions(renderGroup, rendererOrPipes) {
+    const root = renderGroup.root;
+    const instructionSet = renderGroup.instructionSet;
+    instructionSet.reset();
+    const renderer = rendererOrPipes.renderPipes ? rendererOrPipes : rendererOrPipes.batch.renderer;
+    const renderPipes = renderer.renderPipes;
+    renderPipes.batch.buildStart(instructionSet);
+    renderPipes.blendMode.buildStart();
+    renderPipes.colorMask.buildStart();
+    if (root.sortableChildren) {
+      root.sortChildren();
+    }
+    root.collectRenderablesWithEffects(instructionSet, renderer, null);
+    renderPipes.batch.buildEnd(instructionSet);
+    renderPipes.blendMode.buildEnd(instructionSet);
+  }
 }
 /** @ignore */
 RenderGroupSystem.extension = {
   type: [
-    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_8__.ExtensionType.WebGLSystem,
-    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_8__.ExtensionType.WebGPUSystem,
-    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_8__.ExtensionType.CanvasSystem
+    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_7__.ExtensionType.WebGLSystem,
+    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_7__.ExtensionType.WebGPUSystem,
+    _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_7__.ExtensionType.CanvasSystem
   ],
   name: "renderGroup"
 };
@@ -63017,75 +63220,15 @@ class Bounds {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   _getGlobalBoundsRecursive: () => (/* binding */ _getGlobalBoundsRecursive),
 /* harmony export */   getFastGlobalBounds: () => (/* binding */ getFastGlobalBounds)
 /* harmony export */ });
-/* harmony import */ var _maths_matrix_Matrix_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../maths/matrix/Matrix.mjs */ "./node_modules/pixi.js/lib/maths/matrix/Matrix.mjs");
-/* harmony import */ var _utils_matrixAndBoundsPool_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils/matrixAndBoundsPool.mjs */ "./node_modules/pixi.js/lib/scene/container/bounds/utils/matrixAndBoundsPool.mjs");
-
+/* harmony import */ var _utils_logging_deprecation_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../utils/logging/deprecation.mjs */ "./node_modules/pixi.js/lib/utils/logging/deprecation.mjs");
 
 
 "use strict";
-const tempMatrix = new _maths_matrix_Matrix_mjs__WEBPACK_IMPORTED_MODULE_0__.Matrix();
 function getFastGlobalBounds(target, bounds) {
-  bounds.clear();
-  _getGlobalBoundsRecursive(target, bounds);
-  if (!bounds.isValid) {
-    bounds.set(0, 0, 0, 0);
-  }
-  const renderGroup = target.renderGroup || target.parentRenderGroup;
-  bounds.applyMatrix(renderGroup.worldTransform);
-  return bounds;
-}
-function _getGlobalBoundsRecursive(target, bounds) {
-  if (target.localDisplayStatus !== 7 || !target.measurable) {
-    return;
-  }
-  const manageEffects = !!target.effects.length;
-  let localBounds = bounds;
-  if (target.renderGroup || manageEffects) {
-    localBounds = _utils_matrixAndBoundsPool_mjs__WEBPACK_IMPORTED_MODULE_1__.boundsPool.get().clear();
-  }
-  if (target.boundsArea) {
-    bounds.addRect(target.boundsArea, target.worldTransform);
-  } else {
-    if (target.renderPipeId) {
-      const viewBounds = target.bounds;
-      localBounds.addFrame(
-        viewBounds.minX,
-        viewBounds.minY,
-        viewBounds.maxX,
-        viewBounds.maxY,
-        target.groupTransform
-      );
-    }
-    const children = target.children;
-    for (let i = 0; i < children.length; i++) {
-      _getGlobalBoundsRecursive(children[i], localBounds);
-    }
-  }
-  if (manageEffects) {
-    let advanced = false;
-    const renderGroup = target.renderGroup || target.parentRenderGroup;
-    for (let i = 0; i < target.effects.length; i++) {
-      if (target.effects[i].addBounds) {
-        if (!advanced) {
-          advanced = true;
-          localBounds.applyMatrix(renderGroup.worldTransform);
-        }
-        target.effects[i].addBounds(localBounds, true);
-      }
-    }
-    if (advanced) {
-      localBounds.applyMatrix(renderGroup.worldTransform.copyTo(tempMatrix).invert());
-      bounds.addBounds(localBounds, target.relativeGroupTransform);
-    }
-    bounds.addBounds(localBounds);
-    _utils_matrixAndBoundsPool_mjs__WEBPACK_IMPORTED_MODULE_1__.boundsPool.return(localBounds);
-  } else if (target.renderGroup) {
-    bounds.addBounds(localBounds, target.relativeGroupTransform);
-    _utils_matrixAndBoundsPool_mjs__WEBPACK_IMPORTED_MODULE_1__.boundsPool.return(localBounds);
-  }
+  (0,_utils_logging_deprecation_mjs__WEBPACK_IMPORTED_MODULE_0__.deprecation)("8.7.0", "Use container.getFastGlobalBounds() instead");
+  return target.getFastGlobalBounds(true, bounds);
 }
 
 
@@ -63614,6 +63757,86 @@ const childrenHelperMixin = {
 
 /***/ }),
 
+/***/ "./node_modules/pixi.js/lib/scene/container/container-mixins/collectRenderablesMixin.mjs":
+/*!***********************************************************************************************!*\
+  !*** ./node_modules/pixi.js/lib/scene/container/container-mixins/collectRenderablesMixin.mjs ***!
+  \***********************************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   collectRenderablesMixin: () => (/* binding */ collectRenderablesMixin)
+/* harmony export */ });
+
+const collectRenderablesMixin = {
+  /**
+   * Main method to collect renderables from the container and its children.
+   * It checks the container's properties to decide whether to use a simple or advanced collection method.
+   * @param {InstructionSet} instructionSet - The set of instructions to which the renderables will be added.
+   * @param {Renderer} renderer - The renderer responsible for rendering the scene.
+   * @param {IRenderLayer} currentLayer - The current render layer being processed.
+   * @memberof scene.Container#
+   */
+  collectRenderables(instructionSet, renderer, currentLayer) {
+    if (this.parentRenderLayer && this.parentRenderLayer !== currentLayer || this.globalDisplayStatus < 7 || !this.includeInBuild)
+      return;
+    if (this.sortableChildren) {
+      this.sortChildren();
+    }
+    if (this.isSimple) {
+      this.collectRenderablesSimple(instructionSet, renderer, currentLayer);
+    } else if (this.renderGroup) {
+      renderer.renderPipes.renderGroup.addRenderGroup(this.renderGroup, instructionSet);
+    } else {
+      this.collectRenderablesWithEffects(instructionSet, renderer, currentLayer);
+    }
+  },
+  /**
+   * Simple method for collecting renderables from the container's children.
+   * This method is efficient and used when the container is marked as simple.
+   * @param {InstructionSet} instructionSet - The set of instructions to which the renderables will be added.
+   * @param {Renderer} renderer - The renderer responsible for rendering the scene.
+   * @param {IRenderLayer} currentLayer - The current render layer being processed.
+   * @memberof scene.Container#
+   */
+  collectRenderablesSimple(instructionSet, renderer, currentLayer) {
+    const children = this.children;
+    const length = children.length;
+    for (let i = 0; i < length; i++) {
+      children[i].collectRenderables(instructionSet, renderer, currentLayer);
+    }
+  },
+  /**
+   * Advanced method for collecting renderables, which handles additional effects.
+   * This method is used when the container has complex processing needs.
+   * @param {InstructionSet} instructionSet - The set of instructions to which the renderables will be added.
+   * @param {Renderer} renderer - The renderer responsible for rendering the scene.
+   * @param {IRenderLayer} currentLayer - The current render layer being processed.
+   * @memberof scene.Container#
+   */
+  collectRenderablesWithEffects(instructionSet, renderer, currentLayer) {
+    const { renderPipes } = renderer;
+    for (let i = 0; i < this.effects.length; i++) {
+      const effect = this.effects[i];
+      const pipe = renderPipes[effect.pipe];
+      pipe.push(effect, this, instructionSet);
+    }
+    this.collectRenderablesSimple(instructionSet, renderer, currentLayer);
+    for (let i = this.effects.length - 1; i >= 0; i--) {
+      const effect = this.effects[i];
+      const pipe = renderPipes[effect.pipe];
+      pipe.pop(effect, this, instructionSet);
+    }
+  }
+};
+
+
+//# sourceMappingURL=collectRenderablesMixin.mjs.map
+
+
+/***/ }),
+
 /***/ "./node_modules/pixi.js/lib/scene/container/container-mixins/effectsMixin.mjs":
 /*!************************************************************************************!*\
   !*** ./node_modules/pixi.js/lib/scene/container/container-mixins/effectsMixin.mjs ***!
@@ -63897,6 +64120,116 @@ const findMixin = {
 
 
 //# sourceMappingURL=findMixin.mjs.map
+
+
+/***/ }),
+
+/***/ "./node_modules/pixi.js/lib/scene/container/container-mixins/getFastGlobalBoundsMixin.mjs":
+/*!************************************************************************************************!*\
+  !*** ./node_modules/pixi.js/lib/scene/container/container-mixins/getFastGlobalBoundsMixin.mjs ***!
+  \************************************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getFastGlobalBoundsMixin: () => (/* binding */ getFastGlobalBoundsMixin)
+/* harmony export */ });
+/* harmony import */ var _maths_matrix_Matrix_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../maths/matrix/Matrix.mjs */ "./node_modules/pixi.js/lib/maths/matrix/Matrix.mjs");
+/* harmony import */ var _bounds_Bounds_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../bounds/Bounds.mjs */ "./node_modules/pixi.js/lib/scene/container/bounds/Bounds.mjs");
+/* harmony import */ var _bounds_utils_matrixAndBoundsPool_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../bounds/utils/matrixAndBoundsPool.mjs */ "./node_modules/pixi.js/lib/scene/container/bounds/utils/matrixAndBoundsPool.mjs");
+
+
+
+
+"use strict";
+const tempMatrix = new _maths_matrix_Matrix_mjs__WEBPACK_IMPORTED_MODULE_0__.Matrix();
+const getFastGlobalBoundsMixin = {
+  /**
+   * Computes the global bounds for the container, considering its children and optionally
+   * factoring in render layers. It starts by clearing the provided bounds object, then
+   * recursively calculates the bounds, and finally applies the world transformation.
+   * @param {boolean} [factorRenderLayers] - Whether to consider render layers in the calculation.
+   * @param {Bounds} [bounds] - The bounds object to store the result. If not provided, a new one is created.
+   * @returns {Bounds} The computed bounds.
+   * @memberof scene.Container#
+   */
+  getFastGlobalBounds(factorRenderLayers, bounds) {
+    bounds || (bounds = new _bounds_Bounds_mjs__WEBPACK_IMPORTED_MODULE_1__.Bounds());
+    bounds.clear();
+    this._getGlobalBoundsRecursive(!!factorRenderLayers, bounds, this.parentRenderLayer);
+    if (!bounds.isValid) {
+      bounds.set(0, 0, 0, 0);
+    }
+    const renderGroup = this.renderGroup || this.parentRenderGroup;
+    bounds.applyMatrix(renderGroup.worldTransform);
+    return bounds;
+  },
+  /**
+   * Recursively calculates the global bounds for the container and its children.
+   * It considers visibility, measurability, and effects, and applies transformations
+   * as necessary to compute the bounds accurately.
+   * @param {boolean} factorRenderLayers - Whether to consider render layers in the calculation.
+   * @param {Bounds} bounds - The bounds object to update with the calculated values.
+   * @param {IRenderLayer} currentLayer - The current render layer being processed.
+   * @memberof scene.Container#
+   */
+  _getGlobalBoundsRecursive(factorRenderLayers, bounds, currentLayer) {
+    let localBounds = bounds;
+    if (factorRenderLayers && this.parentRenderLayer !== currentLayer)
+      return;
+    if (this.localDisplayStatus !== 7 || !this.measurable) {
+      return;
+    }
+    const manageEffects = !!this.effects.length;
+    if (this.renderGroup || manageEffects) {
+      localBounds = _bounds_utils_matrixAndBoundsPool_mjs__WEBPACK_IMPORTED_MODULE_2__.boundsPool.get().clear();
+    }
+    if (this.boundsArea) {
+      bounds.addRect(this.boundsArea, this.worldTransform);
+    } else {
+      if (this.renderPipeId) {
+        const viewBounds = this.bounds;
+        localBounds.addFrame(
+          viewBounds.minX,
+          viewBounds.minY,
+          viewBounds.maxX,
+          viewBounds.maxY,
+          this.groupTransform
+        );
+      }
+      const children = this.children;
+      for (let i = 0; i < children.length; i++) {
+        children[i]._getGlobalBoundsRecursive(factorRenderLayers, localBounds, currentLayer);
+      }
+    }
+    if (manageEffects) {
+      let advanced = false;
+      const renderGroup = this.renderGroup || this.parentRenderGroup;
+      for (let i = 0; i < this.effects.length; i++) {
+        if (this.effects[i].addBounds) {
+          if (!advanced) {
+            advanced = true;
+            localBounds.applyMatrix(renderGroup.worldTransform);
+          }
+          this.effects[i].addBounds(localBounds, true);
+        }
+      }
+      if (advanced) {
+        localBounds.applyMatrix(renderGroup.worldTransform.copyTo(tempMatrix).invert());
+        bounds.addBounds(localBounds, this.relativeGroupTransform);
+      }
+      bounds.addBounds(localBounds);
+      _bounds_utils_matrixAndBoundsPool_mjs__WEBPACK_IMPORTED_MODULE_2__.boundsPool.return(localBounds);
+    } else if (this.renderGroup) {
+      bounds.addBounds(localBounds, this.relativeGroupTransform);
+      _bounds_utils_matrixAndBoundsPool_mjs__WEBPACK_IMPORTED_MODULE_2__.boundsPool.return(localBounds);
+    }
+  }
+};
+
+
+//# sourceMappingURL=getFastGlobalBoundsMixin.mjs.map
 
 
 /***/ }),
@@ -64353,105 +64686,6 @@ function assignWithIgnore(target, options, ignore = {}) {
 
 /***/ }),
 
-/***/ "./node_modules/pixi.js/lib/scene/container/utils/buildInstructions.mjs":
-/*!******************************************************************************!*\
-  !*** ./node_modules/pixi.js/lib/scene/container/utils/buildInstructions.mjs ***!
-  \******************************************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   buildInstructions: () => (/* binding */ buildInstructions),
-/* harmony export */   collectAllRenderables: () => (/* binding */ collectAllRenderables)
-/* harmony export */ });
-
-function buildInstructions(renderGroup, rendererOrPipes) {
-  const root = renderGroup.root;
-  const instructionSet = renderGroup.instructionSet;
-  instructionSet.reset();
-  const renderer = rendererOrPipes.renderPipes ? rendererOrPipes : rendererOrPipes.batch.renderer;
-  const renderPipes = renderer.renderPipes;
-  renderPipes.batch.buildStart(instructionSet);
-  renderPipes.blendMode.buildStart();
-  renderPipes.colorMask.buildStart();
-  if (root.sortableChildren) {
-    root.sortChildren();
-  }
-  collectAllRenderablesAdvanced(root, instructionSet, renderer, true);
-  renderPipes.batch.buildEnd(instructionSet);
-  renderPipes.blendMode.buildEnd(instructionSet);
-}
-function collectAllRenderables(container, instructionSet, rendererOrPipes) {
-  const renderer = rendererOrPipes.renderPipes ? rendererOrPipes : rendererOrPipes.batch.renderer;
-  if (container.globalDisplayStatus < 7 || !container.includeInBuild)
-    return;
-  if (container.sortableChildren) {
-    container.sortChildren();
-  }
-  if (container.isSimple) {
-    collectAllRenderablesSimple(container, instructionSet, renderer);
-  } else {
-    collectAllRenderablesAdvanced(container, instructionSet, renderer, false);
-  }
-}
-function collectAllRenderablesSimple(container, instructionSet, renderer) {
-  if (container.renderPipeId) {
-    const renderable = container;
-    const { renderPipes, renderableGC } = renderer;
-    renderPipes.blendMode.setBlendMode(renderable, container.groupBlendMode, instructionSet);
-    const rp = renderPipes;
-    rp[renderable.renderPipeId].addRenderable(renderable, instructionSet);
-    renderableGC.addRenderable(renderable);
-    renderable.didViewUpdate = false;
-  }
-  if (!container.renderGroup) {
-    const children = container.children;
-    const length = children.length;
-    for (let i = 0; i < length; i++) {
-      collectAllRenderables(children[i], instructionSet, renderer);
-    }
-  }
-}
-function collectAllRenderablesAdvanced(container, instructionSet, renderer, isRoot) {
-  const { renderPipes, renderableGC } = renderer;
-  if (!isRoot && container.renderGroup) {
-    renderPipes.renderGroup.addRenderGroup(container.renderGroup, instructionSet);
-  } else {
-    for (let i = 0; i < container.effects.length; i++) {
-      const effect = container.effects[i];
-      const pipe = renderPipes[effect.pipe];
-      pipe.push(effect, container, instructionSet);
-    }
-    const renderable = container;
-    const renderPipeId = renderable.renderPipeId;
-    if (renderPipeId) {
-      renderPipes.blendMode.setBlendMode(renderable, renderable.groupBlendMode, instructionSet);
-      const pipe = renderPipes[renderPipeId];
-      pipe.addRenderable(renderable, instructionSet);
-      renderableGC.addRenderable(renderable);
-      renderable.didViewUpdate = false;
-    }
-    const children = container.children;
-    if (children.length) {
-      for (let i = 0; i < children.length; i++) {
-        collectAllRenderables(children[i], instructionSet, renderer);
-      }
-    }
-    for (let i = container.effects.length - 1; i >= 0; i--) {
-      const effect = container.effects[i];
-      const pipe = renderPipes[effect.pipe];
-      pipe.pop(effect, container, instructionSet);
-    }
-  }
-}
-
-
-//# sourceMappingURL=buildInstructions.mjs.map
-
-
-/***/ }),
-
 /***/ "./node_modules/pixi.js/lib/scene/container/utils/checkChildrenDidChange.mjs":
 /*!***********************************************************************************!*\
   !*** ./node_modules/pixi.js/lib/scene/container/utils/checkChildrenDidChange.mjs ***!
@@ -64515,6 +64749,33 @@ function clearList(list, index) {
 
 
 //# sourceMappingURL=clearList.mjs.map
+
+
+/***/ }),
+
+/***/ "./node_modules/pixi.js/lib/scene/container/utils/collectAllRenderables.mjs":
+/*!**********************************************************************************!*\
+  !*** ./node_modules/pixi.js/lib/scene/container/utils/collectAllRenderables.mjs ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   collectAllRenderables: () => (/* binding */ collectAllRenderables)
+/* harmony export */ });
+/* harmony import */ var _utils_logging_deprecation_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../utils/logging/deprecation.mjs */ "./node_modules/pixi.js/lib/utils/logging/deprecation.mjs");
+
+
+"use strict";
+function collectAllRenderables(container, instructionSet, rendererOrPipes) {
+  (0,_utils_logging_deprecation_mjs__WEBPACK_IMPORTED_MODULE_0__.deprecation)("8.7.0", "Please use container.collectRenderables instead.");
+  const renderer = rendererOrPipes.renderPipes ? rendererOrPipes : rendererOrPipes.batch.renderer;
+  return container.collectRenderables(instructionSet, renderer, null);
+}
+
+
+//# sourceMappingURL=collectAllRenderables.mjs.map
 
 
 /***/ }),
@@ -70347,6 +70608,142 @@ function triangulateWithHoles(points, holes, vertices, verticesStride, verticesO
 
 /***/ }),
 
+/***/ "./node_modules/pixi.js/lib/scene/layers/RenderLayer.mjs":
+/*!***************************************************************!*\
+  !*** ./node_modules/pixi.js/lib/scene/layers/RenderLayer.mjs ***!
+  \***************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RenderLayer: () => (/* binding */ RenderLayer),
+/* harmony export */   RenderLayerClass: () => (/* binding */ RenderLayerClass)
+/* harmony export */ });
+/* harmony import */ var _utils_logging_warn_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/logging/warn.mjs */ "./node_modules/pixi.js/lib/utils/logging/warn.mjs");
+/* harmony import */ var _container_Container_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../container/Container.mjs */ "./node_modules/pixi.js/lib/scene/container/Container.mjs");
+
+
+
+"use strict";
+const _RenderLayerClass = class _RenderLayerClass extends _container_Container_mjs__WEBPACK_IMPORTED_MODULE_0__.Container {
+  /**
+   * Creates a new RenderLayer instance
+   * @param options - Configuration options for the RenderLayer
+   * @param {boolean} [options.sortableChildren=false] - If true, layer children will be automatically sorted each render
+   * @param {Function} [options.sortFunction] - Custom function to sort layer children. Default sorts by zIndex
+   */
+  constructor(options = {}) {
+    options = { ..._RenderLayerClass.defaultOptions, ...options };
+    super();
+    /** List of objects to be rendered by this layer */
+    this.renderLayerChildren = [];
+    this.sortableChildren = options.sortableChildren;
+    this.sortFunction = options.sortFunction;
+  }
+  /**
+   * Add an Container to this render layer. The Container will be rendered as part of this layer
+   * while maintaining its original parent in the scene graph.
+   * If the Container already belongs to a layer, it will be removed from the old layer before being added to this one.
+   * @param children - The Container(s) to add to this layer
+   */
+  attach(...children) {
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i];
+      if (child.parentRenderLayer) {
+        if (child.parentRenderLayer === this)
+          continue;
+        child.parentRenderLayer.detach(child);
+      }
+      this.renderLayerChildren.push(child);
+      child.parentRenderLayer = this;
+      const renderGroup = this.renderGroup || this.parentRenderGroup;
+      if (renderGroup) {
+        renderGroup.structureDidChange = true;
+      }
+    }
+    return children[0];
+  }
+  /**
+   * Remove an Container from this render layer. The Container will no longer be rendered
+   * as part of this layer but maintains its original parent.
+   * @param children - The Container(s) to remove from this layer
+   */
+  detach(...children) {
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i];
+      const index = this.renderLayerChildren.indexOf(child);
+      if (index !== -1) {
+        this.renderLayerChildren.splice(index, 1);
+      }
+      child.parentRenderLayer = null;
+      const renderGroup = this.renderGroup || this.parentRenderGroup;
+      if (renderGroup) {
+        renderGroup.structureDidChange = true;
+      }
+    }
+    return children[0];
+  }
+  /** Remove all objects from this render layer. */
+  detachAll() {
+    const layerChildren = this.renderLayerChildren;
+    for (let i = 0; i < layerChildren.length; i++) {
+      layerChildren[i].parentRenderLayer = null;
+    }
+    this.renderLayerChildren.length = 0;
+  }
+  collectRenderables(instructionSet, renderer, _currentLayer) {
+    const layerChildren = this.renderLayerChildren;
+    const length = layerChildren.length;
+    if (this.sortableChildren) {
+      this.sortRenderLayerChildren();
+    }
+    for (let i = 0; i < length; i++) {
+      if (!layerChildren[i].parent) {
+        (0,_utils_logging_warn_mjs__WEBPACK_IMPORTED_MODULE_1__.warn)(
+          "Container must be added to both layer and scene graph. Layers only handle render order - the scene graph is required for transforms (addChild)",
+          layerChildren[i]
+        );
+      }
+      layerChildren[i].collectRenderables(instructionSet, renderer, this);
+    }
+  }
+  /**
+   * Sort the layer's children using the defined sort function.
+   * Will be called each render if sortableChildren is true.
+   * Otherwise can call this manually.
+   */
+  sortRenderLayerChildren() {
+    this.renderLayerChildren.sort(this.sortFunction);
+  }
+  _getGlobalBoundsRecursive(factorRenderLayers, bounds, _currentLayer) {
+    if (!factorRenderLayers)
+      return;
+    const children = this.renderLayerChildren;
+    for (let i = 0; i < children.length; i++) {
+      children[i]._getGlobalBoundsRecursive(true, bounds, this);
+    }
+  }
+};
+/**
+ * Default options for RenderLayer instances
+ * @property {boolean} sortableChildren - If true, layer children will be automatically sorted each render.
+ * Default false.
+ * @property {Function} sortFunction - Function used to sort layer children. Default sorts by zIndex.
+ */
+_RenderLayerClass.defaultOptions = {
+  sortableChildren: false,
+  sortFunction: (a, b) => a.zIndex - b.zIndex
+};
+let RenderLayerClass = _RenderLayerClass;
+const RenderLayer = RenderLayerClass;
+
+
+//# sourceMappingURL=RenderLayer.mjs.map
+
+
+/***/ }),
+
 /***/ "./node_modules/pixi.js/lib/scene/mesh-perspective/PerspectiveMesh.mjs":
 /*!*****************************************************************************!*\
   !*** ./node_modules/pixi.js/lib/scene/mesh-perspective/PerspectiveMesh.mjs ***!
@@ -74893,7 +75290,7 @@ class Sprite extends _view_ViewContainer_mjs__WEBPACK_IMPORTED_MODULE_0__.ViewCo
    * @type {rendering.Bounds}
    */
   get visualBounds() {
-    (0,_utils_data_updateQuadBounds_mjs__WEBPACK_IMPORTED_MODULE_3__.updateQuadBounds)(this._visualBounds, this._anchor, this._texture, 0);
+    (0,_utils_data_updateQuadBounds_mjs__WEBPACK_IMPORTED_MODULE_3__.updateQuadBounds)(this._visualBounds, this._anchor, this._texture);
     return this._visualBounds;
   }
   /**
@@ -76672,9 +77069,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../extensions/Extensions.mjs */ "./node_modules/pixi.js/lib/extensions/Extensions.mjs");
 /* harmony import */ var _rendering_renderers_shared_texture_Texture_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../rendering/renderers/shared/texture/Texture.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/shared/texture/Texture.mjs");
-/* harmony import */ var _utils_data_updateQuadBounds_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/data/updateQuadBounds.mjs */ "./node_modules/pixi.js/lib/utils/data/updateQuadBounds.mjs");
 /* harmony import */ var _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../utils/pool/PoolGroup.mjs */ "./node_modules/pixi.js/lib/utils/pool/PoolGroup.mjs");
 /* harmony import */ var _sprite_BatchableSprite_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../sprite/BatchableSprite.mjs */ "./node_modules/pixi.js/lib/scene/sprite/BatchableSprite.mjs");
+/* harmony import */ var _text_utils_updateTextBounds_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../text/utils/updateTextBounds.mjs */ "./node_modules/pixi.js/lib/scene/text/utils/updateTextBounds.mjs");
 
 
 
@@ -76750,8 +77147,7 @@ class HTMLTextPipe {
       });
     }
     htmlText._didTextUpdate = false;
-    const padding = htmlText._style.padding;
-    (0,_utils_data_updateQuadBounds_mjs__WEBPACK_IMPORTED_MODULE_1__.updateQuadBounds)(batchableSprite.bounds, htmlText._anchor, batchableSprite.texture, padding);
+    (0,_text_utils_updateTextBounds_mjs__WEBPACK_IMPORTED_MODULE_1__.updateTextBounds)(batchableSprite, htmlText);
   }
   async _updateGpuText(htmlText) {
     htmlText._didTextUpdate = false;
@@ -76774,8 +77170,7 @@ class HTMLTextPipe {
     gpuText.generatingTexture = false;
     gpuText.textureNeedsUploading = true;
     htmlText.onViewUpdate();
-    const padding = htmlText._style.padding;
-    (0,_utils_data_updateQuadBounds_mjs__WEBPACK_IMPORTED_MODULE_1__.updateQuadBounds)(batchableSprite.bounds, htmlText._anchor, batchableSprite.texture, padding);
+    (0,_text_utils_updateTextBounds_mjs__WEBPACK_IMPORTED_MODULE_1__.updateTextBounds)(batchableSprite, htmlText);
   }
   _getGpuText(htmlText) {
     return this._gpuText[htmlText.uid] || this.initGpuText(htmlText);
@@ -78871,9 +79266,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   CanvasTextPipe: () => (/* binding */ CanvasTextPipe)
 /* harmony export */ });
 /* harmony import */ var _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../extensions/Extensions.mjs */ "./node_modules/pixi.js/lib/extensions/Extensions.mjs");
-/* harmony import */ var _utils_data_updateQuadBounds_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../utils/data/updateQuadBounds.mjs */ "./node_modules/pixi.js/lib/utils/data/updateQuadBounds.mjs");
 /* harmony import */ var _utils_pool_PoolGroup_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../utils/pool/PoolGroup.mjs */ "./node_modules/pixi.js/lib/utils/pool/PoolGroup.mjs");
 /* harmony import */ var _sprite_BatchableSprite_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../sprite/BatchableSprite.mjs */ "./node_modules/pixi.js/lib/scene/sprite/BatchableSprite.mjs");
+/* harmony import */ var _utils_updateTextBounds_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/updateTextBounds.mjs */ "./node_modules/pixi.js/lib/scene/text/utils/updateTextBounds.mjs");
 
 
 
@@ -78942,8 +79337,7 @@ class CanvasTextPipe {
       this._updateGpuText(text);
     }
     text._didTextUpdate = false;
-    const padding = text._style.padding;
-    (0,_utils_data_updateQuadBounds_mjs__WEBPACK_IMPORTED_MODULE_1__.updateQuadBounds)(batchableSprite.bounds, text._anchor, batchableSprite.texture, padding);
+    (0,_utils_updateTextBounds_mjs__WEBPACK_IMPORTED_MODULE_1__.updateTextBounds)(batchableSprite, text);
   }
   _updateGpuText(text) {
     const gpuText = this._getGpuText(text);
@@ -79846,6 +80240,37 @@ function getPo2TextureFromSource(image, width, height, resolution) {
 
 /***/ }),
 
+/***/ "./node_modules/pixi.js/lib/scene/text/utils/updateTextBounds.mjs":
+/*!************************************************************************!*\
+  !*** ./node_modules/pixi.js/lib/scene/text/utils/updateTextBounds.mjs ***!
+  \************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   updateTextBounds: () => (/* binding */ updateTextBounds)
+/* harmony export */ });
+/* harmony import */ var _utils_data_updateQuadBounds_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../utils/data/updateQuadBounds.mjs */ "./node_modules/pixi.js/lib/utils/data/updateQuadBounds.mjs");
+
+
+"use strict";
+function updateTextBounds(batchableSprite, text) {
+  const { texture, bounds } = batchableSprite;
+  (0,_utils_data_updateQuadBounds_mjs__WEBPACK_IMPORTED_MODULE_0__.updateQuadBounds)(bounds, text._anchor, texture);
+  const padding = text._style.padding;
+  bounds.minX -= padding;
+  bounds.minY -= padding;
+  bounds.maxX -= padding;
+  bounds.maxY -= padding;
+}
+
+
+//# sourceMappingURL=updateTextBounds.mjs.map
+
+
+/***/ }),
+
 /***/ "./node_modules/pixi.js/lib/scene/view/ViewContainer.mjs":
 /*!***************************************************************!*\
   !*** ./node_modules/pixi.js/lib/scene/view/ViewContainer.mjs ***!
@@ -79922,6 +80347,19 @@ class ViewContainer extends _container_Container_mjs__WEBPACK_IMPORTED_MODULE_0_
   destroy(options) {
     super.destroy(options);
     this._bounds = null;
+  }
+  collectRenderablesSimple(instructionSet, renderer, currentLayer) {
+    const { renderPipes, renderableGC } = renderer;
+    renderPipes.blendMode.setBlendMode(this, this.groupBlendMode, instructionSet);
+    const rp = renderPipes;
+    rp[this.renderPipeId].addRenderable(this, instructionSet);
+    renderableGC.addRenderable(this);
+    this.didViewUpdate = false;
+    const children = this.children;
+    const length = children.length;
+    for (let i = 0; i < length; i++) {
+      children[i].collectRenderables(instructionSet, renderer, currentLayer);
+    }
   }
 }
 
@@ -80241,8 +80679,10 @@ const spritesheetAsset = {
       const {
         texture: imageTexture,
         // if user need to use preloaded texture
-        imageFilename
+        imageFilename,
         // if user need to use custom filename (not from jsonFile.meta.image)
+        textureOptions
+        // if user need to set texture options on texture
       } = options?.data ?? {};
       let basePath = _utils_path_mjs__WEBPACK_IMPORTED_MODULE_0__.path.dirname(options.src);
       if (basePath && basePath.lastIndexOf("/") !== basePath.length - 1) {
@@ -80253,7 +80693,7 @@ const spritesheetAsset = {
         texture = imageTexture;
       } else {
         const imagePath = (0,_assets_utils_copySearchParams_mjs__WEBPACK_IMPORTED_MODULE_6__.copySearchParams)(basePath + (imageFilename ?? asset.meta.image), options.src);
-        const assets = await loader.load([imagePath]);
+        const assets = await loader.load([{ src: imagePath, data: textureOptions }]);
         texture = assets[imagePath];
       }
       const spritesheet = new _Spritesheet_mjs__WEBPACK_IMPORTED_MODULE_2__.Spritesheet(
@@ -81172,7 +81612,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 const DATA_URI = /^\s*data:(?:([\w-]+)\/([\w+.-]+))?(?:;charset=([\w-]+))?(?:;(base64))?,(.*)/i;
-const VERSION = "8.6.6";
+const VERSION = "8.7.2";
 
 
 //# sourceMappingURL=const.mjs.map
@@ -81426,23 +81866,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   updateQuadBounds: () => (/* binding */ updateQuadBounds)
 /* harmony export */ });
 
-function updateQuadBounds(bounds, anchor, texture, padding) {
+function updateQuadBounds(bounds, anchor, texture) {
   const { width, height } = texture.orig;
   const trim = texture.trim;
   if (trim) {
     const sourceWidth = trim.width;
     const sourceHeight = trim.height;
-    bounds.minX = trim.x - anchor._x * width - padding;
+    bounds.minX = trim.x - anchor._x * width;
     bounds.maxX = bounds.minX + sourceWidth;
-    bounds.minY = trim.y - anchor._y * height - padding;
+    bounds.minY = trim.y - anchor._y * height;
     bounds.maxY = bounds.minY + sourceHeight;
   } else {
-    bounds.minX = -anchor._x * width - padding;
+    bounds.minX = -anchor._x * width;
     bounds.maxX = bounds.minX + width;
-    bounds.minY = -anchor._y * height - padding;
+    bounds.minY = -anchor._y * height;
     bounds.maxY = bounds.minY + height;
   }
-  return;
 }
 
 

@@ -11,9 +11,9 @@ class ItemAreaView extends EntityView {
 
     _render() {
         const graphics = new PIXI.Graphics();
-        graphics.beginFill(0xFF0000);
-        graphics.drawRect(this._entity.position.x, this._entity.position.y, 6, 6);
-        graphics.endFill();
+        graphics.fill(0xFF0000);
+        graphics.rect(this._entity.position.x, this._entity.position.y, 6, 6);
+        graphics.fill();
         this._entityContainer.addChild(graphics);
     }
 

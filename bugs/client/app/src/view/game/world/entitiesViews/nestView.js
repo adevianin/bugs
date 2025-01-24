@@ -79,8 +79,8 @@ class NestView extends EntityView {
 
         let color = 0x800080;
         this._fortificationLine.clear();
-        this._fortificationLine.beginFill(color);
-        this._fortificationLine.drawRect(0, 0, lineWidth, 5);
+        this._fortificationLine.fill(color);
+        this._fortificationLine.rect(0, 0, lineWidth, 5);
     }
 
     _onClick() {
