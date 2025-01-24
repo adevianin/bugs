@@ -27618,11 +27618,17 @@ const _Application = class _Application {
    * @param options - The optional application and renderer parameters.
    */
   async init(options) {
+    console.log('init===================1')
     options = { ...options };
+    console.log('init===================2')
     this.renderer = await (0,_rendering_renderers_autoDetectRenderer_mjs__WEBPACK_IMPORTED_MODULE_2__.autoDetectRenderer)(options);
+    console.log('init===================3')
     _Application._plugins.forEach((plugin) => {
+      console.log('init plugin ===================4', plugin)
       plugin.init.call(this, options);
+      console.log('init===================5')
     });
+    console.log('init===================6')
   }
   /** Render the current stage. */
   render() {
@@ -46285,8 +46291,10 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 const renderPriority = ["webgl", "webgpu", "canvas"];
 async function autoDetectRenderer(options) {
+  console.log('autoDetectRenderer===================1')
   let preferredOrder = [];
   if (options.preference) {
+    console.log('autoDetectRenderer===================2')
     preferredOrder.push(options.preference);
     renderPriority.forEach((item) => {
       if (item !== options.preference) {
@@ -46294,36 +46302,46 @@ async function autoDetectRenderer(options) {
       }
     });
   } else {
+    console.log('autoDetectRenderer===================3')
     preferredOrder = renderPriority.slice();
   }
   let RendererClass;
   let finalOptions = {};
+  console.log('autoDetectRenderer===================4')
   for (let i = 0; i < preferredOrder.length; i++) {
+    console.log('autoDetectRenderer===================5')
     const rendererType = preferredOrder[i];
     if (rendererType === "webgpu" && await (0,_utils_browser_isWebGPUSupported_mjs__WEBPACK_IMPORTED_MODULE_0__.isWebGPUSupported)()) {
+      console.log('autoDetectRenderer===================6')
       const { WebGPURenderer } = await Promise.resolve(/*! import() */).then(__webpack_require__.bind(__webpack_require__, /*! ./gpu/WebGPURenderer.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/gpu/WebGPURenderer.mjs"));
       RendererClass = WebGPURenderer;
       finalOptions = { ...options, ...options.webgpu };
+      console.log('autoDetectRenderer===================7')
       break;
     } else if (rendererType === "webgl" && (0,_utils_browser_isWebGLSupported_mjs__WEBPACK_IMPORTED_MODULE_1__.isWebGLSupported)(
       options.failIfMajorPerformanceCaveat ?? _shared_system_AbstractRenderer_mjs__WEBPACK_IMPORTED_MODULE_2__.AbstractRenderer.defaultOptions.failIfMajorPerformanceCaveat
     )) {
+      console.log('autoDetectRenderer===================8')
       const { WebGLRenderer } = await Promise.resolve(/*! import() */).then(__webpack_require__.bind(__webpack_require__, /*! ./gl/WebGLRenderer.mjs */ "./node_modules/pixi.js/lib/rendering/renderers/gl/WebGLRenderer.mjs"));
       RendererClass = WebGLRenderer;
       finalOptions = { ...options, ...options.webgl };
       break;
     } else if (rendererType === "canvas") {
+      console.log('autoDetectRenderer===================9')
       finalOptions = { ...options };
       throw new Error("CanvasRenderer is not yet implemented");
     }
   }
+  console.log('autoDetectRenderer===================10')
   delete finalOptions.webgpu;
   delete finalOptions.webgl;
   if (!RendererClass) {
     throw new Error("No available renderer for the current environment");
   }
   const renderer = new RendererClass();
+  console.log('autoDetectRenderer===================11')
   await renderer.init(finalOptions);
+  console.log('autoDetectRenderer===================12')
   return renderer;
 }
 
@@ -58068,7 +58086,9 @@ const _AbstractRenderer = class _AbstractRenderer extends eventemitter3__WEBPACK
    */
   async init(options = {}) {
     const skip = options.skipExtensionImports === true ? true : options.manageImports === false;
+    console.log('RendererInit===================1')
     await (0,_environment_autoDetectEnvironment_mjs__WEBPACK_IMPORTED_MODULE_1__.loadEnvironmentExtensions)(skip);
+    console.log('RendererInit===================2')
     this._addSystems(this.config.systems);
     this._addPipes(this.config.renderPipes, this.config.renderPipeAdaptors);
     for (const systemName in this._systemsHash) {
@@ -82638,7 +82658,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"frames":{"ant_male_1.png":{"frame":{
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + chunkId + ".js";
+/******/ 			return "chunk-" + {"node_modules_pixi_js_lib_environment-browser_browserAll_mjs":"367bb247cd618212c9d6","node_modules_pixi_js_lib_environment-webworker_webworkerAll_mjs":"6bb4237d26226a354cb7"}[chunkId] + ".js";
 /******/ 		};
 /******/ 	})();
 /******/ 	

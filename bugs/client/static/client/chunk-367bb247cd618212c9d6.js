@@ -1,5 +1,29 @@
 "use strict";
-(self["webpackChunkbugs"] = self["webpackChunkbugs"] || []).push([["node_modules_pixi_js_lib_environment-webworker_webworkerAll_mjs"],{
+(self["webpackChunkbugs"] = self["webpackChunkbugs"] || []).push([["node_modules_pixi_js_lib_environment-browser_browserAll_mjs"],{
+
+/***/ "./node_modules/pixi.js/lib/accessibility/init.mjs":
+/*!*********************************************************!*\
+  !*** ./node_modules/pixi.js/lib/accessibility/init.mjs ***!
+  \*********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../extensions/Extensions.mjs */ "./node_modules/pixi.js/lib/extensions/Extensions.mjs");
+/* harmony import */ var _scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../scene/container/Container.mjs */ "./node_modules/pixi.js/lib/scene/container/Container.mjs");
+/* harmony import */ var _AccessibilitySystem_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AccessibilitySystem.mjs */ "./node_modules/pixi.js/lib/accessibility/AccessibilitySystem.mjs");
+/* harmony import */ var _accessibilityTarget_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./accessibilityTarget.mjs */ "./node_modules/pixi.js/lib/accessibility/accessibilityTarget.mjs");
+
+
+
+
+
+"use strict";
+_extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_0__.extensions.add(_AccessibilitySystem_mjs__WEBPACK_IMPORTED_MODULE_1__.AccessibilitySystem);
+_scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_2__.Container.mixin(_accessibilityTarget_mjs__WEBPACK_IMPORTED_MODULE_3__.accessibilityTarget);
+//# sourceMappingURL=init.mjs.map
+
+
+/***/ }),
 
 /***/ "./node_modules/pixi.js/lib/app/init.mjs":
 /*!***********************************************!*\
@@ -23,25 +47,29 @@ _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_0__.extensions.add(_TickerPl
 
 /***/ }),
 
-/***/ "./node_modules/pixi.js/lib/environment-webworker/webworkerAll.mjs":
-/*!*************************************************************************!*\
-  !*** ./node_modules/pixi.js/lib/environment-webworker/webworkerAll.mjs ***!
-  \*************************************************************************/
+/***/ "./node_modules/pixi.js/lib/environment-browser/browserAll.mjs":
+/*!*********************************************************************!*\
+  !*** ./node_modules/pixi.js/lib/environment-browser/browserAll.mjs ***!
+  \*********************************************************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _app_init_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../app/init.mjs */ "./node_modules/pixi.js/lib/app/init.mjs");
-/* harmony import */ var _spritesheet_init_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../spritesheet/init.mjs */ "./node_modules/pixi.js/lib/spritesheet/init.mjs");
-/* harmony import */ var _rendering_init_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../rendering/init.mjs */ "./node_modules/pixi.js/lib/rendering/init.mjs");
-/* harmony import */ var _scene_graphics_init_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../scene/graphics/init.mjs */ "./node_modules/pixi.js/lib/scene/graphics/init.mjs");
-/* harmony import */ var _scene_mesh_init_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../scene/mesh/init.mjs */ "./node_modules/pixi.js/lib/scene/mesh/init.mjs");
-/* harmony import */ var _scene_particle_container_init_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../scene/particle-container/init.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/init.mjs");
-/* harmony import */ var _scene_text_init_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../scene/text/init.mjs */ "./node_modules/pixi.js/lib/scene/text/init.mjs");
-/* harmony import */ var _scene_text_bitmap_init_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../scene/text-bitmap/init.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/init.mjs");
-/* harmony import */ var _scene_text_html_init_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../scene/text-html/init.mjs */ "./node_modules/pixi.js/lib/scene/text-html/init.mjs");
-/* harmony import */ var _scene_sprite_tiling_init_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../scene/sprite-tiling/init.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/init.mjs");
-/* harmony import */ var _scene_sprite_nine_slice_init_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../scene/sprite-nine-slice/init.mjs */ "./node_modules/pixi.js/lib/scene/sprite-nine-slice/init.mjs");
-/* harmony import */ var _filters_init_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../filters/init.mjs */ "./node_modules/pixi.js/lib/filters/init.mjs");
+/* harmony import */ var _accessibility_init_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../accessibility/init.mjs */ "./node_modules/pixi.js/lib/accessibility/init.mjs");
+/* harmony import */ var _app_init_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../app/init.mjs */ "./node_modules/pixi.js/lib/app/init.mjs");
+/* harmony import */ var _events_init_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../events/init.mjs */ "./node_modules/pixi.js/lib/events/init.mjs");
+/* harmony import */ var _spritesheet_init_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../spritesheet/init.mjs */ "./node_modules/pixi.js/lib/spritesheet/init.mjs");
+/* harmony import */ var _rendering_init_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../rendering/init.mjs */ "./node_modules/pixi.js/lib/rendering/init.mjs");
+/* harmony import */ var _scene_graphics_init_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../scene/graphics/init.mjs */ "./node_modules/pixi.js/lib/scene/graphics/init.mjs");
+/* harmony import */ var _scene_mesh_init_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../scene/mesh/init.mjs */ "./node_modules/pixi.js/lib/scene/mesh/init.mjs");
+/* harmony import */ var _scene_particle_container_init_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../scene/particle-container/init.mjs */ "./node_modules/pixi.js/lib/scene/particle-container/init.mjs");
+/* harmony import */ var _scene_text_init_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../scene/text/init.mjs */ "./node_modules/pixi.js/lib/scene/text/init.mjs");
+/* harmony import */ var _scene_text_bitmap_init_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../scene/text-bitmap/init.mjs */ "./node_modules/pixi.js/lib/scene/text-bitmap/init.mjs");
+/* harmony import */ var _scene_text_html_init_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../scene/text-html/init.mjs */ "./node_modules/pixi.js/lib/scene/text-html/init.mjs");
+/* harmony import */ var _scene_sprite_tiling_init_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../scene/sprite-tiling/init.mjs */ "./node_modules/pixi.js/lib/scene/sprite-tiling/init.mjs");
+/* harmony import */ var _scene_sprite_nine_slice_init_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../scene/sprite-nine-slice/init.mjs */ "./node_modules/pixi.js/lib/scene/sprite-nine-slice/init.mjs");
+/* harmony import */ var _filters_init_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../filters/init.mjs */ "./node_modules/pixi.js/lib/filters/init.mjs");
+
+
 
 
 
@@ -56,7 +84,31 @@ __webpack_require__.r(__webpack_exports__);
 
 
 "use strict";
-//# sourceMappingURL=webworkerAll.mjs.map
+//# sourceMappingURL=browserAll.mjs.map
+
+
+/***/ }),
+
+/***/ "./node_modules/pixi.js/lib/events/init.mjs":
+/*!**************************************************!*\
+  !*** ./node_modules/pixi.js/lib/events/init.mjs ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../extensions/Extensions.mjs */ "./node_modules/pixi.js/lib/extensions/Extensions.mjs");
+/* harmony import */ var _scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../scene/container/Container.mjs */ "./node_modules/pixi.js/lib/scene/container/Container.mjs");
+/* harmony import */ var _EventSystem_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EventSystem.mjs */ "./node_modules/pixi.js/lib/events/EventSystem.mjs");
+/* harmony import */ var _FederatedEventTarget_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./FederatedEventTarget.mjs */ "./node_modules/pixi.js/lib/events/FederatedEventTarget.mjs");
+
+
+
+
+
+"use strict";
+_extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_0__.extensions.add(_EventSystem_mjs__WEBPACK_IMPORTED_MODULE_1__.EventSystem);
+_scene_container_Container_mjs__WEBPACK_IMPORTED_MODULE_2__.Container.mixin(_FederatedEventTarget_mjs__WEBPACK_IMPORTED_MODULE_3__.FederatedContainer);
+//# sourceMappingURL=init.mjs.map
 
 
 /***/ }),
@@ -248,4 +300,4 @@ _extensions_Extensions_mjs__WEBPACK_IMPORTED_MODULE_0__.extensions.add(_canvas_C
 /***/ })
 
 }]);
-//# sourceMappingURL=node_modules_pixi_js_lib_environment-webworker_webworkerAll_mjs.js.map
+//# sourceMappingURL=chunk-367bb247cd618212c9d6.js.map

@@ -11,6 +11,7 @@ module.exports = {
         filename: '[name].js',
         path: path.resolve(__dirname, 'static/client'),
         assetModuleFilename: '[hash][ext]',
+        chunkFilename: 'chunk-[contenthash].js',
         clean: true
     },
     resolve: {
