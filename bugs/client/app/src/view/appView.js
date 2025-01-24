@@ -6,8 +6,9 @@ import { AccountView } from './account/accountView';
 import appTmpl from './appTmpl.html';
 
 class AppView extends BaseHTMLView {
-    constructor(el) {
+    constructor(el, pixiApp) {
         super(el);
+        this._pixiApp = pixiApp;
 
         this.$domainFacade.events.on('userLogin', this._onLogin.bind(this));
         this.$domainFacade.events.on('userLogout', this._onLogout.bind(this));
@@ -23,7 +24,7 @@ class AppView extends BaseHTMLView {
         this._accountView = new AccountView(accountViewEl);
 
         let gameEl = this._el.querySelector('[data-game]');
-        this._gameView = new GameView(gameEl);
+        this._gameView = new GameView(gameEl, this._pixiApp);
 
         this._loaderEl = this._el.querySelector('[data-loader]');
 

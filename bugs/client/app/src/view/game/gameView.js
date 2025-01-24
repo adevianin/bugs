@@ -8,8 +8,9 @@ import gameTmpl from './gameTmpl.html';
 
 class GameView extends BaseHTMLView {
 
-    constructor(el) {
+    constructor(el, pixiApp) {
         super(el);
+        this._pixiApp = pixiApp;
 
         this._render();
     }
@@ -19,6 +20,7 @@ class GameView extends BaseHTMLView {
         this._setUpCamera();
         this._panelView.turnOn();
         this._worldView.turnOn();
+        this._pixiApp.resize();
     }
 
     turnOff() {
@@ -33,15 +35,15 @@ class GameView extends BaseHTMLView {
         this._panelView = new Panel(this._el.querySelector('[data-panel]'));
         
         let canvasContainerEl = this._el.querySelector('[data-canvas-container]');
-        this._app = new PIXI.Application({ resizeTo: canvasContainerEl });
-        canvasContainerEl.appendChild(this._app.view);
+        this._pixiApp.resizeTo = canvasContainerEl;
+        canvasContainerEl.appendChild(this._pixiApp.canvas);
         this._entityContainer = new PIXI.Container();
         this._mapHandler = new PIXI.Container();
-        this._app.stage.addChild(this._entityContainer);
+        this._pixiApp.stage.addChild(this._entityContainer);
         this._entityContainer.addChild(this._mapHandler);
         this._worldView = new WorldView(this._entityContainer);
 
-        this._camera = new Camera(this._entityContainer, this._mapHandler, this._app.view);
+        this._camera = new Camera(this._entityContainer, this._mapHandler, this._pixiApp.canvas);
     }
 
     _setUpCamera() {

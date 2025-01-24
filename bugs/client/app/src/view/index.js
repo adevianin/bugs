@@ -8,6 +8,7 @@ import { EventEmitter } from '@utils/eventEmitter.js';
 import { uaMessages } from './messages/uaMessagesLib';
 import worldSpriteSheetAtlas from './textures/build/world_spritesheet.json';
 import worldSpriteSheetUrl from './textures/build/world_spritesheet.png';
+import * as PIXI from 'pixi.js';
 
 async function initViewLayer(domainFacade) {
     let requester = new Requester();
@@ -24,8 +25,10 @@ async function initViewLayer(domainFacade) {
     BaseHTMLView.useMessages(uaMessages);
 
     await spritesheetManager.prepareTextures();
+    let pixiApp = new PIXI.Application();
+    await pixiApp.init();
 
-    let app = new AppView(document.querySelector('[data-app]'));
+    let app = new AppView(document.querySelector('[data-app]'), pixiApp);
 }
 
 export { initViewLayer }
