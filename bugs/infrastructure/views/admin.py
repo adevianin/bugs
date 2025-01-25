@@ -15,7 +15,7 @@ def _build_world_status():
         'isRunning': wf.is_world_running
     }
 
-@user_passes_test(is_superuser)
+@user_passes_test(is_superuser, redirect_field_name=None)
 def admin_panel(request):
     return render(request, 'client/admin_panel.html')
 

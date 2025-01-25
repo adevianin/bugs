@@ -136,6 +136,8 @@ ASGI_APPLICATION = 'bugs.asgi.application'
 
 AUTH_USER_MODEL = 'infrastructure.User'
 
+LOGIN_URL = '/'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

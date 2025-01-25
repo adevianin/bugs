@@ -1,6 +1,9 @@
 from django.shortcuts import render
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.http.request import HttpRequest
 
-def index(request):
+@ensure_csrf_cookie
+def index(request: HttpRequest):
 
     initial_data = {
         'user': request.user.get_general_data() if request.user.is_authenticated else None
