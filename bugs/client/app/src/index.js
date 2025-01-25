@@ -6,7 +6,7 @@ import { readInitialData } from '@utils/readInitialData';
 async function initApp() {
     let initialData = readInitialData();
 
-    let syncLayer = initSyncLayer();
+    let syncLayer = initSyncLayer(initialData);
     let domainFacade = initDomainLayer(syncLayer.apis, syncLayer.serverConnection, initialData);
     await initViewLayer(domainFacade);
 

@@ -3508,9 +3508,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function initSyncLayer() {
+function initSyncLayer(initialData) {
     let requester = new _utils_requester__WEBPACK_IMPORTED_MODULE_0__.Requester();
-    let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection();
+    let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection(initialData.mainSocketURL);
 
     let accountApi = new _accountApi__WEBPACK_IMPORTED_MODULE_1__.AccountApi(requester);
     let nestApi = new _nestApi__WEBPACK_IMPORTED_MODULE_3__.NestApi(requester);
@@ -3654,13 +3654,14 @@ __webpack_require__.r(__webpack_exports__);
 
 class ServerConnection {
 
-    constructor() {
+    constructor(socketURL) {
         this.events = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
+        this._socketURL = socketURL;
     }
 
     connect() {
         return new Promise((res) => {
-            this._socket = new WebSocket(`ws://${location.host}/mainsocket`);
+            this._socket = new WebSocket(this._socketURL);
             this._socket.onmessage = this._emitMessage.bind(this);
             this._socket.onopen = () => {
                 res();
@@ -83314,7 +83315,7 @@ __webpack_require__.r(__webpack_exports__);
 async function initApp() {
     let initialData = (0,_utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__.readInitialData)();
 
-    let syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)();
+    let syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)(initialData);
     let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)(syncLayer.apis, syncLayer.serverConnection, initialData);
     await (0,_view__WEBPACK_IMPORTED_MODULE_2__.initViewLayer)(domainFacade);
 

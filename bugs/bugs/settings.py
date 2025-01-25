@@ -29,6 +29,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1'
 ]
 
+MAIN_SOCKET_URL = '/mainsocket'
 
 # Application definition
 

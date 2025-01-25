@@ -20,12 +20,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bugs.settings')
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
-    "websocket": 
-    # AllowedHostsOriginValidator(
+    "websocket": AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter([
                 re_path('mainsocket', MainSocketConsumer.as_asgi()),
             ])
         )
-    # )
+    )
 })

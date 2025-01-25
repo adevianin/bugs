@@ -7,9 +7,9 @@ import { AntApi } from "./antApi";
 import { UserApi } from "./userApi";
 import { NuptialEnvironmentApi } from "./nuptialEnvironmentApi";
 
-function initSyncLayer() {
+function initSyncLayer(initialData) {
     let requester = new Requester();
-    let serverConnection = new ServerConnection();
+    let serverConnection = new ServerConnection(initialData.mainSocketURL);
 
     let accountApi = new AccountApi(requester);
     let nestApi = new NestApi(requester);
