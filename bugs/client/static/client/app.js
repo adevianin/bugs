@@ -8860,8 +8860,8 @@ class HpLineView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__
             color = 0xff0000;
         }
         this._hpLine.clear();
-        this._hpLine.fill(color);
         this._hpLine.rect(0, 0, lineWidth, 5);
+        this._hpLine.fill(color);
     }
 
 }

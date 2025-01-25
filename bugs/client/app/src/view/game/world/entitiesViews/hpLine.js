@@ -39,8 +39,8 @@ class HpLineView extends BaseGraphicView {
             color = 0xff0000;
         }
         this._hpLine.clear();
-        this._hpLine.fill(color);
         this._hpLine.rect(0, 0, lineWidth, 5);
+        this._hpLine.fill(color);
     }
 
 }
