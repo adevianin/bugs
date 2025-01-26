@@ -9469,8 +9469,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _markerPlacers_newNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./markerPlacers/newNestMarkerPlacerView */ "./app/src/view/game/world/markerManager/markerPlacers/newNestMarkerPlacerView.js");
 /* harmony import */ var _markerPlacers_destroyNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./markerPlacers/destroyNestMarkerPlacerView */ "./app/src/view/game/world/markerManager/markerPlacers/destroyNestMarkerPlacerView.js");
 /* harmony import */ var _markerPlacers_pillageNestMarkerPlacer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./markerPlacers/pillageNestMarkerPlacer */ "./app/src/view/game/world/markerManager/markerPlacers/pillageNestMarkerPlacer.js");
-/* harmony import */ var _markersList_markersList__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./markersList/markersList */ "./app/src/view/game/world/markerManager/markersList/markersList.js");
-
 
 
 
@@ -9507,7 +9505,6 @@ class MarkerManagerView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MOD
     _render() {
         let container = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._markersManagerContainer.addChild(container);
-        this._markersList = new _markersList_markersList__WEBPACK_IMPORTED_MODULE_5__.MarkersList(container);
     }
 
     _onPlaceNewNestMarkerRequest(callback) {
@@ -9697,62 +9694,6 @@ class PillageNestMarkerPlacerView extends _view_base_baseGraphicView__WEBPACK_IM
     remove() {
         this._markerContainer.destroy();
     }
-}
-
-
-
-/***/ }),
-
-/***/ "./app/src/view/game/world/markerManager/markersList/markersList.js":
-/*!**************************************************************************!*\
-  !*** ./app/src/view/game/world/markerManager/markersList/markersList.js ***!
-  \**************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   MarkersList: () => (/* binding */ MarkersList)
-/* harmony export */ });
-/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./app/src/view/base/baseGraphicView.js");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-
-
-
-class MarkersList extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
-
-    constructor(container) {
-        super();
-        this._container = container;
-        // this._myColony = this.$domainFacade.findMyColony();
-
-        // this._renderMarkers();
-
-        // this._myColony.on('operationsChanged', this._renderMarkers.bind(this));
-        // this.$eventBus.on('operationsViewActivationChanged', this._onOperationsViewActivationChanged.bind(this));
-    }
-
-    _renderMarkers() {
-        this._container.removeChildren();
-        this._myColony.operations.forEach(operation => {
-            operation.markers.forEach(marker => {
-                this._renderMarker(marker);
-            });
-        });
-    }
-
-    _renderMarker(marker) {
-        let sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`marker_${marker.type}.png`));
-        sprite.anchor.set(0.5, 1);
-        sprite.x = marker.point[0];
-        sprite.y = marker.point[1];
-        this._container.addChild(sprite);
-    }
-
-    _onOperationsViewActivationChanged(isEnabled) {
-        this._container.renderable = isEnabled;
-    }
-
 }
 
 

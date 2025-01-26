@@ -3,7 +3,6 @@ import * as PIXI from 'pixi.js';
 import { NewNestMarkerPlacerView } from "./markerPlacers/newNestMarkerPlacerView";
 import { DestroyNestMarkerPlacerView } from "./markerPlacers/destroyNestMarkerPlacerView";
 import { PillageNestMarkerPlacerView } from "./markerPlacers/pillageNestMarkerPlacer";
-import { MarkersList } from "./markersList/markersList";
 
 class MarkerManagerView extends BaseGraphicView {
 
@@ -35,7 +34,6 @@ class MarkerManagerView extends BaseGraphicView {
     _render() {
         let container = new PIXI.Container();
         this._markersManagerContainer.addChild(container);
-        this._markersList = new MarkersList(container);
     }
 
     _onPlaceNewNestMarkerRequest(callback) {
