@@ -3,12 +3,14 @@ import { BaseGraphicView } from "@view/base/baseGraphicView";
 import { AntView } from './entitiesViews/antView';
 import { NestView } from './entitiesViews/nestView';
 import { EntityTypes } from "@domain/enum/entityTypes";
-import { MarkerManagerView } from './markerManager/markerManagerView';
+// import { MarkerManagerView } from './markerManager/markerManagerView';
 import { ItemView } from './entitiesViews/itemView';
 import { ItemSourceView } from './entitiesViews/itemSourceView';
 import { ItemAreaView } from './entitiesViews/itemAreaView';
 import { TreeView } from './entitiesViews/treeView';
 import { LadybugView } from './entitiesViews/ladybugView';
+import { PositionPickerView } from './mapPickers/positionPickerView';
+import { NestPickerView } from './mapPickers/nestPickerView';
 
 class WorldView extends BaseGraphicView {
 
@@ -29,7 +31,7 @@ class WorldView extends BaseGraphicView {
 
     turnOff() {
         this._clearEntityViews();
-        this._markerManager.clear();
+        this.$eventBus.emit('deactivateMapPickerRequest');
     }
 
     _render() {
@@ -42,7 +44,8 @@ class WorldView extends BaseGraphicView {
         this._itemAreaContainer = new PIXI.Container();
         this._itemSourceContainer = new PIXI.Container();
         this._treesContainer = new PIXI.Container();
-        this._markersContainer = new PIXI.Container();
+        this._positionPickerContainer = new PIXI.Container();
+        this._nestPickerContainer = new PIXI.Container();
 
         this._container.addChild(this._bg);
         this._container.addChild(this._nestContainer);
@@ -52,10 +55,12 @@ class WorldView extends BaseGraphicView {
         this._container.addChild(this._bigContainer);
         this._container.addChild(this._itemSourceContainer);
         this._container.addChild(this._treesContainer);
-        this._container.addChild(this._markersContainer);
+        this._container.addChild(this._positionPickerContainer);
+        this._container.addChild(this._nestPickerContainer);
         this._container.addChild(this._itemAreaContainer);
 
-        this._markerManager = new MarkerManagerView(this._markersContainer);
+        this._positionPickerView = new PositionPickerView(this._positionPickerContainer);
+        this._nestPickerView = new NestPickerView(this._nestPickerContainer);
 
         this.$domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
     }

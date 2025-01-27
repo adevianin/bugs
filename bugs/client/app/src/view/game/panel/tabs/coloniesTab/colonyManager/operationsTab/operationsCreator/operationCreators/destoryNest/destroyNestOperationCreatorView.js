@@ -27,7 +27,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _onChooseNestBtnClick() {
-        this.$eventBus.emit('placeDestroyNestMarkerRequest', this._performingColony.id, (nest) => {
+        this.$eventBus.emit('nestPickRequest', this._performingColony.id, (nest) => {
             this._choosedNest = nest;
             this._renderChoosedNest();
         });

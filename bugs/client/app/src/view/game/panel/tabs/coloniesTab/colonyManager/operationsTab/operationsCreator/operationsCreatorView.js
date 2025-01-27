@@ -54,7 +54,7 @@ class OperationsCreatorView extends BaseHTMLView {
         this._operationCreator.remove();
         this._operationCreator = null;
         this._toggleCreatorMode(false);
-        this.$eventBus.emit('cancelAnyMarkerPlacerRequest');
+        this.$eventBus.emit('deactivateMapPickerRequest');
     }
 
     _onNewNestOperationBtnClick() {

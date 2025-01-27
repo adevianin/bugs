@@ -51,7 +51,7 @@ class QueenManagerView extends BaseHTMLView {
     }
 
     _onChooseNestPositionBtnClick() {
-        this.$eventBus.emit('placeNewNestMarkerRequest', (point) => { 
+        this.$eventBus.emit('positionPickRequest', (point) => { 
             this._buildingSite = point;
             this._renderBuildingSite();
         });

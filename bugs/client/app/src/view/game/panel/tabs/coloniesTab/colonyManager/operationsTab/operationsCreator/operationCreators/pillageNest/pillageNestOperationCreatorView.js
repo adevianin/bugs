@@ -40,7 +40,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _onChooseNestToPillageBtnClick() {
-        this.$eventBus.emit('placePillageNestMarkerRequest', this._performingColony.id, (nestToPillage) => {
+        this.$eventBus.emit('nestPickRequest', this._performingColony.id, (nestToPillage) => {
             this._nestToPillage = nestToPillage;
             this._renderNestToPillage();
         });

@@ -168,8 +168,8 @@ class DomainFacade {
         return this._nuptialEnvironmentService.nuptialMales;
     }
 
-    findNearestNestForOffensiveOperation(performingColonyId, point) {
-        return this._worldService.findNearestNestForOffensiveOperation(performingColonyId, point);
+    findNearestNest(point, excludeColonyId) {
+        return this._worldService.findNearestNest(point, excludeColonyId);
     }
 
     getMySpecie() {

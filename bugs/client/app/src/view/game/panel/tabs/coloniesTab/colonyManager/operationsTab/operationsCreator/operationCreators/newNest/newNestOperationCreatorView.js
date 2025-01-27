@@ -37,7 +37,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _onChooseBuildingSiteBtnClick() {
-        this.$eventBus.emit('placeNewNestMarkerRequest', (point) => { 
+        this.$eventBus.emit('positionPickRequest', (point) => { 
             this._buildingSite = point;
             this._renderBuildingSite();
         });

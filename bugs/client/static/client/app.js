@@ -216,8 +216,8 @@ class DomainFacade {
         return this._nuptialEnvironmentService.nuptialMales;
     }
 
-    findNearestNestForOffensiveOperation(performingColonyId, point) {
-        return this._worldService.findNearestNestForOffensiveOperation(performingColonyId, point);
+    findNearestNest(point, excludeColonyId) {
+        return this._worldService.findNearestNest(point, excludeColonyId);
     }
 
     getMySpecie() {
@@ -3094,7 +3094,7 @@ class WorldService {
         this._mainEventBus.emit('entityBorn', entity);
     }
 
-    findNearestNestForOffensiveOperation(performingColonyId, point) {
+    findNearestNest(point, excludeColonyId) {
         let nests = this._world.getNests();
         let nearestNest = null;
         let smallestDistance = null;
@@ -3102,7 +3102,7 @@ class WorldService {
 
         nests.forEach(nest => {
             let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_1__.distance)(point.x, point.y, nest.position.x, nest.position.y);
-            if (nest.fromColony != performingColonyId && dist <= maxDist && (!smallestDistance || dist < smallestDistance)) {
+            if ((!excludeColonyId || nest.fromColony != excludeColonyId) && dist <= maxDist && (!smallestDistance || dist < smallestDistance)) {
                 smallestDistance = dist;
                 nearestNest = nest;
             }
@@ -6837,7 +6837,7 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
     }
 
     _onChooseNestBtnClick() {
-        this.$eventBus.emit('placeDestroyNestMarkerRequest', this._performingColony.id, (nest) => {
+        this.$eventBus.emit('nestPickRequest', this._performingColony.id, (nest) => {
             this._choosedNest = nest;
             this._renderChoosedNest();
         });
@@ -6943,7 +6943,7 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
     }
 
     _onChooseBuildingSiteBtnClick() {
-        this.$eventBus.emit('placeNewNestMarkerRequest', (point) => { 
+        this.$eventBus.emit('positionPickRequest', (point) => { 
             this._buildingSite = point;
             this._renderBuildingSite();
         });
@@ -7038,7 +7038,7 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
     }
 
     _onChooseNestToPillageBtnClick() {
-        this.$eventBus.emit('placePillageNestMarkerRequest', this._performingColony.id, (nestToPillage) => {
+        this.$eventBus.emit('nestPickRequest', this._performingColony.id, (nestToPillage) => {
             this._nestToPillage = nestToPillage;
             this._renderNestToPillage();
         });
@@ -7196,7 +7196,7 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._operationCreator.remove();
         this._operationCreator = null;
         this._toggleCreatorMode(false);
-        this.$eventBus.emit('cancelAnyMarkerPlacerRequest');
+        this.$eventBus.emit('deactivateMapPickerRequest');
     }
 
     _onNewNestOperationBtnClick() {
@@ -8081,7 +8081,7 @@ class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     }
 
     _onChooseNestPositionBtnClick() {
-        this.$eventBus.emit('placeNewNestMarkerRequest', (point) => { 
+        this.$eventBus.emit('positionPickRequest', (point) => { 
             this._buildingSite = point;
             this._renderBuildingSite();
         });
@@ -9453,247 +9453,130 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./app/src/view/game/world/markerManager/markerManagerView.js":
-/*!********************************************************************!*\
-  !*** ./app/src/view/game/world/markerManager/markerManagerView.js ***!
-  \********************************************************************/
+/***/ "./app/src/view/game/world/mapPickers/basePickerView.js":
+/*!**************************************************************!*\
+  !*** ./app/src/view/game/world/mapPickers/basePickerView.js ***!
+  \**************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   MarkerManagerView: () => (/* binding */ MarkerManagerView)
+/* harmony export */   BasePickerView: () => (/* binding */ BasePickerView)
 /* harmony export */ });
 /* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./app/src/view/base/baseGraphicView.js");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-/* harmony import */ var _markerPlacers_newNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./markerPlacers/newNestMarkerPlacerView */ "./app/src/view/game/world/markerManager/markerPlacers/newNestMarkerPlacerView.js");
-/* harmony import */ var _markerPlacers_destroyNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./markerPlacers/destroyNestMarkerPlacerView */ "./app/src/view/game/world/markerManager/markerPlacers/destroyNestMarkerPlacerView.js");
-/* harmony import */ var _markerPlacers_pillageNestMarkerPlacer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./markerPlacers/pillageNestMarkerPlacer */ "./app/src/view/game/world/markerManager/markerPlacers/pillageNestMarkerPlacer.js");
 
 
 
+class BasePickerView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
 
-
-
-class MarkerManagerView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
-
-    constructor(markersManagerContainer) {
+    constructor(container) {
         super();
-        this._markersManagerContainer = markersManagerContainer;
-        this._currentMarkerPlacer = null;
+        this._container = container;
 
-        this._render();
-
-        this._stopListenPlaceNewNestMarkerRequest = this.$eventBus.on('placeNewNestMarkerRequest', this._onPlaceNewNestMarkerRequest.bind(this));
-        this._stopListenPlaceDestroyNestMarkerRequest = this.$eventBus.on('placeDestroyNestMarkerRequest', this._onPlaceDestroyNestMarkerRequest.bind(this));
-        this._stopListenPillageDestroyNestMarkerRequest = this.$eventBus.on('placePillageNestMarkerRequest', this._onPlacePillageNestMarkerRequest.bind(this));
-        this._stopListenCancelAnyMarkerPlacerRequest = this.$eventBus.on('cancelAnyMarkerPlacerRequest', this._onMarkerPlacerCancel.bind(this));
+        this._container.on('pointerdown', this._onClick.bind(this));
+        this.$eventBus.on('deactivateMapPickerRequest', this._deactivate.bind(this));
     }
 
-    clear() {
-        this._removeMarkerPlacerPlacer();
+    _activate() {
+        this._container.eventMode = 'static';
+        let worldSize = this.$domainFacade.getWorldSize();
+        this._container.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Rectangle(0, 0, worldSize[0], worldSize[1]);
     }
 
-    remove() {
-        this._removeMarkerPlacerPlacer();
-        this._stopListenPlaceNewNestMarkerRequest();
-        this._stopListenPlaceDestroyNestMarkerRequest();
-        this._stopListenPillageDestroyNestMarkerRequest();
-        this._stopListenCancelAnyMarkerPlacerRequest();
+    _deactivate() {
+        this._container.eventMode = 'none'; 
     }
 
-    _render() {
-        let container = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._markersManagerContainer.addChild(container);
+    _onClick(e) {
+        let point = this._container.toLocal(e.client);
+        this._onPointPick({x: point.x, y: point.y});
     }
 
-    _onPlaceNewNestMarkerRequest(callback) {
-        let newMarkerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._markersManagerContainer.addChild(newMarkerContainer);
-        this._currentMarkerPlacer = new _markerPlacers_newNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_2__.NewNestMarkerPlacerView(newMarkerContainer, callback);
-    }
+    _onPointPick(point) {}
 
-    _onPlaceDestroyNestMarkerRequest(performingColonyId, callback) {
-        let newMarkerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._markersManagerContainer.addChild(newMarkerContainer);
-        this._currentMarkerPlacer = new _markerPlacers_destroyNestMarkerPlacerView__WEBPACK_IMPORTED_MODULE_3__.DestroyNestMarkerPlacerView(newMarkerContainer, performingColonyId, callback);
-    }
-
-    _onPlacePillageNestMarkerRequest(performingColonyId, callback) {
-        let newMarkerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._markersManagerContainer.addChild(newMarkerContainer);
-        this._currentMarkerPlacer = new _markerPlacers_pillageNestMarkerPlacer__WEBPACK_IMPORTED_MODULE_4__.PillageNestMarkerPlacerView(newMarkerContainer, performingColonyId, callback);
-    }
-
-    _onMarkerPlacerCancel() {
-        this._removeMarkerPlacerPlacer();
-    }
-
-    _removeMarkerPlacerPlacer() {
-        if (this._currentMarkerPlacer) {
-            this._currentMarkerPlacer.remove();
-            this._currentMarkerPlacer = null;
-        }
-    }
 }
 
 
 
 /***/ }),
 
-/***/ "./app/src/view/game/world/markerManager/markerPlacers/destroyNestMarkerPlacerView.js":
-/*!********************************************************************************************!*\
-  !*** ./app/src/view/game/world/markerManager/markerPlacers/destroyNestMarkerPlacerView.js ***!
-  \********************************************************************************************/
+/***/ "./app/src/view/game/world/mapPickers/nestPickerView.js":
+/*!**************************************************************!*\
+  !*** ./app/src/view/game/world/mapPickers/nestPickerView.js ***!
+  \**************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   DestroyNestMarkerPlacerView: () => (/* binding */ DestroyNestMarkerPlacerView)
+/* harmony export */   NestPickerView: () => (/* binding */ NestPickerView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./app/src/view/base/baseGraphicView.js");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _basePickerView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./basePickerView */ "./app/src/view/game/world/mapPickers/basePickerView.js");
 
 
+class NestPickerView extends _basePickerView__WEBPACK_IMPORTED_MODULE_0__.BasePickerView {
 
-class DestroyNestMarkerPlacerView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
+    constructor(container) {
+        super(container);
 
-    constructor(markerContainer, performingColonyId, callback) {
-        super();
-        this._markerContainer = markerContainer;
-        this._performingColonyId = performingColonyId;
+        this.$eventBus.on('nestPickRequest', this._onPickRequest.bind(this));
+    }
+
+    _onPickRequest(excludeColonyId, callback) {
         this._callback = callback;
-
-        this._render();
-
-        this._markerContainer.on('pointerdown', this._onClick.bind(this));
+        this._excludeColonyId = excludeColonyId;
+        this._activate();
     }
 
-    _render() {
-        this._markerContainer.eventMode = 'static'; 
-        let worldSize = this.$domainFacade.getWorldSize();
-        this._markerContainer.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Rectangle(0, 0, worldSize[0], worldSize[1]);
-    }
-
-    _onClick(e) {
-        let point = this._markerContainer.toLocal(e.client);
-        let nest = this.$domainFacade.findNearestNestForOffensiveOperation(this._performingColonyId, point);
+    _onPointPick(point) {
+        let nest = this.$domainFacade.findNearestNest(point, this._excludeColonyId);
 
         if (nest) {
             this._callback(nest);
-            this.remove();
+            this._deactivate();
         }
     }
 
-    remove() {
-        this._markerContainer.destroy();
-    }
 }
 
 
 
 /***/ }),
 
-/***/ "./app/src/view/game/world/markerManager/markerPlacers/newNestMarkerPlacerView.js":
-/*!****************************************************************************************!*\
-  !*** ./app/src/view/game/world/markerManager/markerPlacers/newNestMarkerPlacerView.js ***!
-  \****************************************************************************************/
+/***/ "./app/src/view/game/world/mapPickers/positionPickerView.js":
+/*!******************************************************************!*\
+  !*** ./app/src/view/game/world/mapPickers/positionPickerView.js ***!
+  \******************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   NewNestMarkerPlacerView: () => (/* binding */ NewNestMarkerPlacerView)
+/* harmony export */   PositionPickerView: () => (/* binding */ PositionPickerView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./app/src/view/base/baseGraphicView.js");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _basePickerView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./basePickerView */ "./app/src/view/game/world/mapPickers/basePickerView.js");
 
 
+class PositionPickerView extends _basePickerView__WEBPACK_IMPORTED_MODULE_0__.BasePickerView {
 
-class NewNestMarkerPlacerView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
+    constructor(container) {
+        super(container);
 
-    constructor(markerContainer, callback) {
-        super();
-        this._markerContainer = markerContainer;
+        this.$eventBus.on('positionPickRequest', this._onPickRequest.bind(this));
+    }
+
+    _onPickRequest(callback) {
         this._callback = callback;
-
-        this._render();
-
-        this._markerContainer.on('pointerdown', this._onClick.bind(this));
+        this._activate();
     }
 
-    _render() {
-        //todo render nest areas
-        this._markerContainer.eventMode = 'static'; 
-        let worldSize = this.$domainFacade.getWorldSize();
-        this._markerContainer.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Rectangle(0, 0, worldSize[0], worldSize[1]);
+    _onPointPick(point) {
+        this._callback(point);
+        this._deactivate();
     }
 
-    _onClick(e) {
-        //check nest area click
-        let point = this._markerContainer.toLocal(e.client);
-        this._callback({x: point.x, y: point.y});
-        this.remove();
-    }
-
-    remove() {
-        this._markerContainer.destroy();
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./app/src/view/game/world/markerManager/markerPlacers/pillageNestMarkerPlacer.js":
-/*!****************************************************************************************!*\
-  !*** ./app/src/view/game/world/markerManager/markerPlacers/pillageNestMarkerPlacer.js ***!
-  \****************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   PillageNestMarkerPlacerView: () => (/* binding */ PillageNestMarkerPlacerView)
-/* harmony export */ });
-/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./app/src/view/base/baseGraphicView.js");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-
-
-
-class PillageNestMarkerPlacerView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
-
-    constructor(markerContainer, performingColonyId, callback) {
-        super();
-        this._markerContainer = markerContainer;
-        this._performingColonyId = performingColonyId;
-        this._callback = callback;
-
-        this._render();
-
-        this._markerContainer.on('pointerdown', this._onClick.bind(this));
-    }
-
-    _render() {
-        this._markerContainer.eventMode = 'static'; 
-        let worldSize = this.$domainFacade.getWorldSize();
-        this._markerContainer.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Rectangle(0, 0, worldSize[0], worldSize[1]);
-    }
-
-    _onClick(e) {
-        let point = this._markerContainer.toLocal(e.client);
-        let nest = this.$domainFacade.findNearestNestForOffensiveOperation(this._performingColonyId, point);
-
-        if (nest) {
-            this._callback(nest);
-            this.remove();
-        }
-    }
-
-    remove() {
-        this._markerContainer.destroy();
-    }
 }
 
 
@@ -9765,16 +9648,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entitiesViews_antView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./entitiesViews/antView */ "./app/src/view/game/world/entitiesViews/antView.js");
 /* harmony import */ var _entitiesViews_nestView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./entitiesViews/nestView */ "./app/src/view/game/world/entitiesViews/nestView.js");
 /* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./app/src/domain/enum/entityTypes.js");
-/* harmony import */ var _markerManager_markerManagerView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./markerManager/markerManagerView */ "./app/src/view/game/world/markerManager/markerManagerView.js");
-/* harmony import */ var _entitiesViews_itemView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entitiesViews/itemView */ "./app/src/view/game/world/entitiesViews/itemView.js");
-/* harmony import */ var _entitiesViews_itemSourceView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entitiesViews/itemSourceView */ "./app/src/view/game/world/entitiesViews/itemSourceView.js");
-/* harmony import */ var _entitiesViews_itemAreaView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entitiesViews/itemAreaView */ "./app/src/view/game/world/entitiesViews/itemAreaView.js");
-/* harmony import */ var _entitiesViews_treeView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entitiesViews/treeView */ "./app/src/view/game/world/entitiesViews/treeView.js");
-/* harmony import */ var _entitiesViews_ladybugView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entitiesViews/ladybugView */ "./app/src/view/game/world/entitiesViews/ladybugView.js");
+/* harmony import */ var _entitiesViews_itemView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./entitiesViews/itemView */ "./app/src/view/game/world/entitiesViews/itemView.js");
+/* harmony import */ var _entitiesViews_itemSourceView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./entitiesViews/itemSourceView */ "./app/src/view/game/world/entitiesViews/itemSourceView.js");
+/* harmony import */ var _entitiesViews_itemAreaView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entitiesViews/itemAreaView */ "./app/src/view/game/world/entitiesViews/itemAreaView.js");
+/* harmony import */ var _entitiesViews_treeView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entitiesViews/treeView */ "./app/src/view/game/world/entitiesViews/treeView.js");
+/* harmony import */ var _entitiesViews_ladybugView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entitiesViews/ladybugView */ "./app/src/view/game/world/entitiesViews/ladybugView.js");
+/* harmony import */ var _mapPickers_positionPickerView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./mapPickers/positionPickerView */ "./app/src/view/game/world/mapPickers/positionPickerView.js");
+/* harmony import */ var _mapPickers_nestPickerView__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./mapPickers/nestPickerView */ "./app/src/view/game/world/mapPickers/nestPickerView.js");
 
 
 
 
+
+// import { MarkerManagerView } from './markerManager/markerManagerView';
 
 
 
@@ -9802,7 +9688,7 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
 
     turnOff() {
         this._clearEntityViews();
-        this._markerManager.clear();
+        this.$eventBus.emit('deactivateMapPickerRequest');
     }
 
     _render() {
@@ -9815,7 +9701,8 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._itemAreaContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._itemSourceContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._treesContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
-        this._markersContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+        this._positionPickerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+        this._nestPickerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
 
         this._container.addChild(this._bg);
         this._container.addChild(this._nestContainer);
@@ -9825,10 +9712,12 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._container.addChild(this._bigContainer);
         this._container.addChild(this._itemSourceContainer);
         this._container.addChild(this._treesContainer);
-        this._container.addChild(this._markersContainer);
+        this._container.addChild(this._positionPickerContainer);
+        this._container.addChild(this._nestPickerContainer);
         this._container.addChild(this._itemAreaContainer);
 
-        this._markerManager = new _markerManager_markerManagerView__WEBPACK_IMPORTED_MODULE_5__.MarkerManagerView(this._markersContainer);
+        this._positionPickerView = new _mapPickers_positionPickerView__WEBPACK_IMPORTED_MODULE_10__.PositionPickerView(this._positionPickerContainer);
+        this._nestPickerView = new _mapPickers_nestPickerView__WEBPACK_IMPORTED_MODULE_11__.NestPickerView(this._nestPickerContainer);
 
         this.$domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
     }
@@ -9858,22 +9747,22 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
                 view = new _entitiesViews_antView__WEBPACK_IMPORTED_MODULE_2__.AntView(entity, this._antContainer);
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.LADYBUG:
-                view = new _entitiesViews_ladybugView__WEBPACK_IMPORTED_MODULE_10__.LadybugView(entity, this._ladybugContainer);
+                view = new _entitiesViews_ladybugView__WEBPACK_IMPORTED_MODULE_9__.LadybugView(entity, this._ladybugContainer);
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.NEST:
                 view = new _entitiesViews_nestView__WEBPACK_IMPORTED_MODULE_3__.NestView(entity, this._nestContainer);
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.ITEM:
-                view = new _entitiesViews_itemView__WEBPACK_IMPORTED_MODULE_6__.ItemView(entity, this._bigContainer);
+                view = new _entitiesViews_itemView__WEBPACK_IMPORTED_MODULE_5__.ItemView(entity, this._bigContainer);
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.ITEM_SOURCE:
-                view = new _entitiesViews_itemSourceView__WEBPACK_IMPORTED_MODULE_7__.ItemSourceView(entity, this._itemSourceContainer);
+                view = new _entitiesViews_itemSourceView__WEBPACK_IMPORTED_MODULE_6__.ItemSourceView(entity, this._itemSourceContainer);
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.ITEM_AREA:
-                view = new _entitiesViews_itemAreaView__WEBPACK_IMPORTED_MODULE_8__.ItemAreaView(entity, this._itemAreaContainer);
+                view = new _entitiesViews_itemAreaView__WEBPACK_IMPORTED_MODULE_7__.ItemAreaView(entity, this._itemAreaContainer);
                 break;
             case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_4__.EntityTypes.TREE:
-                view = new _entitiesViews_treeView__WEBPACK_IMPORTED_MODULE_9__.TreeView(entity, this._treesContainer);
+                view = new _entitiesViews_treeView__WEBPACK_IMPORTED_MODULE_8__.TreeView(entity, this._treesContainer);
                 break;
             default:
                 throw 'unknown type of entity';
