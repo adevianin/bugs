@@ -11,7 +11,7 @@ class NotificationsListView extends BaseHTMLView {
 
         this._render();
 
-        this._stopListenNewNotification = this._notificationsContainer.on('newNotification', this._onNewNotification.bind(this));
+        this._notificationsContainer.on('newNotification', this._onNewNotification.bind(this));
 
     }
 
@@ -30,14 +30,6 @@ class NotificationsListView extends BaseHTMLView {
         let view = new NotificationView(el, notification);
         this._notificationViews.push(view);
         this._listEl.append(el);
-    }
-
-    remove() {
-        super.remove();
-        for (let notificationView of this._notificationViews) {
-            notificationView.remove();
-        }
-        this._stopListenNewNotification();
     }
 
     _onNewNotification(notification) {

@@ -15,11 +15,6 @@ class SpecieBuilderTabView extends BaseHTMLView {
         this._render();
     }
 
-    remove() {
-        super.remove();
-        this._tabSwitcher.remove();
-    }
-
     _render() {
         this._el.innerHTML = specieBuilderTabTmpl;
 

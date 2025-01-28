@@ -31,11 +31,6 @@ class ClimateTabView extends BaseHTMLView {
         this._changeDirectionEl.innerHTML = this._climate.directionOfChange > 0 ? 'потепління' : 'похолодання';
     }
 
-    remove() {
-        super.remove();
-        this._seasonBarView.remove();
-    }
-
 }
 
 export {

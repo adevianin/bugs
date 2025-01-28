@@ -25,11 +25,6 @@ class NestsListView extends BaseHTMLView {
         this._renderSelectedNest();
     }
 
-    remove() {
-        super.remove();
-        this._clearNestViews();
-    }
-
     _selectNest(nest) {
         this._selectedNest = nest;
         this.events.emit('selectedNestChanged');

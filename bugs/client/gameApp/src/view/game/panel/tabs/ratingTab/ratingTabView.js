@@ -9,7 +9,7 @@ class RatingTabView extends BaseHTMLView {
         super(el);
         this._ratingContainer = this.$domainFacade.ratingContainer;
 
-        this._stopListenRatingChange = this._ratingContainer.on('changed', this._onRatingChanged.bind(this));
+        this._ratingContainer.on('changed', this._onRatingChanged.bind(this));
 
         this._render();
     }
@@ -36,11 +36,6 @@ class RatingTabView extends BaseHTMLView {
 
     _onRatingChanged() {
         this._render();
-    }
-
-    remove() {
-        super.remove();
-        this._stopListenRatingChange();
     }
 
 }

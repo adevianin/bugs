@@ -10,9 +10,9 @@ class AntsListView extends BaseHTMLView {
         super(el);
         this._antViews = {};
 
-        this._stopListenEntityDied = this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this._stopListenEntityBorn = this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
-        this._stopListenQueenFlewNuptialFlight = this.$domainFacade.events.on('queenFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
+        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this.$domainFacade.events.on('queenFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
 
         this._render();
     }
@@ -22,14 +22,6 @@ class AntsListView extends BaseHTMLView {
         this._ants = this.$domainFacade.getAntsFromColony(this._colony.id);
 
         this._renderAnts();
-    }
-
-    remove() {
-        super.remove();
-        this._stopListenEntityDied();
-        this._stopListenEntityBorn();
-        this._stopListenQueenFlewNuptialFlight();
-        this._clearAntViews();
     }
 
     _render() {

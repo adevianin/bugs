@@ -29,11 +29,6 @@ class ColonyManager extends BaseHTMLView {
         }
     }
 
-    remove() {
-        super.remove();
-        this._tabSwitcher.remove();
-    }
-
     _render() {
         this._el.innerHTML = colonyManagerTmpl;
         this._colonyNameEl = this._el.querySelector('[data-colony-name]');

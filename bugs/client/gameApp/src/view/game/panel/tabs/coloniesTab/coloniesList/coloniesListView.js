@@ -7,10 +7,12 @@ class ColoniesListView extends BaseHTMLView {
     constructor(el) {
         super(el);
 
-        this._stopListenColonyBorn = this.$domainFacade.events.on('colonyBorn', this._onColonyBorn.bind(this));
-        this._stopListenColonyDied = this.$domainFacade.events.on('colonyDied', this._onColonyDied.bind(this));
+        this.$domainFacade.events.on('colonyBorn', this._onColonyBorn.bind(this));
+        this.$domainFacade.events.on('colonyDied', this._onColonyDied.bind(this));
 
         this._colonies = this.$domainFacade.findMyColonies();
+        this._colonyViews = {};
+        this._selectedColony = null;
         
         this._renderColonies();
         this._autoSelect();
@@ -25,13 +27,6 @@ class ColoniesListView extends BaseHTMLView {
         this._selectColony(colony, true);
     }
 
-    remove() {
-        super.remove();
-        this._stopListenColonyBorn();
-        this._stopListenColonyDied();
-        this._clearColonyViews();
-    }
-
     _autoSelect() {
         if (!this.selectedColony && this._colonies.length > 0) {
             this._selectColony(this._colonies[0]);
@@ -39,7 +34,7 @@ class ColoniesListView extends BaseHTMLView {
     }
 
     _renderColonies() {
-        this._clearColonyViews();
+        // this._clearColonyViews();
         this._colonies.forEach(colony => this._renderColony(colony));
     }
 
@@ -51,13 +46,13 @@ class ColoniesListView extends BaseHTMLView {
         this._el.append(liEl);
     }
 
-    _clearColonyViews() {
-        for (let colonyId in this._colonyViews) {
-            this._colonyViews[colonyId].remove();
-        }
-        this._colonyViews = {};
-        this._selectedColony = null;
-    }
+    // _clearColonyViews() {
+    //     for (let colonyId in this._colonyViews) {
+    //         this._colonyViews[colonyId].remove();
+    //     }
+    //     this._colonyViews = {};
+    //     this._selectedColony = null;
+    // }
 
     _selectColony(colony, silent = false) {
         this._selectedColony = colony;

@@ -12,20 +12,13 @@ class QueensListView extends BaseHTMLView {
 
         this._render();
 
-        this._stopListenQueenFlewNuptialFlight = this.$domainFacade.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
-        this._stopListenQueenFlewNuptialFlightBack = this.$domainFacade.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
+        this.$domainFacade.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
+        this.$domainFacade.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
         this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
     }
 
     get selectedQueen() {
         return this._selectedQueen;
-    }
-
-    remove() {
-        super.remove();
-        this._clearQueenViews();
-        this._stopListenQueenFlewNuptialFlight();
-        this._stopListenQueenFlewNuptialFlightBack();
     }
 
     _autoSelect() {
@@ -77,14 +70,6 @@ class QueensListView extends BaseHTMLView {
     _checkIdInQueensList(id) {
         let queensIds = this._queens.map(queen => queen.id);
         return queensIds.includes(id);
-    }
-
-    _clearQueenViews() {
-        for (let queenId in this._queenViews) {
-            this._queenViews[queenId].remove();
-        }
-
-        this._queenViews = {};
     }
 
     _onQueenFlewNuptialFlight(queen) {

@@ -11,12 +11,12 @@ class ColoniesTabView extends BaseHTMLView {
         
         this._render();
 
-        this._stopListenSelectedColonyChanged = this._coloniesList.events.on('selectedColonyChanged', this._manageSelectedColony.bind(this));
-        this._stopListenColonyBorn = this.$domainFacade.events.on('colonyBorn', this._renderMode.bind(this));
-        this._stopListenColonyDied = this.$domainFacade.events.on('colonyDied', this._renderMode.bind(this));
+        this._coloniesList.events.on('selectedColonyChanged', this._manageSelectedColony.bind(this));
+        this.$domainFacade.events.on('colonyBorn', this._renderMode.bind(this));
+        this.$domainFacade.events.on('colonyDied', this._renderMode.bind(this));
         this._bornNewAntaraBtn.addEventListener('click', this._onBornNewAntaraBtnClick.bind(this));
-        this._stopListenEntityDied = this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this._stopListenEntityBorn = this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
 
     }
 
@@ -58,17 +58,6 @@ class ColoniesTabView extends BaseHTMLView {
 
     _renderBornNewAntaraBtnState() {
         this._bornNewAntaraBtn.classList.toggle('hidden', this.$domainFacade.isAnyMyAnt());
-    }
-
-    remove() {
-        super.remove();
-        this._coloniesList.remove();
-        this._colonyManager.remove();
-        this._stopListenColonyBorn();
-        this._stopListenColonyDied();
-        this._stopListenSelectedColonyChanged();
-        this._stopListenEntityDied();
-        this._stopListenEntityBorn();
     }
 
     _onBornNewAntaraBtnClick() {

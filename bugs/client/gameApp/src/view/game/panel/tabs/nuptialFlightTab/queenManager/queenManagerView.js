@@ -24,11 +24,6 @@ class QueenManagerView extends BaseHTMLView {
         this._renderBuildingSite();
     }
 
-    remove() {
-        super.remove();
-        this._malesSearch.remove();
-    }
-
     _render() {
         this._el.innerHTML = queenManagerTmpl;
         this._malesSearch = new MalesSearchView(this._el.querySelector('[data-males-search]'));

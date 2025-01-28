@@ -12,12 +12,6 @@ class LarvaTabView extends BaseHTMLView {
         this._render();
     }
 
-    remove() {
-        super.remove();
-        this._stopListenNest();
-        this._clearLarvaeList();
-    }
-
     manageNest(nest) {
         this._stopListenNest();
         this._nest = nest;

@@ -17,11 +17,6 @@ class NotificationsTabView extends BaseHTMLView {
         this._notificationsListView = new NotificationsListView(this._el.querySelector('[data-notifications]'));
     }
 
-    remove() {
-        super.remove();
-        this._notificationsListView.remove();
-    }
-
 }
 
 export {

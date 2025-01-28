@@ -4848,11 +4848,6 @@ class ClimateTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1_
         this._changeDirectionEl.innerHTML = this._climate.directionOfChange > 0 ? 'потепління' : 'похолодання';
     }
 
-    remove() {
-        super.remove();
-        this._seasonBarView.remove();
-    }
-
 }
 
 
@@ -4970,10 +4965,12 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     constructor(el) {
         super(el);
 
-        this._stopListenColonyBorn = this.$domainFacade.events.on('colonyBorn', this._onColonyBorn.bind(this));
-        this._stopListenColonyDied = this.$domainFacade.events.on('colonyDied', this._onColonyDied.bind(this));
+        this.$domainFacade.events.on('colonyBorn', this._onColonyBorn.bind(this));
+        this.$domainFacade.events.on('colonyDied', this._onColonyDied.bind(this));
 
         this._colonies = this.$domainFacade.findMyColonies();
+        this._colonyViews = {};
+        this._selectedColony = null;
         
         this._renderColonies();
         this._autoSelect();
@@ -4988,13 +4985,6 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._selectColony(colony, true);
     }
 
-    remove() {
-        super.remove();
-        this._stopListenColonyBorn();
-        this._stopListenColonyDied();
-        this._clearColonyViews();
-    }
-
     _autoSelect() {
         if (!this.selectedColony && this._colonies.length > 0) {
             this._selectColony(this._colonies[0]);
@@ -5002,7 +4992,7 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     }
 
     _renderColonies() {
-        this._clearColonyViews();
+        // this._clearColonyViews();
         this._colonies.forEach(colony => this._renderColony(colony));
     }
 
@@ -5014,13 +5004,13 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._el.append(liEl);
     }
 
-    _clearColonyViews() {
-        for (let colonyId in this._colonyViews) {
-            this._colonyViews[colonyId].remove();
-        }
-        this._colonyViews = {};
-        this._selectedColony = null;
-    }
+    // _clearColonyViews() {
+    //     for (let colonyId in this._colonyViews) {
+    //         this._colonyViews[colonyId].remove();
+    //     }
+    //     this._colonyViews = {};
+    //     this._selectedColony = null;
+    // }
 
     _selectColony(colony, silent = false) {
         this._selectedColony = colony;
@@ -5172,12 +5162,12 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         
         this._render();
 
-        this._stopListenSelectedColonyChanged = this._coloniesList.events.on('selectedColonyChanged', this._manageSelectedColony.bind(this));
-        this._stopListenColonyBorn = this.$domainFacade.events.on('colonyBorn', this._renderMode.bind(this));
-        this._stopListenColonyDied = this.$domainFacade.events.on('colonyDied', this._renderMode.bind(this));
+        this._coloniesList.events.on('selectedColonyChanged', this._manageSelectedColony.bind(this));
+        this.$domainFacade.events.on('colonyBorn', this._renderMode.bind(this));
+        this.$domainFacade.events.on('colonyDied', this._renderMode.bind(this));
         this._bornNewAntaraBtn.addEventListener('click', this._onBornNewAntaraBtnClick.bind(this));
-        this._stopListenEntityDied = this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this._stopListenEntityBorn = this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
 
     }
 
@@ -5219,17 +5209,6 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
 
     _renderBornNewAntaraBtnState() {
         this._bornNewAntaraBtn.classList.toggle('hidden', this.$domainFacade.isAnyMyAnt());
-    }
-
-    remove() {
-        super.remove();
-        this._coloniesList.remove();
-        this._colonyManager.remove();
-        this._stopListenColonyBorn();
-        this._stopListenColonyDied();
-        this._stopListenSelectedColonyChanged();
-        this._stopListenEntityDied();
-        this._stopListenEntityBorn();
     }
 
     _onBornNewAntaraBtnClick() {
@@ -5428,9 +5407,9 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
         super(el);
         this._antViews = {};
 
-        this._stopListenEntityDied = this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this._stopListenEntityBorn = this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
-        this._stopListenQueenFlewNuptialFlight = this.$domainFacade.events.on('queenFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
+        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this.$domainFacade.events.on('queenFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
 
         this._render();
     }
@@ -5440,14 +5419,6 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
         this._ants = this.$domainFacade.getAntsFromColony(this._colony.id);
 
         this._renderAnts();
-    }
-
-    remove() {
-        super.remove();
-        this._stopListenEntityDied();
-        this._stopListenEntityBorn();
-        this._stopListenQueenFlewNuptialFlight();
-        this._clearAntViews();
     }
 
     _render() {
@@ -5586,11 +5557,6 @@ class AntsTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._antsList.manageColony(colony);
     }
 
-    remove() {
-        super.remove();
-        this._antsList.remove();
-    }
-
     _render() {
         this._el.innerHTML = _antsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
@@ -5667,11 +5633,6 @@ class ColonyManager extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__
         if (nestToSelect) {
             this._tabSwitcher.activateTab('nests');
         }
-    }
-
-    remove() {
-        super.remove();
-        this._tabSwitcher.remove();
     }
 
     _render() {
@@ -5756,12 +5717,6 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._render();
 
         this._addEggBtn.addEventListener('click', this._onAddEggBtnClick.bind(this));
-    }
-
-    remove() {
-        super.remove();
-        this._stopListenNest();
-        this._clearEggsViews();
     }
 
     _render() {
@@ -6026,12 +5981,6 @@ class LarvaTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
         this._render();
     }
 
-    remove() {
-        super.remove();
-        this._stopListenNest();
-        this._clearLarvaeList();
-    }
-
     manageNest(nest) {
         this._stopListenNest();
         this._nest = nest;
@@ -6216,11 +6165,6 @@ class MainTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
         this._renderName();
     }
 
-    remove() {
-        super.remove();
-        this._stopListenNest();
-    }
-
     _listenNest() {
         this._stopListenStoredCaloriesChanged = this._nest.on('storedCaloriesChanged', this._onStoredCaloriesChanged.bind(this));
     }
@@ -6292,11 +6236,6 @@ class NestManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
         super(el);
 
         this._render();
-    }
-
-    remove() {
-        super.remove();
-        this._tabSwitcher.remove();
     }
 
     manageNest(nest) {
@@ -6433,11 +6372,6 @@ class NestsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._renderSelectedNest();
     }
 
-    remove() {
-        super.remove();
-        this._clearNestViews();
-    }
-
     _selectNest(nest) {
         this._selectedNest = nest;
         this.events.emit('selectedNestChanged');
@@ -6509,12 +6443,6 @@ class NestsTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
 
     manageColony(colony, nestToSelect) {
         this._nestsList.manageColony(colony, nestToSelect);
-    }
-
-    remove() {
-        super.remove();
-        this._nestsList.remove();
-        this._nestManager.remove();
     }
 
     _render() {
@@ -7582,7 +7510,7 @@ class NotificationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
 
         this._render();
 
-        this._stopListenNewNotification = this._notificationsContainer.on('newNotification', this._onNewNotification.bind(this));
+        this._notificationsContainer.on('newNotification', this._onNewNotification.bind(this));
 
     }
 
@@ -7601,14 +7529,6 @@ class NotificationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         let view = new _notification_notificationView__WEBPACK_IMPORTED_MODULE_2__.NotificationView(el, notification);
         this._notificationViews.push(view);
         this._listEl.append(el);
-    }
-
-    remove() {
-        super.remove();
-        for (let notificationView of this._notificationViews) {
-            notificationView.remove();
-        }
-        this._stopListenNewNotification();
     }
 
     _onNewNotification(notification) {
@@ -7653,11 +7573,6 @@ class NotificationsTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MOD
         this._el.innerHTML = _notificationsTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
         
         this._notificationsListView = new _notificationsListView__WEBPACK_IMPORTED_MODULE_3__.NotificationsListView(this._el.querySelector('[data-notifications]'));
-    }
-
-    remove() {
-        super.remove();
-        this._notificationsListView.remove();
     }
 
 }
@@ -7713,12 +7628,6 @@ class NuptialFlightTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MOD
 
         this._render();
         this._queensList.events.on('selectedQueenChanged', this._manageSelectedQueen.bind(this));
-    }
-
-    remove() {
-        super.remove();
-        this._queensList.remove();
-        this._queenManager.remove();
     }
 
     _render() {
@@ -7812,11 +7721,6 @@ class MalesSearchView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
         }
 
         return this._males[this._selectedMaleIndex];
-    }
-
-    remove() {
-        super.remove();
-        this._maleProfile.remove();
     }
 
     _render() {
@@ -7913,11 +7817,6 @@ class NuptialMaleProfileView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_M
         this._genomeView = new _view_game_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_2__.ClosableGenomeView(this._el.querySelector('[data-genome]'), this._male.genome);
     }
 
-    remove() {
-        super.remove();
-        this._reset();
-    }
-
     showMale(male) {
         this._reset();
         this._male = male;
@@ -7976,11 +7875,6 @@ class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         // this._malesSearch.reset();
         this._renderQueen();
         this._renderBuildingSite();
-    }
-
-    remove() {
-        super.remove();
-        this._malesSearch.remove();
     }
 
     _render() {
@@ -8116,20 +8010,13 @@ class QueensListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1_
 
         this._render();
 
-        this._stopListenQueenFlewNuptialFlight = this.$domainFacade.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
-        this._stopListenQueenFlewNuptialFlightBack = this.$domainFacade.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
+        this.$domainFacade.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
+        this.$domainFacade.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
         this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
     }
 
     get selectedQueen() {
         return this._selectedQueen;
-    }
-
-    remove() {
-        super.remove();
-        this._clearQueenViews();
-        this._stopListenQueenFlewNuptialFlight();
-        this._stopListenQueenFlewNuptialFlightBack();
     }
 
     _autoSelect() {
@@ -8181,14 +8068,6 @@ class QueensListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1_
     _checkIdInQueensList(id) {
         let queensIds = this._queens.map(queen => queen.id);
         return queensIds.includes(id);
-    }
-
-    _clearQueenViews() {
-        for (let queenId in this._queenViews) {
-            this._queenViews[queenId].remove();
-        }
-
-        this._queenViews = {};
     }
 
     _onQueenFlewNuptialFlight(queen) {
@@ -8269,7 +8148,7 @@ class RatingTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__
         super(el);
         this._ratingContainer = this.$domainFacade.ratingContainer;
 
-        this._stopListenRatingChange = this._ratingContainer.on('changed', this._onRatingChanged.bind(this));
+        this._ratingContainer.on('changed', this._onRatingChanged.bind(this));
 
         this._render();
     }
@@ -8296,11 +8175,6 @@ class RatingTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__
 
     _onRatingChanged() {
         this._render();
-    }
-
-    remove() {
-        super.remove();
-        this._stopListenRatingChange();
     }
 
 }
@@ -8454,11 +8328,6 @@ class SpecieBuilderTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MOD
         this._specie = this.$domainFacade.getMySpecie();
 
         this._render();
-    }
-
-    remove() {
-        super.remove();
-        this._tabSwitcher.remove();
     }
 
     _render() {

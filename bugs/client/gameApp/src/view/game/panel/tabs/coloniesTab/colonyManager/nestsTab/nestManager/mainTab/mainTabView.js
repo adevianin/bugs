@@ -20,11 +20,6 @@ class MainTabView extends BaseHTMLView {
         this._renderName();
     }
 
-    remove() {
-        super.remove();
-        this._stopListenNest();
-    }
-
     _listenNest() {
         this._stopListenStoredCaloriesChanged = this._nest.on('storedCaloriesChanged', this._onStoredCaloriesChanged.bind(this));
     }
