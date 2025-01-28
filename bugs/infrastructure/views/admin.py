@@ -18,8 +18,8 @@ def _build_world_status():
 
 @user_passes_test(is_superuser)
 @ensure_csrf_cookie
-def admin_panel(request):
-    return render(request, 'client/admin_panel.html')
+def admin_index(request):
+    return render(request, 'client/admin.html')
 
 @user_passes_test(is_superuser)
 @require_POST
