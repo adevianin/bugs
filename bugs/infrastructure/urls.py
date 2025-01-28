@@ -13,15 +13,15 @@ from .views.nuptial import found_colony, save_specie_schema
 from .views.player import born_new_antara
 
 urlpatterns = [
-    path('', index, name='index'),
-
+    path('', index, name='game_index'),
     path('account', account_index, name='account_index'),
+    path('admin', admin_index, name='admin_index'),
+    
     path('accounts/check_name', account_check_name, name='account_check_name'),
     path('accounts/register', account_register, name='account_register'),
     path('accounts/login', account_login, name='account_login'),
     path('accounts/logout', account_logout, name='account_logout'),
 
-    path('admin', admin_index, name='admin_index'),
     path('admin/world/status', world_status_check, name='world_status'),
     path('admin/world/init', init_world, name='init_world'),
     path('admin/world/stop', stop_world, name='stop_world'),
