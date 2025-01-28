@@ -13,4 +13,4 @@ def index(request: HttpRequest):
         'mainSocketURL': MAIN_SOCKET_URL
     }
     
-    return render(request, 'client/home.html', {'initial_data': initial_data})
+    return render(request, 'client/game.html', {'initial_data': initial_data})

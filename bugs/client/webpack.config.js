@@ -5,10 +5,10 @@ module.exports = {
     mode: 'development',
     devtool: "source-map",
     entry: {
-        app: './app/src/index.js',
+        gameApp: './gameApp/src/index.js',
         adminApp: './adminApp/src/index.js',
         accountApp: './accountApp/src/index.js',
-        initialStyles: './app/src/view/initialStyles.css'
+        initialStyles: './gameApp/src/view/initialStyles.css'
     },
     output: {
         filename: '[name].js',
@@ -20,9 +20,9 @@ module.exports = {
     resolve: {
         alias: {
           "@common": path.resolve(__dirname, './common'),
-          "@utils": path.resolve(__dirname, './app/src/utils'),
-          "@view": path.resolve(__dirname, './app/src/view'),
-          "@domain": path.resolve(__dirname, './app/src/domain'),
+          "@utils": path.resolve(__dirname, './gameApp/src/utils'),
+          "@view": path.resolve(__dirname, './gameApp/src/view'),
+          "@domain": path.resolve(__dirname, './gameApp/src/domain'),
         },
     },
     module: {

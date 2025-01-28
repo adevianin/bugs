@@ -3,9 +3,9 @@
         "baseUrl": "./",
         "paths": {
             "@common/*": ["common/*"],
-            "@utils/*": ["app/src/utils/*"],
-            "@view/*": ["app/src/view/*"],
-            "@domain/*": ["app/src/domain/*"],
+            "@utils/*": ["gameApp/src/utils/*"],
+            "@view/*": ["gameApp/src/view/*"],
+            "@domain/*": ["gameApp/src/domain/*"],
         }
     },
     "exclude": ["node_modules"]

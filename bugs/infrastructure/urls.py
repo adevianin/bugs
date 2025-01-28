@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from .views.account import account_check_name, account_register, account_login, account_logout, account_index
-from .views.home import index
+from .views.game import index
 from .views.admin import admin_panel, world_status_check, init_world, stop_world, run_world, save_world, expand_map
 from .views.nest import rename_nest, add_egg, change_egg_caste, change_egg_name, move_egg_to_larva_chamber, delete_egg, delete_larva
 from .views.colony import stop_operation, build_new_sub_nest, destroy_nest, pillage_nest, transport_food, build_fortification, bring_bug
