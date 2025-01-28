@@ -3322,7 +3322,7 @@ class AccountApi {
     }
 
     logout() {
-        return this._requester.post('accounts/logout').then((resp) => {
+        return this._requester.post('api/accounts/logout').then((resp) => {
             return resp.data.redirectUrl;
         });
     }
@@ -3351,23 +3351,23 @@ class AntApi {
     }
 
     flyNuptialFlight(antId) {
-        return this._requester.post(`world/ants/${ antId }/fly_nuptial_flight`)
+        return this._requester.post(`api/world/ants/${ antId }/fly_nuptial_flight`)
     }
 
     changeGuardianBehavior(antId, behaviorValue) {
-        return this._requester.post(`world/ants/${ antId }/guardian_behavior`, {
+        return this._requester.post(`api/world/ants/${ antId }/guardian_behavior`, {
             guaridan_behavior: behaviorValue
         });
     }
 
     toggleCooperativeBehavior(antId, isEnabled) {
-        return this._requester.post(`world/ants/${ antId }/cooperative_behavior`, {
+        return this._requester.post(`api/world/ants/${ antId }/cooperative_behavior`, {
             is_enabled: isEnabled
         });
     }
 
     relocateToNest(antId, nestId) {
-        return this._requester.post(`world/ants/${ antId }/relocate`, {
+        return this._requester.post(`api/world/ants/${ antId }/relocate`, {
             nest_id: nestId
         });
     }
@@ -3395,12 +3395,12 @@ class ColonyApi {
     }
 
     stopOperation(colonyId, operationId) {
-        return this._requester.post(`world/colonies/${ colonyId }/operations/${ operationId }/stop_operation`)
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/${ operationId }/stop_operation`)
     }
 
     buildNewSubNestOperation(colonyId, buildingSite, workersCount, warriorsCount, nestName) {
         return new Promise((res, rej) => {
-            this._requester.post(`world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
+            this._requester.post(`api/world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
                 building_site: [buildingSite.x, buildingSite.y],
                 workers_count: workersCount,
                 warriors_count: warriorsCount,
@@ -3413,7 +3413,7 @@ class ColonyApi {
     }
 
     destroyNestOperation(colonyId, warriorsCount, workersCount, nest) {
-        return this._requester.post(`world/colonies/${ colonyId }/operations/destroy_nest`, {
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/destroy_nest`, {
             warriors_count: warriorsCount,
             workers_count: workersCount,
             nest_id: nest.id
@@ -3421,7 +3421,7 @@ class ColonyApi {
     }
 
     pillageNestOperation(colonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-        return this._requester.post(`world/colonies/${ colonyId }/operations/pillage_nest`, {
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/pillage_nest`, {
             nest_to_pillage_id: pillagingNestId,
             nest_for_loot_id: nestForLootId,
             warriors_count: warriorsCount,
@@ -3430,7 +3430,7 @@ class ColonyApi {
     }
 
     transportFoodOperation(colonyId, fromNestId, toNestId, workersCount, warriorsCount) {
-        return this._requester.post(`world/colonies/${ colonyId }/operations/transport_food`, {
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/transport_food`, {
             from_nest_id: fromNestId,
             to_nest_id: toNestId,
             workers_count: workersCount,
@@ -3439,7 +3439,7 @@ class ColonyApi {
     }
 
     buildFortificationsOpearation(colonyId, nestId, workersCount) {
-        return this._requester.post(`world/colonies/${ colonyId }/operations/build_fortification`, {
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/build_fortification`, {
             nest_id: nestId,
             workers_count: workersCount
         });
@@ -3447,7 +3447,7 @@ class ColonyApi {
 
     bringBugOpearation(colonyId, nestId) {
         return new Promise((res, rej) => {
-            this._requester.post(`world/colonies/${ colonyId }/operations/bring_bug`, {
+            this._requester.post(`api/world/colonies/${ colonyId }/operations/bring_bug`, {
                 nest_id: nestId
             })
             .then(axiosResp => res(null))
@@ -3535,7 +3535,7 @@ class NestApi {
 
     addNewEgg(nestId, name, isFertilized) {
         return new Promise((res, rej) => {
-            this._requester.post(`world/nests/${nestId}/add_egg`, {
+            this._requester.post(`api/world/nests/${nestId}/add_egg`, {
                 name,
                 is_fertilized: isFertilized
             })
@@ -3545,31 +3545,31 @@ class NestApi {
     }
 
     changeEggCaste(nestId, eggId, antType) {
-        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/change_caste`, {
+        return this._requester.post(`api/world/nests/${nestId}/eggs/${eggId}/change_caste`, {
             ant_type: antType
         });
     }
 
     changeEggName(nestId, eggId, name) {
-        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/change_name`, {
+        return this._requester.post(`api/world/nests/${nestId}/eggs/${eggId}/change_name`, {
             name: name
         });
     }
 
     eggToLarvaChamber(nestId, eggId) {
-        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/move_to_larva_chamber`);
+        return this._requester.post(`api/world/nests/${nestId}/eggs/${eggId}/move_to_larva_chamber`);
     }
 
     eggDelete(nestId, eggId) {
-        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/delete`);
+        return this._requester.post(`api/world/nests/${nestId}/eggs/${eggId}/delete`);
     }
 
     larvaDelete(nestId, larvaId) {
-        return this._requester.post(`world/nests/${nestId}/larvae/${larvaId}/delete`);
+        return this._requester.post(`api/world/nests/${nestId}/larvae/${larvaId}/delete`);
     }
 
     renameNest(nestId, name) {
-        return this._requester.post(`world/nests/${nestId}/rename`, {
+        return this._requester.post(`api/world/nests/${nestId}/rename`, {
             name: name
         });
     }
@@ -3598,13 +3598,13 @@ class NuptialEnvironmentApi {
     }
 
     saveSpecieSchema(specie) {
-        this._requester.post('world/nuptial_environment/specie/specie_schema', {
+        this._requester.post('api/world/nuptial_environment/specie/specie_schema', {
             specie_schema: specie.schema
         });
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) { 
-        return this._requester.post('world/nuptial_environment/found_colony', {
+        return this._requester.post('api/world/nuptial_environment/found_colony', {
             queen_id: queenId,
             nuptial_male_id: nuptialMaleId,
             nest_building_site: [nestBuildingSite.x, nestBuildingSite.y],
@@ -3684,7 +3684,7 @@ class UserApi {
     }
 
     bornNewAntara() {
-        return this._requester.post(`world/player/born_new_antara`);
+        return this._requester.post(`api/world/player/born_new_antara`);
     }
 
 }

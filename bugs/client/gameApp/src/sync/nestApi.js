@@ -6,7 +6,7 @@ class NestApi {
 
     addNewEgg(nestId, name, isFertilized) {
         return new Promise((res, rej) => {
-            this._requester.post(`world/nests/${nestId}/add_egg`, {
+            this._requester.post(`api/world/nests/${nestId}/add_egg`, {
                 name,
                 is_fertilized: isFertilized
             })
@@ -16,31 +16,31 @@ class NestApi {
     }
 
     changeEggCaste(nestId, eggId, antType) {
-        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/change_caste`, {
+        return this._requester.post(`api/world/nests/${nestId}/eggs/${eggId}/change_caste`, {
             ant_type: antType
         });
     }
 
     changeEggName(nestId, eggId, name) {
-        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/change_name`, {
+        return this._requester.post(`api/world/nests/${nestId}/eggs/${eggId}/change_name`, {
             name: name
         });
     }
 
     eggToLarvaChamber(nestId, eggId) {
-        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/move_to_larva_chamber`);
+        return this._requester.post(`api/world/nests/${nestId}/eggs/${eggId}/move_to_larva_chamber`);
     }
 
     eggDelete(nestId, eggId) {
-        return this._requester.post(`world/nests/${nestId}/eggs/${eggId}/delete`);
+        return this._requester.post(`api/world/nests/${nestId}/eggs/${eggId}/delete`);
     }
 
     larvaDelete(nestId, larvaId) {
-        return this._requester.post(`world/nests/${nestId}/larvae/${larvaId}/delete`);
+        return this._requester.post(`api/world/nests/${nestId}/larvae/${larvaId}/delete`);
     }
 
     renameNest(nestId, name) {
-        return this._requester.post(`world/nests/${nestId}/rename`, {
+        return this._requester.post(`api/world/nests/${nestId}/rename`, {
             name: name
         });
     }

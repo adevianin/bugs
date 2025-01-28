@@ -5,12 +5,12 @@ class ColonyApi {
     }
 
     stopOperation(colonyId, operationId) {
-        return this._requester.post(`world/colonies/${ colonyId }/operations/${ operationId }/stop_operation`)
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/${ operationId }/stop_operation`)
     }
 
     buildNewSubNestOperation(colonyId, buildingSite, workersCount, warriorsCount, nestName) {
         return new Promise((res, rej) => {
-            this._requester.post(`world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
+            this._requester.post(`api/world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
                 building_site: [buildingSite.x, buildingSite.y],
                 workers_count: workersCount,
                 warriors_count: warriorsCount,
@@ -23,7 +23,7 @@ class ColonyApi {
     }
 
     destroyNestOperation(colonyId, warriorsCount, workersCount, nest) {
-        return this._requester.post(`world/colonies/${ colonyId }/operations/destroy_nest`, {
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/destroy_nest`, {
             warriors_count: warriorsCount,
             workers_count: workersCount,
             nest_id: nest.id
@@ -31,7 +31,7 @@ class ColonyApi {
     }
 
     pillageNestOperation(colonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-        return this._requester.post(`world/colonies/${ colonyId }/operations/pillage_nest`, {
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/pillage_nest`, {
             nest_to_pillage_id: pillagingNestId,
             nest_for_loot_id: nestForLootId,
             warriors_count: warriorsCount,
@@ -40,7 +40,7 @@ class ColonyApi {
     }
 
     transportFoodOperation(colonyId, fromNestId, toNestId, workersCount, warriorsCount) {
-        return this._requester.post(`world/colonies/${ colonyId }/operations/transport_food`, {
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/transport_food`, {
             from_nest_id: fromNestId,
             to_nest_id: toNestId,
             workers_count: workersCount,
@@ -49,7 +49,7 @@ class ColonyApi {
     }
 
     buildFortificationsOpearation(colonyId, nestId, workersCount) {
-        return this._requester.post(`world/colonies/${ colonyId }/operations/build_fortification`, {
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/build_fortification`, {
             nest_id: nestId,
             workers_count: workersCount
         });
@@ -57,7 +57,7 @@ class ColonyApi {
 
     bringBugOpearation(colonyId, nestId) {
         return new Promise((res, rej) => {
-            this._requester.post(`world/colonies/${ colonyId }/operations/bring_bug`, {
+            this._requester.post(`api/world/colonies/${ colonyId }/operations/bring_bug`, {
                 nest_id: nestId
             })
             .then(axiosResp => res(null))

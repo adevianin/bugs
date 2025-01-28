@@ -38,7 +38,7 @@ class WorldStatusView {
     }
 
     _checkWorldStatus() {
-        this._requester.post('admin/world/status').then((resp) => {
+        this._requester.post('api/admin/world/status').then((resp) => {
             this._renderWorldStatus(resp.data.status);
         }).catch(() => {
             alert('server is not responding!!!');
@@ -46,7 +46,7 @@ class WorldStatusView {
     }
 
     _initWorld() {
-        this._requester.post('admin/world/init').then((resp) => {
+        this._requester.post('api/admin/world/init').then((resp) => {
             this._renderWorldStatus(resp.data.status);
         }).catch(() => {
             alert('something went wrong');
@@ -54,7 +54,7 @@ class WorldStatusView {
     }
 
     _stopWorld() {
-        this._requester.post('admin/world/stop').then((resp) => {
+        this._requester.post('api/admin/world/stop').then((resp) => {
             this._renderWorldStatus(resp.data.status);
         }).catch(() => {
             alert('something went wrong');
@@ -62,7 +62,7 @@ class WorldStatusView {
     }
 
     _runWorld() {
-        this._requester.post('admin/world/run').then((resp) => {
+        this._requester.post('api/admin/world/run').then((resp) => {
             this._renderWorldStatus(resp.data.status);
         }).catch(() => {
             alert('something went wrong');
@@ -70,7 +70,7 @@ class WorldStatusView {
     }
 
     _saveWorld() {
-        this._requester.post('admin/world/save').then((resp) => {
+        this._requester.post('api/admin/world/save').then((resp) => {
             alert('saved')
         }).catch(() => {
             alert('something went wrong');
@@ -78,7 +78,7 @@ class WorldStatusView {
     }
 
     _expandMap() {
-        this._requester.post('admin/world/expand_map', {
+        this._requester.post('api/admin/world/expand_map', {
             chunk_rows: this._expandMapChunkRowsEl.value,
             chunk_cols: this._expandMapChunkColsEl.value
         })
