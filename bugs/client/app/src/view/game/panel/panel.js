@@ -16,21 +16,14 @@ class Panel extends BaseHTMLView {
     constructor(el) {
         super(el);
 
+        this._render();
+
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
         this.$eventBus.on('bornNewAntaraBtnClick', this._onBornNewAntaraBtnClick.bind(this));
     }
 
-    turnOn() {
-        this.toggle(true);
+    _render() {
         this._renderTabViews();
-    }
-
-    turnOff() {
-        this.toggle(false);
-        if (this._tabSwitcher) {
-            this._tabSwitcher.remove();
-            this._tabSwitcher = null;
-        }
     }
 
     _renderTabViews() {

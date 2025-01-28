@@ -1,11 +1,14 @@
 const path = require('path');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
     mode: 'development',
     devtool: "source-map",
     entry: {
         app: './app/src/index.js',
-        adminApp: './adminApp/src/index.js'
+        adminApp: './adminApp/src/index.js',
+        accountApp: './accountApp/src/index.js',
+        initialStyles: './app/src/view/initialStyles.css'
     },
     output: {
         filename: '[name].js',
@@ -16,7 +19,8 @@ module.exports = {
     },
     resolve: {
         alias: {
-          "@utils": path.resolve(__dirname, './utils'),
+          "@common": path.resolve(__dirname, './common'),
+          "@utils": path.resolve(__dirname, './app/src/utils'),
           "@view": path.resolve(__dirname, './app/src/view'),
           "@domain": path.resolve(__dirname, './app/src/domain'),
         },
@@ -24,8 +28,19 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.css$/i,
-                use: ["style-loader", "css-loader"],
+                oneOf: [
+                    {
+                        test: /initialStyles\.css$/i,
+                        use: [
+                            MiniCssExtractPlugin.loader,
+                            'css-loader',
+                        ],
+                    },
+                    {
+                        test: /\.css$/i,
+                        use: ["style-loader", "css-loader"],
+                    },
+                ],
             },
             {
                 test: /\.html$/i,
@@ -37,4 +52,5 @@ module.exports = {
             }
         ],
     },
+    plugins: [new MiniCssExtractPlugin()],
 };

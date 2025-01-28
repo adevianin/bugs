@@ -40,30 +40,8 @@ class DomainFacade {
         return this._worldService.world.findEntityById(id);
     }
 
-    isLoggedIn() {
-        return this._accountService.isLoggedIn();
-    }
-
-    login(username, password) {
-        return this._accountService.login(username, password).then(() => {
-            this._tryConnectMessageHandler();
-        });
-    }
-
-    register(username, password) {
-        return this._accountService.register(username, password).then(() => {
-            this._tryConnectMessageHandler();
-        });
-    }
-
     logout() {
-        return this._accountService.logout().then(() => {
-            this._disconnectMessagerHandler();
-        });
-    }
-
-    checkUsernameUnique(username) {
-        return this._accountService.checkUsernameUnique(username);
+        return this._accountService.logout();
     }
 
     getUserData() {
@@ -71,7 +49,7 @@ class DomainFacade {
     }
 
     start() {
-        this._tryConnectMessageHandler();
+        this._messageHandlerService.connect();
     }
 
     getWorldSize() {
@@ -178,16 +156,6 @@ class DomainFacade {
 
     bornNewAntara() {
         this._userService.bornNewAntara();
-    }
-
-    _tryConnectMessageHandler() {
-        if (this._accountService.isLoggedIn()) {
-            this._messageHandlerService.connect();
-        }
-    }
-
-    _disconnectMessagerHandler() {
-        this._messageHandlerService.disconnect();
     }
 
 }

@@ -1,27 +1,31 @@
+import * as PIXI from 'pixi.js';
+
 class Camera {
 
     static MAP_MARGIN = 20;
 
-    constructor(container, handler, canvasEl) {
+    constructor(container, canvasEl, mapWidth, mapHeight) {
         this._container = container;
-        this._handler = handler;
         this._isDraging = false;
         this._anchorPoint = {x: null, y: null};
         this._mapSize = {
-            width: null,
-            height: null
+            width: mapWidth,
+            height: mapHeight
         };
         this._canvasEl = canvasEl;
 
-        this._handler.eventMode = 'static';
+        this._render();
+
         this._handler.on('pointerdown', this._onPointerDown.bind(this));
         this._handler.on('pointerup', this._onPointerUp.bind(this));
         this._handler.on('pointermove', this._onPointerMove.bind(this));
     }
 
-    setMapSize(width, height) {
-        this._mapSize.width = width;
-        this._mapSize.height = height;
+    _render() {
+        this._handler = new PIXI.Container();
+        this._handler.eventMode = 'static';
+        this._handler.hitArea = new PIXI.Rectangle(0, 0, this._mapSize.width, this._mapSize.height);
+        this._container.addChild(this._handler);
     }
 
     _onPointerDown(e) {

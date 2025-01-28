@@ -26,7 +26,9 @@ class UserTab extends BaseHTMLView {
     }
 
     _onUserLogoutBtnClick() {
-        this.$domainFacade.logout();
+        this.$domainFacade.logout().then(redirectUrl => {
+            location.href = redirectUrl;
+        });
     }
 
 }

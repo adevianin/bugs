@@ -1,13 +1,1 @@
-@import './utilStyles.css';
-
-body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
-
-.loader {
-    height: 100%;
-    width: 100%;
-    background-color: blueviolet;
-}
+@import '@common/styles.css';

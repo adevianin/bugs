@@ -88,30 +88,8 @@ class DomainFacade {
         return this._worldService.world.findEntityById(id);
     }
 
-    isLoggedIn() {
-        return this._accountService.isLoggedIn();
-    }
-
-    login(username, password) {
-        return this._accountService.login(username, password).then(() => {
-            this._tryConnectMessageHandler();
-        });
-    }
-
-    register(username, password) {
-        return this._accountService.register(username, password).then(() => {
-            this._tryConnectMessageHandler();
-        });
-    }
-
     logout() {
-        return this._accountService.logout().then(() => {
-            this._disconnectMessagerHandler();
-        });
-    }
-
-    checkUsernameUnique(username) {
-        return this._accountService.checkUsernameUnique(username);
+        return this._accountService.logout();
     }
 
     getUserData() {
@@ -119,7 +97,7 @@ class DomainFacade {
     }
 
     start() {
-        this._tryConnectMessageHandler();
+        this._messageHandlerService.connect();
     }
 
     getWorldSize() {
@@ -228,16 +206,6 @@ class DomainFacade {
         this._userService.bornNewAntara();
     }
 
-    _tryConnectMessageHandler() {
-        if (this._accountService.isLoggedIn()) {
-            this._messageHandlerService.connect();
-        }
-    }
-
-    _disconnectMessagerHandler() {
-        this._messageHandlerService.disconnect();
-    }
-
 }
 
 
@@ -309,7 +277,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   AntColony: () => (/* binding */ AntColony)
 /* harmony export */ });
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./action/actionTypes */ "./app/src/domain/entity/action/actionTypes.js");
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/eventEmitter */ "./utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/eventEmitter */ "./app/src/utils/eventEmitter.js");
 
 
 
@@ -908,7 +876,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Climate: () => (/* binding */ Climate)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./app/src/utils/eventEmitter.js");
 
 
 class Climate extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
@@ -958,7 +926,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Egg: () => (/* binding */ Egg)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./app/src/utils/eventEmitter.js");
 /* harmony import */ var _genetic_genome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genetic/genome */ "./app/src/domain/entity/genetic/genome.js");
 /* harmony import */ var _domain_enum_eggStates__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/eggStates */ "./app/src/domain/enum/eggStates.js");
 
@@ -1025,7 +993,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Entity: () => (/* binding */ Entity)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./app/src/utils/eventEmitter.js");
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./action/actionTypes */ "./app/src/domain/entity/action/actionTypes.js");
 
 
@@ -1288,7 +1256,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./app/src/domain/entity/entity.js");
 /* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enum/entityTypes */ "./app/src/domain/enum/entityTypes.js");
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./app/src/domain/entity/action/actionTypes.js");
-/* harmony import */ var _utils_walker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @utils/walker */ "./utils/walker.js");
+/* harmony import */ var _utils_walker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @utils/walker */ "./app/src/utils/walker.js");
 
 
 
@@ -1502,7 +1470,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Larva: () => (/* binding */ Larva)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./app/src/utils/eventEmitter.js");
 /* harmony import */ var _genetic_genome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genetic/genome */ "./app/src/domain/entity/genetic/genome.js");
 
 
@@ -1555,7 +1523,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   LiveEntity: () => (/* binding */ LiveEntity)
 /* harmony export */ });
 /* harmony import */ var _entity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity */ "./app/src/domain/entity/entity.js");
-/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/distance */ "./utils/distance.js");
+/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/distance */ "./app/src/utils/distance.js");
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./app/src/domain/entity/action/actionTypes.js");
 
 
@@ -1882,7 +1850,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NotificationsContainer: () => (/* binding */ NotificationsContainer)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./app/src/utils/eventEmitter.js");
 
 
 class NotificationsContainer extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
@@ -1997,7 +1965,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Specie: () => (/* binding */ Specie)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./app/src/utils/eventEmitter.js");
 
 
 class Specie extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
@@ -2053,7 +2021,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SpecieChromosome: () => (/* binding */ SpecieChromosome)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./app/src/utils/eventEmitter.js");
 
 
 class SpecieChromosome extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
@@ -2133,7 +2101,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   RatingContainer: () => (/* binding */ RatingContainer)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./app/src/utils/eventEmitter.js");
 
 
 class RatingContainer extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
@@ -2561,7 +2529,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domainFacade__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./domainFacade */ "./app/src/domain/domainFacade.js");
 /* harmony import */ var _service_accountService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./service/accountService */ "./app/src/domain/service/accountService.js");
 /* harmony import */ var _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./service/messageHandlerService */ "./app/src/domain/service/messageHandlerService.js");
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @utils/eventEmitter */ "./utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @utils/eventEmitter */ "./app/src/utils/eventEmitter.js");
 /* harmony import */ var _worldFactory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./worldFactory */ "./app/src/domain/worldFactory.js");
 /* harmony import */ var _service_worldService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./service/worldService */ "./app/src/domain/service/worldService.js");
 /* harmony import */ var _service_colonyService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/colonyService */ "./app/src/domain/service/colonyService.js");
@@ -2594,7 +2562,7 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let world = worldFactory.buildWorld();
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus, ratingContainer);
-    let accountService = new _service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user, mainEventBus);
+    let accountService = new _service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user);
     let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
     let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_7__.UserService(apis.userApi, notificationsContainer);
     let nuptialEnvironmentService = new _service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_8__.NuptialEnvironmentService(mainEventBus, nuptialEnvironmentFactory, apis.nuptialEnvironmentApi);
@@ -2622,54 +2590,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class AccountService {
     
-    constructor(accountApi, userData, mainEventBus) {
+    constructor(accountApi, userData) {
         this._accountApi = accountApi;
         this._userData = userData;
-        this._mainEventBus = mainEventBus;
-    }
-
-    login(username, password) {
-        return this._accountApi.login(username, password)
-            .then(userData => {
-                this._userData = userData;
-                this._emitStatusChange();
-            });
-    }
-
-    register(username, password) {
-        return this._accountApi.register(username, password)
-            .then(userData => {
-                this._userData = userData;
-                this._emitStatusChange();
-            });
     }
 
     logout() {
-        return this._accountApi.logout().then(() => {
-            this._userData = null;
-            this._emitStatusChange();
-        });
-    }
-
-    checkUsernameUnique(username) {
-        return this._accountApi.checkUsernameUnique(username);
-    }
-
-    isLoggedIn() {
-        return !!this._userData;
+        return this._accountApi.logout();
     }
 
     getUserData() {
         return this._userData;
-    }
-
-    _emitStatusChange() {
-        if (this.isLoggedIn()) {
-            this._mainEventBus.emit('userLogin');
-        } else {
-            this._mainEventBus.emit('userLogout');
-        }
-        
     }
 
 }
@@ -2691,7 +2622,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/entity/action/actionTypes */ "./app/src/domain/entity/action/actionTypes.js");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/consts */ "./app/src/domain/consts.js");
-/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @utils/distance */ "./utils/distance.js");
+/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @utils/distance */ "./app/src/utils/distance.js");
 
 
 
@@ -2855,7 +2786,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NuptialEnvironmentService: () => (/* binding */ NuptialEnvironmentService)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./app/src/utils/eventEmitter.js");
 /* harmony import */ var _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/entity/action/actionTypes */ "./app/src/domain/entity/action/actionTypes.js");
 
 
@@ -3010,7 +2941,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   WorldService: () => (/* binding */ WorldService)
 /* harmony export */ });
 /* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/enum/antTypes */ "./app/src/domain/enum/antTypes.js");
-/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/distance */ "./utils/distance.js");
+/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/distance */ "./app/src/utils/distance.js");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/consts */ "./app/src/domain/consts.js");
 
 
@@ -3319,31 +3250,9 @@ class AccountApi {
         this._requester = requester;
     }
 
-    login(username, password) {
-        return this._requester.post('users/login', {
-            username, password
-        }).then((response) => {
-            return response.data.user;
-        });
-    }
-
-    register(username, password) {
-        return this._requester.post('users', {
-            username, password
-        }).then((response) => {
-            return response.data.user;
-        });
-    }
-
     logout() {
-        return this._requester.post('users/logout');
-    }
-
-    checkUsernameUnique(username) {
-        return this._requester.post('users/username_unique_check', {
-            username
-        }).then((res) => {
-            return res.data.is_unique;
+        return this._requester.post('accounts/logout').then((resp) => {
+            return resp.data.redirectUrl;
         });
     }
 
@@ -3491,7 +3400,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   initSyncLayer: () => (/* binding */ initSyncLayer)
 /* harmony export */ });
-/* harmony import */ var _utils_requester__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/requester */ "./utils/requester.js");
+/* harmony import */ var _common_utils_requester__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/requester */ "./common/utils/requester.js");
 /* harmony import */ var _accountApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./accountApi */ "./app/src/sync/accountApi.js");
 /* harmony import */ var _serverConnection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./serverConnection */ "./app/src/sync/serverConnection.js");
 /* harmony import */ var _nestApi__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestApi */ "./app/src/sync/nestApi.js");
@@ -3509,7 +3418,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function initSyncLayer(initialData) {
-    let requester = new _utils_requester__WEBPACK_IMPORTED_MODULE_0__.Requester();
+    let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_0__.Requester();
     let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection(initialData.mainSocketURL);
 
     let accountApi = new _accountApi__WEBPACK_IMPORTED_MODULE_1__.AccountApi(requester);
@@ -3649,7 +3558,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ServerConnection: () => (/* binding */ ServerConnection)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./app/src/utils/eventEmitter.js");
 
 
 class ServerConnection {
@@ -3713,128 +3622,143 @@ class UserApi {
 
 /***/ }),
 
-/***/ "./app/src/view/account/accountView.js":
+/***/ "./app/src/utils/convertStepsToYear.js":
 /*!*********************************************!*\
-  !*** ./app/src/view/account/accountView.js ***!
+  !*** ./app/src/utils/convertStepsToYear.js ***!
   \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   AccountView: () => (/* binding */ AccountView)
+/* harmony export */   converStepsToYear: () => (/* binding */ converStepsToYear)
 /* harmony export */ });
-/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./app/src/view/account/styles.css");
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./template.html */ "./app/src/view/account/template.html");
-/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../base/baseHTMLView */ "./app/src/view/base/baseHTMLView.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/consts */ "./app/src/domain/consts.js");
+
+
+function converStepsToYear(steps) {
+    // return Math.floor(steps / CONSTS.STEPS_IN_YEAR);
+    return steps;
+}
 
 
 
+/***/ }),
+
+/***/ "./app/src/utils/distance.js":
+/*!***********************************!*\
+  !*** ./app/src/utils/distance.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   distance: () => (/* binding */ distance)
+/* harmony export */ });
+function distance(x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow((x1  -x2), 2) + Math.pow((y1 - y2), 2));
+}
 
 
-class AccountView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
 
-    constructor(el) {
-        super(el);
+/***/ }),
 
-        this._render();
+/***/ "./app/src/utils/eventEmitter.js":
+/*!***************************************!*\
+  !*** ./app/src/utils/eventEmitter.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-        this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));
-        this._registrationBtn.addEventListener('click', this._onRegistrationBtnClick.bind(this));
-        this._switchModeToRegisterBtn.addEventListener('click', this._onSwitchModeToRegisterClick.bind(this));
-        this._switchModeToLoginBtn.addEventListener('click', this._onSwitchModeToLoginClick.bind(this));
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EventEmitter: () => (/* binding */ EventEmitter)
+/* harmony export */ });
+/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! events */ "./node_modules/events/events.js");
+/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_0__);
 
-        this._switchMode('login');
-    }
 
-    _render() {
-        this._el.innerHTML = _template_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+class EventEmitter extends (events__WEBPACK_IMPORTED_MODULE_0___default()) {
 
-        this._loginTabEl = this._el.querySelector('[data-login-tab]');
-        this._registrationTabEl = this._el.querySelector('[data-registration-tab]');
+    on(eventName, callback) {
+        super.on(eventName, callback);
 
-        this._loginBtn = this._el.querySelector('[data-login-btn]');
-        this._registrationBtn = this._el.querySelector('[data-registration-btn]');
-        this._switchModeToRegisterBtn = this._el.querySelector('[data-switch-to-register-btn]');
-        this._switchModeToLoginBtn = this._el.querySelector('[data-switch-to-login-btn]');
-
-        this._notCorrectCredsErrorEl = this._el.querySelector('[data-not-correct-creds-error]');
-        this._passwordDifferentErrorEl = this._el.querySelector('[data-passwords-different-error]');
-        this._usernameIsntUniqueErrorEl = this._el.querySelector('[data-username-isnt-unique]');
-
-        this._toggleNotCorrectLoginPassError(false);
-        this._toggleDifferentPasswordsError(false);
-        this._toggleUsernameIsntUniqueError(false);
-    }
-
-    _onLoginBtnClick() {
-        let username = this._loginTabEl.querySelector('[data-user-name]').value;
-        let password =  this._loginTabEl.querySelector('[data-password]').value;
-        this.$domainFacade.login(username, password)
-            .catch(() => {
-                this._toggleNotCorrectLoginPassError(true);
-            });
-    }
-
-    _onRegistrationBtnClick() {
-        let username = this._registrationTabEl.querySelector('[data-user-name]').value;
-        let password =  this._registrationTabEl.querySelector('[data-password]').value;
-        let passwordConfirm =  this._registrationTabEl.querySelector('[data-password-confirm]').value;
-
-        if (!username || !password) {
-            return;
+        return () => {
+            this.off(eventName, callback);
         }
-        
-        let isPasswordSame = password == passwordConfirm;
-        this._toggleDifferentPasswordsError(!isPasswordSame);
-
-        this.$domainFacade.checkUsernameUnique(username)
-            .then((isUnique) => {
-                this._toggleUsernameIsntUniqueError(!isUnique);
-
-                if (isUnique && isPasswordSame) {
-                    this.$domainFacade.register(username, password);
-                }
-            });
     }
 
-    _onSwitchModeToLoginClick() {
-        this._switchMode('login');
+}
+
+
+
+/***/ }),
+
+/***/ "./app/src/utils/readInitialData.js":
+/*!******************************************!*\
+  !*** ./app/src/utils/readInitialData.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   readInitialData: () => (/* binding */ readInitialData)
+/* harmony export */ });
+let initialData = null;
+
+function readInitialData() {
+    if (!initialData) {
+        initialData = JSON.parse(document.getElementById('initial-data').innerText);
     }
 
-    _onSwitchModeToRegisterClick() {
-        this._switchMode('register');
-    }
+    return initialData;
+}
 
-    _switchMode(modeName) {
-        this._clearFields();
-        this._loginTabEl.classList.toggle('hidden', modeName != 'login');
-        this._registrationTabEl.classList.toggle('hidden', modeName != 'register');
-    }
 
-    _toggleNotCorrectLoginPassError(isShowed) {
-        this._notCorrectCredsErrorEl.classList.toggle('hidden', !isShowed);
-    }
 
-    _toggleDifferentPasswordsError(isShowed) {
-        this._passwordDifferentErrorEl.classList.toggle('hidden', !isShowed);
-    }
+/***/ }),
 
-    _toggleUsernameIsntUniqueError(isShowed) {
-        this._usernameIsntUniqueErrorEl.classList.toggle('hidden', !isShowed);
-    }
+/***/ "./app/src/utils/walker.js":
+/*!*********************************!*\
+  !*** ./app/src/utils/walker.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-    _clearFields() {
-        let inputs = this._el.querySelectorAll('input');
-        inputs.forEach((input) => {
-            input.value = '';
-        });
-    }
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   walker: () => (/* binding */ walker)
+/* harmony export */ });
+/* harmony import */ var _distance__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./distance */ "./app/src/utils/distance.js");
 
-    _toggle(isEnabled) {
-        this._el.classList.toggle('hidden', !isEnabled);
-    }
-    
+
+function _calcCoordForWalkedPercent(startCoord, endCoord, flayedPercent) {
+    let distance = Math.abs(Math.abs(endCoord) - Math.abs(startCoord));
+    let distancePassed = distance * (flayedPercent  / 100);
+    return endCoord > startCoord ? startCoord + distancePassed : startCoord - distancePassed;
+}
+
+function walker(startPos, destPos, userSpeed, onPosChange) {
+    let dist = (0,_distance__WEBPACK_IMPORTED_MODULE_0__.distance)(startPos.x, startPos.y, destPos.x, destPos.y);
+    let wholeWalkTime = (dist / userSpeed) * 1000;
+    let walkStartAt = Date.now();
+    return new Promise((res, rej) => {
+        let walkInterval = setInterval(() => {
+            let timeInWalk = Date.now() - walkStartAt;
+            let walkedPercent = ( 100 * timeInWalk ) / wholeWalkTime;
+            if (walkedPercent < 100) {
+                let currentX = _calcCoordForWalkedPercent(startPos.x, destPos.x, walkedPercent);
+                let currentY = _calcCoordForWalkedPercent(startPos.y, destPos.y, walkedPercent);
+                onPosChange(currentX, currentY);
+            } else {
+                onPosChange(destPos.x, destPos.y);
+                clearInterval(walkInterval);
+                res();
+            }
+        }, 50);
+    });
 }
 
 
@@ -3855,9 +3779,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _appStyles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./appStyles.css */ "./app/src/view/appStyles.css");
 /* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./base/baseHTMLView */ "./app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _game_gameView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game/gameView */ "./app/src/view/game/gameView.js");
-/* harmony import */ var _account_accountView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./account/accountView */ "./app/src/view/account/accountView.js");
-/* harmony import */ var _appTmpl_html__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./appTmpl.html */ "./app/src/view/appTmpl.html");
-
+/* harmony import */ var _appTmpl_html__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./appTmpl.html */ "./app/src/view/appTmpl.html");
 
 
 
@@ -3869,64 +3791,19 @@ class AppView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLVi
         super(el);
         this._pixiApp = pixiApp;
 
-        this.$domainFacade.events.on('userLogin', this._onLogin.bind(this));
-        this.$domainFacade.events.on('userLogout', this._onLogout.bind(this));
         this.$domainFacade.events.on('initStepDone', this._onInitStepDone.bind(this));
-
-        this._render();
     }
 
     _render() {
-        this._el.innerHTML = _appTmpl_html__WEBPACK_IMPORTED_MODULE_4__["default"];
-
-        let accountViewEl = this._el.querySelector('[data-account]');
-        this._accountView = new _account_accountView__WEBPACK_IMPORTED_MODULE_3__.AccountView(accountViewEl);
+        this._el.innerHTML = _appTmpl_html__WEBPACK_IMPORTED_MODULE_3__["default"];
 
         let gameEl = this._el.querySelector('[data-game]');
         this._gameView = new _game_gameView__WEBPACK_IMPORTED_MODULE_2__.GameView(gameEl, this._pixiApp);
-
-        this._loaderEl = this._el.querySelector('[data-loader]');
-
-        let isLoggedin = this.$domainFacade.isLoggedIn();
-        if (isLoggedin) {
-            this._renderLoggedInState();
-        } else {
-            this._renderLoggedOutState();
-        }
-    }
-
-    _renderLoggedInState() {
-        this._accountView.toggle(false);
-        this._gameView.turnOff();
-        this._toggleGameLoader(true);
-    }
-
-    _renderLoggedOutState() {
-        this._accountView.toggle(true);
-        this._gameView.turnOff();
-        this._toggleGameLoader(false);
-    }
-
-    _renderAppInitedState() {
-        this._accountView.toggle(false);
-        this._gameView.turnOn();
-        this._toggleGameLoader(false);
-    }
-
-    _toggleGameLoader(isEnabled) {
-        this._loaderEl.classList.toggle('hidden', !isEnabled);
-    }
-
-    _onLogin() {
-        this._renderLoggedInState();
-    }
-
-    _onLogout() {
-        this._renderLoggedOutState();
     }
 
     _onInitStepDone() {
-        this._renderAppInitedState();
+        this._render();
+        this.events.emit('ready');
     }
 }
 
@@ -4001,7 +3878,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BaseHTMLView: () => (/* binding */ BaseHTMLView)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./app/src/utils/eventEmitter.js");
 
 
 class BaseHTMLView {
@@ -4067,30 +3944,35 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Camera: () => (/* binding */ Camera)
 /* harmony export */ });
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
+
 class Camera {
 
     static MAP_MARGIN = 20;
 
-    constructor(container, handler, canvasEl) {
+    constructor(container, canvasEl, mapWidth, mapHeight) {
         this._container = container;
-        this._handler = handler;
         this._isDraging = false;
         this._anchorPoint = {x: null, y: null};
         this._mapSize = {
-            width: null,
-            height: null
+            width: mapWidth,
+            height: mapHeight
         };
         this._canvasEl = canvasEl;
 
-        this._handler.eventMode = 'static';
+        this._render();
+
         this._handler.on('pointerdown', this._onPointerDown.bind(this));
         this._handler.on('pointerup', this._onPointerUp.bind(this));
         this._handler.on('pointermove', this._onPointerMove.bind(this));
     }
 
-    setMapSize(width, height) {
-        this._mapSize.width = width;
-        this._mapSize.height = height;
+    _render() {
+        this._handler = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+        this._handler.eventMode = 'static';
+        this._handler.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Rectangle(0, 0, this._mapSize.width, this._mapSize.height);
+        this._container.addChild(this._handler);
     }
 
     _onPointerDown(e) {
@@ -4177,20 +4059,6 @@ class GameView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Base
         this._render();
     }
 
-    turnOn() {
-        this.toggle(true);
-        this._setUpCamera();
-        this._panelView.turnOn();
-        this._worldView.turnOn();
-        this._pixiApp.resize();
-    }
-
-    turnOff() {
-        this.toggle(false);
-        this._worldView.turnOff();
-        this._panelView.turnOff();
-    }
-
     _render() {
         this._el.innerHTML = _gameTmpl_html__WEBPACK_IMPORTED_MODULE_6__["default"];
 
@@ -4199,22 +4067,18 @@ class GameView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Base
         let canvasContainerEl = this._el.querySelector('[data-canvas-container]');
         this._pixiApp.resizeTo = canvasContainerEl;
         canvasContainerEl.appendChild(this._pixiApp.canvas);
+
         this._entityContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._mapHandler = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._pixiApp.stage.addChild(this._entityContainer);
-        this._entityContainer.addChild(this._mapHandler);
+
         this._worldView = new _world__WEBPACK_IMPORTED_MODULE_4__.WorldView(this._entityContainer);
 
-        this._camera = new _camera__WEBPACK_IMPORTED_MODULE_3__.Camera(this._entityContainer, this._mapHandler, this._pixiApp.canvas);
-    }
-
-    _setUpCamera() {
         let worldSize = this.$domainFacade.getWorldSize();
-        let width = worldSize[0];
-        let height = worldSize[1];
+        let mapWidth = worldSize[0];
+        let mapHeight = worldSize[1];
+        this._camera = new _camera__WEBPACK_IMPORTED_MODULE_3__.Camera(this._entityContainer, this._pixiApp.canvas, mapWidth, mapHeight);
 
-        this._mapHandler.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Rectangle(0, 0, width, height);
-        this._camera.setMapSize(width, height);
+        this._pixiApp.resize();
     }
 
 }
@@ -4822,21 +4686,14 @@ class Panel extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTM
     constructor(el) {
         super(el);
 
+        this._render();
+
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
         this.$eventBus.on('bornNewAntaraBtnClick', this._onBornNewAntaraBtnClick.bind(this));
     }
 
-    turnOn() {
-        this.toggle(true);
+    _render() {
         this._renderTabViews();
-    }
-
-    turnOff() {
-        this.toggle(false);
-        if (this._tabSwitcher) {
-            this._tabSwitcher.remove();
-            this._tabSwitcher = null;
-        }
     }
 
     _renderTabViews() {
@@ -7517,7 +7374,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _nestAlarmCanceledNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./nestAlarmCanceledNotificationTmpl.html */ "./app/src/view/game/panel/tabs/notificationsTab/notification/nestAlarmCanceledNotificationTmpl.html");
 /* harmony import */ var _nestAlarmRaisedNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./nestAlarmRaisedNotificationTmpl.html */ "./app/src/view/game/panel/tabs/notificationsTab/notification/nestAlarmRaisedNotificationTmpl.html");
 /* harmony import */ var _diedColonyNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diedColonyNotificationTmpl.html */ "./app/src/view/game/panel/tabs/notificationsTab/notification/diedColonyNotificationTmpl.html");
-/* harmony import */ var _utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @utils/convertStepsToYear */ "./utils/convertStepsToYear.js");
+/* harmony import */ var _utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @utils/convertStepsToYear */ "./app/src/utils/convertStepsToYear.js");
 
 
 
@@ -8674,7 +8531,9 @@ class UserTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
     }
 
     _onUserLogoutBtnClick() {
-        this.$domainFacade.logout();
+        this.$domainFacade.logout().then(redirectUrl => {
+            location.href = redirectUrl;
+        });
     }
 
 }
@@ -9660,7 +9519,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// import { MarkerManagerView } from './markerManager/markerManagerView';
 
 
 
@@ -9679,20 +9537,17 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._textures = {};
 
         this._render();
-    }
 
-    turnOn() {
-        this._resizeBg();
-        this._buildEntityViews();
-    }
-
-    turnOff() {
-        this._clearEntityViews();
-        this.$eventBus.emit('deactivateMapPickerRequest');
+        this.$domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
     }
 
     _render() {
-        this._bg = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TilingSprite(this.$textureManager.getTexture('grass.png'));
+        let worldSize = this.$domainFacade.getWorldSize();
+        this._bg = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TilingSprite({
+            texture: this.$textureManager.getTexture('grass.png'),
+            width: worldSize[0],
+            height: worldSize[1],
+        });
         this._antContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._ladybugContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._itemContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
@@ -9719,18 +9574,11 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._positionPickerView = new _mapPickers_positionPickerView__WEBPACK_IMPORTED_MODULE_10__.PositionPickerView(this._positionPickerContainer);
         this._nestPickerView = new _mapPickers_nestPickerView__WEBPACK_IMPORTED_MODULE_11__.NestPickerView(this._nestPickerContainer);
 
-        this.$domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
+        this._buildEntityViews();
     }
 
     _onEntityBorn(entity) {
         this._buildEntityView(entity);
-    }
-
-    _clearEntityViews() {
-        this._entityViews.forEach(view => {
-            view.remove();
-        });
-        this._entityViews = [];
     }
 
     _buildEntityViews() {
@@ -9771,12 +9619,6 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._entityViews.push(view);
     }
 
-    _resizeBg() {
-        let worldSize = this.$domainFacade.getWorldSize();
-        this._bg.width = worldSize[0];
-        this._bg.height = worldSize[1];
-    }
-
 }
 
 
@@ -9795,12 +9637,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   initViewLayer: () => (/* binding */ initViewLayer)
 /* harmony export */ });
 /* harmony import */ var _appView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./appView */ "./app/src/view/appView.js");
-/* harmony import */ var _utils_requester__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/requester */ "./utils/requester.js");
+/* harmony import */ var _common_utils_requester__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/utils/requester */ "./common/utils/requester.js");
 /* harmony import */ var _game_world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game/world/worldSpritesheetManager */ "./app/src/view/game/world/worldSpritesheetManager.js");
 /* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base/baseGraphicView */ "./app/src/view/base/baseGraphicView.js");
 /* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base/baseHTMLView */ "./app/src/view/base/baseHTMLView.js");
 /* harmony import */ var _popups_popupManager__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./popups/popupManager */ "./app/src/view/popups/popupManager.js");
-/* harmony import */ var _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @utils/eventEmitter.js */ "./utils/eventEmitter.js");
+/* harmony import */ var _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @utils/eventEmitter.js */ "./app/src/utils/eventEmitter.js");
 /* harmony import */ var _messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./messages/uaMessagesLib */ "./app/src/view/messages/uaMessagesLib.js");
 /* harmony import */ var _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./textures/build/world_spritesheet.json */ "./app/src/view/textures/build/world_spritesheet.json");
 /* harmony import */ var _textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./textures/build/world_spritesheet.png */ "./app/src/view/textures/build/world_spritesheet.png");
@@ -9818,10 +9660,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 async function initViewLayer(domainFacade) {
-    let requester = new _utils_requester__WEBPACK_IMPORTED_MODULE_1__.Requester();
+    let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_1__.Requester();
     let eventBus = new _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__.EventEmitter();
     let spritesheetManager = new _game_world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__.WorldSpritesheetManager(_textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_9__, _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_8__, requester);
     let popupManager = new _popups_popupManager__WEBPACK_IMPORTED_MODULE_5__.PopupManager(document.querySelector('[data-popup-container]'));
+    let loaderEl = document.querySelector('[data-game-loader]')
 
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useTextureManager(spritesheetManager);
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.usePopupManager(popupManager);
@@ -9836,6 +9679,9 @@ async function initViewLayer(domainFacade) {
     await pixiApp.init();
 
     let app = new _appView__WEBPACK_IMPORTED_MODULE_0__.AppView(document.querySelector('[data-app]'), pixiApp);
+    app.events.addListener('ready', () => {
+        loaderEl.remove();
+    })
 }
 
 
@@ -9956,6 +9802,77 @@ class PopupManager {
     _showPopup(popup) {
         this._el.innerHTML = '';
         this._el.appendChild(popup.el);
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./common/utils/getCookie.js":
+/*!***********************************!*\
+  !*** ./common/utils/getCookie.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getCookie: () => (/* binding */ getCookie)
+/* harmony export */ });
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+
+/***/ }),
+
+/***/ "./common/utils/requester.js":
+/*!***********************************!*\
+  !*** ./common/utils/requester.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Requester: () => (/* binding */ Requester)
+/* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/lib/axios.js");
+/* harmony import */ var _common_utils_getCookie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/getCookie */ "./common/utils/getCookie.js");
+
+
+
+class Requester {
+
+    post(url, params) {
+        return axios__WEBPACK_IMPORTED_MODULE_1__["default"].post(url, params, { headers: {
+            'Content-type': 'application/json',
+            'X-CSRFToken': this._readCsrfToken()
+        }})
+    }
+
+    get(url, params) {
+        return axios__WEBPACK_IMPORTED_MODULE_1__["default"].get(url, params, { headers: {
+            'Content-type': 'application/json',
+            'X-CSRFToken': this._readCsrfToken()
+        }})
+    }
+
+    _readCsrfToken() {
+        return (0,_common_utils_getCookie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('csrftoken');
     }
 }
 
@@ -15222,79 +15139,6 @@ exports.ParseError = ParseError;
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js!./app/src/view/account/styles.css":
-/*!*******************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./app/src/view/account/styles.css ***!
-  \*******************************************************************************/
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-// Imports
-
-
-var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-// Module
-___CSS_LOADER_EXPORT___.push([module.id, `.account {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-}
-
-.account--title {
-    text-align: center;
-    font-size: 32px;
-}
-
-.account-tab {
-    height: 250px;
-    width: 270px;
-    border: solid 1px;
-    text-align: center;
-    padding: 40px;
-}
-
-.account--fields-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.account--fields-list li {
-    margin-top: 10px;
-    padding: 0;
-}
-
-.account--fields-list li input {
-    width: 100%;
-    font-size: 24px;
-}
-
-.account--buttons-container {
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.account--error {
-    margin-top: 10px;
-    color: red;
-    text-align: left;
-}`, "",{"version":3,"sources":["webpack://./app/src/view/account/styles.css"],"names":[],"mappings":"AAAA;IACI,aAAa;IACb,uBAAuB;IACvB,mBAAmB;IACnB,YAAY;AAChB;;AAEA;IACI,kBAAkB;IAClB,eAAe;AACnB;;AAEA;IACI,aAAa;IACb,YAAY;IACZ,iBAAiB;IACjB,kBAAkB;IAClB,aAAa;AACjB;;AAEA;IACI,gBAAgB;IAChB,SAAS;IACT,UAAU;AACd;;AAEA;IACI,gBAAgB;IAChB,UAAU;AACd;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI,gBAAgB;IAChB,aAAa;IACb,8BAA8B;AAClC;;AAEA;IACI,gBAAgB;IAChB,UAAU;IACV,gBAAgB;AACpB","sourcesContent":[".account {\r\n    display: flex;\r\n    justify-content: center;\r\n    align-items: center;\r\n    height: 100%;\r\n}\r\n\r\n.account--title {\r\n    text-align: center;\r\n    font-size: 32px;\r\n}\r\n\r\n.account-tab {\r\n    height: 250px;\r\n    width: 270px;\r\n    border: solid 1px;\r\n    text-align: center;\r\n    padding: 40px;\r\n}\r\n\r\n.account--fields-list {\r\n    list-style: none;\r\n    margin: 0;\r\n    padding: 0;\r\n}\r\n\r\n.account--fields-list li {\r\n    margin-top: 10px;\r\n    padding: 0;\r\n}\r\n\r\n.account--fields-list li input {\r\n    width: 100%;\r\n    font-size: 24px;\r\n}\r\n\r\n.account--buttons-container {\r\n    margin-top: 10px;\r\n    display: flex;\r\n    justify-content: space-between;\r\n}\r\n\r\n.account--error {\r\n    margin-top: 10px;\r\n    color: red;\r\n    text-align: left;\r\n}"],"sourceRoot":""}]);
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
-
-
-/***/ }),
-
 /***/ "./node_modules/css-loader/dist/cjs.js!./app/src/view/appStyles.css":
 /*!**************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./app/src/view/appStyles.css ***!
@@ -15310,26 +15154,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_utilStyles_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! -!../../../node_modules/css-loader/dist/cjs.js!./utilStyles.css */ "./node_modules/css-loader/dist/cjs.js!./app/src/view/utilStyles.css");
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_common_styles_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! -!../../../node_modules/css-loader/dist/cjs.js!../../../common/styles.css */ "./node_modules/css-loader/dist/cjs.js!./common/styles.css");
 // Imports
 
 
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-___CSS_LOADER_EXPORT___.i(_node_modules_css_loader_dist_cjs_js_utilStyles_css__WEBPACK_IMPORTED_MODULE_2__["default"]);
+___CSS_LOADER_EXPORT___.i(_node_modules_css_loader_dist_cjs_js_common_styles_css__WEBPACK_IMPORTED_MODULE_2__["default"]);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, `body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
-
-.loader {
-    height: 100%;
-    width: 100%;
-    background-color: blueviolet;
-}
-`, "",{"version":3,"sources":["webpack://./app/src/view/appStyles.css"],"names":[],"mappings":"AAEA;IACI,SAAS;IACT,UAAU;IACV,gBAAgB;AACpB;;AAEA;IACI,YAAY;IACZ,WAAW;IACX,4BAA4B;AAChC","sourcesContent":["@import './utilStyles.css';\r\n\r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n    overflow: hidden;\r\n}\r\n\r\n.loader {\r\n    height: 100%;\r\n    width: 100%;\r\n    background-color: blueviolet;\r\n}\r\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, `
+`, "",{"version":3,"sources":[],"names":[],"mappings":"","sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -15962,10 +15796,10 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.specie-builder__chromosome-editor-tab
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js!./app/src/view/utilStyles.css":
-/*!***************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./app/src/view/utilStyles.css ***!
-  \***************************************************************************/
+/***/ "./node_modules/css-loader/dist/cjs.js!./common/styles.css":
+/*!*****************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./common/styles.css ***!
+  \*****************************************************************/
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -15973,9 +15807,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
 /* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
 // Imports
 
@@ -15984,7 +15818,7 @@ var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBP
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, `.hidden {
     display: none !important
-}`, "",{"version":3,"sources":["webpack://./app/src/view/utilStyles.css"],"names":[],"mappings":"AAAA;IACI;AACJ","sourcesContent":[".hidden {\r\n    display: none !important\r\n}"],"sourceRoot":""}]);
+}`, "",{"version":3,"sources":["webpack://./common/styles.css"],"names":[],"mappings":"AAAA;IACI;AACJ","sourcesContent":[".hidden {\r\n    display: none !important\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -17659,24 +17493,6 @@ function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
 
 /***/ }),
 
-/***/ "./app/src/view/account/template.html":
-/*!********************************************!*\
-  !*** ./app/src/view/account/template.html ***!
-  \********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<div class=\"account-tab\" data-login-tab>\r\n    <span class=\"account--title\">\r\n        Логін\r\n    </span>\r\n    <ul class=\"account--fields-list\">\r\n        <li>\r\n            <input type=\"text\" placeholder=\"логін\" data-user-name />\r\n        </li>\r\n        <li>\r\n            <input type=\"password\" placeholder=\"пароль\" data-password />\r\n        </li>\r\n    </ul>\r\n    <div class=\"account--error\" data-not-correct-creds-error>логін чи пароль не вірні</div>\r\n    <div class=\"account--buttons-container\">\r\n        <button data-login-btn>залогінитись</button>\r\n        <a href=\"#\" data-switch-to-register-btn>реєструватись</a>\r\n    </div>\r\n</div>\r\n<div class=\"account-tab\" data-registration-tab>\r\n    <span class=\"account--title\">\r\n        Реєстрація\r\n    </span>\r\n    <ul class=\"account--fields-list\">\r\n        <li>\r\n            <input type=\"text\" placeholder=\"логін\" data-user-name />\r\n        </li>\r\n        <li>\r\n            <input type=\"password\" placeholder=\"пароль\" data-password />\r\n        </li>\r\n        <li>\r\n            <input type=\"password\" placeholder=\"підтвердження пароля\" data-password-confirm />\r\n        </li>\r\n    </ul>\r\n    <div class=\"account--error\" data-passwords-different-error>паролі не співпадають</div>\r\n    <div class=\"account--error\" data-username-isnt-unique>логін занятий</div>\r\n    <div class=\"account--buttons-container\">\r\n        <button data-registration-btn>зареєструватись</button>\r\n        <a href=\"#\" data-switch-to-login-btn>логінитись</a>\r\n    </div>\r\n</div>\r\n";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
 /***/ "./app/src/view/appTmpl.html":
 /*!***********************************!*\
   !*** ./app/src/view/appTmpl.html ***!
@@ -17689,7 +17505,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"game\" data-game></div>\r\n<div class=\"account\" data-account></div>\r\n<div class=\"loader\" data-loader>loading</div>";
+var code = "<div class=\"game\" data-game></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -18999,61 +18815,6 @@ function parseValues(args) {
 
 /***/ }),
 
-/***/ "./app/src/view/account/styles.css":
-/*!*****************************************!*\
-  !*** ./app/src/view/account/styles.css ***!
-  \*****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./app/src/view/account/styles.css");
-
-      
-      
-      
-      
-      
-      
-      
-      
-      
-
-var options = {};
-
-options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
-options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
-
-      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
-    
-options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
-options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
-
-var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
-
-
-
-
-       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
-
-
-/***/ }),
-
 /***/ "./app/src/view/appStyles.css":
 /*!************************************!*\
   !*** ./app/src/view/appStyles.css ***!
@@ -20149,220 +19910,6 @@ function styleTagTransform(css, styleElement) {
   }
 }
 module.exports = styleTagTransform;
-
-/***/ }),
-
-/***/ "./utils/convertStepsToYear.js":
-/*!*************************************!*\
-  !*** ./utils/convertStepsToYear.js ***!
-  \*************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   converStepsToYear: () => (/* binding */ converStepsToYear)
-/* harmony export */ });
-/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/consts */ "./app/src/domain/consts.js");
-
-
-function converStepsToYear(steps) {
-    // return Math.floor(steps / CONSTS.STEPS_IN_YEAR);
-    return steps;
-}
-
-
-
-/***/ }),
-
-/***/ "./utils/distance.js":
-/*!***************************!*\
-  !*** ./utils/distance.js ***!
-  \***************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   distance: () => (/* binding */ distance)
-/* harmony export */ });
-function distance(x1, y1, x2, y2) {
-    return Math.sqrt(Math.pow((x1  -x2), 2) + Math.pow((y1 - y2), 2));
-}
-
-
-
-/***/ }),
-
-/***/ "./utils/eventEmitter.js":
-/*!*******************************!*\
-  !*** ./utils/eventEmitter.js ***!
-  \*******************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   EventEmitter: () => (/* binding */ EventEmitter)
-/* harmony export */ });
-/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! events */ "./node_modules/events/events.js");
-/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_0__);
-
-
-class EventEmitter extends (events__WEBPACK_IMPORTED_MODULE_0___default()) {
-
-    on(eventName, callback) {
-        super.on(eventName, callback);
-
-        return () => {
-            this.off(eventName, callback);
-        }
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./utils/getCookie.js":
-/*!****************************!*\
-  !*** ./utils/getCookie.js ***!
-  \****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   getCookie: () => (/* binding */ getCookie)
-/* harmony export */ });
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
-
-
-/***/ }),
-
-/***/ "./utils/readInitialData.js":
-/*!**********************************!*\
-  !*** ./utils/readInitialData.js ***!
-  \**********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   readInitialData: () => (/* binding */ readInitialData)
-/* harmony export */ });
-let initialData = null;
-
-function readInitialData() {
-    if (!initialData) {
-        initialData = JSON.parse(document.getElementById('initial-data').innerText);
-    }
-
-    return initialData;
-}
-
-
-
-/***/ }),
-
-/***/ "./utils/requester.js":
-/*!****************************!*\
-  !*** ./utils/requester.js ***!
-  \****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Requester: () => (/* binding */ Requester)
-/* harmony export */ });
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/lib/axios.js");
-/* harmony import */ var _utils_getCookie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/getCookie */ "./utils/getCookie.js");
-
-
-
-class Requester {
-
-    post(url, params) {
-        return axios__WEBPACK_IMPORTED_MODULE_1__["default"].post(url, params, { headers: {
-            'Content-type': 'application/json',
-            'X-CSRFToken': this._readCsrfToken()
-        }})
-    }
-
-    get(url, params) {
-        return axios__WEBPACK_IMPORTED_MODULE_1__["default"].get(url, params, { headers: {
-            'Content-type': 'application/json',
-            'X-CSRFToken': this._readCsrfToken()
-        }})
-    }
-
-    _readCsrfToken() {
-        return (0,_utils_getCookie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('csrftoken');
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./utils/walker.js":
-/*!*************************!*\
-  !*** ./utils/walker.js ***!
-  \*************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   walker: () => (/* binding */ walker)
-/* harmony export */ });
-/* harmony import */ var _distance__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./distance */ "./utils/distance.js");
-
-
-function _calcCoordForWalkedPercent(startCoord, endCoord, flayedPercent) {
-    let distance = Math.abs(Math.abs(endCoord) - Math.abs(startCoord));
-    let distancePassed = distance * (flayedPercent  / 100);
-    return endCoord > startCoord ? startCoord + distancePassed : startCoord - distancePassed;
-}
-
-function walker(startPos, destPos, userSpeed, onPosChange) {
-    let dist = (0,_distance__WEBPACK_IMPORTED_MODULE_0__.distance)(startPos.x, startPos.y, destPos.x, destPos.y);
-    let wholeWalkTime = (dist / userSpeed) * 1000;
-    let walkStartAt = Date.now();
-    return new Promise((res, rej) => {
-        let walkInterval = setInterval(() => {
-            let timeInWalk = Date.now() - walkStartAt;
-            let walkedPercent = ( 100 * timeInWalk ) / wholeWalkTime;
-            if (walkedPercent < 100) {
-                let currentX = _calcCoordForWalkedPercent(startPos.x, destPos.x, walkedPercent);
-                let currentY = _calcCoordForWalkedPercent(startPos.y, destPos.y, walkedPercent);
-                onPosChange(currentX, currentY);
-            } else {
-                onPosChange(destPos.x, destPos.y);
-                clearInterval(walkInterval);
-                res();
-            }
-        }, 50);
-    });
-}
-
-
 
 /***/ }),
 
@@ -82932,6 +82479,15 @@ module.exports = /*#__PURE__*/JSON.parse('{"frames":{"ant_male_1.png":{"frame":{
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/get mini-css chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference async chunks
+/******/ 		__webpack_require__.miniCssF = (chunkId) => {
+/******/ 			// return url for filenames based on template
+/******/ 			return undefined;
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/global */
 /******/ 	(() => {
 /******/ 		__webpack_require__.g = (function() {
@@ -83136,7 +82692,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _sync__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./sync */ "./app/src/sync/index.js");
 /* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./domain */ "./app/src/domain/index.js");
 /* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./view */ "./app/src/view/index.js");
-/* harmony import */ var _utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @utils/readInitialData */ "./utils/readInitialData.js");
+/* harmony import */ var _utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @utils/readInitialData */ "./app/src/utils/readInitialData.js");
 
 
 

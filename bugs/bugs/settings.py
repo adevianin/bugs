@@ -137,7 +137,7 @@ ASGI_APPLICATION = 'bugs.asgi.application'
 
 AUTH_USER_MODEL = 'infrastructure.User'
 
-LOGIN_URL = '/'
+LOGIN_URL = '/account'
 
 LOGGING = {
     'version': 1,

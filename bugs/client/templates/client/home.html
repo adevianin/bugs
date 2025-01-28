@@ -2,10 +2,12 @@
 <html>
     <head>
         {{ initial_data|json_script:"initial-data" }}
+        <link rel="stylesheet" href="{% static 'client/initialStyles.css' %}">
     </head>
     <body>
         <div data-app></div>
         <div data-popup-container></div>
+        <div class="game-loader" data-game-loader>loading</div>
     </body>
     <script src="{% static 'client/app.js' %}"></script>
 </html>

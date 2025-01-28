@@ -4,6 +4,7 @@ from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.views.decorators.http import require_POST
 from core.world.world_facade import WorldFacade
 import json
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 def is_superuser(user):
     return user.is_superuser
@@ -15,7 +16,8 @@ def _build_world_status():
         'isRunning': wf.is_world_running
     }
 
-@user_passes_test(is_superuser, redirect_field_name=None)
+@user_passes_test(is_superuser)
+@ensure_csrf_cookie
 def admin_panel(request):
     return render(request, 'client/admin_panel.html')
 

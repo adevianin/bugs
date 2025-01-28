@@ -1,11 +1,17 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpRequest
 from infrastructure.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.http import require_POST
-from core.world.world_facade import WorldFacade
+from django.shortcuts import render
+from django.urls import reverse
+from django.views.decorators.csrf import ensure_csrf_cookie
+
+@ensure_csrf_cookie
+def account_index(request: HttpRequest):
+    return render(request, 'client/account.html')
 
 @require_POST 
-def check_username(request):
+def account_check_name(request):
     try:
         username = request.json['username']
     except Exception as e:
@@ -18,7 +24,7 @@ def check_username(request):
     })
     
 @require_POST        
-def user_register(request):
+def account_register(request):
     try:
         username = request.json['username']
         password = request.json['password']
@@ -36,7 +42,7 @@ def user_register(request):
         return HttpResponse(status=500)
 
 @require_POST    
-def user_login(request):
+def account_login(request):
     try:
         username = request.json['username']
         password = request.json['password']
@@ -54,7 +60,9 @@ def user_login(request):
         return HttpResponse(status=401)
 
 @require_POST
-def user_logout(request):
+def account_logout(request):
     logout(request)
-    return HttpResponse(status=200)
+    return JsonResponse({
+        'redirectUrl': reverse('account_index')
+    })
         

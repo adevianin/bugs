@@ -3,7 +3,6 @@ import { BaseGraphicView } from "@view/base/baseGraphicView";
 import { AntView } from './entitiesViews/antView';
 import { NestView } from './entitiesViews/nestView';
 import { EntityTypes } from "@domain/enum/entityTypes";
-// import { MarkerManagerView } from './markerManager/markerManagerView';
 import { ItemView } from './entitiesViews/itemView';
 import { ItemSourceView } from './entitiesViews/itemSourceView';
 import { ItemAreaView } from './entitiesViews/itemAreaView';
@@ -22,20 +21,17 @@ class WorldView extends BaseGraphicView {
         this._textures = {};
 
         this._render();
-    }
 
-    turnOn() {
-        this._resizeBg();
-        this._buildEntityViews();
-    }
-
-    turnOff() {
-        this._clearEntityViews();
-        this.$eventBus.emit('deactivateMapPickerRequest');
+        this.$domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
     }
 
     _render() {
-        this._bg = new PIXI.TilingSprite(this.$textureManager.getTexture('grass.png'));
+        let worldSize = this.$domainFacade.getWorldSize();
+        this._bg = new PIXI.TilingSprite({
+            texture: this.$textureManager.getTexture('grass.png'),
+            width: worldSize[0],
+            height: worldSize[1],
+        });
         this._antContainer = new PIXI.Container();
         this._ladybugContainer = new PIXI.Container();
         this._itemContainer = new PIXI.Container();
@@ -62,18 +58,11 @@ class WorldView extends BaseGraphicView {
         this._positionPickerView = new PositionPickerView(this._positionPickerContainer);
         this._nestPickerView = new NestPickerView(this._nestPickerContainer);
 
-        this.$domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
+        this._buildEntityViews();
     }
 
     _onEntityBorn(entity) {
         this._buildEntityView(entity);
-    }
-
-    _clearEntityViews() {
-        this._entityViews.forEach(view => {
-            view.remove();
-        });
-        this._entityViews = [];
     }
 
     _buildEntityViews() {
@@ -112,12 +101,6 @@ class WorldView extends BaseGraphicView {
         }
 
         this._entityViews.push(view);
-    }
-
-    _resizeBg() {
-        let worldSize = this.$domainFacade.getWorldSize();
-        this._bg.width = worldSize[0];
-        this._bg.height = worldSize[1];
     }
 
 }

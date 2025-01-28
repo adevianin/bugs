@@ -1,5 +1,5 @@
 import { AppView } from './appView';
-import { Requester } from '@utils/requester';
+import { Requester } from '@common/utils/requester';
 import { WorldSpritesheetManager } from './game/world/worldSpritesheetManager';
 import { BaseGraphicView } from './base/baseGraphicView';
 import { BaseHTMLView } from './base/baseHTMLView';
@@ -15,6 +15,7 @@ async function initViewLayer(domainFacade) {
     let eventBus = new EventEmitter();
     let spritesheetManager = new WorldSpritesheetManager(worldSpriteSheetUrl, worldSpriteSheetAtlas, requester);
     let popupManager = new PopupManager(document.querySelector('[data-popup-container]'));
+    let loaderEl = document.querySelector('[data-game-loader]')
 
     BaseGraphicView.useTextureManager(spritesheetManager);
     BaseGraphicView.usePopupManager(popupManager);
@@ -29,6 +30,9 @@ async function initViewLayer(domainFacade) {
     await pixiApp.init();
 
     let app = new AppView(document.querySelector('[data-app]'), pixiApp);
+    app.events.addListener('ready', () => {
+        loaderEl.remove();
+    })
 }
 
 export { initViewLayer }

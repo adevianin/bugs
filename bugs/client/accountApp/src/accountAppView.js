@@ -1,12 +1,8 @@
-import './styles.css';
+class AccountAppView {
 
-import template from './template.html';
-import { BaseHTMLView } from '../base/baseHTMLView';
-
-class AccountView extends BaseHTMLView {
-
-    constructor(el) {
-        super(el);
+    constructor(el, accountApi) {
+        this._el = el;
+        this._accountApi = accountApi;
 
         this._render();
 
@@ -19,8 +15,6 @@ class AccountView extends BaseHTMLView {
     }
 
     _render() {
-        this._el.innerHTML = template;
-
         this._loginTabEl = this._el.querySelector('[data-login-tab]');
         this._registrationTabEl = this._el.querySelector('[data-registration-tab]');
 
@@ -32,16 +26,21 @@ class AccountView extends BaseHTMLView {
         this._notCorrectCredsErrorEl = this._el.querySelector('[data-not-correct-creds-error]');
         this._passwordDifferentErrorEl = this._el.querySelector('[data-passwords-different-error]');
         this._usernameIsntUniqueErrorEl = this._el.querySelector('[data-username-isnt-unique]');
+        this._registrationSomethingWrongErrorEl = this._el.querySelector('[data-reg-something-went-wrong]');
 
         this._toggleNotCorrectLoginPassError(false);
         this._toggleDifferentPasswordsError(false);
         this._toggleUsernameIsntUniqueError(false);
+        this._toggleRegSomethingWentWrongError(false);
     }
 
     _onLoginBtnClick() {
         let username = this._loginTabEl.querySelector('[data-user-name]').value;
         let password =  this._loginTabEl.querySelector('[data-password]').value;
-        this.$domainFacade.login(username, password)
+        this._accountApi.login(username, password)
+            .then(() => {
+                this._redirectToNext();
+            })
             .catch(() => {
                 this._toggleNotCorrectLoginPassError(true);
             });
@@ -58,22 +57,33 @@ class AccountView extends BaseHTMLView {
         
         let isPasswordSame = password == passwordConfirm;
         this._toggleDifferentPasswordsError(!isPasswordSame);
+        if (!isPasswordSame) {
+            return;
+        }
 
-        this.$domainFacade.checkUsernameUnique(username)
+        this._accountApi.checkUsernameUnique(username)
             .then((isUnique) => {
                 this._toggleUsernameIsntUniqueError(!isUnique);
 
                 if (isUnique && isPasswordSame) {
-                    this.$domainFacade.register(username, password);
+                    this._accountApi.register(username, password)
+                        .then(() => {
+                            this._redirectToNext();
+                        })
+                        .catch(() => {
+                            this._toggleRegSomethingWentWrongError(true);
+                        })
                 }
             });
     }
 
-    _onSwitchModeToLoginClick() {
+    _onSwitchModeToLoginClick(e) {
+        e.preventDefault();
         this._switchMode('login');
     }
 
-    _onSwitchModeToRegisterClick() {
+    _onSwitchModeToRegisterClick(e) {
+        e.preventDefault();
         this._switchMode('register');
     }
 
@@ -95,6 +105,10 @@ class AccountView extends BaseHTMLView {
         this._usernameIsntUniqueErrorEl.classList.toggle('hidden', !isShowed);
     }
 
+    _toggleRegSomethingWentWrongError(isShowed) {
+        this._registrationSomethingWrongErrorEl.classList.toggle('hidden', !isShowed);
+    }
+
     _clearFields() {
         let inputs = this._el.querySelectorAll('input');
         inputs.forEach((input) => {
@@ -106,8 +120,12 @@ class AccountView extends BaseHTMLView {
         this._el.classList.toggle('hidden', !isEnabled);
     }
     
+    _redirectToNext() {
+        let nextUrl = new URLSearchParams(window.location.search).get('next') || '/';
+        window.location.href = nextUrl;
+    }
 }
 
 export {
-    AccountView
+    AccountAppView
 }

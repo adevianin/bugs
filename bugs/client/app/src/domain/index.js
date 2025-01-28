@@ -22,7 +22,7 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let world = worldFactory.buildWorld();
 
     let worldService = new WorldService(world, worldFactory, mainEventBus, ratingContainer);
-    let accountService = new AccountService(apis.accountApi, initialData.user, mainEventBus);
+    let accountService = new AccountService(apis.accountApi, initialData.user);
     let colonyService = new ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
     let userService = new UserService(apis.userApi, notificationsContainer);
     let nuptialEnvironmentService = new NuptialEnvironmentService(mainEventBus, nuptialEnvironmentFactory, apis.nuptialEnvironmentApi);

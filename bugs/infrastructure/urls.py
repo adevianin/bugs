@@ -3,7 +3,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views.account import check_username, user_register, user_login, user_logout
+from .views.account import account_check_name, account_register, account_login, account_logout, account_index
 from .views.home import index
 from .views.admin import admin_panel, world_status_check, init_world, stop_world, run_world, save_world, expand_map
 from .views.nest import rename_nest, add_egg, change_egg_caste, change_egg_name, move_egg_to_larva_chamber, delete_egg, delete_larva
@@ -14,27 +14,29 @@ from .views.player import born_new_antara
 
 urlpatterns = [
     path('', index, name='index'),
-    path('users/username_unique_check', check_username, name='username-unique-check'),
-    path('users', user_register, name='user-registration'),
-    path('users/login', user_login, name='user-login'),
-    path('users/logout', user_logout, name='user-logout'),
 
-    path('admin', admin_panel, name='admin-panel'),
-    path('admin/world/status', world_status_check, name='world-status'),
-    path('admin/world/init', init_world, name='init-world'),
-    path('admin/world/stop', stop_world, name='stop-world'),
-    path('admin/world/run', run_world, name='run-world'),
-    path('admin/world/save', save_world, name='save-world'),
-    path('admin/world/expand_map', expand_map, name='expand-map'),
+    path('account', account_index, name='account_index'),
+    path('accounts/check_name', account_check_name, name='account_check_name'),
+    path('accounts/register', account_register, name='account_register'),
+    path('accounts/login', account_login, name='account_login'),
+    path('accounts/logout', account_logout, name='account_logout'),
 
-    path('world/nests/<int:nest_id>/rename', rename_nest, name='rename-nest'),
+    path('admin', admin_panel, name='admin_panel'),
+    path('admin/world/status', world_status_check, name='world_status'),
+    path('admin/world/init', init_world, name='init_world'),
+    path('admin/world/stop', stop_world, name='stop_world'),
+    path('admin/world/run', run_world, name='run_world'),
+    path('admin/world/save', save_world, name='save_world'),
+    path('admin/world/expand_map', expand_map, name='expand_map'),
+
+    path('world/nests/<int:nest_id>/rename', rename_nest, name='rename_nest'),
     path('world/nests/<int:nest_id>/add_egg', add_egg, name='add_egg'),
-    path('world/nests/<int:nest_id>/eggs/<int:egg_id>/change_caste', change_egg_caste, name='change-egg-caste'),
-    path('world/nests/<int:nest_id>/eggs/<int:egg_id>/change_name', change_egg_name, name='change-egg-name'),
-    path('world/nests/<int:nest_id>/eggs/<int:egg_id>/move_to_larva_chamber', move_egg_to_larva_chamber, name='move-egg-to-larva-chamber'),
-    path('world/nests/<int:nest_id>/eggs/<int:egg_id>/delete', delete_egg, name='delete-egg'),
+    path('world/nests/<int:nest_id>/eggs/<int:egg_id>/change_caste', change_egg_caste, name='change_egg_caste'),
+    path('world/nests/<int:nest_id>/eggs/<int:egg_id>/change_name', change_egg_name, name='change_egg_name'),
+    path('world/nests/<int:nest_id>/eggs/<int:egg_id>/move_to_larva_chamber', move_egg_to_larva_chamber, name='move_egg_to_larva_chamber'),
+    path('world/nests/<int:nest_id>/eggs/<int:egg_id>/delete', delete_egg, name='delete_egg'),
 
-    path('world/nests/<int:nest_id>/larvae/<int:larva_id>/delete', delete_larva, name='delete-larva'),
+    path('world/nests/<int:nest_id>/larvae/<int:larva_id>/delete', delete_larva, name='delete_larva'),
 
     path('world/colonies/<int:colony_id>/operations/<int:operation_id>/stop_operation', stop_operation, name='stop_operation'),
     path('world/colonies/<int:colony_id>/operations/build_new_sub_nest', build_new_sub_nest, name='build_new_sub_nest'),
@@ -50,10 +52,9 @@ urlpatterns = [
     path('world/ants/<int:ant_id>/relocate', relocate_ant, name='relocate_ant'),
 
     path('world/nuptial_environment/found_colony', found_colony, name='found_colony'),
-    # path('world/nuptial_environment/specie', get_my_specie, name='get_my_specie'),
     path('world/nuptial_environment/specie/specie_schema', save_specie_schema, name='save_specie_schema'),
 
-    path('world/player/born_new_antara', born_new_antara, name="born-new-antara")
+    path('world/player/born_new_antara', born_new_antara, name="born_new_antara")
 
 
 
