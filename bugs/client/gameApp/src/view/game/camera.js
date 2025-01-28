@@ -4,8 +4,9 @@ class Camera {
 
     static MAP_MARGIN = 20;
 
-    constructor(container, canvasEl, mapWidth, mapHeight) {
+    constructor(container, handler, canvasEl, mapWidth, mapHeight) {
         this._container = container;
+        this._handler = handler;
         this._isDraging = false;
         this._anchorPoint = {x: null, y: null};
         this._mapSize = {
@@ -14,18 +15,9 @@ class Camera {
         };
         this._canvasEl = canvasEl;
 
-        this._render();
-
         this._handler.on('pointerdown', this._onPointerDown.bind(this));
         this._handler.on('pointerup', this._onPointerUp.bind(this));
         this._handler.on('pointermove', this._onPointerMove.bind(this));
-    }
-
-    _render() {
-        this._handler = new PIXI.Container();
-        this._handler.eventMode = 'static';
-        this._handler.hitArea = new PIXI.Rectangle(0, 0, this._mapSize.width, this._mapSize.height);
-        this._container.addChild(this._handler);
     }
 
     _onPointerDown(e) {

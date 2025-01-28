@@ -4022,8 +4022,9 @@ class Camera {
 
     static MAP_MARGIN = 20;
 
-    constructor(container, canvasEl, mapWidth, mapHeight) {
+    constructor(container, handler, canvasEl, mapWidth, mapHeight) {
         this._container = container;
+        this._handler = handler;
         this._isDraging = false;
         this._anchorPoint = {x: null, y: null};
         this._mapSize = {
@@ -4032,18 +4033,9 @@ class Camera {
         };
         this._canvasEl = canvasEl;
 
-        this._render();
-
         this._handler.on('pointerdown', this._onPointerDown.bind(this));
         this._handler.on('pointerup', this._onPointerUp.bind(this));
         this._handler.on('pointermove', this._onPointerMove.bind(this));
-    }
-
-    _render() {
-        this._handler = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
-        this._handler.eventMode = 'static';
-        this._handler.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Rectangle(0, 0, this._mapSize.width, this._mapSize.height);
-        this._container.addChild(this._handler);
     }
 
     _onPointerDown(e) {
@@ -4142,12 +4134,16 @@ class GameView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Base
         this._entityContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         this._pixiApp.stage.addChild(this._entityContainer);
 
-        this._worldView = new _world__WEBPACK_IMPORTED_MODULE_4__.WorldView(this._entityContainer);
-
         let worldSize = this.$domainFacade.getWorldSize();
         let mapWidth = worldSize[0];
         let mapHeight = worldSize[1];
-        this._camera = new _camera__WEBPACK_IMPORTED_MODULE_3__.Camera(this._entityContainer, this._pixiApp.canvas, mapWidth, mapHeight);
+        this._mapHandler = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._entityContainer.addChild(this._mapHandler);
+        this._mapHandler.eventMode = 'static';
+        this._mapHandler.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Rectangle(0, 0, mapWidth, mapHeight);
+        this._camera = new _camera__WEBPACK_IMPORTED_MODULE_3__.Camera(this._entityContainer, this._mapHandler, this._pixiApp.canvas, mapWidth, mapHeight);
+
+        this._worldView = new _world__WEBPACK_IMPORTED_MODULE_4__.WorldView(this._entityContainer);
 
         this._pixiApp.resize();
     }
