@@ -7138,7 +7138,9 @@ class OperationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._render();
 
         this._stopBtn.addEventListener('click', this._onStopBtnClick.bind(this));
-        this._el.addEventListener('click', this._onOperationClick.bind(this));
+        this._showPlanCheckbox.addEventListener('change', this._onShowPlanCheckboxChanged.bind(this));
+
+        // this._el.addEventListener('click', this._onOperationClick.bind(this));
     }
 
     update() {
@@ -7151,6 +7153,7 @@ class OperationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._statusEl = this._el.querySelector('[data-status]')
         this._stopBtn = this._el.querySelector('[data-stop-btn]');
         this._hiringProgressEl = this._el.querySelector('[data-hiring-progress]');
+        this._showPlanCheckbox = this._el.querySelector('[data-show-plan]');
 
         this._renderOperation();
     }
@@ -7168,9 +7171,18 @@ class OperationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this.$domainFacade.stopOperation(this._colonyId, this._operation.id);
     }
 
-    _onOperationClick() {
-        this.$eventBus.emit('markersDemonstrateRequest', this._operation.markers);
+    _onShowPlanCheckboxChanged() {
+        let isChecked = this._showPlanCheckbox.checked;
+        if (isChecked) {
+            this.$eventBus.emit('operationMarkersShowRequest', this._operation);
+        } else {
+            this.$eventBus.emit('operationMarkersHideRequest', this._operation);
+        }
     }
+
+    // _onOperationClick() {
+    //     this.$eventBus.emit('markersDemonstrateRequest', this._operation.markers);
+    // }
 
 }
 
@@ -7191,6 +7203,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
 /* harmony import */ var _operationView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationView */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationView.js");
+/* harmony import */ var _operationsListTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./operationsListTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationsListTmpl.html");
+
 
 
 
@@ -7199,6 +7213,14 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
     constructor(el) {
         super(el);
         this._operationViews = {};
+
+        this._render();
+    }
+
+    _render() {
+        this._el.innerHTML = _operationsListTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
+
+        this._operationsContainerEl = this._el.querySelector('[data-operations-container]');
     }
 
     manageColony(colony) {
@@ -7250,10 +7272,10 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
     }
 
     _renderOperation(operation) {
-        let el = document.createElement('li');
+        let el = document.createElement('tr');
         let view = new _operationView__WEBPACK_IMPORTED_MODULE_1__.OperationView(el, operation, this._colony.id);
         this._operationViews[operation.id] = view;
-        this._el.append(el);
+        this._operationsContainerEl.append(el);
     }
 
     _removeOperationViews() {
@@ -9406,16 +9428,18 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
     constructor(container) {
         super();
         this._container = container;
+        this._operationMarkersViewPacks = {};
 
-        this.$eventBus.on('markersDemonstrateRequest', this._onMarkersDemonstrateRequest.bind(this));
+        this.$eventBus.on('operationMarkersShowRequest', this._onOperationMarkersShowRequest.bind(this));
+        this.$eventBus.on('operationMarkersHideRequest', this._onOperationMarkersHideRequest.bind(this));
     }
 
-    _renderMarkers(markers) {
-        this._container.removeChildren();
-        markers.forEach((marker) => {
-            this._renderMarker(marker);
-        });
-    }
+    // _renderMarkers(markers) {
+    //     this._container.removeChildren();
+    //     markers.forEach((marker) => {
+    //         this._renderMarker(marker);
+    //     });
+    // }
 
     _renderMarker(marker) {
         let markerView = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`marker_${marker.type}.png`));
@@ -9423,10 +9447,31 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
         markerView.position.x = marker.point[0];
         markerView.position.y = marker.point[1];
         this._container.addChild(markerView);
+        return markerView;
     }
 
-    _onMarkersDemonstrateRequest(markers) {
-        this._renderMarkers(markers);
+    _onOperationMarkersShowRequest(operation) {
+        if (this._operationMarkersViewPacks[operation.id]) {
+            return;
+        }
+        let markerViews = [];
+        operation.markers.forEach((marker) => {
+            let markerView = this._renderMarker(marker);
+            markerViews.push(markerView);
+        });
+        this._operationMarkersViewPacks[operation.id] = {
+            views: markerViews
+        }
+    }
+
+    _onOperationMarkersHideRequest(operation) {
+        if (!this._operationMarkersViewPacks[operation.id]) {
+            return;
+        }
+        for (let view of this._operationMarkersViewPacks[operation.id].views) {
+            this._container.removeChild(view);
+        }
+        delete this._operationMarkersViewPacks[operation.id];
     }
 
 }
@@ -15458,9 +15503,13 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.colony_manager {
 }
 
 .colony-manager__operations-list {
-    list-style-type: none;
-    padding: 3px;
-    margin: 0;
+    border-collapse: collapse;
+    border-spacing: 0px;
+    border: solid 1px;
+}
+
+.colony-manager__operations-list td {
+    border: solid 1px;
 }
 
 .colony-manager__operations-creator {
@@ -15481,7 +15530,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.colony_manager {
 
 .colony-manager__ants-table td {
     border: solid 1px;
-}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,YAAY;AAChB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,YAAY;AAChB;;;AAGA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,YAAY;IACZ,SAAS;IACT,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n\r\n.colony-manager__operations-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__operations-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__operations-creator {\r\n    padding: 3px;\r\n}\r\n\r\n.colony-manager__new_operations_list {\r\n    padding: 3px;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.colony-manager__ants-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__ants-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
+}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,YAAY;AAChB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,YAAY;AAChB;;;AAGA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,YAAY;IACZ,SAAS;IACT,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n\r\n.colony-manager__operations-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__operations-list {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__operations-list td {\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__operations-creator {\r\n    padding: 3px;\r\n}\r\n\r\n.colony-manager__new_operations_list {\r\n    padding: 3px;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.colony-manager__ants-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__ants-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -18170,7 +18219,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<span data-name></span>\r\n<span data-status></span>\r\n<span data-hiring-progress></span>\r\n<button data-stop-btn>X</button>";
+var code = "<tr>\r\n    <td data-name></td>\r\n    <td data-status></td>\r\n    <td data-hiring-progress></td>\r\n    <td>\r\n        <input type=\"checkbox\" data-show-plan />\r\n    </td>\r\n    <td>\r\n        <button data-stop-btn>X</button>\r\n    </td>\r\n</tr>\r\n";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationsListTmpl.html":
+/*!*************************************************************************************************************************!*\
+  !*** ./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationsListTmpl.html ***!
+  \*************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<thead>\r\n    <tr>\r\n        <td>назва</td>\r\n        <td>найм</td>\r\n        <td>статус</td>\r\n        <td>показать план</td>\r\n        <td>зупинить</td>\r\n    </tr>\r\n</thead>\r\n<tbody data-operations-container></tbody>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -18188,7 +18255,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<ul class=\"colony-manager__operations-list\" data-operations-list></ul>\r\n<div class=\"colony-manager__operations-creator\" data-operations-creator></div>";
+var code = "<table class=\"colony-manager__operations-list\" data-operations-list></table>\r\n<div class=\"colony-manager__operations-creator\" data-operations-creator></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

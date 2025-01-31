@@ -34,9 +34,13 @@
 }
 
 .colony-manager__operations-list {
-    list-style-type: none;
-    padding: 3px;
-    margin: 0;
+    border-collapse: collapse;
+    border-spacing: 0px;
+    border: solid 1px;
+}
+
+.colony-manager__operations-list td {
+    border: solid 1px;
 }
 
 .colony-manager__operations-creator {

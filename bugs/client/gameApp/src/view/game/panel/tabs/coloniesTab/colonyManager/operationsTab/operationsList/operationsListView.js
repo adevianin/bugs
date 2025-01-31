@@ -1,11 +1,20 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import { OperationView } from "./operationView";
+import operationsListTmpl from "./operationsListTmpl.html";
 
 class OperationsListView extends BaseHTMLView {
     
     constructor(el) {
         super(el);
         this._operationViews = {};
+
+        this._render();
+    }
+
+    _render() {
+        this._el.innerHTML = operationsListTmpl;
+
+        this._operationsContainerEl = this._el.querySelector('[data-operations-container]');
     }
 
     manageColony(colony) {
@@ -57,10 +66,10 @@ class OperationsListView extends BaseHTMLView {
     }
 
     _renderOperation(operation) {
-        let el = document.createElement('li');
+        let el = document.createElement('tr');
         let view = new OperationView(el, operation, this._colony.id);
         this._operationViews[operation.id] = view;
-        this._el.append(el);
+        this._operationsContainerEl.append(el);
     }
 
     _removeOperationViews() {

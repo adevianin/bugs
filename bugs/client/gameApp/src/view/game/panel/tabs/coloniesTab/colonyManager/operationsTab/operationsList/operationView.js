@@ -11,7 +11,9 @@ class OperationView extends BaseHTMLView {
         this._render();
 
         this._stopBtn.addEventListener('click', this._onStopBtnClick.bind(this));
-        this._el.addEventListener('click', this._onOperationClick.bind(this));
+        this._showPlanCheckbox.addEventListener('change', this._onShowPlanCheckboxChanged.bind(this));
+
+        // this._el.addEventListener('click', this._onOperationClick.bind(this));
     }
 
     update() {
@@ -24,6 +26,7 @@ class OperationView extends BaseHTMLView {
         this._statusEl = this._el.querySelector('[data-status]')
         this._stopBtn = this._el.querySelector('[data-stop-btn]');
         this._hiringProgressEl = this._el.querySelector('[data-hiring-progress]');
+        this._showPlanCheckbox = this._el.querySelector('[data-show-plan]');
 
         this._renderOperation();
     }
@@ -41,9 +44,18 @@ class OperationView extends BaseHTMLView {
         this.$domainFacade.stopOperation(this._colonyId, this._operation.id);
     }
 
-    _onOperationClick() {
-        this.$eventBus.emit('markersDemonstrateRequest', this._operation.markers);
+    _onShowPlanCheckboxChanged() {
+        let isChecked = this._showPlanCheckbox.checked;
+        if (isChecked) {
+            this.$eventBus.emit('operationMarkersShowRequest', this._operation);
+        } else {
+            this.$eventBus.emit('operationMarkersHideRequest', this._operation);
+        }
     }
+
+    // _onOperationClick() {
+    //     this.$eventBus.emit('markersDemonstrateRequest', this._operation.markers);
+    // }
 
 }
 
