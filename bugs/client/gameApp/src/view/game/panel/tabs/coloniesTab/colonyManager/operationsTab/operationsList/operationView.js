@@ -11,6 +11,7 @@ class OperationView extends BaseHTMLView {
         this._render();
 
         this._stopBtn.addEventListener('click', this._onStopBtnClick.bind(this));
+        this._el.addEventListener('click', this._onOperationClick.bind(this));
     }
 
     update() {
@@ -38,6 +39,10 @@ class OperationView extends BaseHTMLView {
 
     _onStopBtnClick() {
         this.$domainFacade.stopOperation(this._colonyId, this._operation.id);
+    }
+
+    _onOperationClick() {
+        this.$eventBus.emit('markersDemonstrateRequest', this._operation.markers);
     }
 
 }

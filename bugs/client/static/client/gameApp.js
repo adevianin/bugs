@@ -7138,6 +7138,7 @@ class OperationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._render();
 
         this._stopBtn.addEventListener('click', this._onStopBtnClick.bind(this));
+        this._el.addEventListener('click', this._onOperationClick.bind(this));
     }
 
     update() {
@@ -7165,6 +7166,10 @@ class OperationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
 
     _onStopBtnClick() {
         this.$domainFacade.stopOperation(this._colonyId, this._operation.id);
+    }
+
+    _onOperationClick() {
+        this.$eventBus.emit('markersDemonstrateRequest', this._operation.markers);
     }
 
 }
@@ -9380,6 +9385,56 @@ class PositionPickerView extends _basePickerView__WEBPACK_IMPORTED_MODULE_0__.Ba
 
 /***/ }),
 
+/***/ "./gameApp/src/view/game/world/markersDemonstratorView.js":
+/*!****************************************************************!*\
+  !*** ./gameApp/src/view/game/world/markersDemonstratorView.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MarkersDemonstratorView: () => (/* binding */ MarkersDemonstratorView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
+
+
+class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
+
+    constructor(container) {
+        super();
+        this._container = container;
+
+        this.$eventBus.on('markersDemonstrateRequest', this._onMarkersDemonstrateRequest.bind(this));
+    }
+
+    _renderMarkers(markers) {
+        this._container.removeChildren();
+        markers.forEach((marker) => {
+            this._renderMarker(marker);
+        });
+    }
+
+    _renderMarker(marker) {
+        let markerView = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`marker_${marker.type}.png`));
+        markerView.anchor.set(0.5, 0.5); 
+        markerView.position.x = marker.point[0];
+        markerView.position.y = marker.point[1];
+        this._container.addChild(markerView);
+    }
+
+    _onMarkersDemonstrateRequest(markers) {
+        this._renderMarkers(markers);
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/view/game/world/worldSpritesheetManager.js":
 /*!****************************************************************!*\
   !*** ./gameApp/src/view/game/world/worldSpritesheetManager.js ***!
@@ -9452,6 +9507,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entitiesViews_ladybugView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entitiesViews/ladybugView */ "./gameApp/src/view/game/world/entitiesViews/ladybugView.js");
 /* harmony import */ var _mapPickers_positionPickerView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./mapPickers/positionPickerView */ "./gameApp/src/view/game/world/mapPickers/positionPickerView.js");
 /* harmony import */ var _mapPickers_nestPickerView__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./mapPickers/nestPickerView */ "./gameApp/src/view/game/world/mapPickers/nestPickerView.js");
+/* harmony import */ var _markersDemonstratorView__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./markersDemonstratorView */ "./gameApp/src/view/game/world/markersDemonstratorView.js");
+
 
 
 
@@ -9496,6 +9553,7 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._treesContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._positionPickerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._nestPickerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+        this._markerDemonstratorContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
 
         this._container.addChild(this._bg);
         this._container.addChild(this._nestContainer);
@@ -9508,9 +9566,11 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._container.addChild(this._positionPickerContainer);
         this._container.addChild(this._nestPickerContainer);
         this._container.addChild(this._itemAreaContainer);
+        this._container.addChild(this._markerDemonstratorContainer);
 
         this._positionPickerView = new _mapPickers_positionPickerView__WEBPACK_IMPORTED_MODULE_10__.PositionPickerView(this._positionPickerContainer);
         this._nestPickerView = new _mapPickers_nestPickerView__WEBPACK_IMPORTED_MODULE_11__.NestPickerView(this._nestPickerContainer);
+        this._markerDemonstrator = new _markersDemonstratorView__WEBPACK_IMPORTED_MODULE_12__.MarkersDemonstratorView(this._markerDemonstratorContainer);
 
         this._buildEntityViews();
     }
