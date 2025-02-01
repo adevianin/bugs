@@ -4644,9 +4644,11 @@ __webpack_require__.r(__webpack_exports__);
 class TabSwitcher extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
 
     //tabsData - [{ name: 'user', label: 'Користувач', tab: this._userTab }]
-    constructor(el, tabsData) {
+    constructor(el, switcherName, tabsData) {
         super(el);
         this._tabsData = tabsData;
+        this._switcherName = switcherName;
+        this._currentActiveTabName = null;
         
         this._render();
 
@@ -4672,6 +4674,9 @@ class TabSwitcher extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.B
     }
 
     activateTab(activatingTabName) {
+        if (this._currentActiveTabName == activatingTabName) {
+            return
+        }
         this._tabsData.forEach(tabData => {
             tabData.tab.toggle(tabData.name == activatingTabName);
         });
@@ -4679,6 +4684,8 @@ class TabSwitcher extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.B
             let activatorTabName = btn.getAttribute('data-tab-activator');
             btn.classList.toggle('tab-switcher__activator--active', activatorTabName == activatingTabName);
         });
+        this._currentActiveTabName = activatingTabName;
+        this.$eventBus.emit('tabSwitched', this._switcherName, activatingTabName);
     }
 
     toggleTabDisabling(tabName, isDisabled) {
@@ -4776,7 +4783,7 @@ class Panel extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTM
         this._notificationsTab = new _tabs_notificationsTab__WEBPACK_IMPORTED_MODULE_9__.NotificationsTabView(this._el.querySelector('[data-notifications-tab]'));
         this._ratingTab = new _tabs_ratingTab__WEBPACK_IMPORTED_MODULE_10__.RatingTabView(this._el.querySelector('[data-rating-tab]'));
 
-        this._tabSwitcher = new _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+        this._tabSwitcher = new _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'panel', [
             { name: 'user', label: 'Користувач', tab: this._userTab },
             { name: 'colonies', label: 'Колонії', tab: this._coloniesTab },
             { name: 'nuptial_flight', label: 'Шлюбний політ', tab: this._nuptialFlightTab },
@@ -5644,7 +5651,7 @@ class ColonyManager extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__
         this._operationsTab = new _operationsTab__WEBPACK_IMPORTED_MODULE_5__.OperationsTab(this._el.querySelector('[data-operations-tab]'));
         this._nestsTab = new _nestsTab__WEBPACK_IMPORTED_MODULE_3__.NestsTabView(this._el.querySelector('[data-nests-tab]'));
 
-        this._tabSwitcher = new _view_game_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_6__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+        this._tabSwitcher = new _view_game_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_6__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'colony', [
             { name: 'ants', label: 'мурахи', tab: this._antsTab },
             { name: 'operations', label: 'операції', tab: this._operationsTab },
             { name: 'nests', label: 'гнізда', tab: this._nestsTab }
@@ -6255,7 +6262,7 @@ class NestManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
         this._eggTab = new _eggTab_eggTabView__WEBPACK_IMPORTED_MODULE_3__.EggTabView(this._el.querySelector('[data-egg-tab]'));
         this._larvaTab = new _larvaTab_larvaTabView__WEBPACK_IMPORTED_MODULE_4__.LarvaTabView(this._el.querySelector('[data-larva-tab]'));
         this._mainTab = new _mainTab_mainTabView__WEBPACK_IMPORTED_MODULE_5__.MainTabView(this._el.querySelector('[data-main-tab]'));
-        this._tabSwitcher = new _view_game_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_2__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+        this._tabSwitcher = new _view_game_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_2__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'nest', [
             { name: 'main', label: 'основне', tab: this._mainTab },
             { name: 'egg', label: 'яйця', tab: this._eggTab },
             { name: 'larva', label: 'личинки', tab: this._larvaTab }
@@ -7053,40 +7060,41 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this.$eventBus.emit('deactivateMapPickerRequest');
     }
 
-    _onNewNestOperationBtnClick() {
+    _startOperationCreating(operationCreatorView) {
         this._toggleCreatorMode(true);
-        this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.NewNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._operationCreator = operationCreatorView;
         this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+        this.$eventBus.emit('startOperationCreating');
+    }
+
+    _onNewNestOperationBtnClick() {
+        let creatorView = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.NewNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._startOperationCreating(creatorView);
     }
 
     _onDestroyOperationBtnClick() {
-        this._toggleCreatorMode(true);
-        this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.DestroyNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+        let creatorView = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.DestroyNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._startOperationCreating(creatorView);
     }
 
     _onPillageNestOperationBtnClick() {
-        this._toggleCreatorMode(true);
-        this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.PillageNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+        let creatorView = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.PillageNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._startOperationCreating(creatorView);
     }
 
     _onTransportFoodOperationBtnClick() {
-        this._toggleCreatorMode(true);
-        this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.TransportFoodOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+        let creatorView = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.TransportFoodOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._startOperationCreating(creatorView);
     }
 
     _onBuildFortificationOperationBtnClick() {
-        this._toggleCreatorMode(true);
-        this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.BuildFortificationOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+        let creatorView = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.BuildFortificationOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._startOperationCreating(creatorView);
     }
 
     _onBringBugOperationBtnClick() {
-        this._toggleCreatorMode(true);
-        this._operationCreator = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.BringBugOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+        let creatorView = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.BringBugOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._startOperationCreating(creatorView);
     }
 }
 
@@ -7138,13 +7146,15 @@ class OperationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._render();
 
         this._stopBtn.addEventListener('click', this._onStopBtnClick.bind(this));
-        this._showPlanCheckbox.addEventListener('change', this._onShowPlanCheckboxChanged.bind(this));
-
-        // this._el.addEventListener('click', this._onOperationClick.bind(this));
+        this._el.addEventListener('click', this._onClick.bind(this));
     }
 
     update() {
         this._renderOperation();
+    }
+
+    toggleSelect(isSelected) {
+        this._el.classList.toggle('colony-manager__operation--selected', isSelected);
     }
 
     _render() {
@@ -7153,7 +7163,6 @@ class OperationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._statusEl = this._el.querySelector('[data-status]')
         this._stopBtn = this._el.querySelector('[data-stop-btn]');
         this._hiringProgressEl = this._el.querySelector('[data-hiring-progress]');
-        this._showPlanCheckbox = this._el.querySelector('[data-show-plan]');
 
         this._renderOperation();
     }
@@ -7167,22 +7176,14 @@ class OperationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._hiringProgressEl.innerHTML = `${workersText} ${warriorsText}`;
     }
 
-    _onStopBtnClick() {
+    _onStopBtnClick(e) {
+        e.stopPropagation();
         this.$domainFacade.stopOperation(this._colonyId, this._operation.id);
     }
 
-    _onShowPlanCheckboxChanged() {
-        let isChecked = this._showPlanCheckbox.checked;
-        if (isChecked) {
-            this.$eventBus.emit('operationMarkersShowRequest', this._operation);
-        } else {
-            this.$eventBus.emit('operationMarkersHideRequest', this._operation);
-        }
+    _onClick() {
+        this.events.emit('click');
     }
-
-    // _onOperationClick() {
-    //     this.$eventBus.emit('markersDemonstrateRequest', this._operation.markers);
-    // }
 
 }
 
@@ -7213,8 +7214,16 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
     constructor(el) {
         super(el);
         this._operationViews = {};
+        this._selectedOperation = null;
 
         this._render();
+
+        this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
+        this.$eventBus.on('startOperationCreating', this._onStartOperationCreating.bind(this));
+    }
+
+    get _selectedOperationId() {
+        return this._selectedOperation ? this._selectedOperation.id : null;
     }
 
     _render() {
@@ -7229,6 +7238,7 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
         this._listenColony(colony);
 
         this._renderColonyOperations();
+        this._selectOperation(null);
     }
 
     remove() {
@@ -7273,7 +7283,9 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
 
     _renderOperation(operation) {
         let el = document.createElement('tr');
+        el.classList.add('colony-manager__operation');
         let view = new _operationView__WEBPACK_IMPORTED_MODULE_1__.OperationView(el, operation, this._colony.id);
+        view.events.addListener('click', () => this._onOperationViewClick(operation));
         this._operationViews[operation.id] = view;
         this._operationsContainerEl.append(el);
     }
@@ -7283,6 +7295,43 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
             this._operationViews[operationId].remove();
         }
         this._operationViews = {};
+    }
+
+    _selectOperation(operation) {
+        this._selectedOperation = operation;
+        this._renderSelectedOperation();
+        this._makeOperationMarkersDemonstratorRequest();
+    }
+
+    _renderSelectedOperation() {
+        for (let operationId in this._operationViews) {
+            let view = this._operationViews[operationId];
+            view.toggleSelect(this._selectedOperationId == operationId); 
+        }
+    }
+
+    _makeOperationMarkersDemonstratorRequest() {
+        if (this._selectedOperation) {
+            this.$eventBus.emit('operationMarkersShowRequest', this._selectedOperation);
+        } else {
+            this.$eventBus.emit('operationMarkersHideRequest');
+        }
+    }
+
+    _onOperationViewClick(operation) {
+        if (this._selectedOperationId == operation.id) {
+            this._selectOperation(null);
+        } else {
+            this._selectOperation(operation);
+        }
+    }
+
+    _onSomeTabSwitched() {
+        this._selectOperation(null);
+    }
+
+    _onStartOperationCreating() {
+        this._selectOperation(null);
     }
 }
 
@@ -8369,7 +8418,7 @@ class SpecieBuilderTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MOD
         this._combatChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-combat-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.COMBAT));
         this._adjustingChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-adjusting-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.ADJUSTING));
 
-        this._tabSwitcher = new _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_4__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+        this._tabSwitcher = new _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_4__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'specie', [
             { name: 'body_editor', label: 'Тіло', tab: this._bodyChromosomeEditorTab },
             { name: 'development_editor', label: 'Розвиток', tab: this._developmentChromosomeEditorTab },
             { name: 'adaptation_editor', label: 'Адаптація', tab: this._adaptationChromosomeEditorTab },
@@ -9428,18 +9477,12 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
     constructor(container) {
         super();
         this._container = container;
-        this._operationMarkersViewPacks = {};
+        this._demonstratingOperation = null;
+        this._demonstratingOperationMarkerViews = [];
 
         this.$eventBus.on('operationMarkersShowRequest', this._onOperationMarkersShowRequest.bind(this));
         this.$eventBus.on('operationMarkersHideRequest', this._onOperationMarkersHideRequest.bind(this));
     }
-
-    // _renderMarkers(markers) {
-    //     this._container.removeChildren();
-    //     markers.forEach((marker) => {
-    //         this._renderMarker(marker);
-    //     });
-    // }
 
     _renderMarker(marker) {
         let markerView = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`marker_${marker.type}.png`));
@@ -9450,28 +9493,25 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
         return markerView;
     }
 
-    _onOperationMarkersShowRequest(operation) {
-        if (this._operationMarkersViewPacks[operation.id]) {
-            return;
-        }
-        let markerViews = [];
-        operation.markers.forEach((marker) => {
-            let markerView = this._renderMarker(marker);
-            markerViews.push(markerView);
-        });
-        this._operationMarkersViewPacks[operation.id] = {
-            views: markerViews
-        }
-    }
-
-    _onOperationMarkersHideRequest(operation) {
-        if (!this._operationMarkersViewPacks[operation.id]) {
-            return;
-        }
-        for (let view of this._operationMarkersViewPacks[operation.id].views) {
+    _clearOperationMarkers() {
+        for (let view of this._demonstratingOperationMarkerViews) {
             this._container.removeChild(view);
         }
-        delete this._operationMarkersViewPacks[operation.id];
+        this._demonstratingOperationMarkerViews = [];
+    }
+
+    _onOperationMarkersShowRequest(operation) {
+        this._clearOperationMarkers();
+        let markerViews = [];
+        for (let marker of operation.markers) {
+            let markerView = this._renderMarker(marker);
+            markerViews.push(markerView);
+        }
+        this._demonstratingOperationMarkerViews = markerViews;
+    }
+
+    _onOperationMarkersHideRequest() {
+        this._clearOperationMarkers();
     }
 
 }
@@ -15508,6 +15548,14 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.colony_manager {
     border: solid 1px;
 }
 
+.colony-manager__operation {
+    cursor: pointer;
+}
+
+.colony-manager__operation--selected {
+    color: red;
+}
+
 .colony-manager__operations-list td {
     border: solid 1px;
 }
@@ -15530,7 +15578,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.colony_manager {
 
 .colony-manager__ants-table td {
     border: solid 1px;
-}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,YAAY;AAChB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,YAAY;AAChB;;;AAGA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,YAAY;IACZ,SAAS;IACT,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n\r\n.colony-manager__operations-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__operations-list {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__operations-list td {\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__operations-creator {\r\n    padding: 3px;\r\n}\r\n\r\n.colony-manager__new_operations_list {\r\n    padding: 3px;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.colony-manager__ants-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__ants-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
+}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,YAAY;AAChB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,YAAY;AAChB;;;AAGA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,eAAe;AACnB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,YAAY;IACZ,SAAS;IACT,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n\r\n.colony-manager__operations-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__operations-list {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__operation {\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__operation--selected {\r\n    color: red;\r\n}\r\n\r\n.colony-manager__operations-list td {\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__operations-creator {\r\n    padding: 3px;\r\n}\r\n\r\n.colony-manager__new_operations_list {\r\n    padding: 3px;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.colony-manager__ants-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__ants-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -18219,7 +18267,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<tr>\r\n    <td data-name></td>\r\n    <td data-status></td>\r\n    <td data-hiring-progress></td>\r\n    <td>\r\n        <input type=\"checkbox\" data-show-plan />\r\n    </td>\r\n    <td>\r\n        <button data-stop-btn>X</button>\r\n    </td>\r\n</tr>\r\n";
+var code = "<td data-name></td>\r\n<td data-status></td>\r\n<td data-hiring-progress></td>\r\n<td>\r\n    <button data-stop-btn>X</button>\r\n</td>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -18237,7 +18285,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<thead>\r\n    <tr>\r\n        <td>назва</td>\r\n        <td>найм</td>\r\n        <td>статус</td>\r\n        <td>показать план</td>\r\n        <td>зупинить</td>\r\n    </tr>\r\n</thead>\r\n<tbody data-operations-container></tbody>";
+var code = "<thead>\r\n    <tr>\r\n        <td>назва</td>\r\n        <td>статус</td>\r\n        <td>найм</td>\r\n        <td>зупинить</td>\r\n    </tr>\r\n</thead>\r\n<tbody data-operations-container></tbody>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

@@ -37,7 +37,7 @@ class Panel extends BaseHTMLView {
         this._notificationsTab = new NotificationsTabView(this._el.querySelector('[data-notifications-tab]'));
         this._ratingTab = new RatingTabView(this._el.querySelector('[data-rating-tab]'));
 
-        this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+        this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'panel', [
             { name: 'user', label: 'Користувач', tab: this._userTab },
             { name: 'colonies', label: 'Колонії', tab: this._coloniesTab },
             { name: 'nuptial_flight', label: 'Шлюбний політ', tab: this._nuptialFlightTab },

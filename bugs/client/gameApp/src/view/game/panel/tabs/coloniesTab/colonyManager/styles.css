@@ -39,6 +39,14 @@
     border: solid 1px;
 }
 
+.colony-manager__operation {
+    cursor: pointer;
+}
+
+.colony-manager__operation--selected {
+    color: red;
+}
+
 .colony-manager__operations-list td {
     border: solid 1px;
 }

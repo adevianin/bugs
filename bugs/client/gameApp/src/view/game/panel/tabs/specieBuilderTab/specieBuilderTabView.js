@@ -25,7 +25,7 @@ class SpecieBuilderTabView extends BaseHTMLView {
         this._combatChromosomeEditorTab = new ChromosomeEditorTab(this._el.querySelector('[data-combat-chromosome-editor-tab]'), this._specie.getChromosomeByType(ChromosomesTypes.COMBAT));
         this._adjustingChromosomeEditorTab = new ChromosomeEditorTab(this._el.querySelector('[data-adjusting-chromosome-editor-tab]'), this._specie.getChromosomeByType(ChromosomesTypes.ADJUSTING));
 
-        this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+        this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'specie', [
             { name: 'body_editor', label: 'Тіло', tab: this._bodyChromosomeEditorTab },
             { name: 'development_editor', label: 'Розвиток', tab: this._developmentChromosomeEditorTab },
             { name: 'adaptation_editor', label: 'Адаптація', tab: this._adaptationChromosomeEditorTab },

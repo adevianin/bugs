@@ -36,7 +36,7 @@ class ColonyManager extends BaseHTMLView {
         this._operationsTab = new OperationsTab(this._el.querySelector('[data-operations-tab]'));
         this._nestsTab = new NestsTabView(this._el.querySelector('[data-nests-tab]'));
 
-        this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+        this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'colony', [
             { name: 'ants', label: 'мурахи', tab: this._antsTab },
             { name: 'operations', label: 'операції', tab: this._operationsTab },
             { name: 'nests', label: 'гнізда', tab: this._nestsTab }

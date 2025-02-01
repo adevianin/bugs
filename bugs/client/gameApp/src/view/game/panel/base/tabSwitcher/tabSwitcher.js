@@ -5,9 +5,11 @@ import { BaseHTMLView } from '@view/base/baseHTMLView';
 class TabSwitcher extends BaseHTMLView {
 
     //tabsData - [{ name: 'user', label: 'Користувач', tab: this._userTab }]
-    constructor(el, tabsData) {
+    constructor(el, switcherName, tabsData) {
         super(el);
         this._tabsData = tabsData;
+        this._switcherName = switcherName;
+        this._currentActiveTabName = null;
         
         this._render();
 
@@ -33,6 +35,9 @@ class TabSwitcher extends BaseHTMLView {
     }
 
     activateTab(activatingTabName) {
+        if (this._currentActiveTabName == activatingTabName) {
+            return
+        }
         this._tabsData.forEach(tabData => {
             tabData.tab.toggle(tabData.name == activatingTabName);
         });
@@ -40,6 +45,8 @@ class TabSwitcher extends BaseHTMLView {
             let activatorTabName = btn.getAttribute('data-tab-activator');
             btn.classList.toggle('tab-switcher__activator--active', activatorTabName == activatingTabName);
         });
+        this._currentActiveTabName = activatingTabName;
+        this.$eventBus.emit('tabSwitched', this._switcherName, activatingTabName);
     }
 
     toggleTabDisabling(tabName, isDisabled) {

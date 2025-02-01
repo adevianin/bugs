@@ -57,40 +57,41 @@ class OperationsCreatorView extends BaseHTMLView {
         this.$eventBus.emit('deactivateMapPickerRequest');
     }
 
-    _onNewNestOperationBtnClick() {
+    _startOperationCreating(operationCreatorView) {
         this._toggleCreatorMode(true);
-        this._operationCreator = new NewNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._operationCreator = operationCreatorView;
         this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+        this.$eventBus.emit('startOperationCreating');
+    }
+
+    _onNewNestOperationBtnClick() {
+        let creatorView = new NewNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._startOperationCreating(creatorView);
     }
 
     _onDestroyOperationBtnClick() {
-        this._toggleCreatorMode(true);
-        this._operationCreator = new DestroyNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+        let creatorView = new DestroyNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._startOperationCreating(creatorView);
     }
 
     _onPillageNestOperationBtnClick() {
-        this._toggleCreatorMode(true);
-        this._operationCreator = new PillageNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+        let creatorView = new PillageNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._startOperationCreating(creatorView);
     }
 
     _onTransportFoodOperationBtnClick() {
-        this._toggleCreatorMode(true);
-        this._operationCreator = new TransportFoodOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+        let creatorView = new TransportFoodOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._startOperationCreating(creatorView);
     }
 
     _onBuildFortificationOperationBtnClick() {
-        this._toggleCreatorMode(true);
-        this._operationCreator = new BuildFortificationOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+        let creatorView = new BuildFortificationOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._startOperationCreating(creatorView);
     }
 
     _onBringBugOperationBtnClick() {
-        this._toggleCreatorMode(true);
-        this._operationCreator = new BringBugOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
+        let creatorView = new BringBugOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        this._startOperationCreating(creatorView);
     }
 }
 

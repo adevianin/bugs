@@ -6,18 +6,12 @@ class MarkersDemonstratorView extends BaseGraphicView {
     constructor(container) {
         super();
         this._container = container;
-        this._operationMarkersViewPacks = {};
+        this._demonstratingOperation = null;
+        this._demonstratingOperationMarkerViews = [];
 
         this.$eventBus.on('operationMarkersShowRequest', this._onOperationMarkersShowRequest.bind(this));
         this.$eventBus.on('operationMarkersHideRequest', this._onOperationMarkersHideRequest.bind(this));
     }
-
-    // _renderMarkers(markers) {
-    //     this._container.removeChildren();
-    //     markers.forEach((marker) => {
-    //         this._renderMarker(marker);
-    //     });
-    // }
 
     _renderMarker(marker) {
         let markerView = new PIXI.Sprite(this.$textureManager.getTexture(`marker_${marker.type}.png`));
@@ -28,28 +22,25 @@ class MarkersDemonstratorView extends BaseGraphicView {
         return markerView;
     }
 
-    _onOperationMarkersShowRequest(operation) {
-        if (this._operationMarkersViewPacks[operation.id]) {
-            return;
-        }
-        let markerViews = [];
-        operation.markers.forEach((marker) => {
-            let markerView = this._renderMarker(marker);
-            markerViews.push(markerView);
-        });
-        this._operationMarkersViewPacks[operation.id] = {
-            views: markerViews
-        }
-    }
-
-    _onOperationMarkersHideRequest(operation) {
-        if (!this._operationMarkersViewPacks[operation.id]) {
-            return;
-        }
-        for (let view of this._operationMarkersViewPacks[operation.id].views) {
+    _clearOperationMarkers() {
+        for (let view of this._demonstratingOperationMarkerViews) {
             this._container.removeChild(view);
         }
-        delete this._operationMarkersViewPacks[operation.id];
+        this._demonstratingOperationMarkerViews = [];
+    }
+
+    _onOperationMarkersShowRequest(operation) {
+        this._clearOperationMarkers();
+        let markerViews = [];
+        for (let marker of operation.markers) {
+            let markerView = this._renderMarker(marker);
+            markerViews.push(markerView);
+        }
+        this._demonstratingOperationMarkerViews = markerViews;
+    }
+
+    _onOperationMarkersHideRequest() {
+        this._clearOperationMarkers();
     }
 
 }

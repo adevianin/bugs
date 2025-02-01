@@ -28,7 +28,7 @@ class NestManagerView extends BaseHTMLView {
         this._eggTab = new EggTabView(this._el.querySelector('[data-egg-tab]'));
         this._larvaTab = new LarvaTabView(this._el.querySelector('[data-larva-tab]'));
         this._mainTab = new MainTabView(this._el.querySelector('[data-main-tab]'));
-        this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), [
+        this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'nest', [
             { name: 'main', label: 'основне', tab: this._mainTab },
             { name: 'egg', label: 'яйця', tab: this._eggTab },
             { name: 'larva', label: 'личинки', tab: this._larvaTab }
