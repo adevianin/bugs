@@ -9489,8 +9489,37 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
         markerView.anchor.set(0.5, 0.5); 
         markerView.position.x = marker.point[0];
         markerView.position.y = marker.point[1];
-        this._container.addChild(markerView);
         return markerView;
+    }
+
+    _renderMarkerConnection(x1, y1, x2, y2) {
+        let line = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Graphics();
+        line.setStrokeStyle({
+            color: 0xff0000,
+            width: 2,
+            alignment: 0.5,
+        });
+        line.moveTo(x1, y1);
+        line.lineTo(x2, y2);
+        // line.stroke();
+        return line;
+    }
+
+    _renderMarkers(markers) {
+        let views = [];
+        for (let i = 0; i < markers.length; i++) {
+            let marker = markers[i];
+            let markerView = this._renderMarker(marker);
+            views.push(markerView);
+            let hasNext = i + 1 < markers.length;
+            if (hasNext) {
+                let nextMarker = markers[i + 1];
+                let connectionView = this._renderMarkerConnection(marker.point[0], marker.point[1], nextMarker.point[0], nextMarker.point[1]);
+                views.push(connectionView);
+            }
+        }
+
+        return views;
     }
 
     _clearOperationMarkers() {
@@ -9502,10 +9531,9 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
 
     _onOperationMarkersShowRequest(operation) {
         this._clearOperationMarkers();
-        let markerViews = [];
-        for (let marker of operation.markers) {
-            let markerView = this._renderMarker(marker);
-            markerViews.push(markerView);
+        let markerViews = this._renderMarkers(operation.markers);
+        for (let markerView of markerViews) {
+            this._container.addChild(markerView);
         }
         this._demonstratingOperationMarkerViews = markerViews;
     }
