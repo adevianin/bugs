@@ -5,3 +5,5 @@ class MarkerTypes(StrEnum):
     CROSS = 'cross'
     EAT = 'eat'
     PILLAGE = 'pillage'
+    LOAD = 'load'
+    UNLOAD = 'unload'

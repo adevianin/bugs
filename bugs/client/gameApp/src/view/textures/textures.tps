@@ -240,8 +240,10 @@
             <key type="filename">images/ladybug_dead.png</key>
             <key type="filename">images/marker_cross.png</key>
             <key type="filename">images/marker_eat.png</key>
+            <key type="filename">images/marker_load.png</key>
             <key type="filename">images/marker_pillage.png</key>
             <key type="filename">images/marker_pointer.png</key>
+            <key type="filename">images/marker_unload.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -440,6 +442,8 @@
                     <filename>images/item_nectar_1v.png</filename>
                     <filename>images/item_source_nectar.png</filename>
                     <filename>images/item_source_nectar_not_fertile.png</filename>
+                    <filename>images/marker_load.png</filename>
+                    <filename>images/marker_unload.png</filename>
                 </array>
             </struct>
         </map>

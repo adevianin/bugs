@@ -29,6 +29,7 @@ class PillageNestOperation(Operation):
         self._open_vacancies(AntTypes.WARRIOR, self._warrior_vacancies_count)
         self._open_vacancies(AntTypes.WORKER, self._worker_vacancies_count)
         self._add_marker(MarkerTypes.PILLAGE, nest_to_pillage.position)
+        self._add_marker(MarkerTypes.LOAD, nest_for_loot.position)
         self._aggression_targets_filter = lambda entity: entity.from_colony_id == self._nest_to_pillage.from_colony_id
         self._nest_to_pillage = nest_to_pillage
         self._nest_for_loot = nest_for_loot
