@@ -9482,6 +9482,7 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
 
         this.$eventBus.on('operationMarkersShowRequest', this._onOperationMarkersShowRequest.bind(this));
         this.$eventBus.on('operationMarkersHideRequest', this._onOperationMarkersHideRequest.bind(this));
+
     }
 
     _renderMarker(marker) {
@@ -9501,7 +9502,7 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
         });
         line.moveTo(x1, y1);
         line.lineTo(x2, y2);
-        // line.stroke();
+        line.stroke();
         return line;
     }
 
@@ -9519,6 +9520,10 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
             }
         }
 
+        for (let markerView of views) {
+            this._container.addChild(markerView);
+        }
+
         return views;
     }
 
@@ -9531,11 +9536,7 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
 
     _onOperationMarkersShowRequest(operation) {
         this._clearOperationMarkers();
-        let markerViews = this._renderMarkers(operation.markers);
-        for (let markerView of markerViews) {
-            this._container.addChild(markerView);
-        }
-        this._demonstratingOperationMarkerViews = markerViews;
+        this._demonstratingOperationMarkerViews = this._renderMarkers(operation.markers);
     }
 
     _onOperationMarkersHideRequest() {

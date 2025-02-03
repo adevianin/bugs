@@ -11,6 +11,7 @@ class MarkersDemonstratorView extends BaseGraphicView {
 
         this.$eventBus.on('operationMarkersShowRequest', this._onOperationMarkersShowRequest.bind(this));
         this.$eventBus.on('operationMarkersHideRequest', this._onOperationMarkersHideRequest.bind(this));
+
     }
 
     _renderMarker(marker) {
@@ -48,6 +49,10 @@ class MarkersDemonstratorView extends BaseGraphicView {
             }
         }
 
+        for (let markerView of views) {
+            this._container.addChild(markerView);
+        }
+
         return views;
     }
 
@@ -60,11 +65,7 @@ class MarkersDemonstratorView extends BaseGraphicView {
 
     _onOperationMarkersShowRequest(operation) {
         this._clearOperationMarkers();
-        let markerViews = this._renderMarkers(operation.markers);
-        for (let markerView of markerViews) {
-            this._container.addChild(markerView);
-        }
-        this._demonstratingOperationMarkerViews = markerViews;
+        this._demonstratingOperationMarkerViews = this._renderMarkers(operation.markers);
     }
 
     _onOperationMarkersHideRequest() {
