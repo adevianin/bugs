@@ -243,6 +243,7 @@
             <key type="filename">images/marker_load.png</key>
             <key type="filename">images/marker_pillage.png</key>
             <key type="filename">images/marker_pointer.png</key>
+            <key type="filename">images/marker_shield.png</key>
             <key type="filename">images/marker_unload.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -444,6 +445,7 @@
                     <filename>images/item_source_nectar_not_fertile.png</filename>
                     <filename>images/marker_load.png</filename>
                     <filename>images/marker_unload.png</filename>
+                    <filename>images/marker_shield.png</filename>
                 </array>
             </struct>
         </map>

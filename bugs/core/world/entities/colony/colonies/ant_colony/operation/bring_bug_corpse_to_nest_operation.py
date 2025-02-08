@@ -34,6 +34,7 @@ class BringBugCorpseToNestOperation(Operation):
         self._name = 'перенести в гніздо'
         self._open_vacancies(AntTypes.WORKER, self._worker_vacancies_count)
         self._add_marker(MarkerTypes.EAT, search_bug_corpse_location)
+        self._add_marker(MarkerTypes.LOAD, nest.position)
         self._nest = nest
         self._search_bug_corpse_location = search_bug_corpse_location
         self._found_bug_corpse_item = found_bug_corpse

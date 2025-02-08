@@ -1,5 +1,6 @@
 import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import destroyNestOperationCreatorTmpl from './destroyNestOperationCreatorTmpl.html';
+import { MarkerTypes } from "@domain/enum/markerTypes";
 
 class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
 
@@ -30,6 +31,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         this.$eventBus.emit('nestPickRequest', this._performingColony.id, (nest) => {
             this._choosedNest = nest;
             this._renderChoosedNest();
+            this._showMarkers();
         });
     }
 
@@ -41,6 +43,11 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         let workersCount = parseInt(this._workersCountEl.value);
         this.$domainFacade.destroyNestOperation(this._performingColony.id, warriorsCount, workersCount, this._choosedNest);
         this._onDone();
+    }
+
+    _showMarkers() {
+        let markers = [this.$domainFacade.buildMarker(MarkerTypes.CROSS, this._choosedNest.position)];
+        this._demonstrateMarkersRequest(markers);
     }
 }
 

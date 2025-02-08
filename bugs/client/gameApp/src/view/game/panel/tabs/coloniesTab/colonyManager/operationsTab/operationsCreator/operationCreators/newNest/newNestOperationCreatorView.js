@@ -1,5 +1,6 @@
 import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import newNestOperationCreatorTmpl from './newNestOperationCreatorTmpl.html';
+import { MarkerTypes } from "@domain/enum/markerTypes";
 
 class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
@@ -40,6 +41,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         this.$eventBus.emit('positionPickRequest', (point) => { 
             this._buildingSite = point;
             this._renderBuildingSite();
+            this._showMarkers();
         });
     }
 
@@ -68,6 +70,11 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
     _renderError(messageId) {
         this._errorContainerEl.innerHTML = this.$messages[messageId];
+    }
+
+    _showMarkers() {
+        let markers = [this.$domainFacade.buildMarker(MarkerTypes.POINTER, this._buildingSite)];
+        this._demonstrateMarkersRequest(markers);
     }
 
 }

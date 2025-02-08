@@ -1,6 +1,7 @@
 import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import bringBugOperationCreatorTmpl from './bringBugOperationCreatorTmpl.html';
 import { NestSelectorView } from "@view/game/panel/base/nestSelector";
+import { MarkerTypes } from "@domain/enum/markerTypes";
 
 class BringBugOperationCreatorView extends BaseOperationCreatorView {
 
@@ -10,6 +11,7 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
         this._render();
 
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
     }
 
     remove() {
@@ -25,6 +27,8 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
         this._errorContainerEl = this._el.querySelector('[data-error-container]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
+
+        this._showMarkers();
     }
 
     _onStartBtnClick() {
@@ -40,6 +44,21 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
 
     _renderError(messageId) {
         this._errorContainerEl.innerHTML = this.$messages[messageId];
+    }
+
+    _onNestChanged() {
+        this._showMarkers();
+    }
+
+    _showMarkers() {
+        let markers = [];
+
+        if (this._nestSelector.nestId) {
+            let nest = this.$domainFacade.findEntityById(this._nestSelector.nestId);
+            markers.push(this.$domainFacade.buildMarker(MarkerTypes.LOAD, nest.position));
+        }
+
+        this._demonstrateMarkersRequest(markers);
     }
 
 }

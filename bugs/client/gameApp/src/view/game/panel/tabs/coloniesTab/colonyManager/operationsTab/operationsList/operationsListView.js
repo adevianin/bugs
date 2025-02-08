@@ -12,7 +12,7 @@ class OperationsListView extends BaseHTMLView {
         this._render();
 
         this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
-        this.$eventBus.on('startOperationCreating', this._onStartOperationCreating.bind(this));
+        this.$eventBus.on('beforeStartOperationCreating', this._onStartOperationCreating.bind(this));
         this.$eventBus.on('stopOperationCreating', this._onStopOperationCreating.bind(this));
     }
 

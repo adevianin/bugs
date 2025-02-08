@@ -290,7 +290,7 @@
 },
 "grass.png":
 {
-	"frame": {"x":408,"y":128,"w":64,"h":64},
+	"frame": {"x":440,"y":128,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
@@ -624,7 +624,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"marker_unload.png":
+"marker_shield.png":
 {
 	"frame": {"x":256,"y":128,"w":32,"h":32},
 	"rotated": false,
@@ -632,9 +632,17 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
+"marker_unload.png":
+{
+	"frame": {"x":288,"y":128,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
 "nest.png":
 {
-	"frame": {"x":288,"y":128,"w":40,"h":40},
+	"frame": {"x":320,"y":128,"w":40,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
@@ -642,7 +650,7 @@
 },
 "nest_building.png":
 {
-	"frame": {"x":328,"y":128,"w":40,"h":40},
+	"frame": {"x":360,"y":128,"w":40,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
@@ -650,7 +658,7 @@
 },
 "nest_destroyed.png":
 {
-	"frame": {"x":368,"y":128,"w":40,"h":40},
+	"frame": {"x":400,"y":128,"w":40,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
@@ -679,6 +687,6 @@
 	"format": "RGBA8888",
 	"size": {"w":512,"h":802},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:5f304c72abf3bbde9bd876c65743baf8:d86fece285dad335f0efcfedff6a8bcb:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:1741c484272c7dfcb3d48f47078f3077:b29fa80a87dcab0b36da44bb173354d1:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }

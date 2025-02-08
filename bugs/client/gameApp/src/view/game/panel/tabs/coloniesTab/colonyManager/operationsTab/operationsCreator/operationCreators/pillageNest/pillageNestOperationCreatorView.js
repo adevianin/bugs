@@ -1,6 +1,7 @@
 import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import pillageNestOperationCreatorTmpl from './pillageNestOperationCreatorTmpl.html';
 import { NestSelectorView } from "@view/game/panel/base/nestSelector";
+import { MarkerTypes } from "@domain/enum/markerTypes";
 
 class PillageNestOperationCreatorView extends BaseOperationCreatorView {
 
@@ -13,6 +14,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
 
         this._chooseNestToPillageBtn.addEventListener('click', this._onChooseNestToPillageBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._nestForLootSelector.events.addListener('changed', this._onNestForLootChanged.bind(this));
     }
 
     remove() {
@@ -33,16 +35,22 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         this._el.querySelector('[data-nest-selector-container]').append(this._nestForLootSelector.el);
 
         this._renderNestToPillage();
+        this._showMarkers();
     }
 
     _renderNestToPillage() {
         this._nestToPillageEl.innerHTML = this._nestToPillage ? `(${ this._nestToPillage.id })` : '(не вибрано)';
     }
 
+    _onNestForLootChanged() {
+        this._showMarkers();
+    }
+
     _onChooseNestToPillageBtnClick() {
         this.$eventBus.emit('nestPickRequest', this._performingColony.id, (nestToPillage) => {
             this._nestToPillage = nestToPillage;
             this._renderNestToPillage();
+            this._showMarkers();
         });
     }
 
@@ -55,6 +63,21 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         let workersCount = parseInt(this._workersCountEl.value);
         let nestForLootId = this._nestForLootSelector.nestId;
         this.$domainFacade.pillageNestOperation(this._performingColony.id, this._nestToPillage.id, nestForLootId, warriorsCount, workersCount);
+    }
+
+    _showMarkers() {
+        let markers = [];
+
+        if (this._nestToPillage) {
+            markers.push(this.$domainFacade.buildMarker(MarkerTypes.PILLAGE, this._nestToPillage.position));
+        }
+
+        if (this._nestForLootSelector.nestId) {
+            let nestForLoot = this.$domainFacade.findEntityById(this._nestForLootSelector.nestId);
+            markers.push(this.$domainFacade.buildMarker(MarkerTypes.LOAD, nestForLoot.position));
+        }
+
+        this._demonstrateMarkersRequest(markers);
     }
 
 }

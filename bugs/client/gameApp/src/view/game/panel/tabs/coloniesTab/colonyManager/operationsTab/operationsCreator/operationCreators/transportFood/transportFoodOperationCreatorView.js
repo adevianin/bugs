@@ -1,6 +1,7 @@
 import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import transportFoodOperationCreatorTmpl from './transportFoodOperationCreatorTmpl.html';
 import { NestSelectorView } from "@view/game/panel/base/nestSelector";
+import { MarkerTypes } from "@domain/enum/markerTypes";
 
 class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
 
@@ -10,6 +11,8 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         this._render();
 
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._nestSelectorFrom.events.addListener('changed', this._onNestFromChanged.bind(this));
+        this._nestSelectorTo.events.addListener('changed', this._onNestToChanged.bind(this));
 
     }
 
@@ -32,6 +35,8 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         this._warriorsCountInput = this._el.querySelector('[data-warriors-count]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
+
+        this._showMarkers();
     }
 
     _onStartBtnClick() {
@@ -42,6 +47,30 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         let warriorsCount = this._warriorsCountInput.value;
         this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
         this._onDone();
+    }
+
+    _onNestFromChanged() {
+        this._showMarkers();
+    }
+
+    _onNestToChanged() {
+        this._showMarkers();
+    }
+
+    _showMarkers() {
+        let markers = [];
+
+        if (this._nestSelectorFrom.nestId) {
+            let nestFrom = this.$domainFacade.findEntityById(this._nestSelectorFrom.nestId);
+            markers.push(this.$domainFacade.buildMarker(MarkerTypes.UNLOAD, nestFrom.position));
+        }
+
+        if (this._nestSelectorTo.nestId) {
+            let nestFrom = this.$domainFacade.findEntityById(this._nestSelectorTo.nestId);
+            markers.push(this.$domainFacade.buildMarker(MarkerTypes.LOAD, nestFrom.position));
+        }
+
+        this._demonstrateMarkersRequest(markers);
     }
 
 }

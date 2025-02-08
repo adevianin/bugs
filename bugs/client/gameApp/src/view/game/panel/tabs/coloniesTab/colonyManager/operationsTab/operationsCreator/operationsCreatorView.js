@@ -2,6 +2,7 @@ import { BaseHTMLView } from "@view/base/baseHTMLView";
 import operationsCreatorTmpl from './operationsCreatorTmpl.html';
 import { NewNestOperationCreatorView, DestroyNestOperationCreatorView, PillageNestOperationCreatorView, 
     TransportFoodOperationCreatorView, BuildFortificationOperationCreatorView, BringBugOperationCreatorView } from "./operationCreators";
+import { OperationTypes } from "@domain/enum/operationTypes";
 
 class OperationsCreatorView extends BaseHTMLView {
 
@@ -11,12 +12,12 @@ class OperationsCreatorView extends BaseHTMLView {
         this._render();
 
         this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
-        this._newNestOperationBtn.addEventListener('click', this._onNewNestOperationBtnClick.bind(this));
-        this._destroyNestOperationBtn.addEventListener('click', this._onDestroyOperationBtnClick.bind(this));
-        this._pillageNestOperationBtn.addEventListener('click', this._onPillageNestOperationBtnClick.bind(this));
-        this._transportFoodOperationBtn.addEventListener('click', this._onTransportFoodOperationBtnClick.bind(this));
-        this._buildFortificationOperationBtn.addEventListener('click', this._onBuildFortificationOperationBtnClick.bind(this));
-        this._bringBugOperationBtn.addEventListener('click', this._onBringBugOperationBtnClick.bind(this));
+        this._newNestOperationBtn.addEventListener('click', () => this._startOperationCreating(OperationTypes.BUILD_NEW_SUB_NEST));
+        this._destroyNestOperationBtn.addEventListener('click', () => this._startOperationCreating(OperationTypes.DESTROY_NEST));
+        this._pillageNestOperationBtn.addEventListener('click', () => this._startOperationCreating(OperationTypes.PILLAGE_NEST));
+        this._transportFoodOperationBtn.addEventListener('click', () => this._startOperationCreating(OperationTypes.TRANSPORT_FOOD));
+        this._buildFortificationOperationBtn.addEventListener('click', () => this._startOperationCreating(OperationTypes.BUILD_FORTIFICATION));
+        this._bringBugOperationBtn.addEventListener('click', () => this._startOperationCreating(OperationTypes.BRING_BUG_CORPSE_TO_NEST));
         this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
     }
 
@@ -24,13 +25,6 @@ class OperationsCreatorView extends BaseHTMLView {
         this._colony = colony;
         this._stopOperationCreating();
     }
-
-    // remove() {
-    //     super.remove();
-    //     if (this._operationCreator) {
-    //         this._operationCreator.remove();
-    //     }
-    // }
 
     _render() {
         this._el.innerHTML = operationsCreatorTmpl;
@@ -60,50 +54,37 @@ class OperationsCreatorView extends BaseHTMLView {
         this._operationCreator = null;
         this._toggleCreatorMode(false);
         this.$eventBus.emit('deactivateMapPickerRequest');
+        this.$eventBus.emit('hideMarkersRequest');
         this.$eventBus.emit('stopOperationCreating');
     }
 
-    _startOperationCreating(operationCreatorView) {
+    _startOperationCreating(operationType) {
+        this.$eventBus.emit('beforeStartOperationCreating');
         this._toggleCreatorMode(true);
-        this._operationCreator = operationCreatorView;
+        this._operationCreator = this._buildOperationCreator(operationType);
         this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
-        this.$eventBus.emit('startOperationCreating');
+    }
+
+    _buildOperationCreator(operationType) {
+        switch(operationType) {
+            case OperationTypes.BRING_BUG_CORPSE_TO_NEST:
+                return new BringBugOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+            case OperationTypes.BUILD_FORTIFICATION:
+                return new BuildFortificationOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+            case OperationTypes.BUILD_NEW_SUB_NEST:
+                return new NewNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+            case OperationTypes.DESTROY_NEST:
+                return new DestroyNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+            case OperationTypes.PILLAGE_NEST:
+                return new PillageNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+            case OperationTypes.TRANSPORT_FOOD:
+                return new TransportFoodOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        }
     }
 
     _onSomeTabSwitched() {
         this._stopOperationCreating();
     }
-
-    _onNewNestOperationBtnClick() {
-        let creatorView = new NewNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._startOperationCreating(creatorView);
-    }
-
-    _onDestroyOperationBtnClick() {
-        let creatorView = new DestroyNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._startOperationCreating(creatorView);
-    }
-
-    _onPillageNestOperationBtnClick() {
-        let creatorView = new PillageNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._startOperationCreating(creatorView);
-    }
-
-    _onTransportFoodOperationBtnClick() {
-        let creatorView = new TransportFoodOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._startOperationCreating(creatorView);
-    }
-
-    _onBuildFortificationOperationBtnClick() {
-        let creatorView = new BuildFortificationOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._startOperationCreating(creatorView);
-    }
-
-    _onBringBugOperationBtnClick() {
-        let creatorView = new BringBugOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._startOperationCreating(creatorView);
-    }
-
 }
 
 export { OperationsCreatorView }

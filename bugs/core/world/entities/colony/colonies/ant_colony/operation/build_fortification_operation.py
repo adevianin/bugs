@@ -29,7 +29,7 @@ class BuildFortificationOperation(Operation):
         self._nest = nest
         self._name = 'будування фортицікацій'
         self._open_vacancies(AntTypes.WORKER, self._worker_vacancies_count)
-        self._add_marker(MarkerTypes.POINTER, self._nest.position)
+        self._add_marker(MarkerTypes.SHIELD, self._nest.position)
 
         self._nest_removal_block_id = self._nest.block_removal()
 

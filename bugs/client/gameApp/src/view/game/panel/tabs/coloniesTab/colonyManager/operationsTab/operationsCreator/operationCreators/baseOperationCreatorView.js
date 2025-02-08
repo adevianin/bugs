@@ -8,6 +8,10 @@ class BaseOperationCreatorView extends BaseHTMLView {
         this._performingColony = performingColony;
         this._onDone = onDone;
     }
+
+    _demonstrateMarkersRequest(markers) {
+        this.$eventBus.emit('showMarkersRequest', markers);
+    }
 }
 
 export {

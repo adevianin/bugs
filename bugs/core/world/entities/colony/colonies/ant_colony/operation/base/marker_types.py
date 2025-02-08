@@ -7,3 +7,4 @@ class MarkerTypes(StrEnum):
     PILLAGE = 'pillage'
     LOAD = 'load'
     UNLOAD = 'unload'
+    SHIELD = 'shield'

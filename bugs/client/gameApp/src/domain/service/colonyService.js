@@ -56,6 +56,13 @@ class ColonyService {
         return this._colonyApi.bringBugOpearation(performingColonyId, nestId);
     }
 
+    buildMarker(type, point) {
+        return {
+            type,
+            point
+        };
+    }
+
 }
 
 export {

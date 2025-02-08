@@ -29,8 +29,8 @@ class TransportFoodOperation(Operation):
         self._name = 'перенести їжу'
         self._open_vacancies(AntTypes.WORKER, self._worker_vacancies_count)
         self._open_vacancies(AntTypes.WARRIOR, self._warrior_vacancies_count)
-        self._add_marker(MarkerTypes.EAT, nest_from.position)
-        self._add_marker(MarkerTypes.EAT, nest_to.position)
+        self._add_marker(MarkerTypes.UNLOAD, nest_from.position)
+        self._add_marker(MarkerTypes.LOAD, nest_to.position)
 
         self._nest_from = nest_from
         self._nest_to = nest_to

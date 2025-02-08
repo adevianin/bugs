@@ -225,6 +225,10 @@ class DomainFacade {
         return this._worldService.world.climate;
     }
 
+    buildMarker(type, point) {
+        return this._colonyService.buildMarker(type, point);
+    }
+
     /*======operations========*/
 
     stopOperation(colonyId, operationId) {
@@ -2562,6 +2566,31 @@ const GenesTypes = {
 
 /***/ }),
 
+/***/ "./gameApp/src/domain/enum/markerTypes.js":
+/*!************************************************!*\
+  !*** ./gameApp/src/domain/enum/markerTypes.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MarkerTypes: () => (/* binding */ MarkerTypes)
+/* harmony export */ });
+const MarkerTypes = {
+    POINTER: 'pointer',
+    CROSS: 'cross',
+    EAT: 'eat',
+    PILLAGE: 'pillage',
+    LOAD: 'load',
+    UNLOAD: 'unload',
+    SHIELD: 'shield'
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/domain/enum/notificationTypes.js":
 /*!******************************************************!*\
   !*** ./gameApp/src/domain/enum/notificationTypes.js ***!
@@ -2580,6 +2609,30 @@ const NotificationTypes = {
     NEST_ALARM_CANCELED: 'nest_alarm_canceled',
     NEST_ALARM_CANCELED: 'nest_alarm_canceled',
     DIED_COLONY: 'died_colony'
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/domain/enum/operationTypes.js":
+/*!***************************************************!*\
+  !*** ./gameApp/src/domain/enum/operationTypes.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   OperationTypes: () => (/* binding */ OperationTypes)
+/* harmony export */ });
+const OperationTypes = {
+    BUILD_NEW_SUB_NEST: 'build_new_sub_nest',
+    DESTROY_NEST: 'destroy_nest',
+    PILLAGE_NEST: 'pillage_nest',
+    BRING_BUG_CORPSE_TO_NEST: 'bring_bug_corpse_to_nest',
+    TRANSPORT_FOOD: 'transport_food',
+    BUILD_FORTIFICATION: 'build_fortification'
 }
 
 
@@ -2750,6 +2803,13 @@ class ColonyService {
 
     bringBugOpearation(performingColonyId, nestId) {
         return this._colonyApi.bringBugOpearation(performingColonyId, nestId);
+    }
+
+    buildMarker(type, point) {
+        return {
+            type,
+            point
+        };
     }
 
 }
@@ -6528,6 +6588,10 @@ class BaseOperationCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED
         this._performingColony = performingColony;
         this._onDone = onDone;
     }
+
+    _demonstrateMarkersRequest(markers) {
+        this.$eventBus.emit('showMarkersRequest', markers);
+    }
 }
 
 
@@ -6548,6 +6612,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseOperationCreatorView */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js");
 /* harmony import */ var _bringBugOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bringBugOperationCreatorTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/bringBug/bringBugOperationCreatorTmpl.html");
 /* harmony import */ var _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/nestSelector */ "./gameApp/src/view/game/panel/base/nestSelector/index.js");
+/* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
+
 
 
 
@@ -6560,6 +6626,7 @@ class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IM
         this._render();
 
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
     }
 
     remove() {
@@ -6575,6 +6642,8 @@ class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IM
         this._errorContainerEl = this._el.querySelector('[data-error-container]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
+
+        this._showMarkers();
     }
 
     _onStartBtnClick() {
@@ -6590,6 +6659,21 @@ class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IM
 
     _renderError(messageId) {
         this._errorContainerEl.innerHTML = this.$messages[messageId];
+    }
+
+    _onNestChanged() {
+        this._showMarkers();
+    }
+
+    _showMarkers() {
+        let markers = [];
+
+        if (this._nestSelector.nestId) {
+            let nest = this.$domainFacade.findEntityById(this._nestSelector.nestId);
+            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.LOAD, nest.position));
+        }
+
+        this._demonstrateMarkersRequest(markers);
     }
 
 }
@@ -6612,6 +6696,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseOperationCreatorView */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js");
 /* harmony import */ var _buildFortificationOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./buildFortificationOperationCreatorTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/buildFortification/buildFortificationOperationCreatorTmpl.html");
 /* harmony import */ var _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/nestSelector */ "./gameApp/src/view/game/panel/base/nestSelector/index.js");
+/* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
+
 
 
 
@@ -6624,6 +6710,7 @@ class BuildFortificationOperationCreatorView extends _baseOperationCreatorView__
         this._render();
 
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
 
     }
 
@@ -6641,6 +6728,7 @@ class BuildFortificationOperationCreatorView extends _baseOperationCreatorView__
         this._workersCountInput = this._el.querySelector('[data-workers-count]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
+        this._showMarkers();
     }
 
     _onStartBtnClick() {
@@ -6648,6 +6736,21 @@ class BuildFortificationOperationCreatorView extends _baseOperationCreatorView__
         let workersCount = this._workersCountInput.value;
         this.$domainFacade.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount);
         this._onDone();
+    }
+
+    _onNestChanged() {
+        this._showMarkers();
+    }
+
+    _showMarkers() {
+        let markers = [];
+
+        if (this._nestSelector.nestId) {
+            let nest = this.$domainFacade.findEntityById(this._nestSelector.nestId);
+            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.SHIELD, nest.position));
+        }
+
+        this._demonstrateMarkersRequest(markers);
     }
 
 }
@@ -6669,6 +6772,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseOperationCreatorView */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js");
 /* harmony import */ var _destroyNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./destroyNestOperationCreatorTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/destoryNest/destroyNestOperationCreatorTmpl.html");
+/* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
+
 
 
 
@@ -6701,6 +6806,7 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         this.$eventBus.emit('nestPickRequest', this._performingColony.id, (nest) => {
             this._choosedNest = nest;
             this._renderChoosedNest();
+            this._showMarkers();
         });
     }
 
@@ -6712,6 +6818,11 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         let workersCount = parseInt(this._workersCountEl.value);
         this.$domainFacade.destroyNestOperation(this._performingColony.id, warriorsCount, workersCount, this._choosedNest);
         this._onDone();
+    }
+
+    _showMarkers() {
+        let markers = [this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_2__.MarkerTypes.CROSS, this._choosedNest.position)];
+        this._demonstrateMarkersRequest(markers);
     }
 }
 
@@ -6765,6 +6876,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseOperationCreatorView */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js");
 /* harmony import */ var _newNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./newNestOperationCreatorTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/newNest/newNestOperationCreatorTmpl.html");
+/* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
+
 
 
 
@@ -6807,6 +6920,7 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
         this.$eventBus.emit('positionPickRequest', (point) => { 
             this._buildingSite = point;
             this._renderBuildingSite();
+            this._showMarkers();
         });
     }
 
@@ -6837,6 +6951,11 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
         this._errorContainerEl.innerHTML = this.$messages[messageId];
     }
 
+    _showMarkers() {
+        let markers = [this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_2__.MarkerTypes.POINTER, this._buildingSite)];
+        this._demonstrateMarkersRequest(markers);
+    }
+
 }
 
 
@@ -6857,6 +6976,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseOperationCreatorView */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js");
 /* harmony import */ var _pillageNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pillageNestOperationCreatorTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/pillageNest/pillageNestOperationCreatorTmpl.html");
 /* harmony import */ var _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/nestSelector */ "./gameApp/src/view/game/panel/base/nestSelector/index.js");
+/* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
+
 
 
 
@@ -6872,6 +6993,7 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
 
         this._chooseNestToPillageBtn.addEventListener('click', this._onChooseNestToPillageBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._nestForLootSelector.events.addListener('changed', this._onNestForLootChanged.bind(this));
     }
 
     remove() {
@@ -6892,16 +7014,22 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         this._el.querySelector('[data-nest-selector-container]').append(this._nestForLootSelector.el);
 
         this._renderNestToPillage();
+        this._showMarkers();
     }
 
     _renderNestToPillage() {
         this._nestToPillageEl.innerHTML = this._nestToPillage ? `(${ this._nestToPillage.id })` : '(не вибрано)';
     }
 
+    _onNestForLootChanged() {
+        this._showMarkers();
+    }
+
     _onChooseNestToPillageBtnClick() {
         this.$eventBus.emit('nestPickRequest', this._performingColony.id, (nestToPillage) => {
             this._nestToPillage = nestToPillage;
             this._renderNestToPillage();
+            this._showMarkers();
         });
     }
 
@@ -6914,6 +7042,21 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         let workersCount = parseInt(this._workersCountEl.value);
         let nestForLootId = this._nestForLootSelector.nestId;
         this.$domainFacade.pillageNestOperation(this._performingColony.id, this._nestToPillage.id, nestForLootId, warriorsCount, workersCount);
+    }
+
+    _showMarkers() {
+        let markers = [];
+
+        if (this._nestToPillage) {
+            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.PILLAGE, this._nestToPillage.position));
+        }
+
+        if (this._nestForLootSelector.nestId) {
+            let nestForLoot = this.$domainFacade.findEntityById(this._nestForLootSelector.nestId);
+            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.LOAD, nestForLoot.position));
+        }
+
+        this._demonstrateMarkersRequest(markers);
     }
 
 }
@@ -6936,6 +7079,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseOperationCreatorView */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js");
 /* harmony import */ var _transportFoodOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./transportFoodOperationCreatorTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/transportFood/transportFoodOperationCreatorTmpl.html");
 /* harmony import */ var _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/nestSelector */ "./gameApp/src/view/game/panel/base/nestSelector/index.js");
+/* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
+
 
 
 
@@ -6948,6 +7093,8 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
         this._render();
 
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._nestSelectorFrom.events.addListener('changed', this._onNestFromChanged.bind(this));
+        this._nestSelectorTo.events.addListener('changed', this._onNestToChanged.bind(this));
 
     }
 
@@ -6970,6 +7117,8 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
         this._warriorsCountInput = this._el.querySelector('[data-warriors-count]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
+
+        this._showMarkers();
     }
 
     _onStartBtnClick() {
@@ -6980,6 +7129,30 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
         let warriorsCount = this._warriorsCountInput.value;
         this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
         this._onDone();
+    }
+
+    _onNestFromChanged() {
+        this._showMarkers();
+    }
+
+    _onNestToChanged() {
+        this._showMarkers();
+    }
+
+    _showMarkers() {
+        let markers = [];
+
+        if (this._nestSelectorFrom.nestId) {
+            let nestFrom = this.$domainFacade.findEntityById(this._nestSelectorFrom.nestId);
+            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.UNLOAD, nestFrom.position));
+        }
+
+        if (this._nestSelectorTo.nestId) {
+            let nestFrom = this.$domainFacade.findEntityById(this._nestSelectorTo.nestId);
+            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.LOAD, nestFrom.position));
+        }
+
+        this._demonstrateMarkersRequest(markers);
     }
 
 }
@@ -7002,6 +7175,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
 /* harmony import */ var _operationsCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationsCreatorTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationsCreatorTmpl.html");
 /* harmony import */ var _operationCreators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./operationCreators */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/index.js");
+/* harmony import */ var _domain_enum_operationTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/operationTypes */ "./gameApp/src/domain/enum/operationTypes.js");
+
 
 
 
@@ -7014,12 +7189,12 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._render();
 
         this._cancelOperationCreatingBtn.addEventListener('click', this._stopOperationCreating.bind(this));
-        this._newNestOperationBtn.addEventListener('click', this._onNewNestOperationBtnClick.bind(this));
-        this._destroyNestOperationBtn.addEventListener('click', this._onDestroyOperationBtnClick.bind(this));
-        this._pillageNestOperationBtn.addEventListener('click', this._onPillageNestOperationBtnClick.bind(this));
-        this._transportFoodOperationBtn.addEventListener('click', this._onTransportFoodOperationBtnClick.bind(this));
-        this._buildFortificationOperationBtn.addEventListener('click', this._onBuildFortificationOperationBtnClick.bind(this));
-        this._bringBugOperationBtn.addEventListener('click', this._onBringBugOperationBtnClick.bind(this));
+        this._newNestOperationBtn.addEventListener('click', () => this._startOperationCreating(_domain_enum_operationTypes__WEBPACK_IMPORTED_MODULE_3__.OperationTypes.BUILD_NEW_SUB_NEST));
+        this._destroyNestOperationBtn.addEventListener('click', () => this._startOperationCreating(_domain_enum_operationTypes__WEBPACK_IMPORTED_MODULE_3__.OperationTypes.DESTROY_NEST));
+        this._pillageNestOperationBtn.addEventListener('click', () => this._startOperationCreating(_domain_enum_operationTypes__WEBPACK_IMPORTED_MODULE_3__.OperationTypes.PILLAGE_NEST));
+        this._transportFoodOperationBtn.addEventListener('click', () => this._startOperationCreating(_domain_enum_operationTypes__WEBPACK_IMPORTED_MODULE_3__.OperationTypes.TRANSPORT_FOOD));
+        this._buildFortificationOperationBtn.addEventListener('click', () => this._startOperationCreating(_domain_enum_operationTypes__WEBPACK_IMPORTED_MODULE_3__.OperationTypes.BUILD_FORTIFICATION));
+        this._bringBugOperationBtn.addEventListener('click', () => this._startOperationCreating(_domain_enum_operationTypes__WEBPACK_IMPORTED_MODULE_3__.OperationTypes.BRING_BUG_CORPSE_TO_NEST));
         this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
     }
 
@@ -7027,13 +7202,6 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._colony = colony;
         this._stopOperationCreating();
     }
-
-    // remove() {
-    //     super.remove();
-    //     if (this._operationCreator) {
-    //         this._operationCreator.remove();
-    //     }
-    // }
 
     _render() {
         this._el.innerHTML = _operationsCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
@@ -7063,50 +7231,37 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._operationCreator = null;
         this._toggleCreatorMode(false);
         this.$eventBus.emit('deactivateMapPickerRequest');
+        this.$eventBus.emit('hideMarkersRequest');
         this.$eventBus.emit('stopOperationCreating');
     }
 
-    _startOperationCreating(operationCreatorView) {
+    _startOperationCreating(operationType) {
+        this.$eventBus.emit('beforeStartOperationCreating');
         this._toggleCreatorMode(true);
-        this._operationCreator = operationCreatorView;
+        this._operationCreator = this._buildOperationCreator(operationType);
         this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
-        this.$eventBus.emit('startOperationCreating');
+    }
+
+    _buildOperationCreator(operationType) {
+        switch(operationType) {
+            case _domain_enum_operationTypes__WEBPACK_IMPORTED_MODULE_3__.OperationTypes.BRING_BUG_CORPSE_TO_NEST:
+                return new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.BringBugOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+            case _domain_enum_operationTypes__WEBPACK_IMPORTED_MODULE_3__.OperationTypes.BUILD_FORTIFICATION:
+                return new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.BuildFortificationOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+            case _domain_enum_operationTypes__WEBPACK_IMPORTED_MODULE_3__.OperationTypes.BUILD_NEW_SUB_NEST:
+                return new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.NewNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+            case _domain_enum_operationTypes__WEBPACK_IMPORTED_MODULE_3__.OperationTypes.DESTROY_NEST:
+                return new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.DestroyNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+            case _domain_enum_operationTypes__WEBPACK_IMPORTED_MODULE_3__.OperationTypes.PILLAGE_NEST:
+                return new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.PillageNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+            case _domain_enum_operationTypes__WEBPACK_IMPORTED_MODULE_3__.OperationTypes.TRANSPORT_FOOD:
+                return new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.TransportFoodOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
+        }
     }
 
     _onSomeTabSwitched() {
         this._stopOperationCreating();
     }
-
-    _onNewNestOperationBtnClick() {
-        let creatorView = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.NewNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._startOperationCreating(creatorView);
-    }
-
-    _onDestroyOperationBtnClick() {
-        let creatorView = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.DestroyNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._startOperationCreating(creatorView);
-    }
-
-    _onPillageNestOperationBtnClick() {
-        let creatorView = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.PillageNestOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._startOperationCreating(creatorView);
-    }
-
-    _onTransportFoodOperationBtnClick() {
-        let creatorView = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.TransportFoodOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._startOperationCreating(creatorView);
-    }
-
-    _onBuildFortificationOperationBtnClick() {
-        let creatorView = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.BuildFortificationOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._startOperationCreating(creatorView);
-    }
-
-    _onBringBugOperationBtnClick() {
-        let creatorView = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.BringBugOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
-        this._startOperationCreating(creatorView);
-    }
-
 }
 
 
@@ -7230,7 +7385,7 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
         this._render();
 
         this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
-        this.$eventBus.on('startOperationCreating', this._onStartOperationCreating.bind(this));
+        this.$eventBus.on('beforeStartOperationCreating', this._onStartOperationCreating.bind(this));
         this.$eventBus.on('stopOperationCreating', this._onStopOperationCreating.bind(this));
     }
 
@@ -9504,8 +9659,8 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
     _renderMarker(marker) {
         let markerView = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Sprite(this.$textureManager.getTexture(`marker_${marker.type}.png`));
         markerView.anchor.set(0.5, 0.5); 
-        markerView.position.x = marker.point[0];
-        markerView.position.y = marker.point[1];
+        markerView.position.x = marker.point.x;
+        markerView.position.y = marker.point.y;
         return markerView;
     }
 
@@ -9531,7 +9686,7 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
             let hasNext = i + 1 < markers.length;
             if (hasNext) {
                 let nextMarker = markers[i + 1];
-                let connectionView = this._renderMarkerConnection(marker.point[0], marker.point[1], nextMarker.point[0], nextMarker.point[1]);
+                let connectionView = this._renderMarkerConnection(marker.point.x, marker.point.y, nextMarker.point.x, nextMarker.point.y);
                 views.push(connectionView);
             }
         }
@@ -9544,6 +9699,7 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
     }
 
     _clearMarkers() {
+        console.log('clearing markers')
         for (let view of this._markerViews) {
             this._container.removeChild(view);
         }
@@ -9552,6 +9708,7 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
 
     _onShowMarkersRequest(markers) {
         this._clearMarkers();
+        console.log('demonstrating markers', markers);
         this._markerViews = this._renderMarkers(markers);
     }
 
@@ -20009,7 +20166,7 @@ module.exports = styleTagTransform;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
-module.exports = __webpack_require__.p + "e64d5ad7ebe5c320c50c.png";
+module.exports = __webpack_require__.p + "3978a44c0818f5f17add.png";
 
 /***/ }),
 
@@ -82488,7 +82645,7 @@ function sayHello(type) {
 /***/ ((module) => {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"frames":{"ant_male_1.png":{"frame":{"x":0,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_2.png":{"frame":{"x":32,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_3.png":{"frame":{"x":64,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_4.png":{"frame":{"x":96,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_5.png":{"frame":{"x":128,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_6.png":{"frame":{"x":160,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_7.png":{"frame":{"x":192,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_8.png":{"frame":{"x":224,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_dead.png":{"frame":{"x":256,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_1.png":{"frame":{"x":288,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_2.png":{"frame":{"x":320,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_3.png":{"frame":{"x":352,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_4.png":{"frame":{"x":384,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_5.png":{"frame":{"x":416,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_6.png":{"frame":{"x":448,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_7.png":{"frame":{"x":480,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_8.png":{"frame":{"x":0,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_dead.png":{"frame":{"x":32,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_1.png":{"frame":{"x":64,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_2.png":{"frame":{"x":96,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_3.png":{"frame":{"x":128,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_4.png":{"frame":{"x":160,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_5.png":{"frame":{"x":192,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_6.png":{"frame":{"x":224,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_7.png":{"frame":{"x":256,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_8.png":{"frame":{"x":288,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_dead.png":{"frame":{"x":320,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_1.png":{"frame":{"x":352,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_2.png":{"frame":{"x":384,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_3.png":{"frame":{"x":416,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_4.png":{"frame":{"x":448,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_5.png":{"frame":{"x":480,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_6.png":{"frame":{"x":0,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_7.png":{"frame":{"x":32,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_8.png":{"frame":{"x":64,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_dead.png":{"frame":{"x":96,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"grass.png":{"frame":{"x":408,"y":128,"w":64,"h":64},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":64,"h":64},"sourceSize":{"w":64,"h":64}},"ground_beetle_1.png":{"frame":{"x":128,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_2.png":{"frame":{"x":160,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_3.png":{"frame":{"x":192,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_4.png":{"frame":{"x":224,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_5.png":{"frame":{"x":256,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_6.png":{"frame":{"x":288,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_7.png":{"frame":{"x":320,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_8.png":{"frame":{"x":352,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_dead.png":{"frame":{"x":384,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_ant_food_1v.png":{"frame":{"x":416,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_bug_corpse_1v.png":{"frame":{"x":0,"y":192,"w":45,"h":65},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":45,"h":65},"sourceSize":{"w":45,"h":65}},"item_bug_corpse_2v.png":{"frame":{"x":45,"y":192,"w":45,"h":65},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":45,"h":65},"sourceSize":{"w":45,"h":65}},"item_flower_1v.png":{"frame":{"x":448,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_flower_2v.png":{"frame":{"x":480,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_flower_3v.png":{"frame":{"x":0,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_honeydew_1v.png":{"frame":{"x":32,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_1v.png":{"frame":{"x":64,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_2v.png":{"frame":{"x":96,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_3v.png":{"frame":{"x":128,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_4v.png":{"frame":{"x":160,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_nectar_1v.png":{"frame":{"x":192,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_source_honeydew.png":{"frame":{"x":90,"y":192,"w":90,"h":110},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":90,"h":110},"sourceSize":{"w":90,"h":110}},"item_source_honeydew_not_fertile.png":{"frame":{"x":180,"y":192,"w":90,"h":110},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":90,"h":110},"sourceSize":{"w":90,"h":110}},"item_source_nectar.png":{"frame":{"x":270,"y":192,"w":90,"h":110},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":90,"h":110},"sourceSize":{"w":90,"h":110}},"item_source_nectar_not_fertile.png":{"frame":{"x":360,"y":192,"w":90,"h":110},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":90,"h":110},"sourceSize":{"w":90,"h":110}},"item_stick_1v.png":{"frame":{"x":224,"y":96,"w":38,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":38,"h":32},"sourceSize":{"w":38,"h":32}},"item_stick_2v.png":{"frame":{"x":262,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_1.png":{"frame":{"x":294,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_2.png":{"frame":{"x":326,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_3.png":{"frame":{"x":358,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_4.png":{"frame":{"x":390,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_5.png":{"frame":{"x":422,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_6.png":{"frame":{"x":454,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_7.png":{"frame":{"x":0,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_8.png":{"frame":{"x":32,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_dead.png":{"frame":{"x":64,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_cross.png":{"frame":{"x":96,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_eat.png":{"frame":{"x":128,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_load.png":{"frame":{"x":160,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_pillage.png":{"frame":{"x":192,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_pointer.png":{"frame":{"x":224,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_unload.png":{"frame":{"x":256,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"nest.png":{"frame":{"x":288,"y":128,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}},"nest_building.png":{"frame":{"x":328,"y":128,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}},"nest_destroyed.png":{"frame":{"x":368,"y":128,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}},"tree_summer.png":{"frame":{"x":0,"y":302,"w":462,"h":500},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":462,"h":500},"sourceSize":{"w":462,"h":500}}},"animations":{"ant_male":["ant_male_1.png","ant_male_2.png","ant_male_3.png","ant_male_4.png","ant_male_5.png","ant_male_6.png","ant_male_7.png","ant_male_8.png"],"ant_queen":["ant_queen_1.png","ant_queen_2.png","ant_queen_3.png","ant_queen_4.png","ant_queen_5.png","ant_queen_6.png","ant_queen_7.png","ant_queen_8.png"],"ant_warrior":["ant_warrior_1.png","ant_warrior_2.png","ant_warrior_3.png","ant_warrior_4.png","ant_warrior_5.png","ant_warrior_6.png","ant_warrior_7.png","ant_warrior_8.png"],"ant_worker":["ant_worker_1.png","ant_worker_2.png","ant_worker_3.png","ant_worker_4.png","ant_worker_5.png","ant_worker_6.png","ant_worker_7.png","ant_worker_8.png"],"ground_beetle":["ground_beetle_1.png","ground_beetle_2.png","ground_beetle_3.png","ground_beetle_4.png","ground_beetle_5.png","ground_beetle_6.png","ground_beetle_7.png","ground_beetle_8.png"],"ladybug":["ladybug_1.png","ladybug_2.png","ladybug_3.png","ladybug_4.png","ladybug_5.png","ladybug_6.png","ladybug_7.png","ladybug_8.png"]},"meta":{"app":"https://www.codeandweb.com/texturepacker","version":"1.1","image":"world_spritesheet.png","format":"RGBA8888","size":{"w":512,"h":802},"scale":"1","smartupdate":"$TexturePacker:SmartUpdate:5f304c72abf3bbde9bd876c65743baf8:d86fece285dad335f0efcfedff6a8bcb:2b831dbdc2ad4f91b77d89d68a6c0718$"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"frames":{"ant_male_1.png":{"frame":{"x":0,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_2.png":{"frame":{"x":32,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_3.png":{"frame":{"x":64,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_4.png":{"frame":{"x":96,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_5.png":{"frame":{"x":128,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_6.png":{"frame":{"x":160,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_7.png":{"frame":{"x":192,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_8.png":{"frame":{"x":224,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_male_dead.png":{"frame":{"x":256,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_1.png":{"frame":{"x":288,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_2.png":{"frame":{"x":320,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_3.png":{"frame":{"x":352,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_4.png":{"frame":{"x":384,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_5.png":{"frame":{"x":416,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_6.png":{"frame":{"x":448,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_7.png":{"frame":{"x":480,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_8.png":{"frame":{"x":0,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_queen_dead.png":{"frame":{"x":32,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_1.png":{"frame":{"x":64,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_2.png":{"frame":{"x":96,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_3.png":{"frame":{"x":128,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_4.png":{"frame":{"x":160,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_5.png":{"frame":{"x":192,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_6.png":{"frame":{"x":224,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_7.png":{"frame":{"x":256,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_8.png":{"frame":{"x":288,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_warrior_dead.png":{"frame":{"x":320,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_1.png":{"frame":{"x":352,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_2.png":{"frame":{"x":384,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_3.png":{"frame":{"x":416,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_4.png":{"frame":{"x":448,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_5.png":{"frame":{"x":480,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_6.png":{"frame":{"x":0,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_7.png":{"frame":{"x":32,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_8.png":{"frame":{"x":64,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ant_worker_dead.png":{"frame":{"x":96,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"grass.png":{"frame":{"x":440,"y":128,"w":64,"h":64},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":64,"h":64},"sourceSize":{"w":64,"h":64}},"ground_beetle_1.png":{"frame":{"x":128,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_2.png":{"frame":{"x":160,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_3.png":{"frame":{"x":192,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_4.png":{"frame":{"x":224,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_5.png":{"frame":{"x":256,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_6.png":{"frame":{"x":288,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_7.png":{"frame":{"x":320,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_8.png":{"frame":{"x":352,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ground_beetle_dead.png":{"frame":{"x":384,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_ant_food_1v.png":{"frame":{"x":416,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_bug_corpse_1v.png":{"frame":{"x":0,"y":192,"w":45,"h":65},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":45,"h":65},"sourceSize":{"w":45,"h":65}},"item_bug_corpse_2v.png":{"frame":{"x":45,"y":192,"w":45,"h":65},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":45,"h":65},"sourceSize":{"w":45,"h":65}},"item_flower_1v.png":{"frame":{"x":448,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_flower_2v.png":{"frame":{"x":480,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_flower_3v.png":{"frame":{"x":0,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_honeydew_1v.png":{"frame":{"x":32,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_1v.png":{"frame":{"x":64,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_2v.png":{"frame":{"x":96,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_3v.png":{"frame":{"x":128,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_leaf_4v.png":{"frame":{"x":160,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_nectar_1v.png":{"frame":{"x":192,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"item_source_honeydew.png":{"frame":{"x":90,"y":192,"w":90,"h":110},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":90,"h":110},"sourceSize":{"w":90,"h":110}},"item_source_honeydew_not_fertile.png":{"frame":{"x":180,"y":192,"w":90,"h":110},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":90,"h":110},"sourceSize":{"w":90,"h":110}},"item_source_nectar.png":{"frame":{"x":270,"y":192,"w":90,"h":110},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":90,"h":110},"sourceSize":{"w":90,"h":110}},"item_source_nectar_not_fertile.png":{"frame":{"x":360,"y":192,"w":90,"h":110},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":90,"h":110},"sourceSize":{"w":90,"h":110}},"item_stick_1v.png":{"frame":{"x":224,"y":96,"w":38,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":38,"h":32},"sourceSize":{"w":38,"h":32}},"item_stick_2v.png":{"frame":{"x":262,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_1.png":{"frame":{"x":294,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_2.png":{"frame":{"x":326,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_3.png":{"frame":{"x":358,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_4.png":{"frame":{"x":390,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_5.png":{"frame":{"x":422,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_6.png":{"frame":{"x":454,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_7.png":{"frame":{"x":0,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_8.png":{"frame":{"x":32,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"ladybug_dead.png":{"frame":{"x":64,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_cross.png":{"frame":{"x":96,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_eat.png":{"frame":{"x":128,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_load.png":{"frame":{"x":160,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_pillage.png":{"frame":{"x":192,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_pointer.png":{"frame":{"x":224,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_shield.png":{"frame":{"x":256,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"marker_unload.png":{"frame":{"x":288,"y":128,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"nest.png":{"frame":{"x":320,"y":128,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}},"nest_building.png":{"frame":{"x":360,"y":128,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}},"nest_destroyed.png":{"frame":{"x":400,"y":128,"w":40,"h":40},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":40,"h":40},"sourceSize":{"w":40,"h":40}},"tree_summer.png":{"frame":{"x":0,"y":302,"w":462,"h":500},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":462,"h":500},"sourceSize":{"w":462,"h":500}}},"animations":{"ant_male":["ant_male_1.png","ant_male_2.png","ant_male_3.png","ant_male_4.png","ant_male_5.png","ant_male_6.png","ant_male_7.png","ant_male_8.png"],"ant_queen":["ant_queen_1.png","ant_queen_2.png","ant_queen_3.png","ant_queen_4.png","ant_queen_5.png","ant_queen_6.png","ant_queen_7.png","ant_queen_8.png"],"ant_warrior":["ant_warrior_1.png","ant_warrior_2.png","ant_warrior_3.png","ant_warrior_4.png","ant_warrior_5.png","ant_warrior_6.png","ant_warrior_7.png","ant_warrior_8.png"],"ant_worker":["ant_worker_1.png","ant_worker_2.png","ant_worker_3.png","ant_worker_4.png","ant_worker_5.png","ant_worker_6.png","ant_worker_7.png","ant_worker_8.png"],"ground_beetle":["ground_beetle_1.png","ground_beetle_2.png","ground_beetle_3.png","ground_beetle_4.png","ground_beetle_5.png","ground_beetle_6.png","ground_beetle_7.png","ground_beetle_8.png"],"ladybug":["ladybug_1.png","ladybug_2.png","ladybug_3.png","ladybug_4.png","ladybug_5.png","ladybug_6.png","ladybug_7.png","ladybug_8.png"]},"meta":{"app":"https://www.codeandweb.com/texturepacker","version":"1.1","image":"world_spritesheet.png","format":"RGBA8888","size":{"w":512,"h":802},"scale":"1","smartupdate":"$TexturePacker:SmartUpdate:1741c484272c7dfcb3d48f47078f3077:b29fa80a87dcab0b36da44bb173354d1:2b831dbdc2ad4f91b77d89d68a6c0718$"}}');
 
 /***/ })
 

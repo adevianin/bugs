@@ -16,8 +16,8 @@ class MarkersDemonstratorView extends BaseGraphicView {
     _renderMarker(marker) {
         let markerView = new PIXI.Sprite(this.$textureManager.getTexture(`marker_${marker.type}.png`));
         markerView.anchor.set(0.5, 0.5); 
-        markerView.position.x = marker.point[0];
-        markerView.position.y = marker.point[1];
+        markerView.position.x = marker.point.x;
+        markerView.position.y = marker.point.y;
         return markerView;
     }
 
@@ -43,7 +43,7 @@ class MarkersDemonstratorView extends BaseGraphicView {
             let hasNext = i + 1 < markers.length;
             if (hasNext) {
                 let nextMarker = markers[i + 1];
-                let connectionView = this._renderMarkerConnection(marker.point[0], marker.point[1], nextMarker.point[0], nextMarker.point[1]);
+                let connectionView = this._renderMarkerConnection(marker.point.x, marker.point.y, nextMarker.point.x, nextMarker.point.y);
                 views.push(connectionView);
             }
         }
@@ -56,6 +56,7 @@ class MarkersDemonstratorView extends BaseGraphicView {
     }
 
     _clearMarkers() {
+        console.log('clearing markers')
         for (let view of this._markerViews) {
             this._container.removeChild(view);
         }
@@ -64,6 +65,7 @@ class MarkersDemonstratorView extends BaseGraphicView {
 
     _onShowMarkersRequest(markers) {
         this._clearMarkers();
+        console.log('demonstrating markers', markers);
         this._markerViews = this._renderMarkers(markers);
     }
 

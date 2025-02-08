@@ -202,7 +202,7 @@ def init():
     larva_client_serializer = LarvaClientSerializer(genome_client_serializer)
     egg_client_serializer = EggClientSerializer(genome_client_serializer)
     util_client_serializer = UtilClientSerializer()
-    operation_client_serializer = OperationClientSerializer()
+    operation_client_serializer = OperationClientSerializer(util_client_serializer)
     colony_client_serializer = ColonyClientSerializer(operation_client_serializer)
     item_client_serializer = ItemClientSerializer(util_client_serializer)
     item_source_client_serializer = ItemSourceClientSerializer(util_client_serializer)
