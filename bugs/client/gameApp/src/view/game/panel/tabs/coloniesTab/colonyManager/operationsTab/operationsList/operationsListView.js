@@ -13,6 +13,7 @@ class OperationsListView extends BaseHTMLView {
 
         this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
         this.$eventBus.on('startOperationCreating', this._onStartOperationCreating.bind(this));
+        this.$eventBus.on('stopOperationCreating', this._onStopOperationCreating.bind(this));
     }
 
     get _selectedOperationId() {
@@ -125,6 +126,11 @@ class OperationsListView extends BaseHTMLView {
 
     _onStartOperationCreating() {
         this._selectOperation(null);
+        this.toggle(false);
+    }
+
+    _onStopOperationCreating() {
+        this.toggle(true);
     }
 }
 

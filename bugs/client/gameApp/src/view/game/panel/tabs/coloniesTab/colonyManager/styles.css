@@ -30,13 +30,14 @@
 
 .colony-manager__operations-tab {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 .colony-manager__operations-list {
     border-collapse: collapse;
     border-spacing: 0px;
     border: solid 1px;
+    margin-top: 3px;
 }
 
 .colony-manager__operation {
@@ -52,13 +53,14 @@
 }
 
 .colony-manager__operations-creator {
-    padding: 3px;
+    padding: 0;
 }
 
 .colony-manager__new_operations_list {
-    padding: 3px;
+    padding: 0;
     margin: 0;
     list-style-type: none;
+    display: flex;
 }
 
 .colony-manager__ants-table {

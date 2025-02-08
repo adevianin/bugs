@@ -53,12 +53,14 @@ class OperationsCreatorView extends BaseHTMLView {
     }
 
     _stopOperationCreating() {
-        if (this._operationCreator) {
-            this._operationCreator.remove();
-            this._operationCreator = null;
+        if (!this._operationCreator) {
+            return
         }
+        this._operationCreator.remove();
+        this._operationCreator = null;
         this._toggleCreatorMode(false);
         this.$eventBus.emit('deactivateMapPickerRequest');
+        this.$eventBus.emit('stopOperationCreating');
     }
 
     _startOperationCreating(operationCreatorView) {

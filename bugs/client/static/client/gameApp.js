@@ -6528,12 +6528,6 @@ class BaseOperationCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED
         this._performingColony = performingColony;
         this._onDone = onDone;
     }
-
-    _demonstrateMarkers(markers, connect = false) {
-        this.$eventBus.emit('markersShowRequest', markers, connect);
-    }
-
-    
 }
 
 
@@ -7034,12 +7028,12 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._stopOperationCreating();
     }
 
-    remove() {
-        super.remove();
-        if (this._operationCreator) {
-            this._operationCreator.remove();
-        }
-    }
+    // remove() {
+    //     super.remove();
+    //     if (this._operationCreator) {
+    //         this._operationCreator.remove();
+    //     }
+    // }
 
     _render() {
         this._el.innerHTML = _operationsCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
@@ -7063,12 +7057,13 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
 
     _stopOperationCreating() {
         if (!this._operationCreator) {
-            return;
+            return
         }
         this._operationCreator.remove();
         this._operationCreator = null;
         this._toggleCreatorMode(false);
         this.$eventBus.emit('deactivateMapPickerRequest');
+        this.$eventBus.emit('stopOperationCreating');
     }
 
     _startOperationCreating(operationCreatorView) {
@@ -7236,6 +7231,7 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
 
         this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
         this.$eventBus.on('startOperationCreating', this._onStartOperationCreating.bind(this));
+        this.$eventBus.on('stopOperationCreating', this._onStopOperationCreating.bind(this));
     }
 
     get _selectedOperationId() {
@@ -7348,6 +7344,11 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
 
     _onStartOperationCreating() {
         this._selectOperation(null);
+        this.toggle(false);
+    }
+
+    _onStopOperationCreating() {
+        this.toggle(true);
     }
 }
 
@@ -15584,13 +15585,14 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.colony_manager {
 
 .colony-manager__operations-tab {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 .colony-manager__operations-list {
     border-collapse: collapse;
     border-spacing: 0px;
     border: solid 1px;
+    margin-top: 3px;
 }
 
 .colony-manager__operation {
@@ -15606,13 +15608,14 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.colony_manager {
 }
 
 .colony-manager__operations-creator {
-    padding: 3px;
+    padding: 0;
 }
 
 .colony-manager__new_operations_list {
-    padding: 3px;
+    padding: 0;
     margin: 0;
     list-style-type: none;
+    display: flex;
 }
 
 .colony-manager__ants-table {
@@ -15623,7 +15626,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.colony_manager {
 
 .colony-manager__ants-table td {
     border: solid 1px;
-}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,YAAY;AAChB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,YAAY;AAChB;;;AAGA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,eAAe;AACnB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,YAAY;IACZ,SAAS;IACT,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n\r\n.colony-manager__operations-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__operations-list {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__operation {\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__operation--selected {\r\n    color: red;\r\n}\r\n\r\n.colony-manager__operations-list td {\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__operations-creator {\r\n    padding: 3px;\r\n}\r\n\r\n.colony-manager__new_operations_list {\r\n    padding: 3px;\r\n    margin: 0;\r\n    list-style-type: none;\r\n}\r\n\r\n.colony-manager__ants-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__ants-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
+}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,YAAY;AAChB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,YAAY;AAChB;;;AAGA;IACI,aAAa;IACb,sBAAsB;AAC1B;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;IACjB,eAAe;AACnB;;AAEA;IACI,eAAe;AACnB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,UAAU;IACV,SAAS;IACT,qBAAqB;IACrB,aAAa;AACjB;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n\r\n.colony-manager__operations-tab {\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n.colony-manager__operations-list {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n    margin-top: 3px;\r\n}\r\n\r\n.colony-manager__operation {\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__operation--selected {\r\n    color: red;\r\n}\r\n\r\n.colony-manager__operations-list td {\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__operations-creator {\r\n    padding: 0;\r\n}\r\n\r\n.colony-manager__new_operations_list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n    display: flex;\r\n}\r\n\r\n.colony-manager__ants-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__ants-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -18294,7 +18297,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-new-operation-list>\r\n    створити операцію:\r\n    <ul class=\"colony-manager__new_operations_list\">\r\n        <li><button data-add-new-nest>нове гніздо</button></li>\r\n        <li><button data-destroy-nest>розвалить гніздо</button></li>\r\n        <li><button data-pillage-nest>пограбувать гніздо</button></li>\r\n        <li><button data-transport-food>перенести їжу</button></li>\r\n        <li><button data-build-fortification>будувать фортифікації</button></li>\r\n        <li><button data-bring-bug>принести жука</button></li>\r\n    </ul>\r\n</div>\r\n<button data-cancel-operation-creating>назад</button>\r\n<div data-operation-creator-placeholder></div>";
+var code = "<div data-new-operation-list>\r\n    <ul class=\"colony-manager__new_operations_list\">\r\n        <li><button data-add-new-nest>нове гніздо</button></li>\r\n        <li><button data-destroy-nest>розвалить гніздо</button></li>\r\n        <li><button data-pillage-nest>пограбувать гніздо</button></li>\r\n        <li><button data-transport-food>перенести їжу</button></li>\r\n        <li><button data-build-fortification>будувать фортифікації</button></li>\r\n        <li><button data-bring-bug>принести жука</button></li>\r\n    </ul>\r\n</div>\r\n<button data-cancel-operation-creating>назад</button>\r\n<div data-operation-creator-placeholder></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -18348,7 +18351,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<table class=\"colony-manager__operations-list\" data-operations-list></table>\r\n<div class=\"colony-manager__operations-creator\" data-operations-creator></div>";
+var code = "<div class=\"colony-manager__operations-creator\" data-operations-creator></div>\r\n<table class=\"colony-manager__operations-list\" data-operations-list></table>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
