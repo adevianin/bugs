@@ -25,12 +25,12 @@ class OperationsCreatorView extends BaseHTMLView {
         this._stopOperationCreating();
     }
 
-    remove() {
-        super.remove();
-        if (this._operationCreator) {
-            this._operationCreator.remove();
-        }
-    }
+    // remove() {
+    //     super.remove();
+    //     if (this._operationCreator) {
+    //         this._operationCreator.remove();
+    //     }
+    // }
 
     _render() {
         this._el.innerHTML = operationsCreatorTmpl;
@@ -53,11 +53,10 @@ class OperationsCreatorView extends BaseHTMLView {
     }
 
     _stopOperationCreating() {
-        if (!this._operationCreator) {
-            return;
+        if (this._operationCreator) {
+            this._operationCreator.remove();
+            this._operationCreator = null;
         }
-        this._operationCreator.remove();
-        this._operationCreator = null;
         this._toggleCreatorMode(false);
         this.$eventBus.emit('deactivateMapPickerRequest');
     }
