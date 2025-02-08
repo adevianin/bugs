@@ -17,10 +17,12 @@ class OperationsCreatorView extends BaseHTMLView {
         this._transportFoodOperationBtn.addEventListener('click', this._onTransportFoodOperationBtnClick.bind(this));
         this._buildFortificationOperationBtn.addEventListener('click', this._onBuildFortificationOperationBtnClick.bind(this));
         this._bringBugOperationBtn.addEventListener('click', this._onBringBugOperationBtnClick.bind(this));
+        this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
     }
 
     manageColony(colony) {
         this._colony = colony;
+        this._stopOperationCreating();
     }
 
     remove() {
@@ -51,6 +53,9 @@ class OperationsCreatorView extends BaseHTMLView {
     }
 
     _stopOperationCreating() {
+        if (!this._operationCreator) {
+            return;
+        }
         this._operationCreator.remove();
         this._operationCreator = null;
         this._toggleCreatorMode(false);
@@ -62,6 +67,10 @@ class OperationsCreatorView extends BaseHTMLView {
         this._operationCreator = operationCreatorView;
         this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
         this.$eventBus.emit('startOperationCreating');
+    }
+
+    _onSomeTabSwitched() {
+        this._stopOperationCreating();
     }
 
     _onNewNestOperationBtnClick() {
@@ -93,6 +102,7 @@ class OperationsCreatorView extends BaseHTMLView {
         let creatorView = new BringBugOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
         this._startOperationCreating(creatorView);
     }
+
 }
 
 export { OperationsCreatorView }

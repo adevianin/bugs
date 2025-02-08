@@ -6528,6 +6528,12 @@ class BaseOperationCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED
         this._performingColony = performingColony;
         this._onDone = onDone;
     }
+
+    _demonstrateMarkers(markers, connect = false) {
+        this.$eventBus.emit('markersShowRequest', markers, connect);
+    }
+
+    
 }
 
 
@@ -7020,10 +7026,12 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._transportFoodOperationBtn.addEventListener('click', this._onTransportFoodOperationBtnClick.bind(this));
         this._buildFortificationOperationBtn.addEventListener('click', this._onBuildFortificationOperationBtnClick.bind(this));
         this._bringBugOperationBtn.addEventListener('click', this._onBringBugOperationBtnClick.bind(this));
+        this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
     }
 
     manageColony(colony) {
         this._colony = colony;
+        this._stopOperationCreating();
     }
 
     remove() {
@@ -7054,6 +7062,9 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
     }
 
     _stopOperationCreating() {
+        if (!this._operationCreator) {
+            return;
+        }
         this._operationCreator.remove();
         this._operationCreator = null;
         this._toggleCreatorMode(false);
@@ -7065,6 +7076,10 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._operationCreator = operationCreatorView;
         this._operationCreatorPlaceholderEl.append(this._operationCreator.el);
         this.$eventBus.emit('startOperationCreating');
+    }
+
+    _onSomeTabSwitched() {
+        this._stopOperationCreating();
     }
 
     _onNewNestOperationBtnClick() {
@@ -7096,6 +7111,7 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         let creatorView = new _operationCreators__WEBPACK_IMPORTED_MODULE_2__.BringBugOperationCreatorView(this._colony, this._stopOperationCreating.bind(this));
         this._startOperationCreating(creatorView);
     }
+
 }
 
 
