@@ -6,11 +6,10 @@ class MarkersDemonstratorView extends BaseGraphicView {
     constructor(container) {
         super();
         this._container = container;
-        this._demonstratingOperation = null;
-        this._demonstratingOperationMarkerViews = [];
+        this._markerViews = [];
 
-        this.$eventBus.on('operationMarkersShowRequest', this._onOperationMarkersShowRequest.bind(this));
-        this.$eventBus.on('operationMarkersHideRequest', this._onOperationMarkersHideRequest.bind(this));
+        this.$eventBus.on('showMarkersRequest', this._onShowMarkersRequest.bind(this));
+        this.$eventBus.on('hideMarkersRequest', this._onHideMarkersRequest.bind(this));
 
     }
 
@@ -56,20 +55,20 @@ class MarkersDemonstratorView extends BaseGraphicView {
         return views;
     }
 
-    _clearOperationMarkers() {
-        for (let view of this._demonstratingOperationMarkerViews) {
+    _clearMarkers() {
+        for (let view of this._markerViews) {
             this._container.removeChild(view);
         }
-        this._demonstratingOperationMarkerViews = [];
+        this._markerViews = [];
     }
 
-    _onOperationMarkersShowRequest(operation) {
-        this._clearOperationMarkers();
-        this._demonstratingOperationMarkerViews = this._renderMarkers(operation.markers);
+    _onShowMarkersRequest(markers) {
+        this._clearMarkers();
+        this._markerViews = this._renderMarkers(markers);
     }
 
-    _onOperationMarkersHideRequest() {
-        this._clearOperationMarkers();
+    _onHideMarkersRequest() {
+        this._clearMarkers();
     }
 
 }

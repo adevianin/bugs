@@ -106,9 +106,9 @@ class OperationsListView extends BaseHTMLView {
 
     _makeOperationMarkersDemonstratorRequest() {
         if (this._selectedOperation) {
-            this.$eventBus.emit('operationMarkersShowRequest', this._selectedOperation);
+            this.$eventBus.emit('showMarkersRequest', this._selectedOperation.markers);
         } else {
-            this.$eventBus.emit('operationMarkersHideRequest');
+            this.$eventBus.emit('hideMarkersRequest');
         }
     }
 
