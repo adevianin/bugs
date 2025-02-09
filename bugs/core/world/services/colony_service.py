@@ -11,7 +11,7 @@ from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.settings import NEW_EGG_FOOD_COST, LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT, MAX_DISTANCE_TO_OPERATION_TARGET
 from core.world.messages import Messages
 from core.world.utils.remove_non_alphanumeric_and_spaces import remove_non_alphanumeric_and_spaces
-from core.world.exceptions import AccessDeniedError, GameRuleError, EntityNotFoundError
+from core.world.exceptions import GameRuleError, EntityNotFoundError
 
 from typing import Callable
 
@@ -24,7 +24,7 @@ class ColonyService():
         self._world = world
 
     def add_egg(self, user_id: int, nest_id: int, name: str, is_fertilized: bool):
-        nest = self._find_nest_for_user(nest_id, user_id)
+        nest = self._world.find_nest_for_owner(nest_id, user_id)
         queen = self._find_queen_of_colony(nest.from_colony_id)
         
         if not queen or queen.located_in_nest_id != nest_id:
@@ -41,31 +41,31 @@ class ColonyService():
         nest.add_egg(egg)
 
     def change_egg_caste(self, user_id: int, nest_id: int, egg_id: int, ant_type: AntTypes):
-        nest = self._find_nest_for_user(nest_id, user_id)
+        nest = self._world.find_nest_for_owner(nest_id, user_id)
         nest.change_egg_caste(egg_id, ant_type)
 
     def change_egg_name(self, user_id: int, nest_id: int, egg_id: int, name: str):
-        nest = self._find_nest_for_user(nest_id, user_id)
+        nest = self._world.find_nest_for_owner(nest_id, user_id)
         nest.change_egg_name(egg_id, name)
 
     def move_egg_to_larva_chamber(self, user_id: int, nest_id: int, egg_id: int):
-        nest = self._find_nest_for_user(nest_id, user_id)
+        nest = self._world.find_nest_for_owner(nest_id, user_id)
         nest.move_egg_to_larva_chamber(egg_id)
 
     def delete_egg(self, user_id: int, nest_id: int, egg_id: int):
-        nest = self._find_nest_for_user(nest_id, user_id)
+        nest = self._world.find_nest_for_owner(nest_id, user_id)
         nest.delete_egg(egg_id)
 
     def delete_larva(self, user_id: int, nest_id: int, larva_id: int):
-        nest = self._find_nest_for_user(nest_id, user_id)
+        nest = self._world.find_nest_for_owner(nest_id, user_id)
         nest.delete_larva(larva_id)
 
     def stop_operation(self, user_id: int, colony_id: int, operation_id: int):
-        colony = self._find_ant_colony_for_user(colony_id, user_id)
+        colony = self._world.find_ant_colony_for_owner(colony_id, user_id)
         colony.cancel_operation(operation_id)
 
     def build_new_sub_nest(self, user_id: int, performing_colony_id: int, position: Point, workers_count: int, warriors_count: int, nest_name: str):
-        colony = self._find_ant_colony_for_user(performing_colony_id, user_id)
+        colony = self._world.find_ant_colony_for_owner(performing_colony_id, user_id)
         queen = self._find_queen_of_colony(performing_colony_id)
 
         if not queen:
@@ -90,7 +90,7 @@ class ColonyService():
         colony.add_operation(operation)
         
     def destroy_nest_operation(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int, warriors_count: int):
-        performing_colony = self._find_ant_colony_for_user(performing_colony_id, user_id)
+        performing_colony = self._world.find_ant_colony_for_owner(performing_colony_id, user_id)
         
         nest: Nest = self._world.map.get_entity_by_id(nest_id)
         if not nest:
@@ -114,7 +114,7 @@ class ColonyService():
         performing_colony.add_operation(operation)
 
     def pillage_nest_operation(self, user_id: int, performing_colony_id: int, nest_to_pillage_id: int, nest_for_loot_id: int, workers_count: int, warriors_count: int):
-        performing_colony = self._find_ant_colony_for_user(performing_colony_id, user_id)
+        performing_colony = self._world.find_ant_colony_for_owner(performing_colony_id, user_id)
 
         nest_to_pillage = self._world.map.get_entity_by_id(nest_to_pillage_id)
         if not nest_to_pillage:
@@ -145,7 +145,7 @@ class ColonyService():
         performing_colony.add_operation(operation)
 
     def transfer_food_operation(self, user_id: int, performing_colony_id: int, from_nest_id: int, to_nest_id: int, workers_count: int, warriors_count: int):
-        performing_colony = self._find_ant_colony_for_user(performing_colony_id, user_id)
+        performing_colony = self._world.find_ant_colony_for_owner(performing_colony_id, user_id)
         
         from_nest: Nest = self._world.map.get_entity_by_id(from_nest_id)
         if not from_nest:
@@ -172,8 +172,8 @@ class ColonyService():
         performing_colony.add_operation(operation)
 
     def build_fortification_operation(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int):
-        performing_colony = self._find_ant_colony_for_user(performing_colony_id, user_id)
-        nest = self._find_nest_for_user(nest_id, user_id)
+        performing_colony = self._world.find_ant_colony_for_owner(performing_colony_id, user_id)
+        nest = self._world.find_nest_for_owner(nest_id, user_id)
         
         operation = self._operation_factory.build_build_fortification(nest, workers_count)
 
@@ -183,8 +183,8 @@ class ColonyService():
         performing_colony.add_operation(operation)
 
     def bring_bug_operation(self, user_id: int, performing_colony_id: int, nest_id: int):
-        performing_colony = self._find_ant_colony_for_user(performing_colony_id, user_id)
-        nest = self._find_nest_for_user(nest_id, user_id)
+        performing_colony = self._world.find_ant_colony_for_owner(performing_colony_id, user_id)
+        nest = self._world.find_nest_for_owner(nest_id, user_id)
         
         filter: Callable[[Item], bool] = lambda item: item.item_type == ItemTypes.BUG_CORPSE
         items = self._world.map.find_entities_near(nest.position, nest.area, EntityTypes.ITEM, filter)
@@ -200,31 +200,8 @@ class ColonyService():
         performing_colony.add_operation(operation)
 
     def rename_nest(self, user_id: int, nest_id: int, name: str):
-        nest = self._find_nest_for_user(nest_id, user_id)
+        nest = self._world.find_nest_for_owner(nest_id, user_id)
         nest.name = name
-
-    def _find_nest_for_user(self, nest_id: int, user_id: int) -> Nest:
-        nest: Nest = self._world.map.get_entity_by_id(nest_id)
-        if not nest: 
-            raise EntityNotFoundError(f'nest(id={nest_id}) not found')
-
-        if nest.owner_id != user_id:
-            raise AccessDeniedError(f'user(id={user_id}) doesn\'t have nest(id={nest.id})')
-        
-        return nest
-
-    def _find_ant_colony_for_user(self, colony_id: int, user_id: int) -> AntColony:
-        colony: AntColony = self._world.get_colony_by_id(colony_id)
-        if not colony: 
-            raise EntityNotFoundError(f'colony(id={colony_id}) not found')
-
-        if colony.owner_id != user_id:
-            raise AccessDeniedError(f'user(id={user_id}) doesn\'t have colony(id={colony.id})')
-        
-        if colony.member_type != EntityTypes.ANT:
-            raise GameRuleError('not corrent colony type')
-        
-        return colony
 
     def _find_queen_of_colony(self, colony_id: int) -> QueenAnt:
         colony_queen_filter: Callable[[QueenAnt], bool] = lambda ant: ant.is_queen_of_colony
