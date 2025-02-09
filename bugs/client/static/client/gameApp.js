@@ -240,19 +240,19 @@ class DomainFacade {
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
-        this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
+        return this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
     }
 
     pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-        this._colonyService.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
+        return this._colonyService.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
     }
 
     transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
-        this._colonyService.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
+        return this._colonyService.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
     }
 
     buildFortificationsOpearation(performingColonyId, nestId, workersCount) {
-        this._colonyService.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
+        return this._colonyService.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
     }
 
     bringBugOpearation(performingColonyId, nestId) {
@@ -2786,19 +2786,19 @@ class ColonyService {
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
-        this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
+        return this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
     }
 
     pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-        this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
+        return this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
     }
 
     transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
-        this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
+        return this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
     }
 
     buildFortificationsOpearation(performingColonyId, nestId, workersCount) {
-        this._colonyApi.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
+        return this._colonyApi.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
     }
 
     bringBugOpearation(performingColonyId, nestId) {
@@ -3473,11 +3473,15 @@ class ColonyApi {
     }
 
     destroyNestOperation(colonyId, warriorsCount, workersCount, nest) {
-        return this._requester.post(`api/world/colonies/${ colonyId }/operations/destroy_nest`, {
-            warriors_count: warriorsCount,
-            workers_count: workersCount,
-            nest_id: nest.id
-        })
+        return new Promise((res, rej) => {
+            this._requester.post(`api/world/colonies/${ colonyId }/operations/destroy_nest`, {
+                warriors_count: warriorsCount,
+                workers_count: workersCount,
+                nest_id: nest.id
+            })
+            .then(axiosResp => res(null))
+            .catch(axiosResp => rej(axiosResp.response.data))
+        });
     }
 
     pillageNestOperation(colonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
@@ -6795,6 +6799,7 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         this._startBtn = this._el.querySelector('[data-start-btn]');
         this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
         this._workersCountEl = this._el.querySelector('[data-workers-count]');
+        this._errorContainerEl = this._el.querySelector('[data-error-container]');
         this._renderChoosedNest();
     }
 
@@ -6816,13 +6821,22 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         }
         let warriorsCount = parseInt(this._warriorsCountEl.value);
         let workersCount = parseInt(this._workersCountEl.value);
-        this.$domainFacade.destroyNestOperation(this._performingColony.id, warriorsCount, workersCount, this._choosedNest);
-        this._onDone();
+        this.$domainFacade.destroyNestOperation(this._performingColony.id, warriorsCount, workersCount, this._choosedNest)
+            .then(() => {
+                this._onDone();
+            })
+            .catch((errId) => {
+                this._renderError(errId);
+            });
     }
 
     _showMarkers() {
         let markers = [this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_2__.MarkerTypes.CROSS, this._choosedNest.position)];
         this._demonstrateMarkersRequest(markers);
+    }
+
+    _renderError(messageId) {
+        this._errorContainerEl.innerHTML = this.$messages[messageId];
     }
 }
 
@@ -10041,6 +10055,9 @@ const uaMessages = {
     NOT_ENOUGHT_FOOD_IN_NEST_TO_LAY_EGG: 'Не достатньо їжі для відкладення яєць',
     NOT_SUITABLE_SEASON_TO_LAY_EGG: 'Непідходящий сезон для відкладення яєць',
     NO_BUG_CORPSE_IN_NEST_AREA: 'Не видно трупів жуків на території гнізда',
+    CANT_DESTROY_NEST_WITHOUT_LIVING_QUEEN: 'Мурахи не можуть атакувати гніздо самі без королеви',
+    NEST_TO_DESTROY_IS_FAR_AWAY: 'Гніздо для атаки занадто далеко від основного гнізда',
+    NO_NEST_TO_DESTROY: 'Немає гнізда для атаки',
 
     nothing_activity: 'нічим не займаюсь',
     preparing_for_hibernation_activity: 'готуюсь до зимової сплячки',
@@ -18381,7 +18398,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "зруйнувати гніздо\r\n<div>\r\n    гніздо: <span data-choosed-nest></span>\r\n    <button data-choose-nest-btn>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість робочих: <input data-workers-count type=\"number\" min=\"1\" max=\"10\" value=\"1\">\r\n</div>\r\n<div>\r\n    кількість воїнів: <input data-warriors-count type=\"number\" min=\"1\" max=\"10\" value=\"1\">\r\n</div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>\r\n";
+var code = "зруйнувати гніздо\r\n<div>\r\n    гніздо: <span data-choosed-nest></span>\r\n    <button data-choose-nest-btn>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість робочих: <input data-workers-count type=\"number\" min=\"1\" max=\"10\" value=\"1\">\r\n</div>\r\n<div>\r\n    кількість воїнів: <input data-warriors-count type=\"number\" min=\"1\" max=\"10\" value=\"1\">\r\n</div>\r\n<div data-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

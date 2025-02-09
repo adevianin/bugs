@@ -37,19 +37,19 @@ class ColonyService {
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
-        this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
+        return this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
     }
 
     pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-        this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
+        return this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
     }
 
     transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
-        this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
+        return this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
     }
 
     buildFortificationsOpearation(performingColonyId, nestId, workersCount) {
-        this._colonyApi.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
+        return this._colonyApi.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
     }
 
     bringBugOpearation(performingColonyId, nestId) {

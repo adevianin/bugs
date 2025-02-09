@@ -121,19 +121,19 @@ class DomainFacade {
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
-        this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
+        return this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
     }
 
     pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-        this._colonyService.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
+        return this._colonyService.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
     }
 
     transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
-        this._colonyService.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
+        return this._colonyService.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
     }
 
     buildFortificationsOpearation(performingColonyId, nestId, workersCount) {
-        this._colonyService.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
+        return this._colonyService.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
     }
 
     bringBugOpearation(performingColonyId, nestId) {

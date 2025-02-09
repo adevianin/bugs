@@ -23,11 +23,15 @@ class ColonyApi {
     }
 
     destroyNestOperation(colonyId, warriorsCount, workersCount, nest) {
-        return this._requester.post(`api/world/colonies/${ colonyId }/operations/destroy_nest`, {
-            warriors_count: warriorsCount,
-            workers_count: workersCount,
-            nest_id: nest.id
-        })
+        return new Promise((res, rej) => {
+            this._requester.post(`api/world/colonies/${ colonyId }/operations/destroy_nest`, {
+                warriors_count: warriorsCount,
+                workers_count: workersCount,
+                nest_id: nest.id
+            })
+            .then(axiosResp => res(null))
+            .catch(axiosResp => rej(axiosResp.response.data))
+        });
     }
 
     pillageNestOperation(colonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {

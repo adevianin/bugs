@@ -20,6 +20,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         this._startBtn = this._el.querySelector('[data-start-btn]');
         this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
         this._workersCountEl = this._el.querySelector('[data-workers-count]');
+        this._errorContainerEl = this._el.querySelector('[data-error-container]');
         this._renderChoosedNest();
     }
 
@@ -41,13 +42,22 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         }
         let warriorsCount = parseInt(this._warriorsCountEl.value);
         let workersCount = parseInt(this._workersCountEl.value);
-        this.$domainFacade.destroyNestOperation(this._performingColony.id, warriorsCount, workersCount, this._choosedNest);
-        this._onDone();
+        this.$domainFacade.destroyNestOperation(this._performingColony.id, warriorsCount, workersCount, this._choosedNest)
+            .then(() => {
+                this._onDone();
+            })
+            .catch((errId) => {
+                this._renderError(errId);
+            });
     }
 
     _showMarkers() {
         let markers = [this.$domainFacade.buildMarker(MarkerTypes.CROSS, this._choosedNest.position)];
         this._demonstrateMarkersRequest(markers);
+    }
+
+    _renderError(messageId) {
+        this._errorContainerEl.innerHTML = this.$messages[messageId];
     }
 }
 

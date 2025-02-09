@@ -135,17 +135,17 @@ class ColonyService():
         nest: Nest = self._world.map.get_entity_by_id(nest_id)
 
         if not nest:
-            raise Exception('no nest to destroy')
+            return Messages.NO_NEST_TO_DESTROY
         
         if nest.from_colony_id == performing_colony.id:
             raise Exception('colony cant destroy its nest')
         
         queen_of_colony = self._find_queen_of_colony(performing_colony.id)
         if not queen_of_colony:
-            raise Exception('cant destroy nest operation when no queen of colony')
+            return Messages.CANT_DESTROY_NEST_WITHOUT_LIVING_QUEEN
         
         if queen_of_colony.position.dist(nest.position) > MAX_DISTANCE_TO_OPERATION_TARGET:
-            raise Exception('nest to destroy is too far away')
+            return Messages.NEST_TO_DESTROY_IS_FAR_AWAY
         
         operation = self._operation_factory.build_destroy_nest_operation(nest, workers_count, warriors_count)
 

@@ -46,9 +46,11 @@ def destroy_nest(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    wf.destroy_nest_operation_command(request.user.id, colony_id, nest_id, workers_count, warriors_count)
-    
-    return HttpResponse(status=200)
+    err = wf.destroy_nest_operation_command(request.user.id, colony_id, nest_id, workers_count, warriors_count)
+    if err:
+        return HttpResponse(err, status=409)
+    else:
+        return HttpResponse(status=200)
 
 @require_POST
 @login_required     

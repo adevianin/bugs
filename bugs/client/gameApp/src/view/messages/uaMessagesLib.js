@@ -6,6 +6,9 @@ const uaMessages = {
     NOT_ENOUGHT_FOOD_IN_NEST_TO_LAY_EGG: 'Не достатньо їжі для відкладення яєць',
     NOT_SUITABLE_SEASON_TO_LAY_EGG: 'Непідходящий сезон для відкладення яєць',
     NO_BUG_CORPSE_IN_NEST_AREA: 'Не видно трупів жуків на території гнізда',
+    CANT_DESTROY_NEST_WITHOUT_LIVING_QUEEN: 'Мурахи не можуть атакувати гніздо самі без королеви',
+    NEST_TO_DESTROY_IS_FAR_AWAY: 'Гніздо для атаки занадто далеко від основного гнізда',
+    NO_NEST_TO_DESTROY: 'Немає гнізда для атаки',
 
     nothing_activity: 'нічим не займаюсь',
     preparing_for_hibernation_activity: 'готуюсь до зимової сплячки',
