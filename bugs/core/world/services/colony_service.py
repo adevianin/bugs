@@ -161,7 +161,12 @@ class ColonyService():
             raise Exception('user is not colony owner')
 
         nest_to_pillage = self._world.map.get_entity_by_id(nest_to_pillage_id)
+        if not nest_to_pillage:
+            return Messages.NO_NEST_TO_PILLAGE
+
         nest_for_loot = self._world.map.get_entity_by_id(nest_for_loot_id)
+        if not nest_for_loot:
+            return Messages.CANT_PILLAGE_WITHOUT_NEST_FOR_LOOT
 
         if nest_to_pillage.from_colony_id == performing_colony.id:
             raise Exception('colony cant pillage its nests')
@@ -171,10 +176,10 @@ class ColonyService():
         
         queen_of_colony = self._find_queen_of_colony(performing_colony.id)
         if not queen_of_colony:
-            raise Exception('cant destroy nest operation when no queen of colony')
+            return Messages.CANT_PILLAGE_NEST_WITHOUT_LIVING_QUEEN
         
         if queen_of_colony.position.dist(nest_to_pillage.position) > MAX_DISTANCE_TO_OPERATION_TARGET:
-            raise Exception('nest_to_pillage to destroy is too far away')
+            return Messages.NEST_TO_PILLAGE_IS_FAR_AWAY
 
         operation = self._operation_factory.build_pillage_nest_operation(nest_to_pillage, nest_for_loot, workers_count, warriors_count)
 

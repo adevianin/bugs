@@ -9,6 +9,10 @@ const uaMessages = {
     CANT_DESTROY_NEST_WITHOUT_LIVING_QUEEN: 'Мурахи не можуть атакувати гніздо самі без королеви',
     NEST_TO_DESTROY_IS_FAR_AWAY: 'Гніздо для атаки занадто далеко від основного гнізда',
     NO_NEST_TO_DESTROY: 'Немає гнізда для атаки',
+    CANT_PILLAGE_NEST_WITHOUT_LIVING_QUEEN: 'Мурахи не можуть грабувати гніздо самі без королеви',
+    NO_NEST_TO_PILLAGE: 'Немає гнізда для пограбування',
+    CANT_PILLAGE_WITHOUT_NEST_FOR_LOOT: 'Не можна грабувати гніздо не маючи гніздо для здобичі',
+    NEST_TO_PILLAGE_IS_FAR_AWAY: 'Гніздо для грабування занадто далеко',
 
     nothing_activity: 'нічим не займаюсь',
     preparing_for_hibernation_activity: 'готуюсь до зимової сплячки',
