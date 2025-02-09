@@ -10048,6 +10048,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   uaMessages: () => (/* binding */ uaMessages)
 /* harmony export */ });
 const uaMessages = {
+    SOMETHING_WENT_WRONG: 'Щось пішло не так',
     CANT_BUILD_SUB_NEST_WITHOUT_QUEEN: 'Не можна будувати гніздо сателіт в колонії без королеви.',
     CANT_BUILD_MORE_SUB_NEST: 'Досягнуто максимальну кількість гнізд сателітів.',
     CANT_BUILD_SUB_NEST_FAR_AWAY: 'Не можна будувати гніздо сателіт так далеко центрального.',
@@ -10058,6 +10059,10 @@ const uaMessages = {
     CANT_DESTROY_NEST_WITHOUT_LIVING_QUEEN: 'Мурахи не можуть атакувати гніздо самі без королеви',
     NEST_TO_DESTROY_IS_FAR_AWAY: 'Гніздо для атаки занадто далеко від основного гнізда',
     NO_NEST_TO_DESTROY: 'Немає гнізда для атаки',
+    CANT_PILLAGE_NEST_WITHOUT_LIVING_QUEEN: 'Мурахи не можуть грабувати гніздо самі без королеви',
+    NO_NEST_TO_PILLAGE: 'Немає гнізда для пограбування',
+    CANT_PILLAGE_WITHOUT_NEST_FOR_LOOT: 'Не можна грабувати гніздо не маючи гніздо для здобичі',
+    NEST_TO_PILLAGE_IS_FAR_AWAY: 'Гніздо для грабування занадто далеко',
 
     nothing_activity: 'нічим не займаюсь',
     preparing_for_hibernation_activity: 'готуюсь до зимової сплячки',

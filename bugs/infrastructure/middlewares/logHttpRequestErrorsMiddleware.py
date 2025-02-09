@@ -1,4 +1,7 @@
 import logging
+from django.http import HttpResponse
+from core.world.exceptions import GameError
+from core.world.messages import Messages
 
 class LogHttpRequestErrorsMiddleware:
     def __init__(self, get_response):
@@ -10,5 +13,10 @@ class LogHttpRequestErrorsMiddleware:
         return response
 
     def process_exception(self, request, exception):
-        msg = str(exception) + str(request)
+        msg = f"Exception [{type(exception).__name__}]: {exception}, Request: {request}"
         self._logger.error(msg)
+
+        if isinstance(exception, GameError):
+            return HttpResponse(Messages.SOMETHING_WENT_WRONG, status=400)
+
+        return HttpResponse(Messages.SOMETHING_WENT_WRONG, status=500)
