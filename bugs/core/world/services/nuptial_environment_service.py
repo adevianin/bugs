@@ -7,6 +7,10 @@ from core.world.entities.ant.base.nuptial_environment.specie_builder.specie impo
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 from core.world.utils.remove_non_alphanumeric_and_spaces import remove_non_alphanumeric_and_spaces
 from core.world.settings import FOOD_IN_NEW_COLONY_MAIN_NEST
+from core.world.entities.ant.base.ant import Ant
+from core.world.entities.ant.base.ant_types import AntTypes
+from core.world.exceptions import EntityNotFoundError
+from core.world.messages import Messages
 
 from typing import List, Dict
 
@@ -19,10 +23,10 @@ class NuptialEnvironmentService():
         self._world = world
 
     def found_new_colony(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point, colony_name: str):
-        queen: QueenAnt = self._world.map.get_entity_by_id(queen_id)
-
-        if queen.owner_id != user_id:
-            raise Exception('user dont have this ant')
+        ant: Ant = self._world.find_ant_for_owner(queen_id, user_id)
+        if ant.ant_type != AntTypes:
+            raise EntityNotFoundError(f'queen(id={queen_id}) not found')
+        queen: QueenAnt = ant
         
         nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
         male = nuptial_environment.get_male(nuptial_male_id)
@@ -54,5 +58,5 @@ class NuptialEnvironmentService():
             nuptial_environment.specie.apply_schema(specie_schema)
             return None
         else:
-            return 'specie schema is not valid'
+            return Messages.SPECIE_SCHEMA_IS_NOT_VALID
         

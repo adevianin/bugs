@@ -1,4 +1,5 @@
 const uaMessages = {
+    SPECIE_SCHEMA_IS_NOT_VALID: 'SPECIE_SCHEMA_IS_NOT_VALID',
     SOMETHING_WENT_WRONG: 'Щось пішло не так',
     CANT_BUILD_SUB_NEST_WITHOUT_QUEEN: 'Не можна будувати гніздо сателіт в колонії без королеви.',
     CANT_BUILD_MORE_SUB_NEST: 'Досягнуто максимальну кількість гнізд сателітів.',
