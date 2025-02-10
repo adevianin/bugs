@@ -2,7 +2,6 @@ from core.world.entities.map.map import Map
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME, STEPS_IN_YEAR, SPRING_START_YEAR_STEP, SUMMER_START_YEAR_STEP, AUTUMN_START_YEAR_STEP, WINTER_START_YEAR_STEP
 from core.world.entities.colony.base.colony import Colony
-from core.world.entities.colony.base.colony_relations_manager import ColonyRelationsManager
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 from core.world.entities.climate.climate import Climate
@@ -13,6 +12,7 @@ from .player_stats import PlayerStats
 from .season_types import SeasonTypes
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.world.id_generator import IdGenerator
+from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
 
 from logging import Logger
 from typing import List, Callable
@@ -23,7 +23,7 @@ class World():
 
     def __init__(self, map: Map, event_bus: EventEmitter, colonies: List[Colony], birthers, spawners, nuptial_environments: List[NuptialEnvironment], 
                  notifications: List[Notification], player_stats_list: List[PlayerStats], climate: Climate, sensor_handlers, current_step: int, 
-                 managers, id_generator: IdGenerator, logger: Logger):
+                 relations_table: ColonyRelationsTable, id_generator: IdGenerator, logger: Logger):
         self.lock = threading.Lock()
         self._map = map
         self._event_bus = event_bus
@@ -32,7 +32,7 @@ class World():
         self._is_world_running = False
         self._current_step = current_step
         self._current_season = self._calc_current_season()
-        self._colony_relations_manager: ColonyRelationsManager = managers['colony_relations_manager']
+        self._relations_table = relations_table
         self._birthers = birthers
         self._spawners = spawners
         self._nuptial_environments = nuptial_environments
@@ -74,8 +74,8 @@ class World():
         return list(filter(ant_colonies_filter, self._colonies))
 
     @property
-    def colony_relations_table(self):
-        return self._colony_relations_manager.relations_table
+    def colony_relations_table(self) -> ColonyRelationsTable:
+        return self._relations_table
     
     @property
     def nuptial_environments(self):

@@ -41,7 +41,7 @@ class ColonyRelationsTable():
     def clear_relations_for_colony(self, colony_id: int):
         self._relations_data = [relation for relation in self._relations_data if colony_id not in relation['colony_ids']]
 
-    def improve_relations(self, except_colony_ids: List[int]):
+    def improve_relations_except(self, except_colony_ids: List[int]):
         for relation in self._relations_data:
             colony1_id = relation['colony_ids'][0]
             colony2_id = relation['colony_ids'][1]

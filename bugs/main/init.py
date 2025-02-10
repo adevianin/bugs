@@ -79,6 +79,7 @@ from core.world.services.ant_service import AntService
 from core.world.services.rating_serivice import RatingService
 from core.world.services.world_service import WorldService
 from core.world.services.notification_serivce import NotificationService
+from core.world.services.colony_relations_service import ColonyRelationsService
 
 from infrastructure.websocket.serializers.world_client_serializer import WorldClientSerializer
 from infrastructure.websocket.serializers.colony_client_serializer import ColonyClientSerializer
@@ -194,10 +195,11 @@ def init():
     ant_service = AntService(event_bus)
     rating_service = RatingService(event_bus, usernames_repository)
     notification_service = NotificationService(event_bus)
+    colony_relations_service = ColonyRelationsService(event_bus)
     world_service = WorldService(event_bus, world_factory, map_factory, colony_factory, climate_factory, tree_factory, item_area_factory, item_source_factory)
 
     world_facade = WorldFacade(event_bus, world_repository, colony_service, player_service, nuptial_environment_service, ant_service, rating_service, 
-                               notification_service, world_service)
+                               notification_service, colony_relations_service, world_service)
 
     stats_client_serializer = StatsClientSerializer()
     genes_client_serializer = GenesClientSerializer()

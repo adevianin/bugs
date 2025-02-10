@@ -15,7 +15,6 @@ from core.world.entities.climate.climate import Climate
 from .sensor_handlers.visual_sensor_handler import VisualSensorHandler
 from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
 from .notification.notifications.notification import Notification
-from core.world.entities.colony.base.colony_relations_manager import ColonyRelationsManager
 from .player_stats import PlayerStats
 from core.world.entities.ladybug.ladybug_factory import LadybugFactory
 from core.world.entities.ladybug.ladybug_spawner import LadybugSpawner
@@ -52,10 +51,7 @@ class WorldFactory():
             'visual_sensor_handler': VisualSensorHandler(self._event_bus, map),
             'temperature_sensor_handler': TemperatureSensorHandler(climate)
         }
-        managers = {
-            'colony_relations_manager': ColonyRelationsManager(self._event_bus, colony_relations_table),
-        }
 
         return World(map, self._event_bus, colonies, birthers, spawners, nuptial_environments, notifications,
-                    player_stats_list, climate, sensor_handlers, current_step, managers, id_generator, self._game_logger)
+                    player_stats_list, climate, sensor_handlers, current_step, colony_relations_table, id_generator, self._game_logger)
     

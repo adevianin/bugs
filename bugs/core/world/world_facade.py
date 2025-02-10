@@ -16,6 +16,7 @@ from core.world.entities.world.world import World
 from core.world.entities.world.id_generator import IdGenerator
 from core.world.entities.action.base.action import Action
 from core.world.services.notification_serivce import NotificationService
+from core.world.services.colony_relations_service import ColonyRelationsService
 
 from typing import Callable, List, Dict
 
@@ -28,7 +29,7 @@ class WorldFacade:
 
     def __init__(self, event_bus: EventEmitter, world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, 
                  nuptial_environment_service: NuptialEnvironmentService, ant_service: AntService, rating_service: RatingService, notification_service: NotificationService,
-                 world_service: WorldService):
+                 colony_relations_service: ColonyRelationsService, world_service: WorldService):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
@@ -44,6 +45,7 @@ class WorldFacade:
         self._ant_service = ant_service
         self._rating_service = rating_service
         self._notification_service = notification_service
+        self._colony_relations_service = colony_relations_service
         self._world_service = world_service
 
         self._world = None
@@ -206,6 +208,7 @@ class WorldFacade:
         self._ant_service.set_world(self._world)
         self._rating_service.set_world(self._world)
         self._notification_service.set_world(self._world)
+        self._colony_relations_service.set_world(self._world)
         self._world_service.set_world(self._world)
     
     def _on_step_done(self, step_number: int, season: SeasonTypes):
