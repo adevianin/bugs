@@ -177,7 +177,6 @@ class Ant(LiveEntity):
         self._body.give_food(nest)
 
     def free_mind(self):
-        raise Exception('asdsad')
         self._mind.free_mind()
 
     def toggle_auto_thought_generation(self, is_enabled: bool):
