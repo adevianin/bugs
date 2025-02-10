@@ -149,14 +149,14 @@ class ColonyService(BaseService):
         nest_to_pillage = self._world.map.get_entity_by_id(nest_to_pillage_id)
         if not nest_to_pillage:
             return Messages.NO_NEST_TO_PILLAGE
+        
+        if nest_to_pillage.from_colony_id == performing_colony.id:
+            raise GameRuleError(f'colony(id={performing_colony_id}) cant pillage its nest(id={nest_to_pillage_id})')
 
         nest_for_loot = self._world.map.get_entity_by_id(nest_for_loot_id)
         if not nest_for_loot:
             return Messages.CANT_PILLAGE_WITHOUT_NEST_FOR_LOOT
 
-        if nest_to_pillage.from_colony_id == performing_colony.id:
-            raise GameRuleError(f'colony(id={performing_colony_id}) cant pillage its nest(id={nest_to_pillage_id})')
-        
         if nest_for_loot.from_colony_id != performing_colony.id:
             raise GameRuleError('nest for loot can be only from performing colony')
         
@@ -177,17 +177,11 @@ class ColonyService(BaseService):
     def transfer_food_operation(self, user_id: int, performing_colony_id: int, from_nest_id: int, to_nest_id: int, workers_count: int, warriors_count: int):
         performing_colony = self._find_ant_colony_for_owner(performing_colony_id, user_id)
         
-        from_nest: Nest = self._world.map.get_entity_by_id(from_nest_id)
-        if not from_nest:
-            raise EntityNotFoundError(f'nest(id={from_nest_id}) not found')
-        
+        from_nest = self._find_nest_for_owner(from_nest_id, user_id)
         if from_nest.from_colony_id != performing_colony_id:
             GameRuleError('cant transport food from another colony\'s nest')
 
-        to_nest: Nest = self._world.map.get_entity_by_id(to_nest_id)
-        if not to_nest:
-            raise EntityNotFoundError(f'nest(id={to_nest_id}) not found')
-        
+        to_nest = self._find_nest_for_owner(to_nest_id, user_id)
         if to_nest.from_colony_id != performing_colony_id:
             GameRuleError('cant transport food to another colony\'s nest')
 

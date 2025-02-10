@@ -118,15 +118,15 @@ class WorldFacade:
 
     def pillage_nest_operation_command(self, user_id: int, performing_colony_id: int, nest_to_pillage_id: int, nest_for_loot_id: int, workers_count: int, warriors_count: int):
         with self._world.lock:
-            self._colony_service.pillage_nest_operation(user_id, performing_colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
+            return self._colony_service.pillage_nest_operation(user_id, performing_colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
 
     def transfer_food_operation_command(self, user_id: int, performing_colony_id: int, from_nest_id: int, to_nest_id: int, workers_count: int, warriors_count: int):
         with self._world.lock:
-            self._colony_service.transfer_food_operation(user_id, performing_colony_id, from_nest_id, to_nest_id, workers_count, warriors_count)
+            return self._colony_service.transfer_food_operation(user_id, performing_colony_id, from_nest_id, to_nest_id, workers_count, warriors_count)
 
     def build_fortification_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int):
         with self._world.lock:
-            self._colony_service.build_fortification_operation(user_id, performing_colony_id, nest_id, workers_count)
+            return self._colony_service.build_fortification_operation(user_id, performing_colony_id, nest_id, workers_count)
         
     def bring_bug_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int):
         with self._world.lock:

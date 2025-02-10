@@ -34,6 +34,8 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         this._workersCountInput = this._el.querySelector('[data-workers-count]');
         this._warriorsCountInput = this._el.querySelector('[data-warriors-count]');
 
+        this._errorContainerEl = this._el.querySelector('[data-error-container]');
+
         this._startBtn = this._el.querySelector('[data-start-btn]');
 
         this._showMarkers();
@@ -45,8 +47,13 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         let toNestId = this._nestSelectorTo.nestId;
         let workersCount = this._workersCountInput.value;
         let warriorsCount = this._warriorsCountInput.value;
-        this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
-        this._onDone();
+        this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount)
+            .then(() => {
+                this._onDone();
+            })
+            .catch((errId) => {
+                this._renderError(errId);
+            });
     }
 
     _onNestFromChanged() {
@@ -71,6 +78,10 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         }
 
         this._demonstrateMarkersRequest(markers);
+    }
+
+    _renderError(messageId) {
+        this._errorContainerEl.innerHTML = this.$messages[messageId];
     }
 
 }

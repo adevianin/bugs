@@ -35,27 +35,40 @@ class ColonyApi {
     }
 
     pillageNestOperation(colonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-        return this._requester.post(`api/world/colonies/${ colonyId }/operations/pillage_nest`, {
-            nest_to_pillage_id: pillagingNestId,
-            nest_for_loot_id: nestForLootId,
-            warriors_count: warriorsCount,
-            workers_count: workersCount
-        })
+        return new Promise((res, rej) => {
+            this._requester.post(`api/world/colonies/${ colonyId }/operations/pillage_nest`, {
+                nest_to_pillage_id: pillagingNestId,
+                nest_for_loot_id: nestForLootId,
+                warriors_count: warriorsCount,
+                workers_count: workersCount
+            })
+            .then(axiosResp => res(null))
+            .catch(axiosResp => rej(axiosResp.response.data))
+        });
+        
     }
 
     transportFoodOperation(colonyId, fromNestId, toNestId, workersCount, warriorsCount) {
-        return this._requester.post(`api/world/colonies/${ colonyId }/operations/transport_food`, {
-            from_nest_id: fromNestId,
-            to_nest_id: toNestId,
-            workers_count: workersCount,
-            warriors_count: warriorsCount,
+        return new Promise((res, rej) => {
+            this._requester.post(`api/world/colonies/${ colonyId }/operations/transport_food`, {
+                from_nest_id: fromNestId,
+                to_nest_id: toNestId,
+                workers_count: workersCount,
+                warriors_count: warriorsCount,
+            })
+            .then(axiosResp => res(null))
+            .catch(axiosResp => rej(axiosResp.response.data))
         });
     }
 
     buildFortificationsOpearation(colonyId, nestId, workersCount) {
-        return this._requester.post(`api/world/colonies/${ colonyId }/operations/build_fortification`, {
-            nest_id: nestId,
-            workers_count: workersCount
+        return new Promise((res, rej) => {
+            this._requester.post(`api/world/colonies/${ colonyId }/operations/build_fortification`, {
+                nest_id: nestId,
+                workers_count: workersCount
+            })
+            .then(axiosResp => res(null))
+            .catch(axiosResp => rej(axiosResp.response.data))
         });
     }
 
@@ -66,7 +79,7 @@ class ColonyApi {
             })
             .then(axiosResp => res(null))
             .catch(axiosResp => rej(axiosResp.response.data))
-        })
+        });
     }
 }
 

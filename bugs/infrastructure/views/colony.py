@@ -66,9 +66,11 @@ def pillage_nest(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    wf.pillage_nest_operation_command(request.user.id, colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
-    
-    return HttpResponse(status=200)
+    err = wf.pillage_nest_operation_command(request.user.id, colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
+    if err:
+        return HttpResponse(err, status=409)
+    else:
+        return HttpResponse(status=200)
 
 @require_POST
 @login_required     
@@ -84,9 +86,11 @@ def transport_food(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    wf.transfer_food_operation_command(request.user.id, colony_id, from_nest_id, to_nest_id, workers_count, warriors_count)
-    
-    return HttpResponse(status=200)
+    err = wf.transfer_food_operation_command(request.user.id, colony_id, from_nest_id, to_nest_id, workers_count, warriors_count)
+    if err:
+        return HttpResponse(err, status=409)
+    else:
+        return HttpResponse(status=200)
 
 @require_POST
 @login_required     
@@ -100,9 +104,11 @@ def build_fortification(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    wf.build_fortification_operation_command(request.user.id, colony_id, nest_id, workers_count)
-    
-    return HttpResponse(status=200)
+    err = wf.build_fortification_operation_command(request.user.id, colony_id, nest_id, workers_count)
+    if err:
+        return HttpResponse(err, status=409)
+    else:
+        return HttpResponse(status=200)
 
 @require_POST
 @login_required     

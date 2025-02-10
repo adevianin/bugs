@@ -30,6 +30,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
         this._workersCountEl = this._el.querySelector('[data-workers-count]');
         this._startBtn = this._el.querySelector('[data-start-btn]');
+        this._errorContainerEl = this._el.querySelector('[data-error-container]');
 
         this._nestForLootSelector = new NestSelectorView(this._performingColony.id)
         this._el.querySelector('[data-nest-selector-container]').append(this._nestForLootSelector.el);
@@ -62,7 +63,13 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         let warriorsCount = parseInt(this._warriorsCountEl.value);
         let workersCount = parseInt(this._workersCountEl.value);
         let nestForLootId = this._nestForLootSelector.nestId;
-        this.$domainFacade.pillageNestOperation(this._performingColony.id, this._nestToPillage.id, nestForLootId, warriorsCount, workersCount);
+        this.$domainFacade.pillageNestOperation(this._performingColony.id, this._nestToPillage.id, nestForLootId, warriorsCount, workersCount)
+            .then(() => {
+                this._onDone();
+            })
+            .catch((errId) => {
+                this._renderError(errId);
+            });
     }
 
     _showMarkers() {
@@ -78,6 +85,10 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         }
 
         this._demonstrateMarkersRequest(markers);
+    }
+
+    _renderError(messageId) {
+        this._errorContainerEl.innerHTML = this.$messages[messageId];
     }
 
 }
