@@ -44,8 +44,6 @@ class World():
         self._id_generator = id_generator
         self._logger = logger
 
-        self._event_bus.add_listener('colony_died', self._on_colony_died)
-
     @property
     def id_generator(self):
         return self._id_generator
@@ -116,6 +114,9 @@ class World():
     def add_new_colony(self, colony: Colony):
         self._colonies.append(colony)
 
+    def remove_colony(self, colony: Colony):
+        self._colonies.remove(colony)
+
     def stop(self):
         if (not self._is_world_running): 
             return
@@ -172,9 +173,6 @@ class World():
         # self._my_test_code()
 
         self._current_step += 1
-
-    def _on_colony_died(self, colony: Colony):
-        self._colonies.remove(colony)
 
     def _calc_current_season(self) -> SeasonTypes:
         year_step = self._current_step % STEPS_IN_YEAR

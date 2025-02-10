@@ -15,6 +15,7 @@ from core.world.utils.remove_non_alphanumeric_and_spaces import remove_non_alpha
 from core.world.exceptions import GameRuleError, EntityNotFoundError
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.action.colony_born_action import ColonyBornAction
+from core.world.entities.colony.base.colony import Colony
 
 from typing import Callable
 
@@ -24,6 +25,8 @@ class ColonyService(BaseService):
         super().__init__(event_bus)
         self._colony_factory = colony_factory
         self._operation_factory = operation_factory
+
+        self._event_bus.add_listener('colony_died', self._on_colony_died)
 
     def found_new_colony(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point, colony_name: str):
         ant: Ant = self._find_ant_for_owner(queen_id, user_id)
@@ -238,4 +241,7 @@ class ColonyService(BaseService):
             return queens[0]
         else:
             return None
+        
+    def _on_colony_died(self, colony: Colony):
+        self._world.remove_colony(colony)
     
