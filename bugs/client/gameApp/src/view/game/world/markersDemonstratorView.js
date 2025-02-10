@@ -56,7 +56,6 @@ class MarkersDemonstratorView extends BaseGraphicView {
     }
 
     _clearMarkers() {
-        console.log('clearing markers')
         for (let view of this._markerViews) {
             this._container.removeChild(view);
         }
@@ -65,7 +64,6 @@ class MarkersDemonstratorView extends BaseGraphicView {
 
     _onShowMarkersRequest(markers) {
         this._clearMarkers();
-        console.log('demonstrating markers', markers);
         this._markerViews = this._renderMarkers(markers);
     }
 

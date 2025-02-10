@@ -7263,6 +7263,10 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._stopOperationCreating();
     }
 
+    get _isOperationCreating() {
+        return !!this._operationCreator;
+    }
+
     _render() {
         this._el.innerHTML = _operationsCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
         this._newNestOperationBtn = this._el.querySelector('[data-add-new-nest]');
@@ -7284,13 +7288,14 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
     }
 
     _stopOperationCreating() {
-        if (!this._operationCreator) {
+        if (!this._isOperationCreating) {
             return
         }
         this._operationCreator.remove();
         this._operationCreator = null;
         this._toggleCreatorMode(false);
         this.$eventBus.emit('deactivateMapPickerRequest');
+        console.log('hide markers from operation creating');
         this.$eventBus.emit('hideMarkersRequest');
         this.$eventBus.emit('stopOperationCreating');
     }
@@ -7453,6 +7458,10 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
         return this._selectedOperation ? this._selectedOperation.id : null;
     }
 
+    get _isOperationSelected() {
+        return !!this._selectedOperation;
+    }
+
     _render() {
         this._el.innerHTML = _operationsListTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
 
@@ -7465,7 +7474,7 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
         this._listenColony(colony);
 
         this._renderColonyOperations();
-        this._selectOperation(null);
+        this._clearOperationSelect();
     }
 
     remove() {
@@ -7491,6 +7500,9 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
     _onOperationDeleted(operationId) {
         this._operationViews[operationId].remove();
         delete this._operationViews[operationId];
+        if (this._selectedOperationId == operationId) {
+            this._clearOperationSelect();
+        }
     }
 
     _stopListenColony() {
@@ -7527,7 +7539,16 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
     _selectOperation(operation) {
         this._selectedOperation = operation;
         this._renderSelectedOperation();
-        this._makeOperationMarkersDemonstratorRequest();
+        this.$eventBus.emit('showMarkersRequest', this._selectedOperation.markers);
+    }
+
+    _clearOperationSelect() {
+        if (this._isOperationSelected) {
+            console.log('hidemarkers from operation list');
+            this._selectedOperation = null;
+            this._renderSelectedOperation();
+            this.$eventBus.emit('hideMarkersRequest');
+        }
     }
 
     _renderSelectedOperation() {
@@ -7537,28 +7558,20 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
         }
     }
 
-    _makeOperationMarkersDemonstratorRequest() {
-        if (this._selectedOperation) {
-            this.$eventBus.emit('showMarkersRequest', this._selectedOperation.markers);
-        } else {
-            this.$eventBus.emit('hideMarkersRequest');
-        }
-    }
-
     _onOperationViewClick(operation) {
         if (this._selectedOperationId == operation.id) {
-            this._selectOperation(null);
+            this._clearOperationSelect();
         } else {
             this._selectOperation(operation);
         }
     }
 
     _onSomeTabSwitched() {
-        this._selectOperation(null);
+        this._clearOperationSelect();
     }
 
     _onStartOperationCreating() {
-        this._selectOperation(null);
+        this._clearOperationSelect();
         this.toggle(false);
     }
 
@@ -9759,7 +9772,6 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
     }
 
     _clearMarkers() {
-        console.log('clearing markers')
         for (let view of this._markerViews) {
             this._container.removeChild(view);
         }
@@ -9768,7 +9780,6 @@ class MarkersDemonstratorView extends _view_base_baseGraphicView__WEBPACK_IMPORT
 
     _onShowMarkersRequest(markers) {
         this._clearMarkers();
-        console.log('demonstrating markers', markers);
         this._markerViews = this._renderMarkers(markers);
     }
 

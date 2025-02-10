@@ -26,6 +26,10 @@ class OperationsCreatorView extends BaseHTMLView {
         this._stopOperationCreating();
     }
 
+    get _isOperationCreating() {
+        return !!this._operationCreator;
+    }
+
     _render() {
         this._el.innerHTML = operationsCreatorTmpl;
         this._newNestOperationBtn = this._el.querySelector('[data-add-new-nest]');
@@ -47,7 +51,7 @@ class OperationsCreatorView extends BaseHTMLView {
     }
 
     _stopOperationCreating() {
-        if (!this._operationCreator) {
+        if (!this._isOperationCreating) {
             return
         }
         this._operationCreator.remove();

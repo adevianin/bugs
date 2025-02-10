@@ -20,6 +20,10 @@ class OperationsListView extends BaseHTMLView {
         return this._selectedOperation ? this._selectedOperation.id : null;
     }
 
+    get _isOperationSelected() {
+        return !!this._selectedOperation;
+    }
+
     _render() {
         this._el.innerHTML = operationsListTmpl;
 
@@ -32,7 +36,7 @@ class OperationsListView extends BaseHTMLView {
         this._listenColony(colony);
 
         this._renderColonyOperations();
-        this._selectOperation(null);
+        this._clearOperationSelect();
     }
 
     remove() {
@@ -58,6 +62,9 @@ class OperationsListView extends BaseHTMLView {
     _onOperationDeleted(operationId) {
         this._operationViews[operationId].remove();
         delete this._operationViews[operationId];
+        if (this._selectedOperationId == operationId) {
+            this._clearOperationSelect();
+        }
     }
 
     _stopListenColony() {
@@ -94,7 +101,15 @@ class OperationsListView extends BaseHTMLView {
     _selectOperation(operation) {
         this._selectedOperation = operation;
         this._renderSelectedOperation();
-        this._makeOperationMarkersDemonstratorRequest();
+        this.$eventBus.emit('showMarkersRequest', this._selectedOperation.markers);
+    }
+
+    _clearOperationSelect() {
+        if (this._isOperationSelected) {
+            this._selectedOperation = null;
+            this._renderSelectedOperation();
+            this.$eventBus.emit('hideMarkersRequest');
+        }
     }
 
     _renderSelectedOperation() {
@@ -104,28 +119,20 @@ class OperationsListView extends BaseHTMLView {
         }
     }
 
-    _makeOperationMarkersDemonstratorRequest() {
-        if (this._selectedOperation) {
-            this.$eventBus.emit('showMarkersRequest', this._selectedOperation.markers);
-        } else {
-            this.$eventBus.emit('hideMarkersRequest');
-        }
-    }
-
     _onOperationViewClick(operation) {
         if (this._selectedOperationId == operation.id) {
-            this._selectOperation(null);
+            this._clearOperationSelect();
         } else {
             this._selectOperation(operation);
         }
     }
 
     _onSomeTabSwitched() {
-        this._selectOperation(null);
+        this._clearOperationSelect();
     }
 
     _onStartOperationCreating() {
-        this._selectOperation(null);
+        this._clearOperationSelect();
         this.toggle(false);
     }
 
