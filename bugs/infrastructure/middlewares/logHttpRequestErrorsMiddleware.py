@@ -12,9 +12,8 @@ class LogHttpRequestErrorsMiddleware:
         response = self.get_response(request)
         return response
 
-    def process_exception(self, request, exception):
-        msg = f"Exception [{type(exception).__name__}]: {exception}, Request: {request}"
-        self._logger.error(msg)
+    def process_exception(self, request, exception: Exception):
+        self._logger.exception(request, exc_info=exception)
 
         if isinstance(exception, GameError):
             return HttpResponse(Messages.SOMETHING_WENT_WRONG, status=400)
