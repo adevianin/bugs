@@ -189,7 +189,7 @@ def init():
     usernames_repository = UsernamesRepository()
 
     colony_service = ColonyService(event_bus, colony_factory, operation_factory)
-    player_service = PlayerService(event_bus, colony_factory, ant_factory, nuptial_environment_factory, player_stats_factory)
+    player_service = PlayerService(event_bus, nuptial_environment_factory, player_stats_factory)
     nuptial_environment_service = NuptialEnvironmentService(event_bus)
     ant_service = AntService(event_bus)
     rating_service = RatingService(event_bus, usernames_repository)
