@@ -1,15 +1,14 @@
-from core.world.entities.map.map import Map
-from core.world.entities.base.entity import Entity
+from core.world.services.base_service import BaseService
+from abc import abstractmethod
 from core.world.utils.event_emiter import EventEmitter
-from .requests.birth_request import BirthRequest
-from abc import ABC, abstractmethod
+from core.world.entities.world.birth_requests.birth_request import BirthRequest
+from core.world.entities.base.entity import Entity
 from core.world.entities.action.entity_born_action import EntityBornAction
 
-class EntityBirther(ABC):
+class EntityBirtherService(BaseService):
 
-    def __init__(self, event_bus: EventEmitter, request_event_name: str, map: Map):
-        self._event_bus = event_bus
-        self._map = map
+    def __init__(self, event_bus: EventEmitter, request_event_name: str):
+        super().__init__(event_bus)
 
         self._event_bus.add_listener(request_event_name, self._handle_request)
 

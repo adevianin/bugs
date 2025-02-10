@@ -6,10 +6,6 @@ from core.world.entities.colony.base.colony_relations_table import ColonyRelatio
 from core.world.entities.ant.ant_factory import AntFactory
 from core.world.entities.item.items.item_factory import ItemFactory
 from core.world.entities.nest.nest_factory import NestFactory
-from core.world.entities.world.birthers.ant_birther import AntBirther
-from core.world.entities.world.birthers.item_birther import ItemBirther
-from core.world.entities.world.birthers.nest_birther import NestBirther
-from core.world.entities.world.birthers.ladybug_birther import LadybugBirther
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 from core.world.entities.climate.climate import Climate
 from .sensor_handlers.visual_sensor_handler import VisualSensorHandler
@@ -41,17 +37,11 @@ class WorldFactory():
             'ladybug_spawner': LadybugSpawner(self._event_bus, map),
             'bug_corpse_spawner': BugCorpseSpawner(self._event_bus, map)
         }
-        birthers = {
-            'ant_birther': AntBirther(self._event_bus, map, self._ant_factory),
-            'item_birther': ItemBirther(self._event_bus, map, self._item_factory),
-            'nest_birther': NestBirther(self._event_bus, map, self._nest_factory),
-            'ladybug_birther': LadybugBirther(self._event_bus, map, self._ladybug_factory)
-        }
         sensor_handlers = {
             'visual_sensor_handler': VisualSensorHandler(self._event_bus, map),
             'temperature_sensor_handler': TemperatureSensorHandler(climate)
         }
 
-        return World(map, self._event_bus, colonies, birthers, spawners, nuptial_environments, notifications,
+        return World(map, self._event_bus, colonies, spawners, nuptial_environments, notifications,
                     player_stats_list, climate, sensor_handlers, current_step, colony_relations_table, id_generator, self._game_logger)
     

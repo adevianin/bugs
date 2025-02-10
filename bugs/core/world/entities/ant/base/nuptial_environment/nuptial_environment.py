@@ -9,7 +9,7 @@ from core.world.entities.action.nuptial_environment_specie_genes_changed_action 
 from core.world.settings import MUTATITON_PERCENT, SUPER_MUTATION_CHANCE_PERCENT, SUPER_MUTATION_PERCENT
 from core.world.entities.ant.base.larva import Larva
 from core.world.entities.ant.base.ant_types import AntTypes
-from core.world.entities.world.birthers.requests.ant_requests.ant_birth_from_system_request import AntBirthFromSystemRequest
+from core.world.entities.world.birth_requests.ant_requests.ant_birth_from_system_request import AntBirthFromSystemRequest
 from core.world.utils.point import Point
 from core.world.entities.world.season_types import SeasonTypes
 from typing import List, Callable

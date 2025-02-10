@@ -6,7 +6,7 @@ from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.utils.size import Size
 from core.world.entities.base.body import Body
 from core.world.entities.base.entity import Entity
-from core.world.entities.world.birthers.requests.item_birth_request import ItemBirthRequest
+from core.world.entities.world.birth_requests.item_birth_request import ItemBirthRequest
 from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.world.season_types import SeasonTypes
 

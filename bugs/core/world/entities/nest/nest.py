@@ -4,8 +4,8 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.base.entity import Entity
 from core.world.entities.item.items.base.item_types import ItemTypes
-from core.world.entities.world.birthers.requests.ant_requests.ant_birth_from_nest_request import AntBirthFromNestRequest
-from core.world.entities.world.birthers.requests.item_birth_request import ItemBirthRequest
+from core.world.entities.world.birth_requests.ant_requests.ant_birth_from_nest_request import AntBirthFromNestRequest
+from core.world.entities.world.birth_requests.item_birth_request import ItemBirthRequest
 from core.world.entities.action.nest_stored_calories_changed_action import NestStoredCaloriesChangedAction
 from core.world.entities.action.nest_build_status_changed_action import NestBuildStatusChangedAction
 from core.world.entities.ant.base.larva import Larva

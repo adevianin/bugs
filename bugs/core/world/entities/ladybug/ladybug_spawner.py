@@ -1,6 +1,6 @@
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.map.map import Map
-from core.world.entities.world.birthers.requests.ladybug_birth_request import LadybugBirthRequest
+from core.world.entities.world.birth_requests.ladybug_birth_request import LadybugBirthRequest
 from core.world.entities.world.season_types import SeasonTypes
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.settings import ANTS_PER_LADYBUG, SPAWN_LADYBUGS

@@ -1,3 +1,4 @@
+from abc import ABC
 from core.world.entities.world.world import World
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.base.entity_types import EntityTypes
@@ -9,7 +10,7 @@ from core.world.entities.ant.base.nuptial_environment.nuptial_environment import
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.action.base.action import Action
 
-class BaseService():
+class BaseService(ABC):
 
     def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus

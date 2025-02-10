@@ -11,7 +11,7 @@ from core.world.entities.action.entity_got_in_nest_action import EntityGotInNest
 from core.world.entities.action.entity_got_out_of_nest_action import EntityGotOutOfNestAction
 from core.world.entities.action.ant_picked_up_item_action import AntPickedUpItemAction
 from core.world.entities.action.ant_dropped_picked_item import AntDroppedPickedItemAction
-from core.world.entities.world.birthers.requests.nest_birth_request import NestBirthRequest
+from core.world.entities.world.birth_requests.nest_birth_request import NestBirthRequest
 from .guardian_behaviors import GuardianBehaviors
 from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.world.notification.notifications.died_ant_notification import DiedAntNotification
