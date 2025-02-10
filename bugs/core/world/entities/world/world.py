@@ -21,7 +21,7 @@ import time
 
 class World():
 
-    def __init__(self, map: Map, event_bus: EventEmitter, colonies: List[Colony], spawners, nuptial_environments: List[NuptialEnvironment], 
+    def __init__(self, map: Map, event_bus: EventEmitter, colonies: List[Colony], nuptial_environments: List[NuptialEnvironment], 
                  notifications: List[Notification], player_stats_list: List[PlayerStats], climate: Climate, sensor_handlers, current_step: int, 
                  relations_table: ColonyRelationsTable, id_generator: IdGenerator, logger: Logger):
         self.lock = threading.Lock()
@@ -33,7 +33,6 @@ class World():
         self._current_step = current_step
         self._current_season = self._calc_current_season()
         self._relations_table = relations_table
-        self._spawners = spawners
         self._nuptial_environments = nuptial_environments
         self._notifications = notifications
         self._player_stats_list = player_stats_list

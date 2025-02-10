@@ -21,6 +21,8 @@ from core.world.services.birthers.ant_birther_service import AntBirtherService
 from core.world.services.birthers.item_birther_service import ItemBirtherService
 from core.world.services.birthers.nest_birther_service import NestBirtherService
 from core.world.services.birthers.ladybug_birther_service import LadybugBirtherService
+from core.world.services.spawners.ladybug_spawner_service import LadybugSpawnerService
+from core.world.services.spawners.bug_corpse_spawner_service import BugCorpseSpawnerService
 
 from typing import Callable, List, Dict
 
@@ -34,7 +36,8 @@ class WorldFacade:
     def __init__(self, event_bus: EventEmitter, world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, 
                  nuptial_environment_service: NuptialEnvironmentService, ant_service: AntService, rating_service: RatingService, notification_service: NotificationService,
                  colony_relations_service: ColonyRelationsService, ant_birther_service: AntBirtherService, item_birther_service: ItemBirtherService,  
-                 nest_birther_service: NestBirtherService, ladybug_birther_service: LadybugBirtherService, world_service: WorldService):
+                 nest_birther_service: NestBirtherService, ladybug_birther_service: LadybugBirtherService, ladybug_spawner_service: LadybugSpawnerService,
+                 bug_corpse_spawner_service: BugCorpseSpawnerService, world_service: WorldService):
         if WorldFacade._instance != None:
             raise Exception('WorldFacade is singleton')
         else:
@@ -55,6 +58,8 @@ class WorldFacade:
         self._item_birther_service = item_birther_service
         self._nest_birther_service = nest_birther_service
         self._ladybug_birther_service = ladybug_birther_service
+        self._ladybug_spawner_service = ladybug_spawner_service
+        self._bug_corpse_spawner_service = bug_corpse_spawner_service
         self._world_service = world_service
 
         self._world = None
@@ -222,6 +227,8 @@ class WorldFacade:
         self._item_birther_service.set_world(self._world)
         self._nest_birther_service.set_world(self._world)
         self._ladybug_birther_service.set_world(self._world)
+        self._ladybug_spawner_service.set_world(self._world)
+        self._bug_corpse_spawner_service.set_world(self._world)
         self._world_service.set_world(self._world)
     
     def _on_step_done(self, step_number: int, season: SeasonTypes):

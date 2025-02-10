@@ -84,6 +84,8 @@ from core.world.services.birthers.ant_birther_service import AntBirtherService
 from core.world.services.birthers.item_birther_service import ItemBirtherService
 from core.world.services.birthers.nest_birther_service import NestBirtherService
 from core.world.services.birthers.ladybug_birther_service import LadybugBirtherService
+from core.world.services.spawners.ladybug_spawner_service import LadybugSpawnerService
+from core.world.services.spawners.bug_corpse_spawner_service import BugCorpseSpawnerService
 
 from infrastructure.websocket.serializers.world_client_serializer import WorldClientSerializer
 from infrastructure.websocket.serializers.colony_client_serializer import ColonyClientSerializer
@@ -204,11 +206,13 @@ def init():
     item_birther_service = ItemBirtherService(event_bus, item_factory)
     nest_birther_service = NestBirtherService(event_bus, nest_factory)
     ladybug_birther_service = LadybugBirtherService(event_bus, ladybug_factory)
+    ladybug_spawner_service = LadybugSpawnerService(event_bus)
+    bug_corpse_spawner_service = BugCorpseSpawnerService(event_bus)
     world_service = WorldService(event_bus, world_factory, map_factory, colony_factory, climate_factory, tree_factory, item_area_factory, item_source_factory)
 
     world_facade = WorldFacade(event_bus, world_repository, colony_service, player_service, nuptial_environment_service, ant_service, rating_service, 
                                 notification_service, colony_relations_service, ant_birther_service, item_birther_service, nest_birther_service, ladybug_birther_service,
-                                world_service)
+                                ladybug_spawner_service, bug_corpse_spawner_service, world_service)
 
     stats_client_serializer = StatsClientSerializer()
     genes_client_serializer = GenesClientSerializer()

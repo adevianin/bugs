@@ -13,8 +13,6 @@ from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
 from .notification.notifications.notification import Notification
 from .player_stats import PlayerStats
 from core.world.entities.ladybug.ladybug_factory import LadybugFactory
-from core.world.entities.ladybug.ladybug_spawner import LadybugSpawner
-from core.world.entities.item.items.bug_corpse.bug_corpse_spawner import BugCorpseSpawner
 from core.world.entities.world.id_generator import IdGenerator
 
 from typing import List
@@ -33,15 +31,11 @@ class WorldFactory():
                     nuptial_environments: List[NuptialEnvironment], player_stats_list: List[PlayerStats], climate: Climate, current_step: int, 
                     notifications: List[Notification], last_used_id: int) -> World:
         id_generator = IdGenerator(last_used_id)
-        spawners = {
-            'ladybug_spawner': LadybugSpawner(self._event_bus, map),
-            'bug_corpse_spawner': BugCorpseSpawner(self._event_bus, map)
-        }
         sensor_handlers = {
             'visual_sensor_handler': VisualSensorHandler(self._event_bus, map),
             'temperature_sensor_handler': TemperatureSensorHandler(climate)
         }
 
-        return World(map, self._event_bus, colonies, spawners, nuptial_environments, notifications,
-                    player_stats_list, climate, sensor_handlers, current_step, colony_relations_table, id_generator, self._game_logger)
+        return World(map, self._event_bus, colonies, nuptial_environments, notifications, player_stats_list, climate, sensor_handlers, 
+                    current_step, colony_relations_table, id_generator, self._game_logger)
     
