@@ -17,6 +17,7 @@ from core.world.entities.ant.base.genetic.genes.development_worker_caste_gene im
 from core.world.entities.ant.base.genetic.genes.adaptation_cold_gene import AdaptationColdGene
 from core.world.entities.ant.base.genetic.genes.adjusting_appetite_gene import AdjustingAppetiteGene
 from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdjustingDevelopmentAppetiteGene
+from core.world.exceptions import GameError
 
 class Chromosome(ABC):
 
@@ -101,7 +102,7 @@ class Chromosome(ABC):
                 gene2 = genes_by_type[1]
                 merged_genes.append(gene1.merge(gene2))
             else:
-                raise Exception('invalid genes count')
+                raise GameError('invalid genes count')
             
         return Chromosome.build(self.type, merged_genes)
     

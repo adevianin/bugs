@@ -1,4 +1,5 @@
 from typing import List, Dict
+from core.world.exceptions import GameError
 
 class ColonyRelationsTable():
 
@@ -27,7 +28,7 @@ class ColonyRelationsTable():
     
     def set_relation_value(self, colony1_id: int, colony2_id: int, value: int):
         if colony1_id == colony2_id:
-            raise Exception('invalid relation')
+            raise GameError('invalid relation')
         relation = self._find_relation(colony1_id, colony2_id)
         if relation:
             relation['value'] = value

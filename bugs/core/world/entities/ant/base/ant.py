@@ -24,6 +24,7 @@ from core.world.entities.base.death_record.buried_in_destructed_nest_death_recor
 from core.world.entities.action.ant_current_activity_changed_action import AntCurrentActivityChangedAction
 from core.world.entities.ant.base.ant_activity_types import AntActivityTypes
 from typing import List
+from core.world.exceptions import GameRuleError
 
 class Ant(LiveEntity):
 
@@ -112,7 +113,7 @@ class Ant(LiveEntity):
     
     def fly_nuptial_flight(self):
         if not self.can_fly_nuptial_flight:
-            raise Exception('cant fly nuptial flight')
+            raise GameRuleError('cant fly nuptial flight')
         
         self.from_colony_id = None
         self._mind.toggle_auto_thought_generation(False)
@@ -176,6 +177,7 @@ class Ant(LiveEntity):
         self._body.give_food(nest)
 
     def free_mind(self):
+        raise Exception('asdsad')
         self._mind.free_mind()
 
     def toggle_auto_thought_generation(self, is_enabled: bool):
@@ -186,7 +188,7 @@ class Ant(LiveEntity):
 
     def join_operation(self):
         if self._mind.is_in_opearetion:
-            raise Exception('already in operation')
+            raise GameRuleError('already in operation')
         self._mind.toggle_is_in_operation(True)
 
     def leave_operation(self):

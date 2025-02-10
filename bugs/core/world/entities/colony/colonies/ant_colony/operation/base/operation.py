@@ -18,6 +18,7 @@ from core.world.entities.base.live_entity.live_entity import LiveEntity
 from core.world.entities.base.damage_types import DamageTypes
 from core.world.entities.ant.worker.worker_ant import WorkerAnt
 from core.world.entities.ant.warrior.warrior_ant import WarriorAnt
+from core.world.exceptions import GameError
 
 class Operation(ABC):
 
@@ -174,7 +175,7 @@ class Operation(ABC):
         
     def try_hire_ants(self, ants: List[Ant]):
         if (not self.is_hiring):
-            raise Exception('operation is not hiring')
+            raise GameError('operation is not hiring')
         is_hired_someone = False
         for ant in ants:
             if self.is_hiring and self._check_hiring_ant(ant):
@@ -274,9 +275,9 @@ class Operation(ABC):
 
     def _register_formation(self, formation: BaseFormation):
         if self._fight:
-            raise Exception('cant register formation during fight')
+            raise GameError('cant register formation during fight')
         if self._formation:
-            raise Exception('formation already registered')
+            raise GameError('formation already registered')
         self._formation = formation
         self._formation.start()
         self._listen_formation(formation)
@@ -301,7 +302,7 @@ class Operation(ABC):
     def _init_fight(self, ants: List[Ant]):
         print('init fight on stage =', self._stage)
         if self._fight:
-            raise Exception('fight already inited')
+            raise GameError('fight already inited')
         if self._formation:
             self._destroy_formation()
         self._fight = self._fight_factory.build_fight(ants)

@@ -1,3 +1,4 @@
+from core.world.exceptions import GameError
 import threading
 
 class IdGenerator():
@@ -7,7 +8,7 @@ class IdGenerator():
     @classmethod
     def generate_id(cls):
         if not cls._global_generator:
-            raise Exception('global generator is not setted')
+            raise GameError('global generator is not setted')
         
         return cls._global_generator.generate_next_id()
     

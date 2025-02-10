@@ -19,6 +19,7 @@ from core.world.entities.item.items.bug_corpse.bug_corpse_item_body import BugCo
 from .nectar_item.nectar_item import NectarItem
 from .nectar_item.nectar_item_body import NectarItemBody
 from core.world.entities.world.id_generator import IdGenerator
+from core.world.exceptions import GameError
 
 import random
 
@@ -51,7 +52,7 @@ class ItemFactory():
             case ItemTypes.NECTAR:
                 return self._build_nectar_item(id, position, angle, strength, variety, life_span, is_picked, ownership, hp)
             case _:
-                raise Exception('unknown item type')
+                raise GameError('unknown item type')
 
     def _build_flower_item(self, id: int, position: Point, angle: int, strength: int, variety: int, life_span: int, is_picked: bool, ownership: OwnershipConfig,
                            hp: int):

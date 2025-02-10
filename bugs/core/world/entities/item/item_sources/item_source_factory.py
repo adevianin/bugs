@@ -9,6 +9,7 @@ from core.world.entities.base.stats_library import StatsLibrary
 from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.world.season_types import SeasonTypes
 from core.world.entities.world.id_generator import IdGenerator
+from core.world.exceptions import GameError
 
 class ItemSourceFactory():
 
@@ -29,7 +30,7 @@ class ItemSourceFactory():
                 is_active = NectarItemSource.check_is_fertile_season(current_season)
                 return self._build_nectar_item_source(id, ownership, hp, position, 0, fertility, 0, min_item_strength, max_item_strength, is_active)
             case _:
-                raise Exception('unknown type of item source')
+                raise GameError('unknown type of item source')
 
     def build_item_source(self, id: int, ownership: OwnershipConfig, hp: int, position: Point, angle: int, item_type: ItemTypes, 
                           fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int, is_active: bool):
@@ -39,7 +40,7 @@ class ItemSourceFactory():
             case ItemTypes.NECTAR:
                 return self._build_nectar_item_source(id, ownership, hp, position, angle, fertility, accumulated, min_item_strength, max_item_strength, is_active)
             case _:
-                raise Exception('unknown type of item source')
+                raise GameError('unknown type of item source')
 
     def _build_honeydew_item_source(self, id: int, ownership: OwnershipConfig, hp: int, position: Point, angle: int, fertility: int, 
                                     accumulated: int, min_item_strength: int, max_item_strength: int, is_active: bool):

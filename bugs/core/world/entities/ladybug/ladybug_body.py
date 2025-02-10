@@ -3,6 +3,7 @@ from core.world.entities.item.item_sources.base.item_source import ItemSource
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.tree.tree import Tree
+from core.world.exceptions import GameError
 
 from typing import List, Callable
 
@@ -19,6 +20,6 @@ class LadybugBody(LiveBody):
 
     def eat_aphid(self, honeydew_item_source: ItemSource):
         if honeydew_item_source.item_type != ItemTypes.HONEYDEW:
-            raise Exception('is is not aphid')
+            raise GameError('is is not aphid')
         
         self.damage_another_body(honeydew_item_source.body)

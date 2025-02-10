@@ -6,6 +6,7 @@ from typing import List
 from core.world.utils.point import Point
 from core.world.entities.base.enemy_interface import iEnemy
 from core.world.entities.thought.thought_types import ThoughtTypes
+from core.world.exceptions import GameError
 
 class Mind(ABC):
 
@@ -72,7 +73,7 @@ class Mind(ABC):
 
     def _register_thought(self, thought: Thought, asap: bool = False, immediately = False):
         if asap and immediately:
-            raise Exception('thought can be asap and immediately at the same time')
+            raise GameError('thought can be asap and immediately at the same time')
         
         if (not asap and not immediately) or not self._has_thoughts_to_do():
             self._thoughts_stack.append(thought)

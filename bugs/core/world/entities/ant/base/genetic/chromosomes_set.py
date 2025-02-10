@@ -3,6 +3,7 @@ from typing import List, Dict
 from .chromosome_types import ChromosomeTypes
 from .phenotype import Phenotype
 from .genes.base.genes_types import GenesTypes
+from core.world.exceptions import GameError
 
 class ChromosomesSet():
 
@@ -45,7 +46,7 @@ class ChromosomesSet():
                 merged_chromosome = chromosome1.merge(chromosome2)
                 merged_chromosomes.append(merged_chromosome)
             else:
-                raise Exception('invalid count of chromosomes')
+                raise GameError('invalid count of chromosomes')
         
         return ChromosomesSet.build(merged_chromosomes)
     
@@ -82,5 +83,5 @@ class ChromosomesSet():
             if chromosome.type == type:
                 return chromosome
             
-        raise Exception('chromosome is not found')
+        raise GameError('chromosome is not found')
     

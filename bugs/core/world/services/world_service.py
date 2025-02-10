@@ -17,6 +17,8 @@ from core.world.entities.item.item_sources.honeydew_item_source.honeydew_item_so
 from core.world.entities.tree.tree_body import TreeBody
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.item.item_areas.base.item_area import ItemArea
+from core.world.exceptions import GameError
+
 import random
 from typing import Dict, Callable, Iterator, Tuple
 
@@ -186,7 +188,7 @@ class WorldService(BaseService):
 
     def _randomly_place_obj_in_rect(self, rect_pos: Point, rect_size: Size, obj_size: Size, padding: int = 10):
         if obj_size.width + 2 * padding > rect_size.width or obj_size.height + 2 * padding > rect_size.height:
-            raise Exception('not corect rect size or obj size')
+            raise GameError('not corect rect size or obj size')
         min_x = rect_pos.x + int(obj_size.width / 2) + padding
         max_x = rect_pos.x + int(rect_size.width - obj_size.width / 2) - padding
         min_y = rect_pos.y + obj_size.height + padding

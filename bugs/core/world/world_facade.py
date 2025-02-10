@@ -23,6 +23,7 @@ from core.world.services.birthers.nest_birther_service import NestBirtherService
 from core.world.services.birthers.ladybug_birther_service import LadybugBirtherService
 from core.world.services.spawners.ladybug_spawner_service import LadybugSpawnerService
 from core.world.services.spawners.bug_corpse_spawner_service import BugCorpseSpawnerService
+from core.world.exceptions import GameError
 
 from typing import Callable, List, Dict
 
@@ -39,7 +40,7 @@ class WorldFacade:
                  nest_birther_service: NestBirtherService, ladybug_birther_service: LadybugBirtherService, ladybug_spawner_service: LadybugSpawnerService,
                  bug_corpse_spawner_service: BugCorpseSpawnerService, world_service: WorldService):
         if WorldFacade._instance != None:
-            raise Exception('WorldFacade is singleton')
+            raise GameError('WorldFacade is singleton')
         else:
             WorldFacade._instance = self
 

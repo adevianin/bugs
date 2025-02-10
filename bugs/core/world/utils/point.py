@@ -1,5 +1,7 @@
 from collections import namedtuple
 from typing import List, Tuple
+from core.world.exceptions import GameError
+
 import math, random
 
 class Point(namedtuple('Point', ['x', 'y'])):
@@ -91,7 +93,7 @@ class Point(namedtuple('Point', ['x', 'y'])):
     @staticmethod
     def generate_random_point_within_circle(center: 'Point', radius: int, min_distance_to_center: int = 0):
         if radius < min_distance_to_center:
-            raise Exception('min distance cannot be greater than radius of circle')
+            raise GameError('min distance cannot be greater than radius of circle')
         radius = random.uniform(min_distance_to_center, radius)
         angle = random.uniform(0, 2 * math.pi)
         x = int(center.x + radius * math.cos(angle))

@@ -25,6 +25,7 @@ from .male.male_ant import MaleAnt
 from .base.guardian_behaviors import GuardianBehaviors
 from core.world.entities.base.ownership_config import OwnershipConfig
 from core.world.entities.world.id_generator import IdGenerator
+from core.world.exceptions import GameError
 
 class AntFactory():
 
@@ -44,7 +45,7 @@ class AntFactory():
             case AntTypes.MALE:    
                 return self._build_new_male_ant(id, name, ownership, genome, position, home_nest, birth_step)
             case _:
-                raise Exception('unknown type of ant')
+                raise GameError('unknown type of ant')
 
     def _build_new_worker_ant(self, id: int, name: str, ownership: OwnershipConfig, genome: Genome, position: Point, home_nest: Nest, birth_step: int):
         new_ant = self.build_worker_ant(id, name, ownership, position, 0, 0, birth_step, 0, home_nest, home_nest, Memory(), True, None, False, genome, GuardianBehaviors.NEST, True)
