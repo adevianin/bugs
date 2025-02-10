@@ -3,6 +3,7 @@ from core.world.entities.ant.base.ant import Ant
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
+from core.world.entities.colony.base.colony import Colony
 from core.world.exceptions import EntityNotFoundError, AccessDeniedError
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 
@@ -33,7 +34,7 @@ class BaseService():
         return nest
     
     def _find_ant_colony_for_owner(self, colony_id: int, owner_id: int) -> AntColony:
-        colony: AntColony = self._world.get_colony_by_id(colony_id)
+        colony: AntColony = self._find_colony_by_id(colony_id)
         if not colony or colony.member_type != EntityTypes.ANT: 
             raise EntityNotFoundError(f'colony(id={colony_id}) not found')
 
@@ -48,3 +49,10 @@ class BaseService():
                 return environment
             
         raise EntityNotFoundError(f'nuptial environment for user(id={owner_id}) not found')
+    
+    def _find_colony_by_id(self, colony_id: int) -> Colony:
+        for colony in self._world.colonies:
+            if colony.id == colony_id:
+                return colony
+        
+        return None
