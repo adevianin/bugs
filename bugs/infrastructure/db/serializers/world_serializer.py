@@ -116,8 +116,7 @@ class WorldSerializer():
                     'thoughts': [self._thought_serializer.serialize(thought) for thought in entity.thoughts]
                 })
 
-        notifications = world.get_all_notifications()
-        json['notifications'] = [self._notification_serializer.serialize(notification) for notification in notifications ]
+        json['notifications'] = [self._notification_serializer.serialize(notification) for notification in world.notifications ]
 
         json['player_stats'] = [self._player_stats_serializer.serialize(player_stats) for player_stats in world.player_stats_list]
 

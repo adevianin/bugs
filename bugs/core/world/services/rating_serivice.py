@@ -1,6 +1,5 @@
 from .base_service import BaseService
 from core.world.usernames_repository_interface import iUsernamesRepository
-from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.world.world import World
 from core.world.entities.world.player_stats import PlayerStats
 from core.world.settings import STEPS_IN_YEAR
@@ -8,11 +7,10 @@ from core.world.entities.action.rating_updated_action import RatingUpdatedAction
 
 class RatingService(BaseService):
 
-    def __init__(self, event_bus: EventEmitter, usernames_repository: iUsernamesRepository):
-        self._event_bus = event_bus
+    def __init__(self, event_bus, usernames_repository: iUsernamesRepository):
+        super().__init__(event_bus)
         self._usernames_repository = usernames_repository
         self._rating = []
-
         self._event_bus.add_listener('step_done', self._on_step_done)
 
     @property

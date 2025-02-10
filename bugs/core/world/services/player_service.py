@@ -17,7 +17,7 @@ class PlayerService(BaseService):
 
     def __init__(self, event_bus: EventEmitter, colony_factory: ColonyFactory, ant_factory: AntFactory, nuptial_env_factory: NuptialEnvironmentFactory, 
                  player_stats_factory: PlayerStatsFactory):
-        self._event_bus = event_bus
+        super().__init__(event_bus)
         self._colony_factory = colony_factory
         self._ant_factory = ant_factory
         self._nuptial_env_factory = nuptial_env_factory

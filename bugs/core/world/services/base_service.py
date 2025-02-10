@@ -6,8 +6,13 @@ from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 from core.world.entities.colony.base.colony import Colony
 from core.world.exceptions import EntityNotFoundError, AccessDeniedError
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
+from core.world.utils.event_emiter import EventEmitter
+from core.world.entities.action.base.action import Action
 
 class BaseService():
+
+    def __init__(self, event_bus: EventEmitter):
+        self._event_bus = event_bus
 
     def set_world(self, world: World):
         self._world = world
@@ -56,3 +61,6 @@ class BaseService():
                 return colony
         
         return None
+    
+    def _emit_action(self, action: Action):
+        self._event_bus.emit('action', action)

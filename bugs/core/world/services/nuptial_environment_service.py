@@ -17,7 +17,8 @@ from typing import List, Dict
 
 class NuptialEnvironmentService(BaseService):
 
-    def __init__(self, colony_factory: ColonyFactory):
+    def __init__(self, event_bus, colony_factory: ColonyFactory):
+        super().__init__(event_bus)
         self._colony_factory = colony_factory
 
     def found_new_colony(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point, colony_name: str):

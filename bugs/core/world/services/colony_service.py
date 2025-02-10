@@ -1,7 +1,6 @@
 from .base_service import BaseService
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.base.entity_types import EntityTypes
-from core.world.entities.world.world import World
 from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
@@ -18,7 +17,8 @@ from typing import Callable
 
 class ColonyService(BaseService):
 
-    def __init__(self, operation_factory: OperationFactory):
+    def __init__(self, event_bus, operation_factory: OperationFactory):
+        super().__init__(event_bus)
         self._operation_factory = operation_factory
 
     def add_egg(self, user_id: int, nest_id: int, name: str, is_fertilized: bool):

@@ -24,8 +24,9 @@ class WorldService(BaseService):
 
     CHUNK_SIZE = Size(1000, 1000)
 
-    def __init__(self, world_factory: WorldFactory, map_factory: MapFactory, colony_factory: ColonyFactory, climate_factory: ClimateFactory, tree_factory: TreeFactory, 
-                 item_area_factory: ItemAreaFactory, item_source_factory: ItemSourceFactory):
+    def __init__(self, event_bus, world_factory: WorldFactory, map_factory: MapFactory, colony_factory: ColonyFactory, climate_factory: ClimateFactory, 
+                 tree_factory: TreeFactory, item_area_factory: ItemAreaFactory, item_source_factory: ItemSourceFactory):
+        super().__init__(event_bus)
         self._world_factory = world_factory
         self._map_factory = map_factory
         self._colony_factory = colony_factory

@@ -2,7 +2,6 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.map.map import Map
 from .world import World
 from core.world.entities.colony.base.colony import Colony
-from core.world.entities.base.entity_collection import EntityCollection
 from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
 from core.world.entities.ant.ant_factory import AntFactory
 from core.world.entities.item.items.item_factory import ItemFactory
@@ -16,7 +15,6 @@ from core.world.entities.climate.climate import Climate
 from .sensor_handlers.visual_sensor_handler import VisualSensorHandler
 from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
 from .notification.notifications.notification import Notification
-from .notification.notification_manager import NotificationManager
 from core.world.entities.colony.base.colony_relations_manager import ColonyRelationsManager
 from .player_stats import PlayerStats
 from core.world.entities.ladybug.ladybug_factory import LadybugFactory
@@ -56,9 +54,8 @@ class WorldFactory():
         }
         managers = {
             'colony_relations_manager': ColonyRelationsManager(self._event_bus, colony_relations_table),
-            'notification_manager': NotificationManager(self._event_bus, notifications)
         }
 
-        return World(map, self._event_bus, colonies, birthers, spawners, nuptial_environments, 
+        return World(map, self._event_bus, colonies, birthers, spawners, nuptial_environments, notifications,
                     player_stats_list, climate, sensor_handlers, current_step, managers, id_generator, self._game_logger)
     

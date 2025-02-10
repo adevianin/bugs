@@ -78,6 +78,7 @@ from core.world.services.nuptial_environment_service import NuptialEnvironmentSe
 from core.world.services.ant_service import AntService
 from core.world.services.rating_serivice import RatingService
 from core.world.services.world_service import WorldService
+from core.world.services.notification_serivce import NotificationService
 
 from infrastructure.websocket.serializers.world_client_serializer import WorldClientSerializer
 from infrastructure.websocket.serializers.colony_client_serializer import ColonyClientSerializer
@@ -187,14 +188,16 @@ def init():
     world_repository = WorldRepository(world_data_repository, world_serializer, world_deserializer)
     usernames_repository = UsernamesRepository()
 
-    colony_service = ColonyService(operation_factory)
+    colony_service = ColonyService(event_bus, operation_factory)
     player_service = PlayerService(event_bus, colony_factory, ant_factory, nuptial_environment_factory, player_stats_factory)
-    nuptial_environment_service = NuptialEnvironmentService(colony_factory)
-    ant_service = AntService()
+    nuptial_environment_service = NuptialEnvironmentService(event_bus, colony_factory)
+    ant_service = AntService(event_bus)
     rating_service = RatingService(event_bus, usernames_repository)
-    world_service = WorldService(world_factory, map_factory, colony_factory, climate_factory, tree_factory, item_area_factory, item_source_factory)
+    notification_service = NotificationService(event_bus)
+    world_service = WorldService(event_bus, world_factory, map_factory, colony_factory, climate_factory, tree_factory, item_area_factory, item_source_factory)
 
-    world_facade = WorldFacade(event_bus, world_repository, colony_service, player_service, nuptial_environment_service, ant_service, rating_service, world_service)
+    world_facade = WorldFacade(event_bus, world_repository, colony_service, player_service, nuptial_environment_service, ant_service, rating_service, 
+                               notification_service, world_service)
 
     stats_client_serializer = StatsClientSerializer()
     genes_client_serializer = GenesClientSerializer()

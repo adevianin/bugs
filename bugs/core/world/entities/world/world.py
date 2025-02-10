@@ -9,7 +9,6 @@ from core.world.entities.ant.base.nuptial_environment.nuptial_environment import
 from core.world.entities.climate.climate import Climate
 from .sensor_handlers.visual_sensor_handler import VisualSensorHandler
 from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
-from .notification.notification_manager import NotificationManager
 from .notification.notifications.notification import Notification
 from .player_stats import PlayerStats
 from .season_types import SeasonTypes
@@ -23,9 +22,9 @@ import time
 
 class World():
 
-    def __init__(self, map: Map, event_bus: EventEmitter, colonies: List[Colony],  
-                 birthers, spawners, nuptial_environments: List[NuptialEnvironment], player_stats_list: List[PlayerStats], climate: Climate, 
-                 sensor_handlers, current_step: int, managers, id_generator: IdGenerator, logger: Logger):
+    def __init__(self, map: Map, event_bus: EventEmitter, colonies: List[Colony], birthers, spawners, nuptial_environments: List[NuptialEnvironment], 
+                 notifications: List[Notification], player_stats_list: List[PlayerStats], climate: Climate, sensor_handlers, current_step: int, 
+                 managers, id_generator: IdGenerator, logger: Logger):
         self.lock = threading.Lock()
         self._map = map
         self._event_bus = event_bus
@@ -38,11 +37,11 @@ class World():
         self._birthers = birthers
         self._spawners = spawners
         self._nuptial_environments = nuptial_environments
+        self._notifications = notifications
         self._player_stats_list = player_stats_list
         self._climate = climate
         self._visual_sensor_handler: VisualSensorHandler = sensor_handlers['visual_sensor_handler']
         self._temperature_sensor_handler: TemperatureSensorHandler = sensor_handlers['temperature_sensor_handler']
-        self._notification_manager: NotificationManager = managers['notification_manager']
         self._id_generator = id_generator
         self._logger = logger
 
@@ -86,6 +85,10 @@ class World():
         return self._nuptial_environments
     
     @property
+    def notifications(self) -> List[Notification]:
+        return self._notifications
+    
+    @property
     def player_stats_list(self):
         return self._player_stats_list
     
@@ -101,11 +104,8 @@ class World():
     def _current_year(self):
         return self._current_step // STEPS_IN_YEAR
     
-    def get_all_notifications(self) -> List[Notification]:
-        return self._notification_manager.get_all_notifications()
-    
-    def get_notifications_for_owner(self, owner_id: int):
-        return self._notification_manager.get_notifications_for_owner(owner_id)
+    def add_new_notification(self, notification: Notification):
+        self._notifications.append(notification)
     
     def add_new_nuptial_environment(self, nuptial_environment: NuptialEnvironment):
         self._nuptial_environments.append(nuptial_environment)
