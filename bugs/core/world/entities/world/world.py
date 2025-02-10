@@ -4,7 +4,6 @@ from core.world.settings import STEP_TIME, STEPS_IN_YEAR, SPRING_START_YEAR_STEP
 from core.world.entities.colony.base.colony import Colony
 from core.world.entities.colony.base.colony_relations_manager import ColonyRelationsManager
 from core.world.entities.base.entity_types import EntityTypes
-from core.world.entities.action.colony_born_action import ColonyBornAction
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 from core.world.entities.climate.climate import Climate
 from .sensor_handlers.visual_sensor_handler import VisualSensorHandler
@@ -116,8 +115,6 @@ class World():
     
     def add_new_colony(self, colony: Colony):
         self._colonies.append(colony)
-        self._event_bus.emit('colony_born', colony)
-        self._event_bus.emit('action', ColonyBornAction.build(colony))
 
     def stop(self):
         if (not self._is_world_running): 

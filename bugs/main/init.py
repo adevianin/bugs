@@ -188,9 +188,9 @@ def init():
     world_repository = WorldRepository(world_data_repository, world_serializer, world_deserializer)
     usernames_repository = UsernamesRepository()
 
-    colony_service = ColonyService(event_bus, operation_factory)
+    colony_service = ColonyService(event_bus, colony_factory, operation_factory)
     player_service = PlayerService(event_bus, colony_factory, ant_factory, nuptial_environment_factory, player_stats_factory)
-    nuptial_environment_service = NuptialEnvironmentService(event_bus, colony_factory)
+    nuptial_environment_service = NuptialEnvironmentService(event_bus)
     ant_service = AntService(event_bus)
     rating_service = RatingService(event_bus, usernames_repository)
     notification_service = NotificationService(event_bus)

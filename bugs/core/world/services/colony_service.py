@@ -3,23 +3,52 @@ from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.queen.queen_ant import QueenAnt
-from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 from core.world.entities.colony.colonies.ant_colony.operation.operation_factory import OperationFactory
+from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.utils.point import Point
 from core.world.entities.item.items.base.item import Item 
 from core.world.entities.item.items.base.item_types import ItemTypes 
-from core.world.settings import NEW_EGG_FOOD_COST, LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT, MAX_DISTANCE_TO_OPERATION_TARGET
+from core.world.settings import (NEW_EGG_FOOD_COST, LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT, 
+                                 MAX_DISTANCE_TO_OPERATION_TARGET, FOOD_IN_NEW_COLONY_MAIN_NEST)
 from core.world.messages import Messages
 from core.world.utils.remove_non_alphanumeric_and_spaces import remove_non_alphanumeric_and_spaces
 from core.world.exceptions import GameRuleError, EntityNotFoundError
+from core.world.entities.ant.base.ant import Ant
+from core.world.entities.action.colony_born_action import ColonyBornAction
 
 from typing import Callable
 
 class ColonyService(BaseService):
 
-    def __init__(self, event_bus, operation_factory: OperationFactory):
+    def __init__(self, event_bus, colony_factory: ColonyFactory, operation_factory: OperationFactory):
         super().__init__(event_bus)
+        self._colony_factory = colony_factory
         self._operation_factory = operation_factory
+
+    def found_new_colony(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point, colony_name: str):
+        ant: Ant = self._find_ant_for_owner(queen_id, user_id)
+        if ant.ant_type != AntTypes.QUEEN:
+            raise EntityNotFoundError(f'queen(id={queen_id}) not found')
+        queen: QueenAnt = ant
+        
+        nuptial_environment = self._find_nuptial_environment_for_owner(user_id)
+        male = nuptial_environment.get_male(nuptial_male_id)
+        queen.fertilize(male)
+
+        colony_name = remove_non_alphanumeric_and_spaces(colony_name)
+        new_colony = self._colony_factory.build_new_ant_colony(user_id, self._world.map, self._world.colony_relations_table, colony_name)
+        new_colony.add_new_member(queen)
+
+        def on_nest_found(nest: Nest):
+            queen.relocate_to_nest(nest)
+            queen.fly_nuptial_flight_back(nest.position)
+            # queen.build_nest(nest, True)
+            nest.take_calories(FOOD_IN_NEW_COLONY_MAIN_NEST)
+            self._world.add_new_colony(new_colony)
+            self._event_bus.emit('colony_born', new_colony)
+            self._emit_action(ColonyBornAction.build(new_colony)) # found nest before new colony
+
+        queen.found_nest(colony_name, True, nest_building_site, on_nest_found)
 
     def add_egg(self, user_id: int, nest_id: int, name: str, is_fertilized: bool):
         nest = self._find_nest_for_owner(nest_id, user_id)

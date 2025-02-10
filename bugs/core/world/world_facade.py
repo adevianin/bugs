@@ -141,7 +141,7 @@ class WorldFacade:
 
     def found_colony_command(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point, colony_name: str):
         with self._world.lock:
-            self._nuptial_environment_service.found_new_colony(user_id, queen_id, nuptial_male_id, nest_building_site, colony_name)
+            self._colony_service.found_new_colony(user_id, queen_id, nuptial_male_id, nest_building_site, colony_name)
 
     def born_new_antara_command(self, user_id: int):
         with self._world.lock:
