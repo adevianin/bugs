@@ -135,11 +135,6 @@ class World():
         
         return None
     
-    def get_ant_colonies_by_owner(self, owner_id: int):
-        ant_colonies = self.ant_colonies
-        owner_filter: Callable[[AntColony], bool] = lambda colony: colony.owner_id == owner_id
-        return list(filter(owner_filter, ant_colonies))
-    
     def get_nuptial_environment_by_owner(self, owner_id: int) -> NuptialEnvironment:
         for environment in self._nuptial_environments:
             if environment.owner_id == owner_id:
