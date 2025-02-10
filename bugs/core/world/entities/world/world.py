@@ -126,13 +126,6 @@ class World():
         
         return None
     
-    def get_nuptial_environment_by_owner(self, owner_id: int) -> NuptialEnvironment:
-        for environment in self._nuptial_environments:
-            if environment.owner_id == owner_id:
-                return environment
-            
-        return None
-    
     def stop(self):
         if (not self._is_world_running): 
             return

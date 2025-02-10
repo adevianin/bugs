@@ -177,8 +177,7 @@ class WorldFacade:
         return self._nuptial_environment_service.get_specie_for(user_id)
     
     def get_nuptial_males_for_client(self, user_id: int):
-        nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
-        return nuptial_environment.males
+        return self._nuptial_environment_service.get_nuptial_males_for_owner(user_id)
     
     def get_notifications_for_client(self, user_id: int):
         return self._world.get_notifications_for_owner(user_id)

@@ -43,7 +43,7 @@ class PlayerService(BaseService):
         def on_antara_born(queen: QueenAnt):
             queen.fly_nuptial_flight()
 
-        nuptial_env = self._world.get_nuptial_environment_by_owner(player_id)
+        nuptial_env = self._find_nuptial_environment_for_owner(player_id)
         nuptial_env.born_antara(on_antara_born)
 
     def _build_starter_pack_for_player(self, player_id: int):
@@ -54,7 +54,7 @@ class PlayerService(BaseService):
         self._world.add_new_player_stats(player_stats)
 
     def _check_starter_pack_for_player(self, player_id: int) -> bool:
-        nuptial_env = self._world.get_nuptial_environment_by_owner(player_id)
+        nuptial_env = self._find_nuptial_environment_for_owner(player_id)
         return bool(nuptial_env)
     
     def _get_ant_colonies_by_owner(self, owner_id: int):

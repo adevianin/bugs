@@ -21,7 +21,7 @@ class AntService(BaseService):
             male: MaleAnt = ant
             is_success = male.fly_nuptial_flight()
             if is_success:
-                nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
+                nuptial_environment = self._find_nuptial_environment_for_owner(user_id)
                 nuptial_environment.fly_in_male(male)
             
     def change_ant_guardian_behavior(self, user_id: int, ant_id: int, guaridan_behavior: GuardianBehaviors):

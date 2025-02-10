@@ -4,6 +4,7 @@ from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.nest.nest import Nest
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 from core.world.exceptions import EntityNotFoundError, AccessDeniedError
+from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 
 class BaseService():
 
@@ -40,3 +41,10 @@ class BaseService():
             raise AccessDeniedError(f'user(id={owner_id}) doesn\'t have colony(id={colony.id})')
         
         return colony
+    
+    def _find_nuptial_environment_for_owner(self, owner_id: int) -> NuptialEnvironment:
+        for environment in self._world.nuptial_environments:
+            if environment.owner_id == owner_id:
+                return environment
+            
+        raise EntityNotFoundError(f'nuptial environment for user(id={owner_id}) not found')

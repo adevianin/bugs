@@ -26,7 +26,7 @@ class NuptialEnvironmentService(BaseService):
             raise EntityNotFoundError(f'queen(id={queen_id}) not found')
         queen: QueenAnt = ant
         
-        nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
+        nuptial_environment = self._find_nuptial_environment_for_owner(user_id)
         male = nuptial_environment.get_male(nuptial_male_id)
         queen.fertilize(male)
 
@@ -46,12 +46,16 @@ class NuptialEnvironmentService(BaseService):
         queen.found_nest(colony_name, True, nest_building_site, on_nest_found)
 
     def get_specie_for(self, user_id: int) -> Specie:
-        nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
+        nuptial_environment = self._find_nuptial_environment_for_owner(user_id)
 
         return nuptial_environment.specie
     
+    def get_nuptial_males_for_owner(self, user_id: int):
+        nuptial_environment = self._find_nuptial_environment_for_owner(user_id)
+        return nuptial_environment.males
+    
     def change_specie_schema(self, user_id: int, specie_schema: Dict[ChromosomeTypes, List[str]]):
-        nuptial_environment = self._world.get_nuptial_environment_by_owner(user_id)
+        nuptial_environment = self._find_nuptial_environment_for_owner(user_id)
         if nuptial_environment.specie.validate_schema(specie_schema):
             nuptial_environment.specie.apply_schema(specie_schema)
             return None
