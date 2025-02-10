@@ -2,8 +2,6 @@ from core.world.entities.map.map import Map
 from core.world.utils.event_emiter import EventEmitter
 from core.world.settings import STEP_TIME, STEPS_IN_YEAR, SPRING_START_YEAR_STEP, SUMMER_START_YEAR_STEP, AUTUMN_START_YEAR_STEP, WINTER_START_YEAR_STEP
 from core.world.entities.colony.base.colony import Colony
-from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
-from core.world.entities.base.entity_collection import EntityCollection
 from core.world.entities.colony.base.colony_relations_manager import ColonyRelationsManager
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.action.colony_born_action import ColonyBornAction
@@ -102,13 +100,6 @@ class World():
     @property
     def _current_year(self):
         return self._current_step // STEPS_IN_YEAR
-    
-    def get_player_stats_for_owner(self, owner_id: int) -> PlayerStats:
-        for player_stats in self._player_stats_list:
-            if player_stats.owner_id == owner_id:
-                return player_stats
-            
-        return None
     
     def get_all_notifications(self) -> List[Notification]:
         return self._notification_manager.get_all_notifications()

@@ -1,15 +1,12 @@
+from .base_service import BaseService
 from core.world.usernames_repository_interface import iUsernamesRepository
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.world.world import World
-from core.world.entities.base.entity_types import EntityTypes
-from core.world.entities.ant.base.ant import Ant
-from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
+from core.world.entities.world.player_stats import PlayerStats
 from core.world.settings import STEPS_IN_YEAR
 from core.world.entities.action.rating_updated_action import RatingUpdatedAction
-from typing import List
-from collections import Counter
 
-class RatingService():
+class RatingService(BaseService):
 
     def __init__(self, event_bus: EventEmitter, usernames_repository: iUsernamesRepository):
         self._event_bus = event_bus
@@ -21,9 +18,9 @@ class RatingService():
     @property
     def rating(self):
         return self._rating
-
+    
     def set_world(self, world: World):
-        self._world = world
+        super().set_world(world)
         self._generate_rating()
 
     def _on_step_done(self, step_number: int, season):
@@ -36,7 +33,7 @@ class RatingService():
         stats = []
         for user_data in user_datas:
             id = user_data['id']
-            player_stats = self._world.get_player_stats_for_owner(id)
+            player_stats = self._get_player_stats_for_owner(id)
             stat = {
                 'id': id,
                 'username': user_data['username'],
@@ -54,4 +51,11 @@ class RatingService():
             place += 1
 
         self._rating = stats
+
+    def _get_player_stats_for_owner(self, owner_id: int) -> PlayerStats:
+        for player_stats in self._world.player_stats_list:
+            if player_stats.owner_id == owner_id:
+                return player_stats
+            
+        return None
         
