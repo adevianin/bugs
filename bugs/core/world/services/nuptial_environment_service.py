@@ -1,3 +1,4 @@
+from .base_service import BaseService
 from core.world.entities.world.world import World
 from core.world.utils.point import Point
 from core.world.entities.ant.queen.queen_ant import QueenAnt
@@ -14,17 +15,14 @@ from core.world.messages import Messages
 
 from typing import List, Dict
 
-class NuptialEnvironmentService():
+class NuptialEnvironmentService(BaseService):
 
     def __init__(self, colony_factory: ColonyFactory):
         self._colony_factory = colony_factory
 
-    def set_world(self, world: World):
-        self._world = world
-
     def found_new_colony(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point, colony_name: str):
-        ant: Ant = self._world.find_ant_for_owner(queen_id, user_id)
-        if ant.ant_type != AntTypes:
+        ant: Ant = self._find_ant_for_owner(queen_id, user_id)
+        if ant.ant_type != AntTypes.QUEEN:
             raise EntityNotFoundError(f'queen(id={queen_id}) not found')
         queen: QueenAnt = ant
         
