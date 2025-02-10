@@ -1,3 +1,4 @@
+from .base_service import BaseService
 from core.world.entities.world.world_factory import WorldFactory
 from core.world.entities.world.world import World
 from core.world.entities.base.entity_collection import EntityCollection
@@ -19,7 +20,7 @@ from core.world.entities.item.item_areas.base.item_area import ItemArea
 import random
 from typing import Dict, Callable, Iterator, Tuple
 
-class WorldService():
+class WorldService(BaseService):
 
     CHUNK_SIZE = Size(1000, 1000)
 
@@ -32,9 +33,6 @@ class WorldService():
         self._tree_factory = tree_factory
         self._item_area_factory = item_area_factory
         self._item_source_factory = item_source_factory
-
-    def set_world(self, world: World):
-        self._world = world
 
     def expand_current_map(self, expand_chunk_rows: int, expand_chunk_cols: int):
         if self._world.is_world_running:
