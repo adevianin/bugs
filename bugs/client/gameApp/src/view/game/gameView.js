@@ -24,13 +24,13 @@ class GameView extends BaseHTMLView {
         this._pixiApp.resizeTo = canvasContainerEl;
         canvasContainerEl.appendChild(this._pixiApp.canvas);
 
-        this._entityContainer = new PIXI.Container();
-        this._pixiApp.stage.addChild(this._entityContainer);
+        this._worldContainer = new PIXI.Container();
+        this._pixiApp.stage.addChild(this._worldContainer);
 
         let worldSize = this.$domainFacade.getWorldSize();
-        this._camera = new Camera(this._entityContainer, this._pixiApp.canvas, worldSize[0], worldSize[1]);
+        this._camera = new Camera(this._worldContainer, this._pixiApp.canvas, worldSize[0], worldSize[1]);
 
-        this._worldView = new WorldView(this._entityContainer);
+        this._worldView = new WorldView(this._worldContainer);
 
         this._pixiApp.resize();
     }

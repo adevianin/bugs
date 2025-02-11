@@ -4216,13 +4216,13 @@ class GameView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Base
         this._pixiApp.resizeTo = canvasContainerEl;
         canvasContainerEl.appendChild(this._pixiApp.canvas);
 
-        this._entityContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._pixiApp.stage.addChild(this._entityContainer);
+        this._worldContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this._pixiApp.stage.addChild(this._worldContainer);
 
         let worldSize = this.$domainFacade.getWorldSize();
-        this._camera = new _camera__WEBPACK_IMPORTED_MODULE_3__.Camera(this._entityContainer, this._pixiApp.canvas, worldSize[0], worldSize[1]);
+        this._camera = new _camera__WEBPACK_IMPORTED_MODULE_3__.Camera(this._worldContainer, this._pixiApp.canvas, worldSize[0], worldSize[1]);
 
-        this._worldView = new _world__WEBPACK_IMPORTED_MODULE_4__.WorldView(this._entityContainer);
+        this._worldView = new _world__WEBPACK_IMPORTED_MODULE_4__.WorldView(this._worldContainer);
 
         this._pixiApp.resize();
     }
@@ -7295,7 +7295,6 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._operationCreator = null;
         this._toggleCreatorMode(false);
         this.$eventBus.emit('deactivateMapPickerRequest');
-        console.log('hide markers from operation creating');
         this.$eventBus.emit('hideMarkersRequest');
         this.$eventBus.emit('stopOperationCreating');
     }
@@ -7544,7 +7543,6 @@ class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODUL
 
     _clearOperationSelect() {
         if (this._isOperationSelected) {
-            console.log('hidemarkers from operation list');
             this._selectedOperation = null;
             this._renderSelectedOperation();
             this.$eventBus.emit('hideMarkersRequest');
