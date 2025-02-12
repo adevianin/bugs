@@ -3935,9 +3935,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class AppView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
-    constructor(el, pixiApp) {
+    constructor(el) {
         super(el);
-        this._pixiApp = pixiApp;
 
         this.$domainFacade.events.on('initStepDone', this._onInitStepDone.bind(this));
     }
@@ -3946,7 +3945,7 @@ class AppView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLVi
         this._el.innerHTML = _appTmpl_html__WEBPACK_IMPORTED_MODULE_3__["default"];
 
         let gameEl = this._el.querySelector('[data-game]');
-        this._gameView = new _game_gameView__WEBPACK_IMPORTED_MODULE_2__.GameView(gameEl, this._pixiApp);
+        this._gameView = new _game_gameView__WEBPACK_IMPORTED_MODULE_2__.GameView(gameEl);
     }
 
     _onInitStepDone() {
@@ -3976,6 +3975,7 @@ class BaseGraphicView {
     static popupManager;
     static domainFacade;
     static eventBus;
+    static pixiApp;
 
     static useTextureManager(textureManager) {
         BaseGraphicView.textureManager = textureManager;
@@ -3993,6 +3993,10 @@ class BaseGraphicView {
         BaseGraphicView.eventBus = eventBus;
     }
 
+    static usePixiApp(pixiApp) {
+        BaseGraphicView.pixiApp = pixiApp;
+    }
+
     get $domainFacade() {
         return BaseGraphicView.domainFacade;
     }
@@ -4003,6 +4007,10 @@ class BaseGraphicView {
 
     get $eventBus() {
         return BaseGraphicView.eventBus;
+    }
+
+    get $pixiApp() {
+        return BaseGraphicView.pixiApp;
     }
 
     remove(){
@@ -4033,6 +4041,8 @@ class BaseHTMLView {
 
     static domainFacade;
     static eventBus;
+    static messages;
+    static pixiApp;
 
     static useDomainFacade(domainFacade) {
         BaseHTMLView.domainFacade = domainFacade;
@@ -4044,6 +4054,10 @@ class BaseHTMLView {
 
     static useMessages(messages) {
         BaseHTMLView.messages = messages;
+    }
+
+    static usePixiApp(pixiApp) {
+        BaseHTMLView.pixiApp = pixiApp;
     }
 
     constructor(el) {
@@ -4065,6 +4079,10 @@ class BaseHTMLView {
 
     get $messages() {
         return BaseHTMLView.messages;
+    }
+
+    get $pixiApp() {
+        return BaseHTMLView.pixiApp;
     }
 
     toggle(isEnabled) {
@@ -4190,6 +4208,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _world__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./world */ "./gameApp/src/view/game/world/index.js");
 /* harmony import */ var _panel__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./panel */ "./gameApp/src/view/game/panel/index.js");
 /* harmony import */ var _gameTmpl_html__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./gameTmpl.html */ "./gameApp/src/view/game/gameTmpl.html");
+/* harmony import */ var _mapPickers_mapPickerMasterView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./mapPickers/mapPickerMasterView */ "./gameApp/src/view/game/mapPickers/mapPickerMasterView.js");
+
 
 
 
@@ -4200,9 +4220,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class GameView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
 
-    constructor(el, pixiApp) {
+    constructor(el) {
         super(el);
-        this._pixiApp = pixiApp;
 
         this._render();
     }
@@ -4210,21 +4229,313 @@ class GameView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Base
     _render() {
         this._el.innerHTML = _gameTmpl_html__WEBPACK_IMPORTED_MODULE_6__["default"];
 
-        this._panelView = new _panel__WEBPACK_IMPORTED_MODULE_5__.Panel(this._el.querySelector('[data-panel]'));
+        new _panel__WEBPACK_IMPORTED_MODULE_5__.Panel(this._el.querySelector('[data-panel]'));
         
         let canvasContainerEl = this._el.querySelector('[data-canvas-container]');
-        this._pixiApp.resizeTo = canvasContainerEl;
-        canvasContainerEl.appendChild(this._pixiApp.canvas);
+        this.$pixiApp.resizeTo = canvasContainerEl;
+        canvasContainerEl.appendChild(this.$pixiApp.canvas);
 
-        this._worldContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this._pixiApp.stage.addChild(this._worldContainer);
-
+        let worldContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this.$pixiApp.stage.addChild(worldContainer);
         let worldSize = this.$domainFacade.getWorldSize();
-        this._camera = new _camera__WEBPACK_IMPORTED_MODULE_3__.Camera(this._worldContainer, this._pixiApp.canvas, worldSize[0], worldSize[1]);
+        new _camera__WEBPACK_IMPORTED_MODULE_3__.Camera(worldContainer, this.$pixiApp.canvas, worldSize[0], worldSize[1]);
+        new _world__WEBPACK_IMPORTED_MODULE_4__.WorldView(worldContainer);
 
-        this._worldView = new _world__WEBPACK_IMPORTED_MODULE_4__.WorldView(this._worldContainer);
+        let mapPickerBorderContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        this.$pixiApp.stage.addChild(mapPickerBorderContainer);
+        let mapPickerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        worldContainer.addChild(mapPickerContainer);
+        new _mapPickers_mapPickerMasterView__WEBPACK_IMPORTED_MODULE_7__.MapPickerMasterView(mapPickerContainer, mapPickerBorderContainer);
+        
+        this.$pixiApp.resize();
+    }
 
-        this._pixiApp.resize();
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/game/mapPickers/basePickerView.js":
+/*!************************************************************!*\
+  !*** ./gameApp/src/view/game/mapPickers/basePickerView.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BasePickerView: () => (/* binding */ BasePickerView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
+
+
+class BasePickerView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
+
+    constructor(container) {
+        super();
+        this._container = container;
+
+        this._container.on('pointerdown', this._onClick.bind(this));
+    }
+
+    activate() {
+        this._container.eventMode = 'static';
+        let worldSize = this.$domainFacade.getWorldSize();
+        this._container.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Rectangle(0, 0, worldSize[0], worldSize[1]);
+    }
+
+    deactivate() {
+        this._container.eventMode = 'none'; 
+    }
+
+    _onClick(e) {
+        let point = this._container.toLocal(e.client);
+        this._onPointPick({x: point.x, y: point.y});
+    }
+
+    _onPointPick(point) {}
+
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/game/mapPickers/borderView.js":
+/*!********************************************************!*\
+  !*** ./gameApp/src/view/game/mapPickers/borderView.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BorderView: () => (/* binding */ BorderView)
+/* harmony export */ });
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
+
+
+
+class BorderView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.BaseGraphicView {
+
+    constructor(container) {
+        super();
+        this._container = container;
+
+        this._render();
+    }
+
+    activate() {
+        this._container.renderable = true;
+    }
+
+    deactivate() {
+        this._container.renderable = false;
+    }
+
+    _render() {
+        this._container.renderable = false;
+        this._renderBorder();
+
+        this.$pixiApp.ticker.add(this._checkIfNeededRerenderBorder.bind(this));
+    }
+
+    _renderBorder() {
+        this._clearBorder();
+        this._size = {
+            width: this.$pixiApp.renderer.width,
+            height: this.$pixiApp.renderer.height
+        }
+        let margin = 3;
+        this._border = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();
+        this._container.addChild(this._border);
+        this._border.setStrokeStyle({
+            color: 0xff0000,
+            width: 4,
+            alignment: 0.5
+        });
+        this._border.moveTo(margin, margin);
+        this._border.lineTo(this._size.width - margin, margin);
+        this._border.lineTo(this._size.width - margin, this._size.height - margin);
+        this._border.lineTo(margin, this._size.height - margin);
+        this._border.lineTo(margin, margin);
+        this._border.stroke();
+    }
+
+    _clearBorder() {
+        if (this._border) {
+            this._container.removeChild(this._border);
+            this._border = null;
+        }
+    }
+
+    _checkIfNeededRerenderBorder() {
+        if (this._container.renderable) { // if activated
+            if (this._size.width != this.$pixiApp.renderer.width || this._size.height != this.$pixiApp.renderer.height) {
+                this._renderBorder();
+            }
+        }
+    }
+
+    
+
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/game/mapPickers/mapPickerMasterView.js":
+/*!*****************************************************************!*\
+  !*** ./gameApp/src/view/game/mapPickers/mapPickerMasterView.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MapPickerMasterView: () => (/* binding */ MapPickerMasterView)
+/* harmony export */ });
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
+/* harmony import */ var _nestPickerView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./nestPickerView */ "./gameApp/src/view/game/mapPickers/nestPickerView.js");
+/* harmony import */ var _positionPickerView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./positionPickerView */ "./gameApp/src/view/game/mapPickers/positionPickerView.js");
+/* harmony import */ var _borderView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./borderView */ "./gameApp/src/view/game/mapPickers/borderView.js");
+
+
+
+
+
+
+class MapPickerMasterView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.BaseGraphicView {
+
+    constructor(container, borderContainer) {
+        super();
+        this._container = container;
+        this._borderContainer = borderContainer;
+
+        this._render();
+
+        this.$eventBus.on('nestPickRequest', this._onNestPickRequest.bind(this));
+        this.$eventBus.on('positionPickRequest', this._onPositionPickRequest.bind(this));
+        this.$eventBus.on('deactivateMapPickerRequest', this._onPickerDeactivateRequest.bind(this));
+    }
+
+    _render() {
+        let positionPickerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+        this._container.addChild(positionPickerContainer);
+        this._positionPickerView = new _positionPickerView__WEBPACK_IMPORTED_MODULE_3__.PositionPickerView(positionPickerContainer);
+
+        let nestPickerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+        this._container.addChild(nestPickerContainer);
+        this._nestPickerView = new _nestPickerView__WEBPACK_IMPORTED_MODULE_2__.NestPickerView(nestPickerContainer);
+
+        this._borderView = new _borderView__WEBPACK_IMPORTED_MODULE_4__.BorderView(this._borderContainer);
+    }
+
+    _onNestPickRequest(excludeColonyId, callback) {
+        this._nestPickerView.activate(excludeColonyId, nest => {
+            callback(nest);
+            this._deactivateAll();
+        });
+        this._borderView.activate();
+    }
+
+    _onPositionPickRequest(callback) {
+        this._positionPickerView.activate(point => {
+            callback(point);
+            this._deactivateAll();
+        });
+        this._borderView.activate();
+    }
+
+    _onPickerDeactivateRequest() {
+        this._deactivateAll();
+    }
+
+    _deactivateAll() {
+        this._nestPickerView.deactivate();
+        this._positionPickerView.deactivate();
+        this._borderView.deactivate();
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/game/mapPickers/nestPickerView.js":
+/*!************************************************************!*\
+  !*** ./gameApp/src/view/game/mapPickers/nestPickerView.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   NestPickerView: () => (/* binding */ NestPickerView)
+/* harmony export */ });
+/* harmony import */ var _basePickerView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./basePickerView */ "./gameApp/src/view/game/mapPickers/basePickerView.js");
+
+
+class NestPickerView extends _basePickerView__WEBPACK_IMPORTED_MODULE_0__.BasePickerView {
+
+    constructor(container) {
+        super(container);
+    }
+
+    activate(excludeColonyId, callback) {
+        super.activate();
+        this._callback = callback;
+        this._excludeColonyId = excludeColonyId;
+    }
+
+    _onPointPick(point) {
+        let nest = this.$domainFacade.findNearestNest(point, this._excludeColonyId);
+
+        if (nest) {
+            this._callback(nest);
+        }
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/game/mapPickers/positionPickerView.js":
+/*!****************************************************************!*\
+  !*** ./gameApp/src/view/game/mapPickers/positionPickerView.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PositionPickerView: () => (/* binding */ PositionPickerView)
+/* harmony export */ });
+/* harmony import */ var _basePickerView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./basePickerView */ "./gameApp/src/view/game/mapPickers/basePickerView.js");
+
+
+class PositionPickerView extends _basePickerView__WEBPACK_IMPORTED_MODULE_0__.BasePickerView {
+
+    constructor(container) {
+        super(container);
+    }
+
+    activate(callback) {
+        super.activate();
+        this._callback = callback;
+    }
+
+    _onPointPick(point) {
+        this._callback(point);
     }
 
 }
@@ -9569,136 +9880,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./gameApp/src/view/game/world/mapPickers/basePickerView.js":
-/*!******************************************************************!*\
-  !*** ./gameApp/src/view/game/world/mapPickers/basePickerView.js ***!
-  \******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   BasePickerView: () => (/* binding */ BasePickerView)
-/* harmony export */ });
-/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-
-
-
-class BasePickerView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__.BaseGraphicView {
-
-    constructor(container) {
-        super();
-        this._container = container;
-
-        this._container.on('pointerdown', this._onClick.bind(this));
-        this.$eventBus.on('deactivateMapPickerRequest', this._deactivate.bind(this));
-    }
-
-    _activate() {
-        this._container.eventMode = 'static';
-        let worldSize = this.$domainFacade.getWorldSize();
-        this._container.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Rectangle(0, 0, worldSize[0], worldSize[1]);
-    }
-
-    _deactivate() {
-        this._container.eventMode = 'none'; 
-    }
-
-    _onClick(e) {
-        let point = this._container.toLocal(e.client);
-        this._onPointPick({x: point.x, y: point.y});
-    }
-
-    _onPointPick(point) {}
-
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/view/game/world/mapPickers/nestPickerView.js":
-/*!******************************************************************!*\
-  !*** ./gameApp/src/view/game/world/mapPickers/nestPickerView.js ***!
-  \******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   NestPickerView: () => (/* binding */ NestPickerView)
-/* harmony export */ });
-/* harmony import */ var _basePickerView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./basePickerView */ "./gameApp/src/view/game/world/mapPickers/basePickerView.js");
-
-
-class NestPickerView extends _basePickerView__WEBPACK_IMPORTED_MODULE_0__.BasePickerView {
-
-    constructor(container) {
-        super(container);
-
-        this.$eventBus.on('nestPickRequest', this._onPickRequest.bind(this));
-    }
-
-    _onPickRequest(excludeColonyId, callback) {
-        this._callback = callback;
-        this._excludeColonyId = excludeColonyId;
-        this._activate();
-    }
-
-    _onPointPick(point) {
-        let nest = this.$domainFacade.findNearestNest(point, this._excludeColonyId);
-
-        if (nest) {
-            this._callback(nest);
-            this._deactivate();
-        }
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/view/game/world/mapPickers/positionPickerView.js":
-/*!**********************************************************************!*\
-  !*** ./gameApp/src/view/game/world/mapPickers/positionPickerView.js ***!
-  \**********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   PositionPickerView: () => (/* binding */ PositionPickerView)
-/* harmony export */ });
-/* harmony import */ var _basePickerView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./basePickerView */ "./gameApp/src/view/game/world/mapPickers/basePickerView.js");
-
-
-class PositionPickerView extends _basePickerView__WEBPACK_IMPORTED_MODULE_0__.BasePickerView {
-
-    constructor(container) {
-        super(container);
-
-        this.$eventBus.on('positionPickRequest', this._onPickRequest.bind(this));
-    }
-
-    _onPickRequest(callback) {
-        this._callback = callback;
-        this._activate();
-    }
-
-    _onPointPick(point) {
-        this._callback(point);
-        this._deactivate();
-    }
-
-}
-
-
-
-/***/ }),
-
 /***/ "./gameApp/src/view/game/world/markersDemonstratorView.js":
 /*!****************************************************************!*\
   !*** ./gameApp/src/view/game/world/markersDemonstratorView.js ***!
@@ -9861,9 +10042,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entitiesViews_itemAreaView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./entitiesViews/itemAreaView */ "./gameApp/src/view/game/world/entitiesViews/itemAreaView.js");
 /* harmony import */ var _entitiesViews_treeView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entitiesViews/treeView */ "./gameApp/src/view/game/world/entitiesViews/treeView.js");
 /* harmony import */ var _entitiesViews_ladybugView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entitiesViews/ladybugView */ "./gameApp/src/view/game/world/entitiesViews/ladybugView.js");
-/* harmony import */ var _mapPickers_positionPickerView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./mapPickers/positionPickerView */ "./gameApp/src/view/game/world/mapPickers/positionPickerView.js");
-/* harmony import */ var _mapPickers_nestPickerView__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./mapPickers/nestPickerView */ "./gameApp/src/view/game/world/mapPickers/nestPickerView.js");
-/* harmony import */ var _markersDemonstratorView__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./markersDemonstratorView */ "./gameApp/src/view/game/world/markersDemonstratorView.js");
+/* harmony import */ var _markersDemonstratorView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./markersDemonstratorView */ "./gameApp/src/view/game/world/markersDemonstratorView.js");
 
 
 
@@ -9874,8 +10053,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
+// import { PositionPickerView } from '../mapPickers/positionPickerView';
+// import { NestPickerView } from '../mapPickers/nestPickerView';
 
 
 class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.BaseGraphicView {
@@ -9907,8 +10086,8 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._itemAreaContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._itemSourceContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._treesContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
-        this._positionPickerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
-        this._nestPickerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+        // this._positionPickerContainer = new PIXI.Container();
+        // this._nestPickerContainer = new PIXI.Container();
         this._markerDemonstratorContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
 
         this._container.addChild(this._bg);
@@ -9919,14 +10098,14 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._container.addChild(this._bigContainer);
         this._container.addChild(this._itemSourceContainer);
         this._container.addChild(this._treesContainer);
-        this._container.addChild(this._positionPickerContainer);
-        this._container.addChild(this._nestPickerContainer);
+        // this._container.addChild(this._positionPickerContainer);
+        // this._container.addChild(this._nestPickerContainer);
         this._container.addChild(this._itemAreaContainer);
         this._container.addChild(this._markerDemonstratorContainer);
 
-        this._positionPickerView = new _mapPickers_positionPickerView__WEBPACK_IMPORTED_MODULE_10__.PositionPickerView(this._positionPickerContainer);
-        this._nestPickerView = new _mapPickers_nestPickerView__WEBPACK_IMPORTED_MODULE_11__.NestPickerView(this._nestPickerContainer);
-        this._markerDemonstrator = new _markersDemonstratorView__WEBPACK_IMPORTED_MODULE_12__.MarkersDemonstratorView(this._markerDemonstratorContainer);
+        // this._positionPickerView = new PositionPickerView(this._positionPickerContainer);
+        // this._nestPickerView = new NestPickerView(this._nestPickerContainer);
+        this._markerDemonstrator = new _markersDemonstratorView__WEBPACK_IMPORTED_MODULE_10__.MarkersDemonstratorView(this._markerDemonstratorContainer);
 
         this._buildEntityViews();
     }
@@ -10018,21 +10197,24 @@ async function initViewLayer(domainFacade) {
     let eventBus = new _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__.EventEmitter();
     let spritesheetManager = new _game_world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__.WorldSpritesheetManager(_textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_9__, _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_8__, requester);
     let popupManager = new _popups_popupManager__WEBPACK_IMPORTED_MODULE_5__.PopupManager(document.querySelector('[data-popup-container]'));
-    let loaderEl = document.querySelector('[data-game-loader]')
+    let loaderEl = document.querySelector('[data-game-loader]');
+
+    let pixiApp = new pixi_js__WEBPACK_IMPORTED_MODULE_10__.Application();
 
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useTextureManager(spritesheetManager);
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.usePopupManager(popupManager);
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useDomainFacade(domainFacade);
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useEventBus(eventBus);
+    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.usePixiApp(pixiApp);
     _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.useDomainFacade(domainFacade);
     _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.useEventBus(eventBus);
     _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.useMessages(_messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_7__.uaMessages);
+    _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.usePixiApp(pixiApp);
 
     await spritesheetManager.prepareTextures();
-    let pixiApp = new pixi_js__WEBPACK_IMPORTED_MODULE_10__.Application();
     await pixiApp.init();
 
-    let app = new _appView__WEBPACK_IMPORTED_MODULE_0__.AppView(document.querySelector('[data-app]'), pixiApp);
+    let app = new _appView__WEBPACK_IMPORTED_MODULE_0__.AppView(document.querySelector('[data-app]'));
     app.events.addListener('ready', () => {
         loaderEl.remove();
     })

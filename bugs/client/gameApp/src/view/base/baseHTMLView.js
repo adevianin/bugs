@@ -4,6 +4,8 @@ class BaseHTMLView {
 
     static domainFacade;
     static eventBus;
+    static messages;
+    static pixiApp;
 
     static useDomainFacade(domainFacade) {
         BaseHTMLView.domainFacade = domainFacade;
@@ -15,6 +17,10 @@ class BaseHTMLView {
 
     static useMessages(messages) {
         BaseHTMLView.messages = messages;
+    }
+
+    static usePixiApp(pixiApp) {
+        BaseHTMLView.pixiApp = pixiApp;
     }
 
     constructor(el) {
@@ -36,6 +42,10 @@ class BaseHTMLView {
 
     get $messages() {
         return BaseHTMLView.messages;
+    }
+
+    get $pixiApp() {
+        return BaseHTMLView.pixiApp;
     }
 
     toggle(isEnabled) {

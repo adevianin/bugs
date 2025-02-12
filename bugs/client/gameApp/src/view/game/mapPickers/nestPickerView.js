@@ -4,14 +4,12 @@ class NestPickerView extends BasePickerView {
 
     constructor(container) {
         super(container);
-
-        this.$eventBus.on('nestPickRequest', this._onPickRequest.bind(this));
     }
 
-    _onPickRequest(excludeColonyId, callback) {
+    activate(excludeColonyId, callback) {
+        super.activate();
         this._callback = callback;
         this._excludeColonyId = excludeColonyId;
-        this._activate();
     }
 
     _onPointPick(point) {
@@ -19,7 +17,6 @@ class NestPickerView extends BasePickerView {
 
         if (nest) {
             this._callback(nest);
-            this._deactivate();
         }
     }
 

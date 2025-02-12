@@ -4,6 +4,7 @@ class BaseGraphicView {
     static popupManager;
     static domainFacade;
     static eventBus;
+    static pixiApp;
 
     static useTextureManager(textureManager) {
         BaseGraphicView.textureManager = textureManager;
@@ -21,6 +22,10 @@ class BaseGraphicView {
         BaseGraphicView.eventBus = eventBus;
     }
 
+    static usePixiApp(pixiApp) {
+        BaseGraphicView.pixiApp = pixiApp;
+    }
+
     get $domainFacade() {
         return BaseGraphicView.domainFacade;
     }
@@ -31,6 +36,10 @@ class BaseGraphicView {
 
     get $eventBus() {
         return BaseGraphicView.eventBus;
+    }
+
+    get $pixiApp() {
+        return BaseGraphicView.pixiApp;
     }
 
     remove(){

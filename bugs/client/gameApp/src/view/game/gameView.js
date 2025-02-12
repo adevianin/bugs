@@ -5,12 +5,12 @@ import { Camera } from './camera';
 import { WorldView } from './world';
 import { Panel } from './panel';
 import gameTmpl from './gameTmpl.html';
+import { MapPickerMasterView } from './mapPickers/mapPickerMasterView';
 
 class GameView extends BaseHTMLView {
 
-    constructor(el, pixiApp) {
+    constructor(el) {
         super(el);
-        this._pixiApp = pixiApp;
 
         this._render();
     }
@@ -18,21 +18,25 @@ class GameView extends BaseHTMLView {
     _render() {
         this._el.innerHTML = gameTmpl;
 
-        this._panelView = new Panel(this._el.querySelector('[data-panel]'));
+        new Panel(this._el.querySelector('[data-panel]'));
         
         let canvasContainerEl = this._el.querySelector('[data-canvas-container]');
-        this._pixiApp.resizeTo = canvasContainerEl;
-        canvasContainerEl.appendChild(this._pixiApp.canvas);
+        this.$pixiApp.resizeTo = canvasContainerEl;
+        canvasContainerEl.appendChild(this.$pixiApp.canvas);
 
-        this._worldContainer = new PIXI.Container();
-        this._pixiApp.stage.addChild(this._worldContainer);
-
+        let worldContainer = new PIXI.Container();
+        this.$pixiApp.stage.addChild(worldContainer);
         let worldSize = this.$domainFacade.getWorldSize();
-        this._camera = new Camera(this._worldContainer, this._pixiApp.canvas, worldSize[0], worldSize[1]);
+        new Camera(worldContainer, this.$pixiApp.canvas, worldSize[0], worldSize[1]);
+        new WorldView(worldContainer);
 
-        this._worldView = new WorldView(this._worldContainer);
-
-        this._pixiApp.resize();
+        let mapPickerBorderContainer = new PIXI.Container();
+        this.$pixiApp.stage.addChild(mapPickerBorderContainer);
+        let mapPickerContainer = new PIXI.Container();
+        worldContainer.addChild(mapPickerContainer);
+        new MapPickerMasterView(mapPickerContainer, mapPickerBorderContainer);
+        
+        this.$pixiApp.resize();
     }
 
 }
