@@ -3969,48 +3969,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BaseGraphicView: () => (/* binding */ BaseGraphicView)
 /* harmony export */ });
-class BaseGraphicView {
+/* harmony import */ var _baseView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseView */ "./gameApp/src/view/base/baseView.js");
+
+
+class BaseGraphicView extends _baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView {
 
     static textureManager;
-    static popupManager;
-    static domainFacade;
-    static eventBus;
-    static pixiApp;
 
     static useTextureManager(textureManager) {
         BaseGraphicView.textureManager = textureManager;
     }
 
-    static usePopupManager(popupManager) {
-        BaseGraphicView.popupManager = popupManager;
-    }
-
-    static useDomainFacade(domainFacade) {
-        BaseGraphicView.domainFacade = domainFacade;
-    }
-
-    static useEventBus(eventBus) {
-        BaseGraphicView.eventBus = eventBus;
-    }
-
-    static usePixiApp(pixiApp) {
-        BaseGraphicView.pixiApp = pixiApp;
-    }
-
-    get $domainFacade() {
-        return BaseGraphicView.domainFacade;
-    }
-
     get $textureManager() {
         return BaseGraphicView.textureManager;
-    }
-
-    get $eventBus() {
-        return BaseGraphicView.eventBus;
-    }
-
-    get $pixiApp() {
-        return BaseGraphicView.pixiApp;
     }
 
     remove(){
@@ -4035,54 +4006,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   BaseHTMLView: () => (/* binding */ BaseHTMLView)
 /* harmony export */ });
 /* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
+/* harmony import */ var _baseView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./baseView */ "./gameApp/src/view/base/baseView.js");
 
 
-class BaseHTMLView {
 
-    static domainFacade;
-    static eventBus;
-    static messages;
-    static pixiApp;
-
-    static useDomainFacade(domainFacade) {
-        BaseHTMLView.domainFacade = domainFacade;
-    }
-
-    static useEventBus(eventBus) {
-        BaseHTMLView.eventBus = eventBus;
-    }
-
-    static useMessages(messages) {
-        BaseHTMLView.messages = messages;
-    }
-
-    static usePixiApp(pixiApp) {
-        BaseHTMLView.pixiApp = pixiApp;
-    }
+class BaseHTMLView extends _baseView__WEBPACK_IMPORTED_MODULE_1__.BaseView {
 
     constructor(el) {
+        super();
         this._el = el;
         this.events = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
     }
 
     get el() {
         return this._el;
-    }
-
-    get $domainFacade() {
-        return BaseHTMLView.domainFacade;
-    }
-
-    get $eventBus() {
-        return BaseHTMLView.eventBus;
-    }
-
-    get $messages() {
-        return BaseHTMLView.messages;
-    }
-
-    get $pixiApp() {
-        return BaseHTMLView.pixiApp;
     }
 
     toggle(isEnabled) {
@@ -4093,6 +4030,62 @@ class BaseHTMLView {
         this._el.remove();
         this.events.removeAllListeners();
     }
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/base/baseView.js":
+/*!*******************************************!*\
+  !*** ./gameApp/src/view/base/baseView.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BaseView: () => (/* binding */ BaseView)
+/* harmony export */ });
+class BaseView {
+
+    static domainFacade;
+    static eventBus;
+    static messages;
+    static pixiApp;
+
+    get $domainFacade() {
+        return BaseView.domainFacade;
+    }
+
+    get $eventBus() {
+        return BaseView.eventBus;
+    }
+
+    get $messages() {
+        return BaseView.messages;
+    }
+
+    get $pixiApp() {
+        return BaseView.pixiApp;
+    }
+
+    static useDomainFacade(domainFacade) {
+        BaseView.domainFacade = domainFacade;
+    }
+
+    static useEventBus(eventBus) {
+        BaseView.eventBus = eventBus;
+    }
+
+    static useMessages(messages) {
+        BaseView.messages = messages;
+    }
+
+    static usePixiApp(pixiApp) {
+        BaseView.pixiApp = pixiApp;
+    }
+
 }
 
 
@@ -4241,11 +4234,9 @@ class GameView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Base
         new _camera__WEBPACK_IMPORTED_MODULE_3__.Camera(worldContainer, this.$pixiApp.canvas, worldSize[0], worldSize[1]);
         new _world__WEBPACK_IMPORTED_MODULE_4__.WorldView(worldContainer);
 
-        let mapPickerBorderContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
-        this.$pixiApp.stage.addChild(mapPickerBorderContainer);
         let mapPickerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
         worldContainer.addChild(mapPickerContainer);
-        new _mapPickers_mapPickerMasterView__WEBPACK_IMPORTED_MODULE_7__.MapPickerMasterView(mapPickerContainer, mapPickerBorderContainer);
+        new _mapPickers_mapPickerMasterView__WEBPACK_IMPORTED_MODULE_7__.MapPickerMasterView(mapPickerContainer, this._el.querySelector('[data-map-picker-border]'));
         
         this.$pixiApp.resize();
     }
@@ -4315,73 +4306,33 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BorderView: () => (/* binding */ BorderView)
 /* harmony export */ });
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
 
 
+class BorderView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-class BorderView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.BaseGraphicView {
-
-    constructor(container) {
-        super();
-        this._container = container;
-
+    constructor(el) {
+        super(el);
+        
         this._render();
     }
 
-    activate() {
-        this._container.renderable = true;
+    _render() {
+        this._textEl = document.createElement('div');
+        this._textEl.classList.add('game__map-picker-label');
+        this._el.appendChild(this._textEl);
+
+        this.deactivate();
+    }
+
+    activate(text) {
+        this._el.classList.remove('hidden');
+        this._textEl.innerHTML = text;
     }
 
     deactivate() {
-        this._container.renderable = false;
+        this._el.classList.add('hidden');
     }
-
-    _render() {
-        this._container.renderable = false;
-        this._renderBorder();
-
-        this.$pixiApp.ticker.add(this._checkIfNeededRerenderBorder.bind(this));
-    }
-
-    _renderBorder() {
-        this._clearBorder();
-        this._size = {
-            width: this.$pixiApp.renderer.width,
-            height: this.$pixiApp.renderer.height
-        }
-        let margin = 3;
-        this._border = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();
-        this._container.addChild(this._border);
-        this._border.setStrokeStyle({
-            color: 0xff0000,
-            width: 4,
-            alignment: 0.5
-        });
-        this._border.moveTo(margin, margin);
-        this._border.lineTo(this._size.width - margin, margin);
-        this._border.lineTo(this._size.width - margin, this._size.height - margin);
-        this._border.lineTo(margin, this._size.height - margin);
-        this._border.lineTo(margin, margin);
-        this._border.stroke();
-    }
-
-    _clearBorder() {
-        if (this._border) {
-            this._container.removeChild(this._border);
-            this._border = null;
-        }
-    }
-
-    _checkIfNeededRerenderBorder() {
-        if (this._container.renderable) { // if activated
-            if (this._size.width != this.$pixiApp.renderer.width || this._size.height != this.$pixiApp.renderer.height) {
-                this._renderBorder();
-            }
-        }
-    }
-
-    
 
 }
 
@@ -4413,10 +4364,10 @@ __webpack_require__.r(__webpack_exports__);
 
 class MapPickerMasterView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.BaseGraphicView {
 
-    constructor(container, borderContainer) {
+    constructor(container, borderEl) {
         super();
         this._container = container;
-        this._borderContainer = borderContainer;
+        this._borderEl = borderEl;
 
         this._render();
 
@@ -4434,7 +4385,7 @@ class MapPickerMasterView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_M
         this._container.addChild(nestPickerContainer);
         this._nestPickerView = new _nestPickerView__WEBPACK_IMPORTED_MODULE_2__.NestPickerView(nestPickerContainer);
 
-        this._borderView = new _borderView__WEBPACK_IMPORTED_MODULE_4__.BorderView(this._borderContainer);
+        this._borderView = new _borderView__WEBPACK_IMPORTED_MODULE_4__.BorderView(this._borderEl);
     }
 
     _onNestPickRequest(excludeColonyId, callback) {
@@ -4442,7 +4393,7 @@ class MapPickerMasterView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_M
             callback(nest);
             this._deactivateAll();
         });
-        this._borderView.activate();
+        this._borderView.activate(this.$messages.pick_nest);
     }
 
     _onPositionPickRequest(callback) {
@@ -4450,7 +4401,7 @@ class MapPickerMasterView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_M
             callback(point);
             this._deactivateAll();
         });
-        this._borderView.activate();
+        this._borderView.activate(this.$messages.pick_position);
     }
 
     _onPickerDeactivateRequest() {
@@ -10169,18 +10120,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   initViewLayer: () => (/* binding */ initViewLayer)
 /* harmony export */ });
-/* harmony import */ var _appView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./appView */ "./gameApp/src/view/appView.js");
-/* harmony import */ var _common_utils_requester__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/utils/requester */ "./common/utils/requester.js");
-/* harmony import */ var _game_world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game/world/worldSpritesheetManager */ "./gameApp/src/view/game/world/worldSpritesheetManager.js");
-/* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
-/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
-/* harmony import */ var _popups_popupManager__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./popups/popupManager */ "./gameApp/src/view/popups/popupManager.js");
-/* harmony import */ var _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @utils/eventEmitter.js */ "./gameApp/src/utils/eventEmitter.js");
-/* harmony import */ var _messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./messages/uaMessagesLib */ "./gameApp/src/view/messages/uaMessagesLib.js");
-/* harmony import */ var _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./textures/build/world_spritesheet.json */ "./gameApp/src/view/textures/build/world_spritesheet.json");
-/* harmony import */ var _textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./textures/build/world_spritesheet.png */ "./gameApp/src/view/textures/build/world_spritesheet.png");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-
+/* harmony import */ var _base_baseView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseView */ "./gameApp/src/view/base/baseView.js");
+/* harmony import */ var _appView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./appView */ "./gameApp/src/view/appView.js");
+/* harmony import */ var _common_utils_requester__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/utils/requester */ "./common/utils/requester.js");
+/* harmony import */ var _game_world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./game/world/worldSpritesheetManager */ "./gameApp/src/view/game/world/worldSpritesheetManager.js");
+/* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
+/* harmony import */ var _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @utils/eventEmitter.js */ "./gameApp/src/utils/eventEmitter.js");
+/* harmony import */ var _messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./messages/uaMessagesLib */ "./gameApp/src/view/messages/uaMessagesLib.js");
+/* harmony import */ var _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./textures/build/world_spritesheet.json */ "./gameApp/src/view/textures/build/world_spritesheet.json");
+/* harmony import */ var _textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./textures/build/world_spritesheet.png */ "./gameApp/src/view/textures/build/world_spritesheet.png");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 
 
 
@@ -10193,27 +10142,22 @@ __webpack_require__.r(__webpack_exports__);
 
 
 async function initViewLayer(domainFacade) {
-    let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_1__.Requester();
-    let eventBus = new _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_6__.EventEmitter();
-    let spritesheetManager = new _game_world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__.WorldSpritesheetManager(_textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_9__, _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_8__, requester);
-    let popupManager = new _popups_popupManager__WEBPACK_IMPORTED_MODULE_5__.PopupManager(document.querySelector('[data-popup-container]'));
+    let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_2__.Requester();
+    let eventBus = new _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_5__.EventEmitter();
+    let spritesheetManager = new _game_world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_3__.WorldSpritesheetManager(_textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_8__, _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_7__, requester);
     let loaderEl = document.querySelector('[data-game-loader]');
 
     await spritesheetManager.prepareTextures();
-    let pixiApp = new pixi_js__WEBPACK_IMPORTED_MODULE_10__.Application();
+    let pixiApp = new pixi_js__WEBPACK_IMPORTED_MODULE_9__.Application();
     await pixiApp.init();
 
-    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useTextureManager(spritesheetManager);
-    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.usePopupManager(popupManager);
-    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useDomainFacade(domainFacade);
-    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useEventBus(eventBus);
-    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.usePixiApp(pixiApp);
-    _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.useDomainFacade(domainFacade);
-    _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.useEventBus(eventBus);
-    _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.useMessages(_messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_7__.uaMessages);
-    _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.usePixiApp(pixiApp);
+    _base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView.useDomainFacade(domainFacade);
+    _base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView.useEventBus(eventBus);
+    _base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView.useMessages(_messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_6__.uaMessages);
+    _base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView.usePixiApp(pixiApp);
+    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_4__.BaseGraphicView.useTextureManager(spritesheetManager);
 
-    let app = new _appView__WEBPACK_IMPORTED_MODULE_0__.AppView(document.querySelector('[data-app]'));
+    let app = new _appView__WEBPACK_IMPORTED_MODULE_1__.AppView(document.querySelector('[data-app]'));
     app.events.addListener('ready', () => {
         loaderEl.remove();
     })
@@ -10315,38 +10259,8 @@ const uaMessages = {
     go_home_activity: 'йду додому',
     watching_nest_activity: 'слідкую за гніздом',
     founding_main_nest_activity: 'будую основне гніздо колонії',
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/view/popups/popupManager.js":
-/*!*************************************************!*\
-  !*** ./gameApp/src/view/popups/popupManager.js ***!
-  \*************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   PopupManager: () => (/* binding */ PopupManager)
-/* harmony export */ });
-class PopupManager {
-
-    constructor(el) {
-        this._el = el;
-    }
-
-    // openNestPopup(nest) {
-    //     let popup = new NestPopup(nest);
-    //     this._showPopup(popup);
-    // }
-
-    _showPopup(popup) {
-        this._el.innerHTML = '';
-        this._el.appendChild(popup.el);
-    }
+    pick_position: 'постав точку',
+    pick_nest: 'вибери гніздо'
 }
 
 
@@ -15701,8 +15615,27 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.game {
 .game__canvas-container {
     flex-grow: 1;
     overflow: hidden;
+    position: relative;
 }
-`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/gameStyles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,aAAa;IACb,sBAAsB;AAC1B;;AAEA;IACI,YAAY;IACZ,gBAAgB;AACpB","sourcesContent":[".game {\r\n    height: 100%;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n.game__canvas-container {\r\n    flex-grow: 1;\r\n    overflow: hidden;\r\n}\r\n"],"sourceRoot":""}]);
+
+.game__map-picker-border {
+    pointer-events: none;
+    position: absolute;
+    border: solid 4px red;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    justify-content: center;
+    display: flex;
+}
+
+.game__map-picker-label {
+    color: red;
+    font-size: 24;
+}
+
+`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/gameStyles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,aAAa;IACb,sBAAsB;AAC1B;;AAEA;IACI,YAAY;IACZ,gBAAgB;IAChB,kBAAkB;AACtB;;AAEA;IACI,oBAAoB;IACpB,kBAAkB;IAClB,qBAAqB;IACrB,OAAO;IACP,QAAQ;IACR,MAAM;IACN,SAAS;IACT,uBAAuB;IACvB,aAAa;AACjB;;AAEA;IACI,UAAU;IACV,aAAa;AACjB","sourcesContent":[".game {\r\n    height: 100%;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n.game__canvas-container {\r\n    flex-grow: 1;\r\n    overflow: hidden;\r\n    position: relative;\r\n}\r\n\r\n.game__map-picker-border {\r\n    pointer-events: none;\r\n    position: absolute;\r\n    border: solid 4px red;\r\n    left: 0;\r\n    right: 0;\r\n    top: 0;\r\n    bottom: 0;\r\n    justify-content: center;\r\n    display: flex;\r\n}\r\n\r\n.game__map-picker-label {\r\n    color: red;\r\n    font-size: 24;\r\n}\r\n\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -18010,7 +17943,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"game__canvas-container\" data-canvas-container></div>\r\n<div class=\"panel\" data-panel></div>\r\n";
+var code = "<div class=\"game__canvas-container\" data-canvas-container>\r\n    <div class=\"game__map-picker-border\" data-map-picker-border></div>\r\n</div>\r\n<div class=\"panel\" data-panel></div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

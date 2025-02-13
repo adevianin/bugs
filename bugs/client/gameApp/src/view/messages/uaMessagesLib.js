@@ -30,6 +30,8 @@ const uaMessages = {
     go_home_activity: 'йду додому',
     watching_nest_activity: 'слідкую за гніздом',
     founding_main_nest_activity: 'будую основне гніздо колонії',
+    pick_position: 'постав точку',
+    pick_nest: 'вибери гніздо'
 }
 
 export {

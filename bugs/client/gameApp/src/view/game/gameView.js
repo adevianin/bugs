@@ -30,11 +30,9 @@ class GameView extends BaseHTMLView {
         new Camera(worldContainer, this.$pixiApp.canvas, worldSize[0], worldSize[1]);
         new WorldView(worldContainer);
 
-        let mapPickerBorderContainer = new PIXI.Container();
-        this.$pixiApp.stage.addChild(mapPickerBorderContainer);
         let mapPickerContainer = new PIXI.Container();
         worldContainer.addChild(mapPickerContainer);
-        new MapPickerMasterView(mapPickerContainer, mapPickerBorderContainer);
+        new MapPickerMasterView(mapPickerContainer, this._el.querySelector('[data-map-picker-border]'));
         
         this.$pixiApp.resize();
     }

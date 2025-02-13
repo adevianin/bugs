@@ -6,10 +6,10 @@ import { BorderView } from './borderView';
 
 class MapPickerMasterView extends BaseGraphicView {
 
-    constructor(container, borderContainer) {
+    constructor(container, borderEl) {
         super();
         this._container = container;
-        this._borderContainer = borderContainer;
+        this._borderEl = borderEl;
 
         this._render();
 
@@ -27,7 +27,7 @@ class MapPickerMasterView extends BaseGraphicView {
         this._container.addChild(nestPickerContainer);
         this._nestPickerView = new NestPickerView(nestPickerContainer);
 
-        this._borderView = new BorderView(this._borderContainer);
+        this._borderView = new BorderView(this._borderEl);
     }
 
     _onNestPickRequest(excludeColonyId, callback) {
@@ -35,7 +35,7 @@ class MapPickerMasterView extends BaseGraphicView {
             callback(nest);
             this._deactivateAll();
         });
-        this._borderView.activate();
+        this._borderView.activate(this.$messages.pick_nest);
     }
 
     _onPositionPickRequest(callback) {
@@ -43,7 +43,7 @@ class MapPickerMasterView extends BaseGraphicView {
             callback(point);
             this._deactivateAll();
         });
-        this._borderView.activate();
+        this._borderView.activate(this.$messages.pick_position);
     }
 
     _onPickerDeactivateRequest() {

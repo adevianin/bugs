@@ -7,4 +7,24 @@
 .game__canvas-container {
     flex-grow: 1;
     overflow: hidden;
+    position: relative;
 }
+
+.game__map-picker-border {
+    pointer-events: none;
+    position: absolute;
+    border: solid 4px red;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    justify-content: center;
+    display: flex;
+}
+
+.game__map-picker-label {
+    color: red;
+    font-size: 24;
+    font-weight: 700;
+}
+
