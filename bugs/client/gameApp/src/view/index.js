@@ -17,7 +17,9 @@ async function initViewLayer(domainFacade) {
     let popupManager = new PopupManager(document.querySelector('[data-popup-container]'));
     let loaderEl = document.querySelector('[data-game-loader]');
 
+    await spritesheetManager.prepareTextures();
     let pixiApp = new PIXI.Application();
+    await pixiApp.init();
 
     BaseGraphicView.useTextureManager(spritesheetManager);
     BaseGraphicView.usePopupManager(popupManager);
@@ -28,9 +30,6 @@ async function initViewLayer(domainFacade) {
     BaseHTMLView.useEventBus(eventBus);
     BaseHTMLView.useMessages(uaMessages);
     BaseHTMLView.usePixiApp(pixiApp);
-
-    await spritesheetManager.prepareTextures();
-    await pixiApp.init();
 
     let app = new AppView(document.querySelector('[data-app]'));
     app.events.addListener('ready', () => {

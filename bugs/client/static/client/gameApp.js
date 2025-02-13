@@ -10199,7 +10199,9 @@ async function initViewLayer(domainFacade) {
     let popupManager = new _popups_popupManager__WEBPACK_IMPORTED_MODULE_5__.PopupManager(document.querySelector('[data-popup-container]'));
     let loaderEl = document.querySelector('[data-game-loader]');
 
+    await spritesheetManager.prepareTextures();
     let pixiApp = new pixi_js__WEBPACK_IMPORTED_MODULE_10__.Application();
+    await pixiApp.init();
 
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useTextureManager(spritesheetManager);
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.usePopupManager(popupManager);
@@ -10210,9 +10212,6 @@ async function initViewLayer(domainFacade) {
     _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.useEventBus(eventBus);
     _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.useMessages(_messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_7__.uaMessages);
     _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_4__.BaseHTMLView.usePixiApp(pixiApp);
-
-    await spritesheetManager.prepareTextures();
-    await pixiApp.init();
 
     let app = new _appView__WEBPACK_IMPORTED_MODULE_0__.AppView(document.querySelector('[data-app]'));
     app.events.addListener('ready', () => {
