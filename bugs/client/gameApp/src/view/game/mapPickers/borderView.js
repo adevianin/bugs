@@ -58,6 +58,7 @@ class BorderView extends BaseGraphicView {
         if (this._container.renderable) { // if activated
             if (this._size.width != this.$pixiApp.renderer.width || this._size.height != this.$pixiApp.renderer.height) {
                 this._renderBorder();
+                this.$pixiApp.resize();
             }
         }
     }
