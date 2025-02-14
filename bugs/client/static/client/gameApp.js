@@ -4268,18 +4268,57 @@ class BasePickerView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE
     constructor(container) {
         super();
         this._container = container;
+        this._worldSize = this.$domainFacade.getWorldSize();
+
+        this._render();
+        this.deactivate();
 
         this._container.on('pointerdown', this._onClick.bind(this));
     }
 
-    activate() {
-        this._container.eventMode = 'static';
-        let worldSize = this.$domainFacade.getWorldSize();
-        this._container.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Rectangle(0, 0, worldSize[0], worldSize[1]);
+    activate(pickableCircle) {
+        this._container.renderable = true;
+        if (pickableCircle) {
+            this._restrictPickableAreaByCircle(pickableCircle);
+        } else {
+            this._clearPickableAreaRestrictions();
+        }
     }
 
     deactivate() {
-        this._container.eventMode = 'none'; 
+        this._container.renderable = false;
+    }
+
+    _render() {
+        this._container.eventMode = 'static';
+    }
+
+    _restrictPickableAreaByCircle(pickableCircle) {
+        this._clearNotPickableArea();
+        this._notPickableArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Graphics();
+        this._notPickableArea.eventMode = 'static';
+        this._notPickableArea.rect(0, 0, this._worldSize[0], this._worldSize[1])
+        .fill({
+            color: 0xff0000,
+            alpha: 0.5,
+        })
+        .circle(pickableCircle.center.x, pickableCircle.center.y, pickableCircle.radius)
+        .cut();
+
+        this._container.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Circle(pickableCircle.center.x, pickableCircle.center.y, pickableCircle.radius);
+
+        this._container.addChild(this._notPickableArea);
+    }
+
+    _clearPickableAreaRestrictions() {
+        this._container.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Rectangle(0, 0, this._worldSize[0], this._worldSize[1]);
+        this._clearNotPickableArea();
+    }
+
+    _clearNotPickableArea() {
+        if (this._notPickableArea) {
+            this._container.removeChild(this._notPickableArea);
+        }
     }
 
     _onClick(e) {
@@ -4396,8 +4435,8 @@ class MapPickerMasterView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_M
         this._borderView.activate(this.$messages.pick_nest);
     }
 
-    _onPositionPickRequest(callback) {
-        this._positionPickerView.activate(point => {
+    _onPositionPickRequest(pickableCircle, callback) {
+        this._positionPickerView.activate(pickableCircle, point => {
             callback(point);
             this._deactivateAll();
         });
@@ -4480,8 +4519,8 @@ class PositionPickerView extends _basePickerView__WEBPACK_IMPORTED_MODULE_0__.Ba
         super(container);
     }
 
-    activate(callback) {
-        super.activate();
+    activate(pickableCircle, callback) {
+        super.activate(pickableCircle);
         this._callback = callback;
     }
 
@@ -7177,6 +7216,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseOperationCreatorView */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js");
 /* harmony import */ var _newNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./newNestOperationCreatorTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/newNest/newNestOperationCreatorTmpl.html");
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
+
 
 
 
@@ -7217,7 +7258,9 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
     }
 
     _onChooseBuildingSiteBtnClick() {
-        this.$eventBus.emit('positionPickRequest', (point) => { 
+        let queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
+        let pickableCircle = { center: queenOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.MAX_DISTANCE_TO_SUB_NEST };
+        this.$eventBus.emit('positionPickRequest', pickableCircle, (point) => { 
             this._buildingSite = point;
             this._renderBuildingSite();
             this._showMarkers();
@@ -8482,7 +8525,7 @@ class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     }
 
     _onChooseNestPositionBtnClick() {
-        this.$eventBus.emit('positionPickRequest', (point) => { 
+        this.$eventBus.emit('positionPickRequest', null, (point) => { 
             this._buildingSite = point;
             this._renderBuildingSite();
         });
@@ -15633,9 +15676,10 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.game {
 .game__map-picker-label {
     color: red;
     font-size: 24;
+    font-weight: 700;
 }
 
-`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/gameStyles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,aAAa;IACb,sBAAsB;AAC1B;;AAEA;IACI,YAAY;IACZ,gBAAgB;IAChB,kBAAkB;AACtB;;AAEA;IACI,oBAAoB;IACpB,kBAAkB;IAClB,qBAAqB;IACrB,OAAO;IACP,QAAQ;IACR,MAAM;IACN,SAAS;IACT,uBAAuB;IACvB,aAAa;AACjB;;AAEA;IACI,UAAU;IACV,aAAa;AACjB","sourcesContent":[".game {\r\n    height: 100%;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n.game__canvas-container {\r\n    flex-grow: 1;\r\n    overflow: hidden;\r\n    position: relative;\r\n}\r\n\r\n.game__map-picker-border {\r\n    pointer-events: none;\r\n    position: absolute;\r\n    border: solid 4px red;\r\n    left: 0;\r\n    right: 0;\r\n    top: 0;\r\n    bottom: 0;\r\n    justify-content: center;\r\n    display: flex;\r\n}\r\n\r\n.game__map-picker-label {\r\n    color: red;\r\n    font-size: 24;\r\n}\r\n\r\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/gameStyles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,aAAa;IACb,sBAAsB;AAC1B;;AAEA;IACI,YAAY;IACZ,gBAAgB;IAChB,kBAAkB;AACtB;;AAEA;IACI,oBAAoB;IACpB,kBAAkB;IAClB,qBAAqB;IACrB,OAAO;IACP,QAAQ;IACR,MAAM;IACN,SAAS;IACT,uBAAuB;IACvB,aAAa;AACjB;;AAEA;IACI,UAAU;IACV,aAAa;IACb,gBAAgB;AACpB","sourcesContent":[".game {\r\n    height: 100%;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n.game__canvas-container {\r\n    flex-grow: 1;\r\n    overflow: hidden;\r\n    position: relative;\r\n}\r\n\r\n.game__map-picker-border {\r\n    pointer-events: none;\r\n    position: absolute;\r\n    border: solid 4px red;\r\n    left: 0;\r\n    right: 0;\r\n    top: 0;\r\n    bottom: 0;\r\n    justify-content: center;\r\n    display: flex;\r\n}\r\n\r\n.game__map-picker-label {\r\n    color: red;\r\n    font-size: 24;\r\n    font-weight: 700;\r\n}\r\n\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

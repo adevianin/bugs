@@ -1,6 +1,7 @@
 import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import newNestOperationCreatorTmpl from './newNestOperationCreatorTmpl.html';
 import { MarkerTypes } from "@domain/enum/markerTypes";
+import { CONSTS } from "@domain/consts";
 
 class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
@@ -38,7 +39,9 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _onChooseBuildingSiteBtnClick() {
-        this.$eventBus.emit('positionPickRequest', (point) => { 
+        let queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
+        let pickableCircle = { center: queenOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_SUB_NEST };
+        this.$eventBus.emit('positionPickRequest', pickableCircle, (point) => { 
             this._buildingSite = point;
             this._renderBuildingSite();
             this._showMarkers();
