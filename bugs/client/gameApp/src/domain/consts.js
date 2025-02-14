@@ -8,7 +8,8 @@ const CONSTS = {
     LAY_EGG_SEASONS: null,
     MAX_DISTANCE_TO_SUB_NEST: null,
     MAX_SUB_NEST_COUNT: null,
-    REQUIRED_GENES: null 
+    REQUIRED_GENES: null,
+    MAX_DISTANCE_TO_OPERATION_TARGET: null
 }
 
 function initConts(constsValues) {

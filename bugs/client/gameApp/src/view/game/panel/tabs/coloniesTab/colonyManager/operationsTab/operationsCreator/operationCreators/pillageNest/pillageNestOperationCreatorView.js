@@ -2,6 +2,7 @@ import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import pillageNestOperationCreatorTmpl from './pillageNestOperationCreatorTmpl.html';
 import { NestSelectorView } from "@view/game/panel/base/nestSelector";
 import { MarkerTypes } from "@domain/enum/markerTypes";
+import { CONSTS } from "@domain/consts";
 
 class PillageNestOperationCreatorView extends BaseOperationCreatorView {
 
@@ -48,7 +49,9 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _onChooseNestToPillageBtnClick() {
-        this.$eventBus.emit('nestPickRequest', this._performingColony.id, (nestToPillage) => {
+        let queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
+        let pickableCircle = { center: queenOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
+        this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, (nestToPillage) => {
             this._nestToPillage = nestToPillage;
             this._renderNestToPillage();
             this._showMarkers();

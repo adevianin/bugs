@@ -30,8 +30,8 @@ class MapPickerMasterView extends BaseGraphicView {
         this._borderView = new BorderView(this._borderEl);
     }
 
-    _onNestPickRequest(excludeColonyId, callback) {
-        this._nestPickerView.activate(excludeColonyId, nest => {
+    _onNestPickRequest(excludeColonyId, pickableCircle, callback) {
+        this._nestPickerView.activate(excludeColonyId, pickableCircle, nest => {
             callback(nest);
             this._deactivateAll();
         });

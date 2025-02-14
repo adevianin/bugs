@@ -94,7 +94,8 @@ const CONSTS = {
     LAY_EGG_SEASONS: null,
     MAX_DISTANCE_TO_SUB_NEST: null,
     MAX_SUB_NEST_COUNT: null,
-    REQUIRED_GENES: null 
+    REQUIRED_GENES: null,
+    MAX_DISTANCE_TO_OPERATION_TARGET: null
 }
 
 function initConts(constsValues) {
@@ -4431,8 +4432,8 @@ class MapPickerMasterView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_M
         this._borderView = new _borderView__WEBPACK_IMPORTED_MODULE_4__.BorderView(this._borderEl);
     }
 
-    _onNestPickRequest(excludeColonyId, callback) {
-        this._nestPickerView.activate(excludeColonyId, nest => {
+    _onNestPickRequest(excludeColonyId, pickableCircle, callback) {
+        this._nestPickerView.activate(excludeColonyId, pickableCircle, nest => {
             callback(nest);
             this._deactivateAll();
         });
@@ -4483,8 +4484,8 @@ class NestPickerView extends _basePickerView__WEBPACK_IMPORTED_MODULE_0__.BasePi
         super(container);
     }
 
-    activate(excludeColonyId, callback) {
-        super.activate();
+    activate(excludeColonyId, pickableCircle, callback) {
+        super.activate(pickableCircle);
         this._callback = callback;
         this._excludeColonyId = excludeColonyId;
     }
@@ -7106,6 +7107,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _baseOperationCreatorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../baseOperationCreatorView */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/baseOperationCreatorView.js");
 /* harmony import */ var _destroyNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./destroyNestOperationCreatorTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/destoryNest/destroyNestOperationCreatorTmpl.html");
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
+
 
 
 
@@ -7137,7 +7140,9 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
     }
 
     _onChooseNestBtnClick() {
-        this.$eventBus.emit('nestPickRequest', this._performingColony.id, (nest) => {
+        let queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
+        let pickableCircle = { center: queenOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
+        this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, (nest) => {
             this._choosedNest = nest;
             this._renderChoosedNest();
             this._showMarkers();
@@ -7324,6 +7329,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pillageNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pillageNestOperationCreatorTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/pillageNest/pillageNestOperationCreatorTmpl.html");
 /* harmony import */ var _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/nestSelector */ "./gameApp/src/view/game/panel/base/nestSelector/index.js");
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
+
 
 
 
@@ -7374,7 +7381,9 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
     }
 
     _onChooseNestToPillageBtnClick() {
-        this.$eventBus.emit('nestPickRequest', this._performingColony.id, (nestToPillage) => {
+        let queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
+        let pickableCircle = { center: queenOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_4__.CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
+        this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, (nestToPillage) => {
             this._nestToPillage = nestToPillage;
             this._renderNestToPillage();
             this._showMarkers();

@@ -6,8 +6,8 @@ class NestPickerView extends BasePickerView {
         super(container);
     }
 
-    activate(excludeColonyId, callback) {
-        super.activate();
+    activate(excludeColonyId, pickableCircle, callback) {
+        super.activate(pickableCircle);
         this._callback = callback;
         this._excludeColonyId = excludeColonyId;
     }
