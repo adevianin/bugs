@@ -33,7 +33,7 @@ class ColonyService(BaseService):
         if ant.ant_type != AntTypes.QUEEN:
             raise EntityNotFoundError(f'queen(id={queen_id}) not found')
         queen: QueenAnt = ant
-        
+
         nuptial_environment = self._find_nuptial_environment_for_owner(user_id)
         male = nuptial_environment.get_male(nuptial_male_id)
         queen.fertilize(male)

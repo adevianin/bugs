@@ -143,7 +143,7 @@ class DomainFacade {
     /*========================*/
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
-        this._nuptialEnvironmentService.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
+        return this._nuptialEnvironmentService.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
     }
 
     getMyNuptialMales() {

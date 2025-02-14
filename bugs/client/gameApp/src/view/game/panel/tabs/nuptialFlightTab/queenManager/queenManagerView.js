@@ -2,7 +2,7 @@ import './style.css';
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import queenManagerTmpl from './queenManagerTmpl.html';
 import { MalesSearchView } from './malesSearch';
-// import { GenesView } from '@view/panel/base/genes';
+import { MarkerTypes } from '@domain/enum/markerTypes';
 
 class QueenManagerView extends BaseHTMLView {
 
@@ -13,6 +13,7 @@ class QueenManagerView extends BaseHTMLView {
 
         this._chooseNestPositionBtn.addEventListener('click', this._onChooseNestPositionBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
     }
 
     manageQueen(queen) {
@@ -31,6 +32,7 @@ class QueenManagerView extends BaseHTMLView {
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
         this._colonyNameEl = this._el.querySelector('[data-colony-name]');
         this._startBtn = this._el.querySelector('[data-start]');
+        this._errorContainerEl = this._el.querySelector('[data-error-container]');
     }
 
     _renderQueen() {
@@ -49,13 +51,43 @@ class QueenManagerView extends BaseHTMLView {
         this.$eventBus.emit('positionPickRequest', null, (point) => { 
             this._buildingSite = point;
             this._renderBuildingSite();
+            this._showMarker();
         });
     }
 
     _onStartBtnClick() {
-        if (this._malesSearch.selectedMale && this._buildingSite && this._colonyNameEl.value) {
-            this.$domainFacade.foundColony(this._queen.id, this._malesSearch.selectedMale.id, this._buildingSite, this._colonyNameEl.value);
+        if (!this._malesSearch.selectedMale || !this._buildingSite || !this._colonyNameEl.value) {
+            return
         }
+
+        this.$domainFacade.foundColony(this._queen.id, this._malesSearch.selectedMale.id, this._buildingSite, this._colonyNameEl.value)
+            .then(() => {
+                this._clearBuildSite();
+            })
+            .catch((errId) => {
+                this._renderError(errId);
+            });
+    }
+
+    _onSomeTabSwitched() {
+        this._clearBuildSite();
+    }
+
+    _showMarker() {
+        let markers = [this.$domainFacade.buildMarker(MarkerTypes.POINTER, this._buildingSite)];
+        this.$eventBus.emit('showMarkersRequest', markers);
+    }
+
+    _clearBuildSite() {
+        if (this._buildingSite) {
+            this._buildingSite = null;
+            this._renderBuildingSite();
+            this.$eventBus.emit('hideMarkersRequest');
+        }
+    }
+
+    _renderError(errId) {
+        this._errorContainerEl.innerHTML = this.$messages[errId];
     }
 }
 

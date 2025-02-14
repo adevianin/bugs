@@ -28,8 +28,8 @@ class NuptialEnvironmentService extends EventEmitter {
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
-        this._nuptialEnvironmentApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
         this._removeMale(nuptialMaleId);
+        return this._nuptialEnvironmentApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
     }
 
     playAction(action) {

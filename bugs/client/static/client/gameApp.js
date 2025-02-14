@@ -262,7 +262,7 @@ class DomainFacade {
     /*========================*/
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
-        this._nuptialEnvironmentService.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
+        return this._nuptialEnvironmentService.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
     }
 
     getMyNuptialMales() {
@@ -2949,8 +2949,8 @@ class NuptialEnvironmentService extends _utils_eventEmitter__WEBPACK_IMPORTED_MO
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
-        this._nuptialEnvironmentApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
         this._removeMale(nuptialMaleId);
+        return this._nuptialEnvironmentApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
     }
 
     playAction(action) {
@@ -3680,13 +3680,17 @@ class NuptialEnvironmentApi {
         });
     }
 
-    foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) { 
-        return this._requester.post('api/world/nuptial_environment/found_colony', {
-            queen_id: queenId,
-            nuptial_male_id: nuptialMaleId,
-            nest_building_site: [nestBuildingSite.x, nestBuildingSite.y],
-            colony_name: colonyName
-        })
+    foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
+        return new Promise((res, rej) => {
+            this._requester.post('api/world/nuptial_environment/found_colony', {
+                queen_id: queenId,
+                nuptial_male_id: nuptialMaleId,
+                nest_building_site: [nestBuildingSite.x, nestBuildingSite.y],
+                colony_name: colonyName
+            })
+            .then(axiosResp => res(null))
+            .catch(axiosResp => rej(axiosResp.response.data))
+        });
     }
     
 }
@@ -8477,11 +8481,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
 /* harmony import */ var _queenManagerTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./queenManagerTmpl.html */ "./gameApp/src/view/game/panel/tabs/nuptialFlightTab/queenManager/queenManagerTmpl.html");
 /* harmony import */ var _malesSearch__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./malesSearch */ "./gameApp/src/view/game/panel/tabs/nuptialFlightTab/queenManager/malesSearch/index.js");
+/* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
 
 
 
 
-// import { GenesView } from '@view/panel/base/genes';
+
 
 class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
 
@@ -8492,6 +8497,7 @@ class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
         this._chooseNestPositionBtn.addEventListener('click', this._onChooseNestPositionBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
     }
 
     manageQueen(queen) {
@@ -8510,6 +8516,7 @@ class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
         this._colonyNameEl = this._el.querySelector('[data-colony-name]');
         this._startBtn = this._el.querySelector('[data-start]');
+        this._errorContainerEl = this._el.querySelector('[data-error-container]');
     }
 
     _renderQueen() {
@@ -8528,13 +8535,43 @@ class QueenManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this.$eventBus.emit('positionPickRequest', null, (point) => { 
             this._buildingSite = point;
             this._renderBuildingSite();
+            this._showMarker();
         });
     }
 
     _onStartBtnClick() {
-        if (this._malesSearch.selectedMale && this._buildingSite && this._colonyNameEl.value) {
-            this.$domainFacade.foundColony(this._queen.id, this._malesSearch.selectedMale.id, this._buildingSite, this._colonyNameEl.value);
+        if (!this._malesSearch.selectedMale || !this._buildingSite || !this._colonyNameEl.value) {
+            return
         }
+
+        this.$domainFacade.foundColony(this._queen.id, this._malesSearch.selectedMale.id, this._buildingSite, this._colonyNameEl.value)
+            .then(() => {
+                this._clearBuildSite();
+            })
+            .catch((errId) => {
+                this._renderError(errId);
+            });
+    }
+
+    _onSomeTabSwitched() {
+        this._clearBuildSite();
+    }
+
+    _showMarker() {
+        let markers = [this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_4__.MarkerTypes.POINTER, this._buildingSite)];
+        this.$eventBus.emit('showMarkersRequest', markers);
+    }
+
+    _clearBuildSite() {
+        if (this._buildingSite) {
+            this._buildingSite = null;
+            this._renderBuildingSite();
+            this.$eventBus.emit('hideMarkersRequest');
+        }
+    }
+
+    _renderError(errId) {
+        this._errorContainerEl.innerHTML = this.$messages[errId];
     }
 }
 
@@ -18941,7 +18978,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>queen <span data-queen-name></span></div>\r\n<div data-males-search></div>\r\n<div>\r\n    назва колонії \r\n    <input type=\"text\" data-colony-name>\r\n</div>\r\n<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<button data-start> старт </button>";
+var code = "<div>queen <span data-queen-name></span></div>\r\n<div data-males-search></div>\r\n<div>\r\n    назва колонії \r\n    <input type=\"text\" data-colony-name>\r\n</div>\r\n<div>\r\n    позиція гнізда:<span data-building-site></span>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<div data-error-container></div>\r\n<button data-start> старт </button>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
