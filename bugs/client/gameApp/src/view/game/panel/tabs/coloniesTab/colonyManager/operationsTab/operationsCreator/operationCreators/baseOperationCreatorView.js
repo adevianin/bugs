@@ -1,3 +1,4 @@
+import "./style.css";
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 
 class BaseOperationCreatorView extends BaseHTMLView {
@@ -12,6 +13,7 @@ class BaseOperationCreatorView extends BaseHTMLView {
     _demonstrateMarkersRequest(markers) {
         this.$eventBus.emit('showMarkersRequest', markers);
     }
+
 }
 
 export {

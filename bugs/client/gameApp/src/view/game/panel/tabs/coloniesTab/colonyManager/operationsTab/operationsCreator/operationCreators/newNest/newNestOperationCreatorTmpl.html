@@ -1,18 +1,23 @@
 <div>
-    позиція гнізда:<span data-building-site></span>
-    <button data-choose-nest-position>вибрать</button>
+    <label>позиція гнізда:</label>
+    <span data-building-position></span>
+    <button data-choose-building-position>вибрать</button>
+    <span class="operation-creator__error" data-building-position-err></span>
 </div>
 <div>
-    кількість робочих(із геном BUILDING_SUBNEST): 
-    <input data-workers-count type="number" min="1" max="3" value="1" required>
+    <label for="workers-count" data-workers-count-label>кількість робочих(із геном BUILDING_SUBNEST):</label>
+    <input id="workers-count" data-workers-count-input type="number">
+    <span class="operation-creator__error" data-workers-count-err></span>
 </div>
 <div>
-    кількість воїнів: 
-    <input data-warriors-count type="number" min="0" max="3" value="0" required>
+    <label for="warriors-count" data-warriors-count-label>кількість воїнів:</label>
+    <input id="warriors-count" data-warriors-count-input type="number">
+    <span class="operation-creator__error" data-warriors-count-err></span>
 </div>
 <div>
-    назва гнізда: 
-    <input data-nest-name required>
+    <label>назва гнізда:</label>
+    <input data-nest-name>
+    <span class="operation-creator__error" data-nest-name-err></span>
 </div>
-<div data-error-container></div>
+<div class="operation-creator__error" data-error-container></div>
 <button data-start>старт</button>

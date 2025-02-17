@@ -31,7 +31,13 @@ const uaMessages = {
     watching_nest_activity: 'слідкую за гніздом',
     founding_main_nest_activity: 'будую основне гніздо колонії',
     pick_position: 'постав точку',
-    pick_nest: 'вибери гніздо'
+    pick_nest: 'вибери гніздо',
+    max: 'макс.',
+    min: 'мін.',
+    not_specified: 'не задано',
+    building_position_needed: 'мурахам треба вказати місце для будування гнізда',
+    to_short_name: 'занадто коротка назва',
+    use_only_chars_and_digits: 'в назві використовуй тільки букви і цифри'
 }
 
 export {
