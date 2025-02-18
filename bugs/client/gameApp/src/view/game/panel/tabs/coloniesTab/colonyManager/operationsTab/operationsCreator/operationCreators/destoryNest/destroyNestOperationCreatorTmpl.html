@@ -1,15 +1,22 @@
 зруйнувати гніздо
 <div>
-    гніздо: <span data-choosed-nest></span>
+    <label>гніздо: </label>
+    <span data-choosed-nest></span>
     <button data-choose-nest-btn>вибрать</button>
+    <span class="operation-creator__error" data-choosed-nest-err></span>
 </div>
 <div>
-    кількість робочих: <input data-workers-count type="number" min="1" max="10" value="1">
+    <label>кількість робочих: </label>
+    <input data-workers-count type="number" min="1" max="10" value="1">
+    <span class="operation-creator__error" data-workers-count-err></span>
 </div>
 <div>
-    кількість воїнів: <input data-warriors-count type="number" min="1" max="10" value="1">
+    <label>кількість воїнів: </label>
+    <input data-warriors-count type="number" min="1" max="10" value="1">
+    <span class="operation-creator__error" data-warriors-count-err></span>
 </div>
-<div data-error-container></div>
+<div class="operation-creator__error" data-min-ants-count-error-container></div>
+<div class="operation-creator__error" data-request-error-container></div>
 <div>
     <button data-start-btn>start</button>
 </div>

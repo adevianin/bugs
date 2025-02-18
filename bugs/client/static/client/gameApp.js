@@ -96,7 +96,8 @@ const CONSTS = {
     MAX_SUB_NEST_COUNT: null,
     REQUIRED_GENES: null,
     MAX_DISTANCE_TO_OPERATION_TARGET: null,
-    BUILD_NEW_SUB_NEST_OPERATION_REQUIREMENTS: null
+    BUILD_NEW_SUB_NEST_OPERATION_REQUIREMENTS: null,
+    DESTROY_NEST_OPERATION_REQUIREMENTS: null
 }
 
 function initConts(constsValues) {
@@ -5108,6 +5109,48 @@ class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
 /***/ }),
 
+/***/ "./gameApp/src/view/game/panel/base/nest/nestInlineView.js":
+/*!*****************************************************************!*\
+  !*** ./gameApp/src/view/game/panel/base/nest/nestInlineView.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   NestInlineView: () => (/* binding */ NestInlineView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+
+
+class NestInlineView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, nest) {
+        super(el);
+        this._nest = nest;
+
+        this._renderNest();
+    }
+
+    get value() {
+        return this._nest;
+    }
+
+    set value(nest) {
+        this._nest = nest;
+        this._renderNest();
+    }
+
+    _renderNest() {
+        this._el.innerHTML = this._nest ? this._nest.name : this.$messages.not_specified;
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/view/game/panel/base/position/positionView.js":
 /*!*******************************************************************!*\
   !*** ./gameApp/src/view/game/panel/base/position/positionView.js ***!
@@ -7272,6 +7315,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _destroyNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./destroyNestOperationCreatorTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/destoryNest/destroyNestOperationCreatorTmpl.html");
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
+/* harmony import */ var _view_game_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/game/panel/base/intInput/intInputView */ "./gameApp/src/view/game/panel/base/intInput/intInputView.js");
+/* harmony import */ var _view_game_panel_base_nest_nestInlineView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/game/panel/base/nest/nestInlineView */ "./gameApp/src/view/game/panel/base/nest/nestInlineView.js");
+
+
 
 
 
@@ -7281,60 +7328,124 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._choosedNest = null;
 
         this._render();
+
         this._chooseNestBtn.addEventListener('click', this._onChooseNestBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
     }
 
-    _render() {
-        this._el.innerHTML = _destroyNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        this._choosedNestEl = this._el.querySelector('[data-choosed-nest]');
-        this._chooseNestBtn = this._el.querySelector('[data-choose-nest-btn]');
-        this._startBtn = this._el.querySelector('[data-start-btn]');
-        this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
-        this._workersCountEl = this._el.querySelector('[data-workers-count]');
-        this._errorContainerEl = this._el.querySelector('[data-error-container]');
-        this._renderChoosedNest();
+    remove() {
+        super.remove();
+        this._workersCount.remove();
+        this._warriorsCount.remove();
+        this._choosedNestView.remove();
     }
 
-    _renderChoosedNest() {
-        this._choosedNestEl.innerHTML = this._choosedNest ? `(${ this._choosedNest.id })` : '(не вибрано)';
+    _render() {
+        this._el.innerHTML = _destroyNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._startBtn = this._el.querySelector('[data-start-btn]');
+        this._requestErrorContainerEl = this._el.querySelector('[data-request-error-container]');
+        this._minAntsCountErrorContainerEl = this._el.querySelector('[data-min-ants-count-error-container]');
+
+        this._chooseNestBtn = this._el.querySelector('[data-choose-nest-btn]');
+        this._choosedNestErr = this._el.querySelector('[data-choosed-nest-err]');
+        this._choosedNestView = new _view_game_panel_base_nest_nestInlineView__WEBPACK_IMPORTED_MODULE_5__.NestInlineView(this._el.querySelector('[data-choosed-nest]'));
+
+        let workersCountInput = this._el.querySelector('[data-workers-count]');
+        let workersCountErrEl = this._el.querySelector('[data-workers-count-err]');
+        let minWorkersCount = _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.DESTROY_NEST_OPERATION_REQUIREMENTS.MIN_WORKERS_COUNT;
+        let maxWorkersCount = _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.DESTROY_NEST_OPERATION_REQUIREMENTS.MAX_WORKERS_COUNT;
+        this._workersCount = new _view_game_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_4__.IntInputView(workersCountInput, minWorkersCount, maxWorkersCount, workersCountErrEl);
+
+        let warriorsCountInput = this._el.querySelector('[data-warriors-count]');
+        let warriorsCountErrEl = this._el.querySelector('[data-warriors-count-err]');
+        let minWarriorsCount = _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.DESTROY_NEST_OPERATION_REQUIREMENTS.MIN_WARRIORS_COUNT;
+        let maxWarriorsCount = _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.DESTROY_NEST_OPERATION_REQUIREMENTS.MAX_WARRIORS_COUNT;
+        this._warriorsCount = new _view_game_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_4__.IntInputView(warriorsCountInput, minWarriorsCount, maxWarriorsCount, warriorsCountErrEl);
+    }
+
+    _validate() {
+        let isError = false;
+
+        if (!this._workersCount.validate()) {
+            isError = true;
+        }
+
+        if (!this._warriorsCount.validate()) {
+            isError = true;
+        }
+
+        let choosedNestErr = this._validateChoosedNest();
+        this._renderChoosedNestError(choosedNestErr);
+        if (choosedNestErr) {
+            isError = true;
+        }
+
+        let minAntsCountErr = this._validateMinAntsCount();
+        this._renderMinAntsCountErr(minAntsCountErr);
+        if (minAntsCountErr) {
+            isError = true;
+        }
+
+        return !isError;
+    }
+
+    _validateChoosedNest() {
+        if (!this._choosedNestView.value) {
+            return this.$messages.choose_nest_for_attack;
+        }
+        
+        return null;
+    }
+
+    _renderChoosedNestError(errText) {
+        this._choosedNestErr.innerHTML = errText || '';
+    }
+
+    _validateMinAntsCount() {
+        let antsCount = this._workersCount.value + this._warriorsCount.value;
+        if (antsCount < _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.DESTROY_NEST_OPERATION_REQUIREMENTS.MIN_ANTS_COUNT) {
+            return this.$messages.too_few_ants_to_attack;
+        }
+
+        return null;
+    }
+
+    _renderMinAntsCountErr(errText) {
+        this._minAntsCountErrorContainerEl.innerHTML = errText || '';
     }
 
     _onChooseNestBtnClick() {
         let queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
         let pickableCircle = { center: queenOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
         this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, (nest) => {
-            this._choosedNest = nest;
-            this._renderChoosedNest();
+            this._choosedNestView.value = nest;
             this._showMarkers();
         });
     }
 
     _onStartBtnClick() {
-        if (!this._choosedNest) {
+        if (!this._validate()) {
             return
         }
-        let warriorsCount = parseInt(this._warriorsCountEl.value);
-        let workersCount = parseInt(this._workersCountEl.value);
-        this.$domainFacade.destroyNestOperation(this._performingColony.id, warriorsCount, workersCount, this._choosedNest)
+        this.$domainFacade.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._choosedNestView.value)
             .then(() => {
                 this._onDone();
             })
             .catch((errId) => {
-                this._renderError(errId);
+                this._renderRequestError(errId);
             });
     }
 
     _showMarkers() {
-        let markers = [this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_2__.MarkerTypes.CROSS, this._choosedNest.position)];
+        let markers = [this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_2__.MarkerTypes.CROSS, this._choosedNestView.value.position)];
         this._demonstrateMarkersRequest(markers);
     }
 
-    _renderError(messageId) {
-        this._errorContainerEl.innerHTML = this.$messages[messageId];
+    _renderRequestError(errId) {
+        this._requestErrorContainerEl.innerHTML = this.$messages[errId];
     }
 }
 
@@ -10598,7 +10709,9 @@ const uaMessages = {
     not_specified: 'не задано',
     building_position_needed: 'мурахам треба вказати місце для будування гнізда',
     to_short_name: 'занадто коротка назва',
-    use_only_chars_and_digits: 'в назві використовуй тільки букви і цифри'
+    use_only_chars_and_digits: 'в назві використовуй тільки букви і цифри',
+    choose_nest_for_attack: 'мурахам треба вказати гніздо для атаки',
+    too_few_ants_to_attack: 'занадто мало мурах для атаки'
 }
 
 
@@ -18981,7 +19094,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "зруйнувати гніздо\r\n<div>\r\n    гніздо: <span data-choosed-nest></span>\r\n    <button data-choose-nest-btn>вибрать</button>\r\n</div>\r\n<div>\r\n    кількість робочих: <input data-workers-count type=\"number\" min=\"1\" max=\"10\" value=\"1\">\r\n</div>\r\n<div>\r\n    кількість воїнів: <input data-warriors-count type=\"number\" min=\"1\" max=\"10\" value=\"1\">\r\n</div>\r\n<div data-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>\r\n";
+var code = "зруйнувати гніздо\r\n<div>\r\n    <label>гніздо: </label>\r\n    <span data-choosed-nest></span>\r\n    <button data-choose-nest-btn>вибрать</button>\r\n    <span class=\"operation-creator__error\" data-choosed-nest-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість робочих: </label>\r\n    <input data-workers-count type=\"number\" min=\"1\" max=\"10\" value=\"1\">\r\n    <span class=\"operation-creator__error\" data-workers-count-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість воїнів: </label>\r\n    <input data-warriors-count type=\"number\" min=\"1\" max=\"10\" value=\"1\">\r\n    <span class=\"operation-creator__error\" data-warriors-count-err></span>\r\n</div>\r\n<div class=\"operation-creator__error\" data-min-ants-count-error-container></div>\r\n<div class=\"operation-creator__error\" data-request-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

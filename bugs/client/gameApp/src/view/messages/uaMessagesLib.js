@@ -37,7 +37,9 @@ const uaMessages = {
     not_specified: 'не задано',
     building_position_needed: 'мурахам треба вказати місце для будування гнізда',
     to_short_name: 'занадто коротка назва',
-    use_only_chars_and_digits: 'в назві використовуй тільки букви і цифри'
+    use_only_chars_and_digits: 'в назві використовуй тільки букви і цифри',
+    choose_nest_for_attack: 'мурахам треба вказати гніздо для атаки',
+    too_few_ants_to_attack: 'занадто мало мурах для атаки'
 }
 
 export {
