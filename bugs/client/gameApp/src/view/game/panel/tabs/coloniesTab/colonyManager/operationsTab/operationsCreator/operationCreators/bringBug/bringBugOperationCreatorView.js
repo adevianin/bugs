@@ -22,9 +22,8 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
     _render() {
         this._el.innerHTML = bringBugOperationCreatorTmpl;
 
-        this._nestSelector = new NestSelectorView(this._performingColony.id);
-        this._el.querySelector('[data-nest-selector]').append(this._nestSelector.el);
-        this._errorContainerEl = this._el.querySelector('[data-error-container]');
+        this._nestSelector = new NestSelectorView(this._performingColony.id, this._el.querySelector('[data-nest-selector]'));
+        this._requestErrorContainerEl = this._el.querySelector('[data-request-error-container]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
 
@@ -38,12 +37,12 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
                 this._onDone();
             })
             .catch((errId) => {
-                this._renderError(errId);
+                this._renderRequestError(errId);
             })
     }
 
-    _renderError(messageId) {
-        this._errorContainerEl.innerHTML = this.$messages[messageId];
+    _renderRequestError(messageId) {
+        this._requestErrorContainerEl.innerHTML = this.$messages[messageId];
     }
 
     _onNestChanged() {

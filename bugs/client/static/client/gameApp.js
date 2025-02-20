@@ -7177,9 +7177,8 @@ class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IM
     _render() {
         this._el.innerHTML = _bringBugOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this._nestSelector = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id);
-        this._el.querySelector('[data-nest-selector]').append(this._nestSelector.el);
-        this._errorContainerEl = this._el.querySelector('[data-error-container]');
+        this._nestSelector = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id, this._el.querySelector('[data-nest-selector]'));
+        this._requestErrorContainerEl = this._el.querySelector('[data-request-error-container]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
 
@@ -7193,12 +7192,12 @@ class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IM
                 this._onDone();
             })
             .catch((errId) => {
-                this._renderError(errId);
+                this._renderRequestError(errId);
             })
     }
 
-    _renderError(messageId) {
-        this._errorContainerEl.innerHTML = this.$messages[messageId];
+    _renderRequestError(messageId) {
+        this._requestErrorContainerEl.innerHTML = this.$messages[messageId];
     }
 
     _onNestChanged() {
@@ -19204,7 +19203,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "принести жука\r\n<div>\r\n    гніздо:\r\n    <div data-nest-selector></div>\r\n</div>\r\n<div data-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
+var code = "принести жука\r\n<div>\r\n    <label>гніздо:</label>\r\n    <select data-nest-selector></select>\r\n</div>\r\n<div class=\"operation-creator__error\"  data-request-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
