@@ -62,10 +62,14 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
     _onChooseNestToPillageBtnClick() {
         let queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
         let pickableCircle = { center: queenOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
-        this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, (nestToPillage) => {
-            this._nestToPillageView.value = nestToPillage;
-            this._showMarkers();
-        });
+        this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, this._onNestToPillageChoosed.bind(this));
+    }
+
+    _onNestToPillageChoosed(nestToPillage) {
+        this._nestToPillageView.value = nestToPillage;
+        this._showMarkers();
+        let nestToPillageError = this._validateChoosedNestToPillage();
+        this._renderNestToPillageError(nestToPillageError);
     }
 
     _validate() {
