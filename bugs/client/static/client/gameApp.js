@@ -4991,6 +4991,7 @@ class IntInputView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.
     _onChange() {
         this._el.value = parseInt(this._el.value);
         this.validate();
+        this.events.emit('change');
     }
 
 }
@@ -7341,6 +7342,8 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
 
         this._chooseNestBtn.addEventListener('click', this._onChooseNestBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._workersCount.events.addListener('change', this._onAntsCountChange.bind(this));
+        this._warriorsCount.events.addListener('change', this._onAntsCountChange.bind(this));
     }
 
     remove() {
@@ -7428,10 +7431,19 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
     _onChooseNestBtnClick() {
         let queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
         let pickableCircle = { center: queenOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
-        this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, (nest) => {
-            this._choosedNestView.value = nest;
-            this._showMarkers();
-        });
+        this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, this._onChoosedNestToDestroy.bind(this));
+    }
+
+    _onChoosedNestToDestroy(nest) {
+        this._choosedNestView.value = nest;
+        this._showMarkers();
+        let choosedNestErr = this._validateChoosedNest();
+        this._renderChoosedNestError(choosedNestErr);
+    }
+
+    _onAntsCountChange() {
+        let minAntsCountErr = this._validateMinAntsCount();
+        this._renderMinAntsCountErr(minAntsCountErr);
     }
 
     _onStartBtnClick() {

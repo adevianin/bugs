@@ -14,6 +14,8 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
 
         this._chooseNestBtn.addEventListener('click', this._onChooseNestBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._workersCount.events.addListener('change', this._onAntsCountChange.bind(this));
+        this._warriorsCount.events.addListener('change', this._onAntsCountChange.bind(this));
     }
 
     remove() {
@@ -101,10 +103,19 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
     _onChooseNestBtnClick() {
         let queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
         let pickableCircle = { center: queenOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
-        this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, (nest) => {
-            this._choosedNestView.value = nest;
-            this._showMarkers();
-        });
+        this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, this._onChoosedNestToDestroy.bind(this));
+    }
+
+    _onChoosedNestToDestroy(nest) {
+        this._choosedNestView.value = nest;
+        this._showMarkers();
+        let choosedNestErr = this._validateChoosedNest();
+        this._renderChoosedNestError(choosedNestErr);
+    }
+
+    _onAntsCountChange() {
+        let minAntsCountErr = this._validateMinAntsCount();
+        this._renderMinAntsCountErr(minAntsCountErr);
     }
 
     _onStartBtnClick() {

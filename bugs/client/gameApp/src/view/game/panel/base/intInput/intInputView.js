@@ -95,6 +95,7 @@ class IntInputView extends BaseHTMLView {
     _onChange() {
         this._el.value = parseInt(this._el.value);
         this.validate();
+        this.events.emit('change');
     }
 
 }
