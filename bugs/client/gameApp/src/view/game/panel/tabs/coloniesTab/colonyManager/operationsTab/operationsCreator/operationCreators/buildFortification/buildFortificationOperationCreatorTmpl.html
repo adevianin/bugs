@@ -1,13 +1,14 @@
 будувать фортифікації
 <div>
-    гніздо:
-    <div data-nest-selector></div>
+    <label>гніздо:</label>
+    <select data-nest-selector></select>
 </div>
 <div>
-    кількість робочих(із геном ):
-    <input data-workers-count type="number" min="1" value="2">
+    <label>кількість робочих:</label>
+    <input data-workers-count type="number">
+    <span class="operation-creator__error" data-workers-count-err></span>
 </div>
-<div data-error-container></div>
+<div class="operation-creator__error" data-request-error-container></div>
 <div>
     <button data-start-btn>start</button>
 </div>

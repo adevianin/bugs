@@ -99,7 +99,8 @@ const CONSTS = {
     BUILD_NEW_SUB_NEST_OPERATION_REQUIREMENTS: null,
     DESTROY_NEST_OPERATION_REQUIREMENTS: null,
     PILLAGE_NEST_OPERATION_REQUIREMENTS: null,
-    TRANSPORT_FOOD_OPERATION_REQUIREMENTS: null
+    TRANSPORT_FOOD_OPERATION_REQUIREMENTS: null,
+    BUILD_FORTIFICATION_OPERATION_REQUIREMENTS: null
 }
 
 function initConts(constsValues) {
@@ -7236,6 +7237,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _buildFortificationOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./buildFortificationOperationCreatorTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/buildFortification/buildFortificationOperationCreatorTmpl.html");
 /* harmony import */ var _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/nestSelector */ "./gameApp/src/view/game/panel/base/nestSelector/index.js");
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
+/* harmony import */ var _view_game_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/game/panel/base/intInput/intInputView */ "./gameApp/src/view/game/panel/base/intInput/intInputView.js");
+
+
 
 
 
@@ -7255,32 +7260,50 @@ class BuildFortificationOperationCreatorView extends _baseOperationCreatorView__
 
     remove() {
         this._nestSelector.remove();
+        this._workersCountView.remove();
         super.remove();
     }
 
     _render() {
         this._el.innerHTML = _buildFortificationOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this._nestSelector = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id);
-        this._el.querySelector('[data-nest-selector]').append(this._nestSelector.el);
+        this._nestSelector = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id, this._el.querySelector('[data-nest-selector]'));
 
-        this._workersCountInput = this._el.querySelector('[data-workers-count]');
+        let workersCountInput = this._el.querySelector('[data-workers-count]');
+        let workersCountErrContainer = this._el.querySelector('[data-workers-count-err]');
+        let minWorkersCount = _domain_consts__WEBPACK_IMPORTED_MODULE_4__.CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MIN_WORKERS_COUNT;
+        let maxWorkersCount = _domain_consts__WEBPACK_IMPORTED_MODULE_4__.CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MAX_WORKERS_COUNT;
+        this._workersCountView = new _view_game_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_5__.IntInputView(workersCountInput, minWorkersCount, maxWorkersCount, workersCountErrContainer);
 
-        this._errorContainerEl = this._el.querySelector('[data-error-container]');
+        this._requestErrorContainer = this._el.querySelector('[data-request-error-container]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
         this._showMarkers();
     }
 
+    _validate() {
+        let isError = false;
+
+        if (this._workersCountView.validate()) {
+            isError = true;
+        }
+
+        return !isError;
+    }
+
     _onStartBtnClick() {
+        if (this._validate()) {
+            return;
+        }
+
         let nestId = this._nestSelector.nestId;
-        let workersCount = this._workersCountInput.value;
+        let workersCount = this._workersCountView.value;
         this.$domainFacade.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount)
             .then(() => {
                 this._onDone();
             })
             .catch((errId) => {
-                this._renderError(errId);
+                this._renderRequestContainerError(errId);
             });
     }
 
@@ -7299,8 +7322,8 @@ class BuildFortificationOperationCreatorView extends _baseOperationCreatorView__
         this._demonstrateMarkersRequest(markers);
     }
 
-    _renderError(messageId) {
-        this._errorContainerEl.innerHTML = this.$messages[messageId];
+    _renderRequestContainerError(messageId) {
+        this._requestErrorContainer.innerHTML = this.$messages[messageId];
     }
 
 }
@@ -19199,7 +19222,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "будувать фортифікації\r\n<div>\r\n    гніздо:\r\n    <div data-nest-selector></div>\r\n</div>\r\n<div>\r\n    кількість робочих(із геном ):\r\n    <input data-workers-count type=\"number\" min=\"1\" value=\"2\">\r\n</div>\r\n<div data-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
+var code = "будувать фортифікації\r\n<div>\r\n    <label>гніздо:</label>\r\n    <select data-nest-selector></select>\r\n</div>\r\n<div>\r\n    <label>кількість робочих:</label>\r\n    <input data-workers-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-workers-count-err></span>\r\n</div>\r\n<div class=\"operation-creator__error\" data-request-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

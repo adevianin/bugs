@@ -2,6 +2,8 @@ import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import buildFortificationOperationCreatorTmpl from './buildFortificationOperationCreatorTmpl.html';
 import { NestSelectorView } from "@view/game/panel/base/nestSelector";
 import { MarkerTypes } from "@domain/enum/markerTypes";
+import { CONSTS } from "@domain/consts";
+import { IntInputView } from "@view/game/panel/base/intInput/intInputView";
 
 class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
 
@@ -17,32 +19,50 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
 
     remove() {
         this._nestSelector.remove();
+        this._workersCountView.remove();
         super.remove();
     }
 
     _render() {
         this._el.innerHTML = buildFortificationOperationCreatorTmpl;
 
-        this._nestSelector = new NestSelectorView(this._performingColony.id);
-        this._el.querySelector('[data-nest-selector]').append(this._nestSelector.el);
+        this._nestSelector = new NestSelectorView(this._performingColony.id, this._el.querySelector('[data-nest-selector]'));
 
-        this._workersCountInput = this._el.querySelector('[data-workers-count]');
+        let workersCountInput = this._el.querySelector('[data-workers-count]');
+        let workersCountErrContainer = this._el.querySelector('[data-workers-count-err]');
+        let minWorkersCount = CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MIN_WORKERS_COUNT;
+        let maxWorkersCount = CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MAX_WORKERS_COUNT;
+        this._workersCountView = new IntInputView(workersCountInput, minWorkersCount, maxWorkersCount, workersCountErrContainer);
 
-        this._errorContainerEl = this._el.querySelector('[data-error-container]');
+        this._requestErrorContainer = this._el.querySelector('[data-request-error-container]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
         this._showMarkers();
     }
 
+    _validate() {
+        let isError = false;
+
+        if (this._workersCountView.validate()) {
+            isError = true;
+        }
+
+        return !isError;
+    }
+
     _onStartBtnClick() {
+        if (this._validate()) {
+            return;
+        }
+
         let nestId = this._nestSelector.nestId;
-        let workersCount = this._workersCountInput.value;
+        let workersCount = this._workersCountView.value;
         this.$domainFacade.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount)
             .then(() => {
                 this._onDone();
             })
             .catch((errId) => {
-                this._renderError(errId);
+                this._renderRequestContainerError(errId);
             });
     }
 
@@ -61,8 +81,8 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
         this._demonstrateMarkersRequest(markers);
     }
 
-    _renderError(messageId) {
-        this._errorContainerEl.innerHTML = this.$messages[messageId];
+    _renderRequestContainerError(messageId) {
+        this._requestErrorContainer.innerHTML = this.$messages[messageId];
     }
 
 }

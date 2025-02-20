@@ -5,6 +5,7 @@ from core.world.entities.colony.colonies.ant_colony.operation.build_new_sub_nest
 from core.world.entities.colony.colonies.ant_colony.operation.destroy_nest_operation import DestroyNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.pillage_nest_operation import PillageNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.transport_food_operation import TransportFoodOperation
+from core.world.entities.colony.colonies.ant_colony.operation.build_fortification_operation import BuildFortificationOperation
 
 class ConstantsClientSerializer():
 
@@ -48,5 +49,12 @@ class ConstantsClientSerializer():
                 'MAX_WORKERS_COUNT': TransportFoodOperation.MAX_WORKERS_COUNT,
                 'MIN_WORKERS_COUNT': TransportFoodOperation.MIN_WORKERS_COUNT,
                 'MIN_ANTS_COUNT': TransportFoodOperation.MIN_ANTS_COUNT
+            },
+            'BUILD_FORTIFICATION_OPERATION_REQUIREMENTS': {
+                'MAX_WARRIORS_COUNT': BuildFortificationOperation.MAX_WARRIORS_COUNT,
+                'MIN_WARRIORS_COUNT': BuildFortificationOperation.MIN_WARRIORS_COUNT,
+                'MAX_WORKERS_COUNT': BuildFortificationOperation.MAX_WORKERS_COUNT,
+                'MIN_WORKERS_COUNT': BuildFortificationOperation.MIN_WORKERS_COUNT,
+                'MIN_ANTS_COUNT': BuildFortificationOperation.MIN_ANTS_COUNT
             }
         }
