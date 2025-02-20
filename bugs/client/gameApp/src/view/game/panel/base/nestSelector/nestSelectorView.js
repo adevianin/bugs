@@ -3,9 +3,8 @@ import { EntityTypes } from "@domain/enum/entityTypes";
 
 class NestSelectorView extends BaseHTMLView {
 
-    constructor(colonyId) {
-        let el = document.createElement('select');
-        super(el);
+    constructor(colonyId, el) {
+        super(el || document.createElement('select'));
         this._colonyId = colonyId;
         this._isDisabled = false;
 
@@ -31,6 +30,13 @@ class NestSelectorView extends BaseHTMLView {
 
     get disabled() {
         return this._isDisabled;
+    }
+
+    selectAt(index) {
+        let option = this._el.children[index];
+        if (option) {
+            this.nestId = option.getAttribute('value');
+        }
     }
 
     _render() {

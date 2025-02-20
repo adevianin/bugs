@@ -4,6 +4,7 @@ from core.world.entities.ant.base.nuptial_environment.specie_builder.required_ge
 from core.world.entities.colony.colonies.ant_colony.operation.build_new_sub_nest_operation import BuildNewSubNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.destroy_nest_operation import DestroyNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.pillage_nest_operation import PillageNestOperation
+from core.world.entities.colony.colonies.ant_colony.operation.transport_food_operation import TransportFoodOperation
 
 class ConstantsClientSerializer():
 
@@ -40,5 +41,12 @@ class ConstantsClientSerializer():
                 'MAX_WORKERS_COUNT': PillageNestOperation.MAX_WORKERS_COUNT,
                 'MIN_WORKERS_COUNT': PillageNestOperation.MIN_WORKERS_COUNT,
                 'MIN_ANTS_COUNT': PillageNestOperation.MIN_ANTS_COUNT
+            },
+            'TRANSPORT_FOOD_OPERATION_REQUIREMENTS': {
+                'MAX_WARRIORS_COUNT': TransportFoodOperation.MAX_WARRIORS_COUNT,
+                'MIN_WARRIORS_COUNT': TransportFoodOperation.MIN_WARRIORS_COUNT,
+                'MAX_WORKERS_COUNT': TransportFoodOperation.MAX_WORKERS_COUNT,
+                'MIN_WORKERS_COUNT': TransportFoodOperation.MIN_WORKERS_COUNT,
+                'MIN_ANTS_COUNT': TransportFoodOperation.MIN_ANTS_COUNT
             }
         }

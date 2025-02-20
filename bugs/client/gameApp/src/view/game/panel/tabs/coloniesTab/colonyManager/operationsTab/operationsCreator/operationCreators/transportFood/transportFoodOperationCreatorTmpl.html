@@ -1,21 +1,26 @@
 перенести їжу
 <div>
-    із гнізда:
-    <div data-from-nest-selector-container></div>
+    <label>із гнізда:</label>
+    <select data-nest-from-selector></select>
+    <span class="operation-creator__error" data-nest-from-err></span>
 </div>
 <div>
-    в гніздо:
-    <div data-to-nest-selector-container></div>
+    <label>в гніздо:</label>
+    <select data-nest-to-selector></select>
+    <span class="operation-creator__error" data-nest-to-err></span>
 </div>
 <div>
-    кількість робочих:
-    <input data-workers-count type="number" min="1" value="2">
+    <label>кількість робочих:</label>
+    <input data-workers-count type="number">
+    <span class="operation-creator__error" data-workers-count-err></span>
 </div>
 <div>
-    кількість воїнів:
-    <input data-warriors-count type="number" min="0" value="2">
+    <label>кількість воїнів:</label>
+    <input data-warriors-count type="number">
+    <span class="operation-creator__error" data-warriors-count-err></span>
 </div>
-<div data-error-container></div>
+<div class="operation-creator__error" data-selected-nests-error-container></div>
+<div class="operation-creator__error" data-request-error-container></div>
 <div>
     <button data-start-btn>start</button>
 </div>

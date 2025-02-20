@@ -98,7 +98,8 @@ const CONSTS = {
     MAX_DISTANCE_TO_OPERATION_TARGET: null,
     BUILD_NEW_SUB_NEST_OPERATION_REQUIREMENTS: null,
     DESTROY_NEST_OPERATION_REQUIREMENTS: null,
-    PILLAGE_NEST_OPERATION_REQUIREMENTS: null
+    PILLAGE_NEST_OPERATION_REQUIREMENTS: null,
+    TRANSPORT_FOOD_OPERATION_REQUIREMENTS: null
 }
 
 function initConts(constsValues) {
@@ -5034,9 +5035,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    constructor(colonyId) {
-        let el = document.createElement('select');
-        super(el);
+    constructor(colonyId, el) {
+        super(el || document.createElement('select'));
         this._colonyId = colonyId;
         this._isDisabled = false;
 
@@ -5062,6 +5062,13 @@ class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
     get disabled() {
         return this._isDisabled;
+    }
+
+    selectAt(index) {
+        let option = this._el.children[index];
+        if (option) {
+            this.nestId = option.getAttribute('value');
+        }
     }
 
     _render() {
@@ -7847,6 +7854,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _transportFoodOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./transportFoodOperationCreatorTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/transportFood/transportFoodOperationCreatorTmpl.html");
 /* harmony import */ var _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/nestSelector */ "./gameApp/src/view/game/panel/base/nestSelector/index.js");
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
+/* harmony import */ var _view_game_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/game/panel/base/intInput/intInputView */ "./gameApp/src/view/game/panel/base/intInput/intInputView.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
+
+
 
 
 
@@ -7858,79 +7869,127 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
         super(performingColony, onDone);
 
         this._render();
+        this._validate();
 
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
-        this._nestSelectorFrom.events.addListener('changed', this._onNestFromChanged.bind(this));
-        this._nestSelectorTo.events.addListener('changed', this._onNestToChanged.bind(this));
-
+        this._nestFromSelector.events.addListener('changed', this._onNestFromChanged.bind(this));
+        this._nestToSelector.events.addListener('changed', this._onNestToChanged.bind(this));
     }
 
     remove() {
-        this._nestSelectorFrom.remove();
-        this._nestSelectorTo.remove();
+        this._nestFromSelector.remove();
+        this._nestToSelector.remove();
+        this._workersCountView.remove();
+        this._warriorsCountView.remove();
         super.remove();
     }
 
     _render() {
         this._el.innerHTML = _transportFoodOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this._nestSelectorFrom = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id);
-        this._el.querySelector('[data-from-nest-selector-container]').append(this._nestSelectorFrom.el);
+        this._nestFromSelector = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id, this._el.querySelector('[data-nest-from-selector]'));
+        this._nestToSelector = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id, this._el.querySelector('[data-nest-to-selector]'));
+        this._nestToSelector.selectAt(1);
+        this._selectedNestsErrorContainer = this._el.querySelector('[data-selected-nests-error-container]');
 
-        this._nestSelectorTo = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id);
-        this._el.querySelector('[data-to-nest-selector-container]').append(this._nestSelectorTo.el);
+        let workersCountInput = this._el.querySelector('[data-workers-count]');
+        let workersCountErrContainer = this._el.querySelector('[data-workers-count-err]');
+        let minWorkersCount = _domain_consts__WEBPACK_IMPORTED_MODULE_5__.CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MIN_WORKERS_COUNT;
+        let maxWorkersCount = _domain_consts__WEBPACK_IMPORTED_MODULE_5__.CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MAX_WORKERS_COUNT;
+        this._workersCountView = new _view_game_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_4__.IntInputView(workersCountInput, minWorkersCount, maxWorkersCount, workersCountErrContainer);
 
-        this._workersCountInput = this._el.querySelector('[data-workers-count]');
-        this._warriorsCountInput = this._el.querySelector('[data-warriors-count]');
+        let warriorsCountInput = this._el.querySelector('[data-warriors-count]');
+        let warriorsCountErrContainer = this._el.querySelector('[data-warriors-count-err]');
+        let minWarriorsCount = _domain_consts__WEBPACK_IMPORTED_MODULE_5__.CONSTS.TRANSPORT_FOOD_OPERATION_REQUIREMENTS.MIN_WARRIORS_COUNT;
+        let maxWarriorsCount = _domain_consts__WEBPACK_IMPORTED_MODULE_5__.CONSTS.TRANSPORT_FOOD_OPERATION_REQUIREMENTS.MAX_WARRIORS_COUNT;
+        this._warriorsCountView = new _view_game_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_4__.IntInputView(warriorsCountInput, minWarriorsCount, maxWarriorsCount, warriorsCountErrContainer);
 
-        this._errorContainerEl = this._el.querySelector('[data-error-container]');
+        this._requestErrorCpntainer = this._el.querySelector('[data-request-error-container]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
 
         this._showMarkers();
     }
 
+    _validate() {
+        let isError = false;
+
+        if (!this._workersCountView.validate()) {
+            isError = true;
+        }
+
+        if (!this._warriorsCountView.validate()) {
+            isError = true;
+        }
+
+        let selectedNestsError = this._validateSelectedNests();
+        this._renderSelectedNestsError(selectedNestsError);
+        if (selectedNestsError) {
+            isError = true;
+        }
+
+        return !isError;
+    }
+
+    _validateSelectedNests() {
+        if (this._nestFromSelector.nestId == this._nestToSelector.nestId) {
+            return this.$messages.choose_different_nests;
+        }
+
+        return null;
+    }
+
+    _renderSelectedNestsError(errorText) {
+        this._selectedNestsErrorContainer.innerHTML = errorText;
+    }
+
     _onStartBtnClick() {
+        if (!this._validate()) {
+            return;
+        }
+
         let performingColonyId = this._performingColony.id;
-        let fromNestId = this._nestSelectorFrom.nestId;
-        let toNestId = this._nestSelectorTo.nestId;
-        let workersCount = this._workersCountInput.value;
-        let warriorsCount = this._warriorsCountInput.value;
+        let fromNestId = this._nestFromSelector.nestId;
+        let toNestId = this._nestToSelector.nestId;
+        let workersCount = this._workersCountView.value;
+        let warriorsCount = this._warriorsCountView.value;
         this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount)
             .then(() => {
                 this._onDone();
             })
             .catch((errId) => {
-                this._renderError(errId);
+                this._renderRequestError(errId);
             });
     }
 
     _onNestFromChanged() {
         this._showMarkers();
+        this._validate();
     }
 
     _onNestToChanged() {
         this._showMarkers();
+        this._validate();
     }
 
     _showMarkers() {
         let markers = [];
 
-        if (this._nestSelectorFrom.nestId) {
-            let nestFrom = this.$domainFacade.findEntityById(this._nestSelectorFrom.nestId);
+        if (this._nestFromSelector.nestId) {
+            let nestFrom = this.$domainFacade.findEntityById(this._nestFromSelector.nestId);
             markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.UNLOAD, nestFrom.position));
         }
 
-        if (this._nestSelectorTo.nestId) {
-            let nestFrom = this.$domainFacade.findEntityById(this._nestSelectorTo.nestId);
+        if (this._nestToSelector.nestId && this._nestToSelector.nestId != this._nestFromSelector.nestId) {
+            let nestFrom = this.$domainFacade.findEntityById(this._nestToSelector.nestId);
             markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.LOAD, nestFrom.position));
         }
 
         this._demonstrateMarkersRequest(markers);
     }
 
-    _renderError(messageId) {
-        this._errorContainerEl.innerHTML = this.$messages[messageId];
+    _renderRequestError(messageId) {
+        this._requestErrorCpntainer.innerHTML = this.$messages[messageId];
     }
 
 }
@@ -10759,6 +10818,7 @@ const uaMessages = {
     choose_nest_for_attack: 'мурахам треба вказати гніздо для атаки',
     too_few_ants_to_attack: 'занадто мало мурах для атаки',
     choose_nest_for_pillage: 'мурахам треба вказати гніздо для грабування',
+    choose_different_nests: 'мурахи можуть переносити їжу лише між різними гніздами'
 }
 
 
@@ -19195,7 +19255,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "перенести їжу\r\n<div>\r\n    із гнізда:\r\n    <div data-from-nest-selector-container></div>\r\n</div>\r\n<div>\r\n    в гніздо:\r\n    <div data-to-nest-selector-container></div>\r\n</div>\r\n<div>\r\n    кількість робочих:\r\n    <input data-workers-count type=\"number\" min=\"1\" value=\"2\">\r\n</div>\r\n<div>\r\n    кількість воїнів:\r\n    <input data-warriors-count type=\"number\" min=\"0\" value=\"2\">\r\n</div>\r\n<div data-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
+var code = "перенести їжу\r\n<div>\r\n    <label>із гнізда:</label>\r\n    <select data-nest-from-selector></select>\r\n    <span class=\"operation-creator__error\" data-nest-from-err></span>\r\n</div>\r\n<div>\r\n    <label>в гніздо:</label>\r\n    <select data-nest-to-selector></select>\r\n    <span class=\"operation-creator__error\" data-nest-to-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість робочих:</label>\r\n    <input data-workers-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-workers-count-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість воїнів:</label>\r\n    <input data-warriors-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-warriors-count-err></span>\r\n</div>\r\n<div class=\"operation-creator__error\" data-selected-nests-error-container></div>\r\n<div class=\"operation-creator__error\" data-request-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
