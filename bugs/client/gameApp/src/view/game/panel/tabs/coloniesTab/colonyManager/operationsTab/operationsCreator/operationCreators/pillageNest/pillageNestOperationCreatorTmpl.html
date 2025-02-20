@@ -1,19 +1,25 @@
 грабить гріздо
 <div>
-    гніздо для пограбування: <span data-nest-to-pillage></span> 
+    <label>гніздо для пограбування:</label>
+    <span data-nest-to-pillage></span> 
     <button data-choose-nest-to-pillage>вибрать</button>
+    <span class="operation-creator__error" data-nest-to-pillage-err></span>
 </div>
 <div>
-    гніздо для здобичі: 
+    <label>гніздо для здобичі:</label>
     <div data-nest-selector-container></div>
 </div>
 <div>
-    кількість воїнів: <input data-warriors-count type="number" min="2" max="10" value="5">
+    <label>кількість воїнів:</label>
+    <input data-warriors-count type="number">
+    <span class="operation-creator__error" data-warriors-count-err></span>
 </div>
 <div>
-    кількість робітників: <input data-workers-count type="number" min="2" max="10" value="2">
+    <label>кількість робітників:</label>
+    <input data-workers-count type="number">
+    <span class="operation-creator__error" data-workers-count-err></span>
 </div>
-<div data-error-container></div>
+<div class="operation-creator__error" data-error-container></div>
 <div>
     <button data-start-btn>start</button>
 </div>

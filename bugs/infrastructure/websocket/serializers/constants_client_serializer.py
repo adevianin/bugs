@@ -3,6 +3,7 @@ from core.world.settings import (NEW_EGG_FOOD_COST, STEPS_IN_YEAR, SPRING_START_
 from core.world.entities.ant.base.nuptial_environment.specie_builder.required_genes_list import REQUIRED_GENES
 from core.world.entities.colony.colonies.ant_colony.operation.build_new_sub_nest_operation import BuildNewSubNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.destroy_nest_operation import DestroyNestOperation
+from core.world.entities.colony.colonies.ant_colony.operation.pillage_nest_operation import PillageNestOperation
 
 class ConstantsClientSerializer():
 
@@ -32,5 +33,12 @@ class ConstantsClientSerializer():
                 'MAX_WORKERS_COUNT': DestroyNestOperation.MAX_WORKERS_COUNT,
                 'MIN_WORKERS_COUNT': DestroyNestOperation.MIN_WORKERS_COUNT,
                 'MIN_ANTS_COUNT': DestroyNestOperation.MIN_ANTS_COUNT
+            },
+            'PILLAGE_NEST_OPERATION_REQUIREMENTS': {
+                'MAX_WARRIORS_COUNT': PillageNestOperation.MAX_WARRIORS_COUNT,
+                'MIN_WARRIORS_COUNT': PillageNestOperation.MIN_WARRIORS_COUNT,
+                'MAX_WORKERS_COUNT': PillageNestOperation.MAX_WORKERS_COUNT,
+                'MIN_WORKERS_COUNT': PillageNestOperation.MIN_WORKERS_COUNT,
+                'MIN_ANTS_COUNT': PillageNestOperation.MIN_ANTS_COUNT
             }
         }

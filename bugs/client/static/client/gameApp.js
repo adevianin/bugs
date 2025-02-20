@@ -97,7 +97,8 @@ const CONSTS = {
     REQUIRED_GENES: null,
     MAX_DISTANCE_TO_OPERATION_TARGET: null,
     BUILD_NEW_SUB_NEST_OPERATION_REQUIREMENTS: null,
-    DESTROY_NEST_OPERATION_REQUIREMENTS: null
+    DESTROY_NEST_OPERATION_REQUIREMENTS: null,
+    PILLAGE_NEST_OPERATION_REQUIREMENTS: null
 }
 
 function initConts(constsValues) {
@@ -7684,6 +7685,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/nestSelector */ "./gameApp/src/view/game/panel/base/nestSelector/index.js");
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
+/* harmony import */ var _view_game_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/game/panel/base/intInput/intInputView */ "./gameApp/src/view/game/panel/base/intInput/intInputView.js");
+/* harmony import */ var _view_game_panel_base_nest_nestInlineView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @view/game/panel/base/nest/nestInlineView */ "./gameApp/src/view/game/panel/base/nest/nestInlineView.js");
+
+
 
 
 
@@ -7694,7 +7699,6 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._nestToPillage = null;
         this._nestForLoot = null;
 
         this._render();
@@ -7705,7 +7709,10 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
     }
 
     remove() {
+        this._nestToPillageView.remove();
         this._nestForLootSelector.remove();
+        this._warriorsCountView.remove();
+        this._workersCountView.remove();
         super.remove();
     }
 
@@ -7713,21 +7720,28 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         this._el.innerHTML = _pillageNestOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._chooseNestToPillageBtn = this._el.querySelector('[data-choose-nest-to-pillage]');
-        this._nestToPillageEl = this._el.querySelector('[data-nest-to-pillage]');
-        this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
-        this._workersCountEl = this._el.querySelector('[data-workers-count]');
-        this._startBtn = this._el.querySelector('[data-start-btn]');
-        this._errorContainerEl = this._el.querySelector('[data-error-container]');
+        this._nestToPillageView = new _view_game_panel_base_nest_nestInlineView__WEBPACK_IMPORTED_MODULE_6__.NestInlineView(this._el.querySelector('[data-nest-to-pillage]'));
+        this._nestToPillageErrorContainer = this._el.querySelector('[data-nest-to-pillage-err]');
 
         this._nestForLootSelector = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id)
         this._el.querySelector('[data-nest-selector-container]').append(this._nestForLootSelector.el);
 
-        this._renderNestToPillage();
-        this._showMarkers();
-    }
+        let warriorsCountInput = this._el.querySelector('[data-warriors-count]');
+        let warriorsCountErrContainer = this._el.querySelector('[data-warriors-count-err]');
+        let minWarriorsCount = _domain_consts__WEBPACK_IMPORTED_MODULE_4__.CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MIN_WARRIORS_COUNT;
+        let maxWarriorsCount = _domain_consts__WEBPACK_IMPORTED_MODULE_4__.CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MAX_WARRIORS_COUNT;
+        this._warriorsCountView = new _view_game_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_5__.IntInputView(warriorsCountInput, minWarriorsCount, maxWarriorsCount, warriorsCountErrContainer);
 
-    _renderNestToPillage() {
-        this._nestToPillageEl.innerHTML = this._nestToPillage ? `(${ this._nestToPillage.id })` : '(не вибрано)';
+        let workersCountInput = this._el.querySelector('[data-workers-count]');
+        let workersCountErrContainer = this._el.querySelector('[data-workers-count-err]');
+        let minWorkersCount = _domain_consts__WEBPACK_IMPORTED_MODULE_4__.CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MIN_WORKERS_COUNT;
+        let maxWorkersCount = _domain_consts__WEBPACK_IMPORTED_MODULE_4__.CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MAX_WORKERS_COUNT;
+        this._workersCountView = new _view_game_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_5__.IntInputView(workersCountInput, minWorkersCount, maxWorkersCount, workersCountErrContainer);
+
+        this._startBtn = this._el.querySelector('[data-start-btn]');
+        this._errorContainerEl = this._el.querySelector('[data-error-container]');
+
+        this._showMarkers();
     }
 
     _onNestForLootChanged() {
@@ -7738,21 +7752,53 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         let queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
         let pickableCircle = { center: queenOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_4__.CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
         this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, (nestToPillage) => {
-            this._nestToPillage = nestToPillage;
-            this._renderNestToPillage();
+            this._nestToPillageView.value = nestToPillage;
             this._showMarkers();
         });
     }
 
+    _validate() {
+        let isError = false;
+
+        let nestToPillageError = this._validateChoosedNestToPillage();
+        this._renderNestToPillageError(nestToPillageError);
+        if (nestToPillageError) {
+            isError = true;
+        }
+
+        if (!this._warriorsCountView.validate()) {
+            isError = true;
+        }
+
+        if (!this._workersCountView.validate()) {
+            isError = true;
+        }
+
+        return !isError;
+    }
+
+    _validateChoosedNestToPillage() {
+        if (!this._nestToPillageView.value) {
+            return this.$messages.choose_nest_for_pillage;
+        }
+
+        return null;
+    }
+
+    _renderNestToPillageError(errText) {
+        this._nestToPillageErrorContainer.innerHTML = errText || '';
+    }
+
     _onStartBtnClick() {
-        if (!this._nestToPillage) {
+        if (!this._validate()) {
             return
         }
 
-        let warriorsCount = parseInt(this._warriorsCountEl.value);
-        let workersCount = parseInt(this._workersCountEl.value);
+        let warriorsCount = this._warriorsCountView.value;
+        let workersCount = this._workersCountView.value;
         let nestForLootId = this._nestForLootSelector.nestId;
-        this.$domainFacade.pillageNestOperation(this._performingColony.id, this._nestToPillage.id, nestForLootId, warriorsCount, workersCount)
+        let nestToPillageId = this._nestToPillageView.value.id;
+        this.$domainFacade.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount)
             .then(() => {
                 this._onDone();
             })
@@ -7764,8 +7810,8 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
     _showMarkers() {
         let markers = [];
 
-        if (this._nestToPillage) {
-            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.PILLAGE, this._nestToPillage.position));
+        if (this._nestToPillageView.value) {
+            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.PILLAGE, this._nestToPillageView.value.position));
         }
 
         if (this._nestForLootSelector.nestId) {
@@ -10711,7 +10757,8 @@ const uaMessages = {
     to_short_name: 'занадто коротка назва',
     use_only_chars_and_digits: 'в назві використовуй тільки букви і цифри',
     choose_nest_for_attack: 'мурахам треба вказати гніздо для атаки',
-    too_few_ants_to_attack: 'занадто мало мурах для атаки'
+    too_few_ants_to_attack: 'занадто мало мурах для атаки',
+    choose_nest_for_pillage: 'мурахам треба вказати гніздо для грабування',
 }
 
 
@@ -19094,7 +19141,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "зруйнувати гніздо\r\n<div>\r\n    <label>гніздо: </label>\r\n    <span data-choosed-nest></span>\r\n    <button data-choose-nest-btn>вибрать</button>\r\n    <span class=\"operation-creator__error\" data-choosed-nest-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість робочих: </label>\r\n    <input data-workers-count type=\"number\" min=\"1\" max=\"10\" value=\"1\">\r\n    <span class=\"operation-creator__error\" data-workers-count-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість воїнів: </label>\r\n    <input data-warriors-count type=\"number\" min=\"1\" max=\"10\" value=\"1\">\r\n    <span class=\"operation-creator__error\" data-warriors-count-err></span>\r\n</div>\r\n<div class=\"operation-creator__error\" data-min-ants-count-error-container></div>\r\n<div class=\"operation-creator__error\" data-request-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>\r\n";
+var code = "зруйнувати гніздо\r\n<div>\r\n    <label>гніздо: </label>\r\n    <span data-choosed-nest></span>\r\n    <button data-choose-nest-btn>вибрать</button>\r\n    <span class=\"operation-creator__error\" data-choosed-nest-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість робочих: </label>\r\n    <input data-workers-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-workers-count-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість воїнів: </label>\r\n    <input data-warriors-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-warriors-count-err></span>\r\n</div>\r\n<div class=\"operation-creator__error\" data-min-ants-count-error-container></div>\r\n<div class=\"operation-creator__error\" data-request-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -19130,7 +19177,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "грабить гріздо\r\n<div>\r\n    гніздо для пограбування: <span data-nest-to-pillage></span> \r\n    <button data-choose-nest-to-pillage>вибрать</button>\r\n</div>\r\n<div>\r\n    гніздо для здобичі: \r\n    <div data-nest-selector-container></div>\r\n</div>\r\n<div>\r\n    кількість воїнів: <input data-warriors-count type=\"number\" min=\"2\" max=\"10\" value=\"5\">\r\n</div>\r\n<div>\r\n    кількість робітників: <input data-workers-count type=\"number\" min=\"2\" max=\"10\" value=\"2\">\r\n</div>\r\n<div data-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
+var code = "грабить гріздо\r\n<div>\r\n    <label>гніздо для пограбування:</label>\r\n    <span data-nest-to-pillage></span> \r\n    <button data-choose-nest-to-pillage>вибрать</button>\r\n    <span class=\"operation-creator__error\" data-nest-to-pillage-err></span>\r\n</div>\r\n<div>\r\n    <label>гніздо для здобичі:</label>\r\n    <div data-nest-selector-container></div>\r\n</div>\r\n<div>\r\n    <label>кількість воїнів:</label>\r\n    <input data-warriors-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-warriors-count-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість робітників:</label>\r\n    <input data-workers-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-workers-count-err></span>\r\n</div>\r\n<div class=\"operation-creator__error\" data-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

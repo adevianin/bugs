@@ -3,12 +3,13 @@ import pillageNestOperationCreatorTmpl from './pillageNestOperationCreatorTmpl.h
 import { NestSelectorView } from "@view/game/panel/base/nestSelector";
 import { MarkerTypes } from "@domain/enum/markerTypes";
 import { CONSTS } from "@domain/consts";
+import { IntInputView } from "@view/game/panel/base/intInput/intInputView";
+import { NestInlineView } from "@view/game/panel/base/nest/nestInlineView";
 
 class PillageNestOperationCreatorView extends BaseOperationCreatorView {
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._nestToPillage = null;
         this._nestForLoot = null;
 
         this._render();
@@ -19,7 +20,10 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     remove() {
+        this._nestToPillageView.remove();
         this._nestForLootSelector.remove();
+        this._warriorsCountView.remove();
+        this._workersCountView.remove();
         super.remove();
     }
 
@@ -27,21 +31,28 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         this._el.innerHTML = pillageNestOperationCreatorTmpl;
 
         this._chooseNestToPillageBtn = this._el.querySelector('[data-choose-nest-to-pillage]');
-        this._nestToPillageEl = this._el.querySelector('[data-nest-to-pillage]');
-        this._warriorsCountEl = this._el.querySelector('[data-warriors-count]');
-        this._workersCountEl = this._el.querySelector('[data-workers-count]');
-        this._startBtn = this._el.querySelector('[data-start-btn]');
-        this._errorContainerEl = this._el.querySelector('[data-error-container]');
+        this._nestToPillageView = new NestInlineView(this._el.querySelector('[data-nest-to-pillage]'));
+        this._nestToPillageErrorContainer = this._el.querySelector('[data-nest-to-pillage-err]');
 
         this._nestForLootSelector = new NestSelectorView(this._performingColony.id)
         this._el.querySelector('[data-nest-selector-container]').append(this._nestForLootSelector.el);
 
-        this._renderNestToPillage();
-        this._showMarkers();
-    }
+        let warriorsCountInput = this._el.querySelector('[data-warriors-count]');
+        let warriorsCountErrContainer = this._el.querySelector('[data-warriors-count-err]');
+        let minWarriorsCount = CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MIN_WARRIORS_COUNT;
+        let maxWarriorsCount = CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MAX_WARRIORS_COUNT;
+        this._warriorsCountView = new IntInputView(warriorsCountInput, minWarriorsCount, maxWarriorsCount, warriorsCountErrContainer);
 
-    _renderNestToPillage() {
-        this._nestToPillageEl.innerHTML = this._nestToPillage ? `(${ this._nestToPillage.id })` : '(не вибрано)';
+        let workersCountInput = this._el.querySelector('[data-workers-count]');
+        let workersCountErrContainer = this._el.querySelector('[data-workers-count-err]');
+        let minWorkersCount = CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MIN_WORKERS_COUNT;
+        let maxWorkersCount = CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MAX_WORKERS_COUNT;
+        this._workersCountView = new IntInputView(workersCountInput, minWorkersCount, maxWorkersCount, workersCountErrContainer);
+
+        this._startBtn = this._el.querySelector('[data-start-btn]');
+        this._errorContainerEl = this._el.querySelector('[data-error-container]');
+
+        this._showMarkers();
     }
 
     _onNestForLootChanged() {
@@ -52,21 +63,53 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         let queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
         let pickableCircle = { center: queenOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
         this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, (nestToPillage) => {
-            this._nestToPillage = nestToPillage;
-            this._renderNestToPillage();
+            this._nestToPillageView.value = nestToPillage;
             this._showMarkers();
         });
     }
 
+    _validate() {
+        let isError = false;
+
+        let nestToPillageError = this._validateChoosedNestToPillage();
+        this._renderNestToPillageError(nestToPillageError);
+        if (nestToPillageError) {
+            isError = true;
+        }
+
+        if (!this._warriorsCountView.validate()) {
+            isError = true;
+        }
+
+        if (!this._workersCountView.validate()) {
+            isError = true;
+        }
+
+        return !isError;
+    }
+
+    _validateChoosedNestToPillage() {
+        if (!this._nestToPillageView.value) {
+            return this.$messages.choose_nest_for_pillage;
+        }
+
+        return null;
+    }
+
+    _renderNestToPillageError(errText) {
+        this._nestToPillageErrorContainer.innerHTML = errText || '';
+    }
+
     _onStartBtnClick() {
-        if (!this._nestToPillage) {
+        if (!this._validate()) {
             return
         }
 
-        let warriorsCount = parseInt(this._warriorsCountEl.value);
-        let workersCount = parseInt(this._workersCountEl.value);
+        let warriorsCount = this._warriorsCountView.value;
+        let workersCount = this._workersCountView.value;
         let nestForLootId = this._nestForLootSelector.nestId;
-        this.$domainFacade.pillageNestOperation(this._performingColony.id, this._nestToPillage.id, nestForLootId, warriorsCount, workersCount)
+        let nestToPillageId = this._nestToPillageView.value.id;
+        this.$domainFacade.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount)
             .then(() => {
                 this._onDone();
             })
@@ -78,8 +121,8 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
     _showMarkers() {
         let markers = [];
 
-        if (this._nestToPillage) {
-            markers.push(this.$domainFacade.buildMarker(MarkerTypes.PILLAGE, this._nestToPillage.position));
+        if (this._nestToPillageView.value) {
+            markers.push(this.$domainFacade.buildMarker(MarkerTypes.PILLAGE, this._nestToPillageView.value.position));
         }
 
         if (this._nestForLootSelector.nestId) {
