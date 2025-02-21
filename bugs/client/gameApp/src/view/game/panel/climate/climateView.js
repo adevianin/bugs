@@ -19,6 +19,7 @@ class ClimateView extends BaseHTMLView {
         this._el.classList.add('climate__container');
 
         this._temperatureEl = this._el.querySelector('[data-temperature]');
+        this._el.querySelector('[data-temperature-container]').setAttribute('title', this.$messages.temperature);
         this._seasonBarView = new SeasonBarView(this._el.querySelector('[data-season-bar]'));
 
         this._renderTemperatureChange();

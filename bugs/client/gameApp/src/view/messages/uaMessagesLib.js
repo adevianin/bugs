@@ -47,7 +47,8 @@ const uaMessages = {
     spring: 'весна',
     summer: 'літо',
     autumn: 'осінь',
-    winter: 'зима'
+    winter: 'зима',
+    temperature: 'температура'
 }
 
 export {

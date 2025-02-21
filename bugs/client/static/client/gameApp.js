@@ -5337,6 +5337,7 @@ class ClimateView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.B
         this._el.classList.add('climate__container');
 
         this._temperatureEl = this._el.querySelector('[data-temperature]');
+        this._el.querySelector('[data-temperature-container]').setAttribute('title', this.$messages.temperature);
         this._seasonBarView = new _seasonBarView__WEBPACK_IMPORTED_MODULE_3__.SeasonBarView(this._el.querySelector('[data-season-bar]'));
 
         this._renderTemperatureChange();
@@ -10846,7 +10847,8 @@ const uaMessages = {
     spring: 'весна',
     summer: 'літо',
     autumn: 'осінь',
-    winter: 'зима'
+    winter: 'зима',
+    temperature: 'температура'
 }
 
 
@@ -18909,7 +18911,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"season-bar\" data-season-bar></div>\r\n<div class=\"climate__temp\"><span data-temperature></span>°C</div>\r\n";
+var code = "<div class=\"season-bar\" data-season-bar></div>\r\n<div class=\"climate__temp\" data-temperature-container><span data-temperature></span>°C</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
