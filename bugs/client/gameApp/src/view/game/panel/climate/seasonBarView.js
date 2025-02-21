@@ -26,10 +26,14 @@ class SeasonBarView extends BaseHTMLView {
         this._winterEl = this._el.querySelector('[data-winter]');
         this._markerEl = this._el.querySelector('[data-marker]');
 
-        this._springEl.setAttribute('title', 'весна');
-        this._summerEl.setAttribute('title', 'літо');
-        this._autumnEl.setAttribute('title', 'осінь');
-        this._winterEl.setAttribute('title', 'зима');
+        this._springEl.setAttribute('title', this.$messages.spring);
+        this._springEl.innerHTML = this.$messages.spring;
+        this._summerEl.setAttribute('title', this.$messages.summer);
+        this._summerEl.innerHTML = this.$messages.summer;
+        this._autumnEl.setAttribute('title', this.$messages.autumn);
+        this._autumnEl.innerHTML = this.$messages.autumn;
+        this._winterEl.setAttribute('title', this.$messages.winter);
+        this._winterEl.innerHTML = this.$messages.winter;
 
         this._springEl.style.width = this._springStepsLength * this._percentsPerStep + '%';
         this._summerEl.style.width = this._summerStepsLength * this._percentsPerStep + '%';

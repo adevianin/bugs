@@ -41,7 +41,13 @@ const uaMessages = {
     choose_nest_for_attack: 'мурахам треба вказати гніздо для атаки',
     too_few_ants_to_attack: 'занадто мало мурах для атаки',
     choose_nest_for_pillage: 'мурахам треба вказати гніздо для грабування',
-    choose_different_nests: 'мурахи можуть переносити їжу лише між різними гніздами'
+    choose_different_nests: 'мурахи можуть переносити їжу лише між різними гніздами',
+
+
+    spring: 'весна',
+    summer: 'літо',
+    autumn: 'осінь',
+    winter: 'зима'
 }
 
 export {

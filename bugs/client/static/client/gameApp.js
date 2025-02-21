@@ -5394,10 +5394,14 @@ class SeasonBarView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._winterEl = this._el.querySelector('[data-winter]');
         this._markerEl = this._el.querySelector('[data-marker]');
 
-        this._springEl.setAttribute('title', 'весна');
-        this._summerEl.setAttribute('title', 'літо');
-        this._autumnEl.setAttribute('title', 'осінь');
-        this._winterEl.setAttribute('title', 'зима');
+        this._springEl.setAttribute('title', this.$messages.spring);
+        this._springEl.innerHTML = this.$messages.spring;
+        this._summerEl.setAttribute('title', this.$messages.summer);
+        this._summerEl.innerHTML = this.$messages.summer;
+        this._autumnEl.setAttribute('title', this.$messages.autumn);
+        this._autumnEl.innerHTML = this.$messages.autumn;
+        this._winterEl.setAttribute('title', this.$messages.winter);
+        this._winterEl.innerHTML = this.$messages.winter;
 
         this._springEl.style.width = this._springStepsLength * this._percentsPerStep + '%';
         this._summerEl.style.width = this._summerStepsLength * this._percentsPerStep + '%';
@@ -10836,7 +10840,13 @@ const uaMessages = {
     choose_nest_for_attack: 'мурахам треба вказати гніздо для атаки',
     too_few_ants_to_attack: 'занадто мало мурах для атаки',
     choose_nest_for_pillage: 'мурахам треба вказати гніздо для грабування',
-    choose_different_nests: 'мурахи можуть переносити їжу лише між різними гніздами'
+    choose_different_nests: 'мурахи можуть переносити їжу лише між різними гніздами',
+
+
+    spring: 'весна',
+    summer: 'літо',
+    autumn: 'осінь',
+    winter: 'зима'
 }
 
 
@@ -16398,6 +16408,9 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.season-bar {
 
 .season-bar__season {
     height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .season-bar__season--spring {
@@ -16424,7 +16437,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.season-bar {
     top: -35px;
     padding: 5px;
     font-size: 28;
-}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/panel/climate/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,aAAa;IACb,mBAAmB;IACnB,kBAAkB;AACtB;;AAEA;IACI,kBAAkB;IAClB,YAAY;IACZ,UAAU;IACV,iBAAiB;IACjB,gBAAgB;IAChB,uBAAuB;AAC3B;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,uBAAuB;AAC3B;;AAEA;IACI,qBAAqB;AACzB;AACA;IACI,wBAAwB;AAC5B;;AAEA;IACI,uBAAuB;AAC3B;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,kBAAkB;IAClB,UAAU;IACV,YAAY;IACZ,aAAa;AACjB","sourcesContent":[".season-bar {\r\n    height: 20px;\r\n    display: flex;\r\n    flex-direction: row;\r\n    position: relative;\r\n}\r\n\r\n.season-bar__marker {\r\n    position: absolute;\r\n    height: 26px;\r\n    width: 6px;\r\n    margin-left: -3px;\r\n    margin-top: -3px;\r\n    background-color: black;\r\n}\r\n\r\n.season-bar__season {\r\n    height: 100%;\r\n}\r\n\r\n.season-bar__season--spring {\r\n    background-color: green;\r\n}\r\n\r\n.season-bar__season--summer {\r\n    background-color: red;\r\n}\r\n.season-bar__season--autumn {\r\n    background-color: yellow;\r\n}\r\n\r\n.season-bar__season--winer {\r\n    background-color: white;\r\n}\r\n\r\n.climate__container {\r\n    position: relative;\r\n} \r\n\r\n.climate__temp {\r\n    position: absolute;\r\n    top: -35px;\r\n    padding: 5px;\r\n    font-size: 28;\r\n}"],"sourceRoot":""}]);
+}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/panel/climate/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,aAAa;IACb,mBAAmB;IACnB,kBAAkB;AACtB;;AAEA;IACI,kBAAkB;IAClB,YAAY;IACZ,UAAU;IACV,iBAAiB;IACjB,gBAAgB;IAChB,uBAAuB;AAC3B;;AAEA;IACI,YAAY;IACZ,aAAa;IACb,uBAAuB;IACvB,mBAAmB;AACvB;;AAEA;IACI,uBAAuB;AAC3B;;AAEA;IACI,qBAAqB;AACzB;AACA;IACI,wBAAwB;AAC5B;;AAEA;IACI,uBAAuB;AAC3B;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,kBAAkB;IAClB,UAAU;IACV,YAAY;IACZ,aAAa;AACjB","sourcesContent":[".season-bar {\r\n    height: 20px;\r\n    display: flex;\r\n    flex-direction: row;\r\n    position: relative;\r\n}\r\n\r\n.season-bar__marker {\r\n    position: absolute;\r\n    height: 26px;\r\n    width: 6px;\r\n    margin-left: -3px;\r\n    margin-top: -3px;\r\n    background-color: black;\r\n}\r\n\r\n.season-bar__season {\r\n    height: 100%;\r\n    display: flex;\r\n    justify-content: center;\r\n    align-items: center;\r\n}\r\n\r\n.season-bar__season--spring {\r\n    background-color: green;\r\n}\r\n\r\n.season-bar__season--summer {\r\n    background-color: red;\r\n}\r\n.season-bar__season--autumn {\r\n    background-color: yellow;\r\n}\r\n\r\n.season-bar__season--winer {\r\n    background-color: white;\r\n}\r\n\r\n.climate__container {\r\n    position: relative;\r\n} \r\n\r\n.climate__temp {\r\n    position: absolute;\r\n    top: -35px;\r\n    padding: 5px;\r\n    font-size: 28;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

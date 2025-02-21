@@ -16,6 +16,9 @@
 
 .season-bar__season {
     height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .season-bar__season--spring {
