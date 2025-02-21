@@ -1,12 +1,20 @@
 .panel {
     background-color: beige;
     display: flex;
-    overflow: hidden;
+    flex-direction: column;
+}
+
+.panel__body {
+    display: flex;
     height: 300px;
 }
 
 .panel__tab-container {
     padding: 5px;
-    flex-grow: 1;
     overflow-y: scroll;
+    flex-grow: 1;
+}
+
+.panel__tab-switcher {
+    width: 130px;
 }

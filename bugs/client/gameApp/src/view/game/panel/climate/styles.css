@@ -32,3 +32,14 @@
 .season-bar__season--winer {
     background-color: white;
 }
+
+.climate__container {
+    position: relative;
+} 
+
+.climate__temp {
+    position: absolute;
+    top: -35px;
+    padding: 5px;
+    font-size: 28;
+}
