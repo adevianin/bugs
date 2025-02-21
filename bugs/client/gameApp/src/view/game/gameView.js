@@ -6,6 +6,7 @@ import { WorldView } from './world';
 import { Panel } from './panel';
 import gameTmpl from './gameTmpl.html';
 import { MapPickerMasterView } from './mapPickers/mapPickerMasterView';
+import { ClimateView } from './climate/climateView';
 
 class GameView extends BaseHTMLView {
 
@@ -17,6 +18,8 @@ class GameView extends BaseHTMLView {
 
     _render() {
         this._el.innerHTML = gameTmpl;
+
+        this._climateView = new ClimateView(this._el.querySelector('[data-climate]'));
 
         new Panel(this._el.querySelector('[data-panel]'));
         

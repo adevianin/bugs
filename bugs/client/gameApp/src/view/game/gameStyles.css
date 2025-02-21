@@ -8,6 +8,7 @@
     flex-grow: 1;
     overflow: hidden;
     position: relative;
+    z-index: 1;
 }
 
 .game__map-picker-border {

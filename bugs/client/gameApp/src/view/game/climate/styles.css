@@ -37,12 +37,15 @@
 }
 
 .climate__container {
-    position: relative;
+    position: absolute;
+    z-index: 2;
+    margin: 3px;
+    left: 0;
+    right: 0;
 } 
 
 .climate__temp {
-    position: absolute;
-    top: -35px;
-    padding: 5px;
     font-size: 28;
+    margin-left: 5px;
+    margin-top: 5px;
 }

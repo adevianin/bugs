@@ -9,7 +9,6 @@ import { NuptialFlightTabView } from './tabs/nuptialFlightTab';
 import { SpecieBuilderTabView } from './tabs/specieBuilderTab';
 import { NotificationsTabView } from './tabs/notificationsTab';
 import { RatingTabView } from './tabs/ratingTab';
-import { ClimateView } from './climate/climateView';
 
 class Panel extends BaseHTMLView {
 
@@ -29,8 +28,6 @@ class Panel extends BaseHTMLView {
 
     _renderTabViews() {
         this._el.innerHTML = panelTmpl;
-
-        this._climateView = new ClimateView(this._el.querySelector('[data-climate]'));
 
         this._userTab = new UserTab(this._el.querySelector('[data-user-tab]'));
         this._coloniesTab = new ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));

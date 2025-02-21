@@ -2,6 +2,7 @@
     background-color: beige;
     display: flex;
     flex-direction: column;
+    z-index: 3;
 }
 
 .panel__body {
