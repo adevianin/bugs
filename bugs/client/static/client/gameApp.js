@@ -5486,20 +5486,35 @@ class Panel extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTM
 
     constructor(el) {
         super(el);
+        this._onMouseMoveBound = this._onMouseMove.bind(this);
+        this._onMouseUpBound = this._onMouseUp.bind(this);
 
         this._render();
 
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
         this.$eventBus.on('bornNewAntaraBtnClick', this._onBornNewAntaraBtnClick.bind(this));
+        this._handler.addEventListener('mousedown', this._onHandlerMousedown.bind(this));
+    }
+
+    get _height() {
+        return parseInt(this._el.style.height);
+    }
+
+    set _height(val) {
+        this._el.style.height = val + 'px';
     }
 
     _render() {
         this._el.classList.add('panel');
+        this._height = 320;
         this._renderTabViews();
     }
 
     _renderTabViews() {
         this._el.innerHTML = _panelTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._handler = this._el.querySelector('[data-handler]');
+        this._handlerHeight = this._handler.getBoundingClientRect().height;
 
         this._userTab = new _tabs_userTab_userTab__WEBPACK_IMPORTED_MODULE_3__.UserTab(this._el.querySelector('[data-user-tab]'));
         this._coloniesTab = new _tabs_coloniesTab__WEBPACK_IMPORTED_MODULE_4__.ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));
@@ -5525,6 +5540,30 @@ class Panel extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTM
 
     _onBornNewAntaraBtnClick() {
         this._tabSwitcher.activateTab('nuptial_flight');
+    }
+
+    _onHandlerMousedown() {
+        document.addEventListener('mousemove', this._onMouseMoveBound);
+        document.addEventListener('mouseup', this._onMouseUpBound);
+    }
+
+    _onMouseMove(e) {
+        let minHeight = this._handlerHeight;
+        let clientRect = this._el.getBoundingClientRect();
+        let cursorY = e.clientY;
+        let panelTop = clientRect.top;
+        let diff = panelTop - cursorY;
+        let newHeight = parseInt(this._el.style.height) + diff;
+        window.getSelection().removeAllRanges();
+        if (newHeight >= minHeight) {
+            this._el.style.height = newHeight + 'px';
+            this.$pixiApp.resize();
+        }
+    }
+
+    _onMouseUp(e) {
+        document.removeEventListener('mousemove', this._onMouseMoveBound);
+        document.removeEventListener('mouseup', this._onMouseUpBound);
     }
 
 }
@@ -16475,22 +16514,32 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.panel {
     display: flex;
     flex-direction: column;
     z-index: 3;
+    flex-shrink: 0;
 }
 
 .panel__body {
     display: flex;
-    height: 300px;
+    flex-grow: 1;
+    min-height: 0;
 }
 
 .panel__tab-container {
     padding: 5px;
-    overflow-y: scroll;
+    overflow-y: auto;
     flex-grow: 1;
 }
 
 .panel__tab-switcher {
     width: 130px;
-}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,aAAa;IACb,sBAAsB;IACtB,UAAU;AACd;;AAEA;IACI,aAAa;IACb,aAAa;AACjB;;AAEA;IACI,YAAY;IACZ,kBAAkB;IAClB,YAAY;AAChB;;AAEA;IACI,YAAY;AAChB","sourcesContent":[".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    flex-direction: column;\r\n    z-index: 3;\r\n}\r\n\r\n.panel__body {\r\n    display: flex;\r\n    height: 300px;\r\n}\r\n\r\n.panel__tab-container {\r\n    padding: 5px;\r\n    overflow-y: scroll;\r\n    flex-grow: 1;\r\n}\r\n\r\n.panel__tab-switcher {\r\n    width: 130px;\r\n}"],"sourceRoot":""}]);
+}
+
+.panel__handler {
+    cursor: row-resize;
+    background-color: lightgray;
+    height: 10px;
+    width: 100%;
+    flex-shrink: 0;
+}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,aAAa;IACb,sBAAsB;IACtB,UAAU;IACV,cAAc;AAClB;;AAEA;IACI,aAAa;IACb,YAAY;IACZ,aAAa;AACjB;;AAEA;IACI,YAAY;IACZ,gBAAgB;IAChB,YAAY;AAChB;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,kBAAkB;IAClB,2BAA2B;IAC3B,YAAY;IACZ,WAAW;IACX,cAAc;AAClB","sourcesContent":[".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    flex-direction: column;\r\n    z-index: 3;\r\n    flex-shrink: 0;\r\n}\r\n\r\n.panel__body {\r\n    display: flex;\r\n    flex-grow: 1;\r\n    min-height: 0;\r\n}\r\n\r\n.panel__tab-container {\r\n    padding: 5px;\r\n    overflow-y: auto;\r\n    flex-grow: 1;\r\n}\r\n\r\n.panel__tab-switcher {\r\n    width: 130px;\r\n}\r\n\r\n.panel__handler {\r\n    cursor: row-resize;\r\n    background-color: lightgray;\r\n    height: 10px;\r\n    width: 100%;\r\n    flex-shrink: 0;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -18952,7 +19001,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"panel__body\" data-panel-body>\r\n    <div class=\"panel__tab-switcher tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n    <div class=\"panel__tab-container\">\r\n        <div data-user-tab></div>\r\n        <div data-operations-tab></div>\r\n        <div data-colonies-tab class=\"colonies-tab\"></div>\r\n        <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n        <div data-specie-builder-tab class=\"\"></div>\r\n        <div data-notifications-tab></div>\r\n        <div data-rating-tab></div>\r\n    </div>\r\n</div>\r\n";
+var code = "<div class=\"panel__handler\" data-handler></div>\r\n<div class=\"panel__body\" data-panel-body>\r\n    <div class=\"panel__tab-switcher tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n    <div class=\"panel__tab-container\">\r\n        <div data-user-tab></div>\r\n        <div data-operations-tab></div>\r\n        <div data-colonies-tab class=\"colonies-tab\"></div>\r\n        <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n        <div data-specie-builder-tab class=\"\"></div>\r\n        <div data-notifications-tab></div>\r\n        <div data-rating-tab></div>\r\n    </div>\r\n</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
