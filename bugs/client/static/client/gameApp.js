@@ -16511,22 +16511,15 @@ var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBP
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, `.panel {
     background-color: beige;
-    display: flex;
-    flex-direction: column;
     z-index: 3;
-    flex-shrink: 0;
-}
-
-.panel__body {
-    display: flex;
-    flex-grow: 1;
-    min-height: 0;
+    display: grid;
+    grid-template-rows: 10px 1fr;
+    grid-template-columns: 140px 1fr;
 }
 
 .panel__tab-container {
     padding: 5px;
     overflow-y: auto;
-    flex-grow: 1;
 }
 
 .panel__tab-switcher {
@@ -16536,10 +16529,8 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.panel {
 .panel__handler {
     cursor: row-resize;
     background-color: lightgray;
-    height: 10px;
-    width: 100%;
-    flex-shrink: 0;
-}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,aAAa;IACb,sBAAsB;IACtB,UAAU;IACV,cAAc;AAClB;;AAEA;IACI,aAAa;IACb,YAAY;IACZ,aAAa;AACjB;;AAEA;IACI,YAAY;IACZ,gBAAgB;IAChB,YAAY;AAChB;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,kBAAkB;IAClB,2BAA2B;IAC3B,YAAY;IACZ,WAAW;IACX,cAAc;AAClB","sourcesContent":[".panel {\r\n    background-color: beige;\r\n    display: flex;\r\n    flex-direction: column;\r\n    z-index: 3;\r\n    flex-shrink: 0;\r\n}\r\n\r\n.panel__body {\r\n    display: flex;\r\n    flex-grow: 1;\r\n    min-height: 0;\r\n}\r\n\r\n.panel__tab-container {\r\n    padding: 5px;\r\n    overflow-y: auto;\r\n    flex-grow: 1;\r\n}\r\n\r\n.panel__tab-switcher {\r\n    width: 130px;\r\n}\r\n\r\n.panel__handler {\r\n    cursor: row-resize;\r\n    background-color: lightgray;\r\n    height: 10px;\r\n    width: 100%;\r\n    flex-shrink: 0;\r\n}"],"sourceRoot":""}]);
+    grid-column: span 2;
+}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/panel/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,UAAU;IACV,aAAa;IACb,4BAA4B;IAC5B,gCAAgC;AACpC;;AAEA;IACI,YAAY;IACZ,gBAAgB;AACpB;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,kBAAkB;IAClB,2BAA2B;IAC3B,mBAAmB;AACvB","sourcesContent":[".panel {\r\n    background-color: beige;\r\n    z-index: 3;\r\n    display: grid;\r\n    grid-template-rows: 10px 1fr;\r\n    grid-template-columns: 140px 1fr;\r\n}\r\n\r\n.panel__tab-container {\r\n    padding: 5px;\r\n    overflow-y: auto;\r\n}\r\n\r\n.panel__tab-switcher {\r\n    width: 130px;\r\n}\r\n\r\n.panel__handler {\r\n    cursor: row-resize;\r\n    background-color: lightgray;\r\n    grid-column: span 2;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -19001,7 +18992,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"panel__handler\" data-handler></div>\r\n<div class=\"panel__body\" data-panel-body>\r\n    <div class=\"panel__tab-switcher tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n    <div class=\"panel__tab-container\">\r\n        <div data-user-tab></div>\r\n        <div data-operations-tab></div>\r\n        <div data-colonies-tab class=\"colonies-tab\"></div>\r\n        <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n        <div data-specie-builder-tab class=\"\"></div>\r\n        <div data-notifications-tab></div>\r\n        <div data-rating-tab></div>\r\n    </div>\r\n</div>\r\n";
+var code = "<!-- <div class=\"panel__handler\" data-handler></div>\r\n<div class=\"panel__body\" data-panel-body>\r\n    <div class=\"panel__tab-switcher tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n    <div class=\"panel__tab-container\">\r\n        <div data-user-tab></div>\r\n        <div data-operations-tab></div>\r\n        <div data-colonies-tab class=\"colonies-tab\"></div>\r\n        <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n        <div data-specie-builder-tab class=\"\"></div>\r\n        <div data-notifications-tab></div>\r\n        <div data-rating-tab></div>\r\n    </div>\r\n</div> -->\r\n\r\n<div class=\"panel__handler\" data-handler></div>\r\n<div class=\"tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div data-colonies-tab class=\"colonies-tab\"></div>\r\n    <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n    <div data-specie-builder-tab class=\"\"></div>\r\n    <div data-notifications-tab></div>\r\n    <div data-rating-tab></div>\r\n</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

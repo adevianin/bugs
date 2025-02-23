@@ -1,21 +1,14 @@
 .panel {
     background-color: beige;
-    display: flex;
-    flex-direction: column;
     z-index: 3;
-    flex-shrink: 0;
-}
-
-.panel__body {
-    display: flex;
-    flex-grow: 1;
-    min-height: 0;
+    display: grid;
+    grid-template-rows: 10px 1fr;
+    grid-template-columns: 140px 1fr;
 }
 
 .panel__tab-container {
     padding: 5px;
     overflow-y: auto;
-    flex-grow: 1;
 }
 
 .panel__tab-switcher {
@@ -25,7 +18,5 @@
 .panel__handler {
     cursor: row-resize;
     background-color: lightgray;
-    height: 10px;
-    width: 100%;
-    flex-shrink: 0;
+    grid-column: span 2;
 }
