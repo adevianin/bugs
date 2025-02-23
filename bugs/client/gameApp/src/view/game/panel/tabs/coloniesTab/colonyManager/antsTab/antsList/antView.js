@@ -1,10 +1,10 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import antTmpl from './antTmpl.html';
 import { NestSelectorView } from "@view/game/panel/base/nestSelector";
-import { AntTypes } from "@domain/enum/antTypes";
 import { CONSTS } from "@domain/consts";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
 import { convertStepsToYear } from "@utils/convertStepsToYear";
+import { ClosableGenomeView } from "@view/game/panel/base/genome/closableGenomeView";
 
 class AntView extends BaseHTMLView {
 
@@ -59,10 +59,6 @@ class AntView extends BaseHTMLView {
         this._cooperativeBehaviorTogglerEl.checked = this._ant.isCooperativeBehavior;
         this._cooperativeBehaviorTogglerEl.disabled = !this._ant.canBeCooperative;
 
-        this._el.querySelector('[data-genome-debug]').addEventListener('click', () => {
-            console.log(this._ant.genome);
-        });
-
         this._profileContainerEl = this._el.querySelector('[data-ant-profile]');
         this._profileBtn = this._el.querySelector('[data-profile-btn]');
         this._renderProfileState();
@@ -76,7 +72,8 @@ class AntView extends BaseHTMLView {
         this._renderCurrentActivity();
 
         this._renderStats();
-        
+
+        this._genomeView = new ClosableGenomeView(this._el.querySelector('[data-genome]'), this._ant.genome);
     }
 
     remove() {
@@ -84,6 +81,7 @@ class AntView extends BaseHTMLView {
         this._stopListenAntDied();
         this._stopListenCurrentActivityChanged();
         this._nestSelector.remove();
+        this._genomeView.remove();
         super.remove();
     }
 

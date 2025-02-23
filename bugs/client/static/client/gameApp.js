@@ -3215,6 +3215,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_climate__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/climate */ "./gameApp/src/domain/entity/climate.js");
 /* harmony import */ var _entity_tree__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./entity/tree */ "./gameApp/src/domain/entity/tree.js");
 /* harmony import */ var _entity_ladybug__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./entity/ladybug */ "./gameApp/src/domain/entity/ladybug.js");
+/* harmony import */ var _entity_genetic_genome__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./entity/genetic/genome */ "./gameApp/src/domain/entity/genetic/genome.js");
+
 
 
 
@@ -3327,7 +3329,7 @@ class WorldFactory {
         let homeNestId = antJson.home_nest_id;
         let stats = antJson.stats;
         let behavior = antJson.behavior;
-        let genome = antJson.genome;
+        let genome = _entity_genetic_genome__WEBPACK_IMPORTED_MODULE_14__.Genome.buildFromJson(antJson.genome);
         let birthStep = antJson.birthStep;
         let currentActivity = antJson.currentActivity;
 
@@ -3789,13 +3791,12 @@ class UserApi {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   converStepsToYear: () => (/* binding */ converStepsToYear)
+/* harmony export */   convertStepsToYear: () => (/* binding */ convertStepsToYear)
 /* harmony export */ });
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
 
 
-function converStepsToYear(steps) {
-    console.log(_domain_consts__WEBPACK_IMPORTED_MODULE_0__.CONSTS.STEPS_IN_YEAR, steps);
+function convertStepsToYear(steps) {
     return Math.floor(steps / _domain_consts__WEBPACK_IMPORTED_MODULE_0__.CONSTS.STEPS_IN_YEAR);
 }
 
@@ -5880,10 +5881,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
 /* harmony import */ var _antTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antTmpl.html");
 /* harmony import */ var _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/nestSelector */ "./gameApp/src/view/game/panel/base/nestSelector/index.js");
-/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/antTypes */ "./gameApp/src/domain/enum/antTypes.js");
-/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
-/* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./gameApp/src/view/labels/antTypesLabels.js");
-/* harmony import */ var _utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @utils/convertStepsToYear */ "./gameApp/src/utils/convertStepsToYear.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
+/* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./gameApp/src/view/labels/antTypesLabels.js");
+/* harmony import */ var _utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @utils/convertStepsToYear */ "./gameApp/src/utils/convertStepsToYear.js");
+/* harmony import */ var _view_game_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @view/game/panel/base/genome/closableGenomeView */ "./gameApp/src/view/game/panel/base/genome/closableGenomeView.js");
 
 
 
@@ -5928,7 +5929,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
 
         this._el.querySelector('[data-name]').innerHTML = this._ant.name;
-        this._el.querySelector('[data-type]').innerHTML = this._ant.isQueenOfColony ? 'Королева' : _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_5__.antTypesLabels[this._ant.antType];
+        this._el.querySelector('[data-type]').innerHTML = this._ant.isQueenOfColony ? 'Королева' : _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_4__.antTypesLabels[this._ant.antType];
 
         this._nestSelector = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._ant.fromColony);
         this._nestSelector.nestId = this._ant.homeNestId;
@@ -5945,10 +5946,6 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._cooperativeBehaviorTogglerEl.checked = this._ant.isCooperativeBehavior;
         this._cooperativeBehaviorTogglerEl.disabled = !this._ant.canBeCooperative;
 
-        this._el.querySelector('[data-genome-debug]').addEventListener('click', () => {
-            console.log(this._ant.genome);
-        });
-
         this._profileContainerEl = this._el.querySelector('[data-ant-profile]');
         this._profileBtn = this._el.querySelector('[data-profile-btn]');
         this._renderProfileState();
@@ -5962,7 +5959,8 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._renderCurrentActivity();
 
         this._renderStats();
-        
+
+        this._genomeView = new _view_game_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_6__.ClosableGenomeView(this._el.querySelector('[data-genome]'), this._ant.genome);
     }
 
     remove() {
@@ -5970,6 +5968,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._stopListenAntDied();
         this._stopListenCurrentActivityChanged();
         this._nestSelector.remove();
+        this._genomeView.remove();
         super.remove();
     }
 
@@ -5983,7 +5982,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
 
     _renderAge() {
         let livedSteps = this.$domainFacade.currentStep - this._ant.birthStep;
-        let age = Math.floor(livedSteps / _domain_consts__WEBPACK_IMPORTED_MODULE_4__.CONSTS.STEPS_IN_YEAR);
+        let age = Math.floor(livedSteps / _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.STEPS_IN_YEAR);
         this._ageEl.innerHTML = age;
     }
 
@@ -6007,7 +6006,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         statsEl.querySelector('[data-defense]').innerHTML = this._ant.stats.defence;
         statsEl.querySelector('[data-appetite]').innerHTML = this._ant.stats.appetite;
         statsEl.querySelector('[data-min-temperature]').innerHTML = this._ant.stats.minTemperature;
-        statsEl.querySelector('[data-life-span]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_6__.converStepsToYear)(this._ant.stats.lifeSpan);
+        statsEl.querySelector('[data-life-span]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_5__.convertStepsToYear)(this._ant.stats.lifeSpan);
     }
 
     _onNestChanged() {
@@ -8593,34 +8592,34 @@ class NotificationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._el.querySelector('[data-ant-name]').innerHTML = this._notification.antName;
         this._el.querySelector('[data-death-describe]').innerHTML = this._generateAntDeathDescribeText();
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.deathRecord.deathPosition);
-        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.converStepsToYear)(this._notification.step) ;
+        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.convertStepsToYear)(this._notification.step) ;
     }
 
     _renderDiedNestNotification() {
         this._el.innerHTML = _diedNestNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_5__["default"];
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.deathRecord.deathPosition);
-        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.converStepsToYear)(this._notification.step) ;
+        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.convertStepsToYear)(this._notification.step) ;
     }
 
     _renderNestAlarmRaisedNotification() {
         this._el.innerHTML = _nestAlarmRaisedNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_7__["default"];
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.nestPosition);
-        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.converStepsToYear)(this._notification.step);
+        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.convertStepsToYear)(this._notification.step);
     }
 
     _renderNestAlarmCanceledNotification() {
         this._el.innerHTML = _nestAlarmCanceledNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_6__["default"];
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.nestPosition);
-        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.converStepsToYear)(this._notification.step) ;
+        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.convertStepsToYear)(this._notification.step) ;
     }
 
     _renderDiedColonyNotification() {
         this._el.innerHTML = _diedColonyNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_8__["default"];
         this._el.querySelector('[data-colony-name]').innerHTML = this._notification.colonyName;
-        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.converStepsToYear)(this._notification.step) ;
+        this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.convertStepsToYear)(this._notification.step) ;
     }
 
     _generateAntDeathDescribeText() {
@@ -19088,7 +19087,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<tr>\r\n    <td data-name rowspan=\"2\"></td>\r\n    <td data-type></td>\r\n    <td data-nest></td>\r\n    <td>\r\n        <select data-guardian-type>\r\n            <option value=\"none\">не захищає</option>\r\n            <option value=\"nest\">тільки гніздо</option>\r\n            <option value=\"colony\">вся колонія</option>\r\n        </select>\r\n    </td>\r\n    <td>\r\n        <input data-is-cooperactive type=\"checkbox\">\r\n    </td>\r\n    <td data-actions>\r\n        <button data-profile-btn>+</button>\r\n    </td>\r\n</tr>\r\n<tr data-ant-profile>\r\n    <td colspan=\"5\">\r\n        <table class=\"g-table\">\r\n            <thead>\r\n                <tr>\r\n                    <td>max_hp</td>\r\n                    <td>hp_regen_rate</td>\r\n                    <td>speed</td>\r\n                    <td>sight_distance</td>\r\n                    <td>strength</td>\r\n                    <td>defense</td>\r\n                    <td>appetite</td>\r\n                    <td>min_temperature</td>\r\n                    <td>life_span</td>\r\n                </tr>\r\n            </thead>\r\n            <tbody>\r\n                <tr data-stats>\r\n                    <td data-max-hp></td>\r\n                    <td data-hp-regen-rate></td>\r\n                    <td data-speed></td>\r\n                    <td data-sight-distance></td>\r\n                    <td data-strength></td>\r\n                    <td data-defense></td>\r\n                    <td data-appetite></td>\r\n                    <td data-min-temperature></td>\r\n                    <td data-life-span></td>\r\n                </tr>\r\n            </tbody>\r\n        </table>\r\n        <div data-id></div>\r\n        <div>age: <span data-age></span></div>\r\n        <div>занятість: <span data-current-activity></span></div>\r\n        <button data-nuptial-flight>шлюбний політ</button>\r\n        <button data-genome-debug>геном</button>\r\n    </td>\r\n</tr>";
+var code = "<tr>\r\n    <td data-name rowspan=\"2\"></td>\r\n    <td data-type></td>\r\n    <td data-nest></td>\r\n    <td>\r\n        <select data-guardian-type>\r\n            <option value=\"none\">не захищає</option>\r\n            <option value=\"nest\">тільки гніздо</option>\r\n            <option value=\"colony\">вся колонія</option>\r\n        </select>\r\n    </td>\r\n    <td>\r\n        <input data-is-cooperactive type=\"checkbox\">\r\n    </td>\r\n    <td data-actions>\r\n        <button data-profile-btn>+</button>\r\n    </td>\r\n</tr>\r\n<tr data-ant-profile>\r\n    <td colspan=\"5\">\r\n        <table class=\"g-table\">\r\n            <thead>\r\n                <tr>\r\n                    <td>max_hp</td>\r\n                    <td>hp_regen_rate</td>\r\n                    <td>speed</td>\r\n                    <td>sight_distance</td>\r\n                    <td>strength</td>\r\n                    <td>defense</td>\r\n                    <td>appetite</td>\r\n                    <td>min_temperature</td>\r\n                    <td>life_span</td>\r\n                </tr>\r\n            </thead>\r\n            <tbody>\r\n                <tr data-stats>\r\n                    <td data-max-hp></td>\r\n                    <td data-hp-regen-rate></td>\r\n                    <td data-speed></td>\r\n                    <td data-sight-distance></td>\r\n                    <td data-strength></td>\r\n                    <td data-defense></td>\r\n                    <td data-appetite></td>\r\n                    <td data-min-temperature></td>\r\n                    <td data-life-span></td>\r\n                </tr>\r\n            </tbody>\r\n        </table>\r\n        <div data-genome></div>\r\n        <div data-id></div>\r\n        <div>age: <span data-age></span></div>\r\n        <div>занятість: <span data-current-activity></span></div>\r\n        <button data-nuptial-flight>шлюбний політ</button>\r\n        <!-- <button data-genome-debug>геном</button> -->\r\n    </td>\r\n</tr>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

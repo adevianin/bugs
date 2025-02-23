@@ -12,6 +12,7 @@ import { Egg } from './entity/egg';
 import { Climate } from './entity/climate';
 import { Tree } from './entity/tree';
 import { Ladybug } from './entity/ladybug';
+import { Genome } from './entity/genetic/genome';
 
 class WorldFactory {
 
@@ -110,7 +111,7 @@ class WorldFactory {
         let homeNestId = antJson.home_nest_id;
         let stats = antJson.stats;
         let behavior = antJson.behavior;
-        let genome = antJson.genome;
+        let genome = Genome.buildFromJson(antJson.genome);
         let birthStep = antJson.birthStep;
         let currentActivity = antJson.currentActivity;
 
