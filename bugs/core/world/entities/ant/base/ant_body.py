@@ -172,7 +172,7 @@ class AntBody(LiveBody):
         def on_food_ready(ant_food: Item):
             self.pick_up_item(ant_food)
 
-        return nest.get_some_food(on_food_ready, self.stats.attack)
+        return nest.get_some_food(on_food_ready, self.stats.strength)
     
     def remember_entity(self, name: str, entity: Entity):
         key = self._build_entity_key(name)

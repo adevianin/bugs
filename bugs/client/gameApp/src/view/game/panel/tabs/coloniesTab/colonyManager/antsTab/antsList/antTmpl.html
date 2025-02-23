@@ -1,10 +1,6 @@
 <tr>
-    <td data-id rowspan="2"></td>
-    <td data-name></td>
+    <td data-name rowspan="2"></td>
     <td data-type></td>
-    <td data-attack></td>
-    <td data-defence></td>
-    <td data-max-hp></td>
     <td data-nest></td>
     <td>
         <select data-guardian-type>
@@ -17,15 +13,43 @@
         <input data-is-cooperactive type="checkbox">
     </td>
     <td data-actions>
-        <button data-fly-away>X</button>
-        <button data-nuptial-flight>шлюбний політ</button>
-        <button data-genome-debug>геном</button>
         <button data-profile-btn>+</button>
     </td>
 </tr>
 <tr data-ant-profile>
-    <td colspan="11">
+    <td colspan="5">
+        <table class="g-table">
+            <thead>
+                <tr>
+                    <td>max_hp</td>
+                    <td>hp_regen_rate</td>
+                    <td>speed</td>
+                    <td>sight_distance</td>
+                    <td>strength</td>
+                    <td>defense</td>
+                    <td>appetite</td>
+                    <td>min_temperature</td>
+                    <td>life_span</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-stats>
+                    <td data-max-hp></td>
+                    <td data-hp-regen-rate></td>
+                    <td data-speed></td>
+                    <td data-sight-distance></td>
+                    <td data-strength></td>
+                    <td data-defense></td>
+                    <td data-appetite></td>
+                    <td data-min-temperature></td>
+                    <td data-life-span></td>
+                </tr>
+            </tbody>
+        </table>
+        <div data-id></div>
         <div>age: <span data-age></span></div>
         <div>занятість: <span data-current-activity></span></div>
+        <button data-nuptial-flight>шлюбний політ</button>
+        <button data-genome-debug>геном</button>
     </td>
 </tr>

@@ -1,3 +1,4 @@
+import './global.css';
 import './gameStyles.css';
 import * as PIXI from 'pixi.js';
 import { BaseHTMLView } from '@view/base/baseHTMLView';

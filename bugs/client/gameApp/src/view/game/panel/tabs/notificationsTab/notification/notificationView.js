@@ -7,7 +7,7 @@ import diedNestNotificationTmpl from './diedNestNotificationTmpl.html';
 import nestAlarmCanceledNotificationTmpl from './nestAlarmCanceledNotificationTmpl.html';
 import nestAlarmRaisedNotificationTmpl from './nestAlarmRaisedNotificationTmpl.html';
 import diedColonyNotificationTmpl from './diedColonyNotificationTmpl.html';
-import { converStepsToYear } from "@utils/convertStepsToYear";
+import { convertStepsToYear } from "@utils/convertStepsToYear";
 
 class NotificationView extends BaseHTMLView {
 
@@ -45,34 +45,34 @@ class NotificationView extends BaseHTMLView {
         this._el.querySelector('[data-ant-name]').innerHTML = this._notification.antName;
         this._el.querySelector('[data-death-describe]').innerHTML = this._generateAntDeathDescribeText();
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.deathRecord.deathPosition);
-        this._el.querySelector('[data-year]').innerHTML = converStepsToYear(this._notification.step) ;
+        this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step) ;
     }
 
     _renderDiedNestNotification() {
         this._el.innerHTML = diedNestNotificationTmpl;
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.deathRecord.deathPosition);
-        this._el.querySelector('[data-year]').innerHTML = converStepsToYear(this._notification.step) ;
+        this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step) ;
     }
 
     _renderNestAlarmRaisedNotification() {
         this._el.innerHTML = nestAlarmRaisedNotificationTmpl;
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.nestPosition);
-        this._el.querySelector('[data-year]').innerHTML = converStepsToYear(this._notification.step);
+        this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step);
     }
 
     _renderNestAlarmCanceledNotification() {
         this._el.innerHTML = nestAlarmCanceledNotificationTmpl;
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.nestPosition);
-        this._el.querySelector('[data-year]').innerHTML = converStepsToYear(this._notification.step) ;
+        this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step) ;
     }
 
     _renderDiedColonyNotification() {
         this._el.innerHTML = diedColonyNotificationTmpl;
         this._el.querySelector('[data-colony-name]').innerHTML = this._notification.colonyName;
-        this._el.querySelector('[data-year]').innerHTML = converStepsToYear(this._notification.step) ;
+        this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step) ;
     }
 
     _generateAntDeathDescribeText() {

@@ -1,10 +1,9 @@
 import { CONSTS } from "@domain/consts"
 
-function converStepsToYear(steps) {
-    // return Math.floor(steps / CONSTS.STEPS_IN_YEAR);
-    return steps;
+function convertStepsToYear(steps) {
+    return Math.floor(steps / CONSTS.STEPS_IN_YEAR);
 }
 
 export {
-    converStepsToYear
+    convertStepsToYear
 }

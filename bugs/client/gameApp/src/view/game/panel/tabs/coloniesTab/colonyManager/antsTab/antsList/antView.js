@@ -4,6 +4,7 @@ import { NestSelectorView } from "@view/game/panel/base/nestSelector";
 import { AntTypes } from "@domain/enum/antTypes";
 import { CONSTS } from "@domain/consts";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
+import { convertStepsToYear } from "@utils/convertStepsToYear";
 
 class AntView extends BaseHTMLView {
 
@@ -39,14 +40,9 @@ class AntView extends BaseHTMLView {
         this._el.innerHTML = antTmpl;
 
         this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
-        this._flyAwayActionBtn = this._el.querySelector('[data-fly-away]');
 
-        this._el.querySelector('[data-id]').innerHTML = this._ant.id;
         this._el.querySelector('[data-name]').innerHTML = this._ant.name;
         this._el.querySelector('[data-type]').innerHTML = this._ant.isQueenOfColony ? 'Королева' : antTypesLabels[this._ant.antType];
-        this._el.querySelector('[data-attack]').innerHTML = this._ant.stats.attack;
-        this._el.querySelector('[data-defence]').innerHTML = this._ant.stats.defence;
-        this._el.querySelector('[data-max-hp]').innerHTML = this._ant.maxHp;
 
         this._nestSelector = new NestSelectorView(this._ant.fromColony);
         this._nestSelector.nestId = this._ant.homeNestId;
@@ -67,15 +63,19 @@ class AntView extends BaseHTMLView {
             console.log(this._ant.genome);
         });
 
-        this._profileEl = this._el.querySelector('[data-ant-profile]');
+        this._profileContainerEl = this._el.querySelector('[data-ant-profile]');
         this._profileBtn = this._el.querySelector('[data-profile-btn]');
         this._renderProfileState();
+
+        this._el.querySelector('[data-id]').innerHTML = this._ant.id;
 
         this._ageEl = this._el.querySelector('[data-age]');
         this._renderAge();
 
         this._currentActivityEl = this._el.querySelector('[data-current-activity]');
         this._renderCurrentActivity();
+
+        this._renderStats();
         
     }
 
@@ -102,13 +102,26 @@ class AntView extends BaseHTMLView {
     }
 
     _renderProfileState() {
-        this._profileEl.classList.toggle('hidden', !this._profileState);
+        this._profileContainerEl.classList.toggle('hidden', !this._profileState);
         this._profileBtn.innerHTML = this._profileState ? '-' : '+';
     }
 
     _renderCurrentActivity() {
         let messageId = `${this._ant.currentActivity}_activity`;
         this._currentActivityEl.innerHTML = this._ant.currentActivity ? this.$messages[messageId] : this.$messages.nothing_activity;
+    }
+
+    _renderStats() {
+        let statsEl = this._el.querySelector('[data-stats]');
+        statsEl.querySelector('[data-max-hp]').innerHTML = this._ant.stats.maxHp;
+        statsEl.querySelector('[data-hp-regen-rate]').innerHTML = this._ant.stats.hpRegenRate;
+        statsEl.querySelector('[data-speed]').innerHTML = this._ant.stats.distancePerStep;
+        statsEl.querySelector('[data-sight-distance]').innerHTML = this._ant.stats.sightDistance;
+        statsEl.querySelector('[data-strength]').innerHTML = this._ant.stats.strength;
+        statsEl.querySelector('[data-defense]').innerHTML = this._ant.stats.defence;
+        statsEl.querySelector('[data-appetite]').innerHTML = this._ant.stats.appetite;
+        statsEl.querySelector('[data-min-temperature]').innerHTML = this._ant.stats.minTemperature;
+        statsEl.querySelector('[data-life-span]').innerHTML = convertStepsToYear(this._ant.stats.lifeSpan);
     }
 
     _onNestChanged() {

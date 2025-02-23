@@ -134,7 +134,7 @@ class LiveBody(Body):
         return self._calories >= self._max_calories
     
     def damage_another_body(self, body: Body):
-        body.receive_damage(self.stats.attack, DamageTypes.COMBAT)
+        body.receive_damage(self.stats.strength, DamageTypes.COMBAT)
         self.events.emit('damaged_another_body')
 
     def receive_damage(self, damage: int, damage_type: DamageTypes):

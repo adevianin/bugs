@@ -62,13 +62,3 @@
     list-style-type: none;
     display: flex;
 }
-
-.colony-manager__ants-table {
-    border-collapse: collapse;
-    border-spacing: 0px;
-    border: solid 1px;
-}
-
-.colony-manager__ants-table td {
-    border: solid 1px;
-}

@@ -27,10 +27,11 @@ class StatsClientSerializer():
         json.update({
             "distancePerStep": stats.distance_per_step,
             "sightDistance": stats.sight_distance,
-            "attack": stats.attack,
+            "strength": stats.strength,
             "defence": stats.defence,
             "appetite": stats.appetite,
-            "minTemperature": stats.min_temperature
+            "minTemperature": stats.min_temperature,
+            "lifeSpan": stats.life_span
         })
         return json
     

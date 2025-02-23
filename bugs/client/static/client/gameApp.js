@@ -3795,8 +3795,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function converStepsToYear(steps) {
-    // return Math.floor(steps / CONSTS.STEPS_IN_YEAR);
-    return steps;
+    console.log(_domain_consts__WEBPACK_IMPORTED_MODULE_0__.CONSTS.STEPS_IN_YEAR, steps);
+    return Math.floor(steps / _domain_consts__WEBPACK_IMPORTED_MODULE_0__.CONSTS.STEPS_IN_YEAR);
 }
 
 
@@ -4330,15 +4330,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   GameView: () => (/* binding */ GameView)
 /* harmony export */ });
-/* harmony import */ var _gameStyles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./gameStyles.css */ "./gameApp/src/view/game/gameStyles.css");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
-/* harmony import */ var _camera__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./camera */ "./gameApp/src/view/game/camera.js");
-/* harmony import */ var _world__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./world */ "./gameApp/src/view/game/world/index.js");
-/* harmony import */ var _panel__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./panel */ "./gameApp/src/view/game/panel/index.js");
-/* harmony import */ var _gameTmpl_html__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./gameTmpl.html */ "./gameApp/src/view/game/gameTmpl.html");
-/* harmony import */ var _mapPickers_mapPickerMasterView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./mapPickers/mapPickerMasterView */ "./gameApp/src/view/game/mapPickers/mapPickerMasterView.js");
-/* harmony import */ var _climate_climateView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./climate/climateView */ "./gameApp/src/view/game/climate/climateView.js");
+/* harmony import */ var _global_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./global.css */ "./gameApp/src/view/game/global.css");
+/* harmony import */ var _gameStyles_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./gameStyles.css */ "./gameApp/src/view/game/gameStyles.css");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _camera__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./camera */ "./gameApp/src/view/game/camera.js");
+/* harmony import */ var _world__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./world */ "./gameApp/src/view/game/world/index.js");
+/* harmony import */ var _panel__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./panel */ "./gameApp/src/view/game/panel/index.js");
+/* harmony import */ var _gameTmpl_html__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./gameTmpl.html */ "./gameApp/src/view/game/gameTmpl.html");
+/* harmony import */ var _mapPickers_mapPickerMasterView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./mapPickers/mapPickerMasterView */ "./gameApp/src/view/game/mapPickers/mapPickerMasterView.js");
+/* harmony import */ var _climate_climateView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./climate/climateView */ "./gameApp/src/view/game/climate/climateView.js");
 
 
 
@@ -4349,7 +4350,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class GameView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
+
+class GameView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_3__.BaseHTMLView {
 
     constructor(el) {
         super(el);
@@ -4358,25 +4360,25 @@ class GameView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Base
     }
 
     _render() {
-        this._el.innerHTML = _gameTmpl_html__WEBPACK_IMPORTED_MODULE_6__["default"];
+        this._el.innerHTML = _gameTmpl_html__WEBPACK_IMPORTED_MODULE_7__["default"];
 
-        this._climateView = new _climate_climateView__WEBPACK_IMPORTED_MODULE_8__.ClimateView(this._el.querySelector('[data-climate]'));
+        this._climateView = new _climate_climateView__WEBPACK_IMPORTED_MODULE_9__.ClimateView(this._el.querySelector('[data-climate]'));
 
-        new _panel__WEBPACK_IMPORTED_MODULE_5__.Panel(this._el.querySelector('[data-panel]'));
+        new _panel__WEBPACK_IMPORTED_MODULE_6__.Panel(this._el.querySelector('[data-panel]'));
         
         let canvasContainerEl = this._el.querySelector('[data-canvas-container]');
         this.$pixiApp.resizeTo = canvasContainerEl;
         canvasContainerEl.appendChild(this.$pixiApp.canvas);
 
-        let worldContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        let worldContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_2__.Container();
         this.$pixiApp.stage.addChild(worldContainer);
         let worldSize = this.$domainFacade.getWorldSize();
-        new _camera__WEBPACK_IMPORTED_MODULE_3__.Camera(worldContainer, this.$pixiApp.canvas, worldSize[0], worldSize[1]);
-        new _world__WEBPACK_IMPORTED_MODULE_4__.WorldView(worldContainer);
+        new _camera__WEBPACK_IMPORTED_MODULE_4__.Camera(worldContainer, this.$pixiApp.canvas, worldSize[0], worldSize[1]);
+        new _world__WEBPACK_IMPORTED_MODULE_5__.WorldView(worldContainer);
 
-        let mapPickerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+        let mapPickerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_2__.Container();
         worldContainer.addChild(mapPickerContainer);
-        new _mapPickers_mapPickerMasterView__WEBPACK_IMPORTED_MODULE_7__.MapPickerMasterView(mapPickerContainer, this._el.querySelector('[data-map-picker-border]'));
+        new _mapPickers_mapPickerMasterView__WEBPACK_IMPORTED_MODULE_8__.MapPickerMasterView(mapPickerContainer, this._el.querySelector('[data-map-picker-border]'));
         
         this.$pixiApp.resize();
     }
@@ -5881,6 +5883,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/antTypes */ "./gameApp/src/domain/enum/antTypes.js");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
 /* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./gameApp/src/view/labels/antTypesLabels.js");
+/* harmony import */ var _utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @utils/convertStepsToYear */ "./gameApp/src/utils/convertStepsToYear.js");
+
 
 
 
@@ -5922,14 +5926,9 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._el.innerHTML = _antTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
-        this._flyAwayActionBtn = this._el.querySelector('[data-fly-away]');
 
-        this._el.querySelector('[data-id]').innerHTML = this._ant.id;
         this._el.querySelector('[data-name]').innerHTML = this._ant.name;
         this._el.querySelector('[data-type]').innerHTML = this._ant.isQueenOfColony ? 'Королева' : _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_5__.antTypesLabels[this._ant.antType];
-        this._el.querySelector('[data-attack]').innerHTML = this._ant.stats.attack;
-        this._el.querySelector('[data-defence]').innerHTML = this._ant.stats.defence;
-        this._el.querySelector('[data-max-hp]').innerHTML = this._ant.maxHp;
 
         this._nestSelector = new _view_game_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._ant.fromColony);
         this._nestSelector.nestId = this._ant.homeNestId;
@@ -5950,15 +5949,19 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
             console.log(this._ant.genome);
         });
 
-        this._profileEl = this._el.querySelector('[data-ant-profile]');
+        this._profileContainerEl = this._el.querySelector('[data-ant-profile]');
         this._profileBtn = this._el.querySelector('[data-profile-btn]');
         this._renderProfileState();
+
+        this._el.querySelector('[data-id]').innerHTML = this._ant.id;
 
         this._ageEl = this._el.querySelector('[data-age]');
         this._renderAge();
 
         this._currentActivityEl = this._el.querySelector('[data-current-activity]');
         this._renderCurrentActivity();
+
+        this._renderStats();
         
     }
 
@@ -5985,13 +5988,26 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
     }
 
     _renderProfileState() {
-        this._profileEl.classList.toggle('hidden', !this._profileState);
+        this._profileContainerEl.classList.toggle('hidden', !this._profileState);
         this._profileBtn.innerHTML = this._profileState ? '-' : '+';
     }
 
     _renderCurrentActivity() {
         let messageId = `${this._ant.currentActivity}_activity`;
         this._currentActivityEl.innerHTML = this._ant.currentActivity ? this.$messages[messageId] : this.$messages.nothing_activity;
+    }
+
+    _renderStats() {
+        let statsEl = this._el.querySelector('[data-stats]');
+        statsEl.querySelector('[data-max-hp]').innerHTML = this._ant.stats.maxHp;
+        statsEl.querySelector('[data-hp-regen-rate]').innerHTML = this._ant.stats.hpRegenRate;
+        statsEl.querySelector('[data-speed]').innerHTML = this._ant.stats.distancePerStep;
+        statsEl.querySelector('[data-sight-distance]').innerHTML = this._ant.stats.sightDistance;
+        statsEl.querySelector('[data-strength]').innerHTML = this._ant.stats.strength;
+        statsEl.querySelector('[data-defense]').innerHTML = this._ant.stats.defence;
+        statsEl.querySelector('[data-appetite]').innerHTML = this._ant.stats.appetite;
+        statsEl.querySelector('[data-min-temperature]').innerHTML = this._ant.stats.minTemperature;
+        statsEl.querySelector('[data-life-span]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_6__.converStepsToYear)(this._ant.stats.lifeSpan);
     }
 
     _onNestChanged() {
@@ -16348,6 +16364,41 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.game {
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/game/global.css":
+/*!********************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/game/global.css ***!
+  \********************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, `.g-table {
+    border-collapse: collapse;
+    border-spacing: 0px;
+    border: solid 1px;
+}
+
+.g-table td {
+    border: solid 1px;
+}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/global.css"],"names":[],"mappings":"AAAA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".g-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.g-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/game/panel/base/genome/style.css":
 /*!*************************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/game/panel/base/genome/style.css ***!
@@ -16690,16 +16741,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.colony_manager {
     list-style-type: none;
     display: flex;
 }
-
-.colony-manager__ants-table {
-    border-collapse: collapse;
-    border-spacing: 0px;
-    border: solid 1px;
-}
-
-.colony-manager__ants-table td {
-    border: solid 1px;
-}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,YAAY;AAChB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,YAAY;AAChB;;;AAGA;IACI,aAAa;IACb,sBAAsB;AAC1B;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;IACjB,eAAe;AACnB;;AAEA;IACI,eAAe;AACnB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,UAAU;IACV,SAAS;IACT,qBAAqB;IACrB,aAAa;AACjB;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n\r\n.colony-manager__operations-tab {\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n.colony-manager__operations-list {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n    margin-top: 3px;\r\n}\r\n\r\n.colony-manager__operation {\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__operation--selected {\r\n    color: red;\r\n}\r\n\r\n.colony-manager__operations-list td {\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__operations-creator {\r\n    padding: 0;\r\n}\r\n\r\n.colony-manager__new_operations_list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n    display: flex;\r\n}\r\n\r\n.colony-manager__ants-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__ants-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,YAAY;AAChB;;AAEA;IACI,qBAAqB;IACrB,YAAY;IACZ,SAAS;AACb;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI;AACJ;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,YAAY;AAChB;;;AAGA;IACI,aAAa;IACb,sBAAsB;AAC1B;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;IACjB,eAAe;AACnB;;AAEA;IACI,eAAe;AACnB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,UAAU;IACV,SAAS;IACT,qBAAqB;IACrB,aAAa;AACjB","sourcesContent":[".colony_manager {\r\n    padding: 5px;\r\n    width: 350px;\r\n}\r\n\r\n.colony-manager__nests-list {\r\n    list-style-type: none;\r\n    padding: 3px;\r\n    margin: 0;\r\n}\r\n\r\n.colony-manager__nest_item {\r\n    color: blue;\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__nest_item--selected {\r\n    color: red\r\n}\r\n\r\n.colony-manager__nest-tab {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.colony-manager__nest-manager {\r\n    padding: 3px;\r\n}\r\n\r\n\r\n.colony-manager__operations-tab {\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n.colony-manager__operations-list {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n    margin-top: 3px;\r\n}\r\n\r\n.colony-manager__operation {\r\n    cursor: pointer;\r\n}\r\n\r\n.colony-manager__operation--selected {\r\n    color: red;\r\n}\r\n\r\n.colony-manager__operations-list td {\r\n    border: solid 1px;\r\n}\r\n\r\n.colony-manager__operations-creator {\r\n    padding: 0;\r\n}\r\n\r\n.colony-manager__new_operations_list {\r\n    padding: 0;\r\n    margin: 0;\r\n    list-style-type: none;\r\n    display: flex;\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -18992,7 +19034,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<!-- <div class=\"panel__handler\" data-handler></div>\r\n<div class=\"panel__body\" data-panel-body>\r\n    <div class=\"panel__tab-switcher tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n    <div class=\"panel__tab-container\">\r\n        <div data-user-tab></div>\r\n        <div data-operations-tab></div>\r\n        <div data-colonies-tab class=\"colonies-tab\"></div>\r\n        <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n        <div data-specie-builder-tab class=\"\"></div>\r\n        <div data-notifications-tab></div>\r\n        <div data-rating-tab></div>\r\n    </div>\r\n</div> -->\r\n\r\n<div class=\"panel__handler\" data-handler></div>\r\n<div class=\"tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div data-colonies-tab class=\"colonies-tab\"></div>\r\n    <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n    <div data-specie-builder-tab class=\"\"></div>\r\n    <div data-notifications-tab></div>\r\n    <div data-rating-tab></div>\r\n</div>\r\n";
+var code = "<div class=\"panel__handler\" data-handler></div>\r\n<div class=\"tab-switcher tab-switcher--vertical\" data-tab-switcher></div>\r\n<div class=\"panel__tab-container\">\r\n    <div data-user-tab></div>\r\n    <div data-operations-tab></div>\r\n    <div data-colonies-tab class=\"colonies-tab\"></div>\r\n    <div data-nuptial-flight-tab class=\"nuptial-flight-tab\"></div>\r\n    <div data-specie-builder-tab class=\"\"></div>\r\n    <div data-notifications-tab></div>\r\n    <div data-rating-tab></div>\r\n</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -19046,7 +19088,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<tr>\r\n    <td data-id rowspan=\"2\"></td>\r\n    <td data-name></td>\r\n    <td data-type></td>\r\n    <td data-attack></td>\r\n    <td data-defence></td>\r\n    <td data-max-hp></td>\r\n    <td data-nest></td>\r\n    <td>\r\n        <select data-guardian-type>\r\n            <option value=\"none\">не захищає</option>\r\n            <option value=\"nest\">тільки гніздо</option>\r\n            <option value=\"colony\">вся колонія</option>\r\n        </select>\r\n    </td>\r\n    <td>\r\n        <input data-is-cooperactive type=\"checkbox\">\r\n    </td>\r\n    <td data-actions>\r\n        <button data-fly-away>X</button>\r\n        <button data-nuptial-flight>шлюбний політ</button>\r\n        <button data-genome-debug>геном</button>\r\n        <button data-profile-btn>+</button>\r\n    </td>\r\n</tr>\r\n<tr data-ant-profile>\r\n    <td colspan=\"11\">\r\n        <div>age: <span data-age></span></div>\r\n        <div>занятість: <span data-current-activity></span></div>\r\n    </td>\r\n</tr>";
+var code = "<tr>\r\n    <td data-name rowspan=\"2\"></td>\r\n    <td data-type></td>\r\n    <td data-nest></td>\r\n    <td>\r\n        <select data-guardian-type>\r\n            <option value=\"none\">не захищає</option>\r\n            <option value=\"nest\">тільки гніздо</option>\r\n            <option value=\"colony\">вся колонія</option>\r\n        </select>\r\n    </td>\r\n    <td>\r\n        <input data-is-cooperactive type=\"checkbox\">\r\n    </td>\r\n    <td data-actions>\r\n        <button data-profile-btn>+</button>\r\n    </td>\r\n</tr>\r\n<tr data-ant-profile>\r\n    <td colspan=\"5\">\r\n        <table class=\"g-table\">\r\n            <thead>\r\n                <tr>\r\n                    <td>max_hp</td>\r\n                    <td>hp_regen_rate</td>\r\n                    <td>speed</td>\r\n                    <td>sight_distance</td>\r\n                    <td>strength</td>\r\n                    <td>defense</td>\r\n                    <td>appetite</td>\r\n                    <td>min_temperature</td>\r\n                    <td>life_span</td>\r\n                </tr>\r\n            </thead>\r\n            <tbody>\r\n                <tr data-stats>\r\n                    <td data-max-hp></td>\r\n                    <td data-hp-regen-rate></td>\r\n                    <td data-speed></td>\r\n                    <td data-sight-distance></td>\r\n                    <td data-strength></td>\r\n                    <td data-defense></td>\r\n                    <td data-appetite></td>\r\n                    <td data-min-temperature></td>\r\n                    <td data-life-span></td>\r\n                </tr>\r\n            </tbody>\r\n        </table>\r\n        <div data-id></div>\r\n        <div>age: <span data-age></span></div>\r\n        <div>занятість: <span data-current-activity></span></div>\r\n        <button data-nuptial-flight>шлюбний політ</button>\r\n        <button data-genome-debug>геном</button>\r\n    </td>\r\n</tr>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -19064,7 +19106,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<thead>\r\n    <tr>\r\n        <td>id</td>\r\n        <td>імя</td>\r\n        <td>тип</td>\r\n        <td>атака</td>\r\n        <td>захист</td>\r\n        <td>макс хп</td>\r\n        <td>гніздо</td>\r\n        <td>guardian</td>\r\n        <td>cooperative</td>\r\n        <td>дії</td>\r\n    </tr>\r\n</thead>";
+var code = "<thead>\r\n    <tr>\r\n        <td>імя</td>\r\n        <td>тип</td>\r\n        <td>гніздо</td>\r\n        <td>guardian</td>\r\n        <td>cooperative</td>\r\n        <td>більше</td>\r\n    </tr>\r\n</thead>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -19082,7 +19124,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<table class=\"colony-manager__ants-table\" data-ants-list></table>";
+var code = "<table class=\"g-table\" data-ants-list></table>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -20139,6 +20181,61 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
        /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_gameStyles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_gameStyles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_gameStyles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/game/global.css":
+/*!******************************************!*\
+  !*** ./gameApp/src/view/game/global.css ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_global_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../node_modules/css-loader/dist/cjs.js!./global.css */ "./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/game/global.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_global_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_global_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_global_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_global_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),
