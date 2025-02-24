@@ -4,7 +4,7 @@ class Camera {
 
     static MAP_MARGIN = 20;
 
-    constructor(container, canvasEl, mapWidth, mapHeight) {
+    constructor(container, pixiApp, mapWidth, mapHeight) {
         this._container = container;
         this._isDraging = false;
         this._anchorPoint = {x: null, y: null};
@@ -12,13 +12,16 @@ class Camera {
             width: mapWidth,
             height: mapHeight
         };
-        this._canvasEl = canvasEl;
+        this._canvasEl = pixiApp.canvas;
+        this._pixiApp = pixiApp;
 
         this._renderHandler();
 
         this._handler.on('pointerdown', this._onPointerDown.bind(this));
         this._handler.on('pointerup', this._onPointerUp.bind(this));
         this._handler.on('pointermove', this._onPointerMove.bind(this));
+
+        window.a = this;
     }
 
     _renderHandler() {
@@ -41,37 +44,71 @@ class Camera {
 
     _onPointerMove(e) {
         if (this._isDraging) {
+            
             let dx = e.client.x - this._anchorPoint.x;
             let dy = e.client.y - this._anchorPoint.y;
 
             this._anchorPoint.x = e.client.x;
             this._anchorPoint.y = e.client.y;
 
-            let containerPosX = this._container.x + dx;
-            let containerPosY = this._container.y + dy;
-
-            if (containerPosX > Camera.MAP_MARGIN) {
-                containerPosX = Camera.MAP_MARGIN;
-            }
-
-            if (containerPosY > Camera.MAP_MARGIN) {
-                containerPosY = Camera.MAP_MARGIN;
-            }
-
-            let minXPos = this._canvasEl.offsetWidth - this._mapSize.width - Camera.MAP_MARGIN
-            if (containerPosX < minXPos) {
-                containerPosX = minXPos;
-            }
-
-            let minPosY = this._canvasEl.offsetHeight - this._mapSize.height  - Camera.MAP_MARGIN;
-            if (containerPosY < minPosY) {
-                containerPosY = minPosY;
-            }
-
-            this._container.x = containerPosX;
-            this._container.y = containerPosY;
+            this._moveContainer(dx, dy);
         }
     }
+
+    showPos(x, y) {
+        let viewPointLocal = this._container.toLocal(new PIXI.Point(this._canvasEl.offsetWidth / 2, this._canvasEl.offsetHeight / 2));
+        let dx = viewPointLocal.x - x;
+        let dy = viewPointLocal.y - y;
+        
+        let duration = 500;
+        let interval = 20;
+        let steps = duration / interval;
+        let stepX = dx / steps;
+        let stepY = dy / steps;
+        
+        let currentStep = 0;
+        
+        let animationInterval = setInterval(() => {
+            if (currentStep < steps) {
+                this._moveContainer(stepX, stepY);
+                currentStep++;
+            } else {
+                clearInterval(animationInterval);
+            }
+        }, interval);
+    }
+
+    _moveContainer(dx, dy) {
+        let containerPosX = this._container.x + dx;
+        let containerPosY = this._container.y + dy;
+
+        if (containerPosX > Camera.MAP_MARGIN) {
+            containerPosX = Camera.MAP_MARGIN;
+        }
+
+        if (containerPosY > Camera.MAP_MARGIN) {
+            containerPosY = Camera.MAP_MARGIN;
+        }
+
+        let minXPos = this._canvasEl.offsetWidth - this._mapSize.width - Camera.MAP_MARGIN
+        if (containerPosX < minXPos) {
+            containerPosX = minXPos;
+        }
+
+        let minPosY = this._canvasEl.offsetHeight - this._mapSize.height  - Camera.MAP_MARGIN;
+        if (containerPosY < minPosY) {
+            containerPosY = minPosY;
+        }
+
+        this._container.x = containerPosX;
+        this._container.y = containerPosY;
+    }
+
+    // _calcViewPoint() {
+    //     return {
+    //         x: this._container.x + (this._canvasEl.offsetWidth / 2);
+    //     }
+    // }
 }
 
 export {
