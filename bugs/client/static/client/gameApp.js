@@ -5921,8 +5921,6 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
     _render() {
         this._el.innerHTML = _antTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
-
         this._el.querySelector('[data-name]').innerHTML = this._ant.name;
         this._el.querySelector('[data-type]').innerHTML = this._ant.isQueenOfColony ? 'Королева' : _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_4__.antTypesLabels[this._ant.antType];
 
@@ -5930,8 +5928,6 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._nestSelector.nestId = this._ant.homeNestId;
         this._nestSelector.disabled = this._ant.isQueenOfColony;
         this._el.querySelector('[data-nest]').append(this._nestSelector.el);
-
-        this._renderActionBtns();
 
         this._guardianTypeSelector = this._el.querySelector('[data-guardian-type]');
         this._guardianTypeSelector.value = this._ant.guardianBehavior;
@@ -5941,23 +5937,21 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._cooperativeBehaviorTogglerEl.checked = this._ant.isCooperativeBehavior;
         this._cooperativeBehaviorTogglerEl.disabled = !this._ant.canBeCooperative;
 
+        this._el.querySelector('[data-id]').innerHTML = this._ant.id;
+
         this._profileContainerEl = this._el.querySelector('[data-ant-profile]');
         this._profileBtn = this._el.querySelector('[data-profile-btn]');
         this._renderProfileState();
-
-        this._el.querySelector('[data-id]').innerHTML = this._ant.id;
-
-        this._ageEl = this._el.querySelector('[data-age]');
-        this._renderAge();
-
+        
         this._currentActivityEl = this._el.querySelector('[data-current-activity]');
         this._renderCurrentActivity();
-
-        this._renderStats();
-
+        this._ageEl = this._el.querySelector('[data-age]');
+        this._renderAge();
         this._genomeView = new _view_game_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_6__.GenomeInlineView(this._el.querySelector('[data-genome]'), this._ant.genome);
-        
+        this._renderStats();
         this._renderBreedingMaleGenome();
+        this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
+        this._renderActionBtns();
     }
 
     remove() {

@@ -37,8 +37,6 @@ class AntView extends BaseHTMLView {
     _render() {
         this._el.innerHTML = antTmpl;
 
-        this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
-
         this._el.querySelector('[data-name]').innerHTML = this._ant.name;
         this._el.querySelector('[data-type]').innerHTML = this._ant.isQueenOfColony ? 'Королева' : antTypesLabels[this._ant.antType];
 
@@ -46,8 +44,6 @@ class AntView extends BaseHTMLView {
         this._nestSelector.nestId = this._ant.homeNestId;
         this._nestSelector.disabled = this._ant.isQueenOfColony;
         this._el.querySelector('[data-nest]').append(this._nestSelector.el);
-
-        this._renderActionBtns();
 
         this._guardianTypeSelector = this._el.querySelector('[data-guardian-type]');
         this._guardianTypeSelector.value = this._ant.guardianBehavior;
@@ -57,23 +53,26 @@ class AntView extends BaseHTMLView {
         this._cooperativeBehaviorTogglerEl.checked = this._ant.isCooperativeBehavior;
         this._cooperativeBehaviorTogglerEl.disabled = !this._ant.canBeCooperative;
 
+        this._el.querySelector('[data-id]').innerHTML = this._ant.id;
+
         this._profileContainerEl = this._el.querySelector('[data-ant-profile]');
         this._profileBtn = this._el.querySelector('[data-profile-btn]');
         this._renderProfileState();
-
-        this._el.querySelector('[data-id]').innerHTML = this._ant.id;
+        
+        this._currentActivityEl = this._el.querySelector('[data-current-activity]');
+        this._renderCurrentActivity();
 
         this._ageEl = this._el.querySelector('[data-age]');
         this._renderAge();
 
-        this._currentActivityEl = this._el.querySelector('[data-current-activity]');
-        this._renderCurrentActivity();
+        this._genomeView = new GenomeInlineView(this._el.querySelector('[data-genome]'), this._ant.genome);
 
         this._renderStats();
 
-        this._genomeView = new GenomeInlineView(this._el.querySelector('[data-genome]'), this._ant.genome);
-        
         this._renderBreedingMaleGenome();
+        
+        this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
+        this._renderActionBtns();
     }
 
     remove() {
