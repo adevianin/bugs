@@ -16,7 +16,7 @@ from core.world.entities.ant.base.genetic.genes.development_male_caste_gene impo
 from core.world.entities.ant.base.genetic.genes.development_worker_caste_gene import DevelopmentWorkerCasteGene
 from core.world.entities.ant.base.genetic.genes.adaptation_cold_gene import AdaptationColdGene
 from core.world.entities.ant.base.genetic.genes.adaptation_appetite_gene import AdaptationAppetiteGene
-from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdaptationDevelopmentAppetiteGene
+from core.world.entities.ant.base.genetic.genes.adaptation_development_appetite_gene import AdaptationDevelopmentAppetiteGene
 from core.world.exceptions import GameError
 
 class Chromosome(ABC):
