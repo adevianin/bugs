@@ -109,6 +109,8 @@ class Ant(LiveEntity):
         return self._body.current_activity
     
     def prepare_for_operation(self):
+        if self._body.am_i_in_hibernation():
+            self._body.exit_hibernation()
         self._body.set_current_activity(AntActivityTypes.IN_OPERATION)
     
     def fly_nuptial_flight(self):
