@@ -15,7 +15,7 @@ from core.world.entities.ant.base.genetic.genes.development_male_caste_gene impo
 from core.world.entities.ant.base.genetic.genes.adaptation_appetite_gene import AdaptationAppetiteGene
 from core.world.entities.ant.base.genetic.genes.adaptation_development_appetite_gene import AdaptationDevelopmentAppetiteGene
 from core.world.entities.ant.base.genetic.genes.adaptation_cold_gene import AdaptationColdGene
-from core.world.entities.ant.base.genetic.genes.building_subnest_gene import BuildingSubnestGene
+from core.world.entities.ant.base.genetic.genes.specialization_building_subnest_gene import SpecializationBuildingSubnestGene
 
 class GenesSerializer():
 
@@ -49,8 +49,8 @@ class GenesSerializer():
                 return self._serialize_adaptation_development_appetite_gene(gene)
             case GenesTypes.ADAPTATION_COLD:
                 return self._serialize_adaptation_cold_gene(gene)
-            case GenesTypes.BUILDING_SUBNEST:
-                return self._serialize_building_subnest_gene(gene)
+            case GenesTypes.SPECIALIZATION_BUILDING_SUBNEST:
+                return self._serialize_specialization_building_subnest_gene(gene)
             case _:
                 raise Exception('unknown gene type')
             
@@ -153,6 +153,6 @@ class GenesSerializer():
         })
         return json
     
-    def _serialize_building_subnest_gene(self, gene: BuildingSubnestGene):
+    def _serialize_specialization_building_subnest_gene(self, gene: SpecializationBuildingSubnestGene):
         return self._serialize_base_gene(gene)
     

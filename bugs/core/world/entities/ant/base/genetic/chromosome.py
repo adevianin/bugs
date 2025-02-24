@@ -125,3 +125,9 @@ class Chromosome(ABC):
             mutated_genes.append(gene.mutate(percent, super_mutate_chance, super_mutate_percent))
 
         return Chromosome.build(self.type, mutated_genes)
+    
+    def inject_gene(self, injecting_gene: BaseGene):
+        gene_with_same_type = self.get_gene_by_type(injecting_gene.type)
+        if gene_with_same_type:
+            self._genes.remove(gene_with_same_type)
+        self._genes.append(injecting_gene)

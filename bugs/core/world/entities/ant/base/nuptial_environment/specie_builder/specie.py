@@ -4,12 +4,13 @@ from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeType
 from core.world.entities.ant.base.genetic.chromosomes_set import ChromosomesSet
 from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
 from .activity_weights_pack import ActivityWeightsPack
-from core.world.settings import (PROBABILITY_OF_SUPER_GENE, SUPER_GENE_THRESHOLD_BODY_STRENGTH, SUPER_GENE_THRESHOLD_BODY_DEFENSE, SUPER_GENE_THRESHOLD_BUILDING_SUBNEST, 
+from core.world.settings import (PROBABILITY_OF_SUPER_GENE, SUPER_GENE_THRESHOLD_BODY_STRENGTH, SUPER_GENE_THRESHOLD_BODY_DEFENSE, SUPER_GENE_THRESHOLD_SPECIALIZATION_BUILDING_SUBNEST, 
                                  SUPER_GENE_THRESHOLD_ADAPTATION_COLD)
 from core.world.utils.probability_check import probability_check
 from core.world.entities.ant.base.genetic.genes.development_warrior_caste_gene import DevelopmentWarriorCasteGene
-from core.world.entities.ant.base.genetic.genes.building_subnest_gene import BuildingSubnestGene
+from core.world.entities.ant.base.genetic.genes.specialization_building_subnest_gene import SpecializationBuildingSubnestGene
 from .required_genes_list import REQUIRED_GENES
+from core.world.entities.ant.base.genetic.genes.base.base_gene import BaseGene
 from typing import List, Dict
 import random
 
@@ -50,8 +51,11 @@ class Specie():
             specie_chromosome.clear_not_activated_specie_genes()
     
     def generate_nuptial_male_genome(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> Genome:
-        super_gene = self._build_super_gene_by_specie_activity() if probability_check(PROBABILITY_OF_SUPER_GENE) else None
-        maternal_chromosome = self._chromosome_set.generate_chorosome_set(percent, super_mutate_chance, super_mutate_percent, super_gene)
+        maternal_chromosome = self._chromosome_set.generate_chorosome_set(percent, super_mutate_chance, super_mutate_percent)
+        if probability_check(PROBABILITY_OF_SUPER_GENE):
+            super_gene = self._build_super_gene_by_specie_activity()
+            maternal_chromosome.inject_gene(super_gene)
+
         return Genome.build(maternal_chromosome, None)
     
     def generate_antara_genome(self) -> Genome:
@@ -100,7 +104,7 @@ class Specie():
     def register_building_activity(self):
         self._activity_weights.building_weight += self._activity_value
 
-    def _build_super_gene_by_specie_activity(self) -> GenesTypes:
+    def _build_super_gene_by_specie_activity(self) -> BaseGene:
         genes = []
 
         if self._activity_weights.attack_weight >= SUPER_GENE_THRESHOLD_BODY_STRENGTH:
@@ -112,8 +116,8 @@ class Specie():
         if self._activity_weights.defense_weight >= SUPER_GENE_THRESHOLD_BODY_DEFENSE:
             genes.append(GenesTypes.BODY_DEFENSE)
 
-        if self._activity_weights.building_weight >= SUPER_GENE_THRESHOLD_BUILDING_SUBNEST and not self.check_gene_presence(GenesTypes.BUILDING_SUBNEST):
-            genes.append(GenesTypes.BUILDING_SUBNEST)
+        if self._activity_weights.building_weight >= SUPER_GENE_THRESHOLD_SPECIALIZATION_BUILDING_SUBNEST and not self.check_gene_presence(GenesTypes.SPECIALIZATION_BUILDING_SUBNEST):
+            genes.append(GenesTypes.SPECIALIZATION_BUILDING_SUBNEST)
 
         if self._activity_weights.cold_resistance_weight >= SUPER_GENE_THRESHOLD_ADAPTATION_COLD:
             genes.append(GenesTypes.ADAPTATION_COLD)
@@ -135,9 +139,9 @@ class Specie():
                 self._activity_weights.defense_weight = 0
                 specie_gene = self._chromosome_set.get_activated_specie_gene_by_type(GenesTypes.BODY_DEFENSE)
                 return specie_gene.gene.upgrade()
-            case GenesTypes.BUILDING_SUBNEST:
+            case GenesTypes.SPECIALIZATION_BUILDING_SUBNEST:
                 self._activity_weights.building_weight = 0
-                return BuildingSubnestGene.build_new_for_specie_gene()
+                return SpecializationBuildingSubnestGene.build_new_for_specie_gene()
             case GenesTypes.ADAPTATION_COLD:
                 self._activity_weights.cold_resistance_weight = 0
                 specie_gene = self._chromosome_set.get_activated_specie_gene_by_type(GenesTypes.ADAPTATION_COLD)

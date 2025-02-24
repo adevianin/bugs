@@ -32,7 +32,7 @@ class BuildNewSubNestOperation(Operation):
         self._building_nest = building_nest
         self._name = f'новий під мурашник "{self._nest_name}"'
         # self._open_vacancies(AntTypes.WORKER, self._worker_vacancies_count)
-        self._open_vacancies(AntTypes.WORKER, self._worker_vacancies_count, [GenesTypes.BUILDING_SUBNEST])
+        self._open_vacancies(AntTypes.WORKER, self._worker_vacancies_count, [GenesTypes.SPECIALIZATION_BUILDING_SUBNEST])
         self._open_vacancies(AntTypes.WARRIOR, self._warrior_vacancies_count)
         self._add_marker(MarkerTypes.POINTER, self._building_site)
 

@@ -2560,7 +2560,7 @@ const GenesTypes = {
     DEVELOPMENT_WARRIOR_CASTE: 'development_warrior_caste',
     DEVELOPMENT_MALE_CASTE: 'development_male_caste',
 
-    BUILDING_SUBNEST: 'building_subnest',
+    SPECIALIZATION_BUILDING_SUBNEST: 'specialization_building_subnest',
 
     ADAPTATION_COLD: 'adaptation_cold',
     ADAPTATION_APPETITE: 'adaptation_appetite',
@@ -4766,8 +4766,8 @@ class GeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.DEVELOPMENT_MALE_CASTE:
                 this._renderCasteDevelopmentGene();
                 break;
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.BUILDING_SUBNEST:
-                this._renderBuildingSubnestGene();
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.SPECIALIZATION_BUILDING_SUBNEST:
+                this._renderSpecializationBuildingSubnestGene();
                 break;
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.ADAPTATION_APPETITE:
                 this._renderAdaptationAppetiteGene();
@@ -4845,7 +4845,7 @@ class GeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
         }
     }
 
-    _renderBuildingSubnestGene() {
+    _renderSpecializationBuildingSubnestGene() {
         this._geneEl.innerHTML = 'ген будування гнізд сателітів';
     }
 
@@ -4912,6 +4912,7 @@ class GenomeInlineView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
     _toggleClosing(isClosed) {
         this._genomView.toggle(!isClosed);
+        console.log(this._genome);
         this._closingBtn.innerHTML = isClosed ? '+' : '-';
         this._isClosed = isClosed;
     }

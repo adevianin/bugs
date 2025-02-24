@@ -52,14 +52,11 @@ class SpecieChromosome():
             specie_gene = SpecieGene.build_new(gene)
             self._specie_genes.append(specie_gene)
     
-    def generate_chromosome(self, percent: int, super_mutate_chance: int, super_mutate_percent: int, super_gene: BaseGene) -> Chromosome:
+    def generate_chromosome(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> Chromosome:
         activated_genes = self._get_activated_specie_genes()
         generated_genes = []
         for specie_gene in activated_genes:
-            if super_gene and super_gene.chromosome_type == self.type and super_gene.type == specie_gene.gene.type:
-                generated_gene = super_gene
-            else:
-                generated_gene = specie_gene.generate_gene(percent, super_mutate_chance, super_mutate_percent)
+            generated_gene = specie_gene.generate_gene(percent, super_mutate_chance, super_mutate_percent)
             generated_genes.append(generated_gene)
 
         return Chromosome.build(self.type, generated_genes)

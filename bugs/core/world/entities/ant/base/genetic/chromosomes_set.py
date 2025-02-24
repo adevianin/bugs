@@ -4,6 +4,7 @@ from .chromosome_types import ChromosomeTypes
 from .phenotype import Phenotype
 from .genes.base.genes_types import GenesTypes
 from core.world.exceptions import GameError
+from core.world.entities.ant.base.genetic.genes.base.base_gene import BaseGene
 
 class ChromosomesSet():
 
@@ -78,6 +79,10 @@ class ChromosomesSet():
             mutated_chromosomes.append(chromosome.mutate(percent, super_mutate_chance, super_mutate_percent))
         
         return ChromosomesSet.build(mutated_chromosomes)
+    
+    def inject_gene(self, gene: BaseGene):
+        chromosome = self._get_chromosome_by_type(gene.chromosome_type)
+        chromosome.inject_gene(gene)
     
     def _get_chromosome_by_type(self, type: ChromosomeTypes):
         for chromosome in self._chromosomes:
