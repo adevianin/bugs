@@ -61,16 +61,6 @@ class Chromosome(ABC):
         genes = []
         return Chromosome(ChromosomeTypes.SPECIALIZATION, genes)
     
-    @staticmethod
-    def build_new_for_specie_building_chromosome():
-        genes = []
-        return Chromosome(ChromosomeTypes.BUILDING, genes)
-    
-    @staticmethod
-    def build_new_for_specie_combat_chromosome():
-        genes = []
-        return Chromosome(ChromosomeTypes.COMBAT, genes)
-    
     def __init__(self, type: ChromosomeTypes, genes: List[BaseGene]):
         self._type = type
         self._genes = genes

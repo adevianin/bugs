@@ -5,5 +5,3 @@ class ChromosomeTypes(StrEnum):
     DEVELOPMENT = 'development'
     ADAPTATION = 'adaptation'
     SPECIALIZATION = 'specialization'
-    BUILDING = 'building'
-    COMBAT = 'combat'
