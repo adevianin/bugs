@@ -1,3 +1,7 @@
+.genome {
+    display: flex;
+}
+
 .genome__chromosome {
     border: solid 1px
 }

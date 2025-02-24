@@ -25,6 +25,7 @@ class GenomeView extends BaseHTMLView {
 
     _render() {
         this._el.innerHTML = genomeTmpl;
+        this._el.classList.add('genome');
 
         this._renderChromosomeSet(this._el.querySelector('[data-maternal-chromosomes-set]'), this._genome.maternal, 'материнський набір хромосом');
         if (this._genome.paternal) {

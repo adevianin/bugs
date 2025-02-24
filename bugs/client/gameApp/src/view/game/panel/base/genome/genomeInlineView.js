@@ -26,7 +26,6 @@ class GenomeInlineView extends BaseHTMLView {
 
     _toggleClosing(isClosed) {
         this._genomView.toggle(!isClosed);
-        this._previewEl.classList.toggle('hidden', !isClosed);
         this._closingBtn.innerHTML = isClosed ? '+' : '-';
         this._isClosed = isClosed;
     }
