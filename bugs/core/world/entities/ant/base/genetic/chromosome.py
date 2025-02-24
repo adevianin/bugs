@@ -57,6 +57,11 @@ class Chromosome(ABC):
         return Chromosome(ChromosomeTypes.ADAPTATION, genes)
     
     @staticmethod
+    def build_new_for_specie_specialization_chromosome():
+        genes = []
+        return Chromosome(ChromosomeTypes.SPECIALIZATION, genes)
+    
+    @staticmethod
     def build_new_for_specie_building_chromosome():
         genes = []
         return Chromosome(ChromosomeTypes.BUILDING, genes)

@@ -21,6 +21,7 @@ class SpecieBuilderTabView extends BaseHTMLView {
         this._bodyChromosomeEditorTab = new ChromosomeEditorTab(this._el.querySelector('[data-body-chromosome-editor-tab]'), this._specie.getChromosomeByType(ChromosomesTypes.BODY));
         this._developmentChromosomeEditorTab = new ChromosomeEditorTab(this._el.querySelector('[data-development-chromosome-editor-tab]'), this._specie.getChromosomeByType(ChromosomesTypes.DEVELOPMENT));
         this._adaptationChromosomeEditorTab = new ChromosomeEditorTab(this._el.querySelector('[data-adaptation-chromosome-editor-tab]'), this._specie.getChromosomeByType(ChromosomesTypes.ADAPTATION));
+        this._specializationChromosomeEditorTab = new ChromosomeEditorTab(this._el.querySelector('[data-specialization-chromosome-editor-tab]'), this._specie.getChromosomeByType(ChromosomesTypes.SPECIALIZATION));
         this._buildingChromosomeEditorTab = new ChromosomeEditorTab(this._el.querySelector('[data-building-chromosome-editor-tab]'), this._specie.getChromosomeByType(ChromosomesTypes.BUILDING));
         this._combatChromosomeEditorTab = new ChromosomeEditorTab(this._el.querySelector('[data-combat-chromosome-editor-tab]'), this._specie.getChromosomeByType(ChromosomesTypes.COMBAT));
 
@@ -28,6 +29,7 @@ class SpecieBuilderTabView extends BaseHTMLView {
             { name: 'body_editor', label: 'Тіло', tab: this._bodyChromosomeEditorTab },
             { name: 'development_editor', label: 'Розвиток', tab: this._developmentChromosomeEditorTab },
             { name: 'adaptation_editor', label: 'Адаптація', tab: this._adaptationChromosomeEditorTab },
+            { name: 'specialization_editor', label: 'Спеціалізація', tab: this._specializationChromosomeEditorTab },
             { name: 'building_editor', label: 'Будівництво', tab: this._buildingChromosomeEditorTab },
             { name: 'combat_editor', label: 'Бій', tab: this._combatChromosomeEditorTab }
         ]);

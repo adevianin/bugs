@@ -2434,6 +2434,7 @@ const ChromosomesTypes = {
     BODY: 'body',
     DEVELOPMENT: 'development',
     ADAPTATION: 'adaptation',
+    SPECIALIZATION: 'specialization',
     BUILDING: 'building',
     COMBAT: 'combat'
 }
@@ -9541,6 +9542,7 @@ class SpecieBuilderTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MOD
         this._bodyChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-body-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.BODY));
         this._developmentChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-development-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.DEVELOPMENT));
         this._adaptationChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-adaptation-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.ADAPTATION));
+        this._specializationChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-specialization-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.SPECIALIZATION));
         this._buildingChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-building-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.BUILDING));
         this._combatChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-combat-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.COMBAT));
 
@@ -9548,6 +9550,7 @@ class SpecieBuilderTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MOD
             { name: 'body_editor', label: 'Тіло', tab: this._bodyChromosomeEditorTab },
             { name: 'development_editor', label: 'Розвиток', tab: this._developmentChromosomeEditorTab },
             { name: 'adaptation_editor', label: 'Адаптація', tab: this._adaptationChromosomeEditorTab },
+            { name: 'specialization_editor', label: 'Спеціалізація', tab: this._specializationChromosomeEditorTab },
             { name: 'building_editor', label: 'Будівництво', tab: this._buildingChromosomeEditorTab },
             { name: 'combat_editor', label: 'Бій', tab: this._combatChromosomeEditorTab }
         ]);
@@ -19752,7 +19755,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switcher></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-body-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-development-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-adaptation-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-building-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-combat-chromosome-editor-tab></div>";
+var code = "<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switcher></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-body-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-development-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-adaptation-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-specialization-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-building-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-combat-chromosome-editor-tab></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
