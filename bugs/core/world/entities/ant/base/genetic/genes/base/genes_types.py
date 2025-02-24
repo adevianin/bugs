@@ -16,7 +16,6 @@ class GenesTypes(StrEnum):
 
     BUILDING_SUBNEST = 'building_subnest'
 
-    ADJUSTING_APPETITE = 'adjusting_appetite'
-    ADJUSTING_DEVELOPMENT_APPETITE = 'adjusting_development_appetite'
-
     ADAPTATION_COLD = 'adaptation_cold'
+    ADAPTATION_APPETITE = 'adaptation_appetite'
+    ADAPTATION_DEVELOPMENT_APPETITE = 'adaptation_development_appetite'

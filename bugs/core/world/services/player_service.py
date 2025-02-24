@@ -51,8 +51,11 @@ class PlayerService(BaseService):
         self._world.add_new_player_stats(player_stats)
 
     def _check_starter_pack_for_player(self, player_id: int) -> bool:
-        nuptial_env = self._find_nuptial_environment_for_owner(player_id)
-        return bool(nuptial_env)
+        for environment in self._world.nuptial_environments:
+            if environment.owner_id == player_id:
+                return True
+            
+        return False
     
     def _get_ant_colonies_by_owner(self, owner_id: int):
         owner_filter: Callable[[AntColony], bool] = lambda colony: colony.owner_id == owner_id

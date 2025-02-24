@@ -2435,8 +2435,7 @@ const ChromosomesTypes = {
     DEVELOPMENT: 'development',
     ADAPTATION: 'adaptation',
     BUILDING: 'building',
-    COMBAT: 'combat',
-    ADJUSTING: 'adjusting'
+    COMBAT: 'combat'
 }
 
 
@@ -2562,10 +2561,9 @@ const GenesTypes = {
 
     BUILDING_SUBNEST: 'building_subnest',
 
-    ADJUSTING_APPETITE: 'adjusting_appetite',
-    ADJUSTING_DEVELOPMENT_APPETITE: 'adjusting_development_appetite',
-
-    ADAPTATION_COLD: 'adaptation_cold'
+    ADAPTATION_COLD: 'adaptation_cold',
+    ADAPTATION_APPETITE: 'adaptation_appetite',
+    ADAPTATION_DEVELOPMENT_APPETITE: 'adaptation_development_appetite'
 }
 
 
@@ -4700,8 +4698,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _developmentCasteGeneTmpl_html__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./developmentCasteGeneTmpl.html */ "./gameApp/src/view/game/panel/base/genome/genes/developmentCasteGeneTmpl.html");
 /* harmony import */ var _bodyLifeSpanTmpl_html__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./bodyLifeSpanTmpl.html */ "./gameApp/src/view/game/panel/base/genome/genes/bodyLifeSpanTmpl.html");
 /* harmony import */ var _adaptationColdTmpl_html__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./adaptationColdTmpl.html */ "./gameApp/src/view/game/panel/base/genome/genes/adaptationColdTmpl.html");
-/* harmony import */ var _adjustingAppetiteTmpl_html__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./adjustingAppetiteTmpl.html */ "./gameApp/src/view/game/panel/base/genome/genes/adjustingAppetiteTmpl.html");
-/* harmony import */ var _adjustingDevelopmentAppetiteTmpl_html__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./adjustingDevelopmentAppetiteTmpl.html */ "./gameApp/src/view/game/panel/base/genome/genes/adjustingDevelopmentAppetiteTmpl.html");
+/* harmony import */ var _adaptationAppetiteTmpl_html__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./adaptationAppetiteTmpl.html */ "./gameApp/src/view/game/panel/base/genome/genes/adaptationAppetiteTmpl.html");
+/* harmony import */ var _adaptationDevelopmentAppetiteTmpl_html__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./adaptationDevelopmentAppetiteTmpl.html */ "./gameApp/src/view/game/panel/base/genome/genes/adaptationDevelopmentAppetiteTmpl.html");
 /* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @domain/enum/antTypes */ "./gameApp/src/domain/enum/antTypes.js");
 /* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./gameApp/src/view/labels/antTypesLabels.js");
 
@@ -4770,11 +4768,11 @@ class GeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.BUILDING_SUBNEST:
                 this._renderBuildingSubnestGene();
                 break;
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.ADJUSTING_APPETITE:
-                this._renderAdjustingAppetiteGene();
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.ADAPTATION_APPETITE:
+                this._renderAdaptationAppetiteGene();
                 break;
-            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE:
-                this._renderAdjustingDevelopmentAppetiteGene();
+            case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.ADAPTATION_DEVELOPMENT_APPETITE:
+                this._renderAdaptationDevelopmentAppetiteGene();
                 break;
             case _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__.GenesTypes.ADAPTATION_COLD:
                 this._renderAdaptationColdGene();
@@ -4850,13 +4848,13 @@ class GeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
         this._geneEl.innerHTML = 'ген будування гнізд сателітів';
     }
 
-    _renderAdjustingAppetiteGene() {
-        this._geneEl.innerHTML = _adjustingAppetiteTmpl_html__WEBPACK_IMPORTED_MODULE_12__["default"];
+    _renderAdaptationAppetiteGene() {
+        this._geneEl.innerHTML = _adaptationAppetiteTmpl_html__WEBPACK_IMPORTED_MODULE_12__["default"];
         this._geneEl.querySelector('[data-multiplier]').innerHTML = this._gene.multiplier;
     }
 
-    _renderAdjustingDevelopmentAppetiteGene() {
-        this._geneEl.innerHTML = _adjustingDevelopmentAppetiteTmpl_html__WEBPACK_IMPORTED_MODULE_13__["default"];
+    _renderAdaptationDevelopmentAppetiteGene() {
+        this._geneEl.innerHTML = _adaptationDevelopmentAppetiteTmpl_html__WEBPACK_IMPORTED_MODULE_13__["default"];
         this._geneEl.querySelector('[data-multiplier]').innerHTML = this._gene.multiplier;
     }
 
@@ -4991,7 +4989,6 @@ class GenomeView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.Ba
 
         this._renderChromosome(el.querySelector('[data-body-chromosome]'), chromosomesSet.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_3__.ChromosomesTypes.BODY));
         this._renderChromosome(el.querySelector('[data-development-chromosome]'), chromosomesSet.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_3__.ChromosomesTypes.DEVELOPMENT));
-        this._renderChromosome(el.querySelector('[data-adjusting-chromosome]'), chromosomesSet.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_3__.ChromosomesTypes.ADJUSTING));
     }
 
     _renderChromosome(el, chromosome) {
@@ -9546,15 +9543,13 @@ class SpecieBuilderTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MOD
         this._adaptationChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-adaptation-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.ADAPTATION));
         this._buildingChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-building-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.BUILDING));
         this._combatChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-combat-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.COMBAT));
-        this._adjustingChromosomeEditorTab = new _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__.ChromosomeEditorTab(this._el.querySelector('[data-adjusting-chromosome-editor-tab]'), this._specie.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_5__.ChromosomesTypes.ADJUSTING));
 
         this._tabSwitcher = new _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_4__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'specie', [
             { name: 'body_editor', label: 'Тіло', tab: this._bodyChromosomeEditorTab },
             { name: 'development_editor', label: 'Розвиток', tab: this._developmentChromosomeEditorTab },
             { name: 'adaptation_editor', label: 'Адаптація', tab: this._adaptationChromosomeEditorTab },
             { name: 'building_editor', label: 'Будівництво', tab: this._buildingChromosomeEditorTab },
-            { name: 'combat_editor', label: 'Бій', tab: this._combatChromosomeEditorTab },
-            { name: 'adjusting_editor', label: 'Підстройка', tab: this._adjustingChromosomeEditorTab },
+            { name: 'combat_editor', label: 'Бій', tab: this._combatChromosomeEditorTab }
         ]);
     }
 
@@ -18773,6 +18768,24 @@ var code = "<div data-chromosome-set-title></div>\r\n<div class=\"genome__chromo
 
 /***/ }),
 
+/***/ "./gameApp/src/view/game/panel/base/genome/genes/adaptationAppetiteTmpl.html":
+/*!***********************************************************************************!*\
+  !*** ./gameApp/src/view/game/panel/base/genome/genes/adaptationAppetiteTmpl.html ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "ген апетиту: <span data-multiplier></span>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./gameApp/src/view/game/panel/base/genome/genes/adaptationColdTmpl.html":
 /*!*******************************************************************************!*\
   !*** ./gameApp/src/view/game/panel/base/genome/genes/adaptationColdTmpl.html ***!
@@ -18791,28 +18804,10 @@ var code = "ген адаптації холоду: <span data-resistance-points
 
 /***/ }),
 
-/***/ "./gameApp/src/view/game/panel/base/genome/genes/adjustingAppetiteTmpl.html":
-/*!**********************************************************************************!*\
-  !*** ./gameApp/src/view/game/panel/base/genome/genes/adjustingAppetiteTmpl.html ***!
-  \**********************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "ген апетиту: <span data-multiplier></span>";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./gameApp/src/view/game/panel/base/genome/genes/adjustingDevelopmentAppetiteTmpl.html":
-/*!*********************************************************************************************!*\
-  !*** ./gameApp/src/view/game/panel/base/genome/genes/adjustingDevelopmentAppetiteTmpl.html ***!
-  \*********************************************************************************************/
+/***/ "./gameApp/src/view/game/panel/base/genome/genes/adaptationDevelopmentAppetiteTmpl.html":
+/*!**********************************************************************************************!*\
+  !*** ./gameApp/src/view/game/panel/base/genome/genes/adaptationDevelopmentAppetiteTmpl.html ***!
+  \**********************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -19757,7 +19752,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switcher></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-body-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-development-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-adaptation-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-building-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-combat-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-adjusting-chromosome-editor-tab></div>";
+var code = "<div class=\"tab-switcher tab-switcher--horizontal\" data-tab-switcher></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-body-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-development-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-adaptation-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-building-chromosome-editor-tab></div>\r\n<div class=\"specie-builder__chromosome-editor-tab\" data-combat-chromosome-editor-tab></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

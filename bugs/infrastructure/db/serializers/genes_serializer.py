@@ -12,8 +12,8 @@ from core.world.entities.ant.base.genetic.genes.development_queen_caste_gene imp
 from core.world.entities.ant.base.genetic.genes.development_worker_caste_gene import DevelopmentWorkerCasteGene
 from core.world.entities.ant.base.genetic.genes.development_warrior_caste_gene import DevelopmentWarriorCasteGene
 from core.world.entities.ant.base.genetic.genes.development_male_caste_gene import DevelopmentMaleCasteGene
-from core.world.entities.ant.base.genetic.genes.adjusting_appetite_gene import AdjustingAppetiteGene
-from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdjustingDevelopmentAppetiteGene
+from core.world.entities.ant.base.genetic.genes.adaptation_appetite_gene import AdaptationAppetiteGene
+from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdaptationDevelopmentAppetiteGene
 from core.world.entities.ant.base.genetic.genes.adaptation_cold_gene import AdaptationColdGene
 from core.world.entities.ant.base.genetic.genes.building_subnest_gene import BuildingSubnestGene
 
@@ -43,10 +43,10 @@ class GenesSerializer():
                 return self._serialize_development_warrior_caste_gene(gene)
             case GenesTypes.DEVELOPMENT_MALE_CASTE:
                 return self._serialize_development_male_caste_gene(gene)
-            case GenesTypes.ADJUSTING_APPETITE:
-                return self._serialize_adjusting_appetite_gene(gene)
-            case GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE:
-                return self._serialize_adjusting_development_appetite_gene(gene)
+            case GenesTypes.ADAPTATION_APPETITE:
+                return self._serialize_adaptation_appetite_gene(gene)
+            case GenesTypes.ADAPTATION_DEVELOPMENT_APPETITE:
+                return self._serialize_adaptation_development_appetite_gene(gene)
             case GenesTypes.ADAPTATION_COLD:
                 return self._serialize_adaptation_cold_gene(gene)
             case GenesTypes.BUILDING_SUBNEST:
@@ -132,14 +132,14 @@ class GenesSerializer():
     def _serialize_development_male_caste_gene(self, gene: DevelopmentMaleCasteGene):
         return self._serialize_base_development_caste_gene(gene)
     
-    def _serialize_adjusting_appetite_gene(self, gene: AdjustingAppetiteGene):
+    def _serialize_adaptation_appetite_gene(self, gene: AdaptationAppetiteGene):
         json = self._serialize_base_gene(gene)
         json.update({
             'multiplier': gene.multiplier
         })
         return json
     
-    def _serialize_adjusting_development_appetite_gene(self, gene: AdjustingDevelopmentAppetiteGene):
+    def _serialize_adaptation_development_appetite_gene(self, gene: AdaptationDevelopmentAppetiteGene):
         json = self._serialize_base_gene(gene)
         json.update({
             'multiplier': gene.multiplier

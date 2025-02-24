@@ -18,8 +18,7 @@ class ChromosomesSet():
             Chromosome.build_new_for_specie_development_chromosome(),
             Chromosome.build_new_for_specie_adaptation_chromosome(),
             Chromosome.build_new_for_specie_building_chromosome(),
-            Chromosome.build_new_for_specie_combat_chromosome(),
-            Chromosome.build_new_for_specie_adjusting_chromosome()
+            Chromosome.build_new_for_specie_combat_chromosome()
         ])
 
     def __init__(self, chromosomes: List[Chromosome]):
@@ -53,16 +52,14 @@ class ChromosomesSet():
     def affect_phenotype(self, phenotype: Phenotype):
         body_chromosome = self._get_chromosome_by_type(ChromosomeTypes.BODY)
         development_chromosome = self._get_chromosome_by_type(ChromosomeTypes.DEVELOPMENT)
-        adaptation_chromosome = self._get_chromosome_by_type(ChromosomeTypes.ADAPTATION)
         building_chromosome = self._get_chromosome_by_type(ChromosomeTypes.BUILDING)
         combat_chromosome = self._get_chromosome_by_type(ChromosomeTypes.COMBAT)
-        adjusting_chromosome = self._get_chromosome_by_type(ChromosomeTypes.ADJUSTING)
+        adaptation_chromosome = self._get_chromosome_by_type(ChromosomeTypes.ADAPTATION)
         body_chromosome.affect_phenotype(phenotype)
         development_chromosome.affect_phenotype(phenotype)
-        adaptation_chromosome.affect_phenotype(phenotype)
         building_chromosome.affect_phenotype(phenotype)
         combat_chromosome.affect_phenotype(phenotype)
-        adjusting_chromosome.affect_phenotype(phenotype)
+        adaptation_chromosome.affect_phenotype(phenotype)
 
     def has_gene(self, gene_type: GenesTypes):
         for chromosome in self._chromosomes:

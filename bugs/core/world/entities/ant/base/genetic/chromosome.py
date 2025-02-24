@@ -15,8 +15,8 @@ from core.world.entities.ant.base.genetic.genes.development_queen_caste_gene imp
 from core.world.entities.ant.base.genetic.genes.development_male_caste_gene import DevelopmentMaleCasteGene
 from core.world.entities.ant.base.genetic.genes.development_worker_caste_gene import DevelopmentWorkerCasteGene
 from core.world.entities.ant.base.genetic.genes.adaptation_cold_gene import AdaptationColdGene
-from core.world.entities.ant.base.genetic.genes.adjusting_appetite_gene import AdjustingAppetiteGene
-from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdjustingDevelopmentAppetiteGene
+from core.world.entities.ant.base.genetic.genes.adaptation_appetite_gene import AdaptationAppetiteGene
+from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdaptationDevelopmentAppetiteGene
 from core.world.exceptions import GameError
 
 class Chromosome(ABC):
@@ -50,7 +50,9 @@ class Chromosome(ABC):
     @staticmethod
     def build_new_for_specie_adaptation_chromosome():
         genes = [
-            AdaptationColdGene.build_new_for_specie_gene()
+            AdaptationColdGene.build_new_for_specie_gene(),
+            AdaptationAppetiteGene.build_new_for_specie_gene(),
+            AdaptationDevelopmentAppetiteGene.build_new_for_specie_gene()
         ]
         return Chromosome(ChromosomeTypes.ADAPTATION, genes)
     
@@ -64,14 +66,6 @@ class Chromosome(ABC):
         genes = []
         return Chromosome(ChromosomeTypes.COMBAT, genes)
     
-    @staticmethod
-    def build_new_for_specie_adjusting_chromosome():
-        genes = [
-            AdjustingAppetiteGene.build_new_for_specie_gene(),
-            AdjustingDevelopmentAppetiteGene.build_new_for_specie_gene()
-        ]
-        return Chromosome(ChromosomeTypes.ADJUSTING, genes)
-
     def __init__(self, type: ChromosomeTypes, genes: List[BaseGene]):
         self._type = type
         self._genes = genes

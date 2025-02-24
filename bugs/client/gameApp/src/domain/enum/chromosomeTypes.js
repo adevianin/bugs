@@ -3,8 +3,7 @@ const ChromosomesTypes = {
     DEVELOPMENT: 'development',
     ADAPTATION: 'adaptation',
     BUILDING: 'building',
-    COMBAT: 'combat',
-    ADJUSTING: 'adjusting'
+    COMBAT: 'combat'
 }
 
 export {

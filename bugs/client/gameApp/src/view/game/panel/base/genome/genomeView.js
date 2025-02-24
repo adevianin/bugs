@@ -40,7 +40,6 @@ class GenomeView extends BaseHTMLView {
 
         this._renderChromosome(el.querySelector('[data-body-chromosome]'), chromosomesSet.getChromosomeByType(ChromosomesTypes.BODY));
         this._renderChromosome(el.querySelector('[data-development-chromosome]'), chromosomesSet.getChromosomeByType(ChromosomesTypes.DEVELOPMENT));
-        this._renderChromosome(el.querySelector('[data-adjusting-chromosome]'), chromosomesSet.getChromosomeByType(ChromosomesTypes.ADJUSTING));
     }
 
     _renderChromosome(el, chromosome) {

@@ -10,8 +10,8 @@ import bodySpeedTmpl from './bodySpeedTmpl.html';
 import devCasteGeneTmpl from './developmentCasteGeneTmpl.html';
 import bodyLifeSpanTmpl from './bodyLifeSpanTmpl.html';
 import adaptationColdTmpl from './adaptationColdTmpl.html';
-import adjustingAppetiteTmpl from './adjustingAppetiteTmpl.html';
-import adjustingDevelopmentAppetiteTmpl from './adjustingDevelopmentAppetiteTmpl.html';
+import adaptationAppetiteTmpl from './adaptationAppetiteTmpl.html';
+import adaptationDevelopmentAppetiteTmpl from './adaptationDevelopmentAppetiteTmpl.html';
 import { AntTypes } from "@domain/enum/antTypes";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
 
@@ -64,11 +64,11 @@ class GeneView extends BaseHTMLView {
             case GenesTypes.BUILDING_SUBNEST:
                 this._renderBuildingSubnestGene();
                 break;
-            case GenesTypes.ADJUSTING_APPETITE:
-                this._renderAdjustingAppetiteGene();
+            case GenesTypes.ADAPTATION_APPETITE:
+                this._renderAdaptationAppetiteGene();
                 break;
-            case GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE:
-                this._renderAdjustingDevelopmentAppetiteGene();
+            case GenesTypes.ADAPTATION_DEVELOPMENT_APPETITE:
+                this._renderAdaptationDevelopmentAppetiteGene();
                 break;
             case GenesTypes.ADAPTATION_COLD:
                 this._renderAdaptationColdGene();
@@ -144,13 +144,13 @@ class GeneView extends BaseHTMLView {
         this._geneEl.innerHTML = 'ген будування гнізд сателітів';
     }
 
-    _renderAdjustingAppetiteGene() {
-        this._geneEl.innerHTML = adjustingAppetiteTmpl;
+    _renderAdaptationAppetiteGene() {
+        this._geneEl.innerHTML = adaptationAppetiteTmpl;
         this._geneEl.querySelector('[data-multiplier]').innerHTML = this._gene.multiplier;
     }
 
-    _renderAdjustingDevelopmentAppetiteGene() {
-        this._geneEl.innerHTML = adjustingDevelopmentAppetiteTmpl;
+    _renderAdaptationDevelopmentAppetiteGene() {
+        this._geneEl.innerHTML = adaptationDevelopmentAppetiteTmpl;
         this._geneEl.querySelector('[data-multiplier]').innerHTML = this._gene.multiplier;
     }
 

@@ -12,8 +12,8 @@ from core.world.entities.ant.base.genetic.genes.development_queen_caste_gene imp
 from core.world.entities.ant.base.genetic.genes.development_worker_caste_gene import DevelopmentWorkerCasteGene
 from core.world.entities.ant.base.genetic.genes.development_warrior_caste_gene import DevelopmentWarriorCasteGene
 from core.world.entities.ant.base.genetic.genes.development_male_caste_gene import DevelopmentMaleCasteGene
-from core.world.entities.ant.base.genetic.genes.adjusting_appetite_gene import AdjustingAppetiteGene
-from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdjustingDevelopmentAppetiteGene
+from core.world.entities.ant.base.genetic.genes.adaptation_appetite_gene import AdaptationAppetiteGene
+from core.world.entities.ant.base.genetic.genes.adjusting_development_appetite_gene import AdaptationDevelopmentAppetiteGene
 from core.world.entities.ant.base.genetic.genes.adaptation_cold_gene import AdaptationColdGene
 from core.world.entities.ant.base.genetic.genes.building_subnest_gene import BuildingSubnestGene
 
@@ -43,10 +43,10 @@ class GeneDeserializer():
                 return self._build_development_warrior_caste_gene(gene_json)
             case GenesTypes.DEVELOPMENT_MALE_CASTE:
                 return self._build_development_male_caste_gene(gene_json)
-            case GenesTypes.ADJUSTING_APPETITE:
-                return self._build_adjusting_appetite_gene(gene_json)
-            case GenesTypes.ADJUSTING_DEVELOPMENT_APPETITE:
-                return self._build_adjusting_development_appetite_gene(gene_json)
+            case GenesTypes.ADAPTATION_APPETITE:
+                return self._build_adaptation_appetite_gene(gene_json)
+            case GenesTypes.ADAPTATION_DEVELOPMENT_APPETITE:
+                return self._build_adaptation_development_appetite_gene(gene_json)
             case GenesTypes.ADAPTATION_COLD:
                 return self._build_adaptation_cold_gene(gene_json)
             case GenesTypes.BUILDING_SUBNEST:
@@ -125,15 +125,15 @@ class GeneDeserializer():
         speed = gene_json['speed']
         return DevelopmentMaleCasteGene.build(domination_code, strength, defense, max_hp, hp_regen_rate, speed)
     
-    def _build_adjusting_appetite_gene(self, gene_json: dict):
+    def _build_adaptation_appetite_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])
         multiplier = gene_json['multiplier']
-        return AdjustingAppetiteGene.build(domination_code, multiplier)
+        return AdaptationAppetiteGene.build(domination_code, multiplier)
     
-    def _build_adjusting_development_appetite_gene(self, gene_json: dict):
+    def _build_adaptation_development_appetite_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])
         multiplier = gene_json['multiplier']
-        return AdjustingDevelopmentAppetiteGene.build(domination_code, multiplier)
+        return AdaptationDevelopmentAppetiteGene.build(domination_code, multiplier)
     
     def _build_adaptation_cold_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])

@@ -6,4 +6,4 @@ class ChromosomeTypes(StrEnum):
     ADAPTATION = 'adaptation'
     BUILDING = 'building'
     COMBAT = 'combat'
-    ADJUSTING = 'adjusting'
+    # ADJUSTING = 'adjusting'
