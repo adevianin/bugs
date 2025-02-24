@@ -4910,7 +4910,6 @@ class GenomeInlineView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
     _toggleClosing(isClosed) {
         this._genomView.toggle(!isClosed);
-        console.log(this._genome);
         this._closingBtn.innerHTML = isClosed ? '+' : '-';
         this._isClosed = isClosed;
     }
@@ -4989,6 +4988,8 @@ class GenomeView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.Ba
 
         this._renderChromosome(el.querySelector('[data-body-chromosome]'), chromosomesSet.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_3__.ChromosomesTypes.BODY));
         this._renderChromosome(el.querySelector('[data-development-chromosome]'), chromosomesSet.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_3__.ChromosomesTypes.DEVELOPMENT));
+        this._renderChromosome(el.querySelector('[data-adaptation-chromosome]'), chromosomesSet.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_3__.ChromosomesTypes.ADAPTATION));
+        this._renderChromosome(el.querySelector('[data-specialization-chromosome]'), chromosomesSet.getChromosomeByType(_domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_3__.ChromosomesTypes.SPECIALIZATION));
     }
 
     _renderChromosome(el, chromosome) {
@@ -18760,7 +18761,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-chromosome-set-title></div>\r\n<div class=\"genome__chromosome\" data-body-chromosome>\r\n    <div class=\"genome__chromosome-title\">хромосома тіла</div>\r\n    <ul class=\"genome__genes-container\" data-genes-container></ul>\r\n</div>\r\n\r\n<div class=\"genome__chromosome\" data-development-chromosome>\r\n    <div class=\"genome__chromosome-title\">хромосома розвитку</div>\r\n    <ul class=\"genome__genes-container\" data-genes-container></ul>\r\n</div>\r\n\r\n<div class=\"genome__chromosome\" data-adjusting-chromosome>\r\n    <div class=\"genome__chromosome-title\">хромосома підстройки</div>\r\n    <ul class=\"genome__genes-container\" data-genes-container></ul>\r\n</div>\r\n\r\n";
+var code = "<div data-chromosome-set-title></div>\r\n<div class=\"genome__chromosome\" data-body-chromosome>\r\n    <div class=\"genome__chromosome-title\">хромосома тіла</div>\r\n    <ul class=\"genome__genes-container\" data-genes-container></ul>\r\n</div>\r\n\r\n<div class=\"genome__chromosome\" data-development-chromosome>\r\n    <div class=\"genome__chromosome-title\">хромосома розвитку</div>\r\n    <ul class=\"genome__genes-container\" data-genes-container></ul>\r\n</div>\r\n\r\n<div class=\"genome__chromosome\" data-adaptation-chromosome>\r\n    <div class=\"genome__chromosome-title\">хромосома адаптації</div>\r\n    <ul class=\"genome__genes-container\" data-genes-container></ul>\r\n</div>\r\n\r\n<div class=\"genome__chromosome\" data-specialization-chromosome>\r\n    <div class=\"genome__chromosome-title\">хромосома спеціалізації</div>\r\n    <ul class=\"genome__genes-container\" data-genes-container></ul>\r\n</div>\r\n\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
