@@ -4677,68 +4677,6 @@ class PositionPickerView extends _basePickerView__WEBPACK_IMPORTED_MODULE_0__.Ba
 
 /***/ }),
 
-/***/ "./gameApp/src/view/game/panel/base/genome/closableGenomeView.js":
-/*!***********************************************************************!*\
-  !*** ./gameApp/src/view/game/panel/base/genome/closableGenomeView.js ***!
-  \***********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   ClosableGenomeView: () => (/* binding */ ClosableGenomeView)
-/* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
-/* harmony import */ var _genomeView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genomeView */ "./gameApp/src/view/game/panel/base/genome/genomeView.js");
-/* harmony import */ var _closableGenomeTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./closableGenomeTmpl.html */ "./gameApp/src/view/game/panel/base/genome/closableGenomeTmpl.html");
-
-
-
-
-class ClosableGenomeView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
-
-    constructor(el, genome) {
-        super(el);
-        this._genome = genome;
-
-        this._render();
-
-        this._closingBtn.addEventListener('click', this._onToggleClosingBtnClick.bind(this));
-    }
-
-    _render() {
-        this._el.innerHTML = _closableGenomeTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
-
-        this._genomView = new _genomeView__WEBPACK_IMPORTED_MODULE_1__.GenomeView(this._el.querySelector('[data-genome]'), this._genome);
-
-        this._previewEl = this._el.querySelector('[data-preview]');
-        this._closingBtn = this._el.querySelector('[data-closing-btn]');
-
-        this._toggleClosing(true);
-    }
-
-    _toggleClosing(isClosed) {
-        this._genomView.toggle(!isClosed);
-        this._previewEl.classList.toggle('hidden', !isClosed);
-        this._closingBtn.innerHTML = isClosed ? '+' : '-';
-        this._isClosed = isClosed;
-    }
-
-    _onToggleClosingBtnClick() {
-        this._toggleClosing(!this._isClosed);
-    }
-
-    remove() {
-        super.remove();
-        this._genomView.remove();
-    }
-
-}
-
-
-
-/***/ }),
-
 /***/ "./gameApp/src/view/game/panel/base/genome/genes/geneView.js":
 /*!*******************************************************************!*\
   !*** ./gameApp/src/view/game/panel/base/genome/genes/geneView.js ***!
@@ -4925,6 +4863,68 @@ class GeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Base
     _renderAdaptationColdGene(gene) {
         this._geneEl.innerHTML = _adaptationColdTmpl_html__WEBPACK_IMPORTED_MODULE_11__["default"];
         this._geneEl.querySelector('[data-resistance-points]').innerHTML = this._gene.resistancePoints;
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/game/panel/base/genome/genomeInlineView.js":
+/*!*********************************************************************!*\
+  !*** ./gameApp/src/view/game/panel/base/genome/genomeInlineView.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   GenomeInlineView: () => (/* binding */ GenomeInlineView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _genomeView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genomeView */ "./gameApp/src/view/game/panel/base/genome/genomeView.js");
+/* harmony import */ var _genomeInlineTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./genomeInlineTmpl.html */ "./gameApp/src/view/game/panel/base/genome/genomeInlineTmpl.html");
+
+
+
+
+class GenomeInlineView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, genome) {
+        super(el);
+        this._genome = genome;
+
+        this._render();
+
+        this._closingBtn.addEventListener('click', this._onToggleClosingBtnClick.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = _genomeInlineTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
+
+        this._genomView = new _genomeView__WEBPACK_IMPORTED_MODULE_1__.GenomeView(this._el.querySelector('[data-genome]'), this._genome);
+
+        this._previewEl = this._el.querySelector('[data-preview]');
+        this._closingBtn = this._el.querySelector('[data-closing-btn]');
+
+        this._toggleClosing(true);
+    }
+
+    _toggleClosing(isClosed) {
+        this._genomView.toggle(!isClosed);
+        this._previewEl.classList.toggle('hidden', !isClosed);
+        this._closingBtn.innerHTML = isClosed ? '+' : '-';
+        this._isClosed = isClosed;
+    }
+
+    _onToggleClosingBtnClick() {
+        this._toggleClosing(!this._isClosed);
+    }
+
+    remove() {
+        super.remove();
+        this._genomView.remove();
     }
 
 }
@@ -5884,7 +5884,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
 /* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./gameApp/src/view/labels/antTypesLabels.js");
 /* harmony import */ var _utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @utils/convertStepsToYear */ "./gameApp/src/utils/convertStepsToYear.js");
-/* harmony import */ var _view_game_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @view/game/panel/base/genome/closableGenomeView */ "./gameApp/src/view/game/panel/base/genome/closableGenomeView.js");
+/* harmony import */ var _view_game_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @view/game/panel/base/genome/genomeInlineView */ "./gameApp/src/view/game/panel/base/genome/genomeInlineView.js");
 
 
 
@@ -5960,7 +5960,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
 
         this._renderStats();
 
-        this._genomeView = new _view_game_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_6__.ClosableGenomeView(this._el.querySelector('[data-genome]'), this._ant.genome);
+        this._genomeView = new _view_game_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_6__.GenomeInlineView(this._el.querySelector('[data-genome]'), this._ant.genome);
     }
 
     remove() {
@@ -6480,7 +6480,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
 /* harmony import */ var _eggTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./eggTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/eggTab/eggTmpl.html");
-/* harmony import */ var _view_game_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/genome/closableGenomeView */ "./gameApp/src/view/game/panel/base/genome/closableGenomeView.js");
+/* harmony import */ var _view_game_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/genome/genomeInlineView */ "./gameApp/src/view/game/panel/base/genome/genomeInlineView.js");
 /* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./gameApp/src/view/labels/antTypesLabels.js");
 /* harmony import */ var _view_labels_eggStatesLabels__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/labels/eggStatesLabels */ "./gameApp/src/view/labels/eggStatesLabels.js");
 
@@ -6511,7 +6511,7 @@ class EggView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._nameInput = this._el.querySelector('[data-name]');
         this._nameInput.value = this._egg.name;
 
-        this._genomeView = new _view_game_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_2__.ClosableGenomeView(this._el.querySelector('[data-genome]'), this._egg.genome);
+        this._genomeView = new _view_game_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_2__.GenomeInlineView(this._el.querySelector('[data-genome]'), this._egg.genome);
 
         this._el.querySelector('[data-is-fertilized]').innerHTML = this._egg.isFertilized ? '+' : '-';
 
@@ -6717,7 +6717,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
 /* harmony import */ var _larvaTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./larvaTmpl.html */ "./gameApp/src/view/game/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTmpl.html");
 /* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./gameApp/src/view/labels/antTypesLabels.js");
-/* harmony import */ var _view_game_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/game/panel/base/genome/closableGenomeView */ "./gameApp/src/view/game/panel/base/genome/closableGenomeView.js");
+/* harmony import */ var _view_game_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/game/panel/base/genome/genomeInlineView */ "./gameApp/src/view/game/panel/base/genome/genomeInlineView.js");
 
 
 
@@ -6742,7 +6742,7 @@ class LarvaView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Bas
         this._progressEl = this._el.querySelector('[data-progress]');
         this._el.querySelector('[data-ant-type]').innerHTML = _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_2__.antTypesLabels[this._larva.antType];
         this._el.querySelector('[data-name]').innerHTML = this._larva.name;
-        this._genomeView = new _view_game_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_3__.ClosableGenomeView(this._el.querySelector('[data-genome]'), this._larva.genome);
+        this._genomeView = new _view_game_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_3__.GenomeInlineView(this._el.querySelector('[data-genome]'), this._larva.genome);
         this._deleteLarvaBtn = this._el.querySelector('[data-delete]');
         this._renderProgress();
     }
@@ -8968,7 +8968,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
 /* harmony import */ var _nuptialMaleProfileTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nuptialMaleProfileTmpl.html */ "./gameApp/src/view/game/panel/tabs/nuptialFlightTab/queenManager/malesSearch/nuptialMaleProfileTmpl.html");
-/* harmony import */ var _view_game_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/genome/closableGenomeView */ "./gameApp/src/view/game/panel/base/genome/closableGenomeView.js");
+/* harmony import */ var _view_game_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/game/panel/base/genome/genomeInlineView */ "./gameApp/src/view/game/panel/base/genome/genomeInlineView.js");
 
 
 
@@ -8989,7 +8989,7 @@ class NuptialMaleProfileView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_M
         this._el.querySelector('[data-max-hp]').innerHTML = this._male.stats.maxHp;
         this._el.querySelector('[data-sight-distance]').innerHTML = this._male.stats.sightDistance;
         this._el.querySelector('[data-appetite]').innerHTML = this._male.stats.appetite;
-        this._genomeView = new _view_game_panel_base_genome_closableGenomeView__WEBPACK_IMPORTED_MODULE_2__.ClosableGenomeView(this._el.querySelector('[data-genome]'), this._male.genome);
+        this._genomeView = new _view_game_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_2__.GenomeInlineView(this._el.querySelector('[data-genome]'), this._male.genome);
     }
 
     showMale(male) {
@@ -18769,24 +18769,6 @@ var code = "<div data-chromosome-set-title></div>\r\n<div class=\"genome__chromo
 
 /***/ }),
 
-/***/ "./gameApp/src/view/game/panel/base/genome/closableGenomeTmpl.html":
-/*!*************************************************************************!*\
-  !*** ./gameApp/src/view/game/panel/base/genome/closableGenomeTmpl.html ***!
-  \*************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<span data-preview>genome</span>\r\n<button data-closing-btn></button>\r\n<div data-genome></div>";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
 /***/ "./gameApp/src/view/game/panel/base/genome/genes/adaptationColdTmpl.html":
 /*!*******************************************************************************!*\
   !*** ./gameApp/src/view/game/panel/base/genome/genes/adaptationColdTmpl.html ***!
@@ -18998,6 +18980,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Module
 var code = "<div data-gene></div>\r\n<div>код домінування: <span data-domination-code></span></div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./gameApp/src/view/game/panel/base/genome/genomeInlineTmpl.html":
+/*!***********************************************************************!*\
+  !*** ./gameApp/src/view/game/panel/base/genome/genomeInlineTmpl.html ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<span data-preview>genome</span>\r\n<button data-closing-btn></button>\r\n<div data-genome></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

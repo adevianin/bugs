@@ -1,8 +1,8 @@
 import { BaseHTMLView } from '@view/base/baseHTMLView';
 import { GenomeView } from "./genomeView";
-import closableGenomeTmpl from './closableGenomeTmpl.html';
+import genomeInlineTmpl from './genomeInlineTmpl.html';
 
-class ClosableGenomeView extends BaseHTMLView {
+class GenomeInlineView extends BaseHTMLView {
 
     constructor(el, genome) {
         super(el);
@@ -14,7 +14,7 @@ class ClosableGenomeView extends BaseHTMLView {
     }
 
     _render() {
-        this._el.innerHTML = closableGenomeTmpl;
+        this._el.innerHTML = genomeInlineTmpl;
 
         this._genomView = new GenomeView(this._el.querySelector('[data-genome]'), this._genome);
 
@@ -43,5 +43,5 @@ class ClosableGenomeView extends BaseHTMLView {
 }
 
 export {
-    ClosableGenomeView
+    GenomeInlineView
 }

@@ -1,6 +1,6 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import eggTmpl from './eggTmpl.html';
-import { ClosableGenomeView } from "@view/game/panel/base/genome/closableGenomeView";
+import { GenomeInlineView } from "@view/game/panel/base/genome/genomeInlineView";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
 import { eggStatesLabels } from "@view/labels/eggStatesLabels";
 
@@ -26,7 +26,7 @@ class EggView extends BaseHTMLView {
         this._nameInput = this._el.querySelector('[data-name]');
         this._nameInput.value = this._egg.name;
 
-        this._genomeView = new ClosableGenomeView(this._el.querySelector('[data-genome]'), this._egg.genome);
+        this._genomeView = new GenomeInlineView(this._el.querySelector('[data-genome]'), this._egg.genome);
 
         this._el.querySelector('[data-is-fertilized]').innerHTML = this._egg.isFertilized ? '+' : '-';
 

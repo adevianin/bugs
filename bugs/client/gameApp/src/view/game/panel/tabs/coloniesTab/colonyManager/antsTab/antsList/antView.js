@@ -4,7 +4,7 @@ import { NestSelectorView } from "@view/game/panel/base/nestSelector";
 import { CONSTS } from "@domain/consts";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
 import { convertStepsToYear } from "@utils/convertStepsToYear";
-import { ClosableGenomeView } from "@view/game/panel/base/genome/closableGenomeView";
+import { GenomeInlineView } from "@view/game/panel/base/genome/genomeInlineView";
 
 class AntView extends BaseHTMLView {
 
@@ -73,7 +73,7 @@ class AntView extends BaseHTMLView {
 
         this._renderStats();
 
-        this._genomeView = new ClosableGenomeView(this._el.querySelector('[data-genome]'), this._ant.genome);
+        this._genomeView = new GenomeInlineView(this._el.querySelector('[data-genome]'), this._ant.genome);
     }
 
     remove() {

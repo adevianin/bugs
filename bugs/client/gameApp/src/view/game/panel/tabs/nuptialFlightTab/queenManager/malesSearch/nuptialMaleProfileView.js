@@ -1,6 +1,6 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import nuptialMaleProfileTmpl from './nuptialMaleProfileTmpl.html';
-import { ClosableGenomeView } from "@view/game/panel/base/genome/closableGenomeView";
+import { GenomeInlineView } from "@view/game/panel/base/genome/genomeInlineView";
 
 class NuptialMaleProfileView extends BaseHTMLView {
 
@@ -18,7 +18,7 @@ class NuptialMaleProfileView extends BaseHTMLView {
         this._el.querySelector('[data-max-hp]').innerHTML = this._male.stats.maxHp;
         this._el.querySelector('[data-sight-distance]').innerHTML = this._male.stats.sightDistance;
         this._el.querySelector('[data-appetite]').innerHTML = this._male.stats.appetite;
-        this._genomeView = new ClosableGenomeView(this._el.querySelector('[data-genome]'), this._male.genome);
+        this._genomeView = new GenomeInlineView(this._el.querySelector('[data-genome]'), this._male.genome);
     }
 
     showMale(male) {
