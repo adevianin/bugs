@@ -4149,6 +4149,7 @@ class Camera {
         this._isDraging = true;
         this._anchorPoint.x = e.client.x;
         this._anchorPoint.y = e.client.y;
+        window.getSelection().removeAllRanges();
     }
 
     _onPointerUp(e) {
@@ -5945,11 +5946,16 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         
         this._currentActivityEl = this._el.querySelector('[data-current-activity]');
         this._renderCurrentActivity();
+
         this._ageEl = this._el.querySelector('[data-age]');
         this._renderAge();
+
         this._genomeView = new _view_game_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_6__.GenomeInlineView(this._el.querySelector('[data-genome]'), this._ant.genome);
+
         this._renderStats();
+
         this._renderBreedingMaleGenome();
+        
         this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
         this._renderActionBtns();
     }

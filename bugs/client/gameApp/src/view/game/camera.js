@@ -32,6 +32,7 @@ class Camera {
         this._isDraging = true;
         this._anchorPoint.x = e.client.x;
         this._anchorPoint.y = e.client.y;
+        window.getSelection().removeAllRanges();
     }
 
     _onPointerUp(e) {
