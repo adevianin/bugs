@@ -1,14 +1,15 @@
 import { BaseAnt } from "./baseAnt";
 import { AntTypes } from "@domain/enum/antTypes";
 import { ACTION_TYPES } from "../action/actionTypes";
+import { Genome } from "../genetic/genome";
 
 class QueenAnt extends BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, genes) {
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, breedingMaleGenome) {
         super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
         this._isFertilized = isFertilized;
         this._isInNuptialFlight = isInNuptialFlight;
-        this._genes = genes;
+        this._breedingMaleGenome = breedingMaleGenome;
     }
 
     get isVisible() {
@@ -23,8 +24,8 @@ class QueenAnt extends BaseAnt {
         return this._isFertilized;
     }
 
-    get genes() {
-        return this._genes;
+    get breedingMaleGenome() {
+        return this._breedingMaleGenome;
     }
 
     get isQueenOfColony() {
@@ -73,8 +74,9 @@ class QueenAnt extends BaseAnt {
         return Promise.resolve();
     }
 
-    _playGotFertilized() {
+    _playGotFertilized(action) {
         this.isFertilized = true;
+        this._breedingMaleGenome = Genome.buildFromJson(action.breedingMaleGenome);
         return Promise.resolve();
     }
 }

@@ -806,17 +806,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _baseAnt__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseAnt */ "./gameApp/src/domain/entity/ant/baseAnt.js");
 /* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/antTypes */ "./gameApp/src/domain/enum/antTypes.js");
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../action/actionTypes */ "./gameApp/src/domain/entity/action/actionTypes.js");
+/* harmony import */ var _genetic_genome__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../genetic/genome */ "./gameApp/src/domain/entity/genetic/genome.js");
+
 
 
 
 
 class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, genes) {
+    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, breedingMaleGenome) {
         super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
         this._isFertilized = isFertilized;
         this._isInNuptialFlight = isInNuptialFlight;
-        this._genes = genes;
+        this._breedingMaleGenome = breedingMaleGenome;
     }
 
     get isVisible() {
@@ -831,8 +833,8 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
         return this._isFertilized;
     }
 
-    get genes() {
-        return this._genes;
+    get breedingMaleGenome() {
+        return this._breedingMaleGenome;
     }
 
     get isQueenOfColony() {
@@ -881,8 +883,9 @@ class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
         return Promise.resolve();
     }
 
-    _playGotFertilized() {
+    _playGotFertilized(action) {
         this.isFertilized = true;
+        this._breedingMaleGenome = _genetic_genome__WEBPACK_IMPORTED_MODULE_3__.Genome.buildFromJson(action.breedingMaleGenome);
         return Promise.resolve();
     }
 }
@@ -3332,11 +3335,11 @@ class WorldFactory {
 
         switch (antJson.ant_type) {
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__.AntTypes.QUEEN:
-                let isFertilized = antJson.is_fertilized;
-                let isInNuptialFlight = antJson.is_in_nuptial_flight;
-                let genes = antJson.genes;
+                let isFertilized = antJson.isFertilized;
+                let isInNuptialFlight = antJson.isInNuptialFlight;
+                let breedingMaleGenome = antJson.breedingMaleGenome ? _entity_genetic_genome__WEBPACK_IMPORTED_MODULE_14__.Genome.buildFromJson(antJson.breedingMaleGenome) : null;
                 return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.QueenAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
-                    genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, genes);
+                    genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, breedingMaleGenome);
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__.AntTypes.WARRIOR:
                 return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.WarriorAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__.AntTypes.WORKER:
@@ -4899,12 +4902,8 @@ class GenomeInlineView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
 
     _render() {
         this._el.innerHTML = _genomeInlineTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
-
         this._genomView = new _genomeView__WEBPACK_IMPORTED_MODULE_1__.GenomeView(this._el.querySelector('[data-genome]'), this._genome);
-
-        this._previewEl = this._el.querySelector('[data-preview]');
         this._closingBtn = this._el.querySelector('[data-closing-btn]');
-
         this._toggleClosing(true);
     }
 
@@ -5906,10 +5905,8 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._cooperativeBehaviorTogglerEl.addEventListener('change', this._onCooperativeBehaviorTogglerChange.bind(this));
         this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
         this._profileBtn.addEventListener('click', this._onProfileBtnClick.bind(this));
-
         this._stopListenAntDied = this._ant.on('died', this.remove.bind(this));
         this._stopListenCurrentActivityChanged = this._ant.on('currentActivityChanged', this._renderCurrentActivity.bind(this));
-
         this._stopListenCurrentStepChanged = this.$domainFacade.events.on('currentStepChanged', this._renderAge.bind(this));
     }
 
@@ -5959,6 +5956,8 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._renderStats();
 
         this._genomeView = new _view_game_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_6__.GenomeInlineView(this._el.querySelector('[data-genome]'), this._ant.genome);
+        
+        this._renderBreedingMaleGenome();
     }
 
     remove() {
@@ -5967,6 +5966,9 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._stopListenCurrentActivityChanged();
         this._nestSelector.remove();
         this._genomeView.remove();
+        if (this._breedingMaleGenomeView) {
+            this._breedingMaleGenomeView.remove();
+        }
         super.remove();
     }
 
@@ -6005,6 +6007,14 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         statsEl.querySelector('[data-appetite]').innerHTML = this._ant.stats.appetite;
         statsEl.querySelector('[data-min-temperature]').innerHTML = this._ant.stats.minTemperature;
         statsEl.querySelector('[data-life-span]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_5__.convertStepsToYear)(this._ant.stats.lifeSpan);
+    }
+
+    _renderBreedingMaleGenome() {
+        if (this._ant.isQueenOfColony) {
+            this._breedingMaleGenomeView = new _view_game_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_6__.GenomeInlineView(this._el.querySelector('[data-breeding-male-genome]'), this._ant.breedingMaleGenome);
+        } else {
+            this._el.querySelector('[data-breeding-male-genome-container]').remove();
+        }
     }
 
     _onNestChanged() {
@@ -18995,7 +19005,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<span data-preview>genome</span>\r\n<button data-closing-btn></button>\r\n<div data-genome></div>";
+var code = "<button data-closing-btn></button>\r\n<div data-genome></div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -19085,7 +19095,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<tr>\r\n    <td data-name rowspan=\"2\"></td>\r\n    <td data-type></td>\r\n    <td data-nest></td>\r\n    <td>\r\n        <select data-guardian-type>\r\n            <option value=\"none\">не захищає</option>\r\n            <option value=\"nest\">тільки гніздо</option>\r\n            <option value=\"colony\">вся колонія</option>\r\n        </select>\r\n    </td>\r\n    <td>\r\n        <input data-is-cooperactive type=\"checkbox\">\r\n    </td>\r\n    <td data-actions>\r\n        <button data-profile-btn>+</button>\r\n    </td>\r\n</tr>\r\n<tr data-ant-profile>\r\n    <td colspan=\"5\">\r\n        <table class=\"g-table\">\r\n            <thead>\r\n                <tr>\r\n                    <td>max_hp</td>\r\n                    <td>hp_regen_rate</td>\r\n                    <td>speed</td>\r\n                    <td>sight_distance</td>\r\n                    <td>strength</td>\r\n                    <td>defense</td>\r\n                    <td>appetite</td>\r\n                    <td>min_temperature</td>\r\n                    <td>life_span</td>\r\n                </tr>\r\n            </thead>\r\n            <tbody>\r\n                <tr data-stats>\r\n                    <td data-max-hp></td>\r\n                    <td data-hp-regen-rate></td>\r\n                    <td data-speed></td>\r\n                    <td data-sight-distance></td>\r\n                    <td data-strength></td>\r\n                    <td data-defense></td>\r\n                    <td data-appetite></td>\r\n                    <td data-min-temperature></td>\r\n                    <td data-life-span></td>\r\n                </tr>\r\n            </tbody>\r\n        </table>\r\n        <div data-genome></div>\r\n        <div data-id></div>\r\n        <div>age: <span data-age></span></div>\r\n        <div>занятість: <span data-current-activity></span></div>\r\n        <button data-nuptial-flight>шлюбний політ</button>\r\n        <!-- <button data-genome-debug>геном</button> -->\r\n    </td>\r\n</tr>";
+var code = "<tr>\r\n    <td data-name rowspan=\"2\"></td>\r\n    <td data-type></td>\r\n    <td data-nest></td>\r\n    <td>\r\n        <select data-guardian-type>\r\n            <option value=\"none\">не захищає</option>\r\n            <option value=\"nest\">тільки гніздо</option>\r\n            <option value=\"colony\">вся колонія</option>\r\n        </select>\r\n    </td>\r\n    <td>\r\n        <input data-is-cooperactive type=\"checkbox\">\r\n    </td>\r\n    <td data-actions>\r\n        <button data-profile-btn>+</button>\r\n    </td>\r\n</tr>\r\n<tr data-ant-profile>\r\n    <td colspan=\"5\">\r\n        <table class=\"g-table\">\r\n            <thead>\r\n                <tr>\r\n                    <td>max_hp</td>\r\n                    <td>hp_regen_rate</td>\r\n                    <td>speed</td>\r\n                    <td>sight_distance</td>\r\n                    <td>strength</td>\r\n                    <td>defense</td>\r\n                    <td>appetite</td>\r\n                    <td>min_temperature</td>\r\n                    <td>life_span</td>\r\n                </tr>\r\n            </thead>\r\n            <tbody>\r\n                <tr data-stats>\r\n                    <td data-max-hp></td>\r\n                    <td data-hp-regen-rate></td>\r\n                    <td data-speed></td>\r\n                    <td data-sight-distance></td>\r\n                    <td data-strength></td>\r\n                    <td data-defense></td>\r\n                    <td data-appetite></td>\r\n                    <td data-min-temperature></td>\r\n                    <td data-life-span></td>\r\n                </tr>\r\n            </tbody>\r\n        </table>\r\n        <div>\r\n            геном: <div data-genome></div>\r\n        </div>\r\n        <div data-breeding-male-genome-container>\r\n            геном від шлюбного самця: <div data-breeding-male-genome></div>\r\n        </div>\r\n        <div data-id></div>\r\n        <div>age: <span data-age></span></div>\r\n        <div>занятість: <span data-current-activity></span></div>\r\n        <button data-nuptial-flight>шлюбний політ</button>\r\n        <!-- <button data-genome-debug>геном</button> -->\r\n    </td>\r\n</tr>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

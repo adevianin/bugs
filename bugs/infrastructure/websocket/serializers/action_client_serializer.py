@@ -42,12 +42,14 @@ from core.world.entities.action.colony_operation_deleted_action import ColonyOpe
 from core.world.entities.action.nuptial_environment_specie_genes_changed_action import NuptialEnvironmentSpecieGenesChangedAction
 from core.world.entities.action.entity_hibernation_status_chenged_action import EntityHibernationStatusChangedAction
 from core.world.entities.action.ant_current_activity_changed_action import AntCurrentActivityChangedAction
+from core.world.entities.action.ant_got_fertilized_action import AntGotFertilizedAction
+from .genome_client_serializer import GenomeClientSerializer
 
 class ActionClientSerializer():
 
     def __init__(self, common_entity_serializer: CommonEntityClientSerializer, util_serializer: UtilClientSerializer, larva_serializer: LarvaClientSerializer, egg_serializer: EggClientSerializer,
                  colony_serializer: ColonyClientSerializer, operation_serializer: OperationClientSerializer, notification_serializer: NotificationClientSerializer, 
-                 nuptial_environment_serializer: NuptialEnvironmentClientSerializer):
+                 nuptial_environment_serializer: NuptialEnvironmentClientSerializer, genome_client_serializer: GenomeClientSerializer):
         self._common_entity_serializer = common_entity_serializer
         self._util_serializer = util_serializer
         self._larva_serializer = larva_serializer
@@ -56,6 +58,7 @@ class ActionClientSerializer():
         self._operation_serializer = operation_serializer
         self._notification_serializer = notification_serializer
         self._nuptial_environment_serializer = nuptial_environment_serializer
+        self._genome_client_serializer = genome_client_serializer
 
     def serialize(self, action: Action):
         match(action.action_type):
@@ -86,7 +89,7 @@ class ActionClientSerializer():
             case ActionTypes.ANT_FLEW_NUPTIAL_FLIGHT_BACK:
                 return self._serialize_ant_flew_nuptial_flight_back(action)
             case ActionTypes.ANT_GOT_FERTILIZED:
-                return self._default_action_serialize(action)
+                return self._serialize_ant_got_fertilized(action)
             case ActionTypes.ANT_HOME_NEST_CHANGED:
                 return self._serialize_ant_home_nest_changed(action)
             case ActionTypes.ANT_CURRENT_ACTIVITY_CHANGED:
@@ -229,6 +232,15 @@ class ActionClientSerializer():
 
         json.update({
             'landingPosition': serialized_landing_position
+        })
+
+        return json
+    
+    def _serialize_ant_got_fertilized(self, action: AntGotFertilizedAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'breedingMaleGenome': self._genome_client_serializer.serialize_genome(action.breeding_male_genome)
         })
 
         return json

@@ -36,7 +36,7 @@ class AntSerializer(LiveEntitySerializer):
     def _serialize_queen(self, json: dict, ant: QueenAnt):
         json = self._serialize_common(json, ant)
 
-        male_chromosomes_set_json = self._genome_serializer.serialize_chromosomes_set(ant.body.male_chromosomes_set) if ant.body.male_chromosomes_set else None
+        male_chromosomes_set_json = self._genome_serializer.serialize_chromosomes_set(ant.male_chromosomes_set) if ant.male_chromosomes_set else None
 
         json.update({
             "male_chromosomes_set": male_chromosomes_set_json

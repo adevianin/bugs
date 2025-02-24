@@ -21,10 +21,8 @@ class AntView extends BaseHTMLView {
         this._cooperativeBehaviorTogglerEl.addEventListener('change', this._onCooperativeBehaviorTogglerChange.bind(this));
         this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
         this._profileBtn.addEventListener('click', this._onProfileBtnClick.bind(this));
-
         this._stopListenAntDied = this._ant.on('died', this.remove.bind(this));
         this._stopListenCurrentActivityChanged = this._ant.on('currentActivityChanged', this._renderCurrentActivity.bind(this));
-
         this._stopListenCurrentStepChanged = this.$domainFacade.events.on('currentStepChanged', this._renderAge.bind(this));
     }
 
@@ -74,6 +72,8 @@ class AntView extends BaseHTMLView {
         this._renderStats();
 
         this._genomeView = new GenomeInlineView(this._el.querySelector('[data-genome]'), this._ant.genome);
+        
+        this._renderBreedingMaleGenome();
     }
 
     remove() {
@@ -82,6 +82,9 @@ class AntView extends BaseHTMLView {
         this._stopListenCurrentActivityChanged();
         this._nestSelector.remove();
         this._genomeView.remove();
+        if (this._breedingMaleGenomeView) {
+            this._breedingMaleGenomeView.remove();
+        }
         super.remove();
     }
 
@@ -120,6 +123,14 @@ class AntView extends BaseHTMLView {
         statsEl.querySelector('[data-appetite]').innerHTML = this._ant.stats.appetite;
         statsEl.querySelector('[data-min-temperature]').innerHTML = this._ant.stats.minTemperature;
         statsEl.querySelector('[data-life-span]').innerHTML = convertStepsToYear(this._ant.stats.lifeSpan);
+    }
+
+    _renderBreedingMaleGenome() {
+        if (this._ant.isQueenOfColony) {
+            this._breedingMaleGenomeView = new GenomeInlineView(this._el.querySelector('[data-breeding-male-genome]'), this._ant.breedingMaleGenome);
+        } else {
+            this._el.querySelector('[data-breeding-male-genome-container]').remove();
+        }
     }
 
     _onNestChanged() {

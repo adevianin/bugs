@@ -117,11 +117,11 @@ class WorldFactory {
 
         switch (antJson.ant_type) {
             case AntTypes.QUEEN:
-                let isFertilized = antJson.is_fertilized;
-                let isInNuptialFlight = antJson.is_in_nuptial_flight;
-                let genes = antJson.genes;
+                let isFertilized = antJson.isFertilized;
+                let isInNuptialFlight = antJson.isInNuptialFlight;
+                let breedingMaleGenome = antJson.breedingMaleGenome ? Genome.buildFromJson(antJson.breedingMaleGenome) : null;
                 return new QueenAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
-                    genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, genes);
+                    genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, breedingMaleGenome);
             case AntTypes.WARRIOR:
                 return new WarriorAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
             case AntTypes.WORKER:

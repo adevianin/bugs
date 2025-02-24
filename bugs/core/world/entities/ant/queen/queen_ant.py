@@ -14,7 +14,7 @@ from core.world.utils.point import Point
 from core.world.entities.ant.base.nuptial_environment.nuptial_male import NuptialMale
 from core.world.entities.action.ant_got_fertilized_action import AntGotFertilizedAction
 from core.world.entities.base.ownership_config import OwnershipConfig
-from core.world.entities.base.damage_types import DamageTypes
+from core.world.entities.ant.base.genetic.genome import Genome
 
 class QueenAnt(Ant):
 
@@ -40,6 +40,14 @@ class QueenAnt(Ant):
     def is_queen_of_colony(self):
         return self._body.is_queen_of_colony
     
+    @property
+    def male_chromosomes_set(self):
+        return self._body.male_chromosomes_set
+    
+    @property
+    def breeding_male_genome(self) -> Genome:
+        return Genome.build(self._body.male_chromosomes_set, None) if self._body.is_fertilized else None
+    
     def fly_nuptial_flight_back(self, landing_position: Point):
         self._mind.toggle_auto_thought_generation(True)
         self._body.fly_nuptial_flight_back(landing_position)
@@ -49,7 +57,7 @@ class QueenAnt(Ant):
     
     def fertilize(self, male: NuptialMale):
         self._body.fertilize(male.genome.maternal_chromosomes_set)
-        self._emit_action(AntGotFertilizedAction.build(self.id))
+        self._emit_action(AntGotFertilizedAction(self.id, self.breeding_male_genome, self.owner_id))
 
     def do_step(self, step_number: int):
         if self._body.is_in_nuptial_flight:

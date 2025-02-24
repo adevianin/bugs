@@ -59,9 +59,9 @@ class AntClientSerializer(LiveEntityClientSerializer):
     def _serialize_queen(self, json: dict, ant: QueenAnt):
         json = self._serializer_common(json, ant)
         json.update({
-            'is_fertilized': ant.body.is_fertilized,
-            'is_in_nuptial_flight': ant.body.is_in_nuptial_flight,
-            'genes': {}
+            'isFertilized': ant.body.is_fertilized,
+            'isInNuptialFlight': ant.body.is_in_nuptial_flight,
+            'breedingMaleGenome': self._genome_client_serializer.serialize_genome(ant.breeding_male_genome) if ant.breeding_male_genome else None
         })
 
         return json
