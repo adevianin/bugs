@@ -1,8 +1,12 @@
 import './appStyles.css';
-
 import { BaseHTMLView } from './base/baseHTMLView';
-import { GameView } from './game/gameView';
 import appTmpl from './appTmpl.html';
+import * as PIXI from 'pixi.js';
+import { ClimateView } from './climate/climateView';
+import { PanelView } from './panel';
+import { Camera } from './camera';
+import { WorldView } from './world';
+import { MapPickerMasterView } from './mapPickers/mapPickerMasterView';
 
 class AppView extends BaseHTMLView {
     constructor(el) {
@@ -13,9 +17,29 @@ class AppView extends BaseHTMLView {
 
     _render() {
         this._el.innerHTML = appTmpl;
+        this._el.classList.add('app');
 
-        let gameEl = this._el.querySelector('[data-game]');
-        this._gameView = new GameView(gameEl);
+        this._climateView = new ClimateView(this._el.querySelector('[data-climate]'));
+
+        new PanelView(this._el.querySelector('[data-panel]'));
+        
+        let canvasContainerEl = this._el.querySelector('[data-canvas-container]');
+        this.$pixiApp.resizeTo = canvasContainerEl;
+        canvasContainerEl.appendChild(this.$pixiApp.canvas);
+
+        let globalContainer = new PIXI.Container();
+        this.$pixiApp.stage.addChild(globalContainer);
+        new Camera(globalContainer);
+
+        let worldContainer = new PIXI.Container();
+        globalContainer.addChild(worldContainer);
+        new WorldView(worldContainer);
+
+        let mapPickerContainer = new PIXI.Container();
+        worldContainer.addChild(mapPickerContainer);
+        new MapPickerMasterView(mapPickerContainer, this._el.querySelector('[data-map-picker-border]'));
+        
+        this.$pixiApp.resize();
     }
 
     _onInitStepDone() {

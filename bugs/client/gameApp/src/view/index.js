@@ -1,7 +1,7 @@
 import { BaseView } from './base/baseView';
 import { AppView } from './appView';
 import { Requester } from '@common/utils/requester';
-import { WorldSpritesheetManager } from './game/world/worldSpritesheetManager';
+import { WorldSpritesheetManager } from './world/worldSpritesheetManager';
 import { BaseGraphicView } from './base/baseGraphicView';
 import { EventEmitter } from '@utils/eventEmitter.js';
 import { uaMessages } from './messages/uaMessagesLib';
