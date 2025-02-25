@@ -75,6 +75,7 @@ class AntColony(Colony):
         self._check_enemies_in_colony_area()
         self._clean_completed_operations()
         self._hire_for_operations()
+        self._handle_no_members_state()
 
     def _listen_operation(self, operation: Operation):
         operation.events.add_listener('change', partial(self._on_operation_change, operation))
@@ -103,6 +104,13 @@ class AntColony(Colony):
         for operation in completed_operations:
             self._operations.remove(operation)
             self._on_operation_removed(operation)
+
+    def _handle_no_members_state(self):
+        memebers = self.get_my_members()
+        if len(memebers) == 0:
+            colony_nests: List[Nest] = self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.NEST])
+            for nest in colony_nests:
+                nest.gradual_decay()
     
     # def _on_operation_change(self):
     #     self._operation_has_changes = True

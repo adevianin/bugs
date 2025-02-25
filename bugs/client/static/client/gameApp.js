@@ -2470,7 +2470,8 @@ __webpack_require__.r(__webpack_exports__);
 const DamageTypes = {
     COLD: 'cold',
     COMBAT: 'combat',
-    SYSTEM: 'system'
+    // SYSTEM: 'system',
+    DECAY: 'decay'
 }
 
 
@@ -5776,12 +5777,12 @@ class PanelView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Bas
         this._ratingTab = new _tabs_ratingTab__WEBPACK_IMPORTED_MODULE_9__.RatingTabView(this._el.querySelector('[data-rating-tab]'));
 
         this._tabSwitcher = new _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'panel', [
-            { name: 'user', label: 'Користувач', tab: this._userTab },
             { name: 'colonies', label: 'Колонії', tab: this._coloniesTab },
             { name: 'nuptial_flight', label: 'Шлюбний політ', tab: this._nuptialFlightTab },
             { name: 'specie_builder', label: 'Вид', tab: this._specieBuildertTab },
             { name: 'notifications', label: 'Сповіщення', tab: this._notificationsTab },
             { name: 'rating', label: 'Рейтинг', tab: this._ratingTab },
+            { name: 'user', label: 'Користувач', tab: this._userTab }
         ]);
     }
 
@@ -8862,7 +8863,9 @@ class NotificationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     }
 
     _renderDiedNestNotification() {
+        console.log(this._notification);
         this._el.innerHTML = _diedNestNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_5__["default"];
+        this._el.querySelector('[data-death-describe]').innerHTML = this._generateNestDeathDescribeText();
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.deathRecord.deathPosition);
         this._el.querySelector('[data-year]').innerHTML = (0,_utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_9__.convertStepsToYear)(this._notification.step) ;
@@ -8911,6 +8914,20 @@ class NotificationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
                 return 'помер з невідомих причин';
             case _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__.DeathTypes.BURIED_IN_DESTRUCTED_NEST:
                 return 'загинув в зруйнованому гнізді';
+        }
+    }
+
+    _generateNestDeathDescribeText() {
+        switch(this._notification.deathRecord.type) {
+            case _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__.DeathTypes.DAMAGE:
+                switch(this._notification.deathRecord.damageType) {
+                    case _domain_enum_damageTypes__WEBPACK_IMPORTED_MODULE_3__.DamageTypes.COMBAT:
+                        return 'розбито';
+                    case _domain_enum_damageTypes__WEBPACK_IMPORTED_MODULE_3__.DamageTypes.DECAY:
+                        return 'завалилось';
+                }
+            case _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__.DeathTypes.SIMPLE:
+                return 'завалилось з невідомих причин';
         }
     }
 
@@ -19532,7 +19549,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<td>\r\n    гніздо <span class=\"notifications-table__name\" data-nest-name></span><span data-death-position></span> розбито.\r\n</td>\r\n<td data-year></td>";
+var code = "<td>\r\n    гніздо <span class=\"notifications-table__name\" data-nest-name></span><span data-death-position></span> <span data-death-describe></span>.\r\n</td>\r\n<td data-year></td>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

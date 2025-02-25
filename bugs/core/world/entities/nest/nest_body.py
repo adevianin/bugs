@@ -68,8 +68,11 @@ class NestBody(Body):
         if not self.is_built:
             self._not_building_steps_counter += 1
             if self._not_building_steps_counter > 5:
-                self.receive_damage(5, DamageTypes.SYSTEM)
+                self.receive_damage(5, DamageTypes.DECAY)
                 self._build_progress = int(self.hp / (self.stats.max_hp / 100))
+
+    def gradual_decay(self):
+        self.receive_damage(20, DamageTypes.DECAY)
 
     def add_egg(self, egg: Egg):
         self.eggs.append(egg)

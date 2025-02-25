@@ -111,6 +111,9 @@ class Nest(Entity):
         self._body.develop_eggs()
         self._body.handle_not_building_steps()
 
+    def gradual_decay(self):
+        self._body.gradual_decay()
+
     def take_edible_item(self, item: Item):
         self._body.take_edible_item(item)
 

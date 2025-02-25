@@ -49,7 +49,9 @@ class NotificationView extends BaseHTMLView {
     }
 
     _renderDiedNestNotification() {
+        console.log(this._notification);
         this._el.innerHTML = diedNestNotificationTmpl;
+        this._el.querySelector('[data-death-describe]').innerHTML = this._generateNestDeathDescribeText();
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
         this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.deathRecord.deathPosition);
         this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step) ;
@@ -98,6 +100,20 @@ class NotificationView extends BaseHTMLView {
                 return 'помер з невідомих причин';
             case DeathTypes.BURIED_IN_DESTRUCTED_NEST:
                 return 'загинув в зруйнованому гнізді';
+        }
+    }
+
+    _generateNestDeathDescribeText() {
+        switch(this._notification.deathRecord.type) {
+            case DeathTypes.DAMAGE:
+                switch(this._notification.deathRecord.damageType) {
+                    case DamageTypes.COMBAT:
+                        return 'розбито';
+                    case DamageTypes.DECAY:
+                        return 'завалилось';
+                }
+            case DeathTypes.SIMPLE:
+                return 'завалилось з невідомих причин';
         }
     }
 

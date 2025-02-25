@@ -17,6 +17,7 @@ class Colony(ABC):
         self._member_type = member_type
         self._map = map
         self._relation_tester = relation_tester
+        self._cached_members = None
 
         for member in self.get_my_members():
             self._handle_my_member(member)
@@ -35,9 +36,13 @@ class Colony(ABC):
     def add_new_member(self, entity: LiveEntity):
         entity.from_colony_id = self.id
         self._handle_my_member(entity)
+        self._clear_cached_members()
     
     def get_my_members(self) -> List[LiveEntity]:
-        return self._map.get_entities(from_colony_id=self.id, entity_types=[self._member_type])
+        if not self._cached_members:
+            self._cached_members = self._map.get_entities(from_colony_id=self.id, entity_types=[self._member_type])
+
+        return self._cached_members
     
     def _on_my_entity_born(self, entity: Entity):
         if entity.type == self.member_type:
@@ -52,11 +57,13 @@ class Colony(ABC):
     def _on_entity_died(self, entity: Entity):
         is_mine = entity.from_colony_id == self._id
         if is_mine:
+            self._clear_cached_members()
             self._on_my_entity_died(entity)
 
     def _on_entity_born(self, entity: Entity):
         is_mine = entity.from_colony_id == self._id
         if is_mine:
+            self._clear_cached_members()
             self._on_my_entity_born(entity)
 
     def _emit_action(self, action: Action):
@@ -69,3 +76,6 @@ class Colony(ABC):
         my_members = self.get_my_members()
         for member in my_members:
             member.body.receive_colony_signal(signal)
+
+    def _clear_cached_members(self):
+        self._cached_members = None
