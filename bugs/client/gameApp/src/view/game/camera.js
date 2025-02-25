@@ -1,19 +1,20 @@
 import * as PIXI from 'pixi.js';
+import { BaseGraphicView } from '@view/base/baseGraphicView';
 
-class Camera {
+class Camera extends BaseGraphicView {
 
     static MAP_MARGIN = 20;
 
-    constructor(container, pixiApp, mapWidth, mapHeight) {
+    constructor(container) {
+        super();
         this._container = container;
         this._isDraging = false;
         this._anchorPoint = {x: null, y: null};
+        let worldSize = this.$domainFacade.getWorldSize();
         this._mapSize = {
-            width: mapWidth,
-            height: mapHeight
+            width: worldSize[0],
+            height: worldSize[1]
         };
-        this._canvasEl = pixiApp.canvas;
-        this._pixiApp = pixiApp;
 
         this._renderHandler();
 
@@ -56,12 +57,12 @@ class Camera {
     }
 
     showPos(x, y) {
-        let viewPointLocal = this._container.toLocal(new PIXI.Point(this._canvasEl.offsetWidth / 2, this._canvasEl.offsetHeight / 2));
+        let viewPointLocal = this._container.toLocal(new PIXI.Point(this.$pixiApp.canvas.offsetWidth / 2, this.$pixiApp.canvas.offsetHeight / 2));
         let dx = viewPointLocal.x - x;
         let dy = viewPointLocal.y - y;
         
         let duration = 500;
-        let interval = 20;
+        let interval = 50;
         let steps = duration / interval;
         let stepX = dx / steps;
         let stepY = dy / steps;
@@ -90,12 +91,12 @@ class Camera {
             containerPosY = Camera.MAP_MARGIN;
         }
 
-        let minXPos = this._canvasEl.offsetWidth - this._mapSize.width - Camera.MAP_MARGIN
+        let minXPos = this.$pixiApp.canvas.offsetWidth - this._mapSize.width - Camera.MAP_MARGIN
         if (containerPosX < minXPos) {
             containerPosX = minXPos;
         }
 
-        let minPosY = this._canvasEl.offsetHeight - this._mapSize.height  - Camera.MAP_MARGIN;
+        let minPosY = this.$pixiApp.canvas.offsetHeight - this._mapSize.height  - Camera.MAP_MARGIN;
         if (containerPosY < minPosY) {
             containerPosY = minPosY;
         }
@@ -104,11 +105,6 @@ class Camera {
         this._container.y = containerPosY;
     }
 
-    // _calcViewPoint() {
-    //     return {
-    //         x: this._container.x + (this._canvasEl.offsetWidth / 2);
-    //     }
-    // }
 }
 
 export {

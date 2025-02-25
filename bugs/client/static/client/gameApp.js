@@ -4115,22 +4115,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Camera: () => (/* binding */ Camera)
 /* harmony export */ });
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
 
 
-class Camera {
+
+class Camera extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.BaseGraphicView {
 
     static MAP_MARGIN = 20;
 
-    constructor(container, pixiApp, mapWidth, mapHeight) {
+    constructor(container) {
+        super();
         this._container = container;
         this._isDraging = false;
         this._anchorPoint = {x: null, y: null};
+        let worldSize = this.$domainFacade.getWorldSize();
         this._mapSize = {
-            width: mapWidth,
-            height: mapHeight
+            width: worldSize[0],
+            height: worldSize[1]
         };
-        this._canvasEl = pixiApp.canvas;
-        this._pixiApp = pixiApp;
 
         this._renderHandler();
 
@@ -4173,12 +4175,12 @@ class Camera {
     }
 
     showPos(x, y) {
-        let viewPointLocal = this._container.toLocal(new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Point(this._canvasEl.offsetWidth / 2, this._canvasEl.offsetHeight / 2));
+        let viewPointLocal = this._container.toLocal(new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Point(this.$pixiApp.canvas.offsetWidth / 2, this.$pixiApp.canvas.offsetHeight / 2));
         let dx = viewPointLocal.x - x;
         let dy = viewPointLocal.y - y;
         
         let duration = 500;
-        let interval = 20;
+        let interval = 50;
         let steps = duration / interval;
         let stepX = dx / steps;
         let stepY = dy / steps;
@@ -4207,12 +4209,12 @@ class Camera {
             containerPosY = Camera.MAP_MARGIN;
         }
 
-        let minXPos = this._canvasEl.offsetWidth - this._mapSize.width - Camera.MAP_MARGIN
+        let minXPos = this.$pixiApp.canvas.offsetWidth - this._mapSize.width - Camera.MAP_MARGIN
         if (containerPosX < minXPos) {
             containerPosX = minXPos;
         }
 
-        let minPosY = this._canvasEl.offsetHeight - this._mapSize.height  - Camera.MAP_MARGIN;
+        let minPosY = this.$pixiApp.canvas.offsetHeight - this._mapSize.height  - Camera.MAP_MARGIN;
         if (containerPosY < minPosY) {
             containerPosY = minPosY;
         }
@@ -4221,11 +4223,6 @@ class Camera {
         this._container.y = containerPosY;
     }
 
-    // _calcViewPoint() {
-    //     return {
-    //         x: this._container.x + (this._canvasEl.offsetWidth / 2);
-    //     }
-    // }
 }
 
 
@@ -4409,10 +4406,12 @@ class GameView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_3__.Base
         this.$pixiApp.resizeTo = canvasContainerEl;
         canvasContainerEl.appendChild(this.$pixiApp.canvas);
 
+        let globalContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_2__.Container();
+        this.$pixiApp.stage.addChild(globalContainer);
+        new _camera__WEBPACK_IMPORTED_MODULE_4__.Camera(globalContainer);
+
         let worldContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_2__.Container();
-        this.$pixiApp.stage.addChild(worldContainer);
-        let worldSize = this.$domainFacade.getWorldSize();
-        new _camera__WEBPACK_IMPORTED_MODULE_4__.Camera(worldContainer, this.$pixiApp, worldSize[0], worldSize[1]);
+        globalContainer.addChild(worldContainer);
         new _world__WEBPACK_IMPORTED_MODULE_5__.WorldView(worldContainer);
 
         let mapPickerContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_2__.Container();
