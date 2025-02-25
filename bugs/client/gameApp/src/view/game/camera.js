@@ -3,7 +3,8 @@ import { BaseGraphicView } from '@view/base/baseGraphicView';
 
 class Camera extends BaseGraphicView {
 
-    static MAP_MARGIN = 20;
+    static MAP_MARGIN = 5;
+    static SHOW_POSITION_DURATION = 500;
 
     constructor(container) {
         super();
@@ -21,8 +22,6 @@ class Camera extends BaseGraphicView {
         this._handler.on('pointerdown', this._onPointerDown.bind(this));
         this._handler.on('pointerup', this._onPointerUp.bind(this));
         this._handler.on('pointermove', this._onPointerMove.bind(this));
-
-        window.a = this;
     }
 
     _renderHandler() {
@@ -46,43 +45,56 @@ class Camera extends BaseGraphicView {
     _onPointerMove(e) {
         if (this._isDraging) {
             
-            let dx = e.client.x - this._anchorPoint.x;
-            let dy = e.client.y - this._anchorPoint.y;
+            let dx = this._anchorPoint.x - e.client.x;
+            let dy = this._anchorPoint.y - e.client.y;
 
             this._anchorPoint.x = e.client.x;
             this._anchorPoint.y = e.client.y;
 
-            this._moveContainer(dx, dy);
+            this._moveCamera(dx, dy);
         }
     }
 
     showPos(x, y) {
         let viewPointLocal = this._container.toLocal(new PIXI.Point(this.$pixiApp.canvas.offsetWidth / 2, this.$pixiApp.canvas.offsetHeight / 2));
-        let dx = viewPointLocal.x - x;
-        let dy = viewPointLocal.y - y;
+        let dx = x - viewPointLocal.x;
+        let dy = y - viewPointLocal.y;
+        let startTime = performance.now();
+        let startCameraPosition = this._getCameraPosition();
+        let destCameraX = startCameraPosition.x + dx;
+        let destCameraY = startCameraPosition.y + dy;
+
+        if (this._moveFn) {
+            this.$pixiApp.ticker.remove(this._moveFn);
+        }
         
-        let duration = 500;
-        let interval = 50;
-        let steps = duration / interval;
-        let stepX = dx / steps;
-        let stepY = dy / steps;
-        
-        let currentStep = 0;
-        
-        let animationInterval = setInterval(() => {
-            if (currentStep < steps) {
-                this._moveContainer(stepX, stepY);
-                currentStep++;
+        this._moveFn = () => {
+            let currentTime = performance.now();
+            let elapsed = currentTime - startTime;
+            let progress = elapsed / Camera.SHOW_POSITION_DURATION;
+
+            if (progress <= 1) {
+                let currentDx = progress * dx;
+                let currentDy = progress * dy;
+                this._setCameraPosition(startCameraPosition.x + currentDx, startCameraPosition.y + currentDy);
             } else {
-                clearInterval(animationInterval);
+                this._setCameraPosition(destCameraX, destCameraY);
+                this.$pixiApp.ticker.remove(this._moveFn);
+                this._moveFn = null;
             }
-        }, interval);
+        };
+
+        this.$pixiApp.ticker.add(this._moveFn);
     }
 
-    _moveContainer(dx, dy) {
-        let containerPosX = this._container.x + dx;
-        let containerPosY = this._container.y + dy;
+    _moveCamera(dx, dy) {
+        let cameraPosition = this._getCameraPosition();
+        this._setCameraPosition(cameraPosition.x + dx, cameraPosition.y + dy);
+    }
 
+    _setCameraPosition(x, y) {
+        let containerPosX = -x;
+        let containerPosY = -y;
         if (containerPosX > Camera.MAP_MARGIN) {
             containerPosX = Camera.MAP_MARGIN;
         }
@@ -103,6 +115,13 @@ class Camera extends BaseGraphicView {
 
         this._container.x = containerPosX;
         this._container.y = containerPosY;
+    }
+
+    _getCameraPosition() {
+        return {
+            x: -this._container.x,
+            y: -this._container.y,
+        }
     }
 
 }
