@@ -4014,8 +4014,7 @@ class AppView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLVi
         this._el.innerHTML = _appTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
         this._el.classList.add('app');
 
-        this._climateView = new _climate_climateView__WEBPACK_IMPORTED_MODULE_4__.ClimateView(this._el.querySelector('[data-climate]'));
-
+        new _climate_climateView__WEBPACK_IMPORTED_MODULE_4__.ClimateView(this._el.querySelector('[data-climate]'));
         new _panel__WEBPACK_IMPORTED_MODULE_5__.PanelView(this._el.querySelector('[data-panel]'));
         
         let canvasContainerEl = this._el.querySelector('[data-canvas-container]');
@@ -4045,12 +4044,16 @@ class AppView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLVi
 
     _showStartPosition() {
         let nest = this.$domainFacade.findMyFirstNest();
-        let worldSize = this.$domainFacade.getWorldSize();
-        let showingPosition = nest ? nest.position : {
-            x: (0,_utils_randomInt__WEBPACK_IMPORTED_MODULE_9__.randomInt)(0, worldSize[0]),
-            y: (0,_utils_randomInt__WEBPACK_IMPORTED_MODULE_9__.randomInt)(0, worldSize[1])
+        if (nest) {
+            this.$eventBus.emit('nestManageRequest', nest);
+            this.$eventBus.emit('showPointRequest', nest.position);
+        } else {
+            let worldSize = this.$domainFacade.getWorldSize();
+            this.$eventBus.emit('showPointRequest', {
+                x: (0,_utils_randomInt__WEBPACK_IMPORTED_MODULE_9__.randomInt)(0, worldSize[0]),
+                y: (0,_utils_randomInt__WEBPACK_IMPORTED_MODULE_9__.randomInt)(0, worldSize[1])
+            });
         }
-        this.$eventBus.emit('showPointRequest', showingPosition);
     }
 }
 
@@ -5856,7 +5859,6 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._selectedColony = null;
         
         this._renderColonies();
-        this._autoSelect();
     }
 
     get selectedColony() {
@@ -5868,14 +5870,7 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._selectColony(colony, true);
     }
 
-    _autoSelect() {
-        if (!this.selectedColony && this._colonies.length > 0) {
-            this._selectColony(this._colonies[0]);
-        }
-    }
-
     _renderColonies() {
-        // this._clearColonyViews();
         this._colonies.forEach(colony => this._renderColony(colony));
     }
 
@@ -5886,14 +5881,6 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._colonyViews[colony.id] = colonyView;
         this._el.append(liEl);
     }
-
-    // _clearColonyViews() {
-    //     for (let colonyId in this._colonyViews) {
-    //         this._colonyViews[colonyId].remove();
-    //     }
-    //     this._colonyViews = {};
-    //     this._selectedColony = null;
-    // }
 
     _selectColony(colony, silent = false) {
         this._selectedColony = colony;
@@ -5930,7 +5917,9 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         if (isMine) {
             this._colonies.push(colony);
             this._renderColony(colony);
-            this._autoSelect();
+            if (!this._selectedColony) {
+                this._selectColony(colony);
+            }
         }
     }
 
@@ -5941,7 +5930,9 @@ class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
             this._deleteColonyView(colony);
             if (this._selectedColony == colony) {
                 this._selectedColony = null;
-                this._autoSelect();
+                if (this._colonies.length > 0) {
+                    this._selectColony(this._colonies[0]);
+                }
             }
         }
     }
@@ -6051,7 +6042,6 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         this._bornNewAntaraBtn.addEventListener('click', this._onBornNewAntaraBtnClick.bind(this));
         this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
         this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
-
     }
 
     showNestManagerFor(nest){
@@ -6068,7 +6058,6 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         this._coloniesList = new _coloniesList__WEBPACK_IMPORTED_MODULE_3__.ColoniesListView(this._el.querySelector('[data-colonies-list]'));
         this._colonyManager = new _colonyManager__WEBPACK_IMPORTED_MODULE_4__.ColonyManager(this._el.querySelector('[data-colony-manager]'));
 
-        this._manageSelectedColony();
         this._renderMode();
         this._renderBornNewAntaraBtnState();
     }
@@ -7285,7 +7274,6 @@ class NestsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
     }
 
     _selectNest(nest) {
-        console.log('_selectNest');
         this._selectedNest = nest;
         this.events.emit('selectedNestChanged');
     }
@@ -7319,13 +7307,11 @@ class NestsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
     }
 
     _deleteNestView(nest) {
-        console.log('_deleteNestView');
         this._nestViews[nest.id].remove();
         delete this._nestViews[nest.id];
     }
 
     _deleteNestEntity(nest) {
-        console.log('_deleteNestEntity');
         let index = this._nests.indexOf(nest);
         if (index != -1) {
             this._nests.splice(index, 1);
@@ -7335,6 +7321,7 @@ class NestsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
     _onNestClick(nest) {
         this._selectNest(nest);
         this._renderSelectedNest();
+        this.$eventBus.emit('showPointRequest', nest.position);
     }
 
     _onSomeoneDied(entity) {
@@ -8906,7 +8893,6 @@ class NotificationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     }
 
     _renderDiedNestNotification() {
-        console.log(this._notification);
         this._el.innerHTML = _diedNestNotificationTmpl_html__WEBPACK_IMPORTED_MODULE_5__["default"];
         this._el.querySelector('[data-death-describe]').innerHTML = this._generateNestDeathDescribeText();
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;

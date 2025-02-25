@@ -15,7 +15,6 @@ class ColoniesListView extends BaseHTMLView {
         this._selectedColony = null;
         
         this._renderColonies();
-        this._autoSelect();
     }
 
     get selectedColony() {
@@ -27,14 +26,7 @@ class ColoniesListView extends BaseHTMLView {
         this._selectColony(colony, true);
     }
 
-    _autoSelect() {
-        if (!this.selectedColony && this._colonies.length > 0) {
-            this._selectColony(this._colonies[0]);
-        }
-    }
-
     _renderColonies() {
-        // this._clearColonyViews();
         this._colonies.forEach(colony => this._renderColony(colony));
     }
 
@@ -45,14 +37,6 @@ class ColoniesListView extends BaseHTMLView {
         this._colonyViews[colony.id] = colonyView;
         this._el.append(liEl);
     }
-
-    // _clearColonyViews() {
-    //     for (let colonyId in this._colonyViews) {
-    //         this._colonyViews[colonyId].remove();
-    //     }
-    //     this._colonyViews = {};
-    //     this._selectedColony = null;
-    // }
 
     _selectColony(colony, silent = false) {
         this._selectedColony = colony;
@@ -89,7 +73,9 @@ class ColoniesListView extends BaseHTMLView {
         if (isMine) {
             this._colonies.push(colony);
             this._renderColony(colony);
-            this._autoSelect();
+            if (!this._selectedColony) {
+                this._selectColony(colony);
+            }
         }
     }
 
@@ -100,7 +86,9 @@ class ColoniesListView extends BaseHTMLView {
             this._deleteColonyView(colony);
             if (this._selectedColony == colony) {
                 this._selectedColony = null;
-                this._autoSelect();
+                if (this._colonies.length > 0) {
+                    this._selectColony(this._colonies[0]);
+                }
             }
         }
     }

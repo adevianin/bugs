@@ -20,8 +20,7 @@ class AppView extends BaseHTMLView {
         this._el.innerHTML = appTmpl;
         this._el.classList.add('app');
 
-        this._climateView = new ClimateView(this._el.querySelector('[data-climate]'));
-
+        new ClimateView(this._el.querySelector('[data-climate]'));
         new PanelView(this._el.querySelector('[data-panel]'));
         
         let canvasContainerEl = this._el.querySelector('[data-canvas-container]');
@@ -51,12 +50,16 @@ class AppView extends BaseHTMLView {
 
     _showStartPosition() {
         let nest = this.$domainFacade.findMyFirstNest();
-        let worldSize = this.$domainFacade.getWorldSize();
-        let showingPosition = nest ? nest.position : {
-            x: randomInt(0, worldSize[0]),
-            y: randomInt(0, worldSize[1])
+        if (nest) {
+            this.$eventBus.emit('nestManageRequest', nest);
+            this.$eventBus.emit('showPointRequest', nest.position);
+        } else {
+            let worldSize = this.$domainFacade.getWorldSize();
+            this.$eventBus.emit('showPointRequest', {
+                x: randomInt(0, worldSize[0]),
+                y: randomInt(0, worldSize[1])
+            });
         }
-        this.$eventBus.emit('showPointRequest', showingPosition);
     }
 }
 

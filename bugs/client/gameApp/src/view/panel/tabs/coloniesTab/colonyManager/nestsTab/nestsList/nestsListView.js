@@ -72,6 +72,7 @@ class NestsListView extends BaseHTMLView {
     _onNestClick(nest) {
         this._selectNest(nest);
         this._renderSelectedNest();
+        this.$eventBus.emit('showPointRequest', nest.position);
     }
 
     _onSomeoneDied(entity) {

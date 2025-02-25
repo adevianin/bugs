@@ -17,7 +17,6 @@ class ColoniesTabView extends BaseHTMLView {
         this._bornNewAntaraBtn.addEventListener('click', this._onBornNewAntaraBtnClick.bind(this));
         this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
         this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
-
     }
 
     showNestManagerFor(nest){
@@ -34,7 +33,6 @@ class ColoniesTabView extends BaseHTMLView {
         this._coloniesList = new ColoniesListView(this._el.querySelector('[data-colonies-list]'));
         this._colonyManager = new ColonyManager(this._el.querySelector('[data-colony-manager]'));
 
-        this._manageSelectedColony();
         this._renderMode();
         this._renderBornNewAntaraBtnState();
     }
