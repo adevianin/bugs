@@ -8,8 +8,6 @@ import { ItemSourceView } from './entitiesViews/itemSourceView';
 import { ItemAreaView } from './entitiesViews/itemAreaView';
 import { TreeView } from './entitiesViews/treeView';
 import { LadybugView } from './entitiesViews/ladybugView';
-// import { PositionPickerView } from '../mapPickers/positionPickerView';
-// import { NestPickerView } from '../mapPickers/nestPickerView';
 import { MarkersDemonstratorView } from './markersDemonstratorView';
 
 class WorldView extends BaseGraphicView {
@@ -41,8 +39,6 @@ class WorldView extends BaseGraphicView {
         this._itemAreaContainer = new PIXI.Container();
         this._itemSourceContainer = new PIXI.Container();
         this._treesContainer = new PIXI.Container();
-        // this._positionPickerContainer = new PIXI.Container();
-        // this._nestPickerContainer = new PIXI.Container();
         this._markerDemonstratorContainer = new PIXI.Container();
 
         this._container.addChild(this._bg);
@@ -53,13 +49,9 @@ class WorldView extends BaseGraphicView {
         this._container.addChild(this._bigContainer);
         this._container.addChild(this._itemSourceContainer);
         this._container.addChild(this._treesContainer);
-        // this._container.addChild(this._positionPickerContainer);
-        // this._container.addChild(this._nestPickerContainer);
         this._container.addChild(this._itemAreaContainer);
         this._container.addChild(this._markerDemonstratorContainer);
 
-        // this._positionPickerView = new PositionPickerView(this._positionPickerContainer);
-        // this._nestPickerView = new NestPickerView(this._nestPickerContainer);
         this._markerDemonstrator = new MarkersDemonstratorView(this._markerDemonstratorContainer);
 
         this._buildEntityViews();
