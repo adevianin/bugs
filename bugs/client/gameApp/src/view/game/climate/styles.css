@@ -42,6 +42,7 @@
     margin: 3px;
     left: 0;
     right: 0;
+    pointer-events: none;
 } 
 
 .climate__temp {
