@@ -24,6 +24,7 @@ class AntView extends BaseHTMLView {
         this._stopListenAntDied = this._ant.on('died', this.remove.bind(this));
         this._stopListenCurrentActivityChanged = this._ant.on('currentActivityChanged', this._renderCurrentActivity.bind(this));
         this._stopListenCurrentStepChanged = this.$domainFacade.events.on('currentStepChanged', this._renderAge.bind(this));
+        this._showAntBtn.addEventListener('click', this._onShowAntBtnClick.bind(this));
     }
 
     _onGuardianBehaviorSelectorChange () {
@@ -73,6 +74,8 @@ class AntView extends BaseHTMLView {
         
         this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
         this._renderActionBtns();
+
+        this._showAntBtn = this._el.querySelector('[data-show-ant]');
     }
 
     remove() {
@@ -139,6 +142,10 @@ class AntView extends BaseHTMLView {
     _onProfileBtnClick() {
         this._profileState = !this._profileState;
         this._renderProfileState();
+    }
+
+    _onShowAntBtnClick() {
+        this.$eventBus.emit('showPointRequest', this._ant.position);
     }
 
 }

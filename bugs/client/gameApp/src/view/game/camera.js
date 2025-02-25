@@ -22,6 +22,7 @@ class Camera extends BaseGraphicView {
         this._handler.on('pointerdown', this._onPointerDown.bind(this));
         this._handler.on('pointerup', this._onPointerUp.bind(this));
         this._handler.on('pointermove', this._onPointerMove.bind(this));
+        this.$eventBus.on('showPointRequest', this._onShowPointRequest.bind(this));
     }
 
     _renderHandler() {
@@ -55,7 +56,7 @@ class Camera extends BaseGraphicView {
         }
     }
 
-    showPos(x, y) {
+    _showPosition(x, y) {
         let viewPointLocal = this._container.toLocal(new PIXI.Point(this.$pixiApp.canvas.offsetWidth / 2, this.$pixiApp.canvas.offsetHeight / 2));
         let dx = x - viewPointLocal.x;
         let dy = y - viewPointLocal.y;
@@ -122,6 +123,10 @@ class Camera extends BaseGraphicView {
             x: -this._container.x,
             y: -this._container.y,
         }
+    }
+
+    _onShowPointRequest(position) {
+        this._showPosition(position.x, position.y);
     }
 
 }

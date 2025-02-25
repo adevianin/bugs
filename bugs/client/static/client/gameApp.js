@@ -4140,8 +4140,7 @@ class Camera extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.Bas
         this._handler.on('pointerdown', this._onPointerDown.bind(this));
         this._handler.on('pointerup', this._onPointerUp.bind(this));
         this._handler.on('pointermove', this._onPointerMove.bind(this));
-
-        window.a = this;
+        this.$eventBus.on('showPointRequest', this._onShowPointRequest.bind(this));
     }
 
     _renderHandler() {
@@ -4175,7 +4174,7 @@ class Camera extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.Bas
         }
     }
 
-    showPos(x, y) {
+    _showPosition(x, y) {
         let viewPointLocal = this._container.toLocal(new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Point(this.$pixiApp.canvas.offsetWidth / 2, this.$pixiApp.canvas.offsetHeight / 2));
         let dx = x - viewPointLocal.x;
         let dy = y - viewPointLocal.y;
@@ -4242,6 +4241,10 @@ class Camera extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.Bas
             x: -this._container.x,
             y: -this._container.y,
         }
+    }
+
+    _onShowPointRequest(position) {
+        this._showPosition(position.x, position.y);
     }
 
 }
@@ -5966,6 +5969,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._stopListenAntDied = this._ant.on('died', this.remove.bind(this));
         this._stopListenCurrentActivityChanged = this._ant.on('currentActivityChanged', this._renderCurrentActivity.bind(this));
         this._stopListenCurrentStepChanged = this.$domainFacade.events.on('currentStepChanged', this._renderAge.bind(this));
+        this._showAntBtn.addEventListener('click', this._onShowAntBtnClick.bind(this));
     }
 
     _onGuardianBehaviorSelectorChange () {
@@ -6015,6 +6019,8 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         
         this._nuptialFlightActionBtn = this._el.querySelector('[data-nuptial-flight]');
         this._renderActionBtns();
+
+        this._showAntBtn = this._el.querySelector('[data-show-ant]');
     }
 
     remove() {
@@ -6081,6 +6087,10 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
     _onProfileBtnClick() {
         this._profileState = !this._profileState;
         this._renderProfileState();
+    }
+
+    _onShowAntBtnClick() {
+        this.$eventBus.emit('showPointRequest', this._ant.position);
     }
 
 }
@@ -19152,7 +19162,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<tr>\r\n    <td data-name rowspan=\"2\"></td>\r\n    <td data-type></td>\r\n    <td data-nest></td>\r\n    <td>\r\n        <select data-guardian-type>\r\n            <option value=\"none\">не захищає</option>\r\n            <option value=\"nest\">тільки гніздо</option>\r\n            <option value=\"colony\">вся колонія</option>\r\n        </select>\r\n    </td>\r\n    <td>\r\n        <input data-is-cooperactive type=\"checkbox\">\r\n    </td>\r\n    <td data-actions>\r\n        <button data-profile-btn>+</button>\r\n    </td>\r\n</tr>\r\n<tr data-ant-profile>\r\n    <td colspan=\"5\">\r\n        <table class=\"g-table\">\r\n            <thead>\r\n                <tr>\r\n                    <td>max_hp</td>\r\n                    <td>hp_regen_rate</td>\r\n                    <td>speed</td>\r\n                    <td>sight_distance</td>\r\n                    <td>strength</td>\r\n                    <td>defense</td>\r\n                    <td>appetite</td>\r\n                    <td>min_temperature</td>\r\n                    <td>life_span</td>\r\n                </tr>\r\n            </thead>\r\n            <tbody>\r\n                <tr data-stats>\r\n                    <td data-max-hp></td>\r\n                    <td data-hp-regen-rate></td>\r\n                    <td data-speed></td>\r\n                    <td data-sight-distance></td>\r\n                    <td data-strength></td>\r\n                    <td data-defense></td>\r\n                    <td data-appetite></td>\r\n                    <td data-min-temperature></td>\r\n                    <td data-life-span></td>\r\n                </tr>\r\n            </tbody>\r\n        </table>\r\n        <div>\r\n            геном: <div data-genome></div>\r\n        </div>\r\n        <div data-breeding-male-genome-container>\r\n            геном від шлюбного самця: <div data-breeding-male-genome></div>\r\n        </div>\r\n        <div data-id></div>\r\n        <div>age: <span data-age></span></div>\r\n        <div>занятість: <span data-current-activity></span></div>\r\n        <button data-nuptial-flight>шлюбний політ</button>\r\n        <!-- <button data-genome-debug>геном</button> -->\r\n    </td>\r\n</tr>";
+var code = "<tr>\r\n    <td data-name rowspan=\"2\"></td>\r\n    <td data-type></td>\r\n    <td data-nest></td>\r\n    <td>\r\n        <select data-guardian-type>\r\n            <option value=\"none\">не захищає</option>\r\n            <option value=\"nest\">тільки гніздо</option>\r\n            <option value=\"colony\">вся колонія</option>\r\n        </select>\r\n    </td>\r\n    <td>\r\n        <input data-is-cooperactive type=\"checkbox\">\r\n    </td>\r\n    <td data-actions>\r\n        <button data-profile-btn>+</button>\r\n    </td>\r\n</tr>\r\n<tr data-ant-profile>\r\n    <td colspan=\"5\">\r\n        <table class=\"g-table\">\r\n            <thead>\r\n                <tr>\r\n                    <td>max_hp</td>\r\n                    <td>hp_regen_rate</td>\r\n                    <td>speed</td>\r\n                    <td>sight_distance</td>\r\n                    <td>strength</td>\r\n                    <td>defense</td>\r\n                    <td>appetite</td>\r\n                    <td>min_temperature</td>\r\n                    <td>life_span</td>\r\n                </tr>\r\n            </thead>\r\n            <tbody>\r\n                <tr data-stats>\r\n                    <td data-max-hp></td>\r\n                    <td data-hp-regen-rate></td>\r\n                    <td data-speed></td>\r\n                    <td data-sight-distance></td>\r\n                    <td data-strength></td>\r\n                    <td data-defense></td>\r\n                    <td data-appetite></td>\r\n                    <td data-min-temperature></td>\r\n                    <td data-life-span></td>\r\n                </tr>\r\n            </tbody>\r\n        </table>\r\n        <div>\r\n            геном: <div data-genome></div>\r\n        </div>\r\n        <div data-breeding-male-genome-container>\r\n            геном від шлюбного самця: <div data-breeding-male-genome></div>\r\n        </div>\r\n        <div data-id></div>\r\n        <div>age: <span data-age></span></div>\r\n        <div>занятість: <span data-current-activity></span></div>\r\n        <button data-nuptial-flight>шлюбний політ</button>\r\n        <button data-show-ant>показать</button>\r\n        <!-- <button data-genome-debug>геном</button> -->\r\n    </td>\r\n</tr>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
