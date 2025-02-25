@@ -7257,6 +7257,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
 /* harmony import */ var _nestView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nestView */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/nestView.js");
+/* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./gameApp/src/domain/enum/entityTypes.js");
+
 
 
 
@@ -7265,6 +7267,9 @@ class NestsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
     constructor(el) {
         super(el);
         this._nestViews = {};
+
+        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
     }
 
     manageColony(colony, nestToSelect) {
@@ -7279,12 +7284,8 @@ class NestsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         return this._selectedNest;
     }
 
-    selectNest(nest) {
-        this._selectNest(nest);
-        this._renderSelectedNest();
-    }
-
     _selectNest(nest) {
+        console.log('_selectNest');
         this._selectedNest = nest;
         this.events.emit('selectedNestChanged');
     }
@@ -7292,12 +7293,16 @@ class NestsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
     _renderNests() {
         this._clearNestViews();
         for (let nest of this._nests) {
-            let el = document.createElement('li');
-            let view = new _nestView__WEBPACK_IMPORTED_MODULE_1__.NestView(el, nest);
-            view.events.addListener('click', () => this._onNestClick(nest));
-            this._nestViews[nest.id] = view;
-            this._el.append(el);
+            this._renderNest(nest);
         }
+    }
+
+    _renderNest(nest) {
+        let el = document.createElement('li');
+        let view = new _nestView__WEBPACK_IMPORTED_MODULE_1__.NestView(el, nest);
+        view.events.addListener('click', () => this._onNestClick(nest));
+        this._nestViews[nest.id] = view;
+        this._el.append(el);
     }
 
     _renderSelectedNest() {
@@ -7313,9 +7318,47 @@ class NestsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
         this._nestViews = {};
     }
 
+    _deleteNestView(nest) {
+        console.log('_deleteNestView');
+        this._nestViews[nest.id].remove();
+        delete this._nestViews[nest.id];
+    }
+
+    _deleteNestEntity(nest) {
+        console.log('_deleteNestEntity');
+        let index = this._nests.indexOf(nest);
+        if (index != -1) {
+            this._nests.splice(index, 1);
+        }
+    }
+
     _onNestClick(nest) {
         this._selectNest(nest);
         this._renderSelectedNest();
+    }
+
+    _onSomeoneDied(entity) {
+        if (this._checkIsMyNest(entity)) {
+            this._deleteNestView(entity);
+            this._deleteNestEntity(entity);
+            if (this._selectedNest == entity) {
+                this._selectedNest = null;
+                if (this._nests.length > 0) {
+                    this._selectNest(this._nests[0]);
+                    this._renderSelectedNest();
+                }
+            }
+        }
+    }
+
+    _onSomeoneBorn(entity) {
+        if (this._checkIsMyNest(entity)) { 
+            this._renderNest(entity);
+        }
+    }
+
+    _checkIsMyNest(entity) {
+        return this._colony && entity.type == _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_2__.EntityTypes.NEST && entity.fromColony == this._colony.id;
     }
 }
 

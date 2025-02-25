@@ -49,7 +49,6 @@ class NotificationView extends BaseHTMLView {
     }
 
     _renderDiedNestNotification() {
-        console.log(this._notification);
         this._el.innerHTML = diedNestNotificationTmpl;
         this._el.querySelector('[data-death-describe]').innerHTML = this._generateNestDeathDescribeText();
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
