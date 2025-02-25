@@ -102,6 +102,21 @@ class WorldService {
         return allAnts.filter(ant => ant.ownerId == userId && ant.antType == AntTypes.QUEEN && ant.isInNuptialFlight);
     }
 
+    findMyFirstNest(userId) {
+        let myNests = this._world.findNestsByOwner(userId);
+        for (let nest of myNests) {
+            if (nest.isMain) {
+                return nest;
+            }
+        }
+
+        if (myNests.length > 0) {
+            return myNests[0];
+        } else {
+            return null;
+        }
+    }
+
 }
 
 export {

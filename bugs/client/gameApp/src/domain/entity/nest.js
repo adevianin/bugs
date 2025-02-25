@@ -16,7 +16,7 @@ class Nest extends Entity {
         this._fortification = fortification;
         this.maxFortification = maxFortification;
         this._name = name;
-        this.isMain = isMain;
+        this._isMain = isMain;
 
         this._setIsBuilt(isBuilt)
     }
@@ -38,6 +38,9 @@ class Nest extends Entity {
         this.emit('fortificationChanged');
     }
 
+    get isMain() {
+        return this._isMain;
+    }
 
     rename(newName) {
         this._name = newName;

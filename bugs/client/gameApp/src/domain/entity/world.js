@@ -67,6 +67,57 @@ class World {
         this._colonies.push(colony);
     }
 
+    findEntityByType(type) {
+        return this._entities.filter(e => e.type == type);
+    }
+
+    findEntityById(id) {
+        return this._entities.find( entity => entity.id == id);
+    }
+
+    findColonyById(id) {
+        return this._colonies.find( colony => colony.id == id);
+    }
+
+    isAnyColonyByOwnerId(ownerId) {
+        return this._colonies.some(colony => colony.ownerId == ownerId);
+    }
+
+    isAnyAntByOwnerId(ownerId) {
+        return this._entities.some(entity => entity.type == EntityTypes.ANT && entity.ownerId == ownerId);
+    }
+
+    findAntsFromColony(colonyId) {
+        return this._entities.filter(e => e.type == EntityTypes.ANT && e.fromColony == colonyId);
+    }
+
+    findColonyByOwnerId(ownerId) {
+        return this._colonies.find(colony => colony.ownerId == ownerId);
+    }
+
+    findColoniesByOwnerId(ownerId) {
+        return this._colonies.filter(colony => colony.ownerId == ownerId);
+    }
+
+    findNestsFromColony(colonyId) {
+        return this._entities.filter(e => e.type == EntityTypes.NEST && e.fromColony == colonyId);
+    }
+
+    findNestsByOwner(ownerId) {
+        return this._entities.filter(e => e.type == EntityTypes.NEST && e.ownerId == ownerId);
+    }
+
+    getQueenOfColony(colonyId) {
+        let ants = this.findAntsFromColony(colonyId);
+        for (let ant of ants) {
+            if (ant.isQueenOfColony) {
+                return ant;
+            }
+        }
+
+        return null;
+    }
+
     deleteEntity(entityId) {
         let entityIndex = -1;
         for (let i = 0; i < this._entities.length; i++)  {
@@ -81,63 +132,16 @@ class World {
         }
     }
 
+    clear() {
+        this._entities = [];
+        this._colonies = [];
+    }
+
     _deleteColony(colony) {
         let index = this._colonies.indexOf(colony);
         if (index != -1) {
             this._colonies.splice(index, 1);
         }
-    }
-
-    findEntityById(id) {
-        return this._entities.find( entity => entity.id == id);
-    }
-
-    findColonyById(id) {
-        return this._colonies.find( colony => colony.id == id);
-    }
-
-    findColoniesByOwnerId(ownerId) {
-        return this._colonies.filter(colony => colony.ownerId == ownerId);
-    }
-
-    isAnyColonyByOwnerId(ownerId) {
-        return this._colonies.some(colony => colony.ownerId == ownerId);
-    }
-
-    isAnyAntByOwnerId(ownerId) {
-        return this._entities.some(entity => entity.type == EntityTypes.ANT && entity.ownerId == ownerId);
-    }
-
-    findColonyByOwnerId(ownerId) {
-        return this._colonies.find(colony => colony.ownerId == ownerId);
-    }
-
-    findAntsFromColony(colonyId) {
-        return this._entities.filter(e => e.type == EntityTypes.ANT && e.fromColony == colonyId);
-    }
-
-    findNestsFromColony(colonyId) {
-        return this._entities.filter(e => e.type == EntityTypes.NEST && e.fromColony == colonyId);
-    }
-
-    getQueenOfColony(colonyId) {
-        let ants = this.findAntsFromColony(colonyId);
-        for (let ant of ants) {
-            if (ant.isQueenOfColony) {
-                return ant;
-            }
-        }
-
-        return null;
-    }
-
-    findEntityByType(type) {
-        return this._entities.filter(e => e.type == type);
-    }
-
-    clear() {
-        this._entities = [];
-        this._colonies = [];
     }
 
     _onEntityDied(entity) {

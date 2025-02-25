@@ -110,6 +110,11 @@ class DomainFacade {
         return this._colonyService.buildMarker(type, point);
     }
 
+    findMyFirstNest() {
+        let userData = this.getUserData();
+        return this._worldService.findMyFirstNest(userData.id);
+    }
+
     /*======operations========*/
 
     stopOperation(colonyId, operationId) {

@@ -7,6 +7,7 @@ import { PanelView } from './panel';
 import { Camera } from './camera';
 import { WorldView } from './world';
 import { MapPickerMasterView } from './mapPickers/mapPickerMasterView';
+import { randomInt } from '@utils/randomInt';
 
 class AppView extends BaseHTMLView {
     constructor(el) {
@@ -44,7 +45,18 @@ class AppView extends BaseHTMLView {
 
     _onInitStepDone() {
         this._render();
+        this._showStartPosition();
         this.events.emit('ready');
+    }
+
+    _showStartPosition() {
+        let nest = this.$domainFacade.findMyFirstNest();
+        let worldSize = this.$domainFacade.getWorldSize();
+        let showingPosition = nest ? nest.position : {
+            x: randomInt(0, worldSize[0]),
+            y: randomInt(0, worldSize[1])
+        }
+        this.$eventBus.emit('showPointRequest', showingPosition);
     }
 }
 

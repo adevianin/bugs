@@ -235,6 +235,11 @@ class DomainFacade {
         return this._colonyService.buildMarker(type, point);
     }
 
+    findMyFirstNest() {
+        let userData = this.getUserData();
+        return this._worldService.findMyFirstNest(userData.id);
+    }
+
     /*======operations========*/
 
     stopOperation(colonyId, operationId) {
@@ -1746,7 +1751,7 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this._fortification = fortification;
         this.maxFortification = maxFortification;
         this._name = name;
-        this.isMain = isMain;
+        this._isMain = isMain;
 
         this._setIsBuilt(isBuilt)
     }
@@ -1768,6 +1773,9 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this.emit('fortificationChanged');
     }
 
+    get isMain() {
+        return this._isMain;
+    }
 
     rename(newName) {
         this._name = newName;
@@ -2313,6 +2321,57 @@ class World {
         this._colonies.push(colony);
     }
 
+    findEntityByType(type) {
+        return this._entities.filter(e => e.type == type);
+    }
+
+    findEntityById(id) {
+        return this._entities.find( entity => entity.id == id);
+    }
+
+    findColonyById(id) {
+        return this._colonies.find( colony => colony.id == id);
+    }
+
+    isAnyColonyByOwnerId(ownerId) {
+        return this._colonies.some(colony => colony.ownerId == ownerId);
+    }
+
+    isAnyAntByOwnerId(ownerId) {
+        return this._entities.some(entity => entity.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT && entity.ownerId == ownerId);
+    }
+
+    findAntsFromColony(colonyId) {
+        return this._entities.filter(e => e.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT && e.fromColony == colonyId);
+    }
+
+    findColonyByOwnerId(ownerId) {
+        return this._colonies.find(colony => colony.ownerId == ownerId);
+    }
+
+    findColoniesByOwnerId(ownerId) {
+        return this._colonies.filter(colony => colony.ownerId == ownerId);
+    }
+
+    findNestsFromColony(colonyId) {
+        return this._entities.filter(e => e.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST && e.fromColony == colonyId);
+    }
+
+    findNestsByOwner(ownerId) {
+        return this._entities.filter(e => e.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST && e.ownerId == ownerId);
+    }
+
+    getQueenOfColony(colonyId) {
+        let ants = this.findAntsFromColony(colonyId);
+        for (let ant of ants) {
+            if (ant.isQueenOfColony) {
+                return ant;
+            }
+        }
+
+        return null;
+    }
+
     deleteEntity(entityId) {
         let entityIndex = -1;
         for (let i = 0; i < this._entities.length; i++)  {
@@ -2327,63 +2386,16 @@ class World {
         }
     }
 
+    clear() {
+        this._entities = [];
+        this._colonies = [];
+    }
+
     _deleteColony(colony) {
         let index = this._colonies.indexOf(colony);
         if (index != -1) {
             this._colonies.splice(index, 1);
         }
-    }
-
-    findEntityById(id) {
-        return this._entities.find( entity => entity.id == id);
-    }
-
-    findColonyById(id) {
-        return this._colonies.find( colony => colony.id == id);
-    }
-
-    findColoniesByOwnerId(ownerId) {
-        return this._colonies.filter(colony => colony.ownerId == ownerId);
-    }
-
-    isAnyColonyByOwnerId(ownerId) {
-        return this._colonies.some(colony => colony.ownerId == ownerId);
-    }
-
-    isAnyAntByOwnerId(ownerId) {
-        return this._entities.some(entity => entity.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT && entity.ownerId == ownerId);
-    }
-
-    findColonyByOwnerId(ownerId) {
-        return this._colonies.find(colony => colony.ownerId == ownerId);
-    }
-
-    findAntsFromColony(colonyId) {
-        return this._entities.filter(e => e.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT && e.fromColony == colonyId);
-    }
-
-    findNestsFromColony(colonyId) {
-        return this._entities.filter(e => e.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST && e.fromColony == colonyId);
-    }
-
-    getQueenOfColony(colonyId) {
-        let ants = this.findAntsFromColony(colonyId);
-        for (let ant of ants) {
-            if (ant.isQueenOfColony) {
-                return ant;
-            }
-        }
-
-        return null;
-    }
-
-    findEntityByType(type) {
-        return this._entities.filter(e => e.type == type);
-    }
-
-    clear() {
-        this._entities = [];
-        this._colonies = [];
     }
 
     _onEntityDied(entity) {
@@ -3184,6 +3196,21 @@ class WorldService {
         return allAnts.filter(ant => ant.ownerId == userId && ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN && ant.isInNuptialFlight);
     }
 
+    findMyFirstNest(userId) {
+        let myNests = this._world.findNestsByOwner(userId);
+        for (let nest of myNests) {
+            if (nest.isMain) {
+                return nest;
+            }
+        }
+
+        if (myNests.length > 0) {
+            return myNests[0];
+        } else {
+            return null;
+        }
+    }
+
 }
 
 
@@ -3854,6 +3881,25 @@ class EventEmitter extends (events__WEBPACK_IMPORTED_MODULE_0___default()) {
 
 /***/ }),
 
+/***/ "./gameApp/src/utils/randomInt.js":
+/*!****************************************!*\
+  !*** ./gameApp/src/utils/randomInt.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   randomInt: () => (/* binding */ randomInt)
+/* harmony export */ });
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) 
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/utils/readInitialData.js":
 /*!**********************************************!*\
   !*** ./gameApp/src/utils/readInitialData.js ***!
@@ -3944,6 +3990,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _camera__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./camera */ "./gameApp/src/view/camera.js");
 /* harmony import */ var _world__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./world */ "./gameApp/src/view/world/index.js");
 /* harmony import */ var _mapPickers_mapPickerMasterView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./mapPickers/mapPickerMasterView */ "./gameApp/src/view/mapPickers/mapPickerMasterView.js");
+/* harmony import */ var _utils_randomInt__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @utils/randomInt */ "./gameApp/src/utils/randomInt.js");
+
 
 
 
@@ -3990,7 +4038,18 @@ class AppView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLVi
 
     _onInitStepDone() {
         this._render();
+        this._showStartPosition();
         this.events.emit('ready');
+    }
+
+    _showStartPosition() {
+        let nest = this.$domainFacade.findMyFirstNest();
+        let worldSize = this.$domainFacade.getWorldSize();
+        let showingPosition = nest ? nest.position : {
+            x: (0,_utils_randomInt__WEBPACK_IMPORTED_MODULE_9__.randomInt)(0, worldSize[0]),
+            y: (0,_utils_randomInt__WEBPACK_IMPORTED_MODULE_9__.randomInt)(0, worldSize[1])
+        }
+        this.$eventBus.emit('showPointRequest', showingPosition);
     }
 }
 
