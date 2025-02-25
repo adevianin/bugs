@@ -4063,7 +4063,7 @@ class BaseHTMLView extends _baseView__WEBPACK_IMPORTED_MODULE_1__.BaseView {
     }
 
     toggle(isEnabled) {
-        this._el.classList.toggle('hidden', !isEnabled);
+        this._el.classList.toggle('g-hidden', !isEnabled);
     }
 
     remove() {
@@ -4633,12 +4633,12 @@ class BorderView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
     }
 
     activate(text) {
-        this._el.classList.remove('hidden');
+        this._el.classList.remove('g-hidden');
         this._textEl.innerHTML = text;
     }
 
     deactivate() {
-        this._el.classList.add('hidden');
+        this._el.classList.add('g-hidden');
     }
 
 }
@@ -6022,16 +6022,16 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         if (isEmpty) {
             this._coloniesList.toggle(false);
             this._colonyManager.toggle(false);
-            this._noColoniesPlaceholderEl.classList.remove('hidden');
+            this._noColoniesPlaceholderEl.classList.remove('g-hidden');
         } else {
             this._coloniesList.toggle(true);
             this._colonyManager.toggle(true);
-            this._noColoniesPlaceholderEl.classList.add('hidden');
+            this._noColoniesPlaceholderEl.classList.add('g-hidden');
         }
     }
 
     _renderBornNewAntaraBtnState() {
-        this._bornNewAntaraBtn.classList.toggle('hidden', this.$domainFacade.isAnyMyAnt());
+        this._bornNewAntaraBtn.classList.toggle('g-hidden', this.$domainFacade.isAnyMyAnt());
     }
 
     _onBornNewAntaraBtnClick() {
@@ -6172,7 +6172,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
     }
 
     _renderActionBtns() {
-        this._nuptialFlightActionBtn.classList.toggle('hidden', !this._ant.canFlyNuptialFlight);
+        this._nuptialFlightActionBtn.classList.toggle('g-hidden', !this._ant.canFlyNuptialFlight);
     }
 
     _renderAge() {
@@ -6182,7 +6182,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
     }
 
     _renderProfileState() {
-        this._profileContainerEl.classList.toggle('hidden', !this._profileState);
+        this._profileContainerEl.classList.toggle('g-hidden', !this._profileState);
         this._profileBtn.innerHTML = this._profileState ? '-' : '+';
     }
 
@@ -8343,9 +8343,9 @@ class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MO
     }
 
     _toggleCreatorMode(isCreatorMode) {
-        this._newOperationsBtnsListEl.classList.toggle('hidden', isCreatorMode);
-        this._cancelOperationCreatingBtn.classList.toggle('hidden', !isCreatorMode);
-        this._operationCreatorPlaceholderEl.classList.toggle('hidden', !isCreatorMode);
+        this._newOperationsBtnsListEl.classList.toggle('g-hidden', isCreatorMode);
+        this._cancelOperationCreatingBtn.classList.toggle('g-hidden', !isCreatorMode);
+        this._operationCreatorPlaceholderEl.classList.toggle('g-hidden', !isCreatorMode);
     }
 
     _stopOperationCreating() {
@@ -8461,7 +8461,7 @@ class OperationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__
     _renderOperation() {
         this._nameEl.innerHTML = this._operation.name;
         this._statusEl.innerHTML = this._operation.status;
-        this._hiringProgressEl.classList.toggle('hidden', this._operation.status == 'in_progress');
+        this._hiringProgressEl.classList.toggle('g-hidden', this._operation.status == 'in_progress');
         let warriorsText = `warriors(${this._operation.hiredWarriorsCount}/${this._operation.warriorVacanciesCount})`
         let workersText = `workers(${this._operation.hiredWorkersCount}/${this._operation.workerVacanciesCount})`;
         this._hiringProgressEl.innerHTML = `${workersText} ${warriorsText}`;
@@ -9128,8 +9128,8 @@ class MalesSearchView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
     }
 
     _renderEmptyState(isEmpty) {
-        this._malesPlaceholder.classList.toggle('hidden', !isEmpty);
-        this._malesEl.classList.toggle('hidden', isEmpty);
+        this._malesPlaceholder.classList.toggle('g-hidden', !isEmpty);
+        this._malesEl.classList.toggle('g-hidden', isEmpty);
     }
 
     _renderChoosingMaleBtnsStatus() {
@@ -9817,11 +9817,11 @@ class SpecieGeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0_
     }
 
     _toggleActivationBtn(isActive) {
-        this._activateBtn.classList.toggle('hidden', !isActive);
+        this._activateBtn.classList.toggle('g-hidden', !isActive);
     }
 
     _toggleDeactivationBtn(isActive) {
-        this._deactivateBtn.classList.toggle('hidden', !isActive);
+        this._deactivateBtn.classList.toggle('g-hidden', !isActive);
     }
 
     _onActivateBtnClick() {
@@ -16208,7 +16208,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, `.hidden {
+___CSS_LOADER_EXPORT___.push([module.id, `.g-hidden {
     display: none !important
 }
 
@@ -16220,7 +16220,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.hidden {
 
 .g-table td {
     border: solid 1px;
-}`, "",{"version":3,"sources":["webpack://./common/styles.css"],"names":[],"mappings":"AAAA;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".hidden {\r\n    display: none !important\r\n}\r\n\r\n.g-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.g-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
+}`, "",{"version":3,"sources":["webpack://./common/styles.css"],"names":[],"mappings":"AAAA;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".g-hidden {\r\n    display: none !important\r\n}\r\n\r\n.g-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.g-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

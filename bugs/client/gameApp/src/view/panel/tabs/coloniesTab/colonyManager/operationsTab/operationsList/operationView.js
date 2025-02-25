@@ -35,7 +35,7 @@ class OperationView extends BaseHTMLView {
     _renderOperation() {
         this._nameEl.innerHTML = this._operation.name;
         this._statusEl.innerHTML = this._operation.status;
-        this._hiringProgressEl.classList.toggle('hidden', this._operation.status == 'in_progress');
+        this._hiringProgressEl.classList.toggle('g-hidden', this._operation.status == 'in_progress');
         let warriorsText = `warriors(${this._operation.hiredWarriorsCount}/${this._operation.warriorVacanciesCount})`
         let workersText = `workers(${this._operation.hiredWorkersCount}/${this._operation.workerVacanciesCount})`;
         this._hiringProgressEl.innerHTML = `${workersText} ${warriorsText}`;

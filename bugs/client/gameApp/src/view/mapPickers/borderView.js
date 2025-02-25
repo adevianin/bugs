@@ -17,12 +17,12 @@ class BorderView extends BaseHTMLView {
     }
 
     activate(text) {
-        this._el.classList.remove('hidden');
+        this._el.classList.remove('g-hidden');
         this._textEl.innerHTML = text;
     }
 
     deactivate() {
-        this._el.classList.add('hidden');
+        this._el.classList.add('g-hidden');
     }
 
 }

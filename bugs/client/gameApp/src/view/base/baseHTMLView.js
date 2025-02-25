@@ -14,7 +14,7 @@ class BaseHTMLView extends BaseView {
     }
 
     toggle(isEnabled) {
-        this._el.classList.toggle('hidden', !isEnabled);
+        this._el.classList.toggle('g-hidden', !isEnabled);
     }
 
     remove() {

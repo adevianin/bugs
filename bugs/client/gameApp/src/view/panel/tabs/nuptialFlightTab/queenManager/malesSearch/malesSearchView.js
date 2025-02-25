@@ -46,8 +46,8 @@ class MalesSearchView extends BaseHTMLView {
     }
 
     _renderEmptyState(isEmpty) {
-        this._malesPlaceholder.classList.toggle('hidden', !isEmpty);
-        this._malesEl.classList.toggle('hidden', isEmpty);
+        this._malesPlaceholder.classList.toggle('g-hidden', !isEmpty);
+        this._malesEl.classList.toggle('g-hidden', isEmpty);
     }
 
     _renderChoosingMaleBtnsStatus() {

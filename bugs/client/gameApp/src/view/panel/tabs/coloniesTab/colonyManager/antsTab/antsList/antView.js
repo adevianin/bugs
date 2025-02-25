@@ -95,7 +95,7 @@ class AntView extends BaseHTMLView {
     }
 
     _renderActionBtns() {
-        this._nuptialFlightActionBtn.classList.toggle('hidden', !this._ant.canFlyNuptialFlight);
+        this._nuptialFlightActionBtn.classList.toggle('g-hidden', !this._ant.canFlyNuptialFlight);
     }
 
     _renderAge() {
@@ -105,7 +105,7 @@ class AntView extends BaseHTMLView {
     }
 
     _renderProfileState() {
-        this._profileContainerEl.classList.toggle('hidden', !this._profileState);
+        this._profileContainerEl.classList.toggle('g-hidden', !this._profileState);
         this._profileBtn.innerHTML = this._profileState ? '-' : '+';
     }
 

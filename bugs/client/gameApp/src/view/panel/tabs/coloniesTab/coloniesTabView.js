@@ -48,16 +48,16 @@ class ColoniesTabView extends BaseHTMLView {
         if (isEmpty) {
             this._coloniesList.toggle(false);
             this._colonyManager.toggle(false);
-            this._noColoniesPlaceholderEl.classList.remove('hidden');
+            this._noColoniesPlaceholderEl.classList.remove('g-hidden');
         } else {
             this._coloniesList.toggle(true);
             this._colonyManager.toggle(true);
-            this._noColoniesPlaceholderEl.classList.add('hidden');
+            this._noColoniesPlaceholderEl.classList.add('g-hidden');
         }
     }
 
     _renderBornNewAntaraBtnState() {
-        this._bornNewAntaraBtn.classList.toggle('hidden', this.$domainFacade.isAnyMyAnt());
+        this._bornNewAntaraBtn.classList.toggle('g-hidden', this.$domainFacade.isAnyMyAnt());
     }
 
     _onBornNewAntaraBtnClick() {

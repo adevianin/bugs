@@ -33,11 +33,11 @@ class SpecieGeneView extends BaseHTMLView {
     }
 
     _toggleActivationBtn(isActive) {
-        this._activateBtn.classList.toggle('hidden', !isActive);
+        this._activateBtn.classList.toggle('g-hidden', !isActive);
     }
 
     _toggleDeactivationBtn(isActive) {
-        this._deactivateBtn.classList.toggle('hidden', !isActive);
+        this._deactivateBtn.classList.toggle('g-hidden', !isActive);
     }
 
     _onActivateBtnClick() {

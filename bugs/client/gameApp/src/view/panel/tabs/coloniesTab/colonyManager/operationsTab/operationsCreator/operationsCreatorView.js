@@ -45,9 +45,9 @@ class OperationsCreatorView extends BaseHTMLView {
     }
 
     _toggleCreatorMode(isCreatorMode) {
-        this._newOperationsBtnsListEl.classList.toggle('hidden', isCreatorMode);
-        this._cancelOperationCreatingBtn.classList.toggle('hidden', !isCreatorMode);
-        this._operationCreatorPlaceholderEl.classList.toggle('hidden', !isCreatorMode);
+        this._newOperationsBtnsListEl.classList.toggle('g-hidden', isCreatorMode);
+        this._cancelOperationCreatingBtn.classList.toggle('g-hidden', !isCreatorMode);
+        this._operationCreatorPlaceholderEl.classList.toggle('g-hidden', !isCreatorMode);
     }
 
     _stopOperationCreating() {

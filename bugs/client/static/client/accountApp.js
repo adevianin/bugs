@@ -149,24 +149,24 @@ class AccountAppView {
 
     _switchMode(modeName) {
         this._clearFields();
-        this._loginTabEl.classList.toggle('hidden', modeName != 'login');
-        this._registrationTabEl.classList.toggle('hidden', modeName != 'register');
+        this._loginTabEl.classList.toggle('g-hidden', modeName != 'login');
+        this._registrationTabEl.classList.toggle('g-hidden', modeName != 'register');
     }
 
     _toggleNotCorrectLoginPassError(isShowed) {
-        this._notCorrectCredsErrorEl.classList.toggle('hidden', !isShowed);
+        this._notCorrectCredsErrorEl.classList.toggle('g-hidden', !isShowed);
     }
 
     _toggleDifferentPasswordsError(isShowed) {
-        this._passwordDifferentErrorEl.classList.toggle('hidden', !isShowed);
+        this._passwordDifferentErrorEl.classList.toggle('g-hidden', !isShowed);
     }
 
     _toggleUsernameIsntUniqueError(isShowed) {
-        this._usernameIsntUniqueErrorEl.classList.toggle('hidden', !isShowed);
+        this._usernameIsntUniqueErrorEl.classList.toggle('g-hidden', !isShowed);
     }
 
     _toggleRegSomethingWentWrongError(isShowed) {
-        this._registrationSomethingWrongErrorEl.classList.toggle('hidden', !isShowed);
+        this._registrationSomethingWrongErrorEl.classList.toggle('g-hidden', !isShowed);
     }
 
     _clearFields() {
@@ -177,7 +177,7 @@ class AccountAppView {
     }
 
     _toggle(isEnabled) {
-        this._el.classList.toggle('hidden', !isEnabled);
+        this._el.classList.toggle('g-hidden', !isEnabled);
     }
     
     _redirectToNext() {
@@ -353,7 +353,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, `.hidden {
+___CSS_LOADER_EXPORT___.push([module.id, `.g-hidden {
     display: none !important
 }
 
@@ -365,7 +365,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.hidden {
 
 .g-table td {
     border: solid 1px;
-}`, "",{"version":3,"sources":["webpack://./common/styles.css"],"names":[],"mappings":"AAAA;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".hidden {\r\n    display: none !important\r\n}\r\n\r\n.g-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.g-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
+}`, "",{"version":3,"sources":["webpack://./common/styles.css"],"names":[],"mappings":"AAAA;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".g-hidden {\r\n    display: none !important\r\n}\r\n\r\n.g-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.g-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

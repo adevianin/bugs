@@ -89,24 +89,24 @@ class AccountAppView {
 
     _switchMode(modeName) {
         this._clearFields();
-        this._loginTabEl.classList.toggle('hidden', modeName != 'login');
-        this._registrationTabEl.classList.toggle('hidden', modeName != 'register');
+        this._loginTabEl.classList.toggle('g-hidden', modeName != 'login');
+        this._registrationTabEl.classList.toggle('g-hidden', modeName != 'register');
     }
 
     _toggleNotCorrectLoginPassError(isShowed) {
-        this._notCorrectCredsErrorEl.classList.toggle('hidden', !isShowed);
+        this._notCorrectCredsErrorEl.classList.toggle('g-hidden', !isShowed);
     }
 
     _toggleDifferentPasswordsError(isShowed) {
-        this._passwordDifferentErrorEl.classList.toggle('hidden', !isShowed);
+        this._passwordDifferentErrorEl.classList.toggle('g-hidden', !isShowed);
     }
 
     _toggleUsernameIsntUniqueError(isShowed) {
-        this._usernameIsntUniqueErrorEl.classList.toggle('hidden', !isShowed);
+        this._usernameIsntUniqueErrorEl.classList.toggle('g-hidden', !isShowed);
     }
 
     _toggleRegSomethingWentWrongError(isShowed) {
-        this._registrationSomethingWrongErrorEl.classList.toggle('hidden', !isShowed);
+        this._registrationSomethingWrongErrorEl.classList.toggle('g-hidden', !isShowed);
     }
 
     _clearFields() {
@@ -117,7 +117,7 @@ class AccountAppView {
     }
 
     _toggle(isEnabled) {
-        this._el.classList.toggle('hidden', !isEnabled);
+        this._el.classList.toggle('g-hidden', !isEnabled);
     }
     
     _redirectToNext() {
