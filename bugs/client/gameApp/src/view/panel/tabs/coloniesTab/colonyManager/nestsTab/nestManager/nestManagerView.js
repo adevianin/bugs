@@ -14,6 +14,10 @@ class NestManagerView extends BaseHTMLView {
     }
 
     manageNest(nest) {
+        if (!nest) {
+            return;
+        }
+        
         this._eggTab.manageNest(nest);
         this._larvaTab.manageNest(nest);
         this._mainTab.manageNest(nest);

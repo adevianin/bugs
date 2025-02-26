@@ -7140,6 +7140,10 @@ class NestManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
     }
 
     manageNest(nest) {
+        if (!nest) {
+            return;
+        }
+        
         this._eggTab.manageNest(nest);
         this._larvaTab.manageNest(nest);
         this._mainTab.manageNest(nest);

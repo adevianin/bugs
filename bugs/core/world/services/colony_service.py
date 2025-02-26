@@ -40,6 +40,7 @@ class ColonyService(BaseService):
 
         colony_name = remove_non_alphanumeric_and_spaces(colony_name)
         new_colony = self._colony_factory.build_new_ant_colony(user_id, self._world.map, self._world.colony_relations_table, colony_name)
+        self._emit_action(ColonyBornAction.build(new_colony))
         new_colony.add_new_member(queen)
 
         def on_nest_found(nest: Nest):
@@ -49,7 +50,6 @@ class ColonyService(BaseService):
             nest.take_calories(FOOD_IN_NEW_COLONY_MAIN_NEST)
             self._world.add_new_colony(new_colony)
             self._event_bus.emit('colony_born', new_colony)
-            self._emit_action(ColonyBornAction.build(new_colony)) # found nest before new colony
 
         queen.found_nest(colony_name, True, nest_building_site, on_nest_found)
 
