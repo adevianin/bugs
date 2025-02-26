@@ -6320,7 +6320,7 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
         this._ants = this.$domainFacade.getAntsFromColony(this._colony.id);
 
         this._renderAnts();
-        this._renderMode();
+        this._renderNoAntsMode();
     }
 
     _render() {
@@ -6329,10 +6329,9 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
         this._noAntsPlaceholderEl = this._el.querySelector('[data-no-ants-placeholder]');
     }
 
-    _renderMode() {
+    _renderNoAntsMode() {
         let isAnyAnts = this._ants.length > 0;
         this._noAntsPlaceholderEl.classList.toggle('g-hidden', isAnyAnts);
-        this._antsContainerEl.classList.toggle('g-hidden', !isAnyAnts);
     }
 
     _renderAnts() {
@@ -6374,7 +6373,7 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
         if (this._isMyAnt(entity)) {
             this._removeAntFromList(entity.id);
         }
-        this._renderMode();
+        this._renderNoAntsMode();
     }
 
     _onSomeoneBorn(entity) {
@@ -6385,7 +6384,7 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
             this._ants.push(entity);
             this._renderAntView(entity);
         }
-        this._renderMode();
+        this._renderNoAntsMode();
     }
 
     _onSomeoneFlewNuptialFlight(ant) {
@@ -19178,7 +19177,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<table class=\"g-table\" data-ants-container>\r\n    <thead>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>тип</td>\r\n            <td>гніздо</td>\r\n            <td>guardian</td>\r\n            <td>cooperative</td>\r\n            <td>більше</td>\r\n        </tr>\r\n    </thead>\r\n</table>\r\n<div data-no-ants-placeholder>в колонії немає мурах</div>";
+var code = "<table class=\"g-table\" data-ants-container>\r\n    <thead>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>тип</td>\r\n            <td>гніздо</td>\r\n            <td>guardian</td>\r\n            <td>cooperative</td>\r\n            <td>більше</td>\r\n        </tr>\r\n    </thead>\r\n    <tr data-no-ants-placeholder>\r\n        <td colspan=\"6\">в колонії немає мурах</td>\r\n    </tr>\r\n</table>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

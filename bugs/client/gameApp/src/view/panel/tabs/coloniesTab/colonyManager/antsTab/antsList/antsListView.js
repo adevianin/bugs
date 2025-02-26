@@ -22,7 +22,7 @@ class AntsListView extends BaseHTMLView {
         this._ants = this.$domainFacade.getAntsFromColony(this._colony.id);
 
         this._renderAnts();
-        this._renderMode();
+        this._renderNoAntsMode();
     }
 
     _render() {
@@ -31,10 +31,9 @@ class AntsListView extends BaseHTMLView {
         this._noAntsPlaceholderEl = this._el.querySelector('[data-no-ants-placeholder]');
     }
 
-    _renderMode() {
+    _renderNoAntsMode() {
         let isAnyAnts = this._ants.length > 0;
         this._noAntsPlaceholderEl.classList.toggle('g-hidden', isAnyAnts);
-        this._antsContainerEl.classList.toggle('g-hidden', !isAnyAnts);
     }
 
     _renderAnts() {
@@ -76,7 +75,7 @@ class AntsListView extends BaseHTMLView {
         if (this._isMyAnt(entity)) {
             this._removeAntFromList(entity.id);
         }
-        this._renderMode();
+        this._renderNoAntsMode();
     }
 
     _onSomeoneBorn(entity) {
@@ -87,7 +86,7 @@ class AntsListView extends BaseHTMLView {
             this._ants.push(entity);
             this._renderAntView(entity);
         }
-        this._renderMode();
+        this._renderNoAntsMode();
     }
 
     _onSomeoneFlewNuptialFlight(ant) {
