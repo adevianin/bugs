@@ -6320,11 +6320,19 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
         this._ants = this.$domainFacade.getAntsFromColony(this._colony.id);
 
         this._renderAnts();
+        this._renderMode();
     }
 
     _render() {
         this._el.innerHTML = _antsListTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        this._antsContainerEl = this._el;
+        this._antsContainerEl = this._el.querySelector('[data-ants-container]');
+        this._noAntsPlaceholderEl = this._el.querySelector('[data-no-ants-placeholder]');
+    }
+
+    _renderMode() {
+        let isAnyAnts = this._ants.length > 0;
+        this._noAntsPlaceholderEl.classList.toggle('g-hidden', isAnyAnts);
+        this._antsContainerEl.classList.toggle('g-hidden', !isAnyAnts);
     }
 
     _renderAnts() {
@@ -6366,6 +6374,7 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
         if (this._isMyAnt(entity)) {
             this._removeAntFromList(entity.id);
         }
+        this._renderMode();
     }
 
     _onSomeoneBorn(entity) {
@@ -6376,6 +6385,7 @@ class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.
             this._ants.push(entity);
             this._renderAntView(entity);
         }
+        this._renderMode();
     }
 
     _onSomeoneFlewNuptialFlight(ant) {
@@ -19168,7 +19178,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<thead>\r\n    <tr>\r\n        <td>імя</td>\r\n        <td>тип</td>\r\n        <td>гніздо</td>\r\n        <td>guardian</td>\r\n        <td>cooperative</td>\r\n        <td>більше</td>\r\n    </tr>\r\n</thead>";
+var code = "<table class=\"g-table\" data-ants-container>\r\n    <thead>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>тип</td>\r\n            <td>гніздо</td>\r\n            <td>guardian</td>\r\n            <td>cooperative</td>\r\n            <td>більше</td>\r\n        </tr>\r\n    </thead>\r\n</table>\r\n<div data-no-ants-placeholder>в колонії немає мурах</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -19186,7 +19196,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<table class=\"g-table\" data-ants-list></table>";
+var code = "<div data-ants-list></div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
