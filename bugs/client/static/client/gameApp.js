@@ -5748,7 +5748,6 @@ class PanelView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Bas
         this._render();
 
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
-        this.$eventBus.on('bornNewAntaraBtnClick', this._onBornNewAntaraBtnClick.bind(this));
         this._handler.addEventListener('mousedown', this._onHandlerMousedown.bind(this));
     }
 
@@ -5780,8 +5779,8 @@ class PanelView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Bas
         this._ratingTab = new _tabs_ratingTab__WEBPACK_IMPORTED_MODULE_9__.RatingTabView(this._el.querySelector('[data-rating-tab]'));
 
         this._tabSwitcher = new _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'panel', [
+            { name: 'breeding', label: 'Розмноження', tab: this._nuptialFlightTab },
             { name: 'colonies', label: 'Колонії', tab: this._coloniesTab },
-            { name: 'nuptial_flight', label: 'Шлюбний політ', tab: this._nuptialFlightTab },
             { name: 'specie_builder', label: 'Вид', tab: this._specieBuildertTab },
             { name: 'notifications', label: 'Сповіщення', tab: this._notificationsTab },
             { name: 'rating', label: 'Рейтинг', tab: this._ratingTab },
@@ -5792,10 +5791,6 @@ class PanelView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Bas
     _onNestManageRequest(nest) {
         this._tabSwitcher.activateTab('colonies');
         this._coloniesTab.showNestManagerFor(nest);
-    }
-
-    _onBornNewAntaraBtnClick() {
-        this._tabSwitcher.activateTab('nuptial_flight');
     }
 
     _onHandlerMousedown() {
@@ -6039,9 +6034,6 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         this._coloniesList.events.on('selectedColonyChanged', this._manageSelectedColony.bind(this));
         this.$domainFacade.events.on('colonyBorn', this._renderMode.bind(this));
         this.$domainFacade.events.on('colonyDied', this._renderMode.bind(this));
-        this._bornNewAntaraBtn.addEventListener('click', this._onBornNewAntaraBtnClick.bind(this));
-        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
     }
 
     showNestManagerFor(nest){
@@ -6053,13 +6045,11 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
         this._el.innerHTML = _coloniesTab_html__WEBPACK_IMPORTED_MODULE_2__["default"];
 
         this._noColoniesPlaceholderEl = this._el.querySelector('[data-no-colonies-space-holder]');
-        this._bornNewAntaraBtn = this._el.querySelector('[data-born-new-antara]');
 
         this._coloniesList = new _coloniesList__WEBPACK_IMPORTED_MODULE_3__.ColoniesListView(this._el.querySelector('[data-colonies-list]'));
         this._colonyManager = new _colonyManager__WEBPACK_IMPORTED_MODULE_4__.ColonyManager(this._el.querySelector('[data-colony-manager]'));
 
         this._renderMode();
-        this._renderBornNewAntaraBtnState();
     }
 
     _manageSelectedColony() {
@@ -6076,27 +6066,6 @@ class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1
             this._coloniesList.toggle(true);
             this._colonyManager.toggle(true);
             this._noColoniesPlaceholderEl.classList.add('g-hidden');
-        }
-    }
-
-    _renderBornNewAntaraBtnState() {
-        this._bornNewAntaraBtn.classList.toggle('g-hidden', this.$domainFacade.isAnyMyAnt());
-    }
-
-    _onBornNewAntaraBtnClick() {
-        this.$domainFacade.bornNewAntara();
-        this.$eventBus.emit('bornNewAntaraBtnClick');
-    }
-
-    _onSomeoneDied(entity) {
-        if (this.$domainFacade.isMyAnt(entity) ) {
-            this._renderBornNewAntaraBtnState();
-        }
-    }
-
-    _onSomeoneBorn(entity) {
-        if (this.$domainFacade.isMyAnt(entity) ) {
-            this._renderBornNewAntaraBtnState();
         }
     }
 
@@ -9127,20 +9096,47 @@ class NuptialFlightTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MOD
         super(el);
 
         this._render();
+        
         this._queensList.events.on('selectedQueenChanged', this._manageSelectedQueen.bind(this));
+        this._bornNewAntaraBtn.addEventListener('click', this._onBornNewAntaraBtnClick.bind(this));
+        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
     }
 
     _render() {
         this._el.innerHTML = _nuptialFlightTab_html__WEBPACK_IMPORTED_MODULE_2__["default"];
+        this._bornNewAntaraBtn = this._el.querySelector('[data-born-new-antara]');
         this._queensList = new _queensList__WEBPACK_IMPORTED_MODULE_3__.QueensListView(this._el.querySelector('[data-queens-list]'));
         this._queenManager = new _queenManager__WEBPACK_IMPORTED_MODULE_4__.QueenManagerView(this._el.querySelector('[data-queen-manager]'));
         if (this._queensList.selectedQueen) {
             this._manageSelectedQueen();
         }
+
+        this._renderBornNewAntaraBtnState();
     }
 
     _manageSelectedQueen() {
         this._queenManager.manageQueen(this._queensList.selectedQueen);
+    }
+
+    _renderBornNewAntaraBtnState() {
+        this._bornNewAntaraBtn.classList.toggle('g-hidden', this.$domainFacade.isAnyMyAnt());
+    }
+
+    _onSomeoneDied(entity) {
+        if (this.$domainFacade.isMyAnt(entity) ) {
+            this._renderBornNewAntaraBtnState();
+        }
+    }
+
+    _onSomeoneBorn(entity) {
+        if (this.$domainFacade.isMyAnt(entity) ) {
+            this._renderBornNewAntaraBtnState();
+        }
+    }
+
+    _onBornNewAntaraBtnClick() {
+        this.$domainFacade.bornNewAntara();
     }
 }
 
@@ -19141,7 +19137,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<ul data-colonies-list class=\"colonies-list\"></ul>\r\n<div data-colony-manager class=\"colony_manager\" ></div>\r\n<div data-no-colonies-space-holder>\r\n    немає колоній\r\n    <button data-born-new-antara>народить нову королеву</button>\r\n</div>";
+var code = "<ul data-colonies-list class=\"colonies-list\"></ul>\r\n<div data-colony-manager class=\"colony_manager\" ></div>\r\n<div data-no-colonies-space-holder>\r\n    немає колоній\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -19681,7 +19677,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<ul class=\"queens-list\" data-queens-list></ul>\r\n<div class=\"queen-manager\" data-queen-manager></div>";
+var code = "<ul class=\"queens-list\" data-queens-list></ul>\r\n<div class=\"queen-manager\" data-queen-manager></div>\r\n<div data-no-colonies-space-holder>\r\n    немає колоній\r\n    <button data-born-new-antara>народить нову королеву</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

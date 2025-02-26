@@ -20,7 +20,6 @@ class PanelView extends BaseHTMLView {
         this._render();
 
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
-        this.$eventBus.on('bornNewAntaraBtnClick', this._onBornNewAntaraBtnClick.bind(this));
         this._handler.addEventListener('mousedown', this._onHandlerMousedown.bind(this));
     }
 
@@ -52,8 +51,8 @@ class PanelView extends BaseHTMLView {
         this._ratingTab = new RatingTabView(this._el.querySelector('[data-rating-tab]'));
 
         this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'panel', [
+            { name: 'breeding', label: 'Розмноження', tab: this._nuptialFlightTab },
             { name: 'colonies', label: 'Колонії', tab: this._coloniesTab },
-            { name: 'nuptial_flight', label: 'Шлюбний політ', tab: this._nuptialFlightTab },
             { name: 'specie_builder', label: 'Вид', tab: this._specieBuildertTab },
             { name: 'notifications', label: 'Сповіщення', tab: this._notificationsTab },
             { name: 'rating', label: 'Рейтинг', tab: this._ratingTab },
@@ -64,10 +63,6 @@ class PanelView extends BaseHTMLView {
     _onNestManageRequest(nest) {
         this._tabSwitcher.activateTab('colonies');
         this._coloniesTab.showNestManagerFor(nest);
-    }
-
-    _onBornNewAntaraBtnClick() {
-        this._tabSwitcher.activateTab('nuptial_flight');
     }
 
     _onHandlerMousedown() {

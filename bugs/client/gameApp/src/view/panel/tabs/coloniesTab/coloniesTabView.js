@@ -14,9 +14,6 @@ class ColoniesTabView extends BaseHTMLView {
         this._coloniesList.events.on('selectedColonyChanged', this._manageSelectedColony.bind(this));
         this.$domainFacade.events.on('colonyBorn', this._renderMode.bind(this));
         this.$domainFacade.events.on('colonyDied', this._renderMode.bind(this));
-        this._bornNewAntaraBtn.addEventListener('click', this._onBornNewAntaraBtnClick.bind(this));
-        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
     }
 
     showNestManagerFor(nest){
@@ -28,13 +25,11 @@ class ColoniesTabView extends BaseHTMLView {
         this._el.innerHTML = coloniesTabTmpl;
 
         this._noColoniesPlaceholderEl = this._el.querySelector('[data-no-colonies-space-holder]');
-        this._bornNewAntaraBtn = this._el.querySelector('[data-born-new-antara]');
 
         this._coloniesList = new ColoniesListView(this._el.querySelector('[data-colonies-list]'));
         this._colonyManager = new ColonyManager(this._el.querySelector('[data-colony-manager]'));
 
         this._renderMode();
-        this._renderBornNewAntaraBtnState();
     }
 
     _manageSelectedColony() {
@@ -51,27 +46,6 @@ class ColoniesTabView extends BaseHTMLView {
             this._coloniesList.toggle(true);
             this._colonyManager.toggle(true);
             this._noColoniesPlaceholderEl.classList.add('g-hidden');
-        }
-    }
-
-    _renderBornNewAntaraBtnState() {
-        this._bornNewAntaraBtn.classList.toggle('g-hidden', this.$domainFacade.isAnyMyAnt());
-    }
-
-    _onBornNewAntaraBtnClick() {
-        this.$domainFacade.bornNewAntara();
-        this.$eventBus.emit('bornNewAntaraBtnClick');
-    }
-
-    _onSomeoneDied(entity) {
-        if (this.$domainFacade.isMyAnt(entity) ) {
-            this._renderBornNewAntaraBtnState();
-        }
-    }
-
-    _onSomeoneBorn(entity) {
-        if (this.$domainFacade.isMyAnt(entity) ) {
-            this._renderBornNewAntaraBtnState();
         }
     }
 
