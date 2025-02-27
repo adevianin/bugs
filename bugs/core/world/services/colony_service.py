@@ -11,7 +11,7 @@ from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.settings import (NEW_EGG_FOOD_COST, LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT, 
                                  MAX_DISTANCE_TO_OPERATION_TARGET, FOOD_IN_NEW_COLONY_MAIN_NEST)
 from core.world.messages import Messages
-from core.world.utils.remove_non_alphanumeric_and_spaces import remove_non_alphanumeric_and_spaces
+from core.world.utils.clean_string import clean_string
 from core.world.exceptions import GameRuleError, EntityNotFoundError
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.action.colony_born_action import ColonyBornAction
@@ -38,7 +38,7 @@ class ColonyService(BaseService):
         male = nuptial_environment.get_male(nuptial_male_id)
         queen.fertilize(male)
 
-        colony_name = remove_non_alphanumeric_and_spaces(colony_name)
+        colony_name = clean_string(colony_name)
         new_colony = self._colony_factory.build_new_ant_colony(user_id, self._world.map, self._world.colony_relations_table, colony_name)
         self._emit_action(ColonyBornAction.build(new_colony))
         new_colony.add_new_member(queen)
@@ -110,7 +110,7 @@ class ColonyService(BaseService):
         if len(sub_nests) >= MAX_SUB_NEST_COUNT:
             return Messages.CANT_BUILD_MORE_SUB_NEST
         
-        nest_name = remove_non_alphanumeric_and_spaces(nest_name)
+        nest_name = clean_string(nest_name)
         
         operation = self._operation_factory.build_build_new_sub_nest_operation(nest_name, position, workers_count, warriors_count)
 
