@@ -9545,6 +9545,15 @@ class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
         }
     }
 
+    _addQueen(queen) {
+        this._queens.push(queen);
+        this._renderIsEmptyState();
+        this._renderChoosingBtnsState();
+        if (!this._hasSelectedQueen) {
+            this._selectQueen(0);
+        }
+    }
+
     _onPrevBtnClick() {
         this._selectQueen(this._selectedQueenIndex - 1);
     }
@@ -9561,12 +9570,7 @@ class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
     _onQueenFlewNuptialFlight(queen) {
         let isMyQueen = this.$domainFacade.isEntityMy(queen);
         if (isMyQueen) {
-            this._queens.push(queen);
-            this._renderIsEmptyState();
-            if (!this._hasSelectedQueen) {
-                this._selectQueen(0);
-            }
-            this._renderChoosingBtnsState();
+            this._addQueen(queen);
         }
     }
 
