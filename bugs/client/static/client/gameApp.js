@@ -9463,7 +9463,7 @@ class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
         this._render();
 
         this.$domainFacade.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
-        // this.$domainFacade.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
+        this.$domainFacade.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
         this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
         this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
 
@@ -9580,6 +9580,12 @@ class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
     _onSomeoneBorn(someone) {
         if (this.$domainFacade.isMyAnt(someone)) {
             this._renderBornAntaraBtnState();
+        }
+    }
+
+    _onQueenFlewNuptialFlightBack(queen) {
+        if (this.$domainFacade.isMyAnt(queen)) {
+            this._removeQueen(queen);
         }
     }
 
