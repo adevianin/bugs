@@ -1,5 +1,5 @@
 from core.world.settings import (NEW_EGG_FOOD_COST, STEPS_IN_YEAR, SPRING_START_YEAR_STEP, SUMMER_START_YEAR_STEP, AUTUMN_START_YEAR_STEP, WINTER_START_YEAR_STEP,
-                                 LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT, MAX_DISTANCE_TO_OPERATION_TARGET)
+                                 LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT, MAX_DISTANCE_TO_OPERATION_TARGET, NUPTIAL_FLIGHT_SEASONS)
 from core.world.entities.ant.base.nuptial_environment.specie_builder.required_genes_list import REQUIRED_GENES
 from core.world.entities.colony.colonies.ant_colony.operation.build_new_sub_nest_operation import BuildNewSubNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.destroy_nest_operation import DestroyNestOperation
@@ -18,6 +18,7 @@ class ConstantsClientSerializer():
             'AUTUMN_START_YEAR_STEP': AUTUMN_START_YEAR_STEP,
             'WINTER_START_YEAR_STEP': WINTER_START_YEAR_STEP,
             'LAY_EGG_SEASONS': LAY_EGG_SEASONS,
+            'NUPTIAL_FLIGHT_SEASONS': NUPTIAL_FLIGHT_SEASONS,
             'MAX_DISTANCE_TO_SUB_NEST': MAX_DISTANCE_TO_SUB_NEST,
             'MAX_SUB_NEST_COUNT': MAX_SUB_NEST_COUNT,
             'REQUIRED_GENES': REQUIRED_GENES,

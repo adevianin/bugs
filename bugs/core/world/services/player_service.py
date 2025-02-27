@@ -10,6 +10,7 @@ from core.world.entities.ant.base.nuptial_environment.specie_builder.specie impo
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment_factory import NuptialEnvironmentFactory
 from core.world.entities.world.player_stats_factory import PlayerStatsFactory
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
+from core.world.exceptions import GameRuleError
 
 from typing import Callable
 
@@ -26,16 +27,11 @@ class PlayerService(BaseService):
             self._build_starter_pack_for_player(player_id)
 
     def born_new_antara(self, player_id: int):
-        player_ant_colonies = self._get_ant_colonies_by_owner(player_id)
-
-        if len(player_ant_colonies) > 0:
-            return
-        
         owner_filter: Callable[[Ant], bool] = lambda ant: ant.owner_id == player_id
         player_ants = self._world.map.get_entities(entity_types=[EntityTypes.ANT], filter=owner_filter)
 
         if len(player_ants) > 0:
-            return
+            raise GameRuleError('cant born antara with another ants')
         
         def on_antara_born(queen: QueenAnt):
             queen.fly_nuptial_flight()

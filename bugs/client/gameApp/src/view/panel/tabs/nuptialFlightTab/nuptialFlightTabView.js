@@ -1,8 +1,7 @@
 import './style.css';
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import nuptialFlightTabTmpl from './nuptialFlightTab.html';
-import { QueensListView } from "./queensList"; 
-import { QueenManagerView } from "./queenManager";
+import { BreedingManagerView } from './breedingManager/breedinManagerView';
 
 class NuptialFlightTabView extends BaseHTMLView {
 
@@ -10,42 +9,48 @@ class NuptialFlightTabView extends BaseHTMLView {
         super(el);
 
         this._render();
-        
-        this._queensList.events.on('selectedQueenChanged', this._manageSelectedQueen.bind(this));
-        this._bornNewAntaraBtn.addEventListener('click', this._onBornNewAntaraBtnClick.bind(this));
+
+        this.$domainFacade.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
         this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
         this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this._bornNewAntaraBtn.addEventListener('click', this._onBornNewAntaraBtnClick.bind(this));
     }
 
     _render() {
         this._el.innerHTML = nuptialFlightTabTmpl;
-        this._bornNewAntaraBtn = this._el.querySelector('[data-born-new-antara]');
-        this._queensList = new QueensListView(this._el.querySelector('[data-queens-list]'));
-        this._queenManager = new QueenManagerView(this._el.querySelector('[data-queen-manager]'));
-        if (this._queensList.selectedQueen) {
-            this._manageSelectedQueen();
-        }
 
-        this._renderBornNewAntaraBtnState();
+        this._nuptialFlightModeEl = this._el.querySelector('[data-nuptial-flight-mode]');
+        this._bornNewAntaraModeEl = this._el.querySelector('[data-born-new-antara-mode]');
+        this._waitingNuptialFlightModeEl = this._el.querySelector('[data-waiting-nuptial-flight-mode]');
+        this._bornNewAntaraBtn = this._el.querySelector('[data-born-new-antara-btn]');
+
+        this._breedingManagerView = new BreedingManagerView(this._el.querySelector('[data-breeding-manager]'));
+
+        this._renderTabMode();
     }
 
-    _manageSelectedQueen() {
-        this._queenManager.manageQueen(this._queensList.selectedQueen);
+    _renderTabMode() {
+        let isNuptialSeason = this.$domainFacade.world.isNuptialSeasonNow;
+        let isAnyAnt = this.$domainFacade.isAnyMyAnt();
+
+        this._nuptialFlightModeEl.classList.toggle('g-hidden', !isNuptialSeason || !isAnyAnt);
+        this._bornNewAntaraModeEl.classList.toggle('g-hidden', !isNuptialSeason || isAnyAnt);
+        this._waitingNuptialFlightModeEl.classList.toggle('g-hidden', isNuptialSeason);
     }
 
-    _renderBornNewAntaraBtnState() {
-        this._bornNewAntaraBtn.classList.toggle('g-hidden', this.$domainFacade.isAnyMyAnt());
+    _onSeasonChanged() {
+        this._renderTabMode();
     }
 
     _onSomeoneDied(entity) {
         if (this.$domainFacade.isMyAnt(entity) ) {
-            this._renderBornNewAntaraBtnState();
+            this._renderTabMode();
         }
     }
 
     _onSomeoneBorn(entity) {
         if (this.$domainFacade.isMyAnt(entity) ) {
-            this._renderBornNewAntaraBtnState();
+            this._renderTabMode();
         }
     }
 

@@ -24,7 +24,7 @@ class NuptialEnvironmentService extends EventEmitter {
 
     init(specieJson, nuptialMalesJson) {
         this._initSpecie(specieJson);
-        this._initMales(nuptialMalesJson);
+        this._setMales(nuptialMalesJson);
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
@@ -50,7 +50,8 @@ class NuptialEnvironmentService extends EventEmitter {
         this._stopListenSpecieChange = this._specie.on('specieSchemaChanged', this._onSpecieSchemaChanged.bind(this));
     }
 
-    _initMales(nuptialMalesJson) {
+    _setMales(nuptialMalesJson) {
+        this._nuptialMales = [];
         for (let maleJson of nuptialMalesJson) {
             let male = this._nuptialEnvironmentFactory.buildNuptialMale(maleJson);
             this._nuptialMales.push(male);
@@ -66,7 +67,7 @@ class NuptialEnvironmentService extends EventEmitter {
     }
 
     _playChangedMalesAction(action) {
-        this._initMales(action.males);
+        this._setMales(action.males);
         this._emitMalesChanged();
     }
 

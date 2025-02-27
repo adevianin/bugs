@@ -16,17 +16,27 @@ class GenomeView extends BaseHTMLView {
         this._render();
     }
 
+    setGenome(genome) {
+        this._genome = genome;
+        this._renderGenome();
+    }
+
     remove() {
         super.remove();
-        for (let geneView of this._genesViews) {
-            geneView.remove();
-        }
+        this._removeGeneViews();
     }
 
     _render() {
         this._el.innerHTML = genomeTmpl;
         this._el.classList.add('genome');
 
+        if (this._genome) {
+            this._renderGenome();
+        }
+    }
+
+    _renderGenome() {
+        this._removeGeneViews();
         this._renderChromosomeSet(this._el.querySelector('[data-maternal-chromosomes-set]'), this._genome.maternal, 'материнський набір хромосом');
         if (this._genome.paternal) {
             this._renderChromosomeSet(this._el.querySelector('[data-paternal-chromosomes-set]'), this._genome.paternal, 'батьківський набір хромосом');
@@ -57,6 +67,12 @@ class GenomeView extends BaseHTMLView {
         geneContainerEl.append(li);
         let view = new GeneView(li, gene);
         this._genesViews.push(view);
+    }
+
+    _removeGeneViews() {
+        for (let geneView of this._genesViews) {
+            geneView.remove();
+        }
     }
 
 }

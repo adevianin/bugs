@@ -51,6 +51,10 @@ class World {
         return this._climate;
     }
 
+    get isNuptialSeasonNow() {
+        return CONSTS.NUPTIAL_FLIGHT_SEASONS.indexOf(this.currentSeason) != -1;
+    }
+
     getAnts() {
         return this.findEntityByType(EntityTypes.ANT);
     }

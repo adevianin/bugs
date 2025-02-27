@@ -13,6 +13,21 @@ class GenomeInlineView extends BaseHTMLView {
         this._closingBtn.addEventListener('click', this._onToggleClosingBtnClick.bind(this));
     }
 
+    toggleDisabling(isDisabled) {
+        if (isDisabled) {
+            this._toggleClosing(true);
+        }
+        this._closingBtn.disabled = isDisabled;
+    }
+
+    close() {
+        this._toggleClosing(true);
+    }
+
+    setGenome(genome) {
+        this._genomView.setGenome(genome);
+    }
+
     _render() {
         this._el.innerHTML = genomeInlineTmpl;
         this._genomView = new GenomeView(this._el.querySelector('[data-genome]'), this._genome);
