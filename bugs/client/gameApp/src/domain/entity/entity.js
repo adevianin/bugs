@@ -147,12 +147,8 @@ class Entity extends EventEmitter {
 
     _playEntityDied(action) {
         this._setState('dead');
-        return new Promise((res) => {
-            setTimeout(() => {
-                this.die();
-                res();
-            }, 5000)
-        });
+        this.die();
+        return Promise.resolve();
     }
 
     _playEntityColonyChanged(action) {

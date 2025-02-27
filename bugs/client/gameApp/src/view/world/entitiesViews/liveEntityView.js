@@ -49,7 +49,9 @@ class LiveEntityView extends EntityView {
     }
 
     remove() {
-        super.remove();
+        setTimeout(() => {
+            super.remove();
+        }, 5000);
         this._unbindPositionChangedListener();
         this._unbindAngleChangedListener();
         this._unbindStateChangeListener();

@@ -1234,12 +1234,8 @@ class Entity extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
 
     _playEntityDied(action) {
         this._setState('dead');
-        return new Promise((res) => {
-            setTimeout(() => {
-                this.die();
-                res();
-            }, 5000)
-        });
+        this.die();
+        return Promise.resolve();
     }
 
     _playEntityColonyChanged(action) {
@@ -10517,7 +10513,9 @@ class LiveEntityView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView
     }
 
     remove() {
-        super.remove();
+        setTimeout(() => {
+            super.remove();
+        }, 5000);
         this._unbindPositionChangedListener();
         this._unbindAngleChangedListener();
         this._unbindStateChangeListener();
