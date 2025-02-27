@@ -46,9 +46,7 @@ class QueenSelectorView extends BaseHTMLView {
         this._renderChoosingBtnsState();
         this._renderBornAntaraBtnState();
 
-        if (this._queens.length > 0) {
-            this._selectQueen(0);
-        }
+        this._autoSelect();
     }
 
     _renderIsEmptyState() {
@@ -70,6 +68,12 @@ class QueenSelectorView extends BaseHTMLView {
         this._prevBtn.disabled = this._selectedQueenIndex == 0;
     }
 
+    _autoSelect() {
+        if (this._queens.length > 0) {
+            this._selectQueen(0);
+        }
+    }
+
     _selectQueen(index) {
         this._selectedQueenIndex = index;
         let queen = this._queens[index];
@@ -83,9 +87,7 @@ class QueenSelectorView extends BaseHTMLView {
         this._queens = this._queens.filter( q => q.id != queen.id);
         if (isRemovingSelectedQueen) {
             this._selectedQueenIndex = null;
-            if (this._queens.length > 0) {
-                this._selectQueen(0);
-            }
+            this._autoSelect();
             this._renderIsEmptyState();
         } else {
             let newIndex = this._queens.indexOf(selectedQueen);
