@@ -15,6 +15,9 @@ const uaMessages = {
     NO_NEST_TO_PILLAGE: 'Немає гнізда для пограбування',
     CANT_PILLAGE_WITHOUT_NEST_FOR_LOOT: 'Не можна грабувати гніздо не маючи гніздо для здобичі',
     NEST_TO_PILLAGE_IS_FAR_AWAY: 'Гніздо для грабування занадто далеко',
+    QUEEN_IS_NECESSARY_FOR_BREEDING: 'Для розмноження потрібна самка',
+    LIVE_QUEEN_IS_NECESSARY_FOR_BREEDING: 'Для розмноження потрібна жива самка',
+    MALE_IS_NECESSARY_FOR_BREEDING: 'Для розмноження потрібен самець',
 
     nothing_activity: 'нічим не займаюсь',
     preparing_for_hibernation_activity: 'готуюсь до зимової сплячки',
@@ -42,7 +45,10 @@ const uaMessages = {
     too_few_ants_to_attack: 'занадто мало мурах для атаки',
     choose_nest_for_pillage: 'мурахам треба вказати гніздо для грабування',
     choose_different_nests: 'мурахи можуть переносити їжу лише між різними гніздами',
-
+    min_str_length: 'мінімальна довжина {0}',
+    max_str_length: 'максимальна довжина {0}',
+    only_chars_and_digits: 'тільки букви та цифри',
+    queen_needs_place_to_settle: 'самкі треба вказать місце щоб заселиться',
 
     spring: 'весна',
     summer: 'літо',

@@ -27,6 +27,10 @@ class QueenSelectorView extends BaseHTMLView {
         return this._hasSelectedQueen ? this._queens[this._selectedQueenIndex].id : null;
     }
 
+    get queen() {
+        return this._hasSelectedQueen ? this._queens[this._selectedQueenIndex] : null;
+    }
+
     get _hasSelectedQueen() {
         return typeof this._selectedQueenIndex == 'number';
     }

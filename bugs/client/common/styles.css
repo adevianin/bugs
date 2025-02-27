@@ -11,3 +11,7 @@
 .g-table td {
     border: solid 1px;
 }
+
+.g-error-container {
+    color: red;
+}

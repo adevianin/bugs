@@ -1,18 +1,23 @@
 <div>
     <label>самка:</label>
     <div data-queen-selector></div>
+    <div class="g-error-container" data-queen-error-container></div>
 </div>
 <div>
     <label>самець:</label>
     <div data-males-search></div>
+    <div class="g-error-container" data-male-error-container></div>
 </div>
 <div>
-    назва колонії 
-    <input type="text" data-colony-name>
+    <label>назва колонії </label>
+    <input data-colony-name>
+    <div class="g-error-container" data-colony-name-error-container></div>
 </div>
 <div>
-    позиція гнізда:<div data-building-site></div>
+    <label>позиція гнізда:</label>
+    <div data-building-site></div>
     <button data-choose-nest-position>вибрать</button>
+    <div class="g-error-container" data-nest-position-error-container></div>
 </div>
 <div data-error-container></div>
-<button data-start> старт </button>
+<button data-start>старт</button>

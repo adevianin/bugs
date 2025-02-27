@@ -4,6 +4,7 @@ import { QueenSelectorView } from "./queenSelector/queenSelectorView";
 import { MaleSelectorView } from "./maleSelector/maleSelectorView";
 import { PositionView } from "@view/panel/base/position/positionView";
 import { MarkerTypes } from '@domain/enum/markerTypes';
+import { TextInputView } from "@view/panel/base/textInput/textInputView";
 
 class BreedingManagerView extends BaseHTMLView {
 
@@ -23,20 +24,92 @@ class BreedingManagerView extends BaseHTMLView {
         this._queenSelectorView = new QueenSelectorView(this._el.querySelector('[data-queen-selector]'));
         this._malesSelectorView = new MaleSelectorView(this._el.querySelector('[data-males-search]'));
         this._nestPositionView = new PositionView(this._el.querySelector('[data-building-site]'));
+        this._colonyNameView = new TextInputView(this._el.querySelector('[data-colony-name]'), this._el.querySelector('[data-colony-name-error-container]'));
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
-        this._colonyNameEl = this._el.querySelector('[data-colony-name]');
         this._startBtn = this._el.querySelector('[data-start]');
         this._errorContainerEl = this._el.querySelector('[data-error-container]');
         this._chooseNestPositionBtn = this._el.querySelector('[data-choose-nest-position]');
+        this._queenErrorContainerEl = this._el.querySelector('[data-queen-error-container]');
+        this._maleErrorContainerEl = this._el.querySelector('[data-male-error-container]');
+        this._nestPositionErrorContainerEl = this._el.querySelector('[data-nest-position-error-container]');
+    }
+
+    _validate() {
+        let isError = false;
+
+        if (!this._colonyNameView.validate()) {
+            isError = true;
+        }
+
+        let nestPositionErrId = this._validateNestPosition();
+        this._renderNestPositionError(nestPositionErrId);
+        if (nestPositionErrId) {
+            isError = true;
+        }
+
+        let queenErrorId = this._validateQueen();
+        this._renderQueenError(queenErrorId);
+        if (queenErrorId) {
+            isError = true;
+        }
+
+        let maleErrorId = this._validaMale();
+        this._renderMaleError(maleErrorId);
+        if (maleErrorId) {
+            isError = true;
+        }
+
+        return !isError;
+    }
+
+    _validateQueen() {
+        if (!this._queenSelectorView.queen) {
+            return 'QUEEN_IS_NECESSARY_FOR_BREEDING';
+        }
+
+        if (this._queenSelectorView.queen && this._queenSelectorView.queen.isDied) {
+            return 'LIVE_QUEEN_IS_NECESSARY_FOR_BREEDING';
+        }
+
+        return null;
+    }
+
+    _renderQueenError(queenErrorId) {
+        this._queenErrorContainerEl.innerHTML = queenErrorId ? this.$messages[queenErrorId] : '';
+    }
+
+    _validaMale() {
+        if (!this._malesSelectorView.selectedMale) {
+            return 'MALE_IS_NECESSARY_FOR_BREEDING';
+        }
+
+        return null;
+    }
+
+    _renderMaleError(errId) {
+        this._maleErrorContainerEl.innerHTML = errId ? this.$messages[errId] : '';
+    }
+
+    _validateNestPosition() {
+        if (!this._nestPositionView.value) {
+            return 'queen_needs_place_to_settle';
+        }
+
+        return null;
+    }
+
+    _renderNestPositionError(errId) {
+        this._nestPositionErrorContainerEl.innerHTML = errId ? this.$messages[errId] : '';
     }
 
     _onStartBtnClick() {
-        if (!this._queenSelectorView.queenId || !this._nestPositionView.value || !this._colonyNameEl.value || !this._malesSelectorView.selectedMale) {
-            return
+        if (!this._validate()) {
+            return;
         }
 
-        this.$domainFacade.foundColony(this._queenSelectorView.queenId, this._malesSelectorView.selectedMale.id, this._nestPositionView.value, this._colonyNameEl.value)
+        this.$domainFacade.foundColony(this._queenSelectorView.queen.id, this._malesSelectorView.selectedMale.id, this._nestPositionView.value, this._colonyNameView.value)
             .then(() => {
+                this.$eventBus.emit('showPointRequest', this._nestPositionView.value);
                 this._resetFields();
             })
             .catch((errId) => {
@@ -49,6 +122,8 @@ class BreedingManagerView extends BaseHTMLView {
             this._nestPositionView.value = null;
             this.$eventBus.emit('hideMarkersRequest');
         }
+
+        this._colonyNameView.value = '';
     }
 
     _onChooseNestPositionBtnClick() {

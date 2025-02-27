@@ -3890,6 +3890,27 @@ class EventEmitter extends (events__WEBPACK_IMPORTED_MODULE_0___default()) {
 
 /***/ }),
 
+/***/ "./gameApp/src/utils/formatMessage.js":
+/*!********************************************!*\
+  !*** ./gameApp/src/utils/formatMessage.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatMessage: () => (/* binding */ formatMessage)
+/* harmony export */ });
+// 'максимальна довжина {0} символів, від {1} до {2}'
+// formatMessage(str, 5, 10, 20)
+function formatMessage(template, ...values) {
+    return template.replace(/{(\d+)}/g, (_, index) => values[index] || '');
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/utils/randomInt.js":
 /*!****************************************!*\
   !*** ./gameApp/src/utils/randomInt.js ***!
@@ -4906,6 +4927,9 @@ const uaMessages = {
     NO_NEST_TO_PILLAGE: 'Немає гнізда для пограбування',
     CANT_PILLAGE_WITHOUT_NEST_FOR_LOOT: 'Не можна грабувати гніздо не маючи гніздо для здобичі',
     NEST_TO_PILLAGE_IS_FAR_AWAY: 'Гніздо для грабування занадто далеко',
+    QUEEN_IS_NECESSARY_FOR_BREEDING: 'Для розмноження потрібна самка',
+    LIVE_QUEEN_IS_NECESSARY_FOR_BREEDING: 'Для розмноження потрібна жива самка',
+    MALE_IS_NECESSARY_FOR_BREEDING: 'Для розмноження потрібен самець',
 
     nothing_activity: 'нічим не займаюсь',
     preparing_for_hibernation_activity: 'готуюсь до зимової сплячки',
@@ -4933,7 +4957,10 @@ const uaMessages = {
     too_few_ants_to_attack: 'занадто мало мурах для атаки',
     choose_nest_for_pillage: 'мурахам треба вказати гніздо для грабування',
     choose_different_nests: 'мурахи можуть переносити їжу лише між різними гніздами',
-
+    min_str_length: 'мінімальна довжина {0}',
+    max_str_length: 'максимальна довжина {0}',
+    only_chars_and_digits: 'тільки букви та цифри',
+    queen_needs_place_to_settle: 'самкі треба вказать місце щоб заселиться',
 
     spring: 'весна',
     summer: 'літо',
@@ -5784,6 +5811,86 @@ class TabSwitcher extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.B
         this.activateTab(tabName);
     }
 
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/panel/base/textInput/textInputView.js":
+/*!****************************************************************!*\
+  !*** ./gameApp/src/view/panel/base/textInput/textInputView.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   TextInputView: () => (/* binding */ TextInputView)
+/* harmony export */ });
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _utils_formatMessage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/formatMessage */ "./gameApp/src/utils/formatMessage.js");
+
+
+
+class TextInputView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, errContainer, minLength=3, maxLength=50) {
+        super(el);
+        this._minLength = minLength;
+        this._maxLength = maxLength;
+        this._regex = /^[a-zA-Zа-яА-ЯґҐєЄіІїЇ0-9 ]+$/;
+        this._errContainer = errContainer;
+
+        this._render();
+
+        this._el.addEventListener('change', this._onChange.bind(this));
+    }
+
+    get value() {
+        return this._el.value;
+    }
+
+    set value(val) {
+        this._el.value = val;
+    }
+
+    validate() {
+        let errorText = this._checkErrors();
+        this._renderError(errorText);
+
+        return !errorText;
+    }
+
+    _checkErrors() {
+        if (this.value.length < this._minLength) {
+            return (0,_utils_formatMessage__WEBPACK_IMPORTED_MODULE_1__.formatMessage)(this.$messages.min_str_length, this._minLength);
+        }
+
+        if (this.value.length > this._maxLength) {
+            return (0,_utils_formatMessage__WEBPACK_IMPORTED_MODULE_1__.formatMessage)(this.$messages.max_str_length, this._maxLength);
+        }
+
+        if (!this._regex.test(this.value)) {
+            return this.$messages.only_chars_and_digits;
+        }
+
+        return null;
+    }
+
+    _renderError(errText) {
+        this._errContainer.innerHTML = errText || '';
+    }
+
+    _render() {
+        this._el.setAttribute('type', 'text');
+        this._el.setAttribute('minlength', this._minLength);
+        this._el.setAttribute('maxlength', this._maxLength);
+    }
+
+    _onChange() {
+        this.validate();
+    }
 }
 
 
@@ -9170,6 +9277,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _maleSelector_maleSelectorView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./maleSelector/maleSelectorView */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleSelectorView.js");
 /* harmony import */ var _view_panel_base_position_positionView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/panel/base/position/positionView */ "./gameApp/src/view/panel/base/position/positionView.js");
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
+/* harmony import */ var _view_panel_base_textInput_textInputView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @view/panel/base/textInput/textInputView */ "./gameApp/src/view/panel/base/textInput/textInputView.js");
+
 
 
 
@@ -9195,20 +9304,92 @@ class BreedingManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
         this._queenSelectorView = new _queenSelector_queenSelectorView__WEBPACK_IMPORTED_MODULE_2__.QueenSelectorView(this._el.querySelector('[data-queen-selector]'));
         this._malesSelectorView = new _maleSelector_maleSelectorView__WEBPACK_IMPORTED_MODULE_3__.MaleSelectorView(this._el.querySelector('[data-males-search]'));
         this._nestPositionView = new _view_panel_base_position_positionView__WEBPACK_IMPORTED_MODULE_4__.PositionView(this._el.querySelector('[data-building-site]'));
+        this._colonyNameView = new _view_panel_base_textInput_textInputView__WEBPACK_IMPORTED_MODULE_6__.TextInputView(this._el.querySelector('[data-colony-name]'), this._el.querySelector('[data-colony-name-error-container]'));
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
-        this._colonyNameEl = this._el.querySelector('[data-colony-name]');
         this._startBtn = this._el.querySelector('[data-start]');
         this._errorContainerEl = this._el.querySelector('[data-error-container]');
         this._chooseNestPositionBtn = this._el.querySelector('[data-choose-nest-position]');
+        this._queenErrorContainerEl = this._el.querySelector('[data-queen-error-container]');
+        this._maleErrorContainerEl = this._el.querySelector('[data-male-error-container]');
+        this._nestPositionErrorContainerEl = this._el.querySelector('[data-nest-position-error-container]');
+    }
+
+    _validate() {
+        let isError = false;
+
+        if (!this._colonyNameView.validate()) {
+            isError = true;
+        }
+
+        let nestPositionErrId = this._validateNestPosition();
+        this._renderNestPositionError(nestPositionErrId);
+        if (nestPositionErrId) {
+            isError = true;
+        }
+
+        let queenErrorId = this._validateQueen();
+        this._renderQueenError(queenErrorId);
+        if (queenErrorId) {
+            isError = true;
+        }
+
+        let maleErrorId = this._validaMale();
+        this._renderMaleError(maleErrorId);
+        if (maleErrorId) {
+            isError = true;
+        }
+
+        return !isError;
+    }
+
+    _validateQueen() {
+        if (!this._queenSelectorView.queen) {
+            return 'QUEEN_IS_NECESSARY_FOR_BREEDING';
+        }
+
+        if (this._queenSelectorView.queen && this._queenSelectorView.queen.isDied) {
+            return 'LIVE_QUEEN_IS_NECESSARY_FOR_BREEDING';
+        }
+
+        return null;
+    }
+
+    _renderQueenError(queenErrorId) {
+        this._queenErrorContainerEl.innerHTML = queenErrorId ? this.$messages[queenErrorId] : '';
+    }
+
+    _validaMale() {
+        if (!this._malesSelectorView.selectedMale) {
+            return 'MALE_IS_NECESSARY_FOR_BREEDING';
+        }
+
+        return null;
+    }
+
+    _renderMaleError(errId) {
+        this._maleErrorContainerEl.innerHTML = errId ? this.$messages[errId] : '';
+    }
+
+    _validateNestPosition() {
+        if (!this._nestPositionView.value) {
+            return 'queen_needs_place_to_settle';
+        }
+
+        return null;
+    }
+
+    _renderNestPositionError(errId) {
+        this._nestPositionErrorContainerEl.innerHTML = errId ? this.$messages[errId] : '';
     }
 
     _onStartBtnClick() {
-        if (!this._queenSelectorView.queenId || !this._nestPositionView.value || !this._colonyNameEl.value || !this._malesSelectorView.selectedMale) {
-            return
+        if (!this._validate()) {
+            return;
         }
 
-        this.$domainFacade.foundColony(this._queenSelectorView.queenId, this._malesSelectorView.selectedMale.id, this._nestPositionView.value, this._colonyNameEl.value)
+        this.$domainFacade.foundColony(this._queenSelectorView.queen.id, this._malesSelectorView.selectedMale.id, this._nestPositionView.value, this._colonyNameView.value)
             .then(() => {
+                this.$eventBus.emit('showPointRequest', this._nestPositionView.value);
                 this._resetFields();
             })
             .catch((errId) => {
@@ -9221,6 +9402,8 @@ class BreedingManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
             this._nestPositionView.value = null;
             this.$eventBus.emit('hideMarkersRequest');
         }
+
+        this._colonyNameView.value = '';
     }
 
     _onChooseNestPositionBtnClick() {
@@ -9500,6 +9683,10 @@ class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
 
     get queenId() {
         return this._hasSelectedQueen ? this._queens[this._selectedQueenIndex].id : null;
+    }
+
+    get queen() {
+        return this._hasSelectedQueen ? this._queens[this._selectedQueenIndex] : null;
     }
 
     get _hasSelectedQueen() {
@@ -16427,7 +16614,11 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.g-hidden {
 
 .g-table td {
     border: solid 1px;
-}`, "",{"version":3,"sources":["webpack://./common/styles.css"],"names":[],"mappings":"AAAA;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".g-hidden {\r\n    display: none !important\r\n}\r\n\r\n.g-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.g-table td {\r\n    border: solid 1px;\r\n}"],"sourceRoot":""}]);
+}
+
+.g-error-container {
+    color: red;
+}`, "",{"version":3,"sources":["webpack://./common/styles.css"],"names":[],"mappings":"AAAA;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,UAAU;AACd","sourcesContent":[".g-hidden {\r\n    display: none !important\r\n}\r\n\r\n.g-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.g-table td {\r\n    border: solid 1px;\r\n}\r\n\r\n.g-error-container {\r\n    color: red;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -19704,7 +19895,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    <label>самка:</label>\r\n    <div data-queen-selector></div>\r\n</div>\r\n<div>\r\n    <label>самець:</label>\r\n    <div data-males-search></div>\r\n</div>\r\n<div>\r\n    назва колонії \r\n    <input type=\"text\" data-colony-name>\r\n</div>\r\n<div>\r\n    позиція гнізда:<div data-building-site></div>\r\n    <button data-choose-nest-position>вибрать</button>\r\n</div>\r\n<div data-error-container></div>\r\n<button data-start> старт </button>";
+var code = "<div>\r\n    <label>самка:</label>\r\n    <div data-queen-selector></div>\r\n    <div class=\"g-error-container\" data-queen-error-container></div>\r\n</div>\r\n<div>\r\n    <label>самець:</label>\r\n    <div data-males-search></div>\r\n    <div class=\"g-error-container\" data-male-error-container></div>\r\n</div>\r\n<div>\r\n    <label>назва колонії </label>\r\n    <input data-colony-name>\r\n    <div class=\"g-error-container\" data-colony-name-error-container></div>\r\n</div>\r\n<div>\r\n    <label>позиція гнізда:</label>\r\n    <div data-building-site></div>\r\n    <button data-choose-nest-position>вибрать</button>\r\n    <div class=\"g-error-container\" data-nest-position-error-container></div>\r\n</div>\r\n<div data-error-container></div>\r\n<button data-start>старт</button>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
