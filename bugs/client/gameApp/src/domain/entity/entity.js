@@ -16,6 +16,7 @@ class Entity extends EventEmitter {
         this._angle = angle;
         this._hp = hp;
         this._maxHp = maxHp;
+        this._isDied = false;
     }
 
     get isVisible() {
@@ -65,6 +66,10 @@ class Entity extends EventEmitter {
         return this._maxHp
     }
 
+    get isDied() {
+        return this._isDied;
+    }
+
     addAction(action) {
         this._actionStack.push(action);
         this.tryPlayNextAction();
@@ -104,6 +109,7 @@ class Entity extends EventEmitter {
     }
 
     die() {
+        this._isDied = true;
         this._emitToEventBus('entityDied');//to delete entity from world
         this.emit('died');//to delete view
     }

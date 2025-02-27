@@ -95,6 +95,19 @@ class QueenSelectorView extends BaseHTMLView {
         }
     }
 
+    _findAndRemoveDied() {
+        let diedQueens = [];
+        for (let queen of this._queens) {
+            if (queen.isDied) {
+                diedQueens.push(queen);
+            }
+        }
+
+        for (let queen of diedQueens) {
+            this._removeQueen(queen);
+        }
+    }
+
     _addQueen(queen) {
         this._queens.push(queen);
         this._renderIsEmptyState();
@@ -106,10 +119,12 @@ class QueenSelectorView extends BaseHTMLView {
 
     _onPrevBtnClick() {
         this._selectQueen(this._selectedQueenIndex - 1);
+        this._findAndRemoveDied();
     }
 
     _onNextBtnClick() {
         this._selectQueen(this._selectedQueenIndex + 1);
+        this._findAndRemoveDied();
     }
 
     _checkIdInQueensList(id) {
@@ -128,7 +143,10 @@ class QueenSelectorView extends BaseHTMLView {
         if (this.$domainFacade.isMyAnt(someone)) {
             this._renderBornAntaraBtnState();
             if (this._checkIdInQueensList(someone.id)) {
-                this._removeQueen(someone);
+                let isDiedSelectedQueen = this.queenId == someone.id;
+                if (!this.isVisible() || !isDiedSelectedQueen) {
+                    this._removeQueen(someone);
+                }
             }
         }
     }

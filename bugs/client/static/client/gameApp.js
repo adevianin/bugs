@@ -1103,6 +1103,7 @@ class Entity extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
         this._angle = angle;
         this._hp = hp;
         this._maxHp = maxHp;
+        this._isDied = false;
     }
 
     get isVisible() {
@@ -1152,6 +1153,10 @@ class Entity extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
         return this._maxHp
     }
 
+    get isDied() {
+        return this._isDied;
+    }
+
     addAction(action) {
         this._actionStack.push(action);
         this.tryPlayNextAction();
@@ -1191,6 +1196,7 @@ class Entity extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitt
     }
 
     die() {
+        this._isDied = true;
         this._emitToEventBus('entityDied');//to delete entity from world
         this.emit('died');//to delete view
     }
@@ -4131,10 +4137,15 @@ class BaseHTMLView extends _baseView__WEBPACK_IMPORTED_MODULE_1__.BaseView {
         this._el.classList.toggle('g-hidden', !isEnabled);
     }
 
+    isVisible() {
+        return this._el.closest('.g-hidden') === null;
+    }
+
     remove() {
         this._el.remove();
         this.events.removeAllListeners();
     }
+
 }
 
 
@@ -9407,6 +9418,8 @@ class QueenProfileView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         super(el);
 
         this._render();
+
+        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
     }
 
     showQueen(queen) {
@@ -9414,6 +9427,7 @@ class QueenProfileView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._queenStatsView.setStats(queen.stats);
         this._queenGenomeView.setGenome(queen.genome);
         this._nameEl.innerHTML = queen.name;
+        this._renderIsDied();
     }
 
     _render() {
@@ -9422,10 +9436,21 @@ class QueenProfileView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._queenStatsEl = this._el.querySelector('[data-queen-stats]');
         this._queenGenomeEl = this._el.querySelector('[data-queen-genome]');
         this._nameEl = this._el.querySelector('[data-name]');
+        this._isDiedMarkerEl = this._el.querySelector('[data-is-died-marker]');
 
         this._queenStatsView = new _view_panel_base_antStats_antStatsView__WEBPACK_IMPORTED_MODULE_3__.AntStatsView();
         this._queenStatsEl.appendChild(this._queenStatsView.el);
         this._queenGenomeView = new _view_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_2__.GenomeInlineView(this._queenGenomeEl);
+    }
+
+    _renderIsDied() {
+        this._isDiedMarkerEl.classList.toggle('g-hidden', !this._queen.isDied);
+    }
+
+    _onSomeoneDied(someone) {
+        if (this._queen && someone.id == this._queen.id) {
+            this._renderIsDied();
+        }
     }
 
 }
@@ -9545,6 +9570,19 @@ class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
         }
     }
 
+    _findAndRemoveDied() {
+        let diedQueens = [];
+        for (let queen of this._queens) {
+            if (queen.isDied) {
+                diedQueens.push(queen);
+            }
+        }
+
+        for (let queen of diedQueens) {
+            this._removeQueen(queen);
+        }
+    }
+
     _addQueen(queen) {
         this._queens.push(queen);
         this._renderIsEmptyState();
@@ -9556,10 +9594,12 @@ class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
 
     _onPrevBtnClick() {
         this._selectQueen(this._selectedQueenIndex - 1);
+        this._findAndRemoveDied();
     }
 
     _onNextBtnClick() {
         this._selectQueen(this._selectedQueenIndex + 1);
+        this._findAndRemoveDied();
     }
 
     _checkIdInQueensList(id) {
@@ -9578,7 +9618,10 @@ class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
         if (this.$domainFacade.isMyAnt(someone)) {
             this._renderBornAntaraBtnState();
             if (this._checkIdInQueensList(someone.id)) {
-                this._removeQueen(someone);
+                let isDiedSelectedQueen = this.queenId == someone.id;
+                if (!this.isVisible() || !isDiedSelectedQueen) {
+                    this._removeQueen(someone);
+                }
             }
         }
     }
@@ -19715,7 +19758,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-name></div>\r\n<div>\r\n    <label>стати:</label>\r\n    <div data-queen-stats></div>\r\n</div>\r\n<div>\r\n    <label>геном:</label>\r\n    <div data-queen-genome></div>\r\n</div>";
+var code = "<div data-is-died-marker>DIED!!!</div>\r\n<div data-name></div>\r\n<div>\r\n    <label>стати:</label>\r\n    <div data-queen-stats></div>\r\n</div>\r\n<div>\r\n    <label>геном:</label>\r\n    <div data-queen-genome></div>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

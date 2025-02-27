@@ -17,10 +17,15 @@ class BaseHTMLView extends BaseView {
         this._el.classList.toggle('g-hidden', !isEnabled);
     }
 
+    isVisible() {
+        return this._el.closest('.g-hidden') === null;
+    }
+
     remove() {
         this._el.remove();
         this.events.removeAllListeners();
     }
+
 }
 
 export {
