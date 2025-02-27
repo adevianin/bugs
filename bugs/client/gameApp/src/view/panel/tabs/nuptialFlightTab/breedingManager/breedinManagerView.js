@@ -1,7 +1,7 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import breedingManagerTmpl from './breedingManagerTmpl.html';
 import { QueenSelectorView } from "./queenSelector/queenSelectorView";
-import { MalesSearchView } from "./malesSearch";
+import { MaleSelectorView } from "./maleSelector/maleSelectorView";
 import { PositionView } from "@view/panel/base/position/positionView";
 import { MarkerTypes } from '@domain/enum/markerTypes';
 
@@ -21,7 +21,7 @@ class BreedingManagerView extends BaseHTMLView {
         this._el.innerHTML = breedingManagerTmpl;
 
         this._queenSelectorView = new QueenSelectorView(this._el.querySelector('[data-queen-selector]'));
-        this._malesSearchView = new MalesSearchView(this._el.querySelector('[data-males-search]'));
+        this._malesSelectorView = new MaleSelectorView(this._el.querySelector('[data-males-search]'));
         this._nestPositionView = new PositionView(this._el.querySelector('[data-building-site]'));
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
         this._colonyNameEl = this._el.querySelector('[data-colony-name]');
@@ -31,11 +31,11 @@ class BreedingManagerView extends BaseHTMLView {
     }
 
     _onStartBtnClick() {
-        if (!this._queenSelectorView.queenId || !this._nestPositionView.value || !this._colonyNameEl.value || !this._malesSearchView.selectedMale) {
+        if (!this._queenSelectorView.queenId || !this._nestPositionView.value || !this._colonyNameEl.value || !this._malesSelectorView.selectedMale) {
             return
         }
 
-        this.$domainFacade.foundColony(this._queenSelectorView.queenId, this._malesSearchView.selectedMale.id, this._nestPositionView.value, this._colonyNameEl.value)
+        this.$domainFacade.foundColony(this._queenSelectorView.queenId, this._malesSelectorView.selectedMale.id, this._nestPositionView.value, this._colonyNameEl.value)
             .then(() => {
                 this._resetFields();
             })

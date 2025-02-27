@@ -1,8 +1,8 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
-import malesSearchTmpl from './malesSearchTmpl.html';
-import { NuptialMaleProfileView } from "./nuptialMaleProfileView";
+import maleSelectorTmpl from './maleSelectorTmpl.html';
+import { MaleProfileView } from "./maleProfileView";
 
-class MalesSearchView extends BaseHTMLView {
+class MaleSelectorView extends BaseHTMLView {
 
     constructor(el) {
         super(el);
@@ -24,13 +24,13 @@ class MalesSearchView extends BaseHTMLView {
     }
 
     _render() {
-        this._el.innerHTML = malesSearchTmpl;
+        this._el.innerHTML = maleSelectorTmpl;
 
         this._malesPlaceholder = this._el.querySelector('[data-males-place-holder]');
         this._malesEl = this._el.querySelector('[data-males]');
         this._nextMaleBtn = this._el.querySelector('[data-next-btn]');
         this._prevMaleBtn = this._el.querySelector('[data-previous-btn]');
-        this._maleProfile = new NuptialMaleProfileView(this._el.querySelector('[data-male-profile]'));
+        this._maleProfile = new MaleProfileView(this._el.querySelector('[data-male-profile]'));
 
         this._renderMales();
     }
@@ -77,5 +77,5 @@ class MalesSearchView extends BaseHTMLView {
 }
 
 export {
-    MalesSearchView
+    MaleSelectorView
 }

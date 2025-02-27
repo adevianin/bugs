@@ -1,9 +1,9 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
-import nuptialMaleProfileTmpl from './nuptialMaleProfileTmpl.html';
+import maleProfileTmpl from './maleProfileTmpl.html';
 import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
 import { AntStatsView } from "@view/panel/base/antStats/antStatsView";
 
-class NuptialMaleProfileView extends BaseHTMLView {
+class MaleProfileView extends BaseHTMLView {
 
     constructor(el) {
         super(el);
@@ -12,7 +12,7 @@ class NuptialMaleProfileView extends BaseHTMLView {
     }
 
     _render() {
-        this._el.innerHTML = nuptialMaleProfileTmpl;
+        this._el.innerHTML = maleProfileTmpl;
 
         this._statsView = new AntStatsView();
         this._el.querySelector('[data-stats]').appendChild(this._statsView.el);
@@ -27,5 +27,5 @@ class NuptialMaleProfileView extends BaseHTMLView {
 }
 
 export {
-    NuptialMaleProfileView
+    MaleProfileView
 }

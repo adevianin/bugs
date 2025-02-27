@@ -9160,7 +9160,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
 /* harmony import */ var _breedingManagerTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./breedingManagerTmpl.html */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/breedingManagerTmpl.html");
 /* harmony import */ var _queenSelector_queenSelectorView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./queenSelector/queenSelectorView */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/queenSelector/queenSelectorView.js");
-/* harmony import */ var _malesSearch__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./malesSearch */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/index.js");
+/* harmony import */ var _maleSelector_maleSelectorView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./maleSelector/maleSelectorView */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleSelectorView.js");
 /* harmony import */ var _view_panel_base_position_positionView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/panel/base/position/positionView */ "./gameApp/src/view/panel/base/position/positionView.js");
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
 
@@ -9186,7 +9186,7 @@ class BreedingManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
         this._el.innerHTML = _breedingManagerTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._queenSelectorView = new _queenSelector_queenSelectorView__WEBPACK_IMPORTED_MODULE_2__.QueenSelectorView(this._el.querySelector('[data-queen-selector]'));
-        this._malesSearchView = new _malesSearch__WEBPACK_IMPORTED_MODULE_3__.MalesSearchView(this._el.querySelector('[data-males-search]'));
+        this._malesSelectorView = new _maleSelector_maleSelectorView__WEBPACK_IMPORTED_MODULE_3__.MaleSelectorView(this._el.querySelector('[data-males-search]'));
         this._nestPositionView = new _view_panel_base_position_positionView__WEBPACK_IMPORTED_MODULE_4__.PositionView(this._el.querySelector('[data-building-site]'));
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
         this._colonyNameEl = this._el.querySelector('[data-colony-name]');
@@ -9196,11 +9196,11 @@ class BreedingManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
     }
 
     _onStartBtnClick() {
-        if (!this._queenSelectorView.queenId || !this._nestPositionView.value || !this._colonyNameEl.value || !this._malesSearchView.selectedMale) {
+        if (!this._queenSelectorView.queenId || !this._nestPositionView.value || !this._colonyNameEl.value || !this._malesSelectorView.selectedMale) {
             return
         }
 
-        this.$domainFacade.foundColony(this._queenSelectorView.queenId, this._malesSearchView.selectedMale.id, this._nestPositionView.value, this._colonyNameEl.value)
+        this.$domainFacade.foundColony(this._queenSelectorView.queenId, this._malesSelectorView.selectedMale.id, this._nestPositionView.value, this._colonyNameEl.value)
             .then(() => {
                 this._resetFields();
             })
@@ -9242,43 +9242,72 @@ class BreedingManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
 
 /***/ }),
 
-/***/ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/index.js":
-/*!*******************************************************************************************!*\
-  !*** ./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/index.js ***!
-  \*******************************************************************************************/
+/***/ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleProfileView.js":
+/*!******************************************************************************************************!*\
+  !*** ./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleProfileView.js ***!
+  \******************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   MalesSearchView: () => (/* reexport safe */ _malesSearchView__WEBPACK_IMPORTED_MODULE_0__.MalesSearchView)
+/* harmony export */   MaleProfileView: () => (/* binding */ MaleProfileView)
 /* harmony export */ });
-/* harmony import */ var _malesSearchView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./malesSearchView */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/malesSearchView.js");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _maleProfileTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./maleProfileTmpl.html */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleProfileTmpl.html");
+/* harmony import */ var _view_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/genome/genomeInlineView */ "./gameApp/src/view/panel/base/genome/genomeInlineView.js");
+/* harmony import */ var _view_panel_base_antStats_antStatsView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/panel/base/antStats/antStatsView */ "./gameApp/src/view/panel/base/antStats/antStatsView.js");
 
+
+
+
+
+class MaleProfileView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+
+        this._render();
+    }
+
+    _render() {
+        this._el.innerHTML = _maleProfileTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+
+        this._statsView = new _view_panel_base_antStats_antStatsView__WEBPACK_IMPORTED_MODULE_3__.AntStatsView();
+        this._el.querySelector('[data-stats]').appendChild(this._statsView.el);
+        this._genomeView = new _view_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_2__.GenomeInlineView(this._el.querySelector('[data-genome]'));
+    }
+
+    showMale(male) {
+        this._statsView.setStats(male.stats);
+        this._genomeView.setGenome(male.genome);
+    }
+
+}
 
 
 
 /***/ }),
 
-/***/ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/malesSearchView.js":
-/*!*****************************************************************************************************!*\
-  !*** ./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/malesSearchView.js ***!
-  \*****************************************************************************************************/
+/***/ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleSelectorView.js":
+/*!*******************************************************************************************************!*\
+  !*** ./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleSelectorView.js ***!
+  \*******************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   MalesSearchView: () => (/* binding */ MalesSearchView)
+/* harmony export */   MaleSelectorView: () => (/* binding */ MaleSelectorView)
 /* harmony export */ });
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
-/* harmony import */ var _malesSearchTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./malesSearchTmpl.html */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/malesSearchTmpl.html");
-/* harmony import */ var _nuptialMaleProfileView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./nuptialMaleProfileView */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/nuptialMaleProfileView.js");
+/* harmony import */ var _maleSelectorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./maleSelectorTmpl.html */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleSelectorTmpl.html");
+/* harmony import */ var _maleProfileView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./maleProfileView */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleProfileView.js");
 
 
 
 
-class MalesSearchView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class MaleSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
     constructor(el) {
         super(el);
@@ -9300,13 +9329,13 @@ class MalesSearchView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
     }
 
     _render() {
-        this._el.innerHTML = _malesSearchTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.innerHTML = _maleSelectorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._malesPlaceholder = this._el.querySelector('[data-males-place-holder]');
         this._malesEl = this._el.querySelector('[data-males]');
         this._nextMaleBtn = this._el.querySelector('[data-next-btn]');
         this._prevMaleBtn = this._el.querySelector('[data-previous-btn]');
-        this._maleProfile = new _nuptialMaleProfileView__WEBPACK_IMPORTED_MODULE_2__.NuptialMaleProfileView(this._el.querySelector('[data-male-profile]'));
+        this._maleProfile = new _maleProfileView__WEBPACK_IMPORTED_MODULE_2__.MaleProfileView(this._el.querySelector('[data-male-profile]'));
 
         this._renderMales();
     }
@@ -9348,53 +9377,6 @@ class MalesSearchView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0
     _onNuptialMalesChanged(males) {
         this._males = males;
         this._renderMales();
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/nuptialMaleProfileView.js":
-/*!************************************************************************************************************!*\
-  !*** ./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/nuptialMaleProfileView.js ***!
-  \************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   NuptialMaleProfileView: () => (/* binding */ NuptialMaleProfileView)
-/* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
-/* harmony import */ var _nuptialMaleProfileTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nuptialMaleProfileTmpl.html */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/nuptialMaleProfileTmpl.html");
-/* harmony import */ var _view_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/genome/genomeInlineView */ "./gameApp/src/view/panel/base/genome/genomeInlineView.js");
-/* harmony import */ var _view_panel_base_antStats_antStatsView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/panel/base/antStats/antStatsView */ "./gameApp/src/view/panel/base/antStats/antStatsView.js");
-
-
-
-
-
-class NuptialMaleProfileView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
-
-    constructor(el) {
-        super(el);
-
-        this._render();
-    }
-
-    _render() {
-        this._el.innerHTML = _nuptialMaleProfileTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-
-        this._statsView = new _view_panel_base_antStats_antStatsView__WEBPACK_IMPORTED_MODULE_3__.AntStatsView();
-        this._el.querySelector('[data-stats]').appendChild(this._statsView.el);
-        this._genomeView = new _view_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_2__.GenomeInlineView(this._el.querySelector('[data-genome]'));
-    }
-
-    showMale(male) {
-        this._statsView.setStats(male.stats);
-        this._genomeView.setGenome(male.genome);
     }
 
 }
@@ -9470,7 +9452,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
 /* harmony import */ var _queenSelectorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./queenSelectorTmpl.html */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/queenSelector/queenSelectorTmpl.html");
 /* harmony import */ var _queenProfileView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./queenProfileView */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/queenSelector/queenProfileView.js");
-
 
 
 
@@ -19676,28 +19657,10 @@ var code = "<div>\r\n    <label>самка:</label>\r\n    <div data-queen-selec
 
 /***/ }),
 
-/***/ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/malesSearchTmpl.html":
-/*!*******************************************************************************************************!*\
-  !*** ./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/malesSearchTmpl.html ***!
-  \*******************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<div data-males>\r\n    <div data-male-profile></div>\r\n    <button data-previous-btn>попередній</button>\r\n    <button data-next-btn>наступний</button>\r\n</div>\r\n<div data-males-place-holder> самців немає</div>\r\n";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/nuptialMaleProfileTmpl.html":
-/*!**************************************************************************************************************!*\
-  !*** ./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/malesSearch/nuptialMaleProfileTmpl.html ***!
-  \**************************************************************************************************************/
+/***/ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleProfileTmpl.html":
+/*!********************************************************************************************************!*\
+  !*** ./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleProfileTmpl.html ***!
+  \********************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -19707,6 +19670,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Module
 var code = "<div>\r\n    <label>стати:</label>\r\n    <div data-stats></div>\r\n</div>\r\n<div>\r\n    <label>геном:</label>\r\n    <div data-genome></div>\r\n</div>\r\n";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleSelectorTmpl.html":
+/*!*********************************************************************************************************!*\
+  !*** ./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleSelectorTmpl.html ***!
+  \*********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div data-males>\r\n    <div data-male-profile></div>\r\n    <button data-previous-btn>попередній</button>\r\n    <button data-next-btn>наступний</button>\r\n</div>\r\n<div data-males-place-holder> самців немає</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
