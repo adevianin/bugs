@@ -9469,9 +9469,11 @@ class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
         this.$domainFacade.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
         // this.$domainFacade.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
         this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
 
         this._prevBtn.addEventListener('click', this._onPrevBtnClick.bind(this));
         this._nextBtn.addEventListener('click', this._onNextBtnClick.bind(this));
+        this._bornAntaraBtn.addEventListener('click', this._onBornNewAntaraBtnClick.bind(this));
 
     }
 
@@ -9487,27 +9489,39 @@ class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
         this._el.innerHTML = _queenSelectorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
         this._queensEl = this._el.querySelector('[data-queens]');
-        this._noQueensPlaceholderEl = this._el.querySelector('[data-no-queens-placeholder]');
+        this._noQueensEl = this._el.querySelector('[data-no-queens]');
         this._prevBtn = this._el.querySelector('[data-previous-btn]');
         this._nextBtn = this._el.querySelector('[data-next-btn]');
+        this._bornAntaraBtn = this._el.querySelector('[data-born-new-antara-btn]');
 
         this._queenProfileView = new _queenProfileView__WEBPACK_IMPORTED_MODULE_2__.QueenProfileView(this._el.querySelector('[data-queen-profile]'));
 
-        this._renderEmptyState();
+        this._renderIsEmptyState();
         this._renderChoosingBtnsState();
+        this._renderBornAntaraBtnState();
 
         if (this._queens.length > 0) {
             this._selectQueen(0);
         }
     }
 
-    _renderEmptyState() {
+    _renderIsEmptyState() {
         let isEmpty = this._queens.length == 0;
-        this._noQueensPlaceholderEl.classList.toggle('g-hidden', !isEmpty);
+        this._noQueensEl.classList.toggle('g-hidden', !isEmpty);
         this._queensEl.classList.toggle('g-hidden', isEmpty);
         if (isEmpty) {
             this._selectedQueenIndex = null;
         }
+    }
+
+    _renderBornAntaraBtnState() {
+        let isAnyAnt = this.$domainFacade.isAnyMyAnt();
+        this._bornAntaraBtn.classList.toggle('g-hidden', isAnyAnt);
+    }
+
+    _renderChoosingBtnsState() {
+        this._nextBtn.disabled = this._selectedQueenIndex + 1 == this._queens.length;
+        this._prevBtn.disabled = this._selectedQueenIndex == 0;
     }
 
     _selectQueen(index) {
@@ -9515,11 +9529,6 @@ class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
         let queen = this._queens[index];
         this._queenProfileView.showQueen(queen);
         this._renderChoosingBtnsState();
-    }
-
-    _renderChoosingBtnsState() {
-        this._nextBtn.disabled = this._selectedQueenIndex + 1 == this._queens.length;
-        this._prevBtn.disabled = this._selectedQueenIndex == 0;
     }
 
     _removeQueen(queen) {
@@ -9531,7 +9540,7 @@ class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
             if (this._queens.length > 0) {
                 this._selectQueen(0);
             }
-            this._renderEmptyState();
+            this._renderIsEmptyState();
         } else {
             let newIndex = this._queens.indexOf(selectedQueen);
             this._selectQueen(newIndex);
@@ -9555,7 +9564,7 @@ class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
         let isMyQueen = this.$domainFacade.isEntityMy(queen);
         if (isMyQueen) {
             this._queens.push(queen);
-            this._renderEmptyState();
+            this._renderIsEmptyState();
             if (!this._hasSelectedQueen) {
                 this._selectQueen(0);
             }
@@ -9564,9 +9573,22 @@ class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE
     }
 
     _onSomeoneDied(someone) {
-        if (this.$domainFacade.isEntityMy(someone) && this._checkIdInQueensList(someone.id)) {
-            this._removeQueen(someone);
+        if (this.$domainFacade.isMyAnt(someone)) {
+            this._renderBornAntaraBtnState();
+            if (this._checkIdInQueensList(someone.id)) {
+                this._removeQueen(someone);
+            }
         }
+    }
+
+    _onSomeoneBorn(someone) {
+        if (this.$domainFacade.isMyAnt(someone)) {
+            this._renderBornAntaraBtnState();
+        }
+    }
+
+    _onBornNewAntaraBtnClick() {
+        this.$domainFacade.bornNewAntara();
     }
 
 }
@@ -9621,52 +9643,30 @@ class NuptialFlightTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MOD
         this._render();
 
         this.$domainFacade.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
-        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
-        this._bornNewAntaraBtn.addEventListener('click', this._onBornNewAntaraBtnClick.bind(this));
     }
 
     _render() {
         this._el.innerHTML = _nuptialFlightTab_html__WEBPACK_IMPORTED_MODULE_2__["default"];
 
         this._nuptialFlightModeEl = this._el.querySelector('[data-nuptial-flight-mode]');
-        this._bornNewAntaraModeEl = this._el.querySelector('[data-born-new-antara-mode]');
         this._waitingNuptialFlightModeEl = this._el.querySelector('[data-waiting-nuptial-flight-mode]');
         this._bornNewAntaraBtn = this._el.querySelector('[data-born-new-antara-btn]');
 
         this._breedingManagerView = new _breedingManager_breedinManagerView__WEBPACK_IMPORTED_MODULE_3__.BreedingManagerView(this._el.querySelector('[data-breeding-manager]'));
 
-        this._renderTabMode();
+        this._renderIsNuptialSeasonState();
     }
 
-    _renderTabMode() {
+    _renderIsNuptialSeasonState() {
         let isNuptialSeason = this.$domainFacade.world.isNuptialSeasonNow;
-        let isAnyAnt = this.$domainFacade.isAnyMyAnt();
-
-        this._nuptialFlightModeEl.classList.toggle('g-hidden', !isNuptialSeason || !isAnyAnt);
-        this._bornNewAntaraModeEl.classList.toggle('g-hidden', !isNuptialSeason || isAnyAnt);
+        this._nuptialFlightModeEl.classList.toggle('g-hidden', !isNuptialSeason);
         this._waitingNuptialFlightModeEl.classList.toggle('g-hidden', isNuptialSeason);
     }
 
     _onSeasonChanged() {
-        this._renderTabMode();
+        this._renderIsNuptialSeasonState();
     }
 
-    _onSomeoneDied(entity) {
-        if (this.$domainFacade.isMyAnt(entity) ) {
-            this._renderTabMode();
-        }
-    }
-
-    _onSomeoneBorn(entity) {
-        if (this.$domainFacade.isMyAnt(entity) ) {
-            this._renderTabMode();
-        }
-    }
-
-    _onBornNewAntaraBtnClick() {
-        this.$domainFacade.bornNewAntara();
-    }
 }
 
 
@@ -19723,7 +19723,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-queens>\r\n    <div data-queen-profile></div>\r\n    <button data-previous-btn>попередній</button>\r\n    <button data-next-btn>наступний</button>\r\n</div>\r\n<div data-no-queens-placeholder>немає самиць в шлюбному льоті</div>";
+var code = "<div data-queens>\r\n    <div data-queen-profile></div>\r\n    <button data-previous-btn>попередній</button>\r\n    <button data-next-btn>наступний</button>\r\n</div>\r\n<div data-no-queens>\r\n    немає самиць в шлюбному льоті\r\n    <button data-born-new-antara-btn>народить нову королеву</button>\r\n</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -19741,7 +19741,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-nuptial-flight-mode>\r\n    <div data-breeding-manager></div>\r\n</div>\r\n<div data-born-new-antara-mode>\r\n    <button data-born-new-antara-btn>народить нову королеву</button>\r\n</div>\r\n<div data-waiting-nuptial-flight-mode>\r\n    сезон розмноження буде через \r\n    <div>(1:1)</div>\r\n</div>";
+var code = "<div data-nuptial-flight-mode>\r\n    <div data-breeding-manager></div>\r\n</div>\r\n<div data-waiting-nuptial-flight-mode>\r\n    сезон розмноження буде через \r\n    <div>(1:1)</div>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
