@@ -50,21 +50,43 @@ __webpack_require__.r(__webpack_exports__);
 class Requester {
 
     post(url, params) {
-        return axios__WEBPACK_IMPORTED_MODULE_1__["default"].post(url, params, { headers: {
-            'Content-type': 'application/json',
-            'X-CSRFToken': this._readCsrfToken()
-        }})
+        return new Promise((res, rej) => {
+            axios__WEBPACK_IMPORTED_MODULE_1__["default"].post(url, params, { headers: {
+                'Content-type': 'application/json',
+                'X-CSRFToken': this._readCsrfToken()
+            }})
+            .then(axiosResponse => {res(this._buildResultFromAxiosResponse(axiosResponse))})
+            .catch(axiosError => {rej(this._buildResultFromAxiosError(axiosError))})
+        });
     }
 
     get(url, params) {
-        return axios__WEBPACK_IMPORTED_MODULE_1__["default"].get(url, params, { headers: {
-            'Content-type': 'application/json',
-            'X-CSRFToken': this._readCsrfToken()
-        }})
+        return new Promise((res, rej) => {
+            axios__WEBPACK_IMPORTED_MODULE_1__["default"].get(url, params, { headers: {
+                'Content-type': 'application/json',
+                'X-CSRFToken': this._readCsrfToken()
+            }})
+            .then(axiosResponse => {res(this._buildResultFromAxiosResponse(axiosResponse))})
+            .catch(axiosError => {rej(this._buildResultFromAxiosError(axiosError))})
+        }) 
     }
 
     _readCsrfToken() {
         return (0,_common_utils_getCookie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('csrftoken');
+    }
+
+    _buildResultFromAxiosResponse(axiosResponse) {
+        return {
+            status: axiosResponse.status,
+            data: axiosResponse.data
+        }
+    }
+
+    _buildResultFromAxiosError(axiosError) {
+        return {
+            status: axiosError.response ? axiosError.response.status : null,
+            data: axiosError.response ? axiosError.response.data : null
+        }
     }
 }
 
@@ -2924,6 +2946,7 @@ class MessageHandlerService {
                     break;
             }
         }
+        this._mainEventBus.emit(`stepSyncDone:${msg.step}`);
     }
 
 }
@@ -3426,8 +3449,8 @@ class AccountApi {
     }
 
     logout() {
-        return this._requester.post('api/accounts/logout').then((resp) => {
-            return resp.data.redirectUrl;
+        return this._requester.post('api/accounts/logout').then(res => {
+            return res.data.redirectUrl;
         });
     }
 
@@ -3733,7 +3756,7 @@ class NuptialEnvironmentApi {
                 colony_name: colonyName
             })
             .then(axiosResp => res(null))
-            .catch(axiosResp => rej(axiosResp.response.data))
+            .catch(axiosError => rej(axiosError.response))
         });
     }
     
@@ -9393,6 +9416,7 @@ class BreedingManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
                 this._resetFields();
             })
             .catch((errId) => {
+                console.log(errId);
                 this._renderError(errId);
             });
     }

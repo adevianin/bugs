@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import user_passes_test
 from django.http import JsonResponse, HttpRequest, HttpResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from core.world.world_facade import WorldFacade
 import json
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -22,11 +22,16 @@ def admin_index(request):
     return render(request, 'client/admin.html')
 
 @user_passes_test(is_superuser)
-@require_POST
+@require_GET
 def world_status_check(request):
-    return JsonResponse({
-        'status': _build_world_status()
-    })
+    return JsonResponse(
+        {
+            'status': _build_world_status()
+        },
+        headers={
+            'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+    )
 
 @user_passes_test(is_superuser)
 @require_POST

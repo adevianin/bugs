@@ -5,8 +5,8 @@ class AccountApi {
     }
 
     logout() {
-        return this._requester.post('api/accounts/logout').then((resp) => {
-            return resp.data.redirectUrl;
+        return this._requester.post('api/accounts/logout').then(res => {
+            return res.data.redirectUrl;
         });
     }
 

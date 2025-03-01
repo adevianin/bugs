@@ -24,39 +24,43 @@ class WorldStatusView {
     }
 
     _checkWorldStatus() {
-        this._requester.post('api/admin/world/status').then((resp) => {
-            this._renderWorldStatus(resp.data.status);
-        }).catch(() => {
-            alert('server is not responding!!!');
+        this._requester.get('api/admin/world/status').then(result => {
+            this._renderWorldStatus(result.data.status);
+        }).catch(result => {
+            if (!result.status) {
+                alert('server is not responding!!!');
+            } else {
+                alert('server in bad state');
+            }
         });
     }
 
     _initWorld() {
-        this._requester.post('api/admin/world/init').then((resp) => {
-            this._renderWorldStatus(resp.data.status);
+        this._requester.post('api/admin/world/init').then(res => {
+            this._renderWorldStatus(res.data.status);
         }).catch(() => {
             alert('something went wrong');
         });
     }
 
     _stopWorld() {
-        this._requester.post('api/admin/world/stop').then((resp) => {
-            this._renderWorldStatus(resp.data.status);
+        this._requester.post('api/admin/world/stop').then(res => {
+            this._renderWorldStatus(res.data.status);
         }).catch(() => {
             alert('something went wrong');
         });
     }
 
     _runWorld() {
-        this._requester.post('api/admin/world/run').then((resp) => {
-            this._renderWorldStatus(resp.data.status);
+        this._requester.post('api/admin/world/run').then(res => {
+            this._renderWorldStatus(res.data.status);
         }).catch(() => {
             alert('something went wrong');
         });
     }
 
     _saveWorld() {
-        this._requester.post('api/admin/world/save').then((resp) => {
+        this._requester.post('api/admin/world/save').then(res => {
             alert('saved')
         }).catch(() => {
             alert('something went wrong');
@@ -68,12 +72,11 @@ class WorldStatusView {
             chunk_rows: this._expandMapChunkRowsEl.value,
             chunk_cols: this._expandMapChunkColsEl.value
         })
-        .then((resp) => {
+        .then(res => {
             alert('expanded')
-        }).catch(axiosErr => {
-            let resp = axiosErr.response
-            if (resp.status == 409) {
-                alert(resp.data.msg);
+        }).catch(res => {
+            if (res.status == 409) {
+                alert(res.data.msg);
             } else {
                 alert('something went wrong');
             }
