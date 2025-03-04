@@ -1,9 +1,9 @@
 import logging
-from django.http import HttpResponse
-from core.world.exceptions import GameError
+from django.http import HttpResponse, JsonResponse
+from core.world.exceptions import GameError, StateConflictError, EntityNotFoundError
 from core.world.messages import Messages
 
-class LogHttpRequestErrorsMiddleware:
+class HttpRequestErrorsHandlerMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
         self._logger = logging.getLogger('request_logger')
@@ -16,6 +16,10 @@ class LogHttpRequestErrorsMiddleware:
         self._logger.exception(request, exc_info=exception)
 
         if isinstance(exception, GameError):
-            return HttpResponse(Messages.SOMETHING_WENT_WRONG, status=400)
+            match exception:
+                case StateConflictError():
+                    return JsonResponse(exception.to_dict(), status=409)
+                case _:
+                    return HttpResponse(Messages.SOMETHING_WENT_WRONG, status=400)
 
         return HttpResponse(Messages.SOMETHING_WENT_WRONG, status=500)

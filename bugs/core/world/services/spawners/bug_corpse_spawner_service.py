@@ -29,7 +29,7 @@ class BugCorpseSpawnerService(BaseService):
             bug_corpses_count = len(bug_corpses)
             if nests_count > 0 and bug_corpses_count < nests_count:
                 nest = random.choice(nests)
-                # nest = self._map.get_entity_by_id(30)
+                # nest = self._world.map.get_entity_by_id(622)
                 spawn_point = self._world.map.generate_random_point_within_circle(nest.position, nest.area, self.MIN_DISTANCE_TO_NEST)
                 strength = random.randint(80, 200)
                 self._event_bus.emit('item_birth_request', ItemBirthRequest(spawn_point, strength, ItemTypes.BUG_CORPSE, random.randint(0, 360)))

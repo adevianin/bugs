@@ -150,7 +150,7 @@ __webpack_require__.r(__webpack_exports__);
 
 class DomainFacade {
 
-    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._accountService = accountService;
@@ -158,6 +158,7 @@ class DomainFacade {
         this._colonyService = colonyService;
         this._userService = userService;
         this._nuptialEnvironmentService = nuptialEnvironmentService;
+        this._nestService = nestService;
     }
 
     get currentStep() {
@@ -247,7 +248,7 @@ class DomainFacade {
 
     getMyQueensInNuptialFlight() {
         let userData = this.getUserData();
-        return this._worldService.getQueensInNuptialFlightFromUser(userData.id);
+        return this._nuptialEnvironmentService.getQueensInNuptialFlightFromUser(userData.id);
     }
 
     getClimate() {
@@ -260,7 +261,7 @@ class DomainFacade {
 
     findMyFirstNest() {
         let userData = this.getUserData();
-        return this._worldService.findMyFirstNest(userData.id);
+        return this._nestService.findMyFirstNest(userData.id);
     }
 
     /*======operations========*/
@@ -269,12 +270,24 @@ class DomainFacade {
         this._colonyService.stopOperation(colonyId, operationId);
     }
 
+    validateNewNestOperationConditions(colonyId) {
+        return this._colonyService.validateNewNestOperationConditions(colonyId);
+    }
+
     buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
         return this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName);
     }
 
+    validateDestroyNestOperationConditions(colonyId) {
+        return this._colonyService.validateDestroyNestOperationConditions(colonyId);
+    }
+
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
         return this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
+    }
+
+    validatePillageNestOperationConditions(colonyId) {
+        return this._colonyService.validatePillageNestOperationConditions(colonyId);
     }
 
     pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
@@ -295,8 +308,8 @@ class DomainFacade {
 
     /*========================*/
 
-    foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
-        return this._nuptialEnvironmentService.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
+    foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName, errCallbacks) {
+        return this._nuptialEnvironmentService.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName, errCallbacks);
     }
 
     getMyNuptialMales() {
@@ -304,7 +317,7 @@ class DomainFacade {
     }
 
     findNearestNest(point, excludeColonyId) {
-        return this._worldService.findNearestNest(point, excludeColonyId);
+        return this._nestService.findNearestNest(point, excludeColonyId);
     }
 
     getMySpecie() {
@@ -313,6 +326,42 @@ class DomainFacade {
 
     bornNewAntara() {
         this._userService.bornNewAntara();
+    }
+
+    layEggInNest(nestId, name, isFertilized) {
+        return this._nestService.layEggInNest(nestId, name, isFertilized);
+    }
+
+    changeEggCasteInNest(nestId, eggId, antType) {
+        return this._nestService.changeEggCasteInNest(nestId, eggId, antType);
+    }
+
+    changeEggNameInNest(nestId, eggId, name) {
+        return this._nestService.changeEggNameInNest(nestId, eggId, name);
+    }
+
+    moveEggToLarvaInNest(nestId, eggId) {
+        return this._nestService.moveEggToLarvaInNest(nestId, eggId);
+    }
+
+    deleteEggInNest(nestId, eggId) {
+        return this._nestService.deleteEggInNest(nestId, eggId);
+    }
+
+    deleteLarvaInNest(nestId, larvaId) {
+        return this._nestService.deleteLarvaInNest(nestId, larvaId);
+    }
+
+    renameNest(nestId, name) {
+        return this._nestService.renameNest(nestId, name);
+    }
+
+    validateLayingEggInNest(nestId) {
+        return this._nestService.validateLayingEggInNest(nestId);
+    }
+
+    findClosestBugCorpseNearNest(nestId) {
+        return this._colonyService.findClosestBugCorpseNearNest(nestId);
     }
 
 }
@@ -1757,8 +1806,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./action/actionTypes */ "./gameApp/src/domain/entity/action/actionTypes.js");
 /* harmony import */ var _larva__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./larva */ "./gameApp/src/domain/entity/larva.js");
 /* harmony import */ var _egg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./egg */ "./gameApp/src/domain/entity/egg.js");
-/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
-
 
 
 
@@ -1767,9 +1814,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
-    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, isBuilt, hp, maxHp, fortification, maxFortification, name, isMain) {
+    constructor(eventBus, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, isBuilt, hp, maxHp, fortification, maxFortification, name, isMain, area) {
         super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST, fromColony, ownerId, hp, maxHp);
-        this._nestApi = nestApi;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
         this.eggs = eggs;
@@ -1777,6 +1823,7 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this.maxFortification = maxFortification;
         this._name = name;
         this._isMain = isMain;
+        this._area = area;
 
         this._setIsBuilt(isBuilt)
     }
@@ -1802,42 +1849,32 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         return this._isMain;
     }
 
+    get area() {
+        return this._area;
+    }
+
     rename(newName) {
         this._name = newName;
-        this._nestApi.renameNest(this.id, newName);
         this.emit('nameChanged');
     }
     
-    addNewEgg(name, isFertilized) {
-        return this._nestApi.addNewEgg(this.id, name, isFertilized);
-    }
-
-    eggToLarvaChamber(eggId) {
-        this._nestApi.eggToLarvaChamber(this.id, eggId);
-    }
-
     eggDelete(eggId) {
-        this._nestApi.eggDelete(this.id, eggId);
-
         let egg = this._findEggById(eggId);
         this._removeEggFromArray(egg);
         this.emit('eggDeleted', egg);
     }
 
-    editCasteForEgg(eggId, antType) {
-        this._nestApi.changeEggCaste(this.id, eggId, antType);
+    changeCasteForEgg(eggId, antType) {
         let egg = this._findEggById(eggId);
         egg.antType = antType;
     }
 
-    editNameForEgg(eggId, name) {
-        this._nestApi.changeEggName(this.id, eggId, name);
+    changeNameForEgg(eggId, name) {
         let egg = this._findEggById(eggId);
         egg.name = name;
     }
 
     larvaDelete(larvaId) {
-        this._nestApi.larvaDelete(this.id, larvaId);
         let larva = this._findLarvaById(larvaId);
         this._removeLarvaFromArray(larva);
         this.emit('larvaDeleted', larva);
@@ -2288,9 +2325,6 @@ class World {
         this._climate = climate;
         this._currentStep = 0;
         this._currentSeason = null;
-
-        this._mainEventBus.on('entityDied', this._onEntityDied.bind(this));
-        this._mainEventBus.on('colonyDied', this._onColonyDied.bind(this));
     }
 
     get currentStep() {
@@ -2346,8 +2380,22 @@ class World {
         this._entities.push(entity);
     }
 
+    deleteEntity(entity) {
+        let index = this._entities.indexOf(entity);
+        if (index != -1) {
+            this._entities.splice(index, 1);
+        }
+    }
+
     addColony(colony) {
         this._colonies.push(colony);
+    }
+
+    deleteColony(colony) {
+        let index = this._colonies.indexOf(colony);
+        if (index != -1) {
+            this._colonies.splice(index, 1);
+        }
     }
 
     findEntityByType(type) {
@@ -2401,38 +2449,9 @@ class World {
         return null;
     }
 
-    deleteEntity(entityId) {
-        let entityIndex = -1;
-        for (let i = 0; i < this._entities.length; i++)  {
-            if (this._entities[i].id == entityId) {
-                entityIndex = i;
-                break;
-            }
-        }
-
-        if (entityIndex != -1) {
-            this._entities.splice(entityIndex, 1);
-        }
-    }
-
     clear() {
         this._entities = [];
         this._colonies = [];
-    }
-
-    _deleteColony(colony) {
-        let index = this._colonies.indexOf(colony);
-        if (index != -1) {
-            this._colonies.splice(index, 1);
-        }
-    }
-
-    _onEntityDied(entity) {
-        this.deleteEntity(entity.id);
-    }
-
-    _onColonyDied(colony) {
-        this._deleteColony(colony);
     }
 
 }
@@ -2614,6 +2633,31 @@ const GenesTypes = {
 
 /***/ }),
 
+/***/ "./gameApp/src/domain/enum/itemTypes.js":
+/*!**********************************************!*\
+  !*** ./gameApp/src/domain/enum/itemTypes.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ItemTypes: () => (/* binding */ ItemTypes)
+/* harmony export */ });
+const ItemTypes = {
+    LEAF: 'leaf',
+    STICK: 'stick',
+    FLOWER: 'flower',
+    HONEYDEW: 'honeydew',
+    NECTAR: 'nectar',
+    BUG_CORPSE: 'bug_corpse',
+    ANT_FOOD: 'ant_food'
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/domain/enum/markerTypes.js":
 /*!************************************************!*\
   !*** ./gameApp/src/domain/enum/markerTypes.js ***!
@@ -2687,6 +2731,44 @@ const OperationTypes = {
 
 /***/ }),
 
+/***/ "./gameApp/src/domain/errors/genericRequestError.js":
+/*!**********************************************************!*\
+  !*** ./gameApp/src/domain/errors/genericRequestError.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   GenericRequestError: () => (/* binding */ GenericRequestError)
+/* harmony export */ });
+class GenericRequestError extends Error {
+
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/domain/errors/stateSyncRequestError.js":
+/*!************************************************************!*\
+  !*** ./gameApp/src/domain/errors/stateSyncRequestError.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   StateSyncRequestError: () => (/* binding */ StateSyncRequestError)
+/* harmony export */ });
+class StateSyncRequestError extends Error {
+
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/domain/index.js":
 /*!*************************************!*\
   !*** ./gameApp/src/domain/index.js ***!
@@ -2707,9 +2789,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _service_colonyService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/colonyService */ "./gameApp/src/domain/service/colonyService.js");
 /* harmony import */ var _service_userService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./service/userService */ "./gameApp/src/domain/service/userService.js");
 /* harmony import */ var _service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./service/nuptialEnvironmentService */ "./gameApp/src/domain/service/nuptialEnvironmentService.js");
-/* harmony import */ var _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entity/notificationsContainer */ "./gameApp/src/domain/entity/notificationsContainer.js");
-/* harmony import */ var _entity_ratingContainer__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entity/ratingContainer */ "./gameApp/src/domain/entity/ratingContainer.js");
-/* harmony import */ var _entity_nuptialEnvironment_nuptialEnvironmentFactory__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/nuptialEnvironment/nuptialEnvironmentFactory */ "./gameApp/src/domain/entity/nuptialEnvironment/nuptialEnvironmentFactory.js");
+/* harmony import */ var _service_nestService__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./service/nestService */ "./gameApp/src/domain/service/nestService.js");
+/* harmony import */ var _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entity/notificationsContainer */ "./gameApp/src/domain/entity/notificationsContainer.js");
+/* harmony import */ var _entity_ratingContainer__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/ratingContainer */ "./gameApp/src/domain/entity/ratingContainer.js");
+/* harmony import */ var _entity_nuptialEnvironment_nuptialEnvironmentFactory__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./entity/nuptialEnvironment/nuptialEnvironmentFactory */ "./gameApp/src/domain/entity/nuptialEnvironment/nuptialEnvironmentFactory.js");
+
 
 
 
@@ -2726,21 +2810,22 @@ __webpack_require__.r(__webpack_exports__);
 function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
 
-    let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.nestApi, apis.antApi);
-    let nuptialEnvironmentFactory = new _entity_nuptialEnvironment_nuptialEnvironmentFactory__WEBPACK_IMPORTED_MODULE_11__.NuptialEnvironmentFactory();
+    let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.antApi);
+    let nuptialEnvironmentFactory = new _entity_nuptialEnvironment_nuptialEnvironmentFactory__WEBPACK_IMPORTED_MODULE_12__.NuptialEnvironmentFactory();
 
-    let notificationsContainer = new _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_9__.NotificationsContainer();
-    let ratingContainer = new _entity_ratingContainer__WEBPACK_IMPORTED_MODULE_10__.RatingContainer();
+    let notificationsContainer = new _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_10__.NotificationsContainer();
+    let ratingContainer = new _entity_ratingContainer__WEBPACK_IMPORTED_MODULE_11__.RatingContainer();
     let world = worldFactory.buildWorld();
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus, ratingContainer);
     let accountService = new _service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user);
-    let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(apis.colonyApi, world, worldFactory, mainEventBus);
+    let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(mainEventBus, world, apis.colonyApi, worldFactory);
     let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_7__.UserService(apis.userApi, notificationsContainer);
-    let nuptialEnvironmentService = new _service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_8__.NuptialEnvironmentService(mainEventBus, nuptialEnvironmentFactory, apis.nuptialEnvironmentApi);
+    let nuptialEnvironmentService = new _service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_8__.NuptialEnvironmentService(mainEventBus, world, nuptialEnvironmentFactory, apis.nuptialEnvironmentApi);
+    let nestService = new _service_nestService__WEBPACK_IMPORTED_MODULE_9__.NestService(mainEventBus, world, apis.nestApi);
     let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService);
 
-    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService);
+    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService);
 
     return domainFacade;
 }
@@ -2781,6 +2866,61 @@ class AccountService {
 
 /***/ }),
 
+/***/ "./gameApp/src/domain/service/base/baseService.js":
+/*!********************************************************!*\
+  !*** ./gameApp/src/domain/service/base/baseService.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BaseService: () => (/* binding */ BaseService)
+/* harmony export */ });
+/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
+
+
+
+class BaseService {
+
+    constructor(mainEventBus, world) {
+        this._mainEventBus = mainEventBus;
+        this._world = world;
+    }
+
+    async _requestHandler(apiCallFunc, ) {
+        try {
+            let result = await apiCallFunc();
+            return result.data;
+        } catch(error) {
+            if (error.status == 409) {
+                await this._waitStepSync(error.data.step);
+                throw new _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_1__.StateSyncRequestError(error.data);
+            }
+            throw new _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_0__.GenericRequestError(error.data)
+        }
+    }
+
+    async _waitStepSync(stepNumber) {
+        console.log('curent step', this._world.currentStep, 'waiting', stepNumber);
+        return new Promise((res, rej) => {
+            if (this._world.currentStep > stepNumber) {
+                res();
+            } else {
+                this._mainEventBus.once(`stepSyncDone:${stepNumber}`, () => {
+                    res();
+                });
+            }
+        });
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/domain/service/colonyService.js":
 /*!*****************************************************!*\
   !*** ./gameApp/src/domain/service/colonyService.js ***!
@@ -2793,19 +2933,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ColonyService: () => (/* binding */ ColonyService)
 /* harmony export */ });
 /* harmony import */ var _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/entity/action/actionTypes */ "./gameApp/src/domain/entity/action/actionTypes.js");
-/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
-/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @utils/distance */ "./gameApp/src/utils/distance.js");
+/* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./base/baseService */ "./gameApp/src/domain/service/base/baseService.js");
+/* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./gameApp/src/domain/enum/entityTypes.js");
+/* harmony import */ var _domain_enum_itemTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/itemTypes */ "./gameApp/src/domain/enum/itemTypes.js");
+/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @utils/distance */ "./gameApp/src/utils/distance.js");
 
 
 
 
-class ColonyService {
 
-    constructor(colonyApi, world, worldFactory, mainEventBus) {
+
+class ColonyService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.BaseService {
+
+    constructor(mainEventBus, world, colonyApi, worldFactory) {
+        super(mainEventBus, world);
         this._mainEventBus = mainEventBus;
         this._colonyApi = colonyApi;
         this._world = world;
         this._worldFactory = worldFactory;
+
+        this._mainEventBus.on('colonyDied', this._onColonyDied.bind(this));
     }
 
     playColonyAction(action) {
@@ -2830,27 +2977,27 @@ class ColonyService {
     }
 
     buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
-        return this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName)
+        return this._requestHandler(() => this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName));
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
-        return this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
+        return this._requestHandler(() => this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest));
     }
 
     pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-        return this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
+        return this._requestHandler(() => this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount));
     }
 
     transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
-        return this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
+        return this._requestHandler(() => this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount));
     }
 
     buildFortificationsOpearation(performingColonyId, nestId, workersCount) {
-        return this._colonyApi.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
+        return this._requestHandler(() => this._colonyApi.buildFortificationsOpearation(performingColonyId, nestId, workersCount));
     }
 
     bringBugOpearation(performingColonyId, nestId) {
-        return this._colonyApi.bringBugOpearation(performingColonyId, nestId);
+        return this._requestHandler(() => this._colonyApi.bringBugOpearation(performingColonyId, nestId));
     }
 
     buildMarker(type, point) {
@@ -2858,6 +3005,55 @@ class ColonyService {
             type,
             point
         };
+    }
+
+    findClosestBugCorpseNearNest(nestId) {
+        let nest = this._world.findEntityById(nestId);
+        let items = this._world.findEntityByType(_domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_2__.EntityTypes.ITEM);
+        let bugCorpsesInNestArea = items
+            .filter(
+                (i) =>
+                    i.itemType === _domain_enum_itemTypes__WEBPACK_IMPORTED_MODULE_3__.ItemTypes.BUG_CORPSE &&
+                    (0,_utils_distance__WEBPACK_IMPORTED_MODULE_4__.distance)(nest.position.x, nest.position.y, i.position.x, i.position.y) <= nest.area
+            )
+            .sort(
+                (a, b) =>
+                    (0,_utils_distance__WEBPACK_IMPORTED_MODULE_4__.distance)(nest.position.x, nest.position.y, a.position.x, a.position.y) - 
+                    (0,_utils_distance__WEBPACK_IMPORTED_MODULE_4__.distance)(nest.position.x, nest.position.y, b.position.x, b.position.y)
+            );
+        
+            return bugCorpsesInNestArea.length > 0 ? bugCorpsesInNestArea[0] : null;
+    }
+
+    validateNewNestOperationConditions(colonyId) {
+        let queen = this._world.getQueenOfColony(colonyId);
+        if (!queen) {
+            return 'CANT_BUILD_SUB_NEST_WITHOUT_QUEEN';
+        }
+
+        return null;
+    }
+
+    validateDestroyNestOperationConditions(colonyId) {
+        let queen = this._world.getQueenOfColony(colonyId);
+        if (!queen) {
+            return 'CANT_DESTROY_NEST_WITHOUT_LIVING_QUEEN';
+        }
+
+        return null;
+    }
+
+    validatePillageNestOperationConditions(colonyId) {
+        let queen = this._world.getQueenOfColony(colonyId);
+        if (!queen) {
+            return 'CANT_PILLAGE_NEST_WITHOUT_LIVING_QUEEN';
+        }
+
+        return null;
+    }
+
+    _onColonyDied(colony) {
+        this._world.deleteColony(colony);
     }
 
 }
@@ -2955,6 +3151,126 @@ class MessageHandlerService {
 
 /***/ }),
 
+/***/ "./gameApp/src/domain/service/nestService.js":
+/*!***************************************************!*\
+  !*** ./gameApp/src/domain/service/nestService.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   NestService: () => (/* binding */ NestService)
+/* harmony export */ });
+/* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseService */ "./gameApp/src/domain/service/base/baseService.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
+/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @utils/distance */ "./gameApp/src/utils/distance.js");
+
+
+
+
+class NestService extends _base_baseService__WEBPACK_IMPORTED_MODULE_0__.BaseService {
+
+    constructor(mainEventBus, world, nestApi) {
+        super(mainEventBus, world);
+        this._nestApi = nestApi;
+    }
+
+    layEggInNest(nestId, name, isFertilized) {
+        return this._requestHandler(() => this._nestApi.layEggInNest(nestId, name, isFertilized));
+    }
+
+    async changeEggCasteInNest(nestId, eggId, antType) {
+        await this._requestHandler(() => this._nestApi.changeEggCaste(nestId, eggId, antType));
+        let nest = this._world.findEntityById(nestId);
+        nest.changeCasteForEgg(eggId, antType);
+    }
+
+    async changeEggNameInNest(nestId, eggId, name) {
+        await this._requestHandler(() => this._nestApi.changeEggName(nestId, eggId, name));
+        let nest = this._world.findEntityById(nestId);
+        nest.changeNameForEgg(eggId, name);
+    }
+
+    async moveEggToLarvaInNest(nestId, eggId) {
+        await this._requestHandler(() => this._nestApi.eggToLarvaChamber(nestId, eggId));
+    }
+
+    async deleteEggInNest(nestId, eggId) {
+        await this._requestHandler(() => this._nestApi.eggDelete(nestId, eggId));
+        let nest = this._world.findEntityById(nestId);
+        nest.eggDelete(eggId);
+    }
+
+    async deleteLarvaInNest(nestId, larvaId) {
+        await this._requestHandler(() => this._nestApi.larvaDelete(nestId, larvaId));
+        let nest = this._world.findEntityById(nestId);
+        nest.larvaDelete(larvaId);
+    }
+
+    async renameNest(nestId, name) {
+        await this._requestHandler(() => this._nestApi.renameNest(nestId, name));
+        let nest = this._world.findEntityById(nestId);
+        nest.rename(name);
+    }
+
+    validateLayingEggInNest(nestId) {
+        let nest = this._world.findEntityById(nestId);
+
+        let queen = this._world.getQueenOfColony(nest.fromColony);
+        if (!queen || queen.locatedInNestId != nest.id) {
+            return 'CANT_LAY_EGG_WITHOUT_QUEEN_IN_NEST';
+        }
+
+        if (nest.storedCalories < _domain_consts__WEBPACK_IMPORTED_MODULE_1__.CONSTS.NEW_EGG_FOOD_COST) {
+            return'NOT_ENOUGHT_FOOD_IN_NEST_TO_LAY_EGG';
+        }
+
+        if (!_domain_consts__WEBPACK_IMPORTED_MODULE_1__.CONSTS.LAY_EGG_SEASONS.includes(this._world.currentSeason)) {
+            return 'NOT_SUITABLE_SEASON_TO_LAY_EGG';
+        }
+
+        return null;
+    }
+
+    findMyFirstNest(userId) {
+        let myNests = this._world.findNestsByOwner(userId);
+        for (let nest of myNests) {
+            if (nest.isMain) {
+                return nest;
+            }
+        }
+
+        if (myNests.length > 0) {
+            return myNests[0];
+        } else {
+            return null;
+        }
+    }
+
+    findNearestNest(point, excludeColonyId) {
+        let nests = this._world.getNests();
+        let nearestNest = null;
+        let smallestDistance = null;
+        let maxDist = 100;
+
+        nests.forEach(nest => {
+            let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_2__.distance)(point.x, point.y, nest.position.x, nest.position.y);
+            if (!nest.isDied && (!excludeColonyId || nest.fromColony != excludeColonyId) && dist <= maxDist && (!smallestDistance || dist < smallestDistance)) {
+                smallestDistance = dist;
+                nearestNest = nest;
+            }
+        });
+
+        return nearestNest;
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/domain/service/nuptialEnvironmentService.js":
 /*!*****************************************************************!*\
   !*** ./gameApp/src/domain/service/nuptialEnvironmentService.js ***!
@@ -2966,16 +3282,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NuptialEnvironmentService: () => (/* binding */ NuptialEnvironmentService)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
+/* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseService */ "./gameApp/src/domain/service/base/baseService.js");
 /* harmony import */ var _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/entity/action/actionTypes */ "./gameApp/src/domain/entity/action/actionTypes.js");
+/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/antTypes */ "./gameApp/src/domain/enum/antTypes.js");
 
 
 
-class NuptialEnvironmentService extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
-    constructor(mainEventBus, nuptialEnvironmentFactory, nuptialEnvironmentApi) {
-        super();
-        this._mainEventBus = mainEventBus;
+class NuptialEnvironmentService extends _base_baseService__WEBPACK_IMPORTED_MODULE_0__.BaseService {
+
+    constructor(mainEventBus, world, nuptialEnvironmentFactory, nuptialEnvironmentApi) {
+        super(mainEventBus, world);
         this._nuptialEnvironmentFactory = nuptialEnvironmentFactory;
         this._nuptialEnvironmentApi = nuptialEnvironmentApi;
         this._nuptialMales = [];
@@ -2998,8 +3315,7 @@ class NuptialEnvironmentService extends _utils_eventEmitter__WEBPACK_IMPORTED_MO
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
-        this._removeMale(nuptialMaleId);
-        return this._nuptialEnvironmentApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
+        return this._requestHandler(() => this._nuptialEnvironmentApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName));
     }
 
     playAction(action) {
@@ -3013,6 +3329,11 @@ class NuptialEnvironmentService extends _utils_eventEmitter__WEBPACK_IMPORTED_MO
             default:
                 throw 'unknown type of action';
         }
+    }
+
+    getQueensInNuptialFlightFromUser(userId) {
+        let allAnts = this._world.getAnts();
+        return allAnts.filter(ant => ant.ownerId == userId && ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_2__.AntTypes.QUEEN && ant.isInNuptialFlight);
     }
 
     _initSpecie(specieJson) {
@@ -3121,11 +3442,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   WorldService: () => (/* binding */ WorldService)
 /* harmony export */ });
-/* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/enum/antTypes */ "./gameApp/src/domain/enum/antTypes.js");
-/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/distance */ "./gameApp/src/utils/distance.js");
-/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
-
-
+/* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./gameApp/src/domain/enum/entityTypes.js");
 
 
 class WorldService {
@@ -3138,6 +3455,7 @@ class WorldService {
         this._ratingContainer = ratingContainer;
 
         this._mainEventBus.on('userLogout', this._clearWorld.bind(this));
+        this._mainEventBus.on('entityDied', this._onEntityDied.bind(this));
     }
 
     get world() {
@@ -3204,42 +3522,29 @@ class WorldService {
         let entity = this._worldFactory.buildEntity(entityJson);
         this._world.addEntity(entity);
         this._mainEventBus.emit('entityBorn', entity);
-    }
-
-    findNearestNest(point, excludeColonyId) {
-        let nests = this._world.getNests();
-        let nearestNest = null;
-        let smallestDistance = null;
-        let maxDist = 100;
-
-        nests.forEach(nest => {
-            let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_1__.distance)(point.x, point.y, nest.position.x, nest.position.y);
-            if ((!excludeColonyId || nest.fromColony != excludeColonyId) && dist <= maxDist && (!smallestDistance || dist < smallestDistance)) {
-                smallestDistance = dist;
-                nearestNest = nest;
-            }
-        });
-
-        return nearestNest;
-    }
-
-    getQueensInNuptialFlightFromUser(userId) {
-        let allAnts = this._world.getAnts();
-        return allAnts.filter(ant => ant.ownerId == userId && ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_0__.AntTypes.QUEEN && ant.isInNuptialFlight);
-    }
-
-    findMyFirstNest(userId) {
-        let myNests = this._world.findNestsByOwner(userId);
-        for (let nest of myNests) {
-            if (nest.isMain) {
-                return nest;
-            }
+        switch (entity.type) {
+            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT:
+                this._mainEventBus.emit('antBorn', entity);
+                this._mainEventBus.emit(`antBorn:${entity.fromColony}`, entity);
+                break;
+            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
+                this._mainEventBus.emit('nestBorn', entity);
+                this._mainEventBus.emit(`nestBorn:${entity.fromColony}`, entity);
+                break;
         }
+    }
 
-        if (myNests.length > 0) {
-            return myNests[0];
-        } else {
-            return null;
+    _onEntityDied(entity) {
+        this._world.deleteEntity(entity);
+        switch (entity.type) {
+            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT:
+                this._mainEventBus.emit('antDied', entity);
+                this._mainEventBus.emit(`antDied:${entity.fromColony}`, entity);
+                break;
+            case _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
+                this._mainEventBus.emit('nestDied', entity);
+                this._mainEventBus.emit(`nestDied:${entity.fromColony}`, entity);
+                break;
         }
     }
 
@@ -3293,9 +3598,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class WorldFactory {
 
-    constructor(mainEventBus, nestApi, antApi) {
+    constructor(mainEventBus, antApi) {
         this._mainEventBus = mainEventBus;
-        this._nestApi = nestApi;
         this._antApi = antApi;
     }
 
@@ -3369,8 +3673,9 @@ class WorldFactory {
         let fortification = nestJson.fortification;
         let name = nestJson.name;
         let isMain = nestJson.isMain;
-        return new _entity_nest__WEBPACK_IMPORTED_MODULE_2__.Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, isBuilt, 
-            hp, maxHp, fortification, maxFortification, name, isMain);
+        let area = nestJson.area;
+        return new _entity_nest__WEBPACK_IMPORTED_MODULE_2__.Nest(this._mainEventBus, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, isBuilt, 
+            hp, maxHp, fortification, maxFortification, name, isMain, area);
     }
 
     buildAnt(antJson) {
@@ -3526,76 +3831,51 @@ class ColonyApi {
     }
 
     buildNewSubNestOperation(colonyId, buildingSite, workersCount, warriorsCount, nestName) {
-        return new Promise((res, rej) => {
-            this._requester.post(`api/world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
-                building_site: [buildingSite.x, buildingSite.y],
-                workers_count: workersCount,
-                warriors_count: warriorsCount,
-                nest_name: nestName
-            })
-            .then(axiosResp => res(null))
-            .catch(axiosResp => rej(axiosResp.response.data))
-        })
-        
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/build_new_sub_nest`, {
+            building_site: [buildingSite.x, buildingSite.y],
+            workers_count: workersCount,
+            warriors_count: warriorsCount,
+            nest_name: nestName
+        });
     }
 
     destroyNestOperation(colonyId, warriorsCount, workersCount, nest) {
-        return new Promise((res, rej) => {
-            this._requester.post(`api/world/colonies/${ colonyId }/operations/destroy_nest`, {
-                warriors_count: warriorsCount,
-                workers_count: workersCount,
-                nest_id: nest.id
-            })
-            .then(axiosResp => res(null))
-            .catch(axiosResp => rej(axiosResp.response.data))
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/destroy_nest`, {
+            warriors_count: warriorsCount,
+            workers_count: workersCount,
+            nest_id: nest.id
         });
     }
 
     pillageNestOperation(colonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-        return new Promise((res, rej) => {
-            this._requester.post(`api/world/colonies/${ colonyId }/operations/pillage_nest`, {
-                nest_to_pillage_id: pillagingNestId,
-                nest_for_loot_id: nestForLootId,
-                warriors_count: warriorsCount,
-                workers_count: workersCount
-            })
-            .then(axiosResp => res(null))
-            .catch(axiosResp => rej(axiosResp.response.data))
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/pillage_nest`, {
+            nest_to_pillage_id: pillagingNestId,
+            nest_for_loot_id: nestForLootId,
+            warriors_count: warriorsCount,
+            workers_count: workersCount
         });
         
     }
 
     transportFoodOperation(colonyId, fromNestId, toNestId, workersCount, warriorsCount) {
-        return new Promise((res, rej) => {
-            this._requester.post(`api/world/colonies/${ colonyId }/operations/transport_food`, {
-                from_nest_id: fromNestId,
-                to_nest_id: toNestId,
-                workers_count: workersCount,
-                warriors_count: warriorsCount,
-            })
-            .then(axiosResp => res(null))
-            .catch(axiosResp => rej(axiosResp.response.data))
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/transport_food`, {
+            from_nest_id: fromNestId,
+            to_nest_id: toNestId,
+            workers_count: workersCount,
+            warriors_count: warriorsCount,
         });
     }
 
     buildFortificationsOpearation(colonyId, nestId, workersCount) {
-        return new Promise((res, rej) => {
-            this._requester.post(`api/world/colonies/${ colonyId }/operations/build_fortification`, {
-                nest_id: nestId,
-                workers_count: workersCount
-            })
-            .then(axiosResp => res(null))
-            .catch(axiosResp => rej(axiosResp.response.data))
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/build_fortification`, {
+            nest_id: nestId,
+            workers_count: workersCount
         });
     }
 
     bringBugOpearation(colonyId, nestId) {
-        return new Promise((res, rej) => {
-            this._requester.post(`api/world/colonies/${ colonyId }/operations/bring_bug`, {
-                nest_id: nestId
-            })
-            .then(axiosResp => res(null))
-            .catch(axiosResp => rej(axiosResp.response.data))
+        return this._requester.post(`api/world/colonies/${ colonyId }/operations/bring_bug`, {
+            nest_id: nestId
         });
     }
 }
@@ -3677,14 +3957,10 @@ class NestApi {
         this._requester = requester;
     }
 
-    addNewEgg(nestId, name, isFertilized) {
-        return new Promise((res, rej) => {
-            this._requester.post(`api/world/nests/${nestId}/add_egg`, {
-                name,
-                is_fertilized: isFertilized
-            })
-            .then(axiosResp => res(null))
-            .catch(axiosResp => rej(axiosResp.response.data))
+    layEggInNest(nestId, name, isFertilized) {
+        return this._requester.post(`api/world/nests/${nestId}/lay_egg`, {
+            name,
+            is_fertilized: isFertilized
         })
     }
 
@@ -3748,15 +4024,11 @@ class NuptialEnvironmentApi {
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
-        return new Promise((res, rej) => {
-            this._requester.post('api/world/nuptial_environment/found_colony', {
-                queen_id: queenId,
-                nuptial_male_id: nuptialMaleId,
-                nest_building_site: [nestBuildingSite.x, nestBuildingSite.y],
-                colony_name: colonyName
-            })
-            .then(axiosResp => res(null))
-            .catch(axiosError => rej(axiosError.response))
+        return this._requester.post('api/world/nuptial_environment/found_colony', {
+            queen_id: queenId,
+            nuptial_male_id: nuptialMaleId,
+            nest_building_site: [nestBuildingSite.x, nestBuildingSite.y],
+            colony_name: colonyName
         });
     }
     
@@ -4979,11 +5251,19 @@ const uaMessages = {
     choose_nest_for_attack: 'мурахам треба вказати гніздо для атаки',
     too_few_ants_to_attack: 'занадто мало мурах для атаки',
     choose_nest_for_pillage: 'мурахам треба вказати гніздо для грабування',
-    choose_different_nests: 'мурахи можуть переносити їжу лише між різними гніздами',
+    choose_different_nests: 'мурахи можуть переносити їжу лише між різними гніздами своєї колонії',
     min_str_length: 'мінімальна довжина {0}',
     max_str_length: 'максимальна довжина {0}',
     only_chars_and_digits: 'тільки букви та цифри',
     queen_needs_place_to_settle: 'самкі треба вказать місце щоб заселиться',
+    nest_destroyed: 'зруйновано',
+    nest_not_choosed: 'не вибрано',
+    choose_nest_for_loot: 'мурахам треба гніздо для здобичі',
+    choose_nest_from: 'мурахам вказать гніздо з якого переносить їжу',
+    choose_nest_to: 'мурахам вказать гніздо в яке переносить їжу',
+    choose_nest_to_fortificate: 'мурахам вказать гніздо для будування фортифікацій',
+    choose_nest_with_bug_nearby: 'вкажи гніздо де був помічений смачний жук',
+    bug_corpse_not_found: 'жука біля гнізда не знайдено',
 
     spring: 'весна',
     summer: 'літо',
@@ -5570,26 +5850,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   NestSelectorView: () => (/* binding */ NestSelectorView)
 /* harmony export */ });
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
-/* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./gameApp/src/domain/enum/entityTypes.js");
-
 
 
 class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    constructor(colonyId, el) {
-        super(el || document.createElement('select'));
+    constructor(el, colonyId) {
+        super(el);
         this._colonyId = colonyId;
+        this._nests = this.$domainFacade.getNestsFromColony(this._colonyId);
         this._isDisabled = false;
 
-        this._stopListenEntityDied = this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this._stopListenEntityBorn = this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
-        this._el.addEventListener('change', this._onChange.bind(this));
-
         this._render();
+
+        this._stopListenNestDied = this.$domainFacade.events.on(`nestDied:${this._colonyId}`, this._onNestDied.bind(this));
+        this._stopListenNestBorn = this.$domainFacade.events.on(`nestBorn:${this._colonyId}`, this._onNestBorn.bind(this));
+        this._el.addEventListener('change', this._onChange.bind(this));
     }
 
     get nestId() {
-        return parseInt(this._el.value);
+        return parseInt(this._el.value) || null;
     }
 
     set nestId(nestId) {
@@ -5605,6 +5884,12 @@ class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         return this._isDisabled;
     }
 
+    remove() {
+        this._stopListenNestDied();
+        this._stopListenNestBorn();
+        super.remove();
+    }
+
     selectAt(index) {
         let option = this._el.children[index];
         if (option) {
@@ -5613,11 +5898,19 @@ class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     }
 
     _render() {
-        let nests = this.$domainFacade.getNestsFromColony(this._colonyId);
-        this._el.innerHTML = '';
-        for (let nest of nests) {
+        this._renderEmptyOption();
+        
+        for (let nest of this._nests) {
             this._renderNestOption(nest);
         }
+    }
+
+    _renderEmptyOption() {
+        let optionEl = document.createElement('option');
+        optionEl.setAttribute('value', 'none');
+        // optionEl.setAttribute('disabled', '');
+        optionEl.innerHTML = this.$messages.nest_not_choosed;
+        this._el.append(optionEl);
     }
 
     _renderNestOption(nest) {
@@ -5627,31 +5920,40 @@ class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
         this._el.append(optionEl);
     }
 
-    _onSomeoneDied(entity) {
-        if (this._isMyNest(entity)) {
-            this._el.querySelector(`[value="${entity.id}"]`).remove();
+    _removeNestOption(nestId) {
+        this._el.querySelector(`[value="${nestId}"]`).remove();
+    }
+
+    _removeNestFromArray(nest) {
+        let index = this._nests.indexOf(nest);
+        if (index > -1) {
+            this._nests.splice(index, 1);
         }
     }
 
-    _onSomeoneBorn(entity) {
-        if (this._isMyNest(entity)) {
-            this._renderNestOption(entity);
-        }
+    _clearValue() {
+        this._el.value = 'none';
+        this.events.emit('changed');
     }
 
-    _isMyNest(entity) {
-        return entity.type == _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.NEST && entity.fromColony == this._colonyId;
+    _onNestDied(nest) {
+        if (this.nestId == nest.id) {
+            this._clearValue();
+        }
+        this._removeNestOption(nest.id);
+        this._removeNestFromArray(nest);
+        
+    }
+
+    _onNestBorn(nest) {
+        this._nests.push(nest);
+        this._renderNestOption(nest);
     }
 
     _onChange() {
         this.events.emit('changed');
     }
 
-    remove() {
-        this._stopListenEntityDied();
-        this._stopListenEntityBorn();
-        super.remove();
-    }
 }
 
 
@@ -5669,20 +5971,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NestInlineView: () => (/* binding */ NestInlineView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./gameApp/src/view/panel/base/nest/style.css");
+/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _nestInlineTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./nestInlineTmpl.html */ "./gameApp/src/view/panel/base/nest/nestInlineTmpl.html");
 
 
-class NestInlineView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+
+class NestInlineView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
 
     constructor(el, nest) {
         super(el);
         this._nest = nest;
 
-        this._renderNest();
+        this._render();
+
+        this._stopListenNesDied = this.$domainFacade.events.on('nestDied', this._onSomeNestDied.bind(this));
+        this._nestNameEl.addEventListener('click', this._onNameClick.bind(this));
     }
 
     get value() {
-        return this._nest;
+        return this._nest && !this._nest.isDied ? this._nest : null;
     }
 
     set value(nest) {
@@ -5690,8 +5999,48 @@ class NestInlineView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0_
         this._renderNest();
     }
 
+    remove() {
+        super.remove();
+        this._stopListenNesDied();
+    }
+
+    _render() {
+        this._el.innerHTML = _nestInlineTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
+
+        this._nestNameEl = this._el.querySelector('[data-nest-name]');
+        this._noNestPlaceholderEl = this._el.querySelector('[data-no-nest-placeholder]');
+        this._nestDiedErrorEl = this._el.querySelector('[data-nest-died-error-container]');
+
+        this._noNestPlaceholderEl.innerHTML = this.$messages.not_specified;
+    }
+
     _renderNest() {
-        this._el.innerHTML = this._nest ? this._nest.name : this.$messages.not_specified;
+        this._renderNestName();
+        this._renderNestDiedState();
+        this._renderNoNestPlaceholderState();
+    }
+
+    _renderNoNestPlaceholderState() {
+        this._noNestPlaceholderEl.classList.toggle('g-hidden', !!this._nest);
+    }
+
+    _renderNestName() {
+        this._nestNameEl.classList.toggle('g-hidden', !this._nest);
+        this._nestNameEl.innerHTML = this._nest ? this._nest.name : '';
+    }
+
+    _renderNestDiedState() {
+        this._nestDiedErrorEl.innerHTML = this._nest && this._nest.isDied ? `(${this.$messages.nest_destroyed})` : '';
+    }
+
+    _onSomeNestDied(nest) {
+        if (this._nest && nest.id == this._nest.id) {
+            this._renderNestDiedState();
+        }
+    }
+
+    _onNameClick() {
+        this.$eventBus.emit('showPointRequest', this._nest.position);
     }
 
 }
@@ -6369,10 +6718,9 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._el.querySelector('[data-name]').innerHTML = this._ant.name;
         this._el.querySelector('[data-type]').innerHTML = this._ant.isQueenOfColony ? 'Королева' : _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_4__.antTypesLabels[this._ant.antType];
 
-        this._nestSelector = new _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._ant.fromColony);
+        this._nestSelector = new _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._el.querySelector('[data-nest]'), this._ant.fromColony);
         this._nestSelector.nestId = this._ant.homeNestId;
         this._nestSelector.disabled = this._ant.isQueenOfColony;
-        this._el.querySelector('[data-nest]').append(this._nestSelector.el);
 
         this._guardianTypeSelector = this._el.querySelector('[data-guardian-type]');
         this._guardianTypeSelector.value = this._ant.guardianBehavior;
@@ -6816,6 +7164,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
 /* harmony import */ var _eggTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./eggTabTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/eggTab/eggTabTmpl.html");
 /* harmony import */ var _eggView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./eggView */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/eggTab/eggView.js");
+/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+
+
 
 
 
@@ -6890,6 +7242,13 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         delete this._eggsViews[egg.id];
     }
 
+    _validate() {
+        let errorId = this.$domainFacade.validateLayingEggInNest(this._nest.id);
+        this._renderError(this.$messages[errorId]);
+
+        return !errorId;
+    }
+
     _onEggBecameLarva(egg) {
         this._removeEggView(egg);
     }
@@ -6902,16 +7261,23 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._renderEgg(egg);
     }
 
-    _onAddEggBtnClick() {
+    async _onAddEggBtnClick() {
+        if (!this._validate()) {
+            return;
+        }
+
         let name = this._generateAntName();
         let isFertilized = this._isFertilizeCheckbox.checked;
-        this._nest.addNewEgg(name, isFertilized)
-            .then(() => {
-                this._renderError();
-            })
-            .catch((errId) => {
-                this._renderError(errId);
-            });
+        try {
+            await this.$domainFacade.layEggInNest(this._nest.id, name, isFertilized);
+        } catch (e) {
+            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_3__.StateSyncRequestError) {
+                this._validate();
+            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_4__.GenericRequestError) {
+                this._renderError(this.$messages['SOMETHING_WENT_WRONG']);
+            }
+        }
+        
     }
 
     _generateAntName() {
@@ -6924,8 +7290,8 @@ class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Ba
         return `${randomAdjective} ${randomNoun}`;
     }
 
-    _renderError(messageId) {
-        this._errorContainerEl.innerHTML = messageId ? this.$messages[messageId] : '';
+    _renderError(errText) {
+        this._errorContainerEl.innerHTML = errText || '';
     }
 
 }
@@ -7016,24 +7382,41 @@ class EggView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._renderProgress();
     }
 
-    _onEggAntTypeChanged() {
+    async _onEggAntTypeChanged() {
         let antType = this._antTypeSelector.value;
-        this._nest.editCasteForEgg(this._egg.id, antType);
-    }
-
-    _onEggNameChanged() {
-        let name = this._nameInput.value;
-        if (name) {
-            this._nest.editNameForEgg(this._egg.id, name);
+        try {
+            await this.$domainFacade.changeEggCasteInNest(this._nest.id, this._egg.id, antType)
+        } catch (e) {
+            console.error(e);
         }
     }
 
-    _onEggtoLarvaChamberClick() {
-        this._nest.eggToLarvaChamber(this._egg.id);
+    async _onEggNameChanged() {
+        let name = this._nameInput.value;
+        if (!name) {
+            return;
+        }
+        try {
+            await this.$domainFacade.changeEggNameInNest(this._nest.id, this._egg.id, name);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
-    _onEggDeleteClick() {
-        this._nest.eggDelete(this._egg.id);
+    async _onEggtoLarvaChamberClick() {
+        try {
+            await this.$domainFacade.moveEggToLarvaInNest(this._nest.id, this._egg.id);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async _onEggDeleteClick() {
+        try {
+            await this.$domainFacade.deleteEggInNest(this._nest.id, this._egg.id);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     remove() {
@@ -7233,8 +7616,12 @@ class LarvaView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.Bas
         this._renderProgress();
     }
 
-    _onDeleteBtnClick() {
-        this._nest.larvaDelete(this._larva.id);
+    async _onDeleteBtnClick() {
+        try {
+            await this.$domainFacade.deleteLarvaInNest(this._nest.id, this._larva.id);
+        } catch (e) {
+            console.error(e);
+        }
     }
 }
 
@@ -7308,8 +7695,15 @@ class MainTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
         this._renderStoredClalories();
     }
 
-    _onChangedNestName() {
-        this._nest.rename(this._nameEl.value);
+    async _onChangedNestName() {
+        if (!this._nameEl.value) {
+            return;
+        }
+        try {
+            await this.$domainFacade.renameNest(this._nest.id, this._nameEl.value);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
 }
@@ -7704,6 +8098,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _bringBugOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bringBugOperationCreatorTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/bringBug/bringBugOperationCreatorTmpl.html");
 /* harmony import */ var _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/nestSelector */ "./gameApp/src/view/panel/base/nestSelector/index.js");
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
+/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+
+
 
 
 
@@ -7713,6 +8111,7 @@ class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IM
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
+        this._closestBugCorpse = null;
 
         this._render();
 
@@ -7728,30 +8127,79 @@ class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IM
     _render() {
         this._el.innerHTML = _bringBugOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this._nestSelector = new _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id, this._el.querySelector('[data-nest-selector]'));
-        this._requestErrorContainerEl = this._el.querySelector('[data-request-error-container]');
+        this._nestSelector = new _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._el.querySelector('[data-nest-selector]'), this._performingColony.id);
+        this._nestErrContainer = this._el.querySelector('[data-nest-err]');
+
+        this._bugCorpseErrContainer = this._el.querySelector('[data-bug-corpse-err]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
 
         this._showMarkers();
     }
 
-    _onStartBtnClick() {
-        let nestId = this._nestSelector.nestId;
-        this.$domainFacade.bringBugOpearation(this._performingColony.id, nestId)
-            .then(() => {
-                this._onDone();
-            })
-            .catch((errId) => {
-                this._renderRequestError(errId);
-            })
+    _validate() {
+        let isError = false;
+
+        let nestError = this._validateNest();
+        this._renderNestError(nestError);
+        if (nestError) {
+            isError = true;
+        }
+
+        let bugCorpseError = this._validateClosestBugCorpse();
+        this._renderBugCorpseError(bugCorpseError);
+        if (bugCorpseError) {
+            isError = true;
+        }
+
+        return !isError;
     }
 
-    _renderRequestError(messageId) {
-        this._requestErrorContainerEl.innerHTML = this.$messages[messageId];
+    _validateNest() {
+        if (!this._nestSelector.nestId) {
+            return this.$messages.choose_nest_with_bug_nearby;
+        }
+
+        return null
+    }
+
+    _renderNestError(errorText) {
+        this._nestErrContainer.innerHTML = errorText || '';
+    }
+
+    _validateClosestBugCorpse() {
+        if (this._nestSelector.nestId && (!this._closestBugCorpse || this._closestBugCorpse.isDied)) {
+            return this.$messages.bug_corpse_not_found;
+        }
+
+        return null;
+    }
+
+    _renderBugCorpseError(errText) {
+        this._bugCorpseErrContainer.innerHTML = errText || '';
+    }
+
+    async _onStartBtnClick() {
+        let nestId = this._nestSelector.nestId;
+        try {
+            await this.$domainFacade.bringBugOpearation(this._performingColony.id, nestId);
+            this._onDone();
+        } catch(e) {
+            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_4__.StateSyncRequestError) {
+                this._validate();
+            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_5__.GenericRequestError) {
+                this._renderMainError('SOMETHING_WENT_WRONG');
+            }
+        }
     }
 
     _onNestChanged() {
+        if (this._nestSelector.nestId) {
+            this._closestBugCorpse = this.$domainFacade.findClosestBugCorpseNearNest(this._nestSelector.nestId);
+        } else {
+            this._closestBugCorpse = null;
+        }
+        this._validate();
         this._showMarkers();
     }
 
@@ -7761,6 +8209,10 @@ class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IM
         if (this._nestSelector.nestId) {
             let nest = this.$domainFacade.findEntityById(this._nestSelector.nestId);
             markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.LOAD, nest.position));
+        }
+
+        if (this._closestBugCorpse) {
+            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.EAT, this._closestBugCorpse.position));
         }
 
         this._demonstrateMarkersRequest(markers);
@@ -7789,6 +8241,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
 /* harmony import */ var _view_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/panel/base/intInput/intInputView */ "./gameApp/src/view/panel/base/intInput/intInputView.js");
+/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+
+
 
 
 
@@ -7817,15 +8273,14 @@ class BuildFortificationOperationCreatorView extends _baseOperationCreatorView__
     _render() {
         this._el.innerHTML = _buildFortificationOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this._nestSelector = new _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id, this._el.querySelector('[data-nest-selector]'));
+        this._nestErrContainer = this._el.querySelector('[data-nest-err]');
+        this._nestSelector = new _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._el.querySelector('[data-nest-selector]'), this._performingColony.id);
 
         let workersCountInput = this._el.querySelector('[data-workers-count]');
         let workersCountErrContainer = this._el.querySelector('[data-workers-count-err]');
         let minWorkersCount = _domain_consts__WEBPACK_IMPORTED_MODULE_4__.CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MIN_WORKERS_COUNT;
         let maxWorkersCount = _domain_consts__WEBPACK_IMPORTED_MODULE_4__.CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MAX_WORKERS_COUNT;
         this._workersCountView = new _view_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_5__.IntInputView(workersCountInput, minWorkersCount, maxWorkersCount, workersCountErrContainer);
-
-        this._requestErrorContainer = this._el.querySelector('[data-request-error-container]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
         this._showMarkers();
@@ -7834,30 +8289,52 @@ class BuildFortificationOperationCreatorView extends _baseOperationCreatorView__
     _validate() {
         let isError = false;
 
-        if (this._workersCountView.validate()) {
+        let nestError = this._validateNest();
+        this._renderNestError(nestError);
+        if (nestError) {
+            isError = true;
+        }
+
+        if (!this._workersCountView.validate()) {
             isError = true;
         }
 
         return !isError;
     }
 
-    _onStartBtnClick() {
-        if (this._validate()) {
+    _validateNest() {
+        if (!this._nestSelector.nestId) {
+            return this.$messages.choose_nest_to_fortificate;
+        }
+
+        return null;
+    }
+
+    _renderNestError(errorText) {
+        this._nestErrContainer.innerHTML = errorText || '';
+    }
+
+    async _onStartBtnClick() {
+        if (!this._validate()) {
             return;
         }
 
         let nestId = this._nestSelector.nestId;
         let workersCount = this._workersCountView.value;
-        this.$domainFacade.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount)
-            .then(() => {
-                this._onDone();
-            })
-            .catch((errId) => {
-                this._renderRequestContainerError(errId);
-            });
+        try {
+            await this.$domainFacade.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount);
+            this._onDone();
+        } catch (e) {
+            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__.StateSyncRequestError) {
+                this._validate();
+            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__.GenericRequestError) {
+                this._renderMainError('SOMETHING_WENT_WRONG');
+            }
+        }
     }
 
     _onNestChanged() {
+        this._validate();
         this._showMarkers();
     }
 
@@ -7870,10 +8347,6 @@ class BuildFortificationOperationCreatorView extends _baseOperationCreatorView__
         }
 
         this._demonstrateMarkersRequest(markers);
-    }
-
-    _renderRequestContainerError(messageId) {
-        this._requestErrorContainer.innerHTML = this.$messages[messageId];
     }
 
 }
@@ -7899,6 +8372,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
 /* harmony import */ var _view_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/panel/base/intInput/intInputView */ "./gameApp/src/view/panel/base/intInput/intInputView.js");
 /* harmony import */ var _view_panel_base_nest_nestInlineView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/panel/base/nest/nestInlineView */ "./gameApp/src/view/panel/base/nest/nestInlineView.js");
+/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+
+
 
 
 
@@ -7910,8 +8387,11 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
+        this._queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
 
         this._render();
+
+        this._checkQueenExisting();
 
         this._chooseNestBtn.addEventListener('click', this._onChooseNestBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
@@ -7973,6 +8453,12 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
             isError = true;
         }
 
+        let condErr = this.$domainFacade.validateDestroyNestOperationConditions(this._performingColony.id);
+        this._renderMainError(condErr);
+        if (condErr) {
+            isError = true;
+        }
+
         return !isError;
     }
 
@@ -8001,9 +8487,16 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         this._minAntsCountErrorContainerEl.innerHTML = errText || '';
     }
 
+    _checkQueenExisting() {
+        if (!this._queenOfColony) {
+            this._renderMainError('CANT_DESTROY_NEST_WITHOUT_LIVING_QUEEN');
+            this._chooseNestBtn.disabled = true;
+            this._startBtn.disabled = true;
+        }
+    }
+
     _onChooseNestBtnClick() {
-        let queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
-        let pickableCircle = { center: queenOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
+        let pickableCircle = { center: this._queenOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
         this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, this._onChoosedNestToDestroy.bind(this));
     }
 
@@ -8019,17 +8512,20 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         this._renderMinAntsCountErr(minAntsCountErr);
     }
 
-    _onStartBtnClick() {
+    async _onStartBtnClick() {
         if (!this._validate()) {
             return
         }
-        this.$domainFacade.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._choosedNestView.value)
-            .then(() => {
-                this._onDone();
-            })
-            .catch((errId) => {
-                this._renderRequestError(errId);
-            });
+        try {
+            await this.$domainFacade.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._choosedNestView.value);
+            this._onDone();
+        } catch (e) {
+            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__.StateSyncRequestError) {
+                this._validate();
+            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__.GenericRequestError) {
+                this._renderMainError('SOMETHING_WENT_WRONG');
+            }
+        }
     }
 
     _showMarkers() {
@@ -8037,8 +8533,8 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         this._demonstrateMarkersRequest(markers);
     }
 
-    _renderRequestError(errId) {
-        this._requestErrorContainerEl.innerHTML = this.$messages[errId];
+    _renderMainError(errId) {
+        this._requestErrorContainerEl.innerHTML = errId ? this.$messages[errId] : '';
     }
 }
 
@@ -8096,6 +8592,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
 /* harmony import */ var _view_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/panel/base/intInput/intInputView */ "./gameApp/src/view/panel/base/intInput/intInputView.js");
 /* harmony import */ var _view_panel_base_position_positionView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/panel/base/position/positionView */ "./gameApp/src/view/panel/base/position/positionView.js");
+/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+/* harmony import */ var _view_panel_base_textInput_textInputView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @view/panel/base/textInput/textInputView */ "./gameApp/src/view/panel/base/textInput/textInputView.js");
+
+
+
 
 
 
@@ -8113,7 +8615,6 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
 
         this._checkQueenExisting();
 
-        this._nestNameEl.addEventListener('change', this._onNestNameChanged.bind(this));
         this._chooseBuildingSiteBtn.addEventListener('click', this._onChooseBuildingSiteBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
     }
@@ -8142,8 +8643,7 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
         let maxWarriorsCount = _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.BUILD_NEW_SUB_NEST_OPERATION_REQUIREMENTS.MAX_WARRIORS_COUNT;
         this._warriorsCount = new _view_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_4__.IntInputView(warriorsCountInput, minWarriorsCount, maxWarriorsCount, warriorsCountErrEl);
 
-        this._nestNameEl = this._el.querySelector('[data-nest-name]');
-        this._nestNameErr = this._el.querySelector('[data-nest-name-err]');
+        this._nestNameView = new _view_panel_base_textInput_textInputView__WEBPACK_IMPORTED_MODULE_8__.TextInputView(this._el.querySelector('[data-nest-name]'), this._el.querySelector('[data-nest-name-err]'));
 
         this._buildingPosition = new _view_panel_base_position_positionView__WEBPACK_IMPORTED_MODULE_5__.PositionView(this._el.querySelector('[data-building-position]'));
         this._chooseBuildingSiteBtn = this._el.querySelector('[data-choose-building-position]');
@@ -8163,11 +8663,19 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
             isError = true;
         }
 
-        if (!this._validateBuildingPosition()) {
+        let buildingPosErr = this._validateBuildingPosition();
+        this._renderBuildingPositionError(buildingPosErr);
+        if (buildingPosErr) {
             isError = true;
         }
 
-        if (!this._validateNestName()) {
+        if (!this._nestNameView.validate()) {
+            isError = true;
+        }
+
+        let condErr = this.$domainFacade.validateNewNestOperationConditions(this._performingColony.id);
+        this._renderMainError(condErr);
+        if (condErr) {
             isError = true;
         }
 
@@ -8175,49 +8683,26 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
     }
 
     _validateBuildingPosition() {
-        let isSpecified = !!this._buildingPosition.value;
-        let errText = isSpecified ? '' : this.$messages.building_position_needed;
-        this._renderBuildingPositionError(errText);
-        return isSpecified;
+        if (!this._buildingPosition.value) {
+            return this.$messages.building_position_needed;
+        }
+        return null;
     }
 
     _renderBuildingPositionError(errText) {
-        this._buildingPositionErrEl.innerHTML = errText;
-    }
-
-    _validateNestName() {
-        let nestName = this._nestNameEl.value;
-
-        if (nestName.length < 3) {
-            this._renderNestNameErr(this.$messages.to_short_name);
-            return false;
-        }
-
-        let regex = /^[a-zA-Zа-яА-ЯіїєІЇЄ0-9 ]+$/u;
-        if (!regex.test(nestName)) {
-            this._renderNestNameErr(this.$messages.use_only_chars_and_digits);
-            return false;
-        }
-
-        this._renderNestNameErr('');
-
-        return true;
-    }
-
-    _renderNestNameErr(errText) {
-        this._nestNameErr.innerHTML = errText;
+        this._buildingPositionErrEl.innerHTML = errText || '';
     }
 
     _checkQueenExisting() {
         if (!this._queenOfColony) {
-            this._renderError('CANT_BUILD_SUB_NEST_WITHOUT_QUEEN');
+            this._renderMainError('CANT_BUILD_SUB_NEST_WITHOUT_QUEEN');
             this._chooseBuildingSiteBtn.disabled = true;
             this._startBtn.disabled = true;
         }
     }
 
-    _renderError(messageId) {
-        this._errorContainerEl.innerHTML = this.$messages[messageId];
+    _renderMainError(messageId) {
+        this._errorContainerEl.innerHTML = messageId ? this.$messages[messageId] : '';
     }
 
     _showMarkers() {
@@ -8234,25 +8719,24 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
         });
     }
 
-    _onStartBtnClick() {
+    async _onStartBtnClick() {
         let isValid = this._validate();
         if (!isValid) {
             return;
         }
         let workersCount = this._workersCount.value;
         let warriorsCount = this._warriorsCount.value;
-        let nestName = this._nestNameEl.value;
-        this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName)
-            .then(() => {
-                this._onDone();
-            })
-            .catch((errId) => {
-                this._renderError(errId);
-            })
-    }
-
-    _onNestNameChanged() {
-        this._validateNestName();
+        let nestName = this._nestNameView.value;
+        try {
+            await this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName);
+            this._onDone();
+        } catch (e) {
+            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__.StateSyncRequestError) {
+                this._validate();
+            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__.GenericRequestError) {
+                this._renderMainError('SOMETHING_WENT_WRONG');
+            }
+        }
     }
 
 }
@@ -8279,6 +8763,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
 /* harmony import */ var _view_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/panel/base/intInput/intInputView */ "./gameApp/src/view/panel/base/intInput/intInputView.js");
 /* harmony import */ var _view_panel_base_nest_nestInlineView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @view/panel/base/nest/nestInlineView */ "./gameApp/src/view/panel/base/nest/nestInlineView.js");
+/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+
+
 
 
 
@@ -8292,8 +8780,11 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
         this._nestForLoot = null;
+        this._queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
 
         this._render();
+
+        this._checkQueenExisting();
 
         this._chooseNestToPillageBtn.addEventListener('click', this._onChooseNestToPillageBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
@@ -8315,8 +8806,8 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         this._nestToPillageView = new _view_panel_base_nest_nestInlineView__WEBPACK_IMPORTED_MODULE_6__.NestInlineView(this._el.querySelector('[data-nest-to-pillage]'));
         this._nestToPillageErrorContainer = this._el.querySelector('[data-nest-to-pillage-err]');
 
-        this._nestForLootSelector = new _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id)
-        this._el.querySelector('[data-nest-selector-container]').append(this._nestForLootSelector.el);
+        this._nestForLootErrContainer = this._el.querySelector('[data-nest-for-loot-err]');
+        this._nestForLootSelector = new _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._el.querySelector('[data-nest-selector]'), this._performingColony.id)
 
         let warriorsCountInput = this._el.querySelector('[data-warriors-count]');
         let warriorsCountErrContainer = this._el.querySelector('[data-warriors-count-err]');
@@ -8336,13 +8827,22 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         this._showMarkers();
     }
 
+    _checkQueenExisting() {
+        if (!this._queenOfColony) {
+            this._renderMainError('CANT_PILLAGE_NEST_WITHOUT_LIVING_QUEEN');
+            this._chooseNestToPillageBtn.disabled = true;
+            this._startBtn.disabled = true;
+        }
+    }
+
     _onNestForLootChanged() {
+        let nestForLootError = this._validateChoosedNestForLoot();
+        this._renderNestForLootError(nestForLootError);
         this._showMarkers();
     }
 
     _onChooseNestToPillageBtnClick() {
-        let queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
-        let pickableCircle = { center: queenOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_4__.CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
+        let pickableCircle = { center: this._queenOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_4__.CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
         this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, this._onNestToPillageChoosed.bind(this));
     }
 
@@ -8362,11 +8862,23 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
             isError = true;
         }
 
+        let nestForLootError = this._validateChoosedNestForLoot();
+        this._renderNestForLootError(nestForLootError);
+        if (nestForLootError) {
+            isError = true;
+        }
+
         if (!this._warriorsCountView.validate()) {
             isError = true;
         }
 
         if (!this._workersCountView.validate()) {
+            isError = true;
+        }
+
+        let condErr = this.$domainFacade.validatePillageNestOperationConditions(this._performingColony.id);
+        this._renderMainError(condErr);
+        if (condErr) {
             isError = true;
         }
 
@@ -8385,7 +8897,19 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         this._nestToPillageErrorContainer.innerHTML = errText || '';
     }
 
-    _onStartBtnClick() {
+    _validateChoosedNestForLoot() {
+        if (!this._nestForLootSelector.nestId) {
+            return this.$messages.choose_nest_for_loot;
+        }
+
+        return null;
+    }
+
+    _renderNestForLootError(errText) {
+        this._nestForLootErrContainer.innerHTML = errText || '';
+    }
+
+    async _onStartBtnClick() {
         if (!this._validate()) {
             return
         }
@@ -8394,13 +8918,16 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         let workersCount = this._workersCountView.value;
         let nestForLootId = this._nestForLootSelector.nestId;
         let nestToPillageId = this._nestToPillageView.value.id;
-        this.$domainFacade.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount)
-            .then(() => {
-                this._onDone();
-            })
-            .catch((errId) => {
-                this._renderError(errId);
-            });
+        try {
+            await this.$domainFacade.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount);
+            this._onDone();
+        } catch (e) {
+            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_7__.StateSyncRequestError) {
+                this._validate();
+            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__.GenericRequestError) {
+                this._renderMainError('SOMETHING_WENT_WRONG');
+            }
+        }
     }
 
     _showMarkers() {
@@ -8418,8 +8945,8 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         this._demonstrateMarkersRequest(markers);
     }
 
-    _renderError(messageId) {
-        this._errorContainerEl.innerHTML = this.$messages[messageId];
+    _renderMainError(messageId) {
+        this._errorContainerEl.innerHTML = messageId ? this.$messages[messageId] : '';
     }
 
 }
@@ -8445,6 +8972,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
 /* harmony import */ var _view_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/panel/base/intInput/intInputView */ "./gameApp/src/view/panel/base/intInput/intInputView.js");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
+/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+
+
 
 
 
@@ -8458,7 +8989,6 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
         super(performingColony, onDone);
 
         this._render();
-        this._validate();
 
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
         this._nestFromSelector.events.addListener('changed', this._onNestFromChanged.bind(this));
@@ -8476,9 +9006,12 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
     _render() {
         this._el.innerHTML = _transportFoodOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-        this._nestFromSelector = new _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id, this._el.querySelector('[data-nest-from-selector]'));
-        this._nestToSelector = new _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._performingColony.id, this._el.querySelector('[data-nest-to-selector]'));
-        this._nestToSelector.selectAt(1);
+        this._nestFromSelector = new _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._el.querySelector('[data-nest-from-selector]'), this._performingColony.id);
+        this._nestFromErrorContainer = this._el.querySelector('[data-nest-from-err]');
+
+        this._nestToSelector = new _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._el.querySelector('[data-nest-to-selector]'), this._performingColony.id);
+        this._nestToErrorContainer = this._el.querySelector('[data-nest-to-err]');
+
         this._selectedNestsErrorContainer = this._el.querySelector('[data-selected-nests-error-container]');
 
         let workersCountInput = this._el.querySelector('[data-workers-count]');
@@ -8493,8 +9026,6 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
         let maxWarriorsCount = _domain_consts__WEBPACK_IMPORTED_MODULE_5__.CONSTS.TRANSPORT_FOOD_OPERATION_REQUIREMENTS.MAX_WARRIORS_COUNT;
         this._warriorsCountView = new _view_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_4__.IntInputView(warriorsCountInput, minWarriorsCount, maxWarriorsCount, warriorsCountErrContainer);
 
-        this._requestErrorCpntainer = this._el.querySelector('[data-request-error-container]');
-
         this._startBtn = this._el.querySelector('[data-start-btn]');
 
         this._showMarkers();
@@ -8502,6 +9033,18 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
 
     _validate() {
         let isError = false;
+
+        let nestFromError = this._validateNestFrom();
+        this._renderNestFromError(nestFromError);
+        if (nestFromError) {
+            isError = true;
+        }
+
+        let nestToError = this._validateNestTo();
+        this._renderNestToError(nestToError);
+        if (nestToError) {
+            isError = true;
+        }
 
         if (!this._workersCountView.validate()) {
             isError = true;
@@ -8520,8 +9063,32 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
         return !isError;
     }
 
+    _validateNestFrom() {
+        if (!this._nestFromSelector.nestId) {
+            return this.$messages.choose_nest_from;
+        }
+
+        return null;
+    }
+
+    _renderNestFromError(errorText) {
+        this._nestFromErrorContainer.innerHTML = errorText || '';
+    }
+
+    _validateNestTo() {
+        if (!this._nestToSelector.nestId) {
+            return this.$messages.choose_nest_to;
+        }
+
+        return null;
+    }
+
+    _renderNestToError(errorText) {
+        this._nestToErrorContainer.innerHTML = errorText || '';
+    }
+
     _validateSelectedNests() {
-        if (this._nestFromSelector.nestId == this._nestToSelector.nestId) {
+        if (!!this._nestFromSelector.nestId && this._nestFromSelector.nestId == this._nestToSelector.nestId) {
             return this.$messages.choose_different_nests;
         }
 
@@ -8532,7 +9099,7 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
         this._selectedNestsErrorContainer.innerHTML = errorText;
     }
 
-    _onStartBtnClick() {
+    async _onStartBtnClick() {
         if (!this._validate()) {
             return;
         }
@@ -8542,13 +9109,16 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
         let toNestId = this._nestToSelector.nestId;
         let workersCount = this._workersCountView.value;
         let warriorsCount = this._warriorsCountView.value;
-        this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount)
-            .then(() => {
-                this._onDone();
-            })
-            .catch((errId) => {
-                this._renderRequestError(errId);
-            });
+        try {
+            await this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
+            this._onDone();
+        } catch (e) {
+            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__.StateSyncRequestError) {
+                this._validate();
+            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__.GenericRequestError) {
+                this._renderMainError('SOMETHING_WENT_WRONG');
+            }
+        }
     }
 
     _onNestFromChanged() {
@@ -8575,10 +9145,6 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
         }
 
         this._demonstrateMarkersRequest(markers);
-    }
-
-    _renderRequestError(messageId) {
-        this._requestErrorCpntainer.innerHTML = this.$messages[messageId];
     }
 
 }
@@ -9301,6 +9867,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_panel_base_position_positionView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/panel/base/position/positionView */ "./gameApp/src/view/panel/base/position/positionView.js");
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
 /* harmony import */ var _view_panel_base_textInput_textInputView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @view/panel/base/textInput/textInputView */ "./gameApp/src/view/panel/base/textInput/textInputView.js");
+/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+
+
 
 
 
@@ -9405,20 +9975,27 @@ class BreedingManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
         this._nestPositionErrorContainerEl.innerHTML = errId ? this.$messages[errId] : '';
     }
 
-    _onStartBtnClick() {
+    async _onStartBtnClick() {
         if (!this._validate()) {
             return;
         }
 
-        this.$domainFacade.foundColony(this._queenSelectorView.queen.id, this._malesSelectorView.selectedMale.id, this._nestPositionView.value, this._colonyNameView.value)
-            .then(() => {
-                this.$eventBus.emit('showPointRequest', this._nestPositionView.value);
-                this._resetFields();
-            })
-            .catch((errId) => {
-                console.log(errId);
-                this._renderError(errId);
-            });
+        try {
+            await this.$domainFacade.foundColony(
+                this._queenSelectorView.queen.id,
+                this._malesSelectorView.selectedMale.id,
+                this._nestPositionView.value,
+                this._colonyNameView.value
+            );
+            this.$eventBus.emit('showPointRequest', this._nestPositionView.value);
+            this._resetFields();
+        } catch (e) {
+            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_7__.StateSyncRequestError) {
+                this._validate();
+            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__.GenericRequestError) {
+                this._renderRequestError('SOMETHING_WENT_WRONG');
+            }
+        }
     }
 
     _resetFields() {
@@ -9442,7 +10019,7 @@ class BreedingManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
         this.$eventBus.emit('showMarkersRequest', markers);
     }
 
-    _renderError(errId) {
+    _renderRequestError(errId) {
         this._errorContainerEl.innerHTML = this.$messages[errId];
     }
 
@@ -16887,6 +17464,35 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.number-field {
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/panel/base/nest/style.css":
+/*!******************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/panel/base/nest/style.css ***!
+  \******************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, `.nest-inline__name {
+    cursor: pointer;
+}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/panel/base/nest/style.css"],"names":[],"mappings":"AAAA;IACI,eAAe;AACnB","sourcesContent":[".nest-inline__name {\r\n    cursor: pointer;\r\n}"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/panel/base/tabSwitcher/styles.css":
 /*!**************************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/panel/base/tabSwitcher/styles.css ***!
@@ -19331,6 +19937,24 @@ var code = "<div data-maternal-chromosomes-set></div>\r\n<div data-paternal-chro
 
 /***/ }),
 
+/***/ "./gameApp/src/view/panel/base/nest/nestInlineTmpl.html":
+/*!**************************************************************!*\
+  !*** ./gameApp/src/view/panel/base/nest/nestInlineTmpl.html ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<span class=\"nest-inline__name\" data-nest-name></span>\r\n<span data-no-nest-placeholder></span>\r\n<span class=\"g-error-container\" data-nest-died-error-container></span>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./gameApp/src/view/panel/panelTmpl.html":
 /*!***********************************************!*\
   !*** ./gameApp/src/view/panel/panelTmpl.html ***!
@@ -19397,7 +20021,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<tr>\r\n    <td data-name rowspan=\"2\"></td>\r\n    <td data-type></td>\r\n    <td data-nest></td>\r\n    <td>\r\n        <select data-guardian-type>\r\n            <option value=\"none\">не захищає</option>\r\n            <option value=\"nest\">тільки гніздо</option>\r\n            <option value=\"colony\">вся колонія</option>\r\n        </select>\r\n    </td>\r\n    <td>\r\n        <input data-is-cooperactive type=\"checkbox\">\r\n    </td>\r\n    <td data-actions>\r\n        <button data-profile-btn>+</button>\r\n    </td>\r\n</tr>\r\n<tr data-ant-profile>\r\n    <td colspan=\"5\">\r\n        <table class=\"g-table\">\r\n            <thead>\r\n                <tr>\r\n                    <td>max_hp</td>\r\n                    <td>hp_regen_rate</td>\r\n                    <td>speed</td>\r\n                    <td>sight_distance</td>\r\n                    <td>strength</td>\r\n                    <td>defense</td>\r\n                    <td>appetite</td>\r\n                    <td>min_temperature</td>\r\n                    <td>life_span</td>\r\n                </tr>\r\n            </thead>\r\n            <tbody>\r\n                <tr data-stats>\r\n                    <td data-max-hp></td>\r\n                    <td data-hp-regen-rate></td>\r\n                    <td data-speed></td>\r\n                    <td data-sight-distance></td>\r\n                    <td data-strength></td>\r\n                    <td data-defense></td>\r\n                    <td data-appetite></td>\r\n                    <td data-min-temperature></td>\r\n                    <td data-life-span></td>\r\n                </tr>\r\n            </tbody>\r\n        </table>\r\n        <div>\r\n            геном: <div data-genome></div>\r\n        </div>\r\n        <div data-breeding-male-genome-container>\r\n            геном від шлюбного самця: <div data-breeding-male-genome></div>\r\n        </div>\r\n        <div data-id></div>\r\n        <div>age: <span data-age></span></div>\r\n        <div>занятість: <span data-current-activity></span></div>\r\n        <button data-nuptial-flight>шлюбний політ</button>\r\n        <button data-show-ant>показать</button>\r\n        <!-- <button data-genome-debug>геном</button> -->\r\n    </td>\r\n</tr>";
+var code = "<tr>\r\n    <td data-name rowspan=\"2\"></td>\r\n    <td data-type></td>\r\n    <td>\r\n        <select data-nest></select>\r\n    </td>\r\n    <td>\r\n        <select data-guardian-type>\r\n            <option value=\"none\">не захищає</option>\r\n            <option value=\"nest\">тільки гніздо</option>\r\n            <option value=\"colony\">вся колонія</option>\r\n        </select>\r\n    </td>\r\n    <td>\r\n        <input data-is-cooperactive type=\"checkbox\">\r\n    </td>\r\n    <td data-actions>\r\n        <button data-profile-btn>+</button>\r\n    </td>\r\n</tr>\r\n<tr data-ant-profile>\r\n    <td colspan=\"5\">\r\n        <table class=\"g-table\">\r\n            <thead>\r\n                <tr>\r\n                    <td>max_hp</td>\r\n                    <td>hp_regen_rate</td>\r\n                    <td>speed</td>\r\n                    <td>sight_distance</td>\r\n                    <td>strength</td>\r\n                    <td>defense</td>\r\n                    <td>appetite</td>\r\n                    <td>min_temperature</td>\r\n                    <td>life_span</td>\r\n                </tr>\r\n            </thead>\r\n            <tbody>\r\n                <tr data-stats>\r\n                    <td data-max-hp></td>\r\n                    <td data-hp-regen-rate></td>\r\n                    <td data-speed></td>\r\n                    <td data-sight-distance></td>\r\n                    <td data-strength></td>\r\n                    <td data-defense></td>\r\n                    <td data-appetite></td>\r\n                    <td data-min-temperature></td>\r\n                    <td data-life-span></td>\r\n                </tr>\r\n            </tbody>\r\n        </table>\r\n        <div>\r\n            геном: <div data-genome></div>\r\n        </div>\r\n        <div data-breeding-male-genome-container>\r\n            геном від шлюбного самця: <div data-breeding-male-genome></div>\r\n        </div>\r\n        <div data-id></div>\r\n        <div>age: <span data-age></span></div>\r\n        <div>занятість: <span data-current-activity></span></div>\r\n        <button data-nuptial-flight>шлюбний політ</button>\r\n        <button data-show-ant>показать</button>\r\n        <!-- <button data-genome-debug>геном</button> -->\r\n    </td>\r\n</tr>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -19469,7 +20093,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n    <div data-error-container></div>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>стан</td>\r\n            <td>каста</td>\r\n            <td>дії</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
+var code = "<div>\r\n    запліднить: <input type=\"checkbox\" data-is-fertilized checked>\r\n    <button data-add-egg>відкласти яйце</button>\r\n    <div class=\"g-error-container\" data-error-container></div>\r\n</div>\r\n<div>\r\n    <table>\r\n        <tr>\r\n            <td>імя</td>\r\n            <td>геном</td>\r\n            <td>заплідн</td>\r\n            <td>прогрес</td>\r\n            <td>стан</td>\r\n            <td>каста</td>\r\n            <td>дії</td>\r\n        </tr>\r\n        <tbody data-eggs-list>\r\n            \r\n        </tbody>\r\n    </table>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -19613,7 +20237,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "принести жука\r\n<div>\r\n    <label>гніздо:</label>\r\n    <select data-nest-selector></select>\r\n</div>\r\n<div class=\"operation-creator__error\"  data-request-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
+var code = "принести жука\r\n<div>\r\n    <label>гніздо:</label>\r\n    <select data-nest-selector></select>\r\n    <span class=\"operation-creator__error\" data-nest-err></span>\r\n</div>\r\n<div class=\"operation-creator__error\"  data-bug-corpse-err></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -19631,7 +20255,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "будувать фортифікації\r\n<div>\r\n    <label>гніздо:</label>\r\n    <select data-nest-selector></select>\r\n</div>\r\n<div>\r\n    <label>кількість робочих:</label>\r\n    <input data-workers-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-workers-count-err></span>\r\n</div>\r\n<div class=\"operation-creator__error\" data-request-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
+var code = "будувать фортифікації\r\n<div>\r\n    <label>гніздо:</label>\r\n    <select data-nest-selector></select>\r\n    <div class=\"operation-creator__error\" data-nest-err></div>\r\n</div>\r\n<div>\r\n    <label>кількість робочих:</label>\r\n    <input data-workers-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-workers-count-err></span>\r\n</div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -19685,7 +20309,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "грабить гріздо\r\n<div>\r\n    <label>гніздо для пограбування:</label>\r\n    <span data-nest-to-pillage></span> \r\n    <button data-choose-nest-to-pillage>вибрать</button>\r\n    <span class=\"operation-creator__error\" data-nest-to-pillage-err></span>\r\n</div>\r\n<div>\r\n    <label>гніздо для здобичі:</label>\r\n    <div data-nest-selector-container></div>\r\n</div>\r\n<div>\r\n    <label>кількість воїнів:</label>\r\n    <input data-warriors-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-warriors-count-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість робітників:</label>\r\n    <input data-workers-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-workers-count-err></span>\r\n</div>\r\n<div class=\"operation-creator__error\" data-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
+var code = "грабить гріздо\r\n<div>\r\n    <label>гніздо для пограбування:</label>\r\n    <span data-nest-to-pillage></span> \r\n    <button data-choose-nest-to-pillage>вибрать</button>\r\n    <span class=\"operation-creator__error\" data-nest-to-pillage-err></span>\r\n</div>\r\n<div>\r\n    <label>гніздо для здобичі:</label>\r\n    <select data-nest-selector></select>\r\n    <span class=\"operation-creator__error\" data-nest-for-loot-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість воїнів:</label>\r\n    <input data-warriors-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-warriors-count-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість робітників:</label>\r\n    <input data-workers-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-workers-count-err></span>\r\n</div>\r\n<div class=\"operation-creator__error\" data-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -19703,7 +20327,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "перенести їжу\r\n<div>\r\n    <label>із гнізда:</label>\r\n    <select data-nest-from-selector></select>\r\n    <span class=\"operation-creator__error\" data-nest-from-err></span>\r\n</div>\r\n<div>\r\n    <label>в гніздо:</label>\r\n    <select data-nest-to-selector></select>\r\n    <span class=\"operation-creator__error\" data-nest-to-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість робочих:</label>\r\n    <input data-workers-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-workers-count-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість воїнів:</label>\r\n    <input data-warriors-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-warriors-count-err></span>\r\n</div>\r\n<div class=\"operation-creator__error\" data-selected-nests-error-container></div>\r\n<div class=\"operation-creator__error\" data-request-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
+var code = "перенести їжу\r\n<div>\r\n    <label>із гнізда:</label>\r\n    <select data-nest-from-selector></select>\r\n    <span class=\"operation-creator__error\" data-nest-from-err></span>\r\n</div>\r\n<div>\r\n    <label>в гніздо:</label>\r\n    <select data-nest-to-selector></select>\r\n    <span class=\"operation-creator__error\" data-nest-to-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість робочих:</label>\r\n    <input data-workers-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-workers-count-err></span>\r\n</div>\r\n<div>\r\n    <label>кількість воїнів:</label>\r\n    <input data-warriors-count type=\"number\">\r\n    <span class=\"operation-creator__error\" data-warriors-count-err></span>\r\n</div>\r\n<div class=\"operation-creator__error\" data-selected-nests-error-container></div>\r\n<div>\r\n    <button data-start-btn>start</button>\r\n</div>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -20536,6 +21160,61 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../node_modules/css-loader/dist/cjs.js!./style.css */ "./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/panel/base/intInput/style.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/panel/base/nest/style.css":
+/*!****************************************************!*\
+  !*** ./gameApp/src/view/panel/base/nest/style.css ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../node_modules/css-loader/dist/cjs.js!./style.css */ "./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/panel/base/nest/style.css");
 
       
       

@@ -9,6 +9,9 @@ class EntityCollection():
     def __init__(self):
         self._entities = {}
 
+    def has_entity(self, id: int) -> bool:
+        return id in self._entities
+
     def add_entity(self, entity: Entity):
         self._entities[entity.id] = entity
 
@@ -17,7 +20,7 @@ class EntityCollection():
 
     def get_entity_by_id(self, id: int) -> Entity:
         return self._entities[id]
-
+    
     def get_entities(self, ids: List[int] = None) -> List[Entity]:
         if ids is not None:
             res = []

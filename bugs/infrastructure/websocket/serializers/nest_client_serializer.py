@@ -26,7 +26,8 @@ class NestClientSerializer(EntityClientSerializer):
             'fortification': nest.fortification,
             'maxFortification': nest.stats.max_fortification,
             'name': nest.name,
-            'isMain': nest.is_main
+            'isMain': nest.is_main,
+            'area': nest.area
         })
 
         return json

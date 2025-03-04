@@ -4,13 +4,18 @@ import { MarkerTypes } from "@domain/enum/markerTypes";
 import { CONSTS } from "@domain/consts";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
 import { NestInlineView } from "@view/panel/base/nest/nestInlineView";
+import { StateSyncRequestError } from "@domain/errors/stateSyncRequestError";
+import { GenericRequestError } from "@domain/errors/genericRequestError";
 
 class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
+        this._queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
 
         this._render();
+
+        this._checkQueenExisting();
 
         this._chooseNestBtn.addEventListener('click', this._onChooseNestBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
@@ -72,6 +77,12 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
             isError = true;
         }
 
+        let condErr = this.$domainFacade.validateDestroyNestOperationConditions(this._performingColony.id);
+        this._renderMainError(condErr);
+        if (condErr) {
+            isError = true;
+        }
+
         return !isError;
     }
 
@@ -100,9 +111,16 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         this._minAntsCountErrorContainerEl.innerHTML = errText || '';
     }
 
+    _checkQueenExisting() {
+        if (!this._queenOfColony) {
+            this._renderMainError('CANT_DESTROY_NEST_WITHOUT_LIVING_QUEEN');
+            this._chooseNestBtn.disabled = true;
+            this._startBtn.disabled = true;
+        }
+    }
+
     _onChooseNestBtnClick() {
-        let queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
-        let pickableCircle = { center: queenOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
+        let pickableCircle = { center: this._queenOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
         this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, this._onChoosedNestToDestroy.bind(this));
     }
 
@@ -118,17 +136,20 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         this._renderMinAntsCountErr(minAntsCountErr);
     }
 
-    _onStartBtnClick() {
+    async _onStartBtnClick() {
         if (!this._validate()) {
             return
         }
-        this.$domainFacade.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._choosedNestView.value)
-            .then(() => {
-                this._onDone();
-            })
-            .catch((errId) => {
-                this._renderRequestError(errId);
-            });
+        try {
+            await this.$domainFacade.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._choosedNestView.value);
+            this._onDone();
+        } catch (e) {
+            if (e instanceof StateSyncRequestError) {
+                this._validate();
+            } else if (e instanceof GenericRequestError) {
+                this._renderMainError('SOMETHING_WENT_WRONG');
+            }
+        }
     }
 
     _showMarkers() {
@@ -136,8 +157,8 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         this._demonstrateMarkersRequest(markers);
     }
 
-    _renderRequestError(errId) {
-        this._requestErrorContainerEl.innerHTML = this.$messages[errId];
+    _renderMainError(errId) {
+        this._requestErrorContainerEl.innerHTML = errId ? this.$messages[errId] : '';
     }
 }
 

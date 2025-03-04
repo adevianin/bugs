@@ -16,9 +16,8 @@ import { Genome } from './entity/genetic/genome';
 
 class WorldFactory {
 
-    constructor(mainEventBus, nestApi, antApi) {
+    constructor(mainEventBus, antApi) {
         this._mainEventBus = mainEventBus;
-        this._nestApi = nestApi;
         this._antApi = antApi;
     }
 
@@ -92,8 +91,9 @@ class WorldFactory {
         let fortification = nestJson.fortification;
         let name = nestJson.name;
         let isMain = nestJson.isMain;
-        return new Nest(this._mainEventBus, this._nestApi, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, isBuilt, 
-            hp, maxHp, fortification, maxFortification, name, isMain);
+        let area = nestJson.area;
+        return new Nest(this._mainEventBus, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, isBuilt, 
+            hp, maxHp, fortification, maxFortification, name, isMain, area);
     }
 
     buildAnt(antJson) {

@@ -5,6 +5,8 @@ import { MaleSelectorView } from "./maleSelector/maleSelectorView";
 import { PositionView } from "@view/panel/base/position/positionView";
 import { MarkerTypes } from '@domain/enum/markerTypes';
 import { TextInputView } from "@view/panel/base/textInput/textInputView";
+import { StateSyncRequestError } from "@domain/errors/stateSyncRequestError";
+import { GenericRequestError } from "@domain/errors/genericRequestError";
 
 class BreedingManagerView extends BaseHTMLView {
 
@@ -102,19 +104,27 @@ class BreedingManagerView extends BaseHTMLView {
         this._nestPositionErrorContainerEl.innerHTML = errId ? this.$messages[errId] : '';
     }
 
-    _onStartBtnClick() {
+    async _onStartBtnClick() {
         if (!this._validate()) {
             return;
         }
 
-        this.$domainFacade.foundColony(this._queenSelectorView.queen.id, this._malesSelectorView.selectedMale.id, this._nestPositionView.value, this._colonyNameView.value)
-            .then(() => {
-                this.$eventBus.emit('showPointRequest', this._nestPositionView.value);
-                this._resetFields();
-            })
-            .catch((errId) => {
-                this._renderError(errId);
-            });
+        try {
+            await this.$domainFacade.foundColony(
+                this._queenSelectorView.queen.id,
+                this._malesSelectorView.selectedMale.id,
+                this._nestPositionView.value,
+                this._colonyNameView.value
+            );
+            this.$eventBus.emit('showPointRequest', this._nestPositionView.value);
+            this._resetFields();
+        } catch (e) {
+            if (e instanceof StateSyncRequestError) {
+                this._validate();
+            } else if (e instanceof GenericRequestError) {
+                this._renderRequestError('SOMETHING_WENT_WRONG');
+            }
+        }
     }
 
     _resetFields() {
@@ -138,7 +148,7 @@ class BreedingManagerView extends BaseHTMLView {
         this.$eventBus.emit('showMarkersRequest', markers);
     }
 
-    _renderError(errId) {
+    _renderRequestError(errId) {
         this._errorContainerEl.innerHTML = this.$messages[errId];
     }
 

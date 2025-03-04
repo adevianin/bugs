@@ -2,7 +2,7 @@ import { EntityTypes } from "./enum/entityTypes";
 
 class DomainFacade {
 
-    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._accountService = accountService;
@@ -10,6 +10,7 @@ class DomainFacade {
         this._colonyService = colonyService;
         this._userService = userService;
         this._nuptialEnvironmentService = nuptialEnvironmentService;
+        this._nestService = nestService;
     }
 
     get currentStep() {
@@ -99,7 +100,7 @@ class DomainFacade {
 
     getMyQueensInNuptialFlight() {
         let userData = this.getUserData();
-        return this._worldService.getQueensInNuptialFlightFromUser(userData.id);
+        return this._nuptialEnvironmentService.getQueensInNuptialFlightFromUser(userData.id);
     }
 
     getClimate() {
@@ -112,7 +113,7 @@ class DomainFacade {
 
     findMyFirstNest() {
         let userData = this.getUserData();
-        return this._worldService.findMyFirstNest(userData.id);
+        return this._nestService.findMyFirstNest(userData.id);
     }
 
     /*======operations========*/
@@ -121,12 +122,24 @@ class DomainFacade {
         this._colonyService.stopOperation(colonyId, operationId);
     }
 
+    validateNewNestOperationConditions(colonyId) {
+        return this._colonyService.validateNewNestOperationConditions(colonyId);
+    }
+
     buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
         return this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName);
     }
 
+    validateDestroyNestOperationConditions(colonyId) {
+        return this._colonyService.validateDestroyNestOperationConditions(colonyId);
+    }
+
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
         return this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
+    }
+
+    validatePillageNestOperationConditions(colonyId) {
+        return this._colonyService.validatePillageNestOperationConditions(colonyId);
     }
 
     pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
@@ -147,8 +160,8 @@ class DomainFacade {
 
     /*========================*/
 
-    foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
-        return this._nuptialEnvironmentService.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
+    foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName, errCallbacks) {
+        return this._nuptialEnvironmentService.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName, errCallbacks);
     }
 
     getMyNuptialMales() {
@@ -156,7 +169,7 @@ class DomainFacade {
     }
 
     findNearestNest(point, excludeColonyId) {
-        return this._worldService.findNearestNest(point, excludeColonyId);
+        return this._nestService.findNearestNest(point, excludeColonyId);
     }
 
     getMySpecie() {
@@ -165,6 +178,42 @@ class DomainFacade {
 
     bornNewAntara() {
         this._userService.bornNewAntara();
+    }
+
+    layEggInNest(nestId, name, isFertilized) {
+        return this._nestService.layEggInNest(nestId, name, isFertilized);
+    }
+
+    changeEggCasteInNest(nestId, eggId, antType) {
+        return this._nestService.changeEggCasteInNest(nestId, eggId, antType);
+    }
+
+    changeEggNameInNest(nestId, eggId, name) {
+        return this._nestService.changeEggNameInNest(nestId, eggId, name);
+    }
+
+    moveEggToLarvaInNest(nestId, eggId) {
+        return this._nestService.moveEggToLarvaInNest(nestId, eggId);
+    }
+
+    deleteEggInNest(nestId, eggId) {
+        return this._nestService.deleteEggInNest(nestId, eggId);
+    }
+
+    deleteLarvaInNest(nestId, larvaId) {
+        return this._nestService.deleteLarvaInNest(nestId, larvaId);
+    }
+
+    renameNest(nestId, name) {
+        return this._nestService.renameNest(nestId, name);
+    }
+
+    validateLayingEggInNest(nestId) {
+        return this._nestService.validateLayingEggInNest(nestId);
+    }
+
+    findClosestBugCorpseNearNest(nestId) {
+        return this._colonyService.findClosestBugCorpseNearNest(nestId);
     }
 
 }

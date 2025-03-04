@@ -3,13 +3,11 @@ import { EntityTypes } from '../enum/entityTypes';
 import { ACTION_TYPES } from './action/actionTypes';
 import { Larva } from './larva';
 import { Egg } from './egg';
-import { CONSTS } from '@domain/consts';
 
 class Nest extends Entity {
 
-    constructor(eventBus, nestApi, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, isBuilt, hp, maxHp, fortification, maxFortification, name, isMain) {
+    constructor(eventBus, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, isBuilt, hp, maxHp, fortification, maxFortification, name, isMain, area) {
         super(eventBus, id, position, angle, EntityTypes.NEST, fromColony, ownerId, hp, maxHp);
-        this._nestApi = nestApi;
         this.storedCalories = storedCalories;
         this.larvae = larvae;
         this.eggs = eggs;
@@ -17,6 +15,7 @@ class Nest extends Entity {
         this.maxFortification = maxFortification;
         this._name = name;
         this._isMain = isMain;
+        this._area = area;
 
         this._setIsBuilt(isBuilt)
     }
@@ -42,42 +41,32 @@ class Nest extends Entity {
         return this._isMain;
     }
 
+    get area() {
+        return this._area;
+    }
+
     rename(newName) {
         this._name = newName;
-        this._nestApi.renameNest(this.id, newName);
         this.emit('nameChanged');
     }
     
-    addNewEgg(name, isFertilized) {
-        return this._nestApi.addNewEgg(this.id, name, isFertilized);
-    }
-
-    eggToLarvaChamber(eggId) {
-        this._nestApi.eggToLarvaChamber(this.id, eggId);
-    }
-
     eggDelete(eggId) {
-        this._nestApi.eggDelete(this.id, eggId);
-
         let egg = this._findEggById(eggId);
         this._removeEggFromArray(egg);
         this.emit('eggDeleted', egg);
     }
 
-    editCasteForEgg(eggId, antType) {
-        this._nestApi.changeEggCaste(this.id, eggId, antType);
+    changeCasteForEgg(eggId, antType) {
         let egg = this._findEggById(eggId);
         egg.antType = antType;
     }
 
-    editNameForEgg(eggId, name) {
-        this._nestApi.changeEggName(this.id, eggId, name);
+    changeNameForEgg(eggId, name) {
         let egg = this._findEggById(eggId);
         egg.name = name;
     }
 
     larvaDelete(larvaId) {
-        this._nestApi.larvaDelete(this.id, larvaId);
         let larva = this._findLarvaById(larvaId);
         this._removeLarvaFromArray(larva);
         this.emit('larvaDeleted', larva);

@@ -4,6 +4,8 @@ import { NestSelectorView } from "@view/panel/base/nestSelector";
 import { MarkerTypes } from "@domain/enum/markerTypes";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
 import { CONSTS } from "@domain/consts";
+import { StateSyncRequestError } from "@domain/errors/stateSyncRequestError";
+import { GenericRequestError } from "@domain/errors/genericRequestError";
 
 class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
 
@@ -11,7 +13,6 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         super(performingColony, onDone);
 
         this._render();
-        this._validate();
 
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
         this._nestFromSelector.events.addListener('changed', this._onNestFromChanged.bind(this));
@@ -29,9 +30,12 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
     _render() {
         this._el.innerHTML = transportFoodOperationCreatorTmpl;
 
-        this._nestFromSelector = new NestSelectorView(this._performingColony.id, this._el.querySelector('[data-nest-from-selector]'));
-        this._nestToSelector = new NestSelectorView(this._performingColony.id, this._el.querySelector('[data-nest-to-selector]'));
-        this._nestToSelector.selectAt(1);
+        this._nestFromSelector = new NestSelectorView(this._el.querySelector('[data-nest-from-selector]'), this._performingColony.id);
+        this._nestFromErrorContainer = this._el.querySelector('[data-nest-from-err]');
+
+        this._nestToSelector = new NestSelectorView(this._el.querySelector('[data-nest-to-selector]'), this._performingColony.id);
+        this._nestToErrorContainer = this._el.querySelector('[data-nest-to-err]');
+
         this._selectedNestsErrorContainer = this._el.querySelector('[data-selected-nests-error-container]');
 
         let workersCountInput = this._el.querySelector('[data-workers-count]');
@@ -46,8 +50,6 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         let maxWarriorsCount = CONSTS.TRANSPORT_FOOD_OPERATION_REQUIREMENTS.MAX_WARRIORS_COUNT;
         this._warriorsCountView = new IntInputView(warriorsCountInput, minWarriorsCount, maxWarriorsCount, warriorsCountErrContainer);
 
-        this._requestErrorCpntainer = this._el.querySelector('[data-request-error-container]');
-
         this._startBtn = this._el.querySelector('[data-start-btn]');
 
         this._showMarkers();
@@ -55,6 +57,18 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
 
     _validate() {
         let isError = false;
+
+        let nestFromError = this._validateNestFrom();
+        this._renderNestFromError(nestFromError);
+        if (nestFromError) {
+            isError = true;
+        }
+
+        let nestToError = this._validateNestTo();
+        this._renderNestToError(nestToError);
+        if (nestToError) {
+            isError = true;
+        }
 
         if (!this._workersCountView.validate()) {
             isError = true;
@@ -73,8 +87,32 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         return !isError;
     }
 
+    _validateNestFrom() {
+        if (!this._nestFromSelector.nestId) {
+            return this.$messages.choose_nest_from;
+        }
+
+        return null;
+    }
+
+    _renderNestFromError(errorText) {
+        this._nestFromErrorContainer.innerHTML = errorText || '';
+    }
+
+    _validateNestTo() {
+        if (!this._nestToSelector.nestId) {
+            return this.$messages.choose_nest_to;
+        }
+
+        return null;
+    }
+
+    _renderNestToError(errorText) {
+        this._nestToErrorContainer.innerHTML = errorText || '';
+    }
+
     _validateSelectedNests() {
-        if (this._nestFromSelector.nestId == this._nestToSelector.nestId) {
+        if (!!this._nestFromSelector.nestId && this._nestFromSelector.nestId == this._nestToSelector.nestId) {
             return this.$messages.choose_different_nests;
         }
 
@@ -85,7 +123,7 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         this._selectedNestsErrorContainer.innerHTML = errorText;
     }
 
-    _onStartBtnClick() {
+    async _onStartBtnClick() {
         if (!this._validate()) {
             return;
         }
@@ -95,13 +133,16 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         let toNestId = this._nestToSelector.nestId;
         let workersCount = this._workersCountView.value;
         let warriorsCount = this._warriorsCountView.value;
-        this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount)
-            .then(() => {
-                this._onDone();
-            })
-            .catch((errId) => {
-                this._renderRequestError(errId);
-            });
+        try {
+            await this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
+            this._onDone();
+        } catch (e) {
+            if (e instanceof StateSyncRequestError) {
+                this._validate();
+            } else if (e instanceof GenericRequestError) {
+                this._renderMainError('SOMETHING_WENT_WRONG');
+            }
+        }
     }
 
     _onNestFromChanged() {
@@ -128,10 +169,6 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         }
 
         this._demonstrateMarkersRequest(markers);
-    }
-
-    _renderRequestError(messageId) {
-        this._requestErrorCpntainer.innerHTML = this.$messages[messageId];
     }
 
 }

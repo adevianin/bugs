@@ -4,7 +4,7 @@ from django.http import HttpRequest, JsonResponse, HttpResponse
 from core.world.world_facade import WorldFacade
 from core.world.utils.point import Point
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
-from core.world.settings import MAX_NAME_LENGTH
+from core.world.utils.clean_name import clean_name
 
 import json
 
@@ -18,13 +18,13 @@ def found_colony(request: HttpRequest):
         queen_id = int(data['queen_id'])
         nuptial_male_id = int(data['nuptial_male_id'])
         nest_building_site = Point.from_json(data['nest_building_site'])
-        colony_name = data['colony_name'][:MAX_NAME_LENGTH]
+        colony_name = clean_name(data['colony_name'])
     except Exception as e:
         return HttpResponse(status=400)
 
     wf.found_colony_command(request.user.id, queen_id, nuptial_male_id, nest_building_site, colony_name)
 
-    return HttpResponse(status=200)
+    return HttpResponse(status=204)
 
 @require_POST
 @login_required     

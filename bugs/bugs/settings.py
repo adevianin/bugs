@@ -56,7 +56,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'infrastructure.middlewares.convertJsonMiddleware.ConvertJSONMiddleware',
-    'infrastructure.middlewares.logHttpRequestErrorsMiddleware.LogHttpRequestErrorsMiddleware'
+    'infrastructure.middlewares.httpRequestErrorsHandlerMiddleware.HttpRequestErrorsHandlerMiddleware'
 ]
 
 ROOT_URLCONF = 'bugs.urls'

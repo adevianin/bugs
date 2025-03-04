@@ -4,14 +4,10 @@ class NestApi {
         this._requester = requester;
     }
 
-    addNewEgg(nestId, name, isFertilized) {
-        return new Promise((res, rej) => {
-            this._requester.post(`api/world/nests/${nestId}/add_egg`, {
-                name,
-                is_fertilized: isFertilized
-            })
-            .then(axiosResp => res(null))
-            .catch(axiosResp => rej(axiosResp.response.data))
+    layEggInNest(nestId, name, isFertilized) {
+        return this._requester.post(`api/world/nests/${nestId}/lay_egg`, {
+            name,
+            is_fertilized: isFertilized
         })
     }
 

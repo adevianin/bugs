@@ -1,6 +1,8 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
 import eggTabTmpl from './eggTabTmpl.html';
 import { EggView } from "./eggView";
+import { StateSyncRequestError } from "@domain/errors/stateSyncRequestError";
+import { GenericRequestError } from "@domain/errors/genericRequestError";
 
 class EggTabView extends BaseHTMLView {
 
@@ -72,6 +74,13 @@ class EggTabView extends BaseHTMLView {
         delete this._eggsViews[egg.id];
     }
 
+    _validate() {
+        let errorId = this.$domainFacade.validateLayingEggInNest(this._nest.id);
+        this._renderError(this.$messages[errorId]);
+
+        return !errorId;
+    }
+
     _onEggBecameLarva(egg) {
         this._removeEggView(egg);
     }
@@ -84,16 +93,23 @@ class EggTabView extends BaseHTMLView {
         this._renderEgg(egg);
     }
 
-    _onAddEggBtnClick() {
+    async _onAddEggBtnClick() {
+        if (!this._validate()) {
+            return;
+        }
+
         let name = this._generateAntName();
         let isFertilized = this._isFertilizeCheckbox.checked;
-        this._nest.addNewEgg(name, isFertilized)
-            .then(() => {
-                this._renderError();
-            })
-            .catch((errId) => {
-                this._renderError(errId);
-            });
+        try {
+            await this.$domainFacade.layEggInNest(this._nest.id, name, isFertilized);
+        } catch (e) {
+            if (e instanceof StateSyncRequestError) {
+                this._validate();
+            } else if (e instanceof GenericRequestError) {
+                this._renderError(this.$messages['SOMETHING_WENT_WRONG']);
+            }
+        }
+        
     }
 
     _generateAntName() {
@@ -106,8 +122,8 @@ class EggTabView extends BaseHTMLView {
         return `${randomAdjective} ${randomNoun}`;
     }
 
-    _renderError(messageId) {
-        this._errorContainerEl.innerHTML = messageId ? this.$messages[messageId] : '';
+    _renderError(errText) {
+        this._errorContainerEl.innerHTML = errText || '';
     }
 
 }

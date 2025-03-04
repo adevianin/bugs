@@ -64,24 +64,41 @@ class EggView extends BaseHTMLView {
         this._renderProgress();
     }
 
-    _onEggAntTypeChanged() {
+    async _onEggAntTypeChanged() {
         let antType = this._antTypeSelector.value;
-        this._nest.editCasteForEgg(this._egg.id, antType);
-    }
-
-    _onEggNameChanged() {
-        let name = this._nameInput.value;
-        if (name) {
-            this._nest.editNameForEgg(this._egg.id, name);
+        try {
+            await this.$domainFacade.changeEggCasteInNest(this._nest.id, this._egg.id, antType)
+        } catch (e) {
+            console.error(e);
         }
     }
 
-    _onEggtoLarvaChamberClick() {
-        this._nest.eggToLarvaChamber(this._egg.id);
+    async _onEggNameChanged() {
+        let name = this._nameInput.value;
+        if (!name) {
+            return;
+        }
+        try {
+            await this.$domainFacade.changeEggNameInNest(this._nest.id, this._egg.id, name);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
-    _onEggDeleteClick() {
-        this._nest.eggDelete(this._egg.id);
+    async _onEggtoLarvaChamberClick() {
+        try {
+            await this.$domainFacade.moveEggToLarvaInNest(this._nest.id, this._egg.id);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async _onEggDeleteClick() {
+        try {
+            await this.$domainFacade.deleteEggInNest(this._nest.id, this._egg.id);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     remove() {

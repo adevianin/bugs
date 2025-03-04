@@ -9,9 +9,6 @@ class World {
         this._climate = climate;
         this._currentStep = 0;
         this._currentSeason = null;
-
-        this._mainEventBus.on('entityDied', this._onEntityDied.bind(this));
-        this._mainEventBus.on('colonyDied', this._onColonyDied.bind(this));
     }
 
     get currentStep() {
@@ -67,8 +64,22 @@ class World {
         this._entities.push(entity);
     }
 
+    deleteEntity(entity) {
+        let index = this._entities.indexOf(entity);
+        if (index != -1) {
+            this._entities.splice(index, 1);
+        }
+    }
+
     addColony(colony) {
         this._colonies.push(colony);
+    }
+
+    deleteColony(colony) {
+        let index = this._colonies.indexOf(colony);
+        if (index != -1) {
+            this._colonies.splice(index, 1);
+        }
     }
 
     findEntityByType(type) {
@@ -122,38 +133,9 @@ class World {
         return null;
     }
 
-    deleteEntity(entityId) {
-        let entityIndex = -1;
-        for (let i = 0; i < this._entities.length; i++)  {
-            if (this._entities[i].id == entityId) {
-                entityIndex = i;
-                break;
-            }
-        }
-
-        if (entityIndex != -1) {
-            this._entities.splice(entityIndex, 1);
-        }
-    }
-
     clear() {
         this._entities = [];
         this._colonies = [];
-    }
-
-    _deleteColony(colony) {
-        let index = this._colonies.indexOf(colony);
-        if (index != -1) {
-            this._colonies.splice(index, 1);
-        }
-    }
-
-    _onEntityDied(entity) {
-        this.deleteEntity(entity.id);
-    }
-
-    _onColonyDied(colony) {
-        this._deleteColony(colony);
     }
 
 }

@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 from .views.account import account_check_name, account_register, account_login, account_logout, account_index
 from .views.game import index
 from .views.admin import admin_index, world_status_check, init_world, stop_world, run_world, save_world, expand_map
-from .views.nest import rename_nest, add_egg, change_egg_caste, change_egg_name, move_egg_to_larva_chamber, delete_egg, delete_larva
+from .views.nest import rename_nest, lay_egg, change_egg_caste, change_egg_name, move_egg_to_larva_chamber, delete_egg, delete_larva
 from .views.colony import stop_operation, build_new_sub_nest, destroy_nest, pillage_nest, transport_food, build_fortification, bring_bug
 from .views.ant import fly_nuptial_flight, change_ant_guardian_behavior, change_ant_cooperative_behavior, relocate_ant
 from .views.nuptial import found_colony, save_specie_schema
@@ -30,7 +30,7 @@ urlpatterns = [
     path('api/admin/world/expand_map', expand_map, name='expand_map'),
 
     path('api/world/nests/<int:nest_id>/rename', rename_nest, name='rename_nest'),
-    path('api/world/nests/<int:nest_id>/add_egg', add_egg, name='add_egg'),
+    path('api/world/nests/<int:nest_id>/lay_egg', lay_egg, name='lay_egg'),
     path('api/world/nests/<int:nest_id>/eggs/<int:egg_id>/change_caste', change_egg_caste, name='change_egg_caste'),
     path('api/world/nests/<int:nest_id>/eggs/<int:egg_id>/change_name', change_egg_name, name='change_egg_name'),
     path('api/world/nests/<int:nest_id>/eggs/<int:egg_id>/move_to_larva_chamber', move_egg_to_larva_chamber, name='move_egg_to_larva_chamber'),

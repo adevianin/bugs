@@ -1,11 +1,11 @@
-import { EventEmitter } from "@utils/eventEmitter";
+import { BaseService } from "./base/baseService";
 import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
+import { AntTypes } from '@domain/enum/antTypes';
 
-class NuptialEnvironmentService extends EventEmitter {
+class NuptialEnvironmentService extends BaseService {
 
-    constructor(mainEventBus, nuptialEnvironmentFactory, nuptialEnvironmentApi) {
-        super();
-        this._mainEventBus = mainEventBus;
+    constructor(mainEventBus, world, nuptialEnvironmentFactory, nuptialEnvironmentApi) {
+        super(mainEventBus, world);
         this._nuptialEnvironmentFactory = nuptialEnvironmentFactory;
         this._nuptialEnvironmentApi = nuptialEnvironmentApi;
         this._nuptialMales = [];
@@ -28,8 +28,7 @@ class NuptialEnvironmentService extends EventEmitter {
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
-        this._removeMale(nuptialMaleId);
-        return this._nuptialEnvironmentApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName);
+        return this._requestHandler(() => this._nuptialEnvironmentApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName));
     }
 
     playAction(action) {
@@ -43,6 +42,11 @@ class NuptialEnvironmentService extends EventEmitter {
             default:
                 throw 'unknown type of action';
         }
+    }
+
+    getQueensInNuptialFlightFromUser(userId) {
+        let allAnts = this._world.getAnts();
+        return allAnts.filter(ant => ant.ownerId == userId && ant.antType == AntTypes.QUEEN && ant.isInNuptialFlight);
     }
 
     _initSpecie(specieJson) {

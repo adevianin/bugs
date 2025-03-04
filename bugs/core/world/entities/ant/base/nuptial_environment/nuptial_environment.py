@@ -44,7 +44,7 @@ class NuptialEnvironment():
         self._specie.accept_male_genome(male.body.genome)
         self._emit_specie_genes_changed_action()
     
-    def get_male(self, male_id: str) -> NuptialMale:
+    def pull_male(self, male_id: str) -> NuptialMale:
         for male in self._males:
             if male.id == male_id:
                 self._males.remove(male)

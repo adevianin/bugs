@@ -46,8 +46,12 @@ class LarvaView extends BaseHTMLView {
         this._renderProgress();
     }
 
-    _onDeleteBtnClick() {
-        this._nest.larvaDelete(this._larva.id);
+    async _onDeleteBtnClick() {
+        try {
+            await this.$domainFacade.deleteLarvaInNest(this._nest.id, this._larva.id);
+        } catch (e) {
+            console.error(e);
+        }
     }
 }
 

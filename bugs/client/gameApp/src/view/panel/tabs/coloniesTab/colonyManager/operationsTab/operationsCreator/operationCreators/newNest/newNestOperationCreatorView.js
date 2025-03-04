@@ -4,6 +4,9 @@ import { MarkerTypes } from "@domain/enum/markerTypes";
 import { CONSTS } from "@domain/consts";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
 import { PositionView } from "@view/panel/base/position/positionView";
+import { StateSyncRequestError } from "@domain/errors/stateSyncRequestError";
+import { GenericRequestError } from "@domain/errors/genericRequestError";
+import { TextInputView } from "@view/panel/base/textInput/textInputView";
 
 class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
@@ -15,7 +18,6 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
         this._checkQueenExisting();
 
-        this._nestNameEl.addEventListener('change', this._onNestNameChanged.bind(this));
         this._chooseBuildingSiteBtn.addEventListener('click', this._onChooseBuildingSiteBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
     }
@@ -44,8 +46,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         let maxWarriorsCount = CONSTS.BUILD_NEW_SUB_NEST_OPERATION_REQUIREMENTS.MAX_WARRIORS_COUNT;
         this._warriorsCount = new IntInputView(warriorsCountInput, minWarriorsCount, maxWarriorsCount, warriorsCountErrEl);
 
-        this._nestNameEl = this._el.querySelector('[data-nest-name]');
-        this._nestNameErr = this._el.querySelector('[data-nest-name-err]');
+        this._nestNameView = new TextInputView(this._el.querySelector('[data-nest-name]'), this._el.querySelector('[data-nest-name-err]'));
 
         this._buildingPosition = new PositionView(this._el.querySelector('[data-building-position]'));
         this._chooseBuildingSiteBtn = this._el.querySelector('[data-choose-building-position]');
@@ -65,11 +66,19 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
             isError = true;
         }
 
-        if (!this._validateBuildingPosition()) {
+        let buildingPosErr = this._validateBuildingPosition();
+        this._renderBuildingPositionError(buildingPosErr);
+        if (buildingPosErr) {
             isError = true;
         }
 
-        if (!this._validateNestName()) {
+        if (!this._nestNameView.validate()) {
+            isError = true;
+        }
+
+        let condErr = this.$domainFacade.validateNewNestOperationConditions(this._performingColony.id);
+        this._renderMainError(condErr);
+        if (condErr) {
             isError = true;
         }
 
@@ -77,49 +86,26 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _validateBuildingPosition() {
-        let isSpecified = !!this._buildingPosition.value;
-        let errText = isSpecified ? '' : this.$messages.building_position_needed;
-        this._renderBuildingPositionError(errText);
-        return isSpecified;
+        if (!this._buildingPosition.value) {
+            return this.$messages.building_position_needed;
+        }
+        return null;
     }
 
     _renderBuildingPositionError(errText) {
-        this._buildingPositionErrEl.innerHTML = errText;
-    }
-
-    _validateNestName() {
-        let nestName = this._nestNameEl.value;
-
-        if (nestName.length < 3) {
-            this._renderNestNameErr(this.$messages.to_short_name);
-            return false;
-        }
-
-        let regex = /^[a-zA-Zа-яА-ЯіїєІЇЄ0-9 ]+$/u;
-        if (!regex.test(nestName)) {
-            this._renderNestNameErr(this.$messages.use_only_chars_and_digits);
-            return false;
-        }
-
-        this._renderNestNameErr('');
-
-        return true;
-    }
-
-    _renderNestNameErr(errText) {
-        this._nestNameErr.innerHTML = errText;
+        this._buildingPositionErrEl.innerHTML = errText || '';
     }
 
     _checkQueenExisting() {
         if (!this._queenOfColony) {
-            this._renderError('CANT_BUILD_SUB_NEST_WITHOUT_QUEEN');
+            this._renderMainError('CANT_BUILD_SUB_NEST_WITHOUT_QUEEN');
             this._chooseBuildingSiteBtn.disabled = true;
             this._startBtn.disabled = true;
         }
     }
 
-    _renderError(messageId) {
-        this._errorContainerEl.innerHTML = this.$messages[messageId];
+    _renderMainError(messageId) {
+        this._errorContainerEl.innerHTML = messageId ? this.$messages[messageId] : '';
     }
 
     _showMarkers() {
@@ -136,25 +122,24 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         });
     }
 
-    _onStartBtnClick() {
+    async _onStartBtnClick() {
         let isValid = this._validate();
         if (!isValid) {
             return;
         }
         let workersCount = this._workersCount.value;
         let warriorsCount = this._warriorsCount.value;
-        let nestName = this._nestNameEl.value;
-        this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName)
-            .then(() => {
-                this._onDone();
-            })
-            .catch((errId) => {
-                this._renderError(errId);
-            })
-    }
-
-    _onNestNameChanged() {
-        this._validateNestName();
+        let nestName = this._nestNameView.value;
+        try {
+            await this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName);
+            this._onDone();
+        } catch (e) {
+            if (e instanceof StateSyncRequestError) {
+                this._validate();
+            } else if (e instanceof GenericRequestError) {
+                this._renderMainError('SOMETHING_WENT_WRONG');
+            }
+        }
     }
 
 }

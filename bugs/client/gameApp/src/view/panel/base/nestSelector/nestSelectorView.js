@@ -1,22 +1,22 @@
 import { BaseHTMLView } from "@view/base/baseHTMLView";
-import { EntityTypes } from "@domain/enum/entityTypes";
 
 class NestSelectorView extends BaseHTMLView {
 
-    constructor(colonyId, el) {
-        super(el || document.createElement('select'));
+    constructor(el, colonyId) {
+        super(el);
         this._colonyId = colonyId;
+        this._nests = this.$domainFacade.getNestsFromColony(this._colonyId);
         this._isDisabled = false;
 
-        this._stopListenEntityDied = this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this._stopListenEntityBorn = this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
-        this._el.addEventListener('change', this._onChange.bind(this));
-
         this._render();
+
+        this._stopListenNestDied = this.$domainFacade.events.on(`nestDied:${this._colonyId}`, this._onNestDied.bind(this));
+        this._stopListenNestBorn = this.$domainFacade.events.on(`nestBorn:${this._colonyId}`, this._onNestBorn.bind(this));
+        this._el.addEventListener('change', this._onChange.bind(this));
     }
 
     get nestId() {
-        return parseInt(this._el.value);
+        return parseInt(this._el.value) || null;
     }
 
     set nestId(nestId) {
@@ -32,6 +32,12 @@ class NestSelectorView extends BaseHTMLView {
         return this._isDisabled;
     }
 
+    remove() {
+        this._stopListenNestDied();
+        this._stopListenNestBorn();
+        super.remove();
+    }
+
     selectAt(index) {
         let option = this._el.children[index];
         if (option) {
@@ -40,11 +46,19 @@ class NestSelectorView extends BaseHTMLView {
     }
 
     _render() {
-        let nests = this.$domainFacade.getNestsFromColony(this._colonyId);
-        this._el.innerHTML = '';
-        for (let nest of nests) {
+        this._renderEmptyOption();
+        
+        for (let nest of this._nests) {
             this._renderNestOption(nest);
         }
+    }
+
+    _renderEmptyOption() {
+        let optionEl = document.createElement('option');
+        optionEl.setAttribute('value', 'none');
+        // optionEl.setAttribute('disabled', '');
+        optionEl.innerHTML = this.$messages.nest_not_choosed;
+        this._el.append(optionEl);
     }
 
     _renderNestOption(nest) {
@@ -54,31 +68,40 @@ class NestSelectorView extends BaseHTMLView {
         this._el.append(optionEl);
     }
 
-    _onSomeoneDied(entity) {
-        if (this._isMyNest(entity)) {
-            this._el.querySelector(`[value="${entity.id}"]`).remove();
+    _removeNestOption(nestId) {
+        this._el.querySelector(`[value="${nestId}"]`).remove();
+    }
+
+    _removeNestFromArray(nest) {
+        let index = this._nests.indexOf(nest);
+        if (index > -1) {
+            this._nests.splice(index, 1);
         }
     }
 
-    _onSomeoneBorn(entity) {
-        if (this._isMyNest(entity)) {
-            this._renderNestOption(entity);
-        }
+    _clearValue() {
+        this._el.value = 'none';
+        this.events.emit('changed');
     }
 
-    _isMyNest(entity) {
-        return entity.type == EntityTypes.NEST && entity.fromColony == this._colonyId;
+    _onNestDied(nest) {
+        if (this.nestId == nest.id) {
+            this._clearValue();
+        }
+        this._removeNestOption(nest.id);
+        this._removeNestFromArray(nest);
+        
+    }
+
+    _onNestBorn(nest) {
+        this._nests.push(nest);
+        this._renderNestOption(nest);
     }
 
     _onChange() {
         this.events.emit('changed');
     }
 
-    remove() {
-        this._stopListenEntityDied();
-        this._stopListenEntityBorn();
-        super.remove();
-    }
 }
 
 export {

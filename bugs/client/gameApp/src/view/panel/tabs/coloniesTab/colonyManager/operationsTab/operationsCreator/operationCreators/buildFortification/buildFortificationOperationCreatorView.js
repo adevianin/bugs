@@ -4,6 +4,8 @@ import { NestSelectorView } from "@view/panel/base/nestSelector";
 import { MarkerTypes } from "@domain/enum/markerTypes";
 import { CONSTS } from "@domain/consts";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
+import { StateSyncRequestError } from "@domain/errors/stateSyncRequestError";
+import { GenericRequestError } from "@domain/errors/genericRequestError";
 
 class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
 
@@ -26,15 +28,14 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
     _render() {
         this._el.innerHTML = buildFortificationOperationCreatorTmpl;
 
-        this._nestSelector = new NestSelectorView(this._performingColony.id, this._el.querySelector('[data-nest-selector]'));
+        this._nestErrContainer = this._el.querySelector('[data-nest-err]');
+        this._nestSelector = new NestSelectorView(this._el.querySelector('[data-nest-selector]'), this._performingColony.id);
 
         let workersCountInput = this._el.querySelector('[data-workers-count]');
         let workersCountErrContainer = this._el.querySelector('[data-workers-count-err]');
         let minWorkersCount = CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MIN_WORKERS_COUNT;
         let maxWorkersCount = CONSTS.PILLAGE_NEST_OPERATION_REQUIREMENTS.MAX_WORKERS_COUNT;
         this._workersCountView = new IntInputView(workersCountInput, minWorkersCount, maxWorkersCount, workersCountErrContainer);
-
-        this._requestErrorContainer = this._el.querySelector('[data-request-error-container]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
         this._showMarkers();
@@ -43,30 +44,52 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
     _validate() {
         let isError = false;
 
-        if (this._workersCountView.validate()) {
+        let nestError = this._validateNest();
+        this._renderNestError(nestError);
+        if (nestError) {
+            isError = true;
+        }
+
+        if (!this._workersCountView.validate()) {
             isError = true;
         }
 
         return !isError;
     }
 
-    _onStartBtnClick() {
-        if (this._validate()) {
+    _validateNest() {
+        if (!this._nestSelector.nestId) {
+            return this.$messages.choose_nest_to_fortificate;
+        }
+
+        return null;
+    }
+
+    _renderNestError(errorText) {
+        this._nestErrContainer.innerHTML = errorText || '';
+    }
+
+    async _onStartBtnClick() {
+        if (!this._validate()) {
             return;
         }
 
         let nestId = this._nestSelector.nestId;
         let workersCount = this._workersCountView.value;
-        this.$domainFacade.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount)
-            .then(() => {
-                this._onDone();
-            })
-            .catch((errId) => {
-                this._renderRequestContainerError(errId);
-            });
+        try {
+            await this.$domainFacade.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount);
+            this._onDone();
+        } catch (e) {
+            if (e instanceof StateSyncRequestError) {
+                this._validate();
+            } else if (e instanceof GenericRequestError) {
+                this._renderMainError('SOMETHING_WENT_WRONG');
+            }
+        }
     }
 
     _onNestChanged() {
+        this._validate();
         this._showMarkers();
     }
 
@@ -79,10 +102,6 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
         }
 
         this._demonstrateMarkersRequest(markers);
-    }
-
-    _renderRequestContainerError(messageId) {
-        this._requestErrorContainer.innerHTML = this.$messages[messageId];
     }
 
 }

@@ -51,8 +51,15 @@ class MainTabView extends BaseHTMLView {
         this._renderStoredClalories();
     }
 
-    _onChangedNestName() {
-        this._nest.rename(this._nameEl.value);
+    async _onChangedNestName() {
+        if (!this._nameEl.value) {
+            return;
+        }
+        try {
+            await this.$domainFacade.renameNest(this._nest.id, this._nameEl.value);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
 }

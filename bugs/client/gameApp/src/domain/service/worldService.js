@@ -1,6 +1,4 @@
-import { AntTypes } from '@domain/enum/antTypes';
-import { distance } from '@utils/distance';
-import { CONSTS } from '@domain/consts';
+import { EntityTypes } from '@domain/enum/entityTypes';
 
 class WorldService {
 
@@ -12,6 +10,7 @@ class WorldService {
         this._ratingContainer = ratingContainer;
 
         this._mainEventBus.on('userLogout', this._clearWorld.bind(this));
+        this._mainEventBus.on('entityDied', this._onEntityDied.bind(this));
     }
 
     get world() {
@@ -78,42 +77,29 @@ class WorldService {
         let entity = this._worldFactory.buildEntity(entityJson);
         this._world.addEntity(entity);
         this._mainEventBus.emit('entityBorn', entity);
-    }
-
-    findNearestNest(point, excludeColonyId) {
-        let nests = this._world.getNests();
-        let nearestNest = null;
-        let smallestDistance = null;
-        let maxDist = 100;
-
-        nests.forEach(nest => {
-            let dist = distance(point.x, point.y, nest.position.x, nest.position.y);
-            if ((!excludeColonyId || nest.fromColony != excludeColonyId) && dist <= maxDist && (!smallestDistance || dist < smallestDistance)) {
-                smallestDistance = dist;
-                nearestNest = nest;
-            }
-        });
-
-        return nearestNest;
-    }
-
-    getQueensInNuptialFlightFromUser(userId) {
-        let allAnts = this._world.getAnts();
-        return allAnts.filter(ant => ant.ownerId == userId && ant.antType == AntTypes.QUEEN && ant.isInNuptialFlight);
-    }
-
-    findMyFirstNest(userId) {
-        let myNests = this._world.findNestsByOwner(userId);
-        for (let nest of myNests) {
-            if (nest.isMain) {
-                return nest;
-            }
+        switch (entity.type) {
+            case EntityTypes.ANT:
+                this._mainEventBus.emit('antBorn', entity);
+                this._mainEventBus.emit(`antBorn:${entity.fromColony}`, entity);
+                break;
+            case EntityTypes.NEST:
+                this._mainEventBus.emit('nestBorn', entity);
+                this._mainEventBus.emit(`nestBorn:${entity.fromColony}`, entity);
+                break;
         }
+    }
 
-        if (myNests.length > 0) {
-            return myNests[0];
-        } else {
-            return null;
+    _onEntityDied(entity) {
+        this._world.deleteEntity(entity);
+        switch (entity.type) {
+            case EntityTypes.ANT:
+                this._mainEventBus.emit('antDied', entity);
+                this._mainEventBus.emit(`antDied:${entity.fromColony}`, entity);
+                break;
+            case EntityTypes.NEST:
+                this._mainEventBus.emit('nestDied', entity);
+                this._mainEventBus.emit(`nestDied:${entity.fromColony}`, entity);
+                break;
         }
     }
 

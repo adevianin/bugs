@@ -66,6 +66,7 @@ class MessageHandlerService {
                     break;
             }
         }
+        this._mainEventBus.emit(`stepSyncDone:${msg.step}`);
     }
 
 }

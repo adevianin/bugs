@@ -50,11 +50,20 @@ class Map:
 
         return Point(x, y)
     
+    def has_entity(self, id: int) -> bool:
+        return self._entities_collection.has_entity(id)
+    
     def add_entity(self, entity: Entity):
         self._entities_collection.add_entity(entity)
     
     def get_entity_by_id(self, id: int) -> Entity:
         return self._entities_collection.get_entity_by_id(id)
+    
+    def find_entity_by_id(self, id: int) -> Entity:
+        if self._entities_collection.has_entity(id):
+            return self.get_entity_by_id(id)
+        else:
+            return None
     
     def get_all_entities(self) -> List[Entity]:
         return self._entities_collection.get_entities()

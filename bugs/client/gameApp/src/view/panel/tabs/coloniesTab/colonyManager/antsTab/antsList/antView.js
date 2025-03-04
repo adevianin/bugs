@@ -41,10 +41,9 @@ class AntView extends BaseHTMLView {
         this._el.querySelector('[data-name]').innerHTML = this._ant.name;
         this._el.querySelector('[data-type]').innerHTML = this._ant.isQueenOfColony ? 'Королева' : antTypesLabels[this._ant.antType];
 
-        this._nestSelector = new NestSelectorView(this._ant.fromColony);
+        this._nestSelector = new NestSelectorView(this._el.querySelector('[data-nest]'), this._ant.fromColony);
         this._nestSelector.nestId = this._ant.homeNestId;
         this._nestSelector.disabled = this._ant.isQueenOfColony;
-        this._el.querySelector('[data-nest]').append(this._nestSelector.el);
 
         this._guardianTypeSelector = this._el.querySelector('[data-guardian-type]');
         this._guardianTypeSelector.value = this._ant.guardianBehavior;
