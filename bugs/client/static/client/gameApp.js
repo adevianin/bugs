@@ -752,6 +752,7 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
     _playHomeNestChanged(action) {
         this._homeNestId = action.nestId;
+        this.emit('homeNestChanged');
         return Promise.resolve();
     }
 
@@ -6781,10 +6782,13 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._cooperativeBehaviorTogglerEl.addEventListener('change', this._onCooperativeBehaviorTogglerChange.bind(this));
         this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
         this._profileBtn.addEventListener('click', this._onProfileBtnClick.bind(this));
+        this._showAntBtn.addEventListener('click', this._onShowAntBtnClick.bind(this));
+
         this._stopListenAntDied = this._ant.on('died', this.remove.bind(this));
         this._stopListenCurrentActivityChanged = this._ant.on('currentActivityChanged', this._renderCurrentActivity.bind(this));
+        this._stopListenHomeNestChanged = this._ant.on('homeNestChanged', this._onHomeNestChanged.bind(this));
+
         this._stopListenCurrentStepChanged = this.$domainFacade.events.on('currentStepChanged', this._renderAge.bind(this));
-        this._showAntBtn.addEventListener('click', this._onShowAntBtnClick.bind(this));
     }
 
     _onGuardianBehaviorSelectorChange () {
@@ -6841,6 +6845,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._stopListenCurrentStepChanged();
         this._stopListenAntDied();
         this._stopListenCurrentActivityChanged();
+        this._stopListenHomeNestChanged();
         this._nestSelector.remove();
         this._genomeView.remove();
         if (this._breedingMaleGenomeView) {
@@ -6905,6 +6910,10 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
 
     _onShowAntBtnClick() {
         this.$eventBus.emit('showPointRequest', this._ant.position);
+    }
+
+    _onHomeNestChanged() {
+        this._nestSelector.nestId = this._ant.homeNestId;
     }
 
 }

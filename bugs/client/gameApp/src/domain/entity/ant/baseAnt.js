@@ -182,6 +182,7 @@ class BaseAnt extends LiveEntity {
 
     _playHomeNestChanged(action) {
         this._homeNestId = action.nestId;
+        this.emit('homeNestChanged');
         return Promise.resolve();
     }
 
