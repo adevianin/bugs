@@ -16,9 +16,8 @@ import { Genome } from './entity/genetic/genome';
 
 class WorldFactory {
 
-    constructor(mainEventBus, antApi) {
+    constructor(mainEventBus) {
         this._mainEventBus = mainEventBus;
-        this._antApi = antApi;
     }
 
     buildEntity(entityJson) {
@@ -129,14 +128,14 @@ class WorldFactory {
                 let isFertilized = antJson.isFertilized;
                 let isInNuptialFlight = antJson.isInNuptialFlight;
                 let breedingMaleGenome = antJson.breedingMaleGenome ? Genome.buildFromJson(antJson.breedingMaleGenome) : null;
-                return new QueenAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
+                return new QueenAnt(this._mainEventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
                     genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, breedingMaleGenome);
             case AntTypes.WARRIOR:
-                return new WarriorAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
+                return new WarriorAnt(this._mainEventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
             case AntTypes.WORKER:
-                return new WorkerAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
+                return new WorkerAnt(this._mainEventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
             case AntTypes.MALE:
-                return new MaleAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
+                return new MaleAnt(this._mainEventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
             default:
                 throw 'unknown type of ant';
         }

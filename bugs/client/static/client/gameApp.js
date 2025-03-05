@@ -150,7 +150,7 @@ __webpack_require__.r(__webpack_exports__);
 
 class DomainFacade {
 
-    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService, antService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._accountService = accountService;
@@ -159,6 +159,7 @@ class DomainFacade {
         this._userService = userService;
         this._nuptialEnvironmentService = nuptialEnvironmentService;
         this._nestService = nestService;
+        this._antService = antService;
     }
 
     get currentStep() {
@@ -364,6 +365,26 @@ class DomainFacade {
         return this._colonyService.findClosestBugCorpseNearNest(nestId);
     }
 
+    /*==========ant===========*/
+
+    antFlyNuptialFlight(antId) {
+        this._antService.antFlyNuptialFlight(antId);
+    }
+
+    antChangeGuardianBehavior(antId, behaviorValue) {
+        this._antService.antChangeGuardianBehavior(antId, behaviorValue);
+    }
+
+    antToggleCooperativeBehavior(antId, isCooperative) {
+        this._antService.antToggleCooperativeBehavior(antId, isCooperative);
+    }
+
+    antRelocate(antId, homeNestId) {
+        this._antService.antRelocate(antId, homeNestId);
+    }
+
+    /*========================*/
+
 }
 
 
@@ -553,7 +574,7 @@ __webpack_require__.r(__webpack_exports__);
 
 class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, 
+    constructor(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, 
             genome, birthStep, currentActivity) {
         super(eventBus, id, position, angle, _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT, fromColony, ownerId, hp, maxHp, isInHibernation);
         this._name = name;
@@ -564,7 +585,6 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         this._homeNestId = homeNestId;
         this._stats = stats;
         this._behavior = behavior;
-        this._antApi = antApi;
         this._genome = genome
         this._birthStep = birthStep;
         this._currentActivity = currentActivity;
@@ -607,6 +627,10 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         return this._homeNestId;
     }
 
+    set homeNestId(homeNestId) {
+        this._homeNestId = homeNestId;
+    }
+
     get stats() {
         return this._stats;
     }
@@ -615,8 +639,16 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         return this._behavior.guardianBehavior;
     }
 
+    set guardianBehavior(behaviorValue) {
+        return this._behavior.guardianBehavior = behaviorValue;
+    }
+
     get isCooperativeBehavior() {
         return this._behavior.isCooperative;
+    }
+
+    set isCooperativeBehavior(isCooperative) {
+        return this._behavior.isCooperative = isCooperative;
     }
 
     get genome() {
@@ -656,27 +688,8 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         return this._currentActivity;
     }
 
-    changeGuardianBehavior(behaviorValue) {
-        this._behavior.guardianBehavior = behaviorValue;
-        this._antApi.changeGuardianBehavior(this.id, behaviorValue);
-    }
-
-    toggleCooperativeBehavior(isEnabled) {
-        this._behavior.cooperative = isEnabled;
-        this._antApi.toggleCooperativeBehavior(this.id, isEnabled);
-    }
-
     hasPickedItem() {
         return !!this._pickedItemId;
-    }
-
-    relocateToNest(nestId) {
-        this._antApi.relocateToNest(this.id, nestId);
-        this._homeNestId = nestId;
-    }
-
-    flyNuptialFlight() {
-        this._antApi.flyNuptialFlight(this.id);
     }
 
     playAction(action) {
@@ -691,8 +704,6 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
                 return this._playItemDroped(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_HOME_NEST_CHANGED:
                 return this._playHomeNestChanged(action);
-            // case ACTION_TYPES.ENTITY_EAT_FOOD:
-            //     return this._playEatFoodAction(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_IN_NEST:
                 return this._playGotInNest(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
@@ -743,10 +754,6 @@ class BaseAnt extends _liveEntity__WEBPACK_IMPORTED_MODULE_0__.LiveEntity {
         this._homeNestId = action.nestId;
         return Promise.resolve();
     }
-
-    // _toggleIsInNest(isInNest) {
-    //     this._isInNest = isInNest;
-    // }
 
     _playCurrentActivityChanged(action) {
         this._currentActivity = action.activity;
@@ -823,8 +830,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class MaleAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity) {
-        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
+    constructor(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity) {
+        super(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.MALE, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
     }
 
     get canFlyNuptialFlight() {
@@ -892,8 +899,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class QueenAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, breedingMaleGenome) {
-        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
+    constructor(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, breedingMaleGenome) {
+        super(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
         this._isFertilized = isFertilized;
         this._isInNuptialFlight = isInNuptialFlight;
         this._breedingMaleGenome = breedingMaleGenome;
@@ -990,8 +997,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class WarriorAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity) {
-        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
+    constructor(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity) {
+        super(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
     }
 }
 
@@ -1017,8 +1024,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class WorkerAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity) {
-        super(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WORKER, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
+    constructor(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity) {
+        super(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_1__.AntTypes.WORKER, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
     }
 
 }
@@ -2806,6 +2813,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./entity/notificationsContainer */ "./gameApp/src/domain/entity/notificationsContainer.js");
 /* harmony import */ var _entity_ratingContainer__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./entity/ratingContainer */ "./gameApp/src/domain/entity/ratingContainer.js");
 /* harmony import */ var _entity_nuptialEnvironment_nuptialEnvironmentFactory__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./entity/nuptialEnvironment/nuptialEnvironmentFactory */ "./gameApp/src/domain/entity/nuptialEnvironment/nuptialEnvironmentFactory.js");
+/* harmony import */ var _service_antService__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./service/antService */ "./gameApp/src/domain/service/antService.js");
+
 
 
 
@@ -2823,7 +2832,7 @@ __webpack_require__.r(__webpack_exports__);
 function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
 
-    let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus, apis.antApi);
+    let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus);
     let nuptialEnvironmentFactory = new _entity_nuptialEnvironment_nuptialEnvironmentFactory__WEBPACK_IMPORTED_MODULE_12__.NuptialEnvironmentFactory();
 
     let notificationsContainer = new _entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_10__.NotificationsContainer();
@@ -2836,9 +2845,10 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_7__.UserService(apis.userApi, notificationsContainer);
     let nuptialEnvironmentService = new _service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_8__.NuptialEnvironmentService(mainEventBus, world, nuptialEnvironmentFactory, apis.nuptialEnvironmentApi);
     let nestService = new _service_nestService__WEBPACK_IMPORTED_MODULE_9__.NestService(mainEventBus, world, apis.nestApi);
+    let antService = new _service_antService__WEBPACK_IMPORTED_MODULE_13__.AntService(mainEventBus, world, apis.antApi);
     let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService);
 
-    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService);
+    let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService, antService);
 
     return domainFacade;
 }
@@ -2879,6 +2889,55 @@ class AccountService {
 
 /***/ }),
 
+/***/ "./gameApp/src/domain/service/antService.js":
+/*!**************************************************!*\
+  !*** ./gameApp/src/domain/service/antService.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AntService: () => (/* binding */ AntService)
+/* harmony export */ });
+/* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseService */ "./gameApp/src/domain/service/base/baseService.js");
+
+
+class AntService extends _base_baseService__WEBPACK_IMPORTED_MODULE_0__.BaseService {
+
+    constructor(mainEventBus, world, antApi) {
+        super(mainEventBus, world);
+        this._antApi = antApi;
+    }
+
+    async antFlyNuptialFlight(antId) {
+        await this._requestHandler(() => this._antApi.flyNuptialFlight(antId));
+    }
+
+    async antChangeGuardianBehavior(antId, behaviorValue) {
+        await this._requestHandler(() => this._antApi.changeGuardianBehavior(antId, behaviorValue));
+        let ant = this._world.findEntityById(antId);
+        ant.guardianBehavior = behaviorValue;
+    }
+
+    async antToggleCooperativeBehavior(antId, isCooperative) {
+        await this._requestHandler(() => this._antApi.toggleCooperativeBehavior(antId, isCooperative));
+        let ant = this._world.findEntityById(antId);
+        ant.isCooperativeBehavior = isCooperative;
+    }
+
+    async antRelocate(antId, homeNestId) {
+        await this._requestHandler(() => this._antApi.relocateToNest(antId, homeNestId));
+        let ant = this._world.findEntityById(antId);
+        ant.homeNestId = homeNestId;
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/domain/service/base/baseService.js":
 /*!********************************************************!*\
   !*** ./gameApp/src/domain/service/base/baseService.js ***!
@@ -2902,7 +2961,7 @@ class BaseService {
         this._world = world;
     }
 
-    async _requestHandler(apiCallFunc, ) {
+    async _requestHandler(apiCallFunc) {
         try {
             let result = await apiCallFunc();
             return result.data;
@@ -2916,7 +2975,6 @@ class BaseService {
     }
 
     async _waitStepSync(stepNumber) {
-        console.log('curent step', this._world.currentStep, 'waiting', stepNumber);
         return new Promise((res, rej) => {
             if (this._world.currentStep > stepNumber) {
                 res();
@@ -3612,9 +3670,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class WorldFactory {
 
-    constructor(mainEventBus, antApi) {
+    constructor(mainEventBus) {
         this._mainEventBus = mainEventBus;
-        this._antApi = antApi;
     }
 
     buildEntity(entityJson) {
@@ -3725,14 +3782,14 @@ class WorldFactory {
                 let isFertilized = antJson.isFertilized;
                 let isInNuptialFlight = antJson.isInNuptialFlight;
                 let breedingMaleGenome = antJson.breedingMaleGenome ? _entity_genetic_genome__WEBPACK_IMPORTED_MODULE_14__.Genome.buildFromJson(antJson.breedingMaleGenome) : null;
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.QueenAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.QueenAnt(this._mainEventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior,
                     genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, breedingMaleGenome);
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__.AntTypes.WARRIOR:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.WarriorAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.WarriorAnt(this._mainEventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__.AntTypes.WORKER:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.WorkerAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.WorkerAnt(this._mainEventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
             case _enum_antTypes__WEBPACK_IMPORTED_MODULE_8__.AntTypes.MALE:
-                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.MaleAnt(this._mainEventBus, this._antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
+                return new _entity_ant__WEBPACK_IMPORTED_MODULE_9__.MaleAnt(this._mainEventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
             default:
                 throw 'unknown type of ant';
         }
@@ -3806,7 +3863,7 @@ class AntApi {
     }
 
     flyNuptialFlight(antId) {
-        return this._requester.post(`api/world/ants/${ antId }/fly_nuptial_flight`)
+        return this._requester.post(`api/world/ants/${ antId }/fly_nuptial_flight`);
     }
 
     changeGuardianBehavior(antId, behaviorValue) {
@@ -5877,11 +5934,12 @@ __webpack_require__.r(__webpack_exports__);
 
 class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    constructor(el, colonyId) {
+    constructor(el, colonyId, canBeEmpty = true) {
         super(el);
         this._colonyId = colonyId;
         this._nests = this.$domainFacade.getNestsFromColony(this._colonyId);
         this._isDisabled = false;
+        this._canBeEmpty = canBeEmpty;
 
         this._render();
 
@@ -5931,7 +5989,9 @@ class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_
     _renderEmptyOption() {
         let optionEl = document.createElement('option');
         optionEl.setAttribute('value', 'none');
-        // optionEl.setAttribute('disabled', '');
+        if (!this._canBeEmpty) {
+            optionEl.setAttribute('disabled', '');
+        }
         optionEl.innerHTML = this.$messages.nest_not_choosed;
         this._el.append(optionEl);
     }
@@ -6728,11 +6788,11 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
     }
 
     _onGuardianBehaviorSelectorChange () {
-        this._ant.changeGuardianBehavior(this._guardianTypeSelector.value);
+        this.$domainFacade.antChangeGuardianBehavior(this._ant.id, this._guardianTypeSelector.value);
     }
 
     _onCooperativeBehaviorTogglerChange () {
-        this._ant.toggleCooperativeBehavior(this._cooperativeBehaviorTogglerEl.checked);
+        this.$domainFacade.antToggleCooperativeBehavior(this._ant.id, this._cooperativeBehaviorTogglerEl.checked);
     }
 
     _render() {
@@ -6741,7 +6801,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
         this._el.querySelector('[data-name]').innerHTML = this._ant.name;
         this._el.querySelector('[data-type]').innerHTML = this._ant.isQueenOfColony ? 'Королева' : _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_4__.antTypesLabels[this._ant.antType];
 
-        this._nestSelector = new _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._el.querySelector('[data-nest]'), this._ant.fromColony);
+        this._nestSelector = new _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__.NestSelectorView(this._el.querySelector('[data-nest]'), this._ant.fromColony, false);
         this._nestSelector.nestId = this._ant.homeNestId;
         this._nestSelector.disabled = this._ant.isQueenOfColony;
 
@@ -6790,7 +6850,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
     }
 
     _onNuptialFlightBtnClick() {
-        this._ant.flyNuptialFlight();
+        this.$domainFacade.antFlyNuptialFlight(this._ant.id);
     }
 
     _renderActionBtns() {
@@ -6835,7 +6895,7 @@ class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseH
     }
 
     _onNestChanged() {
-        this._ant.relocateToNest(this._nestSelector.nestId);
+        this.$domainFacade.antRelocate(this._ant.id, this._nestSelector.nestId);
     }
 
     _onProfileBtnClick() {

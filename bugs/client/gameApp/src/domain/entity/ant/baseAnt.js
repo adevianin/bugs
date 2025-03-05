@@ -4,7 +4,7 @@ import { ACTION_TYPES } from '../action/actionTypes';
 
 class BaseAnt extends LiveEntity {
 
-    constructor(eventBus, antApi, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, 
+    constructor(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, 
             genome, birthStep, currentActivity) {
         super(eventBus, id, position, angle, EntityTypes.ANT, fromColony, ownerId, hp, maxHp, isInHibernation);
         this._name = name;
@@ -15,7 +15,6 @@ class BaseAnt extends LiveEntity {
         this._homeNestId = homeNestId;
         this._stats = stats;
         this._behavior = behavior;
-        this._antApi = antApi;
         this._genome = genome
         this._birthStep = birthStep;
         this._currentActivity = currentActivity;
@@ -58,6 +57,10 @@ class BaseAnt extends LiveEntity {
         return this._homeNestId;
     }
 
+    set homeNestId(homeNestId) {
+        this._homeNestId = homeNestId;
+    }
+
     get stats() {
         return this._stats;
     }
@@ -66,8 +69,16 @@ class BaseAnt extends LiveEntity {
         return this._behavior.guardianBehavior;
     }
 
+    set guardianBehavior(behaviorValue) {
+        return this._behavior.guardianBehavior = behaviorValue;
+    }
+
     get isCooperativeBehavior() {
         return this._behavior.isCooperative;
+    }
+
+    set isCooperativeBehavior(isCooperative) {
+        return this._behavior.isCooperative = isCooperative;
     }
 
     get genome() {
@@ -107,27 +118,8 @@ class BaseAnt extends LiveEntity {
         return this._currentActivity;
     }
 
-    changeGuardianBehavior(behaviorValue) {
-        this._behavior.guardianBehavior = behaviorValue;
-        this._antApi.changeGuardianBehavior(this.id, behaviorValue);
-    }
-
-    toggleCooperativeBehavior(isEnabled) {
-        this._behavior.cooperative = isEnabled;
-        this._antApi.toggleCooperativeBehavior(this.id, isEnabled);
-    }
-
     hasPickedItem() {
         return !!this._pickedItemId;
-    }
-
-    relocateToNest(nestId) {
-        this._antApi.relocateToNest(this.id, nestId);
-        this._homeNestId = nestId;
-    }
-
-    flyNuptialFlight() {
-        this._antApi.flyNuptialFlight(this.id);
     }
 
     playAction(action) {
@@ -142,8 +134,6 @@ class BaseAnt extends LiveEntity {
                 return this._playItemDroped(action);
             case ACTION_TYPES.ANT_HOME_NEST_CHANGED:
                 return this._playHomeNestChanged(action);
-            // case ACTION_TYPES.ENTITY_EAT_FOOD:
-            //     return this._playEatFoodAction(action);
             case ACTION_TYPES.ENTITY_GOT_IN_NEST:
                 return this._playGotInNest(action);
             case ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
@@ -194,10 +184,6 @@ class BaseAnt extends LiveEntity {
         this._homeNestId = action.nestId;
         return Promise.resolve();
     }
-
-    // _toggleIsInNest(isInNest) {
-    //     this._isInNest = isInNest;
-    // }
 
     _playCurrentActivityChanged(action) {
         this._currentActivity = action.activity;

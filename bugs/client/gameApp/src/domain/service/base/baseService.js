@@ -8,7 +8,7 @@ class BaseService {
         this._world = world;
     }
 
-    async _requestHandler(apiCallFunc, ) {
+    async _requestHandler(apiCallFunc) {
         try {
             let result = await apiCallFunc();
             return result.data;
@@ -22,7 +22,6 @@ class BaseService {
     }
 
     async _waitStepSync(stepNumber) {
-        console.log('curent step', this._world.currentStep, 'waiting', stepNumber);
         return new Promise((res, rej) => {
             if (this._world.currentStep > stepNumber) {
                 res();

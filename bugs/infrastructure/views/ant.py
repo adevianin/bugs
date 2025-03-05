@@ -10,7 +10,7 @@ import json
 def fly_nuptial_flight(request: HttpRequest, ant_id: int):
     wf = WorldFacade.get_instance()
     wf.fly_nuptial_flight_command(request.user.id, ant_id)
-    return HttpResponse(status=200)
+    return HttpResponse(status=204)
 
 @require_POST
 @login_required     
@@ -24,7 +24,7 @@ def change_ant_guardian_behavior(request: HttpRequest, ant_id: int):
     
     wf.change_ant_guardian_behavior_command(request.user.id, ant_id, guaridan_behavior)
     
-    return HttpResponse(status=200)
+    return HttpResponse(status=204)
 
 @require_POST
 @login_required     
@@ -38,7 +38,7 @@ def change_ant_cooperative_behavior(request: HttpRequest, ant_id: int):
     
     wf.change_ant_cooperative_behavior_command(request.user.id, ant_id, is_enabled)
     
-    return HttpResponse(status=200)
+    return HttpResponse(status=204)
 
 @require_POST
 @login_required     
@@ -52,4 +52,4 @@ def relocate_ant(request: HttpRequest, ant_id: int):
     
     wf.relocate_ant_command(request.user.id, ant_id, nest_id)
     
-    return HttpResponse(status=200)
+    return HttpResponse(status=204)

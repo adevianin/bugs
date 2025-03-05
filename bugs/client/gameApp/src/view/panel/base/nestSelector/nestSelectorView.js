@@ -2,11 +2,12 @@ import { BaseHTMLView } from "@view/base/baseHTMLView";
 
 class NestSelectorView extends BaseHTMLView {
 
-    constructor(el, colonyId) {
+    constructor(el, colonyId, canBeEmpty = true) {
         super(el);
         this._colonyId = colonyId;
         this._nests = this.$domainFacade.getNestsFromColony(this._colonyId);
         this._isDisabled = false;
+        this._canBeEmpty = canBeEmpty;
 
         this._render();
 
@@ -56,7 +57,9 @@ class NestSelectorView extends BaseHTMLView {
     _renderEmptyOption() {
         let optionEl = document.createElement('option');
         optionEl.setAttribute('value', 'none');
-        // optionEl.setAttribute('disabled', '');
+        if (!this._canBeEmpty) {
+            optionEl.setAttribute('disabled', '');
+        }
         optionEl.innerHTML = this.$messages.nest_not_choosed;
         this._el.append(optionEl);
     }

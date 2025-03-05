@@ -5,7 +5,7 @@ class AntApi {
     }
 
     flyNuptialFlight(antId) {
-        return this._requester.post(`api/world/ants/${ antId }/fly_nuptial_flight`)
+        return this._requester.post(`api/world/ants/${ antId }/fly_nuptial_flight`);
     }
 
     changeGuardianBehavior(antId, behaviorValue) {

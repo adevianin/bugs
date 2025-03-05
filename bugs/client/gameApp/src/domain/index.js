@@ -11,11 +11,12 @@ import { NestService } from './service/nestService';
 import { NotificationsContainer } from './entity/notificationsContainer';
 import { RatingContainer } from './entity/ratingContainer';
 import { NuptialEnvironmentFactory } from './entity/nuptialEnvironment/nuptialEnvironmentFactory';
+import { AntService } from './service/antService';
 
 function initDomainLayer(apis, serverConnection, initialData) {
     let mainEventBus = new EventEmitter();
 
-    let worldFactory = new WorldFactory(mainEventBus, apis.antApi);
+    let worldFactory = new WorldFactory(mainEventBus);
     let nuptialEnvironmentFactory = new NuptialEnvironmentFactory();
 
     let notificationsContainer = new NotificationsContainer();
@@ -28,9 +29,10 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let userService = new UserService(apis.userApi, notificationsContainer);
     let nuptialEnvironmentService = new NuptialEnvironmentService(mainEventBus, world, nuptialEnvironmentFactory, apis.nuptialEnvironmentApi);
     let nestService = new NestService(mainEventBus, world, apis.nestApi);
+    let antService = new AntService(mainEventBus, world, apis.antApi);
     let messageHandlerService = new MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService);
 
-    let domainFacade = new DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService);
+    let domainFacade = new DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService, antService);
 
     return domainFacade;
 }

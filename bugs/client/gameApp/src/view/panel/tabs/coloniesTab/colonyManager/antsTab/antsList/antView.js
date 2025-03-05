@@ -28,11 +28,11 @@ class AntView extends BaseHTMLView {
     }
 
     _onGuardianBehaviorSelectorChange () {
-        this._ant.changeGuardianBehavior(this._guardianTypeSelector.value);
+        this.$domainFacade.antChangeGuardianBehavior(this._ant.id, this._guardianTypeSelector.value);
     }
 
     _onCooperativeBehaviorTogglerChange () {
-        this._ant.toggleCooperativeBehavior(this._cooperativeBehaviorTogglerEl.checked);
+        this.$domainFacade.antToggleCooperativeBehavior(this._ant.id, this._cooperativeBehaviorTogglerEl.checked);
     }
 
     _render() {
@@ -41,7 +41,7 @@ class AntView extends BaseHTMLView {
         this._el.querySelector('[data-name]').innerHTML = this._ant.name;
         this._el.querySelector('[data-type]').innerHTML = this._ant.isQueenOfColony ? 'Королева' : antTypesLabels[this._ant.antType];
 
-        this._nestSelector = new NestSelectorView(this._el.querySelector('[data-nest]'), this._ant.fromColony);
+        this._nestSelector = new NestSelectorView(this._el.querySelector('[data-nest]'), this._ant.fromColony, false);
         this._nestSelector.nestId = this._ant.homeNestId;
         this._nestSelector.disabled = this._ant.isQueenOfColony;
 
@@ -90,7 +90,7 @@ class AntView extends BaseHTMLView {
     }
 
     _onNuptialFlightBtnClick() {
-        this._ant.flyNuptialFlight();
+        this.$domainFacade.antFlyNuptialFlight(this._ant.id);
     }
 
     _renderActionBtns() {
@@ -135,7 +135,7 @@ class AntView extends BaseHTMLView {
     }
 
     _onNestChanged() {
-        this._ant.relocateToNest(this._nestSelector.nestId);
+        this.$domainFacade.antRelocate(this._ant.id, this._nestSelector.nestId);
     }
 
     _onProfileBtnClick() {

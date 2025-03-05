@@ -2,7 +2,7 @@ import { EntityTypes } from "./enum/entityTypes";
 
 class DomainFacade {
 
-    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService) {
+    constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService, antService) {
         this._mainEventBus = mainEventBus;
         this._worldService = worldService;
         this._accountService = accountService;
@@ -11,6 +11,7 @@ class DomainFacade {
         this._userService = userService;
         this._nuptialEnvironmentService = nuptialEnvironmentService;
         this._nestService = nestService;
+        this._antService = antService;
     }
 
     get currentStep() {
@@ -215,6 +216,26 @@ class DomainFacade {
     findClosestBugCorpseNearNest(nestId) {
         return this._colonyService.findClosestBugCorpseNearNest(nestId);
     }
+
+    /*==========ant===========*/
+
+    antFlyNuptialFlight(antId) {
+        this._antService.antFlyNuptialFlight(antId);
+    }
+
+    antChangeGuardianBehavior(antId, behaviorValue) {
+        this._antService.antChangeGuardianBehavior(antId, behaviorValue);
+    }
+
+    antToggleCooperativeBehavior(antId, isCooperative) {
+        this._antService.antToggleCooperativeBehavior(antId, isCooperative);
+    }
+
+    antRelocate(antId, homeNestId) {
+        this._antService.antRelocate(antId, homeNestId);
+    }
+
+    /*========================*/
 
 }
 export { DomainFacade }
