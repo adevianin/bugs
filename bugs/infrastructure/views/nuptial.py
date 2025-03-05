@@ -47,3 +47,12 @@ def save_specie_schema(request: HttpRequest):
         return HttpResponse(status=200)
     else:
         return HttpResponse(error, status=400)
+    
+@require_POST
+@login_required     
+def born_new_antara(request: HttpRequest):
+    wf = WorldFacade.get_instance()
+
+    wf.born_new_antara_command(request.user.id)
+
+    return HttpResponse(status=200)

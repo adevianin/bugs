@@ -5,7 +5,7 @@ class UserApi {
     }
 
     bornNewAntara() {
-        return this._requester.post(`api/world/player/born_new_antara`);
+        return this._requester.post(`api/world/nuptial_environment/born_new_antara`);
     }
 
 }

@@ -9,8 +9,7 @@ from .views.admin import admin_index, world_status_check, init_world, stop_world
 from .views.nest import rename_nest, lay_egg, change_egg_caste, change_egg_name, move_egg_to_larva_chamber, delete_egg, delete_larva
 from .views.colony import stop_operation, build_new_sub_nest, destroy_nest, pillage_nest, transport_food, build_fortification, bring_bug
 from .views.ant import fly_nuptial_flight, change_ant_guardian_behavior, change_ant_cooperative_behavior, relocate_ant
-from .views.nuptial import found_colony, save_specie_schema
-from .views.player import born_new_antara
+from .views.nuptial import found_colony, save_specie_schema, born_new_antara
 
 urlpatterns = [
     path('', index, name='game_index'),
@@ -53,8 +52,7 @@ urlpatterns = [
 
     path('api/world/nuptial_environment/found_colony', found_colony, name='found_colony'),
     path('api/world/nuptial_environment/specie/specie_schema', save_specie_schema, name='save_specie_schema'),
-
-    path('api/world/player/born_new_antara', born_new_antara, name="born_new_antara")
+    path('api/world/nuptial_environment/born_new_antara', born_new_antara, name="born_new_antara")
 
 
 
