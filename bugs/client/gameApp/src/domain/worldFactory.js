@@ -30,8 +30,7 @@ class WorldFactory {
             case EntityTypes.NEST:
                 return this.buildNest(entityJson);
             case EntityTypes.ITEM:
-                return this.buildItem(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, 
-                    entityJson.item_type, entityJson.variety, entityJson.is_picked);
+                return this.buildItem(entityJson);
             case EntityTypes.ITEM_SOURCE:
                 return this.buildItemSource(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, 
                     entityJson.item_type, entityJson.is_fertile);
@@ -52,8 +51,18 @@ class WorldFactory {
         return new ItemSource(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, isFertile);
     }
 
-    buildItem(id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
-        return new Item(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked);
+    buildItem(entityJson) {
+        let id = entityJson.id; 
+        let position = entityJson.position;
+        let angle = entityJson.angle;
+        let fromColony = entityJson.from_colony_id;
+        let hp = entityJson.hp;
+        let maxHp = entityJson.max_hp
+        let itemType = entityJson.itemType;
+        let itemVariety = entityJson.variety;
+        let isPicked = entityJson.isPicked;
+        let isBringing = entityJson.isBringing;
+        return new Item(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked, isBringing);
     }
 
     buildWorld() {

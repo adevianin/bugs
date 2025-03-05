@@ -18,6 +18,7 @@ from core.world.entities.action.nest_larva_fed_action import NestLarvaFedAction
 from core.world.entities.action.nest_build_status_changed_action import NestBuildStatusChangedAction
 from core.world.entities.action.item_was_dropped_action import ItemWasDroppedAction
 from core.world.entities.action.item_being_bringed_action import ItemBeingBringedAction
+from core.world.entities.action.item_bringing_state_changed_action import ItemBringingStateChangedAction
 from core.world.entities.action.colony_born_action import ColonyBornAction
 from core.world.entities.action.colony_died_action import ColonyDiedAction
 from core.world.entities.action.ant_flew_nuptial_flight_back_action import AntFlewNuptialFlightBackAction
@@ -120,6 +121,8 @@ class ActionClientSerializer():
                 return self._serialize_item_source_fertility_changed(action)
             case ActionTypes.ITEM_BEING_BRINGED:
                 return self._serialize_item_being_bringed(action)
+            case ActionTypes.ITEM_BRINGING_STATE_CHANGED:
+                return self._serialize_item_bringing_state_changed(action)
             case ActionTypes.COLONY_BORN:
                 return self._serialize_colony_born(action)
             case ActionTypes.COLONY_DIED:
@@ -370,6 +373,14 @@ class ActionClientSerializer():
         json.update({
             'new_position': serialized_new_position, 
             'bring_user_speed': distance_per_step_to_user_speed(action.bringing_dist_per_step)
+        })
+
+        return json
+    
+    def _serialize_item_bringing_state_changed(self, action: ItemBringingStateChangedAction):
+        json = self._serialize_common(action)
+        json.update({
+            'isBringing': action.is_bringing, 
         })
 
         return json

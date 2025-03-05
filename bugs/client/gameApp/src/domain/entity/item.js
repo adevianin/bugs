@@ -5,11 +5,12 @@ import { walker } from "@utils/walker";
 
 class Item extends Entity {
     
-    constructor(eventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
+    constructor(eventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked, isBringing) {
         super(eventBus, id, position, angle, EntityTypes.ITEM, fromColony, null, hp, maxHp);
         this._itemType = itemType;
         this._itemVariety = itemVariety;
         this._isPicked = isPicked;
+        this._isBringing = isBringing;
     }
 
     get itemType() {
@@ -29,6 +30,10 @@ class Item extends Entity {
         this.emit('isPickedChanged');
     }
 
+    get isBringing() {
+        return this._isBringing;
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {
@@ -41,6 +46,8 @@ class Item extends Entity {
                 return this._playItemDrop(action);
             case ACTION_TYPES.ITEM_BEING_BRINGED:
                 return this._playItemBeingBringed(action);
+            case ACTION_TYPES.ITEM_BRINGING_STATE_CHANGED:
+                return this._playItemBringingStateChanged(action);
         }
     }
 
@@ -72,6 +79,11 @@ class Item extends Entity {
         return walker(this._position, newPos, userSpeed, (x, y) => {
             this.setPosition(x, y);
         });
+    }
+
+    _playItemBringingStateChanged(action) {
+        this._isBringing = action.isBringing;
+        return Promise.resolve();
     }
 
 }

@@ -215,7 +215,7 @@ class ColonyService(BaseService):
         performing_colony = self._find_ant_colony_for_owner(performing_colony_id, user_id)
         nest = self._find_nest_for_owner(nest_id, user_id)
         
-        filter: Callable[[Item], bool] = lambda item: item.item_type == ItemTypes.BUG_CORPSE
+        filter: Callable[[Item], bool] = lambda item: item.item_type == ItemTypes.BUG_CORPSE and not item.is_bringing
         items = self._world.map.find_entities_near(nest.position, nest.area, EntityTypes.ITEM, filter)
         key: Callable[[Item], int] = lambda item: nest.position.dist(item.position)
         items.sort(key = key)

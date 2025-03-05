@@ -6,9 +6,10 @@ class ItemClientSerializer(EntityClientSerializer):
     def serialize(self, item: Item):
         json = super().serialize(item)
         json.update({
-            'item_type': item.item_type,
-            'is_picked': item.is_picked,
-            'variety': item.variety
+            'itemType': item.item_type,
+            'isPicked': item.is_picked,
+            'variety': item.variety,
+            'isBringing': item.is_bringing
         })
 
         return json

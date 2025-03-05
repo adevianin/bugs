@@ -6,6 +6,7 @@ from core.world.entities.base.entity import Entity
 from core.world.entities.action.item_was_picked_up_action import ItemWasPickedUpAction
 from core.world.entities.action.item_was_dropped_action import ItemWasDroppedAction
 from core.world.entities.action.item_being_bringed_action import ItemBeingBringedAction
+from core.world.entities.action.item_bringing_state_changed_action import ItemBringingStateChangedAction
 from .item_body import ItemBody
 from core.world.entities.base.ownership_config import OwnershipConfig
 
@@ -84,12 +85,15 @@ class Item(Entity):
         self._emit_action(ItemWasDroppedAction.build(self.id, self.position))
 
     def setup_bringing(self, position: Point, bringing_dist_per_step: int):
+        if (not self.is_bringing):
+            self._emit_action(ItemBringingStateChangedAction(self.id, True))
         self._bringing_position = position
         self._bringing_dist_per_step = bringing_dist_per_step
 
     def clear_bringing(self):
         self._bringing_position = None
         self._bringing_dist_per_step = None
+        self._emit_action(ItemBringingStateChangedAction(self.id, False))
 
     def _be_bringed(self):
         self._body.position = self._bringing_position

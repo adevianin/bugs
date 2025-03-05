@@ -19,6 +19,7 @@ const ACTION_TYPES = {
     ITEM_WAS_DROPPED: 'item_was_dropped',
     ITEM_SOURCE_FERTILITY_CHANGED: 'item_source_fertility_changed',
     ITEM_BEING_BRINGED: 'item_being_bringed',
+    ITEM_BRINGING_STATE_CHANGED: 'item_bringing_state_changed',
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
     NEST_LARVA_FED: 'nest_larva_fed',
     NEST_LARVA_IS_READY: 'nest_larva_is_ready',

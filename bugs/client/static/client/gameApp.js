@@ -401,6 +401,7 @@ const ACTION_TYPES = {
     ITEM_WAS_DROPPED: 'item_was_dropped',
     ITEM_SOURCE_FERTILITY_CHANGED: 'item_source_fertility_changed',
     ITEM_BEING_BRINGED: 'item_being_bringed',
+    ITEM_BRINGING_STATE_CHANGED: 'item_bringing_state_changed',
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
     NEST_LARVA_FED: 'nest_larva_fed',
     NEST_LARVA_IS_READY: 'nest_larva_is_ready',
@@ -1427,11 +1428,12 @@ __webpack_require__.r(__webpack_exports__);
 
 class Item extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     
-    constructor(eventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
+    constructor(eventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked, isBringing) {
         super(eventBus, id, position, angle, _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ITEM, fromColony, null, hp, maxHp);
         this._itemType = itemType;
         this._itemVariety = itemVariety;
         this._isPicked = isPicked;
+        this._isBringing = isBringing;
     }
 
     get itemType() {
@@ -1451,6 +1453,10 @@ class Item extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this.emit('isPickedChanged');
     }
 
+    get isBringing() {
+        return this._isBringing;
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {
@@ -1463,6 +1469,8 @@ class Item extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
                 return this._playItemDrop(action);
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ITEM_BEING_BRINGED:
                 return this._playItemBeingBringed(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ITEM_BRINGING_STATE_CHANGED:
+                return this._playItemBringingStateChanged(action);
         }
     }
 
@@ -1494,6 +1502,11 @@ class Item extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         return (0,_utils_walker__WEBPACK_IMPORTED_MODULE_3__.walker)(this._position, newPos, userSpeed, (x, y) => {
             this.setPosition(x, y);
         });
+    }
+
+    _playItemBringingStateChanged(action) {
+        this._isBringing = action.isBringing;
+        return Promise.resolve();
     }
 
 }
@@ -3014,7 +3027,8 @@ class ColonyService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.BaseS
             .filter(
                 (i) =>
                     i.itemType === _domain_enum_itemTypes__WEBPACK_IMPORTED_MODULE_3__.ItemTypes.BUG_CORPSE &&
-                    (0,_utils_distance__WEBPACK_IMPORTED_MODULE_4__.distance)(nest.position.x, nest.position.y, i.position.x, i.position.y) <= nest.area
+                    (0,_utils_distance__WEBPACK_IMPORTED_MODULE_4__.distance)(nest.position.x, nest.position.y, i.position.x, i.position.y) <= nest.area &&
+                    !i.isBringing
             )
             .sort(
                 (a, b) =>
@@ -3612,8 +3626,7 @@ class WorldFactory {
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.NEST:
                 return this.buildNest(entityJson);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM:
-                return this.buildItem(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, 
-                    entityJson.item_type, entityJson.variety, entityJson.is_picked);
+                return this.buildItem(entityJson);
             case _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ITEM_SOURCE:
                 return this.buildItemSource(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, 
                     entityJson.item_type, entityJson.is_fertile);
@@ -3634,8 +3647,18 @@ class WorldFactory {
         return new _entity_itemSource__WEBPACK_IMPORTED_MODULE_6__.ItemSource(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, isFertile);
     }
 
-    buildItem(id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked) {
-        return new _entity_item__WEBPACK_IMPORTED_MODULE_5__.Item(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked);
+    buildItem(entityJson) {
+        let id = entityJson.id; 
+        let position = entityJson.position;
+        let angle = entityJson.angle;
+        let fromColony = entityJson.from_colony_id;
+        let hp = entityJson.hp;
+        let maxHp = entityJson.max_hp
+        let itemType = entityJson.itemType;
+        let itemVariety = entityJson.variety;
+        let isPicked = entityJson.isPicked;
+        let isBringing = entityJson.isBringing;
+        return new _entity_item__WEBPACK_IMPORTED_MODULE_5__.Item(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, itemVariety, isPicked, isBringing);
     }
 
     buildWorld() {

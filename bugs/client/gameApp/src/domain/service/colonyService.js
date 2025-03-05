@@ -75,7 +75,8 @@ class ColonyService extends BaseService {
             .filter(
                 (i) =>
                     i.itemType === ItemTypes.BUG_CORPSE &&
-                    distance(nest.position.x, nest.position.y, i.position.x, i.position.y) <= nest.area
+                    distance(nest.position.x, nest.position.y, i.position.x, i.position.y) <= nest.area &&
+                    !i.isBringing
             )
             .sort(
                 (a, b) =>
