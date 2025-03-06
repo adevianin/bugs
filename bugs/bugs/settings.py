@@ -26,7 +26,15 @@ SECRET_KEY = 'django-insecure-qv!8c)g#2br&@y#0%h557i^tlq)6+g*!4vznz8)vxy0jf3#ve1
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '127.0.0.1'
+    'localhost',
+    '127.0.0.1',
+    'b9d0-37-139-176-92.ngrok-free.app'
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost',
+    'http://127.0.0.1',
+    'https://b9d0-37-139-176-92.ngrok-free.app'
 ]
 
 MAIN_SOCKET_URL = '/mainsocket'
@@ -179,3 +187,7 @@ LOGGING = {
     },
 }
 
+# GOOGLE_CLIENT_ID='722545101653-j1gkkj3s807i5amjpvh51elm0nr4aet2.apps.googleusercontent.com'
+GOOGLE_CLIENT_ID='722545101653-9e6l6u1e85lo4gn723e2srhabq0kdieq.apps.googleusercontent.com'
+# GOOGLE_OAUTH_REDIRECT_URI = "http://localhost:8000/api/accounts/google_auth_callback"
+GOOGLE_OAUTH_REDIRECT_URI = "https://b9d0-37-139-176-92.ngrok-free.app/api/accounts/google_auth_callback"

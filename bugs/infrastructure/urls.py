@@ -3,7 +3,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views.account import account_check_name, account_register, account_login, account_logout, account_index
+from .views.account import account_check_name, account_register, account_login, account_logout, account_index, google_auth_callback
 from .views.game import index
 from .views.admin import admin_index, world_status_check, init_world, stop_world, run_world, save_world, expand_map
 from .views.nest import rename_nest, lay_egg, change_egg_caste, change_egg_name, move_egg_to_larva_chamber, delete_egg, delete_larva
@@ -20,6 +20,7 @@ urlpatterns = [
     path('api/accounts/register', account_register, name='account_register'),
     path('api/accounts/login', account_login, name='account_login'),
     path('api/accounts/logout', account_logout, name='account_logout'),
+    path('api/accounts/google_auth_callback', google_auth_callback, name='google_auth_callback'),
 
     path('api/admin/world/status', world_status_check, name='world_status'),
     path('api/admin/world/init', init_world, name='init_world'),
