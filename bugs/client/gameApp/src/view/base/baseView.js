@@ -4,6 +4,7 @@ class BaseView {
     static eventBus;
     static messages;
     static pixiApp;
+    static messageMaster;
 
     get $domainFacade() {
         return BaseView.domainFacade;
@@ -21,6 +22,10 @@ class BaseView {
         return BaseView.pixiApp;
     }
 
+    get $mm() {
+        return BaseView.messageMaster;
+    }
+
     static useDomainFacade(domainFacade) {
         BaseView.domainFacade = domainFacade;
     }
@@ -35,6 +40,10 @@ class BaseView {
 
     static usePixiApp(pixiApp) {
         BaseView.pixiApp = pixiApp;
+    }
+
+    static useMessageMaster(messageMaster) {
+        BaseView.messageMaster = messageMaster;
     }
 
 }

@@ -4566,6 +4566,7 @@ class BaseView {
     static eventBus;
     static messages;
     static pixiApp;
+    static messageMaster;
 
     get $domainFacade() {
         return BaseView.domainFacade;
@@ -4583,6 +4584,10 @@ class BaseView {
         return BaseView.pixiApp;
     }
 
+    get $mm() {
+        return BaseView.messageMaster;
+    }
+
     static useDomainFacade(domainFacade) {
         BaseView.domainFacade = domainFacade;
     }
@@ -4597,6 +4602,10 @@ class BaseView {
 
     static usePixiApp(pixiApp) {
         BaseView.pixiApp = pixiApp;
+    }
+
+    static useMessageMaster(messageMaster) {
+        BaseView.messageMaster = messageMaster;
     }
 
 }
@@ -4901,7 +4910,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./messages/uaMessagesLib */ "./gameApp/src/view/messages/uaMessagesLib.js");
 /* harmony import */ var _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./textures/build/world_spritesheet.json */ "./gameApp/src/view/textures/build/world_spritesheet.json");
 /* harmony import */ var _textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./textures/build/world_spritesheet.png */ "./gameApp/src/view/textures/build/world_spritesheet.png");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _messages_messageMaster__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./messages/messageMaster */ "./gameApp/src/view/messages/messageMaster.js");
+/* harmony import */ var _messages_msgLibraries__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./messages/msgLibraries */ "./gameApp/src/view/messages/msgLibraries/index.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
+
 
 
 
@@ -4920,13 +4933,16 @@ async function initViewLayer(domainFacade) {
     let loaderEl = document.querySelector('[data-game-loader]');
 
     await spritesheetManager.prepareTextures();
-    let pixiApp = new pixi_js__WEBPACK_IMPORTED_MODULE_9__.Application();
+    let pixiApp = new pixi_js__WEBPACK_IMPORTED_MODULE_11__.Application();
     await pixiApp.init();
+
+    let mm = _messages_messageMaster__WEBPACK_IMPORTED_MODULE_9__.MessageMaster.build(_messages_msgLibraries__WEBPACK_IMPORTED_MODULE_10__.msgLibrariesPack);
 
     _base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView.useDomainFacade(domainFacade);
     _base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView.useEventBus(eventBus);
     _base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView.useMessages(_messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_6__.uaMessages);
     _base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView.usePixiApp(pixiApp);
+    _base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView.useMessageMaster(mm);
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_4__.BaseGraphicView.useTextureManager(spritesheetManager);
 
     let app = new _appView__WEBPACK_IMPORTED_MODULE_1__.AppView(document.querySelector('[data-app]'));
@@ -5269,6 +5285,151 @@ class PositionPickerView extends _basePickerView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._callback(point);
     }
 
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/messages/messageIds.js":
+/*!*************************************************!*\
+  !*** ./gameApp/src/view/messages/messageIds.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MESSAGE_IDS: () => (/* binding */ MESSAGE_IDS)
+/* harmony export */ });
+const MESSAGE_IDS = {
+    TAB_BREEDING: 'TAB_BREEDING',
+    TAB_COLONIES: 'TAB_COLONIES',
+    TAB_SPECIE: 'TAB_SPECIE',
+    TAB_NOTIFICATIONS: 'TAB_NOTIFICATIONS',
+    TAB_RATING: 'TAB_RATING',
+    TAB_ACCOUNT: 'TAB_ACCOUNT'
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/messages/messageMaster.js":
+/*!****************************************************!*\
+  !*** ./gameApp/src/view/messages/messageMaster.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MessageMaster: () => (/* binding */ MessageMaster)
+/* harmony export */ });
+class MessageMaster {
+
+    static build(msgLibrariesPack) {
+        let lang = MessageMaster._determineLang();
+        return new MessageMaster(msgLibrariesPack[lang]);
+    }
+
+    static _determineLang() {
+        return navigator.language || 'en';
+    }
+
+    constructor(msgLibrary) {
+        this._msgLibrary = msgLibrary;
+    }
+
+    get(msgId) {
+        return this._msgLibrary[msgId];
+    }
+
+    // 'максимальна довжина {0} символів, від {1} до {2}'
+    // format(str, 5, 10, 20)
+    format(msgId, ...values) {
+        let msgTemplate = this._msgLibrary[msgId];
+        return msgTemplate.replace(/{(\d+)}/g, (_, index) => values[index] || '');
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/messages/msgLibraries/enLibrary.js":
+/*!*************************************************************!*\
+  !*** ./gameApp/src/view/messages/msgLibraries/enLibrary.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EN_LIBRARY: () => (/* binding */ EN_LIBRARY)
+/* harmony export */ });
+/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./gameApp/src/view/messages/messageIds.js");
+
+
+const EN_LIBRARY = {
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_BREEDING]: 'Breeding',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_COLONIES]: 'Colonies',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_SPECIE]: 'Specie',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_NOTIFICATIONS]: 'Notifications',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_RATING]: 'Rating',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_ACCOUNT]: 'Account',
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/messages/msgLibraries/index.js":
+/*!*********************************************************!*\
+  !*** ./gameApp/src/view/messages/msgLibraries/index.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   msgLibrariesPack: () => (/* binding */ msgLibrariesPack)
+/* harmony export */ });
+/* harmony import */ var _enLibrary__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./enLibrary */ "./gameApp/src/view/messages/msgLibraries/enLibrary.js");
+/* harmony import */ var _ukLibrary__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ukLibrary */ "./gameApp/src/view/messages/msgLibraries/ukLibrary.js");
+
+
+
+let msgLibrariesPack = {
+    'en': _enLibrary__WEBPACK_IMPORTED_MODULE_0__.EN_LIBRARY,
+    'uk': _ukLibrary__WEBPACK_IMPORTED_MODULE_1__.UK_LIBRARY
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/messages/msgLibraries/ukLibrary.js":
+/*!*************************************************************!*\
+  !*** ./gameApp/src/view/messages/msgLibraries/ukLibrary.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   UK_LIBRARY: () => (/* binding */ UK_LIBRARY)
+/* harmony export */ });
+/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./gameApp/src/view/messages/messageIds.js");
+
+
+const UK_LIBRARY = {
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_BREEDING]: 'Розмноження',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_COLONIES]: 'Колонії',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_SPECIE]: 'Вид',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_NOTIFICATIONS]: 'Сповіщення',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_RATING]: 'Рейтинг',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_ACCOUNT]: 'Акаунт',
 }
 
 
@@ -6392,6 +6553,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _tabs_specieBuilderTab__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./tabs/specieBuilderTab */ "./gameApp/src/view/panel/tabs/specieBuilderTab/index.js");
 /* harmony import */ var _tabs_notificationsTab__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./tabs/notificationsTab */ "./gameApp/src/view/panel/tabs/notificationsTab/index.js");
 /* harmony import */ var _tabs_ratingTab__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./tabs/ratingTab */ "./gameApp/src/view/panel/tabs/ratingTab/index.js");
+/* harmony import */ var _view_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @view/messages/messageIds */ "./gameApp/src/view/messages/messageIds.js");
+
 
 
 
@@ -6445,12 +6608,12 @@ class PanelView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Bas
         this._ratingTab = new _tabs_ratingTab__WEBPACK_IMPORTED_MODULE_9__.RatingTabView(this._el.querySelector('[data-rating-tab]'));
 
         this._tabSwitcher = new _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'panel', [
-            { name: 'breeding', label: 'Розмноження', tab: this._nuptialFlightTab },
-            { name: 'colonies', label: 'Колонії', tab: this._coloniesTab },
-            { name: 'specie_builder', label: 'Вид', tab: this._specieBuildertTab },
-            { name: 'notifications', label: 'Сповіщення', tab: this._notificationsTab },
-            { name: 'rating', label: 'Рейтинг', tab: this._ratingTab },
-            { name: 'user', label: 'Користувач', tab: this._userTab }
+            { name: 'breeding', label: this.$mm.get(_view_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_BREEDING), tab: this._nuptialFlightTab },
+            { name: 'colonies', label: this.$mm.get(_view_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_COLONIES), tab: this._coloniesTab },
+            { name: 'specie_builder', label: this.$mm.get(_view_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_SPECIE), tab: this._specieBuildertTab },
+            { name: 'notifications', label: this.$mm.get(_view_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_NOTIFICATIONS), tab: this._notificationsTab },
+            { name: 'rating', label: this.$mm.get(_view_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_RATING), tab: this._ratingTab },
+            { name: 'user', label: this.$mm.get(_view_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_ACCOUNT), tab: this._userTab }
         ]);
     }
 
@@ -17444,13 +17607,14 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.season-bar {
     left: 0;
     right: 0;
     pointer-events: none;
+    transform: translateY(0.1px); /*fix canvas rendering glich chrome*/
 } 
 
 .climate__temp {
     font-size: 28;
     margin-left: 5px;
     margin-top: 5px;
-}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/climate/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,aAAa;IACb,mBAAmB;IACnB,kBAAkB;AACtB;;AAEA;IACI,kBAAkB;IAClB,YAAY;IACZ,UAAU;IACV,iBAAiB;IACjB,gBAAgB;IAChB,uBAAuB;AAC3B;;AAEA;IACI,YAAY;IACZ,aAAa;IACb,uBAAuB;IACvB,mBAAmB;AACvB;;AAEA;IACI,uBAAuB;AAC3B;;AAEA;IACI,qBAAqB;AACzB;AACA;IACI,wBAAwB;AAC5B;;AAEA;IACI,uBAAuB;AAC3B;;AAEA;IACI,kBAAkB;IAClB,UAAU;IACV,WAAW;IACX,OAAO;IACP,QAAQ;IACR,oBAAoB;AACxB;;AAEA;IACI,aAAa;IACb,gBAAgB;IAChB,eAAe;AACnB","sourcesContent":[".season-bar {\r\n    height: 20px;\r\n    display: flex;\r\n    flex-direction: row;\r\n    position: relative;\r\n}\r\n\r\n.season-bar__marker {\r\n    position: absolute;\r\n    height: 26px;\r\n    width: 6px;\r\n    margin-left: -3px;\r\n    margin-top: -3px;\r\n    background-color: black;\r\n}\r\n\r\n.season-bar__season {\r\n    height: 100%;\r\n    display: flex;\r\n    justify-content: center;\r\n    align-items: center;\r\n}\r\n\r\n.season-bar__season--spring {\r\n    background-color: green;\r\n}\r\n\r\n.season-bar__season--summer {\r\n    background-color: red;\r\n}\r\n.season-bar__season--autumn {\r\n    background-color: yellow;\r\n}\r\n\r\n.season-bar__season--winer {\r\n    background-color: white;\r\n}\r\n\r\n.climate__container {\r\n    position: absolute;\r\n    z-index: 2;\r\n    margin: 3px;\r\n    left: 0;\r\n    right: 0;\r\n    pointer-events: none;\r\n} \r\n\r\n.climate__temp {\r\n    font-size: 28;\r\n    margin-left: 5px;\r\n    margin-top: 5px;\r\n}"],"sourceRoot":""}]);
+}`, "",{"version":3,"sources":["webpack://./gameApp/src/view/climate/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,aAAa;IACb,mBAAmB;IACnB,kBAAkB;AACtB;;AAEA;IACI,kBAAkB;IAClB,YAAY;IACZ,UAAU;IACV,iBAAiB;IACjB,gBAAgB;IAChB,uBAAuB;AAC3B;;AAEA;IACI,YAAY;IACZ,aAAa;IACb,uBAAuB;IACvB,mBAAmB;AACvB;;AAEA;IACI,uBAAuB;AAC3B;;AAEA;IACI,qBAAqB;AACzB;AACA;IACI,wBAAwB;AAC5B;;AAEA;IACI,uBAAuB;AAC3B;;AAEA;IACI,kBAAkB;IAClB,UAAU;IACV,WAAW;IACX,OAAO;IACP,QAAQ;IACR,oBAAoB;IACpB,4BAA4B,EAAE,oCAAoC;AACtE;;AAEA;IACI,aAAa;IACb,gBAAgB;IAChB,eAAe;AACnB","sourcesContent":[".season-bar {\r\n    height: 20px;\r\n    display: flex;\r\n    flex-direction: row;\r\n    position: relative;\r\n}\r\n\r\n.season-bar__marker {\r\n    position: absolute;\r\n    height: 26px;\r\n    width: 6px;\r\n    margin-left: -3px;\r\n    margin-top: -3px;\r\n    background-color: black;\r\n}\r\n\r\n.season-bar__season {\r\n    height: 100%;\r\n    display: flex;\r\n    justify-content: center;\r\n    align-items: center;\r\n}\r\n\r\n.season-bar__season--spring {\r\n    background-color: green;\r\n}\r\n\r\n.season-bar__season--summer {\r\n    background-color: red;\r\n}\r\n.season-bar__season--autumn {\r\n    background-color: yellow;\r\n}\r\n\r\n.season-bar__season--winer {\r\n    background-color: white;\r\n}\r\n\r\n.climate__container {\r\n    position: absolute;\r\n    z-index: 2;\r\n    margin: 3px;\r\n    left: 0;\r\n    right: 0;\r\n    pointer-events: none;\r\n    transform: translateY(0.1px); /*fix canvas rendering glich chrome*/\r\n} \r\n\r\n.climate__temp {\r\n    font-size: 28;\r\n    margin-left: 5px;\r\n    margin-top: 5px;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

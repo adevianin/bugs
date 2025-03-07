@@ -9,6 +9,7 @@ import { NuptialFlightTabView } from './tabs/nuptialFlightTab';
 import { SpecieBuilderTabView } from './tabs/specieBuilderTab';
 import { NotificationsTabView } from './tabs/notificationsTab';
 import { RatingTabView } from './tabs/ratingTab';
+import { MESSAGE_IDS } from '@view/messages/messageIds';
 
 class PanelView extends BaseHTMLView {
 
@@ -51,12 +52,12 @@ class PanelView extends BaseHTMLView {
         this._ratingTab = new RatingTabView(this._el.querySelector('[data-rating-tab]'));
 
         this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'panel', [
-            { name: 'breeding', label: 'Розмноження', tab: this._nuptialFlightTab },
-            { name: 'colonies', label: 'Колонії', tab: this._coloniesTab },
-            { name: 'specie_builder', label: 'Вид', tab: this._specieBuildertTab },
-            { name: 'notifications', label: 'Сповіщення', tab: this._notificationsTab },
-            { name: 'rating', label: 'Рейтинг', tab: this._ratingTab },
-            { name: 'user', label: 'Користувач', tab: this._userTab }
+            { name: 'breeding', label: this.$mm.get(MESSAGE_IDS.TAB_BREEDING), tab: this._nuptialFlightTab },
+            { name: 'colonies', label: this.$mm.get(MESSAGE_IDS.TAB_COLONIES), tab: this._coloniesTab },
+            { name: 'specie_builder', label: this.$mm.get(MESSAGE_IDS.TAB_SPECIE), tab: this._specieBuildertTab },
+            { name: 'notifications', label: this.$mm.get(MESSAGE_IDS.TAB_NOTIFICATIONS), tab: this._notificationsTab },
+            { name: 'rating', label: this.$mm.get(MESSAGE_IDS.TAB_RATING), tab: this._ratingTab },
+            { name: 'user', label: this.$mm.get(MESSAGE_IDS.TAB_ACCOUNT), tab: this._userTab }
         ]);
     }
 
