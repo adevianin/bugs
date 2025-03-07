@@ -43,6 +43,7 @@
     left: 0;
     right: 0;
     pointer-events: none;
+    transform: translateY(0.1px); /*fix canvas rendering glich chrome*/
 } 
 
 .climate__temp {
