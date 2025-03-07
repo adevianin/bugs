@@ -295,108 +295,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_common_styles_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! -!../../node_modules/css-loader/dist/cjs.js!../../common/styles.css */ "./node_modules/css-loader/dist/cjs.js!./common/styles.css");
-// Imports
-
-
-
-var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-___CSS_LOADER_EXPORT___.i(_node_modules_css_loader_dist_cjs_js_common_styles_css__WEBPACK_IMPORTED_MODULE_2__["default"]);
-// Module
-___CSS_LOADER_EXPORT___.push([module.id, `.account {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    flex-direction: column;
-}
-
-.account--title {
-    text-align: center;
-    font-size: 32px;
-}
-
-.account-tab {
-    height: 250px;
-    width: 270px;
-    text-align: center;
-}
-
-.account--fields-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.account--fields-list li {
-    margin-top: 10px;
-    padding: 0;
-}
-
-.account--fields-list li input {
-    width: 100%;
-    font-size: 24px;
-}
-
-.account--buttons-container {
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.account--error {
-    margin-top: 10px;
-    color: red;
-    text-align: left;
-}
-
-.account__google-auth{
-    border-bottom: solid 1px gray;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-}`, "",{"version":3,"sources":["webpack://./accountApp/src/styles.css"],"names":[],"mappings":"AAEA;IACI,aAAa;IACb,uBAAuB;IACvB,mBAAmB;IACnB,YAAY;IACZ,sBAAsB;AAC1B;;AAEA;IACI,kBAAkB;IAClB,eAAe;AACnB;;AAEA;IACI,aAAa;IACb,YAAY;IACZ,kBAAkB;AACtB;;AAEA;IACI,gBAAgB;IAChB,SAAS;IACT,UAAU;AACd;;AAEA;IACI,gBAAgB;IAChB,UAAU;AACd;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI,gBAAgB;IAChB,aAAa;IACb,8BAA8B;AAClC;;AAEA;IACI,gBAAgB;IAChB,UAAU;IACV,gBAAgB;AACpB;;AAEA;IACI,6BAA6B;IAC7B,mBAAmB;IACnB,oBAAoB;AACxB","sourcesContent":["@import '@common/styles.css';\r\n\r\n.account {\r\n    display: flex;\r\n    justify-content: center;\r\n    align-items: center;\r\n    height: 100%;\r\n    flex-direction: column;\r\n}\r\n\r\n.account--title {\r\n    text-align: center;\r\n    font-size: 32px;\r\n}\r\n\r\n.account-tab {\r\n    height: 250px;\r\n    width: 270px;\r\n    text-align: center;\r\n}\r\n\r\n.account--fields-list {\r\n    list-style: none;\r\n    margin: 0;\r\n    padding: 0;\r\n}\r\n\r\n.account--fields-list li {\r\n    margin-top: 10px;\r\n    padding: 0;\r\n}\r\n\r\n.account--fields-list li input {\r\n    width: 100%;\r\n    font-size: 24px;\r\n}\r\n\r\n.account--buttons-container {\r\n    margin-top: 10px;\r\n    display: flex;\r\n    justify-content: space-between;\r\n}\r\n\r\n.account--error {\r\n    margin-top: 10px;\r\n    color: red;\r\n    text-align: left;\r\n}\r\n\r\n.account__google-auth{\r\n    border-bottom: solid 1px gray;\r\n    margin-bottom: 20px;\r\n    padding-bottom: 20px;\r\n}"],"sourceRoot":""}]);
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/cjs.js!./common/styles.css":
-/*!*****************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./common/styles.css ***!
-  \*****************************************************************/
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
 // Imports
 
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, `.g-hidden {
-    display: none !important
-}
-
-.g-table {
-    border-collapse: collapse;
-    border-spacing: 0px;
-    border: solid 1px;
-}
-
-.g-table td {
-    border: solid 1px;
-}
-
-.g-error-container {
-    color: red;
-}`, "",{"version":3,"sources":["webpack://./common/styles.css"],"names":[],"mappings":"AAAA;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,UAAU;AACd","sourcesContent":[".g-hidden {\r\n    display: none !important\r\n}\r\n\r\n.g-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.g-table td {\r\n    border: solid 1px;\r\n}\r\n\r\n.g-error-container {\r\n    color: red;\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ``, "",{"version":3,"sources":[],"names":[],"mappings":"","sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
