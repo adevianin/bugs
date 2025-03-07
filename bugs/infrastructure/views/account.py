@@ -13,12 +13,10 @@ from django.shortcuts import redirect
 
 @ensure_csrf_cookie
 def account_index(request: HttpRequest):
-    resp = render(request, 'client/account.html', {
+    return render(request, 'client/account.html', {
         'google_client_id': GOOGLE_CLIENT_ID,
         'google_oauth_redirect_uri': GOOGLE_OAUTH_REDIRECT_URI
     })
-    resp['Referrer-Policy'] = 'no-referrer-when-downgrade'
-    return resp
 
 @csrf_exempt
 @require_POST

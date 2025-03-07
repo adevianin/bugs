@@ -308,6 +308,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.account {
     justify-content: center;
     align-items: center;
     height: 100%;
+    flex-direction: column;
 }
 
 .account--title {
@@ -318,9 +319,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.account {
 .account-tab {
     height: 250px;
     width: 270px;
-    border: solid 1px;
     text-align: center;
-    padding: 40px;
 }
 
 .account--fields-list {
@@ -349,7 +348,13 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.account {
     margin-top: 10px;
     color: red;
     text-align: left;
-}`, "",{"version":3,"sources":["webpack://./accountApp/src/styles.css"],"names":[],"mappings":"AAEA;IACI,aAAa;IACb,uBAAuB;IACvB,mBAAmB;IACnB,YAAY;AAChB;;AAEA;IACI,kBAAkB;IAClB,eAAe;AACnB;;AAEA;IACI,aAAa;IACb,YAAY;IACZ,iBAAiB;IACjB,kBAAkB;IAClB,aAAa;AACjB;;AAEA;IACI,gBAAgB;IAChB,SAAS;IACT,UAAU;AACd;;AAEA;IACI,gBAAgB;IAChB,UAAU;AACd;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI,gBAAgB;IAChB,aAAa;IACb,8BAA8B;AAClC;;AAEA;IACI,gBAAgB;IAChB,UAAU;IACV,gBAAgB;AACpB","sourcesContent":["@import '@common/styles.css';\r\n\r\n.account {\r\n    display: flex;\r\n    justify-content: center;\r\n    align-items: center;\r\n    height: 100%;\r\n}\r\n\r\n.account--title {\r\n    text-align: center;\r\n    font-size: 32px;\r\n}\r\n\r\n.account-tab {\r\n    height: 250px;\r\n    width: 270px;\r\n    border: solid 1px;\r\n    text-align: center;\r\n    padding: 40px;\r\n}\r\n\r\n.account--fields-list {\r\n    list-style: none;\r\n    margin: 0;\r\n    padding: 0;\r\n}\r\n\r\n.account--fields-list li {\r\n    margin-top: 10px;\r\n    padding: 0;\r\n}\r\n\r\n.account--fields-list li input {\r\n    width: 100%;\r\n    font-size: 24px;\r\n}\r\n\r\n.account--buttons-container {\r\n    margin-top: 10px;\r\n    display: flex;\r\n    justify-content: space-between;\r\n}\r\n\r\n.account--error {\r\n    margin-top: 10px;\r\n    color: red;\r\n    text-align: left;\r\n}"],"sourceRoot":""}]);
+}
+
+.account__google-auth{
+    border-bottom: solid 1px gray;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+}`, "",{"version":3,"sources":["webpack://./accountApp/src/styles.css"],"names":[],"mappings":"AAEA;IACI,aAAa;IACb,uBAAuB;IACvB,mBAAmB;IACnB,YAAY;IACZ,sBAAsB;AAC1B;;AAEA;IACI,kBAAkB;IAClB,eAAe;AACnB;;AAEA;IACI,aAAa;IACb,YAAY;IACZ,kBAAkB;AACtB;;AAEA;IACI,gBAAgB;IAChB,SAAS;IACT,UAAU;AACd;;AAEA;IACI,gBAAgB;IAChB,UAAU;AACd;;AAEA;IACI,WAAW;IACX,eAAe;AACnB;;AAEA;IACI,gBAAgB;IAChB,aAAa;IACb,8BAA8B;AAClC;;AAEA;IACI,gBAAgB;IAChB,UAAU;IACV,gBAAgB;AACpB;;AAEA;IACI,6BAA6B;IAC7B,mBAAmB;IACnB,oBAAoB;AACxB","sourcesContent":["@import '@common/styles.css';\r\n\r\n.account {\r\n    display: flex;\r\n    justify-content: center;\r\n    align-items: center;\r\n    height: 100%;\r\n    flex-direction: column;\r\n}\r\n\r\n.account--title {\r\n    text-align: center;\r\n    font-size: 32px;\r\n}\r\n\r\n.account-tab {\r\n    height: 250px;\r\n    width: 270px;\r\n    text-align: center;\r\n}\r\n\r\n.account--fields-list {\r\n    list-style: none;\r\n    margin: 0;\r\n    padding: 0;\r\n}\r\n\r\n.account--fields-list li {\r\n    margin-top: 10px;\r\n    padding: 0;\r\n}\r\n\r\n.account--fields-list li input {\r\n    width: 100%;\r\n    font-size: 24px;\r\n}\r\n\r\n.account--buttons-container {\r\n    margin-top: 10px;\r\n    display: flex;\r\n    justify-content: space-between;\r\n}\r\n\r\n.account--error {\r\n    margin-top: 10px;\r\n    color: red;\r\n    text-align: left;\r\n}\r\n\r\n.account__google-auth{\r\n    border-bottom: solid 1px gray;\r\n    margin-bottom: 20px;\r\n    padding-bottom: 20px;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

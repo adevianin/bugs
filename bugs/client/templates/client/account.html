@@ -1,8 +1,28 @@
 {% load static %}
 <html>
     <head>
+        <meta name="referrer" content="origin" />
     </head>
     <body class="account">
+        <div class="account__google-auth">
+            <div id="g_id_onload"
+                data-client_id="{{ google_client_id }}"
+                data-context="use"
+                data-ux_mode="redirect"
+                data-login_uri="{{ google_oauth_redirect_uri }}"
+                data-auto_prompt="false">
+            </div>
+
+            <div class="g_id_signin"
+                data-type="standard"
+                data-shape="rectangular"
+                data-theme="outline"
+                data-text="continue_with"
+                data-size="large"
+                data-logo_alignment="left"
+                data-width="270">
+            </div>
+        </div>
         <div class="account-tab" data-login-tab>
             <span class="account--title">
                 Логін
@@ -13,25 +33,6 @@
                 </li>
                 <li>
                     <input type="password" placeholder="пароль" data-password />
-                </li>
-                <li>
-                    <div id="g_id_onload"
-                        data-client_id="{{ google_client_id }}"
-                        data-context="signin"
-                        data-ux_mode="redirect"
-                        data-login_uri="{{ google_oauth_redirect_uri }}"
-                        data-auto_prompt="false"
-                        data-auto_select="false">
-                    </div>
-
-                    <div class="g_id_signin"
-                        data-type="standard"
-                        data-shape="rectangular"
-                        data-theme="outline"
-                        data-text="signin_with"
-                        data-size="large"
-                        data-logo_alignment="left">
-                    </div>
                 </li>
             </ul>
             <div class="account--error" data-not-correct-creds-error>логін чи пароль не вірні</div>
@@ -53,24 +54,6 @@
                 </li>
                 <li>
                     <input type="password" placeholder="підтвердження пароля" data-password-confirm />
-                </li>
-                <li>
-                    <div id="g_id_onload"
-                        data-client_id="{{ google_client_id }}"
-                        data-context="signup"
-                        data-ux_mode="redirect"
-                        data-login_uri="{{ google_oauth_redirect_uri }}"
-                        data-auto_prompt="false">
-                    </div>
-
-                    <div class="g_id_signin"
-                        data-type="standard"
-                        data-shape="rectangular"
-                        data-theme="outline"
-                        data-text="signup_with"
-                        data-size="large"
-                        data-logo_alignment="right">
-                    </div>
                 </li>
             </ul>
             <div class="account--error" data-passwords-different-error>паролі не співпадають</div>
