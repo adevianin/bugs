@@ -9,7 +9,7 @@ module.exports = {
         adminApp: './adminApp/src/index.js',
         accountApp: './accountApp/src/index.js',
         initialStylesGameApp: './gameApp/src/view/initialStyles.css',
-        initialStylesAccountApp: './accountApp/src/initialStyles.css'
+        initialStylesAccountApp: './accountApp/src/view/initialStyles.css'
     },
     output: {
         filename: '[name].js',

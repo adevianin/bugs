@@ -2,20 +2,139 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./accountApp/src/accountAppView.js":
-/*!******************************************!*\
-  !*** ./accountApp/src/accountAppView.js ***!
-  \******************************************/
+/***/ "./accountApp/src/domain/domainFacade.js":
+/*!***********************************************!*\
+  !*** ./accountApp/src/domain/domainFacade.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DomainFacade: () => (/* binding */ DomainFacade)
+/* harmony export */ });
+/* harmony import */ var _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/baseDomainFacade */ "./common/domain/baseDomainFacade.js");
+
+
+class DomainFacade extends _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MODULE_0__.BaseDomainFacade {
+
+    constructor(accountService) {
+        super();
+        this._accountService = accountService;
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./accountApp/src/messages/messageIds.js":
+/*!***********************************************!*\
+  !*** ./accountApp/src/messages/messageIds.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MESSAGE_IDS: () => (/* binding */ MESSAGE_IDS)
+/* harmony export */ });
+/* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
+
+
+const MESSAGE_IDS = {
+    ..._common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS,
+}
+
+
+
+/***/ }),
+
+/***/ "./accountApp/src/messages/msgLibraries/enLibrary.js":
+/*!***********************************************************!*\
+  !*** ./accountApp/src/messages/msgLibraries/enLibrary.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EN_LIBRARY: () => (/* binding */ EN_LIBRARY)
+/* harmony export */ });
+/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./accountApp/src/messages/messageIds.js");
+/* harmony import */ var _common_messages_msgLibraries_enLibrary__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/messages/msgLibraries/enLibrary */ "./common/messages/msgLibraries/enLibrary.js");
+
+
+
+const EN_LIBRARY = {
+    ..._common_messages_msgLibraries_enLibrary__WEBPACK_IMPORTED_MODULE_1__.EN_BASE_LIBRARY,
+}
+
+
+
+/***/ }),
+
+/***/ "./accountApp/src/messages/msgLibraries/index.js":
+/*!*******************************************************!*\
+  !*** ./accountApp/src/messages/msgLibraries/index.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   msgLibrariesPack: () => (/* binding */ msgLibrariesPack)
+/* harmony export */ });
+/* harmony import */ var _enLibrary__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./enLibrary */ "./accountApp/src/messages/msgLibraries/enLibrary.js");
+/* harmony import */ var _ukLibrary__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ukLibrary */ "./accountApp/src/messages/msgLibraries/ukLibrary.js");
+
+
+
+let msgLibrariesPack = {
+    'en': _enLibrary__WEBPACK_IMPORTED_MODULE_0__.EN_LIBRARY,
+    'uk': _ukLibrary__WEBPACK_IMPORTED_MODULE_1__.UK_LIBRARY
+}
+
+
+
+/***/ }),
+
+/***/ "./accountApp/src/messages/msgLibraries/ukLibrary.js":
+/*!***********************************************************!*\
+  !*** ./accountApp/src/messages/msgLibraries/ukLibrary.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   UK_LIBRARY: () => (/* binding */ UK_LIBRARY)
+/* harmony export */ });
+/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./accountApp/src/messages/messageIds.js");
+/* harmony import */ var _common_messages_msgLibraries_ukLibrary__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/messages/msgLibraries/ukLibrary */ "./common/messages/msgLibraries/ukLibrary.js");
+
+
+
+const UK_LIBRARY = {
+    ..._common_messages_msgLibraries_ukLibrary__WEBPACK_IMPORTED_MODULE_1__.UK_BASE_LIBRARY,
+}
+
+
+
+/***/ }),
+
+/***/ "./accountApp/src/view/accountAppView.js":
+/*!***********************************************!*\
+  !*** ./accountApp/src/view/accountAppView.js ***!
+  \***********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AccountAppView: () => (/* binding */ AccountAppView)
 /* harmony export */ });
-/* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./accountApp/src/view/styles.css");
+/* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
 
 
-class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
 
     constructor(el) {
         super(el);
@@ -146,32 +265,6 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
 
 /***/ }),
 
-/***/ "./accountApp/src/domain/domainFacade.js":
-/*!***********************************************!*\
-  !*** ./accountApp/src/domain/domainFacade.js ***!
-  \***********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   DomainFacade: () => (/* binding */ DomainFacade)
-/* harmony export */ });
-/* harmony import */ var _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/baseDomainFacade */ "./common/domain/baseDomainFacade.js");
-
-
-class DomainFacade extends _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MODULE_0__.BaseDomainFacade {
-
-    constructor(accountService) {
-        super();
-        this._accountService = accountService;
-    }
-
-}
-
-
-
-/***/ }),
-
 /***/ "./common/domain/baseDomainFacade.js":
 /*!*******************************************!*\
   !*** ./common/domain/baseDomainFacade.js ***!
@@ -212,6 +305,121 @@ class AccountService {
         return this._userData;
     }
 
+}
+
+
+
+/***/ }),
+
+/***/ "./common/messages/messageIds.js":
+/*!***************************************!*\
+  !*** ./common/messages/messageIds.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BASE_MESSAGE_IDS: () => (/* binding */ BASE_MESSAGE_IDS)
+/* harmony export */ });
+const BASE_MESSAGE_IDS = {
+}
+
+
+
+/***/ }),
+
+/***/ "./common/messages/messageMaster.js":
+/*!******************************************!*\
+  !*** ./common/messages/messageMaster.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MessageMaster: () => (/* binding */ MessageMaster)
+/* harmony export */ });
+class MessageMaster {
+
+    static _instance = null
+
+    static init(msgLibrariesPack) {
+        if (MessageMaster._instance) {
+            throw 'Message Master is inited already';
+        }
+        let lang = MessageMaster._determineLang();
+        MessageMaster._instance = new MessageMaster(msgLibrariesPack[lang]);
+    }
+
+    static _determineLang() {
+        return navigator.language || 'en';
+    }
+
+    static get(msgId) {
+        return MessageMaster._instance.get(msgId);
+    }
+
+    // 'максимальна довжина {0} символів, від {1} до {2}'
+    // format(str, 5, 10, 20)
+    static format(msgId, ...values) {
+        return MessageMaster._instance.format(msgId, ...values);
+    }
+
+    constructor(msgLibrary) {
+        this._msgLibrary = msgLibrary;
+    }
+
+    get(msgId) {
+        if (!this._msgLibrary[msgId]) {
+            console.warn(`Message ID "${msgId}" not found`);
+            return msgId;
+        }
+        return this._msgLibrary[msgId];
+    }
+
+    format(msgId, ...values) {
+        let msgTemplate = this._msgLibrary[msgId];
+        return msgTemplate.replace(/{(\d+)}/g, (_, index) => values[index] || '');
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./common/messages/msgLibraries/enLibrary.js":
+/*!***************************************************!*\
+  !*** ./common/messages/msgLibraries/enLibrary.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EN_BASE_LIBRARY: () => (/* binding */ EN_BASE_LIBRARY)
+/* harmony export */ });
+/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./common/messages/messageIds.js");
+
+
+const EN_BASE_LIBRARY = {
+}
+
+
+
+/***/ }),
+
+/***/ "./common/messages/msgLibraries/ukLibrary.js":
+/*!***************************************************!*\
+  !*** ./common/messages/msgLibraries/ukLibrary.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   UK_BASE_LIBRARY: () => (/* binding */ UK_BASE_LIBRARY)
+/* harmony export */ });
+/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./common/messages/messageIds.js");
+
+
+const UK_BASE_LIBRARY = {
 }
 
 
@@ -478,19 +686,19 @@ class BaseView {
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js!./accountApp/src/styles.css":
-/*!*************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./accountApp/src/styles.css ***!
-  \*************************************************************************/
+/***/ "./node_modules/css-loader/dist/cjs.js!./accountApp/src/view/styles.css":
+/*!******************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./accountApp/src/view/styles.css ***!
+  \******************************************************************************/
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
 /* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
 // Imports
 
@@ -1130,29 +1338,29 @@ function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
 
 /***/ }),
 
-/***/ "./accountApp/src/styles.css":
-/*!***********************************!*\
-  !*** ./accountApp/src/styles.css ***!
-  \***********************************/
+/***/ "./accountApp/src/view/styles.css":
+/*!****************************************!*\
+  !*** ./accountApp/src/view/styles.css ***!
+  \****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./accountApp/src/styles.css");
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./accountApp/src/view/styles.css");
 
       
       
@@ -6236,14 +6444,15 @@ var __webpack_exports__ = {};
   !*** ./accountApp/src/index.js ***!
   \*********************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./accountApp/src/styles.css");
-/* harmony import */ var _accountAppView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./accountAppView */ "./accountApp/src/accountAppView.js");
-/* harmony import */ var _common_sync_accountApi__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/sync/accountApi */ "./common/sync/accountApi.js");
-/* harmony import */ var _common_utils_requester__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/utils/requester */ "./common/utils/requester.js");
-/* harmony import */ var _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/domain/service/accountService */ "./common/domain/service/accountService.js");
-/* harmony import */ var _domain_domainFacade__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./domain/domainFacade */ "./accountApp/src/domain/domainFacade.js");
-/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
-/* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+/* harmony import */ var _view_accountAppView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./view/accountAppView */ "./accountApp/src/view/accountAppView.js");
+/* harmony import */ var _common_sync_accountApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/sync/accountApi */ "./common/sync/accountApi.js");
+/* harmony import */ var _common_utils_requester__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/utils/requester */ "./common/utils/requester.js");
+/* harmony import */ var _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/domain/service/accountService */ "./common/domain/service/accountService.js");
+/* harmony import */ var _domain_domainFacade__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./domain/domainFacade */ "./accountApp/src/domain/domainFacade.js");
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
+/* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+/* harmony import */ var _messages_msgLibraries__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./messages/msgLibraries */ "./accountApp/src/messages/msgLibraries/index.js");
+/* harmony import */ var _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @common/messages/messageMaster */ "./common/messages/messageMaster.js");
 
 
 
@@ -6253,17 +6462,20 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_3__.Requester();
-let accountApi = new _common_sync_accountApi__WEBPACK_IMPORTED_MODULE_2__.AccountApi(requester);
 
-let accountService = new _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_4__.AccountService(accountApi);
-let domainFacade = new _domain_domainFacade__WEBPACK_IMPORTED_MODULE_5__.DomainFacade(accountService);
+_common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_8__.MessageMaster.init(_messages_msgLibraries__WEBPACK_IMPORTED_MODULE_7__.msgLibrariesPack);
 
-let viewEventBus = new _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_6__.EventEmitter();
-_common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_7__.BaseHTMLView.useDomainFacade(domainFacade);
-_common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_7__.BaseHTMLView.useEventBus(viewEventBus);
+let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_2__.Requester();
+let accountApi = new _common_sync_accountApi__WEBPACK_IMPORTED_MODULE_1__.AccountApi(requester);
 
-new _accountAppView__WEBPACK_IMPORTED_MODULE_1__.AccountAppView(document.body, accountApi);
+let accountService = new _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_3__.AccountService(accountApi);
+let domainFacade = new _domain_domainFacade__WEBPACK_IMPORTED_MODULE_4__.DomainFacade(accountService);
+
+let viewEventBus = new _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_5__.EventEmitter();
+_common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_6__.BaseHTMLView.useDomainFacade(domainFacade);
+_common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_6__.BaseHTMLView.useEventBus(viewEventBus);
+
+new _view_accountAppView__WEBPACK_IMPORTED_MODULE_0__.AccountAppView(document.body, accountApi);
 })();
 
 /******/ })()

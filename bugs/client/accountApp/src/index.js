@@ -1,11 +1,14 @@
-import './styles.css';
-import { AccountAppView } from "./accountAppView";
+import { AccountAppView } from "./view/accountAppView";
 import { AccountApi } from '@common/sync/accountApi';
 import { Requester } from '@common/utils/requester';
 import { AccountService } from '@common/domain/service/accountService';
 import { DomainFacade } from './domain/domainFacade';
 import { EventEmitter } from '@common/utils/eventEmitter';
 import { BaseHTMLView } from '@common/view/base/baseHTMLView';
+import { msgLibrariesPack } from "./messages/msgLibraries";
+import { MessageMaster } from '@common/messages/messageMaster';
+
+MessageMaster.init(msgLibrariesPack);
 
 let requester = new Requester();
 let accountApi = new AccountApi(requester);

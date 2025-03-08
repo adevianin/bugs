@@ -1,3 +1,4 @@
+import './styles.css';
 import { BaseHTMLView } from "@common/view/base/baseHTMLView";
 
 class AccountAppView extends BaseHTMLView {
