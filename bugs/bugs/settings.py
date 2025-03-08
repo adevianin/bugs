@@ -204,3 +204,11 @@ GOOGLE_CLIENT_ID='722545101653-j1gkkj3s807i5amjpvh51elm0nr4aet2.apps.googleuserc
 # GOOGLE_CLIENT_ID='722545101653-9e6l6u1e85lo4gn723e2srhabq0kdieq.apps.googleusercontent.com'
 GOOGLE_OAUTH_REDIRECT_URI = "http://localhost:8000/api/accounts/google_auth_callback"
 # GOOGLE_OAUTH_REDIRECT_URI = "https://b9d0-37-139-176-92.ngrok-free.app/api/accounts/google_auth_callback"
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "evolutionofants@gmail.com"
+EMAIL_HOST_PASSWORD = "ujap njlp wipe fwil"
+DEFAULT_FROM_EMAIL = "Evolution Of Ants <your-email@gmail.com>"
