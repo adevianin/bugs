@@ -2,52 +2,6 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./accountApp/src/accountApi.js":
-/*!**************************************!*\
-  !*** ./accountApp/src/accountApi.js ***!
-  \**************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   AccountApi: () => (/* binding */ AccountApi)
-/* harmony export */ });
-class AccountApi {
-    
-    constructor(requester) {
-        this._requester = requester;
-    }
-
-    login(username, password) {
-        return this._requester.post('api/accounts/login', {
-            username, password
-        }).then(res => {
-            return res.data.user;
-        });
-    }
-
-    register(username, password) {
-        return this._requester.post('api/accounts/register', {
-            username, password
-        }).then(res => {
-            return res.data.user;
-        });
-    }
-
-    checkUsernameUnique(username) {
-        return this._requester.post('api/accounts/check_name', {
-            username
-        }).then(res => {
-            return res.data.is_unique;
-        });
-    }
-
-}
-
-
-
-/***/ }),
-
 /***/ "./accountApp/src/accountAppView.js":
 /*!******************************************!*\
   !*** ./accountApp/src/accountAppView.js ***!
@@ -184,6 +138,58 @@ class AccountAppView {
         let nextUrl = new URLSearchParams(window.location.search).get('next') || '/';
         window.location.href = nextUrl;
     }
+}
+
+
+
+/***/ }),
+
+/***/ "./common/sync/accountApi.js":
+/*!***********************************!*\
+  !*** ./common/sync/accountApi.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AccountApi: () => (/* binding */ AccountApi)
+/* harmony export */ });
+class AccountApi {
+    
+    constructor(requester) {
+        this._requester = requester;
+    }
+
+    login(username, password) {
+        return this._requester.post('api/accounts/login', {
+            username, password
+        }).then(res => {
+            return res.data.user;
+        });
+    }
+
+    logout() {
+        return this._requester.post('api/accounts/logout').then(res => {
+            return res.data.redirectUrl;
+        });
+    }
+
+    register(username, password) {
+        return this._requester.post('api/accounts/register', {
+            username, password
+        }).then(res => {
+            return res.data.user;
+        });
+    }
+
+    checkUsernameUnique(username) {
+        return this._requester.post('api/accounts/check_name', {
+            username
+        }).then(res => {
+            return res.data.is_unique;
+        });
+    }
+
 }
 
 
@@ -5534,7 +5540,7 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./accountApp/src/styles.css");
 /* harmony import */ var _accountAppView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./accountAppView */ "./accountApp/src/accountAppView.js");
-/* harmony import */ var _accountApi__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./accountApi */ "./accountApp/src/accountApi.js");
+/* harmony import */ var _common_sync_accountApi__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/sync/accountApi */ "./common/sync/accountApi.js");
 /* harmony import */ var _common_utils_requester__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/utils/requester */ "./common/utils/requester.js");
 
 
@@ -5542,7 +5548,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_3__.Requester();
-let accountApi = new _accountApi__WEBPACK_IMPORTED_MODULE_2__.AccountApi(requester);
+let accountApi = new _common_sync_accountApi__WEBPACK_IMPORTED_MODULE_2__.AccountApi(requester);
 new _accountAppView__WEBPACK_IMPORTED_MODULE_1__.AccountAppView(document.body, accountApi);
 })();
 

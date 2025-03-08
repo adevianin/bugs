@@ -1,6 +1,6 @@
-import { BaseView } from "./baseView";
+import { BaseGameView } from "./baseGameView";
 
-class BaseGraphicView extends BaseView {
+class BaseGraphicView extends BaseGameView {
 
     static textureManager;
 

@@ -12,6 +12,12 @@ class AccountApi {
         });
     }
 
+    logout() {
+        return this._requester.post('api/accounts/logout').then(res => {
+            return res.data.redirectUrl;
+        });
+    }
+
     register(username, password) {
         return this._requester.post('api/accounts/register', {
             username, password

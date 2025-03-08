@@ -1,4 +1,7 @@
+import { BASE_MESSAGE_IDS } from "@common/messages/messageIds"
+
 const MESSAGE_IDS = {
+    ...BASE_MESSAGE_IDS,
     TAB_BREEDING: 'TAB_BREEDING',
     TAB_COLONIES: 'TAB_COLONIES',
     TAB_SPECIE: 'TAB_SPECIE',

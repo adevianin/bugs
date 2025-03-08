@@ -1,6 +1,6 @@
 import './styles.css';
 import { AccountAppView } from "./accountAppView";
-import { AccountApi } from './accountApi';
+import { AccountApi } from '@common/sync/accountApi';
 import { Requester } from '@common/utils/requester';
 
 let requester = new Requester();

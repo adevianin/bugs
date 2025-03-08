@@ -1,8 +1,8 @@
-import { BaseService } from "./base/baseService";
+import { BaseGameService } from "./base/baseGameService";
 import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
 import { AntTypes } from '@domain/enum/antTypes';
 
-class NuptialEnvironmentService extends BaseService {
+class NuptialEnvironmentService extends BaseGameService {
 
     constructor(mainEventBus, world, nuptialEnvironmentFactory, nuptialEnvironmentApi) {
         super(mainEventBus, world);

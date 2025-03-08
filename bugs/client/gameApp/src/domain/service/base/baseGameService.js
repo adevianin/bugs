@@ -1,7 +1,7 @@
 import { GenericRequestError } from "@domain/errors/genericRequestError";
 import { StateSyncRequestError } from "@domain/errors/stateSyncRequestError";
 
-class BaseService {
+class BaseGameService {
 
     constructor(mainEventBus, world) {
         this._mainEventBus = mainEventBus;
@@ -36,5 +36,5 @@ class BaseService {
 }
 
 export {
-    BaseService
+    BaseGameService
 }

@@ -1,6 +1,8 @@
-import { MESSAGE_IDS } from "../messageIds"
+import { MESSAGE_IDS } from "../messageIds";
+import { EN_BASE_LIBRARY } from "@common/messages/msgLibraries/enLibrary";
 
 const EN_LIBRARY = {
+    ...EN_BASE_LIBRARY,
     [MESSAGE_IDS.TAB_BREEDING]: 'Breeding',
     [MESSAGE_IDS.TAB_COLONIES]: 'Colonies',
     [MESSAGE_IDS.TAB_SPECIE]: 'Specie',

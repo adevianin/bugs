@@ -1,6 +1,6 @@
-import { BaseService } from "./base/baseService";
+import { BaseGameService } from "./base/baseGameService";
 
-class AntService extends BaseService {
+class AntService extends BaseGameService {
 
     constructor(mainEventBus, world, antApi) {
         super(mainEventBus, world);

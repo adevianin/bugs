@@ -1,6 +1,245 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./common/domain/baseDomainFacade.js":
+/*!*******************************************!*\
+  !*** ./common/domain/baseDomainFacade.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BaseDomainFacade: () => (/* binding */ BaseDomainFacade)
+/* harmony export */ });
+class BaseDomainFacade {
+
+    constructor(mainEventBus, accountService) {
+        this._mainEventBus = mainEventBus;
+        this._accountService = accountService;
+    }
+
+    get events() {
+        return this._mainEventBus;
+    }
+
+    logout() {
+        return this._accountService.logout();
+    }
+
+    getUserData() {
+        return this._accountService.getUserData();
+    }
+
+}
+
+
+/***/ }),
+
+/***/ "./common/domain/service/accountService.js":
+/*!*************************************************!*\
+  !*** ./common/domain/service/accountService.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AccountService: () => (/* binding */ AccountService)
+/* harmony export */ });
+class AccountService {
+    
+    constructor(accountApi, userData) {
+        this._accountApi = accountApi;
+        this._userData = userData;
+    }
+
+    logout() {
+        return this._accountApi.logout();
+    }
+
+    getUserData() {
+        return this._userData;
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./common/messages/messageIds.js":
+/*!***************************************!*\
+  !*** ./common/messages/messageIds.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BASE_MESSAGE_IDS: () => (/* binding */ BASE_MESSAGE_IDS)
+/* harmony export */ });
+const BASE_MESSAGE_IDS = {
+}
+
+
+
+/***/ }),
+
+/***/ "./common/messages/messageMaster.js":
+/*!******************************************!*\
+  !*** ./common/messages/messageMaster.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MessageMaster: () => (/* binding */ MessageMaster)
+/* harmony export */ });
+class MessageMaster {
+
+    static _instance = null
+
+    static init(msgLibrariesPack) {
+        if (MessageMaster._instance) {
+            throw 'Message Master is inited already';
+        }
+        let lang = MessageMaster._determineLang();
+        MessageMaster._instance = new MessageMaster(msgLibrariesPack[lang]);
+    }
+
+    static _determineLang() {
+        return navigator.language || 'en';
+    }
+
+    static get(msgId) {
+        return MessageMaster._instance.get(msgId);
+    }
+
+    // 'максимальна довжина {0} символів, від {1} до {2}'
+    // format(str, 5, 10, 20)
+    static format(msgId, ...values) {
+        return MessageMaster._instance.format(msgId, ...values);
+    }
+
+    constructor(msgLibrary) {
+        this._msgLibrary = msgLibrary;
+    }
+
+    get(msgId) {
+        if (!this._msgLibrary[msgId]) {
+            console.warn(`Message ID "${msgId}" not found`);
+            return msgId;
+        }
+        return this._msgLibrary[msgId];
+    }
+
+    format(msgId, ...values) {
+        let msgTemplate = this._msgLibrary[msgId];
+        return msgTemplate.replace(/{(\d+)}/g, (_, index) => values[index] || '');
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./common/messages/msgLibraries/enLibrary.js":
+/*!***************************************************!*\
+  !*** ./common/messages/msgLibraries/enLibrary.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EN_BASE_LIBRARY: () => (/* binding */ EN_BASE_LIBRARY)
+/* harmony export */ });
+/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./common/messages/messageIds.js");
+
+
+const EN_BASE_LIBRARY = {
+}
+
+
+
+/***/ }),
+
+/***/ "./common/messages/msgLibraries/ukLibrary.js":
+/*!***************************************************!*\
+  !*** ./common/messages/msgLibraries/ukLibrary.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   UK_BASE_LIBRARY: () => (/* binding */ UK_BASE_LIBRARY)
+/* harmony export */ });
+/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./common/messages/messageIds.js");
+
+
+const UK_BASE_LIBRARY = {
+}
+
+
+
+/***/ }),
+
+/***/ "./common/sync/accountApi.js":
+/*!***********************************!*\
+  !*** ./common/sync/accountApi.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AccountApi: () => (/* binding */ AccountApi)
+/* harmony export */ });
+class AccountApi {
+    
+    constructor(requester) {
+        this._requester = requester;
+    }
+
+    login(username, password) {
+        return this._requester.post('api/accounts/login', {
+            username, password
+        }).then(res => {
+            return res.data.user;
+        });
+    }
+
+    logout() {
+        return this._requester.post('api/accounts/logout').then(res => {
+            return res.data.redirectUrl;
+        });
+    }
+
+    register(username, password) {
+        return this._requester.post('api/accounts/register', {
+            username, password
+        }).then(res => {
+            return res.data.user;
+        });
+    }
+
+    checkUsernameUnique(username) {
+        return this._requester.post('api/accounts/check_name', {
+            username
+        }).then(res => {
+            return res.data.is_unique;
+        });
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./common/utils/getCookie.js":
 /*!***********************************!*\
   !*** ./common/utils/getCookie.js ***!
@@ -94,6 +333,44 @@ class Requester {
 
 /***/ }),
 
+/***/ "./common/view/base/baseView.js":
+/*!**************************************!*\
+  !*** ./common/view/base/baseView.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BaseView: () => (/* binding */ BaseView)
+/* harmony export */ });
+class BaseView {
+
+    static domainFacade;
+    static eventBus;
+
+    get $domainFacade() {
+        return BaseView.domainFacade;
+    }
+
+    get $eventBus() {
+        return BaseView.eventBus;
+    }
+
+    static useDomainFacade(domainFacade) {
+        BaseView.domainFacade = domainFacade;
+    }
+
+    static useEventBus(eventBus) {
+        BaseView.eventBus = eventBus;
+    }
+
+}
+
+   
+
+/***/ }),
+
 /***/ "./gameApp/src/domain/consts.js":
 /*!**************************************!*\
   !*** ./gameApp/src/domain/consts.js ***!
@@ -145,15 +422,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DomainFacade: () => (/* binding */ DomainFacade)
 /* harmony export */ });
-/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./enum/entityTypes */ "./gameApp/src/domain/enum/entityTypes.js");
+/* harmony import */ var _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/baseDomainFacade */ "./common/domain/baseDomainFacade.js");
+/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./enum/entityTypes */ "./gameApp/src/domain/enum/entityTypes.js");
 
 
-class DomainFacade {
+
+class DomainFacade extends _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MODULE_0__.BaseDomainFacade {
 
     constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService, antService) {
-        this._mainEventBus = mainEventBus;
+        super(mainEventBus, accountService);
         this._worldService = worldService;
-        this._accountService = accountService;
         this._messageHandlerService = messageHandlerService;
         this._colonyService = colonyService;
         this._userService = userService;
@@ -164,10 +442,6 @@ class DomainFacade {
 
     get currentStep() {
         return this._worldService.world.currentStep;
-    }
-
-    get events() {
-        return this._mainEventBus;
     }
 
     get notificationsContainer() {
@@ -188,14 +462,6 @@ class DomainFacade {
 
     findEntityById(id) {
         return this._worldService.world.findEntityById(id);
-    }
-
-    logout() {
-        return this._accountService.logout();
-    }
-
-    getUserData() {
-        return this._accountService.getUserData();
     }
 
     start() {
@@ -224,7 +490,7 @@ class DomainFacade {
     }
 
     isMyAnt(entity) {
-        return this.isEntityMy(entity) && entity.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT;
+        return this.isEntityMy(entity) && entity.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT;
     }
 
     isColonyMy(colony) {
@@ -2802,7 +3068,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   initDomainLayer: () => (/* binding */ initDomainLayer)
 /* harmony export */ });
 /* harmony import */ var _domainFacade__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./domainFacade */ "./gameApp/src/domain/domainFacade.js");
-/* harmony import */ var _service_accountService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./service/accountService */ "./gameApp/src/domain/service/accountService.js");
+/* harmony import */ var _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/domain/service/accountService */ "./common/domain/service/accountService.js");
 /* harmony import */ var _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./service/messageHandlerService */ "./gameApp/src/domain/service/messageHandlerService.js");
 /* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
 /* harmony import */ var _worldFactory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./worldFactory */ "./gameApp/src/domain/worldFactory.js");
@@ -2841,7 +3107,7 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let world = worldFactory.buildWorld();
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus, ratingContainer);
-    let accountService = new _service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user);
+    let accountService = new _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user);
     let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(mainEventBus, world, apis.colonyApi, worldFactory);
     let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_7__.UserService(apis.userApi, notificationsContainer);
     let nuptialEnvironmentService = new _service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_8__.NuptialEnvironmentService(mainEventBus, world, nuptialEnvironmentFactory, apis.nuptialEnvironmentApi);
@@ -2852,38 +3118,6 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService, antService);
 
     return domainFacade;
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/domain/service/accountService.js":
-/*!******************************************************!*\
-  !*** ./gameApp/src/domain/service/accountService.js ***!
-  \******************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   AccountService: () => (/* binding */ AccountService)
-/* harmony export */ });
-class AccountService {
-    
-    constructor(accountApi, userData) {
-        this._accountApi = accountApi;
-        this._userData = userData;
-    }
-
-    logout() {
-        return this._accountApi.logout();
-    }
-
-    getUserData() {
-        return this._userData;
-    }
-
 }
 
 
@@ -2901,10 +3135,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AntService: () => (/* binding */ AntService)
 /* harmony export */ });
-/* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseService */ "./gameApp/src/domain/service/base/baseService.js");
+/* harmony import */ var _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseGameService */ "./gameApp/src/domain/service/base/baseGameService.js");
 
 
-class AntService extends _base_baseService__WEBPACK_IMPORTED_MODULE_0__.BaseService {
+class AntService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__.BaseGameService {
 
     constructor(mainEventBus, world, antApi) {
         super(mainEventBus, world);
@@ -2939,23 +3173,23 @@ class AntService extends _base_baseService__WEBPACK_IMPORTED_MODULE_0__.BaseServ
 
 /***/ }),
 
-/***/ "./gameApp/src/domain/service/base/baseService.js":
-/*!********************************************************!*\
-  !*** ./gameApp/src/domain/service/base/baseService.js ***!
-  \********************************************************/
+/***/ "./gameApp/src/domain/service/base/baseGameService.js":
+/*!************************************************************!*\
+  !*** ./gameApp/src/domain/service/base/baseGameService.js ***!
+  \************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   BaseService: () => (/* binding */ BaseService)
+/* harmony export */   BaseGameService: () => (/* binding */ BaseGameService)
 /* harmony export */ });
 /* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
 /* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
 
 
 
-class BaseService {
+class BaseGameService {
 
     constructor(mainEventBus, world) {
         this._mainEventBus = mainEventBus;
@@ -3005,7 +3239,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ColonyService: () => (/* binding */ ColonyService)
 /* harmony export */ });
 /* harmony import */ var _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/entity/action/actionTypes */ "./gameApp/src/domain/entity/action/actionTypes.js");
-/* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./base/baseService */ "./gameApp/src/domain/service/base/baseService.js");
+/* harmony import */ var _base_baseGameService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./base/baseGameService */ "./gameApp/src/domain/service/base/baseGameService.js");
 /* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./gameApp/src/domain/enum/entityTypes.js");
 /* harmony import */ var _domain_enum_itemTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/itemTypes */ "./gameApp/src/domain/enum/itemTypes.js");
 /* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @utils/distance */ "./gameApp/src/utils/distance.js");
@@ -3015,7 +3249,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class ColonyService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.BaseService {
+class ColonyService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_1__.BaseGameService {
 
     constructor(mainEventBus, world, colonyApi, worldFactory) {
         super(mainEventBus, world);
@@ -3235,14 +3469,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NestService: () => (/* binding */ NestService)
 /* harmony export */ });
-/* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseService */ "./gameApp/src/domain/service/base/baseService.js");
+/* harmony import */ var _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseGameService */ "./gameApp/src/domain/service/base/baseGameService.js");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
 /* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @utils/distance */ "./gameApp/src/utils/distance.js");
 
 
 
 
-class NestService extends _base_baseService__WEBPACK_IMPORTED_MODULE_0__.BaseService {
+class NestService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__.BaseGameService {
 
     constructor(mainEventBus, world, nestApi) {
         super(mainEventBus, world);
@@ -3355,14 +3589,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NuptialEnvironmentService: () => (/* binding */ NuptialEnvironmentService)
 /* harmony export */ });
-/* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseService */ "./gameApp/src/domain/service/base/baseService.js");
+/* harmony import */ var _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseGameService */ "./gameApp/src/domain/service/base/baseGameService.js");
 /* harmony import */ var _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/entity/action/actionTypes */ "./gameApp/src/domain/entity/action/actionTypes.js");
 /* harmony import */ var _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/antTypes */ "./gameApp/src/domain/enum/antTypes.js");
 
 
 
 
-class NuptialEnvironmentService extends _base_baseService__WEBPACK_IMPORTED_MODULE_0__.BaseService {
+class NuptialEnvironmentService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__.BaseGameService {
 
     constructor(mainEventBus, world, nuptialEnvironmentFactory, nuptialEnvironmentApi) {
         super(mainEventBus, world);
@@ -3828,55 +4062,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MESSAGE_IDS: () => (/* binding */ MESSAGE_IDS)
 /* harmony export */ });
+/* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
+
+
 const MESSAGE_IDS = {
+    ..._common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS,
     TAB_BREEDING: 'TAB_BREEDING',
     TAB_COLONIES: 'TAB_COLONIES',
     TAB_SPECIE: 'TAB_SPECIE',
     TAB_NOTIFICATIONS: 'TAB_NOTIFICATIONS',
     TAB_RATING: 'TAB_RATING',
     TAB_ACCOUNT: 'TAB_ACCOUNT'
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/messages/messageMaster.js":
-/*!***********************************************!*\
-  !*** ./gameApp/src/messages/messageMaster.js ***!
-  \***********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   MessageMaster: () => (/* binding */ MessageMaster)
-/* harmony export */ });
-class MessageMaster {
-
-    static build(msgLibrariesPack) {
-        let lang = MessageMaster._determineLang();
-        return new MessageMaster(msgLibrariesPack[lang]);
-    }
-
-    static _determineLang() {
-        return navigator.language || 'en';
-    }
-
-    constructor(msgLibrary) {
-        this._msgLibrary = msgLibrary;
-    }
-
-    get(msgId) {
-        return this._msgLibrary[msgId];
-    }
-
-    // 'максимальна довжина {0} символів, від {1} до {2}'
-    // format(str, 5, 10, 20)
-    format(msgId, ...values) {
-        let msgTemplate = this._msgLibrary[msgId];
-        return msgTemplate.replace(/{(\d+)}/g, (_, index) => values[index] || '');
-    }
 }
 
 
@@ -3895,9 +4091,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   EN_LIBRARY: () => (/* binding */ EN_LIBRARY)
 /* harmony export */ });
 /* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./gameApp/src/messages/messageIds.js");
+/* harmony import */ var _common_messages_msgLibraries_enLibrary__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/messages/msgLibraries/enLibrary */ "./common/messages/msgLibraries/enLibrary.js");
+
 
 
 const EN_LIBRARY = {
+    ..._common_messages_msgLibraries_enLibrary__WEBPACK_IMPORTED_MODULE_1__.EN_BASE_LIBRARY,
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_BREEDING]: 'Breeding',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_COLONIES]: 'Colonies',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_SPECIE]: 'Specie',
@@ -3947,9 +4146,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   UK_LIBRARY: () => (/* binding */ UK_LIBRARY)
 /* harmony export */ });
 /* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./gameApp/src/messages/messageIds.js");
+/* harmony import */ var _common_messages_msgLibraries_ukLibrary__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/messages/msgLibraries/ukLibrary */ "./common/messages/msgLibraries/ukLibrary.js");
+
 
 
 const UK_LIBRARY = {
+    ..._common_messages_msgLibraries_ukLibrary__WEBPACK_IMPORTED_MODULE_1__.UK_BASE_LIBRARY,
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_BREEDING]: 'Розмноження',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_COLONIES]: 'Колонії',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_SPECIE]: 'Вид',
@@ -4038,35 +4240,6 @@ const uaMessages = {
     autumn: 'осінь',
     winter: 'зима',
     temperature: 'температура'
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/sync/accountApi.js":
-/*!****************************************!*\
-  !*** ./gameApp/src/sync/accountApi.js ***!
-  \****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   AccountApi: () => (/* binding */ AccountApi)
-/* harmony export */ });
-class AccountApi {
-    
-    constructor(requester) {
-        this._requester = requester;
-    }
-
-    logout() {
-        return this._requester.post('api/accounts/logout').then(res => {
-            return res.data.redirectUrl;
-        });
-    }
-
 }
 
 
@@ -4204,7 +4377,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   initSyncLayer: () => (/* binding */ initSyncLayer)
 /* harmony export */ });
 /* harmony import */ var _common_utils_requester__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/requester */ "./common/utils/requester.js");
-/* harmony import */ var _accountApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./accountApi */ "./gameApp/src/sync/accountApi.js");
+/* harmony import */ var _common_sync_accountApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/sync/accountApi */ "./common/sync/accountApi.js");
 /* harmony import */ var _serverConnection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./serverConnection */ "./gameApp/src/sync/serverConnection.js");
 /* harmony import */ var _nestApi__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestApi */ "./gameApp/src/sync/nestApi.js");
 /* harmony import */ var _colonyApi__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./colonyApi */ "./gameApp/src/sync/colonyApi.js");
@@ -4224,7 +4397,7 @@ function initSyncLayer(initialData) {
     let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_0__.Requester();
     let serverConnection = new _serverConnection__WEBPACK_IMPORTED_MODULE_2__.ServerConnection(initialData.mainSocketURL);
 
-    let accountApi = new _accountApi__WEBPACK_IMPORTED_MODULE_1__.AccountApi(requester);
+    let accountApi = new _common_sync_accountApi__WEBPACK_IMPORTED_MODULE_1__.AccountApi(requester);
     let nestApi = new _nestApi__WEBPACK_IMPORTED_MODULE_3__.NestApi(requester);
     let colonyApi = new _colonyApi__WEBPACK_IMPORTED_MODULE_4__.ColonyApi(requester);
     let antApi = new _antApi__WEBPACK_IMPORTED_MODULE_5__.AntApi(requester);
@@ -4693,6 +4866,47 @@ class AppView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLVi
 
 /***/ }),
 
+/***/ "./gameApp/src/view/base/baseGameView.js":
+/*!***********************************************!*\
+  !*** ./gameApp/src/view/base/baseGameView.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BaseGameView: () => (/* binding */ BaseGameView)
+/* harmony export */ });
+/* harmony import */ var _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/view/base/baseView */ "./common/view/base/baseView.js");
+
+
+class BaseGameView extends _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView {
+
+    static messages;
+    static pixiApp;
+
+    get $messages() {
+        return BaseGameView.messages;
+    }
+
+    get $pixiApp() {
+        return BaseGameView.pixiApp;
+    }
+
+    static useMessages(messages) {
+        BaseGameView.messages = messages;
+    }
+
+    static usePixiApp(pixiApp) {
+        BaseGameView.pixiApp = pixiApp;
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/view/base/baseGraphicView.js":
 /*!**************************************************!*\
   !*** ./gameApp/src/view/base/baseGraphicView.js ***!
@@ -4704,10 +4918,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BaseGraphicView: () => (/* binding */ BaseGraphicView)
 /* harmony export */ });
-/* harmony import */ var _baseView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseView */ "./gameApp/src/view/base/baseView.js");
+/* harmony import */ var _baseGameView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseGameView */ "./gameApp/src/view/base/baseGameView.js");
 
 
-class BaseGraphicView extends _baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView {
+class BaseGraphicView extends _baseGameView__WEBPACK_IMPORTED_MODULE_0__.BaseGameView {
 
     static textureManager;
 
@@ -4741,11 +4955,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   BaseHTMLView: () => (/* binding */ BaseHTMLView)
 /* harmony export */ });
 /* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
-/* harmony import */ var _baseView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./baseView */ "./gameApp/src/view/base/baseView.js");
+/* harmony import */ var _baseGameView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./baseGameView */ "./gameApp/src/view/base/baseGameView.js");
 
 
 
-class BaseHTMLView extends _baseView__WEBPACK_IMPORTED_MODULE_1__.BaseView {
+class BaseHTMLView extends _baseGameView__WEBPACK_IMPORTED_MODULE_1__.BaseGameView {
 
     constructor(el) {
         super();
@@ -4768,71 +4982,6 @@ class BaseHTMLView extends _baseView__WEBPACK_IMPORTED_MODULE_1__.BaseView {
     remove() {
         this._el.remove();
         this.events.removeAllListeners();
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/view/base/baseView.js":
-/*!*******************************************!*\
-  !*** ./gameApp/src/view/base/baseView.js ***!
-  \*******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   BaseView: () => (/* binding */ BaseView)
-/* harmony export */ });
-class BaseView {
-
-    static domainFacade;
-    static eventBus;
-    static messages;
-    static pixiApp;
-    static messageMaster;
-
-    get $domainFacade() {
-        return BaseView.domainFacade;
-    }
-
-    get $eventBus() {
-        return BaseView.eventBus;
-    }
-
-    get $messages() {
-        return BaseView.messages;
-    }
-
-    get $pixiApp() {
-        return BaseView.pixiApp;
-    }
-
-    get $mm() {
-        return BaseView.messageMaster;
-    }
-
-    static useDomainFacade(domainFacade) {
-        BaseView.domainFacade = domainFacade;
-    }
-
-    static useEventBus(eventBus) {
-        BaseView.eventBus = eventBus;
-    }
-
-    static useMessages(messages) {
-        BaseView.messages = messages;
-    }
-
-    static usePixiApp(pixiApp) {
-        BaseView.pixiApp = pixiApp;
-    }
-
-    static useMessageMaster(messageMaster) {
-        BaseView.messageMaster = messageMaster;
     }
 
 }
@@ -5128,7 +5277,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   initViewLayer: () => (/* binding */ initViewLayer)
 /* harmony export */ });
-/* harmony import */ var _base_baseView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseView */ "./gameApp/src/view/base/baseView.js");
+/* harmony import */ var _base_baseGameView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseGameView */ "./gameApp/src/view/base/baseGameView.js");
 /* harmony import */ var _appView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./appView */ "./gameApp/src/view/appView.js");
 /* harmony import */ var _common_utils_requester__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/utils/requester */ "./common/utils/requester.js");
 /* harmony import */ var _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./world/worldSpritesheetManager */ "./gameApp/src/view/world/worldSpritesheetManager.js");
@@ -5137,11 +5286,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../messages/uaMessagesLib */ "./gameApp/src/messages/uaMessagesLib.js");
 /* harmony import */ var _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./textures/build/world_spritesheet.json */ "./gameApp/src/view/textures/build/world_spritesheet.json");
 /* harmony import */ var _textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./textures/build/world_spritesheet.png */ "./gameApp/src/view/textures/build/world_spritesheet.png");
-/* harmony import */ var _messages_messageMaster__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @messages/messageMaster */ "./gameApp/src/messages/messageMaster.js");
-/* harmony import */ var _messages_msgLibraries__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @messages/msgLibraries */ "./gameApp/src/messages/msgLibraries/index.js");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-
-
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 
 
 
@@ -5160,16 +5305,13 @@ async function initViewLayer(domainFacade) {
     let loaderEl = document.querySelector('[data-game-loader]');
 
     await spritesheetManager.prepareTextures();
-    let pixiApp = new pixi_js__WEBPACK_IMPORTED_MODULE_11__.Application();
+    let pixiApp = new pixi_js__WEBPACK_IMPORTED_MODULE_9__.Application();
     await pixiApp.init();
 
-    let mm = _messages_messageMaster__WEBPACK_IMPORTED_MODULE_9__.MessageMaster.build(_messages_msgLibraries__WEBPACK_IMPORTED_MODULE_10__.msgLibrariesPack);
-
-    _base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView.useDomainFacade(domainFacade);
-    _base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView.useEventBus(eventBus);
-    _base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView.useMessages(_messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_6__.uaMessages);
-    _base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView.usePixiApp(pixiApp);
-    _base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView.useMessageMaster(mm);
+    _base_baseGameView__WEBPACK_IMPORTED_MODULE_0__.BaseGameView.useDomainFacade(domainFacade);
+    _base_baseGameView__WEBPACK_IMPORTED_MODULE_0__.BaseGameView.useEventBus(eventBus);
+    _base_baseGameView__WEBPACK_IMPORTED_MODULE_0__.BaseGameView.useMessages(_messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_6__.uaMessages);
+    _base_baseGameView__WEBPACK_IMPORTED_MODULE_0__.BaseGameView.usePixiApp(pixiApp);
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_4__.BaseGraphicView.useTextureManager(spritesheetManager);
 
     let app = new _appView__WEBPACK_IMPORTED_MODULE_1__.AppView(document.querySelector('[data-app]'));
@@ -6554,6 +6696,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _tabs_notificationsTab__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./tabs/notificationsTab */ "./gameApp/src/view/panel/tabs/notificationsTab/index.js");
 /* harmony import */ var _tabs_ratingTab__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./tabs/ratingTab */ "./gameApp/src/view/panel/tabs/ratingTab/index.js");
 /* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
+/* harmony import */ var _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @common/messages/messageMaster */ "./common/messages/messageMaster.js");
+
 
 
 
@@ -6608,12 +6752,12 @@ class PanelView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Bas
         this._ratingTab = new _tabs_ratingTab__WEBPACK_IMPORTED_MODULE_9__.RatingTabView(this._el.querySelector('[data-rating-tab]'));
 
         this._tabSwitcher = new _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'panel', [
-            { name: 'breeding', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_BREEDING), tab: this._nuptialFlightTab },
-            { name: 'colonies', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_COLONIES), tab: this._coloniesTab },
-            { name: 'specie_builder', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_SPECIE), tab: this._specieBuildertTab },
-            { name: 'notifications', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_NOTIFICATIONS), tab: this._notificationsTab },
-            { name: 'rating', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_RATING), tab: this._ratingTab },
-            { name: 'user', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_ACCOUNT), tab: this._userTab }
+            { name: 'breeding', label: _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_11__.MessageMaster.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_BREEDING), tab: this._nuptialFlightTab },
+            { name: 'colonies', label: _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_11__.MessageMaster.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_COLONIES), tab: this._coloniesTab },
+            { name: 'specie_builder', label: _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_11__.MessageMaster.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_SPECIE), tab: this._specieBuildertTab },
+            { name: 'notifications', label: _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_11__.MessageMaster.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_NOTIFICATIONS), tab: this._notificationsTab },
+            { name: 'rating', label: _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_11__.MessageMaster.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_RATING), tab: this._ratingTab },
+            { name: 'user', label: _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_11__.MessageMaster.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_ACCOUNT), tab: this._userTab }
         ]);
     }
 
@@ -85108,6 +85252,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./domain */ "./gameApp/src/domain/index.js");
 /* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./view */ "./gameApp/src/view/index.js");
 /* harmony import */ var _utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @utils/readInitialData */ "./gameApp/src/utils/readInitialData.js");
+/* harmony import */ var _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/messages/messageMaster */ "./common/messages/messageMaster.js");
+/* harmony import */ var _messages_msgLibraries__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @messages/msgLibraries */ "./gameApp/src/messages/msgLibraries/index.js");
+
+
 
 
 
@@ -85115,6 +85263,8 @@ __webpack_require__.r(__webpack_exports__);
 
 async function initApp() {
     let initialData = (0,_utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__.readInitialData)();
+
+    _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_4__.MessageMaster.init(_messages_msgLibraries__WEBPACK_IMPORTED_MODULE_5__.msgLibrariesPack);
 
     let syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)(initialData);
     let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)(syncLayer.apis, syncLayer.serverConnection, initialData);

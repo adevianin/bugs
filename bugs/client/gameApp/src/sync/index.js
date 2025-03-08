@@ -1,5 +1,5 @@
 import { Requester } from "@common/utils/requester";
-import { AccountApi } from "./accountApi";
+import { AccountApi } from "@common/sync/accountApi";
 import { ServerConnection } from "./serverConnection";
 import { NestApi } from "./nestApi";
 import { ColonyApi } from "./colonyApi";

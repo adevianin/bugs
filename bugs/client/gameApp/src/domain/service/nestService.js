@@ -1,8 +1,8 @@
-import { BaseService } from "./base/baseService";
+import { BaseGameService } from "./base/baseGameService";
 import { CONSTS } from "@domain/consts";
 import { distance } from '@utils/distance';
 
-class NestService extends BaseService {
+class NestService extends BaseGameService {
 
     constructor(mainEventBus, world, nestApi) {
         super(mainEventBus, world);

@@ -1,6 +1,8 @@
 import { MESSAGE_IDS } from "../messageIds"
+import { UK_BASE_LIBRARY } from "@common/messages/msgLibraries/ukLibrary"
 
 const UK_LIBRARY = {
+    ...UK_BASE_LIBRARY,
     [MESSAGE_IDS.TAB_BREEDING]: 'Розмноження',
     [MESSAGE_IDS.TAB_COLONIES]: 'Колонії',
     [MESSAGE_IDS.TAB_SPECIE]: 'Вид',

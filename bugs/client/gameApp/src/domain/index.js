@@ -1,5 +1,5 @@
 import { DomainFacade } from './domainFacade';
-import { AccountService } from './service/accountService';
+import { AccountService } from '@common/domain/service/accountService';
 import { MessageHandlerService } from './service/messageHandlerService';
 import { EventEmitter } from '@utils/eventEmitter';
 import { WorldFactory } from './worldFactory';

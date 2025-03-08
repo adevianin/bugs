@@ -1,4 +1,4 @@
-import { BaseView } from './base/baseView';
+import { BaseGameView } from './base/baseGameView';
 import { AppView } from './appView';
 import { Requester } from '@common/utils/requester';
 import { WorldSpritesheetManager } from './world/worldSpritesheetManager';
@@ -7,8 +7,6 @@ import { EventEmitter } from '@utils/eventEmitter.js';
 import { uaMessages } from '../messages/uaMessagesLib';
 import worldSpriteSheetAtlas from './textures/build/world_spritesheet.json';
 import worldSpriteSheetUrl from './textures/build/world_spritesheet.png';
-import { MessageMaster } from '@messages/messageMaster';
-import { msgLibrariesPack } from '@messages/msgLibraries';
 import * as PIXI from 'pixi.js';
 
 async function initViewLayer(domainFacade) {
@@ -21,13 +19,10 @@ async function initViewLayer(domainFacade) {
     let pixiApp = new PIXI.Application();
     await pixiApp.init();
 
-    let mm = MessageMaster.build(msgLibrariesPack);
-
-    BaseView.useDomainFacade(domainFacade);
-    BaseView.useEventBus(eventBus);
-    BaseView.useMessages(uaMessages);
-    BaseView.usePixiApp(pixiApp);
-    BaseView.useMessageMaster(mm);
+    BaseGameView.useDomainFacade(domainFacade);
+    BaseGameView.useEventBus(eventBus);
+    BaseGameView.useMessages(uaMessages);
+    BaseGameView.usePixiApp(pixiApp);
     BaseGraphicView.useTextureManager(spritesheetManager);
 
     let app = new AppView(document.querySelector('[data-app]'));

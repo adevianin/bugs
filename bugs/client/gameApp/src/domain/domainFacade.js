@@ -1,11 +1,11 @@
+import { BaseDomainFacade } from "@common/domain/baseDomainFacade";
 import { EntityTypes } from "./enum/entityTypes";
 
-class DomainFacade {
+class DomainFacade extends BaseDomainFacade {
 
     constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService, antService) {
-        this._mainEventBus = mainEventBus;
+        super(mainEventBus, accountService);
         this._worldService = worldService;
-        this._accountService = accountService;
         this._messageHandlerService = messageHandlerService;
         this._colonyService = colonyService;
         this._userService = userService;
@@ -16,10 +16,6 @@ class DomainFacade {
 
     get currentStep() {
         return this._worldService.world.currentStep;
-    }
-
-    get events() {
-        return this._mainEventBus;
     }
 
     get notificationsContainer() {
@@ -40,14 +36,6 @@ class DomainFacade {
 
     findEntityById(id) {
         return this._worldService.world.findEntityById(id);
-    }
-
-    logout() {
-        return this._accountService.logout();
-    }
-
-    getUserData() {
-        return this._accountService.getUserData();
     }
 
     start() {

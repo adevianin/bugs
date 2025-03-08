@@ -1,10 +1,10 @@
 import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
-import { BaseService } from "./base/baseService";
+import { BaseGameService } from "./base/baseGameService";
 import { EntityTypes } from "@domain/enum/entityTypes";
 import { ItemTypes } from "@domain/enum/itemTypes";
 import { distance } from "@utils/distance";
 
-class ColonyService extends BaseService {
+class ColonyService extends BaseGameService {
 
     constructor(mainEventBus, world, colonyApi, worldFactory) {
         super(mainEventBus, world);
