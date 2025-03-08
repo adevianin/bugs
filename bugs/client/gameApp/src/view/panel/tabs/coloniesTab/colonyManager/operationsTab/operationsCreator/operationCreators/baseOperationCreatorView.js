@@ -1,7 +1,7 @@
 import "./style.css";
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 
-class BaseOperationCreatorView extends BaseHTMLView {
+class BaseOperationCreatorView extends BaseGameHTMLView {
 
     constructor(performingColony, onDone) {
         let el = document.createElement('div');

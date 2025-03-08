@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import antTmpl from './antTmpl.html';
 import { NestSelectorView } from "@view/panel/base/nestSelector";
 import { CONSTS } from "@domain/consts";
@@ -6,7 +6,7 @@ import { antTypesLabels } from "@view/labels/antTypesLabels";
 import { convertStepsToYear } from "@utils/convertStepsToYear";
 import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
 
-class AntView extends BaseHTMLView {
+class AntView extends BaseGameHTMLView {
 
     constructor(ant) {
         let el = document.createElement('tbody');

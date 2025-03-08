@@ -1,4 +1,4 @@
-import { EventEmitter } from "@utils/eventEmitter";
+import { EventEmitter } from "@common/utils/eventEmitter";
 
 class RatingContainer extends EventEmitter {
 

@@ -1,4 +1,4 @@
-import { EventEmitter } from "@utils/eventEmitter";
+import { EventEmitter } from "@common/utils/eventEmitter";
 import { ACTION_TYPES } from './action/actionTypes';
 
 class Entity extends EventEmitter {

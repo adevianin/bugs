@@ -1,8 +1,8 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import notificationsListTmpl from './notificationsListTmpl.html';
 import { NotificationView } from "./notification/notificationView";
 
-class NotificationsListView extends BaseHTMLView {
+class NotificationsListView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

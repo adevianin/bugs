@@ -1,7 +1,7 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import mainTabTmpl from './mainTabTmpl.html';
 
-class MainTabView extends BaseHTMLView {
+class MainTabView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

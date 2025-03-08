@@ -1,11 +1,11 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import nestManagerTmpl from './nestManagerTmpl.html';
 import { TabSwitcher } from "@view/panel/base/tabSwitcher";
 import { EggTabView } from "./eggTab/eggTabView";
 import { LarvaTabView } from "./larvaTab/larvaTabView";
 import { MainTabView } from "./mainTab/mainTabView";
 
-class NestManagerView extends BaseHTMLView {
+class NestManagerView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

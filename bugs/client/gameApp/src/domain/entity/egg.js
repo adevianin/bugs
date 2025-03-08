@@ -1,4 +1,4 @@
-import { EventEmitter } from "@utils/eventEmitter";
+import { EventEmitter } from "@common/utils/eventEmitter";
 import { Genome } from "./genetic/genome";
 import { EggStates } from "@domain/enum/eggStates";
 

@@ -4,7 +4,9 @@ import { EntityTypes } from "./enum/entityTypes";
 class DomainFacade extends BaseDomainFacade {
 
     constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService, antService) {
-        super(mainEventBus, accountService);
+        super();
+        this._mainEventBus = mainEventBus;
+        this._accountService = accountService;
         this._worldService = worldService;
         this._messageHandlerService = messageHandlerService;
         this._colonyService = colonyService;
@@ -12,6 +14,10 @@ class DomainFacade extends BaseDomainFacade {
         this._nuptialEnvironmentService = nuptialEnvironmentService;
         this._nestService = nestService;
         this._antService = antService;
+    }
+
+    get events() {
+        return this._mainEventBus;
     }
 
     get currentStep() {
@@ -224,6 +230,18 @@ class DomainFacade extends BaseDomainFacade {
     }
 
     /*========================*/
+
+    /*==========account===========*/
+
+    logout() {
+        return this._accountService.logout();
+    }
+
+    getUserData() {
+        return this._accountService.getUserData();
+    }
+
+    /*==============================*/
 
 }
 export { DomainFacade }

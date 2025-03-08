@@ -1,7 +1,7 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import operationTmpl from './operationTmpl.html';
 
-class OperationView extends BaseHTMLView {
+class OperationView extends BaseGameHTMLView {
 
     constructor(el, operation, colonyId) {
         super(el);

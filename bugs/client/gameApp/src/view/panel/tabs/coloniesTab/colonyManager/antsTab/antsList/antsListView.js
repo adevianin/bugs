@@ -1,10 +1,10 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import antsListTmpl from './antsListTmpl.html';
 import { AntView } from "./antView";
 import { EntityTypes } from "@domain/enum/entityTypes";
 import { AntTypes } from "@domain/enum/antTypes";  
 
-class AntsListView extends BaseHTMLView {
+class AntsListView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

@@ -1,9 +1,9 @@
 import './styles.css';
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import notificationsTabTmpl from './notificationsTabTmpl.html';
 import { NotificationsListView } from "./notificationsListView";
 
-class NotificationsTabView extends BaseHTMLView {
+class NotificationsTabView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

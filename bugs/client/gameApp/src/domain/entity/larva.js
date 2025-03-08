@@ -1,4 +1,4 @@
-import { EventEmitter } from "@utils/eventEmitter";
+import { EventEmitter } from "@common/utils/eventEmitter";
 import { Genome } from "./genetic/genome";
 
 class Larva extends EventEmitter {

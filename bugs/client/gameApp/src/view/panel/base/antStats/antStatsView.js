@@ -1,8 +1,8 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import antStatsTmpl from './antStatsTmpl.html'
 import { convertStepsToYear } from "@utils/convertStepsToYear";
 
-class AntStatsView extends BaseHTMLView {
+class AntStatsView extends BaseGameHTMLView {
 
     constructor(stats) {
         super(document.createElement('table'));

@@ -1,5 +1,5 @@
 import { ACTION_TYPES } from "./action/actionTypes";
-import { EventEmitter } from "@utils/eventEmitter";
+import { EventEmitter } from "@common/utils/eventEmitter";
 
 class AntColony extends EventEmitter {
 

@@ -1,9 +1,9 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import specieGeneTmpl from './specieGeneTmpl.html';
 import { GeneView } from "../../base/genome/genes/geneView";
 import { CONSTS } from "@domain/consts";
 
-class SpecieGeneView extends BaseHTMLView {
+class SpecieGeneView extends BaseGameHTMLView {
 
     constructor(el, specieGene, isActivated, chromosomeType) {
         super(el);

@@ -1,9 +1,9 @@
 import './styles.css';
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import climateTmpl from './climateTmpl.html';
 import { SeasonBarView } from "./seasonBarView";
 
-class ClimateView extends BaseHTMLView {
+class ClimateView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

@@ -1,8 +1,8 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import larvaTabTmpl from './larvaTabTmpl.html';
 import { LarvaView } from "./larvaView";
 
-class LarvaTabView extends BaseHTMLView {
+class LarvaTabView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

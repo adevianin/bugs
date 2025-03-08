@@ -1,8 +1,8 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import queenSelectorTmpl from './queenSelectorTmpl.html';
 import { QueenProfileView } from "./queenProfileView";
 
-class QueenSelectorView extends BaseHTMLView {
+class QueenSelectorView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

@@ -1,8 +1,8 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { NestView } from "./nestView";
 import { EntityTypes } from "@domain/enum/entityTypes";
 
-class NestsListView extends BaseHTMLView {
+class NestsListView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

@@ -1,9 +1,9 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import larvaTmpl from './larvaTmpl.html';
 import { antTypesLabels } from '@view/labels/antTypesLabels';
 import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
 
-class LarvaView extends BaseHTMLView {
+class LarvaView extends BaseGameHTMLView {
 
     constructor(el, larva, nest) {
         super(el);

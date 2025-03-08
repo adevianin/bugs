@@ -1,8 +1,9 @@
-class AccountAppView {
+import { BaseHTMLView } from "@common/view/base/baseHTMLView";
 
-    constructor(el, accountApi) {
-        this._el = el;
-        this._accountApi = accountApi;
+class AccountAppView extends BaseHTMLView {
+
+    constructor(el) {
+        super(el);
 
         this._render();
 

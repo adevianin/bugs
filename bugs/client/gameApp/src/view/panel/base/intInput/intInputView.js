@@ -1,7 +1,7 @@
 import "./style.css";
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 
-class IntInputView extends BaseHTMLView {
+class IntInputView extends BaseGameHTMLView {
 
     constructor(el, minValue, maxValue, errContainerEl) {
         super(el);

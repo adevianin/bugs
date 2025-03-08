@@ -1,7 +1,7 @@
 import './styles.css'
 
 import panelTmpl from './panelTmpl.html';
-import { BaseHTMLView } from '@view/base/baseHTMLView';
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { UserTab } from './tabs/userTab/userTab';
 import { ColoniesTabView } from './tabs/coloniesTab';
 import { TabSwitcher } from './base/tabSwitcher';
@@ -12,7 +12,7 @@ import { RatingTabView } from './tabs/ratingTab';
 import { MESSAGE_IDS } from '@messages/messageIds';
 import { MessageMaster } from '@common/messages/messageMaster';
 
-class PanelView extends BaseHTMLView {
+class PanelView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

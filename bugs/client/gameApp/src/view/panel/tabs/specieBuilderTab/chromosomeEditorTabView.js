@@ -1,8 +1,8 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import chromosomeEditorTabTmpl from './chromosomeEditorTabTmpl.html';
 import { SpecieGeneView } from "./specieGeneView";
 
-class ChromosomeEditorTab extends BaseHTMLView {
+class ChromosomeEditorTab extends BaseGameHTMLView {
 
     constructor(el, chromosome) {
         super(el);

@@ -1,9 +1,9 @@
 import './styles.css';
-import { BaseHTMLView } from '@view/base/baseHTMLView';
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import ratingTabTmpl from './ratingTabTmpl.html';
 import ratingPlaceTmpl from './ratingPlaceTmpl.html';
 
-class RatingTabView extends BaseHTMLView {
+class RatingTabView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

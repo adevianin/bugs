@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import breedingManagerTmpl from './breedingManagerTmpl.html';
 import { QueenSelectorView } from "./queenSelector/queenSelectorView";
 import { MaleSelectorView } from "./maleSelector/maleSelectorView";
@@ -8,7 +8,7 @@ import { TextInputView } from "@view/panel/base/textInput/textInputView";
 import { StateSyncRequestError } from "@domain/errors/stateSyncRequestError";
 import { GenericRequestError } from "@domain/errors/genericRequestError";
 
-class BreedingManagerView extends BaseHTMLView {
+class BreedingManagerView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

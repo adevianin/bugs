@@ -1,6 +1,6 @@
-import { BaseGameView } from "./baseGameView";
+import { BaseView } from "@common/view/base/baseView";
 
-class BaseGraphicView extends BaseGameView {
+class BaseGraphicView extends BaseView {
 
     static textureManager;
 
@@ -10,10 +10,6 @@ class BaseGraphicView extends BaseGameView {
 
     get $textureManager() {
         return BaseGraphicView.textureManager;
-    }
-
-    remove(){
-        throw 'remove method is abstract';
     }
 
 }

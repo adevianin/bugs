@@ -1,6 +1,6 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 
-class NestSelectorView extends BaseHTMLView {
+class NestSelectorView extends BaseGameHTMLView {
 
     constructor(el, colonyId, canBeEmpty = true) {
         super(el);

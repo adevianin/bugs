@@ -1,7 +1,7 @@
-import { EventEmitter } from "@utils/eventEmitter";
-import { BaseGameView } from "./baseGameView";
+import { EventEmitter } from "@common/utils/eventEmitter";
+import { BaseView } from "./baseView";
 
-class BaseHTMLView extends BaseGameView {
+class BaseHTMLView extends BaseView {
 
     constructor(el) {
         super();

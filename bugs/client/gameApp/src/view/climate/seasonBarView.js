@@ -1,8 +1,8 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import seasonBarTmpl from './seasonBarTmpl.html';
 import { CONSTS } from "@domain/consts";
 
-class SeasonBarView extends BaseHTMLView {
+class SeasonBarView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

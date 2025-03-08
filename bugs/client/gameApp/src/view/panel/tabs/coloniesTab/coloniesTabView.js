@@ -1,10 +1,10 @@
 import './styles.css';
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import coloniesTabTmpl from "./coloniesTab.html";
 import { ColoniesListView } from './coloniesList';
 import { ColonyManager } from './colonyManager';
 
-class ColoniesTabView extends BaseHTMLView {
+class ColoniesTabView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

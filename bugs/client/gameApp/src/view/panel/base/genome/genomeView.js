@@ -1,12 +1,12 @@
 import './style.css';
 
-import { BaseHTMLView } from '@view/base/baseHTMLView';
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { GeneView } from './genes/geneView';
 import { ChromosomesTypes } from '@domain/enum/chromosomeTypes';
 import genomeTmpl from './genomeTmpl.html';
 import chromosomesSetTmpl from './chromosomesSetTmpl.html';
 
-class GenomeView extends BaseHTMLView {
+class GenomeView extends BaseGameHTMLView {
 
     constructor(el, genome) {
         super(el);

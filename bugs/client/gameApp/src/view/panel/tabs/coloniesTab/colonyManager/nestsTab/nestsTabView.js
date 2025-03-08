@@ -1,9 +1,9 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import nestsTabTmpl from './nestsTabTmpl.html';
 import { NestsListView } from "./nestsList";
 import { NestManagerView } from "./nestManager";
 
-class NestsTabView extends BaseHTMLView {
+class NestsTabView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el)

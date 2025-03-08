@@ -1,6 +1,6 @@
 import './appStyles.css';
-import { BaseHTMLView } from './base/baseHTMLView';
 import appTmpl from './appTmpl.html';
+import { BaseGameHTMLView } from './base/baseGameHTMLView';
 import * as PIXI from 'pixi.js';
 import { ClimateView } from './climate/climateView';
 import { PanelView } from './panel';
@@ -9,7 +9,7 @@ import { WorldView } from './world';
 import { MapPickerMasterView } from './mapPickers/mapPickerMasterView';
 import { randomInt } from '@utils/randomInt';
 
-class AppView extends BaseHTMLView {
+class AppView extends BaseGameHTMLView {
     constructor(el) {
         super(el);
 
@@ -29,7 +29,7 @@ class AppView extends BaseHTMLView {
 
         let globalContainer = new PIXI.Container();
         this.$pixiApp.stage.addChild(globalContainer);
-        new Camera(globalContainer);
+        new Camera(globalContainer, this.$pixiApp);
 
         let worldContainer = new PIXI.Container();
         globalContainer.addChild(worldContainer);

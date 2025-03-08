@@ -1,6 +1,6 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 
-class PositionView extends BaseHTMLView {
+class PositionView extends BaseGameHTMLView {
 
     constructor(el, position) {
         super(el);

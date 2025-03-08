@@ -1,4 +1,4 @@
-import { BaseHTMLView } from '@view/base/baseHTMLView';
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { GenesTypes } from '@domain/enum/genesTypes';
 import geneTmpl from './geneTmpl.html';
 import bodyStrengthTmpl from './bodyStrengthTmpl.html';
@@ -15,7 +15,7 @@ import adaptationDevelopmentAppetiteTmpl from './adaptationDevelopmentAppetiteTm
 import { AntTypes } from "@domain/enum/antTypes";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
 
-class GeneView extends BaseHTMLView {
+class GeneView extends BaseGameHTMLView {
 
     constructor(el, gene) {
         super(el);

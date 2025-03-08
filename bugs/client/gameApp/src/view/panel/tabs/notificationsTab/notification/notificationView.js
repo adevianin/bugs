@@ -1,4 +1,4 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { NotificationTypes } from "@domain/enum/notificationTypes";
 import { DeathTypes } from "@domain/enum/deathTypes";
 import { DamageTypes } from "@domain/enum/damageTypes";
@@ -9,7 +9,7 @@ import nestAlarmRaisedNotificationTmpl from './nestAlarmRaisedNotificationTmpl.h
 import diedColonyNotificationTmpl from './diedColonyNotificationTmpl.html';
 import { convertStepsToYear } from "@utils/convertStepsToYear";
 
-class NotificationView extends BaseHTMLView {
+class NotificationView extends BaseGameHTMLView {
 
     constructor(el, notification) {
         super(el);

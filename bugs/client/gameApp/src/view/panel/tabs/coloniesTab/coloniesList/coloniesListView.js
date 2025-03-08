@@ -1,8 +1,8 @@
 import './styles.css';
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { ColonyView } from "./colonyView";
 
-class ColoniesListView extends BaseHTMLView {
+class ColoniesListView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

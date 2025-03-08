@@ -1,8 +1,8 @@
-import { BaseHTMLView } from '@view/base/baseHTMLView';
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { GenomeView } from "./genomeView";
 import genomeInlineTmpl from './genomeInlineTmpl.html';
 
-class GenomeInlineView extends BaseHTMLView {
+class GenomeInlineView extends BaseGameHTMLView {
 
     constructor(el, genome) {
         super(el);

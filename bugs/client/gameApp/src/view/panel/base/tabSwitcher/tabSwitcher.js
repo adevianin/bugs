@@ -1,8 +1,8 @@
 import './styles.css';
 
-import { BaseHTMLView } from '@view/base/baseHTMLView';
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 
-class TabSwitcher extends BaseHTMLView {
+class TabSwitcher extends BaseGameHTMLView {
 
     //tabsData - [{ name: 'user', label: 'Користувач', tab: this._userTab }]
     constructor(el, switcherName, tabsData) {

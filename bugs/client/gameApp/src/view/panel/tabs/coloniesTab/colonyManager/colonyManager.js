@@ -1,12 +1,12 @@
 import './styles.css';
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import colonyManagerTmpl from "./colonyManagerTmpl.html";
 import { NestsTabView } from './nestsTab';
 import { AntsTab } from './antsTab';
 import { OperationsTab } from './operationsTab';
 import { TabSwitcher } from '@view/panel/base/tabSwitcher';
 
-class ColonyManager extends BaseHTMLView {
+class ColonyManager extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

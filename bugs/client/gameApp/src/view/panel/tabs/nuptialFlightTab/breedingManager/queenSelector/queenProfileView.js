@@ -1,9 +1,9 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import queenProfileTmpl from './queenProfileTmpl.html';
 import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
 import { AntStatsView } from "@view/panel/base/antStats/antStatsView";
 
-class QueenProfileView extends BaseHTMLView {
+class QueenProfileView extends BaseGameHTMLView {
     
     constructor(el) {
         super(el);

@@ -1,7 +1,7 @@
-import { BaseHTMLView } from '@view/base/baseHTMLView';
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import userTabTmpl from './userTabTmpl.html';
 
-class UserTab extends BaseHTMLView {
+class UserTab extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

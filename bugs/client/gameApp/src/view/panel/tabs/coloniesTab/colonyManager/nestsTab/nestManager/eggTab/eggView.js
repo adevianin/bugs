@@ -1,10 +1,10 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import eggTmpl from './eggTmpl.html';
 import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
 import { eggStatesLabels } from "@view/labels/eggStatesLabels";
 
-class EggView extends BaseHTMLView {
+class EggView extends BaseGameHTMLView {
     constructor(el, egg, nest) {
         super(el);
         this._nest = nest;

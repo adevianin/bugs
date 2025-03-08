@@ -1,8 +1,8 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import antsTabTmpl from './antsTabTmpl.html';
 import { AntsListView } from "./antsList";
 
-class AntsTab extends BaseHTMLView {
+class AntsTab extends BaseGameHTMLView {
 
     constructor(el) {
         super(el)

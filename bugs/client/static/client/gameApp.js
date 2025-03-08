@@ -12,26 +12,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BaseDomainFacade: () => (/* binding */ BaseDomainFacade)
 /* harmony export */ });
-class BaseDomainFacade {
-
-    constructor(mainEventBus, accountService) {
-        this._mainEventBus = mainEventBus;
-        this._accountService = accountService;
-    }
-
-    get events() {
-        return this._mainEventBus;
-    }
-
-    logout() {
-        return this._accountService.logout();
-    }
-
-    getUserData() {
-        return this._accountService.getUserData();
-    }
-
-}
+class BaseDomainFacade {}
 
 
 /***/ }),
@@ -240,6 +221,37 @@ class AccountApi {
 
 /***/ }),
 
+/***/ "./common/utils/eventEmitter.js":
+/*!**************************************!*\
+  !*** ./common/utils/eventEmitter.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EventEmitter: () => (/* binding */ EventEmitter)
+/* harmony export */ });
+/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! events */ "./node_modules/events/events.js");
+/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_0__);
+
+
+class EventEmitter extends (events__WEBPACK_IMPORTED_MODULE_0___default()) {
+
+    on(eventName, callback) {
+        super.on(eventName, callback);
+
+        return () => {
+            this.off(eventName, callback);
+        }
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./common/utils/getCookie.js":
 /*!***********************************!*\
   !*** ./common/utils/getCookie.js ***!
@@ -333,6 +345,53 @@ class Requester {
 
 /***/ }),
 
+/***/ "./common/view/base/baseHTMLView.js":
+/*!******************************************!*\
+  !*** ./common/view/base/baseHTMLView.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BaseHTMLView: () => (/* binding */ BaseHTMLView)
+/* harmony export */ });
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
+/* harmony import */ var _baseView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./baseView */ "./common/view/base/baseView.js");
+
+
+
+class BaseHTMLView extends _baseView__WEBPACK_IMPORTED_MODULE_1__.BaseView {
+
+    constructor(el) {
+        super();
+        this._el = el;
+        this.events = new _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
+    }
+
+    get el() {
+        return this._el;
+    }
+
+    toggle(isEnabled) {
+        this._el.classList.toggle('g-hidden', !isEnabled);
+    }
+
+    isVisible() {
+        return this._el.closest('.g-hidden') === null;
+    }
+
+    remove() {
+        this._el.remove();
+        this.events.removeAllListeners();
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./common/view/base/baseView.js":
 /*!**************************************!*\
   !*** ./common/view/base/baseView.js ***!
@@ -363,6 +422,10 @@ class BaseView {
 
     static useEventBus(eventBus) {
         BaseView.eventBus = eventBus;
+    }
+
+    remove(){
+        throw 'remove method is abstract';
     }
 
 }
@@ -430,7 +493,9 @@ __webpack_require__.r(__webpack_exports__);
 class DomainFacade extends _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MODULE_0__.BaseDomainFacade {
 
     constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService, antService) {
-        super(mainEventBus, accountService);
+        super();
+        this._mainEventBus = mainEventBus;
+        this._accountService = accountService;
         this._worldService = worldService;
         this._messageHandlerService = messageHandlerService;
         this._colonyService = colonyService;
@@ -438,6 +503,10 @@ class DomainFacade extends _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MOD
         this._nuptialEnvironmentService = nuptialEnvironmentService;
         this._nestService = nestService;
         this._antService = antService;
+    }
+
+    get events() {
+        return this._mainEventBus;
     }
 
     get currentStep() {
@@ -651,6 +720,18 @@ class DomainFacade extends _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MOD
 
     /*========================*/
 
+    /*==========account===========*/
+
+    logout() {
+        return this._accountService.logout();
+    }
+
+    getUserData() {
+        return this._accountService.getUserData();
+    }
+
+    /*==============================*/
+
 }
 
 
@@ -723,11 +804,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   AntColony: () => (/* binding */ AntColony)
 /* harmony export */ });
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./action/actionTypes */ "./gameApp/src/domain/entity/action/actionTypes.js");
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
 
 
 
-class AntColony extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_1__.EventEmitter {
+class AntColony extends _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_1__.EventEmitter {
 
     constructor(eventBus, id, onwerId, name, operations) {
         super();
@@ -1312,10 +1393,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Climate: () => (/* binding */ Climate)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
 
 
-class Climate extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+class Climate extends _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
     constructor() {
         super();
@@ -1362,14 +1443,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Egg: () => (/* binding */ Egg)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
 /* harmony import */ var _genetic_genome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genetic/genome */ "./gameApp/src/domain/entity/genetic/genome.js");
 /* harmony import */ var _domain_enum_eggStates__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/eggStates */ "./gameApp/src/domain/enum/eggStates.js");
 
 
 
 
-class Egg extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+class Egg extends _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
     static buildFromJson(json) {
         let genome = _genetic_genome__WEBPACK_IMPORTED_MODULE_1__.Genome.buildFromJson(json.genome);
@@ -1429,12 +1510,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Entity: () => (/* binding */ Entity)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
 /* harmony import */ var _action_actionTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./action/actionTypes */ "./gameApp/src/domain/entity/action/actionTypes.js");
 
 
 
-class Entity extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+class Entity extends _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
     constructor(eventBus, id, position, angle, type, fromColony, ownerId, hp, maxHp) {
         super();
@@ -1920,12 +2001,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Larva: () => (/* binding */ Larva)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
 /* harmony import */ var _genetic_genome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genetic/genome */ "./gameApp/src/domain/entity/genetic/genome.js");
 
 
 
-class Larva extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+class Larva extends _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
     static buildFromJson(json) {
         let genome = _genetic_genome__WEBPACK_IMPORTED_MODULE_1__.Genome.buildFromJson(json.genome);
@@ -2291,10 +2372,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NotificationsContainer: () => (/* binding */ NotificationsContainer)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
 
 
-class NotificationsContainer extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+class NotificationsContainer extends _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
     constructor() {
         super();
@@ -2406,10 +2487,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Specie: () => (/* binding */ Specie)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
 
 
-class Specie extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+class Specie extends _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
     constructor(specieChromosomes) {
         super();
@@ -2462,10 +2543,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SpecieChromosome: () => (/* binding */ SpecieChromosome)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
 
 
-class SpecieChromosome extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+class SpecieChromosome extends _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
     constructor(type, activatedSpecieGenesIds, specieGenes) {
         super();
@@ -2542,10 +2623,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   RatingContainer: () => (/* binding */ RatingContainer)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
 
 
-class RatingContainer extends _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
+class RatingContainer extends _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
 
     get ratingPlaces() {
         return this._ratingPlaces;
@@ -3070,7 +3151,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domainFacade__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./domainFacade */ "./gameApp/src/domain/domainFacade.js");
 /* harmony import */ var _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/domain/service/accountService */ "./common/domain/service/accountService.js");
 /* harmony import */ var _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./service/messageHandlerService */ "./gameApp/src/domain/service/messageHandlerService.js");
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
 /* harmony import */ var _worldFactory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./worldFactory */ "./gameApp/src/domain/worldFactory.js");
 /* harmony import */ var _service_worldService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./service/worldService */ "./gameApp/src/domain/service/worldService.js");
 /* harmony import */ var _service_colonyService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./service/colonyService */ "./gameApp/src/domain/service/colonyService.js");
@@ -3097,7 +3178,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function initDomainLayer(apis, serverConnection, initialData) {
-    let mainEventBus = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
+    let mainEventBus = new _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
 
     let worldFactory = new _worldFactory__WEBPACK_IMPORTED_MODULE_4__.WorldFactory(mainEventBus);
     let nuptialEnvironmentFactory = new _entity_nuptialEnvironment_nuptialEnvironmentFactory__WEBPACK_IMPORTED_MODULE_12__.NuptialEnvironmentFactory();
@@ -4530,13 +4611,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ServerConnection: () => (/* binding */ ServerConnection)
 /* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
 
 
 class ServerConnection {
 
     constructor(socketURL) {
-        this.events = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
+        this.events = new _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
         this._socketURL = socketURL;
     }
 
@@ -4629,37 +4710,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 function distance(x1, y1, x2, y2) {
     return Math.sqrt(Math.pow((x1  -x2), 2) + Math.pow((y1 - y2), 2));
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/utils/eventEmitter.js":
-/*!*******************************************!*\
-  !*** ./gameApp/src/utils/eventEmitter.js ***!
-  \*******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   EventEmitter: () => (/* binding */ EventEmitter)
-/* harmony export */ });
-/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! events */ "./node_modules/events/events.js");
-/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_0__);
-
-
-class EventEmitter extends (events__WEBPACK_IMPORTED_MODULE_0___default()) {
-
-    on(eventName, callback) {
-        super.on(eventName, callback);
-
-        return () => {
-            this.off(eventName, callback);
-        }
-    }
-
 }
 
 
@@ -4788,8 +4838,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   AppView: () => (/* binding */ AppView)
 /* harmony export */ });
 /* harmony import */ var _appStyles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./appStyles.css */ "./gameApp/src/view/appStyles.css");
-/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
-/* harmony import */ var _appTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./appTmpl.html */ "./gameApp/src/view/appTmpl.html");
+/* harmony import */ var _appTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./appTmpl.html */ "./gameApp/src/view/appTmpl.html");
+/* harmony import */ var _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 /* harmony import */ var _climate_climateView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./climate/climateView */ "./gameApp/src/view/climate/climateView.js");
 /* harmony import */ var _panel__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./panel */ "./gameApp/src/view/panel/index.js");
@@ -4808,7 +4858,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class AppView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+class AppView extends _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseGameHTMLView {
     constructor(el) {
         super(el);
 
@@ -4816,7 +4866,7 @@ class AppView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLVi
     }
 
     _render() {
-        this._el.innerHTML = _appTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
+        this._el.innerHTML = _appTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
         this._el.classList.add('app');
 
         new _climate_climateView__WEBPACK_IMPORTED_MODULE_4__.ClimateView(this._el.querySelector('[data-climate]'));
@@ -4828,7 +4878,7 @@ class AppView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLVi
 
         let globalContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_3__.Container();
         this.$pixiApp.stage.addChild(globalContainer);
-        new _camera__WEBPACK_IMPORTED_MODULE_6__.Camera(globalContainer);
+        new _camera__WEBPACK_IMPORTED_MODULE_6__.Camera(globalContainer, this.$pixiApp);
 
         let worldContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_3__.Container();
         globalContainer.addChild(worldContainer);
@@ -4866,39 +4916,39 @@ class AppView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLVi
 
 /***/ }),
 
-/***/ "./gameApp/src/view/base/baseGameView.js":
-/*!***********************************************!*\
-  !*** ./gameApp/src/view/base/baseGameView.js ***!
-  \***********************************************/
+/***/ "./gameApp/src/view/base/baseGameHTMLView.js":
+/*!***************************************************!*\
+  !*** ./gameApp/src/view/base/baseGameHTMLView.js ***!
+  \***************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   BaseGameView: () => (/* binding */ BaseGameView)
+/* harmony export */   BaseGameHTMLView: () => (/* binding */ BaseGameHTMLView)
 /* harmony export */ });
-/* harmony import */ var _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/view/base/baseView */ "./common/view/base/baseView.js");
+/* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
 
 
-class BaseGameView extends _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView {
+class BaseGameHTMLView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
     static messages;
     static pixiApp;
 
     get $messages() {
-        return BaseGameView.messages;
+        return BaseGameHTMLView.messages;
     }
 
     get $pixiApp() {
-        return BaseGameView.pixiApp;
+        return BaseGameHTMLView.pixiApp;
     }
 
     static useMessages(messages) {
-        BaseGameView.messages = messages;
+        BaseGameHTMLView.messages = messages;
     }
 
     static usePixiApp(pixiApp) {
-        BaseGameView.pixiApp = pixiApp;
+        BaseGameHTMLView.pixiApp = pixiApp;
     }
 
 }
@@ -4918,10 +4968,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BaseGraphicView: () => (/* binding */ BaseGraphicView)
 /* harmony export */ });
-/* harmony import */ var _baseGameView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseGameView */ "./gameApp/src/view/base/baseGameView.js");
+/* harmony import */ var _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/view/base/baseView */ "./common/view/base/baseView.js");
 
 
-class BaseGraphicView extends _baseGameView__WEBPACK_IMPORTED_MODULE_0__.BaseGameView {
+class BaseGraphicView extends _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView {
 
     static textureManager;
 
@@ -4931,57 +4981,6 @@ class BaseGraphicView extends _baseGameView__WEBPACK_IMPORTED_MODULE_0__.BaseGam
 
     get $textureManager() {
         return BaseGraphicView.textureManager;
-    }
-
-    remove(){
-        throw 'remove method is abstract';
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/view/base/baseHTMLView.js":
-/*!***********************************************!*\
-  !*** ./gameApp/src/view/base/baseHTMLView.js ***!
-  \***********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   BaseHTMLView: () => (/* binding */ BaseHTMLView)
-/* harmony export */ });
-/* harmony import */ var _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @utils/eventEmitter */ "./gameApp/src/utils/eventEmitter.js");
-/* harmony import */ var _baseGameView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./baseGameView */ "./gameApp/src/view/base/baseGameView.js");
-
-
-
-class BaseHTMLView extends _baseGameView__WEBPACK_IMPORTED_MODULE_1__.BaseGameView {
-
-    constructor(el) {
-        super();
-        this._el = el;
-        this.events = new _utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
-    }
-
-    get el() {
-        return this._el;
-    }
-
-    toggle(isEnabled) {
-        this._el.classList.toggle('g-hidden', !isEnabled);
-    }
-
-    isVisible() {
-        return this._el.closest('.g-hidden') === null;
-    }
-
-    remove() {
-        this._el.remove();
-        this.events.removeAllListeners();
     }
 
 }
@@ -5011,7 +5010,7 @@ class Camera extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.Bas
     static MAP_MARGIN = 5;
     static SHOW_POSITION_DURATION = 500;
 
-    constructor(container) {
+    constructor(container, pixiApp) {
         super();
         this._container = container;
         this._isDraging = false;
@@ -5021,6 +5020,7 @@ class Camera extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.Bas
             width: worldSize[0],
             height: worldSize[1]
         };
+        this._pixiApp = pixiApp;
 
         this._renderHandler();
 
@@ -5062,7 +5062,7 @@ class Camera extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.Bas
     }
 
     _showPosition(x, y) {
-        let viewPointLocal = this._container.toLocal(new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Point(this.$pixiApp.canvas.offsetWidth / 2, this.$pixiApp.canvas.offsetHeight / 2));
+        let viewPointLocal = this._container.toLocal(new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Point(this._pixiApp.canvas.offsetWidth / 2, this._pixiApp.canvas.offsetHeight / 2));
         let dx = x - viewPointLocal.x;
         let dy = y - viewPointLocal.y;
         let startTime = performance.now();
@@ -5071,7 +5071,7 @@ class Camera extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.Bas
         let destCameraY = startCameraPosition.y + dy;
 
         if (this._moveFn) {
-            this.$pixiApp.ticker.remove(this._moveFn);
+            this._pixiApp.ticker.remove(this._moveFn);
         }
         
         this._moveFn = () => {
@@ -5085,12 +5085,12 @@ class Camera extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.Bas
                 this._setCameraPosition(startCameraPosition.x + currentDx, startCameraPosition.y + currentDy);
             } else {
                 this._setCameraPosition(destCameraX, destCameraY);
-                this.$pixiApp.ticker.remove(this._moveFn);
+                this._pixiApp.ticker.remove(this._moveFn);
                 this._moveFn = null;
             }
         };
 
-        this.$pixiApp.ticker.add(this._moveFn);
+        this._pixiApp.ticker.add(this._moveFn);
     }
 
     _moveCamera(dx, dy) {
@@ -5109,12 +5109,12 @@ class Camera extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.Bas
             containerPosY = Camera.MAP_MARGIN;
         }
 
-        let minXPos = this.$pixiApp.canvas.offsetWidth - this._mapSize.width - Camera.MAP_MARGIN
+        let minXPos = this._pixiApp.canvas.offsetWidth - this._mapSize.width - Camera.MAP_MARGIN
         if (containerPosX < minXPos) {
             containerPosX = minXPos;
         }
 
-        let minPosY = this.$pixiApp.canvas.offsetHeight - this._mapSize.height  - Camera.MAP_MARGIN;
+        let minPosY = this._pixiApp.canvas.offsetHeight - this._mapSize.height  - Camera.MAP_MARGIN;
         if (containerPosY < minPosY) {
             containerPosY = minPosY;
         }
@@ -5152,7 +5152,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ClimateView: () => (/* binding */ ClimateView)
 /* harmony export */ });
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./gameApp/src/view/climate/styles.css");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _climateTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./climateTmpl.html */ "./gameApp/src/view/climate/climateTmpl.html");
 /* harmony import */ var _seasonBarView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./seasonBarView */ "./gameApp/src/view/climate/seasonBarView.js");
 
@@ -5160,7 +5160,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class ClimateView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+class ClimateView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -5203,14 +5203,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SeasonBarView: () => (/* binding */ SeasonBarView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _seasonBarTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./seasonBarTmpl.html */ "./gameApp/src/view/climate/seasonBarTmpl.html");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
 
 
 
 
-class SeasonBarView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class SeasonBarView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -5277,15 +5277,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   initViewLayer: () => (/* binding */ initViewLayer)
 /* harmony export */ });
-/* harmony import */ var _base_baseGameView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseGameView */ "./gameApp/src/view/base/baseGameView.js");
-/* harmony import */ var _appView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./appView */ "./gameApp/src/view/appView.js");
-/* harmony import */ var _common_utils_requester__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/utils/requester */ "./common/utils/requester.js");
-/* harmony import */ var _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./world/worldSpritesheetManager */ "./gameApp/src/view/world/worldSpritesheetManager.js");
-/* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
-/* harmony import */ var _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @utils/eventEmitter.js */ "./gameApp/src/utils/eventEmitter.js");
-/* harmony import */ var _messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../messages/uaMessagesLib */ "./gameApp/src/messages/uaMessagesLib.js");
-/* harmony import */ var _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./textures/build/world_spritesheet.json */ "./gameApp/src/view/textures/build/world_spritesheet.json");
-/* harmony import */ var _textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./textures/build/world_spritesheet.png */ "./gameApp/src/view/textures/build/world_spritesheet.png");
+/* harmony import */ var _appView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./appView */ "./gameApp/src/view/appView.js");
+/* harmony import */ var _common_utils_requester__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/utils/requester */ "./common/utils/requester.js");
+/* harmony import */ var _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./world/worldSpritesheetManager */ "./gameApp/src/view/world/worldSpritesheetManager.js");
+/* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
+/* harmony import */ var _common_utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/utils/eventEmitter.js */ "./common/utils/eventEmitter.js");
+/* harmony import */ var _messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../messages/uaMessagesLib */ "./gameApp/src/messages/uaMessagesLib.js");
+/* harmony import */ var _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./textures/build/world_spritesheet.json */ "./gameApp/src/view/textures/build/world_spritesheet.json");
+/* harmony import */ var _textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./textures/build/world_spritesheet.png */ "./gameApp/src/view/textures/build/world_spritesheet.png");
+/* harmony import */ var _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 
 
@@ -5299,22 +5299,24 @@ __webpack_require__.r(__webpack_exports__);
 
 
 async function initViewLayer(domainFacade) {
-    let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_2__.Requester();
-    let eventBus = new _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_5__.EventEmitter();
-    let spritesheetManager = new _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_3__.WorldSpritesheetManager(_textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_8__, _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_7__, requester);
+    let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_1__.Requester();
+    let eventBus = new _common_utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_4__.EventEmitter();
+    let spritesheetManager = new _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__.WorldSpritesheetManager(_textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_7__, _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_6__, requester);
     let loaderEl = document.querySelector('[data-game-loader]');
 
     await spritesheetManager.prepareTextures();
     let pixiApp = new pixi_js__WEBPACK_IMPORTED_MODULE_9__.Application();
     await pixiApp.init();
 
-    _base_baseGameView__WEBPACK_IMPORTED_MODULE_0__.BaseGameView.useDomainFacade(domainFacade);
-    _base_baseGameView__WEBPACK_IMPORTED_MODULE_0__.BaseGameView.useEventBus(eventBus);
-    _base_baseGameView__WEBPACK_IMPORTED_MODULE_0__.BaseGameView.useMessages(_messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_6__.uaMessages);
-    _base_baseGameView__WEBPACK_IMPORTED_MODULE_0__.BaseGameView.usePixiApp(pixiApp);
-    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_4__.BaseGraphicView.useTextureManager(spritesheetManager);
+    _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_8__.BaseGameHTMLView.useDomainFacade(domainFacade);
+    _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_8__.BaseGameHTMLView.useEventBus(eventBus);
+    _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_8__.BaseGameHTMLView.useMessages(_messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_5__.uaMessages);
+    _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_8__.BaseGameHTMLView.usePixiApp(pixiApp);
+    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useDomainFacade(domainFacade);
+    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useEventBus(eventBus);
+    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useTextureManager(spritesheetManager);
 
-    let app = new _appView__WEBPACK_IMPORTED_MODULE_1__.AppView(document.querySelector('[data-app]'));
+    let app = new _appView__WEBPACK_IMPORTED_MODULE_0__.AppView(document.querySelector('[data-app]'));
     app.events.addListener('ready', () => {
         loaderEl.remove();
     })
@@ -5471,10 +5473,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BorderView: () => (/* binding */ BorderView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 
 
-class BorderView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class BorderView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -5671,14 +5673,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AntStatsView: () => (/* binding */ AntStatsView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _antStatsTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antStatsTmpl.html */ "./gameApp/src/view/panel/base/antStats/antStatsTmpl.html");
 /* harmony import */ var _utils_convertStepsToYear__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @utils/convertStepsToYear */ "./gameApp/src/utils/convertStepsToYear.js");
 
 
 
 
-class AntStatsView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class AntStatsView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(stats) {
         super(document.createElement('table'));
@@ -5730,7 +5732,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   GeneView: () => (/* binding */ GeneView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _domain_enum_genesTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/genesTypes */ "./gameApp/src/domain/enum/genesTypes.js");
 /* harmony import */ var _geneTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./geneTmpl.html */ "./gameApp/src/view/panel/base/genome/genes/geneTmpl.html");
 /* harmony import */ var _bodyStrengthTmpl_html__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./bodyStrengthTmpl.html */ "./gameApp/src/view/panel/base/genome/genes/bodyStrengthTmpl.html");
@@ -5763,7 +5765,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class GeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class GeneView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el, gene) {
         super(el);
@@ -5924,14 +5926,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   GenomeInlineView: () => (/* binding */ GenomeInlineView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _genomeView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genomeView */ "./gameApp/src/view/panel/base/genome/genomeView.js");
 /* harmony import */ var _genomeInlineTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./genomeInlineTmpl.html */ "./gameApp/src/view/panel/base/genome/genomeInlineTmpl.html");
 
 
 
 
-class GenomeInlineView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class GenomeInlineView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el, genome) {
         super(el);
@@ -5997,7 +5999,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   GenomeView: () => (/* binding */ GenomeView)
 /* harmony export */ });
 /* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./gameApp/src/view/panel/base/genome/style.css");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _genes_geneView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./genes/geneView */ "./gameApp/src/view/panel/base/genome/genes/geneView.js");
 /* harmony import */ var _domain_enum_chromosomeTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/chromosomeTypes */ "./gameApp/src/domain/enum/chromosomeTypes.js");
 /* harmony import */ var _genomeTmpl_html__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./genomeTmpl.html */ "./gameApp/src/view/panel/base/genome/genomeTmpl.html");
@@ -6010,7 +6012,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class GenomeView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+class GenomeView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseGameHTMLView {
 
     constructor(el, genome) {
         super(el);
@@ -6097,11 +6099,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   IntInputView: () => (/* binding */ IntInputView)
 /* harmony export */ });
 /* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./gameApp/src/view/panel/base/intInput/style.css");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 
 
 
-class IntInputView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+class IntInputView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseGameHTMLView {
 
     constructor(el, minValue, maxValue, errContainerEl) {
         super(el);
@@ -6233,10 +6235,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NestSelectorView: () => (/* binding */ NestSelectorView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 
 
-class NestSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class NestSelectorView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el, colonyId, canBeEmpty = true) {
         super(el);
@@ -6359,13 +6361,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   NestInlineView: () => (/* binding */ NestInlineView)
 /* harmony export */ });
 /* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./gameApp/src/view/panel/base/nest/style.css");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _nestInlineTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./nestInlineTmpl.html */ "./gameApp/src/view/panel/base/nest/nestInlineTmpl.html");
 
 
 
 
-class NestInlineView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+class NestInlineView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseGameHTMLView {
 
     constructor(el, nest) {
         super(el);
@@ -6447,10 +6449,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PositionView: () => (/* binding */ PositionView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 
 
-class PositionView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class PositionView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el, position) {
         super(el);
@@ -6508,12 +6510,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   TabSwitcher: () => (/* binding */ TabSwitcher)
 /* harmony export */ });
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./gameApp/src/view/panel/base/tabSwitcher/styles.css");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 
 
 
 
-class TabSwitcher extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+class TabSwitcher extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseGameHTMLView {
 
     //tabsData - [{ name: 'user', label: 'Користувач', tab: this._userTab }]
     constructor(el, switcherName, tabsData) {
@@ -6587,12 +6589,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TextInputView: () => (/* binding */ TextInputView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _utils_formatMessage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/formatMessage */ "./gameApp/src/utils/formatMessage.js");
 
 
 
-class TextInputView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class TextInputView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el, errContainer, minLength=3, maxLength=50) {
         super(el);
@@ -6687,7 +6689,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./gameApp/src/view/panel/styles.css");
 /* harmony import */ var _panelTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./panelTmpl.html */ "./gameApp/src/view/panel/panelTmpl.html");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _tabs_userTab_userTab__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./tabs/userTab/userTab */ "./gameApp/src/view/panel/tabs/userTab/userTab.js");
 /* harmony import */ var _tabs_coloniesTab__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tabs/coloniesTab */ "./gameApp/src/view/panel/tabs/coloniesTab/index.js");
 /* harmony import */ var _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./base/tabSwitcher */ "./gameApp/src/view/panel/base/tabSwitcher/index.js");
@@ -6711,7 +6713,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class PanelView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
+class PanelView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -6808,13 +6810,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ColoniesListView: () => (/* binding */ ColoniesListView)
 /* harmony export */ });
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./gameApp/src/view/panel/tabs/coloniesTab/coloniesList/styles.css");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _colonyView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./colonyView */ "./gameApp/src/view/panel/tabs/coloniesTab/coloniesList/colonyView.js");
 
 
 
 
-class ColoniesListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+class ColoniesListView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -6921,12 +6923,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ColonyView: () => (/* binding */ ColonyView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _colony_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./colony.html */ "./gameApp/src/view/panel/tabs/coloniesTab/coloniesList/colony.html");
 
 
 
-class ColonyView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class ColonyView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el, colony) {
         super(el)
@@ -6987,7 +6989,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ColoniesTabView: () => (/* binding */ ColoniesTabView)
 /* harmony export */ });
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./gameApp/src/view/panel/tabs/coloniesTab/styles.css");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _coloniesTab_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./coloniesTab.html */ "./gameApp/src/view/panel/tabs/coloniesTab/coloniesTab.html");
 /* harmony import */ var _coloniesList__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./coloniesList */ "./gameApp/src/view/panel/tabs/coloniesTab/coloniesList/index.js");
 /* harmony import */ var _colonyManager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./colonyManager */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/index.js");
@@ -6997,7 +6999,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class ColoniesTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+class ColoniesTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -7059,7 +7061,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AntView: () => (/* binding */ AntView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _antTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antTmpl.html");
 /* harmony import */ var _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/nestSelector */ "./gameApp/src/view/panel/base/nestSelector/index.js");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
@@ -7074,7 +7076,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class AntView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class AntView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(ant) {
         let el = document.createElement('tbody');
@@ -7240,7 +7242,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AntsListView: () => (/* binding */ AntsListView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _antsListTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antsListTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antsListTmpl.html");
 /* harmony import */ var _antView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./antView */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/antView.js");
 /* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./gameApp/src/domain/enum/entityTypes.js");
@@ -7251,7 +7253,7 @@ __webpack_require__.r(__webpack_exports__);
 
   
 
-class AntsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class AntsListView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -7397,14 +7399,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AntsTab: () => (/* binding */ AntsTab)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _antsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./antsTabTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsTabTmpl.html");
 /* harmony import */ var _antsList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./antsList */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/antsList/index.js");
 
 
 
 
-class AntsTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class AntsTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el)
@@ -7457,7 +7459,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ColonyManager: () => (/* binding */ ColonyManager)
 /* harmony export */ });
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/styles.css");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _colonyManagerTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./colonyManagerTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/colonyManagerTmpl.html");
 /* harmony import */ var _nestsTab__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestsTab */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/index.js");
 /* harmony import */ var _antsTab__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./antsTab */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/antsTab/index.js");
@@ -7471,7 +7473,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class ColonyManager extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+class ColonyManager extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -7560,7 +7562,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   EggTabView: () => (/* binding */ EggTabView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _eggTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./eggTabTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/eggTab/eggTabTmpl.html");
 /* harmony import */ var _eggView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./eggView */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/eggTab/eggView.js");
 /* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
@@ -7571,7 +7573,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class EggTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class EggTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -7710,7 +7712,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   EggView: () => (/* binding */ EggView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _eggTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./eggTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/eggTab/eggTmpl.html");
 /* harmony import */ var _view_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/genome/genomeInlineView */ "./gameApp/src/view/panel/base/genome/genomeInlineView.js");
 /* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./gameApp/src/view/labels/antTypesLabels.js");
@@ -7721,7 +7723,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class EggView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class EggView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
     constructor(el, egg, nest) {
         super(el);
         this._nest = nest;
@@ -7858,14 +7860,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   LarvaTabView: () => (/* binding */ LarvaTabView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _larvaTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./larvaTabTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTabTmpl.html");
 /* harmony import */ var _larvaView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./larvaView */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaView.js");
 
 
 
 
-class LarvaTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class LarvaTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -7963,7 +7965,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   LarvaView: () => (/* binding */ LarvaView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _larvaTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./larvaTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/larvaTab/larvaTmpl.html");
 /* harmony import */ var _view_labels_antTypesLabels__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/labels/antTypesLabels */ "./gameApp/src/view/labels/antTypesLabels.js");
 /* harmony import */ var _view_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/panel/base/genome/genomeInlineView */ "./gameApp/src/view/panel/base/genome/genomeInlineView.js");
@@ -7972,7 +7974,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class LarvaView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class LarvaView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el, larva, nest) {
         super(el);
@@ -8039,12 +8041,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MainTabView: () => (/* binding */ MainTabView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _mainTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./mainTabTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/mainTab/mainTabTmpl.html");
 
 
 
-class MainTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class MainTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -8122,7 +8124,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NestManagerView: () => (/* binding */ NestManagerView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _nestManagerTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nestManagerTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/nestManagerTmpl.html");
 /* harmony import */ var _view_panel_base_tabSwitcher__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/tabSwitcher */ "./gameApp/src/view/panel/base/tabSwitcher/index.js");
 /* harmony import */ var _eggTab_eggTabView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./eggTab/eggTabView */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/eggTab/eggTabView.js");
@@ -8135,7 +8137,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class NestManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class NestManagerView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -8204,12 +8206,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NestView: () => (/* binding */ NestView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _nestTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nestTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/nestTmpl.html");
 
 
 
-class NestView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class NestView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el, nest) {
         super(el);
@@ -8252,14 +8254,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NestsListView: () => (/* binding */ NestsListView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _nestView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nestView */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/nestView.js");
 /* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./gameApp/src/domain/enum/entityTypes.js");
 
 
 
 
-class NestsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class NestsListView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -8372,7 +8374,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NestsTabView: () => (/* binding */ NestsTabView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _nestsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nestsTabTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsTabTmpl.html");
 /* harmony import */ var _nestsList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./nestsList */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestsList/index.js");
 /* harmony import */ var _nestManager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestManager */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/index.js");
@@ -8381,7 +8383,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class NestsTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class NestsTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el)
@@ -8459,11 +8461,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   BaseOperationCreatorView: () => (/* binding */ BaseOperationCreatorView)
 /* harmony export */ });
 /* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/style.css");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 
 
 
-class BaseOperationCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+class BaseOperationCreatorView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseGameHTMLView {
 
     constructor(performingColony, onDone) {
         let el = document.createElement('div');
@@ -9566,7 +9568,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   OperationsCreatorView: () => (/* binding */ OperationsCreatorView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _operationsCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationsCreatorTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationsCreatorTmpl.html");
 /* harmony import */ var _operationCreators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./operationCreators */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/index.js");
 /* harmony import */ var _domain_enum_operationTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/operationTypes */ "./gameApp/src/domain/enum/operationTypes.js");
@@ -9575,7 +9577,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class OperationsCreatorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class OperationsCreatorView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -9695,12 +9697,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   OperationView: () => (/* binding */ OperationView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _operationTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationTmpl.html");
 
 
 
-class OperationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class OperationView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el, operation, colonyId) {
         super(el);
@@ -9766,14 +9768,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   OperationsListView: () => (/* binding */ OperationsListView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _operationView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationView */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationView.js");
 /* harmony import */ var _operationsListTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./operationsListTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/operationsListTmpl.html");
 
 
 
 
-class OperationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class OperationsListView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
     
     constructor(el) {
         super(el);
@@ -9927,7 +9929,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   OperationsTab: () => (/* binding */ OperationsTab)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _operationsTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationsTabTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsTabTmpl.html");
 /* harmony import */ var _operationsList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./operationsList */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsList/index.js");
 /* harmony import */ var _operationsCreator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./operationsCreator */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/index.js");
@@ -9936,7 +9938,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class OperationsTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class OperationsTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el)
@@ -10015,7 +10017,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NotificationView: () => (/* binding */ NotificationView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _domain_enum_notificationTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/enum/notificationTypes */ "./gameApp/src/domain/enum/notificationTypes.js");
 /* harmony import */ var _domain_enum_deathTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/deathTypes */ "./gameApp/src/domain/enum/deathTypes.js");
 /* harmony import */ var _domain_enum_damageTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/damageTypes */ "./gameApp/src/domain/enum/damageTypes.js");
@@ -10036,7 +10038,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class NotificationView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class NotificationView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el, notification) {
         super(el);
@@ -10164,14 +10166,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NotificationsListView: () => (/* binding */ NotificationsListView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _notificationsListTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./notificationsListTmpl.html */ "./gameApp/src/view/panel/tabs/notificationsTab/notificationsListTmpl.html");
 /* harmony import */ var _notification_notificationView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./notification/notificationView */ "./gameApp/src/view/panel/tabs/notificationsTab/notification/notificationView.js");
 
 
 
 
-class NotificationsListView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class NotificationsListView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -10223,7 +10225,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   NotificationsTabView: () => (/* binding */ NotificationsTabView)
 /* harmony export */ });
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./gameApp/src/view/panel/tabs/notificationsTab/styles.css");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _notificationsTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./notificationsTabTmpl.html */ "./gameApp/src/view/panel/tabs/notificationsTab/notificationsTabTmpl.html");
 /* harmony import */ var _notificationsListView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./notificationsListView */ "./gameApp/src/view/panel/tabs/notificationsTab/notificationsListView.js");
 
@@ -10231,7 +10233,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class NotificationsTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+class NotificationsTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -10262,7 +10264,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BreedingManagerView: () => (/* binding */ BreedingManagerView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _breedingManagerTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./breedingManagerTmpl.html */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/breedingManagerTmpl.html");
 /* harmony import */ var _queenSelector_queenSelectorView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./queenSelector/queenSelectorView */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/queenSelector/queenSelectorView.js");
 /* harmony import */ var _maleSelector_maleSelectorView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./maleSelector/maleSelectorView */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleSelectorView.js");
@@ -10281,7 +10283,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class BreedingManagerView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class BreedingManagerView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -10446,7 +10448,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MaleProfileView: () => (/* binding */ MaleProfileView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _maleProfileTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./maleProfileTmpl.html */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleProfileTmpl.html");
 /* harmony import */ var _view_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/genome/genomeInlineView */ "./gameApp/src/view/panel/base/genome/genomeInlineView.js");
 /* harmony import */ var _view_panel_base_antStats_antStatsView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/panel/base/antStats/antStatsView */ "./gameApp/src/view/panel/base/antStats/antStatsView.js");
@@ -10455,7 +10457,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class MaleProfileView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class MaleProfileView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -10493,14 +10495,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MaleSelectorView: () => (/* binding */ MaleSelectorView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _maleSelectorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./maleSelectorTmpl.html */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleSelectorTmpl.html");
 /* harmony import */ var _maleProfileView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./maleProfileView */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/maleSelector/maleProfileView.js");
 
 
 
 
-class MaleSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class MaleSelectorView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -10589,7 +10591,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   QueenProfileView: () => (/* binding */ QueenProfileView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _queenProfileTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./queenProfileTmpl.html */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/queenSelector/queenProfileTmpl.html");
 /* harmony import */ var _view_panel_base_genome_genomeInlineView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/genome/genomeInlineView */ "./gameApp/src/view/panel/base/genome/genomeInlineView.js");
 /* harmony import */ var _view_panel_base_antStats_antStatsView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/panel/base/antStats/antStatsView */ "./gameApp/src/view/panel/base/antStats/antStatsView.js");
@@ -10598,7 +10600,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class QueenProfileView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class QueenProfileView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
     
     constructor(el) {
         super(el);
@@ -10656,14 +10658,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   QueenSelectorView: () => (/* binding */ QueenSelectorView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _queenSelectorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./queenSelectorTmpl.html */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/queenSelector/queenSelectorTmpl.html");
 /* harmony import */ var _queenProfileView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./queenProfileView */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/queenSelector/queenProfileView.js");
 
 
 
 
-class QueenSelectorView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class QueenSelectorView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -10868,7 +10870,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   NuptialFlightTabView: () => (/* binding */ NuptialFlightTabView)
 /* harmony export */ });
 /* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/style.css");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _nuptialFlightTab_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./nuptialFlightTab.html */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/nuptialFlightTab.html");
 /* harmony import */ var _breedingManager_breedinManagerView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./breedingManager/breedinManagerView */ "./gameApp/src/view/panel/tabs/nuptialFlightTab/breedingManager/breedinManagerView.js");
 
@@ -10876,7 +10878,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class NuptialFlightTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+class NuptialFlightTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -10944,7 +10946,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   RatingTabView: () => (/* binding */ RatingTabView)
 /* harmony export */ });
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./gameApp/src/view/panel/tabs/ratingTab/styles.css");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _ratingTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ratingTabTmpl.html */ "./gameApp/src/view/panel/tabs/ratingTab/ratingTabTmpl.html");
 /* harmony import */ var _ratingPlaceTmpl_html__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ratingPlaceTmpl.html */ "./gameApp/src/view/panel/tabs/ratingTab/ratingPlaceTmpl.html");
 
@@ -10952,7 +10954,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class RatingTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+class RatingTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -11004,14 +11006,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ChromosomeEditorTab: () => (/* binding */ ChromosomeEditorTab)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _chromosomeEditorTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./chromosomeEditorTabTmpl.html */ "./gameApp/src/view/panel/tabs/specieBuilderTab/chromosomeEditorTabTmpl.html");
 /* harmony import */ var _specieGeneView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./specieGeneView */ "./gameApp/src/view/panel/tabs/specieBuilderTab/specieGeneView.js");
 
 
 
 
-class ChromosomeEditorTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class ChromosomeEditorTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el, chromosome) {
         super(el);
@@ -11118,7 +11120,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   SpecieBuilderTabView: () => (/* binding */ SpecieBuilderTabView)
 /* harmony export */ });
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./gameApp/src/view/panel/tabs/specieBuilderTab/styles.css");
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _specieBuilderTabTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./specieBuilderTabTmpl.html */ "./gameApp/src/view/panel/tabs/specieBuilderTab/specieBuilderTabTmpl.html");
 /* harmony import */ var _chromosomeEditorTabView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./chromosomeEditorTabView */ "./gameApp/src/view/panel/tabs/specieBuilderTab/chromosomeEditorTabView.js");
 /* harmony import */ var _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../base/tabSwitcher */ "./gameApp/src/view/panel/base/tabSwitcher/index.js");
@@ -11130,7 +11132,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class SpecieBuilderTabView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+class SpecieBuilderTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);
@@ -11173,7 +11175,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SpecieGeneView: () => (/* binding */ SpecieGeneView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _specieGeneTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieGeneTmpl.html */ "./gameApp/src/view/panel/tabs/specieBuilderTab/specieGeneTmpl.html");
 /* harmony import */ var _base_genome_genes_geneView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../base/genome/genes/geneView */ "./gameApp/src/view/panel/base/genome/genes/geneView.js");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
@@ -11182,7 +11184,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class SpecieGeneView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class SpecieGeneView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el, specieGene, isActivated, chromosomeType) {
         super(el);
@@ -11243,12 +11245,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   UserTab: () => (/* binding */ UserTab)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseHTMLView */ "./gameApp/src/view/base/baseHTMLView.js");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _userTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userTabTmpl.html */ "./gameApp/src/view/panel/tabs/userTab/userTabTmpl.html");
 
 
 
-class UserTab extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
     constructor(el) {
         super(el);

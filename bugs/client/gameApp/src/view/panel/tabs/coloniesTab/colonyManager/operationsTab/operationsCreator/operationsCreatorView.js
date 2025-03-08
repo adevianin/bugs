@@ -1,10 +1,10 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import operationsCreatorTmpl from './operationsCreatorTmpl.html';
 import { NewNestOperationCreatorView, DestroyNestOperationCreatorView, PillageNestOperationCreatorView, 
     TransportFoodOperationCreatorView, BuildFortificationOperationCreatorView, BringBugOperationCreatorView } from "./operationCreators";
 import { OperationTypes } from "@domain/enum/operationTypes";
 
-class OperationsCreatorView extends BaseHTMLView {
+class OperationsCreatorView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

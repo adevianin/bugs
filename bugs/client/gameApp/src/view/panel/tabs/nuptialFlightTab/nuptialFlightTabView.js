@@ -1,9 +1,9 @@
 import './style.css';
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import nuptialFlightTabTmpl from './nuptialFlightTab.html';
 import { BreedingManagerView } from './breedingManager/breedinManagerView';
 
-class NuptialFlightTabView extends BaseHTMLView {
+class NuptialFlightTabView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

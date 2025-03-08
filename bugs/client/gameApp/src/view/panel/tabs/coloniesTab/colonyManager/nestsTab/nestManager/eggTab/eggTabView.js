@@ -1,10 +1,10 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import eggTabTmpl from './eggTabTmpl.html';
 import { EggView } from "./eggView";
 import { StateSyncRequestError } from "@domain/errors/stateSyncRequestError";
 import { GenericRequestError } from "@domain/errors/genericRequestError";
 
-class EggTabView extends BaseHTMLView {
+class EggTabView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

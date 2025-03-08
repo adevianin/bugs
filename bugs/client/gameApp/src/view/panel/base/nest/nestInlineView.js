@@ -1,8 +1,8 @@
 import './style.css'
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import nestInlineTmpl from './nestInlineTmpl.html';
 
-class NestInlineView extends BaseHTMLView {
+class NestInlineView extends BaseGameHTMLView {
 
     constructor(el, nest) {
         super(el);

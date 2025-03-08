@@ -6,7 +6,7 @@ class Camera extends BaseGraphicView {
     static MAP_MARGIN = 5;
     static SHOW_POSITION_DURATION = 500;
 
-    constructor(container) {
+    constructor(container, pixiApp) {
         super();
         this._container = container;
         this._isDraging = false;
@@ -16,6 +16,7 @@ class Camera extends BaseGraphicView {
             width: worldSize[0],
             height: worldSize[1]
         };
+        this._pixiApp = pixiApp;
 
         this._renderHandler();
 
@@ -57,7 +58,7 @@ class Camera extends BaseGraphicView {
     }
 
     _showPosition(x, y) {
-        let viewPointLocal = this._container.toLocal(new PIXI.Point(this.$pixiApp.canvas.offsetWidth / 2, this.$pixiApp.canvas.offsetHeight / 2));
+        let viewPointLocal = this._container.toLocal(new PIXI.Point(this._pixiApp.canvas.offsetWidth / 2, this._pixiApp.canvas.offsetHeight / 2));
         let dx = x - viewPointLocal.x;
         let dy = y - viewPointLocal.y;
         let startTime = performance.now();
@@ -66,7 +67,7 @@ class Camera extends BaseGraphicView {
         let destCameraY = startCameraPosition.y + dy;
 
         if (this._moveFn) {
-            this.$pixiApp.ticker.remove(this._moveFn);
+            this._pixiApp.ticker.remove(this._moveFn);
         }
         
         this._moveFn = () => {
@@ -80,12 +81,12 @@ class Camera extends BaseGraphicView {
                 this._setCameraPosition(startCameraPosition.x + currentDx, startCameraPosition.y + currentDy);
             } else {
                 this._setCameraPosition(destCameraX, destCameraY);
-                this.$pixiApp.ticker.remove(this._moveFn);
+                this._pixiApp.ticker.remove(this._moveFn);
                 this._moveFn = null;
             }
         };
 
-        this.$pixiApp.ticker.add(this._moveFn);
+        this._pixiApp.ticker.add(this._moveFn);
     }
 
     _moveCamera(dx, dy) {
@@ -104,12 +105,12 @@ class Camera extends BaseGraphicView {
             containerPosY = Camera.MAP_MARGIN;
         }
 
-        let minXPos = this.$pixiApp.canvas.offsetWidth - this._mapSize.width - Camera.MAP_MARGIN
+        let minXPos = this._pixiApp.canvas.offsetWidth - this._mapSize.width - Camera.MAP_MARGIN
         if (containerPosX < minXPos) {
             containerPosX = minXPos;
         }
 
-        let minPosY = this.$pixiApp.canvas.offsetHeight - this._mapSize.height  - Camera.MAP_MARGIN;
+        let minPosY = this._pixiApp.canvas.offsetHeight - this._mapSize.height  - Camera.MAP_MARGIN;
         if (containerPosY < minPosY) {
             containerPosY = minPosY;
         }

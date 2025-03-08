@@ -1,11 +1,11 @@
 import './styles.css';
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import specieBuilderTabTmpl from './specieBuilderTabTmpl.html';
 import { ChromosomeEditorTab } from "./chromosomeEditorTabView";
 import { TabSwitcher } from '../../base/tabSwitcher';
 import { ChromosomesTypes } from "@domain/enum/chromosomeTypes";
 
-class SpecieBuilderTabView extends BaseHTMLView {
+class SpecieBuilderTabView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);

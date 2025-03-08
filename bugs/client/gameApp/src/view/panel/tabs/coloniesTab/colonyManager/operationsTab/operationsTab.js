@@ -1,9 +1,9 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import operationsTabTmpl from './operationsTabTmpl.html';
 import { OperationsListView } from "./operationsList";
 import { OperationsCreatorView } from "./operationsCreator";
 
-class OperationsTab extends BaseHTMLView {
+class OperationsTab extends BaseGameHTMLView {
 
     constructor(el) {
         super(el)

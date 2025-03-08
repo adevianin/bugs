@@ -19,6 +19,10 @@ class BaseView {
         BaseView.eventBus = eventBus;
     }
 
+    remove(){
+        throw 'remove method is abstract';
+    }
+
 }
 
 export {

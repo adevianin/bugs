@@ -1,7 +1,7 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { formatMessage } from "@utils/formatMessage";
 
-class TextInputView extends BaseHTMLView {
+class TextInputView extends BaseGameHTMLView {
 
     constructor(el, errContainer, minLength=3, maxLength=50) {
         super(el);

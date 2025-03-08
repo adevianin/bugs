@@ -1,8 +1,8 @@
-import { BaseHTMLView } from "@view/base/baseHTMLView";
+import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { AntStatsView } from "./antStatsView";
 import antStatsInlineTmpl from './antStatsInlineTmpl.html';
 
-class AntStatsInlineView extends BaseHTMLView {
+class AntStatsInlineView extends BaseGameHTMLView {
 
     constructor(el, stats) {
         super(el);
