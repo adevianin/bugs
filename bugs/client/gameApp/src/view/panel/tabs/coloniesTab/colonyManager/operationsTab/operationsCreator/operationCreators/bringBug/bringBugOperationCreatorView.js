@@ -78,9 +78,12 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
     }
 
     async _onStartBtnClick() {
-        let nestId = this._nestSelector.nestId;
+        if (!this._validate()) {
+            return;
+        }
+
         try {
-            await this.$domainFacade.bringBugOpearation(this._performingColony.id, nestId);
+            await this.$domainFacade.bringBugOpearation(this._performingColony.id, this._nestSelector.nestId);
             this._onDone();
         } catch(e) {
             if (e instanceof StateSyncRequestError) {
