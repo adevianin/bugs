@@ -3817,6 +3817,233 @@ class WorldFactory {
 
 /***/ }),
 
+/***/ "./gameApp/src/messages/messageIds.js":
+/*!********************************************!*\
+  !*** ./gameApp/src/messages/messageIds.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MESSAGE_IDS: () => (/* binding */ MESSAGE_IDS)
+/* harmony export */ });
+const MESSAGE_IDS = {
+    TAB_BREEDING: 'TAB_BREEDING',
+    TAB_COLONIES: 'TAB_COLONIES',
+    TAB_SPECIE: 'TAB_SPECIE',
+    TAB_NOTIFICATIONS: 'TAB_NOTIFICATIONS',
+    TAB_RATING: 'TAB_RATING',
+    TAB_ACCOUNT: 'TAB_ACCOUNT'
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/messages/messageMaster.js":
+/*!***********************************************!*\
+  !*** ./gameApp/src/messages/messageMaster.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MessageMaster: () => (/* binding */ MessageMaster)
+/* harmony export */ });
+class MessageMaster {
+
+    static build(msgLibrariesPack) {
+        let lang = MessageMaster._determineLang();
+        return new MessageMaster(msgLibrariesPack[lang]);
+    }
+
+    static _determineLang() {
+        return navigator.language || 'en';
+    }
+
+    constructor(msgLibrary) {
+        this._msgLibrary = msgLibrary;
+    }
+
+    get(msgId) {
+        return this._msgLibrary[msgId];
+    }
+
+    // 'максимальна довжина {0} символів, від {1} до {2}'
+    // format(str, 5, 10, 20)
+    format(msgId, ...values) {
+        let msgTemplate = this._msgLibrary[msgId];
+        return msgTemplate.replace(/{(\d+)}/g, (_, index) => values[index] || '');
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/messages/msgLibraries/enLibrary.js":
+/*!********************************************************!*\
+  !*** ./gameApp/src/messages/msgLibraries/enLibrary.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EN_LIBRARY: () => (/* binding */ EN_LIBRARY)
+/* harmony export */ });
+/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./gameApp/src/messages/messageIds.js");
+
+
+const EN_LIBRARY = {
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_BREEDING]: 'Breeding',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_COLONIES]: 'Colonies',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_SPECIE]: 'Specie',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_NOTIFICATIONS]: 'Notifications',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_RATING]: 'Rating',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_ACCOUNT]: 'Account',
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/messages/msgLibraries/index.js":
+/*!****************************************************!*\
+  !*** ./gameApp/src/messages/msgLibraries/index.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   msgLibrariesPack: () => (/* binding */ msgLibrariesPack)
+/* harmony export */ });
+/* harmony import */ var _enLibrary__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./enLibrary */ "./gameApp/src/messages/msgLibraries/enLibrary.js");
+/* harmony import */ var _ukLibrary__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ukLibrary */ "./gameApp/src/messages/msgLibraries/ukLibrary.js");
+
+
+
+let msgLibrariesPack = {
+    'en': _enLibrary__WEBPACK_IMPORTED_MODULE_0__.EN_LIBRARY,
+    'uk': _ukLibrary__WEBPACK_IMPORTED_MODULE_1__.UK_LIBRARY
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/messages/msgLibraries/ukLibrary.js":
+/*!********************************************************!*\
+  !*** ./gameApp/src/messages/msgLibraries/ukLibrary.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   UK_LIBRARY: () => (/* binding */ UK_LIBRARY)
+/* harmony export */ });
+/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./gameApp/src/messages/messageIds.js");
+
+
+const UK_LIBRARY = {
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_BREEDING]: 'Розмноження',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_COLONIES]: 'Колонії',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_SPECIE]: 'Вид',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_NOTIFICATIONS]: 'Сповіщення',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_RATING]: 'Рейтинг',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_ACCOUNT]: 'Акаунт',
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/messages/uaMessagesLib.js":
+/*!***********************************************!*\
+  !*** ./gameApp/src/messages/uaMessagesLib.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   uaMessages: () => (/* binding */ uaMessages)
+/* harmony export */ });
+const uaMessages = {
+    SPECIE_SCHEMA_IS_NOT_VALID: 'SPECIE_SCHEMA_IS_NOT_VALID',
+    SOMETHING_WENT_WRONG: 'Щось пішло не так',
+    CANT_BUILD_SUB_NEST_WITHOUT_QUEEN: 'Не можна будувати гніздо сателіт в колонії без королеви.',
+    CANT_BUILD_MORE_SUB_NEST: 'Досягнуто максимальну кількість гнізд сателітів.',
+    CANT_BUILD_SUB_NEST_FAR_AWAY: 'Не можна будувати гніздо сателіт так далеко центрального.',
+    CANT_LAY_EGG_WITHOUT_QUEEN_IN_NEST: 'Королеви немає в гнізді для відкладення яєць',
+    NOT_ENOUGHT_FOOD_IN_NEST_TO_LAY_EGG: 'Не достатньо їжі для відкладення яєць',
+    NOT_SUITABLE_SEASON_TO_LAY_EGG: 'Непідходящий сезон для відкладення яєць',
+    NO_BUG_CORPSE_IN_NEST_AREA: 'Не видно трупів жуків на території гнізда',
+    CANT_DESTROY_NEST_WITHOUT_LIVING_QUEEN: 'Мурахи не можуть атакувати гніздо самі без королеви',
+    NEST_TO_DESTROY_IS_FAR_AWAY: 'Гніздо для атаки занадто далеко від основного гнізда',
+    NO_NEST_TO_DESTROY: 'Немає гнізда для атаки',
+    CANT_PILLAGE_NEST_WITHOUT_LIVING_QUEEN: 'Мурахи не можуть грабувати гніздо самі без королеви',
+    NO_NEST_TO_PILLAGE: 'Немає гнізда для пограбування',
+    CANT_PILLAGE_WITHOUT_NEST_FOR_LOOT: 'Не можна грабувати гніздо не маючи гніздо для здобичі',
+    NEST_TO_PILLAGE_IS_FAR_AWAY: 'Гніздо для грабування занадто далеко',
+    QUEEN_IS_NECESSARY_FOR_BREEDING: 'Для розмноження потрібна самка',
+    LIVE_QUEEN_IS_NECESSARY_FOR_BREEDING: 'Для розмноження потрібна жива самка',
+    MALE_IS_NECESSARY_FOR_BREEDING: 'Для розмноження потрібен самець',
+
+    nothing_activity: 'нічим не займаюсь',
+    preparing_for_hibernation_activity: 'готуюсь до зимової сплячки',
+    hibernation_activity: 'зимова сплячка',
+    patroling_nest_territory_activity: 'патрулюю територію гнізда',
+    collecting_food_activity: 'збираю їжу',
+    feeding_myself_activity: 'йду поїсти',
+    defending_home_nest_activity: 'захищаю гніздо',
+    defending_myself_activity: 'захищаюсь',
+    defending_colony_activity: 'захищаю колонію',
+    sheltering_in_nest_activity: 'ховаюсь у гнізді',
+    in_operation_activity: 'в операції',
+    go_home_activity: 'йду додому',
+    watching_nest_activity: 'слідкую за гніздом',
+    founding_main_nest_activity: 'будую основне гніздо колонії',
+    pick_position: 'постав точку',
+    pick_nest: 'вибери гніздо',
+    max: 'макс.',
+    min: 'мін.',
+    not_specified: 'не задано',
+    building_position_needed: 'мурахам треба вказати місце для будування гнізда',
+    to_short_name: 'занадто коротка назва',
+    use_only_chars_and_digits: 'в назві використовуй тільки букви і цифри',
+    choose_nest_for_attack: 'мурахам треба вказати гніздо для атаки',
+    too_few_ants_to_attack: 'занадто мало мурах для атаки',
+    choose_nest_for_pillage: 'мурахам треба вказати гніздо для грабування',
+    choose_different_nests: 'мурахи можуть переносити їжу лише між різними гніздами своєї колонії',
+    min_str_length: 'мінімальна довжина {0}',
+    max_str_length: 'максимальна довжина {0}',
+    only_chars_and_digits: 'тільки букви та цифри',
+    queen_needs_place_to_settle: 'самкі треба вказать місце щоб заселиться',
+    nest_destroyed: 'зруйновано',
+    nest_not_choosed: 'не вибрано',
+    choose_nest_for_loot: 'мурахам треба гніздо для здобичі',
+    choose_nest_from: 'мурахам вказать гніздо з якого переносить їжу',
+    choose_nest_to: 'мурахам вказать гніздо в яке переносить їжу',
+    choose_nest_to_fortificate: 'мурахам вказать гніздо для будування фортифікацій',
+    choose_nest_with_bug_nearby: 'вкажи гніздо де був помічений смачний жук',
+    bug_corpse_not_found: 'жука біля гнізда не знайдено',
+
+    spring: 'весна',
+    summer: 'літо',
+    autumn: 'осінь',
+    winter: 'зима',
+    temperature: 'температура'
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/sync/accountApi.js":
 /*!****************************************!*\
   !*** ./gameApp/src/sync/accountApi.js ***!
@@ -4907,11 +5134,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./world/worldSpritesheetManager */ "./gameApp/src/view/world/worldSpritesheetManager.js");
 /* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
 /* harmony import */ var _utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @utils/eventEmitter.js */ "./gameApp/src/utils/eventEmitter.js");
-/* harmony import */ var _messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./messages/uaMessagesLib */ "./gameApp/src/view/messages/uaMessagesLib.js");
+/* harmony import */ var _messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../messages/uaMessagesLib */ "./gameApp/src/messages/uaMessagesLib.js");
 /* harmony import */ var _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./textures/build/world_spritesheet.json */ "./gameApp/src/view/textures/build/world_spritesheet.json");
 /* harmony import */ var _textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./textures/build/world_spritesheet.png */ "./gameApp/src/view/textures/build/world_spritesheet.png");
-/* harmony import */ var _messages_messageMaster__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./messages/messageMaster */ "./gameApp/src/view/messages/messageMaster.js");
-/* harmony import */ var _messages_msgLibraries__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./messages/msgLibraries */ "./gameApp/src/view/messages/msgLibraries/index.js");
+/* harmony import */ var _messages_messageMaster__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @messages/messageMaster */ "./gameApp/src/messages/messageMaster.js");
+/* harmony import */ var _messages_msgLibraries__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @messages/msgLibraries */ "./gameApp/src/messages/msgLibraries/index.js");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 
 
@@ -5285,233 +5512,6 @@ class PositionPickerView extends _basePickerView__WEBPACK_IMPORTED_MODULE_0__.Ba
         this._callback(point);
     }
 
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/view/messages/messageIds.js":
-/*!*************************************************!*\
-  !*** ./gameApp/src/view/messages/messageIds.js ***!
-  \*************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   MESSAGE_IDS: () => (/* binding */ MESSAGE_IDS)
-/* harmony export */ });
-const MESSAGE_IDS = {
-    TAB_BREEDING: 'TAB_BREEDING',
-    TAB_COLONIES: 'TAB_COLONIES',
-    TAB_SPECIE: 'TAB_SPECIE',
-    TAB_NOTIFICATIONS: 'TAB_NOTIFICATIONS',
-    TAB_RATING: 'TAB_RATING',
-    TAB_ACCOUNT: 'TAB_ACCOUNT'
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/view/messages/messageMaster.js":
-/*!****************************************************!*\
-  !*** ./gameApp/src/view/messages/messageMaster.js ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   MessageMaster: () => (/* binding */ MessageMaster)
-/* harmony export */ });
-class MessageMaster {
-
-    static build(msgLibrariesPack) {
-        let lang = MessageMaster._determineLang();
-        return new MessageMaster(msgLibrariesPack[lang]);
-    }
-
-    static _determineLang() {
-        return navigator.language || 'en';
-    }
-
-    constructor(msgLibrary) {
-        this._msgLibrary = msgLibrary;
-    }
-
-    get(msgId) {
-        return this._msgLibrary[msgId];
-    }
-
-    // 'максимальна довжина {0} символів, від {1} до {2}'
-    // format(str, 5, 10, 20)
-    format(msgId, ...values) {
-        let msgTemplate = this._msgLibrary[msgId];
-        return msgTemplate.replace(/{(\d+)}/g, (_, index) => values[index] || '');
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/view/messages/msgLibraries/enLibrary.js":
-/*!*************************************************************!*\
-  !*** ./gameApp/src/view/messages/msgLibraries/enLibrary.js ***!
-  \*************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   EN_LIBRARY: () => (/* binding */ EN_LIBRARY)
-/* harmony export */ });
-/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./gameApp/src/view/messages/messageIds.js");
-
-
-const EN_LIBRARY = {
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_BREEDING]: 'Breeding',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_COLONIES]: 'Colonies',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_SPECIE]: 'Specie',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_NOTIFICATIONS]: 'Notifications',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_RATING]: 'Rating',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_ACCOUNT]: 'Account',
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/view/messages/msgLibraries/index.js":
-/*!*********************************************************!*\
-  !*** ./gameApp/src/view/messages/msgLibraries/index.js ***!
-  \*********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   msgLibrariesPack: () => (/* binding */ msgLibrariesPack)
-/* harmony export */ });
-/* harmony import */ var _enLibrary__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./enLibrary */ "./gameApp/src/view/messages/msgLibraries/enLibrary.js");
-/* harmony import */ var _ukLibrary__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ukLibrary */ "./gameApp/src/view/messages/msgLibraries/ukLibrary.js");
-
-
-
-let msgLibrariesPack = {
-    'en': _enLibrary__WEBPACK_IMPORTED_MODULE_0__.EN_LIBRARY,
-    'uk': _ukLibrary__WEBPACK_IMPORTED_MODULE_1__.UK_LIBRARY
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/view/messages/msgLibraries/ukLibrary.js":
-/*!*************************************************************!*\
-  !*** ./gameApp/src/view/messages/msgLibraries/ukLibrary.js ***!
-  \*************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   UK_LIBRARY: () => (/* binding */ UK_LIBRARY)
-/* harmony export */ });
-/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./gameApp/src/view/messages/messageIds.js");
-
-
-const UK_LIBRARY = {
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_BREEDING]: 'Розмноження',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_COLONIES]: 'Колонії',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_SPECIE]: 'Вид',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_NOTIFICATIONS]: 'Сповіщення',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_RATING]: 'Рейтинг',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_ACCOUNT]: 'Акаунт',
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/view/messages/uaMessagesLib.js":
-/*!****************************************************!*\
-  !*** ./gameApp/src/view/messages/uaMessagesLib.js ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   uaMessages: () => (/* binding */ uaMessages)
-/* harmony export */ });
-const uaMessages = {
-    SPECIE_SCHEMA_IS_NOT_VALID: 'SPECIE_SCHEMA_IS_NOT_VALID',
-    SOMETHING_WENT_WRONG: 'Щось пішло не так',
-    CANT_BUILD_SUB_NEST_WITHOUT_QUEEN: 'Не можна будувати гніздо сателіт в колонії без королеви.',
-    CANT_BUILD_MORE_SUB_NEST: 'Досягнуто максимальну кількість гнізд сателітів.',
-    CANT_BUILD_SUB_NEST_FAR_AWAY: 'Не можна будувати гніздо сателіт так далеко центрального.',
-    CANT_LAY_EGG_WITHOUT_QUEEN_IN_NEST: 'Королеви немає в гнізді для відкладення яєць',
-    NOT_ENOUGHT_FOOD_IN_NEST_TO_LAY_EGG: 'Не достатньо їжі для відкладення яєць',
-    NOT_SUITABLE_SEASON_TO_LAY_EGG: 'Непідходящий сезон для відкладення яєць',
-    NO_BUG_CORPSE_IN_NEST_AREA: 'Не видно трупів жуків на території гнізда',
-    CANT_DESTROY_NEST_WITHOUT_LIVING_QUEEN: 'Мурахи не можуть атакувати гніздо самі без королеви',
-    NEST_TO_DESTROY_IS_FAR_AWAY: 'Гніздо для атаки занадто далеко від основного гнізда',
-    NO_NEST_TO_DESTROY: 'Немає гнізда для атаки',
-    CANT_PILLAGE_NEST_WITHOUT_LIVING_QUEEN: 'Мурахи не можуть грабувати гніздо самі без королеви',
-    NO_NEST_TO_PILLAGE: 'Немає гнізда для пограбування',
-    CANT_PILLAGE_WITHOUT_NEST_FOR_LOOT: 'Не можна грабувати гніздо не маючи гніздо для здобичі',
-    NEST_TO_PILLAGE_IS_FAR_AWAY: 'Гніздо для грабування занадто далеко',
-    QUEEN_IS_NECESSARY_FOR_BREEDING: 'Для розмноження потрібна самка',
-    LIVE_QUEEN_IS_NECESSARY_FOR_BREEDING: 'Для розмноження потрібна жива самка',
-    MALE_IS_NECESSARY_FOR_BREEDING: 'Для розмноження потрібен самець',
-
-    nothing_activity: 'нічим не займаюсь',
-    preparing_for_hibernation_activity: 'готуюсь до зимової сплячки',
-    hibernation_activity: 'зимова сплячка',
-    patroling_nest_territory_activity: 'патрулюю територію гнізда',
-    collecting_food_activity: 'збираю їжу',
-    feeding_myself_activity: 'йду поїсти',
-    defending_home_nest_activity: 'захищаю гніздо',
-    defending_myself_activity: 'захищаюсь',
-    defending_colony_activity: 'захищаю колонію',
-    sheltering_in_nest_activity: 'ховаюсь у гнізді',
-    in_operation_activity: 'в операції',
-    go_home_activity: 'йду додому',
-    watching_nest_activity: 'слідкую за гніздом',
-    founding_main_nest_activity: 'будую основне гніздо колонії',
-    pick_position: 'постав точку',
-    pick_nest: 'вибери гніздо',
-    max: 'макс.',
-    min: 'мін.',
-    not_specified: 'не задано',
-    building_position_needed: 'мурахам треба вказати місце для будування гнізда',
-    to_short_name: 'занадто коротка назва',
-    use_only_chars_and_digits: 'в назві використовуй тільки букви і цифри',
-    choose_nest_for_attack: 'мурахам треба вказати гніздо для атаки',
-    too_few_ants_to_attack: 'занадто мало мурах для атаки',
-    choose_nest_for_pillage: 'мурахам треба вказати гніздо для грабування',
-    choose_different_nests: 'мурахи можуть переносити їжу лише між різними гніздами своєї колонії',
-    min_str_length: 'мінімальна довжина {0}',
-    max_str_length: 'максимальна довжина {0}',
-    only_chars_and_digits: 'тільки букви та цифри',
-    queen_needs_place_to_settle: 'самкі треба вказать місце щоб заселиться',
-    nest_destroyed: 'зруйновано',
-    nest_not_choosed: 'не вибрано',
-    choose_nest_for_loot: 'мурахам треба гніздо для здобичі',
-    choose_nest_from: 'мурахам вказать гніздо з якого переносить їжу',
-    choose_nest_to: 'мурахам вказать гніздо в яке переносить їжу',
-    choose_nest_to_fortificate: 'мурахам вказать гніздо для будування фортифікацій',
-    choose_nest_with_bug_nearby: 'вкажи гніздо де був помічений смачний жук',
-    bug_corpse_not_found: 'жука біля гнізда не знайдено',
-
-    spring: 'весна',
-    summer: 'літо',
-    autumn: 'осінь',
-    winter: 'зима',
-    temperature: 'температура'
 }
 
 
@@ -6553,7 +6553,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _tabs_specieBuilderTab__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./tabs/specieBuilderTab */ "./gameApp/src/view/panel/tabs/specieBuilderTab/index.js");
 /* harmony import */ var _tabs_notificationsTab__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./tabs/notificationsTab */ "./gameApp/src/view/panel/tabs/notificationsTab/index.js");
 /* harmony import */ var _tabs_ratingTab__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./tabs/ratingTab */ "./gameApp/src/view/panel/tabs/ratingTab/index.js");
-/* harmony import */ var _view_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @view/messages/messageIds */ "./gameApp/src/view/messages/messageIds.js");
+/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
 
 
 
@@ -6608,12 +6608,12 @@ class PanelView extends _view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Bas
         this._ratingTab = new _tabs_ratingTab__WEBPACK_IMPORTED_MODULE_9__.RatingTabView(this._el.querySelector('[data-rating-tab]'));
 
         this._tabSwitcher = new _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'panel', [
-            { name: 'breeding', label: this.$mm.get(_view_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_BREEDING), tab: this._nuptialFlightTab },
-            { name: 'colonies', label: this.$mm.get(_view_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_COLONIES), tab: this._coloniesTab },
-            { name: 'specie_builder', label: this.$mm.get(_view_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_SPECIE), tab: this._specieBuildertTab },
-            { name: 'notifications', label: this.$mm.get(_view_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_NOTIFICATIONS), tab: this._notificationsTab },
-            { name: 'rating', label: this.$mm.get(_view_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_RATING), tab: this._ratingTab },
-            { name: 'user', label: this.$mm.get(_view_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_ACCOUNT), tab: this._userTab }
+            { name: 'breeding', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_BREEDING), tab: this._nuptialFlightTab },
+            { name: 'colonies', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_COLONIES), tab: this._coloniesTab },
+            { name: 'specie_builder', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_SPECIE), tab: this._specieBuildertTab },
+            { name: 'notifications', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_NOTIFICATIONS), tab: this._notificationsTab },
+            { name: 'rating', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_RATING), tab: this._ratingTab },
+            { name: 'user', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_ACCOUNT), tab: this._userTab }
         ]);
     }
 
@@ -8435,9 +8435,12 @@ class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IM
     }
 
     async _onStartBtnClick() {
-        let nestId = this._nestSelector.nestId;
+        if (!this._validate()) {
+            return;
+        }
+
         try {
-            await this.$domainFacade.bringBugOpearation(this._performingColony.id, nestId);
+            await this.$domainFacade.bringBugOpearation(this._performingColony.id, this._nestSelector.nestId);
             this._onDone();
         } catch(e) {
             if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_4__.StateSyncRequestError) {

@@ -24,6 +24,7 @@ module.exports = {
           "@utils": path.resolve(__dirname, './gameApp/src/utils'),
           "@view": path.resolve(__dirname, './gameApp/src/view'),
           "@domain": path.resolve(__dirname, './gameApp/src/domain'),
+          "@messages": path.resolve(__dirname, './gameApp/src/messages'),
         },
     },
     module: {

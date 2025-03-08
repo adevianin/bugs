@@ -4,11 +4,11 @@ import { Requester } from '@common/utils/requester';
 import { WorldSpritesheetManager } from './world/worldSpritesheetManager';
 import { BaseGraphicView } from './base/baseGraphicView';
 import { EventEmitter } from '@utils/eventEmitter.js';
-import { uaMessages } from './messages/uaMessagesLib';
+import { uaMessages } from '../messages/uaMessagesLib';
 import worldSpriteSheetAtlas from './textures/build/world_spritesheet.json';
 import worldSpriteSheetUrl from './textures/build/world_spritesheet.png';
-import { MessageMaster } from './messages/messageMaster';
-import { msgLibrariesPack } from './messages/msgLibraries';
+import { MessageMaster } from '@messages/messageMaster';
+import { msgLibrariesPack } from '@messages/msgLibraries';
 import * as PIXI from 'pixi.js';
 
 async function initViewLayer(domainFacade) {

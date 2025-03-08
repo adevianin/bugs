@@ -9,7 +9,7 @@ import { NuptialFlightTabView } from './tabs/nuptialFlightTab';
 import { SpecieBuilderTabView } from './tabs/specieBuilderTab';
 import { NotificationsTabView } from './tabs/notificationsTab';
 import { RatingTabView } from './tabs/ratingTab';
-import { MESSAGE_IDS } from '@view/messages/messageIds';
+import { MESSAGE_IDS } from '@messages/messageIds';
 
 class PanelView extends BaseHTMLView {
 

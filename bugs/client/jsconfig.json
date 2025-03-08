@@ -6,6 +6,7 @@
             "@utils/*": ["gameApp/src/utils/*"],
             "@view/*": ["gameApp/src/view/*"],
             "@domain/*": ["gameApp/src/domain/*"],
+            "@messages/*": ["gameApp/src/messages/*"],
         }
     },
     "exclude": ["node_modules"]
