@@ -4,8 +4,8 @@ import { NestSelectorView } from "@view/panel/base/nestSelector";
 import { MarkerTypes } from "@domain/enum/markerTypes";
 import { CONSTS } from "@domain/consts";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
-import { StateSyncRequestError } from "@domain/errors/stateSyncRequestError";
-import { GenericRequestError } from "@domain/errors/genericRequestError";
+import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
+import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 
 class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
 

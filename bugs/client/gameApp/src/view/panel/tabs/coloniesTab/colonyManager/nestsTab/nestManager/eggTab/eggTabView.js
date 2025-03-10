@@ -1,8 +1,8 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import eggTabTmpl from './eggTabTmpl.html';
 import { EggView } from "./eggView";
-import { StateSyncRequestError } from "@domain/errors/stateSyncRequestError";
-import { GenericRequestError } from "@domain/errors/genericRequestError";
+import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
+import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 
 class EggTabView extends BaseGameHTMLView {
 

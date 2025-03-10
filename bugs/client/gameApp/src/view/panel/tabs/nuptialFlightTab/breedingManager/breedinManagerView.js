@@ -5,8 +5,8 @@ import { MaleSelectorView } from "./maleSelector/maleSelectorView";
 import { PositionView } from "@view/panel/base/position/positionView";
 import { MarkerTypes } from '@domain/enum/markerTypes';
 import { TextInputView } from "@view/panel/base/textInput/textInputView";
-import { StateSyncRequestError } from "@domain/errors/stateSyncRequestError";
-import { GenericRequestError } from "@domain/errors/genericRequestError";
+import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
+import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 
 class BreedingManagerView extends BaseGameHTMLView {
 

@@ -1,23 +1,25 @@
-import { GenericRequestError } from "@domain/errors/genericRequestError";
-import { StateSyncRequestError } from "@domain/errors/stateSyncRequestError";
+import { GenericRequestError } from "@common/domain/errors/genericRequestError";
+import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
+import { BaseService } from "@common/domain/service/base/baseService";
 
-class BaseGameService {
+class BaseGameService extends BaseService {
 
     constructor(mainEventBus, world) {
+        super();
         this._mainEventBus = mainEventBus;
         this._world = world;
     }
 
     async _requestHandler(apiCallFunc) {
         try {
-            let result = await apiCallFunc();
-            return result.data;
-        } catch(error) {
-            if (error.status == 409) {
-                await this._waitStepSync(error.data.step);
-                throw new StateSyncRequestError(error.data);
+            await super._requestHandler(apiCallFunc);
+        } catch (e) {
+            if (e instanceof StateSyncRequestError) {
+                await this._waitStepSync(e.data.step);
+                throw e;
+            } else {
+                throw e;
             }
-            throw new GenericRequestError(error.data)
         }
     }
 

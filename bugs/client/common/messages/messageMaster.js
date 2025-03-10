@@ -8,6 +8,7 @@ class MessageMaster {
         }
         let lang = MessageMaster._determineLang();
         MessageMaster._instance = new MessageMaster(msgLibrariesPack[lang]);
+        return MessageMaster._instance;
     }
 
     static _determineLang() {

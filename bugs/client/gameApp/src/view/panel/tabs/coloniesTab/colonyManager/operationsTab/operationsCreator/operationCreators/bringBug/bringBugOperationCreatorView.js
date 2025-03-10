@@ -2,8 +2,8 @@ import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import bringBugOperationCreatorTmpl from './bringBugOperationCreatorTmpl.html';
 import { NestSelectorView } from "@view/panel/base/nestSelector";
 import { MarkerTypes } from "@domain/enum/markerTypes";
-import { StateSyncRequestError } from "@domain/errors/stateSyncRequestError";
-import { GenericRequestError } from "@domain/errors/genericRequestError";
+import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
+import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 
 class BringBugOperationCreatorView extends BaseOperationCreatorView {
 
