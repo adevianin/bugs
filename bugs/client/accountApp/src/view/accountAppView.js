@@ -3,6 +3,7 @@ import { BaseHTMLView } from "@common/view/base/baseHTMLView";
 import { MESSAGE_IDS } from '../messages/messageIds';
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 import { StateSyncRequestError } from '@common/domain/errors/stateSyncRequestError';
+import { throttle } from '@common/utils/throttle';
 
 class AccountAppView extends BaseHTMLView {
 
@@ -17,7 +18,7 @@ class AccountAppView extends BaseHTMLView {
         this._render();
 
         this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));
-        this._registrationBtn.addEventListener('click', this._onRegistrationBtnClick.bind(this));
+        this._registrationBtn.addEventListener('click', throttle(this._onRegistrationBtnClick.bind(this), 2000));
 
         this._switchModeToRegisterBtn.addEventListener('click', this._onSwitchModeToRegisterClick.bind(this));
         this._switchModeToLoginBtn.addEventListener('click', this._onSwitchModeToLoginClick.bind(this));
@@ -47,6 +48,7 @@ class AccountAppView extends BaseHTMLView {
 
         this._registrationTabEl = this._el.querySelector('[data-registration-tab]');
         this._registrationBtn = this._el.querySelector('[data-registration-btn]');
+        this._registrationFormLoader = new DotsLoaderView(this._registrationTabEl.querySelector('[data-registration-form-loader]'));
         this._registrationUsernameEl = this._registrationTabEl.querySelector('[data-username]');
         this._registrationUsernameErrContainer = this._registrationTabEl.querySelector('[data-username-err]');
         this._registrationUsernameLoader = new DotsLoaderView(this._registrationTabEl.querySelector('[data-username-loader]'));
@@ -213,6 +215,7 @@ class AccountAppView extends BaseHTMLView {
     }
 
     async _onRegistrationBtnClick() {
+        this._registrationFormLoader.toggle(true);
         let isValid = await this._validateRegistration();
         if (!isValid) {
             return;
@@ -230,6 +233,7 @@ class AccountAppView extends BaseHTMLView {
                 this._validateRegistration();
             }
         }
+        this._registrationFormLoader.toggle(false);
     }
 
     _onSwitchModeToLoginClick(e) {

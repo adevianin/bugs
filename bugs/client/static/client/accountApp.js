@@ -108,6 +108,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../messages/messageIds */ "./accountApp/src/messages/messageIds.js");
 /* harmony import */ var _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/view/dotsLoader/dotsLoaderView */ "./common/view/dotsLoader/dotsLoaderView.js");
 /* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_utils_throttle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/utils/throttle */ "./common/utils/throttle.js");
+
 
 
 
@@ -127,7 +129,7 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._render();
 
         this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));
-        this._registrationBtn.addEventListener('click', this._onRegistrationBtnClick.bind(this));
+        this._registrationBtn.addEventListener('click', (0,_common_utils_throttle__WEBPACK_IMPORTED_MODULE_5__.throttle)(this._onRegistrationBtnClick.bind(this), 2000));
 
         this._switchModeToRegisterBtn.addEventListener('click', this._onSwitchModeToRegisterClick.bind(this));
         this._switchModeToLoginBtn.addEventListener('click', this._onSwitchModeToLoginClick.bind(this));
@@ -157,6 +159,7 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
 
         this._registrationTabEl = this._el.querySelector('[data-registration-tab]');
         this._registrationBtn = this._el.querySelector('[data-registration-btn]');
+        this._registrationFormLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__.DotsLoaderView(this._registrationTabEl.querySelector('[data-registration-form-loader]'));
         this._registrationUsernameEl = this._registrationTabEl.querySelector('[data-username]');
         this._registrationUsernameErrContainer = this._registrationTabEl.querySelector('[data-username-err]');
         this._registrationUsernameLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__.DotsLoaderView(this._registrationTabEl.querySelector('[data-username-loader]'));
@@ -323,6 +326,7 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
     }
 
     async _onRegistrationBtnClick() {
+        this._registrationFormLoader.toggle(true);
         let isValid = await this._validateRegistration();
         if (!isValid) {
             return;
@@ -340,6 +344,7 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
                 this._validateRegistration();
             }
         }
+        this._registrationFormLoader.toggle(false);
     }
 
     _onSwitchModeToLoginClick(e) {
@@ -902,6 +907,33 @@ class Requester {
             data: axiosError.response ? axiosError.response.data : null
         }
     }
+}
+
+
+
+/***/ }),
+
+/***/ "./common/utils/throttle.js":
+/*!**********************************!*\
+  !*** ./common/utils/throttle.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   throttle: () => (/* binding */ throttle)
+/* harmony export */ });
+function throttle(func, wait) {
+    let lastCall = 0;
+
+    return function(...args) {
+        const now = new Date().getTime();
+
+        if (now - lastCall >= wait) {
+            lastCall = now;
+            func.apply(this, args);
+        }
+    };
 }
 
 
