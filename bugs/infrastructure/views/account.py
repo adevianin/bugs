@@ -10,6 +10,9 @@ from django.views.decorators.csrf import csrf_exempt
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
+import json
 
 @ensure_csrf_cookie
 def account_index(request: HttpRequest):
@@ -48,7 +51,7 @@ def google_auth_callback(request: HttpRequest):
         return redirect('game_index')
 
 @require_POST 
-def account_check_name(request):
+def check_username_uniqueness(request):
     try:
         username = request.json['username']
     except Exception as e:
@@ -59,30 +62,55 @@ def account_check_name(request):
     return JsonResponse({
         'is_unique': is_unique
     })
-    
-@require_POST        
-def account_register(request):
+
+@require_POST 
+def check_email_uniqueness(request):
     try:
-        username = request.json['username']
-        password = request.json['password']
+        email = request.json['email']
     except Exception as e:
         return HttpResponse(status=400)
 
+    is_unique = not User.objects.filter(email=email).exists()
+
+    return JsonResponse({
+        'is_unique': is_unique
+    })
+    
+@require_POST        
+def account_register(request: HttpRequest):
     try:
-        user = User.objects.create_user(username, password=password)
+        data = json.loads(request.body)
+        username = data.get('username', '').strip()
+        email = data.get('email', '').strip()
+        password = data.get('password', '')
+        
+        if not username or not email or not password:
+            return HttpResponse(status=400)
+    except Exception:
+        return HttpResponse(status=400)
+
+    try:
+        user = User(username=username, email=email)
+        user.set_password(password)
+        user.full_clean()
+        user.save()
+
         login(request, user)
         
         return JsonResponse({
             'user': user.get_general_data()
         })
-    except:
-        return HttpResponse(status=500)
+    except ValidationError as e:
+        return HttpResponse(status=409)
 
 @require_POST    
-def account_login(request):
+def account_login(request: HttpRequest):
     try:
-        username = request.json['username']
-        password = request.json['password']
+        data = json.loads(request.body)
+        username = data.get('username', '')
+        password = data.get('password', '')
+        if not username or not password:
+            return HttpResponse(status=400)
     except Exception as e:
         return HttpResponse(status=400)
     
@@ -102,4 +130,15 @@ def account_logout(request):
     return JsonResponse({
         'redirectUrl': reverse('account_index')
     })
-        
+
+@require_POST
+@login_required  
+def account_change_name(request):
+    username = request.json['username']
+    user = User.objects.get(id=request.user.id)
+    user.username = username
+    user.full_clean()  # Викличе валідацію
+    user.save()
+    return JsonResponse({
+            'user': user.get_general_data()
+        })

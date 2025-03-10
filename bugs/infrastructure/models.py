@@ -1,15 +1,37 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator, MinLengthValidator, MaxLengthValidator, EmailValidator
 
 class User(AbstractUser):
+    username = models.CharField(
+        max_length=32,
+        unique=True,
+        validators=[
+            MinLengthValidator(4),
+            MaxLengthValidator(32),
+            RegexValidator(
+                regex=r'^[a-zA-Z0-9_-]+$',
+                message="Username can only contain letters, numbers, underscores, and hyphens."
+            )
+        ],
+        error_messages={
+            'unique': "A user with this username already exists.",
+        }
+    )
+    email = models.EmailField(
+        unique=True,
+        validators=[EmailValidator()],
+        error_messages={
+            'unique': "A user with this email already exists.",
+        }
+    )
     
     def get_general_data(self):
         return {
             'id': self.id,
             'username': self.username,
+            'email': self.email
         }
 
 class World(models.Model):
     state = models.JSONField()
-
-# Create your models here.

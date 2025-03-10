@@ -3,7 +3,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views.account import account_check_name, account_register, account_login, account_logout, account_index, google_auth_callback
+from .views.account import check_username_uniqueness, check_email_uniqueness, account_register, account_login, account_logout, account_index, google_auth_callback
 from .views.game import index
 from .views.admin import admin_index, world_status_check, init_world, stop_world, run_world, save_world, expand_map
 from .views.nest import rename_nest, lay_egg, change_egg_caste, change_egg_name, move_egg_to_larva_chamber, delete_egg, delete_larva
@@ -16,7 +16,8 @@ urlpatterns = [
     path('account', account_index, name='account_index'),
     path('admin', admin_index, name='admin_index'),
     
-    path('api/accounts/check_name', account_check_name, name='account_check_name'),
+    path('api/accounts/check_username_uniqueness', check_username_uniqueness, name='check_username_uniqueness'),
+    path('api/accounts/check_email_uniqueness', check_email_uniqueness, name='check_email_uniqueness'),
     path('api/accounts/register', account_register, name='account_register'),
     path('api/accounts/login', account_login, name='account_login'),
     path('api/accounts/logout', account_logout, name='account_logout'),

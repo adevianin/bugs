@@ -17,6 +17,52 @@ class BaseDomainFacade {}
 
 /***/ }),
 
+/***/ "./common/domain/errors/genericRequestError.js":
+/*!*****************************************************!*\
+  !*** ./common/domain/errors/genericRequestError.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   GenericRequestError: () => (/* binding */ GenericRequestError)
+/* harmony export */ });
+class GenericRequestError extends Error {
+
+    constructor(data) {
+        super();
+        this.data = data;
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./common/domain/errors/stateSyncRequestError.js":
+/*!*******************************************************!*\
+  !*** ./common/domain/errors/stateSyncRequestError.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   StateSyncRequestError: () => (/* binding */ StateSyncRequestError)
+/* harmony export */ });
+/* harmony import */ var _genericRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./genericRequestError */ "./common/domain/errors/genericRequestError.js");
+
+
+class StateSyncRequestError extends _genericRequestError__WEBPACK_IMPORTED_MODULE_0__.GenericRequestError {
+
+}
+
+
+
+/***/ }),
+
 /***/ "./common/domain/service/accountService.js":
 /*!*************************************************!*\
   !*** ./common/domain/service/accountService.js ***!
@@ -28,9 +74,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AccountService: () => (/* binding */ AccountService)
 /* harmony export */ });
-class AccountService {
+/* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
+/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
+/* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base/baseService */ "./common/domain/service/base/baseService.js");
+
+
+
+
+class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.BaseService {
+
+    static MIN_USERNAME_LENGTH = 4;
+    static MAX_USERNAME_LENGTH = 32;
+    static USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
+    static MIN_PASSWORD_LENGTH = 8;
+    static MAX_PASSWORD_LENGTH = 40;
     
     constructor(accountApi, userData) {
+        super();
         this._accountApi = accountApi;
         this._userData = userData;
     }
@@ -39,8 +99,101 @@ class AccountService {
         return this._accountApi.logout();
     }
 
+    async register(username, email, password) {
+        return this._requestHandler(() => this._accountApi.register(username, email, password));
+    }
+
     getUserData() {
         return this._userData;
+    }
+
+    async validateUsername(username = '') {
+        if (username.length < AccountService.MIN_USERNAME_LENGTH) {
+            return {
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR,
+                minLength: AccountService.MIN_USERNAME_LENGTH
+            }
+        }
+
+        if (username.length > AccountService.MAX_USERNAME_LENGTH) {
+            return {
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR,
+                maxLength: AccountService.MAX_USERNAME_LENGTH
+            }
+        }
+
+        if (!AccountService.USERNAME_REGEX.test(username)) {
+            return {
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS
+            }
+        }
+
+        let isUniq = await this._accountApi.checkUsernameUniqueness(username);
+        if (!isUniq) {
+            return {
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN
+            }
+        }
+
+        return null;
+    }
+
+    async checkEmailUniqueness(email) {
+        return await this._accountApi.checkEmailUniqueness(email);
+    }
+
+    validatePassword(password = '') {
+        if (password.length < AccountService.MIN_PASSWORD_LENGTH) {
+            return {
+                msgId: _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR,
+                minLength: AccountService.MIN_PASSWORD_LENGTH
+            }
+        }
+
+        if (password.length > AccountService.MAX_PASSWORD_LENGTH) {
+            return {
+                msgId: _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR,
+                maxLength: AccountService.MAX_PASSWORD_LENGTH
+            }
+        }
+
+        return null;
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./common/domain/service/base/baseService.js":
+/*!***************************************************!*\
+  !*** ./common/domain/service/base/baseService.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BaseService: () => (/* binding */ BaseService)
+/* harmony export */ });
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
+
+
+
+class BaseService {
+
+    async _requestHandler(apiCallFunc) {
+        try {
+            let result = await apiCallFunc();
+            return result.data;
+        } catch(error) {
+            if (error.status == 409) {
+                throw new _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__.StateSyncRequestError(error.data);
+            }
+            throw new _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_1__.GenericRequestError(error.data)
+        }
     }
 
 }
@@ -61,6 +214,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   BASE_MESSAGE_IDS: () => (/* binding */ BASE_MESSAGE_IDS)
 /* harmony export */ });
 const BASE_MESSAGE_IDS = {
+    USERNAME_MIN_LENGTH_ERR: 'USERNAME_MIN_LENGTH_ERR',
+    USERNAME_MAX_LENGTH_ERR: 'USERNAME_MAX_LENGTH_ERR',
+    USERNAME_INVALID_CHARS: 'USERNAME_INVALID_CHARS',
+    USERNAME_TAKEN: 'USERNAME_TAKEN',
+    EMAIL_INVALID_FORMAT: 'EMAIL_INVALID_FORMAT',
+    EMAIL_TAKEN: 'EMAIL_TAKEN',
+    PASSWORD_MIN_LENGTH_ERR: 'PASSWORD_MIN_LENGTH_ERR',
+    PASSWORD_MAX_LENGTH_ERR: 'PASSWORD_MAX_LENGTH_ERR',
+    PASSWORD_CONFIRMATION_IS_NOT_VALID: 'PASSWORD_CONFIRMATION_IS_NOT_VALID'
 }
 
 
@@ -88,6 +250,7 @@ class MessageMaster {
         }
         let lang = MessageMaster._determineLang();
         MessageMaster._instance = new MessageMaster(msgLibrariesPack[lang]);
+        return MessageMaster._instance;
     }
 
     static _determineLang() {
@@ -141,6 +304,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const EN_BASE_LIBRARY = {
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR]: 'Username is too short. The minimum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Username is too long. The maximum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Username contains invalid characters.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'This username is already taken.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID_FORMAT]: 'The email address is invalid.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'The email address is already taken.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Password is too short. The minimum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Password is too long. The maximum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: '"The passwords do not match.',
 }
 
 
@@ -162,6 +334,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const UK_BASE_LIBRARY = {
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR]: 'Ім\'я користувача занадто коротке. Мінімально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Ім\'я користувача занадто довге. Максимально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Ім\'я користувача містить недопустимі символи.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'Це ім\'я користувача вже зайняте.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID_FORMAT]: 'Електронна адреса недійсна.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'Електронна адреса вже зайнята.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Пароль занадто короткий. Мінімально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Пароль занадто довгий. Максимально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: 'Паролі не співпадають.',
 }
 
 
@@ -188,8 +369,6 @@ class AccountApi {
     login(username, password) {
         return this._requester.post('api/accounts/login', {
             username, password
-        }).then(res => {
-            return res.data.user;
         });
     }
 
@@ -199,17 +378,23 @@ class AccountApi {
         });
     }
 
-    register(username, password) {
+    register(username, email, password) {
         return this._requester.post('api/accounts/register', {
-            username, password
-        }).then(res => {
-            return res.data.user;
+            username, email, password
         });
     }
 
-    checkUsernameUnique(username) {
-        return this._requester.post('api/accounts/check_name', {
+    checkUsernameUniqueness(username) {
+        return this._requester.post('api/accounts/check_username_uniqueness', {
             username
+        }).then(res => {
+            return res.data.is_unique;
+        });
+    }
+
+    checkEmailUniqueness(email) {
+        return this._requester.post('api/accounts/check_email_uniqueness', {
+            email
         }).then(res => {
             return res.data.is_unique;
         });
@@ -276,6 +461,31 @@ function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+
+
+/***/ }),
+
+/***/ "./common/utils/readInitialData.js":
+/*!*****************************************!*\
+  !*** ./common/utils/readInitialData.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   readInitialData: () => (/* binding */ readInitialData)
+/* harmony export */ });
+let initialData = null;
+
+function readInitialData() {
+    if (!initialData) {
+        initialData = JSON.parse(document.getElementById('initial-data').innerText);
+    }
+
+    return initialData;
 }
 
 
@@ -407,6 +617,8 @@ class BaseView {
 
     static domainFacade;
     static eventBus;
+    static mm;
+    static messages;
 
     get $domainFacade() {
         return BaseView.domainFacade;
@@ -416,12 +628,28 @@ class BaseView {
         return BaseView.eventBus;
     }
 
+    get $mm() {
+        return BaseView.mm;
+    }
+
+    get $messages() {
+        return BaseView.messages;
+    }
+
     static useDomainFacade(domainFacade) {
         BaseView.domainFacade = domainFacade;
     }
 
     static useEventBus(eventBus) {
         BaseView.eventBus = eventBus;
+    }
+
+    static useMessageMaster(mm) {
+        BaseView.mm = mm;
+    }
+
+    static useMessages(messages) {
+        BaseView.messages = messages;
     }
 
     remove(){
@@ -3099,44 +3327,6 @@ const OperationTypes = {
 
 /***/ }),
 
-/***/ "./gameApp/src/domain/errors/genericRequestError.js":
-/*!**********************************************************!*\
-  !*** ./gameApp/src/domain/errors/genericRequestError.js ***!
-  \**********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   GenericRequestError: () => (/* binding */ GenericRequestError)
-/* harmony export */ });
-class GenericRequestError extends Error {
-
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/domain/errors/stateSyncRequestError.js":
-/*!************************************************************!*\
-  !*** ./gameApp/src/domain/errors/stateSyncRequestError.js ***!
-  \************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   StateSyncRequestError: () => (/* binding */ StateSyncRequestError)
-/* harmony export */ });
-class StateSyncRequestError extends Error {
-
-}
-
-
-
-/***/ }),
-
 /***/ "./gameApp/src/domain/index.js":
 /*!*************************************!*\
   !*** ./gameApp/src/domain/index.js ***!
@@ -3265,28 +3455,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BaseGameService: () => (/* binding */ BaseGameService)
 /* harmony export */ });
-/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
-/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_service_base_baseService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/domain/service/base/baseService */ "./common/domain/service/base/baseService.js");
 
 
 
-class BaseGameService {
+
+class BaseGameService extends _common_domain_service_base_baseService__WEBPACK_IMPORTED_MODULE_2__.BaseService {
 
     constructor(mainEventBus, world) {
+        super();
         this._mainEventBus = mainEventBus;
         this._world = world;
     }
 
     async _requestHandler(apiCallFunc) {
         try {
-            let result = await apiCallFunc();
-            return result.data;
-        } catch(error) {
-            if (error.status == 409) {
-                await this._waitStepSync(error.data.step);
-                throw new _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_1__.StateSyncRequestError(error.data);
+            await super._requestHandler(apiCallFunc);
+        } catch (e) {
+            if (e instanceof _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_1__.StateSyncRequestError) {
+                await this._waitStepSync(e.data.step);
+                throw e;
+            } else {
+                throw e;
             }
-            throw new _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_0__.GenericRequestError(error.data)
         }
     }
 
@@ -4756,31 +4949,6 @@ function randomInt(min, max) {
 
 /***/ }),
 
-/***/ "./gameApp/src/utils/readInitialData.js":
-/*!**********************************************!*\
-  !*** ./gameApp/src/utils/readInitialData.js ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   readInitialData: () => (/* binding */ readInitialData)
-/* harmony export */ });
-let initialData = null;
-
-function readInitialData() {
-    if (!initialData) {
-        initialData = JSON.parse(document.getElementById('initial-data').innerText);
-    }
-
-    return initialData;
-}
-
-
-
-/***/ }),
-
 /***/ "./gameApp/src/utils/walker.js":
 /*!*************************************!*\
   !*** ./gameApp/src/utils/walker.js ***!
@@ -4932,19 +5100,10 @@ __webpack_require__.r(__webpack_exports__);
 
 class BaseGameHTMLView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    static messages;
     static pixiApp;
-
-    get $messages() {
-        return BaseGameHTMLView.messages;
-    }
 
     get $pixiApp() {
         return BaseGameHTMLView.pixiApp;
-    }
-
-    static useMessages(messages) {
-        BaseGameHTMLView.messages = messages;
     }
 
     static usePixiApp(pixiApp) {
@@ -5281,12 +5440,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_utils_requester__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/utils/requester */ "./common/utils/requester.js");
 /* harmony import */ var _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./world/worldSpritesheetManager */ "./gameApp/src/view/world/worldSpritesheetManager.js");
 /* harmony import */ var _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
-/* harmony import */ var _common_utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/utils/eventEmitter.js */ "./common/utils/eventEmitter.js");
-/* harmony import */ var _messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../messages/uaMessagesLib */ "./gameApp/src/messages/uaMessagesLib.js");
+/* harmony import */ var _messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../messages/uaMessagesLib */ "./gameApp/src/messages/uaMessagesLib.js");
+/* harmony import */ var _common_utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/utils/eventEmitter.js */ "./common/utils/eventEmitter.js");
 /* harmony import */ var _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./textures/build/world_spritesheet.json */ "./gameApp/src/view/textures/build/world_spritesheet.json");
 /* harmony import */ var _textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./textures/build/world_spritesheet.png */ "./gameApp/src/view/textures/build/world_spritesheet.png");
 /* harmony import */ var _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @common/view/base/baseView */ "./common/view/base/baseView.js");
+/* harmony import */ var _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @common/messages/messageMaster */ "./common/messages/messageMaster.js");
+/* harmony import */ var _messages_msgLibraries__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @messages/msgLibraries */ "./gameApp/src/messages/msgLibraries/index.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+
+
+
 
 
 
@@ -5300,20 +5465,21 @@ __webpack_require__.r(__webpack_exports__);
 
 async function initViewLayer(domainFacade) {
     let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_1__.Requester();
-    let eventBus = new _common_utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_4__.EventEmitter();
+    let eventBus = new _common_utils_eventEmitter_js__WEBPACK_IMPORTED_MODULE_5__.EventEmitter();
     let spritesheetManager = new _world_worldSpritesheetManager__WEBPACK_IMPORTED_MODULE_2__.WorldSpritesheetManager(_textures_build_world_spritesheet_png__WEBPACK_IMPORTED_MODULE_7__, _textures_build_world_spritesheet_json__WEBPACK_IMPORTED_MODULE_6__, requester);
     let loaderEl = document.querySelector('[data-game-loader]');
 
     await spritesheetManager.prepareTextures();
-    let pixiApp = new pixi_js__WEBPACK_IMPORTED_MODULE_9__.Application();
+    let pixiApp = new pixi_js__WEBPACK_IMPORTED_MODULE_12__.Application();
     await pixiApp.init();
 
-    _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_8__.BaseGameHTMLView.useDomainFacade(domainFacade);
-    _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_8__.BaseGameHTMLView.useEventBus(eventBus);
-    _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_8__.BaseGameHTMLView.useMessages(_messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_5__.uaMessages);
+    let mm = _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_10__.MessageMaster.init(_messages_msgLibraries__WEBPACK_IMPORTED_MODULE_11__.msgLibrariesPack);
+
+    _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_9__.BaseView.useDomainFacade(domainFacade);
+    _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_9__.BaseView.useEventBus(eventBus);
+    _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_9__.BaseView.useMessageMaster(mm);
+    _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_9__.BaseView.useMessages(_messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_4__.uaMessages);
     _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_8__.BaseGameHTMLView.usePixiApp(pixiApp);
-    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useDomainFacade(domainFacade);
-    _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useEventBus(eventBus);
     _base_baseGraphicView__WEBPACK_IMPORTED_MODULE_3__.BaseGraphicView.useTextureManager(spritesheetManager);
 
     let app = new _appView__WEBPACK_IMPORTED_MODULE_0__.AppView(document.querySelector('[data-app]'));
@@ -6698,8 +6864,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _tabs_notificationsTab__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./tabs/notificationsTab */ "./gameApp/src/view/panel/tabs/notificationsTab/index.js");
 /* harmony import */ var _tabs_ratingTab__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./tabs/ratingTab */ "./gameApp/src/view/panel/tabs/ratingTab/index.js");
 /* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
-/* harmony import */ var _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @common/messages/messageMaster */ "./common/messages/messageMaster.js");
-
 
 
 
@@ -6754,12 +6918,12 @@ class PanelView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_2__
         this._ratingTab = new _tabs_ratingTab__WEBPACK_IMPORTED_MODULE_9__.RatingTabView(this._el.querySelector('[data-rating-tab]'));
 
         this._tabSwitcher = new _base_tabSwitcher__WEBPACK_IMPORTED_MODULE_5__.TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'panel', [
-            { name: 'breeding', label: _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_11__.MessageMaster.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_BREEDING), tab: this._nuptialFlightTab },
-            { name: 'colonies', label: _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_11__.MessageMaster.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_COLONIES), tab: this._coloniesTab },
-            { name: 'specie_builder', label: _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_11__.MessageMaster.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_SPECIE), tab: this._specieBuildertTab },
-            { name: 'notifications', label: _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_11__.MessageMaster.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_NOTIFICATIONS), tab: this._notificationsTab },
-            { name: 'rating', label: _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_11__.MessageMaster.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_RATING), tab: this._ratingTab },
-            { name: 'user', label: _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_11__.MessageMaster.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_ACCOUNT), tab: this._userTab }
+            { name: 'breeding', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_BREEDING), tab: this._nuptialFlightTab },
+            { name: 'colonies', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_COLONIES), tab: this._coloniesTab },
+            { name: 'specie_builder', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_SPECIE), tab: this._specieBuildertTab },
+            { name: 'notifications', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_NOTIFICATIONS), tab: this._notificationsTab },
+            { name: 'rating', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_RATING), tab: this._ratingTab },
+            { name: 'user', label: this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_10__.MESSAGE_IDS.TAB_ACCOUNT), tab: this._userTab }
         ]);
     }
 
@@ -7565,8 +7729,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _eggTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./eggTabTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/eggTab/eggTabTmpl.html");
 /* harmony import */ var _eggView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./eggView */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/nestsTab/nestManager/eggTab/eggView.js");
-/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
-/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
 
 
 
@@ -7672,9 +7836,9 @@ class EggTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0_
         try {
             await this.$domainFacade.layEggInNest(this._nest.id, name, isFertilized);
         } catch (e) {
-            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_3__.StateSyncRequestError) {
+            if (e instanceof _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_3__.StateSyncRequestError) {
                 this._validate();
-            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_4__.GenericRequestError) {
+            } else if (e instanceof _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_4__.GenericRequestError) {
                 this._renderError(this.$messages['SOMETHING_WENT_WRONG']);
             }
         }
@@ -8499,8 +8663,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _bringBugOperationCreatorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bringBugOperationCreatorTmpl.html */ "./gameApp/src/view/panel/tabs/coloniesTab/colonyManager/operationsTab/operationsCreator/operationCreators/bringBug/bringBugOperationCreatorTmpl.html");
 /* harmony import */ var _view_panel_base_nestSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/panel/base/nestSelector */ "./gameApp/src/view/panel/base/nestSelector/index.js");
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
-/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
-/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
 
 
 
@@ -8589,9 +8753,9 @@ class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IM
             await this.$domainFacade.bringBugOpearation(this._performingColony.id, this._nestSelector.nestId);
             this._onDone();
         } catch(e) {
-            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_4__.StateSyncRequestError) {
+            if (e instanceof _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_4__.StateSyncRequestError) {
                 this._validate();
-            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_5__.GenericRequestError) {
+            } else if (e instanceof _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_5__.GenericRequestError) {
                 this._renderMainError('SOMETHING_WENT_WRONG');
             }
         }
@@ -8645,8 +8809,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
 /* harmony import */ var _view_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/panel/base/intInput/intInputView */ "./gameApp/src/view/panel/base/intInput/intInputView.js");
-/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
-/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
 
 
 
@@ -8729,9 +8893,9 @@ class BuildFortificationOperationCreatorView extends _baseOperationCreatorView__
             await this.$domainFacade.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount);
             this._onDone();
         } catch (e) {
-            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__.StateSyncRequestError) {
+            if (e instanceof _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__.StateSyncRequestError) {
                 this._validate();
-            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__.GenericRequestError) {
+            } else if (e instanceof _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__.GenericRequestError) {
                 this._renderMainError('SOMETHING_WENT_WRONG');
             }
         }
@@ -8776,8 +8940,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
 /* harmony import */ var _view_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/panel/base/intInput/intInputView */ "./gameApp/src/view/panel/base/intInput/intInputView.js");
 /* harmony import */ var _view_panel_base_nest_nestInlineView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/panel/base/nest/nestInlineView */ "./gameApp/src/view/panel/base/nest/nestInlineView.js");
-/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
-/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
 
 
 
@@ -8924,9 +9088,9 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
             await this.$domainFacade.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._choosedNestView.value);
             this._onDone();
         } catch (e) {
-            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__.StateSyncRequestError) {
+            if (e instanceof _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__.StateSyncRequestError) {
                 this._validate();
-            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__.GenericRequestError) {
+            } else if (e instanceof _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__.GenericRequestError) {
                 this._renderMainError('SOMETHING_WENT_WRONG');
             }
         }
@@ -8996,8 +9160,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
 /* harmony import */ var _view_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/panel/base/intInput/intInputView */ "./gameApp/src/view/panel/base/intInput/intInputView.js");
 /* harmony import */ var _view_panel_base_position_positionView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/panel/base/position/positionView */ "./gameApp/src/view/panel/base/position/positionView.js");
-/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
-/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
 /* harmony import */ var _view_panel_base_textInput_textInputView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @view/panel/base/textInput/textInputView */ "./gameApp/src/view/panel/base/textInput/textInputView.js");
 
 
@@ -9135,9 +9299,9 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
             await this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName);
             this._onDone();
         } catch (e) {
-            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__.StateSyncRequestError) {
+            if (e instanceof _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__.StateSyncRequestError) {
                 this._validate();
-            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__.GenericRequestError) {
+            } else if (e instanceof _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__.GenericRequestError) {
                 this._renderMainError('SOMETHING_WENT_WRONG');
             }
         }
@@ -9167,8 +9331,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
 /* harmony import */ var _view_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @view/panel/base/intInput/intInputView */ "./gameApp/src/view/panel/base/intInput/intInputView.js");
 /* harmony import */ var _view_panel_base_nest_nestInlineView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @view/panel/base/nest/nestInlineView */ "./gameApp/src/view/panel/base/nest/nestInlineView.js");
-/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
-/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
 
 
 
@@ -9326,9 +9490,9 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
             await this.$domainFacade.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount);
             this._onDone();
         } catch (e) {
-            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_7__.StateSyncRequestError) {
+            if (e instanceof _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_7__.StateSyncRequestError) {
                 this._validate();
-            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__.GenericRequestError) {
+            } else if (e instanceof _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__.GenericRequestError) {
                 this._renderMainError('SOMETHING_WENT_WRONG');
             }
         }
@@ -9376,8 +9540,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
 /* harmony import */ var _view_panel_base_intInput_intInputView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/panel/base/intInput/intInputView */ "./gameApp/src/view/panel/base/intInput/intInputView.js");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
-/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
-/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
 
 
 
@@ -9517,9 +9681,9 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
             await this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
             this._onDone();
         } catch (e) {
-            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__.StateSyncRequestError) {
+            if (e instanceof _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_6__.StateSyncRequestError) {
                 this._validate();
-            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__.GenericRequestError) {
+            } else if (e instanceof _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__.GenericRequestError) {
                 this._renderMainError('SOMETHING_WENT_WRONG');
             }
         }
@@ -10271,8 +10435,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_panel_base_position_positionView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @view/panel/base/position/positionView */ "./gameApp/src/view/panel/base/position/positionView.js");
 /* harmony import */ var _domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @domain/enum/markerTypes */ "./gameApp/src/domain/enum/markerTypes.js");
 /* harmony import */ var _view_panel_base_textInput_textInputView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @view/panel/base/textInput/textInputView */ "./gameApp/src/view/panel/base/textInput/textInputView.js");
-/* harmony import */ var _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @domain/errors/stateSyncRequestError */ "./gameApp/src/domain/errors/stateSyncRequestError.js");
-/* harmony import */ var _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @domain/errors/genericRequestError */ "./gameApp/src/domain/errors/genericRequestError.js");
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
 
 
 
@@ -10394,9 +10558,9 @@ class BreedingManagerView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_
             this.$eventBus.emit('showPointRequest', this._nestPositionView.value);
             this._resetFields();
         } catch (e) {
-            if (e instanceof _domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_7__.StateSyncRequestError) {
+            if (e instanceof _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_7__.StateSyncRequestError) {
                 this._validate();
-            } else if (e instanceof _domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__.GenericRequestError) {
+            } else if (e instanceof _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__.GenericRequestError) {
                 this._renderRequestError('SOMETHING_WENT_WRONG');
             }
         }
@@ -85253,20 +85417,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _sync__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./sync */ "./gameApp/src/sync/index.js");
 /* harmony import */ var _domain__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./domain */ "./gameApp/src/domain/index.js");
 /* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./view */ "./gameApp/src/view/index.js");
-/* harmony import */ var _utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @utils/readInitialData */ "./gameApp/src/utils/readInitialData.js");
-/* harmony import */ var _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/messages/messageMaster */ "./common/messages/messageMaster.js");
-/* harmony import */ var _messages_msgLibraries__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @messages/msgLibraries */ "./gameApp/src/messages/msgLibraries/index.js");
-
-
+/* harmony import */ var _common_utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/utils/readInitialData */ "./common/utils/readInitialData.js");
 
 
 
 
 
 async function initApp() {
-    let initialData = (0,_utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__.readInitialData)();
-
-    _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_4__.MessageMaster.init(_messages_msgLibraries__WEBPACK_IMPORTED_MODULE_5__.msgLibrariesPack);
+    let initialData = (0,_common_utils_readInitialData__WEBPACK_IMPORTED_MODULE_3__.readInitialData)();
 
     let syncLayer = (0,_sync__WEBPACK_IMPORTED_MODULE_0__.initSyncLayer)(initialData);
     let domainFacade = (0,_domain__WEBPACK_IMPORTED_MODULE_1__.initDomainLayer)(syncLayer.apis, syncLayer.serverConnection, initialData);

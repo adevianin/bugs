@@ -7,8 +7,6 @@ class AccountApi {
     login(username, password) {
         return this._requester.post('api/accounts/login', {
             username, password
-        }).then(res => {
-            return res.data.user;
         });
     }
 
@@ -18,17 +16,23 @@ class AccountApi {
         });
     }
 
-    register(username, password) {
+    register(username, email, password) {
         return this._requester.post('api/accounts/register', {
-            username, password
-        }).then(res => {
-            return res.data.user;
+            username, email, password
         });
     }
 
-    checkUsernameUnique(username) {
-        return this._requester.post('api/accounts/check_name', {
+    checkUsernameUniqueness(username) {
+        return this._requester.post('api/accounts/check_username_uniqueness', {
             username
+        }).then(res => {
+            return res.data.is_unique;
+        });
+    }
+
+    checkEmailUniqueness(email) {
+        return this._requester.post('api/accounts/check_email_uniqueness', {
+            email
         }).then(res => {
             return res.data.is_unique;
         });

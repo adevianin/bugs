@@ -2,32 +2,6 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./accountApp/src/domain/domainFacade.js":
-/*!***********************************************!*\
-  !*** ./accountApp/src/domain/domainFacade.js ***!
-  \***********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   DomainFacade: () => (/* binding */ DomainFacade)
-/* harmony export */ });
-/* harmony import */ var _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/baseDomainFacade */ "./common/domain/baseDomainFacade.js");
-
-
-class DomainFacade extends _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MODULE_0__.BaseDomainFacade {
-
-    constructor(accountService) {
-        super();
-        this._accountService = accountService;
-    }
-
-}
-
-
-
-/***/ }),
-
 /***/ "./accountApp/src/messages/messageIds.js":
 /*!***********************************************!*\
   !*** ./accountApp/src/messages/messageIds.js ***!
@@ -131,30 +105,48 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./accountApp/src/view/styles.css");
 /* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../messages/messageIds */ "./accountApp/src/messages/messageIds.js");
+/* harmony import */ var _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/view/dotsLoader/dotsLoaderView */ "./common/view/dotsLoader/dotsLoaderView.js");
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+
+
+
 
 
 
 class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
 
-    constructor(el) {
+    constructor(el, accountService) {
         super(el);
+        this._accountService = accountService;
+        this._registrationApprovedFields = {
+            username: false,
+            email: false,
+        }
 
         this._render();
 
         this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));
         this._registrationBtn.addEventListener('click', this._onRegistrationBtnClick.bind(this));
+
         this._switchModeToRegisterBtn.addEventListener('click', this._onSwitchModeToRegisterClick.bind(this));
         this._switchModeToLoginBtn.addEventListener('click', this._onSwitchModeToLoginClick.bind(this));
+
+        this._registrationUsernameEl.addEventListener('change', this._onRegistrationUsernameChanged.bind(this));
+        this._registrationUsernameEl.addEventListener('input', this._onRegistrationUsernameInput.bind(this));
+        this._registrationEmailEl.addEventListener('change', this._onRegistrationEmailChanged.bind(this));
+        this._registrationEmailEl.addEventListener('input', this._onRegistrationEmailInput.bind(this));
+        this._registrationPasswordEl.addEventListener('change', this._onRegistrationPasswordChanged.bind(this));
+        this._registrationPasswordConfirmEl.addEventListener('change', this._onRegistrationPasswordConfirmChanged.bind(this));
 
         this._switchMode('login');
     }
 
     _render() {
         this._loginTabEl = this._el.querySelector('[data-login-tab]');
-        this._registrationTabEl = this._el.querySelector('[data-registration-tab]');
 
         this._loginBtn = this._el.querySelector('[data-login-btn]');
-        this._registrationBtn = this._el.querySelector('[data-registration-btn]');
+        
         this._switchModeToRegisterBtn = this._el.querySelector('[data-switch-to-register-btn]');
         this._switchModeToLoginBtn = this._el.querySelector('[data-switch-to-login-btn]');
 
@@ -163,53 +155,191 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._usernameIsntUniqueErrorEl = this._el.querySelector('[data-username-isnt-unique]');
         this._registrationSomethingWrongErrorEl = this._el.querySelector('[data-reg-something-went-wrong]');
 
-        this._toggleNotCorrectLoginPassError(false);
-        this._toggleDifferentPasswordsError(false);
-        this._toggleUsernameIsntUniqueError(false);
-        this._toggleRegSomethingWentWrongError(false);
+        this._registrationTabEl = this._el.querySelector('[data-registration-tab]');
+        this._registrationBtn = this._el.querySelector('[data-registration-btn]');
+        this._registrationUsernameEl = this._registrationTabEl.querySelector('[data-username]');
+        this._registrationUsernameErrContainer = this._registrationTabEl.querySelector('[data-username-err]');
+        this._registrationUsernameLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__.DotsLoaderView(this._registrationTabEl.querySelector('[data-username-loader]'));
+        this._registrationEmailEl = this._registrationTabEl.querySelector('[data-email]');
+        this._registrationEmailLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__.DotsLoaderView(this._registrationTabEl.querySelector('[data-email-loader]'));
+        this._registrationEmailErrContainer = this._registrationTabEl.querySelector('[data-email-err]');
+        this._registrationPasswordEl = this._registrationTabEl.querySelector('[data-password]');
+        this._registrationPasswordErrContainer = this._registrationTabEl.querySelector('[data-password-err]');
+        this._registrationPasswordConfirmEl = this._registrationTabEl.querySelector('[data-password-confirm]');
+        this._registrationPasswordConfirmErrContainer = this._registrationTabEl.querySelector('[data-password-confirm-err]');
     }
 
-    _onLoginBtnClick() {
-        let username = this._loginTabEl.querySelector('[data-user-name]').value;
-        let password =  this._loginTabEl.querySelector('[data-password]').value;
-        this._accountApi.login(username, password)
-            .then(() => {
-                this._redirectToNext();
-            })
-            .catch(() => {
-                this._toggleNotCorrectLoginPassError(true);
-            });
+    async _validateRegistration() {
+        let isError = false;
+
+        if (!this._registrationApprovedFields.username) {
+            console.log('validating username');
+            let usernameErr = await this._validateRegistrationUsername();
+            this._renderRegistrationUsernameError(usernameErr);
+            if (usernameErr) {
+                isError = true;
+            }
+        }
+
+        if (!this._registrationApprovedFields.email) {
+            console.log('validating email');
+            let emailErr = await this._validateRegistrationEmail();
+            this._renderRegistrationEmailError(emailErr);
+            if (emailErr) {
+                isError = true;
+            }
+        }
+
+        let passwordErr = this._validateRegistrationPassword();
+        this._renderRegistrationPasswordError(passwordErr);
+        if (passwordErr) {
+            isError = true;
+        }
+
+        let passConfirmErr = this._validateRegistrationPasswordConfirm();
+        this._renderRegistrationPasswordConfirmError(passConfirmErr);
+        if (passConfirmErr) {
+            isError = true;
+        }
+
+        return !isError;
     }
 
-    _onRegistrationBtnClick() {
-        let username = this._registrationTabEl.querySelector('[data-user-name]').value;
-        let password =  this._registrationTabEl.querySelector('[data-password]').value;
-        let passwordConfirm =  this._registrationTabEl.querySelector('[data-password-confirm]').value;
+    async _validateRegistrationUsername() {
+        let username = this._registrationUsernameEl.value;
+        let res = await this._accountService.validateUsername(username);
+        return res;
+    }
 
-        if (!username || !password) {
+    _renderRegistrationUsernameError(err) {
+        if (err) {
+            switch (err.msgId) {
+                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR):
+                    this._registrationUsernameErrContainer.innerHTML = this.$mm.format(err.msgId, err.minLength);
+                    break;
+                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR):
+                    this._registrationUsernameErrContainer.innerHTML = this.$mm.format(err.msgId, err.maxLength);
+                    break;
+                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.USERNAME_INVALID_CHARS):
+                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.USERNAME_TAKEN):
+                    this._registrationUsernameErrContainer.innerHTML = this.$mm.format(err.msgId);
+                    break;
+            }
+        } else {
+            this._registrationUsernameErrContainer.innerHTML = '';
+        }
+    }
+
+    _onRegistrationUsernameInput() {
+        this._registrationApprovedFields.username = false;
+    }
+
+    async _onRegistrationUsernameChanged() {
+        this._registrationUsernameLoader.toggle(true);
+        let usernameErr = await this._validateRegistrationUsername();
+        this._registrationUsernameLoader.toggle(false);
+        this._renderRegistrationUsernameError(usernameErr);
+        this._registrationApprovedFields.username = !usernameErr;
+    }
+
+    async _validateRegistrationEmail() {
+        let email = this._registrationEmailEl.value;
+
+        if (!email || !this._registrationEmailEl.checkValidity()) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.EMAIL_INVALID_FORMAT;
+        }
+
+        let isUniq = await this._accountService.checkEmailUniqueness(email);
+        if (!isUniq) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.EMAIL_TAKEN;
+        }
+
+        return null;
+    }
+
+    _renderRegistrationEmailError(errId) {
+        this._registrationEmailErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    _onRegistrationEmailInput() {
+        this._registrationApprovedFields.email = false;
+    }
+
+    async _onRegistrationEmailChanged() {
+        this._registrationEmailLoader.toggle(true);
+        let emailErr = await this._validateRegistrationEmail();
+        this._registrationEmailLoader.toggle(false);
+        this._renderRegistrationEmailError(emailErr);
+        this._registrationApprovedFields.email = !emailErr;
+    }
+
+    _validateRegistrationPassword() {
+        let password = this._registrationPasswordEl.value;
+        return this._accountService.validatePassword(password);
+    }
+
+    _renderRegistrationPasswordError(err) {
+        if (err) {
+            switch (err.msgId) {
+                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR):
+                    this._registrationPasswordErrContainer.innerHTML = this.$mm.format(err.msgId, err.minLength);
+                    break;
+                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR):
+                    this._registrationPasswordErrContainer.innerHTML = this.$mm.format(err.msgId, err.maxLength);
+                    break;
+            }
+        } else {
+            this._registrationPasswordErrContainer.innerHTML = '';
+        }
+    }
+
+    _onRegistrationPasswordChanged() {
+        let passwordErr = this._validateRegistrationPassword();
+        this._renderRegistrationPasswordError(passwordErr);
+    }
+
+    _validateRegistrationPasswordConfirm() {
+        let confirmPassword = this._registrationPasswordConfirmEl.value;
+        let password = this._registrationPasswordEl.value;
+        if (confirmPassword != password) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID;
+        }
+
+        return null;
+    }
+
+    _renderRegistrationPasswordConfirmError(errId) {
+        this._registrationPasswordConfirmErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    _onRegistrationPasswordConfirmChanged() {
+        let passConfirmErr = this._validateRegistrationPasswordConfirm();
+        this._renderRegistrationPasswordConfirmError(passConfirmErr);
+    }
+
+    _resetRegistrationApprovedFields() {
+        this._registrationApprovedFields.username = false;
+        this._registrationApprovedFields.email = false;
+    }
+
+    async _onRegistrationBtnClick() {
+        let isValid = await this._validateRegistration();
+        if (!isValid) {
             return;
         }
-        
-        let isPasswordSame = password == passwordConfirm;
-        this._toggleDifferentPasswordsError(!isPasswordSame);
-        if (!isPasswordSame) {
-            return;
+
+        let username = this._registrationUsernameEl.value;
+        let email = this._registrationEmailEl.value;
+        let password = this._registrationPasswordEl.value;
+        try {
+            await this._accountService.register(username, email, password);
+            this._redirectToNext();
+        } catch(e) {
+            if (e instanceof _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_4__.StateSyncRequestError) {
+                this._resetRegistrationApprovedFields();
+                this._validateRegistration();
+            }
         }
-
-        this._accountApi.checkUsernameUnique(username)
-            .then((isUnique) => {
-                this._toggleUsernameIsntUniqueError(!isUnique);
-
-                if (isUnique && isPasswordSame) {
-                    this._accountApi.register(username, password)
-                        .then(() => {
-                            this._redirectToNext();
-                        })
-                        .catch(() => {
-                            this._toggleRegSomethingWentWrongError(true);
-                        })
-                }
-            });
     }
 
     _onSwitchModeToLoginClick(e) {
@@ -259,23 +389,64 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         let nextUrl = new URLSearchParams(window.location.search).get('next') || '/';
         window.location.href = nextUrl;
     }
+
+    _onLoginBtnClick() {
+        let username = this._loginTabEl.querySelector('[data-user-name]').value;
+        let password =  this._loginTabEl.querySelector('[data-password]').value;
+        this._accountApi.login(username, password)
+            .then(() => {
+                this._redirectToNext();
+            })
+            .catch(() => {
+                this._toggleNotCorrectLoginPassError(true);
+            });
+    }
 }
 
 
 
 /***/ }),
 
-/***/ "./common/domain/baseDomainFacade.js":
-/*!*******************************************!*\
-  !*** ./common/domain/baseDomainFacade.js ***!
-  \*******************************************/
+/***/ "./common/domain/errors/genericRequestError.js":
+/*!*****************************************************!*\
+  !*** ./common/domain/errors/genericRequestError.js ***!
+  \*****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   BaseDomainFacade: () => (/* binding */ BaseDomainFacade)
+/* harmony export */   GenericRequestError: () => (/* binding */ GenericRequestError)
 /* harmony export */ });
-class BaseDomainFacade {}
+class GenericRequestError extends Error {
+
+    constructor(data) {
+        super();
+        this.data = data;
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./common/domain/errors/stateSyncRequestError.js":
+/*!*******************************************************!*\
+  !*** ./common/domain/errors/stateSyncRequestError.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   StateSyncRequestError: () => (/* binding */ StateSyncRequestError)
+/* harmony export */ });
+/* harmony import */ var _genericRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./genericRequestError */ "./common/domain/errors/genericRequestError.js");
+
+
+class StateSyncRequestError extends _genericRequestError__WEBPACK_IMPORTED_MODULE_0__.GenericRequestError {
+
+}
+
 
 
 /***/ }),
@@ -290,9 +461,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AccountService: () => (/* binding */ AccountService)
 /* harmony export */ });
-class AccountService {
+/* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
+/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
+/* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base/baseService */ "./common/domain/service/base/baseService.js");
+
+
+
+
+class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.BaseService {
+
+    static MIN_USERNAME_LENGTH = 4;
+    static MAX_USERNAME_LENGTH = 32;
+    static USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
+    static MIN_PASSWORD_LENGTH = 8;
+    static MAX_PASSWORD_LENGTH = 40;
     
     constructor(accountApi, userData) {
+        super();
         this._accountApi = accountApi;
         this._userData = userData;
     }
@@ -301,8 +486,100 @@ class AccountService {
         return this._accountApi.logout();
     }
 
+    async register(username, email, password) {
+        return this._requestHandler(() => this._accountApi.register(username, email, password));
+    }
+
     getUserData() {
         return this._userData;
+    }
+
+    async validateUsername(username = '') {
+        if (username.length < AccountService.MIN_USERNAME_LENGTH) {
+            return {
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR,
+                minLength: AccountService.MIN_USERNAME_LENGTH
+            }
+        }
+
+        if (username.length > AccountService.MAX_USERNAME_LENGTH) {
+            return {
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR,
+                maxLength: AccountService.MAX_USERNAME_LENGTH
+            }
+        }
+
+        if (!AccountService.USERNAME_REGEX.test(username)) {
+            return {
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS
+            }
+        }
+
+        let isUniq = await this._accountApi.checkUsernameUniqueness(username);
+        if (!isUniq) {
+            return {
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN
+            }
+        }
+
+        return null;
+    }
+
+    async checkEmailUniqueness(email) {
+        return await this._accountApi.checkEmailUniqueness(email);
+    }
+
+    validatePassword(password = '') {
+        if (password.length < AccountService.MIN_PASSWORD_LENGTH) {
+            return {
+                msgId: _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR,
+                minLength: AccountService.MIN_PASSWORD_LENGTH
+            }
+        }
+
+        if (password.length > AccountService.MAX_PASSWORD_LENGTH) {
+            return {
+                msgId: _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR,
+                maxLength: AccountService.MAX_PASSWORD_LENGTH
+            }
+        }
+
+        return null;
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./common/domain/service/base/baseService.js":
+/*!***************************************************!*\
+  !*** ./common/domain/service/base/baseService.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BaseService: () => (/* binding */ BaseService)
+/* harmony export */ });
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
+
+
+
+class BaseService {
+
+    async _requestHandler(apiCallFunc) {
+        try {
+            let result = await apiCallFunc();
+            return result.data;
+        } catch(error) {
+            if (error.status == 409) {
+                throw new _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__.StateSyncRequestError(error.data);
+            }
+            throw new _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_1__.GenericRequestError(error.data)
+        }
     }
 
 }
@@ -322,6 +599,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   BASE_MESSAGE_IDS: () => (/* binding */ BASE_MESSAGE_IDS)
 /* harmony export */ });
 const BASE_MESSAGE_IDS = {
+    USERNAME_MIN_LENGTH_ERR: 'USERNAME_MIN_LENGTH_ERR',
+    USERNAME_MAX_LENGTH_ERR: 'USERNAME_MAX_LENGTH_ERR',
+    USERNAME_INVALID_CHARS: 'USERNAME_INVALID_CHARS',
+    USERNAME_TAKEN: 'USERNAME_TAKEN',
+    EMAIL_INVALID_FORMAT: 'EMAIL_INVALID_FORMAT',
+    EMAIL_TAKEN: 'EMAIL_TAKEN',
+    PASSWORD_MIN_LENGTH_ERR: 'PASSWORD_MIN_LENGTH_ERR',
+    PASSWORD_MAX_LENGTH_ERR: 'PASSWORD_MAX_LENGTH_ERR',
+    PASSWORD_CONFIRMATION_IS_NOT_VALID: 'PASSWORD_CONFIRMATION_IS_NOT_VALID'
 }
 
 
@@ -348,6 +634,7 @@ class MessageMaster {
         }
         let lang = MessageMaster._determineLang();
         MessageMaster._instance = new MessageMaster(msgLibrariesPack[lang]);
+        return MessageMaster._instance;
     }
 
     static _determineLang() {
@@ -400,6 +687,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const EN_BASE_LIBRARY = {
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR]: 'Username is too short. The minimum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Username is too long. The maximum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Username contains invalid characters.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'This username is already taken.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID_FORMAT]: 'The email address is invalid.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'The email address is already taken.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Password is too short. The minimum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Password is too long. The maximum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: '"The passwords do not match.',
 }
 
 
@@ -420,6 +716,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const UK_BASE_LIBRARY = {
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR]: 'Ім\'я користувача занадто коротке. Мінімально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Ім\'я користувача занадто довге. Максимально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Ім\'я користувача містить недопустимі символи.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'Це ім\'я користувача вже зайняте.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID_FORMAT]: 'Електронна адреса недійсна.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'Електронна адреса вже зайнята.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Пароль занадто короткий. Мінімально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Пароль занадто довгий. Максимально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: 'Паролі не співпадають.',
 }
 
 
@@ -445,8 +750,6 @@ class AccountApi {
     login(username, password) {
         return this._requester.post('api/accounts/login', {
             username, password
-        }).then(res => {
-            return res.data.user;
         });
     }
 
@@ -456,17 +759,23 @@ class AccountApi {
         });
     }
 
-    register(username, password) {
+    register(username, email, password) {
         return this._requester.post('api/accounts/register', {
-            username, password
-        }).then(res => {
-            return res.data.user;
+            username, email, password
         });
     }
 
-    checkUsernameUnique(username) {
-        return this._requester.post('api/accounts/check_name', {
+    checkUsernameUniqueness(username) {
+        return this._requester.post('api/accounts/check_username_uniqueness', {
             username
+        }).then(res => {
+            return res.data.is_unique;
+        });
+    }
+
+    checkEmailUniqueness(email) {
+        return this._requester.post('api/accounts/check_email_uniqueness', {
+            email
         }).then(res => {
             return res.data.is_unique;
         });
@@ -659,6 +968,8 @@ class BaseView {
 
     static domainFacade;
     static eventBus;
+    static mm;
+    static messages;
 
     get $domainFacade() {
         return BaseView.domainFacade;
@@ -666,6 +977,14 @@ class BaseView {
 
     get $eventBus() {
         return BaseView.eventBus;
+    }
+
+    get $mm() {
+        return BaseView.mm;
+    }
+
+    get $messages() {
+        return BaseView.messages;
     }
 
     static useDomainFacade(domainFacade) {
@@ -676,6 +995,14 @@ class BaseView {
         BaseView.eventBus = eventBus;
     }
 
+    static useMessageMaster(mm) {
+        BaseView.mm = mm;
+    }
+
+    static useMessages(messages) {
+        BaseView.messages = messages;
+    }
+
     remove(){
         throw 'remove method is abstract';
     }
@@ -683,6 +1010,69 @@ class BaseView {
 }
 
    
+
+/***/ }),
+
+/***/ "./common/view/dotsLoader/dotsLoaderView.js":
+/*!**************************************************!*\
+  !*** ./common/view/dotsLoader/dotsLoaderView.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DotsLoaderView: () => (/* binding */ DotsLoaderView)
+/* harmony export */ });
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./common/view/dotsLoader/style.css");
+/* harmony import */ var _dotsLoaderTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dotsLoaderTmpl.html */ "./common/view/dotsLoader/dotsLoaderTmpl.html");
+/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+
+
+
+
+class DotsLoaderView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+
+        this._render();
+    }
+
+    _render() {
+        this._el.innerHTML = _dotsLoaderTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.classList.add('dots-loader');
+    }
+    
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/messages/messageIds.js":
+/*!********************************************!*\
+  !*** ./gameApp/src/messages/messageIds.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MESSAGE_IDS: () => (/* binding */ MESSAGE_IDS)
+/* harmony export */ });
+/* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
+
+
+const MESSAGE_IDS = {
+    ..._common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS,
+    TAB_BREEDING: 'TAB_BREEDING',
+    TAB_COLONIES: 'TAB_COLONIES',
+    TAB_SPECIE: 'TAB_SPECIE',
+    TAB_NOTIFICATIONS: 'TAB_NOTIFICATIONS',
+    TAB_RATING: 'TAB_RATING',
+    TAB_ACCOUNT: 'TAB_ACCOUNT'
+}
+
+
 
 /***/ }),
 
@@ -706,6 +1096,69 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, ``, "",{"version":3,"sources":[],"names":[],"mappings":"","sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./common/view/dotsLoader/style.css":
+/*!********************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./common/view/dotsLoader/style.css ***!
+  \********************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, `.dots-loader {
+    position: relative;
+    width: 30px;
+    height: 30px;
+}
+
+.dots-loader div {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: #007bff;
+    border-radius: 50%;
+    animation: circle-animation 1.2s linear infinite;
+}
+
+.dots-loader div:nth-child(1) { top: 15%; left: 50%; transform: translate(-50%, -50%); animation-delay: -1.05s; }
+.dots-loader div:nth-child(2) { top: 25%; left: 75%; transform: translate(-50%, -50%); animation-delay: -0.9s; }
+.dots-loader div:nth-child(3) { top: 50%; left: 85%; transform: translate(-50%, -50%); animation-delay: -0.75s; }
+.dots-loader div:nth-child(4) { top: 75%; left: 75%; transform: translate(-50%, -50%); animation-delay: -0.6s; }
+.dots-loader div:nth-child(5) { top: 85%; left: 50%; transform: translate(-50%, -50%); animation-delay: -0.45s; }
+.dots-loader div:nth-child(6) { top: 75%; left: 25%; transform: translate(-50%, -50%); animation-delay: -0.3s; }
+.dots-loader div:nth-child(7) { top: 50%; left: 15%; transform: translate(-50%, -50%); animation-delay: -0.15s; }
+.dots-loader div:nth-child(8) { top: 25%; left: 25%; transform: translate(-50%, -50%); animation-delay: 0; }
+
+@keyframes circle-animation {
+    0% {
+        opacity: 0;
+        transform: scale(0.3) translate(-50%, -50%);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1) translate(-50%, -50%);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.3) translate(-50%, -50%);
+    }
+}`, "",{"version":3,"sources":["webpack://./common/view/dotsLoader/style.css"],"names":[],"mappings":"AAAA;IACI,kBAAkB;IAClB,WAAW;IACX,YAAY;AAChB;;AAEA;IACI,kBAAkB;IAClB,UAAU;IACV,WAAW;IACX,yBAAyB;IACzB,kBAAkB;IAClB,gDAAgD;AACpD;;AAEA,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,uBAAuB,EAAE;AAChH,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,sBAAsB,EAAE;AAC/G,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,uBAAuB,EAAE;AAChH,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,sBAAsB,EAAE;AAC/G,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,uBAAuB,EAAE;AAChH,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,sBAAsB,EAAE;AAC/G,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,uBAAuB,EAAE;AAChH,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,kBAAkB,EAAE;;AAE3G;IACI;QACI,UAAU;QACV,2CAA2C;IAC/C;IACA;QACI,UAAU;QACV,yCAAyC;IAC7C;IACA;QACI,UAAU;QACV,2CAA2C;IAC/C;AACJ","sourcesContent":[".dots-loader {\r\n    position: relative;\r\n    width: 30px;\r\n    height: 30px;\r\n}\r\n\r\n.dots-loader div {\r\n    position: absolute;\r\n    width: 6px;\r\n    height: 6px;\r\n    background-color: #007bff;\r\n    border-radius: 50%;\r\n    animation: circle-animation 1.2s linear infinite;\r\n}\r\n\r\n.dots-loader div:nth-child(1) { top: 15%; left: 50%; transform: translate(-50%, -50%); animation-delay: -1.05s; }\r\n.dots-loader div:nth-child(2) { top: 25%; left: 75%; transform: translate(-50%, -50%); animation-delay: -0.9s; }\r\n.dots-loader div:nth-child(3) { top: 50%; left: 85%; transform: translate(-50%, -50%); animation-delay: -0.75s; }\r\n.dots-loader div:nth-child(4) { top: 75%; left: 75%; transform: translate(-50%, -50%); animation-delay: -0.6s; }\r\n.dots-loader div:nth-child(5) { top: 85%; left: 50%; transform: translate(-50%, -50%); animation-delay: -0.45s; }\r\n.dots-loader div:nth-child(6) { top: 75%; left: 25%; transform: translate(-50%, -50%); animation-delay: -0.3s; }\r\n.dots-loader div:nth-child(7) { top: 50%; left: 15%; transform: translate(-50%, -50%); animation-delay: -0.15s; }\r\n.dots-loader div:nth-child(8) { top: 25%; left: 25%; transform: translate(-50%, -50%); animation-delay: 0; }\r\n\r\n@keyframes circle-animation {\r\n    0% {\r\n        opacity: 0;\r\n        transform: scale(0.3) translate(-50%, -50%);\r\n    }\r\n    50% {\r\n        opacity: 1;\r\n        transform: scale(1) translate(-50%, -50%);\r\n    }\r\n    100% {\r\n        opacity: 0;\r\n        transform: scale(0.3) translate(-50%, -50%);\r\n    }\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1338,6 +1791,23 @@ function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
 
 /***/ }),
 
+/***/ "./common/view/dotsLoader/dotsLoaderTmpl.html":
+/*!****************************************************!*\
+  !*** ./common/view/dotsLoader/dotsLoaderTmpl.html ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div></div>\r\n<div></div>\r\n<div></div>\r\n<div></div>\r\n<div></div>\r\n<div></div>\r\n<div></div>\r\n<div></div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./accountApp/src/view/styles.css":
 /*!****************************************!*\
   !*** ./accountApp/src/view/styles.css ***!
@@ -1388,6 +1858,60 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
        /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./common/view/dotsLoader/style.css":
+/*!******************************************!*\
+  !*** ./common/view/dotsLoader/style.css ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js!./style.css */ "./node_modules/css-loader/dist/cjs.js!./common/view/dotsLoader/style.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),
@@ -6448,11 +6972,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_sync_accountApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/sync/accountApi */ "./common/sync/accountApi.js");
 /* harmony import */ var _common_utils_requester__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/utils/requester */ "./common/utils/requester.js");
 /* harmony import */ var _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/domain/service/accountService */ "./common/domain/service/accountService.js");
-/* harmony import */ var _domain_domainFacade__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./domain/domainFacade */ "./accountApp/src/domain/domainFacade.js");
-/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
-/* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
-/* harmony import */ var _messages_msgLibraries__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./messages/msgLibraries */ "./accountApp/src/messages/msgLibraries/index.js");
-/* harmony import */ var _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @common/messages/messageMaster */ "./common/messages/messageMaster.js");
+/* harmony import */ var _messages_msgLibraries__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./messages/msgLibraries */ "./accountApp/src/messages/msgLibraries/index.js");
+/* harmony import */ var _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/messages/messageMaster */ "./common/messages/messageMaster.js");
+/* harmony import */ var _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/view/base/baseView */ "./common/view/base/baseView.js");
 
 
 
@@ -6461,21 +6983,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-_common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_8__.MessageMaster.init(_messages_msgLibraries__WEBPACK_IMPORTED_MODULE_7__.msgLibrariesPack);
+let mm = _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_5__.MessageMaster.init(_messages_msgLibraries__WEBPACK_IMPORTED_MODULE_4__.msgLibrariesPack);
+_common_view_base_baseView__WEBPACK_IMPORTED_MODULE_6__.BaseView.useMessageMaster(mm);
 
 let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_2__.Requester();
 let accountApi = new _common_sync_accountApi__WEBPACK_IMPORTED_MODULE_1__.AccountApi(requester);
 
 let accountService = new _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_3__.AccountService(accountApi);
-let domainFacade = new _domain_domainFacade__WEBPACK_IMPORTED_MODULE_4__.DomainFacade(accountService);
 
-let viewEventBus = new _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_5__.EventEmitter();
-_common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_6__.BaseHTMLView.useDomainFacade(domainFacade);
-_common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_6__.BaseHTMLView.useEventBus(viewEventBus);
-
-new _view_accountAppView__WEBPACK_IMPORTED_MODULE_0__.AccountAppView(document.body, accountApi);
+new _view_accountAppView__WEBPACK_IMPORTED_MODULE_0__.AccountAppView(document.body, accountService);
 })();
 
 /******/ })()
