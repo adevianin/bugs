@@ -84,7 +84,7 @@ __webpack_require__.r(__webpack_exports__);
 class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.BaseService {
 
     static MIN_USERNAME_LENGTH = 4;
-    static MAX_USERNAME_LENGTH = 32;
+    static MAX_USERNAME_LENGTH = 50;
     static USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
     static MIN_PASSWORD_LENGTH = 8;
     static MAX_PASSWORD_LENGTH = 40;

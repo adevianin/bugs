@@ -1,14 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator, MinLengthValidator, MaxLengthValidator, EmailValidator
+from core.world.settings import MAX_USERNAME_LENGTH, MIN_USERNAME_LENGTH
 
 class User(AbstractUser):
     username = models.CharField(
-        max_length=32,
+        max_length=MAX_USERNAME_LENGTH,
         unique=True,
         validators=[
-            MinLengthValidator(4),
-            MaxLengthValidator(32),
+            MinLengthValidator(MIN_USERNAME_LENGTH),
+            MaxLengthValidator(MAX_USERNAME_LENGTH),
             RegexValidator(
                 regex=r'^[a-zA-Z0-9_-]+$',
                 message="Username can only contain letters, numbers, underscores, and hyphens."

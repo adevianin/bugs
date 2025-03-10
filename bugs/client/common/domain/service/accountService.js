@@ -5,7 +5,7 @@ import { BaseService } from "./base/baseService";
 class AccountService extends BaseService {
 
     static MIN_USERNAME_LENGTH = 4;
-    static MAX_USERNAME_LENGTH = 32;
+    static MAX_USERNAME_LENGTH = 50;
     static USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
     static MIN_PASSWORD_LENGTH = 8;
     static MAX_PASSWORD_LENGTH = 40;
