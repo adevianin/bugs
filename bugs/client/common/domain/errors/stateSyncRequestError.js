@@ -1,8 +1,6 @@
-class StateSyncRequestError extends Error {
-    constructor(data) {
-        super();
-        this.data = data;
-    }
+import { GenericRequestError } from "./genericRequestError";
+
+class StateSyncRequestError extends GenericRequestError {
 
 }
 
