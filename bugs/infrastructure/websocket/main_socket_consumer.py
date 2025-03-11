@@ -13,7 +13,7 @@ class MainSocketConsumer(WebsocketConsumer):
     def connect(self):
         self._user = self.scope["user"]
 
-        if self._user.is_authenticated:
+        if self._user.is_authenticated and self._world_facade.is_world_running:
             self._world_facade.ensure_starter_pack_built_for_player(self._user.id)
             self.accept()
         else:
