@@ -109,6 +109,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/view/dotsLoader/dotsLoaderView */ "./common/view/dotsLoader/dotsLoaderView.js");
 /* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
 /* harmony import */ var _common_utils_throttle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/utils/throttle */ "./common/utils/throttle.js");
+/* harmony import */ var _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/domain/errors/unauthorizedRequestError */ "./common/domain/errors/unauthorizedRequestError.js");
+
 
 
 
@@ -144,22 +146,24 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._switchMode('login');
     }
 
-    _render() {
-        this._loginTabEl = this._el.querySelector('[data-login-tab]');
+    get _registrationUsername() {
+        return this._registrationUsernameEl.value.trim();
+    }
 
-        this._loginBtn = this._el.querySelector('[data-login-btn]');
-        
+    get _registrationEmail() {
+        return this._registrationEmailEl.value.trim();
+    }
+
+    get _loginEmail() {
+        return this._loginEmailEl.value.trim();
+    }
+
+    _render() {
         this._switchModeToRegisterBtn = this._el.querySelector('[data-switch-to-register-btn]');
         this._switchModeToLoginBtn = this._el.querySelector('[data-switch-to-login-btn]');
 
-        this._notCorrectCredsErrorEl = this._el.querySelector('[data-not-correct-creds-error]');
-        this._passwordDifferentErrorEl = this._el.querySelector('[data-passwords-different-error]');
-        this._usernameIsntUniqueErrorEl = this._el.querySelector('[data-username-isnt-unique]');
-        this._registrationSomethingWrongErrorEl = this._el.querySelector('[data-reg-something-went-wrong]');
-
         this._registrationTabEl = this._el.querySelector('[data-registration-tab]');
         this._registrationBtn = this._el.querySelector('[data-registration-btn]');
-        this._registrationFormLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__.DotsLoaderView(this._registrationTabEl.querySelector('[data-registration-form-loader]'));
         this._registrationUsernameEl = this._registrationTabEl.querySelector('[data-username]');
         this._registrationUsernameErrContainer = this._registrationTabEl.querySelector('[data-username-err]');
         this._registrationUsernameLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__.DotsLoaderView(this._registrationTabEl.querySelector('[data-username-loader]'));
@@ -170,6 +174,14 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._registrationPasswordErrContainer = this._registrationTabEl.querySelector('[data-password-err]');
         this._registrationPasswordConfirmEl = this._registrationTabEl.querySelector('[data-password-confirm]');
         this._registrationPasswordConfirmErrContainer = this._registrationTabEl.querySelector('[data-password-confirm-err]');
+
+        this._loginTabEl = this._el.querySelector('[data-login-tab]');
+        this._loginBtn = this._el.querySelector('[data-login-btn]');
+        this._loginErrContainer = this._loginTabEl.querySelector('[data-login-err]');
+        this._loginEmailEl = this._loginTabEl.querySelector('[data-email]');
+        this._loginEmailErrContainer = this._loginTabEl.querySelector('[data-email-err]');
+        this._loginPasswordEl = this._loginTabEl.querySelector('[data-password]');
+        this._loginPasswordErrContainer = this._loginTabEl.querySelector('[data-password-err]');
     }
 
     async _validateRegistration() {
@@ -207,7 +219,7 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
     }
 
     async _validateRegistrationUsername() {
-        let username = this._registrationUsernameEl.value;
+        let username = this._registrationUsername;
         let res = await this._accountService.validateUsername(username);
         return res;
     }
@@ -244,10 +256,10 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
     }
 
     async _validateRegistrationEmail() {
-        let email = this._registrationEmailEl.value;
+        let email = this._registrationEmail;
 
         if (!email || !this._registrationEmailEl.checkValidity()) {
-            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.EMAIL_INVALID_FORMAT;
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.EMAIL_INVALID;
         }
 
         let isUniq = await this._accountService.checkEmailUniqueness(email);
@@ -324,15 +336,13 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
     }
 
     async _onRegistrationBtnClick() {
-        this._registrationFormLoader.toggle(true);
         let isValid = await this._validateRegistration();
         if (!isValid) {
-            this._registrationFormLoader.toggle(false);
             return;
         }
 
-        let username = this._registrationUsernameEl.value;
-        let email = this._registrationEmailEl.value;
+        let username = this._registrationUsername;
+        let email = this._registrationEmail;
         let password = this._registrationPasswordEl.value;
         try {
             await this._accountService.register(username, email, password);
@@ -343,7 +353,6 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
                 this._validateRegistration();
             }
         }
-        this._registrationFormLoader.toggle(false);
     }
 
     _onSwitchModeToLoginClick(e) {
@@ -378,16 +387,73 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         window.location.href = nextUrl;
     }
 
-    _onLoginBtnClick() {
-        let username = this._loginTabEl.querySelector('[data-user-name]').value;
-        let password =  this._loginTabEl.querySelector('[data-password]').value;
-        this._accountApi.login(username, password)
-            .then(() => {
-                this._redirectToNext();
-            })
-            .catch(() => {
-                this._toggleNotCorrectLoginPassError(true);
-            });
+    _validateLogin() {
+        let isError = false;
+
+        let emailErr = this._validateLoginEmail();
+        this._renderLoginEmailErr(emailErr);
+        if (emailErr) {
+            isError = true;
+        }
+
+        let passwordErr = this._validateLoginPassword();
+        this._renderLoginPasswordErr(passwordErr);
+        if (passwordErr) {
+            isError = true;
+        }
+
+        return !isError;
+    }
+
+    _validateLoginEmail() {
+        let email = this._loginEmail;
+        if (!email || !this._loginEmailEl.checkValidity()) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.EMAIL_INVALID;
+        }
+
+        return null;
+    }
+
+    _renderLoginEmailErr(errId) {
+        this._loginEmailErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    _validateLoginPassword() {
+        let password = this._loginPasswordEl.value;
+        if (!password) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.PASSWORD_NEEDED;
+        }
+
+        return null;
+    }
+
+    _renderLoginPasswordErr(errId) {
+        this._loginPasswordErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    async _onLoginBtnClick() {
+        if (!this._validateLogin()) {
+            return;
+        }
+
+        let email = this._loginEmail;
+        let password = this._loginPasswordEl.value;
+
+        try {
+            await this._accountService.login(email, password);
+            this._renderLoginErr();
+            this._redirectToNext();
+        } catch (e) {
+            if (e instanceof _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_6__.UnauthorizedRequestError) {
+                this._renderLoginErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL);
+            } else {
+                this._renderLoginErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.SOMETHING_WENT_WRONG);
+            }
+        }
+    }
+
+    _renderLoginErr(errId) {
+        this._loginErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 }
 
@@ -439,6 +505,27 @@ class StateSyncRequestError extends _genericRequestError__WEBPACK_IMPORTED_MODUL
 
 /***/ }),
 
+/***/ "./common/domain/errors/unauthorizedRequestError.js":
+/*!**********************************************************!*\
+  !*** ./common/domain/errors/unauthorizedRequestError.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   UnauthorizedRequestError: () => (/* binding */ UnauthorizedRequestError)
+/* harmony export */ });
+/* harmony import */ var _genericRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./genericRequestError */ "./common/domain/errors/genericRequestError.js");
+
+
+class UnauthorizedRequestError extends _genericRequestError__WEBPACK_IMPORTED_MODULE_0__.GenericRequestError {
+
+}
+
+
+
+/***/ }),
+
 /***/ "./common/domain/service/accountService.js":
 /*!*************************************************!*\
   !*** ./common/domain/service/accountService.js ***!
@@ -468,6 +555,10 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         super();
         this._accountApi = accountApi;
         this._userData = userData;
+    }
+
+    login(email, password) {
+        return this._requestHandler(() => this._accountApi.login(email, password));
     }
 
     logout() {
@@ -553,6 +644,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
 /* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
+/* harmony import */ var _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/domain/errors/unauthorizedRequestError */ "./common/domain/errors/unauthorizedRequestError.js");
+
 
 
 
@@ -563,10 +656,14 @@ class BaseService {
             let result = await apiCallFunc();
             return result.data;
         } catch(error) {
-            if (error.status == 409) {
-                throw new _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__.StateSyncRequestError(error.data);
+            switch(error.status) {
+                case 409:
+                    throw new _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__.StateSyncRequestError(error.data);
+                case 401:
+                    throw new _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__.UnauthorizedRequestError(error.data);
+                default:
+                    throw new _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_1__.GenericRequestError(error.data)
             }
-            throw new _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_1__.GenericRequestError(error.data)
         }
     }
 
@@ -591,11 +688,14 @@ const BASE_MESSAGE_IDS = {
     USERNAME_MAX_LENGTH_ERR: 'USERNAME_MAX_LENGTH_ERR',
     USERNAME_INVALID_CHARS: 'USERNAME_INVALID_CHARS',
     USERNAME_TAKEN: 'USERNAME_TAKEN',
-    EMAIL_INVALID_FORMAT: 'EMAIL_INVALID_FORMAT',
+    EMAIL_INVALID: 'EMAIL_INVALID',
     EMAIL_TAKEN: 'EMAIL_TAKEN',
     PASSWORD_MIN_LENGTH_ERR: 'PASSWORD_MIN_LENGTH_ERR',
     PASSWORD_MAX_LENGTH_ERR: 'PASSWORD_MAX_LENGTH_ERR',
-    PASSWORD_CONFIRMATION_IS_NOT_VALID: 'PASSWORD_CONFIRMATION_IS_NOT_VALID'
+    PASSWORD_CONFIRMATION_IS_NOT_VALID: 'PASSWORD_CONFIRMATION_IS_NOT_VALID',
+    PASSWORD_NEEDED: 'PASSWORD_NEEDED',
+    NOT_VALID_PASSWORD_OR_EMAIL: 'NOT_VALID_PASSWORD_OR_EMAIL',
+    SOMETHING_WENT_WRONG: 'SOMETHING_WENT_WRONG'
 }
 
 
@@ -679,11 +779,14 @@ const EN_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Username is too long. The maximum allowed length is {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Username contains invalid characters.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'This username is already taken.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID_FORMAT]: 'The email address is invalid.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'The email address is invalid.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'The email address is already taken.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Password is too short. The minimum allowed length is {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Password is too long. The maximum allowed length is {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: '"The passwords do not match.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Password not provided.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Incorrect password or email address.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Something went wrong.',
 }
 
 
@@ -708,11 +811,14 @@ const UK_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Ім\'я користувача занадто довге. Максимально допустима довжина — {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Ім\'я користувача містить недопустимі символи.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'Це ім\'я користувача вже зайняте.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID_FORMAT]: 'Електронна адреса недійсна.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'Електронна адреса недійсна.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'Електронна адреса вже зайнята.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Пароль занадто короткий. Мінімально допустима довжина — {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Пароль занадто довгий. Максимально допустима довжина — {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: 'Паролі не співпадають.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Пароль не вказано.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Неправильний пароль або електронна адреса.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Щось пішло не так.',
 }
 
 
@@ -735,9 +841,9 @@ class AccountApi {
         this._requester = requester;
     }
 
-    login(username, password) {
+    login(email, password) {
         return this._requester.post('api/accounts/login', {
-            username, password
+            email, password
         });
     }
 

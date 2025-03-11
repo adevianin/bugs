@@ -63,6 +63,28 @@ class StateSyncRequestError extends _genericRequestError__WEBPACK_IMPORTED_MODUL
 
 /***/ }),
 
+/***/ "./common/domain/errors/unauthorizedRequestError.js":
+/*!**********************************************************!*\
+  !*** ./common/domain/errors/unauthorizedRequestError.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   UnauthorizedRequestError: () => (/* binding */ UnauthorizedRequestError)
+/* harmony export */ });
+/* harmony import */ var _genericRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./genericRequestError */ "./common/domain/errors/genericRequestError.js");
+
+
+class UnauthorizedRequestError extends _genericRequestError__WEBPACK_IMPORTED_MODULE_0__.GenericRequestError {
+
+}
+
+
+
+/***/ }),
+
 /***/ "./common/domain/service/accountService.js":
 /*!*************************************************!*\
   !*** ./common/domain/service/accountService.js ***!
@@ -93,6 +115,10 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         super();
         this._accountApi = accountApi;
         this._userData = userData;
+    }
+
+    login(email, password) {
+        return this._requestHandler(() => this._accountApi.login(email, password));
     }
 
     logout() {
@@ -179,6 +205,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
 /* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
+/* harmony import */ var _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/domain/errors/unauthorizedRequestError */ "./common/domain/errors/unauthorizedRequestError.js");
+
 
 
 
@@ -189,10 +217,14 @@ class BaseService {
             let result = await apiCallFunc();
             return result.data;
         } catch(error) {
-            if (error.status == 409) {
-                throw new _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__.StateSyncRequestError(error.data);
+            switch(error.status) {
+                case 409:
+                    throw new _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__.StateSyncRequestError(error.data);
+                case 401:
+                    throw new _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__.UnauthorizedRequestError(error.data);
+                default:
+                    throw new _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_1__.GenericRequestError(error.data)
             }
-            throw new _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_1__.GenericRequestError(error.data)
         }
     }
 
@@ -218,11 +250,14 @@ const BASE_MESSAGE_IDS = {
     USERNAME_MAX_LENGTH_ERR: 'USERNAME_MAX_LENGTH_ERR',
     USERNAME_INVALID_CHARS: 'USERNAME_INVALID_CHARS',
     USERNAME_TAKEN: 'USERNAME_TAKEN',
-    EMAIL_INVALID_FORMAT: 'EMAIL_INVALID_FORMAT',
+    EMAIL_INVALID: 'EMAIL_INVALID',
     EMAIL_TAKEN: 'EMAIL_TAKEN',
     PASSWORD_MIN_LENGTH_ERR: 'PASSWORD_MIN_LENGTH_ERR',
     PASSWORD_MAX_LENGTH_ERR: 'PASSWORD_MAX_LENGTH_ERR',
-    PASSWORD_CONFIRMATION_IS_NOT_VALID: 'PASSWORD_CONFIRMATION_IS_NOT_VALID'
+    PASSWORD_CONFIRMATION_IS_NOT_VALID: 'PASSWORD_CONFIRMATION_IS_NOT_VALID',
+    PASSWORD_NEEDED: 'PASSWORD_NEEDED',
+    NOT_VALID_PASSWORD_OR_EMAIL: 'NOT_VALID_PASSWORD_OR_EMAIL',
+    SOMETHING_WENT_WRONG: 'SOMETHING_WENT_WRONG'
 }
 
 
@@ -308,11 +343,14 @@ const EN_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Username is too long. The maximum allowed length is {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Username contains invalid characters.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'This username is already taken.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID_FORMAT]: 'The email address is invalid.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'The email address is invalid.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'The email address is already taken.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Password is too short. The minimum allowed length is {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Password is too long. The maximum allowed length is {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: '"The passwords do not match.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Password not provided.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Incorrect password or email address.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Something went wrong.',
 }
 
 
@@ -338,11 +376,14 @@ const UK_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Ім\'я користувача занадто довге. Максимально допустима довжина — {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Ім\'я користувача містить недопустимі символи.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'Це ім\'я користувача вже зайняте.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID_FORMAT]: 'Електронна адреса недійсна.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'Електронна адреса недійсна.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'Електронна адреса вже зайнята.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Пароль занадто короткий. Мінімально допустима довжина — {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Пароль занадто довгий. Максимально допустима довжина — {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: 'Паролі не співпадають.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Пароль не вказано.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Неправильний пароль або електронна адреса.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Щось пішло не так.',
 }
 
 
@@ -366,9 +407,9 @@ class AccountApi {
         this._requester = requester;
     }
 
-    login(username, password) {
+    login(email, password) {
         return this._requester.post('api/accounts/login', {
-            username, password
+            email, password
         });
     }
 
@@ -3455,14 +3496,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BaseGameService: () => (/* binding */ BaseGameService)
 /* harmony export */ });
-/* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
-/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
-/* harmony import */ var _common_domain_service_base_baseService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/domain/service/base/baseService */ "./common/domain/service/base/baseService.js");
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_service_base_baseService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/domain/service/base/baseService */ "./common/domain/service/base/baseService.js");
 
 
 
-
-class BaseGameService extends _common_domain_service_base_baseService__WEBPACK_IMPORTED_MODULE_2__.BaseService {
+class BaseGameService extends _common_domain_service_base_baseService__WEBPACK_IMPORTED_MODULE_1__.BaseService {
 
     constructor(mainEventBus, world) {
         super();
@@ -3474,7 +3513,7 @@ class BaseGameService extends _common_domain_service_base_baseService__WEBPACK_I
         try {
             await super._requestHandler(apiCallFunc);
         } catch (e) {
-            if (e instanceof _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_1__.StateSyncRequestError) {
+            if (e instanceof _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__.StateSyncRequestError) {
                 await this._waitStepSync(e.data.step);
                 throw e;
             } else {

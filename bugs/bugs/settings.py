@@ -156,8 +156,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ASGI_APPLICATION = 'bugs.asgi.application'
 
-AUTH_USER_MODEL = 'infrastructure.User'
-
 LOGIN_URL = '/account'
 
 LOGGING = {
@@ -212,3 +210,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "evolutionofants@gmail.com"
 EMAIL_HOST_PASSWORD = "ujap njlp wipe fwil"
 DEFAULT_FROM_EMAIL = "Evolution Of Ants <your-email@gmail.com>"
+
+AUTH_USER_MODEL = 'infrastructure.User'
+AUTHENTICATION_BACKENDS = [
+    'infrastructure.email_authentication_backend.EmailBackend'
+]

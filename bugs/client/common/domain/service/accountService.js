@@ -16,6 +16,10 @@ class AccountService extends BaseService {
         this._userData = userData;
     }
 
+    login(email, password) {
+        return this._requestHandler(() => this._accountApi.login(email, password));
+    }
+
     logout() {
         return this._accountApi.logout();
     }

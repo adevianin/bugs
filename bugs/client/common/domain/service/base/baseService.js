@@ -1,5 +1,6 @@
 import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
+import { UnauthorizedRequestError } from "@common/domain/errors/unauthorizedRequestError";
 
 class BaseService {
 
@@ -8,10 +9,14 @@ class BaseService {
             let result = await apiCallFunc();
             return result.data;
         } catch(error) {
-            if (error.status == 409) {
-                throw new StateSyncRequestError(error.data);
+            switch(error.status) {
+                case 409:
+                    throw new StateSyncRequestError(error.data);
+                case 401:
+                    throw new UnauthorizedRequestError(error.data);
+                default:
+                    throw new GenericRequestError(error.data)
             }
-            throw new GenericRequestError(error.data)
         }
     }
 

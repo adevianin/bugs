@@ -2,17 +2,14 @@ from django.http import HttpResponse, JsonResponse, HttpRequest
 from infrastructure.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.http import require_POST
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from bugs.settings import GOOGLE_CLIENT_ID, GOOGLE_OAUTH_REDIRECT_URI
-from django.views.decorators.csrf import csrf_exempt
 from google.oauth2 import id_token
 from google.auth.transport import requests
-from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from core.world.settings import MAX_USERNAME_LENGTH
 import json
 import random
 import uuid
@@ -54,38 +51,12 @@ def google_auth_callback(request: HttpRequest):
 
         return redirect('game_index')
 
-@require_POST 
-def check_username_uniqueness(request):
-    try:
-        username = request.json['username']
-    except Exception as e:
-        return HttpResponse(status=400)
-
-    is_unique = not User.objects.filter(username=username).exists()
-
-    return JsonResponse({
-        'is_unique': is_unique
-    })
-
-@require_POST 
-def check_email_uniqueness(request):
-    try:
-        email = request.json['email']
-    except Exception as e:
-        return HttpResponse(status=400)
-
-    is_unique = not User.objects.filter(email=email).exists()
-
-    return JsonResponse({
-        'is_unique': is_unique
-    })
-    
 @require_POST        
 def account_register(request: HttpRequest):
     try:
         data = json.loads(request.body)
-        username = data.get('username', '').strip()
-        email = data.get('email', '').strip()
+        username = data.get('username', '')
+        email = data.get('email', '')
         password = data.get('password', '')
         
         if not username or not email or not password:
@@ -94,10 +65,11 @@ def account_register(request: HttpRequest):
         return HttpResponse(status=400)
 
     try:
-        user = User(username=username, email=email)
-        user.set_password(password)
-        user.full_clean()
-        user.save()
+        user = User.objects.create_user(
+            username=username, 
+            email=email, 
+            password=password
+        )
 
         login(request, user)
         
@@ -111,14 +83,14 @@ def account_register(request: HttpRequest):
 def account_login(request: HttpRequest):
     try:
         data = json.loads(request.body)
-        username = data.get('username', '')
+        email = data.get('email', '')
         password = data.get('password', '')
-        if not username or not password:
+        if not email or not password:
             return HttpResponse(status=400)
     except Exception as e:
         return HttpResponse(status=400)
     
-    user = authenticate(username=username, password=password)
+    user = authenticate(request, email=email, password=password)
 
     if user is not None:
         login(request, user)
@@ -137,15 +109,48 @@ def account_logout(request):
 
 @require_POST
 @login_required  
-def account_change_name(request):
-    username = request.json['username']
+def account_change_name(request: HttpRequest):
+    data = json.loads(request.body)
+    username = data.get('username', '')
     user = User.objects.get(id=request.user.id)
     user.username = username
-    user.full_clean()  # Викличе валідацію
+    user.full_clean()
     user.save()
     return JsonResponse({
             'user': user.get_general_data()
         })
+
+@require_POST 
+def check_username_uniqueness(request: HttpRequest):
+    try:
+        data = json.loads(request.body)
+        username = data.get('username', '')
+        if not username:
+            return HttpResponse(status=400)
+    except Exception as e:
+        return HttpResponse(status=400)
+
+    is_unique = not User.objects.filter(username=username).exists()
+
+    return JsonResponse({
+        'is_unique': is_unique
+    })
+
+@require_POST 
+def check_email_uniqueness(request):
+    try:
+        data = json.loads(request.body)
+        email = data.get('email', '')
+        if not email:
+            return HttpResponse(status=400)
+    except Exception as e:
+        return HttpResponse(status=400)
+
+    is_unique = not User.objects.filter(email=email).exists()
+
+    return JsonResponse({
+        'is_unique': is_unique
+    })
 
 
 def generate_username():

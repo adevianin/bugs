@@ -4,9 +4,9 @@ class AccountApi {
         this._requester = requester;
     }
 
-    login(username, password) {
+    login(email, password) {
         return this._requester.post('api/accounts/login', {
-            username, password
+            email, password
         });
     }
 

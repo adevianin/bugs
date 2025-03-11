@@ -31,13 +31,15 @@
             </span>
             <ul class="account--fields-list">
                 <li>
-                    <input type="text" placeholder="{% trans "login" %}" data-user-name />
+                    <input type="email" placeholder="{% trans "email" %}" data-email />
+                    <div class="g-error-container" data-email-err data-err-container></div>
                 </li>
                 <li>
                     <input type="password" placeholder="{% trans "password" %}" data-password />
+                    <div class="g-error-container" data-password-err data-err-container></div>
                 </li>
             </ul>
-            <div class="account--error g-hidden" data-not-correct-creds-error>{% trans "Login or password is not correct." %}</div>
+            <div class="account--error" data-login-err data-err-container></div>
             <div class="account--buttons-container">
                 <button data-login-btn>{% trans "sign in" context "button" %}</button>
                 <a href="#" data-switch-to-register-btn>{% trans "sign up" context "link" %}</a>
@@ -69,12 +71,10 @@
             </ul>
             <div class="account--buttons-container">
                 <button data-registration-btn>{% trans "sign up" context "button" %}</button>
-                <div class="g-hidden" data-registration-form-loader></div>
                 <a href="#" data-switch-to-login-btn>{% trans "sign in" context "link" %}</a>
             </div>
         </div>
     </body>
-    {{ initial_data|json_script:"initial-data" }}
     <script src="https://accounts.google.com/gsi/client"></script>
     <script src="{% static 'client/accountApp.js' %}"></script>
 </html>

@@ -1,4 +1,3 @@
-import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
 import { BaseService } from "@common/domain/service/base/baseService";
 

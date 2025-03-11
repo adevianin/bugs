@@ -4,6 +4,7 @@ import { MESSAGE_IDS } from '../messages/messageIds';
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 import { StateSyncRequestError } from '@common/domain/errors/stateSyncRequestError';
 import { throttle } from '@common/utils/throttle';
+import { UnauthorizedRequestError } from '@common/domain/errors/unauthorizedRequestError';
 
 class AccountAppView extends BaseHTMLView {
 
@@ -33,22 +34,24 @@ class AccountAppView extends BaseHTMLView {
         this._switchMode('login');
     }
 
-    _render() {
-        this._loginTabEl = this._el.querySelector('[data-login-tab]');
+    get _registrationUsername() {
+        return this._registrationUsernameEl.value.trim();
+    }
 
-        this._loginBtn = this._el.querySelector('[data-login-btn]');
-        
+    get _registrationEmail() {
+        return this._registrationEmailEl.value.trim();
+    }
+
+    get _loginEmail() {
+        return this._loginEmailEl.value.trim();
+    }
+
+    _render() {
         this._switchModeToRegisterBtn = this._el.querySelector('[data-switch-to-register-btn]');
         this._switchModeToLoginBtn = this._el.querySelector('[data-switch-to-login-btn]');
 
-        this._notCorrectCredsErrorEl = this._el.querySelector('[data-not-correct-creds-error]');
-        this._passwordDifferentErrorEl = this._el.querySelector('[data-passwords-different-error]');
-        this._usernameIsntUniqueErrorEl = this._el.querySelector('[data-username-isnt-unique]');
-        this._registrationSomethingWrongErrorEl = this._el.querySelector('[data-reg-something-went-wrong]');
-
         this._registrationTabEl = this._el.querySelector('[data-registration-tab]');
         this._registrationBtn = this._el.querySelector('[data-registration-btn]');
-        this._registrationFormLoader = new DotsLoaderView(this._registrationTabEl.querySelector('[data-registration-form-loader]'));
         this._registrationUsernameEl = this._registrationTabEl.querySelector('[data-username]');
         this._registrationUsernameErrContainer = this._registrationTabEl.querySelector('[data-username-err]');
         this._registrationUsernameLoader = new DotsLoaderView(this._registrationTabEl.querySelector('[data-username-loader]'));
@@ -59,6 +62,14 @@ class AccountAppView extends BaseHTMLView {
         this._registrationPasswordErrContainer = this._registrationTabEl.querySelector('[data-password-err]');
         this._registrationPasswordConfirmEl = this._registrationTabEl.querySelector('[data-password-confirm]');
         this._registrationPasswordConfirmErrContainer = this._registrationTabEl.querySelector('[data-password-confirm-err]');
+
+        this._loginTabEl = this._el.querySelector('[data-login-tab]');
+        this._loginBtn = this._el.querySelector('[data-login-btn]');
+        this._loginErrContainer = this._loginTabEl.querySelector('[data-login-err]');
+        this._loginEmailEl = this._loginTabEl.querySelector('[data-email]');
+        this._loginEmailErrContainer = this._loginTabEl.querySelector('[data-email-err]');
+        this._loginPasswordEl = this._loginTabEl.querySelector('[data-password]');
+        this._loginPasswordErrContainer = this._loginTabEl.querySelector('[data-password-err]');
     }
 
     async _validateRegistration() {
@@ -96,7 +107,7 @@ class AccountAppView extends BaseHTMLView {
     }
 
     async _validateRegistrationUsername() {
-        let username = this._registrationUsernameEl.value;
+        let username = this._registrationUsername;
         let res = await this._accountService.validateUsername(username);
         return res;
     }
@@ -133,10 +144,10 @@ class AccountAppView extends BaseHTMLView {
     }
 
     async _validateRegistrationEmail() {
-        let email = this._registrationEmailEl.value;
+        let email = this._registrationEmail;
 
         if (!email || !this._registrationEmailEl.checkValidity()) {
-            return MESSAGE_IDS.EMAIL_INVALID_FORMAT;
+            return MESSAGE_IDS.EMAIL_INVALID;
         }
 
         let isUniq = await this._accountService.checkEmailUniqueness(email);
@@ -213,15 +224,13 @@ class AccountAppView extends BaseHTMLView {
     }
 
     async _onRegistrationBtnClick() {
-        this._registrationFormLoader.toggle(true);
         let isValid = await this._validateRegistration();
         if (!isValid) {
-            this._registrationFormLoader.toggle(false);
             return;
         }
 
-        let username = this._registrationUsernameEl.value;
-        let email = this._registrationEmailEl.value;
+        let username = this._registrationUsername;
+        let email = this._registrationEmail;
         let password = this._registrationPasswordEl.value;
         try {
             await this._accountService.register(username, email, password);
@@ -232,7 +241,6 @@ class AccountAppView extends BaseHTMLView {
                 this._validateRegistration();
             }
         }
-        this._registrationFormLoader.toggle(false);
     }
 
     _onSwitchModeToLoginClick(e) {
@@ -267,16 +275,73 @@ class AccountAppView extends BaseHTMLView {
         window.location.href = nextUrl;
     }
 
-    _onLoginBtnClick() {
-        let username = this._loginTabEl.querySelector('[data-user-name]').value;
-        let password =  this._loginTabEl.querySelector('[data-password]').value;
-        this._accountApi.login(username, password)
-            .then(() => {
-                this._redirectToNext();
-            })
-            .catch(() => {
-                this._toggleNotCorrectLoginPassError(true);
-            });
+    _validateLogin() {
+        let isError = false;
+
+        let emailErr = this._validateLoginEmail();
+        this._renderLoginEmailErr(emailErr);
+        if (emailErr) {
+            isError = true;
+        }
+
+        let passwordErr = this._validateLoginPassword();
+        this._renderLoginPasswordErr(passwordErr);
+        if (passwordErr) {
+            isError = true;
+        }
+
+        return !isError;
+    }
+
+    _validateLoginEmail() {
+        let email = this._loginEmail;
+        if (!email || !this._loginEmailEl.checkValidity()) {
+            return MESSAGE_IDS.EMAIL_INVALID;
+        }
+
+        return null;
+    }
+
+    _renderLoginEmailErr(errId) {
+        this._loginEmailErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    _validateLoginPassword() {
+        let password = this._loginPasswordEl.value;
+        if (!password) {
+            return MESSAGE_IDS.PASSWORD_NEEDED;
+        }
+
+        return null;
+    }
+
+    _renderLoginPasswordErr(errId) {
+        this._loginPasswordErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    async _onLoginBtnClick() {
+        if (!this._validateLogin()) {
+            return;
+        }
+
+        let email = this._loginEmail;
+        let password = this._loginPasswordEl.value;
+
+        try {
+            await this._accountService.login(email, password);
+            this._renderLoginErr();
+            this._redirectToNext();
+        } catch (e) {
+            if (e instanceof UnauthorizedRequestError) {
+                this._renderLoginErr(MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL);
+            } else {
+                this._renderLoginErr(MESSAGE_IDS.SOMETHING_WENT_WRONG);
+            }
+        }
+    }
+
+    _renderLoginErr(errId) {
+        this._loginErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 }
 
