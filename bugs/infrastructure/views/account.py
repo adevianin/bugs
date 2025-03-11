@@ -64,20 +64,23 @@ def account_register(request: HttpRequest):
     except Exception:
         return HttpResponse(status=400)
 
-    try:
-        user = User.objects.create_user(
-            username=username, 
-            email=email, 
-            password=password
-        )
-
-        login(request, user)
-        
-        return JsonResponse({
-            'user': user.get_general_data()
-        })
-    except ValidationError as e:
+    if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
         return HttpResponse(status=409)
+
+    user = User(username=username, email=email)
+    user.set_password(password)
+    
+    try:
+        user.full_clean()
+        user.save()
+    except ValidationError:
+        return HttpResponse(status=400)
+    
+    login(request, user)
+        
+    return JsonResponse({
+        'user': user.get_general_data()
+    }, status=201)
 
 @require_POST    
 def account_login(request: HttpRequest):
