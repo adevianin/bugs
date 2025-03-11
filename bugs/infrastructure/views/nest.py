@@ -12,7 +12,7 @@ import json
 def rename_nest(request: HttpRequest, nest_id: int):
     try:
         data = json.loads(request.body)
-        name = data['name']
+        name = clean_name(data['name'])
     except Exception as e:
         return HttpResponse(status=400)
 
@@ -27,7 +27,7 @@ def lay_egg(request: HttpRequest, nest_id: int):
     try:
         data = json.loads(request.body)
         name = clean_name(data['name'])
-        is_fertilized = data['is_fertilized']
+        is_fertilized = bool(data['is_fertilized'])
     except Exception as e:
         return HttpResponse(status=400)
 
