@@ -65,7 +65,6 @@ class AccountAppView extends BaseHTMLView {
         let isError = false;
 
         if (!this._registrationApprovedFields.username) {
-            console.log('validating username');
             let usernameErr = await this._validateRegistrationUsername();
             this._renderRegistrationUsernameError(usernameErr);
             if (usernameErr) {
@@ -74,7 +73,6 @@ class AccountAppView extends BaseHTMLView {
         }
 
         if (!this._registrationApprovedFields.email) {
-            console.log('validating email');
             let emailErr = await this._validateRegistrationEmail();
             this._renderRegistrationEmailError(emailErr);
             if (emailErr) {
@@ -218,6 +216,7 @@ class AccountAppView extends BaseHTMLView {
         this._registrationFormLoader.toggle(true);
         let isValid = await this._validateRegistration();
         if (!isValid) {
+            this._registrationFormLoader.toggle(false);
             return;
         }
 
@@ -247,38 +246,22 @@ class AccountAppView extends BaseHTMLView {
     }
 
     _switchMode(modeName) {
-        this._clearFields();
+        this._clearForms();
         this._loginTabEl.classList.toggle('g-hidden', modeName != 'login');
         this._registrationTabEl.classList.toggle('g-hidden', modeName != 'register');
     }
 
-    _toggleNotCorrectLoginPassError(isShowed) {
-        this._notCorrectCredsErrorEl.classList.toggle('g-hidden', !isShowed);
-    }
-
-    _toggleDifferentPasswordsError(isShowed) {
-        this._passwordDifferentErrorEl.classList.toggle('g-hidden', !isShowed);
-    }
-
-    _toggleUsernameIsntUniqueError(isShowed) {
-        this._usernameIsntUniqueErrorEl.classList.toggle('g-hidden', !isShowed);
-    }
-
-    _toggleRegSomethingWentWrongError(isShowed) {
-        this._registrationSomethingWrongErrorEl.classList.toggle('g-hidden', !isShowed);
-    }
-
-    _clearFields() {
+    _clearForms() {
         let inputs = this._el.querySelectorAll('input');
-        inputs.forEach((input) => {
+        for (let input of inputs) {
             input.value = '';
-        });
+        }
+        let errContainers = this._el.querySelectorAll('[data-err-container]');
+        for (let errContainer of errContainers) {
+            errContainer.innerHTML = '';
+        }
     }
 
-    _toggle(isEnabled) {
-        this._el.classList.toggle('g-hidden', !isEnabled);
-    }
-    
     _redirectToNext() {
         let nextUrl = new URLSearchParams(window.location.search).get('next') || '/';
         window.location.href = nextUrl;
