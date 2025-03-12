@@ -1,17 +1,39 @@
-{% extends 'base.html' %}
-
-{% load static %}
-
-{% block styles %}
-  <link rel="stylesheet" href="{% static 'client/initialStylesResetPassword.css' %}">
-{% endblock %}
+{% extends 'password_reset/base_password_reset.html' %}
 
 {% block content %}
-  <h2>Введіть новий пароль</h2>
-  <form method="post">
-    <jacascript>alert('{{ uidb64 }}')</jacascript>
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Змінити пароль</button>
-  </form>
+  {% if validlink %}
+    <form method="post" class="form">
+      <h2>Введіть новий пароль</h2>
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      
+      <div class="form-group">
+          <label for="id_new_password1">Новий пароль</label>
+          {{ form.new_password1 }}
+          {% if form.new_password1.errors %}
+            <ul class="errorlist">
+                {% for error in form.new_password1.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+          {% endif %}
+      </div>
+
+      <div class="form-group">
+          <label for="id_new_password2">Підтвердження пароля</label>
+          {{ form.new_password2 }}
+          {% if form.new_password2.errors %}
+            <ul class="errorlist">
+                {% for error in form.new_password2.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+          {% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-primary">Змінити пароль</button>
+    </form>
+  {% else %}
+    <p>Це посилання більше недійсне.</p>
+  {% endif %}
 {% endblock %}

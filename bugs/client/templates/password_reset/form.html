@@ -1,9 +1,23 @@
+{% extends 'password_reset/base_password_reset.html' %}
+
 {% block content %}
-  <h2>Скидання пароля</h2>
-  <p>Введіть вашу електронну пошту, щоб отримати інструкції для відновлення пароля.</p>
-  <form method="post">
+  <form method="post" class="form">
+    <p class="form-description">Введіть вашу електронну пошту, щоб отримати інструкції для відновлення пароля.</p>
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Надіслати</button>
+    {{ form.non_field_errors }}
+    
+    <div class="form-group">
+        <label for="id_email">Електронна пошта</label>
+        {{ form.email }}
+        {% if form.email.errors %}
+          <ul class="errorlist">
+              {% for error in form.email.errors %}
+                  <li>{{ error }}</li>
+              {% endfor %}
+          </ul>
+        {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Надіслати</button>
   </form>
 {% endblock %}
