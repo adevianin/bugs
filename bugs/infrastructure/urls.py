@@ -10,11 +10,17 @@ from .views.nest import rename_nest, lay_egg, change_egg_caste, change_egg_name,
 from .views.colony import stop_operation, build_new_sub_nest, destroy_nest, pillage_nest, transport_food, build_fortification, bring_bug
 from .views.ant import fly_nuptial_flight, change_ant_guardian_behavior, change_ant_cooperative_behavior, relocate_ant
 from .views.nuptial import found_colony, save_specie_schema, born_new_antara
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', index, name='game_index'),
     path('account', account_index, name='account_index'),
     path('admin', admin_index, name='admin_index'),
+
+    path('password_reset/', auth_views.PasswordResetView.as_view(template_name='password_reset/form.html', email_template_name='password_reset/email.html'), name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='password_reset/done.html'), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='password_reset/confirm.html'), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset/complete.html'), name='password_reset_complete'),
     
     path('api/accounts/check_username_uniqueness', check_username_uniqueness, name='check_username_uniqueness'),
     path('api/accounts/check_email_uniqueness', check_email_uniqueness, name='check_email_uniqueness'),

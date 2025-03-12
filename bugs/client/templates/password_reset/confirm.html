@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'client/initialStylesResetPassword.css' %}">
+{% endblock %}
+
+{% block content %}
+  <h2>Введіть новий пароль</h2>
+  <form method="post">
+    <jacascript>alert('{{ uidb64 }}')</jacascript>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Змінити пароль</button>
+  </form>
+{% endblock %}

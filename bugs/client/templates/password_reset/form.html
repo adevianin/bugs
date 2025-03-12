@@ -1,0 +1,9 @@
+{% block content %}
+  <h2>Скидання пароля</h2>
+  <p>Введіть вашу електронну пошту, щоб отримати інструкції для відновлення пароля.</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Надіслати</button>
+  </form>
+{% endblock %}

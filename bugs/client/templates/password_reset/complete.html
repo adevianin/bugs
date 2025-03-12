@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'client/initialStylesResetPassword.css' %}">
+{% endblock %}
+
+{% block content %}
+  <h2>Пароль успішно змінено</h2>
+  <p>Ви можете <a href="{% url 'account_index' %}">увійти</a> з новим паролем.</p>
+{% endblock %}

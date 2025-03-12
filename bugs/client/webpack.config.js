@@ -9,7 +9,8 @@ module.exports = {
         adminApp: './adminApp/src/index.js',
         accountApp: './accountApp/src/index.js',
         initialStylesGameApp: './gameApp/src/view/initialStyles.css',
-        initialStylesAccountApp: './accountApp/src/view/initialStyles.css'
+        initialStylesAccountApp: './accountApp/src/view/initialStyles.css',
+        initialStylesResetPassword: './passwordReset/initialStyles.css'
     },
     output: {
         filename: '[name].js',

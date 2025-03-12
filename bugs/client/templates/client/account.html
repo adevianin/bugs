@@ -42,6 +42,7 @@
             <div class="account--error" data-login-err data-err-container></div>
             <div class="account--buttons-container">
                 <button data-login-btn>{% trans "sign in" context "button" %}</button>
+                <a href="{% url 'password_reset' %}">Забули пароль?</a>
                 <a href="#" data-switch-to-register-btn>{% trans "sign up" context "link" %}</a>
             </div>
         </div>
