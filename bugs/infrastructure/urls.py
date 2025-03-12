@@ -17,10 +17,13 @@ urlpatterns = [
     path('account', account_index, name='account_index'),
     path('admin', admin_index, name='admin_index'),
 
-    path('password_reset/', auth_views.PasswordResetView.as_view(template_name='password_reset/form.html', email_template_name='password_reset/email.html'), name='password_reset'),
-    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='password_reset/done.html'), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='password_reset/confirm.html'), name='password_reset_confirm'),
-    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset/complete.html'), name='password_reset_complete'),
+    path('password_reset/', auth_views.PasswordResetView.as_view(
+        template_name='client/password_reset/form.html', 
+        email_template_name='client/password_reset/email.html'
+        ), name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='client/password_reset/done.html'), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='client/password_reset/confirm.html'), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='client/password_reset/complete.html'), name='password_reset_complete'),
     
     path('api/accounts/check_username_uniqueness', check_username_uniqueness, name='check_username_uniqueness'),
     path('api/accounts/check_email_uniqueness', check_email_uniqueness, name='check_email_uniqueness'),
