@@ -1,11 +1,24 @@
+{% extends 'base.html' %}
 {% load i18n %}
 {% load static %}
-<html>
-    <head>
-        <meta name="referrer" content="origin" />
-        <link rel="stylesheet" href="{% static 'client/initialStylesAccountApp.css' %}">
-    </head>
-    <body class="account">
+
+{% block title %}Акаунт{% endblock %}
+
+{% block meta %}
+    <meta name="referrer" content="origin" />
+{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'client/initialStylesAccountApp.css' %}">
+{% endblock %}
+
+{% block javascript %}
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <script src="{% static 'client/accountApp.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="account">
         <div class="account__google-auth">
             <div id="g_id_onload"
                 data-client_id="{{ google_client_id }}"
@@ -75,7 +88,5 @@
                 <a href="#" data-switch-to-login-btn>{% trans "sign in" context "link" %}</a>
             </div>
         </div>
-    </body>
-    <script src="https://accounts.google.com/gsi/client"></script>
-    <script src="{% static 'client/accountApp.js' %}"></script>
-</html>
+    </div>
+{% endblock %}

@@ -1,7 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Game Under Maintenance</title>
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}
+    Game Under Maintenance
+{% endblock %}
+
+{% block styles %}
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,11 +30,11 @@
             line-height: 1.6;
         }
     </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
     <div class="container">
         <h1>Game Under Maintenance</h1>
         <p>The game is temporarily unavailable due to maintenance or updates.</p>
     </div>
-</body>
-</html>
+{% endblock %}

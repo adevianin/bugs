@@ -17810,7 +17810,13 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, `.g-hidden {
+___CSS_LOADER_EXPORT___.push([module.id, `html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.g-hidden {
     display: none !important
 }
 
@@ -17826,7 +17832,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.g-hidden {
 
 .g-error-container {
     color: red;
-}`, "",{"version":3,"sources":["webpack://./common/styles.css"],"names":[],"mappings":"AAAA;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,UAAU;AACd","sourcesContent":[".g-hidden {\r\n    display: none !important\r\n}\r\n\r\n.g-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.g-table td {\r\n    border: solid 1px;\r\n}\r\n\r\n.g-error-container {\r\n    color: red;\r\n}"],"sourceRoot":""}]);
+}`, "",{"version":3,"sources":["webpack://./common/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,SAAS;IACT,UAAU;AACd;;AAEA;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,UAAU;AACd","sourcesContent":["html, body {\r\n    height: 100%;\r\n    margin: 0;\r\n    padding: 0;\r\n}\r\n\r\n.g-hidden {\r\n    display: none !important\r\n}\r\n\r\n.g-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.g-table td {\r\n    border: solid 1px;\r\n}\r\n\r\n.g-error-container {\r\n    color: red;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

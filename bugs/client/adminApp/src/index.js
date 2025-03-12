@@ -1,3 +1,4 @@
+import './styles.css';
 import { WorldStatusView } from "./worldStatusView";
 import { Requester } from "@common/utils/requester";
 

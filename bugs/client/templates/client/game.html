@@ -1,13 +1,19 @@
+{% extends 'base.html' %}
 {% load static %}
-<html>
-    <head>
-        {{ initial_data|json_script:"initial-data" }}
-        <link rel="stylesheet" href="{% static 'client/initialStylesGameApp.css' %}">
-    </head>
-    <body>
-        <div data-app></div>
-        <div data-popup-container></div>
-        <div class="game-loader" data-game-loader>loading</div>
-    </body>
+
+{% block title %}Evolution Of Ants{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'client/initialStylesGameApp.css' %}">
+{% endblock %}
+
+{% block javascript %}
+    {{ initial_data|json_script:"initial-data" }}
     <script src="{% static 'client/gameApp.js' %}"></script>
-</html>
+{% endblock %}
+
+{% block content %}
+    <div data-app></div>
+    <div data-popup-container></div>
+    <div class="game-loader" data-game-loader>loading</div>
+{% endblock %}

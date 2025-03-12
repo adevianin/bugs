@@ -1,0 +1,41 @@
+.admin-panel {
+    background-color: #f1f1f1;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.status-section {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.status-label {
+    font-weight: bold;
+}
+
+.button-section {
+    margin-top: 10px;
+}
+
+.button-section button {
+    margin-right: 10px;
+}
+
+.expanding-map-section {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+.expanding-map-section input {
+    width: 40px;
+}
+.expanding-map-section_button {
+    width: 65px;
+    margin-top: 5px;
+}
+.world-controls-fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}

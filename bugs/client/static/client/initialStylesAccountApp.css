@@ -1,6 +1,12 @@
 /*!*********************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js!./common/styles.css ***!
   \*********************************************************************/
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 .g-hidden {
     display: none !important
 }
