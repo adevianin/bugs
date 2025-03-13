@@ -22,6 +22,18 @@ class AccountApi {
         });
     }
 
+    resetPasswordRequest(email) {
+        return this._requester.post('api/accounts/reset_password_request', {
+            email
+        });
+    }
+
+    setNewPassword(newPassword, token, id) {
+        return this._requester.post('api/accounts/set_new_password', {
+            newPassword, token, id
+        });
+    }
+
     checkUsernameUniqueness(username) {
         return this._requester.post('api/accounts/check_username_uniqueness', {
             username

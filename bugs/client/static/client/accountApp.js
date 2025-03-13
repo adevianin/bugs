@@ -110,6 +110,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
 /* harmony import */ var _common_utils_throttle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/utils/throttle */ "./common/utils/throttle.js");
 /* harmony import */ var _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/domain/errors/unauthorizedRequestError */ "./common/domain/errors/unauthorizedRequestError.js");
+/* harmony import */ var _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @common/view/errors/accountPasswordErrorView */ "./common/view/errors/accountPasswordErrorView.js");
+
 
 
 
@@ -171,7 +173,7 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._registrationEmailLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__.DotsLoaderView(this._registrationTabEl.querySelector('[data-email-loader]'));
         this._registrationEmailErrContainer = this._registrationTabEl.querySelector('[data-email-err]');
         this._registrationPasswordEl = this._registrationTabEl.querySelector('[data-password]');
-        this._registrationPasswordErrContainer = this._registrationTabEl.querySelector('[data-password-err]');
+        this._registrationPasswordErrView = new _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_7__.AccountPasswordErrorView(this._registrationTabEl.querySelector('[data-password-err]'));
         this._registrationPasswordConfirmEl = this._registrationTabEl.querySelector('[data-password-confirm]');
         this._registrationPasswordConfirmErrContainer = this._registrationTabEl.querySelector('[data-password-confirm-err]');
 
@@ -292,18 +294,7 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
     }
 
     _renderRegistrationPasswordError(err) {
-        if (err) {
-            switch (err.msgId) {
-                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR):
-                    this._registrationPasswordErrContainer.innerHTML = this.$mm.format(err.msgId, err.minLength);
-                    break;
-                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR):
-                    this._registrationPasswordErrContainer.innerHTML = this.$mm.format(err.msgId, err.maxLength);
-                    break;
-            }
-        } else {
-            this._registrationPasswordErrContainer.innerHTML = '';
-        }
+        this._registrationPasswordErrView.setErr(err);
     }
 
     _onRegistrationPasswordChanged() {
@@ -567,6 +558,14 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
 
     async register(username, email, password) {
         return this._requestHandler(() => this._accountApi.register(username, email, password));
+    }
+
+    resetPasswordRequest(email) {
+        return this._requestHandler(() => this._accountApi.resetPasswordRequest(email));
+    }
+
+    setNewPassword(newPassword, token, id) {
+        return this._requestHandler(() => this._accountApi.setNewPassword(newPassword, token, id));
     }
 
     getUserData() {
@@ -856,6 +855,18 @@ class AccountApi {
     register(username, email, password) {
         return this._requester.post('api/accounts/register', {
             username, email, password
+        });
+    }
+
+    resetPasswordRequest(email) {
+        return this._requester.post('api/accounts/reset_password_request', {
+            email
+        });
+    }
+
+    setNewPassword(newPassword, token, id) {
+        return this._requester.post('api/accounts/set_new_password', {
+            newPassword, token, id
         });
     }
 
@@ -1164,6 +1175,67 @@ class DotsLoaderView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Bas
         this._el.classList.add('dots-loader');
     }
     
+}
+
+
+
+/***/ }),
+
+/***/ "./common/view/errors/accountPasswordErrorView.js":
+/*!********************************************************!*\
+  !*** ./common/view/errors/accountPasswordErrorView.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AccountPasswordErrorView: () => (/* binding */ AccountPasswordErrorView)
+/* harmony export */ });
+/* harmony import */ var _base_baseErrorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseErrorView */ "./common/view/errors/base/baseErrorView.js");
+/* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
+
+
+
+class AccountPasswordErrorView extends _base_baseErrorView__WEBPACK_IMPORTED_MODULE_0__.BaseErrorView {
+
+    setErr(err) {
+        if (err) {
+            switch (err.msgId) {
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR):
+                    this._el.innerHTML = this.$mm.format(err.msgId, err.minLength);
+                    break;
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR):
+                    this._el.innerHTML = this.$mm.format(err.msgId, err.maxLength);
+                    break;
+            }
+        } else {
+            this._el.innerHTML = '';
+        }
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./common/view/errors/base/baseErrorView.js":
+/*!**************************************************!*\
+  !*** ./common/view/errors/base/baseErrorView.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BaseErrorView: () => (/* binding */ BaseErrorView)
+/* harmony export */ });
+/* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+
+
+class BaseErrorView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    setErr(err) {
+        throw 'not realized';
+    }
 }
 
 

@@ -16,6 +16,9 @@ from django.utils.encoding import force_bytes
 from bugs.settings import DEFAULT_FROM_EMAIL
 from django.core.mail import EmailMessage
 from infrastructure.token_generators.email_verification_token_generator import EmailVerificationToken
+from infrastructure.token_generators.reset_password_token_generator import ResetPasswordTokenGenerator
+from urllib.parse import urlencode
+from django.contrib.auth.password_validation import validate_password
 import json
 import random
 import uuid
@@ -25,6 +28,14 @@ def account_index(request: HttpRequest):
     return render(request, 'client/account/index.html', {
         'google_client_id': GOOGLE_CLIENT_ID,
         'google_oauth_redirect_uri': GOOGLE_OAUTH_REDIRECT_URI
+    })
+
+@ensure_csrf_cookie
+def reset_password(request: HttpRequest):
+    token = request.GET.get('t') 
+    return render(request, 'client/account/reset_password.html', {
+        "is_set_password_mode": bool(token),
+        "is_request_mode": not bool(token),
     })
 
 @csrf_exempt
@@ -75,7 +86,12 @@ def account_register(request: HttpRequest):
         return HttpResponse(status=409)
 
     user = User(username=username, email=email)
-    user.set_password(password)
+
+    try:
+        validate_password(password, user=user)
+        user.set_password(password)
+    except ValidationError as e:
+        return HttpResponse(status=400)
     
     try:
         user.full_clean()
@@ -182,6 +198,79 @@ def verify_email(request, uidb64, token):
     return render(request, 'client/account/email_verification.html', {
         "is_success": is_success
     })
+
+@require_POST 
+def reset_password_request(request: HttpRequest):
+    try:
+        data = json.loads(request.body)
+        email = data.get('email', '')
+        if not email:
+            return HttpResponse(status=400)
+    except Exception as e:
+        return HttpResponse(status=400)
+    
+    try:
+        user = User.objects.get(email=email)
+        if user.has_usable_password():
+            _send_reset_password_email(request, user)
+        return HttpResponse(status=200)
+    except User.DoesNotExist:
+        return HttpResponse(status=200)
+    
+@require_POST 
+def set_new_password(request: HttpRequest):
+    try:
+        data = json.loads(request.body)
+        new_password = data.get('newPassword', '')
+        base64Id = data.get('id', '')
+        token = data.get('token', '')
+        if not new_password or not base64Id or not token:
+            return HttpResponse(status=400)
+    except Exception as e:
+        return HttpResponse(status=400)
+    
+    try:
+        id = urlsafe_base64_decode(base64Id).decode()
+        user = User.objects.get(pk=id)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        return HttpResponse(status=400)
+    
+    if not ResetPasswordTokenGenerator.validate(user, token):
+        return HttpResponse(status=400)
+    
+    try:
+        validate_password(new_password, user=user)
+    except ValidationError as e:
+        return HttpResponse(status=400)
+    
+    user.set_password(new_password)
+    user.save()
+    
+    return HttpResponse(status=204)
+
+def _send_reset_password_email(request: HttpRequest, user: User):
+    subject = 'Відновлення пароля'
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = ResetPasswordTokenGenerator.generate(user)
+    relative_link = reverse('reset_password')
+    absolute_link = request.build_absolute_uri(relative_link)
+    params = {'i': uid, 't': token}
+    full_link = f'{absolute_link}?{urlencode(params)}'
+    
+    html_message = render_to_string('infrastructure/emails/password_reset.html', {
+        'user': user,
+        'reset_password_link': full_link,
+    })
+    
+    email = EmailMessage(
+        subject=subject,
+        body=html_message,
+        from_email=DEFAULT_FROM_EMAIL,
+        to=[user.email],
+    )
+    email.content_subtype = 'html'
+    email.send()
+
     
 def _send_verification_email(request: HttpRequest, user: User):
     subject = 'Підтвердження вашого облікового запису'

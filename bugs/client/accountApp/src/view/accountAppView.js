@@ -5,6 +5,7 @@ import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 import { StateSyncRequestError } from '@common/domain/errors/stateSyncRequestError';
 import { throttle } from '@common/utils/throttle';
 import { UnauthorizedRequestError } from '@common/domain/errors/unauthorizedRequestError';
+import { AccountPasswordErrorView } from '@common/view/errors/accountPasswordErrorView';
 
 class AccountAppView extends BaseHTMLView {
 
@@ -59,7 +60,7 @@ class AccountAppView extends BaseHTMLView {
         this._registrationEmailLoader = new DotsLoaderView(this._registrationTabEl.querySelector('[data-email-loader]'));
         this._registrationEmailErrContainer = this._registrationTabEl.querySelector('[data-email-err]');
         this._registrationPasswordEl = this._registrationTabEl.querySelector('[data-password]');
-        this._registrationPasswordErrContainer = this._registrationTabEl.querySelector('[data-password-err]');
+        this._registrationPasswordErrView = new AccountPasswordErrorView(this._registrationTabEl.querySelector('[data-password-err]'));
         this._registrationPasswordConfirmEl = this._registrationTabEl.querySelector('[data-password-confirm]');
         this._registrationPasswordConfirmErrContainer = this._registrationTabEl.querySelector('[data-password-confirm-err]');
 
@@ -180,18 +181,7 @@ class AccountAppView extends BaseHTMLView {
     }
 
     _renderRegistrationPasswordError(err) {
-        if (err) {
-            switch (err.msgId) {
-                case (MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR):
-                    this._registrationPasswordErrContainer.innerHTML = this.$mm.format(err.msgId, err.minLength);
-                    break;
-                case (MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR):
-                    this._registrationPasswordErrContainer.innerHTML = this.$mm.format(err.msgId, err.maxLength);
-                    break;
-            }
-        } else {
-            this._registrationPasswordErrContainer.innerHTML = '';
-        }
+        this._registrationPasswordErrView.setErr(err);
     }
 
     _onRegistrationPasswordChanged() {

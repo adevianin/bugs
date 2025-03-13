@@ -2,112 +2,470 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./adminApp/src/worldStatusView.js":
-/*!*****************************************!*\
-  !*** ./adminApp/src/worldStatusView.js ***!
-  \*****************************************/
+/***/ "./common/domain/errors/genericRequestError.js":
+/*!*****************************************************!*\
+  !*** ./common/domain/errors/genericRequestError.js ***!
+  \*****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   WorldStatusView: () => (/* binding */ WorldStatusView)
+/* harmony export */   GenericRequestError: () => (/* binding */ GenericRequestError)
 /* harmony export */ });
-class WorldStatusView {
-    constructor(requester, el) {
+class GenericRequestError extends Error {
+
+    constructor(data) {
+        super();
+        this.data = data;
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./common/domain/errors/stateSyncRequestError.js":
+/*!*******************************************************!*\
+  !*** ./common/domain/errors/stateSyncRequestError.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   StateSyncRequestError: () => (/* binding */ StateSyncRequestError)
+/* harmony export */ });
+/* harmony import */ var _genericRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./genericRequestError */ "./common/domain/errors/genericRequestError.js");
+
+
+class StateSyncRequestError extends _genericRequestError__WEBPACK_IMPORTED_MODULE_0__.GenericRequestError {
+
+}
+
+
+
+/***/ }),
+
+/***/ "./common/domain/errors/unauthorizedRequestError.js":
+/*!**********************************************************!*\
+  !*** ./common/domain/errors/unauthorizedRequestError.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   UnauthorizedRequestError: () => (/* binding */ UnauthorizedRequestError)
+/* harmony export */ });
+/* harmony import */ var _genericRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./genericRequestError */ "./common/domain/errors/genericRequestError.js");
+
+
+class UnauthorizedRequestError extends _genericRequestError__WEBPACK_IMPORTED_MODULE_0__.GenericRequestError {
+
+}
+
+
+
+/***/ }),
+
+/***/ "./common/domain/service/accountService.js":
+/*!*************************************************!*\
+  !*** ./common/domain/service/accountService.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AccountService: () => (/* binding */ AccountService)
+/* harmony export */ });
+/* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
+/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
+/* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base/baseService */ "./common/domain/service/base/baseService.js");
+
+
+
+
+class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.BaseService {
+
+    static MIN_USERNAME_LENGTH = 4;
+    static MAX_USERNAME_LENGTH = 50;
+    static USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
+    static MIN_PASSWORD_LENGTH = 8;
+    static MAX_PASSWORD_LENGTH = 40;
+    
+    constructor(accountApi, userData) {
+        super();
+        this._accountApi = accountApi;
+        this._userData = userData;
+    }
+
+    login(email, password) {
+        return this._requestHandler(() => this._accountApi.login(email, password));
+    }
+
+    logout() {
+        return this._accountApi.logout();
+    }
+
+    async register(username, email, password) {
+        return this._requestHandler(() => this._accountApi.register(username, email, password));
+    }
+
+    resetPasswordRequest(email) {
+        return this._requestHandler(() => this._accountApi.resetPasswordRequest(email));
+    }
+
+    setNewPassword(newPassword, token, id) {
+        return this._requestHandler(() => this._accountApi.setNewPassword(newPassword, token, id));
+    }
+
+    getUserData() {
+        return this._userData;
+    }
+
+    async validateUsername(username = '') {
+        if (username.length < AccountService.MIN_USERNAME_LENGTH) {
+            return {
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR,
+                minLength: AccountService.MIN_USERNAME_LENGTH
+            }
+        }
+
+        if (username.length > AccountService.MAX_USERNAME_LENGTH) {
+            return {
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR,
+                maxLength: AccountService.MAX_USERNAME_LENGTH
+            }
+        }
+
+        if (!AccountService.USERNAME_REGEX.test(username)) {
+            return {
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS
+            }
+        }
+
+        let isUniq = await this._accountApi.checkUsernameUniqueness(username);
+        if (!isUniq) {
+            return {
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN
+            }
+        }
+
+        return null;
+    }
+
+    async checkEmailUniqueness(email) {
+        return await this._accountApi.checkEmailUniqueness(email);
+    }
+
+    validatePassword(password = '') {
+        if (password.length < AccountService.MIN_PASSWORD_LENGTH) {
+            return {
+                msgId: _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR,
+                minLength: AccountService.MIN_PASSWORD_LENGTH
+            }
+        }
+
+        if (password.length > AccountService.MAX_PASSWORD_LENGTH) {
+            return {
+                msgId: _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR,
+                maxLength: AccountService.MAX_PASSWORD_LENGTH
+            }
+        }
+
+        return null;
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./common/domain/service/base/baseService.js":
+/*!***************************************************!*\
+  !*** ./common/domain/service/base/baseService.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BaseService: () => (/* binding */ BaseService)
+/* harmony export */ });
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
+/* harmony import */ var _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/domain/errors/unauthorizedRequestError */ "./common/domain/errors/unauthorizedRequestError.js");
+
+
+
+
+class BaseService {
+
+    async _requestHandler(apiCallFunc) {
+        try {
+            let result = await apiCallFunc();
+            return result.data;
+        } catch(error) {
+            switch(error.status) {
+                case 409:
+                    throw new _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__.StateSyncRequestError(error.data);
+                case 401:
+                    throw new _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__.UnauthorizedRequestError(error.data);
+                default:
+                    throw new _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_1__.GenericRequestError(error.data)
+            }
+        }
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./common/messages/messageIds.js":
+/*!***************************************!*\
+  !*** ./common/messages/messageIds.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BASE_MESSAGE_IDS: () => (/* binding */ BASE_MESSAGE_IDS)
+/* harmony export */ });
+const BASE_MESSAGE_IDS = {
+    USERNAME_MIN_LENGTH_ERR: 'USERNAME_MIN_LENGTH_ERR',
+    USERNAME_MAX_LENGTH_ERR: 'USERNAME_MAX_LENGTH_ERR',
+    USERNAME_INVALID_CHARS: 'USERNAME_INVALID_CHARS',
+    USERNAME_TAKEN: 'USERNAME_TAKEN',
+    EMAIL_INVALID: 'EMAIL_INVALID',
+    EMAIL_TAKEN: 'EMAIL_TAKEN',
+    PASSWORD_MIN_LENGTH_ERR: 'PASSWORD_MIN_LENGTH_ERR',
+    PASSWORD_MAX_LENGTH_ERR: 'PASSWORD_MAX_LENGTH_ERR',
+    PASSWORD_CONFIRMATION_IS_NOT_VALID: 'PASSWORD_CONFIRMATION_IS_NOT_VALID',
+    PASSWORD_NEEDED: 'PASSWORD_NEEDED',
+    NOT_VALID_PASSWORD_OR_EMAIL: 'NOT_VALID_PASSWORD_OR_EMAIL',
+    SOMETHING_WENT_WRONG: 'SOMETHING_WENT_WRONG'
+}
+
+
+
+/***/ }),
+
+/***/ "./common/messages/messageMaster.js":
+/*!******************************************!*\
+  !*** ./common/messages/messageMaster.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MessageMaster: () => (/* binding */ MessageMaster)
+/* harmony export */ });
+class MessageMaster {
+
+    static _instance = null
+
+    static init(msgLibrariesPack) {
+        if (MessageMaster._instance) {
+            throw 'Message Master is inited already';
+        }
+        let lang = MessageMaster._determineLang();
+        MessageMaster._instance = new MessageMaster(msgLibrariesPack[lang]);
+        return MessageMaster._instance;
+    }
+
+    static _determineLang() {
+        return navigator.language || 'en';
+    }
+
+    static get(msgId) {
+        return MessageMaster._instance.get(msgId);
+    }
+
+    // 'максимальна довжина {0} символів, від {1} до {2}'
+    // format(str, 5, 10, 20)
+    static format(msgId, ...values) {
+        return MessageMaster._instance.format(msgId, ...values);
+    }
+
+    constructor(msgLibrary) {
+        this._msgLibrary = msgLibrary;
+    }
+
+    get(msgId) {
+        if (!this._msgLibrary[msgId]) {
+            console.warn(`Message ID "${msgId}" not found`);
+            return msgId;
+        }
+        return this._msgLibrary[msgId];
+    }
+
+    format(msgId, ...values) {
+        let msgTemplate = this._msgLibrary[msgId];
+        return msgTemplate.replace(/{(\d+)}/g, (_, index) => values[index] || '');
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./common/messages/msgLibraries/enLibrary.js":
+/*!***************************************************!*\
+  !*** ./common/messages/msgLibraries/enLibrary.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EN_BASE_LIBRARY: () => (/* binding */ EN_BASE_LIBRARY)
+/* harmony export */ });
+/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./common/messages/messageIds.js");
+
+
+const EN_BASE_LIBRARY = {
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR]: 'Username is too short. The minimum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Username is too long. The maximum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Username contains invalid characters.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'This username is already taken.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'The email address is invalid.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'The email address is already taken.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Password is too short. The minimum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Password is too long. The maximum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: '"The passwords do not match.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Password not provided.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Incorrect password or email address.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Something went wrong.',
+}
+
+
+
+/***/ }),
+
+/***/ "./common/messages/msgLibraries/ukLibrary.js":
+/*!***************************************************!*\
+  !*** ./common/messages/msgLibraries/ukLibrary.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   UK_BASE_LIBRARY: () => (/* binding */ UK_BASE_LIBRARY)
+/* harmony export */ });
+/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./common/messages/messageIds.js");
+
+
+const UK_BASE_LIBRARY = {
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR]: 'Ім\'я користувача занадто коротке. Мінімально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Ім\'я користувача занадто довге. Максимально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Ім\'я користувача містить недопустимі символи.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'Це ім\'я користувача вже зайняте.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'Електронна адреса недійсна.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'Електронна адреса вже зайнята.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Пароль занадто короткий. Мінімально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Пароль занадто довгий. Максимально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: 'Паролі не співпадають.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Пароль не вказано.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Неправильний пароль або електронна адреса.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Щось пішло не так.',
+}
+
+
+
+/***/ }),
+
+/***/ "./common/sync/accountApi.js":
+/*!***********************************!*\
+  !*** ./common/sync/accountApi.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AccountApi: () => (/* binding */ AccountApi)
+/* harmony export */ });
+class AccountApi {
+    
+    constructor(requester) {
         this._requester = requester;
-        this._el = el;
-        this._isWorldRunningStatusEl = this._el.querySelector('[data-is-world-running]');
-        this._isWorldInitedStatusEl = this._el.querySelector('[data-is-world-inited]');
-        this._initWorldBtnEl = this._el.querySelector('[data-init-world]');
-        this._stopWorldBtnEl = this._el.querySelector('[data-stop-world]');
-        this._runWorldBtnEl = this._el.querySelector('[data-run-world]');
-        this._saveWorldBtnEl = this._el.querySelector('[data-save-world]');
-        this._expandMapBtnEl = this._el.querySelector('[data-expand-map-btn]');
-        this._expandMapChunkRowsEl = this._el.querySelector('[data-chunk-rows]');
-        this._expandMapChunkColsEl = this._el.querySelector('[data-chunk-cols]');
-        this._worldControlsEl = this._el.querySelector('[data-world-controls]');
-
-        this._initWorldBtnEl.addEventListener('click', this._initWorld.bind(this));
-        this._stopWorldBtnEl.addEventListener('click', this._stopWorld.bind(this));
-        this._runWorldBtnEl.addEventListener('click', this._runWorld.bind(this));
-        this._saveWorldBtnEl.addEventListener('click', this._saveWorld.bind(this));
-        this._expandMapBtnEl.addEventListener('click', this._expandMap.bind(this));
-
-        this._checkWorldStatus();
-        setInterval(this._checkWorldStatus.bind(this), 30000);
     }
 
-    _checkWorldStatus() {
-        this._requester.get('api/admin/world/status').then(result => {
-            this._renderWorldStatus(result.data.status);
-        }).catch(result => {
-            if (!result.status) {
-                alert('server is not responding!!!');
-            } else {
-                alert('server in bad state');
-            }
+    login(email, password) {
+        return this._requester.post('api/accounts/login', {
+            email, password
         });
     }
 
-    _initWorld() {
-        this._requester.post('api/admin/world/init').then(res => {
-            this._renderWorldStatus(res.data.status);
-        }).catch(() => {
-            alert('something went wrong');
+    logout() {
+        return this._requester.post('api/accounts/logout').then(res => {
+            return res.data.redirectUrl;
         });
     }
 
-    _stopWorld() {
-        this._requester.post('api/admin/world/stop').then(res => {
-            this._renderWorldStatus(res.data.status);
-        }).catch(() => {
-            alert('something went wrong');
+    register(username, email, password) {
+        return this._requester.post('api/accounts/register', {
+            username, email, password
         });
     }
 
-    _runWorld() {
-        this._requester.post('api/admin/world/run').then(res => {
-            this._renderWorldStatus(res.data.status);
-        }).catch(() => {
-            alert('something went wrong');
+    resetPasswordRequest(email) {
+        return this._requester.post('api/accounts/reset_password_request', {
+            email
         });
     }
 
-    _saveWorld() {
-        this._requester.post('api/admin/world/save').then(res => {
-            alert('saved')
-        }).catch(() => {
-            alert('something went wrong');
+    setNewPassword(newPassword, token, id) {
+        return this._requester.post('api/accounts/set_new_password', {
+            newPassword, token, id
         });
     }
 
-    _expandMap() {
-        this._requester.post('api/admin/world/expand_map', {
-            chunk_rows: this._expandMapChunkRowsEl.value,
-            chunk_cols: this._expandMapChunkColsEl.value
-        })
-        .then(res => {
-            alert('expanded')
-        }).catch(res => {
-            if (res.status == 409) {
-                alert(res.data.msg);
-            } else {
-                alert('something went wrong');
-            }
+    checkUsernameUniqueness(username) {
+        return this._requester.post('api/accounts/check_username_uniqueness', {
+            username
+        }).then(res => {
+            return res.data.is_unique;
         });
     }
 
-    _renderWorldStatus(status) {
-        this._isWorldRunningStatusEl.innerText = status.isRunning;
-        this._isWorldInitedStatusEl.innerText = status.isInited;
-        
-        this._worldControlsEl.disabled = !status.isInited;
-        this._initWorldBtnEl.disabled = status.isInited;
-        this._saveWorldBtnEl.disabled = status.isRunning;
-        this._expandMapBtnEl.disabled = status.isRunning;
-        this._runWorldBtnEl.disabled = status.isRunning;
-        this._stopWorldBtnEl.disabled = !status.isRunning;
+    checkEmailUniqueness(email) {
+        return this._requester.post('api/accounts/check_email_uniqueness', {
+            email
+        }).then(res => {
+            return res.data.is_unique;
+        });
     }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./common/utils/eventEmitter.js":
+/*!**************************************!*\
+  !*** ./common/utils/eventEmitter.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EventEmitter: () => (/* binding */ EventEmitter)
+/* harmony export */ });
+/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! events */ "./node_modules/events/events.js");
+/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_0__);
+
+
+class EventEmitter extends (events__WEBPACK_IMPORTED_MODULE_0___default()) {
+
+    on(eventName, callback) {
+        super.on(eventName, callback);
+
+        return () => {
+            this.off(eventName, callback);
+        }
+    }
+
 }
 
 
@@ -138,6 +496,36 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+
+
+/***/ }),
+
+/***/ "./common/utils/getQueryParams.js":
+/*!****************************************!*\
+  !*** ./common/utils/getQueryParams.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getQueryParams: () => (/* binding */ getQueryParams)
+/* harmony export */ });
+function getQueryParams() {
+    let params = {};
+    let queryString = window.location.search;
+
+    if (queryString) {
+        let urlParams = new URLSearchParams(queryString);
+
+        urlParams.forEach((value, key) => {
+            params[key] = value;
+        });
+    }
+
+    return params;
+}
+
 
 
 
@@ -205,149 +593,292 @@ class Requester {
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js!./adminApp/src/styles.css":
-/*!***********************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./adminApp/src/styles.css ***!
-  \***********************************************************************/
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
+/***/ "./common/view/base/baseHTMLView.js":
+/*!******************************************!*\
+  !*** ./common/view/base/baseHTMLView.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   BaseHTMLView: () => (/* binding */ BaseHTMLView)
 /* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_common_view_basic_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! -!../../node_modules/css-loader/dist/cjs.js!../../common/view/basic.css */ "./node_modules/css-loader/dist/cjs.js!./common/view/basic.css");
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_common_view_global_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! -!../../node_modules/css-loader/dist/cjs.js!../../common/view/global.css */ "./node_modules/css-loader/dist/cjs.js!./common/view/global.css");
-// Imports
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
+/* harmony import */ var _baseView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./baseView */ "./common/view/base/baseView.js");
 
 
 
+class BaseHTMLView extends _baseView__WEBPACK_IMPORTED_MODULE_1__.BaseView {
 
-var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-___CSS_LOADER_EXPORT___.i(_node_modules_css_loader_dist_cjs_js_common_view_basic_css__WEBPACK_IMPORTED_MODULE_2__["default"]);
-___CSS_LOADER_EXPORT___.i(_node_modules_css_loader_dist_cjs_js_common_view_global_css__WEBPACK_IMPORTED_MODULE_3__["default"]);
-// Module
-___CSS_LOADER_EXPORT___.push([module.id, `.admin-panel {
-    background-color: #f1f1f1;
-    padding: 20px;
-    border-radius: 5px;
-    margin-bottom: 20px;
+    constructor(el) {
+        super();
+        this._el = el;
+        this.events = new _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
+    }
+
+    get el() {
+        return this._el;
+    }
+
+    toggle(isEnabled) {
+        this._el.classList.toggle('g-hidden', !isEnabled);
+    }
+
+    isVisible() {
+        return this._el.closest('.g-hidden') === null;
+    }
+
+    remove() {
+        this._el.remove();
+        this.events.removeAllListeners();
+    }
+
 }
 
-.status-section {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.status-label {
-    font-weight: bold;
-}
-
-.button-section {
-    margin-top: 10px;
-}
-
-.button-section button {
-    margin-right: 10px;
-}
-
-.expanding-map-section {
-    display: flex;
-    flex-direction: column;
-    margin-top: 10px;
-}
-.expanding-map-section input {
-    width: 40px;
-}
-.expanding-map-section_button {
-    width: 65px;
-    margin-top: 5px;
-}
-.world-controls-fieldset {
-    border: 0;
-    margin: 0;
-    padding: 0;
-}`, "",{"version":3,"sources":["webpack://./adminApp/src/styles.css"],"names":[],"mappings":"AAGA;IACI,yBAAyB;IACzB,aAAa;IACb,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,gBAAgB;IAChB,mBAAmB;AACvB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,gBAAgB;AACpB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,aAAa;IACb,sBAAsB;IACtB,gBAAgB;AACpB;AACA;IACI,WAAW;AACf;AACA;IACI,WAAW;IACX,eAAe;AACnB;AACA;IACI,SAAS;IACT,SAAS;IACT,UAAU;AACd","sourcesContent":["@import '@common/view/basic.css';\r\n@import '@common/view/global.css';\r\n\r\n.admin-panel {\r\n    background-color: #f1f1f1;\r\n    padding: 20px;\r\n    border-radius: 5px;\r\n    margin-bottom: 20px;\r\n}\r\n\r\n.status-section {\r\n    margin-top: 10px;\r\n    margin-bottom: 10px;\r\n}\r\n\r\n.status-label {\r\n    font-weight: bold;\r\n}\r\n\r\n.button-section {\r\n    margin-top: 10px;\r\n}\r\n\r\n.button-section button {\r\n    margin-right: 10px;\r\n}\r\n\r\n.expanding-map-section {\r\n    display: flex;\r\n    flex-direction: column;\r\n    margin-top: 10px;\r\n}\r\n.expanding-map-section input {\r\n    width: 40px;\r\n}\r\n.expanding-map-section_button {\r\n    width: 65px;\r\n    margin-top: 5px;\r\n}\r\n.world-controls-fieldset {\r\n    border: 0;\r\n    margin: 0;\r\n    padding: 0;\r\n}"],"sourceRoot":""}]);
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js!./common/view/basic.css":
-/*!*********************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./common/view/basic.css ***!
-  \*********************************************************************/
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
+/***/ "./common/view/base/baseView.js":
+/*!**************************************!*\
+  !*** ./common/view/base/baseView.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   BaseView: () => (/* binding */ BaseView)
 /* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-// Imports
+class BaseView {
 
+    static domainFacade;
+    static eventBus;
+    static mm;
+    static messages;
 
-var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-// Module
-___CSS_LOADER_EXPORT___.push([module.id, `* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    get $domainFacade() {
+        return BaseView.domainFacade;
+    }
+
+    get $eventBus() {
+        return BaseView.eventBus;
+    }
+
+    get $mm() {
+        return BaseView.mm;
+    }
+
+    get $messages() {
+        return BaseView.messages;
+    }
+
+    static useDomainFacade(domainFacade) {
+        BaseView.domainFacade = domainFacade;
+    }
+
+    static useEventBus(eventBus) {
+        BaseView.eventBus = eventBus;
+    }
+
+    static useMessageMaster(mm) {
+        BaseView.mm = mm;
+    }
+
+    static useMessages(messages) {
+        BaseView.messages = messages;
+    }
+
+    remove(){
+        throw 'remove method is abstract';
+    }
+
 }
 
-html, body {
-    height: 100%;
+   
+
+/***/ }),
+
+/***/ "./common/view/dotsLoader/dotsLoaderView.js":
+/*!**************************************************!*\
+  !*** ./common/view/dotsLoader/dotsLoaderView.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DotsLoaderView: () => (/* binding */ DotsLoaderView)
+/* harmony export */ });
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./common/view/dotsLoader/style.css");
+/* harmony import */ var _dotsLoaderTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dotsLoaderTmpl.html */ "./common/view/dotsLoader/dotsLoaderTmpl.html");
+/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+
+
+
+
+class DotsLoaderView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseHTMLView {
+
+    constructor(el) {
+        super(el);
+
+        this._render();
+    }
+
+    _render() {
+        this._el.innerHTML = _dotsLoaderTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
+        this._el.classList.add('dots-loader');
+    }
+    
 }
-`, "",{"version":3,"sources":["webpack://./common/view/basic.css"],"names":[],"mappings":"AAAA;IACI,SAAS;IACT,UAAU;IACV,sBAAsB;AAC1B;;AAEA;IACI,YAAY;AAChB","sourcesContent":["* {\r\n    margin: 0;\r\n    padding: 0;\r\n    box-sizing: border-box;\r\n}\r\n\r\nhtml, body {\r\n    height: 100%;\r\n}\r\n"],"sourceRoot":""}]);
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
 
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js!./common/view/global.css":
-/*!**********************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./common/view/global.css ***!
-  \**********************************************************************/
+/***/ "./common/view/errors/accountPasswordErrorView.js":
+/*!********************************************************!*\
+  !*** ./common/view/errors/accountPasswordErrorView.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AccountPasswordErrorView: () => (/* binding */ AccountPasswordErrorView)
+/* harmony export */ });
+/* harmony import */ var _base_baseErrorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseErrorView */ "./common/view/errors/base/baseErrorView.js");
+/* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
+
+
+
+class AccountPasswordErrorView extends _base_baseErrorView__WEBPACK_IMPORTED_MODULE_0__.BaseErrorView {
+
+    setErr(err) {
+        if (err) {
+            switch (err.msgId) {
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR):
+                    this._el.innerHTML = this.$mm.format(err.msgId, err.minLength);
+                    break;
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR):
+                    this._el.innerHTML = this.$mm.format(err.msgId, err.maxLength);
+                    break;
+            }
+        } else {
+            this._el.innerHTML = '';
+        }
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./common/view/errors/base/baseErrorView.js":
+/*!**************************************************!*\
+  !*** ./common/view/errors/base/baseErrorView.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BaseErrorView: () => (/* binding */ BaseErrorView)
+/* harmony export */ });
+/* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+
+
+class BaseErrorView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    setErr(err) {
+        throw 'not realized';
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/messages/messageIds.js":
+/*!********************************************!*\
+  !*** ./gameApp/src/messages/messageIds.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MESSAGE_IDS: () => (/* binding */ MESSAGE_IDS)
+/* harmony export */ });
+/* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
+
+
+const MESSAGE_IDS = {
+    ..._common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS,
+    TAB_BREEDING: 'TAB_BREEDING',
+    TAB_COLONIES: 'TAB_COLONIES',
+    TAB_SPECIE: 'TAB_SPECIE',
+    TAB_NOTIFICATIONS: 'TAB_NOTIFICATIONS',
+    TAB_RATING: 'TAB_RATING',
+    TAB_ACCOUNT: 'TAB_ACCOUNT'
+}
+
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./common/view/dotsLoader/style.css":
+/*!********************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./common/view/dotsLoader/style.css ***!
+  \********************************************************************************/
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
 /* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
 // Imports
 
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, `.g-hidden {
-    display: none !important
+___CSS_LOADER_EXPORT___.push([module.id, `.dots-loader {
+    position: relative;
+    width: 30px;
+    height: 30px;
 }
 
-.g-table {
-    border-collapse: collapse;
-    border-spacing: 0px;
-    border: solid 1px;
+.dots-loader div {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: #007bff;
+    border-radius: 50%;
+    animation: circle-animation 1.2s linear infinite;
 }
 
-.g-table td {
-    border: solid 1px;
-}
+.dots-loader div:nth-child(1) { top: 15%; left: 50%; transform: translate(-50%, -50%); animation-delay: -1.05s; }
+.dots-loader div:nth-child(2) { top: 25%; left: 75%; transform: translate(-50%, -50%); animation-delay: -0.9s; }
+.dots-loader div:nth-child(3) { top: 50%; left: 85%; transform: translate(-50%, -50%); animation-delay: -0.75s; }
+.dots-loader div:nth-child(4) { top: 75%; left: 75%; transform: translate(-50%, -50%); animation-delay: -0.6s; }
+.dots-loader div:nth-child(5) { top: 85%; left: 50%; transform: translate(-50%, -50%); animation-delay: -0.45s; }
+.dots-loader div:nth-child(6) { top: 75%; left: 25%; transform: translate(-50%, -50%); animation-delay: -0.3s; }
+.dots-loader div:nth-child(7) { top: 50%; left: 15%; transform: translate(-50%, -50%); animation-delay: -0.15s; }
+.dots-loader div:nth-child(8) { top: 25%; left: 25%; transform: translate(-50%, -50%); animation-delay: 0; }
 
-.g-error-container {
-    color: red;
-}`, "",{"version":3,"sources":["webpack://./common/view/global.css"],"names":[],"mappings":"AAAA;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,UAAU;AACd","sourcesContent":[".g-hidden {\r\n    display: none !important\r\n}\r\n\r\n.g-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.g-table td {\r\n    border: solid 1px;\r\n}\r\n\r\n.g-error-container {\r\n    color: red;\r\n}"],"sourceRoot":""}]);
+@keyframes circle-animation {
+    0% {
+        opacity: 0;
+        transform: scale(0.3) translate(-50%, -50%);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1) translate(-50%, -50%);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.3) translate(-50%, -50%);
+    }
+}`, "",{"version":3,"sources":["webpack://./common/view/dotsLoader/style.css"],"names":[],"mappings":"AAAA;IACI,kBAAkB;IAClB,WAAW;IACX,YAAY;AAChB;;AAEA;IACI,kBAAkB;IAClB,UAAU;IACV,WAAW;IACX,yBAAyB;IACzB,kBAAkB;IAClB,gDAAgD;AACpD;;AAEA,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,uBAAuB,EAAE;AAChH,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,sBAAsB,EAAE;AAC/G,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,uBAAuB,EAAE;AAChH,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,sBAAsB,EAAE;AAC/G,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,uBAAuB,EAAE;AAChH,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,sBAAsB,EAAE;AAC/G,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,uBAAuB,EAAE;AAChH,gCAAgC,QAAQ,EAAE,SAAS,EAAE,gCAAgC,EAAE,kBAAkB,EAAE;;AAE3G;IACI;QACI,UAAU;QACV,2CAA2C;IAC/C;IACA;QACI,UAAU;QACV,yCAAyC;IAC7C;IACA;QACI,UAAU;QACV,2CAA2C;IAC/C;AACJ","sourcesContent":[".dots-loader {\r\n    position: relative;\r\n    width: 30px;\r\n    height: 30px;\r\n}\r\n\r\n.dots-loader div {\r\n    position: absolute;\r\n    width: 6px;\r\n    height: 6px;\r\n    background-color: #007bff;\r\n    border-radius: 50%;\r\n    animation: circle-animation 1.2s linear infinite;\r\n}\r\n\r\n.dots-loader div:nth-child(1) { top: 15%; left: 50%; transform: translate(-50%, -50%); animation-delay: -1.05s; }\r\n.dots-loader div:nth-child(2) { top: 25%; left: 75%; transform: translate(-50%, -50%); animation-delay: -0.9s; }\r\n.dots-loader div:nth-child(3) { top: 50%; left: 85%; transform: translate(-50%, -50%); animation-delay: -0.75s; }\r\n.dots-loader div:nth-child(4) { top: 75%; left: 75%; transform: translate(-50%, -50%); animation-delay: -0.6s; }\r\n.dots-loader div:nth-child(5) { top: 85%; left: 50%; transform: translate(-50%, -50%); animation-delay: -0.45s; }\r\n.dots-loader div:nth-child(6) { top: 75%; left: 25%; transform: translate(-50%, -50%); animation-delay: -0.3s; }\r\n.dots-loader div:nth-child(7) { top: 50%; left: 15%; transform: translate(-50%, -50%); animation-delay: -0.15s; }\r\n.dots-loader div:nth-child(8) { top: 25%; left: 25%; transform: translate(-50%, -50%); animation-delay: 0; }\r\n\r\n@keyframes circle-animation {\r\n    0% {\r\n        opacity: 0;\r\n        transform: scale(0.3) translate(-50%, -50%);\r\n    }\r\n    50% {\r\n        opacity: 1;\r\n        transform: scale(1) translate(-50%, -50%);\r\n    }\r\n    100% {\r\n        opacity: 0;\r\n        transform: scale(0.3) translate(-50%, -50%);\r\n    }\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -473,29 +1004,553 @@ module.exports = function (item) {
 
 /***/ }),
 
-/***/ "./adminApp/src/styles.css":
-/*!*********************************!*\
-  !*** ./adminApp/src/styles.css ***!
-  \*********************************/
+/***/ "./node_modules/events/events.js":
+/*!***************************************!*\
+  !*** ./node_modules/events/events.js ***!
+  \***************************************/
+/***/ ((module) => {
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
+var R = typeof Reflect === 'object' ? Reflect : null
+var ReflectApply = R && typeof R.apply === 'function'
+  ? R.apply
+  : function ReflectApply(target, receiver, args) {
+    return Function.prototype.apply.call(target, receiver, args);
+  }
+
+var ReflectOwnKeys
+if (R && typeof R.ownKeys === 'function') {
+  ReflectOwnKeys = R.ownKeys
+} else if (Object.getOwnPropertySymbols) {
+  ReflectOwnKeys = function ReflectOwnKeys(target) {
+    return Object.getOwnPropertyNames(target)
+      .concat(Object.getOwnPropertySymbols(target));
+  };
+} else {
+  ReflectOwnKeys = function ReflectOwnKeys(target) {
+    return Object.getOwnPropertyNames(target);
+  };
+}
+
+function ProcessEmitWarning(warning) {
+  if (console && console.warn) console.warn(warning);
+}
+
+var NumberIsNaN = Number.isNaN || function NumberIsNaN(value) {
+  return value !== value;
+}
+
+function EventEmitter() {
+  EventEmitter.init.call(this);
+}
+module.exports = EventEmitter;
+module.exports.once = once;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._eventsCount = 0;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+var defaultMaxListeners = 10;
+
+function checkListener(listener) {
+  if (typeof listener !== 'function') {
+    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+  }
+}
+
+Object.defineProperty(EventEmitter, 'defaultMaxListeners', {
+  enumerable: true,
+  get: function() {
+    return defaultMaxListeners;
+  },
+  set: function(arg) {
+    if (typeof arg !== 'number' || arg < 0 || NumberIsNaN(arg)) {
+      throw new RangeError('The value of "defaultMaxListeners" is out of range. It must be a non-negative number. Received ' + arg + '.');
+    }
+    defaultMaxListeners = arg;
+  }
+});
+
+EventEmitter.init = function() {
+
+  if (this._events === undefined ||
+      this._events === Object.getPrototypeOf(this)._events) {
+    this._events = Object.create(null);
+    this._eventsCount = 0;
+  }
+
+  this._maxListeners = this._maxListeners || undefined;
+};
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
+  if (typeof n !== 'number' || n < 0 || NumberIsNaN(n)) {
+    throw new RangeError('The value of "n" is out of range. It must be a non-negative number. Received ' + n + '.');
+  }
+  this._maxListeners = n;
+  return this;
+};
+
+function _getMaxListeners(that) {
+  if (that._maxListeners === undefined)
+    return EventEmitter.defaultMaxListeners;
+  return that._maxListeners;
+}
+
+EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
+  return _getMaxListeners(this);
+};
+
+EventEmitter.prototype.emit = function emit(type) {
+  var args = [];
+  for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);
+  var doError = (type === 'error');
+
+  var events = this._events;
+  if (events !== undefined)
+    doError = (doError && events.error === undefined);
+  else if (!doError)
+    return false;
+
+  // If there is no 'error' event listener then throw.
+  if (doError) {
+    var er;
+    if (args.length > 0)
+      er = args[0];
+    if (er instanceof Error) {
+      // Note: The comments on the `throw` lines are intentional, they show
+      // up in Node's output if this results in an unhandled exception.
+      throw er; // Unhandled 'error' event
+    }
+    // At least give some kind of context to the user
+    var err = new Error('Unhandled error.' + (er ? ' (' + er.message + ')' : ''));
+    err.context = er;
+    throw err; // Unhandled 'error' event
+  }
+
+  var handler = events[type];
+
+  if (handler === undefined)
+    return false;
+
+  if (typeof handler === 'function') {
+    ReflectApply(handler, this, args);
+  } else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      ReflectApply(listeners[i], this, args);
+  }
+
+  return true;
+};
+
+function _addListener(target, type, listener, prepend) {
+  var m;
+  var events;
+  var existing;
+
+  checkListener(listener);
+
+  events = target._events;
+  if (events === undefined) {
+    events = target._events = Object.create(null);
+    target._eventsCount = 0;
+  } else {
+    // To avoid recursion in the case that type === "newListener"! Before
+    // adding it to the listeners, first emit "newListener".
+    if (events.newListener !== undefined) {
+      target.emit('newListener', type,
+                  listener.listener ? listener.listener : listener);
+
+      // Re-assign `events` because a newListener handler could have caused the
+      // this._events to be assigned to a new object
+      events = target._events;
+    }
+    existing = events[type];
+  }
+
+  if (existing === undefined) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    existing = events[type] = listener;
+    ++target._eventsCount;
+  } else {
+    if (typeof existing === 'function') {
+      // Adding the second element, need to change to array.
+      existing = events[type] =
+        prepend ? [listener, existing] : [existing, listener];
+      // If we've already got an array, just append.
+    } else if (prepend) {
+      existing.unshift(listener);
+    } else {
+      existing.push(listener);
+    }
+
+    // Check for listener leak
+    m = _getMaxListeners(target);
+    if (m > 0 && existing.length > m && !existing.warned) {
+      existing.warned = true;
+      // No error code for this since it is a Warning
+      // eslint-disable-next-line no-restricted-syntax
+      var w = new Error('Possible EventEmitter memory leak detected. ' +
+                          existing.length + ' ' + String(type) + ' listeners ' +
+                          'added. Use emitter.setMaxListeners() to ' +
+                          'increase limit');
+      w.name = 'MaxListenersExceededWarning';
+      w.emitter = target;
+      w.type = type;
+      w.count = existing.length;
+      ProcessEmitWarning(w);
+    }
+  }
+
+  return target;
+}
+
+EventEmitter.prototype.addListener = function addListener(type, listener) {
+  return _addListener(this, type, listener, false);
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.prependListener =
+    function prependListener(type, listener) {
+      return _addListener(this, type, listener, true);
+    };
+
+function onceWrapper() {
+  if (!this.fired) {
+    this.target.removeListener(this.type, this.wrapFn);
+    this.fired = true;
+    if (arguments.length === 0)
+      return this.listener.call(this.target);
+    return this.listener.apply(this.target, arguments);
+  }
+}
+
+function _onceWrap(target, type, listener) {
+  var state = { fired: false, wrapFn: undefined, target: target, type: type, listener: listener };
+  var wrapped = onceWrapper.bind(state);
+  wrapped.listener = listener;
+  state.wrapFn = wrapped;
+  return wrapped;
+}
+
+EventEmitter.prototype.once = function once(type, listener) {
+  checkListener(listener);
+  this.on(type, _onceWrap(this, type, listener));
+  return this;
+};
+
+EventEmitter.prototype.prependOnceListener =
+    function prependOnceListener(type, listener) {
+      checkListener(listener);
+      this.prependListener(type, _onceWrap(this, type, listener));
+      return this;
+    };
+
+// Emits a 'removeListener' event if and only if the listener was removed.
+EventEmitter.prototype.removeListener =
+    function removeListener(type, listener) {
+      var list, events, position, i, originalListener;
+
+      checkListener(listener);
+
+      events = this._events;
+      if (events === undefined)
+        return this;
+
+      list = events[type];
+      if (list === undefined)
+        return this;
+
+      if (list === listener || list.listener === listener) {
+        if (--this._eventsCount === 0)
+          this._events = Object.create(null);
+        else {
+          delete events[type];
+          if (events.removeListener)
+            this.emit('removeListener', type, list.listener || listener);
+        }
+      } else if (typeof list !== 'function') {
+        position = -1;
+
+        for (i = list.length - 1; i >= 0; i--) {
+          if (list[i] === listener || list[i].listener === listener) {
+            originalListener = list[i].listener;
+            position = i;
+            break;
+          }
+        }
+
+        if (position < 0)
+          return this;
+
+        if (position === 0)
+          list.shift();
+        else {
+          spliceOne(list, position);
+        }
+
+        if (list.length === 1)
+          events[type] = list[0];
+
+        if (events.removeListener !== undefined)
+          this.emit('removeListener', type, originalListener || listener);
+      }
+
+      return this;
+    };
+
+EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
+
+EventEmitter.prototype.removeAllListeners =
+    function removeAllListeners(type) {
+      var listeners, events, i;
+
+      events = this._events;
+      if (events === undefined)
+        return this;
+
+      // not listening for removeListener, no need to emit
+      if (events.removeListener === undefined) {
+        if (arguments.length === 0) {
+          this._events = Object.create(null);
+          this._eventsCount = 0;
+        } else if (events[type] !== undefined) {
+          if (--this._eventsCount === 0)
+            this._events = Object.create(null);
+          else
+            delete events[type];
+        }
+        return this;
+      }
+
+      // emit removeListener for all listeners on all events
+      if (arguments.length === 0) {
+        var keys = Object.keys(events);
+        var key;
+        for (i = 0; i < keys.length; ++i) {
+          key = keys[i];
+          if (key === 'removeListener') continue;
+          this.removeAllListeners(key);
+        }
+        this.removeAllListeners('removeListener');
+        this._events = Object.create(null);
+        this._eventsCount = 0;
+        return this;
+      }
+
+      listeners = events[type];
+
+      if (typeof listeners === 'function') {
+        this.removeListener(type, listeners);
+      } else if (listeners !== undefined) {
+        // LIFO order
+        for (i = listeners.length - 1; i >= 0; i--) {
+          this.removeListener(type, listeners[i]);
+        }
+      }
+
+      return this;
+    };
+
+function _listeners(target, type, unwrap) {
+  var events = target._events;
+
+  if (events === undefined)
+    return [];
+
+  var evlistener = events[type];
+  if (evlistener === undefined)
+    return [];
+
+  if (typeof evlistener === 'function')
+    return unwrap ? [evlistener.listener || evlistener] : [evlistener];
+
+  return unwrap ?
+    unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);
+}
+
+EventEmitter.prototype.listeners = function listeners(type) {
+  return _listeners(this, type, true);
+};
+
+EventEmitter.prototype.rawListeners = function rawListeners(type) {
+  return _listeners(this, type, false);
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  if (typeof emitter.listenerCount === 'function') {
+    return emitter.listenerCount(type);
+  } else {
+    return listenerCount.call(emitter, type);
+  }
+};
+
+EventEmitter.prototype.listenerCount = listenerCount;
+function listenerCount(type) {
+  var events = this._events;
+
+  if (events !== undefined) {
+    var evlistener = events[type];
+
+    if (typeof evlistener === 'function') {
+      return 1;
+    } else if (evlistener !== undefined) {
+      return evlistener.length;
+    }
+  }
+
+  return 0;
+}
+
+EventEmitter.prototype.eventNames = function eventNames() {
+  return this._eventsCount > 0 ? ReflectOwnKeys(this._events) : [];
+};
+
+function arrayClone(arr, n) {
+  var copy = new Array(n);
+  for (var i = 0; i < n; ++i)
+    copy[i] = arr[i];
+  return copy;
+}
+
+function spliceOne(list, index) {
+  for (; index + 1 < list.length; index++)
+    list[index] = list[index + 1];
+  list.pop();
+}
+
+function unwrapListeners(arr) {
+  var ret = new Array(arr.length);
+  for (var i = 0; i < ret.length; ++i) {
+    ret[i] = arr[i].listener || arr[i];
+  }
+  return ret;
+}
+
+function once(emitter, name) {
+  return new Promise(function (resolve, reject) {
+    function errorListener(err) {
+      emitter.removeListener(name, resolver);
+      reject(err);
+    }
+
+    function resolver() {
+      if (typeof emitter.removeListener === 'function') {
+        emitter.removeListener('error', errorListener);
+      }
+      resolve([].slice.call(arguments));
+    };
+
+    eventTargetAgnosticAddListener(emitter, name, resolver, { once: true });
+    if (name !== 'error') {
+      addErrorHandlerIfEventEmitter(emitter, errorListener, { once: true });
+    }
+  });
+}
+
+function addErrorHandlerIfEventEmitter(emitter, handler, flags) {
+  if (typeof emitter.on === 'function') {
+    eventTargetAgnosticAddListener(emitter, 'error', handler, flags);
+  }
+}
+
+function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
+  if (typeof emitter.on === 'function') {
+    if (flags.once) {
+      emitter.once(name, listener);
+    } else {
+      emitter.on(name, listener);
+    }
+  } else if (typeof emitter.addEventListener === 'function') {
+    // EventTarget does not have `error` event semantics like Node
+    // EventEmitters, we do not listen for `error` events here.
+    emitter.addEventListener(name, function wrapListener(arg) {
+      // IE does not have builtin `{ once: true }` support so we
+      // have to do it manually.
+      if (flags.once) {
+        emitter.removeEventListener(name, wrapListener);
+      }
+      listener(arg);
+    });
+  } else {
+    throw new TypeError('The "emitter" argument must be of type EventEmitter. Received type ' + typeof emitter);
+  }
+}
+
+
+/***/ }),
+
+/***/ "./common/view/dotsLoader/dotsLoaderTmpl.html":
+/*!****************************************************!*\
+  !*** ./common/view/dotsLoader/dotsLoaderTmpl.html ***!
+  \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+// Module
+var code = "<div></div>\r\n<div></div>\r\n<div></div>\r\n<div></div>\r\n<div></div>\r\n<div></div>\r\n<div></div>\r\n<div></div>";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
+/***/ "./common/view/dotsLoader/style.css":
+/*!******************************************!*\
+  !*** ./common/view/dotsLoader/style.css ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./adminApp/src/styles.css");
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js!./style.css */ "./node_modules/css-loader/dist/cjs.js!./common/view/dotsLoader/style.css");
 
       
       
@@ -517,12 +1572,12 @@ options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWi
 options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
 options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
 
-var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
 
 
 
 
-       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),
@@ -791,6 +1846,367 @@ function styleTagTransform(css, styleElement) {
   }
 }
 module.exports = styleTagTransform;
+
+/***/ }),
+
+/***/ "./resetPasswordApp/src/messages/messageIds.js":
+/*!*****************************************************!*\
+  !*** ./resetPasswordApp/src/messages/messageIds.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MESSAGE_IDS: () => (/* binding */ MESSAGE_IDS)
+/* harmony export */ });
+/* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
+
+
+const MESSAGE_IDS = {
+    ..._common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS,
+}
+
+
+
+/***/ }),
+
+/***/ "./resetPasswordApp/src/messages/msgLibraries/enLibrary.js":
+/*!*****************************************************************!*\
+  !*** ./resetPasswordApp/src/messages/msgLibraries/enLibrary.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EN_LIBRARY: () => (/* binding */ EN_LIBRARY)
+/* harmony export */ });
+/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./resetPasswordApp/src/messages/messageIds.js");
+/* harmony import */ var _common_messages_msgLibraries_enLibrary__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/messages/msgLibraries/enLibrary */ "./common/messages/msgLibraries/enLibrary.js");
+
+
+
+const EN_LIBRARY = {
+    ..._common_messages_msgLibraries_enLibrary__WEBPACK_IMPORTED_MODULE_1__.EN_BASE_LIBRARY,
+}
+
+
+
+/***/ }),
+
+/***/ "./resetPasswordApp/src/messages/msgLibraries/index.js":
+/*!*************************************************************!*\
+  !*** ./resetPasswordApp/src/messages/msgLibraries/index.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   msgLibrariesPack: () => (/* binding */ msgLibrariesPack)
+/* harmony export */ });
+/* harmony import */ var _enLibrary__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./enLibrary */ "./resetPasswordApp/src/messages/msgLibraries/enLibrary.js");
+/* harmony import */ var _ukLibrary__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ukLibrary */ "./resetPasswordApp/src/messages/msgLibraries/ukLibrary.js");
+
+
+
+let msgLibrariesPack = {
+    'en': _enLibrary__WEBPACK_IMPORTED_MODULE_0__.EN_LIBRARY,
+    'uk': _ukLibrary__WEBPACK_IMPORTED_MODULE_1__.UK_LIBRARY
+}
+
+
+
+/***/ }),
+
+/***/ "./resetPasswordApp/src/messages/msgLibraries/ukLibrary.js":
+/*!*****************************************************************!*\
+  !*** ./resetPasswordApp/src/messages/msgLibraries/ukLibrary.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   UK_LIBRARY: () => (/* binding */ UK_LIBRARY)
+/* harmony export */ });
+/* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./resetPasswordApp/src/messages/messageIds.js");
+/* harmony import */ var _common_messages_msgLibraries_ukLibrary__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/messages/msgLibraries/ukLibrary */ "./common/messages/msgLibraries/ukLibrary.js");
+
+
+
+const UK_LIBRARY = {
+    ..._common_messages_msgLibraries_ukLibrary__WEBPACK_IMPORTED_MODULE_1__.UK_BASE_LIBRARY,
+}
+
+
+
+/***/ }),
+
+/***/ "./resetPasswordApp/src/view/requestModeContainerView.js":
+/*!***************************************************************!*\
+  !*** ./resetPasswordApp/src/view/requestModeContainerView.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RequestModeContainerView: () => (/* binding */ RequestModeContainerView)
+/* harmony export */ });
+/* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../messages/messageIds */ "./resetPasswordApp/src/messages/messageIds.js");
+/* harmony import */ var _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/view/dotsLoader/dotsLoaderView */ "./common/view/dotsLoader/dotsLoaderView.js");
+
+
+
+
+class RequestModeContainerView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+    constructor(el, accountService) {
+        super(el);
+        this._accountService = accountService;
+
+        this._render();
+
+        this._requestCreatingSendBtn.addEventListener('click', this._onRequestCreatingSendBtnClick.bind(this));
+    }
+
+    _render() {
+        this._requestCreatingTabEl = this._el.querySelector('[data-request-creating-tab]');
+        this._requestCreatingSendBtn = this._requestCreatingTabEl.querySelector('[data-send]');
+        this._emailEl = this._requestCreatingTabEl.querySelector('[data-email]');
+        this._emailErrContainer = this._requestCreatingTabEl.querySelector('[data-email-err]');
+        this._requestErrContainer = this._requestCreatingTabEl.querySelector('[data-request-err]');
+        this._requestCreatingLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__.DotsLoaderView(this._requestCreatingTabEl.querySelector('[data-loader]'));
+        this._requestDoneTabEl = this._el.querySelector('[data-request-done-tab]');
+    }
+
+    _validateRequestCreating() {
+        let isError = false;
+
+        let emailErr = this._validateEmail();
+        this._renderEmailErr(emailErr);
+        if (emailErr) {
+            isError = true;
+        }
+
+        return !isError;
+    }
+
+    _validateEmail() {
+        let email = this._emailEl.value;
+
+        if (!email || !this._emailEl.checkValidity()) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.EMAIL_INVALID;
+        }
+
+        return null;
+    }
+
+    _renderEmailErr(errId) {
+        this._emailErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    async _onRequestCreatingSendBtnClick() {
+        if (!this._validateRequestCreating()) {
+            return;
+        }
+
+        let email = this._emailEl.value;
+        try {
+            this._requestCreatingLoader.toggle(true);
+            await this._accountService.resetPasswordRequest(email);
+            this._switchRequestDoneTab();
+        } catch (e) {
+            this._renderRequestErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.SOMETHING_WENT_WRONG);
+        }
+        this._requestCreatingLoader.toggle(false);
+    }
+
+    _renderRequestErr(errId) {
+        this._requestErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    _switchRequestDoneTab() {
+        this._requestCreatingTabEl.classList.add('g-hidden');
+        this._requestDoneTabEl.classList.remove('g-hidden');
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./resetPasswordApp/src/view/resetPasswordAppView.js":
+/*!***********************************************************!*\
+  !*** ./resetPasswordApp/src/view/resetPasswordAppView.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ResetPasswordAppView: () => (/* binding */ ResetPasswordAppView)
+/* harmony export */ });
+/* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+/* harmony import */ var _requestModeContainerView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./requestModeContainerView */ "./resetPasswordApp/src/view/requestModeContainerView.js");
+/* harmony import */ var _setPasswordModeView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./setPasswordModeView */ "./resetPasswordApp/src/view/setPasswordModeView.js");
+
+
+
+
+class ResetPasswordAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, accountService) {
+        super(el);
+        this._accountService = accountService;
+
+        this._render();
+    }
+
+    _render() {
+        let requestModeEl = this._el.querySelector('[data-request-mode]');
+        let setPasswordModeEl = this._el.querySelector('[data-set-password-mode]');
+
+        if (requestModeEl) {
+            this._modeView = new _requestModeContainerView__WEBPACK_IMPORTED_MODULE_1__.RequestModeContainerView(requestModeEl, this._accountService);
+        } else if (setPasswordModeEl) {
+            this._modeView = new _setPasswordModeView__WEBPACK_IMPORTED_MODULE_2__.SetPasswordModeView(setPasswordModeEl, this._accountService);
+        }
+        
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./resetPasswordApp/src/view/setPasswordModeView.js":
+/*!**********************************************************!*\
+  !*** ./resetPasswordApp/src/view/setPasswordModeView.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SetPasswordModeView: () => (/* binding */ SetPasswordModeView)
+/* harmony export */ });
+/* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+/* harmony import */ var _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/view/dotsLoader/dotsLoaderView */ "./common/view/dotsLoader/dotsLoaderView.js");
+/* harmony import */ var _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/view/errors/accountPasswordErrorView */ "./common/view/errors/accountPasswordErrorView.js");
+/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../messages/messageIds */ "./resetPasswordApp/src/messages/messageIds.js");
+/* harmony import */ var _common_utils_getQueryParams__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/utils/getQueryParams */ "./common/utils/getQueryParams.js");
+
+
+
+
+
+
+class SetPasswordModeView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, accountService) {
+        super(el);
+        this._accountService = accountService;
+
+        this._render();
+
+        this._setPasswordBtn.addEventListener('click', this._onSetPasswordBtnClick.bind(this));
+        this._passwordEl.addEventListener('change', this._onPasswordChange.bind(this));
+        this._passwordConfirmEl.addEventListener('change', this._onPasswordConfirmChange.bind(this));
+    }
+
+    _render() {
+        this._setPasswordTabEl = this._el.querySelector('[data-set-password-tab]');
+        this._passwordEl = this._setPasswordTabEl.querySelector('[data-password]');
+        this._passwordErrView = new _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_2__.AccountPasswordErrorView(this._setPasswordTabEl.querySelector('[data-password-err]'));
+        this._passwordConfirmEl = this._setPasswordTabEl.querySelector('[data-password-confirmation]');
+        this._passwordConfirmErrContainerEl = this._setPasswordTabEl.querySelector('[data-password-confirmation-err]');
+        this._requestErrContainerEl = this._setPasswordTabEl.querySelector('[data-request-err]');
+        this._loader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_1__.DotsLoaderView(this._setPasswordTabEl.querySelector('[data-loader]'));
+        this._setPasswordBtn = this._setPasswordTabEl.querySelector('[data-set-password-btn]');
+
+        this._settedPasswordTabEl = this._el.querySelector('[data-setted-password-tab]');
+    }
+
+    _validateSetPassword() {
+        let isError = false;
+
+        let passwordErr = this._validatePassword();
+        this._renderPasswordErr(passwordErr);
+        if (passwordErr) {
+            isError = true;
+        }
+
+        let passwordConfirmErr = this._validatePasswordConfirm();
+        this._renderPasswordConfirmErr(passwordConfirmErr);
+        if (passwordConfirmErr) {
+            isError = true;
+        }
+
+        return !isError;
+    }
+
+    _validatePassword() {
+        let password = this._passwordEl.value;
+        return this._accountService.validatePassword(password);
+    }
+
+    _renderPasswordErr(err) {
+        this._passwordErrView.setErr(err);
+    }
+
+    _onPasswordChange() {
+        let passwordErr = this._validatePassword();
+        this._renderPasswordErr(passwordErr);
+    }
+
+    _validatePasswordConfirm() {
+        let confirmPassword = this._passwordConfirmEl.value;
+        let password = this._passwordEl.value;
+        if (confirmPassword != password) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_3__.MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID;
+        }
+
+        return null;
+    }
+
+    _renderPasswordConfirmErr(errId) {
+        this._passwordConfirmErrContainerEl.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    _onPasswordConfirmChange() {
+        let passwordConfirmErr = this._validatePasswordConfirm();
+        this._renderPasswordConfirmErr(passwordConfirmErr);
+    }
+
+    async _onSetPasswordBtnClick() {
+        if (!this._validateSetPassword()) {
+            return;
+        }
+
+        let queryParams = (0,_common_utils_getQueryParams__WEBPACK_IMPORTED_MODULE_4__.getQueryParams)();
+        let token = queryParams['t'];
+        let id = queryParams['i'];
+        let password = this._passwordEl.value;
+        
+        try {
+            this._loader.toggle(true);
+            await this._accountService.setNewPassword(password, token, id);
+            this._switchSettedPasswordTab();
+        } catch (e) {
+            this._renderRequestErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_3__.MESSAGE_IDS.SOMETHING_WENT_WRONG);
+        }
+        this._loader.toggle(false);
+    }
+
+    _renderRequestErr(errId) {
+        this._requestErrContainerEl.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    _switchSettedPasswordTab() {
+        this._setPasswordTabEl.classList.add('g-hidden');
+        this._settedPasswordTabEl.classList.remove('g-hidden');
+    }
+
+}
+
+
 
 /***/ }),
 
@@ -5563,21 +6979,36 @@ const asap = typeof queueMicrotask !== 'undefined' ?
 var __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
-/*!*******************************!*\
-  !*** ./adminApp/src/index.js ***!
-  \*******************************/
+/*!***************************************!*\
+  !*** ./resetPasswordApp/src/index.js ***!
+  \***************************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./adminApp/src/styles.css");
-/* harmony import */ var _worldStatusView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./worldStatusView */ "./adminApp/src/worldStatusView.js");
+/* harmony import */ var _view_resetPasswordAppView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./view/resetPasswordAppView */ "./resetPasswordApp/src/view/resetPasswordAppView.js");
+/* harmony import */ var _common_sync_accountApi__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/sync/accountApi */ "./common/sync/accountApi.js");
 /* harmony import */ var _common_utils_requester__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/utils/requester */ "./common/utils/requester.js");
+/* harmony import */ var _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/domain/service/accountService */ "./common/domain/service/accountService.js");
+/* harmony import */ var _messages_msgLibraries__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./messages/msgLibraries */ "./resetPasswordApp/src/messages/msgLibraries/index.js");
+/* harmony import */ var _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/messages/messageMaster */ "./common/messages/messageMaster.js");
+/* harmony import */ var _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/view/base/baseView */ "./common/view/base/baseView.js");
 
 
 
+
+
+
+
+
+let mm = _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_5__.MessageMaster.init(_messages_msgLibraries__WEBPACK_IMPORTED_MODULE_4__.msgLibrariesPack);
+_common_view_base_baseView__WEBPACK_IMPORTED_MODULE_6__.BaseView.useMessageMaster(mm);
 
 let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_2__.Requester();
-new _worldStatusView__WEBPACK_IMPORTED_MODULE_1__.WorldStatusView(requester, document.querySelector('[data-world-status]'))
+let accountApi = new _common_sync_accountApi__WEBPACK_IMPORTED_MODULE_1__.AccountApi(requester);
+
+let accountService = new _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_3__.AccountService(accountApi);
+
+new _view_resetPasswordAppView__WEBPACK_IMPORTED_MODULE_0__.ResetPasswordAppView(document.body, accountService);
 })();
 
 /******/ })()
 ;
-//# sourceMappingURL=adminApp.js.map
+//# sourceMappingURL=resetPasswordApp.js.map

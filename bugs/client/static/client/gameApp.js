@@ -129,6 +129,14 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         return this._requestHandler(() => this._accountApi.register(username, email, password));
     }
 
+    resetPasswordRequest(email) {
+        return this._requestHandler(() => this._accountApi.resetPasswordRequest(email));
+    }
+
+    setNewPassword(newPassword, token, id) {
+        return this._requestHandler(() => this._accountApi.setNewPassword(newPassword, token, id));
+    }
+
     getUserData() {
         return this._userData;
     }
@@ -422,6 +430,18 @@ class AccountApi {
     register(username, email, password) {
         return this._requester.post('api/accounts/register', {
             username, email, password
+        });
+    }
+
+    resetPasswordRequest(email) {
+        return this._requester.post('api/accounts/reset_password_request', {
+            email
+        });
+    }
+
+    setNewPassword(newPassword, token, id) {
+        return this._requester.post('api/accounts/set_new_password', {
+            newPassword, token, id
         });
     }
 

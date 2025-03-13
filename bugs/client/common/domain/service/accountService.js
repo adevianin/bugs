@@ -28,6 +28,14 @@ class AccountService extends BaseService {
         return this._requestHandler(() => this._accountApi.register(username, email, password));
     }
 
+    resetPasswordRequest(email) {
+        return this._requestHandler(() => this._accountApi.resetPasswordRequest(email));
+    }
+
+    setNewPassword(newPassword, token, id) {
+        return this._requestHandler(() => this._accountApi.setNewPassword(newPassword, token, id));
+    }
+
     getUserData() {
         return this._userData;
     }

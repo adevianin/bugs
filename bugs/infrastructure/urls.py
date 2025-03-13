@@ -3,27 +3,20 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views.account import check_username_uniqueness, check_email_uniqueness, account_register, account_login, account_logout, account_index, google_auth_callback, verify_email
+from .views.account import (check_username_uniqueness, check_email_uniqueness, account_register, account_login, account_logout, 
+                            account_index, google_auth_callback, verify_email, reset_password, reset_password_request, set_new_password)
 from .views.game import index
 from .views.admin import admin_index, world_status_check, init_world, stop_world, run_world, save_world, expand_map
 from .views.nest import rename_nest, lay_egg, change_egg_caste, change_egg_name, move_egg_to_larva_chamber, delete_egg, delete_larva
 from .views.colony import stop_operation, build_new_sub_nest, destroy_nest, pillage_nest, transport_food, build_fortification, bring_bug
 from .views.ant import fly_nuptial_flight, change_ant_guardian_behavior, change_ant_cooperative_behavior, relocate_ant
 from .views.nuptial import found_colony, save_specie_schema, born_new_antara
-from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', index, name='game_index'),
     path('account', account_index, name='account_index'),
     path('admin', admin_index, name='admin_index'),
-
-    path('password_reset/', auth_views.PasswordResetView.as_view(
-        template_name='client/password_reset/form.html', 
-        email_template_name='infrastructure/emails/password_reset.html'
-        ), name='password_reset'),
-    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='client/password_reset/done.html'), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='client/password_reset/confirm.html'), name='password_reset_confirm'),
-    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='client/password_reset/complete.html'), name='password_reset_complete'),
+    path('reset_password', reset_password, name='reset_password'),
     path('verify_email/<uidb64>/<token>/', verify_email, name='verify_email'),
     
     path('api/accounts/check_username_uniqueness', check_username_uniqueness, name='check_username_uniqueness'),
@@ -32,6 +25,8 @@ urlpatterns = [
     path('api/accounts/login', account_login, name='account_login'),
     path('api/accounts/logout', account_logout, name='account_logout'),
     path('api/accounts/google_auth_callback', google_auth_callback, name='google_auth_callback'),
+    path('api/accounts/reset_password_request', reset_password_request, name='reset_password_request'),
+    path('api/accounts/set_new_password', set_new_password, name='set_new_password'),
 
     path('api/admin/world/status', world_status_check, name='world_status'),
     path('api/admin/world/init', init_world, name='init_world'),
@@ -65,7 +60,5 @@ urlpatterns = [
     path('api/world/nuptial_environment/found_colony', found_colony, name='found_colony'),
     path('api/world/nuptial_environment/specie/specie_schema', save_specie_schema, name='save_specie_schema'),
     path('api/world/nuptial_environment/born_new_antara', born_new_antara, name="born_new_antara")
-
-
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

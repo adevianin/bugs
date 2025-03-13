@@ -9,9 +9,10 @@ module.exports = {
         gameApp: './gameApp/src/index.js',
         adminApp: './adminApp/src/index.js',
         accountApp: './accountApp/src/index.js',
+        resetPasswordApp: './resetPasswordApp/src/index.js',
         initialStylesGameApp: './gameApp/src/view/initialStyles.css',
         initialStylesAccountApp: './accountApp/src/view/initialStyles.css',
-        initialStylesResetPassword: './passwordReset/initialStyles.css',
+        initialStylesResetPasswordApp: './resetPasswordApp/src/view/initialStyles.css',
         initialStylesEmailVerification: './emailVerification/initialStyles.css',
     },
     output: {
