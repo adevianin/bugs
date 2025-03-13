@@ -15,7 +15,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from bugs.settings import DEFAULT_FROM_EMAIL
 from django.core.mail import EmailMessage
-from infrastructure.token_generators.email_verification_token_generator import EmailVerificationToken
+from infrastructure.token_generators.email_verification_token_generator import EmailVerificationTokenGenerator
 from infrastructure.token_generators.reset_password_token_generator import ResetPasswordTokenGenerator
 from urllib.parse import urlencode
 from django.contrib.auth.password_validation import validate_password
@@ -188,7 +188,7 @@ def verify_email(request, uidb64, token):
         user = None
 
     is_success = None
-    if user and EmailVerificationToken.validate(user, token):
+    if user and EmailVerificationTokenGenerator.validate(user, token):
         user.is_email_verified = True
         user.save()
         is_success = True
@@ -275,7 +275,7 @@ def _send_reset_password_email(request: HttpRequest, user: User):
 def _send_verification_email(request: HttpRequest, user: User):
     subject = 'Підтвердження вашого облікового запису'
     uid = urlsafe_base64_encode(force_bytes(user.pk))
-    token = EmailVerificationToken.generate(user)
+    token = EmailVerificationTokenGenerator.generate(user)
     relative_link = reverse('verify_email', kwargs={'uidb64': uid, 'token': token})
     verification_link = request.build_absolute_uri(relative_link)
     
