@@ -4,6 +4,7 @@ from django.core.validators import RegexValidator, MinLengthValidator, MaxLength
 from core.world.settings import MAX_USERNAME_LENGTH, MIN_USERNAME_LENGTH
 
 class User(AbstractUser):
+    is_email_verified = models.BooleanField(default=False)
     username = models.CharField(
         max_length=MAX_USERNAME_LENGTH,
         unique=True,

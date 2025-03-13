@@ -1,0 +1,5 @@
+{% autoescape off %}
+<p>Привіт, {{ user.username }}!</p>
+<p>Дякуємо за реєстрацію. Підтвердьте вашу електронну адресу, перейшовши за посиланням нижче:</p>
+<a href="{{ verification_link }}">Підтвердити email</a>
+{% endautoescape %}

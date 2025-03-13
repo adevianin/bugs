@@ -1,7 +1,7 @@
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from infrastructure.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
@@ -10,13 +10,19 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from bugs.settings import DEFAULT_FROM_EMAIL
+from django.core.mail import EmailMessage
+from infrastructure.token_generators.email_verification_token_generator import EmailVerificationToken
 import json
 import random
 import uuid
 
 @ensure_csrf_cookie
 def account_index(request: HttpRequest):
-    return render(request, 'client/account.html', {
+    return render(request, 'client/account/index.html', {
         'google_client_id': GOOGLE_CLIENT_ID,
         'google_oauth_redirect_uri': GOOGLE_OAUTH_REDIRECT_URI
     })
@@ -43,7 +49,8 @@ def google_auth_callback(request: HttpRequest):
         user, created = User.objects.get_or_create(email=user_email)
 
         if created:
-            user.username = generate_username()
+            user.username = _generate_username()
+            user.is_email_verified = True
             user.set_unusable_password()
             user.save()
 
@@ -77,6 +84,7 @@ def account_register(request: HttpRequest):
         return HttpResponse(status=400)
     
     login(request, user)
+    _send_verification_email(request, user)
         
     return JsonResponse({
         'user': user.get_general_data()
@@ -155,8 +163,48 @@ def check_email_uniqueness(request):
         'is_unique': is_unique
     })
 
+@require_GET
+def verify_email(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
 
-def generate_username():
+    is_success = None
+    if user and EmailVerificationToken.validate(user, token):
+        user.is_email_verified = True
+        user.save()
+        is_success = True
+    else:
+        is_success = False
+
+    return render(request, 'client/account/email_verification.html', {
+        "is_success": is_success
+    })
+    
+def _send_verification_email(request: HttpRequest, user: User):
+    subject = 'Підтвердження вашого облікового запису'
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = EmailVerificationToken.generate(user)
+    relative_link = reverse('verify_email', kwargs={'uidb64': uid, 'token': token})
+    verification_link = request.build_absolute_uri(relative_link)
+    
+    html_message = render_to_string('infrastructure/emails/verify_email.html', {
+        'user': user,
+        'verification_link': verification_link,
+    })
+    
+    email = EmailMessage(
+        subject=subject,
+        body=html_message,
+        from_email=DEFAULT_FROM_EMAIL,
+        to=[user.email],
+    )
+    email.content_subtype = 'html'
+    email.send()
+
+def _generate_username():
     adjectives = [
         "Swift", "Fierce", "Cunning", "Mighty", "Silent", "Shadow", "Vibrant", "Ancient",
         "Rapid", "Brave", "Loyal", "Bold", "Clever", "Stormy", "Golden", "Venomous",
@@ -205,3 +253,4 @@ def generate_username():
 
         if not User.objects.filter(username=username).exists():
             return username
+

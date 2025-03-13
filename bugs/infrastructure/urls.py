@@ -3,7 +3,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views.account import check_username_uniqueness, check_email_uniqueness, account_register, account_login, account_logout, account_index, google_auth_callback
+from .views.account import check_username_uniqueness, check_email_uniqueness, account_register, account_login, account_logout, account_index, google_auth_callback, verify_email
 from .views.game import index
 from .views.admin import admin_index, world_status_check, init_world, stop_world, run_world, save_world, expand_map
 from .views.nest import rename_nest, lay_egg, change_egg_caste, change_egg_name, move_egg_to_larva_chamber, delete_egg, delete_larva
@@ -24,6 +24,7 @@ urlpatterns = [
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='client/password_reset/done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='client/password_reset/confirm.html'), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='client/password_reset/complete.html'), name='password_reset_complete'),
+    path('verify_email/<uidb64>/<token>/', verify_email, name='verify_email'),
     
     path('api/accounts/check_username_uniqueness', check_username_uniqueness, name='check_username_uniqueness'),
     path('api/accounts/check_email_uniqueness', check_email_uniqueness, name='check_email_uniqueness'),

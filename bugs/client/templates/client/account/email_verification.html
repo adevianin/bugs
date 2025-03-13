@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}Підтвердження email{% endblock %}
+
+{% block meta %}
+    <meta name="referrer" content="no-referrer">    
+{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'client/initialStylesEmailVerification.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="verification-container">
+        {% if is_success %}
+            <div class="verification-success">
+                <div class="icon success-icon">✔</div>
+                <h1>Email успішно підтверджено!</h1>
+                <p>Нові горизонти еволюції відкриті для вас.</p>
+                <a href="/" class="action-link">До мурашника</a>
+            </div>
+        {% else %}
+            <div class="verification-failure">
+                <div class="icon failure-icon">✖</div>
+                <h1>Щось пішло не так...</h1>
+                <p>На жаль, нам не вдалося підтвердити ваш email. Можливо, токен недійсний або вже використаний.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

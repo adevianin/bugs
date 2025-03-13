@@ -1,0 +1,32 @@
+@import '@common/styles.css';
+
+.verification-container {
+    text-align: center;
+    padding: 50px;
+}
+.verification-success {
+    color: #28a745;
+}
+.verification-failure {
+    color: #dc3545;
+}
+.icon {
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+.success-icon {
+    color: #28a745;
+}
+.failure-icon {
+    color: #dc3545;
+}
+.action-link {
+    display: block;
+    margin-top: 20px;
+    font-size: 16px;
+    text-decoration: none;
+    color: #007bff;
+}
+.action-link:hover {
+    text-decoration: underline;
+}
