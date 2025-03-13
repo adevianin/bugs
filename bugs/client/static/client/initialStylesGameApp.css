@@ -1,12 +1,35 @@
+/*!*************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./common/view/basic.css ***!
+  \*************************************************************************/
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/*!**************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./common/view/global.css ***!
+  \**************************************************************************/
+.g-hidden {
+    display: none !important
+}
+
+.g-table {
+    border-collapse: collapse;
+    border-spacing: 0px;
+    border: solid 1px;
+}
+
+.g-table td {
+    border: solid 1px;
+}
+
+.g-error-container {
+    color: red;
+}
 /*!**************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/initialStyles.css ***!
   \**************************************************************************************/
-body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
-
 .game-loader {
     position: absolute;
     top: 0;

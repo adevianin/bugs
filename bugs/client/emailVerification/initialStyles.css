@@ -1,4 +1,4 @@
-@import '@common/styles.css';
+@import '@common/view/basic.css';
 
 .verification-container {
     text-align: center;

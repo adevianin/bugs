@@ -1,4 +1,5 @@
-@import '@common/styles.css';
+@import '@common/view/basic.css';
+@import '@common/view/global.css';
 
 .account {
     display: flex;

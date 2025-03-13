@@ -1,8 +1,5 @@
-body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
+@import '@common/view/basic.css';
+@import '@common/view/global.css';
 
 .game-loader {
     position: absolute;

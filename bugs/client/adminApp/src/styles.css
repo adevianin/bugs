@@ -1,3 +1,6 @@
+@import '@common/view/basic.css';
+@import '@common/view/global.css';
+
 .admin-panel {
     background-color: #f1f1f1;
     padding: 20px;

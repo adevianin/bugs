@@ -17790,55 +17790,6 @@ exports.ParseError = ParseError;
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js!./common/styles.css":
-/*!*****************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./common/styles.css ***!
-  \*****************************************************************/
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-// Imports
-
-
-var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-// Module
-___CSS_LOADER_EXPORT___.push([module.id, `html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-.g-hidden {
-    display: none !important
-}
-
-.g-table {
-    border-collapse: collapse;
-    border-spacing: 0px;
-    border: solid 1px;
-}
-
-.g-table td {
-    border: solid 1px;
-}
-
-.g-error-container {
-    color: red;
-}`, "",{"version":3,"sources":["webpack://./common/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,SAAS;IACT,UAAU;AACd;;AAEA;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,UAAU;AACd","sourcesContent":["html, body {\r\n    height: 100%;\r\n    margin: 0;\r\n    padding: 0;\r\n}\r\n\r\n.g-hidden {\r\n    display: none !important\r\n}\r\n\r\n.g-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.g-table td {\r\n    border: solid 1px;\r\n}\r\n\r\n.g-error-container {\r\n    color: red;\r\n}"],"sourceRoot":""}]);
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
-
-
-/***/ }),
-
 /***/ "./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/appStyles.css":
 /*!******************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/appStyles.css ***!
@@ -17854,13 +17805,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_common_styles_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! -!../../../node_modules/css-loader/dist/cjs.js!../../../common/styles.css */ "./node_modules/css-loader/dist/cjs.js!./common/styles.css");
 // Imports
 
 
-
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-___CSS_LOADER_EXPORT___.i(_node_modules_css_loader_dist_cjs_js_common_styles_css__WEBPACK_IMPORTED_MODULE_2__["default"]);
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, `.app {
     height: 100%;
@@ -17893,7 +17841,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.app {
     font-weight: 700;
     margin-top: 20px;
 }
-`, "",{"version":3,"sources":["webpack://./gameApp/src/view/appStyles.css"],"names":[],"mappings":"AAEA;IACI,YAAY;IACZ,aAAa;IACb,sBAAsB;AAC1B;;AAEA;IACI,YAAY;IACZ,gBAAgB;IAChB,kBAAkB;IAClB,UAAU;AACd;;AAEA;IACI,oBAAoB;IACpB,kBAAkB;IAClB,qBAAqB;IACrB,OAAO;IACP,QAAQ;IACR,MAAM;IACN,SAAS;IACT,uBAAuB;IACvB,aAAa;AACjB;;AAEA;IACI,UAAU;IACV,aAAa;IACb,gBAAgB;IAChB,gBAAgB;AACpB","sourcesContent":["@import '@common/styles.css';\r\n\r\n.app {\r\n    height: 100%;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n.app__canvas-container {\r\n    flex-grow: 1;\r\n    overflow: hidden;\r\n    position: relative;\r\n    z-index: 1;\r\n}\r\n\r\n.app__map-picker-border {\r\n    pointer-events: none;\r\n    position: absolute;\r\n    border: solid 4px red;\r\n    left: 0;\r\n    right: 0;\r\n    top: 0;\r\n    bottom: 0;\r\n    justify-content: center;\r\n    display: flex;\r\n}\r\n\r\n.app__map-picker-label {\r\n    color: red;\r\n    font-size: 24;\r\n    font-weight: 700;\r\n    margin-top: 20px;\r\n}\r\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./gameApp/src/view/appStyles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,aAAa;IACb,sBAAsB;AAC1B;;AAEA;IACI,YAAY;IACZ,gBAAgB;IAChB,kBAAkB;IAClB,UAAU;AACd;;AAEA;IACI,oBAAoB;IACpB,kBAAkB;IAClB,qBAAqB;IACrB,OAAO;IACP,QAAQ;IACR,MAAM;IACN,SAAS;IACT,uBAAuB;IACvB,aAAa;AACjB;;AAEA;IACI,UAAU;IACV,aAAa;IACb,gBAAgB;IAChB,gBAAgB;AACpB","sourcesContent":[".app {\r\n    height: 100%;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n.app__canvas-container {\r\n    flex-grow: 1;\r\n    overflow: hidden;\r\n    position: relative;\r\n    z-index: 1;\r\n}\r\n\r\n.app__map-picker-border {\r\n    pointer-events: none;\r\n    position: absolute;\r\n    border: solid 4px red;\r\n    left: 0;\r\n    right: 0;\r\n    top: 0;\r\n    bottom: 0;\r\n    justify-content: center;\r\n    display: flex;\r\n}\r\n\r\n.app__map-picker-label {\r\n    color: red;\r\n    font-size: 24;\r\n    font-weight: 700;\r\n    margin-top: 20px;\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
