@@ -11,9 +11,9 @@ html, body {
     height: 100%;
 }
 
-/*!***************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./emailVerification/initialStyles.css ***!
-  \***************************************************************************************/
+/*!*******************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./emailVerificationPage/initialStyles.css ***!
+  \*******************************************************************************************/
 .verification-container {
     text-align: center;
     padding: 50px;
@@ -45,4 +45,4 @@ html, body {
     text-decoration: underline;
 }
 
-/*# sourceMappingURL=initialStylesEmailVerification.css.map*/
+/*# sourceMappingURL=initialStylesEmailVerificationPage.css.map*/

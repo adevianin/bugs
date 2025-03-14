@@ -13,7 +13,7 @@ module.exports = {
         initialStylesGameApp: './gameApp/src/view/initialStyles.css',
         initialStylesAccountApp: './accountApp/src/view/initialStyles.css',
         initialStylesResetPasswordApp: './resetPasswordApp/src/view/initialStyles.css',
-        initialStylesEmailVerification: './emailVerification/initialStyles.css',
+        initialStylesEmailVerificationPage: './emailVerificationPage/initialStyles.css',
     },
     output: {
         filename: '[name].js',
