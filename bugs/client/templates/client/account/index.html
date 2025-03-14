@@ -45,16 +45,17 @@
             <ul class="account--fields-list">
                 <li>
                     <input type="email" placeholder="{% trans "email" %}" data-email />
-                    <div class="g-error-container" data-email-err data-err-container></div>
+                    <div class="g-error-container" data-email-err ></div>
                 </li>
                 <li>
                     <input type="password" placeholder="{% trans "password" %}" data-password />
-                    <div class="g-error-container" data-password-err data-err-container></div>
+                    <div class="g-error-container" data-password-err ></div>
                 </li>
             </ul>
-            <div class="account--error" data-login-err data-err-container></div>
+            <div class="account--error" data-login-request-err ></div>
             <div class="account--buttons-container">
                 <button data-login-btn>{% trans "sign in" context "button" %}</button>
+                <div class="g-hidden" data-login-request-loader></div>
                 <a href="{% url 'reset_password' %}">Забули пароль?</a>
                 <a href="#" data-switch-to-register-btn>{% trans "sign up" context "link" %}</a>
             </div>
@@ -67,24 +68,26 @@
                 <li>
                     <input type="text" placeholder="{% trans "login" %}" data-username />
                     <div class="g-hidden" data-username-loader></div>
-                    <div class="g-error-container" data-username-err data-err-container></div>
+                    <div class="g-error-container" data-username-err ></div>
                 </li>
                 <li>
                     <input type="email" placeholder="{% trans "email" %}" data-email />
                     <div class="g-hidden" data-email-loader></div>
-                    <div class="g-error-container" data-email-err data-err-container></div>
+                    <div class="g-error-container" data-email-err ></div>
                 </li>
                 <li>
                     <input type="password" placeholder="{% trans "password" %}" data-password />
-                    <div class="g-error-container" data-password-err data-err-container></div>
+                    <div class="g-error-container" data-password-err ></div>
                 </li>
                 <li>
                     <input type="password" placeholder="{% trans "password confirmation" %}" data-password-confirm />
-                    <div class="g-error-container" data-password-confirm-err data-err-container></div>
+                    <div class="g-error-container" data-password-confirm-err ></div>
                 </li>
             </ul>
+            <div class="account--error" data-registration-request-err></div>
             <div class="account--buttons-container">
                 <button data-registration-btn>{% trans "sign up" context "button" %}</button>
+                <div class="g-hidden" data-registration-request-loader></div>
                 <a href="#" data-switch-to-login-btn>{% trans "sign in" context "link" %}</a>
             </div>
         </div>

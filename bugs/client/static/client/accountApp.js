@@ -105,16 +105,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./accountApp/src/view/styles.css");
 /* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
-/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../messages/messageIds */ "./accountApp/src/messages/messageIds.js");
-/* harmony import */ var _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/view/dotsLoader/dotsLoaderView */ "./common/view/dotsLoader/dotsLoaderView.js");
-/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
-/* harmony import */ var _common_utils_throttle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/utils/throttle */ "./common/utils/throttle.js");
-/* harmony import */ var _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/domain/errors/unauthorizedRequestError */ "./common/domain/errors/unauthorizedRequestError.js");
-/* harmony import */ var _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @common/view/errors/accountPasswordErrorView */ "./common/view/errors/accountPasswordErrorView.js");
-
-
-
-
+/* harmony import */ var _loginTabView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./loginTabView */ "./accountApp/src/view/loginTabView.js");
+/* harmony import */ var _registrationTabView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./registrationTabView */ "./accountApp/src/view/registrationTabView.js");
 
 
 
@@ -125,225 +117,19 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
     constructor(el, accountService) {
         super(el);
         this._accountService = accountService;
-        this._registrationApprovedFields = {
-            username: false,
-            email: false,
-        }
 
         this._render();
-
-        this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));
-        this._registrationBtn.addEventListener('click', (0,_common_utils_throttle__WEBPACK_IMPORTED_MODULE_5__.throttle)(this._onRegistrationBtnClick.bind(this), 2000));
-
+        
         this._switchModeToRegisterBtn.addEventListener('click', this._onSwitchModeToRegisterClick.bind(this));
         this._switchModeToLoginBtn.addEventListener('click', this._onSwitchModeToLoginClick.bind(this));
-
-        this._registrationUsernameEl.addEventListener('change', this._onRegistrationUsernameChanged.bind(this));
-        this._registrationUsernameEl.addEventListener('input', this._onRegistrationUsernameInput.bind(this));
-        this._registrationEmailEl.addEventListener('change', this._onRegistrationEmailChanged.bind(this));
-        this._registrationEmailEl.addEventListener('input', this._onRegistrationEmailInput.bind(this));
-        this._registrationPasswordEl.addEventListener('change', this._onRegistrationPasswordChanged.bind(this));
-        this._registrationPasswordConfirmEl.addEventListener('change', this._onRegistrationPasswordConfirmChanged.bind(this));
-
-        this._switchMode('login');
-    }
-
-    get _registrationUsername() {
-        return this._registrationUsernameEl.value.trim();
-    }
-
-    get _registrationEmail() {
-        return this._registrationEmailEl.value.trim();
-    }
-
-    get _loginEmail() {
-        return this._loginEmailEl.value.trim();
     }
 
     _render() {
         this._switchModeToRegisterBtn = this._el.querySelector('[data-switch-to-register-btn]');
         this._switchModeToLoginBtn = this._el.querySelector('[data-switch-to-login-btn]');
 
-        this._registrationTabEl = this._el.querySelector('[data-registration-tab]');
-        this._registrationBtn = this._el.querySelector('[data-registration-btn]');
-        this._registrationUsernameEl = this._registrationTabEl.querySelector('[data-username]');
-        this._registrationUsernameErrContainer = this._registrationTabEl.querySelector('[data-username-err]');
-        this._registrationUsernameLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__.DotsLoaderView(this._registrationTabEl.querySelector('[data-username-loader]'));
-        this._registrationEmailEl = this._registrationTabEl.querySelector('[data-email]');
-        this._registrationEmailLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__.DotsLoaderView(this._registrationTabEl.querySelector('[data-email-loader]'));
-        this._registrationEmailErrContainer = this._registrationTabEl.querySelector('[data-email-err]');
-        this._registrationPasswordEl = this._registrationTabEl.querySelector('[data-password]');
-        this._registrationPasswordErrView = new _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_7__.AccountPasswordErrorView(this._registrationTabEl.querySelector('[data-password-err]'));
-        this._registrationPasswordConfirmEl = this._registrationTabEl.querySelector('[data-password-confirm]');
-        this._registrationPasswordConfirmErrContainer = this._registrationTabEl.querySelector('[data-password-confirm-err]');
-
-        this._loginTabEl = this._el.querySelector('[data-login-tab]');
-        this._loginBtn = this._el.querySelector('[data-login-btn]');
-        this._loginErrContainer = this._loginTabEl.querySelector('[data-login-err]');
-        this._loginEmailEl = this._loginTabEl.querySelector('[data-email]');
-        this._loginEmailErrContainer = this._loginTabEl.querySelector('[data-email-err]');
-        this._loginPasswordEl = this._loginTabEl.querySelector('[data-password]');
-        this._loginPasswordErrContainer = this._loginTabEl.querySelector('[data-password-err]');
-    }
-
-    async _validateRegistration() {
-        let isError = false;
-
-        if (!this._registrationApprovedFields.username) {
-            let usernameErr = await this._validateRegistrationUsername();
-            this._renderRegistrationUsernameError(usernameErr);
-            if (usernameErr) {
-                isError = true;
-            }
-        }
-
-        if (!this._registrationApprovedFields.email) {
-            let emailErr = await this._validateRegistrationEmail();
-            this._renderRegistrationEmailError(emailErr);
-            if (emailErr) {
-                isError = true;
-            }
-        }
-
-        let passwordErr = this._validateRegistrationPassword();
-        this._renderRegistrationPasswordError(passwordErr);
-        if (passwordErr) {
-            isError = true;
-        }
-
-        let passConfirmErr = this._validateRegistrationPasswordConfirm();
-        this._renderRegistrationPasswordConfirmError(passConfirmErr);
-        if (passConfirmErr) {
-            isError = true;
-        }
-
-        return !isError;
-    }
-
-    async _validateRegistrationUsername() {
-        let username = this._registrationUsername;
-        let res = await this._accountService.validateUsername(username);
-        return res;
-    }
-
-    _renderRegistrationUsernameError(err) {
-        if (err) {
-            switch (err.msgId) {
-                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR):
-                    this._registrationUsernameErrContainer.innerHTML = this.$mm.format(err.msgId, err.minLength);
-                    break;
-                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR):
-                    this._registrationUsernameErrContainer.innerHTML = this.$mm.format(err.msgId, err.maxLength);
-                    break;
-                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.USERNAME_INVALID_CHARS):
-                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.USERNAME_TAKEN):
-                    this._registrationUsernameErrContainer.innerHTML = this.$mm.format(err.msgId);
-                    break;
-            }
-        } else {
-            this._registrationUsernameErrContainer.innerHTML = '';
-        }
-    }
-
-    _onRegistrationUsernameInput() {
-        this._registrationApprovedFields.username = false;
-    }
-
-    async _onRegistrationUsernameChanged() {
-        this._registrationUsernameLoader.toggle(true);
-        let usernameErr = await this._validateRegistrationUsername();
-        this._registrationUsernameLoader.toggle(false);
-        this._renderRegistrationUsernameError(usernameErr);
-        this._registrationApprovedFields.username = !usernameErr;
-    }
-
-    async _validateRegistrationEmail() {
-        let email = this._registrationEmail;
-
-        if (!email || !this._registrationEmailEl.checkValidity()) {
-            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.EMAIL_INVALID;
-        }
-
-        let isUniq = await this._accountService.checkEmailUniqueness(email);
-        if (!isUniq) {
-            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.EMAIL_TAKEN;
-        }
-
-        return null;
-    }
-
-    _renderRegistrationEmailError(errId) {
-        this._registrationEmailErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
-    }
-
-    _onRegistrationEmailInput() {
-        this._registrationApprovedFields.email = false;
-    }
-
-    async _onRegistrationEmailChanged() {
-        this._registrationEmailLoader.toggle(true);
-        let emailErr = await this._validateRegistrationEmail();
-        this._registrationEmailLoader.toggle(false);
-        this._renderRegistrationEmailError(emailErr);
-        this._registrationApprovedFields.email = !emailErr;
-    }
-
-    _validateRegistrationPassword() {
-        let password = this._registrationPasswordEl.value;
-        return this._accountService.validatePassword(password);
-    }
-
-    _renderRegistrationPasswordError(err) {
-        this._registrationPasswordErrView.setErr(err);
-    }
-
-    _onRegistrationPasswordChanged() {
-        let passwordErr = this._validateRegistrationPassword();
-        this._renderRegistrationPasswordError(passwordErr);
-    }
-
-    _validateRegistrationPasswordConfirm() {
-        let confirmPassword = this._registrationPasswordConfirmEl.value;
-        let password = this._registrationPasswordEl.value;
-        if (confirmPassword != password) {
-            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID;
-        }
-
-        return null;
-    }
-
-    _renderRegistrationPasswordConfirmError(errId) {
-        this._registrationPasswordConfirmErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
-    }
-
-    _onRegistrationPasswordConfirmChanged() {
-        let passConfirmErr = this._validateRegistrationPasswordConfirm();
-        this._renderRegistrationPasswordConfirmError(passConfirmErr);
-    }
-
-    _resetRegistrationApprovedFields() {
-        this._registrationApprovedFields.username = false;
-        this._registrationApprovedFields.email = false;
-    }
-
-    async _onRegistrationBtnClick() {
-        let isValid = await this._validateRegistration();
-        if (!isValid) {
-            return;
-        }
-
-        let username = this._registrationUsername;
-        let email = this._registrationEmail;
-        let password = this._registrationPasswordEl.value;
-        try {
-            await this._accountService.register(username, email, password);
-            this._redirectToNext();
-        } catch(e) {
-            if (e instanceof _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_4__.StateSyncRequestError) {
-                this._resetRegistrationApprovedFields();
-                this._validateRegistration();
-            }
-        }
+        this._registrationTabView = new _registrationTabView__WEBPACK_IMPORTED_MODULE_3__.RegistrationTabView(this._el.querySelector('[data-registration-tab]'), this._accountService);
+        this._loginTabView = new _loginTabView__WEBPACK_IMPORTED_MODULE_2__.LoginTabView(this._el.querySelector('[data-login-tab]'), this._accountService);
     }
 
     _onSwitchModeToLoginClick(e) {
@@ -358,37 +144,83 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
 
     _switchMode(modeName) {
         this._clearForms();
-        this._loginTabEl.classList.toggle('g-hidden', modeName != 'login');
-        this._registrationTabEl.classList.toggle('g-hidden', modeName != 'register');
+        this._registrationTabView.toggle(modeName == 'register');
+        this._loginTabView.toggle(modeName == 'login');
     }
 
     _clearForms() {
-        let inputs = this._el.querySelectorAll('input');
-        for (let input of inputs) {
-            input.value = '';
-        }
-        let errContainers = this._el.querySelectorAll('[data-err-container]');
-        for (let errContainer of errContainers) {
-            errContainer.innerHTML = '';
-        }
+        this._registrationTabView.clear();
+        this._loginTabView.clear();
     }
 
-    _redirectToNext() {
-        let nextUrl = new URLSearchParams(window.location.search).get('next') || '/';
-        window.location.href = nextUrl;
+}
+
+
+
+/***/ }),
+
+/***/ "./accountApp/src/view/loginTabView.js":
+/*!*********************************************!*\
+  !*** ./accountApp/src/view/loginTabView.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   LoginTabView: () => (/* binding */ LoginTabView)
+/* harmony export */ });
+/* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+/* harmony import */ var _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/domain/errors/unauthorizedRequestError */ "./common/domain/errors/unauthorizedRequestError.js");
+/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../messages/messageIds */ "./accountApp/src/messages/messageIds.js");
+/* harmony import */ var _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/view/dotsLoader/dotsLoaderView */ "./common/view/dotsLoader/dotsLoaderView.js");
+
+
+
+
+
+class LoginTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, accountService) {
+        super(el);
+        this._accountService = accountService;
+
+        this._render();
+
+        this._loginBtn.addEventListener('click', this._onLoginBtnClick.bind(this));
+    }
+
+    get _loginEmail() {
+        return this._emailEl.value.trim();
+    }
+
+    clear() {
+        this._emailEl.value = '';
+        this._passwordEl.value = '';
+        this._renderEmailErr(null);
+        this._renderPasswordErr(null);
+    }
+
+    _render() {
+        this._loginBtn = this._el.querySelector('[data-login-btn]');
+        this._loginRequestErrContainer = this._el.querySelector('[data-login-request-err]');
+        this._emailEl = this._el.querySelector('[data-email]');
+        this._emailErrContainer = this._el.querySelector('[data-email-err]');
+        this._passwordEl = this._el.querySelector('[data-password]');
+        this._passwordErrContainer = this._el.querySelector('[data-password-err]');
+        this._loginRequestLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__.DotsLoaderView(this._el.querySelector('[data-login-request-loader]'));
     }
 
     _validateLogin() {
         let isError = false;
 
-        let emailErr = this._validateLoginEmail();
-        this._renderLoginEmailErr(emailErr);
+        let emailErr = this._validateEmail();
+        this._renderEmailErr(emailErr);
         if (emailErr) {
             isError = true;
         }
 
-        let passwordErr = this._validateLoginPassword();
-        this._renderLoginPasswordErr(passwordErr);
+        let passwordErr = this._validatePassword();
+        this._renderPasswordErr(passwordErr);
         if (passwordErr) {
             isError = true;
         }
@@ -396,21 +228,21 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         return !isError;
     }
 
-    _validateLoginEmail() {
+    _validateEmail() {
         let email = this._loginEmail;
-        if (!email || !this._loginEmailEl.checkValidity()) {
+        if (!email || !this._emailEl.checkValidity()) {
             return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.EMAIL_INVALID;
         }
 
         return null;
     }
 
-    _renderLoginEmailErr(errId) {
-        this._loginEmailErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    _renderEmailErr(errId) {
+        this._emailErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
-    _validateLoginPassword() {
-        let password = this._loginPasswordEl.value;
+    _validatePassword() {
+        let password = this._passwordEl.value;
         if (!password) {
             return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.PASSWORD_NEEDED;
         }
@@ -418,8 +250,8 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         return null;
     }
 
-    _renderLoginPasswordErr(errId) {
-        this._loginPasswordErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    _renderPasswordErr(errId) {
+        this._passwordErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
     async _onLoginBtnClick() {
@@ -428,23 +260,286 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         }
 
         let email = this._loginEmail;
-        let password = this._loginPasswordEl.value;
+        let password = this._passwordEl.value;
 
         try {
+            this._loginRequestLoader.toggle(true);
             await this._accountService.login(email, password);
-            this._renderLoginErr();
+            this._renderLoginRequestErr();
             this._redirectToNext();
+            this._loginRequestLoader.toggle(false);
         } catch (e) {
-            if (e instanceof _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_6__.UnauthorizedRequestError) {
-                this._renderLoginErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL);
+            if (e instanceof _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_1__.UnauthorizedRequestError) {
+                this._renderLoginRequestErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL);
             } else {
-                this._renderLoginErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.SOMETHING_WENT_WRONG);
+                this._renderLoginRequestErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
+            this._loginRequestLoader.toggle(false);
         }
     }
 
-    _renderLoginErr(errId) {
-        this._loginErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    _renderLoginRequestErr(errId) {
+        this._loginRequestErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    _redirectToNext() {
+        let nextUrl = new URLSearchParams(window.location.search).get('next') || '/';
+        window.location.href = nextUrl;
+    }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./accountApp/src/view/registrationTabView.js":
+/*!****************************************************!*\
+  !*** ./accountApp/src/view/registrationTabView.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RegistrationTabView: () => (/* binding */ RegistrationTabView)
+/* harmony export */ });
+/* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../messages/messageIds */ "./accountApp/src/messages/messageIds.js");
+/* harmony import */ var _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/view/dotsLoader/dotsLoaderView */ "./common/view/dotsLoader/dotsLoaderView.js");
+/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_utils_throttle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/utils/throttle */ "./common/utils/throttle.js");
+/* harmony import */ var _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/view/errors/accountPasswordErrorView */ "./common/view/errors/accountPasswordErrorView.js");
+
+
+
+
+
+
+
+class RegistrationTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+
+    constructor(el, accountService) {
+        super(el);
+        this._accountService = accountService;
+        this._approvedFields = {
+            username: false,
+            email: false,
+        }
+
+        this._render();
+
+        this._usernameEl.addEventListener('change', this._onUsernameChanged.bind(this));
+        this._usernameEl.addEventListener('input', this._onUsernameInput.bind(this));
+        this._emailEl.addEventListener('change', this._onEmailChanged.bind(this));
+        this._emailEl.addEventListener('input', this._onEmailInput.bind(this));
+        this._passwordEl.addEventListener('change', this._onPasswordChanged.bind(this));
+        this._passwordConfirmEl.addEventListener('change', this._onPasswordConfirmChanged.bind(this));
+        this._registrationBtn.addEventListener('click', (0,_common_utils_throttle__WEBPACK_IMPORTED_MODULE_4__.throttle)(this._onRegistrationBtnClick.bind(this), 2000));
+    }
+
+    get _username() {
+        return this._usernameEl.value.trim();
+    }
+
+    get _email() {
+        return this._emailEl.value.trim();
+    }
+
+    clear() {
+        this._usernameEl.value = '';
+        this._emailEl.value = '';
+        this._passwordEl.value = '';
+        this._passwordConfirmEl.value = '';
+        this._renderUsernameError(null);
+        this._renderEmailError(null);
+        this._renderPasswordError(null);
+        this._renderPasswordConfirmError(null);
+        this._resetApprovedFields();
+    }
+
+    _render() {
+        this._registrationBtn = this._el.querySelector('[data-registration-btn]');
+        this._usernameEl = this._el.querySelector('[data-username]');
+        this._usernameErrContainer = this._el.querySelector('[data-username-err]');
+        this._usernameLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__.DotsLoaderView(this._el.querySelector('[data-username-loader]'));
+        this._emailEl = this._el.querySelector('[data-email]');
+        this._emailLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__.DotsLoaderView(this._el.querySelector('[data-email-loader]'));
+        this._emailErrContainer = this._el.querySelector('[data-email-err]');
+        this._passwordEl = this._el.querySelector('[data-password]');
+        this._passwordErrView = new _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_5__.AccountPasswordErrorView(this._el.querySelector('[data-password-err]'));
+        this._passwordConfirmEl = this._el.querySelector('[data-password-confirm]');
+        this._passwordConfirmErrContainer = this._el.querySelector('[data-password-confirm-err]');
+        this._reuqestLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__.DotsLoaderView(this._el.querySelector('[data-registration-request-loader]'));
+        this._requestErrContainer = this._el.querySelector('[data-registration-request-err]');
+    }
+
+    async _validateRegistration() {
+        let isError = false;
+
+        if (!this._approvedFields.username) {
+            let usernameErr = await this._validateUsername();
+            this._renderUsernameError(usernameErr);
+            if (usernameErr) {
+                isError = true;
+            }
+        }
+
+        if (!this._approvedFields.email) {
+            let emailErr = await this._validateEmail();
+            this._renderEmailError(emailErr);
+            if (emailErr) {
+                isError = true;
+            }
+        }
+
+        let passwordErr = this._validatePassword();
+        this._renderPasswordError(passwordErr);
+        if (passwordErr) {
+            isError = true;
+        }
+
+        let passConfirmErr = this._validatePasswordConfirm();
+        this._renderPasswordConfirmError(passConfirmErr);
+        if (passConfirmErr) {
+            isError = true;
+        }
+
+        return !isError;
+    }
+
+    async _validateUsername() {
+        let username = this._username;
+        let res = await this._accountService.validateUsername(username);
+        return res;
+    }
+
+    _renderUsernameError(err) {
+        if (err) {
+            switch (err.msgId) {
+                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR):
+                    this._usernameErrContainer.innerHTML = this.$mm.format(err.msgId, err.minLength);
+                    break;
+                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR):
+                    this._usernameErrContainer.innerHTML = this.$mm.format(err.msgId, err.maxLength);
+                    break;
+                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.USERNAME_INVALID_CHARS):
+                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.USERNAME_TAKEN):
+                    this._usernameErrContainer.innerHTML = this.$mm.format(err.msgId);
+                    break;
+            }
+        } else {
+            this._usernameErrContainer.innerHTML = '';
+        }
+    }
+
+    _onUsernameInput() {
+        this._approvedFields.username = false;
+    }
+
+    async _onUsernameChanged() {
+        this._usernameLoader.toggle(true);
+        let usernameErr = await this._validateUsername();
+        this._usernameLoader.toggle(false);
+        this._renderUsernameError(usernameErr);
+        this._approvedFields.username = !usernameErr;
+    }
+
+    async _validateEmail() {
+        let email = this._email;
+
+        if (!email || !this._emailEl.checkValidity()) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.EMAIL_INVALID;
+        }
+
+        let isUniq = await this._accountService.checkEmailUniqueness(email);
+        if (!isUniq) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.EMAIL_TAKEN;
+        }
+
+        return null;
+    }
+
+    _renderEmailError(errId) {
+        this._emailErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    _onEmailInput() {
+        this._approvedFields.email = false;
+    }
+
+    async _onEmailChanged() {
+        this._emailLoader.toggle(true);
+        let emailErr = await this._validateEmail();
+        this._emailLoader.toggle(false);
+        this._renderEmailError(emailErr);
+        this._approvedFields.email = !emailErr;
+    }
+
+    _validatePassword() {
+        let password = this._passwordEl.value;
+        return this._accountService.validatePassword(password);
+    }
+
+    _renderPasswordError(err) {
+        this._passwordErrView.setErr(err);
+    }
+
+    _onPasswordChanged() {
+        let passwordErr = this._validatePassword();
+        this._renderPasswordError(passwordErr);
+    }
+
+    _validatePasswordConfirm() {
+        let confirmPassword = this._passwordConfirmEl.value;
+        let password = this._passwordEl.value;
+        if (confirmPassword != password) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID;
+        }
+
+        return null;
+    }
+
+    _renderPasswordConfirmError(errId) {
+        this._passwordConfirmErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    _onPasswordConfirmChanged() {
+        let passConfirmErr = this._validatePasswordConfirm();
+        this._renderPasswordConfirmError(passConfirmErr);
+    }
+
+    _resetApprovedFields() {
+        this._approvedFields.username = false;
+        this._approvedFields.email = false;
+    }
+
+    async _onRegistrationBtnClick() {
+        let isValid = await this._validateRegistration();
+        if (!isValid) {
+            return;
+        }
+
+        let username = this._username;
+        let email = this._email;
+        let password = this._passwordEl.value;
+        try {
+            this._reuqestLoader.toggle(true);
+            await this._accountService.register(username, email, password);
+            window.location.href = '/';
+            this._reuqestLoader.toggle(false);
+        } catch(e) {
+            if (e instanceof _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_3__.StateSyncRequestError) {
+                this._resetApprovedFields();
+                this._validateRegistration();
+            } else {
+                this._renderRegistrationRequestErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.SOMETHING_WENT_WRONG);
+            }
+            this._reuqestLoader.toggle(false);
+        }
+    }
+
+    _renderRegistrationRequestErr(errId) {
+        this._requestErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 }
 
