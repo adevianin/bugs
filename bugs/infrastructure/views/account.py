@@ -209,9 +209,9 @@ def reset_password_request(request: HttpRequest):
         user = User.objects.get(email=email)
         if user.has_usable_password():
             EmailService.send_reset_password_email(user, build_base_url(request))
-        return HttpResponse(status=200)
+        return HttpResponse(status=204)
     except User.DoesNotExist:
-        return HttpResponse(status=200)
+        return HttpResponse(status=204)
     
 @require_POST 
 def set_new_password(request: HttpRequest):
