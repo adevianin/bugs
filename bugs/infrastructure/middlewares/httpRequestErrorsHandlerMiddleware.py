@@ -1,7 +1,6 @@
 import logging
 from django.http import HttpResponse, JsonResponse
 from core.world.exceptions import GameError, StateConflictError, EntityNotFoundError
-from core.world.messages import Messages
 
 class HttpRequestErrorsHandlerMiddleware:
     def __init__(self, get_response):
