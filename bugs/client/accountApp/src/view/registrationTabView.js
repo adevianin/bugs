@@ -5,6 +5,7 @@ import { StateSyncRequestError } from '@common/domain/errors/stateSyncRequestErr
 import { throttle } from '@common/utils/throttle';
 import { AccountPasswordErrorView } from '@common/view/errors/accountPasswordErrorView';
 import { AccountUsernameErrorView } from "@common/view/errors/accountUsernameErrorView";
+import { UI_CONSTS } from "@common/view/ui_consts";
 
 class RegistrationTabView extends BaseHTMLView {
 
@@ -24,7 +25,7 @@ class RegistrationTabView extends BaseHTMLView {
         this._emailEl.addEventListener('input', this._onEmailInput.bind(this));
         this._passwordEl.addEventListener('change', this._onPasswordChanged.bind(this));
         this._passwordConfirmEl.addEventListener('change', this._onPasswordConfirmChanged.bind(this));
-        this._registrationBtn.addEventListener('click', throttle(this._onRegistrationBtnClick.bind(this), 2000));
+        this._registrationBtn.addEventListener('click', throttle(this._onRegistrationBtnClick.bind(this), UI_CONSTS.DOUBLE_CLICK_THROTTLE_MS));
     }
 
     get _username() {

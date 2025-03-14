@@ -19,7 +19,8 @@ class User(AbstractUser):
             MaxLengthValidator(MAX_USERNAME_LENGTH),
             RegexValidator(
                 regex=USERNAME_REGEX,
-                message="Username can only contain letters, numbers, underscores, and hyphens."
+                message="Username can only contain letters, numbers, underscores, and hyphens.",
+                code='invalid_chars'
             )
         ],
         error_messages={

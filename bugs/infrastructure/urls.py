@@ -4,7 +4,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from .views.account import (check_username_uniqueness, check_email_uniqueness, account_register, account_login, account_logout, 
-                            account_index, google_auth_callback, verify_email, reset_password, reset_password_request, set_new_password)
+                            account_index, google_auth_callback, verify_email, reset_password, reset_password_request, set_new_password,
+                            change_username)
 from .views.game import index
 from .views.admin import admin_index, world_status_check, init_world, stop_world, run_world, save_world, expand_map
 from .views.nest import rename_nest, lay_egg, change_egg_caste, change_egg_name, move_egg_to_larva_chamber, delete_egg, delete_larva
@@ -27,6 +28,7 @@ urlpatterns = [
     path('api/accounts/google_auth_callback', google_auth_callback, name='google_auth_callback'),
     path('api/accounts/reset_password_request', reset_password_request, name='reset_password_request'),
     path('api/accounts/set_new_password', set_new_password, name='set_new_password'),
+    path('api/accounts/change_username', change_username, name='change_username'),
 
     path('api/admin/world/status', world_status_check, name='world_status'),
     path('api/admin/world/init', init_world, name='init_world'),

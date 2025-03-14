@@ -310,6 +310,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_utils_throttle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/utils/throttle */ "./common/utils/throttle.js");
 /* harmony import */ var _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/view/errors/accountPasswordErrorView */ "./common/view/errors/accountPasswordErrorView.js");
 /* harmony import */ var _common_view_errors_accountUsernameErrorView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/view/errors/accountUsernameErrorView */ "./common/view/errors/accountUsernameErrorView.js");
+/* harmony import */ var _common_view_ui_consts__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @common/view/ui_consts */ "./common/view/ui_consts.js");
+
 
 
 
@@ -336,7 +338,7 @@ class RegistrationTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORT
         this._emailEl.addEventListener('input', this._onEmailInput.bind(this));
         this._passwordEl.addEventListener('change', this._onPasswordChanged.bind(this));
         this._passwordConfirmEl.addEventListener('change', this._onPasswordConfirmChanged.bind(this));
-        this._registrationBtn.addEventListener('click', (0,_common_utils_throttle__WEBPACK_IMPORTED_MODULE_4__.throttle)(this._onRegistrationBtnClick.bind(this), 2000));
+        this._registrationBtn.addEventListener('click', (0,_common_utils_throttle__WEBPACK_IMPORTED_MODULE_4__.throttle)(this._onRegistrationBtnClick.bind(this), _common_view_ui_consts__WEBPACK_IMPORTED_MODULE_7__.UI_CONSTS.DOUBLE_CLICK_THROTTLE_MS));
     }
 
     get _username() {
@@ -601,6 +603,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
 /* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
 /* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base/baseService */ "./common/domain/service/base/baseService.js");
+/* harmony import */ var _errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+
 
 
 
@@ -615,6 +619,21 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
     static EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     static MIN_EMAIL_LENGTH = 4;
     static MAX_EMAIL_LENGTH = 254;
+
+    static USERNAME_MIN_LENGTH_ERR = Object.freeze({
+        msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR,
+        minLength: AccountService.MIN_USERNAME_LENGTH
+    });
+    static USERNAME_MAX_LENGTH_ERR = Object.freeze({
+        msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR,
+        maxLength: AccountService.MAX_USERNAME_LENGTH
+    });
+    static USERNAME_INVALID_CHARS_ERR = Object.freeze({
+        msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS
+    });
+    static USERNAME_TAKEN_ERR = Object.freeze({
+        msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN
+    });
     
     constructor(accountApi, userData) {
         super();
@@ -642,36 +661,48 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         return this._requestHandler(() => this._accountApi.setNewPassword(newPassword, token, id));
     }
 
+    async changeUsername(newUsername) {
+        try {
+            await this._requestHandler(() => this._accountApi.changeUsername(newUsername));
+            this._userData.username = newUsername;
+        } catch (e) {
+            if (e instanceof _errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_3__.StateSyncRequestError) {
+                switch (e.data.err_code) {
+                    case 'min_length':
+                        return AccountService.USERNAME_MIN_LENGTH_ERR;
+                    case 'max_length':
+                        return AccountService.USERNAME_MAX_LENGTH_ERR;
+                    case 'invalid_chars':
+                        return AccountService.USERNAME_INVALID_CHARS_ERR;
+                    case 'unique':
+                        return AccountService.USERNAME_TAKEN_ERR;
+                }
+            } else {
+                throw e;
+            }
+        }
+    }
+
     getUserData() {
         return this._userData;
     }
 
     async validateUsername(username = '') {
         if (username.length < AccountService.MIN_USERNAME_LENGTH) {
-            return {
-                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR,
-                minLength: AccountService.MIN_USERNAME_LENGTH
-            }
+            return AccountService.USERNAME_MIN_LENGTH_ERR;
         }
 
         if (username.length > AccountService.MAX_USERNAME_LENGTH) {
-            return {
-                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR,
-                maxLength: AccountService.MAX_USERNAME_LENGTH
-            }
+            return AccountService.USERNAME_MAX_LENGTH_ERR;
         }
 
         if (!AccountService.USERNAME_REGEX.test(username)) {
-            return {
-                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS
-            }
+            return AccountService.USERNAME_INVALID_CHARS_ERR;
         }
 
         let isUniq = await this._accountApi.checkUsernameUniqueness(username);
         if (!isUniq) {
-            return {
-                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN
-            }
+            return AccountService.USERNAME_TAKEN_ERR;
         }
 
         return null;
@@ -955,6 +986,12 @@ class AccountApi {
     setNewPassword(newPassword, token, id) {
         return this._requester.post('api/accounts/set_new_password', {
             newPassword, token, id
+        });
+    }
+
+    changeUsername(newUsername) {
+        return this._requester.post('api/accounts/change_username', {
+            newUsername
         });
     }
 
@@ -1365,6 +1402,24 @@ class BaseErrorView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MOD
     setErr(err) {
         throw 'not realized';
     }
+}
+
+
+
+/***/ }),
+
+/***/ "./common/view/ui_consts.js":
+/*!**********************************!*\
+  !*** ./common/view/ui_consts.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   UI_CONSTS: () => (/* binding */ UI_CONSTS)
+/* harmony export */ });
+const UI_CONSTS = {
+    DOUBLE_CLICK_THROTTLE_MS: 2000
 }
 
 

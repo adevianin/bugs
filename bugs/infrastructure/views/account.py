@@ -130,19 +130,6 @@ def account_logout(request):
         'redirectUrl': reverse('account_index')
     })
 
-@require_POST
-@login_required  
-def account_change_name(request: HttpRequest):
-    data = json.loads(request.body)
-    username = data.get('username', '')
-    user = User.objects.get(id=request.user.id)
-    user.username = username
-    user.full_clean()
-    user.save()
-    return JsonResponse({
-            'user': user.get_general_data()
-        })
-
 @require_POST 
 def check_username_uniqueness(request: HttpRequest):
     try:
@@ -243,3 +230,26 @@ def set_new_password(request: HttpRequest):
     user.save()
     
     return HttpResponse(status=204)
+
+@require_POST
+@login_required
+def change_username(request: HttpRequest):
+    try:
+        data = json.loads(request.body)
+        new_username = data.get('newUsername', '')
+        if not new_username:
+            return HttpResponse(status=400)
+    except Exception as e:
+        return HttpResponse(status=400)
+    
+    user = User.objects.get(id=request.user.id)
+    user.username = new_username
+    
+    try:
+        user.full_clean()
+        user.save()
+    except ValidationError as e:
+        for error in e.error_dict.get('username', []):
+            return JsonResponse({'err_code': error.code}, status=409)
+
+    return HttpResponse(status=204)    

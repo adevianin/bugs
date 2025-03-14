@@ -1,5 +1,6 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import userTabTmpl from './userTabTmpl.html';
+import { UsernameEditorView } from './usernameEditor/usernameEditorView';
 
 class UserTab extends BaseGameHTMLView {
 
@@ -14,15 +15,8 @@ class UserTab extends BaseGameHTMLView {
     _render() {
         this._el.innerHTML = userTabTmpl;
 
-        this._userNameEl = this._el.querySelector('[data-username]');
+        this._usernameEditorView = new UsernameEditorView(this._el.querySelector('[data-username-editor]'));
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
-
-        this._renderUserData();
-    }
-
-    _renderUserData() {
-        let user = this.$domainFacade.getUserData();
-        this._userNameEl.innerHTML = user.username;
     }
 
     _onUserLogoutBtnClick() {

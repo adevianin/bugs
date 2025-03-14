@@ -241,6 +241,14 @@ class DomainFacade extends BaseDomainFacade {
         return this._accountService.getUserData();
     }
 
+    validateUsername(username) {
+        return this._accountService.validateUsername(username);
+    }
+
+    changeUsername(newUsername) {
+        return this._accountService.changeUsername(newUsername);
+    }
+
     /*==============================*/
 
 }

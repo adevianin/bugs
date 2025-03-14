@@ -34,6 +34,12 @@ class AccountApi {
         });
     }
 
+    changeUsername(newUsername) {
+        return this._requester.post('api/accounts/change_username', {
+            newUsername
+        });
+    }
+
     checkUsernameUniqueness(username) {
         return this._requester.post('api/accounts/check_username_uniqueness', {
             username
