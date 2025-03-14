@@ -20,6 +20,6 @@ class HttpRequestErrorsHandlerMiddleware:
                 case StateConflictError():
                     return JsonResponse(exception.to_dict(), status=409)
                 case _:
-                    return HttpResponse(Messages.SOMETHING_WENT_WRONG, status=400)
+                    return HttpResponse('Something went wrong', status=400)
 
-        return HttpResponse(Messages.SOMETHING_WENT_WRONG, status=500)
+        return HttpResponse('Something went wrong', status=500)
