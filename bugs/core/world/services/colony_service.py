@@ -10,7 +10,6 @@ from core.world.entities.item.items.base.item import Item
 from core.world.entities.item.items.base.item_types import ItemTypes 
 from core.world.settings import (NEW_EGG_FOOD_COST, LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT, 
                                  MAX_DISTANCE_TO_OPERATION_TARGET, FOOD_IN_NEW_COLONY_MAIN_NEST)
-from core.world.messages import Messages
 from core.world.utils.clean_string import clean_string
 from core.world.exceptions import GameRuleError, StateConflictError
 from core.world.entities.ant.base.ant import Ant
