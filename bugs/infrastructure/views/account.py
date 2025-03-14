@@ -10,18 +10,14 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
-from bugs.settings import DEFAULT_FROM_EMAIL
-from django.core.mail import EmailMessage
+from django.utils.http import urlsafe_base64_decode
 from infrastructure.token_generators.email_verification_token_generator import EmailVerificationTokenGenerator
 from infrastructure.token_generators.reset_password_token_generator import ResetPasswordTokenGenerator
-from urllib.parse import urlencode
 from django.contrib.auth.password_validation import validate_password
+from infrastructure.email.email_service import EmailService
+from infrastructure.utils.build_base_url import build_base_url
+from infrastructure.utils.generate_username import generate_username
 import json
-import random
-import uuid
 
 @ensure_csrf_cookie
 def account_index(request: HttpRequest):
@@ -60,7 +56,7 @@ def google_auth_callback(request: HttpRequest):
         user, created = User.objects.get_or_create(email=user_email)
 
         if created:
-            user.username = _generate_username()
+            user.username = generate_username()
             user.is_email_verified = True
             user.set_unusable_password()
             user.save()
@@ -100,7 +96,7 @@ def account_register(request: HttpRequest):
         return HttpResponse(status=400)
     
     login(request, user)
-    _send_verification_email(request, user)
+    EmailService.send_verification_email(user, build_base_url(request))
         
     return JsonResponse({
         'user': user.get_general_data()
@@ -212,7 +208,7 @@ def reset_password_request(request: HttpRequest):
     try:
         user = User.objects.get(email=email)
         if user.has_usable_password():
-            _send_reset_password_email(request, user)
+            EmailService.send_reset_password_email(user, build_base_url(request))
         return HttpResponse(status=200)
     except User.DoesNotExist:
         return HttpResponse(status=200)
@@ -247,99 +243,3 @@ def set_new_password(request: HttpRequest):
     user.save()
     
     return HttpResponse(status=204)
-
-def _send_reset_password_email(request: HttpRequest, user: User):
-    subject = 'Відновлення пароля'
-    uid = urlsafe_base64_encode(force_bytes(user.pk))
-    token = ResetPasswordTokenGenerator.generate(user)
-    relative_link = reverse('reset_password')
-    absolute_link = request.build_absolute_uri(relative_link)
-    params = {'i': uid, 't': token}
-    full_link = f'{absolute_link}?{urlencode(params)}'
-    
-    html_message = render_to_string('infrastructure/emails/password_reset.html', {
-        'user': user,
-        'reset_password_link': full_link,
-    })
-    
-    email = EmailMessage(
-        subject=subject,
-        body=html_message,
-        from_email=DEFAULT_FROM_EMAIL,
-        to=[user.email],
-    )
-    email.content_subtype = 'html'
-    email.send()
-
-    
-def _send_verification_email(request: HttpRequest, user: User):
-    subject = 'Підтвердження вашого облікового запису'
-    uid = urlsafe_base64_encode(force_bytes(user.pk))
-    token = EmailVerificationTokenGenerator.generate(user)
-    relative_link = reverse('verify_email', kwargs={'uidb64': uid, 'token': token})
-    verification_link = request.build_absolute_uri(relative_link)
-    
-    html_message = render_to_string('infrastructure/emails/verify_email.html', {
-        'user': user,
-        'verification_link': verification_link,
-    })
-    
-    email = EmailMessage(
-        subject=subject,
-        body=html_message,
-        from_email=DEFAULT_FROM_EMAIL,
-        to=[user.email],
-    )
-    email.content_subtype = 'html'
-    email.send()
-
-def _generate_username():
-    adjectives = [
-        "Swift", "Fierce", "Cunning", "Mighty", "Silent", "Shadow", "Vibrant", "Ancient",
-        "Rapid", "Brave", "Loyal", "Bold", "Clever", "Stormy", "Golden", "Venomous",
-        "Tireless", "Hardy", "Relentless", "Savage", "Stealthy", "Colossal", "Titanic", "Elder",
-        "Diligent", "Industrious", "Fearless", "Formidable", "Dreaded", "Resilient", "Resourceful", 
-        "Ruthless", "Shrewd", "Tenacious", "Vigilant", "Dominant", "Unyielding", "Wily", "Ferocious",
-        "Daring", "Giant", "Mighty", "Swift-footed", "Ironclad", "Unstoppable", "Nimble", "Persevering",
-        "Wise", "Cunning", "Sharp-eyed", "Watchful", "Dauntless", "Noble", "Enduring", "Merciless",
-        "Survivor", "Indomitable", "Strategic", "Farsighted", "Adaptive", "Hardened", "Feral", "Majestic",
-        "Regal", "Conquering", "Savvy", "Tactical", "Mastermind", "Invincible", "Ingenious", "Resolute",
-        "Fermenting", "Seething", "Dominant", "Vortex", "Infernal", "Apex", "Monarch", "Omniscient",
-        "Boundless", "Ethereal", "Arcane", "Mystic", "Esoteric", "Phantom", "Eclipsing", "Stalwart",
-        "Imperial", "Eldritch", "Everlasting", "Epochal", "Unrelenting", "Glorious", "Pioneer", "Visionary",
-        "Voidborn", "Cryptic", "Unfathomable", "Inexorable", "Provident", "Daemonic", "Labyrinthine"
-    ]
-    nouns = [
-        "Ant", "Colony", "Nest", "Swarm", "Queen", "Worker", "Forager", "Soldier",
-        "Egg", "Larva", "Pupa", "Tunnel", "Chamber", "Hatchling", "Harvester", "Digger",
-        "Scout", "Breeder", "Reaper", "Defender", "Invader", "Warrior", "Goliath", "Overmind",
-        "Hive", "Guardian", "Sentinel", "Commander", "Empress", "King", "Princess", "Baron",
-        "Overlord", "Horde", "Striker", "Protector", "Survivor", "Builder", "Tunneler", "Pioneer",
-        "Forager", "Throne", "Realm", "Emissary", "Strategist", "Warlord", "Monarch", "Ascendant",
-        "Mutant", "Broodmother", "Alpha", "Hivemind", "Dominator", "Conqueror", "Tyrant", "Architect",
-        "Seer", "Alchemist", "Elder", "Phantom", "Specter", "Shadow", "Titan", "Juggernaut",
-        "Pestilence", "Scourge", "Warden", "Keeper", "Harbinger", "Sentient", "Oracle", "Champion",
-        "Tactician", "Genius", "Hierarch", "Ruler", "Pioneer", "Sovereign", "Mindweaver", "Nightmare",
-        "Exalted", "Primarch", "Bloodline", "Paragon", "Mystic", "Shaman", "Chronicler", "Nomad",
-        "Observer", "Executioner", "Exarch", "Prophet", "Prodigy", "Tyrant", "Tactician", "General",
-        "Colonizer", "Navigator", "Wayfinder", "Explorer", "Incubator", "Propagator", "Lifebringer", "Evolver"
-    ]
-
-    i = 0
-    while True:
-        adjective = random.choice(adjectives)
-        noun = random.choice(nouns)
-        number = random.randint(1000, 99999)
-
-        username = f"{adjective}{noun}{number}"
-
-        i += 1
-        if i > 100:
-            username = str(uuid.uuid4())
-        
-        if i > 200:
-            raise Exception('cant generate more names')
-
-        if not User.objects.filter(username=username).exists():
-            return username
-
