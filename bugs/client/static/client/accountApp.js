@@ -612,7 +612,7 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
     static USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
     static MIN_PASSWORD_LENGTH = 8;
     static MAX_PASSWORD_LENGTH = 40;
-    static EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    static EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     static MIN_EMAIL_LENGTH = 4;
     static MAX_EMAIL_LENGTH = 254;
     

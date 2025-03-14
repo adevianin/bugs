@@ -8,7 +8,7 @@ class User(AbstractUser):
     USERNAME_REGEX = r'^[a-zA-Z0-9_-]+$'
     MIN_EMAIL_LENGTH = 4
     MAX_EMAIL_LENGTH = 254
-    EMAIL_REGEX=r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+    EMAIL_REGEX=r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 
     is_email_verified = models.BooleanField(default=False)
     username = models.CharField(
