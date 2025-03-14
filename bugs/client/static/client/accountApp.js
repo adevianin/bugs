@@ -309,6 +309,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
 /* harmony import */ var _common_utils_throttle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/utils/throttle */ "./common/utils/throttle.js");
 /* harmony import */ var _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/view/errors/accountPasswordErrorView */ "./common/view/errors/accountPasswordErrorView.js");
+/* harmony import */ var _common_view_errors_accountUsernameErrorView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/view/errors/accountUsernameErrorView */ "./common/view/errors/accountUsernameErrorView.js");
+
 
 
 
@@ -360,7 +362,7 @@ class RegistrationTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORT
     _render() {
         this._registrationBtn = this._el.querySelector('[data-registration-btn]');
         this._usernameEl = this._el.querySelector('[data-username]');
-        this._usernameErrContainer = this._el.querySelector('[data-username-err]');
+        this._usernameErrView = new _common_view_errors_accountUsernameErrorView__WEBPACK_IMPORTED_MODULE_6__.AccountUsernameErrorView(this._el.querySelector('[data-username-err]'));
         this._usernameLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__.DotsLoaderView(this._el.querySelector('[data-username-loader]'));
         this._emailEl = this._el.querySelector('[data-email]');
         this._emailLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__.DotsLoaderView(this._el.querySelector('[data-email-loader]'));
@@ -414,22 +416,7 @@ class RegistrationTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORT
     }
 
     _renderUsernameError(err) {
-        if (err) {
-            switch (err.msgId) {
-                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR):
-                    this._usernameErrContainer.innerHTML = this.$mm.format(err.msgId, err.minLength);
-                    break;
-                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR):
-                    this._usernameErrContainer.innerHTML = this.$mm.format(err.msgId, err.maxLength);
-                    break;
-                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.USERNAME_INVALID_CHARS):
-                case (_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.USERNAME_TAKEN):
-                    this._usernameErrContainer.innerHTML = this.$mm.format(err.msgId);
-                    break;
-            }
-        } else {
-            this._usernameErrContainer.innerHTML = '';
-        }
+        this._usernameErrView.setErr(err);
     }
 
     _onUsernameInput() {
@@ -708,7 +695,6 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         return null;
     }
 
-    // checkEmailUniqueness
     async validateEmail(email = '') {
         if (email.length < AccountService.MIN_EMAIL_LENGTH ||
             email.length > AccountService.MAX_EMAIL_LENGTH ||
@@ -1308,6 +1294,47 @@ class AccountPasswordErrorView extends _base_baseErrorView__WEBPACK_IMPORTED_MOD
                     break;
                 case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR):
                     this._el.innerHTML = this.$mm.format(err.msgId, err.maxLength);
+                    break;
+            }
+        } else {
+            this._el.innerHTML = '';
+        }
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./common/view/errors/accountUsernameErrorView.js":
+/*!********************************************************!*\
+  !*** ./common/view/errors/accountUsernameErrorView.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AccountUsernameErrorView: () => (/* binding */ AccountUsernameErrorView)
+/* harmony export */ });
+/* harmony import */ var _base_baseErrorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseErrorView */ "./common/view/errors/base/baseErrorView.js");
+/* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
+
+
+
+class AccountUsernameErrorView extends _base_baseErrorView__WEBPACK_IMPORTED_MODULE_0__.BaseErrorView {
+
+    setErr(err) {
+        if (err) {
+            switch (err.msgId) {
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR):
+                    this._el.innerHTML = this.$mm.format(err.msgId, err.minLength);
+                    break;
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR):
+                    this._el.innerHTML = this.$mm.format(err.msgId, err.maxLength);
+                    break;
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS):
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.USERNAME_TAKEN):
+                    this._el.innerHTML = this.$mm.format(err.msgId);
                     break;
             }
         } else {

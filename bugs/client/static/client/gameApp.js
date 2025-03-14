@@ -193,7 +193,6 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         return null;
     }
 
-    // checkEmailUniqueness
     async validateEmail(email = '') {
         if (email.length < AccountService.MIN_EMAIL_LENGTH ||
             email.length > AccountService.MAX_EMAIL_LENGTH ||

@@ -4,6 +4,7 @@ import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 import { StateSyncRequestError } from '@common/domain/errors/stateSyncRequestError';
 import { throttle } from '@common/utils/throttle';
 import { AccountPasswordErrorView } from '@common/view/errors/accountPasswordErrorView';
+import { AccountUsernameErrorView } from "@common/view/errors/accountUsernameErrorView";
 
 class RegistrationTabView extends BaseHTMLView {
 
@@ -49,7 +50,7 @@ class RegistrationTabView extends BaseHTMLView {
     _render() {
         this._registrationBtn = this._el.querySelector('[data-registration-btn]');
         this._usernameEl = this._el.querySelector('[data-username]');
-        this._usernameErrContainer = this._el.querySelector('[data-username-err]');
+        this._usernameErrView = new AccountUsernameErrorView(this._el.querySelector('[data-username-err]'));
         this._usernameLoader = new DotsLoaderView(this._el.querySelector('[data-username-loader]'));
         this._emailEl = this._el.querySelector('[data-email]');
         this._emailLoader = new DotsLoaderView(this._el.querySelector('[data-email-loader]'));
@@ -103,22 +104,7 @@ class RegistrationTabView extends BaseHTMLView {
     }
 
     _renderUsernameError(err) {
-        if (err) {
-            switch (err.msgId) {
-                case (MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR):
-                    this._usernameErrContainer.innerHTML = this.$mm.format(err.msgId, err.minLength);
-                    break;
-                case (MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR):
-                    this._usernameErrContainer.innerHTML = this.$mm.format(err.msgId, err.maxLength);
-                    break;
-                case (MESSAGE_IDS.USERNAME_INVALID_CHARS):
-                case (MESSAGE_IDS.USERNAME_TAKEN):
-                    this._usernameErrContainer.innerHTML = this.$mm.format(err.msgId);
-                    break;
-            }
-        } else {
-            this._usernameErrContainer.innerHTML = '';
-        }
+        this._usernameErrView.setErr(err);
     }
 
     _onUsernameInput() {
