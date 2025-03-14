@@ -445,18 +445,7 @@ class RegistrationTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORT
     }
 
     async _validateEmail() {
-        let email = this._email;
-
-        if (!email || !this._emailEl.checkValidity()) {
-            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.EMAIL_INVALID;
-        }
-
-        let isUniq = await this._accountService.checkEmailUniqueness(email);
-        if (!isUniq) {
-            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.EMAIL_TAKEN;
-        }
-
-        return null;
+        return await this._accountService.validateEmail(this._email);
     }
 
     _renderEmailError(errId) {
@@ -636,6 +625,9 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
     static USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
     static MIN_PASSWORD_LENGTH = 8;
     static MAX_PASSWORD_LENGTH = 40;
+    static EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    static MIN_EMAIL_LENGTH = 4;
+    static MAX_EMAIL_LENGTH = 254;
     
     constructor(accountApi, userData) {
         super();
@@ -698,10 +690,6 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         return null;
     }
 
-    async checkEmailUniqueness(email) {
-        return await this._accountApi.checkEmailUniqueness(email);
-    }
-
     validatePassword(password = '') {
         if (password.length < AccountService.MIN_PASSWORD_LENGTH) {
             return {
@@ -714,6 +702,25 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
             return {
                 msgId: _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR,
                 maxLength: AccountService.MAX_PASSWORD_LENGTH
+            }
+        }
+
+        return null;
+    }
+
+    // checkEmailUniqueness
+    async validateEmail(email = '') {
+        if (email.length < AccountService.MIN_EMAIL_LENGTH ||
+            email.length > AccountService.MAX_EMAIL_LENGTH ||
+            !AccountService.EMAIL_REGEX.test(email)
+        ) {
+            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID;
+        }
+
+        let isUniq = await this._accountApi.checkEmailUniqueness(email);
+        if (!isUniq) {
+            return {
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN
             }
         }
 

@@ -9,6 +9,9 @@ class AccountService extends BaseService {
     static USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
     static MIN_PASSWORD_LENGTH = 8;
     static MAX_PASSWORD_LENGTH = 40;
+    static EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    static MIN_EMAIL_LENGTH = 4;
+    static MAX_EMAIL_LENGTH = 254;
     
     constructor(accountApi, userData) {
         super();
@@ -71,10 +74,6 @@ class AccountService extends BaseService {
         return null;
     }
 
-    async checkEmailUniqueness(email) {
-        return await this._accountApi.checkEmailUniqueness(email);
-    }
-
     validatePassword(password = '') {
         if (password.length < AccountService.MIN_PASSWORD_LENGTH) {
             return {
@@ -87,6 +86,24 @@ class AccountService extends BaseService {
             return {
                 msgId: MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR,
                 maxLength: AccountService.MAX_PASSWORD_LENGTH
+            }
+        }
+
+        return null;
+    }
+
+    async validateEmail(email = '') {
+        if (email.length < AccountService.MIN_EMAIL_LENGTH ||
+            email.length > AccountService.MAX_EMAIL_LENGTH ||
+            !AccountService.EMAIL_REGEX.test(email)
+        ) {
+            return BASE_MESSAGE_IDS.EMAIL_INVALID;
+        }
+
+        let isUniq = await this._accountApi.checkEmailUniqueness(email);
+        if (!isUniq) {
+            return {
+                msgId: BASE_MESSAGE_IDS.EMAIL_TAKEN
             }
         }
 

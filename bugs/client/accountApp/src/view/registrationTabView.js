@@ -134,18 +134,7 @@ class RegistrationTabView extends BaseHTMLView {
     }
 
     async _validateEmail() {
-        let email = this._email;
-
-        if (!email || !this._emailEl.checkValidity()) {
-            return MESSAGE_IDS.EMAIL_INVALID;
-        }
-
-        let isUniq = await this._accountService.checkEmailUniqueness(email);
-        if (!isUniq) {
-            return MESSAGE_IDS.EMAIL_TAKEN;
-        }
-
-        return null;
+        return await this._accountService.validateEmail(this._email);
     }
 
     _renderEmailError(errId) {

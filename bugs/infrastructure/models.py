@@ -1,9 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator, MinLengthValidator, MaxLengthValidator, EmailValidator
-from core.world.settings import MAX_USERNAME_LENGTH, MIN_USERNAME_LENGTH
 
 class User(AbstractUser):
+    MAX_USERNAME_LENGTH = 50
+    MIN_USERNAME_LENGTH = 4
+    USERNAME_REGEX = r'^[a-zA-Z0-9_-]+$'
+    MIN_EMAIL_LENGTH = 4
+    MAX_EMAIL_LENGTH = 254
+    EMAIL_REGEX=r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+
     is_email_verified = models.BooleanField(default=False)
     username = models.CharField(
         max_length=MAX_USERNAME_LENGTH,
@@ -12,7 +18,7 @@ class User(AbstractUser):
             MinLengthValidator(MIN_USERNAME_LENGTH),
             MaxLengthValidator(MAX_USERNAME_LENGTH),
             RegexValidator(
-                regex=r'^[a-zA-Z0-9_-]+$',
+                regex=USERNAME_REGEX,
                 message="Username can only contain letters, numbers, underscores, and hyphens."
             )
         ],
@@ -20,9 +26,17 @@ class User(AbstractUser):
             'unique': "A user with this username already exists.",
         }
     )
-    email = models.EmailField(
+    email = models.CharField(
+        max_length=MAX_EMAIL_LENGTH,
         unique=True,
-        validators=[EmailValidator()],
+        validators=[
+            MinLengthValidator(MIN_EMAIL_LENGTH),
+            MaxLengthValidator(MAX_EMAIL_LENGTH),
+            RegexValidator(
+                regex=EMAIL_REGEX,
+                message="invalid email format"
+            )
+        ],
         error_messages={
             'unique': "A user with this email already exists.",
         }
