@@ -1,7 +1,6 @@
 from .base_service import BaseService
 from core.world.entities.ant.base.nuptial_environment.specie_builder.specie import Specie
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
-from core.world.messages import Messages
 
 from typing import List, Dict
 
@@ -22,5 +21,5 @@ class NuptialEnvironmentService(BaseService):
             nuptial_environment.specie.apply_schema(specie_schema)
             return None
         else:
-            return Messages.SPECIE_SCHEMA_IS_NOT_VALID
+            return 'SPECIE_SCHEMA_IS_NOT_VALID'
         
