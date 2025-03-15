@@ -13,6 +13,11 @@ class EmailFieldEditorView extends BaseFieldEditor {
         this._okBtn.addEventListener('click', this._onOkBtnClick.bind(this));
     }
 
+    remove() {
+        super.remove();
+        this._loader.remove();
+    }
+
     _render() {
         this._el.innerHTML = emailFieldEditorTmpl;
 
