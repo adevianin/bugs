@@ -21852,7 +21852,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-username-value-editor></div>\r\n<div class=\"g-error-container\" data-username-err-container></div>";
+var code = "<div style=\"display: flex;\">\r\n    <span>username:</span>\r\n    <div>\r\n        <div data-username-value-editor></div>\r\n        <div class=\"g-error-container\" data-username-err-container></div>\r\n    </div>\r\n</div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
