@@ -177,9 +177,9 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
 
     async resetPasswordRequest(email) {
         try {
-            await this._accountApi.resetPasswordRequest(email);
+            await this._requestHandler(() => this._accountApi.resetPasswordRequest(email));
             return null;
-        } catch (err) {
+        } catch (e) {
             return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
         }
     }
