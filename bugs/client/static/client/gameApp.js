@@ -39,6 +39,28 @@ class ConflictRequestError extends _genericRequestError__WEBPACK_IMPORTED_MODULE
 
 /***/ }),
 
+/***/ "./common/domain/errors/forbiddenRequestError.js":
+/*!*******************************************************!*\
+  !*** ./common/domain/errors/forbiddenRequestError.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ForbiddenRequestError: () => (/* binding */ ForbiddenRequestError)
+/* harmony export */ });
+/* harmony import */ var _genericRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./genericRequestError */ "./common/domain/errors/genericRequestError.js");
+
+
+class ForbiddenRequestError extends _genericRequestError__WEBPACK_IMPORTED_MODULE_0__.GenericRequestError {
+
+}
+
+
+
+/***/ }),
+
 /***/ "./common/domain/errors/genericRequestError.js":
 /*!*****************************************************!*\
   !*** ./common/domain/errors/genericRequestError.js ***!
@@ -101,6 +123,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base/baseService */ "./common/domain/service/base/baseService.js");
 /* harmony import */ var _errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../errors/unauthorizedRequestError */ "./common/domain/errors/unauthorizedRequestError.js");
 /* harmony import */ var _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../errors/conflictRequestError */ "./common/domain/errors/conflictRequestError.js");
+/* harmony import */ var _errors_forbiddenRequestError__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../errors/forbiddenRequestError */ "./common/domain/errors/forbiddenRequestError.js");
+
 
 
 
@@ -162,10 +186,10 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
 
     async setNewPassword(newPassword, token, id) {
         try {
-            await this._accountApi.setNewPassword(newPassword, token, id);
+            await this._requestHandler(() => this._accountApi.setNewPassword(newPassword, token, id));
             return null;
-        } catch (error) {
-            if (error.status == 403) {
+        } catch (e) {
+            if (e instanceof _errors_forbiddenRequestError__WEBPACK_IMPORTED_MODULE_5__.ForbiddenRequestError) {
                 return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED;
             } else {
                 return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
@@ -302,6 +326,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/errors/conflictRequestError */ "./common/domain/errors/conflictRequestError.js");
 /* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
 /* harmony import */ var _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/domain/errors/unauthorizedRequestError */ "./common/domain/errors/unauthorizedRequestError.js");
+/* harmony import */ var _common_domain_errors_forbiddenRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/domain/errors/forbiddenRequestError */ "./common/domain/errors/forbiddenRequestError.js");
+
 
 
 
@@ -316,6 +342,8 @@ class BaseService {
             switch(error.status) {
                 case 409:
                     throw new _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_0__.ConflictRequestError(error.data);
+                case 403:
+                    throw new _common_domain_errors_forbiddenRequestError__WEBPACK_IMPORTED_MODULE_3__.ForbiddenRequestError(error.data);
                 case 401:
                     throw new _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__.UnauthorizedRequestError(error.data);
                 default:

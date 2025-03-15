@@ -3,6 +3,7 @@ import { MESSAGE_IDS } from "@messages/messageIds";
 import { BaseService } from "./base/baseService";
 import { UnauthorizedRequestError } from "../errors/unauthorizedRequestError";
 import { ConflictRequestError } from "../errors/conflictRequestError";
+import { ForbiddenRequestError } from "../errors/forbiddenRequestError";
 
 class AccountService extends BaseService {
 
@@ -59,10 +60,10 @@ class AccountService extends BaseService {
 
     async setNewPassword(newPassword, token, id) {
         try {
-            await this._accountApi.setNewPassword(newPassword, token, id);
+            await this._requestHandler(() => this._accountApi.setNewPassword(newPassword, token, id));
             return null;
-        } catch (error) {
-            if (error.status == 403) {
+        } catch (e) {
+            if (e instanceof ForbiddenRequestError) {
                 return BASE_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED;
             } else {
                 return BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
