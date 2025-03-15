@@ -77,12 +77,13 @@ class AccountService extends BaseService {
     }
 
     async changeEmail(newEmail, password) {
-        if (!newEmail) {
-            return BASE_MESSAGE_IDS.EMAIL_NEEDED;
-        }
-
         if (!password) {
             return BASE_MESSAGE_IDS.PASSWORD_NEEDED;
+        }
+
+        let emailErr = await this.validateEmail(newEmail, false);
+        if (emailErr) {
+            return emailErr;
         }
 
         try {
@@ -92,18 +93,8 @@ class AccountService extends BaseService {
         } catch (error) {
             if (error.status == 401) {
                 return BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED;
-            } else if (error.status == 400) {
-                switch (error.data.err_code) {
-                    case 'unique':
-                        return BASE_MESSAGE_IDS.EMAIL_TAKEN;
-                    case 'invalid_chars':
-                    case 'min_length':
-                    case 'max_length':
-                    case 'blank':
-                        return BASE_MESSAGE_IDS.EMAIL_INVALID;
-                    default:
-                        return BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
-                }
+            } else if (error.status == 409) {
+                return BASE_MESSAGE_IDS.EMAIL_TAKEN;
             } else {
                 return BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
             }
@@ -155,7 +146,7 @@ class AccountService extends BaseService {
         return null;
     }
 
-    async validateEmail(email = '') {
+    async validateEmail(email = '', checkUniq = true) {
         if (email.length < AccountService.MIN_EMAIL_LENGTH ||
             email.length > AccountService.MAX_EMAIL_LENGTH ||
             !AccountService.EMAIL_REGEX.test(email)
@@ -163,9 +154,11 @@ class AccountService extends BaseService {
             return BASE_MESSAGE_IDS.EMAIL_INVALID;
         }
 
-        let isUniq = await this._accountApi.checkEmailUniqueness(email);
-        if (!isUniq) {
-            return BASE_MESSAGE_IDS.EMAIL_TAKEN;
+        if (checkUniq) {
+            let isUniq = await this._accountApi.checkEmailUniqueness(email);
+            if (!isUniq) {
+                return BASE_MESSAGE_IDS.EMAIL_TAKEN;
+            }
         }
 
         return null;

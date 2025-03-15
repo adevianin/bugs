@@ -278,6 +278,9 @@ def change_email(request: HttpRequest):
         user.save()
     except ValidationError as e:
         for error in e.error_dict.get('email', []):
-            return JsonResponse({'err_code': error.code}, status=400)
+            if error.code == 'unique':
+                return HttpResponse(status=409)
+            else:
+                return HttpResponse(status=400)
 
     return HttpResponse(status=204)    

@@ -179,12 +179,13 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
     }
 
     async changeEmail(newEmail, password) {
-        if (!newEmail) {
-            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_NEEDED;
-        }
-
         if (!password) {
             return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED;
+        }
+
+        let emailErr = await this.validateEmail(newEmail, false);
+        if (emailErr) {
+            return emailErr;
         }
 
         try {
@@ -194,18 +195,8 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         } catch (error) {
             if (error.status == 401) {
                 return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED;
-            } else if (error.status == 400) {
-                switch (error.data.err_code) {
-                    case 'unique':
-                        return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN;
-                    case 'invalid_chars':
-                    case 'min_length':
-                    case 'max_length':
-                    case 'blank':
-                        return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID;
-                    default:
-                        return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
-                }
+            } else if (error.status == 409) {
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN;
             } else {
                 return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
             }
@@ -257,7 +248,7 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         return null;
     }
 
-    async validateEmail(email = '') {
+    async validateEmail(email = '', checkUniq = true) {
         if (email.length < AccountService.MIN_EMAIL_LENGTH ||
             email.length > AccountService.MAX_EMAIL_LENGTH ||
             !AccountService.EMAIL_REGEX.test(email)
@@ -265,9 +256,11 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
             return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID;
         }
 
-        let isUniq = await this._accountApi.checkEmailUniqueness(email);
-        if (!isUniq) {
-            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN;
+        if (checkUniq) {
+            let isUniq = await this._accountApi.checkEmailUniqueness(email);
+            if (!isUniq) {
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN;
+            }
         }
 
         return null;
