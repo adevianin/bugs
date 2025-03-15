@@ -128,8 +128,13 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         return this._requestHandler(() => this._accountApi.register(username, email, password));
     }
 
-    resetPasswordRequest(email) {
-        return this._requestHandler(() => this._accountApi.resetPasswordRequest(email));
+    async resetPasswordRequest(email) {
+        try {
+            await this._accountApi.resetPasswordRequest(email);
+            return null;
+        } catch (err) {
+            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+        }
     }
 
     async setNewPassword(newPassword, token, id) {
@@ -2112,12 +2117,11 @@ class RequestModeContainerView extends _common_view_base_baseHTMLView__WEBPACK_I
         }
 
         let email = this._emailEl.value;
-        try {
-            this._requestCreatingLoader.toggle(true);
-            await this._accountService.resetPasswordRequest(email);
+        this._requestCreatingLoader.toggle(true);
+        let err = await this._accountService.resetPasswordRequest(email);
+        this._renderRequestErr(err);
+        if (!err) {
             this._switchRequestDoneTab();
-        } catch (e) {
-            this._renderRequestErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.SOMETHING_WENT_WRONG);
         }
         this._requestCreatingLoader.toggle(false);
     }

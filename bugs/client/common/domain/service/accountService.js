@@ -46,8 +46,13 @@ class AccountService extends BaseService {
         return this._requestHandler(() => this._accountApi.register(username, email, password));
     }
 
-    resetPasswordRequest(email) {
-        return this._requestHandler(() => this._accountApi.resetPasswordRequest(email));
+    async resetPasswordRequest(email) {
+        try {
+            await this._accountApi.resetPasswordRequest(email);
+            return null;
+        } catch (err) {
+            return BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+        }
     }
 
     async setNewPassword(newPassword, token, id) {

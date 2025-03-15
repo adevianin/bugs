@@ -54,12 +54,11 @@ class RequestModeContainerView extends BaseHTMLView {
         }
 
         let email = this._emailEl.value;
-        try {
-            this._requestCreatingLoader.toggle(true);
-            await this._accountService.resetPasswordRequest(email);
+        this._requestCreatingLoader.toggle(true);
+        let err = await this._accountService.resetPasswordRequest(email);
+        this._renderRequestErr(err);
+        if (!err) {
             this._switchRequestDoneTab();
-        } catch (e) {
-            this._renderRequestErr(MESSAGE_IDS.SOMETHING_WENT_WRONG);
         }
         this._requestCreatingLoader.toggle(false);
     }
