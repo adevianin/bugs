@@ -4,7 +4,7 @@ import { MarkerTypes } from "@domain/enum/markerTypes";
 import { CONSTS } from "@domain/consts";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
 import { PositionView } from "@view/panel/base/position/positionView";
-import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
+import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { TextInputView } from "@view/panel/base/textInput/textInputView";
 
@@ -134,7 +134,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
             await this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName);
             this._onDone();
         } catch (e) {
-            if (e instanceof StateSyncRequestError) {
+            if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {
                 this._renderMainError('SOMETHING_WENT_WRONG');

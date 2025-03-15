@@ -4,7 +4,7 @@ import { NestSelectorView } from "@view/panel/base/nestSelector";
 import { MarkerTypes } from "@domain/enum/markerTypes";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
 import { CONSTS } from "@domain/consts";
-import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
+import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 
 class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
@@ -137,7 +137,7 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
             await this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
             this._onDone();
         } catch (e) {
-            if (e instanceof StateSyncRequestError) {
+            if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {
                 this._renderMainError('SOMETHING_WENT_WRONG');

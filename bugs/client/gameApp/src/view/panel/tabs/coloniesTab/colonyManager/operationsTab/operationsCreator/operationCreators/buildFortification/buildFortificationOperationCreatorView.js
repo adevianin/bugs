@@ -4,7 +4,7 @@ import { NestSelectorView } from "@view/panel/base/nestSelector";
 import { MarkerTypes } from "@domain/enum/markerTypes";
 import { CONSTS } from "@domain/consts";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
-import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
+import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 
 class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
@@ -80,7 +80,7 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
             await this.$domainFacade.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount);
             this._onDone();
         } catch (e) {
-            if (e instanceof StateSyncRequestError) {
+            if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {
                 this._renderMainError('SOMETHING_WENT_WRONG');

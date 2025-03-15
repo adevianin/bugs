@@ -2,6 +2,27 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./common/domain/errors/conflictRequestError.js":
+/*!******************************************************!*\
+  !*** ./common/domain/errors/conflictRequestError.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ConflictRequestError: () => (/* binding */ ConflictRequestError)
+/* harmony export */ });
+/* harmony import */ var _genericRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./genericRequestError */ "./common/domain/errors/genericRequestError.js");
+
+
+class ConflictRequestError extends _genericRequestError__WEBPACK_IMPORTED_MODULE_0__.GenericRequestError {
+
+}
+
+
+
+/***/ }),
+
 /***/ "./common/domain/errors/genericRequestError.js":
 /*!*****************************************************!*\
   !*** ./common/domain/errors/genericRequestError.js ***!
@@ -18,27 +39,6 @@ class GenericRequestError extends Error {
         super();
         this.data = data;
     }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./common/domain/errors/stateSyncRequestError.js":
-/*!*******************************************************!*\
-  !*** ./common/domain/errors/stateSyncRequestError.js ***!
-  \*******************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   StateSyncRequestError: () => (/* binding */ StateSyncRequestError)
-/* harmony export */ });
-/* harmony import */ var _genericRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./genericRequestError */ "./common/domain/errors/genericRequestError.js");
-
-
-class StateSyncRequestError extends _genericRequestError__WEBPACK_IMPORTED_MODULE_0__.GenericRequestError {
 
 }
 
@@ -80,7 +80,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
 /* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
 /* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base/baseService */ "./common/domain/service/base/baseService.js");
-/* harmony import */ var _errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../errors/conflictRequestError */ "./common/domain/errors/conflictRequestError.js");
 
 
 
@@ -143,7 +143,7 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
             await this._requestHandler(() => this._accountApi.changeUsername(newUsername));
             this._userData.username = newUsername;
         } catch (e) {
-            if (e instanceof _errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_3__.StateSyncRequestError) {
+            if (e instanceof _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_3__.ConflictRequestError) {
                 switch (e.data.err_code) {
                     case 'min_length':
                         return AccountService.USERNAME_MIN_LENGTH_ERR;
@@ -237,7 +237,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BaseService: () => (/* binding */ BaseService)
 /* harmony export */ });
-/* harmony import */ var _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/errors/stateSyncRequestError */ "./common/domain/errors/stateSyncRequestError.js");
+/* harmony import */ var _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/errors/conflictRequestError */ "./common/domain/errors/conflictRequestError.js");
 /* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
 /* harmony import */ var _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/domain/errors/unauthorizedRequestError */ "./common/domain/errors/unauthorizedRequestError.js");
 
@@ -253,7 +253,7 @@ class BaseService {
         } catch(error) {
             switch(error.status) {
                 case 409:
-                    throw new _common_domain_errors_stateSyncRequestError__WEBPACK_IMPORTED_MODULE_0__.StateSyncRequestError(error.data);
+                    throw new _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_0__.ConflictRequestError(error.data);
                 case 401:
                     throw new _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__.UnauthorizedRequestError(error.data);
                 default:

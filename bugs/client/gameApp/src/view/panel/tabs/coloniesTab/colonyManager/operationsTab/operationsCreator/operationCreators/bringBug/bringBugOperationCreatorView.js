@@ -2,7 +2,7 @@ import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import bringBugOperationCreatorTmpl from './bringBugOperationCreatorTmpl.html';
 import { NestSelectorView } from "@view/panel/base/nestSelector";
 import { MarkerTypes } from "@domain/enum/markerTypes";
-import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
+import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 
 class BringBugOperationCreatorView extends BaseOperationCreatorView {
@@ -86,7 +86,7 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
             await this.$domainFacade.bringBugOpearation(this._performingColony.id, this._nestSelector.nestId);
             this._onDone();
         } catch(e) {
-            if (e instanceof StateSyncRequestError) {
+            if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {
                 this._renderMainError('SOMETHING_WENT_WRONG');

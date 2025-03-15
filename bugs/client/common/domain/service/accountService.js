@@ -1,7 +1,7 @@
 import { BASE_MESSAGE_IDS } from "@common/messages/messageIds";
 import { MESSAGE_IDS } from "@messages/messageIds";
 import { BaseService } from "./base/baseService";
-import { StateSyncRequestError } from "../errors/stateSyncRequestError";
+import { ConflictRequestError } from "../errors/conflictRequestError";
 
 class AccountService extends BaseService {
 
@@ -60,7 +60,7 @@ class AccountService extends BaseService {
             await this._requestHandler(() => this._accountApi.changeUsername(newUsername));
             this._userData.username = newUsername;
         } catch (e) {
-            if (e instanceof StateSyncRequestError) {
+            if (e instanceof ConflictRequestError) {
                 switch (e.data.err_code) {
                     case 'min_length':
                         return AccountService.USERNAME_MIN_LENGTH_ERR;

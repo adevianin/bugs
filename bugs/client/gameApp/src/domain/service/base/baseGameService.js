@@ -1,4 +1,4 @@
-import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
+import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { BaseService } from "@common/domain/service/base/baseService";
 
 class BaseGameService extends BaseService {
@@ -13,7 +13,7 @@ class BaseGameService extends BaseService {
         try {
             await super._requestHandler(apiCallFunc);
         } catch (e) {
-            if (e instanceof StateSyncRequestError) {
+            if (e instanceof ConflictRequestError) {
                 await this._waitStepSync(e.data.step);
                 throw e;
             } else {

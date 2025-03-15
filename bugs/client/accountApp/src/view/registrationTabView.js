@@ -1,7 +1,7 @@
 import { BaseHTMLView } from "@common/view/base/baseHTMLView";
 import { MESSAGE_IDS } from '../messages/messageIds';
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
-import { StateSyncRequestError } from '@common/domain/errors/stateSyncRequestError';
+import { ConflictRequestError } from '@common/domain/errors/conflictRequestError';
 import { throttle } from '@common/utils/throttle';
 import { AccountPasswordErrorView } from '@common/view/errors/accountPasswordErrorView';
 import { AccountUsernameErrorView } from "@common/view/errors/accountUsernameErrorView";
@@ -193,7 +193,7 @@ class RegistrationTabView extends BaseHTMLView {
             window.location.href = '/';
             this._reuqestLoader.toggle(false);
         } catch(e) {
-            if (e instanceof StateSyncRequestError) {
+            if (e instanceof ConflictRequestError) {
                 this._resetApprovedFields();
                 this._validateRegistration();
             } else {

@@ -4,7 +4,7 @@ import { MarkerTypes } from "@domain/enum/markerTypes";
 import { CONSTS } from "@domain/consts";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
 import { NestInlineView } from "@view/panel/base/nest/nestInlineView";
-import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
+import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 
 class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
@@ -144,7 +144,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
             await this.$domainFacade.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._choosedNestView.value);
             this._onDone();
         } catch (e) {
-            if (e instanceof StateSyncRequestError) {
+            if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {
                 this._renderMainError('SOMETHING_WENT_WRONG');

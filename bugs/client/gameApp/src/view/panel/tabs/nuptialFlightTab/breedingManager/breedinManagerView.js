@@ -5,7 +5,7 @@ import { MaleSelectorView } from "./maleSelector/maleSelectorView";
 import { PositionView } from "@view/panel/base/position/positionView";
 import { MarkerTypes } from '@domain/enum/markerTypes';
 import { TextInputView } from "@view/panel/base/textInput/textInputView";
-import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
+import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 
 class BreedingManagerView extends BaseGameHTMLView {
@@ -119,7 +119,7 @@ class BreedingManagerView extends BaseGameHTMLView {
             this.$eventBus.emit('showPointRequest', this._nestPositionView.value);
             this._resetFields();
         } catch (e) {
-            if (e instanceof StateSyncRequestError) {
+            if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {
                 this._renderRequestError('SOMETHING_WENT_WRONG');

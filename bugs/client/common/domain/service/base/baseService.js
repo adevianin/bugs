@@ -1,4 +1,4 @@
-import { StateSyncRequestError } from "@common/domain/errors/stateSyncRequestError";
+import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { UnauthorizedRequestError } from "@common/domain/errors/unauthorizedRequestError";
 
@@ -11,7 +11,7 @@ class BaseService {
         } catch(error) {
             switch(error.status) {
                 case 409:
-                    throw new StateSyncRequestError(error.data);
+                    throw new ConflictRequestError(error.data);
                 case 401:
                     throw new UnauthorizedRequestError(error.data);
                 default:
