@@ -99,6 +99,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
 /* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
 /* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base/baseService */ "./common/domain/service/base/baseService.js");
+/* harmony import */ var _errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../errors/unauthorizedRequestError */ "./common/domain/errors/unauthorizedRequestError.js");
+/* harmony import */ var _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../errors/conflictRequestError */ "./common/domain/errors/conflictRequestError.js");
+
+
 
 
 
@@ -201,13 +205,13 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         }
 
         try {
-            await this._accountApi.changeEmail(newEmail, password);
+            await this._requestHandler(() => this._accountApi.changeEmail(newEmail, password));
             this._userData.email = newEmail;
             return null;
-        } catch (error) {
-            if (error.status == 401) {
+        } catch (e) {
+            if (e instanceof _errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_3__.UnauthorizedRequestError) {
                 return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED;
-            } else if (error.status == 409) {
+            } else if (e instanceof _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_4__.ConflictRequestError) {
                 return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN;
             } else {
                 return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;

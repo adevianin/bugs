@@ -1,6 +1,8 @@
 import { BASE_MESSAGE_IDS } from "@common/messages/messageIds";
 import { MESSAGE_IDS } from "@messages/messageIds";
 import { BaseService } from "./base/baseService";
+import { UnauthorizedRequestError } from "../errors/unauthorizedRequestError";
+import { ConflictRequestError } from "../errors/conflictRequestError";
 
 class AccountService extends BaseService {
 
@@ -100,13 +102,13 @@ class AccountService extends BaseService {
         }
 
         try {
-            await this._accountApi.changeEmail(newEmail, password);
+            await this._requestHandler(() => this._accountApi.changeEmail(newEmail, password));
             this._userData.email = newEmail;
             return null;
-        } catch (error) {
-            if (error.status == 401) {
+        } catch (e) {
+            if (e instanceof UnauthorizedRequestError) {
                 return BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED;
-            } else if (error.status == 409) {
+            } else if (e instanceof ConflictRequestError) {
                 return BASE_MESSAGE_IDS.EMAIL_TAKEN;
             } else {
                 return BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
