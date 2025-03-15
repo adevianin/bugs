@@ -158,23 +158,22 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
     }
 
     async changeUsername(newUsername) {
+        let usernameErr = await this.validateUsername(newUsername, false);
+        if (usernameErr) {
+            return usernameErr;
+        }
+
         try {
-            await this._requestHandler(() => this._accountApi.changeUsername(newUsername));
+            await this._accountApi.changeUsername(newUsername);
             this._userData.username = newUsername;
-        } catch (e) {
-            if (e instanceof _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_3__.ConflictRequestError) {
-                switch (e.data.err_code) {
-                    case 'min_length':
-                        return AccountService.USERNAME_MIN_LENGTH_ERR;
-                    case 'max_length':
-                        return AccountService.USERNAME_MAX_LENGTH_ERR;
-                    case 'invalid_chars':
-                        return AccountService.USERNAME_INVALID_CHARS_ERR;
-                    case 'unique':
-                        return AccountService.USERNAME_TAKEN_ERR;
-                }
+            return null;
+        } catch (error) {
+            if (error.status == 409) {
+                return AccountService.USERNAME_TAKEN_ERR;
             } else {
-                throw e;
+                return {
+                    msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG
+                }
             }
         }
     }
@@ -217,7 +216,7 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         return this._userData;
     }
 
-    async validateUsername(username = '') {
+    async validateUsername(username = '', checkUniq = true) {
         if (username.length < AccountService.MIN_USERNAME_LENGTH) {
             return AccountService.USERNAME_MIN_LENGTH_ERR;
         }
@@ -230,9 +229,11 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
             return AccountService.USERNAME_INVALID_CHARS_ERR;
         }
 
-        let isUniq = await this._accountApi.checkUsernameUniqueness(username);
-        if (!isUniq) {
-            return AccountService.USERNAME_TAKEN_ERR;
+        if (checkUniq) {
+            let isUniq = await this._accountApi.checkUsernameUniqueness(username);
+            if (!isUniq) {
+                return AccountService.USERNAME_TAKEN_ERR;
+            }
         }
 
         return null;
@@ -336,6 +337,7 @@ const BASE_MESSAGE_IDS = {
     USERNAME_MAX_LENGTH_ERR: 'USERNAME_MAX_LENGTH_ERR',
     USERNAME_INVALID_CHARS: 'USERNAME_INVALID_CHARS',
     USERNAME_TAKEN: 'USERNAME_TAKEN',
+    USERNAME_NEEDED: 'USERNAME_NEEDED',
     EMAIL_INVALID: 'EMAIL_INVALID',
     EMAIL_TAKEN: 'EMAIL_TAKEN',
     EMAIL_NEEDED: 'EMAIL_NEEDED',
@@ -431,6 +433,7 @@ const EN_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Username is too long. The maximum allowed length is {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Username contains invalid characters.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'This username is already taken.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_NEEDED]: 'Username is empty.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'The email address is invalid.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'The email address is already taken.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_NEEDED]: '"The email address is not specified.',
@@ -466,6 +469,7 @@ const UK_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Ім\'я користувача занадто довге. Максимально допустима довжина — {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Ім\'я користувача містить недопустимі символи.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'Це ім\'я користувача вже зайняте.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_NEEDED]: 'Ім\'я користувача порожнє.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'Електронна адреса недійсна.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'Електронна адреса вже зайнята.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_NEEDED]: 'Електронну адресу не вказано.',
@@ -712,34 +716,6 @@ class Requester {
 
 /***/ }),
 
-/***/ "./common/utils/throttle.js":
-/*!**********************************!*\
-  !*** ./common/utils/throttle.js ***!
-  \**********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   throttle: () => (/* binding */ throttle)
-/* harmony export */ });
-function throttle(func, wait) {
-    let lastCall = 0;
-
-    return function(...args) {
-        const now = new Date().getTime();
-
-        if (now - lastCall >= wait) {
-            lastCall = now;
-            func.apply(this, args);
-        }
-    };
-}
-
-
-
-/***/ }),
-
 /***/ "./common/view/base/baseHTMLView.js":
 /*!******************************************!*\
   !*** ./common/view/base/baseHTMLView.js ***!
@@ -915,6 +891,8 @@ class AccountUsernameErrorView extends _base_baseErrorView__WEBPACK_IMPORTED_MOD
                 case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.USERNAME_TAKEN):
                     this._el.innerHTML = this.$mm.format(err.msgId);
                     break;
+                default:
+                    this._el.innerHTML = this.$mm.get(_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         } else {
             this._el.innerHTML = '';
@@ -944,140 +922,6 @@ class BaseErrorView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MOD
 
     setErr(err) {
         throw 'not realized';
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./common/view/ui_consts.js":
-/*!**********************************!*\
-  !*** ./common/view/ui_consts.js ***!
-  \**********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   UI_CONSTS: () => (/* binding */ UI_CONSTS)
-/* harmony export */ });
-const UI_CONSTS = {
-    DOUBLE_CLICK_THROTTLE_MS: 2000
-}
-
-
-
-/***/ }),
-
-/***/ "./common/view/valueEditor/valueEditorView.js":
-/*!****************************************************!*\
-  !*** ./common/view/valueEditor/valueEditorView.js ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   ValueEditorView: () => (/* binding */ ValueEditorView)
-/* harmony export */ });
-/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./common/view/valueEditor/styles.css");
-/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
-/* harmony import */ var _valueEditorTmpl_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./valueEditorTmpl.html */ "./common/view/valueEditor/valueEditorTmpl.html");
-/* harmony import */ var _dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../dotsLoader/dotsLoaderView */ "./common/view/dotsLoader/dotsLoaderView.js");
-/* harmony import */ var _common_utils_throttle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/utils/throttle */ "./common/utils/throttle.js");
-/* harmony import */ var _ui_consts__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../ui_consts */ "./common/view/ui_consts.js");
-
-
-
-
-
-
-
-class ValueEditorView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
-
-    static MODES = {
-        EDIT: 'edit',
-        PREVIEW: 'preview'
-    }
-
-    constructor(el, value = '', valueApplier, inputType = 'text') {
-        super(el);
-        this._inputType = inputType;
-        this._value = value;
-        this._valueApplier = valueApplier;
-
-        this._render();
-
-        this._editBtn.addEventListener('click', this._onEditBtnClick.bind(this));
-        this._cancelBtn.addEventListener('click', this._onCancelBtnClick.bind(this));
-        this._okBtn.addEventListener('click', (0,_common_utils_throttle__WEBPACK_IMPORTED_MODULE_4__.throttle)(this._onOkBtnClick.bind(this), _ui_consts__WEBPACK_IMPORTED_MODULE_5__.UI_CONSTS.DOUBLE_CLICK_THROTTLE_MS));
-    }
-
-    get value() {
-        return this._value;
-    }
-
-    set value(val) {
-        this._value = val;
-        this._renderValue();
-    }
-
-    _render() {
-        this._el.innerHTML = _valueEditorTmpl_html__WEBPACK_IMPORTED_MODULE_2__["default"];
-
-        this._previewContainerEl = this._el.querySelector('[data-preview-container]')
-        this._editContainerEl = this._el.querySelector('[data-edit-container]')
-
-        this._valuePreviewEl = this._el.querySelector('[data-value-preview]');
-
-        this._inputEl = this._el.querySelector('[data-input]');
-        this._inputEl.setAttribute('type', this._inputType);
-
-        this._okBtn = this._el.querySelector('[data-ok]');
-        this._cancelBtn = this._el.querySelector('[data-cancel]');
-        this._editBtn = this._el.querySelector('[data-edit]');
-
-        this._loader = new _dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_3__.DotsLoaderView(this._el.querySelector('[data-loader]'));
-
-        this._renderValue();
-        this._changeMode(ValueEditorView.MODES.PREVIEW);
-    }
-
-    _changeMode(mode) {
-        this._previewContainerEl.classList.toggle('g-hidden', mode != ValueEditorView.MODES.PREVIEW);
-        this._editContainerEl.classList.toggle('g-hidden', mode != ValueEditorView.MODES.EDIT);
-    }
-
-    _renderValue() {
-        this._inputEl.value = this._value;
-        this._valuePreviewEl.innerHTML = this._value;
-    }
-
-    _onEditBtnClick() {
-        this._changeMode(ValueEditorView.MODES.EDIT);
-    }
-
-    _onCancelBtnClick() {
-        this._inputEl.value = this._value;
-        this._changeMode(ValueEditorView.MODES.PREVIEW);
-        this.events.emit('editCanceled');
-    }
-
-    async _onOkBtnClick() {
-        let value = this._inputEl.value;
-        let isAppliedSuccessfully = null;
-        if (this._valueApplier) {
-            this._loader.toggle(true);
-            isAppliedSuccessfully = await this._valueApplier(value);
-            this._loader.toggle(false);
-        }
-        if (isAppliedSuccessfully || !this._valueApplier) {
-            this._value = value;
-            this._renderValue();
-            this._changeMode(ValueEditorView.MODES.PREVIEW);
-            this.events.emit('editDone');
-        }
     }
 }
 
@@ -11927,6 +11771,72 @@ class EmailFieldEditorView extends _baseFieldEditor__WEBPACK_IMPORTED_MODULE_1__
 
 /***/ }),
 
+/***/ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/usernameFieldEditor/usernameFieldEditorView.js":
+/*!*********************************************************************************************************!*\
+  !*** ./gameApp/src/view/panel/tabs/userTab/fieldEditors/usernameFieldEditor/usernameFieldEditorView.js ***!
+  \*********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   UsernameFieldEditorView: () => (/* binding */ UsernameFieldEditorView)
+/* harmony export */ });
+/* harmony import */ var _usernameFieldEditorTmpl_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./usernameFieldEditorTmpl.html */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/usernameFieldEditor/usernameFieldEditorTmpl.html");
+/* harmony import */ var _baseFieldEditor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../baseFieldEditor */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/baseFieldEditor.js");
+/* harmony import */ var _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/view/dotsLoader/dotsLoaderView */ "./common/view/dotsLoader/dotsLoaderView.js");
+/* harmony import */ var _common_view_errors_accountUsernameErrorView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/view/errors/accountUsernameErrorView */ "./common/view/errors/accountUsernameErrorView.js");
+
+
+
+
+
+class UsernameFieldEditorView extends _baseFieldEditor__WEBPACK_IMPORTED_MODULE_1__.BaseFieldEditor {
+
+    constructor(onDone) {
+        super(onDone);
+
+        this._render();
+
+        this._cancelBtn.addEventListener('click', this._onCancelBtnClick.bind(this));
+        this._okBtn.addEventListener('click', this._onOkBtnClick.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = _usernameFieldEditorTmpl_html__WEBPACK_IMPORTED_MODULE_0__["default"];
+
+        this._errView = new _common_view_errors_accountUsernameErrorView__WEBPACK_IMPORTED_MODULE_3__.AccountUsernameErrorView(this._el.querySelector('[data-err-container]'));
+        this._loader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__.DotsLoaderView(this._el.querySelector('[data-loader]'));
+
+        this._okBtn = this._el.querySelector('[data-ok]');
+        this._cancelBtn = this._el.querySelector('[data-cancel]');
+        
+        this._usernameEl = this._el.querySelector('[data-username]');
+        let user = this.$domainFacade.getUserData();
+        this._usernameEl.value = user.username;
+    }
+
+    _onCancelBtnClick() {
+        this._onDone(null);
+    }
+
+    async _onOkBtnClick() {
+        this._loader.toggle(true);
+        let newUsername = this._usernameEl.value;
+        let err = await this.$domainFacade.changeUsername(newUsername);
+        this._errView.setErr(err);
+        this._loader.toggle(false);
+        if (!err) {
+            this._onDone(newUsername);
+        }
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/view/panel/tabs/userTab/userTab.js":
 /*!********************************************************!*\
   !*** ./gameApp/src/view/panel/tabs/userTab/userTab.js ***!
@@ -11940,13 +11850,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _userTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userTabTmpl.html */ "./gameApp/src/view/panel/tabs/userTab/userTabTmpl.html");
-/* harmony import */ var _usernameEditor_usernameEditorView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./usernameEditor/usernameEditorView */ "./gameApp/src/view/panel/tabs/userTab/usernameEditor/usernameEditorView.js");
-/* harmony import */ var _fieldEditors_emailFieldEditor_emailFieldEditorView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./fieldEditors/emailFieldEditor/emailFieldEditorView */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/emailFieldEditor/emailFieldEditorView.js");
+/* harmony import */ var _fieldEditors_emailFieldEditor_emailFieldEditorView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fieldEditors/emailFieldEditor/emailFieldEditorView */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/emailFieldEditor/emailFieldEditorView.js");
+/* harmony import */ var _fieldEditors_usernameFieldEditor_usernameFieldEditorView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./fieldEditors/usernameFieldEditor/usernameFieldEditorView */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/usernameFieldEditor/usernameFieldEditorView.js");
 
 
+// import { UsernameEditorView } from './usernameEditor/usernameEditorView';
 
 
-// import { EmailEditorView } from './emailEditor/emailEditorView';
 
 class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
@@ -11963,6 +11873,7 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
 
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
         this._emailEditBtnEl.addEventListener('click', this._onEmailEditBtnClick.bind(this));
+        this._usernameEditBtnEl.addEventListener('click', this._onUsernameEditBtnClick.bind(this));
     }
 
     _render() {
@@ -11970,12 +11881,18 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
 
         this._mainContainerEl = this._el.querySelector('[data-main-contentainer]');
         this._fieldEditorContainerEl = this._el.querySelector('[data-field-editor-container]');
+
         this._emailEl = this._el.querySelector('[data-email]');
         this._emailEditBtnEl = this._el.querySelector('[data-edit-email-btn]');
-        this._usernameEditorView = new _usernameEditor_usernameEditorView__WEBPACK_IMPORTED_MODULE_2__.UsernameEditorView(this._el.querySelector('[data-username-editor]'));
+
+        this._usernameEl = this._el.querySelector('[data-username]');
+        this._usernameEditBtnEl = this._el.querySelector('[data-edit-username-btn]');
+        // this._usernameEditorView = new UsernameEditorView(this._el.querySelector('[data-username-editor]'));
+
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
 
         this._renderEmail();
+        this._renderUsername();
     }
 
     _changeMode(modeName) {
@@ -12007,6 +11924,11 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
         this._emailEl.innerHTML = user.email;
     }
 
+    _renderUsername() {
+        let user = this.$domainFacade.getUserData();
+        this._usernameEl.innerHTML = user.username;
+    }
+
     _onUserLogoutBtnClick() {
         this.$domainFacade.logout().then(redirectUrl => {
             location.href = redirectUrl;
@@ -12014,7 +11936,7 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
     }
 
     _onEmailEditBtnClick() {
-        let emailFieldEditor = new _fieldEditors_emailFieldEditor_emailFieldEditorView__WEBPACK_IMPORTED_MODULE_3__.EmailFieldEditorView((newEmail) => {
+        let emailFieldEditor = new _fieldEditors_emailFieldEditor_emailFieldEditorView__WEBPACK_IMPORTED_MODULE_2__.EmailFieldEditorView((newEmail) => {
             this._showMainContant();
             if (newEmail) {
                 this._renderEmail();
@@ -12023,55 +11945,14 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
         this._showFieldEditor(emailFieldEditor);
     }
 
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/view/panel/tabs/userTab/usernameEditor/usernameEditorView.js":
-/*!**********************************************************************************!*\
-  !*** ./gameApp/src/view/panel/tabs/userTab/usernameEditor/usernameEditorView.js ***!
-  \**********************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   UsernameEditorView: () => (/* binding */ UsernameEditorView)
-/* harmony export */ });
-/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
-/* harmony import */ var _usernameEditorTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./usernameEditorTmpl.html */ "./gameApp/src/view/panel/tabs/userTab/usernameEditor/usernameEditorTmpl.html");
-/* harmony import */ var _common_view_errors_accountUsernameErrorView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/view/errors/accountUsernameErrorView */ "./common/view/errors/accountUsernameErrorView.js");
-/* harmony import */ var _common_view_valueEditor_valueEditorView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/view/valueEditor/valueEditorView */ "./common/view/valueEditor/valueEditorView.js");
-
-
-
-
-
-class UsernameEditorView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
-
-    constructor(el) {
-        super(el);
-
-        this._render();
-    }
-
-    _render() {
-        let user = this.$domainFacade.getUserData();
-        this._el.innerHTML = _usernameEditorTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-
-        this._valueEditor = new _common_view_valueEditor_valueEditorView__WEBPACK_IMPORTED_MODULE_3__.ValueEditorView(this._el.querySelector('[data-username-value-editor]'), user.username, async (newUsername) => {
-            let err = await this.$domainFacade.changeUsername(newUsername);
-            this._renderUsernameErr(err);
-            return !err;
+    _onUsernameEditBtnClick() {
+        let usernameFieldEditor = new _fieldEditors_usernameFieldEditor_usernameFieldEditorView__WEBPACK_IMPORTED_MODULE_3__.UsernameFieldEditorView((newUsername) => {
+            this._showMainContant();
+            if (newUsername) {
+                this._renderUsername();
+            }
         });
-        this._valueEditor.events.addListener('editCanceled', () => this._renderUsernameErr(null));
-        this._usernameErrView = new _common_view_errors_accountUsernameErrorView__WEBPACK_IMPORTED_MODULE_2__.AccountUsernameErrorView(this._el.querySelector('[data-username-err-container]'));
-    }
-
-    _renderUsernameErr(err) {
-        this._usernameErrView.setErr(err);
+        this._showFieldEditor(usernameFieldEditor);
     }
 
 }
@@ -18445,45 +18326,6 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.dots-loader {
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js!./common/view/valueEditor/styles.css":
-/*!**********************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./common/view/valueEditor/styles.css ***!
-  \**********************************************************************************/
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-// Imports
-
-
-var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-// Module
-___CSS_LOADER_EXPORT___.push([module.id, `.value-editor {
-    padding: 3px;
-}
-
-.value-editor__edit-container {
-    display: flex;
-    flex-direction: row;
-}
-
-.value-editor__preview-container {
-    display: flex;
-    flex-direction: row;
-}`, "",{"version":3,"sources":["webpack://./common/view/valueEditor/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;AAChB;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB;;AAEA;IACI,aAAa;IACb,mBAAmB;AACvB","sourcesContent":[".value-editor {\r\n    padding: 3px;\r\n}\r\n\r\n.value-editor__edit-container {\r\n    display: flex;\r\n    flex-direction: row;\r\n}\r\n\r\n.value-editor__preview-container {\r\n    display: flex;\r\n    flex-direction: row;\r\n}"],"sourceRoot":""}]);
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
-
-
-/***/ }),
-
 /***/ "./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/appStyles.css":
 /*!******************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/appStyles.css ***!
@@ -20869,24 +20711,6 @@ var code = "<div></div>\r\n<div></div>\r\n<div></div>\r\n<div></div>\r\n<div></d
 
 /***/ }),
 
-/***/ "./common/view/valueEditor/valueEditorTmpl.html":
-/*!******************************************************!*\
-  !*** ./common/view/valueEditor/valueEditorTmpl.html ***!
-  \******************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<div class=\"value-editor__preview-container\" data-preview-container>\r\n    <span data-value-preview></span>\r\n    <button data-edit>(E)</button>\r\n</div>\r\n<div class=\"value-editor__edit-container\" data-edit-container>\r\n    <input data-input />\r\n    <button data-ok>✔</button>\r\n    <button data-cancel>✖</button>\r\n    <div class=\"g-hidden\" data-loader></div>\r\n</div>\r\n";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
 /***/ "./gameApp/src/view/appTmpl.html":
 /*!***************************************!*\
   !*** ./gameApp/src/view/appTmpl.html ***!
@@ -22039,6 +21863,24 @@ var code = "<div>\r\n    <label>email:</label>\r\n    <input type=\"email\" data
 
 /***/ }),
 
+/***/ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/usernameFieldEditor/usernameFieldEditorTmpl.html":
+/*!***********************************************************************************************************!*\
+  !*** ./gameApp/src/view/panel/tabs/userTab/fieldEditors/usernameFieldEditor/usernameFieldEditorTmpl.html ***!
+  \***********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div>\r\n    <label>username:</label>\r\n    <input type=\"text\" data-username />\r\n</div>\r\n<div class=\"g-hidden\" data-loader></div>\r\n<div class=\"g-error-container\" data-err-container></div>\r\n<div>\r\n    <button data-ok>ok</button>\r\n    <button data-cancel>cancel</button>\r\n</div>\r\n";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./gameApp/src/view/panel/tabs/userTab/userTabTmpl.html":
 /*!**************************************************************!*\
   !*** ./gameApp/src/view/panel/tabs/userTab/userTabTmpl.html ***!
@@ -22051,25 +21893,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-main-contentainer>\r\n    <div data-username-editor></div>\r\n    <div>\r\n        email:\r\n        <span data-email></span>\r\n        <button data-edit-email-btn>(>)</button>\r\n    </div>\r\n    <button data-logout-btn>вийти</button>\r\n</div>\r\n<div data-field-editor-container></div>\r\n";
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
-
-/***/ }),
-
-/***/ "./gameApp/src/view/panel/tabs/userTab/usernameEditor/usernameEditorTmpl.html":
-/*!************************************************************************************!*\
-  !*** ./gameApp/src/view/panel/tabs/userTab/usernameEditor/usernameEditorTmpl.html ***!
-  \************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Module
-var code = "<div style=\"display: flex;\">\r\n    <span>username:</span>\r\n    <div>\r\n        <div data-username-value-editor></div>\r\n        <div class=\"g-error-container\" data-username-err-container></div>\r\n    </div>\r\n</div>\r\n";
+var code = "<div data-main-contentainer>\r\n    <!-- <div data-username-editor></div> -->\r\n    <div>\r\n        username:\r\n        <span data-username></span>\r\n        <button data-edit-username-btn>(>)</button>\r\n    </div>\r\n    <div>\r\n        email:\r\n        <span data-email></span>\r\n        <button data-edit-email-btn>(>)</button>\r\n    </div>\r\n    <button data-logout-btn>вийти</button>\r\n</div>\r\n<div data-field-editor-container></div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -22350,61 +22174,6 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
        /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
-
-
-/***/ }),
-
-/***/ "./common/view/valueEditor/styles.css":
-/*!********************************************!*\
-  !*** ./common/view/valueEditor/styles.css ***!
-  \********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./common/view/valueEditor/styles.css");
-
-      
-      
-      
-      
-      
-      
-      
-      
-      
-
-var options = {};
-
-options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
-options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
-
-      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
-    
-options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
-options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
-
-var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
-
-
-
-
-       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),

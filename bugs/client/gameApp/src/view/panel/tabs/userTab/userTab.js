@@ -1,8 +1,8 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import userTabTmpl from './userTabTmpl.html';
-import { UsernameEditorView } from './usernameEditor/usernameEditorView';
+// import { UsernameEditorView } from './usernameEditor/usernameEditorView';
 import { EmailFieldEditorView } from './fieldEditors/emailFieldEditor/emailFieldEditorView';
-// import { EmailEditorView } from './emailEditor/emailEditorView';
+import { UsernameFieldEditorView } from './fieldEditors/usernameFieldEditor/usernameFieldEditorView';
 
 class UserTab extends BaseGameHTMLView {
 
@@ -19,6 +19,7 @@ class UserTab extends BaseGameHTMLView {
 
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
         this._emailEditBtnEl.addEventListener('click', this._onEmailEditBtnClick.bind(this));
+        this._usernameEditBtnEl.addEventListener('click', this._onUsernameEditBtnClick.bind(this));
     }
 
     _render() {
@@ -26,12 +27,18 @@ class UserTab extends BaseGameHTMLView {
 
         this._mainContainerEl = this._el.querySelector('[data-main-contentainer]');
         this._fieldEditorContainerEl = this._el.querySelector('[data-field-editor-container]');
+
         this._emailEl = this._el.querySelector('[data-email]');
         this._emailEditBtnEl = this._el.querySelector('[data-edit-email-btn]');
-        this._usernameEditorView = new UsernameEditorView(this._el.querySelector('[data-username-editor]'));
+
+        this._usernameEl = this._el.querySelector('[data-username]');
+        this._usernameEditBtnEl = this._el.querySelector('[data-edit-username-btn]');
+        // this._usernameEditorView = new UsernameEditorView(this._el.querySelector('[data-username-editor]'));
+
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
 
         this._renderEmail();
+        this._renderUsername();
     }
 
     _changeMode(modeName) {
@@ -63,6 +70,11 @@ class UserTab extends BaseGameHTMLView {
         this._emailEl.innerHTML = user.email;
     }
 
+    _renderUsername() {
+        let user = this.$domainFacade.getUserData();
+        this._usernameEl.innerHTML = user.username;
+    }
+
     _onUserLogoutBtnClick() {
         this.$domainFacade.logout().then(redirectUrl => {
             location.href = redirectUrl;
@@ -77,6 +89,16 @@ class UserTab extends BaseGameHTMLView {
             }
         });
         this._showFieldEditor(emailFieldEditor);
+    }
+
+    _onUsernameEditBtnClick() {
+        let usernameFieldEditor = new UsernameFieldEditorView((newUsername) => {
+            this._showMainContant();
+            if (newUsername) {
+                this._renderUsername();
+            }
+        });
+        this._showFieldEditor(usernameFieldEditor);
     }
 
 }

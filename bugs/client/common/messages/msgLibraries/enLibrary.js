@@ -5,6 +5,7 @@ const EN_BASE_LIBRARY = {
     [BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Username is too long. The maximum allowed length is {0}.',
     [BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Username contains invalid characters.',
     [BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'This username is already taken.',
+    [BASE_MESSAGE_IDS.USERNAME_NEEDED]: 'Username is empty.',
     [BASE_MESSAGE_IDS.EMAIL_INVALID]: 'The email address is invalid.',
     [BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'The email address is already taken.',
     [BASE_MESSAGE_IDS.EMAIL_NEEDED]: '"The email address is not specified.',

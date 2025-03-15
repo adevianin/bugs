@@ -16,6 +16,8 @@ class AccountUsernameErrorView extends BaseErrorView {
                 case (BASE_MESSAGE_IDS.USERNAME_TAKEN):
                     this._el.innerHTML = this.$mm.format(err.msgId);
                     break;
+                default:
+                    this._el.innerHTML = this.$mm.get(BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         } else {
             this._el.innerHTML = '';

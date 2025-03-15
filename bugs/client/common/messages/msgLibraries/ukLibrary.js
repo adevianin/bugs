@@ -5,6 +5,7 @@ const UK_BASE_LIBRARY = {
     [BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Ім\'я користувача занадто довге. Максимально допустима довжина — {0}.',
     [BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Ім\'я користувача містить недопустимі символи.',
     [BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'Це ім\'я користувача вже зайняте.',
+    [BASE_MESSAGE_IDS.USERNAME_NEEDED]: 'Ім\'я користувача порожнє.',
     [BASE_MESSAGE_IDS.EMAIL_INVALID]: 'Електронна адреса недійсна.',
     [BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'Електронна адреса вже зайнята.',
     [BASE_MESSAGE_IDS.EMAIL_NEEDED]: 'Електронну адресу не вказано.',

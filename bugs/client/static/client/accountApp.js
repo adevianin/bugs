@@ -662,23 +662,22 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
     }
 
     async changeUsername(newUsername) {
+        let usernameErr = await this.validateUsername(newUsername, false);
+        if (usernameErr) {
+            return usernameErr;
+        }
+
         try {
-            await this._requestHandler(() => this._accountApi.changeUsername(newUsername));
+            await this._accountApi.changeUsername(newUsername);
             this._userData.username = newUsername;
-        } catch (e) {
-            if (e instanceof _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_3__.ConflictRequestError) {
-                switch (e.data.err_code) {
-                    case 'min_length':
-                        return AccountService.USERNAME_MIN_LENGTH_ERR;
-                    case 'max_length':
-                        return AccountService.USERNAME_MAX_LENGTH_ERR;
-                    case 'invalid_chars':
-                        return AccountService.USERNAME_INVALID_CHARS_ERR;
-                    case 'unique':
-                        return AccountService.USERNAME_TAKEN_ERR;
-                }
+            return null;
+        } catch (error) {
+            if (error.status == 409) {
+                return AccountService.USERNAME_TAKEN_ERR;
             } else {
-                throw e;
+                return {
+                    msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG
+                }
             }
         }
     }
@@ -721,7 +720,7 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         return this._userData;
     }
 
-    async validateUsername(username = '') {
+    async validateUsername(username = '', checkUniq = true) {
         if (username.length < AccountService.MIN_USERNAME_LENGTH) {
             return AccountService.USERNAME_MIN_LENGTH_ERR;
         }
@@ -734,9 +733,11 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
             return AccountService.USERNAME_INVALID_CHARS_ERR;
         }
 
-        let isUniq = await this._accountApi.checkUsernameUniqueness(username);
-        if (!isUniq) {
-            return AccountService.USERNAME_TAKEN_ERR;
+        if (checkUniq) {
+            let isUniq = await this._accountApi.checkUsernameUniqueness(username);
+            if (!isUniq) {
+                return AccountService.USERNAME_TAKEN_ERR;
+            }
         }
 
         return null;
@@ -838,6 +839,7 @@ const BASE_MESSAGE_IDS = {
     USERNAME_MAX_LENGTH_ERR: 'USERNAME_MAX_LENGTH_ERR',
     USERNAME_INVALID_CHARS: 'USERNAME_INVALID_CHARS',
     USERNAME_TAKEN: 'USERNAME_TAKEN',
+    USERNAME_NEEDED: 'USERNAME_NEEDED',
     EMAIL_INVALID: 'EMAIL_INVALID',
     EMAIL_TAKEN: 'EMAIL_TAKEN',
     EMAIL_NEEDED: 'EMAIL_NEEDED',
@@ -931,6 +933,7 @@ const EN_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Username is too long. The maximum allowed length is {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Username contains invalid characters.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'This username is already taken.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_NEEDED]: 'Username is empty.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'The email address is invalid.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'The email address is already taken.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_NEEDED]: '"The email address is not specified.',
@@ -965,6 +968,7 @@ const UK_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Ім\'я користувача занадто довге. Максимально допустима довжина — {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Ім\'я користувача містить недопустимі символи.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'Це ім\'я користувача вже зайняте.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_NEEDED]: 'Ім\'я користувача порожнє.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'Електронна адреса недійсна.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'Електронна адреса вже зайнята.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_NEEDED]: 'Електронну адресу не вказано.',
@@ -1417,6 +1421,8 @@ class AccountUsernameErrorView extends _base_baseErrorView__WEBPACK_IMPORTED_MOD
                 case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.USERNAME_TAKEN):
                     this._el.innerHTML = this.$mm.format(err.msgId);
                     break;
+                default:
+                    this._el.innerHTML = this.$mm.get(_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         } else {
             this._el.innerHTML = '';

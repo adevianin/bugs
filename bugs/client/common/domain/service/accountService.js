@@ -56,23 +56,22 @@ class AccountService extends BaseService {
     }
 
     async changeUsername(newUsername) {
+        let usernameErr = await this.validateUsername(newUsername, false);
+        if (usernameErr) {
+            return usernameErr;
+        }
+
         try {
-            await this._requestHandler(() => this._accountApi.changeUsername(newUsername));
+            await this._accountApi.changeUsername(newUsername);
             this._userData.username = newUsername;
-        } catch (e) {
-            if (e instanceof ConflictRequestError) {
-                switch (e.data.err_code) {
-                    case 'min_length':
-                        return AccountService.USERNAME_MIN_LENGTH_ERR;
-                    case 'max_length':
-                        return AccountService.USERNAME_MAX_LENGTH_ERR;
-                    case 'invalid_chars':
-                        return AccountService.USERNAME_INVALID_CHARS_ERR;
-                    case 'unique':
-                        return AccountService.USERNAME_TAKEN_ERR;
-                }
+            return null;
+        } catch (error) {
+            if (error.status == 409) {
+                return AccountService.USERNAME_TAKEN_ERR;
             } else {
-                throw e;
+                return {
+                    msgId: BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG
+                }
             }
         }
     }
@@ -115,7 +114,7 @@ class AccountService extends BaseService {
         return this._userData;
     }
 
-    async validateUsername(username = '') {
+    async validateUsername(username = '', checkUniq = true) {
         if (username.length < AccountService.MIN_USERNAME_LENGTH) {
             return AccountService.USERNAME_MIN_LENGTH_ERR;
         }
@@ -128,9 +127,11 @@ class AccountService extends BaseService {
             return AccountService.USERNAME_INVALID_CHARS_ERR;
         }
 
-        let isUniq = await this._accountApi.checkUsernameUniqueness(username);
-        if (!isUniq) {
-            return AccountService.USERNAME_TAKEN_ERR;
+        if (checkUniq) {
+            let isUniq = await this._accountApi.checkUsernameUniqueness(username);
+            if (!isUniq) {
+                return AccountService.USERNAME_TAKEN_ERR;
+            }
         }
 
         return null;
