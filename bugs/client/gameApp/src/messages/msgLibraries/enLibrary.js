@@ -3,6 +3,7 @@ import { EN_BASE_LIBRARY } from "@common/messages/msgLibraries/enLibrary";
 
 const EN_LIBRARY = {
     ...EN_BASE_LIBRARY,
+    [MESSAGE_IDS.OLD_PASSWORD_NEEDED]: 'Old password is not specified.',
     [MESSAGE_IDS.TAB_BREEDING]: 'Breeding',
     [MESSAGE_IDS.TAB_COLONIES]: 'Colonies',
     [MESSAGE_IDS.TAB_SPECIE]: 'Specie',

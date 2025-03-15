@@ -223,6 +223,19 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         }
     }
 
+    async changePassword(newPassword, oldPassword) {
+        try {
+            await this._requestHandler(() => this._accountApi.changePassword(newPassword, oldPassword));
+            return null;
+        } catch (e) {
+            if (e instanceof _errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_3__.UnauthorizedRequestError) {
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED;
+            } else {
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+            }
+        }
+    }
+
     getUserData() {
         return this._userData;
     }
@@ -362,6 +375,7 @@ const BASE_MESSAGE_IDS = {
     PASSWORD_NEEDED: 'PASSWORD_NEEDED',
     NOT_VALID_PASSWORD_OR_EMAIL: 'NOT_VALID_PASSWORD_OR_EMAIL',
     PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED: 'PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED',
+    OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED: 'OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED',
     RESET_PASSWORD_LINK_EXPIRED: 'RESET_PASSWORD_LINK_EXPIRED',
     SOMETHING_WENT_WRONG: 'SOMETHING_WENT_WRONG',
 }
@@ -457,6 +471,7 @@ const EN_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Password not provided.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Incorrect password or email address.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'The entered password is incorrect. The email has not been changed.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED]: 'The entered old password is incorrect. The password has not been changed.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED]: 'The password reset link is invalid or expired. Please request a new link.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Something went wrong.',
 }
@@ -493,6 +508,7 @@ const UK_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Пароль не вказано.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Неправильний пароль або електронна адреса.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'Введений пароль неправильний. Електронну адресу не було змінено.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED]: 'Введений старий пароль неправильний. Пароль не було змінено.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED]: 'Посилання для відновлення пароля недійсне або застаріле. Будь ласка, запросіть нове посилання.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Щось пішло не так.',
 }
@@ -556,6 +572,12 @@ class AccountApi {
     changeEmail(newEmail, password) {
         return this._requester.post('api/accounts/change_email', {
             newEmail, password
+        });
+    }
+
+    changePassword(newPassword, oldPassword) {
+        return this._requester.post('api/accounts/change_password', {
+            newPassword, oldPassword
         });
     }
 
@@ -949,6 +971,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const MESSAGE_IDS = {
     ..._common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS,
+    OLD_PASSWORD_NEEDED: 'OLD_PASSWORD_NEEDED',
     TAB_BREEDING: 'TAB_BREEDING',
     TAB_COLONIES: 'TAB_COLONIES',
     TAB_SPECIE: 'TAB_SPECIE',

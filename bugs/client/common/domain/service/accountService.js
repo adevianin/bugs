@@ -117,6 +117,19 @@ class AccountService extends BaseService {
         }
     }
 
+    async changePassword(newPassword, oldPassword) {
+        try {
+            await this._requestHandler(() => this._accountApi.changePassword(newPassword, oldPassword));
+            return null;
+        } catch (e) {
+            if (e instanceof UnauthorizedRequestError) {
+                return BASE_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED;
+            } else {
+                return BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+            }
+        }
+    }
+
     getUserData() {
         return this._userData;
     }

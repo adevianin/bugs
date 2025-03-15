@@ -2,6 +2,7 @@ import { BASE_MESSAGE_IDS } from "@common/messages/messageIds"
 
 const MESSAGE_IDS = {
     ...BASE_MESSAGE_IDS,
+    OLD_PASSWORD_NEEDED: 'OLD_PASSWORD_NEEDED',
     TAB_BREEDING: 'TAB_BREEDING',
     TAB_COLONIES: 'TAB_COLONIES',
     TAB_SPECIE: 'TAB_SPECIE',

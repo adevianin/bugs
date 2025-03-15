@@ -284,3 +284,28 @@ def change_email(request: HttpRequest):
                 return HttpResponse(status=400)
 
     return HttpResponse(status=204)    
+
+@require_POST
+@login_required
+def change_password(request: HttpRequest):
+    try:
+        data = json.loads(request.body)
+        old_password = data.get('oldPassword', '')
+        new_password = data.get('newPassword', '')
+    except Exception as e:
+        return HttpResponse(status=400)
+    
+    user = User.objects.get(id=request.user.id)
+
+    if not user.check_password(old_password):
+        return HttpResponse(status=401)
+    
+    try:
+        validate_password(new_password, user=user)
+        user.set_password(new_password)
+        user.full_clean()
+        user.save()
+    except ValidationError as e:
+        return HttpResponse(status=400)
+                
+    return HttpResponse(status=204)    

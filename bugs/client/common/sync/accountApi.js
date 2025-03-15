@@ -46,6 +46,12 @@ class AccountApi {
         });
     }
 
+    changePassword(newPassword, oldPassword) {
+        return this._requester.post('api/accounts/change_password', {
+            newPassword, oldPassword
+        });
+    }
+
     checkUsernameUniqueness(username) {
         return this._requester.post('api/accounts/check_username_uniqueness', {
             username

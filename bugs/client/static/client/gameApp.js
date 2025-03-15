@@ -243,6 +243,19 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         }
     }
 
+    async changePassword(newPassword, oldPassword) {
+        try {
+            await this._requestHandler(() => this._accountApi.changePassword(newPassword, oldPassword));
+            return null;
+        } catch (e) {
+            if (e instanceof _errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_3__.UnauthorizedRequestError) {
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED;
+            } else {
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+            }
+        }
+    }
+
     getUserData() {
         return this._userData;
     }
@@ -384,6 +397,7 @@ const BASE_MESSAGE_IDS = {
     PASSWORD_NEEDED: 'PASSWORD_NEEDED',
     NOT_VALID_PASSWORD_OR_EMAIL: 'NOT_VALID_PASSWORD_OR_EMAIL',
     PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED: 'PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED',
+    OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED: 'OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED',
     RESET_PASSWORD_LINK_EXPIRED: 'RESET_PASSWORD_LINK_EXPIRED',
     SOMETHING_WENT_WRONG: 'SOMETHING_WENT_WRONG',
 }
@@ -481,6 +495,7 @@ const EN_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Password not provided.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Incorrect password or email address.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'The entered password is incorrect. The email has not been changed.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED]: 'The entered old password is incorrect. The password has not been changed.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED]: 'The password reset link is invalid or expired. Please request a new link.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Something went wrong.',
 }
@@ -518,6 +533,7 @@ const UK_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Пароль не вказано.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Неправильний пароль або електронна адреса.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'Введений пароль неправильний. Електронну адресу не було змінено.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED]: 'Введений старий пароль неправильний. Пароль не було змінено.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED]: 'Посилання для відновлення пароля недійсне або застаріле. Будь ласка, запросіть нове посилання.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Щось пішло не так.',
 }
@@ -582,6 +598,12 @@ class AccountApi {
     changeEmail(newEmail, password) {
         return this._requester.post('api/accounts/change_email', {
             newEmail, password
+        });
+    }
+
+    changePassword(newPassword, oldPassword) {
+        return this._requester.post('api/accounts/change_password', {
+            newPassword, oldPassword
         });
     }
 
@@ -894,6 +916,44 @@ class DotsLoaderView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Bas
         this._el.classList.add('dots-loader');
     }
     
+}
+
+
+
+/***/ }),
+
+/***/ "./common/view/errors/accountPasswordErrorView.js":
+/*!********************************************************!*\
+  !*** ./common/view/errors/accountPasswordErrorView.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AccountPasswordErrorView: () => (/* binding */ AccountPasswordErrorView)
+/* harmony export */ });
+/* harmony import */ var _base_baseErrorView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseErrorView */ "./common/view/errors/base/baseErrorView.js");
+/* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
+
+
+
+class AccountPasswordErrorView extends _base_baseErrorView__WEBPACK_IMPORTED_MODULE_0__.BaseErrorView {
+
+    setErr(err) {
+        if (err) {
+            switch (err.msgId) {
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR):
+                    this._el.innerHTML = this.$mm.format(err.msgId, err.minLength);
+                    break;
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR):
+                    this._el.innerHTML = this.$mm.format(err.msgId, err.maxLength);
+                    break;
+            }
+        } else {
+            this._el.innerHTML = '';
+        }
+    }
 }
 
 
@@ -1265,9 +1325,9 @@ class DomainFacade extends _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MOD
         return this._accountService.getUserData();
     }
 
-    validateUsername(username) {
-        return this._accountService.validateUsername(username);
-    }
+    // validateUsername(username) {
+    //     return this._accountService.validateUsername(username);
+    // }
 
     changeUsername(newUsername) {
         return this._accountService.changeUsername(newUsername);
@@ -1275,6 +1335,14 @@ class DomainFacade extends _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MOD
 
     changeEmail(newEmail, password) {
         return this._accountService.changeEmail(newEmail, password);
+    }
+
+    changePassword(newPassword, oldPassword) {
+        return this._accountService.changePassword(newPassword, oldPassword);
+    }
+
+    validatePassword(password) {
+        return this._accountService.validatePassword(password);
     }
 
     /*==============================*/
@@ -4658,6 +4726,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const MESSAGE_IDS = {
     ..._common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS,
+    OLD_PASSWORD_NEEDED: 'OLD_PASSWORD_NEEDED',
     TAB_BREEDING: 'TAB_BREEDING',
     TAB_COLONIES: 'TAB_COLONIES',
     TAB_SPECIE: 'TAB_SPECIE',
@@ -4688,6 +4757,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const EN_LIBRARY = {
     ..._common_messages_msgLibraries_enLibrary__WEBPACK_IMPORTED_MODULE_1__.EN_BASE_LIBRARY,
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.OLD_PASSWORD_NEEDED]: 'Old password is not specified.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_BREEDING]: 'Breeding',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_COLONIES]: 'Colonies',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_SPECIE]: 'Specie',
@@ -4743,6 +4813,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const UK_LIBRARY = {
     ..._common_messages_msgLibraries_ukLibrary__WEBPACK_IMPORTED_MODULE_1__.UK_BASE_LIBRARY,
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.OLD_PASSWORD_NEEDED]: 'Старий пароль не вказано.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_BREEDING]: 'Розмноження',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_COLONIES]: 'Колонії',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.MESSAGE_IDS.TAB_SPECIE]: 'Вид',
@@ -11770,6 +11841,11 @@ class EmailFieldEditorView extends _baseFieldEditor__WEBPACK_IMPORTED_MODULE_1__
         this._okBtn.addEventListener('click', this._onOkBtnClick.bind(this));
     }
 
+    remove() {
+        super.remove();
+        this._loader.remove();
+    }
+
     _render() {
         this._el.innerHTML = _emailFieldEditorTmpl_html__WEBPACK_IMPORTED_MODULE_0__["default"];
 
@@ -11811,6 +11887,173 @@ class EmailFieldEditorView extends _baseFieldEditor__WEBPACK_IMPORTED_MODULE_1__
 
 /***/ }),
 
+/***/ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/passwordFieldEditor/passwordFieldEditorView.js":
+/*!*********************************************************************************************************!*\
+  !*** ./gameApp/src/view/panel/tabs/userTab/fieldEditors/passwordFieldEditor/passwordFieldEditorView.js ***!
+  \*********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PasswordFieldEditorView: () => (/* binding */ PasswordFieldEditorView)
+/* harmony export */ });
+/* harmony import */ var _passwordFieldEditorTmpl_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./passwordFieldEditorTmpl.html */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/passwordFieldEditor/passwordFieldEditorTmpl.html");
+/* harmony import */ var _baseFieldEditor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../baseFieldEditor */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/baseFieldEditor.js");
+/* harmony import */ var _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/view/dotsLoader/dotsLoaderView */ "./common/view/dotsLoader/dotsLoaderView.js");
+/* harmony import */ var _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/view/errors/accountPasswordErrorView */ "./common/view/errors/accountPasswordErrorView.js");
+/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
+
+
+
+
+
+
+class PasswordFieldEditorView extends _baseFieldEditor__WEBPACK_IMPORTED_MODULE_1__.BaseFieldEditor {
+
+    constructor(onDone) {
+        super(onDone);
+
+        this._render();
+
+        this._cancelBtn.addEventListener('click', this._onCancelBtnClick.bind(this));
+        this._okBtn.addEventListener('click', this._onOkBtnClick.bind(this));
+
+        this._newPasswordEl.addEventListener('change', this._onNewPasswordChange.bind(this));
+        this._newPasswordConfirmEl.addEventListener('change', this._onNewPasswordConfirmChange.bind(this));
+        this._oldPasswordEl.addEventListener('change', this._onOldPasswordChange.bind(this));
+    }
+
+    remove() {
+        super.remove();
+        this._loader.remove();
+        this._newPasswordErr.remove();
+    }
+
+    _render() {
+        this._el.innerHTML = _passwordFieldEditorTmpl_html__WEBPACK_IMPORTED_MODULE_0__["default"];
+
+        this._errContainer = this._el.querySelector('[data-err-container]');
+        this._loader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__.DotsLoaderView(this._el.querySelector('[data-loader]'));
+
+        this._okBtn = this._el.querySelector('[data-ok]');
+        this._cancelBtn = this._el.querySelector('[data-cancel]');
+        
+        this._newPasswordEl = this._el.querySelector('[data-new-password]');
+        this._newPasswordConfirmEl = this._el.querySelector('[data-new-password-confirmation]');
+        this._oldPasswordEl = this._el.querySelector('[data-old-password]');
+        
+        this._newPasswordErr = new _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_3__.AccountPasswordErrorView(this._el.querySelector('[data-new-password-err-container]'));
+        this._newPasswordConfirmErrContainer = this._el.querySelector('[data-new-password-confirm-err-container]');
+        this._oldPasswordErrContainer = this._el.querySelector('[data-old-password-err-container]');
+        this._requestErrContainer = this._el.querySelector('[data-request-err-container]');
+    }
+
+    _renderErr(errId) {
+        this._errContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    _onCancelBtnClick() {
+        this._onDone(null);
+    }
+
+    _validate() {
+        let isError = false;
+
+        let newPasswordErr = this._validateNewPassword();
+        this._renderNewPasswordErr(newPasswordErr);
+        if (newPasswordErr) {
+            isError = true;
+        }
+
+        let newPasswordConfirmErr = this._validateNewPasswordConfirm();
+        this._renderNewPasswordConfirmErr(newPasswordConfirmErr);
+        if (newPasswordConfirmErr) {
+            isError = true;
+        }
+
+        let oldPasswordErr = this._validateOldPassword();
+        this._renderOldPasswordErr(oldPasswordErr);
+        if (oldPasswordErr) {
+            isError = true;
+        }
+
+        return !isError;
+    }
+
+    _validateNewPassword() {
+        let newPassword = this._newPasswordEl.value;
+        return this.$domainFacade.validatePassword(newPassword);
+    }
+
+    _renderNewPasswordErr(err) {
+        this._newPasswordErr.setErr(err);
+    }
+
+    _validateNewPasswordConfirm() {
+        let newPassword = this._newPasswordEl.value;
+        let newPasswordConfirm = this._newPasswordConfirmEl.value;
+
+        if (newPassword != newPasswordConfirm) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_4__.MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID
+        }
+    }
+
+    _renderNewPasswordConfirmErr(errId) {
+        this._newPasswordConfirmErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    _validateOldPassword() {
+        if (!this._oldPasswordEl.value.length) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_4__.MESSAGE_IDS.OLD_PASSWORD_NEEDED;
+        }
+    }
+
+    _renderOldPasswordErr(errId) {
+        this._oldPasswordErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    _renderRequestErr(errId) {
+        this._requestErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+     _onNewPasswordChange() {
+        let newPasswordErr = this._validateNewPassword();
+        this._renderNewPasswordErr(newPasswordErr);
+    }
+
+    _onNewPasswordConfirmChange() {
+        let newPasswordConfirmErr = this._validateNewPasswordConfirm();
+        this._renderNewPasswordConfirmErr(newPasswordConfirmErr);
+    }
+
+    _onOldPasswordChange() {
+        let oldPasswordErr = this._validateOldPassword();
+        this._renderOldPasswordErr(oldPasswordErr);
+    }
+
+    async _onOkBtnClick() {
+        if (!this._validate()) {
+            return;
+        }
+
+        this._loader.toggle(true);
+        let newPassword = this._newPasswordEl.value;
+        let oldPassword = this._oldPasswordEl.value;
+        let err = await this.$domainFacade.changePassword(newPassword, oldPassword);
+        this._renderRequestErr(err);
+        this._loader.toggle(false);
+        if (!err) {
+            this._onDone();
+        }
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/usernameFieldEditor/usernameFieldEditorView.js":
 /*!*********************************************************************************************************!*\
   !*** ./gameApp/src/view/panel/tabs/userTab/fieldEditors/usernameFieldEditor/usernameFieldEditorView.js ***!
@@ -11840,6 +12083,11 @@ class UsernameFieldEditorView extends _baseFieldEditor__WEBPACK_IMPORTED_MODULE_
 
         this._cancelBtn.addEventListener('click', this._onCancelBtnClick.bind(this));
         this._okBtn.addEventListener('click', this._onOkBtnClick.bind(this));
+    }
+
+    remove() {
+        super.remove();
+        this._loader.remove();
     }
 
     _render() {
@@ -11892,9 +12140,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _userTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userTabTmpl.html */ "./gameApp/src/view/panel/tabs/userTab/userTabTmpl.html");
 /* harmony import */ var _fieldEditors_emailFieldEditor_emailFieldEditorView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fieldEditors/emailFieldEditor/emailFieldEditorView */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/emailFieldEditor/emailFieldEditorView.js");
 /* harmony import */ var _fieldEditors_usernameFieldEditor_usernameFieldEditorView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./fieldEditors/usernameFieldEditor/usernameFieldEditorView */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/usernameFieldEditor/usernameFieldEditorView.js");
+/* harmony import */ var _fieldEditors_passwordFieldEditor_passwordFieldEditorView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./fieldEditors/passwordFieldEditor/passwordFieldEditorView */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/passwordFieldEditor/passwordFieldEditorView.js");
 
 
-// import { UsernameEditorView } from './usernameEditor/usernameEditorView';
+
 
 
 
@@ -11914,6 +12163,7 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
         this._emailEditBtnEl.addEventListener('click', this._onEmailEditBtnClick.bind(this));
         this._usernameEditBtnEl.addEventListener('click', this._onUsernameEditBtnClick.bind(this));
+        this._passwordEditBtnEl.addEventListener('click', this._onPasswordEditBtnClick.bind(this));
     }
 
     _render() {
@@ -11927,7 +12177,8 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
 
         this._usernameEl = this._el.querySelector('[data-username]');
         this._usernameEditBtnEl = this._el.querySelector('[data-edit-username-btn]');
-        // this._usernameEditorView = new UsernameEditorView(this._el.querySelector('[data-username-editor]'));
+
+        this._passwordEditBtnEl = this._el.querySelector('[data-edit-password-btn]');
 
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
 
@@ -11993,6 +12244,13 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
             }
         });
         this._showFieldEditor(usernameFieldEditor);
+    }
+
+    _onPasswordEditBtnClick() {
+        let passwordFieldEditor = new _fieldEditors_passwordFieldEditor_passwordFieldEditorView__WEBPACK_IMPORTED_MODULE_4__.PasswordFieldEditorView(() => {
+            this._showMainContant();
+        });
+        this._showFieldEditor(passwordFieldEditor);
     }
 
 }
@@ -21903,6 +22161,24 @@ var code = "<div>\r\n    <label>email:</label>\r\n    <input type=\"email\" data
 
 /***/ }),
 
+/***/ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/passwordFieldEditor/passwordFieldEditorTmpl.html":
+/*!***********************************************************************************************************!*\
+  !*** ./gameApp/src/view/panel/tabs/userTab/fieldEditors/passwordFieldEditor/passwordFieldEditorTmpl.html ***!
+  \***********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div>\r\n    <label>new password:</label>\r\n    <input type=\"password\" data-new-password />\r\n    <div class=\"g-error-container\" data-new-password-err-container></div>\r\n</div>\r\n<div>\r\n    <label>new password confirmation:</label>\r\n    <input type=\"password\" data-new-password-confirmation />\r\n    <div class=\"g-error-container\" data-new-password-confirm-err-container></div>\r\n</div>\r\n<div>\r\n    <label>old password:</label>\r\n    <input type=\"password\" data-old-password />\r\n    <div class=\"g-error-container\" data-old-password-err-container></div>\r\n</div>\r\n<div class=\"g-hidden\" data-loader></div>\r\n<div class=\"g-error-container\" data-request-err-container></div>\r\n<div>\r\n    <button data-ok>ok</button>\r\n    <button data-cancel>cancel</button>\r\n</div>\r\n";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/usernameFieldEditor/usernameFieldEditorTmpl.html":
 /*!***********************************************************************************************************!*\
   !*** ./gameApp/src/view/panel/tabs/userTab/fieldEditors/usernameFieldEditor/usernameFieldEditorTmpl.html ***!
@@ -21933,7 +22209,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-main-contentainer>\r\n    <!-- <div data-username-editor></div> -->\r\n    <div>\r\n        username:\r\n        <span data-username></span>\r\n        <button data-edit-username-btn>(>)</button>\r\n    </div>\r\n    <div>\r\n        email:\r\n        <span data-email></span>\r\n        <button data-edit-email-btn>(>)</button>\r\n    </div>\r\n    <button data-logout-btn>вийти</button>\r\n</div>\r\n<div data-field-editor-container></div>\r\n";
+var code = "<div data-main-contentainer>\r\n    <!-- <div data-username-editor></div> -->\r\n    <div>\r\n        username:\r\n        <span data-username></span>\r\n        <button data-edit-username-btn>(>)</button>\r\n    </div>\r\n    <div>\r\n        email:\r\n        <span data-email></span>\r\n        <button data-edit-email-btn>(>)</button>\r\n    </div>\r\n    <div>\r\n        password:\r\n        <span>***</span>\r\n        <button data-edit-password-btn>(>)</button>\r\n    </div>\r\n    <button data-logout-btn>вийти</button>\r\n</div>\r\n<div data-field-editor-container></div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

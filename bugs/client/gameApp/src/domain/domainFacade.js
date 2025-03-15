@@ -241,9 +241,9 @@ class DomainFacade extends BaseDomainFacade {
         return this._accountService.getUserData();
     }
 
-    validateUsername(username) {
-        return this._accountService.validateUsername(username);
-    }
+    // validateUsername(username) {
+    //     return this._accountService.validateUsername(username);
+    // }
 
     changeUsername(newUsername) {
         return this._accountService.changeUsername(newUsername);
@@ -251,6 +251,14 @@ class DomainFacade extends BaseDomainFacade {
 
     changeEmail(newEmail, password) {
         return this._accountService.changeEmail(newEmail, password);
+    }
+
+    changePassword(newPassword, oldPassword) {
+        return this._accountService.changePassword(newPassword, oldPassword);
+    }
+
+    validatePassword(password) {
+        return this._accountService.validatePassword(password);
     }
 
     /*==============================*/

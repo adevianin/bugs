@@ -1,8 +1,8 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import userTabTmpl from './userTabTmpl.html';
-// import { UsernameEditorView } from './usernameEditor/usernameEditorView';
 import { EmailFieldEditorView } from './fieldEditors/emailFieldEditor/emailFieldEditorView';
 import { UsernameFieldEditorView } from './fieldEditors/usernameFieldEditor/usernameFieldEditorView';
+import { PasswordFieldEditorView } from './fieldEditors/passwordFieldEditor/passwordFieldEditorView';
 
 class UserTab extends BaseGameHTMLView {
 
@@ -20,6 +20,7 @@ class UserTab extends BaseGameHTMLView {
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
         this._emailEditBtnEl.addEventListener('click', this._onEmailEditBtnClick.bind(this));
         this._usernameEditBtnEl.addEventListener('click', this._onUsernameEditBtnClick.bind(this));
+        this._passwordEditBtnEl.addEventListener('click', this._onPasswordEditBtnClick.bind(this));
     }
 
     _render() {
@@ -33,7 +34,8 @@ class UserTab extends BaseGameHTMLView {
 
         this._usernameEl = this._el.querySelector('[data-username]');
         this._usernameEditBtnEl = this._el.querySelector('[data-edit-username-btn]');
-        // this._usernameEditorView = new UsernameEditorView(this._el.querySelector('[data-username-editor]'));
+
+        this._passwordEditBtnEl = this._el.querySelector('[data-edit-password-btn]');
 
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
 
@@ -99,6 +101,13 @@ class UserTab extends BaseGameHTMLView {
             }
         });
         this._showFieldEditor(usernameFieldEditor);
+    }
+
+    _onPasswordEditBtnClick() {
+        let passwordFieldEditor = new PasswordFieldEditorView(() => {
+            this._showMainContant();
+        });
+        this._showFieldEditor(passwordFieldEditor);
     }
 
 }
