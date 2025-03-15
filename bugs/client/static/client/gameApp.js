@@ -180,11 +180,11 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         }
 
         try {
-            await this._accountApi.changeUsername(newUsername);
+            await this._requestHandler(() => this._accountApi.changeUsername(newUsername));
             this._userData.username = newUsername;
             return null;
-        } catch (error) {
-            if (error.status == 409) {
+        } catch (e) {
+            if (e instanceof _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_4__.ConflictRequestError) {
                 return AccountService.USERNAME_TAKEN_ERR;
             } else {
                 return {

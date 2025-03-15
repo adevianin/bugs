@@ -77,11 +77,11 @@ class AccountService extends BaseService {
         }
 
         try {
-            await this._accountApi.changeUsername(newUsername);
+            await this._requestHandler(() => this._accountApi.changeUsername(newUsername));
             this._userData.username = newUsername;
             return null;
-        } catch (error) {
-            if (error.status == 409) {
+        } catch (e) {
+            if (e instanceof ConflictRequestError) {
                 return AccountService.USERNAME_TAKEN_ERR;
             } else {
                 return {
