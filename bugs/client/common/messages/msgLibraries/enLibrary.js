@@ -15,6 +15,7 @@ const EN_BASE_LIBRARY = {
     [BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Password not provided.',
     [BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Incorrect password or email address.',
     [BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'The entered password is incorrect. The email has not been changed.',
+    [BASE_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED]: 'The password reset link is invalid or expired. Please request a new link.',
     [BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Something went wrong.',
 }
 

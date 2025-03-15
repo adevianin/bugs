@@ -15,6 +15,7 @@ const UK_BASE_LIBRARY = {
     [BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Пароль не вказано.',
     [BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Неправильний пароль або електронна адреса.',
     [BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'Введений пароль неправильний. Електронну адресу не було змінено.',
+    [BASE_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED]: 'Посилання для відновлення пароля недійсне або застаріле. Будь ласка, запросіть нове посилання.',
     [BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Щось пішло не так.',
 }
 

@@ -1,7 +1,6 @@
 import { BASE_MESSAGE_IDS } from "@common/messages/messageIds";
 import { MESSAGE_IDS } from "@messages/messageIds";
 import { BaseService } from "./base/baseService";
-import { ConflictRequestError } from "../errors/conflictRequestError";
 
 class AccountService extends BaseService {
 
@@ -51,8 +50,17 @@ class AccountService extends BaseService {
         return this._requestHandler(() => this._accountApi.resetPasswordRequest(email));
     }
 
-    setNewPassword(newPassword, token, id) {
-        return this._requestHandler(() => this._accountApi.setNewPassword(newPassword, token, id));
+    async setNewPassword(newPassword, token, id) {
+        try {
+            await this._accountApi.setNewPassword(newPassword, token, id);
+            return null;
+        } catch (error) {
+            if (error.status == 403) {
+                return BASE_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED;
+            } else {
+                return BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+            }
+        }
     }
 
     async changeUsername(newUsername) {

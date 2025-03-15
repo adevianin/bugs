@@ -219,7 +219,7 @@ def set_new_password(request: HttpRequest):
         return HttpResponse(status=400)
     
     if not ResetPasswordTokenGenerator.validate(user, token):
-        return HttpResponse(status=400)
+        return HttpResponse(status=403)
     
     try:
         validate_password(new_password, user=user)
