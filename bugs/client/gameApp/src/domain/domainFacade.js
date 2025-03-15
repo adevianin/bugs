@@ -249,6 +249,10 @@ class DomainFacade extends BaseDomainFacade {
         return this._accountService.changeUsername(newUsername);
     }
 
+    changeEmail(newEmail, password) {
+        return this._accountService.changeEmail(newEmail, password);
+    }
+
     /*==============================*/
 
 }

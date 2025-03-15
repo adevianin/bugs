@@ -77,6 +77,40 @@ class AccountService extends BaseService {
         }
     }
 
+    async changeEmail(newEmail, password) {
+        if (!newEmail) {
+            return BASE_MESSAGE_IDS.EMAIL_NEEDED;
+        }
+
+        if (!password) {
+            return BASE_MESSAGE_IDS.PASSWORD_NEEDED;
+        }
+
+        try {
+            await this._accountApi.changeEmail(newEmail, password);
+            this._userData.email = newEmail;
+            return null;
+        } catch (error) {
+            if (error.status == 401) {
+                return BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED;
+            } else if (error.status == 400) {
+                switch (error.data.err_code) {
+                    case 'unique':
+                        return BASE_MESSAGE_IDS.EMAIL_TAKEN;
+                    case 'invalid_chars':
+                    case 'min_length':
+                    case 'max_length':
+                    case 'blank':
+                        return BASE_MESSAGE_IDS.EMAIL_INVALID;
+                    default:
+                        return BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+                }
+            } else {
+                return BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+            }
+        }
+    }
+
     getUserData() {
         return this._userData;
     }
@@ -130,9 +164,7 @@ class AccountService extends BaseService {
 
         let isUniq = await this._accountApi.checkEmailUniqueness(email);
         if (!isUniq) {
-            return {
-                msgId: BASE_MESSAGE_IDS.EMAIL_TAKEN
-            }
+            return BASE_MESSAGE_IDS.EMAIL_TAKEN;
         }
 
         return null;

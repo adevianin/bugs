@@ -252,4 +252,29 @@ def change_username(request: HttpRequest):
         for error in e.error_dict.get('username', []):
             return JsonResponse({'err_code': error.code}, status=409)
 
+    return HttpResponse(status=204) 
+   
+@require_POST
+@login_required
+def change_email(request: HttpRequest):
+    try:
+        data = json.loads(request.body)
+        new_email = data.get('newEmail', '')
+        password = data.get('password', '')
+    except Exception as e:
+        return HttpResponse(status=400)
+    
+    user = User.objects.get(id=request.user.id)
+
+    if not user.check_password(password):
+        return HttpResponse(status=401)
+    
+    try:
+        user.email = new_email
+        user.full_clean()
+        user.save()
+    except ValidationError as e:
+        for error in e.error_dict.get('email', []):
+            return JsonResponse({'err_code': error.code}, status=400)
+
     return HttpResponse(status=204)    

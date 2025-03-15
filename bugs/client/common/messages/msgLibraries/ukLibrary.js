@@ -7,11 +7,13 @@ const UK_BASE_LIBRARY = {
     [BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'Це ім\'я користувача вже зайняте.',
     [BASE_MESSAGE_IDS.EMAIL_INVALID]: 'Електронна адреса недійсна.',
     [BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'Електронна адреса вже зайнята.',
+    [BASE_MESSAGE_IDS.EMAIL_NEEDED]: 'Електронну адресу не вказано.',
     [BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Пароль занадто короткий. Мінімально допустима довжина — {0}.',
     [BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Пароль занадто довгий. Максимально допустима довжина — {0}.',
     [BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: 'Паролі не співпадають.',
     [BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Пароль не вказано.',
     [BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Неправильний пароль або електронна адреса.',
+    [BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'Введений пароль неправильний. Електронну адресу не було змінено.',
     [BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Щось пішло не так.',
 }
 

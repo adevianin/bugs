@@ -683,6 +683,40 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         }
     }
 
+    async changeEmail(newEmail, password) {
+        if (!newEmail) {
+            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_NEEDED;
+        }
+
+        if (!password) {
+            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED;
+        }
+
+        try {
+            await this._accountApi.changeEmail(newEmail, password);
+            this._userData.email = newEmail;
+            return null;
+        } catch (error) {
+            if (error.status == 401) {
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED;
+            } else if (error.status == 400) {
+                switch (error.data.err_code) {
+                    case 'unique':
+                        return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN;
+                    case 'invalid_chars':
+                    case 'min_length':
+                    case 'max_length':
+                    case 'blank':
+                        return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID;
+                    default:
+                        return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+                }
+            } else {
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+            }
+        }
+    }
+
     getUserData() {
         return this._userData;
     }
@@ -736,9 +770,7 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
 
         let isUniq = await this._accountApi.checkEmailUniqueness(email);
         if (!isUniq) {
-            return {
-                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN
-            }
+            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN;
         }
 
         return null;
@@ -808,11 +840,13 @@ const BASE_MESSAGE_IDS = {
     USERNAME_TAKEN: 'USERNAME_TAKEN',
     EMAIL_INVALID: 'EMAIL_INVALID',
     EMAIL_TAKEN: 'EMAIL_TAKEN',
+    EMAIL_NEEDED: 'EMAIL_NEEDED',
     PASSWORD_MIN_LENGTH_ERR: 'PASSWORD_MIN_LENGTH_ERR',
     PASSWORD_MAX_LENGTH_ERR: 'PASSWORD_MAX_LENGTH_ERR',
     PASSWORD_CONFIRMATION_IS_NOT_VALID: 'PASSWORD_CONFIRMATION_IS_NOT_VALID',
     PASSWORD_NEEDED: 'PASSWORD_NEEDED',
     NOT_VALID_PASSWORD_OR_EMAIL: 'NOT_VALID_PASSWORD_OR_EMAIL',
+    PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED: 'PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED',
     SOMETHING_WENT_WRONG: 'SOMETHING_WENT_WRONG'
 }
 
@@ -899,11 +933,13 @@ const EN_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'This username is already taken.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'The email address is invalid.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'The email address is already taken.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_NEEDED]: '"The email address is not specified.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Password is too short. The minimum allowed length is {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Password is too long. The maximum allowed length is {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: '"The passwords do not match.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Password not provided.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Incorrect password or email address.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'The entered password is incorrect. The email has not been changed.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Something went wrong.',
 }
 
@@ -931,11 +967,13 @@ const UK_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'Це ім\'я користувача вже зайняте.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'Електронна адреса недійсна.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'Електронна адреса вже зайнята.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_NEEDED]: 'Електронну адресу не вказано.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Пароль занадто короткий. Мінімально допустима довжина — {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Пароль занадто довгий. Максимально допустима довжина — {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: 'Паролі не співпадають.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Пароль не вказано.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Неправильний пароль або електронна адреса.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'Введений пароль неправильний. Електронну адресу не було змінено.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Щось пішло не так.',
 }
 
@@ -992,6 +1030,12 @@ class AccountApi {
     changeUsername(newUsername) {
         return this._requester.post('api/accounts/change_username', {
             newUsername
+        });
+    }
+
+    changeEmail(newEmail, password) {
+        return this._requester.post('api/accounts/change_email', {
+            newEmail, password
         });
     }
 

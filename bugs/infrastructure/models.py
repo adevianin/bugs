@@ -35,7 +35,8 @@ class User(AbstractUser):
             MaxLengthValidator(MAX_EMAIL_LENGTH),
             RegexValidator(
                 regex=EMAIL_REGEX,
-                message="invalid email format"
+                message="invalid email format",
+                code='invalid_chars'
             )
         ],
         error_messages={

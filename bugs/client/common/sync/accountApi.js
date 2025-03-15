@@ -40,6 +40,12 @@ class AccountApi {
         });
     }
 
+    changeEmail(newEmail, password) {
+        return this._requester.post('api/accounts/change_email', {
+            newEmail, password
+        });
+    }
+
     checkUsernameUniqueness(username) {
         return this._requester.post('api/accounts/check_username_uniqueness', {
             username

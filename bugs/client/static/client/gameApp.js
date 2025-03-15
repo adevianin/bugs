@@ -179,6 +179,40 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
         }
     }
 
+    async changeEmail(newEmail, password) {
+        if (!newEmail) {
+            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_NEEDED;
+        }
+
+        if (!password) {
+            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED;
+        }
+
+        try {
+            await this._accountApi.changeEmail(newEmail, password);
+            this._userData.email = newEmail;
+            return null;
+        } catch (error) {
+            if (error.status == 401) {
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED;
+            } else if (error.status == 400) {
+                switch (error.data.err_code) {
+                    case 'unique':
+                        return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN;
+                    case 'invalid_chars':
+                    case 'min_length':
+                    case 'max_length':
+                    case 'blank':
+                        return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID;
+                    default:
+                        return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+                }
+            } else {
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+            }
+        }
+    }
+
     getUserData() {
         return this._userData;
     }
@@ -232,9 +266,7 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
 
         let isUniq = await this._accountApi.checkEmailUniqueness(email);
         if (!isUniq) {
-            return {
-                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN
-            }
+            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN;
         }
 
         return null;
@@ -306,11 +338,13 @@ const BASE_MESSAGE_IDS = {
     USERNAME_TAKEN: 'USERNAME_TAKEN',
     EMAIL_INVALID: 'EMAIL_INVALID',
     EMAIL_TAKEN: 'EMAIL_TAKEN',
+    EMAIL_NEEDED: 'EMAIL_NEEDED',
     PASSWORD_MIN_LENGTH_ERR: 'PASSWORD_MIN_LENGTH_ERR',
     PASSWORD_MAX_LENGTH_ERR: 'PASSWORD_MAX_LENGTH_ERR',
     PASSWORD_CONFIRMATION_IS_NOT_VALID: 'PASSWORD_CONFIRMATION_IS_NOT_VALID',
     PASSWORD_NEEDED: 'PASSWORD_NEEDED',
     NOT_VALID_PASSWORD_OR_EMAIL: 'NOT_VALID_PASSWORD_OR_EMAIL',
+    PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED: 'PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED',
     SOMETHING_WENT_WRONG: 'SOMETHING_WENT_WRONG'
 }
 
@@ -399,11 +433,13 @@ const EN_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'This username is already taken.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'The email address is invalid.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'The email address is already taken.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_NEEDED]: '"The email address is not specified.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Password is too short. The minimum allowed length is {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Password is too long. The maximum allowed length is {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: '"The passwords do not match.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Password not provided.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Incorrect password or email address.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'The entered password is incorrect. The email has not been changed.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Something went wrong.',
 }
 
@@ -432,11 +468,13 @@ const UK_BASE_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'Це ім\'я користувача вже зайняте.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'Електронна адреса недійсна.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'Електронна адреса вже зайнята.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_NEEDED]: 'Електронну адресу не вказано.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Пароль занадто короткий. Мінімально допустима довжина — {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Пароль занадто довгий. Максимально допустима довжина — {0}.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: 'Паролі не співпадають.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Пароль не вказано.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Неправильний пароль або електронна адреса.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'Введений пароль неправильний. Електронну адресу не було змінено.',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Щось пішло не так.',
 }
 
@@ -494,6 +532,12 @@ class AccountApi {
     changeUsername(newUsername) {
         return this._requester.post('api/accounts/change_username', {
             newUsername
+        });
+    }
+
+    changeEmail(newEmail, password) {
+        return this._requester.post('api/accounts/change_email', {
+            newEmail, password
         });
     }
 
@@ -1343,6 +1387,10 @@ class DomainFacade extends _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MOD
 
     changeUsername(newUsername) {
         return this._accountService.changeUsername(newUsername);
+    }
+
+    changeEmail(newEmail, password) {
+        return this._accountService.changeEmail(newEmail, password);
     }
 
     /*==============================*/
@@ -11783,6 +11831,102 @@ class SpecieGeneView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODUL
 
 /***/ }),
 
+/***/ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/baseFieldEditor.js":
+/*!*****************************************************************************!*\
+  !*** ./gameApp/src/view/panel/tabs/userTab/fieldEditors/baseFieldEditor.js ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BaseFieldEditor: () => (/* binding */ BaseFieldEditor)
+/* harmony export */ });
+/* harmony import */ var _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/view/base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+
+
+class BaseFieldEditor extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
+    
+    constructor(onDone) {
+        super(document.createElement('div'));
+        this._onDone = onDone;
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/emailFieldEditor/emailFieldEditorView.js":
+/*!***************************************************************************************************!*\
+  !*** ./gameApp/src/view/panel/tabs/userTab/fieldEditors/emailFieldEditor/emailFieldEditorView.js ***!
+  \***************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EmailFieldEditorView: () => (/* binding */ EmailFieldEditorView)
+/* harmony export */ });
+/* harmony import */ var _emailFieldEditorTmpl_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./emailFieldEditorTmpl.html */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/emailFieldEditor/emailFieldEditorTmpl.html");
+/* harmony import */ var _baseFieldEditor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../baseFieldEditor */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/baseFieldEditor.js");
+/* harmony import */ var _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/view/dotsLoader/dotsLoaderView */ "./common/view/dotsLoader/dotsLoaderView.js");
+
+
+
+
+class EmailFieldEditorView extends _baseFieldEditor__WEBPACK_IMPORTED_MODULE_1__.BaseFieldEditor {
+
+    constructor(onDone) {
+        super(onDone);
+
+        this._render();
+
+        this._cancelBtn.addEventListener('click', this._onCancelBtnClick.bind(this));
+        this._okBtn.addEventListener('click', this._onOkBtnClick.bind(this));
+    }
+
+    _render() {
+        this._el.innerHTML = _emailFieldEditorTmpl_html__WEBPACK_IMPORTED_MODULE_0__["default"];
+
+        this._errContainer = this._el.querySelector('[data-err-container]');
+        this._loader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__.DotsLoaderView(this._el.querySelector('[data-loader]'));
+
+        this._okBtn = this._el.querySelector('[data-ok]');
+        this._cancelBtn = this._el.querySelector('[data-cancel]');
+        
+        this._passwordEl = this._el.querySelector('[data-password]');
+        this._emailEl = this._el.querySelector('[data-email]');
+        let user = this.$domainFacade.getUserData();
+        this._emailEl.value = user.email;
+    }
+
+    _renderErr(errId) {
+        this._errContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    }
+
+    _onCancelBtnClick() {
+        this._onDone(null);
+    }
+
+    async _onOkBtnClick() {
+        this._loader.toggle(true);
+        let newEmail = this._emailEl.value;
+        let password = this._passwordEl.value;
+        let err = await this.$domainFacade.changeEmail(newEmail, password);
+        this._renderErr(err);
+        this._loader.toggle(false);
+        if (!err) {
+            this._onDone(newEmail);
+        }
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/view/panel/tabs/userTab/userTab.js":
 /*!********************************************************!*\
   !*** ./gameApp/src/view/panel/tabs/userTab/userTab.js ***!
@@ -11797,31 +11941,86 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
 /* harmony import */ var _userTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userTabTmpl.html */ "./gameApp/src/view/panel/tabs/userTab/userTabTmpl.html");
 /* harmony import */ var _usernameEditor_usernameEditorView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./usernameEditor/usernameEditorView */ "./gameApp/src/view/panel/tabs/userTab/usernameEditor/usernameEditorView.js");
+/* harmony import */ var _fieldEditors_emailFieldEditor_emailFieldEditorView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./fieldEditors/emailFieldEditor/emailFieldEditorView */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/emailFieldEditor/emailFieldEditorView.js");
 
 
 
+
+// import { EmailEditorView } from './emailEditor/emailEditorView';
 
 class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
 
+    static MODES = {
+        PREVIEW: 'preview',
+        EDITOR: 'editor'
+    }
+
     constructor(el) {
         super(el);
+        this._fieldEditor = null;
 
         this._render();
 
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
+        this._emailEditBtnEl.addEventListener('click', this._onEmailEditBtnClick.bind(this));
     }
 
     _render() {
         this._el.innerHTML = _userTabTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
 
+        this._mainContainerEl = this._el.querySelector('[data-main-contentainer]');
+        this._fieldEditorContainerEl = this._el.querySelector('[data-field-editor-container]');
+        this._emailEl = this._el.querySelector('[data-email]');
+        this._emailEditBtnEl = this._el.querySelector('[data-edit-email-btn]');
         this._usernameEditorView = new _usernameEditor_usernameEditorView__WEBPACK_IMPORTED_MODULE_2__.UsernameEditorView(this._el.querySelector('[data-username-editor]'));
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
+
+        this._renderEmail();
+    }
+
+    _changeMode(modeName) {
+        this._mainContainerEl.classList.toggle('g-hidden', modeName != UserTab.MODES.PREVIEW);
+        this._fieldEditorContainerEl.classList.toggle('g-hidden', modeName != UserTab.MODES.EDITOR);
+    }
+
+    _removeFieldEditor() {
+        if (this._fieldEditor) {
+            this._fieldEditor.remove();
+            this._fieldEditor = null;
+        }
+    }
+
+    _showFieldEditor(fieldEditorView) {
+        this._removeFieldEditor();
+        this._fieldEditorContainerEl.appendChild(fieldEditorView.el);
+        this._fieldEditor = fieldEditorView;
+        this._changeMode(UserTab.MODES.EDITOR);
+    }
+
+    _showMainContant() {
+        this._removeFieldEditor();
+        this._changeMode(UserTab.MODES.PREVIEW);
+    }
+
+    _renderEmail() {
+        let user = this.$domainFacade.getUserData();
+        this._emailEl.innerHTML = user.email;
     }
 
     _onUserLogoutBtnClick() {
         this.$domainFacade.logout().then(redirectUrl => {
             location.href = redirectUrl;
         });
+    }
+
+    _onEmailEditBtnClick() {
+        let emailFieldEditor = new _fieldEditors_emailFieldEditor_emailFieldEditorView__WEBPACK_IMPORTED_MODULE_3__.EmailFieldEditorView((newEmail) => {
+            this._showMainContant();
+            if (newEmail) {
+                this._renderEmail();
+            }
+        });
+        this._showFieldEditor(emailFieldEditor);
     }
 
 }
@@ -21822,6 +22021,24 @@ var code = "<button data-activate-btn>&#60;</button>\r\n<button data-deactivate-
 
 /***/ }),
 
+/***/ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/emailFieldEditor/emailFieldEditorTmpl.html":
+/*!*****************************************************************************************************!*\
+  !*** ./gameApp/src/view/panel/tabs/userTab/fieldEditors/emailFieldEditor/emailFieldEditorTmpl.html ***!
+  \*****************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Module
+var code = "<div>\r\n    <label>email:</label>\r\n    <input type=\"email\" data-email />\r\n</div>\r\n<div>\r\n    <label>password:</label>\r\n    <input type=\"password\" data-password />\r\n</div>\r\n<div class=\"g-hidden\" data-loader></div>\r\n<div class=\"g-error-container\" data-err-container></div>\r\n<div>\r\n    <button data-ok>ok</button>\r\n    <button data-cancel>cancel</button>\r\n</div>\r\n";
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
+
+/***/ }),
+
 /***/ "./gameApp/src/view/panel/tabs/userTab/userTabTmpl.html":
 /*!**************************************************************!*\
   !*** ./gameApp/src/view/panel/tabs/userTab/userTabTmpl.html ***!
@@ -21834,7 +22051,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-username-editor></div>\r\n<button data-logout-btn>вийти</button>";
+var code = "<div data-main-contentainer>\r\n    <div data-username-editor></div>\r\n    <div>\r\n        email:\r\n        <span data-email></span>\r\n        <button data-edit-email-btn>(>)</button>\r\n    </div>\r\n    <button data-logout-btn>вийти</button>\r\n</div>\r\n<div data-field-editor-container></div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
