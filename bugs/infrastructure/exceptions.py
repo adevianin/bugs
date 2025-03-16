@@ -1,0 +1,1 @@
+class DailyEmailLimitExceededException(Exception): pass

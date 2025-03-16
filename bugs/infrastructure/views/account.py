@@ -18,6 +18,7 @@ from infrastructure.email.email_service import EmailService
 from infrastructure.utils.build_base_url import build_base_url
 from infrastructure.utils.generate_username import generate_username
 from infrastructure.event_bus import event_bus
+from infrastructure.utils.log_request_exception import log_request_exception
 import json
 
 @ensure_csrf_cookie
@@ -97,7 +98,11 @@ def account_register(request: HttpRequest):
         return HttpResponse(status=400)
     
     login(request, user)
-    EmailService.send_verification_email(user, build_base_url(request))
+
+    try:
+        EmailService.send_verification_email(user, build_base_url(request))
+    except Exception as e:
+        log_request_exception(request, e)
         
     return JsonResponse({
         'user': user.get_general_data()
@@ -197,10 +202,14 @@ def reset_password_request(request: HttpRequest):
     try:
         user = User.objects.get(email=email)
         if user.has_usable_password():
-            EmailService.send_reset_password_email(user, build_base_url(request))
-        return HttpResponse(status=204)
+            try:
+                EmailService.send_reset_password_email(user, build_base_url(request))
+            except Exception as e:
+                log_request_exception(request, e)
     except User.DoesNotExist:
         return HttpResponse(status=204)
+    
+    return HttpResponse(status=204)
     
 @require_POST 
 def set_new_password(request: HttpRequest):
@@ -290,7 +299,10 @@ def change_email(request: HttpRequest):
         user.full_clean()
         user.save()
         if is_email_diff:
-            EmailService.send_verification_email(user, build_base_url(request))
+            try:
+                EmailService.send_verification_email(user, build_base_url(request))
+            except Exception as e:
+                log_request_exception(request, e)
     except ValidationError as e:
         for error in e.error_dict.get('email', []):
             if error.code == 'unique':

@@ -8,11 +8,37 @@ from django.core.mail import EmailMessage
 from bugs.settings import DEFAULT_FROM_EMAIL
 from django.utils.encoding import force_bytes
 from urllib.parse import urlencode
+from collections import defaultdict
+from infrastructure.exceptions import DailyEmailLimitExceededException
+from bugs.settings import USER_MAILS_DAY_LIMIT
+import time
 
 class EmailService():
 
+    email_send_count = defaultdict(lambda: {'count': 0, 'reset_time': time.time() + 86400})
+
+    @staticmethod
+    def can_send_email(user: User):
+        user_data = EmailService.email_send_count[user.id]
+        current_time = time.time()
+
+        if current_time > user_data['reset_time']:
+            EmailService.email_send_count[user.id] = {'count': 0, 'reset_time': current_time + 86400}
+
+        if user_data['count'] >= USER_MAILS_DAY_LIMIT:
+            return False
+
+        return True
+
+    @staticmethod
+    def increment_email_count(user: User):
+        EmailService.email_send_count[user.id]['count'] += 1
+
     @staticmethod
     def send_verification_email(user: User, base_url: str):
+        if not EmailService.can_send_email(user):
+            raise DailyEmailLimitExceededException(f'user id = {user.id}')
+        
         subject = 'Підтвердження вашого облікового запису'
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = EmailVerificationTokenGenerator.generate(user)
@@ -33,8 +59,13 @@ class EmailService():
         email.content_subtype = 'html'
         email.send()
 
+        EmailService.increment_email_count(user)
+
     @staticmethod
     def send_reset_password_email(user: User, base_url: str):
+        if not EmailService.can_send_email(user):
+            raise DailyEmailLimitExceededException(f'user id = {user.id}')
+        
         subject = 'Відновлення пароля'
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = ResetPasswordTokenGenerator.generate(user)
@@ -55,3 +86,5 @@ class EmailService():
         )
         email.content_subtype = 'html'
         email.send()
+
+        EmailService.increment_email_count(user)
