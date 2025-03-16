@@ -49,7 +49,8 @@ class User(AbstractUser):
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'isEmailVerified': self.is_email_verified
+            'isEmailVerified': self.is_email_verified,
+            'isSocialAccount': not self.has_usable_password()
         }
 
 class World(models.Model):

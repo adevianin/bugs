@@ -41,12 +41,14 @@ class UserTab extends BaseGameHTMLView {
         this._usernameEl = this._el.querySelector('[data-username]');
         this._usernameEditBtnEl = this._el.querySelector('[data-edit-username-btn]');
 
+        this._passwordFieldEl = this._el.querySelector('[data-password-field]');
         this._passwordEditBtnEl = this._el.querySelector('[data-edit-password-btn]');
 
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
 
         this._renderEmail();
         this._renderUsername();
+        this._renderPasswordField();
     }
 
     _changeMode(modeName) {
@@ -76,13 +78,19 @@ class UserTab extends BaseGameHTMLView {
     _renderEmail() {
         let user = this.$domain.getUserData();
         this._emailEl.innerHTML = user.email;
-        this._notVerifiedEmailStateEl.classList.toggle('g-hidden', user.isEmailVerified);
-        this._verifiedEmailStateEl.classList.toggle('g-hidden', !user.isEmailVerified);
+        this._emailEditBtnEl.disabled = user.isSocialAccount;
+        this._notVerifiedEmailStateEl.classList.toggle('g-hidden', user.isSocialAccount || user.isEmailVerified);
+        this._verifiedEmailStateEl.classList.toggle('g-hidden', user.isSocialAccount || !user.isEmailVerified);
     }
 
     _renderUsername() {
         let user = this.$domain.getUserData();
         this._usernameEl.innerHTML = user.username;
+    }
+
+    _renderPasswordField() {
+        let user = this.$domain.getUserData();
+        this._passwordFieldEl.classList.toggle('g-hidden', user.isSocialAccount);
     }
 
     _onUserLogoutBtnClick() {

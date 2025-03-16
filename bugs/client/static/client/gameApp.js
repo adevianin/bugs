@@ -12236,12 +12236,14 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
         this._usernameEl = this._el.querySelector('[data-username]');
         this._usernameEditBtnEl = this._el.querySelector('[data-edit-username-btn]');
 
+        this._passwordFieldEl = this._el.querySelector('[data-password-field]');
         this._passwordEditBtnEl = this._el.querySelector('[data-edit-password-btn]');
 
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
 
         this._renderEmail();
         this._renderUsername();
+        this._renderPasswordField();
     }
 
     _changeMode(modeName) {
@@ -12271,13 +12273,19 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
     _renderEmail() {
         let user = this.$domain.getUserData();
         this._emailEl.innerHTML = user.email;
-        this._notVerifiedEmailStateEl.classList.toggle('g-hidden', user.isEmailVerified);
-        this._verifiedEmailStateEl.classList.toggle('g-hidden', !user.isEmailVerified);
+        this._emailEditBtnEl.disabled = user.isSocialAccount;
+        this._notVerifiedEmailStateEl.classList.toggle('g-hidden', user.isSocialAccount || user.isEmailVerified);
+        this._verifiedEmailStateEl.classList.toggle('g-hidden', user.isSocialAccount || !user.isEmailVerified);
     }
 
     _renderUsername() {
         let user = this.$domain.getUserData();
         this._usernameEl.innerHTML = user.username;
+    }
+
+    _renderPasswordField() {
+        let user = this.$domain.getUserData();
+        this._passwordFieldEl.classList.toggle('g-hidden', user.isSocialAccount);
     }
 
     _onUserLogoutBtnClick() {
@@ -22336,7 +22344,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-main-contentainer>\r\n    <!-- <div data-username-editor></div> -->\r\n    <div>\r\n        username:\r\n        <span data-username></span>\r\n        <button data-edit-username-btn>(>)</button>\r\n    </div>\r\n    <div style=\"display: flex; flex-direction: row;\">\r\n        <div>email:</div>\r\n        <div>\r\n            <span data-email></span>\r\n            <button data-edit-email-btn>(>)</button>\r\n            <div data-not-verified-email-state>\r\n                <span class=\"g-error-container\">not verified</span>\r\n                <button data-verify-email-request-btn></button>\r\n            </div>\r\n            <div style=\"color: green;\" data-verified-email-state>\r\n                verified\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div>\r\n        password:\r\n        <span>***</span>\r\n        <button data-edit-password-btn>(>)</button>\r\n    </div>\r\n    <button data-logout-btn>вийти</button>\r\n</div>\r\n<div data-field-editor-container></div>\r\n";
+var code = "<div data-main-contentainer>\r\n    <div>\r\n        username:\r\n        <span data-username></span>\r\n        <button data-edit-username-btn>(>)</button>\r\n    </div>\r\n    <div style=\"display: flex; flex-direction: row;\">\r\n        <div>email:</div>\r\n        <div>\r\n            <span data-email></span>\r\n            <button data-edit-email-btn>(>)</button>\r\n            <div data-not-verified-email-state>\r\n                <span class=\"g-error-container\">not verified</span>\r\n                <button data-verify-email-request-btn></button>\r\n            </div>\r\n            <div style=\"color: green;\" data-verified-email-state>\r\n                verified\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div data-password-field>\r\n        password:\r\n        <span>***</span>\r\n        <button data-edit-password-btn>(>)</button>\r\n    </div>\r\n    <button data-logout-btn>вийти</button>\r\n</div>\r\n<div data-field-editor-container></div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
