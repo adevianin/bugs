@@ -43,6 +43,9 @@ class User(AbstractUser):
             'unique': "A user with this email already exists.",
         }
     )
+
+    def is_social_account(self) -> bool:
+        return not self.has_usable_password()
     
     def get_general_data(self):
         return {
@@ -50,7 +53,7 @@ class User(AbstractUser):
             'username': self.username,
             'email': self.email,
             'isEmailVerified': self.is_email_verified,
-            'isSocialAccount': not self.has_usable_password()
+            'isSocialAccount': self.is_social_account()
         }
 
 class World(models.Model):
