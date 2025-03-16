@@ -52,6 +52,10 @@ class AccountApi {
         });
     }
 
+    verifyEmailRequest() {
+        return this._requester.post('api/accounts/verify_email_request');
+    }
+
     checkUsernameUniqueness(username) {
         return this._requester.post('api/accounts/check_username_uniqueness', {
             username

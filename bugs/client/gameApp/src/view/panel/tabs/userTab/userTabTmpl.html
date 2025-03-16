@@ -1,15 +1,22 @@
 <div data-main-contentainer>
-    <!-- <div data-username-editor></div> -->
     <div>
         username:
         <span data-username></span>
         <button data-edit-username-btn>(>)</button>
     </div>
-    <div>
-        email:
-        <span data-email></span>
-        <span class="g-hidden g-error-container" data-not-verified-label>(not verified)</span>
-        <button data-edit-email-btn>(>)</button>
+    <div style="display: flex; flex-direction: row;">
+        <div>email:</div>
+        <div>
+            <span data-email></span>
+            <button data-edit-email-btn>(>)</button>
+            <div data-not-verified-email-state>
+                <span class="g-error-container">not verified</span>
+                <button data-verify-email-request-btn></button>
+            </div>
+            <div style="color: green;" data-verified-email-state>
+                verified
+            </div>
+        </div>
     </div>
     <div>
         password:

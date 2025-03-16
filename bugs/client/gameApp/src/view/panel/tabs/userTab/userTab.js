@@ -3,6 +3,7 @@ import userTabTmpl from './userTabTmpl.html';
 import { EmailFieldEditorView } from './fieldEditors/emailFieldEditor/emailFieldEditorView';
 import { UsernameFieldEditorView } from './fieldEditors/usernameFieldEditor/usernameFieldEditorView';
 import { PasswordFieldEditorView } from './fieldEditors/passwordFieldEditor/passwordFieldEditorView';
+import { DoneButtonView } from '@common/view/doneButton/doneButtonView';
 
 class UserTab extends BaseGameHTMLView {
 
@@ -21,6 +22,7 @@ class UserTab extends BaseGameHTMLView {
         this._emailEditBtnEl.addEventListener('click', this._onEmailEditBtnClick.bind(this));
         this._usernameEditBtnEl.addEventListener('click', this._onUsernameEditBtnClick.bind(this));
         this._passwordEditBtnEl.addEventListener('click', this._onPasswordEditBtnClick.bind(this));
+        this._verifyEmailRequestBtnView.addEventListener('click', this._onVerifyEmailRequestBtnClick.bind(this));
     }
 
     _render() {
@@ -32,6 +34,9 @@ class UserTab extends BaseGameHTMLView {
         this._emailEl = this._el.querySelector('[data-email]');
         this._emailNotVerifiedMarkerEl = this._el.querySelector('[data-not-verified-label]');
         this._emailEditBtnEl = this._el.querySelector('[data-edit-email-btn]');
+        this._notVerifiedEmailStateEl = this._el.querySelector('[data-not-verified-email-state]');
+        this._verifiedEmailStateEl = this._el.querySelector('[data-verified-email-state]');
+        this._verifyEmailRequestBtnView = new DoneButtonView(this._el.querySelector('[data-verify-email-request-btn]'), 'send again');
 
         this._usernameEl = this._el.querySelector('[data-username]');
         this._usernameEditBtnEl = this._el.querySelector('[data-edit-username-btn]');
@@ -71,7 +76,8 @@ class UserTab extends BaseGameHTMLView {
     _renderEmail() {
         let user = this.$domain.getUserData();
         this._emailEl.innerHTML = user.email;
-        this._emailNotVerifiedMarkerEl.classList.toggle('g-hidden', user.isEmailVerified);
+        this._notVerifiedEmailStateEl.classList.toggle('g-hidden', user.isEmailVerified);
+        this._verifiedEmailStateEl.classList.toggle('g-hidden', !user.isEmailVerified);
     }
 
     _renderUsername() {
@@ -110,6 +116,10 @@ class UserTab extends BaseGameHTMLView {
             this._showMainContant();
         });
         this._showFieldEditor(passwordFieldEditor);
+    }
+
+    _onVerifyEmailRequestBtnClick() {
+        this.$domain.verifyEmailRequest();
     }
 
 }

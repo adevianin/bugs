@@ -247,6 +247,10 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.Base
         return this._userData;
     }
 
+    verifyEmailRequest() {
+        this._requestHandler(() => this._accountApi.verifyEmailRequest());
+    }
+
     async validateUsername(username = '', checkUniq = true) {
         if (username.length < AccountService.MIN_USERNAME_LENGTH) {
             return AccountService.USERNAME_MIN_LENGTH_ERR;
@@ -594,6 +598,10 @@ class AccountApi {
         });
     }
 
+    verifyEmailRequest() {
+        return this._requester.post('api/accounts/verify_email_request');
+    }
+
     checkUsernameUniqueness(username) {
         return this._requester.post('api/accounts/check_username_uniqueness', {
             username
@@ -869,6 +877,65 @@ class BaseView {
 }
 
    
+
+/***/ }),
+
+/***/ "./common/view/doneButton/doneButtonView.js":
+/*!**************************************************!*\
+  !*** ./common/view/doneButton/doneButtonView.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DoneButtonView: () => (/* binding */ DoneButtonView)
+/* harmony export */ });
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./common/view/doneButton/style.css");
+/* harmony import */ var _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../base/baseHTMLView */ "./common/view/base/baseHTMLView.js");
+
+
+
+class DoneButtonView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
+
+    constructor(el, buttonText, doneStateTime = 3000) {
+        super(el);
+        this._buttonText = buttonText;
+        this._doneStateTime = doneStateTime;
+
+        this._render();
+
+        this._el.addEventListener('click', this._onBtnClick.bind(this));
+    }
+
+    addEventListener(eventName, callback) {
+        this._el.addEventListener(eventName, callback);
+    }
+
+    _render() {
+        this._el.classList.add('action-button');
+        this._el.textContent = this._buttonText;
+    }
+
+    _toogleButtonBack() {
+        this._el.classList.remove('action-button--done');
+    }
+
+    _toogleButtonForth() {
+        this._el.classList.add('action-button--done');
+    }
+
+    _onBtnClick() {
+        this._toogleButtonForth();
+
+        setTimeout(() => {
+            this._toogleButtonBack();
+        }, this._doneStateTime);
+    }
+
+}
+
+
 
 /***/ }),
 
@@ -1309,9 +1376,9 @@ class DomainFacade {
         return this._accountService.getUserData();
     }
 
-    // validateUsername(username) {
-    //     return this._accountService.validateUsername(username);
-    // }
+    verifyEmailRequest() {
+        return this._accountService.verifyEmailRequest();
+    }
 
     changeUsername(newUsername) {
         return this._accountService.changeUsername(newUsername);
@@ -12125,6 +12192,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fieldEditors_emailFieldEditor_emailFieldEditorView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fieldEditors/emailFieldEditor/emailFieldEditorView */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/emailFieldEditor/emailFieldEditorView.js");
 /* harmony import */ var _fieldEditors_usernameFieldEditor_usernameFieldEditorView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./fieldEditors/usernameFieldEditor/usernameFieldEditorView */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/usernameFieldEditor/usernameFieldEditorView.js");
 /* harmony import */ var _fieldEditors_passwordFieldEditor_passwordFieldEditorView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./fieldEditors/passwordFieldEditor/passwordFieldEditorView */ "./gameApp/src/view/panel/tabs/userTab/fieldEditors/passwordFieldEditor/passwordFieldEditorView.js");
+/* harmony import */ var _common_view_doneButton_doneButtonView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/view/doneButton/doneButtonView */ "./common/view/doneButton/doneButtonView.js");
+
 
 
 
@@ -12148,6 +12217,7 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
         this._emailEditBtnEl.addEventListener('click', this._onEmailEditBtnClick.bind(this));
         this._usernameEditBtnEl.addEventListener('click', this._onUsernameEditBtnClick.bind(this));
         this._passwordEditBtnEl.addEventListener('click', this._onPasswordEditBtnClick.bind(this));
+        this._verifyEmailRequestBtnView.addEventListener('click', this._onVerifyEmailRequestBtnClick.bind(this));
     }
 
     _render() {
@@ -12159,6 +12229,9 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
         this._emailEl = this._el.querySelector('[data-email]');
         this._emailNotVerifiedMarkerEl = this._el.querySelector('[data-not-verified-label]');
         this._emailEditBtnEl = this._el.querySelector('[data-edit-email-btn]');
+        this._notVerifiedEmailStateEl = this._el.querySelector('[data-not-verified-email-state]');
+        this._verifiedEmailStateEl = this._el.querySelector('[data-verified-email-state]');
+        this._verifyEmailRequestBtnView = new _common_view_doneButton_doneButtonView__WEBPACK_IMPORTED_MODULE_5__.DoneButtonView(this._el.querySelector('[data-verify-email-request-btn]'), 'send again');
 
         this._usernameEl = this._el.querySelector('[data-username]');
         this._usernameEditBtnEl = this._el.querySelector('[data-edit-username-btn]');
@@ -12198,7 +12271,8 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
     _renderEmail() {
         let user = this.$domain.getUserData();
         this._emailEl.innerHTML = user.email;
-        this._emailNotVerifiedMarkerEl.classList.toggle('g-hidden', user.isEmailVerified);
+        this._notVerifiedEmailStateEl.classList.toggle('g-hidden', user.isEmailVerified);
+        this._verifiedEmailStateEl.classList.toggle('g-hidden', !user.isEmailVerified);
     }
 
     _renderUsername() {
@@ -12237,6 +12311,10 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
             this._showMainContant();
         });
         this._showFieldEditor(passwordFieldEditor);
+    }
+
+    _onVerifyEmailRequestBtnClick() {
+        this.$domain.verifyEmailRequest();
     }
 
 }
@@ -18546,6 +18624,69 @@ exports.ParseError = ParseError;
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js!./common/view/doneButton/style.css":
+/*!********************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./common/view/doneButton/style.css ***!
+  \********************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, `.action-button {
+    background-color: #007bff;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.action-button--done {
+    background-color: #28a745;
+    color: #28a745;
+    position: relative;
+    cursor: default;
+    pointer-events: none;
+}
+
+.action-button--done::after {
+    content: "✔";
+    color: black;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    animation: fade-in-scale 0.3s ease forwards;
+}
+
+@keyframes fade-in-scale {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+`, "",{"version":3,"sources":["webpack://./common/view/doneButton/style.css"],"names":[],"mappings":"AAAA;IACI,yBAAyB;IACzB,yBAAyB;IACzB,eAAe;IACf,iBAAiB;AACrB;;AAEA;IACI,yBAAyB;IACzB,cAAc;IACd,kBAAkB;IAClB,eAAe;IACf,oBAAoB;AACxB;;AAEA;IACI,YAAY;IACZ,YAAY;IACZ,kBAAkB;IAClB,SAAS;IACT,QAAQ;IACR,yCAAyC;IACzC,UAAU;IACV,2CAA2C;AAC/C;;AAEA;IACI;QACI,UAAU;QACV,yCAAyC;IAC7C;IACA;QACI,UAAU;QACV,yCAAyC;IAC7C;AACJ","sourcesContent":[".action-button {\r\n    background-color: #007bff;\r\n    transition: all 0.3s ease;\r\n    cursor: pointer;\r\n    user-select: none;\r\n}\r\n\r\n.action-button--done {\r\n    background-color: #28a745;\r\n    color: #28a745;\r\n    position: relative;\r\n    cursor: default;\r\n    pointer-events: none;\r\n}\r\n\r\n.action-button--done::after {\r\n    content: \"✔\";\r\n    color: black;\r\n    position: absolute;\r\n    left: 50%;\r\n    top: 50%;\r\n    transform: translate(-50%, -50%) scale(0);\r\n    opacity: 0;\r\n    animation: fade-in-scale 0.3s ease forwards;\r\n}\r\n\r\n@keyframes fade-in-scale {\r\n    from {\r\n        opacity: 0;\r\n        transform: translate(-50%, -50%) scale(0);\r\n    }\r\n    to {\r\n        opacity: 1;\r\n        transform: translate(-50%, -50%) scale(1);\r\n    }\r\n}\r\n"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js!./common/view/dotsLoader/style.css":
 /*!********************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./common/view/dotsLoader/style.css ***!
@@ -22195,7 +22336,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-main-contentainer>\r\n    <!-- <div data-username-editor></div> -->\r\n    <div>\r\n        username:\r\n        <span data-username></span>\r\n        <button data-edit-username-btn>(>)</button>\r\n    </div>\r\n    <div>\r\n        email:\r\n        <span data-email></span>\r\n        <span class=\"g-hidden g-error-container\" data-not-verified-label>(not verified)</span>\r\n        <button data-edit-email-btn>(>)</button>\r\n    </div>\r\n    <div>\r\n        password:\r\n        <span>***</span>\r\n        <button data-edit-password-btn>(>)</button>\r\n    </div>\r\n    <button data-logout-btn>вийти</button>\r\n</div>\r\n<div data-field-editor-container></div>\r\n";
+var code = "<div data-main-contentainer>\r\n    <!-- <div data-username-editor></div> -->\r\n    <div>\r\n        username:\r\n        <span data-username></span>\r\n        <button data-edit-username-btn>(>)</button>\r\n    </div>\r\n    <div style=\"display: flex; flex-direction: row;\">\r\n        <div>email:</div>\r\n        <div>\r\n            <span data-email></span>\r\n            <button data-edit-email-btn>(>)</button>\r\n            <div data-not-verified-email-state>\r\n                <span class=\"g-error-container\">not verified</span>\r\n                <button data-verify-email-request-btn></button>\r\n            </div>\r\n            <div style=\"color: green;\" data-verified-email-state>\r\n                verified\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div>\r\n        password:\r\n        <span>***</span>\r\n        <button data-edit-password-btn>(>)</button>\r\n    </div>\r\n    <button data-logout-btn>вийти</button>\r\n</div>\r\n<div data-field-editor-container></div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -22421,6 +22562,61 @@ function parseValues(args) {
 	var numbers = args.match(number)
 	return numbers ? numbers.map(Number) : []
 }
+
+
+/***/ }),
+
+/***/ "./common/view/doneButton/style.css":
+/*!******************************************!*\
+  !*** ./common/view/doneButton/style.css ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js!./style.css */ "./node_modules/css-loader/dist/cjs.js!./common/view/doneButton/style.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),

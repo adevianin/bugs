@@ -243,6 +243,10 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.Base
         return this._userData;
     }
 
+    verifyEmailRequest() {
+        this._requestHandler(() => this._accountApi.verifyEmailRequest());
+    }
+
     async validateUsername(username = '', checkUniq = true) {
         if (username.length < AccountService.MIN_USERNAME_LENGTH) {
             return AccountService.USERNAME_MIN_LENGTH_ERR;
@@ -582,6 +586,10 @@ class AccountApi {
         return this._requester.post('api/accounts/change_password', {
             newPassword, oldPassword
         });
+    }
+
+    verifyEmailRequest() {
+        return this._requester.post('api/accounts/verify_email_request');
     }
 
     checkUsernameUniqueness(username) {

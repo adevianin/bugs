@@ -312,4 +312,14 @@ def change_password(request: HttpRequest):
     except ValidationError as e:
         return HttpResponse(status=400)
                 
+    return HttpResponse(status=204)   
+ 
+@require_POST
+@login_required
+def verify_email_request(request: HttpRequest):
+    user = User.objects.get(id=request.user.id)
+
+    if not user.is_email_verified:
+        EmailService.send_verification_email(user, build_base_url(request))
+
     return HttpResponse(status=204)    

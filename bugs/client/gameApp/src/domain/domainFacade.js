@@ -239,9 +239,9 @@ class DomainFacade {
         return this._accountService.getUserData();
     }
 
-    // validateUsername(username) {
-    //     return this._accountService.validateUsername(username);
-    // }
+    verifyEmailRequest() {
+        return this._accountService.verifyEmailRequest();
+    }
 
     changeUsername(newUsername) {
         return this._accountService.changeUsername(newUsername);

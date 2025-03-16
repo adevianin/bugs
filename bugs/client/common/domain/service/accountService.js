@@ -138,6 +138,10 @@ class AccountService extends BaseService {
         return this._userData;
     }
 
+    verifyEmailRequest() {
+        this._requestHandler(() => this._accountApi.verifyEmailRequest());
+    }
+
     async validateUsername(username = '', checkUniq = true) {
         if (username.length < AccountService.MIN_USERNAME_LENGTH) {
             return AccountService.USERNAME_MIN_LENGTH_ERR;

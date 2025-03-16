@@ -1,0 +1,36 @@
+.action-button {
+    background-color: #007bff;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.action-button--done {
+    background-color: #28a745;
+    color: #28a745;
+    position: relative;
+    cursor: default;
+    pointer-events: none;
+}
+
+.action-button--done::after {
+    content: "✔";
+    color: black;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    animation: fade-in-scale 0.3s ease forwards;
+}
+
+@keyframes fade-in-scale {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
