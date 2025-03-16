@@ -221,6 +221,9 @@ def set_new_password(request: HttpRequest):
     if not ResetPasswordTokenGenerator.validate(user, token):
         return HttpResponse(status=403)
     
+    if user.is_social_account():
+        return HttpResponse(status=400) 
+    
     try:
         validate_password(new_password, user=user)
     except ValidationError as e:
@@ -269,6 +272,9 @@ def change_email(request: HttpRequest):
     
     user = User.objects.get(id=request.user.id)
 
+    if user.is_social_account():
+        return HttpResponse(status=400) 
+
     if not user.check_password(password):
         return HttpResponse(status=401)
     
@@ -300,6 +306,9 @@ def change_password(request: HttpRequest):
         return HttpResponse(status=400)
     
     user = User.objects.get(id=request.user.id)
+
+    if user.is_social_account():
+        return HttpResponse(status=400) 
 
     if not user.check_password(old_password):
         return HttpResponse(status=401)
