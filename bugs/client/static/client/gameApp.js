@@ -139,14 +139,9 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.Base
         msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_TAKEN
     });
     
-    constructor(accountApi, userData) {
+    constructor(accountApi) {
         super();
         this._accountApi = accountApi;
-        this._userData = userData;
-    }
-
-    setEventBus(eventBus) {
-        this._eventBus = eventBus;
     }
 
     login(email, password) {
@@ -186,45 +181,41 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.Base
     async changeUsername(newUsername) {
         let usernameErr = await this.validateUsername(newUsername, false);
         if (usernameErr) {
-            return usernameErr;
+            return { success: false, err: usernameErr };
         }
 
         try {
-            await this._requestHandler(() => this._accountApi.changeUsername(newUsername));
-            this._userData.username = newUsername;
-            return null;
+            let data = await this._requestHandler(() => this._accountApi.changeUsername(newUsername));
+            return { success: true, userData: data.user };
         } catch (e) {
             if (e instanceof _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_3__.ConflictRequestError) {
-                return AccountService.USERNAME_TAKEN_ERR;
+                return { success: false, err: AccountService.USERNAME_TAKEN_ERR };
             } else {
-                return {
-                    msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG
-                }
+                return { success: false, err: { msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG } };
             }
         }
     }
 
     async changeEmail(newEmail, password) {
         if (!password) {
-            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_NEEDED;
+            return { success: false, err: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_NEEDED };
         }
 
         let emailErr = await this.validateEmail(newEmail, false);
         if (emailErr) {
-            return emailErr;
+            return { success: false, err: emailErr };
         }
 
         try {
             let data = await this._requestHandler(() => this._accountApi.changeEmail(newEmail, password));
-            this.updateUserData(data.user);
-            return null;
+            return { success: true, userData: data.user };
         } catch (e) {
             if (e instanceof _errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__.UnauthorizedRequestError) {
-                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED;
+                return { success: false, err: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED };
             } else if (e instanceof _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_3__.ConflictRequestError) {
-                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.EMAIL_TAKEN;
+                return { success: false, err: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.EMAIL_TAKEN };
             } else {
-                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+                return { success: false, err: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG };
             }
         }
     }
@@ -240,19 +231,6 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.Base
                 return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG;
             }
         }
-    }
-
-    getUserData() {
-        return this._userData;
-    }
-
-    updateUserData(newUserData) {
-        this._userData = newUserData;
-    }
-
-    verifyEmailForUser() {
-        this._userData.isEmailVerified = true;
-        this._eventBus.emit('emailVerified');
     }
 
     verifyEmailRequest() {
@@ -1381,19 +1359,31 @@ class DomainFacade {
     }
 
     getUserData() {
-        return this._accountService.getUserData();
+        return this._userService.getUserData();
     }
 
     verifyEmailRequest() {
         return this._accountService.verifyEmailRequest();
     }
 
-    changeUsername(newUsername) {
-        return this._accountService.changeUsername(newUsername);
+    async changeUsername(newUsername) {
+        let result = await this._accountService.changeUsername(newUsername);
+        if (result.success) {
+            this._userService.updateUserData(result.userData);
+            return null;
+        } else {
+            return result.err;
+        }
     }
 
-    changeEmail(newEmail, password) {
-        return this._accountService.changeEmail(newEmail, password);
+    async changeEmail(newEmail, password) {
+        let result = await this._accountService.changeEmail(newEmail, password);
+        if (result.success) {
+            this._userService.updateUserData(result.userData);
+            return null;
+        } else {
+            return result.err;
+        }
     }
 
     changePassword(newPassword, oldPassword) {
@@ -3824,10 +3814,9 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let world = worldFactory.buildWorld();
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus, ratingContainer);
-    let accountService = new _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user);
-    accountService.setEventBus(mainEventBus);
+    let accountService = new _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi);
     let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(mainEventBus, world, apis.colonyApi, worldFactory);
-    let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_7__.UserService(notificationsContainer);
+    let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_7__.UserService(mainEventBus, world, initialData.user, notificationsContainer);
     let nuptialEnvironmentService = new _service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_8__.NuptialEnvironmentService(mainEventBus, world, nuptialEnvironmentFactory, apis.nuptialEnvironmentApi);
     let nestService = new _service_nestService__WEBPACK_IMPORTED_MODULE_9__.NestService(mainEventBus, world, apis.nestApi);
     let antService = new _service_antService__WEBPACK_IMPORTED_MODULE_13__.AntService(mainEventBus, world, apis.antApi);
@@ -4104,14 +4093,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class MessageHandlerService {
 
-    constructor(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService, accountService) {
+    constructor(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService) {
         this._mainEventBus = mainEventBus;
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._colonyService = colonyService;
         this._userService = userService;
         this._nuptialEnvironmentService = nuptialEnvironmentService;
-        this._accountService = accountService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
@@ -4176,7 +4164,7 @@ class MessageHandlerService {
     }
 
     _handleEmailVerifiedMsg() {
-        this._accountService.verifyEmailForUser();
+        this._userService.verifyEmailForUser();
     }
 
 }
@@ -4440,9 +4428,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   UserService: () => (/* binding */ UserService)
 /* harmony export */ });
-class UserService {
+/* harmony import */ var _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/baseGameService */ "./gameApp/src/domain/service/base/baseGameService.js");
 
-    constructor(notificationsContainer) {
+
+class UserService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__.BaseGameService {
+
+    constructor(mainEventBus, world, userData, notificationsContainer) {
+        super(mainEventBus, world);
+        this._userData = userData;
         this._notificationsContainer = notificationsContainer
     }
 
@@ -4456,6 +4449,19 @@ class UserService {
 
     playUserAction(action) {
         this._notificationsContainer.pushNewNotification(action.notification);
+    }
+
+    getUserData() {
+        return this._userData;
+    }
+
+    updateUserData(newUserData) {
+        this._userData = newUserData;
+    }
+
+    verifyEmailForUser() {
+        this._userData.isEmailVerified = true;
+        this._mainEventBus.emit('emailVerified');
     }
 
 }

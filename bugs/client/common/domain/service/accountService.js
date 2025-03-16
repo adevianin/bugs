@@ -30,14 +30,9 @@ class AccountService extends BaseService {
         msgId: COMMON_MESSAGE_IDS.USERNAME_TAKEN
     });
     
-    constructor(accountApi, userData) {
+    constructor(accountApi) {
         super();
         this._accountApi = accountApi;
-        this._userData = userData;
-    }
-
-    setEventBus(eventBus) {
-        this._eventBus = eventBus;
     }
 
     login(email, password) {
@@ -77,45 +72,41 @@ class AccountService extends BaseService {
     async changeUsername(newUsername) {
         let usernameErr = await this.validateUsername(newUsername, false);
         if (usernameErr) {
-            return usernameErr;
+            return { success: false, err: usernameErr };
         }
 
         try {
-            await this._requestHandler(() => this._accountApi.changeUsername(newUsername));
-            this._userData.username = newUsername;
-            return null;
+            let data = await this._requestHandler(() => this._accountApi.changeUsername(newUsername));
+            return { success: true, userData: data.user };
         } catch (e) {
             if (e instanceof ConflictRequestError) {
-                return AccountService.USERNAME_TAKEN_ERR;
+                return { success: false, err: AccountService.USERNAME_TAKEN_ERR };
             } else {
-                return {
-                    msgId: COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG
-                }
+                return { success: false, err: { msgId: COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG } };
             }
         }
     }
 
     async changeEmail(newEmail, password) {
         if (!password) {
-            return COMMON_MESSAGE_IDS.PASSWORD_NEEDED;
+            return { success: false, err: COMMON_MESSAGE_IDS.PASSWORD_NEEDED };
         }
 
         let emailErr = await this.validateEmail(newEmail, false);
         if (emailErr) {
-            return emailErr;
+            return { success: false, err: emailErr };
         }
 
         try {
             let data = await this._requestHandler(() => this._accountApi.changeEmail(newEmail, password));
-            this.updateUserData(data.user);
-            return null;
+            return { success: true, userData: data.user };
         } catch (e) {
             if (e instanceof UnauthorizedRequestError) {
-                return COMMON_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED;
+                return { success: false, err: COMMON_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED };
             } else if (e instanceof ConflictRequestError) {
-                return COMMON_MESSAGE_IDS.EMAIL_TAKEN;
+                return { success: false, err: COMMON_MESSAGE_IDS.EMAIL_TAKEN };
             } else {
-                return COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+                return { success: false, err: COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG };
             }
         }
     }
@@ -131,19 +122,6 @@ class AccountService extends BaseService {
                 return COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG;
             }
         }
-    }
-
-    getUserData() {
-        return this._userData;
-    }
-
-    updateUserData(newUserData) {
-        this._userData = newUserData;
-    }
-
-    verifyEmailForUser() {
-        this._userData.isEmailVerified = true;
-        this._eventBus.emit('emailVerified');
     }
 
     verifyEmailRequest() {

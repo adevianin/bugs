@@ -1,6 +1,10 @@
-class UserService {
+import { BaseGameService } from "./base/baseGameService";
 
-    constructor(notificationsContainer) {
+class UserService extends BaseGameService {
+
+    constructor(mainEventBus, world, userData, notificationsContainer) {
+        super(mainEventBus, world);
+        this._userData = userData;
         this._notificationsContainer = notificationsContainer
     }
 
@@ -14,6 +18,19 @@ class UserService {
 
     playUserAction(action) {
         this._notificationsContainer.pushNewNotification(action.notification);
+    }
+
+    getUserData() {
+        return this._userData;
+    }
+
+    updateUserData(newUserData) {
+        this._userData = newUserData;
+    }
+
+    verifyEmailForUser() {
+        this._userData.isEmailVerified = true;
+        this._mainEventBus.emit('emailVerified');
     }
 
 }

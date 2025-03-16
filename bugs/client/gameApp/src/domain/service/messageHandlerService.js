@@ -2,14 +2,13 @@ import { initConts } from "@domain/consts";
 
 class MessageHandlerService {
 
-    constructor(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService, accountService) {
+    constructor(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService) {
         this._mainEventBus = mainEventBus;
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._colonyService = colonyService;
         this._userService = userService;
         this._nuptialEnvironmentService = nuptialEnvironmentService;
-        this._accountService = accountService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
@@ -74,7 +73,7 @@ class MessageHandlerService {
     }
 
     _handleEmailVerifiedMsg() {
-        this._accountService.verifyEmailForUser();
+        this._userService.verifyEmailForUser();
     }
 
 }

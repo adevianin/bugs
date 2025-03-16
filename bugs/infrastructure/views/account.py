@@ -260,7 +260,9 @@ def change_username(request: HttpRequest):
             else:
                 return HttpResponse(status=400)
 
-    return HttpResponse(status=204) 
+    return JsonResponse({
+        'user': user.get_general_data()
+    }, status=200)  
    
 @require_POST
 @login_required

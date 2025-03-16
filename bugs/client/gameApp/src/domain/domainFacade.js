@@ -236,19 +236,31 @@ class DomainFacade {
     }
 
     getUserData() {
-        return this._accountService.getUserData();
+        return this._userService.getUserData();
     }
 
     verifyEmailRequest() {
         return this._accountService.verifyEmailRequest();
     }
 
-    changeUsername(newUsername) {
-        return this._accountService.changeUsername(newUsername);
+    async changeUsername(newUsername) {
+        let result = await this._accountService.changeUsername(newUsername);
+        if (result.success) {
+            this._userService.updateUserData(result.userData);
+            return null;
+        } else {
+            return result.err;
+        }
     }
 
-    changeEmail(newEmail, password) {
-        return this._accountService.changeEmail(newEmail, password);
+    async changeEmail(newEmail, password) {
+        let result = await this._accountService.changeEmail(newEmail, password);
+        if (result.success) {
+            this._userService.updateUserData(result.userData);
+            return null;
+        } else {
+            return result.err;
+        }
     }
 
     changePassword(newPassword, oldPassword) {
