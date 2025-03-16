@@ -1,7 +1,7 @@
-import { BASE_MESSAGE_IDS } from "@common/messages/messageIds"
+import { COMMON_MESSAGE_IDS } from "@common/messages/messageIds"
 
-const MESSAGE_IDS = {
-    ...BASE_MESSAGE_IDS,
+const GAME_MESSAGE_IDS = {
+    ...COMMON_MESSAGE_IDS,
     OLD_PASSWORD_NEEDED: 'OLD_PASSWORD_NEEDED',
     TAB_BREEDING: 'TAB_BREEDING',
     TAB_COLONIES: 'TAB_COLONIES',
@@ -12,5 +12,5 @@ const MESSAGE_IDS = {
 }
 
 export {
-    MESSAGE_IDS
+    GAME_MESSAGE_IDS
 }

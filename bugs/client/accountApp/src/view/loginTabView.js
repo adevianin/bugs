@@ -1,6 +1,6 @@
 import { BaseHTMLView } from "@common/view/base/baseHTMLView";
 import { UnauthorizedRequestError } from '@common/domain/errors/unauthorizedRequestError';
-import { MESSAGE_IDS } from "../messages/messageIds";
+import { ACCOUNT_MESSAGE_IDS } from "../messages/messageIds";
 import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
 
 class LoginTabView extends BaseHTMLView {
@@ -56,7 +56,7 @@ class LoginTabView extends BaseHTMLView {
     _validateEmail() {
         let email = this._loginEmail;
         if (!email || !this._emailEl.checkValidity()) {
-            return MESSAGE_IDS.EMAIL_INVALID;
+            return ACCOUNT_MESSAGE_IDS.EMAIL_INVALID;
         }
 
         return null;
@@ -69,7 +69,7 @@ class LoginTabView extends BaseHTMLView {
     _validatePassword() {
         let password = this._passwordEl.value;
         if (!password) {
-            return MESSAGE_IDS.PASSWORD_NEEDED;
+            return ACCOUNT_MESSAGE_IDS.PASSWORD_NEEDED;
         }
 
         return null;
@@ -95,9 +95,9 @@ class LoginTabView extends BaseHTMLView {
             this._loginRequestLoader.toggle(false);
         } catch (e) {
             if (e instanceof UnauthorizedRequestError) {
-                this._renderLoginRequestErr(MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL);
+                this._renderLoginRequestErr(ACCOUNT_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL);
             } else {
-                this._renderLoginRequestErr(MESSAGE_IDS.SOMETHING_WENT_WRONG);
+                this._renderLoginRequestErr(ACCOUNT_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
             this._loginRequestLoader.toggle(false);
         }

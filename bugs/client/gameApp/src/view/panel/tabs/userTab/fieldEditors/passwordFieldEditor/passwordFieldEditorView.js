@@ -2,7 +2,7 @@ import passwordFieldEditorTmpl from './passwordFieldEditorTmpl.html';
 import { BaseFieldEditor } from '../baseFieldEditor';
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 import { AccountPasswordErrorView } from '@common/view/errors/accountPasswordErrorView';
-import { MESSAGE_IDS } from '@messages/messageIds';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class PasswordFieldEditorView extends BaseFieldEditor {
 
@@ -90,7 +90,7 @@ class PasswordFieldEditorView extends BaseFieldEditor {
         let newPasswordConfirm = this._newPasswordConfirmEl.value;
 
         if (newPassword != newPasswordConfirm) {
-            return MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID
+            return GAME_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID
         }
     }
 
@@ -100,7 +100,7 @@ class PasswordFieldEditorView extends BaseFieldEditor {
 
     _validateOldPassword() {
         if (!this._oldPasswordEl.value.length) {
-            return MESSAGE_IDS.OLD_PASSWORD_NEEDED;
+            return GAME_MESSAGE_IDS.OLD_PASSWORD_NEEDED;
         }
     }
 

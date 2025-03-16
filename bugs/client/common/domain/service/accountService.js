@@ -1,5 +1,4 @@
-import { BASE_MESSAGE_IDS } from "@common/messages/messageIds";
-import { MESSAGE_IDS } from "@messages/messageIds";
+import { COMMON_MESSAGE_IDS } from "@common/messages/messageIds";
 import { BaseService } from "./base/baseService";
 import { UnauthorizedRequestError } from "../errors/unauthorizedRequestError";
 import { ConflictRequestError } from "../errors/conflictRequestError";
@@ -17,18 +16,18 @@ class AccountService extends BaseService {
     static MAX_EMAIL_LENGTH = 254;
 
     static USERNAME_MIN_LENGTH_ERR = Object.freeze({
-        msgId: BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR,
+        msgId: COMMON_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR,
         minLength: AccountService.MIN_USERNAME_LENGTH
     });
     static USERNAME_MAX_LENGTH_ERR = Object.freeze({
-        msgId: BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR,
+        msgId: COMMON_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR,
         maxLength: AccountService.MAX_USERNAME_LENGTH
     });
     static USERNAME_INVALID_CHARS_ERR = Object.freeze({
-        msgId: BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS
+        msgId: COMMON_MESSAGE_IDS.USERNAME_INVALID_CHARS
     });
     static USERNAME_TAKEN_ERR = Object.freeze({
-        msgId: BASE_MESSAGE_IDS.USERNAME_TAKEN
+        msgId: COMMON_MESSAGE_IDS.USERNAME_TAKEN
     });
     
     constructor(accountApi, userData) {
@@ -54,7 +53,7 @@ class AccountService extends BaseService {
             await this._requestHandler(() => this._accountApi.resetPasswordRequest(email));
             return null;
         } catch (e) {
-            return BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+            return COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG;
         }
     }
 
@@ -64,9 +63,9 @@ class AccountService extends BaseService {
             return null;
         } catch (e) {
             if (e instanceof ForbiddenRequestError) {
-                return BASE_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED;
+                return COMMON_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED;
             } else {
-                return BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+                return COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG;
             }
         }
     }
@@ -86,7 +85,7 @@ class AccountService extends BaseService {
                 return AccountService.USERNAME_TAKEN_ERR;
             } else {
                 return {
-                    msgId: BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG
+                    msgId: COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG
                 }
             }
         }
@@ -94,7 +93,7 @@ class AccountService extends BaseService {
 
     async changeEmail(newEmail, password) {
         if (!password) {
-            return BASE_MESSAGE_IDS.PASSWORD_NEEDED;
+            return COMMON_MESSAGE_IDS.PASSWORD_NEEDED;
         }
 
         let emailErr = await this.validateEmail(newEmail, false);
@@ -108,11 +107,11 @@ class AccountService extends BaseService {
             return null;
         } catch (e) {
             if (e instanceof UnauthorizedRequestError) {
-                return BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED;
+                return COMMON_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED;
             } else if (e instanceof ConflictRequestError) {
-                return BASE_MESSAGE_IDS.EMAIL_TAKEN;
+                return COMMON_MESSAGE_IDS.EMAIL_TAKEN;
             } else {
-                return BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+                return COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG;
             }
         }
     }
@@ -123,9 +122,9 @@ class AccountService extends BaseService {
             return null;
         } catch (e) {
             if (e instanceof UnauthorizedRequestError) {
-                return BASE_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED;
+                return COMMON_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED;
             } else {
-                return BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+                return COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG;
             }
         }
     }
@@ -160,14 +159,14 @@ class AccountService extends BaseService {
     validatePassword(password = '') {
         if (password.length < AccountService.MIN_PASSWORD_LENGTH) {
             return {
-                msgId: MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR,
+                msgId: COMMON_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR,
                 minLength: AccountService.MIN_PASSWORD_LENGTH
             }
         }
 
         if (password.length > AccountService.MAX_PASSWORD_LENGTH) {
             return {
-                msgId: MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR,
+                msgId: COMMON_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR,
                 maxLength: AccountService.MAX_PASSWORD_LENGTH
             }
         }
@@ -180,13 +179,13 @@ class AccountService extends BaseService {
             email.length > AccountService.MAX_EMAIL_LENGTH ||
             !AccountService.EMAIL_REGEX.test(email)
         ) {
-            return BASE_MESSAGE_IDS.EMAIL_INVALID;
+            return COMMON_MESSAGE_IDS.EMAIL_INVALID;
         }
 
         if (checkUniq) {
             let isUniq = await this._accountApi.checkEmailUniqueness(email);
             if (!isUniq) {
-                return BASE_MESSAGE_IDS.EMAIL_TAKEN;
+                return COMMON_MESSAGE_IDS.EMAIL_TAKEN;
             }
         }
 

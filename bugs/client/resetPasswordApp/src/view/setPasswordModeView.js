@@ -1,7 +1,7 @@
 import { BaseHTMLView } from "@common/view/base/baseHTMLView";
 import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
 import { AccountPasswordErrorView } from "@common/view/errors/accountPasswordErrorView";
-import { MESSAGE_IDS } from "../messages/messageIds";
+import { RESET_PASSWORD_MESSAGE_IDS } from "../messages/messageIds";
 import { getQueryParams } from "@common/utils/getQueryParams";
 
 class SetPasswordModeView extends BaseHTMLView {
@@ -66,7 +66,7 @@ class SetPasswordModeView extends BaseHTMLView {
         let confirmPassword = this._passwordConfirmEl.value;
         let password = this._passwordEl.value;
         if (confirmPassword != password) {
-            return MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID;
+            return RESET_PASSWORD_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID;
         }
 
         return null;

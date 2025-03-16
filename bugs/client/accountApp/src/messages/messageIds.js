@@ -1,9 +1,9 @@
-import { BASE_MESSAGE_IDS } from "@common/messages/messageIds"
+import { COMMON_MESSAGE_IDS } from "@common/messages/messageIds"
 
-const MESSAGE_IDS = {
-    ...BASE_MESSAGE_IDS,
+const ACCOUNT_MESSAGE_IDS = {
+    ...COMMON_MESSAGE_IDS,
 }
 
 export {
-    MESSAGE_IDS
+    ACCOUNT_MESSAGE_IDS
 }

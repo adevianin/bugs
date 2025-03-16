@@ -1,15 +1,15 @@
-import { MESSAGE_IDS } from "../messageIds";
-import { EN_BASE_LIBRARY } from "@common/messages/msgLibraries/enLibrary";
+import { GAME_MESSAGE_IDS } from "../messageIds";
+import { COMMON_EN_LIBRARY } from "@common/messages/msgLibraries/enLibrary";
 
 const EN_LIBRARY = {
-    ...EN_BASE_LIBRARY,
-    [MESSAGE_IDS.OLD_PASSWORD_NEEDED]: 'Old password is not specified.',
-    [MESSAGE_IDS.TAB_BREEDING]: 'Breeding',
-    [MESSAGE_IDS.TAB_COLONIES]: 'Colonies',
-    [MESSAGE_IDS.TAB_SPECIE]: 'Specie',
-    [MESSAGE_IDS.TAB_NOTIFICATIONS]: 'Notifications',
-    [MESSAGE_IDS.TAB_RATING]: 'Rating',
-    [MESSAGE_IDS.TAB_ACCOUNT]: 'Account',
+    ...COMMON_EN_LIBRARY,
+    [GAME_MESSAGE_IDS.OLD_PASSWORD_NEEDED]: 'Old password is not specified.',
+    [GAME_MESSAGE_IDS.TAB_BREEDING]: 'Breeding',
+    [GAME_MESSAGE_IDS.TAB_COLONIES]: 'Colonies',
+    [GAME_MESSAGE_IDS.TAB_SPECIE]: 'Specie',
+    [GAME_MESSAGE_IDS.TAB_NOTIFICATIONS]: 'Notifications',
+    [GAME_MESSAGE_IDS.TAB_RATING]: 'Rating',
+    [GAME_MESSAGE_IDS.TAB_ACCOUNT]: 'Account',
 }
 
 export {

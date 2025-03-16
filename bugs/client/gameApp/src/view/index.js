@@ -9,7 +9,7 @@ import worldSpriteSheetUrl from './textures/build/world_spritesheet.png';
 import { BaseGameHTMLView } from './base/baseGameHTMLView';
 import { BaseView } from '@common/view/base/baseView';
 import { MessageMaster } from '@common/messages/messageMaster';
-import { msgLibrariesPack } from '@messages/msgLibraries';
+import { gameMsgLibrariesPack } from '@messages/msgLibraries';
 import * as PIXI from 'pixi.js';
 
 async function initViewLayer(domainFacade) {
@@ -22,7 +22,7 @@ async function initViewLayer(domainFacade) {
     let pixiApp = new PIXI.Application();
     await pixiApp.init();
 
-    let mm = MessageMaster.init(msgLibrariesPack);
+    let mm = MessageMaster.init(gameMsgLibrariesPack);
 
     BaseView.useDomainFacade(domainFacade);
     BaseView.useEventBus(eventBus);

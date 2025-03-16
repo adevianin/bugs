@@ -1,5 +1,5 @@
 import { BaseHTMLView } from "@common/view/base/baseHTMLView";
-import { MESSAGE_IDS } from "../messages/messageIds";
+import { RESET_PASSWORD_MESSAGE_IDS } from "../messages/messageIds";
 import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
 
 class RequestModeContainerView extends BaseHTMLView {
@@ -38,7 +38,7 @@ class RequestModeContainerView extends BaseHTMLView {
         let email = this._emailEl.value;
 
         if (!email || !this._emailEl.checkValidity()) {
-            return MESSAGE_IDS.EMAIL_INVALID;
+            return RESET_PASSWORD_MESSAGE_IDS.EMAIL_INVALID;
         }
 
         return null;

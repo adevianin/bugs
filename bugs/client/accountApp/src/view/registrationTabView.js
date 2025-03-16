@@ -1,5 +1,5 @@
 import { BaseHTMLView } from "@common/view/base/baseHTMLView";
-import { MESSAGE_IDS } from '../messages/messageIds';
+import { ACCOUNT_MESSAGE_IDS } from '../messages/messageIds';
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 import { ConflictRequestError } from '@common/domain/errors/conflictRequestError';
 import { throttle } from '@common/utils/throttle';
@@ -158,7 +158,7 @@ class RegistrationTabView extends BaseHTMLView {
         let confirmPassword = this._passwordConfirmEl.value;
         let password = this._passwordEl.value;
         if (confirmPassword != password) {
-            return MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID;
+            return ACCOUNT_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID;
         }
 
         return null;
@@ -197,7 +197,7 @@ class RegistrationTabView extends BaseHTMLView {
                 this._resetApprovedFields();
                 this._validateRegistration();
             } else {
-                this._renderRegistrationRequestErr(MESSAGE_IDS.SOMETHING_WENT_WRONG);
+                this._renderRegistrationRequestErr(ACCOUNT_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
             this._reuqestLoader.toggle(false);
         }

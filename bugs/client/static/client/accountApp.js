@@ -10,13 +10,13 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   MESSAGE_IDS: () => (/* binding */ MESSAGE_IDS)
+/* harmony export */   ACCOUNT_MESSAGE_IDS: () => (/* binding */ ACCOUNT_MESSAGE_IDS)
 /* harmony export */ });
 /* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
 
 
-const MESSAGE_IDS = {
-    ..._common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS,
+const ACCOUNT_MESSAGE_IDS = {
+    ..._common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS,
 }
 
 
@@ -39,7 +39,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const EN_LIBRARY = {
-    ..._common_messages_msgLibraries_enLibrary__WEBPACK_IMPORTED_MODULE_1__.EN_BASE_LIBRARY,
+    ..._common_messages_msgLibraries_enLibrary__WEBPACK_IMPORTED_MODULE_1__.COMMON_EN_LIBRARY,
 }
 
 
@@ -54,14 +54,14 @@ const EN_LIBRARY = {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   msgLibrariesPack: () => (/* binding */ msgLibrariesPack)
+/* harmony export */   accountMsgLibrariesPack: () => (/* binding */ accountMsgLibrariesPack)
 /* harmony export */ });
 /* harmony import */ var _enLibrary__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./enLibrary */ "./accountApp/src/messages/msgLibraries/enLibrary.js");
 /* harmony import */ var _ukLibrary__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ukLibrary */ "./accountApp/src/messages/msgLibraries/ukLibrary.js");
 
 
 
-let msgLibrariesPack = {
+let accountMsgLibrariesPack = {
     'en': _enLibrary__WEBPACK_IMPORTED_MODULE_0__.EN_LIBRARY,
     'uk': _ukLibrary__WEBPACK_IMPORTED_MODULE_1__.UK_LIBRARY
 }
@@ -86,7 +86,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const UK_LIBRARY = {
-    ..._common_messages_msgLibraries_ukLibrary__WEBPACK_IMPORTED_MODULE_1__.UK_BASE_LIBRARY,
+    ..._common_messages_msgLibraries_ukLibrary__WEBPACK_IMPORTED_MODULE_1__.COMMON_UK_LIBRARY,
 }
 
 
@@ -231,7 +231,7 @@ class LoginTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
     _validateEmail() {
         let email = this._loginEmail;
         if (!email || !this._emailEl.checkValidity()) {
-            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.EMAIL_INVALID;
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.ACCOUNT_MESSAGE_IDS.EMAIL_INVALID;
         }
 
         return null;
@@ -244,7 +244,7 @@ class LoginTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
     _validatePassword() {
         let password = this._passwordEl.value;
         if (!password) {
-            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.PASSWORD_NEEDED;
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.ACCOUNT_MESSAGE_IDS.PASSWORD_NEEDED;
         }
 
         return null;
@@ -270,9 +270,9 @@ class LoginTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
             this._loginRequestLoader.toggle(false);
         } catch (e) {
             if (e instanceof _common_domain_errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_1__.UnauthorizedRequestError) {
-                this._renderLoginRequestErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL);
+                this._renderLoginRequestErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.ACCOUNT_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL);
             } else {
-                this._renderLoginRequestErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.MESSAGE_IDS.SOMETHING_WENT_WRONG);
+                this._renderLoginRequestErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.ACCOUNT_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
             this._loginRequestLoader.toggle(false);
         }
@@ -471,7 +471,7 @@ class RegistrationTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORT
         let confirmPassword = this._passwordConfirmEl.value;
         let password = this._passwordEl.value;
         if (confirmPassword != password) {
-            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID;
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.ACCOUNT_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID;
         }
 
         return null;
@@ -510,7 +510,7 @@ class RegistrationTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORT
                 this._resetApprovedFields();
                 this._validateRegistration();
             } else {
-                this._renderRegistrationRequestErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.SOMETHING_WENT_WRONG);
+                this._renderRegistrationRequestErr(_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.ACCOUNT_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
             this._reuqestLoader.toggle(false);
         }
@@ -622,19 +622,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   AccountService: () => (/* binding */ AccountService)
 /* harmony export */ });
 /* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
-/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
-/* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base/baseService */ "./common/domain/service/base/baseService.js");
-/* harmony import */ var _errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../errors/unauthorizedRequestError */ "./common/domain/errors/unauthorizedRequestError.js");
-/* harmony import */ var _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../errors/conflictRequestError */ "./common/domain/errors/conflictRequestError.js");
-/* harmony import */ var _errors_forbiddenRequestError__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../errors/forbiddenRequestError */ "./common/domain/errors/forbiddenRequestError.js");
+/* harmony import */ var _base_baseService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./base/baseService */ "./common/domain/service/base/baseService.js");
+/* harmony import */ var _errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../errors/unauthorizedRequestError */ "./common/domain/errors/unauthorizedRequestError.js");
+/* harmony import */ var _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../errors/conflictRequestError */ "./common/domain/errors/conflictRequestError.js");
+/* harmony import */ var _errors_forbiddenRequestError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../errors/forbiddenRequestError */ "./common/domain/errors/forbiddenRequestError.js");
 
 
 
 
 
 
-
-class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.BaseService {
+class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.BaseService {
 
     static MIN_USERNAME_LENGTH = 4;
     static MAX_USERNAME_LENGTH = 50;
@@ -646,18 +644,18 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
     static MAX_EMAIL_LENGTH = 254;
 
     static USERNAME_MIN_LENGTH_ERR = Object.freeze({
-        msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR,
+        msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR,
         minLength: AccountService.MIN_USERNAME_LENGTH
     });
     static USERNAME_MAX_LENGTH_ERR = Object.freeze({
-        msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR,
+        msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR,
         maxLength: AccountService.MAX_USERNAME_LENGTH
     });
     static USERNAME_INVALID_CHARS_ERR = Object.freeze({
-        msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS
+        msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_INVALID_CHARS
     });
     static USERNAME_TAKEN_ERR = Object.freeze({
-        msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN
+        msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_TAKEN
     });
     
     constructor(accountApi, userData) {
@@ -683,7 +681,7 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
             await this._requestHandler(() => this._accountApi.resetPasswordRequest(email));
             return null;
         } catch (e) {
-            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG;
         }
     }
 
@@ -692,10 +690,10 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
             await this._requestHandler(() => this._accountApi.setNewPassword(newPassword, token, id));
             return null;
         } catch (e) {
-            if (e instanceof _errors_forbiddenRequestError__WEBPACK_IMPORTED_MODULE_5__.ForbiddenRequestError) {
-                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED;
+            if (e instanceof _errors_forbiddenRequestError__WEBPACK_IMPORTED_MODULE_4__.ForbiddenRequestError) {
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED;
             } else {
-                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG;
             }
         }
     }
@@ -711,11 +709,11 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
             this._userData.username = newUsername;
             return null;
         } catch (e) {
-            if (e instanceof _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_4__.ConflictRequestError) {
+            if (e instanceof _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_3__.ConflictRequestError) {
                 return AccountService.USERNAME_TAKEN_ERR;
             } else {
                 return {
-                    msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG
+                    msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG
                 }
             }
         }
@@ -723,7 +721,7 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
 
     async changeEmail(newEmail, password) {
         if (!password) {
-            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED;
+            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_NEEDED;
         }
 
         let emailErr = await this.validateEmail(newEmail, false);
@@ -736,12 +734,12 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
             this._userData.email = newEmail;
             return null;
         } catch (e) {
-            if (e instanceof _errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_3__.UnauthorizedRequestError) {
-                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED;
-            } else if (e instanceof _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_4__.ConflictRequestError) {
-                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN;
+            if (e instanceof _errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__.UnauthorizedRequestError) {
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED;
+            } else if (e instanceof _errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_3__.ConflictRequestError) {
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.EMAIL_TAKEN;
             } else {
-                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG;
             }
         }
     }
@@ -751,10 +749,10 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
             await this._requestHandler(() => this._accountApi.changePassword(newPassword, oldPassword));
             return null;
         } catch (e) {
-            if (e instanceof _errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_3__.UnauthorizedRequestError) {
-                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED;
+            if (e instanceof _errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__.UnauthorizedRequestError) {
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED;
             } else {
-                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG;
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG;
             }
         }
     }
@@ -789,14 +787,14 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
     validatePassword(password = '') {
         if (password.length < AccountService.MIN_PASSWORD_LENGTH) {
             return {
-                msgId: _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR,
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR,
                 minLength: AccountService.MIN_PASSWORD_LENGTH
             }
         }
 
         if (password.length > AccountService.MAX_PASSWORD_LENGTH) {
             return {
-                msgId: _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR,
+                msgId: _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR,
                 maxLength: AccountService.MAX_PASSWORD_LENGTH
             }
         }
@@ -809,13 +807,13 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_2__.Base
             email.length > AccountService.MAX_EMAIL_LENGTH ||
             !AccountService.EMAIL_REGEX.test(email)
         ) {
-            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID;
+            return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.EMAIL_INVALID;
         }
 
         if (checkUniq) {
             let isUniq = await this._accountApi.checkEmailUniqueness(email);
             if (!isUniq) {
-                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN;
+                return _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.EMAIL_TAKEN;
             }
         }
 
@@ -881,9 +879,9 @@ class BaseService {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   BASE_MESSAGE_IDS: () => (/* binding */ BASE_MESSAGE_IDS)
+/* harmony export */   COMMON_MESSAGE_IDS: () => (/* binding */ COMMON_MESSAGE_IDS)
 /* harmony export */ });
-const BASE_MESSAGE_IDS = {
+const COMMON_MESSAGE_IDS = {
     USERNAME_MIN_LENGTH_ERR: 'USERNAME_MIN_LENGTH_ERR',
     USERNAME_MAX_LENGTH_ERR: 'USERNAME_MAX_LENGTH_ERR',
     USERNAME_INVALID_CHARS: 'USERNAME_INVALID_CHARS',
@@ -974,29 +972,29 @@ class MessageMaster {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   EN_BASE_LIBRARY: () => (/* binding */ EN_BASE_LIBRARY)
+/* harmony export */   COMMON_EN_LIBRARY: () => (/* binding */ COMMON_EN_LIBRARY)
 /* harmony export */ });
 /* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./common/messages/messageIds.js");
 
 
-const EN_BASE_LIBRARY = {
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR]: 'Username is too short. The minimum allowed length is {0}.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Username is too long. The maximum allowed length is {0}.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Username contains invalid characters.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'This username is already taken.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_NEEDED]: 'Username is empty.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'The email address is invalid.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'The email address is already taken.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_NEEDED]: '"The email address is not specified.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Password is too short. The minimum allowed length is {0}.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Password is too long. The maximum allowed length is {0}.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: '"The passwords do not match.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Password not provided.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Incorrect password or email address.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'The entered password is incorrect. The email has not been changed.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED]: 'The entered old password is incorrect. The password has not been changed.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED]: 'The password reset link is invalid or expired. Please request a new link.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Something went wrong.',
+const COMMON_EN_LIBRARY = {
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR]: 'Username is too short. The minimum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Username is too long. The maximum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Username contains invalid characters.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_TAKEN]: 'This username is already taken.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_NEEDED]: 'Username is empty.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.EMAIL_INVALID]: 'The email address is invalid.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.EMAIL_TAKEN]: 'The email address is already taken.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.EMAIL_NEEDED]: '"The email address is not specified.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Password is too short. The minimum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Password is too long. The maximum allowed length is {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: '"The passwords do not match.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_NEEDED]: 'Password not provided.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Incorrect password or email address.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'The entered password is incorrect. The email has not been changed.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED]: 'The entered old password is incorrect. The password has not been changed.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED]: 'The password reset link is invalid or expired. Please request a new link.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Something went wrong.',
 }
 
 
@@ -1011,29 +1009,29 @@ const EN_BASE_LIBRARY = {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   UK_BASE_LIBRARY: () => (/* binding */ UK_BASE_LIBRARY)
+/* harmony export */   COMMON_UK_LIBRARY: () => (/* binding */ COMMON_UK_LIBRARY)
 /* harmony export */ });
 /* harmony import */ var _messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../messageIds */ "./common/messages/messageIds.js");
 
 
-const UK_BASE_LIBRARY = {
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR]: 'Ім\'я користувача занадто коротке. Мінімально допустима довжина — {0}.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Ім\'я користувача занадто довге. Максимально допустима довжина — {0}.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Ім\'я користувача містить недопустимі символи.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_TAKEN]: 'Це ім\'я користувача вже зайняте.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.USERNAME_NEEDED]: 'Ім\'я користувача порожнє.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_INVALID]: 'Електронна адреса недійсна.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_TAKEN]: 'Електронна адреса вже зайнята.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.EMAIL_NEEDED]: 'Електронну адресу не вказано.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Пароль занадто короткий. Мінімально допустима довжина — {0}.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Пароль занадто довгий. Максимально допустима довжина — {0}.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: 'Паролі не співпадають.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_NEEDED]: 'Пароль не вказано.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Неправильний пароль або електронна адреса.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'Введений пароль неправильний. Електронну адресу не було змінено.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED]: 'Введений старий пароль неправильний. Пароль не було змінено.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED]: 'Посилання для відновлення пароля недійсне або застаріле. Будь ласка, запросіть нове посилання.',
-    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Щось пішло не так.',
+const COMMON_UK_LIBRARY = {
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR]: 'Ім\'я користувача занадто коротке. Мінімально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Ім\'я користувача занадто довге. Максимально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Ім\'я користувача містить недопустимі символи.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_TAKEN]: 'Це ім\'я користувача вже зайняте.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.USERNAME_NEEDED]: 'Ім\'я користувача порожнє.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.EMAIL_INVALID]: 'Електронна адреса недійсна.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.EMAIL_TAKEN]: 'Електронна адреса вже зайнята.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.EMAIL_NEEDED]: 'Електронну адресу не вказано.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Пароль занадто короткий. Мінімально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Пароль занадто довгий. Максимально допустима довжина — {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: 'Паролі не співпадають.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_NEEDED]: 'Пароль не вказано.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Неправильний пароль або електронна адреса.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.PASSWORD_IS_NOT_VALID_EMAIL_NOT_CHANGED]: 'Введений пароль неправильний. Електронну адресу не було змінено.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.OLD_PASSWORD_IS_NOT_VALID_PASSWORD_NOT_CHANGED]: 'Введений старий пароль неправильний. Пароль не було змінено.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.RESET_PASSWORD_LINK_EXPIRED]: 'Посилання для відновлення пароля недійсне або застаріле. Будь ласка, запросіть нове посилання.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG]: 'Щось пішло не так.',
 }
 
 
@@ -1435,10 +1433,10 @@ class AccountPasswordErrorView extends _base_baseErrorView__WEBPACK_IMPORTED_MOD
     setErr(err) {
         if (err) {
             switch (err.msgId) {
-                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR):
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.COMMON_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR):
                     this._el.innerHTML = this.$mm.format(err.msgId, err.minLength);
                     break;
-                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR):
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.COMMON_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR):
                     this._el.innerHTML = this.$mm.format(err.msgId, err.maxLength);
                     break;
             }
@@ -1472,18 +1470,18 @@ class AccountUsernameErrorView extends _base_baseErrorView__WEBPACK_IMPORTED_MOD
     setErr(err) {
         if (err) {
             switch (err.msgId) {
-                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR):
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.COMMON_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR):
                     this._el.innerHTML = this.$mm.format(err.msgId, err.minLength);
                     break;
-                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR):
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.COMMON_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR):
                     this._el.innerHTML = this.$mm.format(err.msgId, err.maxLength);
                     break;
-                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.USERNAME_INVALID_CHARS):
-                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.USERNAME_TAKEN):
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.COMMON_MESSAGE_IDS.USERNAME_INVALID_CHARS):
+                case (_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.COMMON_MESSAGE_IDS.USERNAME_TAKEN):
                     this._el.innerHTML = this.$mm.format(err.msgId);
                     break;
                 default:
-                    this._el.innerHTML = this.$mm.get(_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.BASE_MESSAGE_IDS.SOMETHING_WENT_WRONG);
+                    this._el.innerHTML = this.$mm.get(_common_messages_messageIds__WEBPACK_IMPORTED_MODULE_1__.COMMON_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         } else {
             this._el.innerHTML = '';
@@ -1531,34 +1529,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 const UI_CONSTS = {
     DOUBLE_CLICK_THROTTLE_MS: 2000
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/messages/messageIds.js":
-/*!********************************************!*\
-  !*** ./gameApp/src/messages/messageIds.js ***!
-  \********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   MESSAGE_IDS: () => (/* binding */ MESSAGE_IDS)
-/* harmony export */ });
-/* harmony import */ var _common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/messages/messageIds */ "./common/messages/messageIds.js");
-
-
-const MESSAGE_IDS = {
-    ..._common_messages_messageIds__WEBPACK_IMPORTED_MODULE_0__.BASE_MESSAGE_IDS,
-    OLD_PASSWORD_NEEDED: 'OLD_PASSWORD_NEEDED',
-    TAB_BREEDING: 'TAB_BREEDING',
-    TAB_COLONIES: 'TAB_COLONIES',
-    TAB_SPECIE: 'TAB_SPECIE',
-    TAB_NOTIFICATIONS: 'TAB_NOTIFICATIONS',
-    TAB_RATING: 'TAB_RATING',
-    TAB_ACCOUNT: 'TAB_ACCOUNT'
 }
 
 
@@ -7460,7 +7430,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-let mm = _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_5__.MessageMaster.init(_messages_msgLibraries__WEBPACK_IMPORTED_MODULE_4__.msgLibrariesPack);
+let mm = _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_5__.MessageMaster.init(_messages_msgLibraries__WEBPACK_IMPORTED_MODULE_4__.accountMsgLibrariesPack);
 _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_6__.BaseView.useMessageMaster(mm);
 
 let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_2__.Requester();

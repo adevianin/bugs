@@ -2,11 +2,11 @@ import { ResetPasswordAppView } from "./view/resetPasswordAppView";
 import { AccountApi } from '@common/sync/accountApi';
 import { Requester } from '@common/utils/requester';
 import { AccountService } from '@common/domain/service/accountService';
-import { msgLibrariesPack } from "./messages/msgLibraries";
+import { resetPasswordMsgLibrariesPack } from "./messages/msgLibraries";
 import { MessageMaster } from '@common/messages/messageMaster';
 import { BaseView } from "@common/view/base/baseView";
 
-let mm = MessageMaster.init(msgLibrariesPack);
+let mm = MessageMaster.init(resetPasswordMsgLibrariesPack);
 BaseView.useMessageMaster(mm);
 
 let requester = new Requester();

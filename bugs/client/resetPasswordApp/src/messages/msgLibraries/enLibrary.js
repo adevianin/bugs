@@ -1,8 +1,8 @@
-import { MESSAGE_IDS } from "../messageIds";
-import { EN_BASE_LIBRARY } from "@common/messages/msgLibraries/enLibrary";
+import { RESET_PASSWORD_MESSAGE_IDS } from "../messageIds";
+import { COMMON_EN_LIBRARY } from "@common/messages/msgLibraries/enLibrary";
 
 const EN_LIBRARY = {
-    ...EN_BASE_LIBRARY,
+    ...COMMON_EN_LIBRARY,
 }
 
 export {
