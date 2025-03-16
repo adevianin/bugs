@@ -18,6 +18,8 @@ class UserTab extends BaseGameHTMLView {
 
         this._render();
 
+        this.$domain.events.on('emailVerified', this._onEmailVerified.bind(this));
+
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
         this._emailEditBtnEl.addEventListener('click', this._onEmailEditBtnClick.bind(this));
         this._usernameEditBtnEl.addEventListener('click', this._onUsernameEditBtnClick.bind(this));
@@ -128,6 +130,10 @@ class UserTab extends BaseGameHTMLView {
 
     _onVerifyEmailRequestBtnClick() {
         this.$domain.verifyEmailRequest();
+    }
+
+    _onEmailVerified() {
+        this._renderEmail();
     }
 
 }

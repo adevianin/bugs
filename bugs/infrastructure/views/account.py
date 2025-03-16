@@ -17,6 +17,7 @@ from django.contrib.auth.password_validation import validate_password
 from infrastructure.email.email_service import EmailService
 from infrastructure.utils.build_base_url import build_base_url
 from infrastructure.utils.generate_username import generate_username
+from infrastructure.event_bus import event_bus
 import json
 
 @ensure_csrf_cookie
@@ -174,6 +175,7 @@ def verify_email(request, uidb64, token):
     if user and EmailVerificationTokenGenerator.validate(user, token):
         user.is_email_verified = True
         user.save()
+        event_bus.emit('email_verified', user)
         is_success = True
     else:
         is_success = False

@@ -36,9 +36,8 @@ class AccountService extends BaseService {
         this._userData = userData;
     }
 
-    updateUserData(newUserData) {
-        this._userData = newUserData;
-        console.log('user data updated', newUserData);
+    setEventBus(eventBus) {
+        this._eventBus = eventBus;
     }
 
     login(email, password) {
@@ -136,6 +135,15 @@ class AccountService extends BaseService {
 
     getUserData() {
         return this._userData;
+    }
+
+    updateUserData(newUserData) {
+        this._userData = newUserData;
+    }
+
+    verifyEmailForUser() {
+        this._userData.isEmailVerified = true;
+        this._eventBus.emit('emailVerified');
     }
 
     verifyEmailRequest() {

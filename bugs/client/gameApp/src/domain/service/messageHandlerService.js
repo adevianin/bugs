@@ -2,13 +2,14 @@ import { initConts } from "@domain/consts";
 
 class MessageHandlerService {
 
-    constructor(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService) {
+    constructor(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService, accountService) {
         this._mainEventBus = mainEventBus;
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._colonyService = colonyService;
         this._userService = userService;
         this._nuptialEnvironmentService = nuptialEnvironmentService;
+        this._accountService = accountService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
@@ -27,6 +28,9 @@ class MessageHandlerService {
                 break;
             case 'step':
                 this._handleStepMsg(msg);
+                break;
+            case 'email_verified':
+                this._handleEmailVerifiedMsg(msg);
                 break;
             default: 
                 throw `unknown type of message "${ msg.type }"`
@@ -67,6 +71,10 @@ class MessageHandlerService {
             }
         }
         this._mainEventBus.emit(`stepSyncDone:${msg.step}`);
+    }
+
+    _handleEmailVerifiedMsg() {
+        this._accountService.verifyEmailForUser();
     }
 
 }

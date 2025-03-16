@@ -1,6 +1,9 @@
 from channels.generic.websocket import WebsocketConsumer
 from core.world.world_facade import WorldFacade
 from .step_data_manager import StepDataManager
+from django.dispatch import receiver
+from infrastructure.event_bus import event_bus
+from infrastructure.models import User
 import json
 
 class MainSocketConsumer(WebsocketConsumer):
@@ -11,17 +14,19 @@ class MainSocketConsumer(WebsocketConsumer):
         self._inited = False
 
     def connect(self):
-        self._user = self.scope["user"]
+        self._user: User = self.scope["user"]
 
         if self._user.is_authenticated and self._world_facade.is_world_running:
             self._world_facade.ensure_starter_pack_built_for_player(self._user.id)
             self.accept()
         else:
             self.close()
-
+        
+        event_bus.add_listener('email_verified', self._on_email_verified)
         self._step_data_manager.events.add_listener('step_data_ready', self._on_step_data_ready)
 
     def disconnect(self, code):
+        event_bus.remove_listener('email_verified', self._on_email_verified)
         self._step_data_manager.events.remove_listener('step_data_ready', self._on_step_data_ready)
         return super().disconnect(code)
     
@@ -36,4 +41,10 @@ class MainSocketConsumer(WebsocketConsumer):
             data = self._step_data_manager.get_init_step_data(self._user.id)
             self.send(json.dumps(data))
             self._inited = True
+
+    def _on_email_verified(self, user: User):
+        if self._user.id == user.id:
+            self.send(json.dumps({
+                'type': 'email_verified'
+            }))
             

@@ -145,9 +145,8 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.Base
         this._userData = userData;
     }
 
-    updateUserData(newUserData) {
-        this._userData = newUserData;
-        console.log('user data updated', newUserData);
+    setEventBus(eventBus) {
+        this._eventBus = eventBus;
     }
 
     login(email, password) {
@@ -245,6 +244,15 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.Base
 
     getUserData() {
         return this._userData;
+    }
+
+    updateUserData(newUserData) {
+        this._userData = newUserData;
+    }
+
+    verifyEmailForUser() {
+        this._userData.isEmailVerified = true;
+        this._eventBus.emit('emailVerified');
     }
 
     verifyEmailRequest() {
@@ -3817,12 +3825,13 @@ function initDomainLayer(apis, serverConnection, initialData) {
 
     let worldService = new _service_worldService__WEBPACK_IMPORTED_MODULE_5__.WorldService(world, worldFactory, mainEventBus, ratingContainer);
     let accountService = new _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user);
+    accountService.setEventBus(mainEventBus);
     let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(mainEventBus, world, apis.colonyApi, worldFactory);
     let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_7__.UserService(apis.userApi, notificationsContainer);
     let nuptialEnvironmentService = new _service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_8__.NuptialEnvironmentService(mainEventBus, world, nuptialEnvironmentFactory, apis.nuptialEnvironmentApi);
     let nestService = new _service_nestService__WEBPACK_IMPORTED_MODULE_9__.NestService(mainEventBus, world, apis.nestApi);
     let antService = new _service_antService__WEBPACK_IMPORTED_MODULE_13__.AntService(mainEventBus, world, apis.antApi);
-    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService);
+    let messageHandlerService = new _service_messageHandlerService__WEBPACK_IMPORTED_MODULE_2__.MessageHandlerService(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService, accountService);
 
     let domainFacade = new _domainFacade__WEBPACK_IMPORTED_MODULE_0__.DomainFacade(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService, antService);
 
@@ -4095,13 +4104,14 @@ __webpack_require__.r(__webpack_exports__);
 
 class MessageHandlerService {
 
-    constructor(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService) {
+    constructor(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService, accountService) {
         this._mainEventBus = mainEventBus;
         this._serverConnection = serverConnection;
         this._worldService = worldService;
         this._colonyService = colonyService;
         this._userService = userService;
         this._nuptialEnvironmentService = nuptialEnvironmentService;
+        this._accountService = accountService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
@@ -4120,6 +4130,9 @@ class MessageHandlerService {
                 break;
             case 'step':
                 this._handleStepMsg(msg);
+                break;
+            case 'email_verified':
+                this._handleEmailVerifiedMsg(msg);
                 break;
             default: 
                 throw `unknown type of message "${ msg.type }"`
@@ -4160,6 +4173,10 @@ class MessageHandlerService {
             }
         }
         this._mainEventBus.emit(`stepSyncDone:${msg.step}`);
+    }
+
+    _handleEmailVerifiedMsg() {
+        this._accountService.verifyEmailForUser();
     }
 
 }
@@ -12213,6 +12230,8 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
 
         this._render();
 
+        this.$domain.events.on('emailVerified', this._onEmailVerified.bind(this));
+
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
         this._emailEditBtnEl.addEventListener('click', this._onEmailEditBtnClick.bind(this));
         this._usernameEditBtnEl.addEventListener('click', this._onUsernameEditBtnClick.bind(this));
@@ -12323,6 +12342,10 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
 
     _onVerifyEmailRequestBtnClick() {
         this.$domain.verifyEmailRequest();
+    }
+
+    _onEmailVerified() {
+        this._renderEmail();
     }
 
 }

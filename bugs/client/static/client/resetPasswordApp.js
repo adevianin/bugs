@@ -141,9 +141,8 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.Base
         this._userData = userData;
     }
 
-    updateUserData(newUserData) {
-        this._userData = newUserData;
-        console.log('user data updated', newUserData);
+    setEventBus(eventBus) {
+        this._eventBus = eventBus;
     }
 
     login(email, password) {
@@ -241,6 +240,15 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.Base
 
     getUserData() {
         return this._userData;
+    }
+
+    updateUserData(newUserData) {
+        this._userData = newUserData;
+    }
+
+    verifyEmailForUser() {
+        this._userData.isEmailVerified = true;
+        this._eventBus.emit('emailVerified');
     }
 
     verifyEmailRequest() {
