@@ -145,6 +145,11 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.Base
         this._userData = userData;
     }
 
+    updateUserData(newUserData) {
+        this._userData = newUserData;
+        console.log('user data updated', newUserData);
+    }
+
     login(email, password) {
         return this._requestHandler(() => this._accountApi.login(email, password));
     }
@@ -211,8 +216,8 @@ class AccountService extends _base_baseService__WEBPACK_IMPORTED_MODULE_1__.Base
         }
 
         try {
-            await this._requestHandler(() => this._accountApi.changeEmail(newEmail, password));
-            this._userData.email = newEmail;
+            let data = await this._requestHandler(() => this._accountApi.changeEmail(newEmail, password));
+            this.updateUserData(data.user);
             return null;
         } catch (e) {
             if (e instanceof _errors_unauthorizedRequestError__WEBPACK_IMPORTED_MODULE_2__.UnauthorizedRequestError) {
@@ -12152,6 +12157,7 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
         this._fieldEditorContainerEl = this._el.querySelector('[data-field-editor-container]');
 
         this._emailEl = this._el.querySelector('[data-email]');
+        this._emailNotVerifiedMarkerEl = this._el.querySelector('[data-not-verified-label]');
         this._emailEditBtnEl = this._el.querySelector('[data-edit-email-btn]');
 
         this._usernameEl = this._el.querySelector('[data-username]');
@@ -12192,6 +12198,7 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
     _renderEmail() {
         let user = this.$domain.getUserData();
         this._emailEl.innerHTML = user.email;
+        this._emailNotVerifiedMarkerEl.classList.toggle('g-hidden', user.isEmailVerified);
     }
 
     _renderUsername() {
@@ -22188,7 +22195,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div data-main-contentainer>\r\n    <!-- <div data-username-editor></div> -->\r\n    <div>\r\n        username:\r\n        <span data-username></span>\r\n        <button data-edit-username-btn>(>)</button>\r\n    </div>\r\n    <div>\r\n        email:\r\n        <span data-email></span>\r\n        <button data-edit-email-btn>(>)</button>\r\n    </div>\r\n    <div>\r\n        password:\r\n        <span>***</span>\r\n        <button data-edit-password-btn>(>)</button>\r\n    </div>\r\n    <button data-logout-btn>вийти</button>\r\n</div>\r\n<div data-field-editor-container></div>\r\n";
+var code = "<div data-main-contentainer>\r\n    <!-- <div data-username-editor></div> -->\r\n    <div>\r\n        username:\r\n        <span data-username></span>\r\n        <button data-edit-username-btn>(>)</button>\r\n    </div>\r\n    <div>\r\n        email:\r\n        <span data-email></span>\r\n        <span class=\"g-hidden g-error-container\" data-not-verified-label>(not verified)</span>\r\n        <button data-edit-email-btn>(>)</button>\r\n    </div>\r\n    <div>\r\n        password:\r\n        <span>***</span>\r\n        <button data-edit-password-btn>(>)</button>\r\n    </div>\r\n    <button data-logout-btn>вийти</button>\r\n</div>\r\n<div data-field-editor-container></div>\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 

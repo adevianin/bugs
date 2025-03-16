@@ -48,7 +48,8 @@ class User(AbstractUser):
         return {
             'id': self.id,
             'username': self.username,
-            'email': self.email
+            'email': self.email,
+            'isEmailVerified': self.is_email_verified
         }
 
 class World(models.Model):

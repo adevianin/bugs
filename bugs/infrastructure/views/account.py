@@ -273,6 +273,8 @@ def change_email(request: HttpRequest):
         return HttpResponse(status=401)
     
     try:
+        if user.email != new_email:
+            user.is_email_verified = False
         user.email = new_email
         user.full_clean()
         user.save()
@@ -283,7 +285,9 @@ def change_email(request: HttpRequest):
             else:
                 return HttpResponse(status=400)
 
-    return HttpResponse(status=204)    
+    return JsonResponse({
+        'user': user.get_general_data()
+    }, status=200)    
 
 @require_POST
 @login_required

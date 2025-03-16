@@ -30,6 +30,7 @@ class UserTab extends BaseGameHTMLView {
         this._fieldEditorContainerEl = this._el.querySelector('[data-field-editor-container]');
 
         this._emailEl = this._el.querySelector('[data-email]');
+        this._emailNotVerifiedMarkerEl = this._el.querySelector('[data-not-verified-label]');
         this._emailEditBtnEl = this._el.querySelector('[data-edit-email-btn]');
 
         this._usernameEl = this._el.querySelector('[data-username]');
@@ -70,6 +71,7 @@ class UserTab extends BaseGameHTMLView {
     _renderEmail() {
         let user = this.$domain.getUserData();
         this._emailEl.innerHTML = user.email;
+        this._emailNotVerifiedMarkerEl.classList.toggle('g-hidden', user.isEmailVerified);
     }
 
     _renderUsername() {

@@ -36,6 +36,11 @@ class AccountService extends BaseService {
         this._userData = userData;
     }
 
+    updateUserData(newUserData) {
+        this._userData = newUserData;
+        console.log('user data updated', newUserData);
+    }
+
     login(email, password) {
         return this._requestHandler(() => this._accountApi.login(email, password));
     }
@@ -102,8 +107,8 @@ class AccountService extends BaseService {
         }
 
         try {
-            await this._requestHandler(() => this._accountApi.changeEmail(newEmail, password));
-            this._userData.email = newEmail;
+            let data = await this._requestHandler(() => this._accountApi.changeEmail(newEmail, password));
+            this.updateUserData(data.user);
             return null;
         } catch (e) {
             if (e instanceof UnauthorizedRequestError) {
