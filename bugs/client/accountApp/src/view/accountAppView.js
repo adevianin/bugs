@@ -5,9 +5,8 @@ import { RegistrationTabView } from './registrationTabView';
 
 class AccountAppView extends BaseHTMLView {
 
-    constructor(el, accountService) {
+    constructor(el) {
         super(el);
-        this._accountService = accountService;
 
         this._render();
         
@@ -19,8 +18,8 @@ class AccountAppView extends BaseHTMLView {
         this._switchModeToRegisterBtn = this._el.querySelector('[data-switch-to-register-btn]');
         this._switchModeToLoginBtn = this._el.querySelector('[data-switch-to-login-btn]');
 
-        this._registrationTabView = new RegistrationTabView(this._el.querySelector('[data-registration-tab]'), this._accountService);
-        this._loginTabView = new LoginTabView(this._el.querySelector('[data-login-tab]'), this._accountService);
+        this._registrationTabView = new RegistrationTabView(this._el.querySelector('[data-registration-tab]'));
+        this._loginTabView = new LoginTabView(this._el.querySelector('[data-login-tab]'));
     }
 
     _onSwitchModeToLoginClick(e) {

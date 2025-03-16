@@ -134,7 +134,7 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         let workersCount = this._workersCountView.value;
         let warriorsCount = this._warriorsCountView.value;
         try {
-            await this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
+            await this.$domain.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
             this._onDone();
         } catch (e) {
             if (e instanceof ConflictRequestError) {
@@ -159,13 +159,13 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         let markers = [];
 
         if (this._nestFromSelector.nestId) {
-            let nestFrom = this.$domainFacade.findEntityById(this._nestFromSelector.nestId);
-            markers.push(this.$domainFacade.buildMarker(MarkerTypes.UNLOAD, nestFrom.position));
+            let nestFrom = this.$domain.findEntityById(this._nestFromSelector.nestId);
+            markers.push(this.$domain.buildMarker(MarkerTypes.UNLOAD, nestFrom.position));
         }
 
         if (this._nestToSelector.nestId && this._nestToSelector.nestId != this._nestFromSelector.nestId) {
-            let nestFrom = this.$domainFacade.findEntityById(this._nestToSelector.nestId);
-            markers.push(this.$domainFacade.buildMarker(MarkerTypes.LOAD, nestFrom.position));
+            let nestFrom = this.$domain.findEntityById(this._nestToSelector.nestId);
+            markers.push(this.$domain.buildMarker(MarkerTypes.LOAD, nestFrom.position));
         }
 
         this._demonstrateMarkersRequest(markers);

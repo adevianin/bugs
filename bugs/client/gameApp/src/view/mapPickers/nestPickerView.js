@@ -13,7 +13,7 @@ class NestPickerView extends BasePickerView {
     }
 
     _onPointPick(point) {
-        let nest = this.$domainFacade.findNearestNest(point, this._excludeColonyId);
+        let nest = this.$domain.findNearestNest(point, this._excludeColonyId);
 
         if (nest) {
             this._callback(nest);

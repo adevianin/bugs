@@ -29,7 +29,7 @@ class EmailFieldEditorView extends BaseFieldEditor {
         
         this._passwordEl = this._el.querySelector('[data-password]');
         this._emailEl = this._el.querySelector('[data-email]');
-        let user = this.$domainFacade.getUserData();
+        let user = this.$domain.getUserData();
         this._emailEl.value = user.email;
     }
 
@@ -45,7 +45,7 @@ class EmailFieldEditorView extends BaseFieldEditor {
         this._loader.toggle(true);
         let newEmail = this._emailEl.value;
         let password = this._passwordEl.value;
-        let err = await this.$domainFacade.changeEmail(newEmail, password);
+        let err = await this.$domain.changeEmail(newEmail, password);
         this._renderErr(err);
         this._loader.toggle(false);
         if (!err) {

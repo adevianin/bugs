@@ -10,7 +10,7 @@ class SpecieBuilderTabView extends BaseGameHTMLView {
     constructor(el) {
         super(el);
 
-        this._specie = this.$domainFacade.getMySpecie();
+        this._specie = this.$domain.getMySpecie();
 
         this._render();
     }

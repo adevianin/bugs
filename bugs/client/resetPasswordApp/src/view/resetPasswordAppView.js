@@ -4,9 +4,8 @@ import { SetPasswordModeView } from "./setPasswordModeView";
 
 class ResetPasswordAppView extends BaseHTMLView {
 
-    constructor(el, accountService) {
+    constructor(el) {
         super(el);
-        this._accountService = accountService;
 
         this._render();
     }
@@ -16,9 +15,9 @@ class ResetPasswordAppView extends BaseHTMLView {
         let setPasswordModeEl = this._el.querySelector('[data-set-password-mode]');
 
         if (requestModeEl) {
-            this._modeView = new RequestModeContainerView(requestModeEl, this._accountService);
+            this._modeView = new RequestModeContainerView(requestModeEl);
         } else if (setPasswordModeEl) {
-            this._modeView = new SetPasswordModeView(setPasswordModeEl, this._accountService);
+            this._modeView = new SetPasswordModeView(setPasswordModeEl);
         }
         
     }

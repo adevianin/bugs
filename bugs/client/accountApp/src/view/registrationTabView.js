@@ -9,9 +9,8 @@ import { UI_CONSTS } from "@common/view/ui_consts";
 
 class RegistrationTabView extends BaseHTMLView {
 
-    constructor(el, accountService) {
+    constructor(el) {
         super(el);
-        this._accountService = accountService;
         this._approvedFields = {
             username: false,
             email: false,
@@ -100,7 +99,7 @@ class RegistrationTabView extends BaseHTMLView {
 
     async _validateUsername() {
         let username = this._username;
-        let res = await this._accountService.validateUsername(username);
+        let res = await this.$domain.validateUsername(username);
         return res;
     }
 
@@ -121,7 +120,7 @@ class RegistrationTabView extends BaseHTMLView {
     }
 
     async _validateEmail() {
-        return await this._accountService.validateEmail(this._email);
+        return await this.$domain.validateEmail(this._email);
     }
 
     _renderEmailError(errId) {
@@ -142,7 +141,7 @@ class RegistrationTabView extends BaseHTMLView {
 
     _validatePassword() {
         let password = this._passwordEl.value;
-        return this._accountService.validatePassword(password);
+        return this.$domain.validatePassword(password);
     }
 
     _renderPasswordError(err) {
@@ -189,7 +188,7 @@ class RegistrationTabView extends BaseHTMLView {
         let password = this._passwordEl.value;
         try {
             this._reuqestLoader.toggle(true);
-            await this._accountService.register(username, email, password);
+            await this.$domain.register(username, email, password);
             window.location.href = '/';
             this._reuqestLoader.toggle(false);
         } catch(e) {

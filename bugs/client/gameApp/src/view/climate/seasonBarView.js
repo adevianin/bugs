@@ -14,7 +14,7 @@ class SeasonBarView extends BaseGameHTMLView {
 
         this._render();
 
-        this.$domainFacade.events.on('currentStepChanged', this._onCurrentStepChanged.bind(this));
+        this.$domain.events.on('currentStepChanged', this._onCurrentStepChanged.bind(this));
     }
 
     _render() {
@@ -44,7 +44,7 @@ class SeasonBarView extends BaseGameHTMLView {
     }
 
     _renderMarker() {
-        let yearStep = this.$domainFacade.currentStep % CONSTS.STEPS_IN_YEAR;
+        let yearStep = this.$domain.currentStep % CONSTS.STEPS_IN_YEAR;
         this._markerEl.style.left = this._percentsPerStep * yearStep + '%';
     }
 

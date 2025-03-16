@@ -24,7 +24,7 @@ async function initViewLayer(domainFacade) {
 
     let mm = MessageMaster.init(gameMsgLibrariesPack);
 
-    BaseView.useDomainFacade(domainFacade);
+    BaseView.useDomain(domainFacade);
     BaseView.useEventBus(eventBus);
     BaseView.useMessageMaster(mm);
     BaseView.useMessages(uaMessages);

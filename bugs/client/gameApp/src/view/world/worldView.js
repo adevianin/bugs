@@ -21,11 +21,11 @@ class WorldView extends BaseGraphicView {
 
         this._render();
 
-        this.$domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
+        this.$domain.events.on('entityBorn', this._onEntityBorn.bind(this));
     }
 
     _render() {
-        let worldSize = this.$domainFacade.getWorldSize();
+        let worldSize = this.$domain.getWorldSize();
         this._bg = new PIXI.TilingSprite({
             texture: this.$textureManager.getTexture('grass.png'),
             width: worldSize[0],
@@ -62,7 +62,7 @@ class WorldView extends BaseGraphicView {
     }
 
     _buildEntityViews() {
-        let entities = this.$domainFacade.getEntities();
+        let entities = this.$domain.getEntities();
         entities.forEach(entity => {
             this._buildEntityView(entity);
         });

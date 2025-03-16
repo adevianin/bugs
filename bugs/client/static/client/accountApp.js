@@ -114,9 +114,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseHTMLView {
 
-    constructor(el, accountService) {
+    constructor(el) {
         super(el);
-        this._accountService = accountService;
 
         this._render();
         
@@ -128,8 +127,8 @@ class AccountAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MO
         this._switchModeToRegisterBtn = this._el.querySelector('[data-switch-to-register-btn]');
         this._switchModeToLoginBtn = this._el.querySelector('[data-switch-to-login-btn]');
 
-        this._registrationTabView = new _registrationTabView__WEBPACK_IMPORTED_MODULE_3__.RegistrationTabView(this._el.querySelector('[data-registration-tab]'), this._accountService);
-        this._loginTabView = new _loginTabView__WEBPACK_IMPORTED_MODULE_2__.LoginTabView(this._el.querySelector('[data-login-tab]'), this._accountService);
+        this._registrationTabView = new _registrationTabView__WEBPACK_IMPORTED_MODULE_3__.RegistrationTabView(this._el.querySelector('[data-registration-tab]'));
+        this._loginTabView = new _loginTabView__WEBPACK_IMPORTED_MODULE_2__.LoginTabView(this._el.querySelector('[data-login-tab]'));
     }
 
     _onSwitchModeToLoginClick(e) {
@@ -180,9 +179,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class LoginTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    constructor(el, accountService) {
+    constructor(el) {
         super(el);
-        this._accountService = accountService;
 
         this._render();
 
@@ -264,7 +262,7 @@ class LoginTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODU
 
         try {
             this._loginRequestLoader.toggle(true);
-            await this._accountService.login(email, password);
+            await this.$domain.login(email, password);
             this._renderLoginRequestErr();
             this._redirectToNext();
             this._loginRequestLoader.toggle(false);
@@ -322,9 +320,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class RegistrationTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    constructor(el, accountService) {
+    constructor(el) {
         super(el);
-        this._accountService = accountService;
         this._approvedFields = {
             username: false,
             email: false,
@@ -413,7 +410,7 @@ class RegistrationTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORT
 
     async _validateUsername() {
         let username = this._username;
-        let res = await this._accountService.validateUsername(username);
+        let res = await this.$domain.validateUsername(username);
         return res;
     }
 
@@ -434,7 +431,7 @@ class RegistrationTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORT
     }
 
     async _validateEmail() {
-        return await this._accountService.validateEmail(this._email);
+        return await this.$domain.validateEmail(this._email);
     }
 
     _renderEmailError(errId) {
@@ -455,7 +452,7 @@ class RegistrationTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORT
 
     _validatePassword() {
         let password = this._passwordEl.value;
-        return this._accountService.validatePassword(password);
+        return this.$domain.validatePassword(password);
     }
 
     _renderPasswordError(err) {
@@ -502,7 +499,7 @@ class RegistrationTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORT
         let password = this._passwordEl.value;
         try {
             this._reuqestLoader.toggle(true);
-            await this._accountService.register(username, email, password);
+            await this.$domain.register(username, email, password);
             window.location.href = '/';
             this._reuqestLoader.toggle(false);
         } catch(e) {
@@ -1330,13 +1327,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class BaseView {
 
-    static domainFacade;
+    static domain;
     static eventBus;
     static mm;
     static messages;
 
-    get $domainFacade() {
-        return BaseView.domainFacade;
+    get $domain() {
+        return BaseView.domain;
     }
 
     get $eventBus() {
@@ -1351,8 +1348,8 @@ class BaseView {
         return BaseView.messages;
     }
 
-    static useDomainFacade(domainFacade) {
-        BaseView.domainFacade = domainFacade;
+    static useDomain(domain) {
+        BaseView.domain = domain;
     }
 
     static useEventBus(eventBus) {
@@ -7431,14 +7428,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let mm = _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_5__.MessageMaster.init(_messages_msgLibraries__WEBPACK_IMPORTED_MODULE_4__.accountMsgLibrariesPack);
-_common_view_base_baseView__WEBPACK_IMPORTED_MODULE_6__.BaseView.useMessageMaster(mm);
-
 let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_2__.Requester();
 let accountApi = new _common_sync_accountApi__WEBPACK_IMPORTED_MODULE_1__.AccountApi(requester);
-
 let accountService = new _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_3__.AccountService(accountApi);
 
-new _view_accountAppView__WEBPACK_IMPORTED_MODULE_0__.AccountAppView(document.body, accountService);
+_common_view_base_baseView__WEBPACK_IMPORTED_MODULE_6__.BaseView.useMessageMaster(mm);
+_common_view_base_baseView__WEBPACK_IMPORTED_MODULE_6__.BaseView.useDomain(accountService);
+
+new _view_accountAppView__WEBPACK_IMPORTED_MODULE_0__.AccountAppView(document.body);
 })();
 
 /******/ })()

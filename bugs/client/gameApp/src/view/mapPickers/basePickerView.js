@@ -6,7 +6,7 @@ class BasePickerView extends BaseGraphicView {
     constructor(container) {
         super();
         this._container = container;
-        this._worldSize = this.$domainFacade.getWorldSize();
+        this._worldSize = this.$domain.getWorldSize();
 
         this._render();
         this.deactivate();

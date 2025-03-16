@@ -13,7 +13,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
         this._nestForLoot = null;
-        this._queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
+        this._queenOfColony = this.$domain.getQueenOfColony(this._performingColony.id);
 
         this._render();
 
@@ -109,7 +109,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
             isError = true;
         }
 
-        let condErr = this.$domainFacade.validatePillageNestOperationConditions(this._performingColony.id);
+        let condErr = this.$domain.validatePillageNestOperationConditions(this._performingColony.id);
         this._renderMainError(condErr);
         if (condErr) {
             isError = true;
@@ -152,7 +152,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         let nestForLootId = this._nestForLootSelector.nestId;
         let nestToPillageId = this._nestToPillageView.value.id;
         try {
-            await this.$domainFacade.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount);
+            await this.$domain.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount);
             this._onDone();
         } catch (e) {
             if (e instanceof ConflictRequestError) {
@@ -167,12 +167,12 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         let markers = [];
 
         if (this._nestToPillageView.value) {
-            markers.push(this.$domainFacade.buildMarker(MarkerTypes.PILLAGE, this._nestToPillageView.value.position));
+            markers.push(this.$domain.buildMarker(MarkerTypes.PILLAGE, this._nestToPillageView.value.position));
         }
 
         if (this._nestForLootSelector.nestId) {
-            let nestForLoot = this.$domainFacade.findEntityById(this._nestForLootSelector.nestId);
-            markers.push(this.$domainFacade.buildMarker(MarkerTypes.LOAD, nestForLoot.position));
+            let nestForLoot = this.$domain.findEntityById(this._nestForLootSelector.nestId);
+            markers.push(this.$domain.buildMarker(MarkerTypes.LOAD, nestForLoot.position));
         }
 
         this._demonstrateMarkersRequest(markers);

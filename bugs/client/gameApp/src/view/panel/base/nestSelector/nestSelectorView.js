@@ -5,14 +5,14 @@ class NestSelectorView extends BaseGameHTMLView {
     constructor(el, colonyId, canBeEmpty = true) {
         super(el);
         this._colonyId = colonyId;
-        this._nests = this.$domainFacade.getNestsFromColony(this._colonyId);
+        this._nests = this.$domain.getNestsFromColony(this._colonyId);
         this._isDisabled = false;
         this._canBeEmpty = canBeEmpty;
 
         this._render();
 
-        this._stopListenNestDied = this.$domainFacade.events.on(`nestDied:${this._colonyId}`, this._onNestDied.bind(this));
-        this._stopListenNestBorn = this.$domainFacade.events.on(`nestBorn:${this._colonyId}`, this._onNestBorn.bind(this));
+        this._stopListenNestDied = this.$domain.events.on(`nestDied:${this._colonyId}`, this._onNestDied.bind(this));
+        this._stopListenNestBorn = this.$domain.events.on(`nestBorn:${this._colonyId}`, this._onNestBorn.bind(this));
         this._el.addEventListener('change', this._onChange.bind(this));
     }
 

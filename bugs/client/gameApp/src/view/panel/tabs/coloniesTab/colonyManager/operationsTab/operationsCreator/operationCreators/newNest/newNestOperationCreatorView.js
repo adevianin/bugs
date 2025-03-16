@@ -12,7 +12,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
+        this._queenOfColony = this.$domain.getQueenOfColony(this._performingColony.id);
 
         this._render();
 
@@ -76,7 +76,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
             isError = true;
         }
 
-        let condErr = this.$domainFacade.validateNewNestOperationConditions(this._performingColony.id);
+        let condErr = this.$domain.validateNewNestOperationConditions(this._performingColony.id);
         this._renderMainError(condErr);
         if (condErr) {
             isError = true;
@@ -109,7 +109,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _showMarkers() {
-        let markers = [this.$domainFacade.buildMarker(MarkerTypes.POINTER, this._buildingPosition.value)];
+        let markers = [this.$domain.buildMarker(MarkerTypes.POINTER, this._buildingPosition.value)];
         this._demonstrateMarkersRequest(markers);
     }
 
@@ -131,7 +131,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         let warriorsCount = this._warriorsCount.value;
         let nestName = this._nestNameView.value;
         try {
-            await this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName);
+            await this.$domain.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName);
             this._onDone();
         } catch (e) {
             if (e instanceof ConflictRequestError) {

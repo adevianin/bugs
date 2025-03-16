@@ -8,13 +8,13 @@ class NestsListView extends BaseGameHTMLView {
         super(el);
         this._nestViews = {};
 
-        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this.$domain.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domain.events.on('entityBorn', this._onSomeoneBorn.bind(this));
     }
 
     manageColony(colony, nestToSelect) {
         this._colony = colony;
-        this._nests = this.$domainFacade.getNestsFromColony(colony.id);
+        this._nests = this.$domain.getNestsFromColony(colony.id);
         this._selectNest(nestToSelect || this._nests[0]);
         this._renderNests();
         this._renderSelectedNest();

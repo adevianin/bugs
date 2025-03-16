@@ -836,13 +836,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class BaseView {
 
-    static domainFacade;
+    static domain;
     static eventBus;
     static mm;
     static messages;
 
-    get $domainFacade() {
-        return BaseView.domainFacade;
+    get $domain() {
+        return BaseView.domain;
     }
 
     get $eventBus() {
@@ -857,8 +857,8 @@ class BaseView {
         return BaseView.messages;
     }
 
-    static useDomainFacade(domainFacade) {
-        BaseView.domainFacade = domainFacade;
+    static useDomain(domain) {
+        BaseView.domain = domain;
     }
 
     static useEventBus(eventBus) {
@@ -5416,7 +5416,7 @@ class AppView extends _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseGa
     constructor(el) {
         super(el);
 
-        this.$domainFacade.events.on('initStepDone', this._onInitStepDone.bind(this));
+        this.$domain.events.on('initStepDone', this._onInitStepDone.bind(this));
     }
 
     _render() {
@@ -5452,12 +5452,12 @@ class AppView extends _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseGa
     }
 
     _showStartPosition() {
-        let nest = this.$domainFacade.findMyFirstNest();
+        let nest = this.$domain.findMyFirstNest();
         if (nest) {
             this.$eventBus.emit('nestManageRequest', nest);
             this.$eventBus.emit('showPointRequest', nest.position);
         } else {
-            let worldSize = this.$domainFacade.getWorldSize();
+            let worldSize = this.$domain.getWorldSize();
             this.$eventBus.emit('showPointRequest', {
                 x: (0,_utils_randomInt__WEBPACK_IMPORTED_MODULE_9__.randomInt)(0, worldSize[0]),
                 y: (0,_utils_randomInt__WEBPACK_IMPORTED_MODULE_9__.randomInt)(0, worldSize[1])
@@ -5560,7 +5560,7 @@ class Camera extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.Bas
         this._container = container;
         this._isDraging = false;
         this._anchorPoint = {x: null, y: null};
-        let worldSize = this.$domainFacade.getWorldSize();
+        let worldSize = this.$domain.getWorldSize();
         this._mapSize = {
             width: worldSize[0],
             height: worldSize[1]
@@ -5709,7 +5709,7 @@ class ClimateView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1
 
     constructor(el) {
         super(el);
-        this._climate = this.$domainFacade.getClimate();
+        this._climate = this.$domain.getClimate();
 
         this._render();
 
@@ -5767,7 +5767,7 @@ class SeasonBarView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE
 
         this._render();
 
-        this.$domainFacade.events.on('currentStepChanged', this._onCurrentStepChanged.bind(this));
+        this.$domain.events.on('currentStepChanged', this._onCurrentStepChanged.bind(this));
     }
 
     _render() {
@@ -5797,7 +5797,7 @@ class SeasonBarView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE
     }
 
     _renderMarker() {
-        let yearStep = this.$domainFacade.currentStep % _domain_consts__WEBPACK_IMPORTED_MODULE_2__.CONSTS.STEPS_IN_YEAR;
+        let yearStep = this.$domain.currentStep % _domain_consts__WEBPACK_IMPORTED_MODULE_2__.CONSTS.STEPS_IN_YEAR;
         this._markerEl.style.left = this._percentsPerStep * yearStep + '%';
     }
 
@@ -5861,7 +5861,7 @@ async function initViewLayer(domainFacade) {
 
     let mm = _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_10__.MessageMaster.init(_messages_msgLibraries__WEBPACK_IMPORTED_MODULE_11__.gameMsgLibrariesPack);
 
-    _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_9__.BaseView.useDomainFacade(domainFacade);
+    _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_9__.BaseView.useDomain(domainFacade);
     _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_9__.BaseView.useEventBus(eventBus);
     _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_9__.BaseView.useMessageMaster(mm);
     _common_view_base_baseView__WEBPACK_IMPORTED_MODULE_9__.BaseView.useMessages(_messages_uaMessagesLib__WEBPACK_IMPORTED_MODULE_4__.uaMessages);
@@ -5948,7 +5948,7 @@ class BasePickerView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE
     constructor(container) {
         super();
         this._container = container;
-        this._worldSize = this.$domainFacade.getWorldSize();
+        this._worldSize = this.$domain.getWorldSize();
 
         this._render();
         this.deactivate();
@@ -6166,7 +6166,7 @@ class NestPickerView extends _basePickerView__WEBPACK_IMPORTED_MODULE_0__.BasePi
     }
 
     _onPointPick(point) {
-        let nest = this.$domainFacade.findNearestNest(point, this._excludeColonyId);
+        let nest = this.$domain.findNearestNest(point, this._excludeColonyId);
 
         if (nest) {
             this._callback(nest);
@@ -6795,14 +6795,14 @@ class NestSelectorView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MOD
     constructor(el, colonyId, canBeEmpty = true) {
         super(el);
         this._colonyId = colonyId;
-        this._nests = this.$domainFacade.getNestsFromColony(this._colonyId);
+        this._nests = this.$domain.getNestsFromColony(this._colonyId);
         this._isDisabled = false;
         this._canBeEmpty = canBeEmpty;
 
         this._render();
 
-        this._stopListenNestDied = this.$domainFacade.events.on(`nestDied:${this._colonyId}`, this._onNestDied.bind(this));
-        this._stopListenNestBorn = this.$domainFacade.events.on(`nestBorn:${this._colonyId}`, this._onNestBorn.bind(this));
+        this._stopListenNestDied = this.$domain.events.on(`nestDied:${this._colonyId}`, this._onNestDied.bind(this));
+        this._stopListenNestBorn = this.$domain.events.on(`nestBorn:${this._colonyId}`, this._onNestBorn.bind(this));
         this._el.addEventListener('change', this._onChange.bind(this));
     }
 
@@ -6927,7 +6927,7 @@ class NestInlineView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODUL
 
         this._render();
 
-        this._stopListenNesDied = this.$domainFacade.events.on('nestDied', this._onSomeNestDied.bind(this));
+        this._stopListenNesDied = this.$domain.events.on('nestDied', this._onSomeNestDied.bind(this));
         this._nestNameEl.addEventListener('click', this._onNameClick.bind(this));
     }
 
@@ -7371,10 +7371,10 @@ class ColoniesListView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MOD
     constructor(el) {
         super(el);
 
-        this.$domainFacade.events.on('colonyBorn', this._onColonyBorn.bind(this));
-        this.$domainFacade.events.on('colonyDied', this._onColonyDied.bind(this));
+        this.$domain.events.on('colonyBorn', this._onColonyBorn.bind(this));
+        this.$domain.events.on('colonyDied', this._onColonyDied.bind(this));
 
-        this._colonies = this.$domainFacade.findMyColonies();
+        this._colonies = this.$domain.findMyColonies();
         this._colonyViews = {};
         this._selectedColony = null;
         
@@ -7433,7 +7433,7 @@ class ColoniesListView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MOD
     }
 
     _onColonyBorn(colony) {
-        let isMine = this.$domainFacade.isColonyMy(colony);
+        let isMine = this.$domain.isColonyMy(colony);
         if (isMine) {
             this._colonies.push(colony);
             this._renderColony(colony);
@@ -7444,7 +7444,7 @@ class ColoniesListView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MOD
     }
 
     _onColonyDied(colony) {
-        let isMine = this.$domainFacade.isColonyMy(colony);
+        let isMine = this.$domain.isColonyMy(colony);
         if (isMine) {
             this._deleteColonyEntity(colony);
             this._deleteColonyView(colony);
@@ -7557,8 +7557,8 @@ class ColoniesTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODU
         this._render();
 
         this._coloniesList.events.on('selectedColonyChanged', this._manageSelectedColony.bind(this));
-        this.$domainFacade.events.on('colonyBorn', this._renderMode.bind(this));
-        this.$domainFacade.events.on('colonyDied', this._renderMode.bind(this));
+        this.$domain.events.on('colonyBorn', this._renderMode.bind(this));
+        this.$domain.events.on('colonyDied', this._renderMode.bind(this));
     }
 
     showNestManagerFor(nest){
@@ -7582,7 +7582,7 @@ class ColoniesTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODU
     }
 
     _renderMode() {
-        let isEmpty = !this.$domainFacade.isAnyMyColony();
+        let isEmpty = !this.$domain.isAnyMyColony();
         if (isEmpty) {
             this._coloniesList.toggle(false);
             this._colonyManager.toggle(false);
@@ -7647,15 +7647,15 @@ class AntView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
         this._stopListenCurrentActivityChanged = this._ant.on('currentActivityChanged', this._renderCurrentActivity.bind(this));
         this._stopListenHomeNestChanged = this._ant.on('homeNestChanged', this._onHomeNestChanged.bind(this));
 
-        this._stopListenCurrentStepChanged = this.$domainFacade.events.on('currentStepChanged', this._renderAge.bind(this));
+        this._stopListenCurrentStepChanged = this.$domain.events.on('currentStepChanged', this._renderAge.bind(this));
     }
 
     _onGuardianBehaviorSelectorChange () {
-        this.$domainFacade.antChangeGuardianBehavior(this._ant.id, this._guardianTypeSelector.value);
+        this.$domain.antChangeGuardianBehavior(this._ant.id, this._guardianTypeSelector.value);
     }
 
     _onCooperativeBehaviorTogglerChange () {
-        this.$domainFacade.antToggleCooperativeBehavior(this._ant.id, this._cooperativeBehaviorTogglerEl.checked);
+        this.$domain.antToggleCooperativeBehavior(this._ant.id, this._cooperativeBehaviorTogglerEl.checked);
     }
 
     _render() {
@@ -7714,7 +7714,7 @@ class AntView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
     }
 
     _onNuptialFlightBtnClick() {
-        this.$domainFacade.antFlyNuptialFlight(this._ant.id);
+        this.$domain.antFlyNuptialFlight(this._ant.id);
     }
 
     _renderActionBtns() {
@@ -7722,7 +7722,7 @@ class AntView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
     }
 
     _renderAge() {
-        let livedSteps = this.$domainFacade.currentStep - this._ant.birthStep;
+        let livedSteps = this.$domain.currentStep - this._ant.birthStep;
         let age = Math.floor(livedSteps / _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.STEPS_IN_YEAR);
         this._ageEl.innerHTML = age;
     }
@@ -7759,7 +7759,7 @@ class AntView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
     }
 
     _onNestChanged() {
-        this.$domainFacade.antRelocate(this._ant.id, this._nestSelector.nestId);
+        this.$domain.antRelocate(this._ant.id, this._nestSelector.nestId);
     }
 
     _onProfileBtnClick() {
@@ -7809,16 +7809,16 @@ class AntsListView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_
         super(el);
         this._antViews = {};
 
-        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
-        this.$domainFacade.events.on('queenFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
+        this.$domain.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domain.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this.$domain.events.on('queenFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
 
         this._render();
     }
 
     manageColony(colony) {
         this._colony = colony;
-        this._ants = this.$domainFacade.getAntsFromColony(this._colony.id);
+        this._ants = this.$domain.getAntsFromColony(this._colony.id);
 
         this._renderAnts();
         this._renderNoAntsMode();
@@ -8194,7 +8194,7 @@ class EggTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0_
     }
 
     _validate() {
-        let errorId = this.$domainFacade.validateLayingEggInNest(this._nest.id);
+        let errorId = this.$domain.validateLayingEggInNest(this._nest.id);
         this._renderError(this.$messages[errorId]);
 
         return !errorId;
@@ -8220,7 +8220,7 @@ class EggTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0_
         let name = this._generateAntName();
         let isFertilized = this._isFertilizeCheckbox.checked;
         try {
-            await this.$domainFacade.layEggInNest(this._nest.id, name, isFertilized);
+            await this.$domain.layEggInNest(this._nest.id, name, isFertilized);
         } catch (e) {
             if (e instanceof _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_3__.ConflictRequestError) {
                 this._validate();
@@ -8336,7 +8336,7 @@ class EggView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
     async _onEggAntTypeChanged() {
         let antType = this._antTypeSelector.value;
         try {
-            await this.$domainFacade.changeEggCasteInNest(this._nest.id, this._egg.id, antType)
+            await this.$domain.changeEggCasteInNest(this._nest.id, this._egg.id, antType)
         } catch (e) {
             console.error(e);
         }
@@ -8348,7 +8348,7 @@ class EggView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
             return;
         }
         try {
-            await this.$domainFacade.changeEggNameInNest(this._nest.id, this._egg.id, name);
+            await this.$domain.changeEggNameInNest(this._nest.id, this._egg.id, name);
         } catch (e) {
             console.error(e);
         }
@@ -8356,7 +8356,7 @@ class EggView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
 
     async _onEggtoLarvaChamberClick() {
         try {
-            await this.$domainFacade.moveEggToLarvaInNest(this._nest.id, this._egg.id);
+            await this.$domain.moveEggToLarvaInNest(this._nest.id, this._egg.id);
         } catch (e) {
             console.error(e);
         }
@@ -8364,7 +8364,7 @@ class EggView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
 
     async _onEggDeleteClick() {
         try {
-            await this.$domainFacade.deleteEggInNest(this._nest.id, this._egg.id);
+            await this.$domain.deleteEggInNest(this._nest.id, this._egg.id);
         } catch (e) {
             console.error(e);
         }
@@ -8569,7 +8569,7 @@ class LarvaView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__
 
     async _onDeleteBtnClick() {
         try {
-            await this.$domainFacade.deleteLarvaInNest(this._nest.id, this._larva.id);
+            await this.$domain.deleteLarvaInNest(this._nest.id, this._larva.id);
         } catch (e) {
             console.error(e);
         }
@@ -8651,7 +8651,7 @@ class MainTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0
             return;
         }
         try {
-            await this.$domainFacade.renameNest(this._nest.id, this._nameEl.value);
+            await this.$domain.renameNest(this._nest.id, this._nameEl.value);
         } catch (e) {
             console.error(e);
         }
@@ -8817,13 +8817,13 @@ class NestsListView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE
         super(el);
         this._nestViews = {};
 
-        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this.$domain.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domain.events.on('entityBorn', this._onSomeoneBorn.bind(this));
     }
 
     manageColony(colony, nestToSelect) {
         this._colony = colony;
-        this._nests = this.$domainFacade.getNestsFromColony(colony.id);
+        this._nests = this.$domain.getNestsFromColony(colony.id);
         this._selectNest(nestToSelect || this._nests[0]);
         this._renderNests();
         this._renderSelectedNest();
@@ -9136,7 +9136,7 @@ class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IM
         }
 
         try {
-            await this.$domainFacade.bringBugOpearation(this._performingColony.id, this._nestSelector.nestId);
+            await this.$domain.bringBugOpearation(this._performingColony.id, this._nestSelector.nestId);
             this._onDone();
         } catch(e) {
             if (e instanceof _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_4__.ConflictRequestError) {
@@ -9149,7 +9149,7 @@ class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IM
 
     _onNestChanged() {
         if (this._nestSelector.nestId) {
-            this._closestBugCorpse = this.$domainFacade.findClosestBugCorpseNearNest(this._nestSelector.nestId);
+            this._closestBugCorpse = this.$domain.findClosestBugCorpseNearNest(this._nestSelector.nestId);
         } else {
             this._closestBugCorpse = null;
         }
@@ -9161,12 +9161,12 @@ class BringBugOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IM
         let markers = [];
 
         if (this._nestSelector.nestId) {
-            let nest = this.$domainFacade.findEntityById(this._nestSelector.nestId);
-            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.LOAD, nest.position));
+            let nest = this.$domain.findEntityById(this._nestSelector.nestId);
+            markers.push(this.$domain.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.LOAD, nest.position));
         }
 
         if (this._closestBugCorpse) {
-            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.EAT, this._closestBugCorpse.position));
+            markers.push(this.$domain.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.EAT, this._closestBugCorpse.position));
         }
 
         this._demonstrateMarkersRequest(markers);
@@ -9276,7 +9276,7 @@ class BuildFortificationOperationCreatorView extends _baseOperationCreatorView__
         let nestId = this._nestSelector.nestId;
         let workersCount = this._workersCountView.value;
         try {
-            await this.$domainFacade.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount);
+            await this.$domain.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount);
             this._onDone();
         } catch (e) {
             if (e instanceof _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_6__.ConflictRequestError) {
@@ -9296,8 +9296,8 @@ class BuildFortificationOperationCreatorView extends _baseOperationCreatorView__
         let markers = [];
 
         if (this._nestSelector.nestId) {
-            let nest = this.$domainFacade.findEntityById(this._nestSelector.nestId);
-            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.SHIELD, nest.position));
+            let nest = this.$domain.findEntityById(this._nestSelector.nestId);
+            markers.push(this.$domain.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.SHIELD, nest.position));
         }
 
         this._demonstrateMarkersRequest(markers);
@@ -9341,7 +9341,7 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
+        this._queenOfColony = this.$domain.getQueenOfColony(this._performingColony.id);
 
         this._render();
 
@@ -9407,7 +9407,7 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
             isError = true;
         }
 
-        let condErr = this.$domainFacade.validateDestroyNestOperationConditions(this._performingColony.id);
+        let condErr = this.$domain.validateDestroyNestOperationConditions(this._performingColony.id);
         this._renderMainError(condErr);
         if (condErr) {
             isError = true;
@@ -9471,7 +9471,7 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
             return
         }
         try {
-            await this.$domainFacade.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._choosedNestView.value);
+            await this.$domain.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._choosedNestView.value);
             this._onDone();
         } catch (e) {
             if (e instanceof _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_6__.ConflictRequestError) {
@@ -9483,7 +9483,7 @@ class DestroyNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
     }
 
     _showMarkers() {
-        let markers = [this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_2__.MarkerTypes.CROSS, this._choosedNestView.value.position)];
+        let markers = [this.$domain.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_2__.MarkerTypes.CROSS, this._choosedNestView.value.position)];
         this._demonstrateMarkersRequest(markers);
     }
 
@@ -9563,7 +9563,7 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
+        this._queenOfColony = this.$domain.getQueenOfColony(this._performingColony.id);
 
         this._render();
 
@@ -9627,7 +9627,7 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
             isError = true;
         }
 
-        let condErr = this.$domainFacade.validateNewNestOperationConditions(this._performingColony.id);
+        let condErr = this.$domain.validateNewNestOperationConditions(this._performingColony.id);
         this._renderMainError(condErr);
         if (condErr) {
             isError = true;
@@ -9660,7 +9660,7 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
     }
 
     _showMarkers() {
-        let markers = [this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_2__.MarkerTypes.POINTER, this._buildingPosition.value)];
+        let markers = [this.$domain.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_2__.MarkerTypes.POINTER, this._buildingPosition.value)];
         this._demonstrateMarkersRequest(markers);
     }
 
@@ -9682,7 +9682,7 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
         let warriorsCount = this._warriorsCount.value;
         let nestName = this._nestNameView.value;
         try {
-            await this.$domainFacade.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName);
+            await this.$domain.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName);
             this._onDone();
         } catch (e) {
             if (e instanceof _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_6__.ConflictRequestError) {
@@ -9734,7 +9734,7 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
         this._nestForLoot = null;
-        this._queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
+        this._queenOfColony = this.$domain.getQueenOfColony(this._performingColony.id);
 
         this._render();
 
@@ -9830,7 +9830,7 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
             isError = true;
         }
 
-        let condErr = this.$domainFacade.validatePillageNestOperationConditions(this._performingColony.id);
+        let condErr = this.$domain.validatePillageNestOperationConditions(this._performingColony.id);
         this._renderMainError(condErr);
         if (condErr) {
             isError = true;
@@ -9873,7 +9873,7 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         let nestForLootId = this._nestForLootSelector.nestId;
         let nestToPillageId = this._nestToPillageView.value.id;
         try {
-            await this.$domainFacade.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount);
+            await this.$domain.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount);
             this._onDone();
         } catch (e) {
             if (e instanceof _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_7__.ConflictRequestError) {
@@ -9888,12 +9888,12 @@ class PillageNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK
         let markers = [];
 
         if (this._nestToPillageView.value) {
-            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.PILLAGE, this._nestToPillageView.value.position));
+            markers.push(this.$domain.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.PILLAGE, this._nestToPillageView.value.position));
         }
 
         if (this._nestForLootSelector.nestId) {
-            let nestForLoot = this.$domainFacade.findEntityById(this._nestForLootSelector.nestId);
-            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.LOAD, nestForLoot.position));
+            let nestForLoot = this.$domain.findEntityById(this._nestForLootSelector.nestId);
+            markers.push(this.$domain.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.LOAD, nestForLoot.position));
         }
 
         this._demonstrateMarkersRequest(markers);
@@ -10064,7 +10064,7 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
         let workersCount = this._workersCountView.value;
         let warriorsCount = this._warriorsCountView.value;
         try {
-            await this.$domainFacade.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
+            await this.$domain.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
             this._onDone();
         } catch (e) {
             if (e instanceof _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_6__.ConflictRequestError) {
@@ -10089,13 +10089,13 @@ class TransportFoodOperationCreatorView extends _baseOperationCreatorView__WEBPA
         let markers = [];
 
         if (this._nestFromSelector.nestId) {
-            let nestFrom = this.$domainFacade.findEntityById(this._nestFromSelector.nestId);
-            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.UNLOAD, nestFrom.position));
+            let nestFrom = this.$domain.findEntityById(this._nestFromSelector.nestId);
+            markers.push(this.$domain.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.UNLOAD, nestFrom.position));
         }
 
         if (this._nestToSelector.nestId && this._nestToSelector.nestId != this._nestFromSelector.nestId) {
-            let nestFrom = this.$domainFacade.findEntityById(this._nestToSelector.nestId);
-            markers.push(this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.LOAD, nestFrom.position));
+            let nestFrom = this.$domain.findEntityById(this._nestToSelector.nestId);
+            markers.push(this.$domain.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_3__.MarkerTypes.LOAD, nestFrom.position));
         }
 
         this._demonstrateMarkersRequest(markers);
@@ -10294,7 +10294,7 @@ class OperationView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE
 
     _onStopBtnClick(e) {
         e.stopPropagation();
-        this.$domainFacade.stopOperation(this._colonyId, this._operation.id);
+        this.$domain.stopOperation(this._colonyId, this._operation.id);
     }
 
     _onClick() {
@@ -10727,7 +10727,7 @@ class NotificationsListView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTE
 
     constructor(el) {
         super(el);
-        this._notificationsContainer = this.$domainFacade.notificationsContainer;
+        this._notificationsContainer = this.$domain.notificationsContainer;
         this._notificationViews = [];
 
         this._render();
@@ -10935,7 +10935,7 @@ class BreedingManagerView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_
         }
 
         try {
-            await this.$domainFacade.foundColony(
+            await this.$domain.foundColony(
                 this._queenSelectorView.queen.id,
                 this._malesSelectorView.selectedMale.id,
                 this._nestPositionView.value,
@@ -10969,7 +10969,7 @@ class BreedingManagerView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_
     }
 
     _showMarker() {
-        let markers = [this.$domainFacade.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_5__.MarkerTypes.POINTER, this._nestPositionView.value)];
+        let markers = [this.$domain.buildMarker(_domain_enum_markerTypes__WEBPACK_IMPORTED_MODULE_5__.MarkerTypes.POINTER, this._nestPositionView.value)];
         this.$eventBus.emit('showMarkersRequest', markers);
     }
 
@@ -11056,11 +11056,11 @@ class MaleSelectorView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MOD
 
     constructor(el) {
         super(el);
-        this._males = this.$domainFacade.getMyNuptialMales();
+        this._males = this.$domain.getMyNuptialMales();
 
         this._render();
 
-        this.$domainFacade.events.on('nuptialMalesChanged', this._onNuptialMalesChanged.bind(this));
+        this.$domain.events.on('nuptialMalesChanged', this._onNuptialMalesChanged.bind(this));
         this._nextMaleBtn.addEventListener('click', this._onNextMaleBtnClick.bind(this));
         this._prevMaleBtn.addEventListener('click', this._onPrevMaleBtnClick.bind(this));
     }
@@ -11157,7 +11157,7 @@ class QueenProfileView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MOD
 
         this._render();
 
-        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domain.events.on('entityDied', this._onSomeoneDied.bind(this));
     }
 
     showQueen(queen) {
@@ -11220,15 +11220,15 @@ class QueenSelectorView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MO
     constructor(el) {
         super(el);
 
-        this._queens = this.$domainFacade.getMyQueensInNuptialFlight();
+        this._queens = this.$domain.getMyQueensInNuptialFlight();
         this._selectedQueenIndex = null;
 
         this._render();
 
-        this.$domainFacade.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
-        this.$domainFacade.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
-        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this.$domain.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
+        this.$domain.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
+        this.$domain.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domain.events.on('entityBorn', this._onSomeoneBorn.bind(this));
 
         this._prevBtn.addEventListener('click', this._onPrevBtnClick.bind(this));
         this._nextBtn.addEventListener('click', this._onNextBtnClick.bind(this));
@@ -11276,7 +11276,7 @@ class QueenSelectorView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MO
     }
 
     _renderBornAntaraBtnState() {
-        let isAnyAnt = this.$domainFacade.isAnyMyAnt();
+        let isAnyAnt = this.$domain.isAnyMyAnt();
         this._bornAntaraBtn.classList.toggle('g-hidden', isAnyAnt);
     }
 
@@ -11350,14 +11350,14 @@ class QueenSelectorView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MO
     }
 
     _onQueenFlewNuptialFlight(queen) {
-        let isMyQueen = this.$domainFacade.isEntityMy(queen);
+        let isMyQueen = this.$domain.isEntityMy(queen);
         if (isMyQueen) {
             this._addQueen(queen);
         }
     }
 
     _onSomeoneDied(someone) {
-        if (this.$domainFacade.isMyAnt(someone)) {
+        if (this.$domain.isMyAnt(someone)) {
             this._renderBornAntaraBtnState();
             if (this._checkIdInQueensList(someone.id)) {
                 let isDiedSelectedQueen = this.queenId == someone.id;
@@ -11369,19 +11369,19 @@ class QueenSelectorView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MO
     }
 
     _onSomeoneBorn(someone) {
-        if (this.$domainFacade.isMyAnt(someone)) {
+        if (this.$domain.isMyAnt(someone)) {
             this._renderBornAntaraBtnState();
         }
     }
 
     _onQueenFlewNuptialFlightBack(queen) {
-        if (this.$domainFacade.isMyAnt(queen)) {
+        if (this.$domain.isMyAnt(queen)) {
             this._removeQueen(queen);
         }
     }
 
     _onBornNewAntaraBtnClick() {
-        this.$domainFacade.bornNewAntara();
+        this.$domain.bornNewAntara();
     }
 
 }
@@ -11435,7 +11435,7 @@ class NuptialFlightTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED
 
         this._render();
 
-        this.$domainFacade.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
+        this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
     }
 
     _render() {
@@ -11451,7 +11451,7 @@ class NuptialFlightTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED
     }
 
     _renderIsNuptialSeasonState() {
-        let isNuptialSeason = this.$domainFacade.world.isNuptialSeasonNow;
+        let isNuptialSeason = this.$domain.world.isNuptialSeasonNow;
         this._nuptialFlightModeEl.classList.toggle('g-hidden', !isNuptialSeason);
         this._waitingNuptialFlightModeEl.classList.toggle('g-hidden', isNuptialSeason);
     }
@@ -11508,7 +11508,7 @@ class RatingTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE
 
     constructor(el) {
         super(el);
-        this._ratingContainer = this.$domainFacade.ratingContainer;
+        this._ratingContainer = this.$domain.ratingContainer;
 
         this._ratingContainer.on('changed', this._onRatingChanged.bind(this));
 
@@ -11687,7 +11687,7 @@ class SpecieBuilderTabView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED
     constructor(el) {
         super(el);
 
-        this._specie = this.$domainFacade.getMySpecie();
+        this._specie = this.$domain.getMySpecie();
 
         this._render();
     }
@@ -11855,7 +11855,7 @@ class EmailFieldEditorView extends _baseFieldEditor__WEBPACK_IMPORTED_MODULE_1__
         
         this._passwordEl = this._el.querySelector('[data-password]');
         this._emailEl = this._el.querySelector('[data-email]');
-        let user = this.$domainFacade.getUserData();
+        let user = this.$domain.getUserData();
         this._emailEl.value = user.email;
     }
 
@@ -11871,7 +11871,7 @@ class EmailFieldEditorView extends _baseFieldEditor__WEBPACK_IMPORTED_MODULE_1__
         this._loader.toggle(true);
         let newEmail = this._emailEl.value;
         let password = this._passwordEl.value;
-        let err = await this.$domainFacade.changeEmail(newEmail, password);
+        let err = await this.$domain.changeEmail(newEmail, password);
         this._renderErr(err);
         this._loader.toggle(false);
         if (!err) {
@@ -11981,7 +11981,7 @@ class PasswordFieldEditorView extends _baseFieldEditor__WEBPACK_IMPORTED_MODULE_
 
     _validateNewPassword() {
         let newPassword = this._newPasswordEl.value;
-        return this.$domainFacade.validatePassword(newPassword);
+        return this.$domain.validatePassword(newPassword);
     }
 
     _renderNewPasswordErr(err) {
@@ -12038,7 +12038,7 @@ class PasswordFieldEditorView extends _baseFieldEditor__WEBPACK_IMPORTED_MODULE_
         this._loader.toggle(true);
         let newPassword = this._newPasswordEl.value;
         let oldPassword = this._oldPasswordEl.value;
-        let err = await this.$domainFacade.changePassword(newPassword, oldPassword);
+        let err = await this.$domain.changePassword(newPassword, oldPassword);
         this._renderRequestErr(err);
         this._loader.toggle(false);
         if (!err) {
@@ -12098,7 +12098,7 @@ class UsernameFieldEditorView extends _baseFieldEditor__WEBPACK_IMPORTED_MODULE_
         this._cancelBtn = this._el.querySelector('[data-cancel]');
         
         this._usernameEl = this._el.querySelector('[data-username]');
-        let user = this.$domainFacade.getUserData();
+        let user = this.$domain.getUserData();
         this._usernameEl.value = user.username;
     }
 
@@ -12109,7 +12109,7 @@ class UsernameFieldEditorView extends _baseFieldEditor__WEBPACK_IMPORTED_MODULE_
     async _onOkBtnClick() {
         this._loader.toggle(true);
         let newUsername = this._usernameEl.value;
-        let err = await this.$domainFacade.changeUsername(newUsername);
+        let err = await this.$domain.changeUsername(newUsername);
         this._errView.setErr(err);
         this._loader.toggle(false);
         if (!err) {
@@ -12209,17 +12209,17 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
     }
 
     _renderEmail() {
-        let user = this.$domainFacade.getUserData();
+        let user = this.$domain.getUserData();
         this._emailEl.innerHTML = user.email;
     }
 
     _renderUsername() {
-        let user = this.$domainFacade.getUserData();
+        let user = this.$domain.getUserData();
         this._usernameEl.innerHTML = user.username;
     }
 
     _onUserLogoutBtnClick() {
-        this.$domainFacade.logout().then(redirectUrl => {
+        this.$domain.logout().then(redirectUrl => {
             location.href = redirectUrl;
         });
     }
@@ -12859,7 +12859,7 @@ class NestView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
         this._nestContainer.x = this._entity.position.x;
         this._nestContainer.y = this._entity.position.y;
 
-        if (this.$domainFacade.isEntityMy(this._entity)) {
+        if (this.$domain.isEntityMy(this._entity)) {
             this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
         }
 
@@ -13215,11 +13215,11 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
 
         this._render();
 
-        this.$domainFacade.events.on('entityBorn', this._onEntityBorn.bind(this));
+        this.$domain.events.on('entityBorn', this._onEntityBorn.bind(this));
     }
 
     _render() {
-        let worldSize = this.$domainFacade.getWorldSize();
+        let worldSize = this.$domain.getWorldSize();
         this._bg = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.TilingSprite({
             texture: this.$textureManager.getTexture('grass.png'),
             width: worldSize[0],
@@ -13256,7 +13256,7 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
     }
 
     _buildEntityViews() {
-        let entities = this.$domainFacade.getEntities();
+        let entities = this.$domain.getEntities();
         entities.forEach(entity => {
             this._buildEntityView(entity);
         });

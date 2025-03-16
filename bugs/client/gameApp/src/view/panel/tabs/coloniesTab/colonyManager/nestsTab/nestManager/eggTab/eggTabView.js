@@ -75,7 +75,7 @@ class EggTabView extends BaseGameHTMLView {
     }
 
     _validate() {
-        let errorId = this.$domainFacade.validateLayingEggInNest(this._nest.id);
+        let errorId = this.$domain.validateLayingEggInNest(this._nest.id);
         this._renderError(this.$messages[errorId]);
 
         return !errorId;
@@ -101,7 +101,7 @@ class EggTabView extends BaseGameHTMLView {
         let name = this._generateAntName();
         let isFertilized = this._isFertilizeCheckbox.checked;
         try {
-            await this.$domainFacade.layEggInNest(this._nest.id, name, isFertilized);
+            await this.$domain.layEggInNest(this._nest.id, name, isFertilized);
         } catch (e) {
             if (e instanceof ConflictRequestError) {
                 this._validate();

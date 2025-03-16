@@ -83,7 +83,7 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
         }
 
         try {
-            await this.$domainFacade.bringBugOpearation(this._performingColony.id, this._nestSelector.nestId);
+            await this.$domain.bringBugOpearation(this._performingColony.id, this._nestSelector.nestId);
             this._onDone();
         } catch(e) {
             if (e instanceof ConflictRequestError) {
@@ -96,7 +96,7 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
 
     _onNestChanged() {
         if (this._nestSelector.nestId) {
-            this._closestBugCorpse = this.$domainFacade.findClosestBugCorpseNearNest(this._nestSelector.nestId);
+            this._closestBugCorpse = this.$domain.findClosestBugCorpseNearNest(this._nestSelector.nestId);
         } else {
             this._closestBugCorpse = null;
         }
@@ -108,12 +108,12 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
         let markers = [];
 
         if (this._nestSelector.nestId) {
-            let nest = this.$domainFacade.findEntityById(this._nestSelector.nestId);
-            markers.push(this.$domainFacade.buildMarker(MarkerTypes.LOAD, nest.position));
+            let nest = this.$domain.findEntityById(this._nestSelector.nestId);
+            markers.push(this.$domain.buildMarker(MarkerTypes.LOAD, nest.position));
         }
 
         if (this._closestBugCorpse) {
-            markers.push(this.$domainFacade.buildMarker(MarkerTypes.EAT, this._closestBugCorpse.position));
+            markers.push(this.$domain.buildMarker(MarkerTypes.EAT, this._closestBugCorpse.position));
         }
 
         this._demonstrateMarkersRequest(markers);

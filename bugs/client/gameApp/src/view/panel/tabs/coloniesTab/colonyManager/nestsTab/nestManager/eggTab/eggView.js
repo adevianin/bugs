@@ -67,7 +67,7 @@ class EggView extends BaseGameHTMLView {
     async _onEggAntTypeChanged() {
         let antType = this._antTypeSelector.value;
         try {
-            await this.$domainFacade.changeEggCasteInNest(this._nest.id, this._egg.id, antType)
+            await this.$domain.changeEggCasteInNest(this._nest.id, this._egg.id, antType)
         } catch (e) {
             console.error(e);
         }
@@ -79,7 +79,7 @@ class EggView extends BaseGameHTMLView {
             return;
         }
         try {
-            await this.$domainFacade.changeEggNameInNest(this._nest.id, this._egg.id, name);
+            await this.$domain.changeEggNameInNest(this._nest.id, this._egg.id, name);
         } catch (e) {
             console.error(e);
         }
@@ -87,7 +87,7 @@ class EggView extends BaseGameHTMLView {
 
     async _onEggtoLarvaChamberClick() {
         try {
-            await this.$domainFacade.moveEggToLarvaInNest(this._nest.id, this._egg.id);
+            await this.$domain.moveEggToLarvaInNest(this._nest.id, this._egg.id);
         } catch (e) {
             console.error(e);
         }
@@ -95,7 +95,7 @@ class EggView extends BaseGameHTMLView {
 
     async _onEggDeleteClick() {
         try {
-            await this.$domainFacade.deleteEggInNest(this._nest.id, this._egg.id);
+            await this.$domain.deleteEggInNest(this._nest.id, this._egg.id);
         } catch (e) {
             console.error(e);
         }

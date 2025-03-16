@@ -68,17 +68,17 @@ class UserTab extends BaseGameHTMLView {
     }
 
     _renderEmail() {
-        let user = this.$domainFacade.getUserData();
+        let user = this.$domain.getUserData();
         this._emailEl.innerHTML = user.email;
     }
 
     _renderUsername() {
-        let user = this.$domainFacade.getUserData();
+        let user = this.$domain.getUserData();
         this._usernameEl.innerHTML = user.username;
     }
 
     _onUserLogoutBtnClick() {
-        this.$domainFacade.logout().then(redirectUrl => {
+        this.$domain.logout().then(redirectUrl => {
             location.href = redirectUrl;
         });
     }

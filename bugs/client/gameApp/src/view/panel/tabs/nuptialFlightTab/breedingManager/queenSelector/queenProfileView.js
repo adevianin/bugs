@@ -10,7 +10,7 @@ class QueenProfileView extends BaseGameHTMLView {
 
         this._render();
 
-        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domain.events.on('entityDied', this._onSomeoneDied.bind(this));
     }
 
     showQueen(queen) {

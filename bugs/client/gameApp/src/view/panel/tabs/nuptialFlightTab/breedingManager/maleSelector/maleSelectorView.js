@@ -6,11 +6,11 @@ class MaleSelectorView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);
-        this._males = this.$domainFacade.getMyNuptialMales();
+        this._males = this.$domain.getMyNuptialMales();
 
         this._render();
 
-        this.$domainFacade.events.on('nuptialMalesChanged', this._onNuptialMalesChanged.bind(this));
+        this.$domain.events.on('nuptialMalesChanged', this._onNuptialMalesChanged.bind(this));
         this._nextMaleBtn.addEventListener('click', this._onNextMaleBtnClick.bind(this));
         this._prevMaleBtn.addEventListener('click', this._onPrevMaleBtnClick.bind(this));
     }

@@ -29,7 +29,7 @@ class UsernameFieldEditorView extends BaseFieldEditor {
         this._cancelBtn = this._el.querySelector('[data-cancel]');
         
         this._usernameEl = this._el.querySelector('[data-username]');
-        let user = this.$domainFacade.getUserData();
+        let user = this.$domain.getUserData();
         this._usernameEl.value = user.username;
     }
 
@@ -40,7 +40,7 @@ class UsernameFieldEditorView extends BaseFieldEditor {
     async _onOkBtnClick() {
         this._loader.toggle(true);
         let newUsername = this._usernameEl.value;
-        let err = await this.$domainFacade.changeUsername(newUsername);
+        let err = await this.$domain.changeUsername(newUsername);
         this._errView.setErr(err);
         this._loader.toggle(false);
         if (!err) {

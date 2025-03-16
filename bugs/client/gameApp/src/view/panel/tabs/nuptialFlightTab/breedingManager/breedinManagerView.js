@@ -110,7 +110,7 @@ class BreedingManagerView extends BaseGameHTMLView {
         }
 
         try {
-            await this.$domainFacade.foundColony(
+            await this.$domain.foundColony(
                 this._queenSelectorView.queen.id,
                 this._malesSelectorView.selectedMale.id,
                 this._nestPositionView.value,
@@ -144,7 +144,7 @@ class BreedingManagerView extends BaseGameHTMLView {
     }
 
     _showMarker() {
-        let markers = [this.$domainFacade.buildMarker(MarkerTypes.POINTER, this._nestPositionView.value)];
+        let markers = [this.$domain.buildMarker(MarkerTypes.POINTER, this._nestPositionView.value)];
         this.$eventBus.emit('showMarkersRequest', markers);
     }
 

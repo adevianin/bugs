@@ -7,15 +7,15 @@ class QueenSelectorView extends BaseGameHTMLView {
     constructor(el) {
         super(el);
 
-        this._queens = this.$domainFacade.getMyQueensInNuptialFlight();
+        this._queens = this.$domain.getMyQueensInNuptialFlight();
         this._selectedQueenIndex = null;
 
         this._render();
 
-        this.$domainFacade.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
-        this.$domainFacade.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
-        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this.$domain.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
+        this.$domain.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
+        this.$domain.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domain.events.on('entityBorn', this._onSomeoneBorn.bind(this));
 
         this._prevBtn.addEventListener('click', this._onPrevBtnClick.bind(this));
         this._nextBtn.addEventListener('click', this._onNextBtnClick.bind(this));
@@ -63,7 +63,7 @@ class QueenSelectorView extends BaseGameHTMLView {
     }
 
     _renderBornAntaraBtnState() {
-        let isAnyAnt = this.$domainFacade.isAnyMyAnt();
+        let isAnyAnt = this.$domain.isAnyMyAnt();
         this._bornAntaraBtn.classList.toggle('g-hidden', isAnyAnt);
     }
 
@@ -137,14 +137,14 @@ class QueenSelectorView extends BaseGameHTMLView {
     }
 
     _onQueenFlewNuptialFlight(queen) {
-        let isMyQueen = this.$domainFacade.isEntityMy(queen);
+        let isMyQueen = this.$domain.isEntityMy(queen);
         if (isMyQueen) {
             this._addQueen(queen);
         }
     }
 
     _onSomeoneDied(someone) {
-        if (this.$domainFacade.isMyAnt(someone)) {
+        if (this.$domain.isMyAnt(someone)) {
             this._renderBornAntaraBtnState();
             if (this._checkIdInQueensList(someone.id)) {
                 let isDiedSelectedQueen = this.queenId == someone.id;
@@ -156,19 +156,19 @@ class QueenSelectorView extends BaseGameHTMLView {
     }
 
     _onSomeoneBorn(someone) {
-        if (this.$domainFacade.isMyAnt(someone)) {
+        if (this.$domain.isMyAnt(someone)) {
             this._renderBornAntaraBtnState();
         }
     }
 
     _onQueenFlewNuptialFlightBack(queen) {
-        if (this.$domainFacade.isMyAnt(queen)) {
+        if (this.$domain.isMyAnt(queen)) {
             this._removeQueen(queen);
         }
     }
 
     _onBornNewAntaraBtnClick() {
-        this.$domainFacade.bornNewAntara();
+        this.$domain.bornNewAntara();
     }
 
 }

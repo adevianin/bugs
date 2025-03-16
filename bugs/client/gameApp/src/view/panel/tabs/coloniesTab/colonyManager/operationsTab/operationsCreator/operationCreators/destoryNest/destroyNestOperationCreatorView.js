@@ -11,7 +11,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._queenOfColony = this.$domainFacade.getQueenOfColony(this._performingColony.id);
+        this._queenOfColony = this.$domain.getQueenOfColony(this._performingColony.id);
 
         this._render();
 
@@ -77,7 +77,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
             isError = true;
         }
 
-        let condErr = this.$domainFacade.validateDestroyNestOperationConditions(this._performingColony.id);
+        let condErr = this.$domain.validateDestroyNestOperationConditions(this._performingColony.id);
         this._renderMainError(condErr);
         if (condErr) {
             isError = true;
@@ -141,7 +141,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
             return
         }
         try {
-            await this.$domainFacade.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._choosedNestView.value);
+            await this.$domain.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._choosedNestView.value);
             this._onDone();
         } catch (e) {
             if (e instanceof ConflictRequestError) {
@@ -153,7 +153,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _showMarkers() {
-        let markers = [this.$domainFacade.buildMarker(MarkerTypes.CROSS, this._choosedNestView.value.position)];
+        let markers = [this.$domain.buildMarker(MarkerTypes.CROSS, this._choosedNestView.value.position)];
         this._demonstrateMarkersRequest(markers);
     }
 

@@ -10,7 +10,7 @@ class NestInlineView extends BaseGameHTMLView {
 
         this._render();
 
-        this._stopListenNesDied = this.$domainFacade.events.on('nestDied', this._onSomeNestDied.bind(this));
+        this._stopListenNesDied = this.$domain.events.on('nestDied', this._onSomeNestDied.bind(this));
         this._nestNameEl.addEventListener('click', this._onNameClick.bind(this));
     }
 

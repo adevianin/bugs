@@ -810,13 +810,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class BaseView {
 
-    static domainFacade;
+    static domain;
     static eventBus;
     static mm;
     static messages;
 
-    get $domainFacade() {
-        return BaseView.domainFacade;
+    get $domain() {
+        return BaseView.domain;
     }
 
     get $eventBus() {
@@ -831,8 +831,8 @@ class BaseView {
         return BaseView.messages;
     }
 
-    static useDomainFacade(domainFacade) {
-        BaseView.domainFacade = domainFacade;
+    static useDomain(domain) {
+        BaseView.domain = domain;
     }
 
     static useEventBus(eventBus) {
@@ -2090,9 +2090,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class RequestModeContainerView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
-    constructor(el, accountService) {
+    constructor(el) {
         super(el);
-        this._accountService = accountService;
 
         this._render();
 
@@ -2142,7 +2141,7 @@ class RequestModeContainerView extends _common_view_base_baseHTMLView__WEBPACK_I
 
         let email = this._emailEl.value;
         this._requestCreatingLoader.toggle(true);
-        let err = await this._accountService.resetPasswordRequest(email);
+        let err = await this.$domain.resetPasswordRequest(email);
         this._renderRequestErr(err);
         if (!err) {
             this._switchRequestDoneTab();
@@ -2183,9 +2182,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class ResetPasswordAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    constructor(el, accountService) {
+    constructor(el) {
         super(el);
-        this._accountService = accountService;
 
         this._render();
     }
@@ -2195,9 +2193,9 @@ class ResetPasswordAppView extends _common_view_base_baseHTMLView__WEBPACK_IMPOR
         let setPasswordModeEl = this._el.querySelector('[data-set-password-mode]');
 
         if (requestModeEl) {
-            this._modeView = new _requestModeContainerView__WEBPACK_IMPORTED_MODULE_1__.RequestModeContainerView(requestModeEl, this._accountService);
+            this._modeView = new _requestModeContainerView__WEBPACK_IMPORTED_MODULE_1__.RequestModeContainerView(requestModeEl);
         } else if (setPasswordModeEl) {
-            this._modeView = new _setPasswordModeView__WEBPACK_IMPORTED_MODULE_2__.SetPasswordModeView(setPasswordModeEl, this._accountService);
+            this._modeView = new _setPasswordModeView__WEBPACK_IMPORTED_MODULE_2__.SetPasswordModeView(setPasswordModeEl);
         }
         
     }
@@ -2231,9 +2229,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class SetPasswordModeView extends _common_view_base_baseHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseHTMLView {
 
-    constructor(el, accountService) {
+    constructor(el) {
         super(el);
-        this._accountService = accountService;
 
         this._render();
 
@@ -2275,7 +2272,7 @@ class SetPasswordModeView extends _common_view_base_baseHTMLView__WEBPACK_IMPORT
 
     _validatePassword() {
         let password = this._passwordEl.value;
-        return this._accountService.validatePassword(password);
+        return this.$domain.validatePassword(password);
     }
 
     _renderPasswordErr(err) {
@@ -2316,7 +2313,7 @@ class SetPasswordModeView extends _common_view_base_baseHTMLView__WEBPACK_IMPORT
         let id = queryParams['i'];
         let password = this._passwordEl.value;
         this._loader.toggle(true);
-        let err = await this._accountService.setNewPassword(password, token, id);
+        let err = await this.$domain.setNewPassword(password, token, id);
         this._renderRequestErr(err);
         if (!err) {
             this._switchSettedPasswordTab();
@@ -7128,14 +7125,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let mm = _common_messages_messageMaster__WEBPACK_IMPORTED_MODULE_5__.MessageMaster.init(_messages_msgLibraries__WEBPACK_IMPORTED_MODULE_4__.resetPasswordMsgLibrariesPack);
-_common_view_base_baseView__WEBPACK_IMPORTED_MODULE_6__.BaseView.useMessageMaster(mm);
-
 let requester = new _common_utils_requester__WEBPACK_IMPORTED_MODULE_2__.Requester();
 let accountApi = new _common_sync_accountApi__WEBPACK_IMPORTED_MODULE_1__.AccountApi(requester);
-
 let accountService = new _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_3__.AccountService(accountApi);
+_common_view_base_baseView__WEBPACK_IMPORTED_MODULE_6__.BaseView.useMessageMaster(mm);
+_common_view_base_baseView__WEBPACK_IMPORTED_MODULE_6__.BaseView.useDomain(accountService);
 
-new _view_resetPasswordAppView__WEBPACK_IMPORTED_MODULE_0__.ResetPasswordAppView(document.body, accountService);
+new _view_resetPasswordAppView__WEBPACK_IMPORTED_MODULE_0__.ResetPasswordAppView(document.body);
 })();
 
 /******/ })()

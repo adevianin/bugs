@@ -27,15 +27,15 @@ class AntView extends BaseGameHTMLView {
         this._stopListenCurrentActivityChanged = this._ant.on('currentActivityChanged', this._renderCurrentActivity.bind(this));
         this._stopListenHomeNestChanged = this._ant.on('homeNestChanged', this._onHomeNestChanged.bind(this));
 
-        this._stopListenCurrentStepChanged = this.$domainFacade.events.on('currentStepChanged', this._renderAge.bind(this));
+        this._stopListenCurrentStepChanged = this.$domain.events.on('currentStepChanged', this._renderAge.bind(this));
     }
 
     _onGuardianBehaviorSelectorChange () {
-        this.$domainFacade.antChangeGuardianBehavior(this._ant.id, this._guardianTypeSelector.value);
+        this.$domain.antChangeGuardianBehavior(this._ant.id, this._guardianTypeSelector.value);
     }
 
     _onCooperativeBehaviorTogglerChange () {
-        this.$domainFacade.antToggleCooperativeBehavior(this._ant.id, this._cooperativeBehaviorTogglerEl.checked);
+        this.$domain.antToggleCooperativeBehavior(this._ant.id, this._cooperativeBehaviorTogglerEl.checked);
     }
 
     _render() {
@@ -94,7 +94,7 @@ class AntView extends BaseGameHTMLView {
     }
 
     _onNuptialFlightBtnClick() {
-        this.$domainFacade.antFlyNuptialFlight(this._ant.id);
+        this.$domain.antFlyNuptialFlight(this._ant.id);
     }
 
     _renderActionBtns() {
@@ -102,7 +102,7 @@ class AntView extends BaseGameHTMLView {
     }
 
     _renderAge() {
-        let livedSteps = this.$domainFacade.currentStep - this._ant.birthStep;
+        let livedSteps = this.$domain.currentStep - this._ant.birthStep;
         let age = Math.floor(livedSteps / CONSTS.STEPS_IN_YEAR);
         this._ageEl.innerHTML = age;
     }
@@ -139,7 +139,7 @@ class AntView extends BaseGameHTMLView {
     }
 
     _onNestChanged() {
-        this.$domainFacade.antRelocate(this._ant.id, this._nestSelector.nestId);
+        this.$domain.antRelocate(this._ant.id, this._nestSelector.nestId);
     }
 
     _onProfileBtnClick() {

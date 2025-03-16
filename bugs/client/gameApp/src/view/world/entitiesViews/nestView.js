@@ -42,7 +42,7 @@ class NestView extends EntityView {
         this._nestContainer.x = this._entity.position.x;
         this._nestContainer.y = this._entity.position.y;
 
-        if (this.$domainFacade.isEntityMy(this._entity)) {
+        if (this.$domain.isEntityMy(this._entity)) {
             this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
         }
 

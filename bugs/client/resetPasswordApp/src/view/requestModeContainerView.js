@@ -3,9 +3,8 @@ import { RESET_PASSWORD_MESSAGE_IDS } from "../messages/messageIds";
 import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
 
 class RequestModeContainerView extends BaseHTMLView {
-    constructor(el, accountService) {
+    constructor(el) {
         super(el);
-        this._accountService = accountService;
 
         this._render();
 
@@ -55,7 +54,7 @@ class RequestModeContainerView extends BaseHTMLView {
 
         let email = this._emailEl.value;
         this._requestCreatingLoader.toggle(true);
-        let err = await this._accountService.resetPasswordRequest(email);
+        let err = await this.$domain.resetPasswordRequest(email);
         this._renderRequestErr(err);
         if (!err) {
             this._switchRequestDoneTab();

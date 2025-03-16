@@ -78,7 +78,7 @@ class PasswordFieldEditorView extends BaseFieldEditor {
 
     _validateNewPassword() {
         let newPassword = this._newPasswordEl.value;
-        return this.$domainFacade.validatePassword(newPassword);
+        return this.$domain.validatePassword(newPassword);
     }
 
     _renderNewPasswordErr(err) {
@@ -135,7 +135,7 @@ class PasswordFieldEditorView extends BaseFieldEditor {
         this._loader.toggle(true);
         let newPassword = this._newPasswordEl.value;
         let oldPassword = this._oldPasswordEl.value;
-        let err = await this.$domainFacade.changePassword(newPassword, oldPassword);
+        let err = await this.$domain.changePassword(newPassword, oldPassword);
         this._renderRequestErr(err);
         this._loader.toggle(false);
         if (!err) {

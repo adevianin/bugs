@@ -10,16 +10,16 @@ class AntsListView extends BaseGameHTMLView {
         super(el);
         this._antViews = {};
 
-        this.$domainFacade.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this.$domainFacade.events.on('entityBorn', this._onSomeoneBorn.bind(this));
-        this.$domainFacade.events.on('queenFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
+        this.$domain.events.on('entityDied', this._onSomeoneDied.bind(this));
+        this.$domain.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this.$domain.events.on('queenFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
 
         this._render();
     }
 
     manageColony(colony) {
         this._colony = colony;
-        this._ants = this.$domainFacade.getAntsFromColony(this._colony.id);
+        this._ants = this.$domain.getAntsFromColony(this._colony.id);
 
         this._renderAnts();
         this._renderNoAntsMode();

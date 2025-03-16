@@ -1,12 +1,12 @@
 class BaseView {
 
-    static domainFacade;
+    static domain;
     static eventBus;
     static mm;
     static messages;
 
-    get $domainFacade() {
-        return BaseView.domainFacade;
+    get $domain() {
+        return BaseView.domain;
     }
 
     get $eventBus() {
@@ -21,8 +21,8 @@ class BaseView {
         return BaseView.messages;
     }
 
-    static useDomainFacade(domainFacade) {
-        BaseView.domainFacade = domainFacade;
+    static useDomain(domain) {
+        BaseView.domain = domain;
     }
 
     static useEventBus(eventBus) {

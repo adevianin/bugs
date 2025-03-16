@@ -5,9 +5,8 @@ import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
 
 class LoginTabView extends BaseHTMLView {
 
-    constructor(el, accountService) {
+    constructor(el) {
         super(el);
-        this._accountService = accountService;
 
         this._render();
 
@@ -89,7 +88,7 @@ class LoginTabView extends BaseHTMLView {
 
         try {
             this._loginRequestLoader.toggle(true);
-            await this._accountService.login(email, password);
+            await this.$domain.login(email, password);
             this._renderLoginRequestErr();
             this._redirectToNext();
             this._loginRequestLoader.toggle(false);

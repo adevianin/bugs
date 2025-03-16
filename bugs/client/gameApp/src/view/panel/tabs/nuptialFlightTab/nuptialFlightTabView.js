@@ -10,7 +10,7 @@ class NuptialFlightTabView extends BaseGameHTMLView {
 
         this._render();
 
-        this.$domainFacade.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
+        this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
     }
 
     _render() {
@@ -26,7 +26,7 @@ class NuptialFlightTabView extends BaseGameHTMLView {
     }
 
     _renderIsNuptialSeasonState() {
-        let isNuptialSeason = this.$domainFacade.world.isNuptialSeasonNow;
+        let isNuptialSeason = this.$domain.world.isNuptialSeasonNow;
         this._nuptialFlightModeEl.classList.toggle('g-hidden', !isNuptialSeason);
         this._waitingNuptialFlightModeEl.classList.toggle('g-hidden', isNuptialSeason);
     }

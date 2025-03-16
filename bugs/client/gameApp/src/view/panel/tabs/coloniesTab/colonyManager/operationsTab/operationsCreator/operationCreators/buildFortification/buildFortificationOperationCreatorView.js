@@ -77,7 +77,7 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
         let nestId = this._nestSelector.nestId;
         let workersCount = this._workersCountView.value;
         try {
-            await this.$domainFacade.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount);
+            await this.$domain.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount);
             this._onDone();
         } catch (e) {
             if (e instanceof ConflictRequestError) {
@@ -97,8 +97,8 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
         let markers = [];
 
         if (this._nestSelector.nestId) {
-            let nest = this.$domainFacade.findEntityById(this._nestSelector.nestId);
-            markers.push(this.$domainFacade.buildMarker(MarkerTypes.SHIELD, nest.position));
+            let nest = this.$domain.findEntityById(this._nestSelector.nestId);
+            markers.push(this.$domain.buildMarker(MarkerTypes.SHIELD, nest.position));
         }
 
         this._demonstrateMarkersRequest(markers);

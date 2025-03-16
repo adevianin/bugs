@@ -7,7 +7,7 @@ class ClimateView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);
-        this._climate = this.$domainFacade.getClimate();
+        this._climate = this.$domain.getClimate();
 
         this._render();
 

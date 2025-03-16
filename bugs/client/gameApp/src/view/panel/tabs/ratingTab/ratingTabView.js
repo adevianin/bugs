@@ -7,7 +7,7 @@ class RatingTabView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);
-        this._ratingContainer = this.$domainFacade.ratingContainer;
+        this._ratingContainer = this.$domain.ratingContainer;
 
         this._ratingContainer.on('changed', this._onRatingChanged.bind(this));
 

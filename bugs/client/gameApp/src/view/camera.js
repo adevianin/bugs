@@ -11,7 +11,7 @@ class Camera extends BaseGraphicView {
         this._container = container;
         this._isDraging = false;
         this._anchorPoint = {x: null, y: null};
-        let worldSize = this.$domainFacade.getWorldSize();
+        let worldSize = this.$domain.getWorldSize();
         this._mapSize = {
             width: worldSize[0],
             height: worldSize[1]

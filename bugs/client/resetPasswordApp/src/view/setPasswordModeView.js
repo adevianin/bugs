@@ -6,9 +6,8 @@ import { getQueryParams } from "@common/utils/getQueryParams";
 
 class SetPasswordModeView extends BaseHTMLView {
 
-    constructor(el, accountService) {
+    constructor(el) {
         super(el);
-        this._accountService = accountService;
 
         this._render();
 
@@ -50,7 +49,7 @@ class SetPasswordModeView extends BaseHTMLView {
 
     _validatePassword() {
         let password = this._passwordEl.value;
-        return this._accountService.validatePassword(password);
+        return this.$domain.validatePassword(password);
     }
 
     _renderPasswordErr(err) {
@@ -91,7 +90,7 @@ class SetPasswordModeView extends BaseHTMLView {
         let id = queryParams['i'];
         let password = this._passwordEl.value;
         this._loader.toggle(true);
-        let err = await this._accountService.setNewPassword(password, token, id);
+        let err = await this.$domain.setNewPassword(password, token, id);
         this._renderRequestErr(err);
         if (!err) {
             this._switchSettedPasswordTab();

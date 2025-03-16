@@ -13,7 +13,7 @@ class AppView extends BaseGameHTMLView {
     constructor(el) {
         super(el);
 
-        this.$domainFacade.events.on('initStepDone', this._onInitStepDone.bind(this));
+        this.$domain.events.on('initStepDone', this._onInitStepDone.bind(this));
     }
 
     _render() {
@@ -49,12 +49,12 @@ class AppView extends BaseGameHTMLView {
     }
 
     _showStartPosition() {
-        let nest = this.$domainFacade.findMyFirstNest();
+        let nest = this.$domain.findMyFirstNest();
         if (nest) {
             this.$eventBus.emit('nestManageRequest', nest);
             this.$eventBus.emit('showPointRequest', nest.position);
         } else {
-            let worldSize = this.$domainFacade.getWorldSize();
+            let worldSize = this.$domain.getWorldSize();
             this.$eventBus.emit('showPointRequest', {
                 x: randomInt(0, worldSize[0]),
                 y: randomInt(0, worldSize[1])
