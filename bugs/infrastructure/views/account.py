@@ -279,11 +279,14 @@ def change_email(request: HttpRequest):
         return HttpResponse(status=401)
     
     try:
-        if user.email != new_email:
+        is_email_diff = user.email != new_email
+        if is_email_diff:
             user.is_email_verified = False
         user.email = new_email
         user.full_clean()
         user.save()
+        if is_email_diff:
+            EmailService.send_verification_email(user, build_base_url(request))
     except ValidationError as e:
         for error in e.error_dict.get('email', []):
             if error.code == 'unique':
