@@ -1315,7 +1315,7 @@ class DomainFacade {
     }
 
     bornNewAntara() {
-        this._userService.bornNewAntara();
+        this._nuptialEnvironmentService.bornNewAntara();
     }
 
     layEggInNest(nestId, name, isFertilized) {
@@ -3827,7 +3827,7 @@ function initDomainLayer(apis, serverConnection, initialData) {
     let accountService = new _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_1__.AccountService(apis.accountApi, initialData.user);
     accountService.setEventBus(mainEventBus);
     let colonyService = new _service_colonyService__WEBPACK_IMPORTED_MODULE_6__.ColonyService(mainEventBus, world, apis.colonyApi, worldFactory);
-    let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_7__.UserService(apis.userApi, notificationsContainer);
+    let userService = new _service_userService__WEBPACK_IMPORTED_MODULE_7__.UserService(notificationsContainer);
     let nuptialEnvironmentService = new _service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_8__.NuptialEnvironmentService(mainEventBus, world, nuptialEnvironmentFactory, apis.nuptialEnvironmentApi);
     let nestService = new _service_nestService__WEBPACK_IMPORTED_MODULE_9__.NestService(mainEventBus, world, apis.nestApi);
     let antService = new _service_antService__WEBPACK_IMPORTED_MODULE_13__.AntService(mainEventBus, world, apis.antApi);
@@ -4370,6 +4370,10 @@ class NuptialEnvironmentService extends _base_baseGameService__WEBPACK_IMPORTED_
         return allAnts.filter(ant => ant.ownerId == userId && ant.antType == _domain_enum_antTypes__WEBPACK_IMPORTED_MODULE_2__.AntTypes.QUEEN && ant.isInNuptialFlight);
     }
 
+    bornNewAntara() {
+        this._nuptialEnvironmentApi.bornNewAntara();
+    }
+
     _initSpecie(specieJson) {
         this._specie = this._nuptialEnvironmentFactory.buildSpecie(specieJson);
         this._stopListenSpecieChange = this._specie.on('specieSchemaChanged', this._onSpecieSchemaChanged.bind(this));
@@ -4438,8 +4442,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class UserService {
 
-    constructor(userApi, notificationsContainer) {
-        this._userApi = userApi;
+    constructor(notificationsContainer) {
         this._notificationsContainer = notificationsContainer
     }
 
@@ -4453,10 +4456,6 @@ class UserService {
 
     playUserAction(action) {
         this._notificationsContainer.pushNewNotification(action.notification);
-    }
-
-    bornNewAntara() {
-        this._userApi.bornNewAntara();
     }
 
 }
@@ -5112,9 +5111,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _nestApi__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nestApi */ "./gameApp/src/sync/nestApi.js");
 /* harmony import */ var _colonyApi__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./colonyApi */ "./gameApp/src/sync/colonyApi.js");
 /* harmony import */ var _antApi__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./antApi */ "./gameApp/src/sync/antApi.js");
-/* harmony import */ var _userApi__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./userApi */ "./gameApp/src/sync/userApi.js");
-/* harmony import */ var _nuptialEnvironmentApi__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./nuptialEnvironmentApi */ "./gameApp/src/sync/nuptialEnvironmentApi.js");
-
+/* harmony import */ var _nuptialEnvironmentApi__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./nuptialEnvironmentApi */ "./gameApp/src/sync/nuptialEnvironmentApi.js");
 
 
 
@@ -5131,8 +5128,7 @@ function initSyncLayer(initialData) {
     let nestApi = new _nestApi__WEBPACK_IMPORTED_MODULE_3__.NestApi(requester);
     let colonyApi = new _colonyApi__WEBPACK_IMPORTED_MODULE_4__.ColonyApi(requester);
     let antApi = new _antApi__WEBPACK_IMPORTED_MODULE_5__.AntApi(requester);
-    let userApi = new _userApi__WEBPACK_IMPORTED_MODULE_6__.UserApi(requester);
-    let nuptialEnvironmentApi = new _nuptialEnvironmentApi__WEBPACK_IMPORTED_MODULE_7__.NuptialEnvironmentApi(requester)
+    let nuptialEnvironmentApi = new _nuptialEnvironmentApi__WEBPACK_IMPORTED_MODULE_6__.NuptialEnvironmentApi(requester)
 
     return {
         apis: {
@@ -5140,7 +5136,6 @@ function initSyncLayer(initialData) {
             nestApi,
             colonyApi,
             antApi,
-            userApi,
             nuptialEnvironmentApi
         },
         serverConnection,
@@ -5242,6 +5237,10 @@ class NuptialEnvironmentApi {
             colony_name: colonyName
         });
     }
+
+    bornNewAntara() {
+        return this._requester.post(`api/world/nuptial_environment/born_new_antara`);
+    }
     
 }
 
@@ -5291,33 +5290,6 @@ class ServerConnection {
     _emitMessage(event) {
         this.events.emit('message', JSON.parse(event.data));
     }
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/sync/userApi.js":
-/*!*************************************!*\
-  !*** ./gameApp/src/sync/userApi.js ***!
-  \*************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   UserApi: () => (/* binding */ UserApi)
-/* harmony export */ });
-class UserApi {
-
-    constructor(requester) {
-        this._requester = requester;
-    }
-
-    bornNewAntara() {
-        return this._requester.post(`api/world/nuptial_environment/born_new_antara`);
-    }
-
 }
 
 

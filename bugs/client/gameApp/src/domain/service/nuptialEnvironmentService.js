@@ -49,6 +49,10 @@ class NuptialEnvironmentService extends BaseGameService {
         return allAnts.filter(ant => ant.ownerId == userId && ant.antType == AntTypes.QUEEN && ant.isInNuptialFlight);
     }
 
+    bornNewAntara() {
+        this._nuptialEnvironmentApi.bornNewAntara();
+    }
+
     _initSpecie(specieJson) {
         this._specie = this._nuptialEnvironmentFactory.buildSpecie(specieJson);
         this._stopListenSpecieChange = this._specie.on('specieSchemaChanged', this._onSpecieSchemaChanged.bind(this));

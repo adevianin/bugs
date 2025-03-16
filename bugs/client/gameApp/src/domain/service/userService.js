@@ -1,7 +1,6 @@
 class UserService {
 
-    constructor(userApi, notificationsContainer) {
-        this._userApi = userApi;
+    constructor(notificationsContainer) {
         this._notificationsContainer = notificationsContainer
     }
 
@@ -15,10 +14,6 @@ class UserService {
 
     playUserAction(action) {
         this._notificationsContainer.pushNewNotification(action.notification);
-    }
-
-    bornNewAntara() {
-        this._userApi.bornNewAntara();
     }
 
 }

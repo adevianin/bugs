@@ -170,7 +170,7 @@ class DomainFacade {
     }
 
     bornNewAntara() {
-        this._userService.bornNewAntara();
+        this._nuptialEnvironmentService.bornNewAntara();
     }
 
     layEggInNest(nestId, name, isFertilized) {
