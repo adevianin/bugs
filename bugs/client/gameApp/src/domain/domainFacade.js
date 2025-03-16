@@ -1,10 +1,8 @@
-import { BaseDomainFacade } from "@common/domain/baseDomainFacade";
 import { EntityTypes } from "./enum/entityTypes";
 
-class DomainFacade extends BaseDomainFacade {
+class DomainFacade {
 
     constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService, antService) {
-        super();
         this._mainEventBus = mainEventBus;
         this._accountService = accountService;
         this._worldService = worldService;

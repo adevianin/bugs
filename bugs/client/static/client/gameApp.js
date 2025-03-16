@@ -1,22 +1,6 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./common/domain/baseDomainFacade.js":
-/*!*******************************************!*\
-  !*** ./common/domain/baseDomainFacade.js ***!
-  \*******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   BaseDomainFacade: () => (/* binding */ BaseDomainFacade)
-/* harmony export */ });
-class BaseDomainFacade {}
-
-
-/***/ }),
-
 /***/ "./common/domain/errors/conflictRequestError.js":
 /*!******************************************************!*\
   !*** ./common/domain/errors/conflictRequestError.js ***!
@@ -1078,15 +1062,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DomainFacade: () => (/* binding */ DomainFacade)
 /* harmony export */ });
-/* harmony import */ var _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/domain/baseDomainFacade */ "./common/domain/baseDomainFacade.js");
-/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./enum/entityTypes */ "./gameApp/src/domain/enum/entityTypes.js");
+/* harmony import */ var _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./enum/entityTypes */ "./gameApp/src/domain/enum/entityTypes.js");
 
 
-
-class DomainFacade extends _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MODULE_0__.BaseDomainFacade {
+class DomainFacade {
 
     constructor(mainEventBus, accountService, messageHandlerService, worldService, colonyService, userService, nuptialEnvironmentService, nestService, antService) {
-        super();
         this._mainEventBus = mainEventBus;
         this._accountService = accountService;
         this._worldService = worldService;
@@ -1152,7 +1133,7 @@ class DomainFacade extends _common_domain_baseDomainFacade__WEBPACK_IMPORTED_MOD
     }
 
     isMyAnt(entity) {
-        return this.isEntityMy(entity) && entity.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_1__.EntityTypes.ANT;
+        return this.isEntityMy(entity) && entity.type == _enum_entityTypes__WEBPACK_IMPORTED_MODULE_0__.EntityTypes.ANT;
     }
 
     isColonyMy(colony) {
