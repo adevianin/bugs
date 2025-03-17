@@ -2,7 +2,7 @@ import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
 import { BaseGameService } from "./base/baseGameService";
 import { EntityTypes } from "@domain/enum/entityTypes";
 import { ItemTypes } from "@domain/enum/itemTypes";
-import { distance } from "@utils/distance";
+import { distance, distance_point } from "@utils/distance";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { CONSTS } from "@domain/consts";
 
@@ -87,6 +87,27 @@ class ColonyService extends BaseGameService {
             );
         
             return bugCorpsesInNestArea.length > 0 ? bugCorpsesInNestArea[0] : null;
+    }
+
+    getSubNestBuildableArea(colonyId) {
+        let demper = 2;
+        let mainNestOfColony = this._world.getMainNestOfColony(colonyId);
+        if (!mainNestOfColony) {
+            return null;
+        }
+        let area = { center: mainNestOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_SUB_NEST - demper};
+        let exclusions = [];
+        let itemSources = this._world.findEntityByType(EntityTypes.ITEM_SOURCE);
+        let maxBlockingDist = CONSTS.MAX_DISTANCE_TO_SUB_NEST + CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE
+        let blockingAreaItemSources = itemSources.filter(is => distance_point(is.position, mainNestOfColony.position) <= maxBlockingDist);
+        for (let itemSource of blockingAreaItemSources) {
+            exclusions.push({ center: itemSource.position, radius: CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE + demper });
+        }
+
+        return {
+            area,
+            exclusions
+        };
     }
 
     validateNewNestOperationConditions(colonyId) {

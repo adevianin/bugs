@@ -6,8 +6,8 @@ class PositionPickerView extends BasePickerView {
         super(container);
     }
 
-    activate(pickableCircle, callback) {
-        super.activate(pickableCircle);
+    activate(pickableCircle, exclusions, callback) {
+        super.activate(pickableCircle, exclusions);
         this._callback = callback;
     }
 

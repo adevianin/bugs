@@ -4,7 +4,7 @@ import { BaseGameHTMLView } from './base/baseGameHTMLView';
 import * as PIXI from 'pixi.js';
 import { ClimateView } from './climate/climateView';
 import { PanelView } from './panel';
-import { Camera } from './camera';
+import { MapController } from './mapController';
 import { WorldView } from './world';
 import { MapPickerMasterView } from './mapPickers/mapPickerMasterView';
 import { randomInt } from '@utils/randomInt';
@@ -29,7 +29,7 @@ class AppView extends BaseGameHTMLView {
 
         let globalContainer = new PIXI.Container();
         this.$pixiApp.stage.addChild(globalContainer);
-        new Camera(globalContainer, this.$pixiApp);
+        new MapController(globalContainer, this.$pixiApp);
 
         let worldContainer = new PIXI.Container();
         globalContainer.addChild(worldContainer);

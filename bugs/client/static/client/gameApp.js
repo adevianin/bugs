@@ -1098,7 +1098,8 @@ const CONSTS = {
     DESTROY_NEST_OPERATION_REQUIREMENTS: null,
     PILLAGE_NEST_OPERATION_REQUIREMENTS: null,
     TRANSPORT_FOOD_OPERATION_REQUIREMENTS: null,
-    BUILD_FORTIFICATION_OPERATION_REQUIREMENTS: null
+    BUILD_FORTIFICATION_OPERATION_REQUIREMENTS: null,
+    ITEM_SOURCE_BLOCKING_DISTANCE: null
 }
 
 function initConts(constsValues) {
@@ -1244,6 +1245,10 @@ class DomainFacade {
 
     validateNewNestOperationConditions(colonyId) {
         return this._colonyService.validateNewNestOperationConditions(colonyId);
+    }
+
+    getSubNestBuildableArea(colonyId) {
+        return this._colonyService.getSubNestBuildableArea(colonyId);
     }
 
     buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
@@ -4059,6 +4064,27 @@ class ColonyService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_1__.B
             return bugCorpsesInNestArea.length > 0 ? bugCorpsesInNestArea[0] : null;
     }
 
+    getSubNestBuildableArea(colonyId) {
+        let demper = 2;
+        let mainNestOfColony = this._world.getMainNestOfColony(colonyId);
+        if (!mainNestOfColony) {
+            return null;
+        }
+        let area = { center: mainNestOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_6__.CONSTS.MAX_DISTANCE_TO_SUB_NEST - demper};
+        let exclusions = [];
+        let itemSources = this._world.findEntityByType(_domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_2__.EntityTypes.ITEM_SOURCE);
+        let maxBlockingDist = _domain_consts__WEBPACK_IMPORTED_MODULE_6__.CONSTS.MAX_DISTANCE_TO_SUB_NEST + _domain_consts__WEBPACK_IMPORTED_MODULE_6__.CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE
+        let blockingAreaItemSources = itemSources.filter(is => (0,_utils_distance__WEBPACK_IMPORTED_MODULE_4__.distance_point)(is.position, mainNestOfColony.position) <= maxBlockingDist);
+        for (let itemSource of blockingAreaItemSources) {
+            exclusions.push({ center: itemSource.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_6__.CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE + demper });
+        }
+
+        return {
+            area,
+            exclusions
+        };
+    }
+
     validateNewNestOperationConditions(colonyId) {
         let queen = this._world.getQueenOfColony(colonyId);
         let mainNest = this._world.getMainNestOfColony(colonyId);
@@ -5431,10 +5457,15 @@ function convertStepsToYear(steps) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   distance: () => (/* binding */ distance)
+/* harmony export */   distance: () => (/* binding */ distance),
+/* harmony export */   distance_point: () => (/* binding */ distance_point)
 /* harmony export */ });
 function distance(x1, y1, x2, y2) {
     return Math.sqrt(Math.pow((x1  -x2), 2) + Math.pow((y1 - y2), 2));
+}
+
+function distance_point(point1, point2) {
+    return distance(point1.x, point1.y, point2.x, point2.y)
 }
 
 
@@ -5522,7 +5553,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 /* harmony import */ var _climate_climateView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./climate/climateView */ "./gameApp/src/view/climate/climateView.js");
 /* harmony import */ var _panel__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./panel */ "./gameApp/src/view/panel/index.js");
-/* harmony import */ var _camera__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./camera */ "./gameApp/src/view/camera.js");
+/* harmony import */ var _mapController__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./mapController */ "./gameApp/src/view/mapController.js");
 /* harmony import */ var _world__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./world */ "./gameApp/src/view/world/index.js");
 /* harmony import */ var _mapPickers_mapPickerMasterView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./mapPickers/mapPickerMasterView */ "./gameApp/src/view/mapPickers/mapPickerMasterView.js");
 /* harmony import */ var _utils_randomInt__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @utils/randomInt */ "./gameApp/src/utils/randomInt.js");
@@ -5557,7 +5588,7 @@ class AppView extends _base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_2__.BaseGa
 
         let globalContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_3__.Container();
         this.$pixiApp.stage.addChild(globalContainer);
-        new _camera__WEBPACK_IMPORTED_MODULE_6__.Camera(globalContainer, this.$pixiApp);
+        new _mapController__WEBPACK_IMPORTED_MODULE_6__.MapController(globalContainer, this.$pixiApp);
 
         let worldContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_3__.Container();
         globalContainer.addChild(worldContainer);
@@ -5651,157 +5682,6 @@ class BaseGraphicView extends _common_view_base_baseView__WEBPACK_IMPORTED_MODUL
 
     get $textureManager() {
         return BaseGraphicView.textureManager;
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/view/camera.js":
-/*!************************************!*\
-  !*** ./gameApp/src/view/camera.js ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Camera: () => (/* binding */ Camera)
-/* harmony export */ });
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
-/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
-
-
-
-class Camera extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.BaseGraphicView {
-
-    static MAP_MARGIN = 5;
-    static SHOW_POSITION_DURATION = 500;
-
-    constructor(container, pixiApp) {
-        super();
-        this._container = container;
-        this._isDraging = false;
-        this._anchorPoint = {x: null, y: null};
-        let worldSize = this.$domain.getWorldSize();
-        this._mapSize = {
-            width: worldSize[0],
-            height: worldSize[1]
-        };
-        this._pixiApp = pixiApp;
-
-        this._renderHandler();
-
-        this._handler.on('pointerdown', this._onPointerDown.bind(this));
-        this._handler.on('pointerup', this._onPointerUp.bind(this));
-        this._handler.on('pointermove', this._onPointerMove.bind(this));
-        this.$eventBus.on('showPointRequest', this._onShowPointRequest.bind(this));
-    }
-
-    _renderHandler() {
-        this._handler = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
-        this._container.addChildAt(this._handler, 0);
-        this._handler.eventMode = 'static';
-        this._handler.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Rectangle(0, 0, this._mapSize.width, this._mapSize.height);
-    }
-
-    _onPointerDown(e) {
-        this._isDraging = true;
-        this._anchorPoint.x = e.client.x;
-        this._anchorPoint.y = e.client.y;
-        window.getSelection().removeAllRanges();
-    }
-
-    _onPointerUp(e) {
-        this._isDraging = false;
-    }
-
-    _onPointerMove(e) {
-        if (this._isDraging) {
-            
-            let dx = this._anchorPoint.x - e.client.x;
-            let dy = this._anchorPoint.y - e.client.y;
-
-            this._anchorPoint.x = e.client.x;
-            this._anchorPoint.y = e.client.y;
-
-            this._moveCamera(dx, dy);
-        }
-    }
-
-    _showPosition(x, y) {
-        let viewPointLocal = this._container.toLocal(new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Point(this._pixiApp.canvas.offsetWidth / 2, this._pixiApp.canvas.offsetHeight / 2));
-        let dx = x - viewPointLocal.x;
-        let dy = y - viewPointLocal.y;
-        let startTime = performance.now();
-        let startCameraPosition = this._getCameraPosition();
-        let destCameraX = startCameraPosition.x + dx;
-        let destCameraY = startCameraPosition.y + dy;
-
-        if (this._moveFn) {
-            this._pixiApp.ticker.remove(this._moveFn);
-        }
-        
-        this._moveFn = () => {
-            let currentTime = performance.now();
-            let elapsed = currentTime - startTime;
-            let progress = elapsed / Camera.SHOW_POSITION_DURATION;
-
-            if (progress <= 1) {
-                let currentDx = progress * dx;
-                let currentDy = progress * dy;
-                this._setCameraPosition(startCameraPosition.x + currentDx, startCameraPosition.y + currentDy);
-            } else {
-                this._setCameraPosition(destCameraX, destCameraY);
-                this._pixiApp.ticker.remove(this._moveFn);
-                this._moveFn = null;
-            }
-        };
-
-        this._pixiApp.ticker.add(this._moveFn);
-    }
-
-    _moveCamera(dx, dy) {
-        let cameraPosition = this._getCameraPosition();
-        this._setCameraPosition(cameraPosition.x + dx, cameraPosition.y + dy);
-    }
-
-    _setCameraPosition(x, y) {
-        let containerPosX = -x;
-        let containerPosY = -y;
-        if (containerPosX > Camera.MAP_MARGIN) {
-            containerPosX = Camera.MAP_MARGIN;
-        }
-
-        if (containerPosY > Camera.MAP_MARGIN) {
-            containerPosY = Camera.MAP_MARGIN;
-        }
-
-        let minXPos = this._pixiApp.canvas.offsetWidth - this._mapSize.width - Camera.MAP_MARGIN
-        if (containerPosX < minXPos) {
-            containerPosX = minXPos;
-        }
-
-        let minPosY = this._pixiApp.canvas.offsetHeight - this._mapSize.height  - Camera.MAP_MARGIN;
-        if (containerPosY < minPosY) {
-            containerPosY = minPosY;
-        }
-
-        this._container.x = containerPosX;
-        this._container.y = containerPosY;
-    }
-
-    _getCameraPosition() {
-        return {
-            x: -this._container.x,
-            y: -this._container.y,
-        }
-    }
-
-    _onShowPointRequest(position) {
-        this._showPosition(position.x, position.y);
     }
 
 }
@@ -6052,6 +5932,167 @@ let eggStatesLabels = {
 
 /***/ }),
 
+/***/ "./gameApp/src/view/mapController.js":
+/*!*******************************************!*\
+  !*** ./gameApp/src/view/mapController.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MapController: () => (/* binding */ MapController)
+/* harmony export */ });
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
+/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @utils/distance */ "./gameApp/src/utils/distance.js");
+
+
+
+
+class MapController extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.BaseGraphicView {
+
+    static MAP_MARGIN = 5;
+    static SHOW_POSITION_DURATION = 500;
+
+    constructor(container, pixiApp) {
+        super();
+        this._container = container;
+        this._isDragingMode = false;
+        this._anchorPoint = {x: null, y: null};
+        this._startPoint = {x: null, y: null};
+        let worldSize = this.$domain.getWorldSize();
+        this._mapSize = {
+            width: worldSize[0],
+            height: worldSize[1]
+        };
+        this._pixiApp = pixiApp;
+
+        this._renderHandler();
+
+        this._handler.on('pointerdown', this._onPointerDown.bind(this));
+        this._handler.on('pointerup', this._onPointerUp.bind(this));
+        this._handler.on('pointerupoutside', this._onPointerUp.bind(this));
+        this._handler.on('pointermove', this._onPointerMove.bind(this));
+        this.$eventBus.on('showPointRequest', this._onShowPointRequest.bind(this));
+    }
+
+    _renderHandler() {
+        this._handler = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+        this._container.addChildAt(this._handler, 0);
+        this._handler.eventMode = 'static';
+        this._handler.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Rectangle(0, 0, this._mapSize.width, this._mapSize.height);
+    }
+
+    _onPointerDown(e) {
+        this._isDragingMode = true;
+        this._anchorPoint.x = e.client.x;
+        this._anchorPoint.y = e.client.y;
+        this._startPoint.x = e.client.x;
+        this._startPoint.y = e.client.y;
+        window.getSelection().removeAllRanges();
+    }
+
+    _onPointerUp(e) {
+        this._isDragingMode = false;
+        let distToStartPoint = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_2__.distance)(e.client.x, e.client.y, this._startPoint.x, this._startPoint.y);
+        if (distToStartPoint < 5) {
+            this.$eventBus.emit('bgclick', this._handler.toLocal(e.client));
+        }
+    }
+
+    _onPointerMove(e) {
+        if (this._isDragingMode) {
+            
+            let dx = this._anchorPoint.x - e.client.x;
+            let dy = this._anchorPoint.y - e.client.y;
+
+            this._anchorPoint.x = e.client.x;
+            this._anchorPoint.y = e.client.y;
+
+            this._moveCamera(dx, dy);
+        }
+    }
+
+    _showPosition(x, y) {
+        let viewPointLocal = this._container.toLocal(new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Point(this._pixiApp.canvas.offsetWidth / 2, this._pixiApp.canvas.offsetHeight / 2));
+        let dx = x - viewPointLocal.x;
+        let dy = y - viewPointLocal.y;
+        let startTime = performance.now();
+        let startCameraPosition = this._getCameraPosition();
+        let destCameraX = startCameraPosition.x + dx;
+        let destCameraY = startCameraPosition.y + dy;
+
+        if (this._moveFn) {
+            this._pixiApp.ticker.remove(this._moveFn);
+        }
+        
+        this._moveFn = () => {
+            let currentTime = performance.now();
+            let elapsed = currentTime - startTime;
+            let progress = elapsed / MapController.SHOW_POSITION_DURATION;
+
+            if (progress <= 1) {
+                let currentDx = progress * dx;
+                let currentDy = progress * dy;
+                this._setCameraPosition(startCameraPosition.x + currentDx, startCameraPosition.y + currentDy);
+            } else {
+                this._setCameraPosition(destCameraX, destCameraY);
+                this._pixiApp.ticker.remove(this._moveFn);
+                this._moveFn = null;
+            }
+        };
+
+        this._pixiApp.ticker.add(this._moveFn);
+    }
+
+    _moveCamera(dx, dy) {
+        let cameraPosition = this._getCameraPosition();
+        this._setCameraPosition(cameraPosition.x + dx, cameraPosition.y + dy);
+    }
+
+    _setCameraPosition(x, y) {
+        let containerPosX = -x;
+        let containerPosY = -y;
+        if (containerPosX > MapController.MAP_MARGIN) {
+            containerPosX = MapController.MAP_MARGIN;
+        }
+
+        if (containerPosY > MapController.MAP_MARGIN) {
+            containerPosY = MapController.MAP_MARGIN;
+        }
+
+        let minXPos = this._pixiApp.canvas.offsetWidth - this._mapSize.width - MapController.MAP_MARGIN
+        if (containerPosX < minXPos) {
+            containerPosX = minXPos;
+        }
+
+        let minPosY = this._pixiApp.canvas.offsetHeight - this._mapSize.height  - MapController.MAP_MARGIN;
+        if (containerPosY < minPosY) {
+            containerPosY = minPosY;
+        }
+
+        this._container.x = containerPosX;
+        this._container.y = containerPosY;
+    }
+
+    _getCameraPosition() {
+        return {
+            x: -this._container.x,
+            y: -this._container.y,
+        }
+    }
+
+    _onShowPointRequest(position) {
+        this._showPosition(position.x, position.y);
+    }
+
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/view/mapPickers/basePickerView.js":
 /*!*******************************************************!*\
   !*** ./gameApp/src/view/mapPickers/basePickerView.js ***!
@@ -6065,6 +6106,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGraphicView */ "./gameApp/src/view/base/baseGraphicView.js");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @utils/distance */ "./gameApp/src/utils/distance.js");
+
 
 
 
@@ -6076,32 +6119,38 @@ class BasePickerView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE
         this._worldSize = this.$domain.getWorldSize();
 
         this._render();
-        this.deactivate();
 
-        this._container.on('pointerdown', this._onClick.bind(this));
+        this._boundOnClick = this._onClick.bind(this);
     }
 
-    activate(pickableCircle) {
+    activate(pickableCircle, exclusions) {
         this._container.renderable = true;
         if (pickableCircle) {
-            this._restrictPickableAreaByCircle(pickableCircle);
+            this._pickableCircle = pickableCircle;
+            this._exclusions = exclusions;
+            this._renderPickableArea(pickableCircle, exclusions);
         } else {
-            this._clearPickableAreaRestrictions();
+            this._clearPickableArea();
         }
+
+        this.$eventBus.on('bgclick', this._boundOnClick);
     }
 
     deactivate() {
         this._container.renderable = false;
+        this._pickableCircle = null;
+        this._exclusions = null;
+        this.$eventBus.off('bgclick', this._boundOnClick);
     }
 
     _render() {
-        this._container.eventMode = 'static';
+        this._container.renderable = false;
     }
 
-    _restrictPickableAreaByCircle(pickableCircle) {
-        this._clearNotPickableArea();
+    _renderPickableArea(pickableCircle, exclusions) {
+        this._clearPickableArea();
+
         this._notPickableArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Graphics();
-        this._notPickableArea.eventMode = 'static';
         this._notPickableArea.rect(0, 0, this._worldSize[0], this._worldSize[1])
         .fill({
             color: 0xff0000,
@@ -6110,24 +6159,57 @@ class BasePickerView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE
         .circle(pickableCircle.center.x, pickableCircle.center.y, pickableCircle.radius)
         .cut();
 
-        this._container.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Circle(pickableCircle.center.x, pickableCircle.center.y, pickableCircle.radius);
-
         this._container.addChild(this._notPickableArea);
-    }
 
-    _clearPickableAreaRestrictions() {
-        this._container.hitArea = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Rectangle(0, 0, this._worldSize[0], this._worldSize[1]);
-        this._clearNotPickableArea();
-    }
+        if (exclusions && exclusions.length > 0) {
+            this._pickableCircleExclusionsContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Container();
+            let mask = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Graphics();
+            mask.circle(pickableCircle.center.x, pickableCircle.center.y, pickableCircle.radius);
+            mask.fill(0x0000ff);
+            this._pickableCircleExclusionsContainer.mask = mask;
+            this._pickableCircleExclusionsContainer.addChild(mask);
+            this._container.addChild(this._pickableCircleExclusionsContainer);
 
-    _clearNotPickableArea() {
-        if (this._notPickableArea) {
-            this._container.removeChild(this._notPickableArea);
+            for (let exclusion of exclusions) {
+                let excelusionGraphic = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Graphics();
+                excelusionGraphic
+                .circle(exclusion.center.x, exclusion.center.y, exclusion.radius)
+                .fill({
+                    color: 0xff0000,
+                    alpha: 0.5,
+                });
+                this._pickableCircleExclusionsContainer.addChild(excelusionGraphic);
+            }
         }
     }
 
-    _onClick(e) {
-        let point = this._container.toLocal(e.client);
+    _clearPickableArea() {
+        if (this._notPickableArea) {
+            this._container.removeChild(this._notPickableArea);
+            this._notPickableArea = null;
+        }
+        if (this._pickableCircleExclusionsContainer) {
+            this._container.removeChild(this._pickableCircleExclusionsContainer);
+            this._pickableCircleExclusionsContainer = null;
+        }
+    }
+
+    _onClick(point) {
+        if (this._pickableCircle) {
+            let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_2__.distance_point)(this._pickableCircle.center, point);
+            if (dist >= this._pickableCircle.radius) {
+                return;
+            }
+
+            if (this._exclusions){
+                for (let exclusion of this._exclusions) {
+                    let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_2__.distance_point)(exclusion.center, point);
+                    if (dist < exclusion.radius) {
+                        return;
+                    }
+                }
+            }
+        }
         this._onPointPick({x: point.x, y: point.y});
     }
 
@@ -6240,8 +6322,8 @@ class MapPickerMasterView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_M
         this._borderView.activate(this.$messages.pick_nest);
     }
 
-    _onPositionPickRequest(pickableCircle, callback) {
-        this._positionPickerView.activate(pickableCircle, point => {
+    _onPositionPickRequest(pickableCircle, exclusions, callback) {
+        this._positionPickerView.activate(pickableCircle, exclusions, point => {
             callback(point);
             this._deactivateAll();
         });
@@ -6324,8 +6406,8 @@ class PositionPickerView extends _basePickerView__WEBPACK_IMPORTED_MODULE_0__.Ba
         super(container);
     }
 
-    activate(pickableCircle, callback) {
-        super.activate(pickableCircle);
+    activate(pickableCircle, exclusions, callback) {
+        super.activate(pickableCircle, exclusions);
         this._callback = callback;
     }
 
@@ -9696,7 +9778,7 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._mainNestOfColony = this.$domain.getMainNestOfColony(this._performingColony.id);
+        this._buildableArea = this.$domain.getSubNestBuildableArea(this._performingColony.id);
 
         this._render();
 
@@ -9805,8 +9887,9 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
     }
 
     _onChooseBuildingSiteBtnClick() {
-        let pickableCircle = { center: this._mainNestOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.MAX_DISTANCE_TO_SUB_NEST };
-        this.$eventBus.emit('positionPickRequest', pickableCircle, (point) => { 
+        let pickableCircle = this._buildableArea.area;
+        let exclusions = this._buildableArea.exclusions;
+        this.$eventBus.emit('positionPickRequest', pickableCircle, exclusions, (point) => { 
             this._buildingPosition.value = point;
             let err = this._validateBuildingPosition();
             this._renderBuildingPositionError(err);

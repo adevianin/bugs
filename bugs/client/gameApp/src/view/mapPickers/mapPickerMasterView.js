@@ -38,8 +38,8 @@ class MapPickerMasterView extends BaseGraphicView {
         this._borderView.activate(this.$messages.pick_nest);
     }
 
-    _onPositionPickRequest(pickableCircle, callback) {
-        this._positionPickerView.activate(pickableCircle, point => {
+    _onPositionPickRequest(pickableCircle, exclusions, callback) {
+        this._positionPickerView.activate(pickableCircle, exclusions, point => {
             callback(point);
             this._deactivateAll();
         });
