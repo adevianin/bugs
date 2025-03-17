@@ -103,16 +103,20 @@ class ColonyService(BaseService):
         queen = self._find_queen_of_colony(performing_colony_id)
 
         if not queen:
-            self._raise_state_conflict_error()
+            self._raise_state_conflict_error(f'not found queen of colony(id={performing_colony_id})')
+
+        main_nest = self._find_main_nest_of_colony(performing_colony_id)
+        if not main_nest:
+            self._raise_state_conflict_error(f'not found main nest of colony(id={performing_colony_id})')
         
-        if queen.position.dist(position) > MAX_DISTANCE_TO_SUB_NEST:
+        if main_nest.position.dist(position) > MAX_DISTANCE_TO_SUB_NEST:
             raise GameRuleError('cant build subnest far away')
         
         sub_nest_filter: Callable[[Nest], bool] = lambda nest: not nest.is_main
         sub_nests = self._world.map.get_entities(colony.id, [EntityTypes.NEST], sub_nest_filter)
 
         if len(sub_nests) >= MAX_SUB_NEST_COUNT:
-            raise GameRuleError('cant build more subnests')
+            self._raise_state_conflict_error(f'cant build more subnests for colony(id={performing_colony_id})')
         
         nest_name = clean_string(nest_name)
         

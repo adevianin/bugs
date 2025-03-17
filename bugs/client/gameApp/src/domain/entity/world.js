@@ -133,6 +133,16 @@ class World {
         return null;
     }
 
+    getMainNestOfColony(colonyId) {
+        let nests = this.findNestsFromColony(colonyId);
+        return nests.find(nest => nest.isMain);
+    }
+
+    getSubNestsOfColony(colonyId) {
+        let nests = this.findNestsFromColony(colonyId);
+        return nests.filter(nest => !nest.isMain);
+    }
+
     clear() {
         this._entities = [];
         this._colonies = [];

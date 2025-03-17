@@ -1,5 +1,6 @@
+import './style.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
-import { formatMessage } from "@utils/formatMessage";
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class TextInputView extends BaseGameHTMLView {
 
@@ -32,15 +33,15 @@ class TextInputView extends BaseGameHTMLView {
 
     _checkErrors() {
         if (this.value.length < this._minLength) {
-            return formatMessage(this.$messages.min_str_length, this._minLength);
+            return this.$mm.format(GAME_MESSAGE_IDS.TEXT_INPUT_MIN_STR_LENGTH, this._minLength);
         }
 
         if (this.value.length > this._maxLength) {
-            return formatMessage(this.$messages.max_str_length, this._maxLength);
+            return this.$mm.format(GAME_MESSAGE_IDS.TEXT_INPUT_MAX_STR_LENGTH, this._maxLength);
         }
 
         if (!this._regex.test(this.value)) {
-            return this.$messages.only_chars_and_digits;
+            return this.$mm.get(GAME_MESSAGE_IDS.TEXT_INPUT_INVALID_CHAR);
         }
 
         return null;
@@ -48,9 +49,11 @@ class TextInputView extends BaseGameHTMLView {
 
     _renderError(errText) {
         this._errContainer.innerHTML = errText || '';
+        this._el.classList.toggle('text-input--error', !!errText);
     }
 
     _render() {
+        this._el.classList.add('text-input');
         this._el.setAttribute('type', 'text');
         this._el.setAttribute('minlength', this._minLength);
         this._el.setAttribute('maxlength', this._maxLength);

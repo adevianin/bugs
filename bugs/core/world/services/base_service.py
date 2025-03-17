@@ -50,7 +50,7 @@ class BaseService(ABC):
     def _find_ant_colony_for_owner(self, colony_id: int, owner_id: int) -> AntColony:
         colony: AntColony = self._find_colony_by_id(colony_id)
         if not colony or colony.member_type != EntityTypes.ANT: 
-            self._raise_state_conflict_error()
+            self._raise_state_conflict_error(f'ant colony(id={colony_id}) not found')
 
         if colony.owner_id != owner_id:
             raise AccessDeniedError(f'user(id={owner_id}) doesn\'t have colony(id={colony.id})')
@@ -77,6 +77,15 @@ class BaseService(ABC):
 
         if len(queens) > 0:
             return queens[0]
+        else:
+            return None
+        
+    def _find_main_nest_of_colony(self, colony_id: int) -> Nest:
+        colony_nest_filter: Callable[[Nest], bool] = lambda nest: nest.is_main
+        nests = self._world.map.get_entities(colony_id, [EntityTypes.NEST], colony_nest_filter)
+
+        if len(nests) > 0:
+            return nests[0]
         else:
             return None
     

@@ -948,7 +948,7 @@ class MessageMaster {
 
     format(msgId, ...values) {
         let msgTemplate = this._msgLibrary[msgId];
-        return msgTemplate.replace(/{(\d+)}/g, (_, index) => values[index] || '');
+        return msgTemplate.replace(/{(\d+)}/g, (_, index) => values[index] !== undefined ? values[index] : '');
     }
 }
 

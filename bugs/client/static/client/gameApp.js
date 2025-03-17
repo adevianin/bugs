@@ -435,7 +435,7 @@ class MessageMaster {
 
     format(msgId, ...values) {
         let msgTemplate = this._msgLibrary[msgId];
-        return msgTemplate.replace(/{(\d+)}/g, (_, index) => values[index] || '');
+        return msgTemplate.replace(/{(\d+)}/g, (_, index) => values[index] !== undefined ? values[index] : '');
     }
 }
 
@@ -1183,6 +1183,10 @@ class DomainFacade {
 
     getQueenOfColony(colonyId) {
         return this._worldService.world.getQueenOfColony(colonyId);
+    }
+
+    getMainNestOfColony(colonyId) {
+        return this._worldService.world.getMainNestOfColony(colonyId);
     }
 
     isEntityMy(entity) {
@@ -3481,6 +3485,16 @@ class World {
         return null;
     }
 
+    getMainNestOfColony(colonyId) {
+        let nests = this.findNestsFromColony(colonyId);
+        return nests.find(nest => nest.isMain);
+    }
+
+    getSubNestsOfColony(colonyId) {
+        let nests = this.findNestsFromColony(colonyId);
+        return nests.filter(nest => !nest.isMain);
+    }
+
     clear() {
         this._entities = [];
         this._colonies = [];
@@ -3918,6 +3932,7 @@ class BaseGameService extends _common_domain_service_base_baseService__WEBPACK_I
     }
 
     async _waitStepSync(stepNumber) {
+        console.log('waiting step', stepNumber);
         return new Promise((res, rej) => {
             if (this._world.currentStep > stepNumber) {
                 res();
@@ -3951,6 +3966,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @domain/enum/entityTypes */ "./gameApp/src/domain/enum/entityTypes.js");
 /* harmony import */ var _domain_enum_itemTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @domain/enum/itemTypes */ "./gameApp/src/domain/enum/itemTypes.js");
 /* harmony import */ var _utils_distance__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @utils/distance */ "./gameApp/src/utils/distance.js");
+/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
+
+
 
 
 
@@ -4042,8 +4061,14 @@ class ColonyService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_1__.B
 
     validateNewNestOperationConditions(colonyId) {
         let queen = this._world.getQueenOfColony(colonyId);
-        if (!queen) {
-            return 'CANT_BUILD_SUB_NEST_WITHOUT_QUEEN';
+        let mainNest = this._world.getMainNestOfColony(colonyId);
+        if (!queen || !mainNest) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_5__.GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN;
+        }
+
+        let subNests = this._world.getSubNestsOfColony(colonyId);
+        if (subNests.length >= _domain_consts__WEBPACK_IMPORTED_MODULE_6__.CONSTS.MAX_SUB_NEST_COUNT) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_5__.GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_MORE_SUB_NESTS;
         }
 
         return null;
@@ -4805,7 +4830,19 @@ const GAME_MESSAGE_IDS = {
     TAB_SPECIE: 'TAB_SPECIE',
     TAB_NOTIFICATIONS: 'TAB_NOTIFICATIONS',
     TAB_RATING: 'TAB_RATING',
-    TAB_ACCOUNT: 'TAB_ACCOUNT'
+    TAB_ACCOUNT: 'TAB_ACCOUNT',
+
+    NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN: 'NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN',
+    NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED: 'NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED',
+    NEW_SUB_NEST_OPER_CANT_BUILD_MORE_SUB_NESTS: 'NEW_SUB_NEST_OPER_CANT_BUILD_MORE_SUB_NESTS',
+
+    INT_INPUT_MIN_MAX: 'INT_FIELD_MIN_MAX',
+    INT_INPUT_MIN: 'INT_FIELD_MIN',
+    INT_INPUT_MAX: 'INT_FIELD_MAX',
+
+    TEXT_INPUT_MIN_STR_LENGTH: 'TEXT_INPUT_MIN_STR_LENGTH',
+    TEXT_INPUT_MAX_STR_LENGTH: 'TEXT_INPUT_MAX_STR_LENGTH',
+    TEXT_INPUT_INVALID_CHAR: 'TEXT_INPUT_INVALID_CHAR',
 }
 
 
@@ -4837,6 +4874,36 @@ const EN_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.TAB_NOTIFICATIONS]: 'Notifications',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.TAB_RATING]: 'Rating',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.TAB_ACCOUNT]: 'Account',
+
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN]: 'You can\'t build a satellite nest in a colony without a queen.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED]: 'Ants need a location chosen for building the nest.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_MORE_SUB_NESTS]: 'The maximum number of satellite nests has been reached.',
+
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.INT_INPUT_MIN_MAX]: '(min. {0}, max. {1})',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.INT_INPUT_MIN]: '(min. {0})',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.INT_INPUT_MAX]: '(max. {0})',
+
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.TEXT_INPUT_MIN_STR_LENGTH]: 'Minimum length {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.TEXT_INPUT_MAX_STR_LENGTH]: 'Maximum length {0}.',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.TEXT_INPUT_INVALID_CHAR]: 'Letters and numbers only.',
+
+    // [GAME_MESSAGE_IDS.CANT_BUILD_MORE_SUB_NEST]: 'The maximum number of satellite nests has been reached.',
+    // [GAME_MESSAGE_IDS.CANT_BUILD_SUB_NEST_FAR_AWAY]: 'A satellite nest cannot be built so far from the central nest.',
+    // [GAME_MESSAGE_IDS.CANT_LAY_EGG_WITHOUT_QUEEN_IN_NEST]: 'The queen is not in the nest to lay eggs.',
+    // [GAME_MESSAGE_IDS.NOT_ENOUGHT_FOOD_IN_NEST_TO_LAY_EGG]: 'Not enough food to lay eggs.',
+    // [GAME_MESSAGE_IDS.NOT_SUITABLE_SEASON_TO_LAY_EGG]: 'It is not the right season for laying eggs.',
+    // [GAME_MESSAGE_IDS.NO_BUG_CORPSE_IN_NEST_AREA]: 'No beetle corpses are visible within the nest\'s territory.',
+    // [GAME_MESSAGE_IDS.CANT_DESTROY_NEST_WITHOUT_LIVING_QUEEN]: 'Ants cannot attack a nest on their own without the queen.',
+    // [GAME_MESSAGE_IDS.NEST_TO_DESTROY_IS_FAR_AWAY]: 'The target nest is too far from the main nest to attack.',
+    // [GAME_MESSAGE_IDS.NO_NEST_TO_DESTROY]: 'There is no nest available to attack.',
+    // [GAME_MESSAGE_IDS.CANT_PILLAGE_NEST_WITHOUT_LIVING_QUEEN]: 'Ants cannot raid a nest on their own without the queen.',
+    // [GAME_MESSAGE_IDS.NO_NEST_TO_PILLAGE]: 'There is no nest available to raid.',
+    // [GAME_MESSAGE_IDS.CANT_PILLAGE_WITHOUT_NEST_FOR_LOOT]: 'A nest cannot be raided without having a nest prepared for loot.',
+    // [GAME_MESSAGE_IDS.NEST_TO_PILLAGE_IS_FAR_AWAY]: 'The nest to raid is too far away.',
+    // [GAME_MESSAGE_IDS.QUEEN_IS_NECESSARY_FOR_BREEDING]: 'A female is required for reproduction.',
+    // [GAME_MESSAGE_IDS.LIVE_QUEEN_IS_NECESSARY_FOR_BREEDING]: 'A living female is required for reproduction.',
+    // [GAME_MESSAGE_IDS.MALE_IS_NECESSARY_FOR_BREEDING]: 'A male is required for reproduction.',
+
 }
 
 
@@ -4893,6 +4960,37 @@ const UK_LIBRARY = {
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.TAB_NOTIFICATIONS]: 'Сповіщення',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.TAB_RATING]: 'Рейтинг',
     [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.TAB_ACCOUNT]: 'Акаунт',
+
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN]: 'Не можна будувати гніздо сателіт в колонії без королеви.!!',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED]: 'Мурахам треба вказати місце для будування гнізда.!!',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_MORE_SUB_NESTS]: 'Досягнуто максимальну кількість гнізд сателітів.!!',
+
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.INT_INPUT_MIN_MAX]: '(мін. {0}, макс. {1})!!',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.INT_INPUT_MIN]: '(мін. {0})!!',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.INT_INPUT_MAX]: '(макс. {0})!!',
+
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.TEXT_INPUT_MIN_STR_LENGTH]: 'Мінімальна довжина {0}.!!',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.TEXT_INPUT_MAX_STR_LENGTH]: 'Максимальна довжина {0}.!!',
+    [_messageIds__WEBPACK_IMPORTED_MODULE_0__.GAME_MESSAGE_IDS.TEXT_INPUT_INVALID_CHAR]: 'Тільки букви та цифри.!!',
+
+
+
+    // [GAME_MESSAGE_IDS.CANT_BUILD_MORE_SUB_NEST]: 'Досягнуто максимальну кількість гнізд сателітів.',
+    // [GAME_MESSAGE_IDS.CANT_BUILD_SUB_NEST_FAR_AWAY]: 'Не можна будувати гніздо сателіт так далеко центрального.',
+    // [GAME_MESSAGE_IDS.CANT_LAY_EGG_WITHOUT_QUEEN_IN_NEST]: 'Королеви немає в гнізді для відкладення яєць.',
+    // [GAME_MESSAGE_IDS.NOT_ENOUGHT_FOOD_IN_NEST_TO_LAY_EGG]: 'Не достатньо їжі для відкладення яєць.',
+    // [GAME_MESSAGE_IDS.NOT_SUITABLE_SEASON_TO_LAY_EGG]: 'Непідходящий сезон для відкладення яєць.',
+    // [GAME_MESSAGE_IDS.NO_BUG_CORPSE_IN_NEST_AREA]: 'Не видно трупів жуків на території гнізда.',
+    // [GAME_MESSAGE_IDS.CANT_DESTROY_NEST_WITHOUT_LIVING_QUEEN]: 'Мурахи не можуть атакувати гніздо самі без королеви.',
+    // [GAME_MESSAGE_IDS.NEST_TO_DESTROY_IS_FAR_AWAY]: 'Гніздо для атаки занадто далеко від основного гнізда.',
+    // [GAME_MESSAGE_IDS.NO_NEST_TO_DESTROY]: 'Немає гнізда для атаки.',
+    // [GAME_MESSAGE_IDS.CANT_PILLAGE_NEST_WITHOUT_LIVING_QUEEN]: 'Мурахи не можуть грабувати гніздо самі без королеви.',
+    // [GAME_MESSAGE_IDS.NO_NEST_TO_PILLAGE]: 'Немає гнізда для пограбування.',
+    // [GAME_MESSAGE_IDS.CANT_PILLAGE_WITHOUT_NEST_FOR_LOOT]: 'Не можна грабувати гніздо не маючи гніздо для здобичі.',
+    // [GAME_MESSAGE_IDS.NEST_TO_PILLAGE_IS_FAR_AWAY]: 'Гніздо для грабування занадто далеко.',
+    // [GAME_MESSAGE_IDS.QUEEN_IS_NECESSARY_FOR_BREEDING]: 'Для розмноження потрібна самка.',
+    // [GAME_MESSAGE_IDS.LIVE_QUEEN_IS_NECESSARY_FOR_BREEDING]: 'Для розмноження потрібна жива самка.',
+    // [GAME_MESSAGE_IDS.MALE_IS_NECESSARY_FOR_BREEDING]: 'Для розмноження потрібен самець.',
 }
 
 
@@ -4913,8 +5011,8 @@ __webpack_require__.r(__webpack_exports__);
 const uaMessages = {
     SPECIE_SCHEMA_IS_NOT_VALID: 'SPECIE_SCHEMA_IS_NOT_VALID',
     SOMETHING_WENT_WRONG: 'Щось пішло не так',
-    CANT_BUILD_SUB_NEST_WITHOUT_QUEEN: 'Не можна будувати гніздо сателіт в колонії без королеви.',
-    CANT_BUILD_MORE_SUB_NEST: 'Досягнуто максимальну кількість гнізд сателітів.',
+    // CANT_BUILD_SUB_NEST_WITHOUT_QUEEN: 'Не можна будувати гніздо сателіт в колонії без королеви.',
+    // CANT_BUILD_MORE_SUB_NEST: 'Досягнуто максимальну кількість гнізд сателітів.',
     CANT_BUILD_SUB_NEST_FAR_AWAY: 'Не можна будувати гніздо сателіт так далеко центрального.',
     CANT_LAY_EGG_WITHOUT_QUEEN_IN_NEST: 'Королеви немає в гнізді для відкладення яєць',
     NOT_ENOUGHT_FOOD_IN_NEST_TO_LAY_EGG: 'Не достатньо їжі для відкладення яєць',
@@ -4947,19 +5045,19 @@ const uaMessages = {
     founding_main_nest_activity: 'будую основне гніздо колонії',
     pick_position: 'постав точку',
     pick_nest: 'вибери гніздо',
-    max: 'макс.',
-    min: 'мін.',
+    // max: 'макс.',
+    // min: 'мін.',
     not_specified: 'не задано',
-    building_position_needed: 'мурахам треба вказати місце для будування гнізда',
+    // building_position_needed: 'мурахам треба вказати місце для будування гнізда',
     to_short_name: 'занадто коротка назва',
     use_only_chars_and_digits: 'в назві використовуй тільки букви і цифри',
     choose_nest_for_attack: 'мурахам треба вказати гніздо для атаки',
     too_few_ants_to_attack: 'занадто мало мурах для атаки',
     choose_nest_for_pillage: 'мурахам треба вказати гніздо для грабування',
     choose_different_nests: 'мурахи можуть переносити їжу лише між різними гніздами своєї колонії',
-    min_str_length: 'мінімальна довжина {0}',
-    max_str_length: 'максимальна довжина {0}',
-    only_chars_and_digits: 'тільки букви та цифри',
+    // min_str_length: 'мінімальна довжина {0}',
+    // max_str_length: 'максимальна довжина {0}',
+    // only_chars_and_digits: 'тільки букви та цифри',
     queen_needs_place_to_settle: 'самкі треба вказать місце щоб заселиться',
     nest_destroyed: 'зруйновано',
     nest_not_choosed: 'не вибрано',
@@ -5337,27 +5435,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 function distance(x1, y1, x2, y2) {
     return Math.sqrt(Math.pow((x1  -x2), 2) + Math.pow((y1 - y2), 2));
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/utils/formatMessage.js":
-/*!********************************************!*\
-  !*** ./gameApp/src/utils/formatMessage.js ***!
-  \********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   formatMessage: () => (/* binding */ formatMessage)
-/* harmony export */ });
-// 'максимальна довжина {0} символів, від {1} до {2}'
-// formatMessage(str, 5, 10, 20)
-function formatMessage(template, ...values) {
-    return template.replace(/{(\d+)}/g, (_, index) => values[index] || '');
 }
 
 
@@ -6700,6 +6777,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./gameApp/src/view/panel/base/intInput/style.css");
 /* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
+/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
+
 
 
 
@@ -6734,11 +6813,11 @@ class IntInputView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_
 
     get _errorText() {
         if (this._hasMin && this._hasMax) {
-            return `(${this.$messages.min} ${this._min}, ${this.$messages.max} ${this._max})`;
+            return this.$mm.format(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.GAME_MESSAGE_IDS.INT_INPUT_MIN_MAX, this._min, this._max);
         } else if (this._hasMin && !this._hasMax) {
-            return `(${this.$messages.min} ${this._min})`;
+            return this.$mm.format(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.GAME_MESSAGE_IDS.INT_INPUT_MIN, this._min);
         } else if (!this._hasMin && this._hasMax) {
-            return `(${this.$messages.max} ${this._max})`;
+            return this.$mm.format(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.GAME_MESSAGE_IDS.INT_INPUT_MAX, this._max);
         } else {
             return '';
         }
@@ -6774,23 +6853,23 @@ class IntInputView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_
     }
 
     _render() {
-        this._el.classList.add('number-field');
+        this._el.classList.add('int-input');
         this._el.setAttribute('type', 'number');
         this._el.setAttribute('min', this._min);
         this._el.setAttribute('max', this._max);
 
-        this._errContainerEl.classList.add('number-field__error-text');
+        this._errContainerEl.classList.add('int-input__error-text');
 
         this._el.value = this._hasMin ? this._min : 0;
     }
 
     _showError() {
-        this._el.classList.add('number-field--error');
+        this._el.classList.add('int-input--error');
         this._errContainerEl.innerHTML = this._errorText;
     }
 
     _hideError() {
-        this._el.classList.remove('number-field--error');
+        this._el.classList.remove('int-input--error');
         this._errContainerEl.innerHTML = '';
     }
 
@@ -7189,12 +7268,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TextInputView: () => (/* binding */ TextInputView)
 /* harmony export */ });
-/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
-/* harmony import */ var _utils_formatMessage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @utils/formatMessage */ "./gameApp/src/utils/formatMessage.js");
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./gameApp/src/view/panel/base/textInput/style.css");
+/* harmony import */ var _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @view/base/baseGameHTMLView */ "./gameApp/src/view/base/baseGameHTMLView.js");
+/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
 
 
 
-class TextInputView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.BaseGameHTMLView {
+
+class TextInputView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_1__.BaseGameHTMLView {
 
     constructor(el, errContainer, minLength=3, maxLength=50) {
         super(el);
@@ -7225,15 +7306,15 @@ class TextInputView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE
 
     _checkErrors() {
         if (this.value.length < this._minLength) {
-            return (0,_utils_formatMessage__WEBPACK_IMPORTED_MODULE_1__.formatMessage)(this.$messages.min_str_length, this._minLength);
+            return this.$mm.format(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.GAME_MESSAGE_IDS.TEXT_INPUT_MIN_STR_LENGTH, this._minLength);
         }
 
         if (this.value.length > this._maxLength) {
-            return (0,_utils_formatMessage__WEBPACK_IMPORTED_MODULE_1__.formatMessage)(this.$messages.max_str_length, this._maxLength);
+            return this.$mm.format(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.GAME_MESSAGE_IDS.TEXT_INPUT_MAX_STR_LENGTH, this._maxLength);
         }
 
         if (!this._regex.test(this.value)) {
-            return this.$messages.only_chars_and_digits;
+            return this.$mm.get(_messages_messageIds__WEBPACK_IMPORTED_MODULE_2__.GAME_MESSAGE_IDS.TEXT_INPUT_INVALID_CHAR);
         }
 
         return null;
@@ -7241,9 +7322,11 @@ class TextInputView extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE
 
     _renderError(errText) {
         this._errContainer.innerHTML = errText || '';
+        this._el.classList.toggle('text-input--error', !!errText);
     }
 
     _render() {
+        this._el.classList.add('text-input');
         this._el.setAttribute('type', 'text');
         this._el.setAttribute('minlength', this._minLength);
         this._el.setAttribute('maxlength', this._maxLength);
@@ -9597,6 +9680,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/domain/errors/conflictRequestError */ "./common/domain/errors/conflictRequestError.js");
 /* harmony import */ var _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @common/domain/errors/genericRequestError */ "./common/domain/errors/genericRequestError.js");
 /* harmony import */ var _view_panel_base_textInput_textInputView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @view/panel/base/textInput/textInputView */ "./gameApp/src/view/panel/base/textInput/textInputView.js");
+/* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @messages/messageIds */ "./gameApp/src/messages/messageIds.js");
+
 
 
 
@@ -9611,11 +9696,11 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._queenOfColony = this.$domain.getQueenOfColony(this._performingColony.id);
+        this._mainNestOfColony = this.$domain.getMainNestOfColony(this._performingColony.id);
 
         this._render();
 
-        this._checkQueenExisting();
+        this._checkOperationConditions();
 
         this._chooseBuildingSiteBtn.addEventListener('click', this._onChooseBuildingSiteBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
@@ -9675,8 +9760,8 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
             isError = true;
         }
 
-        let condErr = this.$domain.validateNewNestOperationConditions(this._performingColony.id);
-        this._renderMainError(condErr);
+        let condErr = this._validateOperationConditions();
+        this._renderOperationConditionsErr(condErr);
         if (condErr) {
             isError = true;
         }
@@ -9686,25 +9771,32 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
 
     _validateBuildingPosition() {
         if (!this._buildingPosition.value) {
-            return this.$messages.building_position_needed;
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_9__.GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED;
         }
         return null;
     }
 
-    _renderBuildingPositionError(errText) {
-        this._buildingPositionErrEl.innerHTML = errText || '';
+    _renderBuildingPositionError(errId) {
+        this._buildingPositionErrEl.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
-    _checkQueenExisting() {
-        if (!this._queenOfColony) {
-            this._renderMainError('CANT_BUILD_SUB_NEST_WITHOUT_QUEEN');
-            this._chooseBuildingSiteBtn.disabled = true;
-            this._startBtn.disabled = true;
-        }
+    _validateOperationConditions() {
+        return this.$domain.validateNewNestOperationConditions(this._performingColony.id);
+    }
+
+    _renderOperationConditionsErr(condErr) {
+        this._renderMainError(condErr);
+        this._chooseBuildingSiteBtn.disabled = !!condErr;
+        this._startBtn.disabled = !!condErr;
     }
 
     _renderMainError(messageId) {
-        this._errorContainerEl.innerHTML = messageId ? this.$messages[messageId] : '';
+        this._errorContainerEl.innerHTML = messageId ? this.$mm.get(messageId) : '';
+    }
+
+    _checkOperationConditions() {
+        let condErr = this._validateOperationConditions();
+        this._renderOperationConditionsErr(condErr);
     }
 
     _showMarkers() {
@@ -9713,10 +9805,11 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
     }
 
     _onChooseBuildingSiteBtnClick() {
-        let pickableCircle = { center: this._queenOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.MAX_DISTANCE_TO_SUB_NEST };
+        let pickableCircle = { center: this._mainNestOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_3__.CONSTS.MAX_DISTANCE_TO_SUB_NEST };
         this.$eventBus.emit('positionPickRequest', pickableCircle, (point) => { 
             this._buildingPosition.value = point;
-            this._validateBuildingPosition();
+            let err = this._validateBuildingPosition();
+            this._renderBuildingPositionError(err);
             this._showMarkers();
         });
     }
@@ -9736,7 +9829,7 @@ class NewNestOperationCreatorView extends _baseOperationCreatorView__WEBPACK_IMP
             if (e instanceof _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_6__.ConflictRequestError) {
                 this._validate();
             } else if (e instanceof _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_7__.GenericRequestError) {
-                this._renderMainError('SOMETHING_WENT_WRONG');
+                this._renderMainError(_messages_messageIds__WEBPACK_IMPORTED_MODULE_9__.GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         }
     }
@@ -12403,7 +12496,7 @@ class AntView extends _liveEntityView__WEBPACK_IMPORTED_MODULE_2__.LiveEntityVie
 
     _renderPickedItemView() {
         if (!this._pickedItemView) {
-            let item = AntView.domainFacade.findEntityById(this._entity.pickedItemId);
+            let item = this.$domain.findEntityById(this._entity.pickedItemId);
             this._pickedItemView = new _pickedItemView__WEBPACK_IMPORTED_MODULE_1__.PickedItemView(item, this._pickedItemContainer);
         }
     }
@@ -18976,20 +19069,15 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, `.number-field {
+___CSS_LOADER_EXPORT___.push([module.id, `.int-input {
     width: 40px;
 }
 
-.number-field--error {
+.int-input--error {
     border: 2px solid red;
     box-shadow: 0 0 5px red;
 }
-
-.number-field__error-text {
-    color: red;
-}
-
-`, "",{"version":3,"sources":["webpack://./gameApp/src/view/panel/base/intInput/style.css"],"names":[],"mappings":"AAAA;IACI,WAAW;AACf;;AAEA;IACI,qBAAqB;IACrB,uBAAuB;AAC3B;;AAEA;IACI,UAAU;AACd","sourcesContent":[".number-field {\r\n    width: 40px;\r\n}\r\n\r\n.number-field--error {\r\n    border: 2px solid red;\r\n    box-shadow: 0 0 5px red;\r\n}\r\n\r\n.number-field__error-text {\r\n    color: red;\r\n}\r\n\r\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./gameApp/src/view/panel/base/intInput/style.css"],"names":[],"mappings":"AAAA;IACI,WAAW;AACf;;AAEA;IACI,qBAAqB;IACrB,uBAAuB;AAC3B","sourcesContent":[".int-input {\r\n    width: 40px;\r\n}\r\n\r\n.int-input--error {\r\n    border: 2px solid red;\r\n    box-shadow: 0 0 5px red;\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -19065,6 +19153,42 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.tab-switcher {
 .tab-switcher__activator--active {
     border: solid 4px;
 }`, "",{"version":3,"sources":["webpack://./gameApp/src/view/panel/base/tabSwitcher/styles.css"],"names":[],"mappings":"AAAA;IACI,YAAY;IACZ,aAAa;AACjB;;AAEA;IACI,mBAAmB;AACvB;;AAEA;IACI,sBAAsB;AAC1B;;AAEA;IACI,WAAW;AACf;;AAEA;IACI,iBAAiB;AACrB","sourcesContent":[".tab-switcher {\r\n    padding: 5px;\r\n    display: flex;\r\n}\r\n\r\n.tab-switcher--horizontal {\r\n    flex-direction: row;\r\n}\r\n\r\n.tab-switcher--vertical {\r\n    flex-direction: column;\r\n}\r\n\r\n.tab-switcher__activator {\r\n    margin: 1px;\r\n}\r\n\r\n.tab-switcher__activator--active {\r\n    border: solid 4px;\r\n}"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/panel/base/textInput/style.css":
+/*!***********************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/panel/base/textInput/style.css ***!
+  \***********************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, `.text-input {
+    width: 100px;
+}
+
+.text-input--error {
+    border: 2px solid red;
+    box-shadow: 0 0 5px red;
+}
+
+`, "",{"version":3,"sources":["webpack://./gameApp/src/view/panel/base/textInput/style.css"],"names":[],"mappings":"AAAA;IACI,YAAY;AAChB;;AAEA;IACI,qBAAqB;IACrB,uBAAuB;AAC3B","sourcesContent":[".text-input {\r\n    width: 100px;\r\n}\r\n\r\n.text-input--error {\r\n    border: 2px solid red;\r\n    box-shadow: 0 0 5px red;\r\n}\r\n\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -21841,7 +21965,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Module
-var code = "<div>\r\n    <label>позиція гнізда:</label>\r\n    <span data-building-position></span>\r\n    <button data-choose-building-position>вибрать</button>\r\n    <span class=\"operation-creator__error\" data-building-position-err></span>\r\n</div>\r\n<div>\r\n    <label for=\"workers-count\" data-workers-count-label>кількість робочих(із геном BUILDING_SUBNEST):</label>\r\n    <input id=\"workers-count\" data-workers-count-input type=\"number\">\r\n    <span class=\"operation-creator__error\" data-workers-count-err></span>\r\n</div>\r\n<div>\r\n    <label for=\"warriors-count\" data-warriors-count-label>кількість воїнів:</label>\r\n    <input id=\"warriors-count\" data-warriors-count-input type=\"number\">\r\n    <span class=\"operation-creator__error\" data-warriors-count-err></span>\r\n</div>\r\n<div>\r\n    <label>назва гнізда:</label>\r\n    <input data-nest-name>\r\n    <span class=\"operation-creator__error\" data-nest-name-err></span>\r\n</div>\r\n<div class=\"operation-creator__error\" data-error-container></div>\r\n<button data-start>старт</button>";
+var code = "<div>\r\n    <label>позиція гнізда:</label>\r\n    <span data-building-position></span>\r\n    <button data-choose-building-position>вибрать</button>\r\n    <span class=\"g-error-container\" data-building-position-err></span>\r\n</div>\r\n<div>\r\n    <label for=\"workers-count\" data-workers-count-label>кількість робочих(із геном BUILDING_SUBNEST):</label>\r\n    <input id=\"workers-count\" data-workers-count-input type=\"number\">\r\n    <span class=\"g-error-container\" data-workers-count-err></span>\r\n</div>\r\n<div>\r\n    <label for=\"warriors-count\" data-warriors-count-label>кількість воїнів:</label>\r\n    <input id=\"warriors-count\" data-warriors-count-input type=\"number\">\r\n    <span class=\"g-error-container\" data-warriors-count-err></span>\r\n</div>\r\n<div>\r\n    <label>назва гнізда:</label>\r\n    <input data-nest-name>\r\n    <span class=\"g-error-container\" data-nest-name-err></span>\r\n</div>\r\n<div class=\"g-error-container\" data-error-container></div>\r\n<button data-start>старт</button>";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 
@@ -23011,6 +23135,61 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
        /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./gameApp/src/view/panel/base/textInput/style.css":
+/*!*********************************************************!*\
+  !*** ./gameApp/src/view/panel/base/textInput/style.css ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../../node_modules/css-loader/dist/cjs.js!./style.css */ "./node_modules/css-loader/dist/cjs.js!./gameApp/src/view/panel/base/textInput/style.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),

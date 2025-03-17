@@ -7,16 +7,17 @@ import { PositionView } from "@view/panel/base/position/positionView";
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { TextInputView } from "@view/panel/base/textInput/textInputView";
+import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 
 class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._queenOfColony = this.$domain.getQueenOfColony(this._performingColony.id);
+        this._mainNestOfColony = this.$domain.getMainNestOfColony(this._performingColony.id);
 
         this._render();
 
-        this._checkQueenExisting();
+        this._checkOperationConditions();
 
         this._chooseBuildingSiteBtn.addEventListener('click', this._onChooseBuildingSiteBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
@@ -76,8 +77,8 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
             isError = true;
         }
 
-        let condErr = this.$domain.validateNewNestOperationConditions(this._performingColony.id);
-        this._renderMainError(condErr);
+        let condErr = this._validateOperationConditions();
+        this._renderOperationConditionsErr(condErr);
         if (condErr) {
             isError = true;
         }
@@ -87,25 +88,32 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
     _validateBuildingPosition() {
         if (!this._buildingPosition.value) {
-            return this.$messages.building_position_needed;
+            return GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED;
         }
         return null;
     }
 
-    _renderBuildingPositionError(errText) {
-        this._buildingPositionErrEl.innerHTML = errText || '';
+    _renderBuildingPositionError(errId) {
+        this._buildingPositionErrEl.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
-    _checkQueenExisting() {
-        if (!this._queenOfColony) {
-            this._renderMainError('CANT_BUILD_SUB_NEST_WITHOUT_QUEEN');
-            this._chooseBuildingSiteBtn.disabled = true;
-            this._startBtn.disabled = true;
-        }
+    _validateOperationConditions() {
+        return this.$domain.validateNewNestOperationConditions(this._performingColony.id);
+    }
+
+    _renderOperationConditionsErr(condErr) {
+        this._renderMainError(condErr);
+        this._chooseBuildingSiteBtn.disabled = !!condErr;
+        this._startBtn.disabled = !!condErr;
     }
 
     _renderMainError(messageId) {
-        this._errorContainerEl.innerHTML = messageId ? this.$messages[messageId] : '';
+        this._errorContainerEl.innerHTML = messageId ? this.$mm.get(messageId) : '';
+    }
+
+    _checkOperationConditions() {
+        let condErr = this._validateOperationConditions();
+        this._renderOperationConditionsErr(condErr);
     }
 
     _showMarkers() {
@@ -114,10 +122,11 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _onChooseBuildingSiteBtnClick() {
-        let pickableCircle = { center: this._queenOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_SUB_NEST };
+        let pickableCircle = { center: this._mainNestOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_SUB_NEST };
         this.$eventBus.emit('positionPickRequest', pickableCircle, (point) => { 
             this._buildingPosition.value = point;
-            this._validateBuildingPosition();
+            let err = this._validateBuildingPosition();
+            this._renderBuildingPositionError(err);
             this._showMarkers();
         });
     }
@@ -137,7 +146,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
             if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {
-                this._renderMainError('SOMETHING_WENT_WRONG');
+                this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         }
     }

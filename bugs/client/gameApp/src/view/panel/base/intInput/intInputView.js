@@ -1,5 +1,6 @@
 import "./style.css";
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
+import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 
 class IntInputView extends BaseGameHTMLView {
 
@@ -32,11 +33,11 @@ class IntInputView extends BaseGameHTMLView {
 
     get _errorText() {
         if (this._hasMin && this._hasMax) {
-            return `(${this.$messages.min} ${this._min}, ${this.$messages.max} ${this._max})`;
+            return this.$mm.format(GAME_MESSAGE_IDS.INT_INPUT_MIN_MAX, this._min, this._max);
         } else if (this._hasMin && !this._hasMax) {
-            return `(${this.$messages.min} ${this._min})`;
+            return this.$mm.format(GAME_MESSAGE_IDS.INT_INPUT_MIN, this._min);
         } else if (!this._hasMin && this._hasMax) {
-            return `(${this.$messages.max} ${this._max})`;
+            return this.$mm.format(GAME_MESSAGE_IDS.INT_INPUT_MAX, this._max);
         } else {
             return '';
         }
@@ -72,23 +73,23 @@ class IntInputView extends BaseGameHTMLView {
     }
 
     _render() {
-        this._el.classList.add('number-field');
+        this._el.classList.add('int-input');
         this._el.setAttribute('type', 'number');
         this._el.setAttribute('min', this._min);
         this._el.setAttribute('max', this._max);
 
-        this._errContainerEl.classList.add('number-field__error-text');
+        this._errContainerEl.classList.add('int-input__error-text');
 
         this._el.value = this._hasMin ? this._min : 0;
     }
 
     _showError() {
-        this._el.classList.add('number-field--error');
+        this._el.classList.add('int-input--error');
         this._errContainerEl.innerHTML = this._errorText;
     }
 
     _hideError() {
-        this._el.classList.remove('number-field--error');
+        this._el.classList.remove('int-input--error');
         this._errContainerEl.innerHTML = '';
     }
 

@@ -1,8 +1,9 @@
-.int-input {
-    width: 40px;
+.text-input {
+    width: 100px;
 }
 
-.int-input--error {
+.text-input--error {
     border: 2px solid red;
     box-shadow: 0 0 5px red;
 }
+

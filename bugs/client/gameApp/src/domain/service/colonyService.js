@@ -3,6 +3,8 @@ import { BaseGameService } from "./base/baseGameService";
 import { EntityTypes } from "@domain/enum/entityTypes";
 import { ItemTypes } from "@domain/enum/itemTypes";
 import { distance } from "@utils/distance";
+import { GAME_MESSAGE_IDS } from "@messages/messageIds";
+import { CONSTS } from "@domain/consts";
 
 class ColonyService extends BaseGameService {
 
@@ -89,8 +91,14 @@ class ColonyService extends BaseGameService {
 
     validateNewNestOperationConditions(colonyId) {
         let queen = this._world.getQueenOfColony(colonyId);
-        if (!queen) {
-            return 'CANT_BUILD_SUB_NEST_WITHOUT_QUEEN';
+        let mainNest = this._world.getMainNestOfColony(colonyId);
+        if (!queen || !mainNest) {
+            return GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN;
+        }
+
+        let subNests = this._world.getSubNestsOfColony(colonyId);
+        if (subNests.length >= CONSTS.MAX_SUB_NEST_COUNT) {
+            return GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_MORE_SUB_NESTS;
         }
 
         return null;

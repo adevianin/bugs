@@ -62,6 +62,10 @@ class DomainFacade {
         return this._worldService.world.getQueenOfColony(colonyId);
     }
 
+    getMainNestOfColony(colonyId) {
+        return this._worldService.world.getMainNestOfColony(colonyId);
+    }
+
     isEntityMy(entity) {
         let userData = this.getUserData();
         return entity.ownerId == userData.id;
