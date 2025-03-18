@@ -1,4 +1,5 @@
 from core.world.entities.world.season_types import SeasonTypes
+from core.world.utils.size import Size
 
 WORLD_ID = 2
 STEP_TIME = 1
@@ -34,3 +35,4 @@ MAX_SUB_NEST_COUNT = 5
 FOOD_IN_NEW_COLONY_MAIN_NEST = 20000
 MAX_NAME_LENGTH = 50
 ITEM_SOURCE_BLOCKING_DISTANCE = 70
+MAP_CHUNK_SIZE = Size(500, 500)

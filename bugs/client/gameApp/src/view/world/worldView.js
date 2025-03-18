@@ -9,6 +9,7 @@ import { ItemAreaView } from './entitiesViews/itemAreaView';
 import { TreeView } from './entitiesViews/treeView';
 import { LadybugView } from './entitiesViews/ladybugView';
 import { MarkersDemonstratorView } from './markersDemonstratorView';
+import { CONSTS } from '@domain/consts';
 
 class WorldView extends BaseGraphicView {
 
@@ -40,6 +41,7 @@ class WorldView extends BaseGraphicView {
         this._itemSourceContainer = new PIXI.Container();
         this._treesContainer = new PIXI.Container();
         this._markerDemonstratorContainer = new PIXI.Container();
+        this._chunksGridContainer = new PIXI.Container();
 
         this._container.addChild(this._bg);
         this._container.addChild(this._nestContainer);
@@ -51,10 +53,12 @@ class WorldView extends BaseGraphicView {
         this._container.addChild(this._treesContainer);
         this._container.addChild(this._itemAreaContainer);
         this._container.addChild(this._markerDemonstratorContainer);
+        this._container.addChild(this._chunksGridContainer);
 
         this._markerDemonstrator = new MarkersDemonstratorView(this._markerDemonstratorContainer);
 
         this._buildEntityViews();
+        // this._renderChunksGrid();
     }
 
     _onEntityBorn(entity) {
@@ -97,6 +101,25 @@ class WorldView extends BaseGraphicView {
         }
 
         this._entityViews.push(view);
+    }
+
+    _renderChunksGrid() {
+        let worldSize = this.$domain.getWorldSize();
+        let mapWidth = worldSize[0];
+        let mapHeight = worldSize[1];
+        let chunkWidth = CONSTS.MAP_CHUNK_SIZE[0];
+        let chunkHeight = CONSTS.MAP_CHUNK_SIZE[1];
+        let colsCount = Math.ceil(mapWidth / chunkWidth);
+        let rowsCount = Math.ceil(mapHeight / chunkHeight);
+        for (let col = 0; col < colsCount; col++) {
+            for (let row = 0; row < rowsCount; row++) {
+                let x = col * chunkWidth;
+                let y = row * chunkHeight;
+                let graphics = new PIXI.Graphics();
+                graphics.rect(x, y, chunkWidth - 1, chunkHeight - 1).stroke({width: 1, color: 0xFF0000});
+                this._chunksGridContainer.addChild(graphics);
+            }
+        }
     }
 
 }

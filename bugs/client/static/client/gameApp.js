@@ -408,7 +408,10 @@ class MessageMaster {
     }
 
     static _determineLang() {
-        return navigator.language || 'en';
+        let language = navigator.language || 'en';
+        if (language.includes('uk')) return 'uk';
+        if (language.includes('en')) return 'en';
+        return 'en';
     }
 
     static get(msgId) {
@@ -1099,7 +1102,8 @@ const CONSTS = {
     PILLAGE_NEST_OPERATION_REQUIREMENTS: null,
     TRANSPORT_FOOD_OPERATION_REQUIREMENTS: null,
     BUILD_FORTIFICATION_OPERATION_REQUIREMENTS: null,
-    ITEM_SOURCE_BLOCKING_DISTANCE: null
+    ITEM_SOURCE_BLOCKING_DISTANCE: null,
+    MAP_CHUNK_SIZE: null
 }
 
 function initConts(constsValues) {
@@ -2789,6 +2793,13 @@ class LiveEntity extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         }
     }
 
+    // _playWalkAction(action) {
+    //     let destPosition = action.position;
+    //     this.setPosition(destPosition.x, destPosition.y);
+    //     this._setState('walking');
+    //     return Promise.resolve();
+    // }
+
     _playWalkAction(action) {
         let destPosition = action.position;
         let dist = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_1__.distance)(this.position.x, this.position.y, destPosition.x, destPosition.y);
@@ -4065,18 +4076,18 @@ class ColonyService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_1__.B
     }
 
     getSubNestBuildableArea(colonyId) {
-        let demper = 2;
+        let damper = 2;
         let mainNestOfColony = this._world.getMainNestOfColony(colonyId);
         if (!mainNestOfColony) {
             return null;
         }
-        let area = { center: mainNestOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_6__.CONSTS.MAX_DISTANCE_TO_SUB_NEST - demper};
+        let area = { center: mainNestOfColony.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_6__.CONSTS.MAX_DISTANCE_TO_SUB_NEST - damper};
         let exclusions = [];
         let itemSources = this._world.findEntityByType(_domain_enum_entityTypes__WEBPACK_IMPORTED_MODULE_2__.EntityTypes.ITEM_SOURCE);
         let maxBlockingDist = _domain_consts__WEBPACK_IMPORTED_MODULE_6__.CONSTS.MAX_DISTANCE_TO_SUB_NEST + _domain_consts__WEBPACK_IMPORTED_MODULE_6__.CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE
         let blockingAreaItemSources = itemSources.filter(is => (0,_utils_distance__WEBPACK_IMPORTED_MODULE_4__.distance_point)(is.position, mainNestOfColony.position) <= maxBlockingDist);
         for (let itemSource of blockingAreaItemSources) {
-            exclusions.push({ center: itemSource.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_6__.CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE + demper });
+            exclusions.push({ center: itemSource.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_6__.CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE + damper });
         }
 
         return {
@@ -5997,6 +6008,7 @@ class MapController extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_
         this._isDragingMode = false;
         let distToStartPoint = (0,_utils_distance__WEBPACK_IMPORTED_MODULE_2__.distance)(e.client.x, e.client.y, this._startPoint.x, this._startPoint.y);
         if (distToStartPoint < 5) {
+            console.log(this._handler.toLocal(e.client));
             this.$eventBus.emit('bgclick', this._handler.toLocal(e.client));
         }
     }
@@ -12554,6 +12566,8 @@ class AntView extends _liveEntityView__WEBPACK_IMPORTED_MODULE_2__.LiveEntityVie
         if (this._entity.hasPickedItem()) { 
             this._renderPickedItemView();
         }
+
+        // this._renderDebugSightDistance();
     }
 
     _buildStandSprite() {
@@ -12582,6 +12596,14 @@ class AntView extends _liveEntityView__WEBPACK_IMPORTED_MODULE_2__.LiveEntityVie
             let item = this.$domain.findEntityById(this._entity.pickedItemId);
             this._pickedItemView = new _pickedItemView__WEBPACK_IMPORTED_MODULE_1__.PickedItemView(item, this._pickedItemContainer);
         }
+    }
+
+    _renderDebugSightDistance() {
+        let sightDistance = this._entity.stats.sightDistance;
+        let graphics = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();
+        graphics.circle(0, 0, sightDistance).stroke({width: 1, color: 0xFF0000});
+        graphics.rect(-sightDistance, -sightDistance, 2*sightDistance, 2*sightDistance).stroke({width: 1, color: 0x00FF00});
+        this._entityContainer.addChild(graphics);
     }
 
 }
@@ -13443,6 +13465,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entitiesViews_treeView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./entitiesViews/treeView */ "./gameApp/src/view/world/entitiesViews/treeView.js");
 /* harmony import */ var _entitiesViews_ladybugView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entitiesViews/ladybugView */ "./gameApp/src/view/world/entitiesViews/ladybugView.js");
 /* harmony import */ var _markersDemonstratorView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./markersDemonstratorView */ "./gameApp/src/view/world/markersDemonstratorView.js");
+/* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
+
 
 
 
@@ -13485,6 +13509,7 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._itemSourceContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._treesContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
         this._markerDemonstratorContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
+        this._chunksGridContainer = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Container();
 
         this._container.addChild(this._bg);
         this._container.addChild(this._nestContainer);
@@ -13496,10 +13521,12 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._container.addChild(this._treesContainer);
         this._container.addChild(this._itemAreaContainer);
         this._container.addChild(this._markerDemonstratorContainer);
+        this._container.addChild(this._chunksGridContainer);
 
         this._markerDemonstrator = new _markersDemonstratorView__WEBPACK_IMPORTED_MODULE_10__.MarkersDemonstratorView(this._markerDemonstratorContainer);
 
         this._buildEntityViews();
+        // this._renderChunksGrid();
     }
 
     _onEntityBorn(entity) {
@@ -13542,6 +13569,25 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         }
 
         this._entityViews.push(view);
+    }
+
+    _renderChunksGrid() {
+        let worldSize = this.$domain.getWorldSize();
+        let mapWidth = worldSize[0];
+        let mapHeight = worldSize[1];
+        let chunkWidth = _domain_consts__WEBPACK_IMPORTED_MODULE_11__.CONSTS.MAP_CHUNK_SIZE[0];
+        let chunkHeight = _domain_consts__WEBPACK_IMPORTED_MODULE_11__.CONSTS.MAP_CHUNK_SIZE[1];
+        let colsCount = Math.ceil(mapWidth / chunkWidth);
+        let rowsCount = Math.ceil(mapHeight / chunkHeight);
+        for (let col = 0; col < colsCount; col++) {
+            for (let row = 0; row < rowsCount; row++) {
+                let x = col * chunkWidth;
+                let y = row * chunkHeight;
+                let graphics = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();
+                graphics.rect(x, y, chunkWidth - 1, chunkHeight - 1).stroke({width: 1, color: 0xFF0000});
+                this._chunksGridContainer.addChild(graphics);
+            }
+        }
     }
 
 }

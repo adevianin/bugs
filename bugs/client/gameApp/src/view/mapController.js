@@ -49,6 +49,7 @@ class MapController extends BaseGraphicView {
         this._isDragingMode = false;
         let distToStartPoint = distance(e.client.x, e.client.y, this._startPoint.x, this._startPoint.y);
         if (distToStartPoint < 5) {
+            console.log(this._handler.toLocal(e.client));
             this.$eventBus.emit('bgclick', this._handler.toLocal(e.client));
         }
     }

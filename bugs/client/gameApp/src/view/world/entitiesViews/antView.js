@@ -30,6 +30,8 @@ class AntView extends LiveEntityView {
         if (this._entity.hasPickedItem()) { 
             this._renderPickedItemView();
         }
+
+        // this._renderDebugSightDistance();
     }
 
     _buildStandSprite() {
@@ -58,6 +60,14 @@ class AntView extends LiveEntityView {
             let item = this.$domain.findEntityById(this._entity.pickedItemId);
             this._pickedItemView = new PickedItemView(item, this._pickedItemContainer);
         }
+    }
+
+    _renderDebugSightDistance() {
+        let sightDistance = this._entity.stats.sightDistance;
+        let graphics = new PIXI.Graphics();
+        graphics.circle(0, 0, sightDistance).stroke({width: 1, color: 0xFF0000});
+        graphics.rect(-sightDistance, -sightDistance, 2*sightDistance, 2*sightDistance).stroke({width: 1, color: 0x00FF00});
+        this._entityContainer.addChild(graphics);
     }
 
 }

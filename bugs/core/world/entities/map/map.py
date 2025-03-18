@@ -5,8 +5,11 @@ from core.world.entities.base.entity_types import EntityTypes, EntityTypesPack
 from core.world.entities.base.live_entity.live_entity import LiveEntity
 from core.world.entities.base.entity_collection import EntityCollection
 from core.world.utils.event_emiter import EventEmitter
-
+from core.world.settings import MAP_CHUNK_SIZE
+from .chunk import Chunk
 from typing import List, Callable
+from core.world.exceptions import GameError
+from core.world.utils.rectangle import Rectangle
 import random, math
 
 class Map:
@@ -15,10 +18,15 @@ class Map:
         self._event_bus = event_bus
         self._size = size
         self._entities_collection = entities_collection
+        self._chunks: List[Chunk] = []
+
+        self._split_on_chunks()
+        self._add_all_entities_to_chunks()
 
         self._event_bus.add_listener('entity_died', self._on_entity_died)
         self._event_bus.add_listener('entity_removal_unblocked', self._on_entity_removal_unblocked)
         self._event_bus.add_listener('entity_born', self._on_entity_born)
+        self._event_bus.add_listener('entity_moved', self._on_entity_moved)
 
     @property
     def size(self):
@@ -90,8 +98,13 @@ class Map:
         return found_entities
     
     def find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes] = None, filter: Callable[[Entity], bool] = None, is_detectable_only: bool = True) -> List[Entity]:
+        chunks = self._get_chunks_in_area(point, max_distance)
+        entities: List[Entity] = []
+        for chunk in chunks:
+            entities += chunk.entities
+
         found_entities = []
-        for entity in self._entities_collection.get_entities():
+        for entity in entities:
             if entity.is_pending_removal:
                 continue
 
@@ -122,13 +135,63 @@ class Map:
         not_live_filter: Callable[[Entity], bool] = lambda entity: entity.type not in EntityTypesPack.LIVE_ENTITIES
         return self.get_entities(filter=not_live_filter)
     
+    def _get_chunks_in_area(self, point: Point, radius: int) -> List[Chunk]:
+        area_rect = Rectangle.build(point.x - radius, point.y - radius, 2*radius, 2*radius)
+        res = []
+
+        for chunk in self._chunks:
+            if chunk.intersects(area_rect):
+                res.append(chunk)
+
+        return res
+    
+    def _split_on_chunks(self):
+        rows_count = math.ceil(self._size.height / MAP_CHUNK_SIZE.height)
+        cols_count = math.ceil(self._size.width / MAP_CHUNK_SIZE.width)
+        for chunk_col_index in range(cols_count):
+            for chunk_row_index in range(rows_count):
+                chunk_position = Point(chunk_col_index * MAP_CHUNK_SIZE.width, chunk_row_index * MAP_CHUNK_SIZE.height)
+                chunk = Chunk.build(chunk_position)
+                self._chunks.append(chunk)
+    
+    def _add_all_entities_to_chunks(self):
+        for entity in self._entities_collection.get_entities():
+            self._add_entity_to_chunks(entity)
+
+    def _add_entity_to_chunks(self, entity: Entity):
+        for chunk in self._chunks:
+            if chunk.contains_point(entity.position):
+                chunk.add_entity(entity)
+                return
+        
+        raise GameError('cant find suitable chunk')
+    
+    def _remove_entity_from_chunks(self, entity: Entity):
+        for chunk in self._chunks:
+            if chunk.contains_entity(entity):
+                chunk.remove_entity(entity)
+                return
+    
     def _on_entity_died(self, entity: Entity):
         if not entity.is_removal_blocked:
             self._entities_collection.delete_entity(entity.id)
+            self._remove_entity_from_chunks(entity)
 
     def _on_entity_removal_unblocked(self, entity: Entity):
         if entity.is_pending_removal:
             self._entities_collection.delete_entity(entity.id)
+            self._remove_entity_from_chunks(entity)
 
     def _on_entity_born(self, entity: Entity):
         self._entities_collection.add_entity(entity)
+        self._add_entity_to_chunks(entity)
+
+    def _on_entity_moved(self, entity: Entity):
+        for chunk in self._chunks:
+            if chunk.contains_entity(entity):
+                if not chunk.contains_point(entity.position):
+                    chunk.remove_entity(entity)
+                    self._add_entity_to_chunks(entity)
+                return
+            
+        raise GameError('cant find entity containing chunk')

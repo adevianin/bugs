@@ -32,6 +32,7 @@ class Entity(ABC):
         self._body.events.add_listener('died', self._on_body_died)
         self._body.events.add_listener('angle_changed', self._on_angle_changed)
         self._body.events.add_listener('hp_changed', self._on_hp_changed)
+        self._body.events.add_listener('position_changed', self._on_position_changed)
 
     @property
     def id(self):
@@ -126,5 +127,8 @@ class Entity(ABC):
 
     def _emit_notification(self, notification: Notification):
         self._event_bus.emit('notification', notification)
+
+    def _on_position_changed(self):
+        self._event_bus.emit('entity_moved', self)
         
     

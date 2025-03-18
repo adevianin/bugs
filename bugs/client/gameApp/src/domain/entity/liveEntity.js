@@ -58,6 +58,13 @@ class LiveEntity extends Entity {
         }
     }
 
+    // _playWalkAction(action) {
+    //     let destPosition = action.position;
+    //     this.setPosition(destPosition.x, destPosition.y);
+    //     this._setState('walking');
+    //     return Promise.resolve();
+    // }
+
     _playWalkAction(action) {
         let destPosition = action.position;
         let dist = distance(this.position.x, this.position.y, destPosition.x, destPosition.y);
