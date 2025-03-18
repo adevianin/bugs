@@ -90,18 +90,18 @@ class ColonyService extends BaseGameService {
     }
 
     getSubNestBuildableArea(colonyId) {
-        let demper = 2;
+        let damper = 2;
         let mainNestOfColony = this._world.getMainNestOfColony(colonyId);
         if (!mainNestOfColony) {
             return null;
         }
-        let area = { center: mainNestOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_SUB_NEST - demper};
+        let area = { center: mainNestOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_SUB_NEST - damper};
         let exclusions = [];
         let itemSources = this._world.findEntityByType(EntityTypes.ITEM_SOURCE);
         let maxBlockingDist = CONSTS.MAX_DISTANCE_TO_SUB_NEST + CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE
         let blockingAreaItemSources = itemSources.filter(is => distance_point(is.position, mainNestOfColony.position) <= maxBlockingDist);
         for (let itemSource of blockingAreaItemSources) {
-            exclusions.push({ center: itemSource.position, radius: CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE + demper });
+            exclusions.push({ center: itemSource.position, radius: CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE + damper });
         }
 
         return {
