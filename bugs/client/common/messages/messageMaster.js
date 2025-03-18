@@ -12,7 +12,10 @@ class MessageMaster {
     }
 
     static _determineLang() {
-        return navigator.language || 'en';
+        let language = navigator.language || 'en';
+        if (language.includes('uk')) return 'uk';
+        if (language.includes('en')) return 'en';
+        return 'en';
     }
 
     static get(msgId) {
