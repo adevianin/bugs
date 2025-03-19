@@ -68,11 +68,6 @@ class WorldService {
         this._world.currentSeason = season;
     }
 
-    _clearWorld() {
-        this._world.clear();
-        // this._mainEventBus.emit('worldCleared');
-    }
-
     giveBirthToEntity(entityJson) {
         let entity = this._worldFactory.buildEntity(entityJson);
         this._world.addEntity(entity);

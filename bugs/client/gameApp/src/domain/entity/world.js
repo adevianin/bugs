@@ -143,11 +143,6 @@ class World {
         return nests.filter(nest => !nest.isMain);
     }
 
-    clear() {
-        this._entities = [];
-        this._colonies = [];
-    }
-
 }
 
 export { World }
