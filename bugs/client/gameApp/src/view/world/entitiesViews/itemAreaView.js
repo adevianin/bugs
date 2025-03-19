@@ -1,5 +1,6 @@
 import { EntityView } from './entityView';
 import * as PIXI from 'pixi.js';
+import { VIEW_SETTINGS } from '@view/viewSettings';
 
 class ItemAreaView extends EntityView { 
 
@@ -10,6 +11,12 @@ class ItemAreaView extends EntityView {
     }
 
     _render() {
+        if (VIEW_SETTINGS.showItemAreaDot) {
+            this._renderDot();
+        }
+    }
+
+    _renderDot() {
         const graphics = new PIXI.Graphics();
         graphics.fill(0xFF0000);
         graphics.rect(this._entity.position.x, this._entity.position.y, 6, 6);

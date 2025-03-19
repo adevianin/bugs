@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { PickedItemView } from './pickedItemView';
 import { LiveEntityView } from './liveEntityView';
+import { VIEW_SETTINGS } from '@view/viewSettings';
 
 class AntView extends LiveEntityView {
 
@@ -31,7 +32,9 @@ class AntView extends LiveEntityView {
             this._renderPickedItemView();
         }
 
-        // this._renderDebugSightDistance();
+        if (VIEW_SETTINGS.showAntSightDistanceView) {
+            this._renderDebugSightDistance();
+        }
     }
 
     _buildStandSprite() {
@@ -66,7 +69,9 @@ class AntView extends LiveEntityView {
         let sightDistance = this._entity.stats.sightDistance;
         let graphics = new PIXI.Graphics();
         graphics.circle(0, 0, sightDistance).stroke({width: 1, color: 0xFF0000});
-        graphics.rect(-sightDistance, -sightDistance, 2*sightDistance, 2*sightDistance).stroke({width: 1, color: 0x00FF00});
+        if (VIEW_SETTINGS.showAntEntitySearchingRect) {
+            graphics.rect(-sightDistance, -sightDistance, 2*sightDistance, 2*sightDistance).stroke({width: 1, color: 0x00FF00});
+        }
         this._entityContainer.addChild(graphics);
     }
 

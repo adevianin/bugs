@@ -10,6 +10,7 @@ import { TreeView } from './entitiesViews/treeView';
 import { LadybugView } from './entitiesViews/ladybugView';
 import { MarkersDemonstratorView } from './markersDemonstratorView';
 import { CONSTS } from '@domain/consts';
+import { VIEW_SETTINGS } from '@view/viewSettings';
 
 class WorldView extends BaseGraphicView {
 
@@ -58,7 +59,9 @@ class WorldView extends BaseGraphicView {
         this._markerDemonstrator = new MarkersDemonstratorView(this._markerDemonstratorContainer);
 
         this._buildEntityViews();
-        // this._renderChunksGrid();
+        if (VIEW_SETTINGS.showMapChunkGrid) {
+            this._renderMapChunksGrid();
+        }
     }
 
     _onEntityBorn(entity) {
@@ -103,7 +106,7 @@ class WorldView extends BaseGraphicView {
         this._entityViews.push(view);
     }
 
-    _renderChunksGrid() {
+    _renderMapChunksGrid() {
         let worldSize = this.$domain.getWorldSize();
         let mapWidth = worldSize[0];
         let mapHeight = worldSize[1];

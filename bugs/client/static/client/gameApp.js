@@ -12520,6 +12520,28 @@ class UserTab extends _view_base_baseGameHTMLView__WEBPACK_IMPORTED_MODULE_0__.B
 
 /***/ }),
 
+/***/ "./gameApp/src/view/viewSettings.js":
+/*!******************************************!*\
+  !*** ./gameApp/src/view/viewSettings.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   VIEW_SETTINGS: () => (/* binding */ VIEW_SETTINGS)
+/* harmony export */ });
+const VIEW_SETTINGS = {
+    showAntSightDistanceView: false,
+    showAntEntitySearchingRect: false,
+    showMapChunkGrid: false,
+    showItemAreaDot: false
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/view/world/entitiesViews/antView.js":
 /*!*********************************************************!*\
   !*** ./gameApp/src/view/world/entitiesViews/antView.js ***!
@@ -12534,6 +12556,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
 /* harmony import */ var _pickedItemView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pickedItemView */ "./gameApp/src/view/world/entitiesViews/pickedItemView.js");
 /* harmony import */ var _liveEntityView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./liveEntityView */ "./gameApp/src/view/world/entitiesViews/liveEntityView.js");
+/* harmony import */ var _view_viewSettings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @view/viewSettings */ "./gameApp/src/view/viewSettings.js");
+
 
 
 
@@ -12567,7 +12591,9 @@ class AntView extends _liveEntityView__WEBPACK_IMPORTED_MODULE_2__.LiveEntityVie
             this._renderPickedItemView();
         }
 
-        // this._renderDebugSightDistance();
+        if (_view_viewSettings__WEBPACK_IMPORTED_MODULE_3__.VIEW_SETTINGS.showAntSightDistanceView) {
+            this._renderDebugSightDistance();
+        }
     }
 
     _buildStandSprite() {
@@ -12602,7 +12628,9 @@ class AntView extends _liveEntityView__WEBPACK_IMPORTED_MODULE_2__.LiveEntityVie
         let sightDistance = this._entity.stats.sightDistance;
         let graphics = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();
         graphics.circle(0, 0, sightDistance).stroke({width: 1, color: 0xFF0000});
-        graphics.rect(-sightDistance, -sightDistance, 2*sightDistance, 2*sightDistance).stroke({width: 1, color: 0x00FF00});
+        if (_view_viewSettings__WEBPACK_IMPORTED_MODULE_3__.VIEW_SETTINGS.showAntEntitySearchingRect) {
+            graphics.rect(-sightDistance, -sightDistance, 2*sightDistance, 2*sightDistance).stroke({width: 1, color: 0x00FF00});
+        }
         this._entityContainer.addChild(graphics);
     }
 
@@ -12731,6 +12759,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _entityView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entityView */ "./gameApp/src/view/world/entitiesViews/entityView.js");
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.mjs");
+/* harmony import */ var _view_viewSettings__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @view/viewSettings */ "./gameApp/src/view/viewSettings.js");
+
 
 
 
@@ -12743,6 +12773,12 @@ class ItemAreaView extends _entityView__WEBPACK_IMPORTED_MODULE_0__.EntityView {
     }
 
     _render() {
+        if (_view_viewSettings__WEBPACK_IMPORTED_MODULE_2__.VIEW_SETTINGS.showItemAreaDot) {
+            this._renderDot();
+        }
+    }
+
+    _renderDot() {
         const graphics = new pixi_js__WEBPACK_IMPORTED_MODULE_1__.Graphics();
         graphics.fill(0xFF0000);
         graphics.rect(this._entity.position.x, this._entity.position.y, 6, 6);
@@ -13466,6 +13502,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entitiesViews_ladybugView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./entitiesViews/ladybugView */ "./gameApp/src/view/world/entitiesViews/ladybugView.js");
 /* harmony import */ var _markersDemonstratorView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./markersDemonstratorView */ "./gameApp/src/view/world/markersDemonstratorView.js");
 /* harmony import */ var _domain_consts__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @domain/consts */ "./gameApp/src/domain/consts.js");
+/* harmony import */ var _view_viewSettings__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @view/viewSettings */ "./gameApp/src/view/viewSettings.js");
+
 
 
 
@@ -13526,7 +13564,9 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._markerDemonstrator = new _markersDemonstratorView__WEBPACK_IMPORTED_MODULE_10__.MarkersDemonstratorView(this._markerDemonstratorContainer);
 
         this._buildEntityViews();
-        // this._renderChunksGrid();
+        if (_view_viewSettings__WEBPACK_IMPORTED_MODULE_12__.VIEW_SETTINGS.showMapChunkGrid) {
+            this._renderMapChunksGrid();
+        }
     }
 
     _onEntityBorn(entity) {
@@ -13571,7 +13611,7 @@ class WorldView extends _view_base_baseGraphicView__WEBPACK_IMPORTED_MODULE_1__.
         this._entityViews.push(view);
     }
 
-    _renderChunksGrid() {
+    _renderMapChunksGrid() {
         let worldSize = this.$domain.getWorldSize();
         let mapWidth = worldSize[0];
         let mapHeight = worldSize[1];
