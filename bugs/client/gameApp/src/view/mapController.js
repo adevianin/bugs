@@ -68,7 +68,7 @@ class MapController extends BaseGraphicView {
     }
 
     _showPosition(x, y) {
-        let viewPointLocal = this._container.toLocal(new PIXI.Point(this._pixiApp.canvas.offsetWidth / 2, this._pixiApp.canvas.offsetHeight / 2));
+        let viewPointLocal = this._getLocalViewPoint();
         let dx = x - viewPointLocal.x;
         let dy = y - viewPointLocal.y;
         let startTime = performance.now();
@@ -127,6 +127,8 @@ class MapController extends BaseGraphicView {
 
         this._container.x = containerPosX;
         this._container.y = containerPosY;
+
+        this.$eventBus.emit('viewPointChange', this._getLocalViewPoint());
     }
 
     _getCameraPosition() {
@@ -138,6 +140,10 @@ class MapController extends BaseGraphicView {
 
     _onShowPointRequest(position) {
         this._showPosition(position.x, position.y);
+    }
+
+    _getLocalViewPoint() {
+        return this._container.toLocal(new PIXI.Point(this._pixiApp.canvas.offsetWidth / 2, this._pixiApp.canvas.offsetHeight / 2));
     }
 
 }

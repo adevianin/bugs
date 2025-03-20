@@ -9,10 +9,6 @@ class LadybugView extends LiveEntityView {
         this._render();
     }
 
-    _renderVisibility() {
-        this._entityContainer.renderable = this._entity.isVisible;
-    }
-
     _buildStandSprite() {
         return new PIXI.Sprite(this.$textureManager.getTexture(`ladybug_4.png`));
     }

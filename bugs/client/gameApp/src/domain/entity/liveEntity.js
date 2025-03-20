@@ -1,6 +1,7 @@
 import { Entity } from "./entity"
 import { distance } from '@utils/distance';
 import { ACTION_TYPES } from './action/actionTypes';
+import { entityWalker } from "@utils/entityWalker";
 
 class LiveEntity extends Entity {
 
@@ -65,30 +66,11 @@ class LiveEntity extends Entity {
     //     return Promise.resolve();
     // }
 
-    _playWalkAction(action) {
+    async _playWalkAction(action) {
         let destPosition = action.position;
-        let dist = distance(this.position.x, this.position.y, destPosition.x, destPosition.y);
-        let walkTimeReducer = this._calcWalkAnimationTimeReducer();
-        let wholeWalkTime = (dist / action.userSpeed) * 1000 * walkTimeReducer;
-        let walkStartAt = Date.now();
-        let startPosition = this.position;
         this._setState('walking');
-        return new Promise((res, rej) => {
-            let walkInterval = setInterval(() => {
-                let timeInWalk = Date.now() - walkStartAt;
-                let walkedPercent = ( 100 * timeInWalk ) / wholeWalkTime;
-                if (walkedPercent < 100) {
-                    let currentX = this._calcCoordForWalkedPercent(startPosition.x, destPosition.x, walkedPercent);
-                    let currentY = this._calcCoordForWalkedPercent(startPosition.y, destPosition.y, walkedPercent);
-                    this.setPosition(currentX, currentY);
-                } else {
-                    this.setPosition(destPosition.x, destPosition.y);
-                    this._setState('standing');
-                    clearInterval(walkInterval);
-                    res();
-                }
-            }, 50)
-        });
+        await entityWalker(this.position, destPosition, action.userSpeed, this);
+        this._setState('standing');
     }
 
     _playHibernationStatusChanged(action) {

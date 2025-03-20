@@ -198,7 +198,7 @@ class BaseAnt extends LiveEntity {
         return new Promise((res) => {
             let rotationInterval = setInterval(()=> {
                 this.angle += 20;
-                this.setPosition(this._position.x, this._position.y-2);
+                this.setPosition(this._position.x, this._position.y-2, true);
                 stepNumber++;
                 if (stepNumber > stepCount) {
                     clearInterval(rotationInterval);

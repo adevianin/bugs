@@ -1,7 +1,7 @@
 import { Entity } from "./entity"
 import { EntityTypes } from "../enum/entityTypes";
 import { ACTION_TYPES } from "./action/actionTypes";
-import { walker } from "@utils/walker"; 
+import { entityWalker } from "@utils/entityWalker"; 
 
 class Item extends Entity {
     
@@ -76,9 +76,7 @@ class Item extends Entity {
     _playItemBeingBringed(action) {
         let newPos = action.new_position;
         let userSpeed = action.bring_user_speed;
-        return walker(this._position, newPos, userSpeed, (x, y) => {
-            this.setPosition(x, y);
-        });
+        return entityWalker(this._position, newPos, userSpeed, this);
     }
 
     _playItemBringingStateChanged(action) {

@@ -17,6 +17,7 @@ class Entity extends EventEmitter {
         this._hp = hp;
         this._maxHp = maxHp;
         this._isDied = false;
+        this._chunkId = null;
     }
 
     get isVisible() {
@@ -27,9 +28,12 @@ class Entity extends EventEmitter {
         return this._state;
     }
 
-    setPosition(x, y) {
+    setPosition(x, y, isMotion = false) {
         this._position = {x, y};
         this.emit('positionChanged');
+        if (!isMotion) {
+            this._eventBus.emit('entityMoved', this);
+        }
     }
 
     get position(){
@@ -68,6 +72,15 @@ class Entity extends EventEmitter {
 
     get isDied() {
         return this._isDied;
+    }
+
+    get chunkId() {
+        return this._chunkId;
+    }
+
+    set chunkId(chunkId) {
+        this._chunkId = chunkId;
+        this.emit('chunkIdChanged');
     }
 
     addAction(action) {

@@ -11,6 +11,8 @@ import { LadybugView } from './entitiesViews/ladybugView';
 import { MarkersDemonstratorView } from './markersDemonstratorView';
 import { CONSTS } from '@domain/consts';
 import { VIEW_SETTINGS } from '@view/viewSettings';
+import { throttle } from '@common/utils/throttle';
+import { EntityView } from './entitiesViews/entityView';
 
 class WorldView extends BaseGraphicView {
 
@@ -18,12 +20,12 @@ class WorldView extends BaseGraphicView {
         super();
         this._container = container;
         
-        this._entityViews = [];
-        this._textures = {};
+        this._buildChunksVisibilityState();
 
         this._render();
 
         this.$domain.events.on('entityBorn', this._onEntityBorn.bind(this));
+        this.$eventBus.on('viewPointChange', throttle(this._onViewPointChange.bind(this), 200));
     }
 
     _render() {
@@ -43,6 +45,7 @@ class WorldView extends BaseGraphicView {
         this._treesContainer = new PIXI.Container();
         this._markerDemonstratorContainer = new PIXI.Container();
         this._chunksGridContainer = new PIXI.Container();
+        this._viewRectContainer = new PIXI.Container();
 
         this._container.addChild(this._bg);
         this._container.addChild(this._nestContainer);
@@ -55,12 +58,16 @@ class WorldView extends BaseGraphicView {
         this._container.addChild(this._itemAreaContainer);
         this._container.addChild(this._markerDemonstratorContainer);
         this._container.addChild(this._chunksGridContainer);
+        this._container.addChild(this._viewRectContainer);
 
         this._markerDemonstrator = new MarkersDemonstratorView(this._markerDemonstratorContainer);
 
         this._buildEntityViews();
         if (VIEW_SETTINGS.showMapChunkGrid) {
             this._renderMapChunksGrid();
+        }
+        if (VIEW_SETTINGS.showViewChunkGrid) {
+            this._renderViewChunksGrid();
         }
     }
 
@@ -102,8 +109,6 @@ class WorldView extends BaseGraphicView {
             default:
                 throw 'unknown type of entity';
         }
-
-        this._entityViews.push(view);
     }
 
     _renderMapChunksGrid() {
@@ -123,6 +128,68 @@ class WorldView extends BaseGraphicView {
                 this._chunksGridContainer.addChild(graphics);
             }
         }
+    }
+
+    _renderViewChunksGrid() {
+        for (let chunk of Object.values(this.$domain.world.chunks)) {
+            let graphics = new PIXI.Graphics();
+            graphics
+                .rect(chunk.shape.x, chunk.shape.y, chunk.shape.width - 1, chunk.shape.height - 1)
+                .stroke({width: 1, color: 0xFFFF00});
+            this._chunksGridContainer.addChild(graphics);
+        }
+    }
+
+    _buildChunksVisibilityState() {
+        let chunksVisibilityState = {};
+        for (let chunkId in this.$domain.world.chunks) {
+            chunksVisibilityState[chunkId] = false;
+        }
+
+        EntityView.useChunksVisibilityState(chunksVisibilityState);
+        this._chunksVisibilityState = chunksVisibilityState;
+    }
+
+    _updateChunksVisibleStateForViewRect(viewRect) {
+        for (let chunkId in this.$domain.world.chunks) {
+            let chunk = this.$domain.world.chunks[chunkId];
+            let isVisibleChunk = chunk.intersectsRect(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
+            let isStateChanged = this._chunksVisibilityState[chunkId] != isVisibleChunk
+            this._chunksVisibilityState[chunkId] = isVisibleChunk;
+            if (isStateChanged) {
+                this.$eventBus.emit(`chunkVisibilityStateChanged:${chunkId}`, isVisibleChunk);
+            }
+        }
+    }
+
+    _renderViewRect(viewRect) {
+        if (this._viewRectGraphics) {
+            this._viewRectContainer.removeChild(this._viewRectGraphics);
+        }
+        this._viewRectGraphics = new PIXI.Graphics();
+        this._viewRectGraphics
+            .rect(viewRect.x, viewRect.y, viewRect.width, viewRect.height)
+            .stroke({width: 1, color: 0x0000FF});
+        this._viewRectContainer.addChild(this._viewRectGraphics);
+    }
+
+    _buildViewRectForViewPoint(viewPoint) {
+        let viewRectWidth = window.screen.width - 30;
+        let viewRectHeight = window.screen.height - 50;
+        return {
+            x: viewPoint.x - viewRectWidth / 2,
+            y: viewPoint.y - viewRectHeight / 2,
+            width: viewRectWidth,
+            height: viewRectHeight
+        }
+    }
+
+    _onViewPointChange(viewPoint) {
+        let viewRect = this._buildViewRectForViewPoint(viewPoint);
+        if (VIEW_SETTINGS.showPlayerViewRect) {
+            this._renderViewRect(viewRect);
+        }
+        this._updateChunksVisibleStateForViewRect(viewRect);
     }
 
 }

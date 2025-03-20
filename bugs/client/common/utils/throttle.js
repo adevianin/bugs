@@ -1,14 +1,7 @@
-function throttle(func, wait) {
-    let lastCall = 0;
+import { throttle as lodashThrottle } from 'lodash';
 
-    return function(...args) {
-        const now = new Date().getTime();
-
-        if (now - lastCall >= wait) {
-            lastCall = now;
-            func.apply(this, args);
-        }
-    };
+function throttle(func, wait, options = {}) {
+    return lodashThrottle(func, wait, options);
 }
 
 export {

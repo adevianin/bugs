@@ -1,5 +1,6 @@
 import { EntityTypes } from "../enum/entityTypes";
 import { CONSTS } from "@domain/consts";
+import { Chunk } from "./chunk";
 
 class World {
     constructor(mainEventBus, climate) {
@@ -9,6 +10,12 @@ class World {
         this._climate = climate;
         this._currentStep = 0;
         this._currentSeason = null;
+        this._size = null;
+        this._chunks = {};
+
+        this._mainEventBus.on('entityMoved', this._onEntityMoved.bind(this));
+
+        window.a = this;
     }
 
     get currentStep() {
@@ -36,10 +43,6 @@ class World {
         return [...this._entities];
     }
 
-    set size(size) {
-        this._size = size;
-    }
-
     get size() {
         return this._size;
     }
@@ -52,6 +55,22 @@ class World {
         return CONSTS.NUPTIAL_FLIGHT_SEASONS.indexOf(this.currentSeason) != -1;
     }
 
+    get chunks() {
+        return this._chunks;
+    }
+
+    initWorld(size, entities, colonies, climate, stepNumber, season) {
+        this._size = size;
+        this._entities = entities;
+        this._colonies = colonies;
+        this._climate.setTemperatureChange(climate.dailyTemperature, climate.directionOfChange);
+        this._currentStep = stepNumber;
+        this._currentSeason = season;
+
+        this._splitOnChunks();
+        this._addAllEntitiesToChunks();
+    }
+
     getAnts() {
         return this.findEntityByType(EntityTypes.ANT);
     }
@@ -62,6 +81,7 @@ class World {
 
     addEntity(entity) {
         this._entities.push(entity);
+        this._addEntityToChunks(entity);
     }
 
     deleteEntity(entity) {
@@ -69,6 +89,7 @@ class World {
         if (index != -1) {
             this._entities.splice(index, 1);
         }
+        this._removeEntityFromChunks(entity);
     }
 
     addColony(colony) {
@@ -141,6 +162,56 @@ class World {
     getSubNestsOfColony(colonyId) {
         let nests = this.findNestsFromColony(colonyId);
         return nests.filter(nest => !nest.isMain);
+    }
+
+    _splitOnChunks() {
+        let rowsCount = Math.ceil(this._size[1] / CONSTS.VIEW_CHUNK_SIZE[1]);
+        let colsCount = Math.ceil(this._size[0] / CONSTS.VIEW_CHUNK_SIZE[0]);
+
+        for (let chunkColIndex = 0; chunkColIndex < colsCount; chunkColIndex++) {
+            for (let chunkRowIndex = 0; chunkRowIndex < rowsCount; chunkRowIndex++) {
+                let chunkX = chunkColIndex * CONSTS.VIEW_CHUNK_SIZE[0];
+                let chunkY = chunkRowIndex * CONSTS.VIEW_CHUNK_SIZE[1];
+                let chunkId = `${chunkColIndex}_${chunkRowIndex}`;
+                this._chunks[chunkId] = new Chunk(chunkX, chunkY, CONSTS.VIEW_CHUNK_SIZE[0], CONSTS.VIEW_CHUNK_SIZE[1]);
+            }
+        }
+    }
+
+    _addAllEntitiesToChunks() {
+        for (let entity of this._entities) {
+            this._addEntityToChunks(entity);
+        }
+    }
+
+    _addEntityToChunks(entity) {
+        let chunkId = this._calcChunkIdForPosition(entity.position);
+        let chunk = this._chunks[chunkId];
+        chunk.addEntity(entity);
+        entity.chunkId = chunkId;
+    }
+
+    _removeEntityFromChunks(entity) {
+        let chunk = this._chunks[entity.chunkId];
+        chunk.removeEntity(entity);
+        entity.chunkId = null;
+    }
+
+    _onEntityMoved(entity) {
+        let newChunkId = this._calcChunkIdForPosition(entity.position);
+        if (entity.chunkId != newChunkId) {
+            let oldChunk = this._chunks[entity.chunkId];
+            oldChunk.removeEntity(entity);
+            let newChunk = this._chunks[newChunkId];
+            newChunk.addEntity(entity);
+            entity.chunkId = newChunkId;
+        }
+    }
+
+    _calcChunkIdForPosition({x, y}) {
+        let first = Math.floor(x / CONSTS.VIEW_CHUNK_SIZE[0]);
+        let second = Math.floor(y / CONSTS.VIEW_CHUNK_SIZE[1]);
+        return `${first}_${second}`;
     }
 
 }

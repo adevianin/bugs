@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js';
-import { PickedItemView } from './pickedItemView';
 import { LiveEntityView } from './liveEntityView';
 import { VIEW_SETTINGS } from '@view/viewSettings';
 
@@ -52,16 +51,18 @@ class AntView extends LiveEntityView {
     }
 
     _removePickedItemView() {
-        if (this._pickedItemView) {
-            this._pickedItemView.remove();
-            this._pickedItemView = null;
+        if (this._pickedItemSprite) {
+            this._pickedItemContainer.removeChild(this._pickedItemSprite);
+            this._pickedItemSprite = null;
         }
     }
 
     _renderPickedItemView() {
-        if (!this._pickedItemView) {
+        if (!this._pickedItemSprite) {
             let item = this.$domain.findEntityById(this._entity.pickedItemId);
-            this._pickedItemView = new PickedItemView(item, this._pickedItemContainer);
+            let textureName = `item_${ item.itemType }_${ item.itemVariety }v.png`;
+            this._pickedItemSprite = new PIXI.Sprite(this.$textureManager.getTexture(textureName));
+            this._pickedItemContainer.addChild(this._pickedItemSprite);
         }
     }
 

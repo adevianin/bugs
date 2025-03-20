@@ -37,6 +37,7 @@ class LiveEntityView extends EntityView {
         this._bodyContainer.pivot.y = halfEntityHeight;
         this._uiContainer.pivot.x = halfEntityWidth;
         this._uiContainer.pivot.y = halfEntityHeight;
+        this._pickedItemContainer.y = -halfEntityHeight + 3;
         this._pickedItemContainer.pivot.x = halfEntityWidth;
         this._pickedItemContainer.pivot.y = halfEntityHeight;
 
@@ -45,7 +46,6 @@ class LiveEntityView extends EntityView {
         this._renderPosition();
         this._renderAngle();
         this._renderState();
-        this._renderVisibility();
     }
 
     remove() {
@@ -90,10 +90,6 @@ class LiveEntityView extends EntityView {
         this._toggleStandingState(state == 'standing');
         this._toggleWalkingState(state == 'walking');
         this._toggleDeadState(state == 'dead');
-    }
-
-    _renderVisibility() {
-        this._entityContainer.renderable = this._entity.isVisible;
     }
 
     _toggleWalkingState(isEnabling) {

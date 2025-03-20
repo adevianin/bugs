@@ -9,7 +9,6 @@ class WorldService {
         this._worldSize = null;
         this._ratingContainer = ratingContainer;
 
-        this._mainEventBus.on('userLogout', this._clearWorld.bind(this));
         this._mainEventBus.on('entityDied', this._onEntityDied.bind(this));
     }
 
@@ -50,22 +49,19 @@ class WorldService {
     }
 
     initWorld(worldJson, step, season) {
+        let entities = [];
         worldJson.entities.forEach(entityJson => { 
             let entity = this._worldFactory.buildEntity(entityJson);
-            this._world.addEntity(entity); 
+            entities.push(entity);
         });
         
+        let colonies = [];
         worldJson.ant_colonies.forEach(colonyJson => {
             let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.name, colonyJson.operations);
-            this._world.addColony(colony);
+            colonies.push(colony);
         });
         
-        this._world.size = worldJson.size;
-
-        this._world.climate.setTemperatureChange(worldJson.climate.dailyTemperature, worldJson.climate.directionOfChange);
-
-        this._world.currentStep = step;
-        this._world.currentSeason = season;
+        this._world.initWorld(worldJson.size, entities, colonies, worldJson.climate, step, season);
     }
 
     giveBirthToEntity(entityJson) {
