@@ -18,8 +18,7 @@ const CONSTS = {
     BUILD_FORTIFICATION_OPERATION_REQUIREMENTS: null,
     ITEM_SOURCE_BLOCKING_DISTANCE: null,
     MAP_CHUNK_SIZE: null,
-
-    VIEW_CHUNK_SIZE: [1000, 1000]
+    VIEW_CHUNK_SIZE: null
 }
 
 function initConts(constsValues) {

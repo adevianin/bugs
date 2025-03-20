@@ -6,7 +6,7 @@ from core.world.entities.map.map_factory import MapFactory
 from core.world.utils.size import Size
 from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
-from core.world.settings import LADYBUG_COLONY_ID
+from core.world.settings import LADYBUG_COLONY_ID, GENERATING_CHUNK_SIZE
 from core.world.entities.climate.climate_factory import ClimateFactory
 from core.world.entities.tree.tree_factory import TreeFactory
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory
@@ -24,8 +24,6 @@ from typing import Dict, Callable, Iterator, Tuple
 
 class WorldService(BaseService):
 
-    CHUNK_SIZE = Size(1000, 1000)
-
     def __init__(self, event_bus, world_factory: WorldFactory, map_factory: MapFactory, colony_factory: ColonyFactory, climate_factory: ClimateFactory, 
                  tree_factory: TreeFactory, item_area_factory: ItemAreaFactory, item_source_factory: ItemSourceFactory):
         super().__init__(event_bus)
@@ -41,8 +39,8 @@ class WorldService(BaseService):
         if self._world.is_world_running:
             return 'world must be stopped before expanding'
         
-        before_expand_chunk_rows_count = int(self._world.map.size.width / WorldService.CHUNK_SIZE.width)
-        before_expand_chunk_cols_count = int(self._world.map.size.height / WorldService.CHUNK_SIZE.height)
+        before_expand_chunk_rows_count = int(self._world.map.size.width / GENERATING_CHUNK_SIZE.width)
+        before_expand_chunk_cols_count = int(self._world.map.size.height / GENERATING_CHUNK_SIZE.height)
         before_expand_last_row_index = before_expand_chunk_rows_count - 1
         before_expand_last_col_index = before_expand_chunk_cols_count - 1
         after_expand_chunk_rows_count = before_expand_chunk_rows_count + expand_chunk_rows
@@ -79,8 +77,8 @@ class WorldService(BaseService):
         return world
 
     def populate_empty_world(self, world: World):
-        chunk_rows_count = int(world.map.size.width / self.CHUNK_SIZE.width)
-        chunk_cols_count = int(world.map.size.height / self.CHUNK_SIZE.height)
+        chunk_rows_count = int(world.map.size.width / GENERATING_CHUNK_SIZE.width)
+        chunk_cols_count = int(world.map.size.height / GENERATING_CHUNK_SIZE.height)
         
         for chunk_position, indexes, edge_info in self._chunks_positions(chunk_rows_count, chunk_cols_count):
             self._generate_chunk(chunk_position, world, edge_info)
@@ -90,7 +88,7 @@ class WorldService(BaseService):
     def _chunks_positions(self, chunk_rows_count: int, chunk_cols_count: int) -> Iterator[Tuple[Point, Dict, Dict]]:
         for chunk_col_index in range(chunk_cols_count):
             for chunk_row_index in range(chunk_rows_count):
-                chunk_position = Point(chunk_col_index * WorldService.CHUNK_SIZE.width, chunk_row_index * WorldService.CHUNK_SIZE.height)
+                chunk_position = Point(chunk_col_index * GENERATING_CHUNK_SIZE.width, chunk_row_index * GENERATING_CHUNK_SIZE.height)
                 edge_info = {
                     'is_left_edge': chunk_col_index == 0,
                     'is_right_edge': chunk_col_index + 1 == chunk_cols_count,
@@ -122,39 +120,39 @@ class WorldService(BaseService):
                 self._generate_chunk_type_3(chunk_pos, world, edge_info)
 
     def _generate_chunk_type_0(self, chunk_pos: Point, world: World, edge_info: Dict):
-        half_chunk_width = int(WorldService.CHUNK_SIZE.width / 2)
-        half_chunk_height = int(WorldService.CHUNK_SIZE.height / 2)
+        half_chunk_width = int(GENERATING_CHUNK_SIZE.width / 2)
+        half_chunk_height = int(GENERATING_CHUNK_SIZE.height / 2)
 
         position = Point(chunk_pos.x + half_chunk_width, chunk_pos.y + half_chunk_height)
-        size = Size(WorldService.CHUNK_SIZE.width - 10, WorldService.CHUNK_SIZE.height - 10)
+        size = Size(GENERATING_CHUNK_SIZE.width - 10, GENERATING_CHUNK_SIZE.height - 10)
         self._build_flower_item_area(world, position, size)
 
     def _generate_chunk_type_1(self, chunk_pos: Point, world: World, edge_info: Dict):
-        half_chunk_width = int(WorldService.CHUNK_SIZE.width / 2)
-        half_chunk_height = int(WorldService.CHUNK_SIZE.height / 2)
+        half_chunk_width = int(GENERATING_CHUNK_SIZE.width / 2)
+        half_chunk_height = int(GENERATING_CHUNK_SIZE.height / 2)
         honeydew_count = random.randint(1, 2)
 
-        rect_size = Size(half_chunk_width, WorldService.CHUNK_SIZE.height)
+        rect_size = Size(half_chunk_width, GENERATING_CHUNK_SIZE.height)
         position = self._randomly_place_obj_in_rect(chunk_pos, rect_size, HoneydewItemSourceBody.SIZE)
         self._build_random_food_source(world, position)
 
         if honeydew_count > 1:
-            rect_size = Size(half_chunk_width, WorldService.CHUNK_SIZE.height)
+            rect_size = Size(half_chunk_width, GENERATING_CHUNK_SIZE.height)
             rect_pos = Point(chunk_pos.x + half_chunk_width, chunk_pos.y)
             position = self._randomly_place_obj_in_rect(rect_pos, rect_size, HoneydewItemSourceBody.SIZE)
             self._build_random_food_source(world, position)
 
         position = Point(chunk_pos.x + half_chunk_width, chunk_pos.y + half_chunk_height)
-        size = Size(WorldService.CHUNK_SIZE.width - 10, WorldService.CHUNK_SIZE.height - 10)
+        size = Size(GENERATING_CHUNK_SIZE.width - 10, GENERATING_CHUNK_SIZE.height - 10)
         self._build_flower_item_area(world, position, size)
 
     def _generate_chunk_type_2(self, chunk_pos: Point, world: World, edge_info: Dict): 
-        half_chunk_width = int(WorldService.CHUNK_SIZE.width / 2)
-        half_chunk_height = int(WorldService.CHUNK_SIZE.height / 2)
+        half_chunk_width = int(GENERATING_CHUNK_SIZE.width / 2)
+        half_chunk_height = int(GENERATING_CHUNK_SIZE.height / 2)
         is_mirror = random.choice([True, False])
         mirror_x = chunk_pos.x + half_chunk_width
 
-        rect_size = Size(half_chunk_width, WorldService.CHUNK_SIZE.height)
+        rect_size = Size(half_chunk_width, GENERATING_CHUNK_SIZE.height)
         tree_pos = self._randomly_place_obj_in_rect(chunk_pos, rect_size, TreeBody.SIZE)
         if is_mirror:
             tree_pos = tree_pos.mirror_x_axis(mirror_x)
@@ -175,13 +173,13 @@ class WorldService(BaseService):
         self._build_random_food_source(world, position)
 
     def _generate_chunk_type_3(self, chunk_pos: Point, world: World, edge_info: Dict):
-        half_chunk_height = int(WorldService.CHUNK_SIZE.height / 2)
+        half_chunk_height = int(GENERATING_CHUNK_SIZE.height / 2)
 
-        rect_size = Size(WorldService.CHUNK_SIZE.width, half_chunk_height + 50)
+        rect_size = Size(GENERATING_CHUNK_SIZE.width, half_chunk_height + 50)
         tree_pos = self._randomly_place_obj_in_rect(chunk_pos, rect_size, TreeBody.SIZE)
         self._build_tree_pack(world, tree_pos)
 
-        rect_size = Size(WorldService.CHUNK_SIZE.width, half_chunk_height - 50)
+        rect_size = Size(GENERATING_CHUNK_SIZE.width, half_chunk_height - 50)
         rect_pos = Point(chunk_pos.x, chunk_pos.y + half_chunk_height + 50)
         position = self._randomly_place_obj_in_rect(rect_pos, rect_size, HoneydewItemSourceBody.SIZE)
         self._build_random_food_source(world, position)
@@ -227,9 +225,9 @@ class WorldService(BaseService):
         world.map.add_entity(leaf_area)
 
     def _check_is_point_inside_chunk(self, point: Point, chunk_pos: Point):
-        is_x_inside = point.x >= chunk_pos.x and point.x <= chunk_pos.x + WorldService.CHUNK_SIZE.width
-        is_y_inside = point.y >= chunk_pos.y and point.y <= chunk_pos.y + WorldService.CHUNK_SIZE.height
+        is_x_inside = point.x >= chunk_pos.x and point.x <= chunk_pos.x + GENERATING_CHUNK_SIZE.width
+        is_y_inside = point.y >= chunk_pos.y and point.y <= chunk_pos.y + GENERATING_CHUNK_SIZE.height
         return is_x_inside and is_y_inside
     
     def _calc_map_size(self, chunk_cols_count: int, chunk_rows_count: int):
-        return Size(WorldService.CHUNK_SIZE.width * chunk_cols_count, WorldService.CHUNK_SIZE.height * chunk_rows_count)
+        return Size(GENERATING_CHUNK_SIZE.width * chunk_cols_count, GENERATING_CHUNK_SIZE.height * chunk_rows_count)
