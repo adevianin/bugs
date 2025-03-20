@@ -84,7 +84,7 @@ class NestSelectorView extends BaseGameHTMLView {
 
     _clearValue() {
         this._el.value = 'none';
-        this.events.emit('changed');
+        // this.events.emit('changed');
     }
 
     _onNestDied(nest) {
