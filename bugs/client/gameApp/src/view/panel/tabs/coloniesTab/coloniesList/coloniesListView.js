@@ -33,7 +33,7 @@ class ColoniesListView extends BaseGameHTMLView {
     _renderColony(colony) {
         let liEl = document.createElement('li');
         let colonyView = new ColonyView(liEl, colony);
-        colonyView.events.addListener('click', () => this._onColonyViewClick(colony))
+        colonyView.events.on('click', () => this._onColonyViewClick(colony))
         this._colonyViews[colony.id] = colonyView;
         this._el.append(liEl);
     }

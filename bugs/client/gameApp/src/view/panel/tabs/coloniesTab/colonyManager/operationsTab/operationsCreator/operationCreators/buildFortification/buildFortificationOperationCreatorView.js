@@ -15,7 +15,7 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
         this._render();
 
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
-        this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
+        this._nestSelector.events.on('changed', this._onNestChanged.bind(this));
 
     }
 

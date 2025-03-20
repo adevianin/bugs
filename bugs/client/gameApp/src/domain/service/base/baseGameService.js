@@ -28,7 +28,8 @@ class BaseGameService extends BaseService {
             if (this._world.currentStep > stepNumber) {
                 res();
             } else {
-                this._mainEventBus.once(`stepSyncDone:${stepNumber}`, () => {
+                let stopListen = this._mainEventBus.on(`stepSyncDone:${stepNumber}`, () => {
+                    stopListen();
                     res();
                 });
             }

@@ -15,6 +15,7 @@ class BasePickerView extends BaseGraphicView {
     }
 
     activate(pickableCircle, exclusions) {
+        this._isActivated = true;
         this._container.renderable = true;
         if (pickableCircle) {
             this._pickableCircle = pickableCircle;
@@ -24,14 +25,18 @@ class BasePickerView extends BaseGraphicView {
             this._clearPickableArea();
         }
 
-        this.$eventBus.on('bgclick', this._boundOnClick);
+        this._stopListenBgClick = this.$eventBus.on('bgclick', this._onClick.bind(this));
     }
 
     deactivate() {
-        this._container.renderable = false;
-        this._pickableCircle = null;
-        this._exclusions = null;
-        this.$eventBus.off('bgclick', this._boundOnClick);
+        if (this._isActivated) {
+            this._isActivated = false;
+            this._container.renderable = false;
+            this._pickableCircle = null;
+            this._exclusions = null;
+            this._stopListenBgClick();
+            this._stopListenBgClick = null;
+        }
     }
 
     _render() {

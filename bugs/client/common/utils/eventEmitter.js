@@ -1,15 +1,22 @@
-import EventEmitterLib from "events";
+import { createNanoEvents } from "nanoevents";
 
-class EventEmitter extends EventEmitterLib {
+class EventEmitter {
+    constructor() {
+        this._emitter = createNanoEvents();
+    }
 
     on(eventName, callback) {
-        super.on(eventName, callback);
+        return this._emitter.on(eventName, callback);
+    }
 
-        return () => {
-            this.off(eventName, callback);
-        }
+    emit(eventName, ...args) {
+        this._emitter.emit(eventName, ...args);
+    }
+
+    removeAllListeners() {
+        this._emitter.events = {};
     }
 
 }
 
-export { EventEmitter }
+export { EventEmitter };

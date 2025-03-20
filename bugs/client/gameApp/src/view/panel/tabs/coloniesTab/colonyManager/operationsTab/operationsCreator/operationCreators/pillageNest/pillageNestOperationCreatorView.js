@@ -21,7 +21,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
 
         this._chooseNestToPillageBtn.addEventListener('click', this._onChooseNestToPillageBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
-        this._nestForLootSelector.events.addListener('changed', this._onNestForLootChanged.bind(this));
+        this._nestForLootSelector.events.on('changed', this._onNestForLootChanged.bind(this));
     }
 
     remove() {

@@ -19,7 +19,7 @@ class AntView extends BaseGameHTMLView {
         this._nuptialFlightActionBtn.addEventListener('click', this._onNuptialFlightBtnClick.bind(this));
         this._guardianTypeSelector.addEventListener('change', this._onGuardianBehaviorSelectorChange.bind(this));
         this._cooperativeBehaviorTogglerEl.addEventListener('change', this._onCooperativeBehaviorTogglerChange.bind(this));
-        this._nestSelector.events.addListener('changed', this._onNestChanged.bind(this));
+        this._nestSelector.events.on('changed', this._onNestChanged.bind(this));
         this._profileBtn.addEventListener('click', this._onProfileBtnClick.bind(this));
         this._showAntBtn.addEventListener('click', this._onShowAntBtnClick.bind(this));
 

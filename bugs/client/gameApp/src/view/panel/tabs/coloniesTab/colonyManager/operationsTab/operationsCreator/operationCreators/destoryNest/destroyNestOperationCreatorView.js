@@ -19,8 +19,8 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
 
         this._chooseNestBtn.addEventListener('click', this._onChooseNestBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
-        this._workersCount.events.addListener('change', this._onAntsCountChange.bind(this));
-        this._warriorsCount.events.addListener('change', this._onAntsCountChange.bind(this));
+        this._workersCount.events.on('change', this._onAntsCountChange.bind(this));
+        this._warriorsCount.events.on('change', this._onAntsCountChange.bind(this));
     }
 
     remove() {

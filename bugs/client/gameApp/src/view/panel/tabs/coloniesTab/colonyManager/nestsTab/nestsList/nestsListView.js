@@ -39,7 +39,7 @@ class NestsListView extends BaseGameHTMLView {
     _renderNest(nest) {
         let el = document.createElement('li');
         let view = new NestView(el, nest);
-        view.events.addListener('click', () => this._onNestClick(nest));
+        view.events.on('click', () => this._onNestClick(nest));
         this._nestViews[nest.id] = view;
         this._el.append(el);
     }

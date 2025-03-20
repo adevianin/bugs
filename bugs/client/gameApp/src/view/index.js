@@ -32,7 +32,7 @@ async function initViewLayer(domainFacade) {
     BaseGraphicView.useTextureManager(spritesheetManager);
 
     let app = new AppView(document.querySelector('[data-app]'));
-    app.events.addListener('ready', () => {
+    app.events.on('ready', () => {
         loaderEl.remove();
     })
 }

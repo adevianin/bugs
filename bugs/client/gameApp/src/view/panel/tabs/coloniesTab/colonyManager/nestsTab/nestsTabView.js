@@ -10,7 +10,7 @@ class NestsTabView extends BaseGameHTMLView {
 
         this._render();
 
-        this._nestsList.events.addListener('selectedNestChanged', this._manageSelectedNest.bind(this));
+        this._nestsList.events.on('selectedNestChanged', this._manageSelectedNest.bind(this));
     }
 
     manageColony(colony, nestToSelect) {

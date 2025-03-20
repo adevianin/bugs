@@ -15,8 +15,8 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         this._render();
 
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
-        this._nestFromSelector.events.addListener('changed', this._onNestFromChanged.bind(this));
-        this._nestToSelector.events.addListener('changed', this._onNestToChanged.bind(this));
+        this._nestFromSelector.events.on('changed', this._onNestFromChanged.bind(this));
+        this._nestToSelector.events.on('changed', this._onNestToChanged.bind(this));
     }
 
     remove() {

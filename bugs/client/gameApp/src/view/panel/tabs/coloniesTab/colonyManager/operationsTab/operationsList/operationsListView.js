@@ -86,7 +86,7 @@ class OperationsListView extends BaseGameHTMLView {
         let el = document.createElement('tr');
         el.classList.add('colony-manager__operation');
         let view = new OperationView(el, operation, this._colony.id);
-        view.events.addListener('click', () => this._onOperationViewClick(operation));
+        view.events.on('click', () => this._onOperationViewClick(operation));
         this._operationViews[operation.id] = view;
         this._operationsContainerEl.append(el);
     }
