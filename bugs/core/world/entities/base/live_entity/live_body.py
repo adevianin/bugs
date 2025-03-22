@@ -231,7 +231,9 @@ class LiveBody(Body):
         self.step_to(choosed_point)
 
     def _look_at(self, point: Point):
-        self.angle = (math.atan2(point.y - self.position.y, point.x - self.position.x) * 180 / math.pi) + 90
+        new_angle = (math.atan2(point.y - self.position.y, point.x - self.position.x) * 180 / math.pi) + 90
+        if abs(new_angle - self.angle) > 1:
+            self.angle = new_angle
 
     def _stun_effect(self):
         self.memory.save('stun_effect', True, 1)
