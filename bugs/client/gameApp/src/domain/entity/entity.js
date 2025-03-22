@@ -86,6 +86,10 @@ class Entity extends EventEmitter {
         this.emit('chunkIdChanged');
     }
 
+    lookAt(x, y) {
+        this.angle = (Math.atan2(y - this._position.y, x - this._position.x) * 180 / Math.PI) + 90;
+    }
+
     addAction(action) {
         this._actionStack.push(action);
         this.tryPlayNextAction();
@@ -97,8 +101,6 @@ class Entity extends EventEmitter {
                 return this._playHpChange(action);
             case ACTION_TYPES.ENTITY_DIED:
                 return this._playEntityDied(action);
-            case ACTION_TYPES.ENTITY_ROTATED:
-                return this._playEntityRotated(action);
             case ACTION_TYPES.ENTITY_COLONY_CHANGED:
                 return this._playEntityColonyChanged(action)
         }
@@ -143,30 +145,6 @@ class Entity extends EventEmitter {
         return Promise.resolve();
     }
 
-    _playEntityRotated(action) {
-        let newAngle = action.actionData.angle;
-        let angleDistance = newAngle - this.angle;
-
-        if (angleDistance > 180) {
-            angleDistance -= 360;
-        } else if (angleDistance < -180) {
-            angleDistance += 360;
-        }
-
-        let stepCount = 4
-        let angleStepSize = angleDistance / stepCount;
-        let step = 1;
-        let interval = setInterval(() => {
-            this.angle += angleStepSize;
-            if (step >= stepCount) {
-                clearInterval(interval);
-            }
-            step++;
-        }, 30);
-        
-        return Promise.resolve();
-    }
-
     _playEntityDied(action) {
         this._setState('dead');
         this.die();
@@ -176,6 +154,34 @@ class Entity extends EventEmitter {
     _playEntityColonyChanged(action) {
         this._fromColony = action.colonyId;
         return Promise.resolve();
+    }
+
+    _calcAnimationTimeMultiplier(actionType) {
+        let actionsCount = 0;
+        for (let action of this._actionStack) {
+            if (action.type == actionType) {
+                actionsCount++;
+            }
+        }
+        switch(actionsCount) {
+            case 0:
+                return 1;
+            case 1:
+                return 0.75;
+            case 2:
+                return 0.5;
+            case 3:
+                return 0.4;
+            default:
+                return 0.2;
+        }
+    }
+
+    _requestActionAnimation(actionType, animationParams = {}) {
+        let timeMultiplier = this._calcAnimationTimeMultiplier(actionType);
+        return new Promise((res, rej) => {
+            this.emit(`actionAnimationReqest:${actionType}`, animationParams, timeMultiplier, res);
+        });
     }
 
 }

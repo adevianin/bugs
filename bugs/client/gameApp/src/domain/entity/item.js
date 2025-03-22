@@ -73,10 +73,11 @@ class Item extends Entity {
         });
     }
 
-    _playItemBeingBringed(action) {
-        let newPos = action.new_position;
-        let userSpeed = action.bring_user_speed;
-        return entityWalker(this._position, newPos, userSpeed, this);
+    async _playItemBeingBringed(action) {
+        await this._requestActionAnimation(ACTION_TYPES.ITEM_BEING_BRINGED, {
+            destinationPosition: action.new_position,
+            userSpeed: action.bring_user_speed
+        });
     }
 
     _playItemBringingStateChanged(action) {

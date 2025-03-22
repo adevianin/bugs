@@ -1,7 +1,5 @@
 import { Entity } from "./entity"
-import { distance } from '@utils/distance';
 import { ACTION_TYPES } from './action/actionTypes';
-import { entityWalker } from "@utils/entityWalker";
 
 class LiveEntity extends Entity {
 
@@ -29,6 +27,8 @@ class LiveEntity extends Entity {
             return promise
         }
         switch (action.type) {
+            case ACTION_TYPES.ENTITY_ROTATED:
+                return this._playEntityRotated(action);
             case ACTION_TYPES.ENTITY_WALK:
                 return this._playWalkAction(action);
             case ACTION_TYPES.ENTITY_HIBERNATION_STATUS_CHANGED:
@@ -38,38 +38,22 @@ class LiveEntity extends Entity {
         return null;
     }
 
-    _calcWalkAnimationTimeReducer() {
-        let walkActionsCount = 0;
-        for (let action of this._actionStack) {
-            if (action.type == ACTION_TYPES.ENTITY_WALK) {
-                walkActionsCount++;
-            }
-        }
-        switch(walkActionsCount) {
-            case 0:
-                return 0.97;
-            case 1:
-                return 0.7;
-            case 2:
-                return 0.5;
-            case 3:
-                return 0.4;
-            default:
-                return 0.2;
-        }
-    }
+    _playEntityRotated(action) {
+        //without waiting rotation done
+        this._requestActionAnimation(ACTION_TYPES.ENTITY_ROTATED, {
+            newAngle: action.actionData.angle
+        });
 
-    // _playWalkAction(action) {
-    //     let destPosition = action.position;
-    //     this.setPosition(destPosition.x, destPosition.y);
-    //     this._setState('walking');
-    //     return Promise.resolve();
-    // }
+        return Promise.resolve();
+    }
 
     async _playWalkAction(action) {
         let destPosition = action.position;
         this._setState('walking');
-        await entityWalker(this.position, destPosition, action.userSpeed, this);
+        await this._requestActionAnimation(ACTION_TYPES.ENTITY_WALK, {
+            destinationPosition: destPosition,
+            userSpeed: action.userSpeed
+        });
         this._setState('standing');
     }
 
@@ -78,11 +62,6 @@ class LiveEntity extends Entity {
         return Promise.resolve();
     }
 
-    _calcCoordForWalkedPercent(startCoord, endCoord, flayedPercent) {
-        let distance = Math.abs(Math.abs(endCoord) - Math.abs(startCoord));
-        let distancePassed = distance * (flayedPercent  / 100);
-        return endCoord > startCoord ? startCoord + distancePassed : startCoord - distancePassed;
-    }
 }
 
 export {

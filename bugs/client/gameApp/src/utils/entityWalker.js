@@ -6,26 +6,33 @@ function _calcCoordForWalkedPercent(startCoord, endCoord, flayedPercent) {
     return endCoord > startCoord ? startCoord + distancePassed : startCoord - distancePassed;
 }
 
-function entityWalker(startPos, destPos, userSpeed, entity) {
+function entityWalker(entity, destPos, userSpeed, timeMultiplier) {
+    let startPos = entity.position;
     let dist = distance(startPos.x, startPos.y, destPos.x, destPos.y);
-    let wholeWalkTime = (dist / userSpeed) * 1000;
+    let wholeWalkTime = timeMultiplier * (dist / userSpeed) * 1000;
     let walkStartAt = Date.now();
+
     return new Promise((res, rej) => {
-        let walkInterval = setInterval(() => {
+        function updatePosition() {
             let timeInWalk = Date.now() - walkStartAt;
-            let walkedPercent = ( 100 * timeInWalk ) / wholeWalkTime;
+            let walkedPercent = (100 * timeInWalk) / wholeWalkTime;
+
             if (walkedPercent < 100) {
                 let currentX = _calcCoordForWalkedPercent(startPos.x, destPos.x, walkedPercent);
                 let currentY = _calcCoordForWalkedPercent(startPos.y, destPos.y, walkedPercent);
                 entity.setPosition(currentX, currentY, true);
+
+                requestAnimationFrame(updatePosition);
             } else {
                 entity.setPosition(destPos.x, destPos.y, false);
-                clearInterval(walkInterval);
                 res();
             }
-        }, 50);
+        }
+
+        requestAnimationFrame(updatePosition);
     });
 }
+
 
 export {
     entityWalker

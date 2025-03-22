@@ -1,6 +1,8 @@
 import { EntityView } from "./entityView";
 import * as PIXI from 'pixi.js';
 import { HpLineView } from "./hpLine";
+import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
+import { entityWalker } from "@utils/entityWalker";
 
 class LiveEntityView extends EntityView {
 
@@ -11,6 +13,8 @@ class LiveEntityView extends EntityView {
         this._unbindAngleChangedListener = this._entity.on('angleChanged', this._renderAngle.bind(this));
         this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderState.bind(this));
         this._unbindHibernationStateListener = this._entity.on('isInHibernationChanged', this._renderVisibility.bind(this));
+        this._stopListenWalkAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_WALK}`, this._onWalkAnimationRequest.bind(this));
+        this._stopListenRotateAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_ROTATED}`, this._onRotateAnimationRequest.bind(this));
     }
 
     _render() {
@@ -57,6 +61,8 @@ class LiveEntityView extends EntityView {
         this._unbindStateChangeListener();
         this._unbindHibernationStateListener();
         this._hpLineView.remove();
+        this._stopListenWalkAnimationRequest();
+        this._stopListenRotateAnimationRequest();
     }
 
     _buildStandSprite() {
@@ -109,6 +115,51 @@ class LiveEntityView extends EntityView {
     _toggleDeadState(isEnabling) {
         this._deadSprite.renderable = isEnabling;
     }
+
+    async _onWalkAnimationRequest(animationParams, timeMultiplier, onDone) {
+        if (this._entityContainer.renderable) {
+            await entityWalker(this._entity, animationParams.destinationPosition, animationParams.userSpeed, timeMultiplier);
+            onDone();
+        } else {
+            this._entity.setPosition(animationParams.destinationPosition.x, animationParams.destinationPosition.y);
+            onDone();
+        }
+    }
+
+    async _onRotateAnimationRequest(animationParams, timeMultiplier, onDone) {
+        if (this._entityContainer.renderable) {
+            let startAngle = this._entity.angle;
+            let newAngle = animationParams.newAngle;
+            let angleDistance = newAngle - this._entity.angle;
+            let rotationStartTime = Date.now();
+            let wholeRotationTime = 150;
+            wholeRotationTime *= timeMultiplier;
+
+            if (angleDistance > 180) {
+                angleDistance -= 360;
+            } else if (angleDistance < -180) {
+                angleDistance += 360;
+            }
+
+            let updateAngle = () => {
+                let rotatingTime = Date.now() - rotationStartTime;
+                let rotatedPercent = (100 * rotatingTime) / wholeRotationTime;
+                if (rotatedPercent < 100) {
+                    this._entity.angle = startAngle + (angleDistance * rotatedPercent / 100);
+                    requestAnimationFrame(updateAngle);
+                } else {
+                    this._entity.angle = newAngle;
+                    onDone();
+                }
+            }
+
+            requestAnimationFrame(updateAngle);
+        } else {
+            this._entity.angle = animationParams.newAngle;
+            onDone();
+        }
+    }
+
 }
 
 export {

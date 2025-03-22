@@ -192,22 +192,6 @@ class BaseAnt extends LiveEntity {
         return Promise.resolve();
     }
 
-    _flyAwayAnimation() {
-        let stepCount = 100;
-        let stepNumber = 0;
-        return new Promise((res) => {
-            let rotationInterval = setInterval(()=> {
-                this.angle += 20;
-                this.setPosition(this._position.x, this._position.y-2, true);
-                stepNumber++;
-                if (stepNumber > stepCount) {
-                    clearInterval(rotationInterval);
-                    res();
-                }
-            }, 20)
-        });
-    }
-
 }
 
 export { BaseAnt }

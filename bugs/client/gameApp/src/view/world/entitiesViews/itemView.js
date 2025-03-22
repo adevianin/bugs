@@ -1,5 +1,7 @@
 import { EntityView } from './entityView';
 import * as PIXI from 'pixi.js';
+import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
+import { entityWalker } from '@utils/entityWalker';
 
 class ItemView extends EntityView {
 
@@ -9,6 +11,7 @@ class ItemView extends EntityView {
         this._unbindIsPickedChangeListener = this._entity.on('isPickedChanged', this._renderIsPicked.bind(this));
         this._unbindPositionChangeListener = this._entity.on('positionChanged', this._renderPosition.bind(this));
         this._unbindAngleChangeListener = this._entity.on('angleChanged', this._renderAngle.bind(this));
+        this._stopListenBeingBringedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_BEING_BRINGED}`, this._onBeingBringedAnimationRequest.bind(this));
 
         this._render();
     }
@@ -44,7 +47,18 @@ class ItemView extends EntityView {
     remove() {
         this._unbindIsPickedChangeListener();
         this._unbindPositionChangeListener();
+        this._stopListenBeingBringedAnimationRequest();
         super.remove();
+    }
+
+    async _onBeingBringedAnimationRequest(animationParams, timeMultiplier, onDone) {
+        if (this._entityContainer.renderable) {
+            await entityWalker(this._entity, animationParams.destinationPosition, animationParams.userSpeed, timeMultiplier);
+            onDone();
+        } else {
+            this._entity.setPosition(animationParams.destinationPosition.x, animationParams.destinationPosition.y);
+            onDone();
+        }
     }
     
 }

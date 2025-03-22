@@ -20,6 +20,10 @@ class MaleAnt extends BaseAnt {
         return false;
     }
 
+    get isVisible() {
+        return super.isVisible && !this._isInNuptialFlight;
+    }
+
     playAction(action) {
         let promise = super.playAction(action)
         if (promise) {
@@ -31,10 +35,9 @@ class MaleAnt extends BaseAnt {
         }
     }
 
-    _playFlyNuptialFlight() {
-        return this._flyAwayAnimation().then(() => {
-            this.isInNuptialFlight = true;
-        });
+    async _playFlyNuptialFlight() {
+        await this._requestActionAnimation(ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT);
+        this.isInNuptialFlight = true;
     }
 
     _playEntityDied(action) {
