@@ -98,6 +98,9 @@ class Map:
         return found_entities
     
     def find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes] = None, filter: Callable[[Entity], bool] = None, is_detectable_only: bool = True) -> List[Entity]:
+        if entity_types is not None and not isinstance(entity_types, list):
+            raise GameError('entity_types must be a list')
+        
         chunks = self._get_chunks_in_area(point, max_distance)
         entities: List[Entity] = []
         for chunk in chunks:

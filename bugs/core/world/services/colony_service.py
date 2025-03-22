@@ -118,7 +118,7 @@ class ColonyService(BaseService):
         if len(sub_nests) >= MAX_SUB_NEST_COUNT:
             self._raise_state_conflict_error(f'cant build more subnests for colony(id={performing_colony_id})')
 
-        blocking_item_sources = self._world.map.find_entities_near(position, ITEM_SOURCE_BLOCKING_DISTANCE, EntityTypes.ITEM_SOURCE)
+        blocking_item_sources = self._world.map.find_entities_near(position, ITEM_SOURCE_BLOCKING_DISTANCE, [EntityTypes.ITEM_SOURCE])
         
         if len(blocking_item_sources) > 0:
             raise GameRuleError('some item sources blocking building nest')
