@@ -11,8 +11,6 @@ class Entity extends EventEmitter {
         this.type = type;
         this._fromColony = fromColony;
         this._ownerId = ownerId;
-        this._actionStack = [];
-        this._isPlaying = false;
         this._angle = angle;
         this._hp = hp;
         this._maxHp = maxHp;
@@ -28,12 +26,10 @@ class Entity extends EventEmitter {
         return this._state;
     }
 
-    setPosition(x, y, isMotion = false) {
+    setPosition(x, y) {
         this._position = {x, y};
         this.emit('positionChanged');
-        if (!isMotion) {
-            this._eventBus.emit('entityMoved', this);
-        }
+        this._eventBus.emit('entityMoved', this);
     }
 
     get position(){
@@ -83,43 +79,23 @@ class Entity extends EventEmitter {
             return; //to prevent changing chunkId and hiding dead state view 
         }
         this._chunkId = chunkId;
-        this.emit('chunkIdChanged');
-    }
-
-    lookAt(x, y) {
-        this.angle = (Math.atan2(y - this._position.y, x - this._position.x) * 180 / Math.PI) + 90;
-    }
-
-    addAction(action) {
-        this._actionStack.push(action);
-        this.tryPlayNextAction();
+        this.emit('chunkIdChanged', chunkId);
     }
 
     playAction(action) {
         switch (action.type) {
             case ACTION_TYPES.ENTITY_HP_CHANGE:
-                return this._playHpChange(action);
+                this._playHpChange(action);
+                return true;
             case ACTION_TYPES.ENTITY_DIED:
-                return this._playEntityDied(action);
+                this._playEntityDied(action);
+                return true;
             case ACTION_TYPES.ENTITY_COLONY_CHANGED:
-                return this._playEntityColonyChanged(action)
+                this._playEntityColonyChanged(action);
+                return true;
+            default:
+                return false;
         }
-
-        return null;
-    }
-
-    tryPlayNextAction() {
-        if (this._actionStack.length == 0 || this._isPlaying) {
-            return
-        }
-        let nextAction = this._actionStack[0];
-        this._actionStack.shift();
-        this._isPlaying = true;
-        this.playAction(nextAction)
-            .then(() => {
-                this._isPlaying = false;
-                this.tryPlayNextAction();
-            });
     }
 
     _emitToEventBus(eventName, data) {
@@ -142,46 +118,18 @@ class Entity extends EventEmitter {
 
     _playHpChange(action) {
         this.hp = action.actionData.hp;
-        return Promise.resolve();
     }
 
     _playEntityDied(action) {
-        this._setState('dead');
         this.die();
-        return Promise.resolve();
     }
 
     _playEntityColonyChanged(action) {
         this._fromColony = action.colonyId;
-        return Promise.resolve();
-    }
-
-    _calcAnimationTimeMultiplier(actionType) {
-        let actionsCount = 0;
-        for (let action of this._actionStack) {
-            if (action.type == actionType) {
-                actionsCount++;
-            }
-        }
-        switch(actionsCount) {
-            case 0:
-                return 1;
-            case 1:
-                return 0.75;
-            case 2:
-                return 0.5;
-            case 3:
-                return 0.4;
-            default:
-                return 0.2;
-        }
     }
 
     _requestActionAnimation(actionType, animationParams = {}) {
-        let timeMultiplier = this._calcAnimationTimeMultiplier(actionType);
-        return new Promise((res, rej) => {
-            this.emit(`actionAnimationReqest:${actionType}`, animationParams, timeMultiplier, res);
-        });
+        this.emit(`actionAnimationReqest:${actionType}`, animationParams);
     }
 
 }

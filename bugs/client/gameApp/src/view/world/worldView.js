@@ -174,8 +174,10 @@ class WorldView extends BaseGraphicView {
     }
 
     _buildViewRectForViewPoint(viewPoint) {
-        let viewRectWidth = window.screen.width - 30;
-        let viewRectHeight = window.screen.height - 50;
+        // let viewRectWidth = window.screen.width - 30;
+        let viewRectWidth = 300;
+        // let viewRectHeight = window.screen.height - 50;
+        let viewRectHeight = 300;
         return {
             x: viewPoint.x - viewRectWidth / 2,
             y: viewPoint.y - viewRectHeight / 2,

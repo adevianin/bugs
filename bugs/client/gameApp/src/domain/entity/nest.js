@@ -91,42 +91,51 @@ class Nest extends Entity {
     }
 
     playAction(action) {
-        let promise = super.playAction(action)
-        if (promise) {
-            return promise
+        let isPlayed = super.playAction(action);
+        if (isPlayed) {
+            return true;
         }
         switch (action.type) {
             case ACTION_TYPES.NEST_STORED_CALORIES_CHANGED:
-                return this._playStoredCaloriesChanged(action);
+                this._playStoredCaloriesChanged(action);
+                return true;
             case ACTION_TYPES.NEST_LARVA_FED:
-                return this._playLarvaFed(action);
+                this._playLarvaFed(action);
+                return true;
             case ACTION_TYPES.NEST_LARVA_IS_READY:
-                return this._playLarvaIsReady(action);
+                this._playLarvaIsReady(action);
+                return true;
             case ACTION_TYPES.NEST_LARVA_ADDED:
-                return this._playLarvaAdded(action);
+                this._playLarvaAdded(action);
+                return true;
             case ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
-                return this._playBuildStatusChanged(action);
+                this._playBuildStatusChanged(action);
+                return true;
             case ACTION_TYPES.NEST_EGG_DEVELOP:
-                return this._playEggDevelop(action);
+                this._playEggDevelop(action);
+                return true;
             case ACTION_TYPES.NEST_EGG_BECAME_LARVA:
-                return this._playEggBecameLarva(action);
+                this._playEggBecameLarva(action);
+                return true;
             case ACTION_TYPES.NEST_EGG_ADDED:
-                return this._playEggAdded(action);
+                this._playEggAdded(action);
+                return true;
             case ACTION_TYPES.NEST_FORTIFICATION_CHANGED:
-                return this._playFortificationChanged(action);
+                this._playFortificationChanged(action);
+                return true;
+            default:
+                throw 'unknown type of action';
         }
     }
 
     _playStoredCaloriesChanged(action) {
         this.storedCalories = action.actionData.stored_calories;
         this.emit('storedCaloriesChanged');
-        return Promise.resolve();
     }
 
     _playLarvaFed(action) {
         let larva = this.larvae.find(larva => larva.id == action.larvaId);
         larva.ateFood = action.ateFood;
-        return Promise.resolve();
     }
 
     _playLarvaIsReady(action) {
@@ -134,44 +143,37 @@ class Nest extends Entity {
         let index = this.larvae.indexOf(larva);
         this.larvae.splice(index, 1);
         this.emit('larvaIsReady', larva);
-        return Promise.resolve();
     }
     
     _playLarvaAdded(action) {
         let larva = Larva.buildFromJson(action.larva);
         this.larvae.push(larva);
         this.emit('larvaAdded', larva);
-        return Promise.resolve();
     }
 
     _playEggDevelop(action) {
         let egg = this._findEggById(action.eggId);
         egg.updateProgress(action.progress, action.state);
-        return Promise.resolve();
     }
 
     _playEggBecameLarva(action) {
         let egg = this._findEggById(action.eggId);
         this._removeEggFromArray(egg);
         this.emit('eggBecameLarva', egg);
-        return Promise.resolve();
     }
 
     _playEggAdded(action) {
         let egg = Egg.buildFromJson(action.egg);
         this.eggs.push(egg);
         this.emit('eggAdded', egg);
-        return Promise.resolve();
     }
 
     _playBuildStatusChanged(action) {
         this._setIsBuilt(action.actionData.is_built)
-        return Promise.resolve();
     }
 
     _playFortificationChanged(action) {
         this.fortification = action.fortification;
-        return Promise.resolve();
     }
 
     _setIsBuilt(isBuilt) {

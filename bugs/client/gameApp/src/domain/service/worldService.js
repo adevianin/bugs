@@ -40,7 +40,7 @@ class WorldService {
                 break;
             default:
                 let actor = this.world.findEntityById(action.actorId);
-                actor.addAction(action);
+                actor.playAction(action);
         }
     }
 

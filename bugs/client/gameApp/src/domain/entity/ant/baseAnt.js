@@ -10,7 +10,6 @@ class BaseAnt extends LiveEntity {
         this._name = name;
         this._pickedItemId = pickedItemId;
         this._antType = antType;
-        this._setState('standing');
         this.locatedInNestId = locatedInNestId;
         this._homeNestId = homeNestId;
         this._stats = stats;
@@ -42,7 +41,6 @@ class BaseAnt extends LiveEntity {
 
     set locatedInNestId(nestId) {
         this._locatedInNestId = nestId;
-        this.emit('locatedInNestChanged');
     }
 
     get pickedItemId() {
@@ -99,7 +97,6 @@ class BaseAnt extends LiveEntity {
 
     set isInNuptialFlight(isInNuptialFlight) {
         this._isInNuptialFlight = isInNuptialFlight;
-        this.emit('isInNuptialFlightChanged');
     }
 
     get isInNuptialFlight() {
@@ -123,73 +120,69 @@ class BaseAnt extends LiveEntity {
     }
 
     playAction(action) {
-        let promise = super.playAction(action)
-        if (promise) {
-            return promise
+        let isPlayed = super.playAction(action);
+        if (isPlayed) {
+            return true;
         }
+
         switch (action.type) {
             case ACTION_TYPES.ANT_PICKED_UP_ITEM:
-                return this._playItemPickingAction(action);
+                this._playItemPickingAction(action);
+                return true;
             case ACTION_TYPES.ANT_DROPPED_PICKED_ITEM:
-                return this._playItemDroped(action);
+                this._playItemDroped(action);
+                return true;
             case ACTION_TYPES.ANT_HOME_NEST_CHANGED:
-                return this._playHomeNestChanged(action);
+                this._playHomeNestChanged(action);
+                return true;
             case ACTION_TYPES.ENTITY_GOT_IN_NEST:
-                return this._playGotInNest(action);
+                this._playGotInNest(action);
+                return true;
             case ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST:
-                return this._playGotOutOfNest(action);
+                this._playGotOutOfNest(action);
+                return true;
             case ACTION_TYPES.ANT_CURRENT_ACTIVITY_CHANGED:
-                return this._playCurrentActivityChanged(action);
+                this._playCurrentActivityChanged(action);
+                return true;
+            default:
+                return false;
         }
     }
 
     _playItemPickingAction(action) {
-        this._setState('standing');
-        return new Promise((res) => {
-            this.pickedItemId = action.actionData.item_id;
-            this.emit('itemPickedUp');
-            res();
+        this.pickedItemId = action.actionData.item_id;
+        this._requestActionAnimation(ACTION_TYPES.ANT_PICKED_UP_ITEM, {
+            itemId: this.pickedItemId
         });
     }
 
     _playItemDroped(action) {
-        this._setState('standing');
-        return new Promise((res) => {
-            this.pickedItemId = null;
-            this.emit('itemDroped')
-            res();
-        });
-    }
-
-    _playEatFoodAction(action) {
-        this._setState('standing');
-        return Promise.resolve();
+        this.pickedItemId = null;
+        this._requestActionAnimation(ACTION_TYPES.ANT_DROPPED_PICKED_ITEM);
     }
 
     _playGotInNest(action) {
-        this._setState('standing');
         this.locatedInNestId = action.actionData.nest_id;
-        this.emit('locatedInNestChanged');
-        return Promise.resolve();
+        this._requestActionAnimation(ACTION_TYPES.ENTITY_GOT_IN_NEST, {
+            isAntVisibleAfter: this.isVisible
+        });
     }
 
     _playGotOutOfNest() {
-        this._setState('standing');
         this.locatedInNestId = null;
-        this.emit('locatedInNestChanged');
-        return Promise.resolve();
+        this._requestActionAnimation(ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST, {
+            isAntVisibleAfter: this.isVisible
+        });
     }
 
     _playHomeNestChanged(action) {
         this._homeNestId = action.nestId;
         this.emit('homeNestChanged');
-        return Promise.resolve();
     }
 
     _playCurrentActivityChanged(action) {
         this._currentActivity = action.activity;
         this.emit('currentActivityChanged');
-        return Promise.resolve();
     }
 
 }

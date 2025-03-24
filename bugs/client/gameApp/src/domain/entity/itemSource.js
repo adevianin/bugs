@@ -24,23 +24,21 @@ class ItemSource extends Entity {
     }
 
     playAction(action) {
-        let promise = super.playAction(action)
-        if (promise) {
-            return promise
+        let isPlayed = super.playAction(action);
+        if (isPlayed) {
+            return true;
         }
         switch (action.type) {
             case ACTION_TYPES.ITEM_SOURCE_FERTILITY_CHANGED:
-                return this._playFertilityChangedAction(action);
+                this._playFertilityChangedAction(action);
+                return true;
+            default:
+                throw 'unknown type of action';
         }
-
-        return null;
     }
 
     _playFertilityChangedAction(action) {
-        return new Promise((res) => {
-            this.isFertile = action.isFertile
-            res();
-        });
+        this.isFertile = action.isFertile;
     }
 }
 

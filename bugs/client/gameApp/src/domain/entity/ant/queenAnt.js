@@ -45,38 +45,46 @@ class QueenAnt extends BaseAnt {
     }
 
     playAction(action) {
-        let promise = super.playAction(action)
-        if (promise) {
-            return promise
+        let isPlayed = super.playAction(action);
+        if (isPlayed) {
+            return true;
         }
+
         switch (action.type) {
             case ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT:
-                return this._playFlyNuptialFlight(action)
+                this._playFlyNuptialFlight(action);
+                return true;
             case ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT_BACK:
-                return this._playFlyNuptialFlightBack(action)
+                this._playFlyNuptialFlightBack(action);
+                return true;
             case ACTION_TYPES.ANT_GOT_FERTILIZED:
-                return this._playGotFertilized(action)
+                this._playGotFertilized(action);
+                return true;
+            default:
+                throw 'unknown type of action';
         }
     }
 
-    async _playFlyNuptialFlight() {
-        await this._requestActionAnimation(ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT);
+    _playFlyNuptialFlight() {
+        this._requestActionAnimation(ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT, {
+            startPosition: this.position
+        });
         this.isInNuptialFlight = true;
         this._emitToEventBus('queenFlewNuptialFlight');
     }
 
     _playFlyNuptialFlightBack(action) {
-        let landPos = action.landingPosition;
-        this.setPosition(landPos.x, landPos.y)
+        this._requestActionAnimation(ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT_BACK, {
+            landingPosition: action.landingPosition
+        });
+        this.setPosition(action.landingPosition.x, action.landingPosition.y)
         this.isInNuptialFlight = false;
         this._emitToEventBus('queenFlewNuptialFlightBack');
-        return Promise.resolve();
     }
 
     _playGotFertilized(action) {
         this.isFertilized = true;
         this._breedingMaleGenome = Genome.buildFromJson(action.breedingMaleGenome);
-        return Promise.resolve();
     }
 }
 

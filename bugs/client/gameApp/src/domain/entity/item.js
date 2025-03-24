@@ -1,7 +1,6 @@
 import { Entity } from "./entity"
 import { EntityTypes } from "../enum/entityTypes";
 import { ACTION_TYPES } from "./action/actionTypes";
-import { entityWalker } from "@utils/entityWalker"; 
 
 class Item extends Entity {
     
@@ -11,6 +10,10 @@ class Item extends Entity {
         this._itemVariety = itemVariety;
         this._isPicked = isPicked;
         this._isBringing = isBringing;
+    }
+
+    get isVisible() {
+        return super.isVisible && !this.isPicked;
     }
 
     get itemType() {
@@ -27,7 +30,6 @@ class Item extends Entity {
 
     set isPicked(value) {
         this._isPicked = value;
-        this.emit('isPickedChanged');
     }
 
     get isBringing() {
@@ -52,32 +54,31 @@ class Item extends Entity {
     }
 
     _playEntityDied(action) {
-        this._setState('dead');
         this.die();
         return Promise.resolve();
     }
 
-    _playItemPickedUp(action) {
-        return new Promise((res) => {
-            this.isPicked = true;
-            res();
-        });
+    async _playItemPickedUp(action) {
+        this.isPicked = true;
+        this._requestActionAnimation(ACTION_TYPES.ITEM_WAS_PICKED_UP);
     }
     
-    _playItemDrop(action) {
-        return new Promise((res) => {
-            this.isPicked = false;
-            let pos = action.actionData.position;
-            this.setPosition(pos.x, pos.y);
-            res();
+    async _playItemDrop(action) {
+        this.isPicked = false;
+        let pos = action.actionData.position;
+        this.setPosition(pos.x, pos.y);
+        this._requestActionAnimation(ACTION_TYPES.ITEM_WAS_DROPPED, {
+            dropPosition: pos
         });
     }
 
     async _playItemBeingBringed(action) {
-        await this._requestActionAnimation(ACTION_TYPES.ITEM_BEING_BRINGED, {
-            destinationPosition: action.new_position,
+        this._requestActionAnimation(ACTION_TYPES.ITEM_BEING_BRINGED, {
+            pointFrom: this.position, 
+            pointTo: action.new_position,
             userSpeed: action.bring_user_speed
         });
+        this.setPosition(action.new_position.x, action.new_position.y);
     }
 
     _playItemBringingStateChanged(action) {

@@ -25,29 +25,27 @@ class MaleAnt extends BaseAnt {
     }
 
     playAction(action) {
-        let promise = super.playAction(action)
-        if (promise) {
-            return promise
+        let isPlayed = super.playAction(action);
+        if (isPlayed) {
+            return true;
         }
+
         switch (action.type) {
             case ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT:
-                return this._playFlyNuptialFlight(action)
+                this._playFlyNuptialFlight(action);
+                return true;
+            default:
+                throw 'unknown type of action'
         }
     }
 
-    async _playFlyNuptialFlight() {
-        await this._requestActionAnimation(ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT);
+    _playFlyNuptialFlight() {
+        this._requestActionAnimation(ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT, {
+            startPosition: this.position
+        });
         this.isInNuptialFlight = true;
     }
 
-    _playEntityDied(action) {
-        if (this.isInNuptialFlight) {
-            this.die();
-            return Promise.resolve();
-        } else {
-            return super._playEntityDied(action);
-        }
-    }
 }
 
 export {

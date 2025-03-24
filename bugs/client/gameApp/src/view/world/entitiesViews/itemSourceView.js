@@ -23,8 +23,8 @@ class ItemSourceView extends EntityView {
         this._deadSprite = new PIXI.Sprite(this.$textureManager.getTexture(`item_source_${this._entity.itemType}_not_fertile.png`));
         this._bodyContainer.addChild(this._deadSprite);
 
-        this._entityContainer.x = this._entity.position.x;
-        this._entityContainer.y = this._entity.position.y;
+        // this._entityContainer.x = this._entity.position.x;
+        // this._entityContainer.y = this._entity.position.y;
 
         this._entityContainer.pivot.x = this._standSprite.width / 2;
         this._entityContainer.pivot.y = this._standSprite.height;
@@ -32,6 +32,7 @@ class ItemSourceView extends EntityView {
         this._hpLineView = new HpLineView(this._entity, { x: 0, y: -10 }, this._standSprite.width, this._uiContainer);
 
         this._renderFertile();
+        this._renderEntityState();
     }
 
     _renderFertile() {

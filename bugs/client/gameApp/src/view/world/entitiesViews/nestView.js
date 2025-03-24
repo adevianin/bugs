@@ -9,7 +9,7 @@ class NestView extends EntityView {
 
         this._render();
 
-        this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderState.bind(this));
+        this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderVisualState.bind(this));
         this._unbindFortificationChangeListener = this._entity.on('fortificationChanged', this._renderFortificationValue.bind(this));
     }
 
@@ -39,14 +39,14 @@ class NestView extends EntityView {
         this._uiContainer.pivot.x = nestHalfWidth;
         this._uiContainer.pivot.y = nestHalfHeight;
 
-        this._nestContainer.x = this._entity.position.x;
-        this._nestContainer.y = this._entity.position.y;
+        // this._nestContainer.x = this._entity.position.x;
+        // this._nestContainer.y = this._entity.position.y;
 
         if (this.$domain.isEntityMy(this._entity)) {
             this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
         }
 
-        this._renderState();
+        this._renderVisualState();
 
         this._hpLineView = new HpLineView(this._entity, { x: 0, y: -13 }, this._builtNestSprite.width, this._uiContainer);
 
@@ -55,6 +55,8 @@ class NestView extends EntityView {
         this._fortificationLine.y = -8;
         this._uiContainer.addChild(this._fortificationLine);
         this._renderFortificationValue();
+
+        this._renderEntityState();
     }
 
     remove() {
@@ -66,7 +68,7 @@ class NestView extends EntityView {
         this._hpLineView.remove();
     }
 
-    _renderState() {
+    _renderVisualState() {
         let state = this._entity.state;
 
         this._builtNestSprite.renderable = state == 'built';

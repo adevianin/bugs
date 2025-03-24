@@ -1,19 +1,32 @@
 import { EntityView } from './entityView';
 import * as PIXI from 'pixi.js';
 import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
-import { entityWalker } from '@utils/entityWalker';
+import { distance_point } from '@utils/distance';
+import { interpolatePoint } from '@utils/interpolatePoint';
 
 class ItemView extends EntityView {
+
+    static ANIMATION_TYPES = class extends EntityView.ANIMATION_TYPES {
+        static PICKED = 'picked';
+        static DROPPED = 'dropped';
+        static BE_BRINGED = 'be_bringed';
+    };
 
     constructor(entity, entitiesContainer) {
         super(entity, entitiesContainer);
 
-        this._unbindIsPickedChangeListener = this._entity.on('isPickedChanged', this._renderIsPicked.bind(this));
-        this._unbindPositionChangeListener = this._entity.on('positionChanged', this._renderPosition.bind(this));
-        this._unbindAngleChangeListener = this._entity.on('angleChanged', this._renderAngle.bind(this));
+        this._stopListenPickedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_WAS_PICKED_UP}`, this._onPickedAnimationRequest.bind(this));
+        this._stopListenDroppedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_WAS_DROPPED}`, this._onDroppedAnimationRequest.bind(this));
         this._stopListenBeingBringedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_BEING_BRINGED}`, this._onBeingBringedAnimationRequest.bind(this));
 
         this._render();
+    }
+
+    remove() {
+        this._stopListenPickedAnimationRequest();
+        this._stopListenDroppedAnimationRequest();
+        this._stopListenBeingBringedAnimationRequest();
+        super.remove();
     }
 
     _render() {
@@ -26,39 +39,84 @@ class ItemView extends EntityView {
         this._entityContainer.pivot.x = halfWidth;
         this._entityContainer.pivot.y = halfHeight;
 
-        this._renderPosition();
-        this._renderIsPicked();
-        this._renderAngle();
+        this._renderEntityState();
     }
 
-    _renderPosition() {
-        this._entityContainer.x = this.entity.position.x;
-        this._entityContainer.y = this.entity.position.y;
-    }
-
-    _renderIsPicked() {
-        this._sprite.renderable = !this._entity.isPicked;
-    }
-
-    _renderAngle() {
-        this._entityContainer.angle = this._entity.angle;
-    }
-
-    remove() {
-        this._unbindIsPickedChangeListener();
-        this._unbindPositionChangeListener();
-        this._stopListenBeingBringedAnimationRequest();
-        super.remove();
-    }
-
-    async _onBeingBringedAnimationRequest(animationParams, timeMultiplier, onDone) {
-        if (this._entityContainer.renderable) {
-            await entityWalker(this._entity, animationParams.destinationPosition, animationParams.userSpeed, timeMultiplier);
-            onDone();
-        } else {
-            this._entity.setPosition(animationParams.destinationPosition.x, animationParams.destinationPosition.y);
-            onDone();
+    async _playAnimation(animation) {
+        let isPlayed = await super._playAnimation(animation);
+        if (isPlayed) {
+            return true;
         }
+
+        switch (animation.type) {
+            case ItemView.ANIMATION_TYPES.PICKED: 
+                this._playPickedAnimation(animation.params);
+                return true;
+            case ItemView.ANIMATION_TYPES.DROPPED: 
+                this._playDroppedAnimation(animation.params);
+                return true;
+            case ItemView.ANIMATION_TYPES.BE_BRINGED: 
+                await this._playBeBringedAnimation(animation.params);
+                return true;
+            default:
+                throw 'unknown type of animation';
+        }
+    }
+
+    _playPickedAnimation() {
+        this._toggleEntityVisibility(false);
+    }
+
+    _playDroppedAnimation({ dropPosition }) {
+        this._renderEntityPosition(dropPosition);
+        this._toggleEntityVisibility(true);
+    }
+
+    _playBeBringedAnimation({ pointFrom, pointTo, userSpeed, speedUpModifier }) {
+        if (this._isFastAnimationMode) {
+            this._renderEntityPosition(pointTo);
+            return;
+        }
+        
+        let dist = distance_point(pointFrom, pointTo);
+        let wholeWalkTime = (dist / userSpeed) * 1000;
+        wholeWalkTime = wholeWalkTime / speedUpModifier;
+        let walkStartAt = null;
+
+        return new Promise((res, rej) => {
+            let animate = (currentTime) => {
+                if (!walkStartAt) {
+                    walkStartAt = currentTime;
+                }
+
+                let timeInWalk = currentTime - walkStartAt;
+                let progress = timeInWalk / wholeWalkTime;
+
+                if (progress < 1) {
+                    let currentPosition = interpolatePoint(pointFrom, pointTo, progress);
+                    this._renderEntityPosition(currentPosition);
+
+                    requestAnimationFrame(animate);
+                } else {
+                    this._renderEntityPosition(pointTo);
+                    res();
+                }
+            }
+
+            requestAnimationFrame(animate);
+        });
+    }
+
+    _onPickedAnimationRequest() {
+        this._addAnimation(ItemView.ANIMATION_TYPES.PICKED);
+    }
+
+    _onDroppedAnimationRequest(params) {
+        this._addAnimation(ItemView.ANIMATION_TYPES.DROPPED, params);
+    }
+
+    async _onBeingBringedAnimationRequest(params) {
+        this._addAnimation(ItemView.ANIMATION_TYPES.BE_BRINGED, params);
     }
     
 }

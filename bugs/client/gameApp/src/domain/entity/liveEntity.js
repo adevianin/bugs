@@ -14,7 +14,6 @@ class LiveEntity extends Entity {
 
     set isInHibernation(val) {
         this._isInHibernation = val;
-        this.emit('isInHibernationChanged');
     }
 
     get isVisible() {
@@ -22,44 +21,48 @@ class LiveEntity extends Entity {
     }
 
     playAction(action) {
-        let promise = super.playAction(action)
-        if (promise) {
-            return promise
-        }
-        switch (action.type) {
-            case ACTION_TYPES.ENTITY_ROTATED:
-                return this._playEntityRotated(action);
-            case ACTION_TYPES.ENTITY_WALK:
-                return this._playWalkAction(action);
-            case ACTION_TYPES.ENTITY_HIBERNATION_STATUS_CHANGED:
-                return this._playHibernationStatusChanged(action);
+        let isPlayed = super.playAction(action);
+        if (isPlayed) {
+            return true;
         }
 
-        return null;
+        switch (action.type) {
+            case ACTION_TYPES.ENTITY_ROTATED:
+                this._playEntityRotated(action);
+                return true;
+            case ACTION_TYPES.ENTITY_WALK:
+                this._playWalkAction(action);
+                return true;
+            case ACTION_TYPES.ENTITY_HIBERNATION_STATUS_CHANGED:
+                this._playHibernationStatusChanged(action);
+                return true;
+            default:
+                return false;
+        }
     }
 
     _playEntityRotated(action) {
-        //without waiting rotation done
         this._requestActionAnimation(ACTION_TYPES.ENTITY_ROTATED, {
+            startAngle: this.angle,
             newAngle: action.actionData.angle
         });
-
-        return Promise.resolve();
+        this.angle = action.actionData.angle;
     }
 
-    async _playWalkAction(action) {
-        let destPosition = action.position;
-        this._setState('walking');
-        await this._requestActionAnimation(ACTION_TYPES.ENTITY_WALK, {
-            destinationPosition: destPosition,
+    _playWalkAction(action) {
+        this._requestActionAnimation(ACTION_TYPES.ENTITY_WALK, {
+            pointFrom: this.position,
+            pointTo: action.position,
             userSpeed: action.userSpeed
         });
-        this._setState('standing');
+        this.setPosition(action.position.x, action.position.y);
     }
 
     _playHibernationStatusChanged(action) {
         this.isInHibernation = action.isInHibernation;
-        return Promise.resolve();
+        this._requestActionAnimation(ACTION_TYPES.ENTITY_HIBERNATION_STATUS_CHANGED, {
+            isEntityVisibleAfter: this.isVisible
+        });
     }
 
 }

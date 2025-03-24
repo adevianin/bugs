@@ -2,17 +2,27 @@ import { EntityView } from "./entityView";
 import * as PIXI from 'pixi.js';
 import { HpLineView } from "./hpLine";
 import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
-import { entityWalker } from "@utils/entityWalker";
+import { distance_point } from "@utils/distance";
+import { interpolatePoint } from "@utils/interpolatePoint";
 
 class LiveEntityView extends EntityView {
 
+    static VISUAL_STATES = class {
+        static DEAD = 'dead';
+        static STANDING = 'standing';
+        static WALKING = 'walking';
+    };
+
+    static ANIMATION_TYPES = class extends EntityView.ANIMATION_TYPES {
+        static WALK = 'walk';
+        static ROTATE = 'rotate';
+        static HIBERNATION_STATUS_CHANGED = 'hibernation_status_changed';
+    };
+
     constructor(entity, entitiesContainer) {
         super(entity, entitiesContainer);
-        
-        this._unbindPositionChangedListener = this._entity.on('positionChanged', this._renderPosition.bind(this));
-        this._unbindAngleChangedListener = this._entity.on('angleChanged', this._renderAngle.bind(this));
-        this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderState.bind(this));
-        this._unbindHibernationStateListener = this._entity.on('isInHibernationChanged', this._renderVisibility.bind(this));
+
+        this._stopListenHibernationStatusChangedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HIBERNATION_STATUS_CHANGED}`, this._onHibernationStatusChangedAnimationRequest.bind(this));
         this._stopListenWalkAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_WALK}`, this._onWalkAnimationRequest.bind(this));
         this._stopListenRotateAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_ROTATED}`, this._onRotateAnimationRequest.bind(this));
     }
@@ -47,22 +57,22 @@ class LiveEntityView extends EntityView {
 
         this._hpLineView = this._buildHpLineView();
 
-        this._renderPosition();
-        this._renderAngle();
-        this._renderState();
+        this._renderEntityState();
     }
 
     remove() {
         setTimeout(() => {
             super.remove();
         }, 5000);
-        this._unbindPositionChangedListener();
-        this._unbindAngleChangedListener();
-        this._unbindStateChangeListener();
-        this._unbindHibernationStateListener();
         this._hpLineView.remove();
         this._stopListenWalkAnimationRequest();
         this._stopListenRotateAnimationRequest();
+        this._stopListenHibernationStatusChangedAnimationRequest();
+    }
+
+    _renderEntityState() {
+        super._renderEntityState();
+        this._renderVisualState(LiveEntityView.VISUAL_STATES.STANDING);
     }
 
     _buildStandSprite() {
@@ -81,21 +91,14 @@ class LiveEntityView extends EntityView {
         return new HpLineView(this._entity, { x: 0, y: -4 }, this._standSprite.width, this._uiContainer);
     }
 
-    _renderPosition() {
-        this._entityContainer.x = this._entity.position.x;
-        this._entityContainer.y = this._entity.position.y;
+    _renderEntityAngle(angle) {
+        this._bodyContainer.angle = angle;
     }
 
-    _renderAngle() {
-        this._bodyContainer.angle = this._entity.angle;
-    }
-
-    _renderState() {
-        let state = this._entity.state;
-
-        this._toggleStandingState(state == 'standing');
-        this._toggleWalkingState(state == 'walking');
-        this._toggleDeadState(state == 'dead');
+    _renderVisualState(state) {
+        this._toggleStandingState(state == LiveEntityView.VISUAL_STATES.STANDING);
+        this._toggleWalkingState(state == LiveEntityView.VISUAL_STATES.WALKING);
+        this._toggleDeadState(state == LiveEntityView.VISUAL_STATES.DEAD);
     }
 
     _toggleWalkingState(isEnabling) {
@@ -116,48 +119,116 @@ class LiveEntityView extends EntityView {
         this._deadSprite.renderable = isEnabling;
     }
 
-    async _onWalkAnimationRequest(animationParams, timeMultiplier, onDone) {
-        if (this._entityContainer.renderable) {
-            await entityWalker(this._entity, animationParams.destinationPosition, animationParams.userSpeed, timeMultiplier);
-            onDone();
-        } else {
-            this._entity.setPosition(animationParams.destinationPosition.x, animationParams.destinationPosition.y);
-            onDone();
+    async _playAnimation(animation) {
+        let isPlayed = await super._playAnimation(animation);
+        if (isPlayed) {
+            return true;
+        }
+
+        switch (animation.type) {
+            case LiveEntityView.ANIMATION_TYPES.WALK: 
+                await this._playWalkAnimation(animation.params);
+                return true;
+            case LiveEntityView.ANIMATION_TYPES.ROTATE: 
+                this._playRotateAnimation(animation.params);
+                return true;
+            case LiveEntityView.ANIMATION_TYPES.HIBERNATION_STATUS_CHANGED: 
+                this._playHibernationStatusChangedAnimation(animation.params);
+                return true;
+            default:
+                return false;
         }
     }
 
-    async _onRotateAnimationRequest(animationParams, timeMultiplier, onDone) {
-        if (this._entityContainer.renderable) {
-            let startAngle = this._entity.angle;
-            let newAngle = animationParams.newAngle;
-            let angleDistance = newAngle - this._entity.angle;
-            let rotationStartTime = Date.now();
-            let wholeRotationTime = 150;
-            wholeRotationTime *= timeMultiplier;
+    _playWalkAnimation({ pointFrom, pointTo, userSpeed, speedUpModifier }) {
+        if (this._isFastAnimationMode) {
+            this._renderEntityPosition(pointTo);
+            this._renderVisualState(LiveEntityView.VISUAL_STATES.STANDING);
+            return
+        }
 
-            if (angleDistance > 180) {
-                angleDistance -= 360;
-            } else if (angleDistance < -180) {
-                angleDistance += 360;
-            }
+        let dist = distance_point(pointFrom, pointTo);
+        let wholeWalkTime = (dist / userSpeed) * 1000;
+        wholeWalkTime = wholeWalkTime / speedUpModifier; 
+        let walkStartAt = null;
 
-            let updateAngle = () => {
-                let rotatingTime = Date.now() - rotationStartTime;
-                let rotatedPercent = (100 * rotatingTime) / wholeRotationTime;
-                if (rotatedPercent < 100) {
-                    this._entity.angle = startAngle + (angleDistance * rotatedPercent / 100);
-                    requestAnimationFrame(updateAngle);
+        this._renderVisualState(LiveEntityView.VISUAL_STATES.WALKING);
+        return new Promise((res, rej) => {
+            let animate = (currentTime) => {
+                if (!walkStartAt) {
+                    walkStartAt = currentTime;
+                }
+
+                let timeInWalk = currentTime - walkStartAt;
+                let progress = timeInWalk / wholeWalkTime;
+
+                if (progress < 1) {
+                    let currentPosition = interpolatePoint(pointFrom, pointTo, progress);
+                    this._renderEntityPosition(currentPosition);
+
+                    requestAnimationFrame(animate);
                 } else {
-                    this._entity.angle = newAngle;
-                    onDone();
+                    this._renderEntityPosition(pointTo);
+                    this._renderVisualState(LiveEntityView.VISUAL_STATES.STANDING);
+                    res();
                 }
             }
 
-            requestAnimationFrame(updateAngle);
-        } else {
-            this._entity.angle = animationParams.newAngle;
-            onDone();
+            requestAnimationFrame(animate);
+        });
+    }
+
+    _playRotateAnimation({ startAngle, newAngle }) {
+        if (this._isFastAnimationMode) {
+            this._renderEntityAngle(newAngle);
+            return;
         }
+
+        let angleDistance = newAngle - startAngle;
+        let rotationStartAt = null;
+        let wholeRotationTime = 150;
+
+        if (angleDistance > 180) {
+            angleDistance -= 360;
+        } else if (angleDistance < -180) {
+            angleDistance += 360;
+        }
+
+        return new Promise((res, rej) => {
+            let updateAngle = (currentTime) => {
+                if (!rotationStartAt) {
+                    rotationStartAt = currentTime;
+                }
+
+                let rotatingTime = currentTime - rotationStartAt;
+                let rotatedPercent = rotatingTime / wholeRotationTime;
+                if (rotatedPercent < 1) {
+                    this._renderEntityAngle(startAngle + (angleDistance * rotatedPercent));
+                    requestAnimationFrame(updateAngle);
+                } else {
+                    this._renderEntityAngle(newAngle);
+                    res();
+                }
+            }
+    
+            requestAnimationFrame(updateAngle);
+        });
+    }
+
+    _playHibernationStatusChangedAnimation({ isEntityVisibleAfter }) {
+        this._toggleEntityVisibility(isEntityVisibleAfter);
+    }
+
+    async _onWalkAnimationRequest(params) {
+        this._addAnimation(LiveEntityView.ANIMATION_TYPES.WALK, params);
+    }
+
+    async _onRotateAnimationRequest(params) {
+        this._addAnimation(LiveEntityView.ANIMATION_TYPES.ROTATE, params);
+    }
+
+    async _onHibernationStatusChangedAnimationRequest(params) {
+        this._addAnimation(LiveEntityView.ANIMATION_TYPES.HIBERNATION_STATUS_CHANGED, params);
     }
 
 }
