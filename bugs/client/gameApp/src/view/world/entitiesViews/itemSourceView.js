@@ -31,8 +31,12 @@ class ItemSourceView extends EntityView {
 
         this._hpLineView = new HpLineView(this._entity, { x: 0, y: -10 }, this._standSprite.width, this._uiContainer);
 
-        this._renderFertile();
         this._renderEntityState();
+    }
+
+    _renderEntityState() {
+        super._renderEntityState();
+        this._renderFertile();
     }
 
     _renderFertile() {
