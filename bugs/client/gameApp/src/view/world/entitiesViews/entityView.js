@@ -19,12 +19,14 @@ class EntityView extends BaseGraphicView {
         this._isAnimPlaying = false;
         this._currentChunkId = null;
         this._isEntityVisible = false;
+        this._isGameActive = true;
 
         this._entity = entity;
         this._parentContainer = entitiesContainer;
         this._entityContainer = new PIXI.Container();
         this._parentContainer.addChild(this._entityContainer);
 
+        document.addEventListener("visibilitychange", this._onGameActivityChange.bind(this));
         this._stopListenDied = this._entity.on('died', this.remove.bind(this));
         this._stopListenChunkIdChanged = this._entity.on('chunkIdChanged', this._onEntityChunkIdChanged.bind(this));
     }
@@ -54,6 +56,9 @@ class EntityView extends BaseGraphicView {
     }
 
     _addAnimation(type, params = {}) {
+        if (!this._isGameActive) {
+            return;
+        }
         this._animQueue.push({type, params});
         this._tryPlayNextAnim();
     }
@@ -157,6 +162,16 @@ class EntityView extends BaseGraphicView {
         this._addAnimation(EntityView.ANIMATION_TYPES.CHUNK_CHANGED, {
             newChunkId
         });
+    }
+
+    _onGameActivityChange() {
+        if (document.hidden) {
+            this._isGameActive = false;
+            this._animQueue = [];
+        } else {
+            this._isGameActive = true;
+            this._renderEntityState();
+        }
     }
     
 }
