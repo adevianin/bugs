@@ -104,6 +104,9 @@ class Entity extends EventEmitter {
 
     _playHpChange(action) {
         this.hp = action.actionData.hp;
+        this._requestActionAnimation(ACTION_TYPES.ENTITY_HP_CHANGE, {
+            hp: this.hp
+        });
     }
 
     _playEntityDied(action) {

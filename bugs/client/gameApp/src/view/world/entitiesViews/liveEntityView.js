@@ -17,6 +17,7 @@ class LiveEntityView extends EntityView {
         static WALK = 'walk';
         static ROTATE = 'rotate';
         static HIBERNATION_STATUS_CHANGED = 'hibernation_status_changed';
+        static HP_CHANGED = 'hp_changed';
     };
 
     constructor(entity, entitiesContainer) {
@@ -25,6 +26,15 @@ class LiveEntityView extends EntityView {
         this._stopListenHibernationStatusChangedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HIBERNATION_STATUS_CHANGED}`, this._onHibernationStatusChangedAnimationRequest.bind(this));
         this._stopListenWalkAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_WALK}`, this._onWalkAnimationRequest.bind(this));
         this._stopListenRotateAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_ROTATED}`, this._onRotateAnimationRequest.bind(this));
+        this._stopListenHpChangeAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
+    }
+
+    get _entityWidth() {
+        return this._standSprite.width;
+    }
+
+    get _entityHeight() {
+        return this._standSprite.height;
     }
 
     _render() {
@@ -44,8 +54,8 @@ class LiveEntityView extends EntityView {
         this._bodyContainer.addChild(this._walkSprite);
         this._bodyContainer.addChild(this._deadSprite);
 
-        let halfEntityWidth = this._standSprite.width / 2;
-        let halfEntityHeight = this._standSprite.height / 2;
+        let halfEntityWidth = this._entityWidth / 2;
+        let halfEntityHeight = this._entityWidth / 2;
 
         this._bodyContainer.pivot.x = halfEntityWidth;
         this._bodyContainer.pivot.y = halfEntityHeight;
@@ -66,10 +76,12 @@ class LiveEntityView extends EntityView {
         this._stopListenWalkAnimationRequest();
         this._stopListenRotateAnimationRequest();
         this._stopListenHibernationStatusChangedAnimationRequest();
+        this._stopListenHpChangeAnimationRequest();
     }
 
     _renderEntityState() {
         super._renderEntityState();
+        this._hpLineView.showValue(this._entity.hp);
         this._renderVisualState(LiveEntityView.VISUAL_STATES.STANDING);
     }
 
@@ -86,7 +98,7 @@ class LiveEntityView extends EntityView {
     }
 
     _buildHpLineView() {
-        return new HpLineView(this._entity, { x: 0, y: -4 }, this._standSprite.width, this._uiContainer);
+        return new HpLineView({ x: 0, y: -4 }, this._entityWidth, this._entity.maxHp, this._uiContainer);
     }
 
     _renderEntityAngle(angle) {
@@ -132,6 +144,9 @@ class LiveEntityView extends EntityView {
                 return true;
             case LiveEntityView.ANIMATION_TYPES.HIBERNATION_STATUS_CHANGED: 
                 this._playHibernationStatusChangedAnimation(animation.params);
+                return true;
+            case LiveEntityView.ANIMATION_TYPES.HP_CHANGED: 
+                this._playHpChangedAnimation(animation.params);
                 return true;
             default:
                 return false;
@@ -217,6 +232,10 @@ class LiveEntityView extends EntityView {
         this._toggleEntityVisibility(isEntityVisibleAfter);
     }
 
+    _playHpChangedAnimation({ hp }) {
+        this._hpLineView.showValue(hp);
+    }
+
     _playDiedAnimation() {
         this._renderVisualState(LiveEntityView.VISUAL_STATES.DEAD);
         setTimeout(() => {
@@ -224,16 +243,20 @@ class LiveEntityView extends EntityView {
         }, 5000);
     }
 
-    async _onWalkAnimationRequest(params) {
+    _onWalkAnimationRequest(params) {
         this._addAnimation(LiveEntityView.ANIMATION_TYPES.WALK, params);
     }
 
-    async _onRotateAnimationRequest(params) {
+    _onRotateAnimationRequest(params) {
         this._addAnimation(LiveEntityView.ANIMATION_TYPES.ROTATE, params);
     }
 
-    async _onHibernationStatusChangedAnimationRequest(params) {
+    _onHibernationStatusChangedAnimationRequest(params) {
         this._addAnimation(LiveEntityView.ANIMATION_TYPES.HIBERNATION_STATUS_CHANGED, params);
+    }
+
+    _onHpChangeAnimationRequest(params) {
+        this._addAnimation(LiveEntityView.ANIMATION_TYPES.HP_CHANGED, params);
     }
 
 }

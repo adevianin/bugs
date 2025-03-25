@@ -2,20 +2,22 @@ import { BaseGraphicView } from "@view/base/baseGraphicView";
 import * as PIXI from 'pixi.js';
 
 class HpLineView extends BaseGraphicView {
-    constructor(entity, position, width, container) {
+    constructor(position, width, maxHp, container) {
         super();
         this._container = container;
-        this._entity = entity;
         this._position = position;
         this._width = width;
-
-        this._unbindHpChangeListener = this._entity.on('hpChanged', this._renderHpValue.bind(this));
+        this._maxHp = maxHp;
 
         this._render();
     }
 
+    showValue(value) {
+        this._renderHpValue(value);
+    }
+
     remove() {
-        this._unbindHpChangeListener();
+        this._container.removeChild(this._hpLine);
     }
 
     _render() {
@@ -23,13 +25,11 @@ class HpLineView extends BaseGraphicView {
         this._hpLine.y = this._position.y;
         this._hpLine.x = this._position.x;
         this._container.addChild(this._hpLine);
-
-        this._renderHpValue();
     }
 
-    _renderHpValue() {
+    _renderHpValue(value) {
         let hpLineMaxWidth = this._width;
-        let hpInPercent = (this._entity.hp * 100) / this._entity.maxHp;
+        let hpInPercent = (value * 100) / this._maxHp;
         let lineWidth = (hpLineMaxWidth / 100) * hpInPercent;
         let color = 0x00ff00;
         if (hpInPercent < 60) {
@@ -40,7 +40,7 @@ class HpLineView extends BaseGraphicView {
         }
         this._hpLine.clear();
         this._hpLine.rect(0, 0, lineWidth, 5);
-        this._hpLine.fill(color);
+        this._hpLine.fill({color});
     }
 
 }

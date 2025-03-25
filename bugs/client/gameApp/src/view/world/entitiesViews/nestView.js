@@ -14,6 +14,7 @@ class NestView extends EntityView {
     static ANIMATION_TYPES = class extends EntityView.ANIMATION_TYPES {
         static BUILD_STATUS_CHANGE = 'build_status_change';
         static FORTIFICATION_CHANGE = 'fortification_change';
+        static HP_CHANGE = 'hp_change';
     };
 
     constructor(entity, entityContainer) {
@@ -22,6 +23,7 @@ class NestView extends EntityView {
         this._render();
         this._stopListenBuildStatusChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.NEST_BUILD_STATUS_CHANGED}`, this._onBuildStatusChangeAnimationRequest.bind(this));
         this._stopListenFortificationChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.NEST_FORTIFICATION_CHANGED}`, this._onFortificationChangeAnimationRequest.bind(this));
+        this._stopListenHpChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
     }
 
     get _nestWidth() {
@@ -62,7 +64,7 @@ class NestView extends EntityView {
             this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
         }
 
-        this._hpLineView = new HpLineView(this._entity, { x: 0, y: -13 }, this._nestWidth, this._uiContainer);
+        this._hpLineView = new HpLineView({ x: 0, y: -13 }, this._nestWidth, this._entity.maxHp, this._uiContainer);
 
         this._fortificationLine = new PIXI.Graphics();
         this._fortificationLine.x = 0;
@@ -76,6 +78,8 @@ class NestView extends EntityView {
         super.remove();
         this._hpLineView.remove();
         this._stopListenBuildStatusChange();
+        this._stopListenFortificationChange();
+        this._stopListenHpChange();
     }
 
     _renderEntityState() {
@@ -83,6 +87,7 @@ class NestView extends EntityView {
         let visualState = this._determineNestVisualState();
         this._renderVisualState(visualState);
         this._renderFortificationValue(this._entity.fortification);
+        this._hpLineView.showValue(this._entity.hp);
     }
 
     _renderVisualState(state) {
@@ -127,6 +132,9 @@ class NestView extends EntityView {
             case NestView.ANIMATION_TYPES.FORTIFICATION_CHANGE: 
                 this._playFortificationChange(animation.params);
                 return true;
+            case NestView.ANIMATION_TYPES.HP_CHANGE: 
+                this._playHpChange(animation.params);
+                return true;
             default:
                 return false;
         }
@@ -148,6 +156,10 @@ class NestView extends EntityView {
         this._renderFortificationValue(fortification);
     }
 
+    _playHpChange({ hp }) {
+        this._hpLineView.showValue(hp);
+    }
+
     _onClick() {
         this.$eventBus.emit('nestManageRequest', this._entity);
     }
@@ -158,6 +170,10 @@ class NestView extends EntityView {
 
     _onFortificationChangeAnimationRequest(params) {
         this._addAnimation(NestView.ANIMATION_TYPES.FORTIFICATION_CHANGE, params);
+    }
+
+    _onHpChangeAnimationRequest(params) {
+        this._addAnimation(NestView.ANIMATION_TYPES.HP_CHANGE, params);
     }
 
 }
