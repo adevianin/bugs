@@ -185,7 +185,7 @@ class EntityView extends BaseGraphicView {
     }
 
     _onGameActivityChange() {
-        if (this._isGameActive) {
+        if (!this._isGameActive) {
             this._animQueue = [];
         } else {
             this._renderEntityState();
