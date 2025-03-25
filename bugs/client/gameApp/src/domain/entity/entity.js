@@ -102,12 +102,6 @@ class Entity extends EventEmitter {
         this._eventBus.emit(eventName, this, data);
     }
 
-    die() {
-        this._isDied = true;
-        this._emitToEventBus('entityDied');//to delete entity from world
-        this.emit('died');//to delete view
-    }
-
     _setState(newState) {
         let isStateDifferent = this._state != newState;
         this._state = newState;
@@ -121,7 +115,10 @@ class Entity extends EventEmitter {
     }
 
     _playEntityDied(action) {
-        this.die();
+        this._isDied = true;
+        this._emitToEventBus('entityDied');//to delete entity from world
+        this.emit('died');//to delete from ants table view
+        this._requestActionAnimation(ACTION_TYPES.ENTITY_DIED)
     }
 
     _playEntityColonyChanged(action) {

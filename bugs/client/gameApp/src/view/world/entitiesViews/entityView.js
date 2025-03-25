@@ -1,10 +1,12 @@
 import { BaseGraphicView } from "@view/base/baseGraphicView";
 import * as PIXI from 'pixi.js';
+import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
 
 class EntityView extends BaseGraphicView {
 
     static ANIMATION_TYPES = class {
-        static CHUNK_CHANGED = 'chunk_changed'
+        static CHUNK_CHANGED = 'chunk_changed';
+        static DIED = 'died';
     };
 
     static chunksVisibilityState;
@@ -27,8 +29,8 @@ class EntityView extends BaseGraphicView {
         this._parentContainer.addChild(this._entityContainer);
 
         document.addEventListener("visibilitychange", this._onGameActivityChange.bind(this));
-        this._stopListenDied = this._entity.on('died', this.remove.bind(this));
         this._stopListenChunkIdChanged = this._entity.on('chunkIdChanged', this._onEntityChunkIdChanged.bind(this));
+        this._stopListenDiedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_DIED}`, this._onDiedAnimationRequest.bind(this));
     }
 
     get entity() {
@@ -45,9 +47,9 @@ class EntityView extends BaseGraphicView {
 
     remove() {
         this._entityContainer.removeFromParent();
-        this._stopListenDied();
         this._stopListenChunkVisibilityChange();
         this._stopListenChunkIdChanged();
+        this._stopListenDiedAnimationRequest();
     }
 
     _toggleEntityVisibility(isVisible) {
@@ -106,6 +108,9 @@ class EntityView extends BaseGraphicView {
             case EntityView.ANIMATION_TYPES.CHUNK_CHANGED: 
                 this._playChunkChangedAnimation(animation.params);
                 return true;
+            case EntityView.ANIMATION_TYPES.DIED: 
+                await this._playDiedAnimation(animation.params);
+                return true;
             default:
                 return false;
         }
@@ -154,6 +159,10 @@ class EntityView extends BaseGraphicView {
         this._renderViewVisibility();
     }
 
+    async _playDiedAnimation() {
+        this.remove();
+    }
+
     _onCurrentChunkVisibilityStateChanged() {
         this._renderViewVisibility();
     }
@@ -162,6 +171,10 @@ class EntityView extends BaseGraphicView {
         this._addAnimation(EntityView.ANIMATION_TYPES.CHUNK_CHANGED, {
             newChunkId
         });
+    }
+
+    _onDiedAnimationRequest(params) {
+        this._addAnimation(EntityView.ANIMATION_TYPES.DIED, params);
     }
 
     _onGameActivityChange() {

@@ -53,11 +53,6 @@ class Item extends Entity {
         }
     }
 
-    _playEntityDied(action) {
-        this.die();
-        return Promise.resolve();
-    }
-
     async _playItemPickedUp(action) {
         this.isPicked = true;
         this._requestActionAnimation(ACTION_TYPES.ITEM_WAS_PICKED_UP);

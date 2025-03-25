@@ -61,9 +61,7 @@ class LiveEntityView extends EntityView {
     }
 
     remove() {
-        setTimeout(() => {
-            super.remove();
-        }, 5000);
+        super.remove();
         this._hpLineView.remove();
         this._stopListenWalkAnimationRequest();
         this._stopListenRotateAnimationRequest();
@@ -217,6 +215,13 @@ class LiveEntityView extends EntityView {
 
     _playHibernationStatusChangedAnimation({ isEntityVisibleAfter }) {
         this._toggleEntityVisibility(isEntityVisibleAfter);
+    }
+
+    _playDiedAnimation() {
+        this._renderVisualState(LiveEntityView.VISUAL_STATES.DEAD);
+        setTimeout(() => {
+            this.remove();
+        }, 5000);
     }
 
     async _onWalkAnimationRequest(params) {

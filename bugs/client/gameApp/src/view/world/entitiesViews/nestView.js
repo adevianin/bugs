@@ -60,10 +60,7 @@ class NestView extends EntityView {
     }
 
     remove() {
-        setTimeout(() => {
-            super.remove();
-            this._entityContainer.removeChild(this._nestContainer);
-        }, 5000);
+        super.remove();
         this._unbindStateChangeListener();
         this._hpLineView.remove();
     }
