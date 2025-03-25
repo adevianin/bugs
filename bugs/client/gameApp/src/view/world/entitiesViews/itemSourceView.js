@@ -5,15 +5,21 @@ import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
 
 class ItemSourceView extends EntityView { 
 
+    static VISUAL_STATES = class {
+        static FERTILE = 'fertile';
+        static NOT_FERTILE = 'not_fertile';
+    };
+
     static ANIMATION_TYPES = class extends EntityView.ANIMATION_TYPES {
         static HP_CHANGE = 'hp_change';
+        static FERTILITY_CHANGE = 'fertility_change';
     };
 
     constructor(entity, entitiesContainer) {
         super(entity, entitiesContainer);
 
-        this._unbindFertileChangeListener = this._entity.on('fertileChanged', this._renderFertile.bind(this));
         this._stopListenHpChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
+        this._stopListenFertilityChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_SOURCE_FERTILITY_CHANGED}`, this._onFertilityChangeAnimationRequest.bind(this));
 
         this._render();
     }
@@ -29,8 +35,8 @@ class ItemSourceView extends EntityView {
     remove() {
         super.remove();
         this._hpLineView.remove();
-        this._unbindFertileChangeListener();
         this._stopListenHpChange();
+        this._stopListenFertilityChange();
     }
 
     _render() {
@@ -55,12 +61,13 @@ class ItemSourceView extends EntityView {
     _renderEntityState() {
         super._renderEntityState();
         this._hpLineView.showValue(this._entity.hp);
-        this._renderFertile();
+        let state = this._entity.isFertile ? ItemSourceView.VISUAL_STATES.FERTILE : ItemSourceView.VISUAL_STATES.NOT_FERTILE;
+        this._renderVisualState(state);
     }
 
-    _renderFertile() {
-        this._standSprite.renderable = this._entity.isFertile;
-        this._deadSprite.renderable = !this._entity.isFertile;
+    _renderVisualState(state) {
+        this._standSprite.renderable = state == ItemSourceView.VISUAL_STATES.FERTILE;
+        this._deadSprite.renderable = state == ItemSourceView.VISUAL_STATES.NOT_FERTILE;
     }
 
     async _playAnimation(animation) {
@@ -73,6 +80,9 @@ class ItemSourceView extends EntityView {
             case ItemSourceView.ANIMATION_TYPES.HP_CHANGE: 
                 this._playHpChange(animation.params);
                 return true;
+            case ItemSourceView.ANIMATION_TYPES.FERTILITY_CHANGE: 
+                this._playFertilityChange(animation.params);
+                return true;
             default:
                 return false;
         }
@@ -82,8 +92,17 @@ class ItemSourceView extends EntityView {
         this._hpLineView.showValue(hp);
     }
 
+    _playFertilityChange({ isFertile }) {
+        let state = isFertile ? ItemSourceView.VISUAL_STATES.FERTILE : ItemSourceView.VISUAL_STATES.NOT_FERTILE;
+        this._renderVisualState(state);
+    }
+
     _onHpChangeAnimationRequest(params) {
         this._addAnimation(ItemSourceView.ANIMATION_TYPES.HP_CHANGE, params);
+    }
+
+    _onFertilityChangeAnimationRequest(params) {
+        this._addAnimation(ItemSourceView.ANIMATION_TYPES.FERTILITY_CHANGE, params);
     }
 
 }

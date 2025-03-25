@@ -16,7 +16,6 @@ class ItemSource extends Entity {
 
     set isFertile(value) {
         this._isFertile = value;
-        this.emit('fertileChanged');
     }
 
     get isFertile() {
@@ -39,6 +38,9 @@ class ItemSource extends Entity {
 
     _playFertilityChangedAction(action) {
         this.isFertile = action.isFertile;
+        this._requestActionAnimation(ACTION_TYPES.ITEM_SOURCE_FERTILITY_CHANGED, {
+            isFertile: this.isFertile
+        })
     }
 }
 
