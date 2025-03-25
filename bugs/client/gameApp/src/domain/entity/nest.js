@@ -8,24 +8,27 @@ class Nest extends Entity {
 
     constructor(eventBus, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, isBuilt, hp, maxHp, fortification, maxFortification, name, isMain, area) {
         super(eventBus, id, position, angle, EntityTypes.NEST, fromColony, ownerId, hp, maxHp);
-        this.storedCalories = storedCalories;
-        this.larvae = larvae;
-        this.eggs = eggs;
+        this._storedCalories = storedCalories;
+        this._larvae = larvae;
+        this._eggs = eggs;
         this._fortification = fortification;
-        this.maxFortification = maxFortification;
+        this._maxFortification = maxFortification;
         this._name = name;
         this._isMain = isMain;
         this._area = area;
-
-        this._setIsBuilt(isBuilt)
+        this._isBuilt = isBuilt;
     }
 
-    get name() {
-        return this._name;
+    get storedCalories() {
+        return this._storedCalories;
     }
 
-    get takenChildPlacesCount() {
-        return this.larvae.length + this.eggs.length;
+    get larvae() {
+        return this._larvae;
+    }
+
+    get eggs() {
+        return this._eggs;
     }
 
     get fortification() {
@@ -34,7 +37,14 @@ class Nest extends Entity {
 
     set fortification(value) {
         this._fortification = value;
-        this.emit('fortificationChanged');
+    }
+
+    get maxFortification() {
+        return this._maxFortification;
+    }
+
+    get name() {
+        return this._name;
     }
 
     get isMain() {
@@ -43,6 +53,10 @@ class Nest extends Entity {
 
     get area() {
         return this._area;
+    }
+
+    get isBuilt() {
+        return this._isBuilt;
     }
 
     rename(newName) {
@@ -73,21 +87,21 @@ class Nest extends Entity {
     }
 
     _removeEggFromArray(egg) {
-        let index = this.eggs.indexOf(egg);
-        this.eggs.splice(index, 1);
+        let index = this._eggs.indexOf(egg);
+        this._eggs.splice(index, 1);
     }
 
     _removeLarvaFromArray(larva) {
-        let index = this.larvae.indexOf(larva);
-        this.larvae.splice(index, 1);
+        let index = this._larvae.indexOf(larva);
+        this._larvae.splice(index, 1);
     }
 
     _findEggById(id) {
-        return this.eggs.find(egg => egg.id == id);
+        return this._eggs.find(egg => egg.id == id);
     }
 
     _findLarvaById(id) {
-        return this.larvae.find(larva => larva.id == id);
+        return this._larvae.find(larva => larva.id == id);
     }
 
     playAction(action) {
@@ -129,25 +143,25 @@ class Nest extends Entity {
     }
 
     _playStoredCaloriesChanged(action) {
-        this.storedCalories = action.actionData.stored_calories;
+        this._storedCalories = action.storedCalories;
         this.emit('storedCaloriesChanged');
     }
 
     _playLarvaFed(action) {
-        let larva = this.larvae.find(larva => larva.id == action.larvaId);
+        let larva = this._larvae.find(larva => larva.id == action.larvaId);
         larva.ateFood = action.ateFood;
     }
 
     _playLarvaIsReady(action) {
-        let larva = this.larvae.find(larva => larva.id == action.larvaId);
-        let index = this.larvae.indexOf(larva);
-        this.larvae.splice(index, 1);
+        let larva = this._larvae.find(larva => larva.id == action.larvaId);
+        let index = this._larvae.indexOf(larva);
+        this._larvae.splice(index, 1);
         this.emit('larvaIsReady', larva);
     }
     
     _playLarvaAdded(action) {
         let larva = Larva.buildFromJson(action.larva);
-        this.larvae.push(larva);
+        this._larvae.push(larva);
         this.emit('larvaAdded', larva);
     }
 
@@ -164,20 +178,22 @@ class Nest extends Entity {
 
     _playEggAdded(action) {
         let egg = Egg.buildFromJson(action.egg);
-        this.eggs.push(egg);
+        this._eggs.push(egg);
         this.emit('eggAdded', egg);
     }
 
     _playBuildStatusChanged(action) {
-        this._setIsBuilt(action.actionData.is_built)
+        this._isBuilt = action.isBuilt;
+        this._requestActionAnimation(ACTION_TYPES.NEST_BUILD_STATUS_CHANGED, {
+            isBuilt: this._isBuilt
+        });
     }
 
     _playFortificationChanged(action) {
         this.fortification = action.fortification;
-    }
-
-    _setIsBuilt(isBuilt) {
-        this._setState(isBuilt ? 'built' : 'building');
+        this._requestActionAnimation(ACTION_TYPES.NEST_FORTIFICATION_CHANGED, {
+            fortification: this.fortification
+        });
     }
 
 }

@@ -1,16 +1,35 @@
 import { EntityView } from './entityView';
 import * as PIXI from 'pixi.js';
 import { HpLineView } from './hpLine';
+import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
 
 class NestView extends EntityView { 
+
+    static VISUAL_STATES = class {
+        static DEAD = 'dead';
+        static BUILT = 'built';
+        static BUILDING = 'building';
+    };
+
+    static ANIMATION_TYPES = class extends EntityView.ANIMATION_TYPES {
+        static BUILD_STATUS_CHANGE = 'build_status_change';
+        static FORTIFICATION_CHANGE = 'fortification_change';
+    };
 
     constructor(entity, entityContainer) {
         super(entity, entityContainer);
 
         this._render();
+        this._stopListenBuildStatusChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.NEST_BUILD_STATUS_CHANGED}`, this._onBuildStatusChangeAnimationRequest.bind(this));
+        this._stopListenFortificationChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.NEST_FORTIFICATION_CHANGED}`, this._onFortificationChangeAnimationRequest.bind(this));
+    }
 
-        this._unbindStateChangeListener = this._entity.on('stateChanged', this._renderVisualState.bind(this));
-        this._unbindFortificationChangeListener = this._entity.on('fortificationChanged', this._renderFortificationValue.bind(this));
+    get _nestWidth() {
+        return this._builtNestSprite.width;
+    }
+
+    get _nestHeight() {
+        return this._builtNestSprite.height;
     }
 
     _render() {
@@ -31,61 +50,114 @@ class NestView extends EntityView {
         this._destroyedNestSprite = new PIXI.Sprite(this.$textureManager.getTexture('nest_destroyed.png'));
         this._bodyContainer.addChild(this._destroyedNestSprite);
 
-        let nestHalfWidth = this._builtNestSprite.width / 2;
-        let nestHalfHeight = this._builtNestSprite.height / 2;
+        let nestHalfWidth = this._nestWidth / 2;
+        let nestHalfHeight = this._nestHeight / 2;
 
         this._bodyContainer.pivot.x = nestHalfWidth;
         this._bodyContainer.pivot.y = nestHalfHeight;
         this._uiContainer.pivot.x = nestHalfWidth;
         this._uiContainer.pivot.y = nestHalfHeight;
 
-        // this._nestContainer.x = this._entity.position.x;
-        // this._nestContainer.y = this._entity.position.y;
-
         if (this.$domain.isEntityMy(this._entity)) {
             this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
         }
 
-        this._renderVisualState();
-
-        this._hpLineView = new HpLineView(this._entity, { x: 0, y: -13 }, this._builtNestSprite.width, this._uiContainer);
+        this._hpLineView = new HpLineView(this._entity, { x: 0, y: -13 }, this._nestWidth, this._uiContainer);
 
         this._fortificationLine = new PIXI.Graphics();
         this._fortificationLine.x = 0;
         this._fortificationLine.y = -8;
         this._uiContainer.addChild(this._fortificationLine);
-        this._renderFortificationValue();
 
         this._renderEntityState();
     }
 
     remove() {
         super.remove();
-        this._unbindStateChangeListener();
         this._hpLineView.remove();
+        this._stopListenBuildStatusChange();
     }
 
-    _renderVisualState() {
-        let state = this._entity.state;
-
-        this._builtNestSprite.renderable = state == 'built';
-        this._buildingNestSprite.renderable = state == 'building';
-        this._destroyedNestSprite.renderable = state == 'dead';
+    _renderEntityState() {
+        super._renderEntityState();
+        let visualState = this._determineNestVisualState();
+        this._renderVisualState(visualState);
+        this._renderFortificationValue(this._entity.fortification);
     }
 
-    _renderFortificationValue() {
-        let fortLineMaxWidth = this._builtNestSprite.width;
-        let fortInPercent = (this._entity.fortification * 100) / this._entity.maxFortification;
+    _renderVisualState(state) {
+        this._builtNestSprite.renderable = state == NestView.VISUAL_STATES.BUILT;
+        this._buildingNestSprite.renderable = state == NestView.VISUAL_STATES.BUILDING;
+        this._destroyedNestSprite.renderable = state == NestView.VISUAL_STATES.DEAD;
+    }
+
+    _renderFortificationValue(fortificationValue) {
+        let fortLineMaxWidth = this._nestWidth;
+        let fortInPercent = (fortificationValue * 100) / this._entity.maxFortification;
         let lineWidth = (fortLineMaxWidth / 100) * fortInPercent;
 
         let color = 0x800080;
         this._fortificationLine.clear();
-        this._fortificationLine.fill(color);
         this._fortificationLine.rect(0, 0, lineWidth, 5);
+        this._fortificationLine.fill({
+            color
+        });
+    }
+
+    _determineNestVisualState() {
+        if (this._entity.isDied) {
+            return NestView.VISUAL_STATES.DEAD;
+        } else if (this._entity.isBuilt) {
+            return NestView.VISUAL_STATES.BUILT;
+        } else {
+            return NestView.VISUAL_STATES.BUILDING;
+        }
+    }
+
+    async _playAnimation(animation) {
+        let isPlayed = await super._playAnimation(animation);
+        if (isPlayed) {
+            return true;
+        }
+
+        switch (animation.type) {
+            case NestView.ANIMATION_TYPES.BUILD_STATUS_CHANGE: 
+                this._playBuildStatusChange(animation.params);
+                return true;
+            case NestView.ANIMATION_TYPES.FORTIFICATION_CHANGE: 
+                this._playFortificationChange(animation.params);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    _playDiedAnimation() {
+        this._renderVisualState(NestView.VISUAL_STATES.DEAD);
+        setTimeout(() => {
+            this.remove();
+        }, 5000);
+    }
+
+    _playBuildStatusChange({ isBuilt }) {
+        let state = isBuilt ? NestView.VISUAL_STATES.BUILT : NestView.VISUAL_STATES.BUILDING;
+        this._renderVisualState(state);
+    }
+
+    _playFortificationChange({ fortification }) {
+        this._renderFortificationValue(fortification);
     }
 
     _onClick() {
         this.$eventBus.emit('nestManageRequest', this._entity);
+    }
+
+    _onBuildStatusChangeAnimationRequest(params) {
+        this._addAnimation(NestView.ANIMATION_TYPES.BUILD_STATUS_CHANGE, params);
+    }
+
+    _onFortificationChangeAnimationRequest(params) {
+        this._addAnimation(NestView.ANIMATION_TYPES.FORTIFICATION_CHANGE, params);
     }
 
 }

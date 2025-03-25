@@ -270,7 +270,7 @@ class ActionClientSerializer():
         json = self._serialize_common(action)
 
         json.update({
-            'actionData': { 'stored_calories': action.stored_calories }
+            'storedCalories': action.stored_calories
         })
 
         return json
@@ -345,7 +345,7 @@ class ActionClientSerializer():
         json = self._serialize_common(action)
 
         json.update({
-            'actionData': { 'is_built': action.is_built }
+            'isBuilt': action.is_built
         })
 
         return json

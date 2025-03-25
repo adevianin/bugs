@@ -21,14 +21,13 @@ class EntityView extends BaseGraphicView {
         this._isAnimPlaying = false;
         this._currentChunkId = null;
         this._isEntityVisible = false;
-        this._isGameActive = true;
 
         this._entity = entity;
         this._parentContainer = entitiesContainer;
         this._entityContainer = new PIXI.Container();
         this._parentContainer.addChild(this._entityContainer);
 
-        document.addEventListener("visibilitychange", this._onGameActivityChange.bind(this));
+        document.addEventListener('visibilitychange', this._onGameActivityChange.bind(this));
         this._stopListenChunkIdChanged = this._entity.on('chunkIdChanged', this._onEntityChunkIdChanged.bind(this));
         this._stopListenDiedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_DIED}`, this._onDiedAnimationRequest.bind(this));
     }
@@ -43,6 +42,10 @@ class EntityView extends BaseGraphicView {
 
     get _isFastAnimationMode() {
         return !this._isCurrentChunkVisible;
+    }
+
+    get _isGameActive() {
+        return !document.hidden;
     }
 
     remove() {
@@ -174,15 +177,17 @@ class EntityView extends BaseGraphicView {
     }
 
     _onDiedAnimationRequest(params) {
-        this._addAnimation(EntityView.ANIMATION_TYPES.DIED, params);
+        if (this._isGameActive) {
+            this._addAnimation(EntityView.ANIMATION_TYPES.DIED, params);
+        } else {
+            this.remove(); // because after game activity change method _renderEntityState cant remove view
+        }
     }
 
     _onGameActivityChange() {
-        if (document.hidden) {
-            this._isGameActive = false;
+        if (this._isGameActive) {
             this._animQueue = [];
         } else {
-            this._isGameActive = true;
             this._renderEntityState();
         }
     }

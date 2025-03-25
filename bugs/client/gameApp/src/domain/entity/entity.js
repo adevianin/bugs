@@ -102,14 +102,6 @@ class Entity extends EventEmitter {
         this._eventBus.emit(eventName, this, data);
     }
 
-    _setState(newState) {
-        let isStateDifferent = this._state != newState;
-        this._state = newState;
-        if (isStateDifferent) {
-            this.emit('stateChanged');
-        }
-    }
-
     _playHpChange(action) {
         this.hp = action.actionData.hp;
     }
