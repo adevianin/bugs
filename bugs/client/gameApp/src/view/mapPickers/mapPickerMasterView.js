@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { BaseGraphicView } from "@view/base/baseGraphicView";
-import { NestPickerView } from "./nestPickerView";
-import { PositionPickerView } from "./positionPickerView";
+import { RaidNestPickerView } from "./raidNestPickerView";
+import { NewNestPositionPickerView } from "./newNestPositionPickerView";
 import { BorderView } from './borderView';
 
 class MapPickerMasterView extends BaseGraphicView {
@@ -13,33 +13,39 @@ class MapPickerMasterView extends BaseGraphicView {
 
         this._render();
 
-        this.$eventBus.on('nestPickRequest', this._onNestPickRequest.bind(this));
-        this.$eventBus.on('positionPickRequest', this._onPositionPickRequest.bind(this));
+        this.$eventBus.on('raidNestPickRequest', this._onRaidNestPickRequest.bind(this));
+        this.$eventBus.on('newNestPositionPickRequest', this._onNewNestPositionPickRequest.bind(this));
         this.$eventBus.on('deactivateMapPickerRequest', this._onPickerDeactivateRequest.bind(this));
     }
 
     _render() {
-        let positionPickerContainer = new PIXI.Container();
-        this._container.addChild(positionPickerContainer);
-        this._positionPickerView = new PositionPickerView(positionPickerContainer);
+        let newNestPositionPickerContainer = new PIXI.Container();
+        this._container.addChild(newNestPositionPickerContainer);
+        this._newNestPositionPickerView = new NewNestPositionPickerView(newNestPositionPickerContainer);
 
         let nestPickerContainer = new PIXI.Container();
         this._container.addChild(nestPickerContainer);
-        this._nestPickerView = new NestPickerView(nestPickerContainer);
+        this._raidNestPickerView = new RaidNestPickerView(nestPickerContainer);
 
         this._borderView = new BorderView(this._borderEl);
     }
 
-    _onNestPickRequest(excludeColonyId, pickableCircle, callback) {
-        this._nestPickerView.activate(excludeColonyId, pickableCircle, nest => {
+    _onRaidNestPickRequest(raidingColonyId, callback) {
+        if (this._raidNestPickerView.isActivated) {
+            return;
+        }
+        this._raidNestPickerView.activate(raidingColonyId, nest => {
             callback(nest);
             this._deactivateAll();
         });
         this._borderView.activate(this.$messages.pick_nest);
     }
 
-    _onPositionPickRequest(pickableCircle, exclusions, callback) {
-        this._positionPickerView.activate(pickableCircle, exclusions, point => {
+    _onNewNestPositionPickRequest(colonyId, callback) {
+        if (this._newNestPositionPickerView.isActivated) {
+            return;
+        }
+        this._newNestPositionPickerView.activate(colonyId, point => {
             callback(point);
             this._deactivateAll();
         });
@@ -51,8 +57,12 @@ class MapPickerMasterView extends BaseGraphicView {
     }
 
     _deactivateAll() {
-        this._nestPickerView.deactivate();
-        this._positionPickerView.deactivate();
+        if (this._raidNestPickerView.isActivated) {
+            this._raidNestPickerView.deactivate();
+        }
+        if (this._newNestPositionPickerView.isActivated) {
+            this._newNestPositionPickerView.deactivate();
+        }
         this._borderView.deactivate();
     }
 

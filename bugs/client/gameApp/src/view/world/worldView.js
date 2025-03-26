@@ -11,8 +11,6 @@ import { LadybugView } from './entitiesViews/ladybugView';
 import { MarkersDemonstratorView } from './markersDemonstratorView';
 import { CONSTS } from '@domain/consts';
 import { VIEW_SETTINGS } from '@view/viewSettings';
-import { throttle } from '@common/utils/throttle';
-import { EntityView } from './entitiesViews/entityView';
 
 class WorldView extends BaseGraphicView {
 
@@ -20,12 +18,12 @@ class WorldView extends BaseGraphicView {
         super();
         this._container = container;
         
-        this._buildChunksVisibilityState();
-
         this._render();
 
         this.$domain.events.on('entityBorn', this._onEntityBorn.bind(this));
-        this.$eventBus.on('viewPointChange', throttle(this._onViewPointChange.bind(this), 200));
+        if (VIEW_SETTINGS.showPlayerViewRect) {
+            this.$eventBus.on('viewPointChanged', this._onViewPointChanged.bind(this));
+        }
     }
 
     _render() {
@@ -140,29 +138,7 @@ class WorldView extends BaseGraphicView {
         }
     }
 
-    _buildChunksVisibilityState() {
-        let chunksVisibilityState = {};
-        for (let chunkId in this.$domain.world.chunks) {
-            chunksVisibilityState[chunkId] = false;
-        }
-
-        EntityView.useChunksVisibilityState(chunksVisibilityState);
-        this._chunksVisibilityState = chunksVisibilityState;
-    }
-
-    _updateChunksVisibleStateForViewRect(viewRect) {
-        for (let chunkId in this.$domain.world.chunks) {
-            let chunk = this.$domain.world.chunks[chunkId];
-            let isVisibleChunk = chunk.intersectsRect(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
-            let isStateChanged = this._chunksVisibilityState[chunkId] != isVisibleChunk
-            this._chunksVisibilityState[chunkId] = isVisibleChunk;
-            if (isStateChanged) {
-                this.$eventBus.emit(`chunkVisibilityStateChanged:${chunkId}`, isVisibleChunk);
-            }
-        }
-    }
-
-    _renderViewRect(viewRect) {
+    _onViewPointChanged(viewPoint, viewRect) {
         if (this._viewRectGraphics) {
             this._viewRectContainer.removeChild(this._viewRectGraphics);
         }
@@ -171,27 +147,6 @@ class WorldView extends BaseGraphicView {
             .rect(viewRect.x, viewRect.y, viewRect.width, viewRect.height)
             .stroke({width: 1, color: 0x0000FF});
         this._viewRectContainer.addChild(this._viewRectGraphics);
-    }
-
-    _buildViewRectForViewPoint(viewPoint) {
-        // let viewRectWidth = window.screen.width - 30;
-        let viewRectWidth = 300;
-        // let viewRectHeight = window.screen.height - 50;
-        let viewRectHeight = 300;
-        return {
-            x: viewPoint.x - viewRectWidth / 2,
-            y: viewPoint.y - viewRectHeight / 2,
-            width: viewRectWidth,
-            height: viewRectHeight
-        }
-    }
-
-    _onViewPointChange(viewPoint) {
-        let viewRect = this._buildViewRectForViewPoint(viewPoint);
-        if (VIEW_SETTINGS.showPlayerViewRect) {
-            this._renderViewRect(viewRect);
-        }
-        this._updateChunksVisibleStateForViewRect(viewRect);
     }
 
 }

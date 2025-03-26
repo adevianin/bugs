@@ -14,8 +14,6 @@ class World {
         this._chunks = {};
 
         this._mainEventBus.on('entityMoved', this._onEntityMoved.bind(this));
-
-        window.a = this;
     }
 
     get currentStep() {
@@ -162,6 +160,15 @@ class World {
     getSubNestsOfColony(colonyId) {
         let nests = this.findNestsFromColony(colonyId);
         return nests.filter(nest => !nest.isMain);
+    }
+
+    getEntitiesFromChunks(chunkIds) {
+        let entities = [];
+        for (let chunkId of chunkIds) {
+            entities = entities.concat(this._chunks[chunkId].entities);
+        }
+
+        return entities;
     }
 
     _splitOnChunks() {

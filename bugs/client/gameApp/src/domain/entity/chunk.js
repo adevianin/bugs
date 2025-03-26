@@ -9,6 +9,10 @@ class Chunk {
         return this._shape;
     }
 
+    get entities() {
+        return this._entities;
+    }
+
     addEntity(entity) {
         this._entities.push(entity);
     }

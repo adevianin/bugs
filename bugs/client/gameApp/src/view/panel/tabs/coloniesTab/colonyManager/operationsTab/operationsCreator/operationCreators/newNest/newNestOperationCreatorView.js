@@ -13,7 +13,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._buildableArea = this.$domain.getSubNestBuildableArea(this._performingColony.id);
+        this._mainNest = this.$domain.getMainNestOfColony(this._performingColony.id);
 
         this._render();
 
@@ -122,9 +122,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _onChooseBuildingSiteBtnClick() {
-        let pickableCircle = this._buildableArea.area;
-        let exclusions = this._buildableArea.exclusions;
-        this.$eventBus.emit('positionPickRequest', pickableCircle, exclusions, (point) => { 
+        this.$eventBus.emit('newNestPositionPickRequest', this._mainNest, (point) => { 
             this._buildingPosition.value = point;
             let err = this._validateBuildingPosition();
             this._renderBuildingPositionError(err);

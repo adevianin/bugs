@@ -123,8 +123,12 @@ class DomainFacade {
         return this._colonyService.validateNewNestOperationConditions(colonyId);
     }
 
-    getSubNestBuildableArea(colonyId) {
-        return this._colonyService.getSubNestBuildableArea(colonyId);
+    getNestBuildableArea(mainNest, chunkIds) {
+        return this._colonyService.getNestBuildableArea(mainNest, chunkIds);
+    }
+
+    getRaidableArea(raidingColonyId, chunkIds) {
+        return this._colonyService.getRaidableArea(raidingColonyId, chunkIds);
     }
 
     buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {

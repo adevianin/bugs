@@ -12,6 +12,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
         this._queenOfColony = this.$domain.getQueenOfColony(this._performingColony.id);
+        this._mainNest = this.$domain.getMainNestOfColony(this._performingColony.id);
 
         this._render();
 
@@ -120,8 +121,8 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _onChooseNestBtnClick() {
-        let pickableCircle = { center: this._queenOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
-        this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, this._onChoosedNestToDestroy.bind(this));
+        //validate if main nest destroyed
+        this.$eventBus.emit('raidNestPickRequest', this._performingColony.id, this._onChoosedNestToDestroy.bind(this));
     }
 
     _onChoosedNestToDestroy(nest) {

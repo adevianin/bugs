@@ -10,6 +10,7 @@ import { BaseGameHTMLView } from './base/baseGameHTMLView';
 import { BaseView } from '@common/view/base/baseView';
 import { MessageMaster } from '@common/messages/messageMaster';
 import { gameMsgLibrariesPack } from '@messages/msgLibraries';
+import { ChunksVisibilityManager } from './world/chunksVisibilityManager';
 import * as PIXI from 'pixi.js';
 
 async function initViewLayer(domainFacade) {
@@ -30,6 +31,8 @@ async function initViewLayer(domainFacade) {
     BaseView.useMessages(uaMessages);
     BaseGameHTMLView.usePixiApp(pixiApp);
     BaseGraphicView.useTextureManager(spritesheetManager);
+
+    ChunksVisibilityManager.init(eventBus, domainFacade.world.chunks);
 
     let app = new AppView(document.querySelector('[data-app]'));
     app.events.on('ready', () => {

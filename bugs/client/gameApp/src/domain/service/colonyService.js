@@ -8,6 +8,8 @@ import { CONSTS } from "@domain/consts";
 
 class ColonyService extends BaseGameService {
 
+    static SAFETY_MARGIN = 2;
+
     constructor(mainEventBus, world, colonyApi, worldFactory) {
         super(mainEventBus, world);
         this._mainEventBus = mainEventBus;
@@ -89,25 +91,52 @@ class ColonyService extends BaseGameService {
             return bugCorpsesInNestArea.length > 0 ? bugCorpsesInNestArea[0] : null;
     }
 
-    getSubNestBuildableArea(colonyId) {
-        let damper = 2;
-        let mainNestOfColony = this._world.getMainNestOfColony(colonyId);
-        if (!mainNestOfColony) {
-            return null;
+    getNestBuildableArea(mainNestOfColony, chunkIds) {
+        let area = null;
+        if (mainNestOfColony) {
+            area = { center: mainNestOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_SUB_NEST - ColonyService.SAFETY_MARGIN};
         }
-        let area = { center: mainNestOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_SUB_NEST - damper};
+        
+        let entities = this._world.getEntitiesFromChunks(chunkIds);
+        let itemSources = entities.filter(e => e.type == EntityTypes.ITEM_SOURCE);
+        if (mainNestOfColony) {
+            let maxBlockingDist = CONSTS.MAX_DISTANCE_TO_SUB_NEST + CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE;
+            itemSources = itemSources.filter(is => distance_point(is.position, mainNestOfColony.position) <= maxBlockingDist);
+        }
+        
         let exclusions = [];
-        let itemSources = this._world.findEntityByType(EntityTypes.ITEM_SOURCE);
-        let maxBlockingDist = CONSTS.MAX_DISTANCE_TO_SUB_NEST + CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE
-        let blockingAreaItemSources = itemSources.filter(is => distance_point(is.position, mainNestOfColony.position) <= maxBlockingDist);
-        for (let itemSource of blockingAreaItemSources) {
-            exclusions.push({ center: itemSource.position, radius: CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE + damper });
+        for (let itemSource of itemSources) {
+            exclusions.push({ center: itemSource.position, radius: CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE + ColonyService.SAFETY_MARGIN });
         }
 
         return {
             area,
             exclusions
         };
+    }
+
+    getRaidableArea(raidingColonyId, chunkIds) {
+        let mainNestOfColony = this._world.getMainNestOfColony(raidingColonyId);
+        let entities = this._world.getEntitiesFromChunks(chunkIds);
+        let nests = entities.filter(e => e.type == EntityTypes.NEST);
+        let area = { center: mainNestOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET - ColonyService.SAFETY_MARGIN};
+
+        let nestPickers = [];
+        let exclusions = [];
+
+        for (let nest of nests) {
+            if (nest.fromColony == raidingColonyId) {
+                exclusions.push({ center: nest.position, radius: CONSTS.NEST_BLOCKING_RADIUS });
+            } else {
+                nestPickers.push({ center: nest.position, radius: CONSTS.NEST_BLOCKING_RADIUS, nest: nest });
+            }
+        }
+
+        return {
+            area,
+            nestPickers,
+            exclusions
+        }
     }
 
     validateNewNestOperationConditions(colonyId) {

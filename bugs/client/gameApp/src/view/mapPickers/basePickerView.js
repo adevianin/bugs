@@ -1,116 +1,128 @@
 import { BaseGraphicView } from "@view/base/baseGraphicView";
 import * as PIXI from 'pixi.js';
-import { distance_point } from "@utils/distance";
 
 class BasePickerView extends BaseGraphicView {
 
     constructor(container) {
         super();
         this._container = container;
-        this._worldSize = this.$domain.getWorldSize();
-
-        this._render();
-
-        this._boundOnClick = this._onClick.bind(this);
+        this._pickableCircle = null;
+        this._exclusions = [];
+        this._isActivated = false;
     }
 
-    activate(pickableCircle, exclusions) {
-        this._isActivated = true;
-        this._container.renderable = true;
-        if (pickableCircle) {
-            this._pickableCircle = pickableCircle;
-            this._exclusions = exclusions;
-            this._renderPickableArea(pickableCircle, exclusions);
-        } else {
-            this._clearPickableArea();
-        }
+    get isActivated() {
+        return this._isActivated;
+    }
 
-        this._stopListenBgClick = this.$eventBus.on('bgclick', this._onClick.bind(this));
+    activate() {
+        if (this._isActivated) {
+            throw 'already activated';
+        }
+        this._isActivated = true;
+        this._stopListenSomeChunkVisibilityStateChanged = this.$eventBus.on('someChunkVisibilityStateChanged', this._onSomeChunkVisibilityStateChanged.bind(this));
     }
 
     deactivate() {
-        if (this._isActivated) {
-            this._isActivated = false;
-            this._container.renderable = false;
-            this._pickableCircle = null;
-            this._exclusions = null;
-            this._stopListenBgClick();
-            this._stopListenBgClick = null;
+        if (!this._isActivated) {
+            throw 'already deactivated';
+        }
+        this._isActivated = false;
+        this._stopListenSomeChunkVisibilityStateChanged();
+        this._clearArea();
+    }
+
+    _updateArea() {
+        this._prepareAreaData();
+        this._renderAreaData();
+    }
+
+    _prepareAreaData() {
+        throw 'not realized';
+    }
+
+    _updateAreaData(pickableCircle, exclusions) {
+        this._pickableCircle = pickableCircle;
+        this._exclusions = exclusions || [];
+    }
+
+    _renderAreaData() {
+        this._clearArea();
+        
+        if (this._pickableCircle) {
+            this._renderPickableCircle(this._pickableCircle);
+        }
+
+        if (this._exclusions.length > 0) {
+            this._renderExclusions(this._exclusions, this._pickableCircle);
         }
     }
 
-    _render() {
-        this._container.renderable = false;
+    _renderPickableCircle(pickableCircle) {
+        let worldSize = this.$domain.getWorldSize();
+        this._notPickableArea = new PIXI.Graphics();
+        this._notPickableArea
+            .rect(0, 0, worldSize[0], worldSize[1])
+            .fill({
+                color: 0xff0000,
+                alpha: 0.5,
+            })
+            .circle(pickableCircle.center.x, pickableCircle.center.y, pickableCircle.radius)
+            .cut();
+        this._container.addChild(this._notPickableArea);
     }
 
-    _renderPickableArea(pickableCircle, exclusions) {
-        this._clearPickableArea();
+    _removePickableCircle() {
+        if (this._notPickableArea) {
+            this._container.removeChild(this._notPickableArea);
+            this._notPickableArea = null;
+        }
+    }
 
-        this._notPickableArea = new PIXI.Graphics();
-        this._notPickableArea.rect(0, 0, this._worldSize[0], this._worldSize[1])
-        .fill({
-            color: 0xff0000,
-            alpha: 0.5,
-        })
-        .circle(pickableCircle.center.x, pickableCircle.center.y, pickableCircle.radius)
-        .cut();
+    _renderCircleMaskFor(container, circle) {
+        let mask = new PIXI.Graphics();
+        mask
+            .circle(circle.center.x, circle.center.y, circle.radius)
+            .fill({
+                color: 0x000000
+            });
+        container.mask = mask;
+        container.addChild(mask);
+    }
 
-        this._container.addChild(this._notPickableArea);
-
-        if (exclusions && exclusions.length > 0) {
-            this._pickableCircleExclusionsContainer = new PIXI.Container();
-            let mask = new PIXI.Graphics();
-            mask.circle(pickableCircle.center.x, pickableCircle.center.y, pickableCircle.radius);
-            mask.fill(0x0000ff);
-            this._pickableCircleExclusionsContainer.mask = mask;
-            this._pickableCircleExclusionsContainer.addChild(mask);
-            this._container.addChild(this._pickableCircleExclusionsContainer);
-
-            for (let exclusion of exclusions) {
-                let excelusionGraphic = new PIXI.Graphics();
-                excelusionGraphic
+    _renderExclusions(exclusions, circleMask) {
+        this._exclusionsContainer = new PIXI.Container();
+        this._container.addChild(this._exclusionsContainer);
+        if (circleMask) {
+            this._renderCircleMaskFor(this._exclusionsContainer, circleMask);
+        }
+        for (let exclusion of exclusions) {
+            let excelusionGraphic = new PIXI.Graphics();
+            excelusionGraphic
                 .circle(exclusion.center.x, exclusion.center.y, exclusion.radius)
                 .fill({
                     color: 0xff0000,
                     alpha: 0.5,
                 });
-                this._pickableCircleExclusionsContainer.addChild(excelusionGraphic);
-            }
+            this._exclusionsContainer.addChild(excelusionGraphic);
         }
     }
 
-    _clearPickableArea() {
-        if (this._notPickableArea) {
-            this._container.removeChild(this._notPickableArea);
-            this._notPickableArea = null;
-        }
-        if (this._pickableCircleExclusionsContainer) {
-            this._container.removeChild(this._pickableCircleExclusionsContainer);
-            this._pickableCircleExclusionsContainer = null;
+    _removeExclusions() {
+        if (this._exclusionsContainer) {
+            this._container.removeChild(this._exclusionsContainer);
+            this._exclusionsContainer = null;
         }
     }
 
-    _onClick(point) {
-        if (this._pickableCircle) {
-            let dist = distance_point(this._pickableCircle.center, point);
-            if (dist >= this._pickableCircle.radius) {
-                return;
-            }
-
-            if (this._exclusions){
-                for (let exclusion of this._exclusions) {
-                    let dist = distance_point(exclusion.center, point);
-                    if (dist < exclusion.radius) {
-                        return;
-                    }
-                }
-            }
-        }
-        this._onPointPick({x: point.x, y: point.y});
+    _clearArea() {
+        this._removePickableCircle();
+        this._removeExclusions();
     }
 
-    _onPointPick(point) {}
-
+    _onSomeChunkVisibilityStateChanged() {
+        this._updateArea();
+    }
 }
 
 export {

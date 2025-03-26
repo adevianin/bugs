@@ -1,6 +1,7 @@
 import { BaseGraphicView } from "@view/base/baseGraphicView";
 import * as PIXI from 'pixi.js';
 import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
+import { ChunksVisibilityManager } from "../chunksVisibilityManager";
 
 class EntityView extends BaseGraphicView {
 
@@ -8,12 +9,6 @@ class EntityView extends BaseGraphicView {
         static CHUNK_CHANGED = 'chunk_changed';
         static DIED = 'died';
     };
-
-    static chunksVisibilityState;
-
-    static useChunksVisibilityState(chunksVisibilityState) {
-        EntityView.chunksVisibilityState = chunksVisibilityState;
-    }
 
     constructor(entity, entitiesContainer) {
         super();
@@ -37,7 +32,7 @@ class EntityView extends BaseGraphicView {
     }
 
     get _isCurrentChunkVisible() {
-        return EntityView.chunksVisibilityState[this._currentChunkId];
+        return ChunksVisibilityManager.isChunkVisible(this._currentChunkId);
     }
 
     get _isFastAnimationMode() {

@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { BaseGraphicView } from '@view/base/baseGraphicView';
 import { distance } from '@utils/distance';
+import { throttle } from '@common/utils/throttle';
 
 class MapController extends BaseGraphicView {
 
@@ -19,6 +20,7 @@ class MapController extends BaseGraphicView {
             height: worldSize[1]
         };
         this._pixiApp = pixiApp;
+        this._throttledOnViewPointChange = throttle(this._onViewPointChange.bind(this), 200);
 
         this._renderHandler();
 
@@ -128,7 +130,13 @@ class MapController extends BaseGraphicView {
         this._container.x = containerPosX;
         this._container.y = containerPosY;
 
-        this.$eventBus.emit('viewPointChange', this._getLocalViewPoint());
+        this._throttledOnViewPointChange();
+    }
+
+    _onViewPointChange() {
+        let viewPoint = this._getLocalViewPoint();
+        let viewRect = this._buildViewRectForViewPoint(viewPoint);
+        this.$eventBus.emit('viewPointChanged', viewPoint, viewRect);
     }
 
     _getCameraPosition() {
@@ -144,6 +152,19 @@ class MapController extends BaseGraphicView {
 
     _getLocalViewPoint() {
         return this._container.toLocal(new PIXI.Point(this._pixiApp.canvas.offsetWidth / 2, this._pixiApp.canvas.offsetHeight / 2));
+    }
+
+    _buildViewRectForViewPoint(viewPoint) {
+        // let viewRectWidth = window.screen.width - 30;
+        let viewRectWidth = 300;
+        // let viewRectHeight = window.screen.height - 50;
+        let viewRectHeight = 300;
+        return {
+            x: viewPoint.x - viewRectWidth / 2,
+            y: viewPoint.y - viewRectHeight / 2,
+            width: viewRectWidth,
+            height: viewRectHeight
+        }
     }
 
 }
