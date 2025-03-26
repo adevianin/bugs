@@ -4,9 +4,9 @@ import { ChunksVisibilityManager } from "@view/world/chunksVisibilityManager";
 
 class NewNestPositionPickerView extends BasePickerView {
 
-    activate(mainNest, callback) {
+    activate(mainNestPosition, callback) {
         super.activate();
-        this._mainNest = mainNest;
+        this._mainNestPosition = mainNestPosition;
         this._callback = callback;
         this._stopListenBgClick = this.$eventBus.on('bgclick', this._onBgClick.bind(this));
 
@@ -19,7 +19,7 @@ class NewNestPositionPickerView extends BasePickerView {
     }
 
     _prepareAreaData() {
-        let { area, exclusions } = this.$domain.getNestBuildableArea(this._mainNest, ChunksVisibilityManager.getVisibleChunkIds());
+        let { area, exclusions } = this.$domain.getNestBuildableArea(this._mainNestPosition, ChunksVisibilityManager.getVisibleChunkIds());
         this._updateAreaData(area, exclusions);
     }
 

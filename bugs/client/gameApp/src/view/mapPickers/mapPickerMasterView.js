@@ -41,11 +41,11 @@ class MapPickerMasterView extends BaseGraphicView {
         this._borderView.activate(this.$messages.pick_nest);
     }
 
-    _onNewNestPositionPickRequest(colonyId, callback) {
+    _onNewNestPositionPickRequest(mainNestPosition, callback) {
         if (this._newNestPositionPickerView.isActivated) {
             return;
         }
-        this._newNestPositionPickerView.activate(colonyId, point => {
+        this._newNestPositionPickerView.activate(mainNestPosition, point => {
             callback(point);
             this._deactivateAll();
         });

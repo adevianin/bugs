@@ -91,17 +91,17 @@ class ColonyService extends BaseGameService {
             return bugCorpsesInNestArea.length > 0 ? bugCorpsesInNestArea[0] : null;
     }
 
-    getNestBuildableArea(mainNestOfColony, chunkIds) {
+    getNestBuildableArea(mainNestPosition, chunkIds) {
         let area = null;
-        if (mainNestOfColony) {
-            area = { center: mainNestOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_SUB_NEST - ColonyService.SAFETY_MARGIN};
+        if (mainNestPosition) {
+            area = { center: mainNestPosition, radius: CONSTS.MAX_DISTANCE_TO_SUB_NEST - ColonyService.SAFETY_MARGIN};
         }
         
         let entities = this._world.getEntitiesFromChunks(chunkIds);
         let itemSources = entities.filter(e => e.type == EntityTypes.ITEM_SOURCE);
-        if (mainNestOfColony) {
+        if (mainNestPosition) {
             let maxBlockingDist = CONSTS.MAX_DISTANCE_TO_SUB_NEST + CONSTS.ITEM_SOURCE_BLOCKING_RADIUS;
-            itemSources = itemSources.filter(is => distance_point(is.position, mainNestOfColony.position) <= maxBlockingDist);
+            itemSources = itemSources.filter(is => distance_point(is.position, mainNestPosition) <= maxBlockingDist);
         }
         
         let exclusions = [];
