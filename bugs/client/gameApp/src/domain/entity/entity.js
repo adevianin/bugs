@@ -75,9 +75,6 @@ class Entity extends EventEmitter {
     }
 
     set chunkId(chunkId) {
-        if (this._isDied) {
-            return; //to prevent changing chunkId and hiding dead state view 
-        }
         this._chunkId = chunkId;
         this.emit('chunkIdChanged', chunkId);
     }

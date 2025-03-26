@@ -166,9 +166,11 @@ class EntityView extends BaseGraphicView {
     }
 
     _onEntityChunkIdChanged(newChunkId) {
-        this._addAnimation(EntityView.ANIMATION_TYPES.CHUNK_CHANGED, {
-            newChunkId
-        });
+        if (!this._entity.isDied) {
+            this._addAnimation(EntityView.ANIMATION_TYPES.CHUNK_CHANGED, {
+                newChunkId
+            });
+        }
     }
 
     _onDiedAnimationRequest(params) {
