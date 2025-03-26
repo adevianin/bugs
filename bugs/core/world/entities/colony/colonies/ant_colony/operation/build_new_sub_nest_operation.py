@@ -12,6 +12,7 @@ from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTyp
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.base.base_formation import BaseFormation
 from .base.fight.fight_factory import FightFactory
 from .base.fight.fight import Fight
+from core.world.settings import NEST_BLOCKING_RADIUS
 
 from typing import List
 from functools import partial
@@ -94,7 +95,11 @@ class BuildNewSubNestOperation(Operation):
     
     def _found_nest_step(self):
         if not self._building_nest or self._building_nest.is_died: #for repeating step
-            self._workers[0].found_nest(self._nest_name, False, self._building_site, self._on_nest_found)
+            nests = self._workers[0].look_around_for_nests()
+            if len(nests) == 0 or nests[0].position.dist(self._workers[0].position) > NEST_BLOCKING_RADIUS:
+                self._workers[0].found_nest(self._nest_name, False, self._building_site, self._on_nest_found)
+            else:
+                self._march_to_assemble_point_for_completion_step()
         else:
             self._build_nest_step()
     

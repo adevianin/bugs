@@ -128,6 +128,9 @@ class AntBody(LiveBody):
         items = self.look_around(types_list=[EntityTypes.ITEM], filter=big_corpse_filter, nearest_first=True)
         return items
     
+    def look_around_for_nests(self) -> List[Nest]:
+        return self.look_around(types_list=[EntityTypes.NEST], nearest_first=True)
+    
     def build_nest(self, nest: Nest):
         nest.build()
         self.events.emit('built_nest')

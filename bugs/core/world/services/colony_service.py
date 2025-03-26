@@ -9,7 +9,7 @@ from core.world.utils.point import Point
 from core.world.entities.item.items.base.item import Item 
 from core.world.entities.item.items.base.item_types import ItemTypes 
 from core.world.settings import (NEW_EGG_FOOD_COST, LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT, 
-                                 MAX_DISTANCE_TO_OPERATION_TARGET, FOOD_IN_NEW_COLONY_MAIN_NEST, ITEM_SOURCE_BLOCKING_RADIUS)
+                                 MAX_DISTANCE_TO_OPERATION_TARGET, FOOD_IN_NEW_COLONY_MAIN_NEST, ITEM_SOURCE_BLOCKING_RADIUS, NEST_BLOCKING_RADIUS)
 from core.world.utils.clean_string import clean_string
 from core.world.exceptions import GameRuleError, StateConflictError
 from core.world.entities.ant.base.ant import Ant
@@ -122,6 +122,11 @@ class ColonyService(BaseService):
         
         if len(blocking_item_sources) > 0:
             raise GameRuleError('some item sources blocking building nest')
+
+        blocking_nests = self._world.map.find_entities_near(position, NEST_BLOCKING_RADIUS, [EntityTypes.NEST])
+        
+        if len(blocking_nests) > 0:
+            raise GameRuleError('some nests blocking building nest')
         
         nest_name = clean_string(nest_name)
         
