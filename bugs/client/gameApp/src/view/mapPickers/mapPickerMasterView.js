@@ -30,11 +30,11 @@ class MapPickerMasterView extends BaseGraphicView {
         this._borderView = new BorderView(this._borderEl);
     }
 
-    _onRaidNestPickRequest(raidingColonyId, callback) {
+    _onRaidNestPickRequest(raidingColonyId, raidAreaCenter, callback) {
         if (this._raidNestPickerView.isActivated) {
             return;
         }
-        this._raidNestPickerView.activate(raidingColonyId, nest => {
+        this._raidNestPickerView.activate(raidingColonyId, raidAreaCenter, nest => {
             callback(nest);
             this._deactivateAll();
         });

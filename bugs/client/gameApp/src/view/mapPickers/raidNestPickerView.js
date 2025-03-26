@@ -4,16 +4,17 @@ import * as PIXI from 'pixi.js';
 
 class RaidNestPickerView extends BasePickerView {
 
-    activate(raidingColonyId, callback) {
+    activate(raidingColonyId, raidAreaCenter, callback) {
         super.activate();
         this._raidingColonyId = raidingColonyId;
+        this._raidAreaCenter = raidAreaCenter;
         this._callback = callback;
 
         this._updateArea();
     }
 
     _prepareAreaData() {
-        let { area, exclusions, nestPickers } = this.$domain.getRaidableArea(this._raidingColonyId, ChunksVisibilityManager.getVisibleChunkIds());
+        let { area, exclusions, nestPickers } = this.$domain.getRaidableArea(this._raidingColonyId, this._raidAreaCenter, ChunksVisibilityManager.getVisibleChunkIds());
         this._updateAreaData(area, exclusions, nestPickers);
     }
 
@@ -52,9 +53,13 @@ class RaidNestPickerView extends BasePickerView {
                 });
             pickerGraphic.eventMode = 'static';
             pickerGraphic.cursor = 'pointer';
-            pickerGraphic.on('pointertap', () => this._callback(nestPicker.nest));
+            pickerGraphic.on('pointertap', () => this._onNestPicked(nestPicker.nest));
             this._nestPickersContainer.addChild(pickerGraphic);
         }
+    }
+
+    _onNestPicked(nest) {
+        this._callback(nest);
     }
 
     _removeNestPickers() {

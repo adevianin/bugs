@@ -121,8 +121,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _onChooseNestBtnClick() {
-        //validate if main nest destroyed
-        this.$eventBus.emit('raidNestPickRequest', this._performingColony.id, this._onChoosedNestToDestroy.bind(this));
+        this.$eventBus.emit('raidNestPickRequest', this._performingColony.id, this._mainNest.position, this._onChoosedNestToDestroy.bind(this));
     }
 
     _onChoosedNestToDestroy(nest) {

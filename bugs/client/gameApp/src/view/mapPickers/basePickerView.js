@@ -21,6 +21,8 @@ class BasePickerView extends BaseGraphicView {
         }
         this._isActivated = true;
         this._stopListenSomeChunkVisibilityStateChanged = this.$eventBus.on('someChunkVisibilityStateChanged', this._onSomeChunkVisibilityStateChanged.bind(this));
+        this._stopListenNestBorn = this.$domain.events.on('nestBorn', this._onNestBorn.bind(this));
+        this._stopListenNestDied = this.$domain.events.on('nestDied', this._onNestDied.bind(this));
     }
 
     deactivate() {
@@ -29,6 +31,8 @@ class BasePickerView extends BaseGraphicView {
         }
         this._isActivated = false;
         this._stopListenSomeChunkVisibilityStateChanged();
+        this._stopListenNestBorn();
+        this._stopListenNestDied();
         this._clearArea();
     }
 
@@ -62,7 +66,12 @@ class BasePickerView extends BaseGraphicView {
         let worldSize = this.$domain.getWorldSize();
         this._notPickableArea = new PIXI.Graphics();
         this._notPickableArea
-            .rect(0, 0, worldSize[0], worldSize[1])
+            .rect(
+                -pickableCircle.radius, 
+                -pickableCircle.radius, 
+                worldSize[0] + pickableCircle.radius, 
+                worldSize[1] + pickableCircle.radius
+            ) // for some reason, the pixi.js doesn't cut if the circle goes beyond the edge of map 
             .fill({
                 color: 0xff0000,
                 alpha: 0.5,
@@ -121,6 +130,14 @@ class BasePickerView extends BaseGraphicView {
     }
 
     _onSomeChunkVisibilityStateChanged() {
+        this._updateArea();
+    }
+
+    _onNestBorn(nest) {
+        this._updateArea();
+    }
+
+    _onNestDied(nest) {
         this._updateArea();
     }
 }
