@@ -100,13 +100,13 @@ class ColonyService extends BaseGameService {
         let entities = this._world.getEntitiesFromChunks(chunkIds);
         let itemSources = entities.filter(e => e.type == EntityTypes.ITEM_SOURCE);
         if (mainNestOfColony) {
-            let maxBlockingDist = CONSTS.MAX_DISTANCE_TO_SUB_NEST + CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE;
+            let maxBlockingDist = CONSTS.MAX_DISTANCE_TO_SUB_NEST + CONSTS.ITEM_SOURCE_BLOCKING_RADIUS;
             itemSources = itemSources.filter(is => distance_point(is.position, mainNestOfColony.position) <= maxBlockingDist);
         }
         
         let exclusions = [];
         for (let itemSource of itemSources) {
-            exclusions.push({ center: itemSource.position, radius: CONSTS.ITEM_SOURCE_BLOCKING_DISTANCE + ColonyService.SAFETY_MARGIN });
+            exclusions.push({ center: itemSource.position, radius: CONSTS.ITEM_SOURCE_BLOCKING_RADIUS + ColonyService.SAFETY_MARGIN });
         }
 
         return {
