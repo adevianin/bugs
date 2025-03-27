@@ -58,6 +58,7 @@ class MarkersDemonstratorView extends BaseGraphicView {
     _clearMarkers() {
         for (let view of this._markerViews) {
             this._container.removeChild(view);
+            view.destroy();
         }
         this._markerViews = [];
     }
