@@ -66,6 +66,7 @@ class RaidNestPickerView extends BasePickerView {
     _removeNestPickers() {
         if (this._nestPickersContainer) {
             this._container.removeChild(this._nestPickersContainer);
+            this._nestPickersContainer.destroy({children: true});
             this._nestPickersContainer = null;
         }
     }

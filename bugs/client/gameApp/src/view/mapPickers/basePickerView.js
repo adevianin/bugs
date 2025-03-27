@@ -5,9 +5,9 @@ class BasePickerView extends BaseGraphicView {
 
     static AREA_LINE_WIDTH = 2;
     static EXCLUSION_AREA_LINE_COLOR = 0xff0000;
-    static ICON_RADIUS = 15;
-    static ICON_LINE_WIDTH = 4;
-    static ICON_COLOR = 0xff0000;
+    static BLOCK_ICON_RADIUS = 15;
+    static BLOCK_ICON_LINE_WIDTH = 4;
+    static BLOCK_ICON_COLOR = 0xff0000;
 
     constructor(container) {
         super();
@@ -90,6 +90,7 @@ class BasePickerView extends BaseGraphicView {
     _removePickableCircle() {
         if (this._notPickableArea) {
             this._container.removeChild(this._notPickableArea);
+            this._notPickableArea.destroy({children: true});
             this._notPickableArea = null;
         }
     }
@@ -113,9 +114,14 @@ class BasePickerView extends BaseGraphicView {
         }
         for (let exclusion of exclusions) {
             let exclusionGraphic = new PIXI.Graphics();
+            exclusionGraphic.eventMode = 'static';
+            exclusionGraphic.on('pointertap', (e) => e.stopPropagation());
 
             exclusionGraphic
                 .circle(exclusion.center.x, exclusion.center.y, exclusion.radius)
+                .fill({
+                    alpha: 0
+                })
                 .stroke({
                     color: BasePickerView.EXCLUSION_AREA_LINE_COLOR,
                     width: BasePickerView.AREA_LINE_WIDTH
@@ -123,25 +129,25 @@ class BasePickerView extends BaseGraphicView {
 
             
             exclusionGraphic
-                .circle(exclusion.center.x, exclusion.center.y, BasePickerView.ICON_RADIUS)
+                .circle(exclusion.center.x, exclusion.center.y, BasePickerView.BLOCK_ICON_RADIUS)
                 .stroke({
-                    color: BasePickerView.ICON_COLOR,
-                    width: BasePickerView.ICON_LINE_WIDTH
+                    color: BasePickerView.BLOCK_ICON_COLOR,
+                    width: BasePickerView.BLOCK_ICON_LINE_WIDTH
                 });
 
             let angle = Math.PI / 4;
             
-            let lineStartX = exclusion.center.x - BasePickerView.ICON_RADIUS * Math.cos(angle);
-            let lineStartY = exclusion.center.y - BasePickerView.ICON_RADIUS * Math.sin(angle);
-            let lineEndX = exclusion.center.x + BasePickerView.ICON_RADIUS * Math.cos(angle);
-            let lineEndY = exclusion.center.y + BasePickerView.ICON_RADIUS * Math.sin(angle);
+            let lineStartX = exclusion.center.x - BasePickerView.BLOCK_ICON_RADIUS * Math.cos(angle);
+            let lineStartY = exclusion.center.y - BasePickerView.BLOCK_ICON_RADIUS * Math.sin(angle);
+            let lineEndX = exclusion.center.x + BasePickerView.BLOCK_ICON_RADIUS * Math.cos(angle);
+            let lineEndY = exclusion.center.y + BasePickerView.BLOCK_ICON_RADIUS * Math.sin(angle);
 
             exclusionGraphic
                 .moveTo(lineStartX, lineStartY)
                 .lineTo(lineEndX, lineEndY)
                 .stroke({
-                    color: BasePickerView.ICON_COLOR,
-                    width: BasePickerView.ICON_LINE_WIDTH
+                    color: BasePickerView.BLOCK_ICON_COLOR,
+                    width: BasePickerView.BLOCK_ICON_LINE_WIDTH
                 });
             this._exclusionsContainer.addChild(exclusionGraphic);
         }
@@ -150,6 +156,7 @@ class BasePickerView extends BaseGraphicView {
     _removeExclusions() {
         if (this._exclusionsContainer) {
             this._container.removeChild(this._exclusionsContainer);
+            this._exclusionsContainer.destroy({children: true});
             this._exclusionsContainer = null;
         }
     }
