@@ -45,6 +45,7 @@ class EntityView extends BaseGraphicView {
 
     remove() {
         this._entityContainer.removeFromParent();
+        this._entityContainer.destroy({children: true});
         this._stopListenChunkVisibilityChange();
         this._stopListenChunkIdChanged();
         this._stopListenDiedAnimationRequest();

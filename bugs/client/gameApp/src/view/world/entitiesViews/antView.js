@@ -70,6 +70,7 @@ class AntView extends LiveEntityView {
     _removePickedItemView() {
         if (this._pickedItemSprite) {
             this._pickedItemContainer.removeChild(this._pickedItemSprite);
+            this._pickedItemSprite.destroy();
             this._pickedItemSprite = null;
         }
     }
