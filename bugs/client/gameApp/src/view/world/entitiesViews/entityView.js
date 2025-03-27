@@ -22,7 +22,8 @@ class EntityView extends BaseGraphicView {
         this._entityContainer = new PIXI.Container();
         this._parentContainer.addChild(this._entityContainer);
 
-        document.addEventListener('visibilitychange', this._onGameActivityChange.bind(this));
+        this._boundOnGameActivityChange = this._onGameActivityChange.bind(this);
+        document.addEventListener('visibilitychange', this._boundOnGameActivityChange);
         this._stopListenChunkIdChanged = this._entity.on('chunkIdChanged', this._onEntityChunkIdChanged.bind(this));
         this._stopListenDiedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_DIED}`, this._onDiedAnimationRequest.bind(this));
     }
@@ -49,6 +50,7 @@ class EntityView extends BaseGraphicView {
         this._stopListenChunkVisibilityChange();
         this._stopListenChunkIdChanged();
         this._stopListenDiedAnimationRequest();
+        document.removeEventListener('visibilitychange', this._boundOnGameActivityChange);
     }
 
     _toggleEntityVisibility(isVisible) {
