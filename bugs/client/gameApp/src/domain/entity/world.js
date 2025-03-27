@@ -1,6 +1,7 @@
 import { EntityTypes } from "../enum/entityTypes";
 import { CONSTS } from "@domain/consts";
 import { Chunk } from "./chunk";
+import { distance_point } from "@utils/distance";
 
 class World {
     constructor(mainEventBus, climate) {
@@ -169,6 +170,32 @@ class World {
         }
 
         return entities;
+    }
+
+    getEntitiesNear(position, radius) {
+        let searchRect = { 
+            x: position.x - radius, 
+            y: position.y - radius, 
+            width: 2*radius, 
+            height: 2*radius 
+        };
+        let seacrhingChunkIds = [];
+        for (let chunkId in this._chunks) {
+            let chunk = this._chunks[chunkId];
+            if (chunk.intersectsRect(searchRect.x, searchRect.y, searchRect.width, searchRect.height)) {
+                seacrhingChunkIds.push(chunkId);
+            }
+        }
+
+        let entities = this.getEntitiesFromChunks(seacrhingChunkIds);
+        let foundEntities = [];
+        for (let entity of entities) {
+            if (distance_point(entity.position, position) <= radius) {
+                foundEntities.push(entity);
+            }
+        }
+
+        return foundEntities;
     }
 
     _splitOnChunks() {

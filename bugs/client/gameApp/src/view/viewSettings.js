@@ -2,7 +2,7 @@ const VIEW_SETTINGS = {
     showAntSightDistanceView: false,
     showAntEntitySearchingRect: false,
     showMapChunkGrid: false,
-    showViewChunkGrid: false,
+    showViewChunkGrid: true,
     showPlayerViewRect: false,
     showItemAreaDot: false
 }

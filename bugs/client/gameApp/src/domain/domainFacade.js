@@ -123,12 +123,12 @@ class DomainFacade {
         return this._colonyService.validateNewNestOperationConditions(colonyId);
     }
 
-    getNestBuildableArea(mainNestPosition, chunkIds) {
-        return this._colonyService.getNestBuildableArea(mainNestPosition, chunkIds);
+    validateBuildingNestPosition(position) {
+        return this._colonyService.validateBuildingNestPosition(position);
     }
 
-    getRaidableArea(raidingColonyId, raidAreaCenter, chunkIds) {
-        return this._colonyService.getRaidableArea(raidingColonyId, raidAreaCenter, chunkIds);
+    getNestBuildableArea(mainNestPosition, chunkIds) {
+        return this._colonyService.getNestBuildableArea(mainNestPosition, chunkIds);
     }
 
     buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
@@ -137,6 +137,10 @@ class DomainFacade {
 
     validateDestroyNestOperationConditions(colonyId) {
         return this._colonyService.validateDestroyNestOperationConditions(colonyId);
+    }
+
+    getRaidableArea(raidingColonyId, raidAreaCenter, chunkIds) {
+        return this._colonyService.getRaidableArea(raidingColonyId, raidAreaCenter, chunkIds);
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {

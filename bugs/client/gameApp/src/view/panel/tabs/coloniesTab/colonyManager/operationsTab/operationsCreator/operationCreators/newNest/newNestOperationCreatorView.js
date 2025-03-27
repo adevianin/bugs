@@ -87,10 +87,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _validateBuildingPosition() {
-        if (!this._buildingPosition.value) {
-            return GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED;
-        }
-        return null;
+        return this.$domain.validateBuildingNestPosition(this._buildingPosition.value);
     }
 
     _renderBuildingPositionError(errId) {

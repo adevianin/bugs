@@ -159,6 +159,20 @@ class ColonyService extends BaseGameService {
         return null;
     }
 
+    validateBuildingNestPosition(position) {
+        if (!position) {
+            return GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED;
+        }
+
+        let nearEntities = this._world.getEntitiesNear(position, CONSTS.NEST_BLOCKING_RADIUS + ColonyService.SAFETY_MARGIN);
+        let nearNests = nearEntities.filter(e => e.type == EntityTypes.NEST);
+        if (nearNests.length > 0) {
+            return GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_BLOCKED;
+        }
+
+        return null;
+    }
+
     validateDestroyNestOperationConditions(colonyId) {
         let queen = this._world.getQueenOfColony(colonyId);
         if (!queen) {
