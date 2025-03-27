@@ -124,7 +124,7 @@ class ColonyService extends BaseGameService {
     getRaidableArea(raidingColonyId, raidAreaCenter, chunkIds) {
         let entities = this._world.getEntitiesFromChunks(chunkIds);
         let nests = entities.filter(e => e.type == EntityTypes.NEST);
-        let area = { center: raidAreaCenter, radius: CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET - ColonyService.SAFETY_MARGIN};
+        let area = { center: raidAreaCenter, radius: CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET - CONSTS.NEST_BLOCKING_RADIUS - ColonyService.SAFETY_MARGIN};
 
         let nestPickers = [];
         let exclusions = [];

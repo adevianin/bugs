@@ -4,6 +4,8 @@ import * as PIXI from 'pixi.js';
 
 class RaidNestPickerView extends BasePickerView {
 
+    static RAIDABLE_NEST_AREA_LINE_COLOR = 0x00ff00;
+
     activate(raidingColonyId, raidAreaCenter, callback) {
         super.activate();
         this._raidingColonyId = raidingColonyId;
@@ -47,9 +49,8 @@ class RaidNestPickerView extends BasePickerView {
                     alpha: 0,
                 })
                 .stroke({
-                    color: 0x0000ff,
-                    alpha: 0.5,
-                    width: 3
+                    color: RaidNestPickerView.RAIDABLE_NEST_AREA_LINE_COLOR,
+                    width: RaidNestPickerView.AREA_LINE_WIDTH
                 });
             pickerGraphic.eventMode = 'static';
             pickerGraphic.cursor = 'pointer';

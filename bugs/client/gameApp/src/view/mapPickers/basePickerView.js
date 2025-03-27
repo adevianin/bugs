@@ -3,6 +3,12 @@ import * as PIXI from 'pixi.js';
 
 class BasePickerView extends BaseGraphicView {
 
+    static AREA_LINE_WIDTH = 2;
+    static EXCLUSION_AREA_LINE_COLOR = 0xff0000;
+    static ICON_RADIUS = 15;
+    static ICON_LINE_WIDTH = 4;
+    static ICON_COLOR = 0xff0000;
+
     constructor(container) {
         super();
         this._container = container;
@@ -106,14 +112,38 @@ class BasePickerView extends BaseGraphicView {
             this._renderCircleMaskFor(this._exclusionsContainer, circleMask);
         }
         for (let exclusion of exclusions) {
-            let excelusionGraphic = new PIXI.Graphics();
-            excelusionGraphic
+            let exclusionGraphic = new PIXI.Graphics();
+
+            exclusionGraphic
                 .circle(exclusion.center.x, exclusion.center.y, exclusion.radius)
-                .fill({
-                    color: 0xff0000,
-                    alpha: 0.5,
+                .stroke({
+                    color: BasePickerView.EXCLUSION_AREA_LINE_COLOR,
+                    width: BasePickerView.AREA_LINE_WIDTH
                 });
-            this._exclusionsContainer.addChild(excelusionGraphic);
+
+            
+            exclusionGraphic
+                .circle(exclusion.center.x, exclusion.center.y, BasePickerView.ICON_RADIUS)
+                .stroke({
+                    color: BasePickerView.ICON_COLOR,
+                    width: BasePickerView.ICON_LINE_WIDTH
+                });
+
+            let angle = Math.PI / 4;
+            
+            let lineStartX = exclusion.center.x - BasePickerView.ICON_RADIUS * Math.cos(angle);
+            let lineStartY = exclusion.center.y - BasePickerView.ICON_RADIUS * Math.sin(angle);
+            let lineEndX = exclusion.center.x + BasePickerView.ICON_RADIUS * Math.cos(angle);
+            let lineEndY = exclusion.center.y + BasePickerView.ICON_RADIUS * Math.sin(angle);
+
+            exclusionGraphic
+                .moveTo(lineStartX, lineStartY)
+                .lineTo(lineEndX, lineEndY)
+                .stroke({
+                    color: BasePickerView.ICON_COLOR,
+                    width: BasePickerView.ICON_LINE_WIDTH
+                });
+            this._exclusionsContainer.addChild(exclusionGraphic);
         }
     }
 
