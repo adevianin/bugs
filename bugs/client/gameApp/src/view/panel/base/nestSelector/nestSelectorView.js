@@ -1,4 +1,5 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class NestSelectorView extends BaseGameHTMLView {
 
@@ -60,7 +61,7 @@ class NestSelectorView extends BaseGameHTMLView {
         if (!this._canBeEmpty) {
             optionEl.setAttribute('disabled', '');
         }
-        optionEl.innerHTML = this.$messages.nest_not_choosed;
+        optionEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_SELECTOR_NOT_SELECTED);
         this._el.append(optionEl);
     }
 

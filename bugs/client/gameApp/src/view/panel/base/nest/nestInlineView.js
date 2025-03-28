@@ -1,6 +1,7 @@
 import './style.css'
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import nestInlineTmpl from './nestInlineTmpl.html';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class NestInlineView extends BaseGameHTMLView {
 
@@ -35,7 +36,7 @@ class NestInlineView extends BaseGameHTMLView {
         this._noNestPlaceholderEl = this._el.querySelector('[data-no-nest-placeholder]');
         this._nestDiedErrorEl = this._el.querySelector('[data-nest-died-error-container]');
 
-        this._noNestPlaceholderEl.innerHTML = this.$messages.not_specified;
+        this._noNestPlaceholderEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_INLINE_NOT_SPECIFIED);
     }
 
     _renderNest() {
@@ -54,7 +55,7 @@ class NestInlineView extends BaseGameHTMLView {
     }
 
     _renderNestDiedState() {
-        this._nestDiedErrorEl.innerHTML = this._nest && this._nest.isDied ? `(${this.$messages.nest_destroyed})` : '';
+        this._nestDiedErrorEl.innerHTML = this._nest && this._nest.isDied ? `(${this.$mm.get(GAME_MESSAGE_IDS.NEST_INLINE_DESTROYED)})` : '';
     }
 
     _onSomeNestDied(nest) {

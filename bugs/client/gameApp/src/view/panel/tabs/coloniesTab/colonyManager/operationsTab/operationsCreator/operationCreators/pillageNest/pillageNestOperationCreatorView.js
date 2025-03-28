@@ -7,17 +7,18 @@ import { IntInputView } from "@view/panel/base/intInput/intInputView";
 import { NestInlineView } from "@view/panel/base/nest/nestInlineView";
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
+import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 
 class PillageNestOperationCreatorView extends BaseOperationCreatorView {
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._nestForLoot = null;
-        this._queenOfColony = this.$domain.getQueenOfColony(this._performingColony.id);
+        this._mainNest = this.$domain.getMainNestOfColony(this._performingColony.id);
+        this._nestToPillage = null;
 
         this._render();
 
-        this._checkQueenExisting();
+        this._checkOperationConditions();
 
         this._chooseNestToPillageBtn.addEventListener('click', this._onChooseNestToPillageBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
@@ -40,7 +41,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         this._nestToPillageErrorContainer = this._el.querySelector('[data-nest-to-pillage-err]');
 
         this._nestForLootErrContainer = this._el.querySelector('[data-nest-for-loot-err]');
-        this._nestForLootSelector = new NestSelectorView(this._el.querySelector('[data-nest-selector]'), this._performingColony.id)
+        this._nestForLootSelector = new NestSelectorView(this._el.querySelector('[data-nest-selector]'), this._performingColony.id);
 
         let warriorsCountInput = this._el.querySelector('[data-warriors-count]');
         let warriorsCountErrContainer = this._el.querySelector('[data-warriors-count-err]');
@@ -60,12 +61,23 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         this._showMarkers();
     }
 
-    _checkQueenExisting() {
-        if (!this._queenOfColony) {
-            this._renderMainError('CANT_PILLAGE_NEST_WITHOUT_LIVING_QUEEN');
-            this._chooseNestToPillageBtn.disabled = true;
-            this._startBtn.disabled = true;
-        }
+    _validateOperationConditions() {
+        return this.$domain.validatePillageNestOperationConditions(this._performingColony.id);
+    }
+
+    _renderOperationConditionsErr(condErr) {
+        this._renderMainError(condErr);
+        this._chooseNestToPillageBtn.disabled = !!condErr;
+        this._startBtn.disabled = !!condErr;
+    }
+
+    _renderMainError(messageId) {
+        this._errorContainerEl.innerHTML = messageId ? this.$mm.get(messageId) : '';
+    }
+
+    _checkOperationConditions() {
+        let condErr = this._validateOperationConditions();
+        this._renderOperationConditionsErr(condErr);
     }
 
     _onNestForLootChanged() {
@@ -75,15 +87,13 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _onChooseNestToPillageBtnClick() {
-        let pickableCircle = { center: this._queenOfColony.position, radius: CONSTS.MAX_DISTANCE_TO_OPERATION_TARGET };
-        this.$eventBus.emit('nestPickRequest', this._performingColony.id, pickableCircle, this._onNestToPillageChoosed.bind(this));
-    }
-
-    _onNestToPillageChoosed(nestToPillage) {
-        this._nestToPillageView.value = nestToPillage;
-        this._showMarkers();
-        let nestToPillageError = this._validateChoosedNestToPillage();
-        this._renderNestToPillageError(nestToPillageError);
+        this.$eventBus.emit('raidNestPickRequest', this._performingColony.id, this._mainNest.position, (nest) => {
+            this._nestToPillageView.value = nest;
+            this._nestToPillage = nest;
+            this._showMarkers();
+            let nestToPillageError = this._validateChoosedNestToPillage();
+            this._renderNestToPillageError(nestToPillageError);
+        });
     }
 
     _validate() {
@@ -109,8 +119,8 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
             isError = true;
         }
 
-        let condErr = this.$domain.validatePillageNestOperationConditions(this._performingColony.id);
-        this._renderMainError(condErr);
+        let condErr = this._validateOperationConditions();
+        this._renderOperationConditionsErr(condErr);
         if (condErr) {
             isError = true;
         }
@@ -119,27 +129,31 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _validateChoosedNestToPillage() {
-        if (!this._nestToPillageView.value) {
-            return this.$messages.choose_nest_for_pillage;
+        if (!this._nestToPillage) {
+            return GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NEST_TO_PILLAGE_NEEDED;
+        }
+
+        if (this._nestToPillage.isDied) {
+            return GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NOT_DESTROYED_NEST_TO_PILLAGE_NEEDED;
         }
 
         return null;
     }
 
-    _renderNestToPillageError(errText) {
-        this._nestToPillageErrorContainer.innerHTML = errText || '';
+    _renderNestToPillageError(errId) {
+        this._nestToPillageErrorContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
     _validateChoosedNestForLoot() {
         if (!this._nestForLootSelector.nestId) {
-            return this.$messages.choose_nest_for_loot;
+            return GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NEST_FOR_LOOT_NEEDED;
         }
 
         return null;
     }
 
-    _renderNestForLootError(errText) {
-        this._nestForLootErrContainer.innerHTML = errText || '';
+    _renderNestForLootError(errId) {
+        this._nestForLootErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
     async _onStartBtnClick() {
@@ -150,7 +164,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         let warriorsCount = this._warriorsCountView.value;
         let workersCount = this._workersCountView.value;
         let nestForLootId = this._nestForLootSelector.nestId;
-        let nestToPillageId = this._nestToPillageView.value.id;
+        let nestToPillageId = this._nestToPillage.id;
         try {
             await this.$domain.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount);
             this._onDone();
@@ -158,7 +172,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
             if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {
-                this._renderMainError('SOMETHING_WENT_WRONG');
+                this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         }
     }
@@ -166,8 +180,8 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
     _showMarkers() {
         let markers = [];
 
-        if (this._nestToPillageView.value) {
-            markers.push(this.$domain.buildMarker(MarkerTypes.PILLAGE, this._nestToPillageView.value.position));
+        if (this._nestToPillage) {
+            markers.push(this.$domain.buildMarker(MarkerTypes.PILLAGE, this._nestToPillage.position));
         }
 
         if (this._nestForLootSelector.nestId) {
@@ -176,10 +190,6 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         }
 
         this._demonstrateMarkersRequest(markers);
-    }
-
-    _renderMainError(messageId) {
-        this._errorContainerEl.innerHTML = messageId ? this.$messages[messageId] : '';
     }
 
 }

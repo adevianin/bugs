@@ -27,6 +27,16 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.DESTROY_NEST_OPER_NOT_DESTROYED_NEST_NEEDED]: 'Мурахам треба вказати не зруйноване гніздо для атаки.',
     [GAME_MESSAGE_IDS.DESTROY_NEST_OPER_TOO_FEW_ANTS]: 'Занадто мало мурах для атаки.',
 
+    [GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_CANT_PILLAGE_WITHOUT_QUEEN]: 'Без королеви мурахи не можуть грабувати інші гнізда.',
+    [GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NEST_TO_PILLAGE_NEEDED]: 'Мурахам треба вказати гніздо для грабування.',
+    [GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NOT_DESTROYED_NEST_TO_PILLAGE_NEEDED]: 'Мурахам треба вказати не зруйноване гніздо для грабування.',
+    [GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NEST_FOR_LOOT_NEEDED]: 'Мурахам треба вказати гніздо для здобичі.',
+
+    [GAME_MESSAGE_IDS.NEST_INLINE_NOT_SPECIFIED]: 'не задано',
+    [GAME_MESSAGE_IDS.NEST_INLINE_DESTROYED]: 'зруйновано',
+
+    [GAME_MESSAGE_IDS.NEST_SELECTOR_NOT_SELECTED]: 'не вибрано',
+
     [GAME_MESSAGE_IDS.INT_INPUT_MIN_MAX]: '(мін. {0}, макс. {1})!!',
     [GAME_MESSAGE_IDS.INT_INPUT_MIN]: '(мін. {0})!!',
     [GAME_MESSAGE_IDS.INT_INPUT_MAX]: '(макс. {0})!!',

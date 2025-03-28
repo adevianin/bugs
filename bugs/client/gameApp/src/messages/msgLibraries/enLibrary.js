@@ -27,6 +27,16 @@ const EN_LIBRARY = {
     [GAME_MESSAGE_IDS.DESTROY_NEST_OPER_NOT_DESTROYED_NEST_NEEDED]: 'Ants need an intact nest to be specified for the attack.',
     [GAME_MESSAGE_IDS.DESTROY_NEST_OPER_TOO_FEW_ANTS]: 'Too few ants to attack.',
 
+    [GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_CANT_PILLAGE_WITHOUT_QUEEN]: 'Without a queen, ants cannot pillage other nests.',
+    [GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NEST_TO_PILLAGE_NEEDED]: 'Ants need a nest to be specified for raiding.',
+    [GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NOT_DESTROYED_NEST_TO_PILLAGE_NEEDED]: 'Ants need an intact nest to be specified for raiding.',
+    [GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NEST_FOR_LOOT_NEEDED]: 'Ants need a nest to be specified for loot.',
+
+    [GAME_MESSAGE_IDS.NEST_INLINE_NOT_SPECIFIED]: 'not specified',
+    [GAME_MESSAGE_IDS.NEST_INLINE_DESTROYED]: 'destroyed',
+
+    [GAME_MESSAGE_IDS.NEST_SELECTOR_NOT_SELECTED]: 'not selected',
+
     [GAME_MESSAGE_IDS.INT_INPUT_MIN_MAX]: '(min. {0}, max. {1})',
     [GAME_MESSAGE_IDS.INT_INPUT_MIN]: '(min. {0})',
     [GAME_MESSAGE_IDS.INT_INPUT_MAX]: '(max. {0})',

@@ -207,7 +207,7 @@ class ColonyService extends BaseGameService {
     validatePillageNestOperationConditions(colonyId) {
         let queen = this._world.getQueenOfColony(colonyId);
         if (!queen) {
-            return 'CANT_PILLAGE_NEST_WITHOUT_LIVING_QUEEN';
+            return GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_CANT_PILLAGE_WITHOUT_QUEEN;
         }
 
         return null;
