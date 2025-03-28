@@ -14,8 +14,8 @@ class QueenSelectorView extends BaseGameHTMLView {
 
         this.$domain.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
         this.$domain.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
-        this.$domain.events.on('antDied', this._onSomeoneDied.bind(this));
-        this.$domain.events.on('antBorn', this._onSomeoneBorn.bind(this));
+        this.$domain.events.on('antDied', this._onAntDied.bind(this));
+        this.$domain.events.on('antBorn', this._onAntBorn.bind(this));
 
         this._prevBtn.addEventListener('click', this._onPrevBtnClick.bind(this));
         this._nextBtn.addEventListener('click', this._onNextBtnClick.bind(this));
@@ -144,20 +144,17 @@ class QueenSelectorView extends BaseGameHTMLView {
         }
     }
 
-    _onSomeoneDied(someone) {
-        if (this.$domain.isMyAnt(someone)) {
+    _onAntDied(ant) {
+        if (this.$domain.isMyAnt(ant)) {
             this._renderBornAntaraBtnState();
-            if (this._checkIdInQueensList(someone.id)) {
-                let isDiedSelectedQueen = this.queenId == someone.id;
-                if (!this.isVisible() || !isDiedSelectedQueen) {
-                    this._removeQueen(someone);
-                }
+            if (this._checkIdInQueensList(ant.id)) {
+                this._removeQueen(ant);
             }
         }
     }
 
-    _onSomeoneBorn(someone) {
-        if (this.$domain.isMyAnt(someone)) {
+    _onAntBorn(ant) {
+        if (this.$domain.isMyAnt(ant)) {
             this._renderBornAntaraBtnState();
         }
     }

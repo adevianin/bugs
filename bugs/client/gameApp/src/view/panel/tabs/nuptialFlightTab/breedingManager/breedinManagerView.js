@@ -130,6 +130,8 @@ class BreedingManagerView extends BaseGameHTMLView {
         this.$eventBus.emit('newNestPositionPickRequest', null, (point) => { 
             this._nestPositionView.value = point;
             this._showMarker();
+            let nestPositionErrId = this._validateNestPosition();
+            this._renderNestPositionError(nestPositionErrId);
         });
     }
 

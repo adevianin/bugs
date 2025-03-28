@@ -9,8 +9,6 @@ class QueenProfileView extends BaseGameHTMLView {
         super(el);
 
         this._render();
-
-        this.$domain.events.on('entityDied', this._onSomeoneDied.bind(this));
     }
 
     showQueen(queen) {
@@ -18,7 +16,6 @@ class QueenProfileView extends BaseGameHTMLView {
         this._queenStatsView.setStats(queen.stats);
         this._queenGenomeView.setGenome(queen.genome);
         this._nameEl.innerHTML = queen.name;
-        this._renderIsDied();
     }
 
     _render() {
@@ -27,21 +24,10 @@ class QueenProfileView extends BaseGameHTMLView {
         this._queenStatsEl = this._el.querySelector('[data-queen-stats]');
         this._queenGenomeEl = this._el.querySelector('[data-queen-genome]');
         this._nameEl = this._el.querySelector('[data-name]');
-        this._isDiedMarkerEl = this._el.querySelector('[data-is-died-marker]');
 
         this._queenStatsView = new AntStatsView();
         this._queenStatsEl.appendChild(this._queenStatsView.el);
         this._queenGenomeView = new GenomeInlineView(this._queenGenomeEl);
-    }
-
-    _renderIsDied() {
-        this._isDiedMarkerEl.classList.toggle('g-hidden', !this._queen.isDied);
-    }
-
-    _onSomeoneDied(someone) {
-        if (this._queen && someone.id == this._queen.id) {
-            this._renderIsDied();
-        }
     }
 
 }
