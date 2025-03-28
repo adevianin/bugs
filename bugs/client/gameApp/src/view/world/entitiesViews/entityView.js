@@ -2,6 +2,7 @@ import { BaseGraphicView } from "@view/base/baseGraphicView";
 import * as PIXI from 'pixi.js';
 import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
 import { ChunksVisibilityManager } from "../chunksVisibilityManager";
+import { VIEW_SETTINGS } from "@view/viewSettings";
 
 class EntityView extends BaseGraphicView {
 
@@ -37,7 +38,7 @@ class EntityView extends BaseGraphicView {
     }
 
     get _isFastAnimationMode() {
-        return !this._isCurrentChunkVisible;
+        return !this._isCurrentChunkVisible || VIEW_SETTINGS.isFastAnimations;
     }
 
     get _isGameActive() {
