@@ -171,7 +171,7 @@ class WorldFacade:
 
     @player_command
     def born_new_antara_command(self, user_id: int):
-        self._player_service.born_new_antara(user_id)
+        self._nuptial_environment_service.born_new_antara(user_id)
 
     @player_command
     def fly_nuptial_flight_command(self, user_id: int, ant_id: int):

@@ -57,6 +57,6 @@ class QueenAntBody(AntBody):
         self.memory.save_flag(self.MemoryKeys.IS_IN_NUPTIAL_FLIGHT, True)
 
     def fly_nuptial_flight_back(self, landing_position: Point):
-        self._position = landing_position
+        self.position = landing_position
         self.memory.save_flag(self.MemoryKeys.IS_IN_NUPTIAL_FLIGHT, False)
         self.events.emit('flew_nuptial_flight_back', self._position)

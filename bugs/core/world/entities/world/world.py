@@ -190,9 +190,16 @@ class World():
             self._event_bus.emit('season_changed', season)
         self._current_season = season
 
-    def _my_test_code(self, id):
+    def _my_test_code(self):
         from core.world.utils.point import Point
         from core.world.entities.nest.nest import Nest
-        ant1: Ant = self._map.get_entity_by_id(id)
-        ant1.walk_to(Point(930,1843))
+        ants = self._map.get_entities(entity_types=[EntityTypes.ANT], filter=lambda ant: ant.owner_id == 2)
+        for ant in ants:
+            ant.simple_die()
+
+    def _my_test_code2(self):
+        from core.world.utils.point import Point
+        from core.world.entities.nest.nest import Nest
+        ant1: Ant = self._map.get_entity_by_id(271)
+        ant1.walk_to(Point(3146,3400))
 

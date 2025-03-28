@@ -53,10 +53,9 @@ class NuptialEnvironment():
         
         return None
     
-    def born_antara(self, on_antara_born: Callable):
+    def born_antara(self, position: Point, on_antara_born: Callable):
         genome = self._specie.generate_antara_genome()
         larva = Larva.build_new('Antara', AntTypes.QUEEN, genome)
-        position = Point(-100, -100)
         self._event_bus.emit('ant_birth_request', AntBirthFromSystemRequest(larva, self._owner_id, position, callback=on_antara_born))
 
     def handle_season(self, season: SeasonTypes):
