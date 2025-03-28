@@ -22,8 +22,8 @@ class EntityView extends BaseGraphicView {
         this._entityContainer = new PIXI.Container();
         this._parentContainer.addChild(this._entityContainer);
 
-        this._boundOnGameActivityChange = this._onGameActivityChange.bind(this);
-        document.addEventListener('visibilitychange', this._boundOnGameActivityChange);
+        // this._boundOnGameActivityChange = this._onGameActivityChange.bind(this);
+        // document.addEventListener('visibilitychange', this._boundOnGameActivityChange);
         this._stopListenChunkIdChanged = this._entity.on('chunkIdChanged', this._onEntityChunkIdChanged.bind(this));
         this._stopListenDiedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_DIED}`, this._onDiedAnimationRequest.bind(this));
     }
@@ -50,7 +50,7 @@ class EntityView extends BaseGraphicView {
         this._stopListenChunkVisibilityChange();
         this._stopListenChunkIdChanged();
         this._stopListenDiedAnimationRequest();
-        document.removeEventListener('visibilitychange', this._boundOnGameActivityChange);
+        // document.removeEventListener('visibilitychange', this._boundOnGameActivityChange);
     }
 
     _toggleEntityVisibility(isVisible) {
@@ -59,9 +59,6 @@ class EntityView extends BaseGraphicView {
     }
 
     _addAnimation(type, params = {}) {
-        if (!this._isGameActive) {
-            return;
-        }
         this._animQueue.push({type, params});
         this._tryPlayNextAnim();
     }
@@ -177,20 +174,16 @@ class EntityView extends BaseGraphicView {
     }
 
     _onDiedAnimationRequest(params) {
-        if (this._isGameActive) {
-            this._addAnimation(EntityView.ANIMATION_TYPES.DIED, params);
-        } else {
-            this.remove(); // because after game activity change method _renderEntityState cant remove view
-        }
+        this._addAnimation(EntityView.ANIMATION_TYPES.DIED, params);
     }
 
-    _onGameActivityChange() {
-        if (!this._isGameActive) {
-            this._animQueue = [];
-        } else {
-            this._renderEntityState();
-        }
-    }
+    // _onGameActivityChange() {
+    //     if (!this._isGameActive) {
+    //         this._animQueue = [];
+    //     } else {
+    //         this._renderEntityState();
+    //     }
+    // }
     
 }
 
