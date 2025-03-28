@@ -6,6 +6,7 @@ import { CONSTS } from "@domain/consts";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
+import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 
 class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
 
@@ -59,14 +60,14 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
 
     _validateNest() {
         if (!this._nestSelector.nestId) {
-            return this.$messages.choose_nest_to_fortificate;
+            return GAME_MESSAGE_IDS.BUILD_FORTIFICATION_OPER_NEST_NEEDED;
         }
 
         return null;
     }
 
-    _renderNestError(errorText) {
-        this._nestErrContainer.innerHTML = errorText || '';
+    _renderNestError(errId) {
+        this._nestErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
     async _onStartBtnClick() {
@@ -83,7 +84,7 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
             if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {
-                this._renderMainError('SOMETHING_WENT_WRONG');
+                this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         }
     }
