@@ -79,8 +79,8 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
             isError = true;
         }
 
-        let condErr = this.$domain.validateDestroyNestOperationConditions(this._performingColony.id);
-        this._renderMainError(condErr);
+        let condErr = this._validateOperationConditions();
+        this._renderOperationConditionsErr(condErr);
         if (condErr) {
             isError = true;
         }
