@@ -38,6 +38,9 @@ const EN_LIBRARY = {
 
     [GAME_MESSAGE_IDS.BUILD_FORTIFICATION_OPER_NEST_NEEDED]: 'Ants need a nest to be specified for constructing protection for their colony.',
 
+    [GAME_MESSAGE_IDS.BRING_BUG_OPER_NEST_NEEDED]: 'Ants need a nest to be specified where a delicious beetle\'s corpse was spotted.',
+    [GAME_MESSAGE_IDS.BRING_BUG_OPER_NO_BUG_FOUND]: 'The beetle near the specified nest has not been found.',
+
     [GAME_MESSAGE_IDS.NEST_INLINE_NOT_SPECIFIED]: 'not specified',
     [GAME_MESSAGE_IDS.NEST_INLINE_DESTROYED]: 'destroyed',
 

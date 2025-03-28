@@ -38,6 +38,9 @@ const UK_LIBRARY = {
 
     [GAME_MESSAGE_IDS.BUILD_FORTIFICATION_OPER_NEST_NEEDED]: 'Мурахам треба вказати гніздо для будування захисту.',
 
+    [GAME_MESSAGE_IDS.BRING_BUG_OPER_NEST_NEEDED]: 'Мурахам треба вказати гніздо де помічений смачний труп жука.',
+    [GAME_MESSAGE_IDS.BRING_BUG_OPER_NO_BUG_FOUND]: 'Жука біля вказаного гнізда не знайдено.',
+
     [GAME_MESSAGE_IDS.NEST_INLINE_NOT_SPECIFIED]: 'не задано',
     [GAME_MESSAGE_IDS.NEST_INLINE_DESTROYED]: 'зруйновано',
 

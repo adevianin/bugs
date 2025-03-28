@@ -4,6 +4,7 @@ import { NestSelectorView } from "@view/panel/base/nestSelector";
 import { MarkerTypes } from "@domain/enum/markerTypes";
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
+import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 
 class BringBugOperationCreatorView extends BaseOperationCreatorView {
 
@@ -55,26 +56,26 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
 
     _validateNest() {
         if (!this._nestSelector.nestId) {
-            return this.$messages.choose_nest_with_bug_nearby;
+            return GAME_MESSAGE_IDS.BRING_BUG_OPER_NEST_NEEDED;
         }
 
         return null
     }
 
-    _renderNestError(errorText) {
-        this._nestErrContainer.innerHTML = errorText || '';
+    _renderNestError(errId) {
+        this._nestErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
     _validateClosestBugCorpse() {
         if (this._nestSelector.nestId && (!this._closestBugCorpse || this._closestBugCorpse.isDied)) {
-            return this.$messages.bug_corpse_not_found;
+            return GAME_MESSAGE_IDS.BRING_BUG_OPER_NO_BUG_FOUND;
         }
 
         return null;
     }
 
-    _renderBugCorpseError(errText) {
-        this._bugCorpseErrContainer.innerHTML = errText || '';
+    _renderBugCorpseError(errId) {
+        this._bugCorpseErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
     async _onStartBtnClick() {
@@ -89,7 +90,7 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
             if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {
-                this._renderMainError('SOMETHING_WENT_WRONG');
+                this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         }
     }
