@@ -22,6 +22,11 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_BLOCKED]: 'Позиція для будування гнізда вже занята.',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_MORE_SUB_NESTS]: 'Досягнуто максимальну кількість гнізд сателітів.!!',
 
+    [GAME_MESSAGE_IDS.DESTROY_NEST_OPER_CANT_ATTACK_WITHOUT_QUEEN]: 'Без королеви мурахи не можуть атакувати інші гнізда.',
+    [GAME_MESSAGE_IDS.DESTROY_NEST_OPER_NEST_NEEDED]: 'Мурахам треба вказати гніздо для атаки.',
+    [GAME_MESSAGE_IDS.DESTROY_NEST_OPER_NOT_DESTROYED_NEST_NEEDED]: 'Мурахам треба вказати не зруйноване гніздо для атаки.',
+    [GAME_MESSAGE_IDS.DESTROY_NEST_OPER_TOO_FEW_ANTS]: 'Занадто мало мурах для атаки.',
+
     [GAME_MESSAGE_IDS.INT_INPUT_MIN_MAX]: '(мін. {0}, макс. {1})!!',
     [GAME_MESSAGE_IDS.INT_INPUT_MIN]: '(мін. {0})!!',
     [GAME_MESSAGE_IDS.INT_INPUT_MAX]: '(макс. {0})!!',

@@ -198,7 +198,7 @@ class ColonyService extends BaseGameService {
     validateDestroyNestOperationConditions(colonyId) {
         let queen = this._world.getQueenOfColony(colonyId);
         if (!queen) {
-            return 'CANT_DESTROY_NEST_WITHOUT_LIVING_QUEEN';
+            return GAME_MESSAGE_IDS.DESTROY_NEST_OPER_CANT_ATTACK_WITHOUT_QUEEN;
         }
 
         return null;
