@@ -89,5 +89,6 @@ class NuptialService(BaseService):
         queens_in_flight_filter: Callable[[Ant], bool] = lambda ant: ant.ant_type == AntTypes.QUEEN and ant.is_in_nuptial_flight
         queens_in_flight: List[QueenAnt] = self._world.map.get_entities(entity_types=[EntityTypes.ANT], filter=queens_in_flight_filter)
         for queen in queens_in_flight:
+            queen.position = self._world.map.generate_random_point()
             queen.cold_die()
         
