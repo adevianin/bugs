@@ -1,6 +1,6 @@
 from .utils.event_emiter import EventEmitter
 from .services.colony_service import ColonyService
-from .services.nuptial_environment_service import NuptialEnvironmentService
+from .services.nuptial_service import NuptialService
 from core.world.utils.point import Point
 from core.world.world_repository_interface import iWorldRepository
 from core.world.entities.ant.base.ant_types import AntTypes
@@ -42,7 +42,7 @@ class WorldFacade:
     def get_instance(cls) -> 'WorldFacade':
         return WorldFacade._instance
 
-    def __init__(self, event_bus: EventEmitter, world_repository: iWorldRepository, colony_service: ColonyService, nuptial_environment_service: NuptialEnvironmentService, 
+    def __init__(self, event_bus: EventEmitter, world_repository: iWorldRepository, colony_service: ColonyService, nuptial_environment_service: NuptialService, 
                  ant_service: AntService, rating_service: RatingService, notification_service: NotificationService,
                  colony_relations_service: ColonyRelationsService, ant_birther_service: AntBirtherService, item_birther_service: ItemBirtherService,  
                  nest_birther_service: NestBirtherService, ladybug_birther_service: LadybugBirtherService, ladybug_spawner_service: LadybugSpawnerService,

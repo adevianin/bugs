@@ -14,7 +14,7 @@ from core.world.entities.ant.base.ant_types import AntTypes
 
 from typing import List, Dict, Callable
 
-class NuptialEnvironmentService(BaseService):
+class NuptialService(BaseService):
 
     def __init__(self, event_bus: EventEmitter, nuptial_env_factory: NuptialEnvironmentFactory):
         super().__init__(event_bus)

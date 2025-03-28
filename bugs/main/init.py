@@ -73,7 +73,7 @@ from core.world.entities.tree.tree_factory import TreeFactory
 from core.world.entities.ladybug.ladybug_factory import LadybugFactory
 
 from core.world.services.colony_service import ColonyService
-from core.world.services.nuptial_environment_service import NuptialEnvironmentService
+from core.world.services.nuptial_service import NuptialService
 from core.world.services.ant_service import AntService
 from core.world.services.rating_serivice import RatingService
 from core.world.services.world_service import WorldService
@@ -195,7 +195,7 @@ def init():
     usernames_repository = UsernamesRepository()
 
     colony_service = ColonyService(event_bus, colony_factory, operation_factory)
-    nuptial_environment_service = NuptialEnvironmentService(event_bus, nuptial_environment_factory)
+    nuptial_environment_service = NuptialService(event_bus, nuptial_environment_factory)
     ant_service = AntService(event_bus)
     rating_service = RatingService(event_bus, usernames_repository, player_stats_factory)
     notification_service = NotificationService(event_bus)
