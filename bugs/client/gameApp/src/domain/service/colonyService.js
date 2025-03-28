@@ -159,15 +159,37 @@ class ColonyService extends BaseGameService {
         return null;
     }
 
-    validateBuildingNestPosition(position) {
+    validateBuildingSubNestPosition(position) {
         if (!position) {
             return GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED;
         }
 
-        let nearEntities = this._world.getEntitiesNear(position, CONSTS.NEST_BLOCKING_RADIUS + ColonyService.SAFETY_MARGIN);
-        let nearNests = nearEntities.filter(e => e.type == EntityTypes.NEST);
-        if (nearNests.length > 0) {
+        if (!this._checkIsBuildPositionFreeFromNests(position)) {
             return GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_BLOCKED;
+        }
+
+        return null;
+    }
+
+    validateBuildingNewNestPosition(position) {
+        if (!position) {
+            return GAME_MESSAGE_IDS.BREEDING_PLACE_TO_SETTLE_NEEDED;
+        }
+
+        if (!this._checkIsBuildPositionFreeFromNests(position)) {
+            return GAME_MESSAGE_IDS.BREEDING_PLACE_TO_SETTLE_BLOCKED;
+        }
+
+        return null;
+    }
+
+    validateBreedingQueen(queen) {
+        if (!queen) {
+            return GAME_MESSAGE_IDS.BREEDING_QUEEN_NEEDED;
+        }
+
+        if (queen.isDied) {
+            return GAME_MESSAGE_IDS.BREEDING_LIVE_QUEEN_NEEDED;
         }
 
         return null;
@@ -189,6 +211,12 @@ class ColonyService extends BaseGameService {
         }
 
         return null;
+    }
+
+    _checkIsBuildPositionFreeFromNests(position) {
+        let nearEntities = this._world.getEntitiesNear(position, CONSTS.NEST_BLOCKING_RADIUS + ColonyService.SAFETY_MARGIN);
+        let nearNests = nearEntities.filter(e => e.type == EntityTypes.NEST);
+        return nearNests.length == 0;
     }
 
     _onColonyDied(colony) {

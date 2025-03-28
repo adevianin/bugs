@@ -14,8 +14,8 @@ class QueenSelectorView extends BaseGameHTMLView {
 
         this.$domain.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
         this.$domain.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
-        this.$domain.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this.$domain.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this.$domain.events.on('antDied', this._onSomeoneDied.bind(this));
+        this.$domain.events.on('antBorn', this._onSomeoneBorn.bind(this));
 
         this._prevBtn.addEventListener('click', this._onPrevBtnClick.bind(this));
         this._nextBtn.addEventListener('click', this._onNextBtnClick.bind(this));
@@ -83,6 +83,7 @@ class QueenSelectorView extends BaseGameHTMLView {
         let queen = this._queens[index];
         this._queenProfileView.showQueen(queen);
         this._renderChoosingBtnsState();
+        this.events.emit('change');
     }
 
     _removeQueen(queen) {

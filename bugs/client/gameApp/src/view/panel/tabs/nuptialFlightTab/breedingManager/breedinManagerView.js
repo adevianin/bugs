@@ -7,6 +7,7 @@ import { MarkerTypes } from '@domain/enum/markerTypes';
 import { TextInputView } from "@view/panel/base/textInput/textInputView";
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class BreedingManagerView extends BaseGameHTMLView {
 
@@ -18,6 +19,7 @@ class BreedingManagerView extends BaseGameHTMLView {
         this._chooseNestPositionBtn.addEventListener('click', this._onChooseNestPositionBtnClick.bind(this));
         this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
         this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
+        this._queenSelectorView.events.on('change', this._onSelectedQueenChanged.bind(this));
     }
 
     _render() {
@@ -29,7 +31,7 @@ class BreedingManagerView extends BaseGameHTMLView {
         this._colonyNameView = new TextInputView(this._el.querySelector('[data-colony-name]'), this._el.querySelector('[data-colony-name-error-container]'));
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
         this._startBtn = this._el.querySelector('[data-start]');
-        this._errorContainerEl = this._el.querySelector('[data-error-container]');
+        this._requestErrorContainerEl = this._el.querySelector('[data-request-error-container]');
         this._chooseNestPositionBtn = this._el.querySelector('[data-choose-nest-position]');
         this._queenErrorContainerEl = this._el.querySelector('[data-queen-error-container]');
         this._maleErrorContainerEl = this._el.querySelector('[data-male-error-container]');
@@ -65,43 +67,31 @@ class BreedingManagerView extends BaseGameHTMLView {
     }
 
     _validateQueen() {
-        if (!this._queenSelectorView.queen) {
-            return 'QUEEN_IS_NECESSARY_FOR_BREEDING';
-        }
-
-        if (this._queenSelectorView.queen && this._queenSelectorView.queen.isDied) {
-            return 'LIVE_QUEEN_IS_NECESSARY_FOR_BREEDING';
-        }
-
-        return null;
+        return this.$domain.validateBreedingQueen(this._queenSelectorView.queen);
     }
 
     _renderQueenError(queenErrorId) {
-        this._queenErrorContainerEl.innerHTML = queenErrorId ? this.$messages[queenErrorId] : '';
+        this._queenErrorContainerEl.innerHTML = queenErrorId ? this.$mm.get(queenErrorId) : '';
     }
 
     _validaMale() {
         if (!this._malesSelectorView.selectedMale) {
-            return 'MALE_IS_NECESSARY_FOR_BREEDING';
+            return GAME_MESSAGE_IDS.BREEDING_MALE_NEEDED;
         }
 
         return null;
     }
 
     _renderMaleError(errId) {
-        this._maleErrorContainerEl.innerHTML = errId ? this.$messages[errId] : '';
+        this._maleErrorContainerEl.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
     _validateNestPosition() {
-        if (!this._nestPositionView.value) {
-            return 'queen_needs_place_to_settle';
-        }
-
-        return null;
+        return this.$domain.validateBuildingNewNestPosition(this._nestPositionView.value);
     }
 
     _renderNestPositionError(errId) {
-        this._nestPositionErrorContainerEl.innerHTML = errId ? this.$messages[errId] : '';
+        this._nestPositionErrorContainerEl.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
     async _onStartBtnClick() {
@@ -122,7 +112,7 @@ class BreedingManagerView extends BaseGameHTMLView {
             if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {
-                this._renderRequestError('SOMETHING_WENT_WRONG');
+                this._renderRequestError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         }
     }
@@ -149,11 +139,16 @@ class BreedingManagerView extends BaseGameHTMLView {
     }
 
     _renderRequestError(errId) {
-        this._errorContainerEl.innerHTML = this.$messages[errId];
+        this._requestErrorContainerEl.innerHTML = this.$mm.get(errId);
     }
 
     _onSomeTabSwitched() {
         this._resetFields();
+    }
+
+    _onSelectedQueenChanged() {
+        let queenErrorId = this._validateQueen();
+        this._renderQueenError(queenErrorId);
     }
 
 }

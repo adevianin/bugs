@@ -11,6 +11,12 @@ const EN_LIBRARY = {
     [GAME_MESSAGE_IDS.TAB_RATING]: 'Rating',
     [GAME_MESSAGE_IDS.TAB_ACCOUNT]: 'Account',
 
+    [GAME_MESSAGE_IDS.BREEDING_PLACE_TO_SETTLE_NEEDED]: 'The female needs a location to settle down.',
+    [GAME_MESSAGE_IDS.BREEDING_PLACE_TO_SETTLE_BLOCKED]: 'The location for settling down is already occupied.',
+    [GAME_MESSAGE_IDS.BREEDING_QUEEN_NEEDED]: 'A female is required for breeding.',
+    [GAME_MESSAGE_IDS.BREEDING_LIVE_QUEEN_NEEDED]: 'A living female is required for breeding.',
+    [GAME_MESSAGE_IDS.BREEDING_MALE_NEEDED]: 'A male from distant regions is required for breeding.',
+
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN]: 'You can\'t build a satellite nest in a colony without a queen.',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED]: 'Ants need a location chosen for building a nest.',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_BLOCKED]: 'The position for building a nest is already occupied.',

@@ -87,7 +87,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _validateBuildingPosition() {
-        return this.$domain.validateBuildingNestPosition(this._buildingPosition.value);
+        return this.$domain.validateBuildingSubNestPosition(this._buildingPosition.value);
     }
 
     _renderBuildingPositionError(errId) {

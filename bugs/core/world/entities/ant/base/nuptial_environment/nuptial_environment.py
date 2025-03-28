@@ -48,6 +48,7 @@ class NuptialEnvironment():
         for male in self._males:
             if male.id == male_id:
                 self._males.remove(male)
+                self._emit_males_changed_action()
                 return male
         
         return None

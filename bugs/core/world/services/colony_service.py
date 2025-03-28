@@ -33,6 +33,12 @@ class ColonyService(BaseService):
             self._raise_state_conflict_error()
         queen: QueenAnt = ant
 
+        if self._check_nest_building_position_is_blocked_by_item_source(nest_building_site):
+            self._raise_state_conflict_error('some item sources blocking building nest')
+        
+        if self._check_nest_building_position_is_blocked_by_nest(nest_building_site):
+            self._raise_state_conflict_error('some nests blocking building nest')
+
         nuptial_environment = self._find_nuptial_environment_for_owner(user_id)
         male = nuptial_environment.pull_male(nuptial_male_id)
         if not male:
@@ -118,16 +124,12 @@ class ColonyService(BaseService):
         if len(sub_nests) >= MAX_SUB_NEST_COUNT:
             self._raise_state_conflict_error(f'cant build more subnests for colony(id={performing_colony_id})')
 
-        blocking_item_sources = self._world.map.find_entities_near(position, ITEM_SOURCE_BLOCKING_RADIUS, [EntityTypes.ITEM_SOURCE])
+        if self._check_nest_building_position_is_blocked_by_item_source(position):
+            self._raise_state_conflict_error('some item sources blocking building nest')
         
-        if len(blocking_item_sources) > 0:
-            raise GameRuleError('some item sources blocking building nest')
+        if self._check_nest_building_position_is_blocked_by_nest(position):
+            self._raise_state_conflict_error('some nests blocking building nest')
 
-        blocking_nests = self._world.map.find_entities_near(position, NEST_BLOCKING_RADIUS, [EntityTypes.NEST])
-        
-        if len(blocking_nests) > 0:
-            raise GameRuleError('some nests blocking building nest')
-        
         nest_name = clean_string(nest_name)
         
         operation = self._operation_factory.build_build_new_sub_nest_operation(nest_name, position, workers_count, warriors_count)
@@ -242,6 +244,14 @@ class ColonyService(BaseService):
             raise GameRuleError('operation bring_bug_operation is not valid')
 
         performing_colony.add_operation(operation)
+
+    def _check_nest_building_position_is_blocked_by_item_source(self, position: Point):
+        blocking_item_sources = self._world.map.find_entities_near(position, ITEM_SOURCE_BLOCKING_RADIUS, [EntityTypes.ITEM_SOURCE])
+        return len(blocking_item_sources) > 0
+    
+    def _check_nest_building_position_is_blocked_by_nest(self, position: Point):
+        blocking_nests = self._world.map.find_entities_near(position, NEST_BLOCKING_RADIUS, [EntityTypes.NEST])
+        return len(blocking_nests) > 0
 
     def _on_colony_died(self, colony: Colony):
         self._world.remove_colony(colony)

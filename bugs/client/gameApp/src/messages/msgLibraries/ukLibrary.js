@@ -11,6 +11,12 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.TAB_RATING]: 'Рейтинг',
     [GAME_MESSAGE_IDS.TAB_ACCOUNT]: 'Акаунт',
 
+    [GAME_MESSAGE_IDS.BREEDING_PLACE_TO_SETTLE_NEEDED]: 'Самкі треба вказати місце де поселитись.',
+    [GAME_MESSAGE_IDS.BREEDING_PLACE_TO_SETTLE_BLOCKED]: 'Місце для поселення вже заняте.',
+    [GAME_MESSAGE_IDS.BREEDING_QUEEN_NEEDED]: 'Для розмноження необхідна самка.',
+    [GAME_MESSAGE_IDS.BREEDING_LIVE_QUEEN_NEEDED]: 'Для розмноження необхідна жива самка.',
+    [GAME_MESSAGE_IDS.BREEDING_MALE_NEEDED]: 'Для розмноження необхідний самець із віддалених країв.',
+
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN]: 'Не можна будувати гніздо сателіт в колонії без королеви.!!',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED]: 'Мурахам треба вказати місце для будування гнізда.!!',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_BLOCKED]: 'Позиція для будування гнізда вже занята.',

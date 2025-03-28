@@ -23,6 +23,7 @@ class BaseGameService extends BaseService {
     }
 
     async _waitStepSync(stepNumber) {
+        console.log('waiting step', stepNumber, 'current', this._world.currentStep);
         return new Promise((res, rej) => {
             if (this._world.currentStep >= stepNumber) {
                 res();

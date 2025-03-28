@@ -119,14 +119,6 @@ class DomainFacade {
         this._colonyService.stopOperation(colonyId, operationId);
     }
 
-    validateNewNestOperationConditions(colonyId) {
-        return this._colonyService.validateNewNestOperationConditions(colonyId);
-    }
-
-    validateBuildingNestPosition(position) {
-        return this._colonyService.validateBuildingNestPosition(position);
-    }
-
     getNestBuildableArea(mainNestPosition, chunkIds) {
         return this._colonyService.getNestBuildableArea(mainNestPosition, chunkIds);
     }
@@ -135,20 +127,12 @@ class DomainFacade {
         return this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName);
     }
 
-    validateDestroyNestOperationConditions(colonyId) {
-        return this._colonyService.validateDestroyNestOperationConditions(colonyId);
-    }
-
     getRaidableArea(raidingColonyId, raidAreaCenter, chunkIds) {
         return this._colonyService.getRaidableArea(raidingColonyId, raidAreaCenter, chunkIds);
     }
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
         return this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
-    }
-
-    validatePillageNestOperationConditions(colonyId) {
-        return this._colonyService.validatePillageNestOperationConditions(colonyId);
     }
 
     pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
@@ -217,10 +201,6 @@ class DomainFacade {
         return this._nestService.renameNest(nestId, name);
     }
 
-    validateLayingEggInNest(nestId) {
-        return this._nestService.validateLayingEggInNest(nestId);
-    }
-
     findClosestBugCorpseNearNest(nestId) {
         return this._colonyService.findClosestBugCorpseNearNest(nestId);
     }
@@ -285,6 +265,38 @@ class DomainFacade {
 
     validatePassword(password) {
         return this._accountService.validatePassword(password);
+    }
+
+    /*==============================*/
+
+    /*======= game validators========*/
+    
+    validateBuildingNewNestPosition(position) {
+        return this._colonyService.validateBuildingNewNestPosition(position);
+    }
+
+    validateBreedingQueen(queen) {
+        return this._colonyService.validateBreedingQueen(queen);
+    }
+
+    validateNewNestOperationConditions(colonyId) {
+        return this._colonyService.validateNewNestOperationConditions(colonyId);
+    }
+
+    validateBuildingSubNestPosition(position) {
+        return this._colonyService.validateBuildingSubNestPosition(position);
+    }
+
+    validateDestroyNestOperationConditions(colonyId) {
+        return this._colonyService.validateDestroyNestOperationConditions(colonyId);
+    }
+
+    validatePillageNestOperationConditions(colonyId) {
+        return this._colonyService.validatePillageNestOperationConditions(colonyId);
+    }
+
+    validateLayingEggInNest(nestId) {
+        return this._nestService.validateLayingEggInNest(nestId);
     }
 
     /*==============================*/

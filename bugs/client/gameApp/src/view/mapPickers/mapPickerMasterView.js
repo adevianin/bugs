@@ -16,6 +16,7 @@ class MapPickerMasterView extends BaseGraphicView {
         this.$eventBus.on('raidNestPickRequest', this._onRaidNestPickRequest.bind(this));
         this.$eventBus.on('newNestPositionPickRequest', this._onNewNestPositionPickRequest.bind(this));
         this.$eventBus.on('deactivateMapPickerRequest', this._onPickerDeactivateRequest.bind(this));
+        this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
     }
 
     _render() {
@@ -53,6 +54,10 @@ class MapPickerMasterView extends BaseGraphicView {
     }
 
     _onPickerDeactivateRequest() {
+        this._deactivateAll();
+    }
+    
+    _onSomeTabSwitched() {
         this._deactivateAll();
     }
 
