@@ -85,7 +85,7 @@ class World():
         return self._notifications
     
     @property
-    def player_stats_list(self):
+    def player_stats_list(self) -> List[PlayerStats]:
         return self._player_stats_list
     
     @property

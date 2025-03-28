@@ -196,10 +196,10 @@ def init():
     usernames_repository = UsernamesRepository()
 
     colony_service = ColonyService(event_bus, colony_factory, operation_factory)
-    player_service = PlayerService(event_bus, nuptial_environment_factory, player_stats_factory)
+    player_service = PlayerService(event_bus, nuptial_environment_factory)
     nuptial_environment_service = NuptialEnvironmentService(event_bus)
     ant_service = AntService(event_bus)
-    rating_service = RatingService(event_bus, usernames_repository)
+    rating_service = RatingService(event_bus, usernames_repository, player_stats_factory)
     notification_service = NotificationService(event_bus)
     colony_relations_service = ColonyRelationsService(event_bus)
     ant_birther_service = AntBirtherService(event_bus, ant_factory)
