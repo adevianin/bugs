@@ -32,6 +32,10 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NOT_DESTROYED_NEST_TO_PILLAGE_NEEDED]: 'Мурахам треба вказати не зруйноване гніздо для грабування.',
     [GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NEST_FOR_LOOT_NEEDED]: 'Мурахам треба вказати гніздо для здобичі.',
 
+    [GAME_MESSAGE_IDS.TRANSPORT_FOOD_OPER_NEST_FROM_NEEDED]: 'Мурахам треба вказати гніздо з якого переносити їжу.',
+    [GAME_MESSAGE_IDS.TRANSPORT_FOOD_OPER_NEST_TO_NEEDED]: 'Мурахам треба вказати гніздо у яке переносити їжу.',
+    [GAME_MESSAGE_IDS.TRANSPORT_FOOD_OPER_DIFFERENT_NESTS_NEEDED]: 'Мурахи можуть переносити їжу лише між різними гніздами своєї колонії.',
+
     [GAME_MESSAGE_IDS.NEST_INLINE_NOT_SPECIFIED]: 'не задано',
     [GAME_MESSAGE_IDS.NEST_INLINE_DESTROYED]: 'зруйновано',
 

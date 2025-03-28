@@ -32,6 +32,10 @@ const EN_LIBRARY = {
     [GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NOT_DESTROYED_NEST_TO_PILLAGE_NEEDED]: 'Ants need an intact nest to be specified for raiding.',
     [GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NEST_FOR_LOOT_NEEDED]: 'Ants need a nest to be specified for loot.',
 
+    [GAME_MESSAGE_IDS.TRANSPORT_FOOD_OPER_NEST_FROM_NEEDED]: 'Ants need a nest to be specified from which to transport food.',
+    [GAME_MESSAGE_IDS.TRANSPORT_FOOD_OPER_NEST_TO_NEEDED]: 'Ants need a nest to be specified into which to transport food.',
+    [GAME_MESSAGE_IDS.TRANSPORT_FOOD_OPER_DIFFERENT_NESTS_NEEDED]: 'Ants can transport food only between different nests within their colony.',
+
     [GAME_MESSAGE_IDS.NEST_INLINE_NOT_SPECIFIED]: 'not specified',
     [GAME_MESSAGE_IDS.NEST_INLINE_DESTROYED]: 'destroyed',
 

@@ -6,6 +6,7 @@ import { IntInputView } from "@view/panel/base/intInput/intInputView";
 import { CONSTS } from "@domain/consts";
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
+import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 
 class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
 
@@ -89,38 +90,38 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
 
     _validateNestFrom() {
         if (!this._nestFromSelector.nestId) {
-            return this.$messages.choose_nest_from;
+            return GAME_MESSAGE_IDS.TRANSPORT_FOOD_OPER_NEST_FROM_NEEDED;
         }
 
         return null;
     }
 
-    _renderNestFromError(errorText) {
-        this._nestFromErrorContainer.innerHTML = errorText || '';
+    _renderNestFromError(errId) {
+        this._nestFromErrorContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
     _validateNestTo() {
         if (!this._nestToSelector.nestId) {
-            return this.$messages.choose_nest_to;
+            return GAME_MESSAGE_IDS.TRANSPORT_FOOD_OPER_NEST_TO_NEEDED;
         }
 
         return null;
     }
 
-    _renderNestToError(errorText) {
-        this._nestToErrorContainer.innerHTML = errorText || '';
+    _renderNestToError(errId) {
+        this._nestToErrorContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
     _validateSelectedNests() {
         if (!!this._nestFromSelector.nestId && this._nestFromSelector.nestId == this._nestToSelector.nestId) {
-            return this.$messages.choose_different_nests;
+            return GAME_MESSAGE_IDS.TRANSPORT_FOOD_OPER_DIFFERENT_NESTS_NEEDED;
         }
 
         return null;
     }
 
-    _renderSelectedNestsError(errorText) {
-        this._selectedNestsErrorContainer.innerHTML = errorText;
+    _renderSelectedNestsError(errId) {
+        this._selectedNestsErrorContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
     async _onStartBtnClick() {
@@ -140,19 +141,25 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
             if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {
-                this._renderMainError('SOMETHING_WENT_WRONG');
+                this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         }
     }
 
     _onNestFromChanged() {
         this._showMarkers();
-        this._validate();
+        let nestFromError = this._validateNestFrom();
+        this._renderNestFromError(nestFromError);
+        let selectedNestsError = this._validateSelectedNests();
+        this._renderSelectedNestsError(selectedNestsError);
     }
 
     _onNestToChanged() {
         this._showMarkers();
-        this._validate();
+        let nestToError = this._validateNestTo();
+        this._renderNestToError(nestToError);
+        let selectedNestsError = this._validateSelectedNests();
+        this._renderSelectedNestsError(selectedNestsError);
     }
 
     _showMarkers() {
