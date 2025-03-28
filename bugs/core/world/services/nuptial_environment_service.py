@@ -7,6 +7,10 @@ from core.world.exceptions import GameRuleError
 from core.world.entities.ant.queen.queen_ant import QueenAnt
 from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment_factory import NuptialEnvironmentFactory
+from core.world.entities.world.season_types import SeasonTypes
+from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
+from core.world.settings import NUPTIAL_MALES_GENRERATE_COUNT
+from core.world.entities.ant.base.ant_types import AntTypes
 
 from typing import List, Dict, Callable
 
@@ -15,6 +19,8 @@ class NuptialEnvironmentService(BaseService):
     def __init__(self, event_bus: EventEmitter, nuptial_env_factory: NuptialEnvironmentFactory):
         super().__init__(event_bus)
         self._nuptial_env_factory = nuptial_env_factory
+
+        self._event_bus.add_listener('season_changed', self._on_season_changed)
 
     def ensure_nuptial_env_built_for_player(self, player_id: int):
         is_built = self._check_nuptial_env_for_player(player_id)
@@ -56,6 +62,7 @@ class NuptialEnvironmentService(BaseService):
         specie = Specie.build_new()
         nuptial_env = self._nuptial_env_factory.build_nuptial_environment(player_id, specie, [])
         self._world.add_new_nuptial_environment(nuptial_env)
+        self._handle_current_season_in_nuptial_env(nuptial_env)
 
     def _check_nuptial_env_for_player(self, player_id: int) -> bool:
         for environment in self._world.nuptial_environments:
@@ -63,4 +70,24 @@ class NuptialEnvironmentService(BaseService):
                 return True
             
         return False
+    
+    def _on_season_changed(self, season: SeasonTypes):
+        if self._world.current_season == SeasonTypes.WINTER:
+            self._kill_queens_in_nuptial_flight()
+
+        for environment in self._world.nuptial_environments:
+            self._handle_current_season_in_nuptial_env(environment)
+
+    def _handle_current_season_in_nuptial_env(self, nupt_env: NuptialEnvironment):
+        if self._world.current_season == SeasonTypes.SUMMER:
+            nupt_env.generate_males(NUPTIAL_MALES_GENRERATE_COUNT)
+        elif self._world.current_season == SeasonTypes.WINTER:
+            nupt_env.clear_males()
+            nupt_env.clear_not_activated_specie_genes()
+
+    def _kill_queens_in_nuptial_flight(self):
+        queens_in_flight_filter: Callable[[Ant], bool] = lambda ant: ant.ant_type == AntTypes.QUEEN and ant.is_in_nuptial_flight
+        queens_in_flight: List[QueenAnt] = self._world.map.get_entities(entity_types=[EntityTypes.ANT], filter=queens_in_flight_filter)
+        for queen in queens_in_flight:
+            queen.cold_die()
         

@@ -11,7 +11,6 @@ from core.world.entities.ant.base.larva import Larva
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.world.birth_requests.ant_requests.ant_birth_from_system_request import AntBirthFromSystemRequest
 from core.world.utils.point import Point
-from core.world.entities.world.season_types import SeasonTypes
 from typing import List, Callable
 
 class NuptialEnvironment():
@@ -26,7 +25,6 @@ class NuptialEnvironment():
         self._event_bus.add_listener('ant_damaged_another_body_stat', self._on_ant_damaged_another_body)
         self._event_bus.add_listener('ant_gave_fortification_item_stat', self._on_ant_gave_fortification_item)
         self._event_bus.add_listener('ant_built_nest_stat', self._on_ant_built_nest)
-        self._event_bus.add_listener('season_changed', self._on_season_changed)
 
     @property
     def owner_id(self):
@@ -58,14 +56,7 @@ class NuptialEnvironment():
         larva = Larva.build_new('Antara', AntTypes.QUEEN, genome)
         self._event_bus.emit('ant_birth_request', AntBirthFromSystemRequest(larva, self._owner_id, position, callback=on_antara_born))
 
-    def handle_season(self, season: SeasonTypes):
-        if season == SeasonTypes.SUMMER:
-            self._generate_males()
-        elif season == SeasonTypes.WINTER:
-            self._clear_males()
-            self._clear_not_activated_specie_genes()
-    
-    def _generate_males(self, count = 3):
+    def generate_males(self, count = 3):
         self._males = []
         for i in range(count):
             genome = self._specie.generate_nuptial_male_genome(MUTATITON_PERCENT, SUPER_MUTATION_CHANCE_PERCENT, SUPER_MUTATION_PERCENT)
@@ -73,11 +64,11 @@ class NuptialEnvironment():
             self._males.append(male)
         self._emit_males_changed_action()
 
-    def _clear_males(self):
+    def clear_males(self):
         self._males = []
         self._emit_males_changed_action() 
 
-    def _clear_not_activated_specie_genes(self):
+    def clear_not_activated_specie_genes(self):
         self._specie.clear_not_activated_specie_genes()
         self._emit_specie_genes_changed_action()
 
@@ -106,6 +97,3 @@ class NuptialEnvironment():
 
     def _emit_specie_genes_changed_action(self):
         self._event_bus.emit('action', NuptialEnvironmentSpecieGenesChangedAction(self._specie.specie_chromosome_set, self._owner_id))
-
-    def _on_season_changed(self, season: SeasonTypes):
-        self.handle_season(season)

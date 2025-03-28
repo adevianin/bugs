@@ -45,6 +45,10 @@ class QueenAnt(Ant):
         return self._body.male_chromosomes_set
     
     @property
+    def is_in_nuptial_flight(self):
+        return self._body.is_in_nuptial_flight
+    
+    @property
     def breeding_male_genome(self) -> Genome:
         return Genome.build(self._body.male_chromosomes_set, None) if self._body.is_fertilized else None
     
@@ -60,10 +64,7 @@ class QueenAnt(Ant):
         self._emit_action(AntGotFertilizedAction(self.id, self.breeding_male_genome, self.owner_id))
 
     def do_step(self, step_number: int):
-        if self._body.is_in_nuptial_flight:
-            if self._body.check_am_i_freezing():
-                self.cold_die()
-        else:
+        if not self._body.is_in_nuptial_flight:
             super().do_step(step_number)
     
     def _on_flew_nuptial_flight(self):
