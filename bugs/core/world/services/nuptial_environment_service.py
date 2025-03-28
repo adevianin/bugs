@@ -5,10 +5,21 @@ from core.world.entities.ant.base.ant import Ant
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.exceptions import GameRuleError
 from core.world.entities.ant.queen.queen_ant import QueenAnt
+from core.world.utils.event_emiter import EventEmitter
+from core.world.entities.ant.base.nuptial_environment.nuptial_environment_factory import NuptialEnvironmentFactory
 
 from typing import List, Dict, Callable
 
 class NuptialEnvironmentService(BaseService):
+
+    def __init__(self, event_bus: EventEmitter, nuptial_env_factory: NuptialEnvironmentFactory):
+        super().__init__(event_bus)
+        self._nuptial_env_factory = nuptial_env_factory
+
+    def ensure_nuptial_env_built_for_player(self, player_id: int):
+        is_built = self._check_nuptial_env_for_player(player_id)
+        if not is_built:
+            self._build_nuptial_env_for_player(player_id)
 
     def get_specie_for(self, user_id: int) -> Specie:
         nuptial_environment = self._find_nuptial_environment_for_owner(user_id)
@@ -40,4 +51,16 @@ class NuptialEnvironmentService(BaseService):
         nuptial_env = self._find_nuptial_environment_for_owner(player_id)
         position = self._world.map.generate_random_point()
         nuptial_env.born_antara(position, on_antara_born)
+
+    def _build_nuptial_env_for_player(self, player_id: int):
+        specie = Specie.build_new()
+        nuptial_env = self._nuptial_env_factory.build_nuptial_environment(player_id, specie, [])
+        self._world.add_new_nuptial_environment(nuptial_env)
+
+    def _check_nuptial_env_for_player(self, player_id: int) -> bool:
+        for environment in self._world.nuptial_environments:
+            if environment.owner_id == player_id:
+                return True
+            
+        return False
         

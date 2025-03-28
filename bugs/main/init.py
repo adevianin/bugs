@@ -72,7 +72,6 @@ from core.world.entities.ant.base.nuptial_environment.nuptial_environment_factor
 from core.world.entities.tree.tree_factory import TreeFactory
 from core.world.entities.ladybug.ladybug_factory import LadybugFactory
 
-from core.world.services.player_service import PlayerService
 from core.world.services.colony_service import ColonyService
 from core.world.services.nuptial_environment_service import NuptialEnvironmentService
 from core.world.services.ant_service import AntService
@@ -196,8 +195,7 @@ def init():
     usernames_repository = UsernamesRepository()
 
     colony_service = ColonyService(event_bus, colony_factory, operation_factory)
-    player_service = PlayerService(event_bus, nuptial_environment_factory)
-    nuptial_environment_service = NuptialEnvironmentService(event_bus)
+    nuptial_environment_service = NuptialEnvironmentService(event_bus, nuptial_environment_factory)
     ant_service = AntService(event_bus)
     rating_service = RatingService(event_bus, usernames_repository, player_stats_factory)
     notification_service = NotificationService(event_bus)
@@ -210,7 +208,7 @@ def init():
     bug_corpse_spawner_service = BugCorpseSpawnerService(event_bus)
     world_service = WorldService(event_bus, world_factory, map_factory, colony_factory, climate_factory, tree_factory, item_area_factory, item_source_factory)
 
-    world_facade = WorldFacade(event_bus, world_repository, colony_service, player_service, nuptial_environment_service, ant_service, rating_service, 
+    world_facade = WorldFacade(event_bus, world_repository, colony_service, nuptial_environment_service, ant_service, rating_service, 
                                 notification_service, colony_relations_service, ant_birther_service, item_birther_service, nest_birther_service, ladybug_birther_service,
                                 ladybug_spawner_service, bug_corpse_spawner_service, world_service)
 

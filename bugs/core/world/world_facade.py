@@ -1,6 +1,5 @@
 from .utils.event_emiter import EventEmitter
 from .services.colony_service import ColonyService
-from .services.player_service import PlayerService
 from .services.nuptial_environment_service import NuptialEnvironmentService
 from core.world.utils.point import Point
 from core.world.world_repository_interface import iWorldRepository
@@ -43,8 +42,8 @@ class WorldFacade:
     def get_instance(cls) -> 'WorldFacade':
         return WorldFacade._instance
 
-    def __init__(self, event_bus: EventEmitter, world_repository: iWorldRepository, colony_service: ColonyService, player_service: PlayerService, 
-                 nuptial_environment_service: NuptialEnvironmentService, ant_service: AntService, rating_service: RatingService, notification_service: NotificationService,
+    def __init__(self, event_bus: EventEmitter, world_repository: iWorldRepository, colony_service: ColonyService, nuptial_environment_service: NuptialEnvironmentService, 
+                 ant_service: AntService, rating_service: RatingService, notification_service: NotificationService,
                  colony_relations_service: ColonyRelationsService, ant_birther_service: AntBirtherService, item_birther_service: ItemBirtherService,  
                  nest_birther_service: NestBirtherService, ladybug_birther_service: LadybugBirtherService, ladybug_spawner_service: LadybugSpawnerService,
                  bug_corpse_spawner_service: BugCorpseSpawnerService, world_service: WorldService):
@@ -58,7 +57,6 @@ class WorldFacade:
         self._world_repository = world_repository
 
         self._colony_service = colony_service
-        self._player_service = player_service
         self._nuptial_environment_service = nuptial_environment_service
         self._ant_service = ant_service
         self._rating_service = rating_service
@@ -199,7 +197,7 @@ class WorldFacade:
 
     @player_command
     def ensure_starter_pack_built_for_player(self, user_id: int):
-        self._player_service.ensure_starter_pack_built_for_player(user_id)
+        self._nuptial_environment_service.ensure_nuptial_env_built_for_player(user_id)
     # </PLAYER_COMMANDS>
 
     def get_specie_for_client(self, user_id: int):
@@ -227,7 +225,6 @@ class WorldFacade:
             self._world_service.populate_empty_world(self._world)
 
         self._colony_service.set_world(self._world)
-        self._player_service.set_world(self._world)
         self._nuptial_environment_service.set_world(self._world)
         self._ant_service.set_world(self._world)
         self._rating_service.set_world(self._world)
