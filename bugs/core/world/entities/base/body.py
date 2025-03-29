@@ -60,7 +60,7 @@ class Body():
     
     def restore_hp_step(self):
         if self.hp < self.stats.max_hp:
-            self.hp += self.stats.hp_regen_rate
+            self.hp = min(self.hp + self.stats.hp_regen_rate, self.stats.max_hp)
 
     def die(self, death_record: BaseDeathRecord):
         self.hp = 0
