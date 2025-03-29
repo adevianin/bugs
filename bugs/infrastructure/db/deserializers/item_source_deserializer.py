@@ -18,7 +18,6 @@ class ItemSourceDeserializer(EntityDeserializer):
             'item_type': ItemTypes(item_source_factory_json['item_type']),
             'fertility': item_source_factory_json['fertility'],
             'accumulated': item_source_factory_json['accumulated'],
-            'min_item_strength': item_source_factory_json['min_item_strength'],
             'max_item_strength': item_source_factory_json['max_item_strength'],
             'is_active': item_source_factory_json['is_active']
         })

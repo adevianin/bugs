@@ -4,22 +4,33 @@ import { ACTION_TYPES } from "./action/actionTypes";
 
 class ItemSource extends Entity {
     
-    constructor(eventBus, id, position, angle, fromColony, hp, maxHp, itemType, isFertile) {
+    constructor(eventBus, id, position, angle, fromColony, hp, maxHp, itemType, isDamaged, accumulated, maxAccumulated, fertility) {
         super(eventBus, id, position, angle, EntityTypes.ITEM_SOURCE, fromColony, null, hp, maxHp);
         this._itemType = itemType;
-        this._isFertile = isFertile;
+        this._isDamaged = isDamaged;
+        this._accumulated = accumulated;
+        this._maxAccumulated = maxAccumulated;
+        this._fertility = fertility;
     }
 
     get itemType() {
         return this._itemType;
     }
 
-    set isFertile(value) {
-        this._isFertile = value;
+    get isDamaged() {
+        return this._isDamaged;
     }
 
-    get isFertile() {
-        return this._isFertile;
+    get accumulated() {
+        return this._accumulated;
+    }
+
+    get maxAccumulated() {
+        return this._maxAccumulated;
+    }
+
+    get fertility() {
+        return this._fertility;
     }
 
     playAction(action) {
@@ -28,18 +39,28 @@ class ItemSource extends Entity {
             return true;
         }
         switch (action.type) {
-            case ACTION_TYPES.ITEM_SOURCE_FERTILITY_CHANGED:
-                this._playFertilityChangedAction(action);
+            case ACTION_TYPES.ITEM_SOURCE_IS_DAMAGED_CHANGED:
+                this._playIsDamagedChangedAction(action);
+                return true;
+            case ACTION_TYPES.ITEM_SOURCE_ACCUMULATED_CHANGED:
+                this._playAccumulatedChangedAction(action);
                 return true;
             default:
                 throw 'unknown type of action';
         }
     }
 
-    _playFertilityChangedAction(action) {
-        this.isFertile = action.isFertile;
-        this._requestActionAnimation(ACTION_TYPES.ITEM_SOURCE_FERTILITY_CHANGED, {
-            isFertile: this.isFertile
+    _playIsDamagedChangedAction(action) {
+        this._isDamaged = action.isDamaged;
+        this._requestActionAnimation(ACTION_TYPES.ITEM_SOURCE_IS_DAMAGED_CHANGED, {
+            isDamaged: this._isDamaged
+        })
+    }
+
+    _playAccumulatedChangedAction(action) {
+        this._accumulated = action.accumulated;
+        this._requestActionAnimation(ACTION_TYPES.ITEM_SOURCE_ACCUMULATED_CHANGED, {
+            accumulated: this._accumulated
         })
     }
 }

@@ -200,12 +200,12 @@ class WorldService(BaseService):
 
     def _build_honeydew_item_source(self, world: World, position: Point):
         fertility = random.randint(1, 14)
-        item_source = self._item_source_factory.build_new_item_source(position, ItemTypes.HONEYDEW, fertility, 10, 40, world.current_season)
+        item_source = self._item_source_factory.build_new_item_source(position, ItemTypes.HONEYDEW, fertility, 40, world.current_season)
         world.map.add_entity(item_source)
 
     def _build_nectar_item_source(self, world: World, position: Point):
         fertility = random.randint(1, 7)
-        item_source = self._item_source_factory.build_new_item_source(position, ItemTypes.NECTAR, fertility, 10, 40, world.current_season)
+        item_source = self._item_source_factory.build_new_item_source(position, ItemTypes.NECTAR, fertility, 30, world.current_season)
         world.map.add_entity(item_source)
 
     def _build_random_food_source(self, world: World, position: Point):

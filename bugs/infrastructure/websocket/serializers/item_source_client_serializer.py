@@ -6,8 +6,11 @@ class ItemSourceClientSerializer(EntityClientSerializer):
     def serialize(self, item_source: ItemSource):
         json = super().serialize(item_source)
         json.update({
-            'item_type': item_source.item_type,
-            'is_fertile': item_source.is_fertile
+            'itemType': item_source.item_type,
+            'isDamaged': item_source.is_damaged,
+            'accumulated': item_source.accumulated,
+            'maxAccumulated': item_source.max_accumulated,
+            'fertility': item_source.fertility
         })
 
         return json

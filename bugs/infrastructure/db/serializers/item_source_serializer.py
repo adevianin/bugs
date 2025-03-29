@@ -10,7 +10,6 @@ class ItemSourceSerializer(EntitySerializer):
             'item_type': item_source.item_type,
             'fertility': item_source.fertility,
             'accumulated': item_source.accumulated,
-            'min_item_strength': item_source.min_item_strength,
             'max_item_strength': item_source.max_item_strength,
             'is_active': item_source.is_active
         })

@@ -32,7 +32,6 @@ from core.world.entities.action.nest_fortification_changed_action import NestFor
 from core.world.entities.action.user_notification_action import UserNotificationAction
 from core.world.entities.action.rating_updated_action import RatingUpdatedAction
 from core.world.entities.action.nuptial_environment_males_changed_action import NuptialEnvironmentMalesChangedAction
-from core.world.entities.action.item_source_fertility_changed_action import ItemSourceFertilityChangeAction
 from .notification_client_serializer import NotificationClientSerializer
 from .nuptial_environment_client_serializer import NuptialEnvironmentClientSerializer
 from core.world.entities.action.ant_home_nest_changed import AntHomeNestChangedAction
@@ -45,6 +44,8 @@ from core.world.entities.action.entity_hibernation_status_chenged_action import 
 from core.world.entities.action.ant_current_activity_changed_action import AntCurrentActivityChangedAction
 from core.world.entities.action.ant_got_fertilized_action import AntGotFertilizedAction
 from .genome_client_serializer import GenomeClientSerializer
+from core.world.entities.action.item_source_is_damaged_changed_action import ItemSourceIsDamagedChangedAction
+from core.world.entities.action.item_source_accumulated_changed_action import ItemSourceAccumulatedChangedAction
 
 class ActionClientSerializer():
 
@@ -117,12 +118,14 @@ class ActionClientSerializer():
                 return self._default_action_serialize(action)
             case ActionTypes.ITEM_WAS_DROPPED:
                 return self._serialize_item_was_dropped(action)
-            case ActionTypes.ITEM_SOURCE_FERTILITY_CHANGED:
-                return self._serialize_item_source_fertility_changed(action)
             case ActionTypes.ITEM_BEING_BRINGED:
                 return self._serialize_item_being_bringed(action)
             case ActionTypes.ITEM_BRINGING_STATE_CHANGED:
                 return self._serialize_item_bringing_state_changed(action)
+            case ActionTypes.ITEM_SOURCE_IS_DAMAGED_CHANGED:
+                return self._serialize_item_source_is_damaged_changed(action)
+            case ActionTypes.ITEM_SOURCE_ACCUMULATED_CHANGED:
+                return self._serialize_item_source_accumulated_changed(action)
             case ActionTypes.COLONY_BORN:
                 return self._serialize_colony_born(action)
             case ActionTypes.COLONY_DIED:
@@ -359,14 +362,6 @@ class ActionClientSerializer():
 
         return json
     
-    def _serialize_item_source_fertility_changed(self, action: ItemSourceFertilityChangeAction):
-        json = self._serialize_common(action)
-        json.update({
-            'isFertile': action.is_fertile
-        })
-
-        return json
-    
     def _serialize_item_being_bringed(self, action: ItemBeingBringedAction):
         json = self._serialize_common(action)
         serialized_new_position = self._util_serializer.serialize_point(action.new_position)
@@ -381,6 +376,22 @@ class ActionClientSerializer():
         json = self._serialize_common(action)
         json.update({
             'isBringing': action.is_bringing, 
+        })
+
+        return json
+    
+    def _serialize_item_source_is_damaged_changed(self, action: ItemSourceIsDamagedChangedAction):
+        json = self._serialize_common(action)
+        json.update({
+            'isDamaged': action.is_damaged, 
+        })
+
+        return json
+    
+    def _serialize_item_source_accumulated_changed(self, action: ItemSourceAccumulatedChangedAction):
+        json = self._serialize_common(action)
+        json.update({
+            'accumulated': action.accumulated, 
         })
 
         return json

@@ -31,8 +31,7 @@ class WorldFactory {
             case EntityTypes.ITEM:
                 return this.buildItem(entityJson);
             case EntityTypes.ITEM_SOURCE:
-                return this.buildItemSource(entityJson.id, entityJson.position, entityJson.angle, entityJson.from_colony_id, entityJson.hp, entityJson.max_hp, 
-                    entityJson.item_type, entityJson.is_fertile);
+                return this.buildItemSource(entityJson);
             case EntityTypes.ITEM_AREA:
                 return this.buildItemArea(entityJson.id, entityJson.position, entityJson.angle, entityJson.hp, entityJson.max_hp);
             case EntityTypes.TREE:
@@ -46,8 +45,19 @@ class WorldFactory {
         return new ItemArea(this._mainEventBus, id, position, angle, hp, maxHp);
     }
 
-    buildItemSource(id, position, angle, fromColony, hp, maxHp, itemType, isFertile) {
-        return new ItemSource(this._mainEventBus, id, position, angle, fromColony, hp, maxHp, itemType, isFertile);
+    buildItemSource(entityJson) {
+        let id = entityJson.id;
+        let position = entityJson.position;
+        let angle = entityJson.angle;
+        let fromColonyId = entityJson.from_colony_id;
+        let hp = entityJson.hp;
+        let maxHp = entityJson.max_hp;
+        let itemType = entityJson.itemType;
+        let isDamaged = entityJson.isDamaged;
+        let accumulated = entityJson.accumulated;
+        let maxAccumulated = entityJson.maxAccumulated;
+        let fertility = entityJson.fertility;
+        return new ItemSource(this._mainEventBus, id, position, angle, fromColonyId, hp, maxHp, itemType, isDamaged, accumulated, maxAccumulated, fertility);
     }
 
     buildItem(entityJson) {

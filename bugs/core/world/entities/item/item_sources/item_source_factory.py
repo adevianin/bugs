@@ -16,7 +16,7 @@ class ItemSourceFactory():
     def __init__(self, event_bus: EventEmitter):
         self._event_bus = event_bus
 
-    def build_new_item_source(self, position: Point, item_type: ItemTypes, fertility: int, min_item_strength: int, max_item_strength: int, 
+    def build_new_item_source(self, position: Point, item_type: ItemTypes, fertility: int, max_item_strength: int, 
                                     current_season: SeasonTypes):
         id = IdGenerator.generate_id()
         ownership = OwnershipConfig.build_empty()
@@ -25,31 +25,31 @@ class ItemSourceFactory():
         match(item_type):
             case ItemTypes.HONEYDEW:
                 is_active = HoneydewItemSource.check_is_fertile_season(current_season)
-                return self._build_honeydew_item_source(id, ownership, hp, position, 0, fertility, 0, min_item_strength, max_item_strength, is_active)
+                return self._build_honeydew_item_source(id, ownership, hp, position, 0, fertility, 0, max_item_strength, is_active)
             case ItemTypes.NECTAR:
                 is_active = NectarItemSource.check_is_fertile_season(current_season)
-                return self._build_nectar_item_source(id, ownership, hp, position, 0, fertility, 0, min_item_strength, max_item_strength, is_active)
+                return self._build_nectar_item_source(id, ownership, hp, position, 0, fertility, 0, max_item_strength, is_active)
             case _:
                 raise GameError('unknown type of item source')
 
     def build_item_source(self, id: int, ownership: OwnershipConfig, hp: int, position: Point, angle: int, item_type: ItemTypes, 
-                          fertility: int, accumulated: int, min_item_strength: int, max_item_strength: int, is_active: bool):
+                          fertility: int, accumulated: int, max_item_strength: int, is_active: bool):
         match(item_type):
             case ItemTypes.HONEYDEW:
-                return self._build_honeydew_item_source(id, ownership, hp, position, angle, fertility, accumulated, min_item_strength, max_item_strength, is_active)
+                return self._build_honeydew_item_source(id, ownership, hp, position, angle, fertility, accumulated, max_item_strength, is_active)
             case ItemTypes.NECTAR:
-                return self._build_nectar_item_source(id, ownership, hp, position, angle, fertility, accumulated, min_item_strength, max_item_strength, is_active)
+                return self._build_nectar_item_source(id, ownership, hp, position, angle, fertility, accumulated, max_item_strength, is_active)
             case _:
                 raise GameError('unknown type of item source')
 
     def _build_honeydew_item_source(self, id: int, ownership: OwnershipConfig, hp: int, position: Point, angle: int, fertility: int, 
-                                    accumulated: int, min_item_strength: int, max_item_strength: int, is_active: bool):
+                                    accumulated: int, max_item_strength: int, is_active: bool):
         stats = StatsLibrary.ITEM_SOURCE_DEFAULT
-        body = HoneydewItemSourceBody(EventEmitter(), stats, position, angle, hp)
-        return HoneydewItemSource(self._event_bus, EventEmitter(), id, ownership, body, fertility, accumulated, min_item_strength, max_item_strength, is_active)
+        body = HoneydewItemSourceBody(EventEmitter(), stats, position, angle, hp, fertility, accumulated, max_item_strength, is_active)
+        return HoneydewItemSource(self._event_bus, EventEmitter(), id, ownership, body)
     
     def _build_nectar_item_source(self, id: int, ownership: OwnershipConfig, hp: int, position: Point, angle: int, fertility: int, 
-                                    accumulated: int, min_item_strength: int, max_item_strength: int, is_active: bool):
+                                    accumulated: int, max_item_strength: int, is_active: bool):
         stats = StatsLibrary.ITEM_SOURCE_DEFAULT
-        body = NectarItemSourceBody(EventEmitter(), stats, position, angle, hp)
-        return NectarItemSource(self._event_bus, EventEmitter(), id, ownership, body, fertility, accumulated, min_item_strength, max_item_strength, is_active)
+        body = NectarItemSourceBody(EventEmitter(), stats, position, angle, hp, fertility, accumulated, max_item_strength, is_active)
+        return NectarItemSource(self._event_bus, EventEmitter(), id, ownership, body)
