@@ -344,7 +344,10 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">images/tree_autumn.png</key>
+            <key type="filename">images/tree_spring.png</key>
             <key type="filename">images/tree_summer.png</key>
+            <key type="filename">images/tree_winter.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -430,7 +433,6 @@
                     <filename>images/ant_male_dead.png</filename>
                     <filename>images/item_stick_1v.png</filename>
                     <filename>images/item_stick_2v.png</filename>
-                    <filename>images/tree_summer.png</filename>
                     <filename>images/ladybug_1.png</filename>
                     <filename>images/ladybug_2.png</filename>
                     <filename>images/ladybug_3.png</filename>
@@ -454,6 +456,10 @@
                     <filename>images/item_source_nectar_spring.png</filename>
                     <filename>images/item_source_nectar_summer.png</filename>
                     <filename>images/item_source_nectar_winter.png</filename>
+                    <filename>images/tree_autumn.png</filename>
+                    <filename>images/tree_spring.png</filename>
+                    <filename>images/tree_summer.png</filename>
+                    <filename>images/tree_winter.png</filename>
                 </array>
             </struct>
         </map>
@@ -462,7 +468,9 @@
         <key>replaceList</key>
         <array/>
         <key>ignoredWarnings</key>
-        <array/>
+        <array>
+            <string>try-pro-features</string>
+        </array>
         <key>commonDivisorX</key>
         <uint>1</uint>
         <key>commonDivisorY</key>
