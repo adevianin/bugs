@@ -4,6 +4,7 @@ import { AntView } from './entitiesViews/antView';
 import { NestView } from './entitiesViews/nestView';
 import { EntityTypes } from "@domain/enum/entityTypes";
 import { ItemView } from './entitiesViews/itemView';
+import { LeafItemView } from './entitiesViews/leafItemView';
 import { ItemSourceView } from './entitiesViews/itemSourceView';
 import { ItemAreaView } from './entitiesViews/itemAreaView';
 import { TreeView } from './entitiesViews/treeView';
@@ -11,6 +12,7 @@ import { LadybugView } from './entitiesViews/ladybugView';
 import { MarkersDemonstratorView } from './markersDemonstratorView';
 import { CONSTS } from '@domain/consts';
 import { VIEW_SETTINGS } from '@view/viewSettings';
+import { ItemTypes } from '@domain/enum/itemTypes';
 
 class WorldView extends BaseGraphicView {
 
@@ -36,7 +38,7 @@ class WorldView extends BaseGraphicView {
         this._antContainer = new PIXI.Container();
         this._ladybugContainer = new PIXI.Container();
         this._itemContainer = new PIXI.Container();
-        this._bigContainer = new PIXI.Container();
+        // this._bigContainer = new PIXI.Container();
         this._nestContainer = new PIXI.Container();
         this._itemAreaContainer = new PIXI.Container();
         this._itemSourceContainer = new PIXI.Container();
@@ -50,7 +52,7 @@ class WorldView extends BaseGraphicView {
         this._container.addChild(this._itemContainer);
         this._container.addChild(this._antContainer);
         this._container.addChild(this._ladybugContainer);
-        this._container.addChild(this._bigContainer);
+        // this._container.addChild(this._bigContainer);
         this._container.addChild(this._itemSourceContainer);
         this._container.addChild(this._treesContainer);
         this._container.addChild(this._itemAreaContainer);
@@ -93,7 +95,11 @@ class WorldView extends BaseGraphicView {
                 view = new NestView(entity, this._nestContainer);
                 break;
             case EntityTypes.ITEM:
-                view = new ItemView(entity, this._bigContainer);
+                if (entity.itemType == ItemTypes.LEAF) {
+                    view = new LeafItemView(entity, this._itemContainer);
+                } else {
+                    view = new ItemView(entity, this._itemContainer);
+                }
                 break;
             case EntityTypes.ITEM_SOURCE:
                 view = new ItemSourceView(entity, this._itemSourceContainer);

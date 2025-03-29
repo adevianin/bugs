@@ -224,9 +224,13 @@
             <key type="filename">images/item_flower_3v.png</key>
             <key type="filename">images/item_honeydew_1v.png</key>
             <key type="filename">images/item_leaf_1v.png</key>
+            <key type="filename">images/item_leaf_1v_autumn.png</key>
             <key type="filename">images/item_leaf_2v.png</key>
+            <key type="filename">images/item_leaf_2v_autumn.png</key>
             <key type="filename">images/item_leaf_3v.png</key>
+            <key type="filename">images/item_leaf_3v_autumn.png</key>
             <key type="filename">images/item_leaf_4v.png</key>
+            <key type="filename">images/item_leaf_4v_autumn.png</key>
             <key type="filename">images/item_nectar_1v.png</key>
             <key type="filename">images/item_stick_2v.png</key>
             <key type="filename">images/ladybug_1.png</key>
@@ -460,6 +464,10 @@
                     <filename>images/tree_spring.png</filename>
                     <filename>images/tree_summer.png</filename>
                     <filename>images/tree_winter.png</filename>
+                    <filename>images/item_leaf_1v_autumn.png</filename>
+                    <filename>images/item_leaf_2v_autumn.png</filename>
+                    <filename>images/item_leaf_3v_autumn.png</filename>
+                    <filename>images/item_leaf_4v_autumn.png</filename>
                 </array>
             </struct>
         </map>
