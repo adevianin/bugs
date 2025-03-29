@@ -38,25 +38,25 @@ class HuntForAphid(Thought):
         if self.fight_near_enemies_thought.is_fighting:
             return
         
-        if not self._body.memory.read_flag(self.Flags.FOUND_APHID):
+        if not self._read_flag(self.Flags.FOUND_APHID):
             food_sources = self._body.look_around_for_honeydew_food_sources()
 
             for food_source in food_sources:
-                if food_source.is_fertile:
+                if not food_source.is_damaged:
                     self._found_food_source = food_source
-                    self._body.memory.save_flag(self.Flags.FOUND_APHID, True)
+                    self._write_flag(self.Flags.FOUND_APHID, True)
                     break
 
-        if self._body.memory.read_flag(self.Flags.FOUND_APHID) and not self._body.memory.read_flag(self.Flags.IS_NEAR_FOUND_APHID):
+        if self._read_flag(self.Flags.FOUND_APHID) and not self._read_flag(self.Flags.IS_NEAR_FOUND_APHID):
             is_walk_done = self._body.step_to(self._found_food_source.position)
-            self._body.memory.save_flag(self.Flags.IS_NEAR_FOUND_APHID, is_walk_done)
+            self._write_flag(self.Flags.IS_NEAR_FOUND_APHID, is_walk_done)
             return
         
-        if self._body.memory.read_flag(self.Flags.IS_NEAR_FOUND_APHID) and not self._body.memory.read_flag(self.Flags.IS_FOUND_APID_EATED):
-            if self._found_food_source.is_fertile:
+        if self._read_flag(self.Flags.IS_NEAR_FOUND_APHID) and not self._read_flag(self.Flags.IS_FOUND_APID_EATED):
+            if not self._found_food_source.is_damaged:
                 self._body.eat_aphid(self._found_food_source)
-            if not self._found_food_source.is_fertile:
-                self._body.memory.save_flag(self.Flags.IS_FOUND_APID_EATED, True)
+            if self._found_food_source.is_damaged:
+                self._write_flag(self.Flags.IS_FOUND_APID_EATED, True)
                 self.done()
             return
         
