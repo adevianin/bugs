@@ -288,9 +288,25 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"grass.png":
+"grass_autumn.png":
 {
 	"frame": {"x":0,"y":129,"w":64,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"grass_summer.png":
+{
+	"frame": {"x":64,"y":129,"w":64,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"grass_winter.png":
+{
+	"frame": {"x":128,"y":129,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
@@ -498,7 +514,7 @@
 },
 "item_source_honeydew_autumn.png":
 {
-	"frame": {"x":64,"y":129,"w":90,"h":110},
+	"frame": {"x":192,"y":129,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -506,7 +522,7 @@
 },
 "item_source_honeydew_spring.png":
 {
-	"frame": {"x":154,"y":129,"w":90,"h":110},
+	"frame": {"x":282,"y":129,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -514,7 +530,7 @@
 },
 "item_source_honeydew_summer.png":
 {
-	"frame": {"x":244,"y":129,"w":90,"h":110},
+	"frame": {"x":372,"y":129,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -522,7 +538,7 @@
 },
 "item_source_honeydew_winter.png":
 {
-	"frame": {"x":334,"y":129,"w":90,"h":110},
+	"frame": {"x":462,"y":129,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -530,7 +546,7 @@
 },
 "item_source_nectar_autumn.png":
 {
-	"frame": {"x":424,"y":129,"w":90,"h":110},
+	"frame": {"x":552,"y":129,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -538,7 +554,7 @@
 },
 "item_source_nectar_spring.png":
 {
-	"frame": {"x":514,"y":129,"w":90,"h":110},
+	"frame": {"x":642,"y":129,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -546,7 +562,7 @@
 },
 "item_source_nectar_summer.png":
 {
-	"frame": {"x":604,"y":129,"w":90,"h":110},
+	"frame": {"x":732,"y":129,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -554,7 +570,7 @@
 },
 "item_source_nectar_winter.png":
 {
-	"frame": {"x":694,"y":129,"w":90,"h":110},
+	"frame": {"x":822,"y":129,"w":90,"h":110},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":110},
@@ -775,6 +791,6 @@
 	"format": "RGBA8888",
 	"size": {"w":924,"h":1239},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:4311a34477cc2fbc6e5777320f8afae0:4133fb81d2cd5cd47f6b85f1f16d394a:2b831dbdc2ad4f91b77d89d68a6c0718$"
+	"smartupdate": "$TexturePacker:SmartUpdate:58ba3137aaead901c771aace375a2058:ac1d2ad142ebedfa0d59564dd274414c:2b831dbdc2ad4f91b77d89d68a6c0718$"
 }
 }

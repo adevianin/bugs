@@ -13,6 +13,7 @@ import { MarkersDemonstratorView } from './markersDemonstratorView';
 import { CONSTS } from '@domain/consts';
 import { VIEW_SETTINGS } from '@view/viewSettings';
 import { ItemTypes } from '@domain/enum/itemTypes';
+import { SEASON_TYPES } from '@domain/enum/season_types';
 
 class WorldView extends BaseGraphicView {
 
@@ -23,6 +24,7 @@ class WorldView extends BaseGraphicView {
         this._render();
 
         this.$domain.events.on('entityBorn', this._onEntityBorn.bind(this));
+        this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
         if (VIEW_SETTINGS.showPlayerViewRect) {
             this.$eventBus.on('viewPointChanged', this._onViewPointChanged.bind(this));
         }
@@ -30,15 +32,24 @@ class WorldView extends BaseGraphicView {
 
     _render() {
         let worldSize = this.$domain.getWorldSize();
-        this._bg = new PIXI.TilingSprite({
-            texture: this.$textureManager.getTexture('grass.png'),
+        this._bgSummer = new PIXI.TilingSprite({
+            texture: this.$textureManager.getTexture('grass_summer.png'),
+            width: worldSize[0],
+            height: worldSize[1],
+        });
+        this._bgAutumn = new PIXI.TilingSprite({
+            texture: this.$textureManager.getTexture('grass_autumn.png'),
+            width: worldSize[0],
+            height: worldSize[1],
+        });
+        this._bgWinter = new PIXI.TilingSprite({
+            texture: this.$textureManager.getTexture('grass_winter.png'),
             width: worldSize[0],
             height: worldSize[1],
         });
         this._antContainer = new PIXI.Container();
         this._ladybugContainer = new PIXI.Container();
         this._itemContainer = new PIXI.Container();
-        // this._bigContainer = new PIXI.Container();
         this._nestContainer = new PIXI.Container();
         this._itemAreaContainer = new PIXI.Container();
         this._itemSourceContainer = new PIXI.Container();
@@ -47,12 +58,13 @@ class WorldView extends BaseGraphicView {
         this._chunksGridContainer = new PIXI.Container();
         this._viewRectContainer = new PIXI.Container();
 
-        this._container.addChild(this._bg);
+        this._container.addChild(this._bgSummer);
+        this._container.addChild(this._bgAutumn);
+        this._container.addChild(this._bgWinter);
         this._container.addChild(this._nestContainer);
         this._container.addChild(this._itemContainer);
         this._container.addChild(this._antContainer);
         this._container.addChild(this._ladybugContainer);
-        // this._container.addChild(this._bigContainer);
         this._container.addChild(this._itemSourceContainer);
         this._container.addChild(this._treesContainer);
         this._container.addChild(this._itemAreaContainer);
@@ -62,6 +74,8 @@ class WorldView extends BaseGraphicView {
 
         this._markerDemonstrator = new MarkersDemonstratorView(this._markerDemonstratorContainer);
 
+        this._renderCurrentSeason();
+
         this._buildEntityViews();
         if (VIEW_SETTINGS.showMapChunkGrid) {
             this._renderMapChunksGrid();
@@ -69,6 +83,17 @@ class WorldView extends BaseGraphicView {
         if (VIEW_SETTINGS.showViewChunkGrid) {
             this._renderViewChunksGrid();
         }
+    }
+
+    _renderCurrentSeason() {
+        let currenSeason = this.$domain.currentSeason;
+        this._bgSummer.renderable = currenSeason == SEASON_TYPES.SPRING || currenSeason == SEASON_TYPES.SUMMER;
+        this._bgAutumn.renderable = currenSeason == SEASON_TYPES.AUTUMN;
+        this._bgWinter.renderable = currenSeason == SEASON_TYPES.WINTER;
+    }
+
+    _onSeasonChanged() {
+        this._renderCurrentSeason();
     }
 
     _onEntityBorn(entity) {

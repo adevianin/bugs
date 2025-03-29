@@ -263,7 +263,9 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">images/grass.png</key>
+            <key type="filename">images/grass_autumn.png</key>
+            <key type="filename">images/grass_summer.png</key>
+            <key type="filename">images/grass_winter.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -373,7 +375,6 @@
             <struct type="SpriteSheet">
                 <key>files</key>
                 <array>
-                    <filename>images/grass.png</filename>
                     <filename>images/ant_warrior_1.png</filename>
                     <filename>images/ant_warrior_2.png</filename>
                     <filename>images/ant_warrior_3.png</filename>
@@ -468,6 +469,9 @@
                     <filename>images/item_leaf_2v_autumn.png</filename>
                     <filename>images/item_leaf_3v_autumn.png</filename>
                     <filename>images/item_leaf_4v_autumn.png</filename>
+                    <filename>images/grass_autumn.png</filename>
+                    <filename>images/grass_summer.png</filename>
+                    <filename>images/grass_winter.png</filename>
                 </array>
             </struct>
         </map>
