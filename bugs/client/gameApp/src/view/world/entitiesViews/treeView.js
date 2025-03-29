@@ -75,7 +75,9 @@ class TreeView extends EntityView {
     }
 
     _onSeasonChanged() {
-        this._renderCurrentSeasonSprite();
+        setTimeout(() => {
+            this._renderCurrentSeasonSprite();
+        }, Math.random() * 10000);
     }
 
     _onViewPointChange(viewPoint, viewRect) {
