@@ -18,6 +18,7 @@ class HpLineView extends BaseGraphicView {
 
     remove() {
         this._container.removeChild(this._hpLine);
+        this._hpLine.destroy();
     }
 
     _render() {
