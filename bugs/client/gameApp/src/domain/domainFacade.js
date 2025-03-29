@@ -22,6 +22,10 @@ class DomainFacade {
         return this._worldService.world.currentStep;
     }
 
+    get currentSeason() {
+        return this._worldService.world.currentSeason;
+    }
+
     get notificationsContainer() {
         return this._userService.notificationsContainer;
     }

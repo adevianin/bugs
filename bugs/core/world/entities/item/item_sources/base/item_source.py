@@ -28,7 +28,7 @@ class ItemSource(Entity):
         self._item_type = item_type
 
         self._event_bus.add_listener('season_changed', self._on_season_changed)
-        self._body.events.add_listener('is_damaged_changed', self._on_is_damaged_changed)
+        # self._body.events.add_listener('is_damaged_changed', self._on_is_damaged_changed)
         self._body.events.add_listener('accumulated_changed', self._on_accumulated_changed)
 
     @property

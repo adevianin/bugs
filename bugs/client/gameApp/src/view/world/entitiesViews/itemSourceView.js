@@ -2,6 +2,7 @@ import { EntityView } from './entityView';
 import * as PIXI from 'pixi.js';
 import { HpLineView } from './hpLine';
 import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
+import { SEASON_TYPES } from '@domain/enum/season_types';
 
 class ItemSourceView extends EntityView { 
     
@@ -23,26 +24,26 @@ class ItemSourceView extends EntityView {
         super(entity, entitiesContainer);
 
         this._stopListenHpChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
-        this._stopListenIsDamagedChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_SOURCE_IS_DAMAGED_CHANGED}`, this._onIsDamagedChangeAnimationRequest.bind(this));
         this._stopListenAccumulatedChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_SOURCE_ACCUMULATED_CHANGED}`, this._onAccumulatedChangeAnimationRequest.bind(this));
+        this._stopListenSeasonChange = this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
 
         this._render();
     }
 
     get _entityWidth() {
-        return this._standSprite.width;
+        return this._spriteSpring.width;
     }
 
     get _entityHeight() {
-        return this._standSprite.height;
+        return this._spriteSpring.height;
     }
 
     remove() {
         super.remove();
         this._hpLineView.remove();
         this._stopListenHpChange();
-        this._stopListenIsDamagedChange();
         this._stopListenAccumulatedChange();
+        this._stopListenSeasonChange();
     }
 
     _render() {
@@ -51,10 +52,14 @@ class ItemSourceView extends EntityView {
         this._entityContainer.addChild(this._bodyContainer);
         this._entityContainer.addChild(this._uiContainer);
         
-        this._standSprite = new PIXI.Sprite(this.$textureManager.getTexture(`item_source_${this._entity.itemType}.png`));
-        this._bodyContainer.addChild(this._standSprite);
-        this._deadSprite = new PIXI.Sprite(this.$textureManager.getTexture(`item_source_${this._entity.itemType}_not_fertile.png`));
-        this._bodyContainer.addChild(this._deadSprite);
+        this._spriteSpring = new PIXI.Sprite(this.$textureManager.getTexture(`item_source_${this._entity.itemType}_${SEASON_TYPES.SPRING}.png`));
+        this._bodyContainer.addChild(this._spriteSpring);
+        this._spriteSummer = new PIXI.Sprite(this.$textureManager.getTexture(`item_source_${this._entity.itemType}_${SEASON_TYPES.SUMMER}.png`));
+        this._bodyContainer.addChild(this._spriteSummer);
+        this._spriteAutumn = new PIXI.Sprite(this.$textureManager.getTexture(`item_source_${this._entity.itemType}_${SEASON_TYPES.AUTUMN}.png`));
+        this._bodyContainer.addChild(this._spriteAutumn);
+        this._spriteWinter = new PIXI.Sprite(this.$textureManager.getTexture(`item_source_${this._entity.itemType}_${SEASON_TYPES.WINTER}.png`));
+        this._bodyContainer.addChild(this._spriteWinter);
 
         this._entityContainer.pivot.x = this._entityWidth / 2;
         this._entityContainer.pivot.y = this._entityHeight;
@@ -71,18 +76,16 @@ class ItemSourceView extends EntityView {
     _renderEntityState() {
         super._renderEntityState();
         this._hpLineView.showValue(this._entity.hp);
-        let state = this._determineVisualState(this._entity.isDamaged);
-        this._renderVisualState(state);
         this._renderAccumulatedValue(this._entity.accumulated);
+        this._renderCurrentSeasonSprite();
     }
 
-    _renderVisualState(state) {
-        this._standSprite.renderable = state == ItemSourceView.VISUAL_STATES.NOT_DAMAGED;
-        this._deadSprite.renderable = state == ItemSourceView.VISUAL_STATES.DAMAGED;
-    }
-
-    _determineVisualState(isDamaged) {
-        return isDamaged ? ItemSourceView.VISUAL_STATES.DAMAGED : ItemSourceView.VISUAL_STATES.NOT_DAMAGED;
+    _renderCurrentSeasonSprite() {
+        let currenSeason = this.$domain.currentSeason;
+        this._spriteSpring.renderable = currenSeason == SEASON_TYPES.SPRING;
+        this._spriteSummer.renderable = currenSeason == SEASON_TYPES.SUMMER;
+        this._spriteAutumn.renderable = currenSeason == SEASON_TYPES.AUTUMN;
+        this._spriteWinter.renderable = currenSeason == SEASON_TYPES.WINTER;
     }
 
     _renderAccumulatedValue(accumulated) {
@@ -132,9 +135,6 @@ class ItemSourceView extends EntityView {
             case ItemSourceView.ANIMATION_TYPES.HP_CHANGE: 
                 this._playHpChange(animation.params);
                 return true;
-            case ItemSourceView.ANIMATION_TYPES.IS_DAMAGED_CHANGE: 
-                this._playIsDamagedChange(animation.params);
-                return true;
             case ItemSourceView.ANIMATION_TYPES.ACCUMULATED_CHANGE: 
                 this._playAccumulatedChange(animation.params);
                 return true;
@@ -147,11 +147,6 @@ class ItemSourceView extends EntityView {
         this._hpLineView.showValue(hp);
     }
 
-    _playIsDamagedChange({ isDamaged }) {
-        let state = this._determineVisualState(isDamaged);
-        this._renderVisualState(state);
-    }
-
     _playAccumulatedChange({ accumulated }) {
         this._renderAccumulatedValue(accumulated);
     }
@@ -160,12 +155,12 @@ class ItemSourceView extends EntityView {
         this._addAnimation(ItemSourceView.ANIMATION_TYPES.HP_CHANGE, params);
     }
 
-    _onIsDamagedChangeAnimationRequest(params) {
-        this._addAnimation(ItemSourceView.ANIMATION_TYPES.IS_DAMAGED_CHANGE, params);
-    }
-
     _onAccumulatedChangeAnimationRequest(params) {
         this._addAnimation(ItemSourceView.ANIMATION_TYPES.ACCUMULATED_CHANGE, params);
+    }
+
+    _onSeasonChanged() {
+        this._renderCurrentSeasonSprite();
     }
 
 }

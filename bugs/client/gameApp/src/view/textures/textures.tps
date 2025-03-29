@@ -4,7 +4,7 @@
         <key>fileFormatVersion</key>
         <int>6</int>
         <key>texturePackerVersion</key>
-        <string>7.0.2</string>
+        <string>7.6.2</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -32,7 +32,7 @@
         <key>dpi</key>
         <uint>72</uint>
         <key>dataFormat</key>
-        <string>pixijs</string>
+        <string>pixijs4</string>
         <key>textureFileName</key>
         <filename></filename>
         <key>flipPVR</key>
@@ -290,10 +290,14 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">images/item_source_honeydew.png</key>
-            <key type="filename">images/item_source_honeydew_not_fertile.png</key>
-            <key type="filename">images/item_source_nectar.png</key>
-            <key type="filename">images/item_source_nectar_not_fertile.png</key>
+            <key type="filename">images/item_source_honeydew_autumn.png</key>
+            <key type="filename">images/item_source_honeydew_spring.png</key>
+            <key type="filename">images/item_source_honeydew_summer.png</key>
+            <key type="filename">images/item_source_honeydew_winter.png</key>
+            <key type="filename">images/item_source_nectar_autumn.png</key>
+            <key type="filename">images/item_source_nectar_spring.png</key>
+            <key type="filename">images/item_source_nectar_summer.png</key>
+            <key type="filename">images/item_source_nectar_winter.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -408,8 +412,6 @@
                     <filename>images/item_leaf_2v.png</filename>
                     <filename>images/item_leaf_3v.png</filename>
                     <filename>images/item_leaf_4v.png</filename>
-                    <filename>images/item_source_honeydew.png</filename>
-                    <filename>images/item_source_honeydew_not_fertile.png</filename>
                     <filename>images/item_honeydew_1v.png</filename>
                     <filename>images/item_flower_1v.png</filename>
                     <filename>images/item_flower_2v.png</filename>
@@ -441,11 +443,17 @@
                     <filename>images/item_bug_corpse_1v.png</filename>
                     <filename>images/item_bug_corpse_2v.png</filename>
                     <filename>images/item_nectar_1v.png</filename>
-                    <filename>images/item_source_nectar.png</filename>
-                    <filename>images/item_source_nectar_not_fertile.png</filename>
                     <filename>images/marker_load.png</filename>
                     <filename>images/marker_unload.png</filename>
                     <filename>images/marker_shield.png</filename>
+                    <filename>images/item_source_honeydew_autumn.png</filename>
+                    <filename>images/item_source_honeydew_spring.png</filename>
+                    <filename>images/item_source_honeydew_summer.png</filename>
+                    <filename>images/item_source_honeydew_winter.png</filename>
+                    <filename>images/item_source_nectar_autumn.png</filename>
+                    <filename>images/item_source_nectar_spring.png</filename>
+                    <filename>images/item_source_nectar_summer.png</filename>
+                    <filename>images/item_source_nectar_winter.png</filename>
                 </array>
             </struct>
         </map>
