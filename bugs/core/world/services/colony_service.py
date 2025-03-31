@@ -11,10 +11,11 @@ from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.settings import (NEW_EGG_FOOD_COST, LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT, 
                                  MAX_DISTANCE_TO_OPERATION_TARGET, FOOD_IN_NEW_COLONY_MAIN_NEST, ITEM_SOURCE_BLOCKING_RADIUS, NEST_BLOCKING_RADIUS)
 from core.world.utils.clean_string import clean_string
-from core.world.exceptions import GameRuleError, StateConflictError
+from core.world.exceptions import GameRuleError, GameError
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.action.colony_born_action import ColonyBornAction
 from core.world.entities.colony.base.colony import Colony
+from core.world.utils.check_is_point_on_map import check_is_point_on_map
 
 from typing import Callable
 
@@ -28,6 +29,9 @@ class ColonyService(BaseService):
         self._event_bus.add_listener('colony_died', self._on_colony_died)
 
     def found_new_colony(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: Point, colony_name: str):
+        if not self._validate_point(nest_building_site):
+            raise GameError('point is not on map')
+
         ant: Ant = self._find_ant_for_owner(queen_id, user_id)
         if ant.ant_type != AntTypes.QUEEN:
             self._raise_state_conflict_error()
@@ -105,6 +109,9 @@ class ColonyService(BaseService):
         colony.cancel_operation(operation_id)
 
     def build_new_sub_nest(self, user_id: int, performing_colony_id: int, position: Point, workers_count: int, warriors_count: int, nest_name: str):
+        if not self._validate_point(position):
+            raise GameError('point is not on map')
+        
         colony = self._find_ant_colony_for_owner(performing_colony_id, user_id)
         queen = self._find_queen_of_colony(performing_colony_id)
 
@@ -255,4 +262,7 @@ class ColonyService(BaseService):
 
     def _on_colony_died(self, colony: Colony):
         self._world.remove_colony(colony)
+
+    def _validate_point(self, point: Point) -> bool:
+        return check_is_point_on_map(self._world.map.size, point)
     
