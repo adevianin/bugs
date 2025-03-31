@@ -26,7 +26,8 @@ class ColonyRelationsService(BaseService):
     def _on_colony_died(self, colony: Colony):
         removed_relations = self._relations_table.clear_relations_for_colony(colony.id)
         ids = self._get_ant_colony_ids_from_relations(removed_relations)
-        ids.remove(colony.id)
+        if colony.id in ids:
+            ids.remove(colony.id)
         self._update_enemies_for_ant_colonies_by_ids(ids)
 
     def _on_step_done(self, step_number: int, season):
