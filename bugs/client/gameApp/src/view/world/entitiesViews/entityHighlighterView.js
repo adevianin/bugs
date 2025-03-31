@@ -14,8 +14,7 @@ class EntityHightlighterView extends BaseGraphicView {
     }
 
     remove() {
-        super.remove();
-        this._stopListenHightlightEntityRequest
+        this._stopListenHightlightEntityRequest();
     }
 
     _render() {
