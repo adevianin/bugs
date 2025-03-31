@@ -149,6 +149,10 @@ class AntView extends BaseGameHTMLView {
 
     _onShowAntBtnClick() {
         this.$eventBus.emit('showPointRequest', this._ant.position);
+        this.$eventBus.emit('highlightEntity', {
+            entityId: this._ant.id,
+            type: 'pointer'
+        });
     }
 
     _onHomeNestChanged() {
