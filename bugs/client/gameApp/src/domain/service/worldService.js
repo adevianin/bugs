@@ -57,11 +57,22 @@ class WorldService {
         
         let colonies = [];
         worldJson.ant_colonies.forEach(colonyJson => {
-            let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.name, colonyJson.operations);
+            let colony = this._worldFactory.buildAntColony(colonyJson);
             colonies.push(colony);
         });
         
         this._world.initWorld(worldJson.size, entities, colonies, worldJson.climate, step, season);
+    }
+
+    getColoniesByIds(ids) {
+        let foundColonies = [];
+        for (let colony of this._world.colonies) {
+            if (ids.includes(colony.id)) {
+                foundColonies.push(colony);
+            }
+        }
+
+        return foundColonies;
     }
 
     giveBirthToEntity(entityJson) {

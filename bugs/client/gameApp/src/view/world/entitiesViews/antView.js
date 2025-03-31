@@ -3,6 +3,7 @@ import { LiveEntityView } from './liveEntityView';
 import { VIEW_SETTINGS } from '@view/viewSettings';
 import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
 import { calculateRotationAngle } from '@utils/calculateRotationAngle';
+import { EntityHightlighterView } from './entityHighlighterView';
 
 class AntView extends LiveEntityView {
 
@@ -34,12 +35,24 @@ class AntView extends LiveEntityView {
 
     remove() {
         super.remove();
+        this._entityHighlighter.remove();
         this._stopListenFlewNuptialAnimationRequest();
         this._stopListenFlewNuptialBackAnimationRequest();
         this._stopListenAntGotInNestAnimationRequest();
         this._stopListenAntGotOutOfNestAnimationRequest();
         this._stopListenAntPickedUpItemAnimationRequest();
         this._stopListenAntDroppedItemAnimationRequest();
+    }
+
+    _render() {
+        super._render();
+
+        this._highlighterY = this._hpTopY - 2;
+        this._highlighterContainer = new PIXI.Container();
+        this._highlighterContainer.position.set(0, this._highlighterY);
+        this._hudContainer.addChild(this._highlighterContainer);
+
+        this._entityHighlighter = new EntityHightlighterView(this._highlighterContainer, this._entity);
     }
 
     _renderEntityState() {

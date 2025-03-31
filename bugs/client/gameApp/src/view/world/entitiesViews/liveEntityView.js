@@ -39,12 +39,12 @@ class LiveEntityView extends EntityView {
 
     _render() {
         this._bodyContainer = new PIXI.Container();
-        this._uiContainer = new PIXI.Container();
+        this._hudContainer = new PIXI.Container();
         this._pickedItemContainer = new PIXI.Container();
         
         this._entityContainer.addChild(this._bodyContainer);
         this._entityContainer.addChild(this._pickedItemContainer);
-        this._entityContainer.addChild(this._uiContainer);
+        this._entityContainer.addChild(this._hudContainer);
 
         this._standSprite = this._buildStandSprite();
         this._walkSprite = this._buildWalkSprite();
@@ -56,16 +56,15 @@ class LiveEntityView extends EntityView {
 
         let halfEntityWidth = this._entityWidth / 2;
         let halfEntityHeight = this._entityWidth / 2;
+        
+        this._bodyContainer.pivot.set(halfEntityWidth, halfEntityHeight);
 
-        this._bodyContainer.pivot.x = halfEntityWidth;
-        this._bodyContainer.pivot.y = halfEntityHeight;
-        this._uiContainer.pivot.x = halfEntityWidth;
-        this._uiContainer.pivot.y = halfEntityHeight;
-        this._pickedItemContainer.y = -halfEntityHeight + 3;
-        this._pickedItemContainer.pivot.x = halfEntityWidth;
-        this._pickedItemContainer.pivot.y = halfEntityHeight;
+        this._pickedItemTopY =  -halfEntityHeight + 3;
+        this._pickedItemContainer.y = this._pickedItemTopY;
+        this._pickedItemContainer.pivot.set(halfEntityWidth, halfEntityHeight);
 
-        this._hpLineView = this._buildHpLineView();
+        this._hpTopY = -halfEntityHeight-5;
+        this._hpLineView = new HpLineView({ x: -halfEntityWidth, y: this._hpTopY }, this._entityWidth, this._entity.maxHp, this._hudContainer);
 
         this._renderEntityState();
     }
@@ -95,10 +94,6 @@ class LiveEntityView extends EntityView {
 
     _buildDeadSprite() {
         throw 'abstract method';
-    }
-
-    _buildHpLineView() {
-        return new HpLineView({ x: 0, y: -4 }, this._entityWidth, this._entity.maxHp, this._uiContainer);
     }
 
     _renderEntityAngle(angle) {

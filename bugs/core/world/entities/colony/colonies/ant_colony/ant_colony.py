@@ -15,6 +15,7 @@ from core.world.entities.world.notification.notifications.died_colony_notificati
 from core.world.entities.action.colony_operation_changed_action import ColonyOperationChangedAction
 from core.world.entities.action.colony_operation_created_action import ColonyOperationCreatedAction
 from core.world.entities.action.colony_operation_deleted_action import ColonyOperationDeletedAction
+from core.world.entities.action.colony_enemies_changed_action import ColonyEnemiesChangedAction
 
 from functools import partial
 
@@ -26,6 +27,7 @@ class AntColony(Colony):
         self._operations: List[Operation] = operations or []
         self._owner_id = owner_id
         self._name = name 
+        self._enemies = []
 
         for operation in self._operations:
             self._listen_operation(operation)
@@ -43,6 +45,15 @@ class AntColony(Colony):
     @property
     def operations(self):
         return self._operations
+    
+    @property
+    def enemies(self) -> List[int]:
+        return self._enemies
+    
+    def set_enemies(self, enemies: List[int], silent: bool = False):
+        self._enemies = enemies
+        if not silent:
+            self._emit_action(ColonyEnemiesChangedAction(self.id, enemies, self.owner_id))
     
     def get_my_nests(self) -> List[Nest]:
         return self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.NEST])

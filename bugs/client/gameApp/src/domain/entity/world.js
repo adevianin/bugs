@@ -42,6 +42,10 @@ class World {
         return [...this._entities];
     }
 
+    get colonies() {
+        return [...this._colonies];
+    }
+
     get size() {
         return this._size;
     }

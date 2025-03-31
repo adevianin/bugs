@@ -39,6 +39,7 @@ from core.world.utils.distance_per_step_to_user_speed import distance_per_step_t
 from core.world.entities.action.colony_operation_created_action import ColonyOperationCreatedAction
 from core.world.entities.action.colony_operation_changed_action import ColonyOperationChangedAction
 from core.world.entities.action.colony_operation_deleted_action import ColonyOperationDeletedAction
+from core.world.entities.action.colony_enemies_changed_action import ColonyEnemiesChangedAction
 from core.world.entities.action.nuptial_environment_specie_genes_changed_action import NuptialEnvironmentSpecieGenesChangedAction
 from core.world.entities.action.entity_hibernation_status_chenged_action import EntityHibernationStatusChangedAction
 from core.world.entities.action.ant_current_activity_changed_action import AntCurrentActivityChangedAction
@@ -136,6 +137,8 @@ class ActionClientSerializer():
                 return self._serialize_colony_operation_changed(action)
             case ActionTypes.COLONY_OPERATION_DELETED:
                 return self._serialize_colony_operation_deleted(action)
+            case ActionTypes.COLONY_ENEMIES_CHANGED:
+                return self._serialize_colony_enemies_changed(action)
             case ActionTypes.CLIMATE_TEMPERATURE_CHANGE:
                 return self._serialize_climate_temperature_changed(action)
             case ActionTypes.USER_NOTIFICATION:
@@ -429,6 +432,13 @@ class ActionClientSerializer():
         json = self._serialize_common(action)
         json.update({
             'operationId': action.operation_id
+        })
+        return json
+    
+    def _serialize_colony_enemies_changed(self, action: ColonyEnemiesChangedAction):
+        json = self._serialize_common(action)
+        json.update({
+            'enemies': action.enemies
         })
         return json
     

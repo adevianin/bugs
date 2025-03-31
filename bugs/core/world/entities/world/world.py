@@ -14,6 +14,7 @@ from core.world.entities.ant.base.ant import Ant
 from core.world.entities.world.id_generator import IdGenerator
 from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
 from bugs.settings import DEBUG
+from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 
 from logging import Logger
 from typing import List, Callable
@@ -68,7 +69,7 @@ class World():
         return self._colonies
     
     @property
-    def ant_colonies(self):
+    def ant_colonies(self) -> List[AntColony]:
         ant_colonies_filter: Callable[[Colony], bool] = lambda colony: colony.member_type == EntityTypes.ANT
         return list(filter(ant_colonies_filter, self._colonies))
 
@@ -114,6 +115,13 @@ class World():
 
     def remove_colony(self, colony: Colony):
         self._colonies.remove(colony)
+
+    def get_colony_by_id(self, id: int):
+        for colony in self._colonies:
+            if colony.id == id:
+                return colony
+            
+        return None
 
     def stop(self):
         if (not self._is_world_running): 

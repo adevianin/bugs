@@ -32,7 +32,7 @@ class ColonyService extends BaseGameService {
     
     }
     giveBirthToColony(colonyJson) {
-        let colony = this._worldFactory.buildAntColony(colonyJson.id, colonyJson.owner_id, colonyJson.name, colonyJson.operations);
+        let colony = this._worldFactory.buildAntColony(colonyJson);
         this._world.addColony(colony);
         this._mainEventBus.emit('colonyBorn', colony);
     }

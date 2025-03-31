@@ -209,6 +209,7 @@
             <key type="filename">images/ant_worker_7.png</key>
             <key type="filename">images/ant_worker_8.png</key>
             <key type="filename">images/ant_worker_dead.png</key>
+            <key type="filename">images/enemy_icon.png</key>
             <key type="filename">images/ground_beetle_1.png</key>
             <key type="filename">images/ground_beetle_2.png</key>
             <key type="filename">images/ground_beetle_3.png</key>
@@ -319,6 +320,7 @@
                 <false/>
             </struct>
             <key type="filename">images/item_stick_1v.png</key>
+            <key type="filename">images/pointer_icon.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -472,6 +474,8 @@
                     <filename>images/grass_autumn.png</filename>
                     <filename>images/grass_summer.png</filename>
                     <filename>images/grass_winter.png</filename>
+                    <filename>images/enemy_icon.png</filename>
+                    <filename>images/pointer_icon.png</filename>
                 </array>
             </struct>
         </map>

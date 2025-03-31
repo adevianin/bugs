@@ -1,5 +1,6 @@
 from typing import List, Dict
 from core.world.exceptions import GameError
+from .colony_relation_types import ColonyRelationTypes
 
 class ColonyRelationsTable():
 
@@ -17,7 +18,7 @@ class ColonyRelationsTable():
         self._relations_data: List = relations_data
 
     @property
-    def relations_data(self):
+    def relations(self):
         return self._relations_data
 
     def get_relation_value(self, colony1_id: int, colony2_id: int):
@@ -26,7 +27,7 @@ class ColonyRelationsTable():
         relation = self._find_relation(colony1_id, colony2_id)
         return relation['value'] if relation else ColonyRelationsTable.DEFAULT_RELATION_VALUE
     
-    def set_relation_value(self, colony1_id: int, colony2_id: int, value: int):
+    def set_relation_value(self, colony1_id: int, colony2_id: int, value: int, relation_type: ColonyRelationTypes) -> List:
         if colony1_id == colony2_id:
             raise GameError('invalid relation')
         relation = self._find_relation(colony1_id, colony2_id)
@@ -35,24 +36,54 @@ class ColonyRelationsTable():
         else:
             relation = {
                 'colony_ids': [colony1_id, colony2_id],
-                'value': value
+                'value': value,
+                'type': relation_type
             }
             self._relations_data.append(relation)
 
-    def clear_relations_for_colony(self, colony_id: int):
-        self._relations_data = [relation for relation in self._relations_data if colony_id not in relation['colony_ids']]
-
-    def improve_relations_except(self, except_colony_ids: List[int]):
+    def clear_relations_for_colony(self, colony_id: int) -> List:
+        removed_relations = []
+        left_relations = []
         for relation in self._relations_data:
-            colony1_id = relation['colony_ids'][0]
-            colony2_id = relation['colony_ids'][1]
-            if colony1_id not in except_colony_ids and colony2_id not in except_colony_ids:
+            if colony_id in relation['colony_ids']:
+                removed_relations.append(relation)
+            else:
+                left_relations.append(relation)
+
+        self._relations_data = left_relations
+
+        return removed_relations
+
+    def improve_ant_colonies_relations(self) -> List:
+        for relation in self._relations_data:
+            if relation['type'] == ColonyRelationTypes.ANT_ANT:
                 relation['value'] += 1
 
-        self._clear_positive_relations()
+        return self._clear_positive_relations()
+    
+    def get_colony_ids_with_negative_relation_to(self, colony_id: int, relation_type: ColonyRelationTypes = ColonyRelationTypes.ANT_ANT) -> List[int]:
+        ids = set()
+        for relation in self._relations_data:
+            if colony_id in relation['colony_ids'] and relation['value'] < 0 and relation['type'] == relation_type:
+                ids.update(relation['colony_ids'])
+                
+        if colony_id in ids:
+            ids.remove(colony_id)
+
+        return list(ids)
 
     def _clear_positive_relations(self):
-        self._relations_data = [relation for relation in self._relations_data if relation['value'] < 0]
+        negative_relations = []
+        positive_relations = []
+        for relation in self._relations_data:
+            if relation['value'] < 0:
+                negative_relations.append(relation)
+            else:
+                positive_relations.append(relation)
+
+        self._relations_data = negative_relations
+
+        return positive_relations
 
     def _find_relation(self, colony1_id: int, colony2_id: int):
         for relation in self._relations_data:
@@ -60,3 +91,4 @@ class ColonyRelationsTable():
                 return relation
             
         return None
+    

@@ -62,3 +62,8 @@
     list-style-type: none;
     display: flex;
 }
+
+.colony-manager__enemies-tab {
+    display: flex;
+    flex-direction: row;
+}

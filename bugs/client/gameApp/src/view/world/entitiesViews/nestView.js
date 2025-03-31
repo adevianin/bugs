@@ -2,6 +2,7 @@ import { EntityView } from './entityView';
 import * as PIXI from 'pixi.js';
 import { HpLineView } from './hpLine';
 import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
+import { EntityHightlighterView } from './entityHighlighterView';
 
 class NestView extends EntityView { 
 
@@ -35,12 +36,12 @@ class NestView extends EntityView {
     }
 
     _render() {
-        this._nestContainer = new PIXI.Container();
         this._bodyContainer = new PIXI.Container();
-        this._uiContainer = new PIXI.Container();
-        this._nestContainer.addChild(this._bodyContainer);
-        this._nestContainer.addChild(this._uiContainer);
-        this._entityContainer.addChild(this._nestContainer);
+        this._hudContainer = new PIXI.Container();
+        this._highlighterContainer = new PIXI.Container();
+        this._hudContainer.addChild(this._highlighterContainer);
+        this._entityContainer.addChild(this._bodyContainer);
+        this._entityContainer.addChild(this._hudContainer);
 
         this._builtNestSprite = new PIXI.Sprite(this.$textureManager.getTexture('nest.png'));
         this._builtNestSprite.eventMode = 'static';
@@ -55,21 +56,23 @@ class NestView extends EntityView {
         let nestHalfWidth = this._nestWidth / 2;
         let nestHalfHeight = this._nestHeight / 2;
 
-        this._bodyContainer.pivot.x = nestHalfWidth;
-        this._bodyContainer.pivot.y = nestHalfHeight;
-        this._uiContainer.pivot.x = nestHalfWidth;
-        this._uiContainer.pivot.y = nestHalfHeight;
+        this._bodyContainer.pivot.set(nestHalfWidth, nestHalfHeight);
 
         if (this.$domain.isEntityMy(this._entity)) {
             this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
         }
 
-        this._hpLineView = new HpLineView({ x: 0, y: -13 }, this._nestWidth, this._entity.maxHp, this._uiContainer);
-
+        this._fortificationTopY = -nestHalfHeight-8;
         this._fortificationLine = new PIXI.Graphics();
-        this._fortificationLine.x = 0;
-        this._fortificationLine.y = -8;
-        this._uiContainer.addChild(this._fortificationLine);
+        this._fortificationLine.position.set(-nestHalfWidth, this._fortificationTopY);
+        this._hudContainer.addChild(this._fortificationLine);
+
+        this._hpTopY = this._fortificationTopY - 5;
+        this._hpLineView = new HpLineView({ x: -nestHalfWidth, y: this._hpTopY }, this._nestWidth, this._entity.maxHp, this._hudContainer);
+
+        this._highlighterBottomY = this._hpTopY - 2;
+        this._highlighterContainer.position.set(0, this._highlighterBottomY);
+        this._entityHighlighter = new EntityHightlighterView(this._highlighterContainer, this._entity);
 
         this._renderEntityState();
     }
@@ -77,6 +80,7 @@ class NestView extends EntityView {
     remove() {
         super.remove();
         this._hpLineView.remove();
+        this._entityHighlighter.remove();
         this._stopListenBuildStatusChange();
         this._stopListenFortificationChange();
         this._stopListenHpChange();

@@ -162,8 +162,13 @@ class WorldFactory {
         return new Tree(this._mainEventBus, id, position, angle, fromColony, ownerId, hp, maxHp);
     }
 
-    buildAntColony(id, owner_id, name, operations) {
-        return new AntColony(this._mainEventBus, id, owner_id, name, operations);
+    buildAntColony(colonyJson) {
+        let id = colonyJson.id;
+        let ownerId = colonyJson.owner_id;
+        let name = colonyJson.name;
+        let operations = colonyJson.operations;
+        let enemies = colonyJson.enemies;
+        return new AntColony(this._mainEventBus, id, ownerId, name, operations, enemies);
     }
 
 }

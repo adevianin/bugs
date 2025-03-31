@@ -3,13 +3,14 @@ import { EventEmitter } from "@common/utils/eventEmitter";
 
 class AntColony extends EventEmitter {
 
-    constructor(eventBus, id, onwerId, name, operations) {
+    constructor(eventBus, id, onwerId, name, operations, enemies) {
         super();
         this._eventBus = eventBus;
         this._id = id;
         this._onwerId = onwerId;
         this._operations = operations;
         this._name = name;
+        this._enemies = enemies;
     }
 
     get id() {
@@ -28,6 +29,10 @@ class AntColony extends EventEmitter {
         return this._operations;
     }
 
+    get enemies() {
+        return this._enemies;
+    }
+
     playAction(action) {
         switch(action.type) {
             case ACTION_TYPES.COLONY_DIED:
@@ -41,6 +46,9 @@ class AntColony extends EventEmitter {
                 break;
             case ACTION_TYPES.COLONY_OPERATION_DELETED:
                 this._playColonyOperationDeleted(action)
+                break;
+            case ACTION_TYPES.COLONY_ENEMIES_CHANGED:
+                this._playColonyEnemiesChanged(action)
                 break;
             default:
                 throw 'unknown colony action type';
@@ -62,6 +70,11 @@ class AntColony extends EventEmitter {
         let deletedOperationId = action.operationId;
         this._operations = this._operations.filter(operation => operation.id != deletedOperationId);
         this.emit('operationDeleted', deletedOperationId);
+    }
+
+    _playColonyEnemiesChanged(action) {
+        this._enemies = action.enemies;
+        this.emit('enemiesChanged');
     }
 
     // _playOperationsChangedAction(action) {

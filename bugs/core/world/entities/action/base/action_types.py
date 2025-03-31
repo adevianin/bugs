@@ -37,6 +37,7 @@ class ActionTypes(StrEnum):
     COLONY_OPERATION_CHANGED = 'colony_operation_changed'
     COLONY_OPERATION_CREATED = 'colony_operation_created'
     COLONY_OPERATION_DELETED = 'colony_operation_deleted'
+    COLONY_ENEMIES_CHANGED = 'colony_enemies_changed'
     CLIMATE_TEMPERATURE_CHANGE = 'climate_temperature_change'
     USER_NOTIFICATION = 'user_notification'
     RATING_UPDATED = 'rating_updated'

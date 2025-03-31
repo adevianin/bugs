@@ -4,6 +4,7 @@ import colonyManagerTmpl from "./colonyManagerTmpl.html";
 import { NestsTabView } from './nestsTab';
 import { AntsTab } from './antsTab';
 import { OperationsTab } from './operationsTab';
+import { EnemiesTab } from './enemiesTab';
 import { TabSwitcher } from '@view/panel/base/tabSwitcher';
 
 class ColonyManager extends BaseGameHTMLView {
@@ -24,6 +25,7 @@ class ColonyManager extends BaseGameHTMLView {
         this._operationsTab.manageColony(colony);
         this._antsTab.manageColony(colony);
         this._nestsTab.manageColony(colony, nestToSelect);
+        this._enemiesTab.manageColony(colony);
         if (nestToSelect) {
             this._tabSwitcher.activateTab('nests');
         }
@@ -35,11 +37,13 @@ class ColonyManager extends BaseGameHTMLView {
         this._antsTab = new AntsTab(this._el.querySelector('[data-ants-tab]'));
         this._operationsTab = new OperationsTab(this._el.querySelector('[data-operations-tab]'));
         this._nestsTab = new NestsTabView(this._el.querySelector('[data-nests-tab]'));
+        this._enemiesTab = new EnemiesTab(this._el.querySelector('[data-enemies-tab]'));
 
         this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'colony', [
             { name: 'ants', label: 'мурахи', tab: this._antsTab },
             { name: 'operations', label: 'операції', tab: this._operationsTab },
-            { name: 'nests', label: 'гнізда', tab: this._nestsTab }
+            { name: 'nests', label: 'гнізда', tab: this._nestsTab },
+            { name: 'enemies', label: 'вороги', tab: this._enemiesTab }
         ]);
     }
 }
