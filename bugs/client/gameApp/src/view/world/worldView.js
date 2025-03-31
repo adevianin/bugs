@@ -61,8 +61,8 @@ class WorldView extends BaseGraphicView {
         this._container.addChild(this._bgSummer);
         this._container.addChild(this._bgAutumn);
         this._container.addChild(this._bgWinter);
-        this._container.addChild(this._nestContainer);
         this._container.addChild(this._itemContainer);
+        this._container.addChild(this._nestContainer);
         this._container.addChild(this._antContainer);
         this._container.addChild(this._ladybugContainer);
         this._container.addChild(this._itemSourceContainer);
