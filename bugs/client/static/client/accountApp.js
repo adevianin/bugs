@@ -1556,7 +1556,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   UI_CONSTS: () => (/* binding */ UI_CONSTS)
 /* harmony export */ });
 const UI_CONSTS = {
-    DOUBLE_CLICK_THROTTLE_MS: 2000
+    DOUBLE_CLICK_THROTTLE_MS: 2000,
+    WORLD_VIEW_FONT_NAME: 'Arial',
+    WORLD_VIEW_FONT_SIZE: 14,
+    WORLD_VIEW_FONT_COLOR: 0x000000,
+    WORLD_VIEW_ANT_STATS_SHOW_TIEM: 10000
 }
 
 

@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js';
 import { HpLineView } from './hpLine';
 import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
 import { SEASON_TYPES } from '@domain/enum/season_types';
+import { UI_CONSTS } from '@common/view/ui_consts';
 
 class ItemSourceView extends EntityView { 
     
@@ -108,9 +109,9 @@ class ItemSourceView extends EntityView {
         let fertilityText = new PIXI.Text({
             text: this._entity.fertility,
             style: {
-                fontFamily: 'Arial',
-                fontSize: 14,
-                fill: 0x000000,
+                fontFamily: UI_CONSTS.WORLD_VIEW_FONT_NAME,
+                fontSize: UI_CONSTS.WORLD_VIEW_FONT_SIZE,
+                fill: UI_CONSTS.WORLD_VIEW_FONT_COLOR,
             },
         });
         fertilityText.anchor.set(0.5);

@@ -352,6 +352,23 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">images/stats_defense_icon.png</key>
+            <key type="filename">images/stats_max_hp_icon.png</key>
+            <key type="filename">images/stats_strength_icon.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>4,4,8,8</rect>
+                <key>scale9Paddings</key>
+                <rect>4,4,8,8</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">images/tree_autumn.png</key>
             <key type="filename">images/tree_spring.png</key>
             <key type="filename">images/tree_summer.png</key>
@@ -476,6 +493,9 @@
                     <filename>images/grass_winter.png</filename>
                     <filename>images/enemy_icon.png</filename>
                     <filename>images/pointer_icon.png</filename>
+                    <filename>images/stats_defense_icon.png</filename>
+                    <filename>images/stats_max_hp_icon.png</filename>
+                    <filename>images/stats_strength_icon.png</filename>
                 </array>
             </struct>
         </map>

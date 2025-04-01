@@ -4,6 +4,7 @@ import { VIEW_SETTINGS } from '@view/viewSettings';
 import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
 import { calculateRotationAngle } from '@utils/calculateRotationAngle';
 import { EntityHightlighterView } from './entityHighlighterView';
+import { UI_CONSTS } from '@common/view/ui_consts';
 
 class AntView extends LiveEntityView {
 
@@ -47,11 +48,14 @@ class AntView extends LiveEntityView {
     _render() {
         super._render();
 
+        this._bodyContainer.eventMode = 'dynamic';
+        this._bodyContainer.cursor = 'pointer';
+        this._bodyContainer.on('pointerdown', this._onBodyClick.bind(this));
+
         this._highlighterY = this._hpTopY - 2;
         this._highlighterContainer = new PIXI.Container();
         this._highlighterContainer.position.set(0, this._highlighterY);
         this._hudContainer.addChild(this._highlighterContainer);
-
         this._entityHighlighter = new EntityHightlighterView(this._highlighterContainer, this._entity);
     }
 
@@ -67,7 +71,8 @@ class AntView extends LiveEntityView {
     }
 
     _buildStandSprite() {
-        return new PIXI.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_4.png`));
+        let sprite = new PIXI.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_4.png`));
+        return sprite;
     }
 
     _buildWalkSprite() {
@@ -103,6 +108,80 @@ class AntView extends LiveEntityView {
             graphics.rect(-sightDistance, -sightDistance, 2*sightDistance, 2*sightDistance).stroke({width: 1, color: 0x00FF00});
         }
         this._entityContainer.addChild(graphics);
+    }
+
+    _renderStats() {
+        if (this._statsContainer) {
+            return;
+        }
+        this._statsContainer = new PIXI.Container();
+        this._statsContainer.position.set(0, this._entityHeight / 2);
+        this._hudContainer.addChild(this._statsContainer);
+
+        let maxHpIcon = new PIXI.Sprite(this.$textureManager.getTexture('stats_max_hp_icon.png'));
+        maxHpIcon.anchor.set(0.5, 0);
+        let strengthIcon = new PIXI.Sprite(this.$textureManager.getTexture('stats_strength_icon.png'));
+        strengthIcon.anchor.set(0.5, 0);
+        let defenseIcon = new PIXI.Sprite(this.$textureManager.getTexture('stats_defense_icon.png'));
+        defenseIcon.anchor.set(0.5, 0);
+        let maxHpText = new PIXI.Text({
+            text: this._entity.stats.maxHp,
+            style: {
+                fontFamily: UI_CONSTS.WORLD_VIEW_FONT_NAME,
+                fontSize: UI_CONSTS.WORLD_VIEW_FONT_SIZE,
+                fill: UI_CONSTS.WORLD_VIEW_FONT_COLOR,
+            },
+        });
+        maxHpText.anchor.set(0.5, 0);
+        let strengthText = new PIXI.Text({
+            text: this._entity.stats.strength,
+            style: {
+                fontFamily: UI_CONSTS.WORLD_VIEW_FONT_NAME,
+                fontSize: UI_CONSTS.WORLD_VIEW_FONT_SIZE,
+                fill: UI_CONSTS.WORLD_VIEW_FONT_COLOR,
+            },
+        });
+        strengthText.anchor.set(0.5, 0);
+        let defenseText = new PIXI.Text({
+            text: this._entity.stats.defence,
+            style: {
+                fontFamily: UI_CONSTS.WORLD_VIEW_FONT_NAME,
+                fontSize: UI_CONSTS.WORLD_VIEW_FONT_SIZE,
+                fill: UI_CONSTS.WORLD_VIEW_FONT_COLOR,
+            },
+        });
+        defenseText.anchor.set(0.5, 0);
+        let colPadding = 1;
+        this._statsContainer.addChild(maxHpIcon, strengthIcon, defenseIcon, maxHpText, strengthText, defenseText);
+        let maxHpColWidth = colPadding + Math.max(maxHpText.width, maxHpIcon.width) + colPadding;
+        let strengthColWidth = colPadding + Math.max(maxHpText.width, strengthIcon.width) + colPadding;
+        let defenseColWidth = colPadding + Math.max(defenseText.width, defenseIcon.width) + colPadding;
+        let wholeStatsWidth = maxHpColWidth + strengthColWidth + defenseColWidth;
+        let maxHpColLeftX = -wholeStatsWidth / 2;
+        let maxHpColCenterX = maxHpColLeftX + maxHpColWidth / 2;
+        let strengthColLeftX = maxHpColLeftX + maxHpColWidth;
+        let strengthColCenterX = strengthColLeftX + strengthColWidth / 2;
+        let defenseColLeftX = strengthColLeftX + strengthColWidth;
+        let defenseColCenterX = defenseColLeftX + defenseColWidth / 2;
+
+        maxHpIcon.position.set(maxHpColCenterX, 0);
+        maxHpText.position.set(maxHpColCenterX, maxHpIcon.height);
+        strengthIcon.position.set(strengthColCenterX, 0);
+        strengthText.position.set(strengthColCenterX, maxHpIcon.height);
+        defenseIcon.position.set(defenseColCenterX, 0);
+        defenseText.position.set(defenseColCenterX, maxHpIcon.height);
+
+        setTimeout(() => {
+            this._removeStats();
+        }, UI_CONSTS.WORLD_VIEW_ANT_STATS_SHOW_TIEM);
+    }
+
+    _removeStats() {
+        if (this._statsContainer) {
+            this._hudContainer.removeChild(this._statsContainer);
+            this._statsContainer.destroy();
+            this._statsContainer = null;
+        }
     }
 
     async _playAnimation(animation) {
@@ -231,6 +310,10 @@ class AntView extends LiveEntityView {
 
     _onAntDroppedItemAnimationRequest(params) {
         this._addAnimation(AntView.ANIMATION_TYPES.DROPPED_ITEM);
+    }
+
+    _onBodyClick() {
+        this._renderStats();
     }
 
 }
