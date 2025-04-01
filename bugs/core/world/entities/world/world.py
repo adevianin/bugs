@@ -146,7 +146,7 @@ class World():
                 with self.lock:
                     self._do_step()
             except Exception as e:
-                self._logger.exception(str(e), exc_info=e)
+                self._logger.exception(f'step({step_number}) error', exc_info=e)
                 if DEBUG:
                     raise e
 
@@ -166,14 +166,24 @@ class World():
 
         not_live_entities = self._map.get_not_live_entities()
         for entity in not_live_entities:
-            entity.do_step()
+            try:
+                entity.do_step()
+            except Exception as e:
+                self._logger.exception(f'not live entity(id={ entity.id }) step error', exc_info=e)
+                if DEBUG:
+                    raise e
         
         entities = self._map.get_live_entities()
         for entity in entities:
-            if not entity.is_died: #in case if first entity in list killed next entity
-                self._temperature_sensor_handler.handle_sensor(entity)
-                self._visual_sensor_handler.handle_sensor(entity)
-                entity.do_step(self._current_step)
+            try:
+                if not entity.is_died: #in case if first entity in list killed next entity
+                    self._temperature_sensor_handler.handle_sensor(entity)
+                    self._visual_sensor_handler.handle_sensor(entity)
+                    entity.do_step(self._current_step)
+            except Exception as e:
+                self._logger.exception(f'live entity(id={ entity.id }) step error', exc_info=e)
+                if DEBUG:
+                    raise e
 
         self._event_bus.emit('step_done', self._current_step, self._current_season)
 
