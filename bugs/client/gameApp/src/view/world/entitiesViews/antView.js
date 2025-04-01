@@ -43,6 +43,7 @@ class AntView extends LiveEntityView {
         this._stopListenAntGotOutOfNestAnimationRequest();
         this._stopListenAntPickedUpItemAnimationRequest();
         this._stopListenAntDroppedItemAnimationRequest();
+        clearTimeout(this._hideStatsTimer);
     }
 
     _render() {
@@ -171,13 +172,14 @@ class AntView extends LiveEntityView {
         defenseIcon.position.set(defenseColCenterX, 0);
         defenseText.position.set(defenseColCenterX, maxHpIcon.height);
 
-        setTimeout(() => {
+        this._hideStatsTimer = setTimeout(() => {
             this._removeStats();
         }, UI_CONSTS.WORLD_VIEW_ANT_STATS_SHOW_TIEM);
     }
 
     _removeStats() {
         if (this._statsContainer) {
+            this._hideStatsTimer = null;
             this._hudContainer.removeChild(this._statsContainer);
             this._statsContainer.destroy();
             this._statsContainer = null;
