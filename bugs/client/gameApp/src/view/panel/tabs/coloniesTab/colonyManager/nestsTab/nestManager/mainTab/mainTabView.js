@@ -1,5 +1,6 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import mainTabTmpl from './mainTabTmpl.html';
+import { NameEditorView } from '@view/panel/base/nameEditor/nameEditorView';
 
 class MainTabView extends BaseGameHTMLView {
 
@@ -7,8 +8,6 @@ class MainTabView extends BaseGameHTMLView {
         super(el);
 
         this._render();
-
-        this._nameEl.addEventListener('change', this._onChangedNestName.bind(this));
     }
 
     manageNest(nest) {
@@ -17,7 +16,7 @@ class MainTabView extends BaseGameHTMLView {
         this._listenNest();
 
         this._renderStoredClalories();
-        this._renderName();
+        this._nameEditor.name = nest.name;
     }
 
     _listenNest() {
@@ -36,30 +35,20 @@ class MainTabView extends BaseGameHTMLView {
         this._el.innerHTML = mainTabTmpl;
 
         this._storedCaloriesEl = this._el.querySelector('[data-stored-calories]');
-        this._nameEl = this._el.querySelector('[data-name]');
+        this._nameEditor = new NameEditorView(this._el.querySelector('[data-name-editor]'), this._applyNestName.bind(this));
     }
 
     _renderStoredClalories() {
         this._storedCaloriesEl.innerHTML = this._nest.storedCalories;
     }
 
-    _renderName() {
-        this._nameEl.value = this._nest.name;
-    }
-
     _onStoredCaloriesChanged() {
         this._renderStoredClalories();
     }
 
-    async _onChangedNestName() {
-        if (!this._nameEl.value) {
-            return;
-        }
-        try {
-            await this.$domain.renameNest(this._nest.id, this._nameEl.value);
-        } catch (e) {
-            console.error(e);
-        }
+    async _applyNestName(newName) {
+        await this.$domain.renameNest(this._nest.id, newName);
+        return true;
     }
 
 }

@@ -3,6 +3,7 @@ import eggTmpl from './eggTmpl.html';
 import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
 import { eggStatesLabels } from "@view/labels/eggStatesLabels";
+import { NameEditorView } from '@view/panel/base/nameEditor/nameEditorView';
 
 class EggView extends BaseGameHTMLView {
     constructor(el, egg, nest) {
@@ -15,16 +16,12 @@ class EggView extends BaseGameHTMLView {
         this._render();
 
         this._antTypeSelector.addEventListener('change', this._onEggAntTypeChanged.bind(this));
-        this._nameInput.addEventListener('change', this._onEggNameChanged.bind(this));
         this._toLarvaChamberBtn.addEventListener('click', this._onEggtoLarvaChamberClick.bind(this));
         this._deleteBtn.addEventListener('click', this._onEggDeleteClick.bind(this));
     }
 
     _render() {
         this._el.innerHTML = eggTmpl;
-
-        this._nameInput = this._el.querySelector('[data-name]');
-        this._nameInput.value = this._egg.name;
 
         this._genomeView = new GenomeInlineView(this._el.querySelector('[data-genome]'), this._egg.genome);
 
@@ -40,6 +37,13 @@ class EggView extends BaseGameHTMLView {
         this._antTypeSelector = this._el.querySelector('[data-ant-type-selector]');
         this._renderAntTypeSelectorOptions();
         this._antTypeSelector.value = this._egg.antType;
+
+        this._nameEditor = new NameEditorView(this._el.querySelector('[data-name-editor]'), this._applyEggName.bind(this), this._egg.name);
+    }
+
+    async _applyEggName(newName) {
+        await this.$domain.changeEggNameInNest(this._nest.id, this._egg.id, newName);
+        return true;
     }
 
     _renderProgress() {
@@ -73,18 +77,6 @@ class EggView extends BaseGameHTMLView {
         }
     }
 
-    async _onEggNameChanged() {
-        let name = this._nameInput.value;
-        if (!name) {
-            return;
-        }
-        try {
-            await this.$domain.changeEggNameInNest(this._nest.id, this._egg.id, name);
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
     async _onEggtoLarvaChamberClick() {
         try {
             await this.$domain.moveEggToLarvaInNest(this._nest.id, this._egg.id);
@@ -104,6 +96,7 @@ class EggView extends BaseGameHTMLView {
     remove() {
         super.remove();
         this._genomeView.remove();
+        this._nameEditor.remove();
         this._stopListenProgressChange();
     }
 }

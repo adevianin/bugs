@@ -1,0 +1,13 @@
+.name-editor {
+    padding: 3px;
+}
+
+.name-editor__edit-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.name-editor__preview-container {
+    display: flex;
+    flex-direction: row;
+}

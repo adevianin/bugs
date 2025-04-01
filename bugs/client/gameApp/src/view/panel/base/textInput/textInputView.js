@@ -4,7 +4,7 @@ import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class TextInputView extends BaseGameHTMLView {
 
-    constructor(el, errContainer, minLength=3, maxLength=50) {
+    constructor(el, errContainer, minLength=3, maxLength=50, doValidationOnChange=true) {
         super(el);
         this._minLength = minLength;
         this._maxLength = maxLength;
@@ -13,11 +13,13 @@ class TextInputView extends BaseGameHTMLView {
 
         this._render();
 
-        this._el.addEventListener('change', this._onChange.bind(this));
+        if (doValidationOnChange) {
+            this._el.addEventListener('change', this._onChange.bind(this));
+        }
     }
 
     get value() {
-        return this._el.value;
+        return this._el.value.trim();
     }
 
     set value(val) {
@@ -29,6 +31,10 @@ class TextInputView extends BaseGameHTMLView {
         this._renderError(errorText);
 
         return !errorText;
+    }
+
+    clearErr() {
+        this._renderError(null);
     }
 
     _checkErrors() {

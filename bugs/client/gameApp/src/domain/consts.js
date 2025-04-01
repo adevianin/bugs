@@ -19,7 +19,9 @@ const CONSTS = {
     ITEM_SOURCE_BLOCKING_RADIUS: null,
     NEST_BLOCKING_RADIUS: null,
     MAP_CHUNK_SIZE: null,
-    VIEW_CHUNK_SIZE: null
+    VIEW_CHUNK_SIZE: null,
+    MAX_NAME_LENGTH: null,
+    MIN_NAME_LENGTH: null
 }
 
 function initConts(constsValues) {
