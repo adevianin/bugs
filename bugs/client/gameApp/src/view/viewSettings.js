@@ -5,7 +5,8 @@ const VIEW_SETTINGS = {
     showViewChunkGrid: false,
     showPlayerViewRect: false,
     showItemAreaDot: false,
-    isFastAnimations: false
+    isFastAnimations: false,
+    renderNestId: true
 }
 
 export {
