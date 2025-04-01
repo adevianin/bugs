@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js';
 import { HpLineView } from './hpLine';
 import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
 import { EntityHightlighterView } from './entityHighlighterView';
+import { UI_CONSTS } from '@common/view/ui_consts';
 
 class NestView extends EntityView { 
 
@@ -18,13 +19,15 @@ class NestView extends EntityView {
         static HP_CHANGE = 'hp_change';
     };
 
-    constructor(entity, entityContainer) {
+    constructor(entity, entityContainer, nestHudLayer) {
         super(entity, entityContainer);
+        this._nestHudLayer = nestHudLayer;
 
         this._render();
         this._stopListenBuildStatusChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.NEST_BUILD_STATUS_CHANGED}`, this._onBuildStatusChangeAnimationRequest.bind(this));
         this._stopListenFortificationChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.NEST_FORTIFICATION_CHANGED}`, this._onFortificationChangeAnimationRequest.bind(this));
         this._stopListenHpChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
+        this._stopListenNameChange = this._entity.on('nameChanged', this._onNameChanged.bind(this));
     }
 
     get _nestWidth() {
@@ -38,10 +41,14 @@ class NestView extends EntityView {
     _render() {
         this._bodyContainer = new PIXI.Container();
         this._hudContainer = new PIXI.Container();
+        this._nameContainer = new PIXI.Container();
         this._highlighterContainer = new PIXI.Container();
         this._hudContainer.addChild(this._highlighterContainer);
+        this._hudContainer.addChild(this._nameContainer);
         this._entityContainer.addChild(this._bodyContainer);
         this._entityContainer.addChild(this._hudContainer);
+
+        this._nestHudLayer.attach(this._hudContainer);
 
         this._builtNestSprite = new PIXI.Sprite(this.$textureManager.getTexture('nest.png'));
         this._builtNestSprite.eventMode = 'static';
@@ -71,7 +78,20 @@ class NestView extends EntityView {
         this._hpTopY = this._fortificationTopY - 5;
         this._hpLineView = new HpLineView({ x: -nestHalfWidth, y: this._hpTopY }, this._nestWidth, this._entity.maxHp, this._hudContainer);
 
-        this._highlighterBottomY = this._hpTopY - 2;
+        this._nameText = new PIXI.Text({
+            text: this._entity.name,
+            style: {
+                fontFamily: UI_CONSTS.WORLD_VIEW_FONT_NAME,
+                fontSize: UI_CONSTS.WORLD_VIEW_FONT_SIZE,
+                fill: UI_CONSTS.WORLD_VIEW_FONT_COLOR,
+            },
+        });
+        this._nameText.anchor.set(0.5, 0);
+        this._nameTopY = this._hpTopY - 2 - this._nameText.height;
+        this._nameContainer.addChild(this._nameText);
+        this._nameContainer.position.set(0, this._nameTopY);
+
+        this._highlighterBottomY = this._nameTopY - 2;
         this._highlighterContainer.position.set(0, this._highlighterBottomY);
         this._entityHighlighter = new EntityHightlighterView(this._highlighterContainer, this._entity);
 
@@ -85,6 +105,8 @@ class NestView extends EntityView {
         this._stopListenBuildStatusChange();
         this._stopListenFortificationChange();
         this._stopListenHpChange();
+        this._stopListenNameChange();
+        this._nestHudLayer.detach(this._hudContainer);
     }
 
     _renderEntityState() {
@@ -93,6 +115,7 @@ class NestView extends EntityView {
         this._renderVisualState(visualState);
         this._renderFortificationValue(this._entity.fortification);
         this._hpLineView.showValue(this._entity.hp);
+        this._renderName(this._entity.name);
     }
 
     _renderVisualState(state) {
@@ -112,6 +135,10 @@ class NestView extends EntityView {
         this._fortificationLine.fill({
             color
         });
+    }
+
+    _renderName(name) {
+        this._nameContainer.addChild
     }
 
     _determineNestVisualState() {
@@ -179,6 +206,10 @@ class NestView extends EntityView {
 
     _onHpChangeAnimationRequest(params) {
         this._addAnimation(NestView.ANIMATION_TYPES.HP_CHANGE, params);
+    }
+
+    _onNameChanged() {
+        this._nameText.text = this._entity.name;
     }
 
 }

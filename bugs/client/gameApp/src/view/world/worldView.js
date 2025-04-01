@@ -59,6 +59,7 @@ class WorldView extends BaseGraphicView {
         this._viewRectContainer = new PIXI.Container();
 
         this._antHudLayer = new PIXI.RenderLayer();
+        this._nestHudLayer = new PIXI.RenderLayer();
 
         this._container.addChild(this._bgSummer);
         this._container.addChild(this._bgAutumn);
@@ -73,7 +74,9 @@ class WorldView extends BaseGraphicView {
         this._container.addChild(this._markerDemonstratorContainer);
         this._container.addChild(this._chunksGridContainer);
         this._container.addChild(this._viewRectContainer);
+
         this._container.addChild(this._antHudLayer);
+        this._container.addChild(this._nestHudLayer);
 
         this._markerDemonstrator = new MarkersDemonstratorView(this._markerDemonstratorContainer);
 
@@ -120,7 +123,7 @@ class WorldView extends BaseGraphicView {
                 view = new LadybugView(entity, this._ladybugContainer);
                 break;
             case EntityTypes.NEST:
-                view = new NestView(entity, this._nestContainer);
+                view = new NestView(entity, this._nestContainer, this._nestHudLayer);
                 break;
             case EntityTypes.ITEM:
                 if (entity.itemType == ItemTypes.LEAF) {
