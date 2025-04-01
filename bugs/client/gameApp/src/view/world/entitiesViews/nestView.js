@@ -45,6 +45,7 @@ class NestView extends EntityView {
 
         this._builtNestSprite = new PIXI.Sprite(this.$textureManager.getTexture('nest.png'));
         this._builtNestSprite.eventMode = 'static';
+        this._builtNestSprite.cursor = 'pointer';
         this._bodyContainer.addChild(this._builtNestSprite);
 
         this._buildingNestSprite = new PIXI.Sprite(this.$textureManager.getTexture('nest_building.png'));
