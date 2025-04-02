@@ -118,7 +118,14 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         this._demonstrateMarkersRequest(markers);
     }
 
+    _showMainNest() {
+        if (this._mainNest) {
+            this.$eventBus.emit('showPointRequest', this._mainNest.position);
+        }
+    }
+
     _onChooseBuildingSiteBtnClick() {
+        this._showMainNest();
         this.$eventBus.emit('newNestPositionPickRequest', this._mainNest.position, (point) => { 
             this._buildingPosition.value = point;
             let err = this._validateBuildingPosition();
