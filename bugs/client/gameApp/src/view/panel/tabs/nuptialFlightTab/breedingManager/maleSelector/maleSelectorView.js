@@ -70,7 +70,6 @@ class MaleSelectorView extends BaseGameHTMLView {
     }
 
     _onNuptialMalesChanged(males) {
-        console.log(males);
         this._males = males;
         this._renderMales();
     }

@@ -9,6 +9,13 @@ class EventEmitter {
         return this._emitter.on(eventName, callback);
     }
 
+    once(eventName, callback) {
+        let stopListen = this._emitter.on(eventName, (...args) => {
+            stopListen();
+            callback(...args);
+        });
+    }
+
     emit(eventName, ...args) {
         this._emitter.emit(eventName, ...args);
     }
