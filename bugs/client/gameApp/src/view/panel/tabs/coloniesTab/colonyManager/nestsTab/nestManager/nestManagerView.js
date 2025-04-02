@@ -9,14 +9,21 @@ class NestManagerView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);
+        this._nest = null;
 
         this._render();
+
+        this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
     }
 
     manageNest(nest) {
         if (!nest) {
             return;
         }
+
+        this._emitHideNestAreaRequest();
+        this._nest = nest;
+        this._emitShowNestAreaRequest();
         
         this._eggTab.manageNest(nest);
         this._larvaTab.manageNest(nest);
@@ -37,6 +44,26 @@ class NestManagerView extends BaseGameHTMLView {
             { name: 'egg', label: 'яйця', tab: this._eggTab },
             { name: 'larva', label: 'личинки', tab: this._larvaTab }
         ]);
+    }
+
+    _emitHideNestAreaRequest() {
+        if (this._nest) {
+            this._nest.emit('hideNestAreaRequest');
+        }
+    }
+
+    _emitShowNestAreaRequest() {
+        if (this._nest) {
+            this._nest.emit('showNestAreaRequest');
+        }
+    }
+
+    _onSomeTabSwitched() {
+        if (this.isVisible()) {
+            this._emitShowNestAreaRequest();
+        } else {
+            this._emitHideNestAreaRequest();
+        }
     }
 
 }

@@ -28,6 +28,8 @@ class NestView extends EntityView {
         this._stopListenFortificationChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.NEST_FORTIFICATION_CHANGED}`, this._onFortificationChangeAnimationRequest.bind(this));
         this._stopListenHpChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
         this._stopListenNameChange = this._entity.on('nameChanged', this._onNameChanged.bind(this));
+        this._stopListenShowNestAreaRequest = this._entity.on('showNestAreaRequest', this._onShowNestAreaRequest.bind(this));
+        this._stopListenHideNestAreaRequest = this._entity.on('hideNestAreaRequest', this._onHideNestAreaRequest.bind(this));
     }
 
     get _nestWidth() {
@@ -60,6 +62,16 @@ class NestView extends EntityView {
 
         this._destroyedNestSprite = new PIXI.Sprite(this.$textureManager.getTexture('nest_destroyed.png'));
         this._bodyContainer.addChild(this._destroyedNestSprite);
+
+        this._nestArea = new PIXI.Graphics();
+        this._nestArea
+            .circle(0,0, this._entity.area)
+            .stroke({
+                color: UI_CONSTS.WORLD_VIEW_NEST_AREA_COLOR,
+                width: 1
+            });
+        this._nestArea.renderable = false;
+        this._hudContainer.addChild(this._nestArea);
 
         let nestHalfWidth = this._nestWidth / 2;
         let nestHalfHeight = this._nestHeight / 2;
@@ -107,6 +119,8 @@ class NestView extends EntityView {
         this._stopListenHpChange();
         this._stopListenNameChange();
         this._nestHudLayer.detach(this._hudContainer);
+        this._stopListenShowNestAreaRequest();
+        this._stopListenHideNestAreaRequest();
     }
 
     _renderEntityState() {
@@ -210,6 +224,14 @@ class NestView extends EntityView {
 
     _onNameChanged() {
         this._nameText.text = this._entity.name;
+    }
+
+    _onShowNestAreaRequest() {
+        this._nestArea.renderable = true;
+    }
+
+    _onHideNestAreaRequest() {
+        this._nestArea.renderable = false;
     }
 
 }
