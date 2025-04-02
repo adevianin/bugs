@@ -9,6 +9,7 @@ from core.world.entities.base.ownership_config import OwnershipConfig
 from .food_sources_data_manager import FoodSourcesDataManager
 from core.world.entities.world.id_generator import IdGenerator
 from typing import List, Dict
+from core.world.settings import NEST_AREA
 
 class NestFactory():
 
@@ -17,7 +18,7 @@ class NestFactory():
 
     def build_new_nest(self, position: Point, ownership: OwnershipConfig, name: str, is_main: bool):
         id = IdGenerator.generate_id()
-        return self.build_nest(id=id, position=position, angle=0, hp=100, ownership=ownership, larvae=[], eggs=[], stored_calories=0, area=300, 
+        return self.build_nest(id=id, position=position, angle=0, hp=150, ownership=ownership, larvae=[], eggs=[], stored_calories=0, area=NEST_AREA, 
                                build_progress=0, fortification=0, nearby_food_sources_data={}, nearby_enemy_positions=[], name=name, is_main=is_main)
     
     def build_nest(self, id: int, position: Point, angle: int, ownership: OwnershipConfig, hp: int, larvae: List[Larva], eggs: List[Egg], stored_calories: int, area: int, 

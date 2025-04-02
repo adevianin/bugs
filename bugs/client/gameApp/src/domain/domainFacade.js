@@ -112,8 +112,8 @@ class DomainFacade {
         return this._worldService.world.climate;
     }
 
-    buildMarker(type, point) {
-        return this._colonyService.buildMarker(type, point);
+    buildMarker(type, point, params) {
+        return this._colonyService.buildMarker(type, point, params);
     }
 
     findMyFirstNest() {

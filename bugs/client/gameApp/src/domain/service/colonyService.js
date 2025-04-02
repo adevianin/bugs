@@ -65,10 +65,11 @@ class ColonyService extends BaseGameService {
         return this._requestHandler(() => this._colonyApi.bringBugOpearation(performingColonyId, nestId));
     }
 
-    buildMarker(type, point) {
+    buildMarker(type, point, params = {}) {
         return {
             type,
-            point
+            point,
+            params
         };
     }
 

@@ -8,6 +8,7 @@ import { TextInputView } from "@view/panel/base/textInput/textInputView";
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
+import { CONSTS } from '@domain/consts';
 
 class BreedingManagerView extends BaseGameHTMLView {
 
@@ -136,7 +137,7 @@ class BreedingManagerView extends BaseGameHTMLView {
     }
 
     _showMarker() {
-        let markers = [this.$domain.buildMarker(MarkerTypes.POINTER, this._nestPositionView.value)];
+        let markers = [this.$domain.buildMarker(MarkerTypes.POINTER, this._nestPositionView.value, { area: CONSTS.NEST_AREA })];
         this.$eventBus.emit('showMarkersRequest', markers);
     }
 

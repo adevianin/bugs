@@ -114,7 +114,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _showMarkers() {
-        let markers = [this.$domain.buildMarker(MarkerTypes.POINTER, this._buildingPosition.value)];
+        let markers = [this.$domain.buildMarker(MarkerTypes.POINTER, this._buildingPosition.value, { area: CONSTS.NEST_AREA })];
         this._demonstrateMarkersRequest(markers);
     }
 

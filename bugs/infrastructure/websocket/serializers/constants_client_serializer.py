@@ -1,6 +1,6 @@
 from core.world.settings import (NEW_EGG_FOOD_COST, STEPS_IN_YEAR, SPRING_START_YEAR_STEP, SUMMER_START_YEAR_STEP, AUTUMN_START_YEAR_STEP, WINTER_START_YEAR_STEP,
                                  LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT, MAX_DISTANCE_TO_OPERATION_TARGET, NUPTIAL_FLIGHT_SEASONS, 
-                                 ITEM_SOURCE_BLOCKING_RADIUS, MAP_CHUNK_SIZE, VIEW_CHUNK_SIZE, NEST_BLOCKING_RADIUS, MAX_NAME_LENGTH, MIN_NAME_LENGTH)
+                                 ITEM_SOURCE_BLOCKING_RADIUS, MAP_CHUNK_SIZE, VIEW_CHUNK_SIZE, NEST_BLOCKING_RADIUS, MAX_NAME_LENGTH, MIN_NAME_LENGTH, NEST_AREA)
 from core.world.entities.ant.base.nuptial_environment.specie_builder.required_genes_list import REQUIRED_GENES
 from core.world.entities.colony.colonies.ant_colony.operation.build_new_sub_nest_operation import BuildNewSubNestOperation
 from core.world.entities.colony.colonies.ant_colony.operation.destroy_nest_operation import DestroyNestOperation
@@ -30,6 +30,7 @@ class ConstantsClientSerializer():
             'VIEW_CHUNK_SIZE': VIEW_CHUNK_SIZE,
             'MAX_NAME_LENGTH': MAX_NAME_LENGTH,
             'MIN_NAME_LENGTH': MIN_NAME_LENGTH,
+            'NEST_AREA': NEST_AREA,
             'BUILD_NEW_SUB_NEST_OPERATION_REQUIREMENTS': {
                 'MAX_WARRIORS_COUNT': BuildNewSubNestOperation.MAX_WARRIORS_COUNT,
                 'MIN_WARRIORS_COUNT': BuildNewSubNestOperation.MIN_WARRIORS_COUNT,

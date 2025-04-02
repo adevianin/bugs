@@ -21,7 +21,8 @@ const CONSTS = {
     MAP_CHUNK_SIZE: null,
     VIEW_CHUNK_SIZE: null,
     MAX_NAME_LENGTH: null,
-    MIN_NAME_LENGTH: null
+    MIN_NAME_LENGTH: null,
+    NEST_AREA: null
 }
 
 function initConts(constsValues) {
