@@ -51,8 +51,8 @@ class MapController extends BaseGraphicView {
         this._isDragingMode = false;
         let distToStartPoint = distance(e.client.x, e.client.y, this._startPoint.x, this._startPoint.y);
         if (distToStartPoint < 5) {
-            console.log(this._handler.toLocal({x: Math.floor(e.client.x), y: Math.floor(e.client.y)}));
-            this.$eventBus.emit('bgclick', this._handler.toLocal({x: Math.floor(e.client.x), y: Math.floor(e.client.y)}));
+            console.log(this._getLocalPointFromClickEvent(e));
+            this.$eventBus.emit('bgclick', this._getLocalPointFromClickEvent(e));
         }
     }
 
@@ -165,6 +165,26 @@ class MapController extends BaseGraphicView {
         }
     }
 
+    _getLocalPointFromClickEvent(e) {
+        let localPoint = this._handler.toLocal({x: e.client.x, y: e.client.y});
+        let x = Math.round(localPoint.x);
+        let y = Math.round(localPoint.y);
+        if (x < 0) {
+            x = 0;
+        }
+        if (x >= this._mapSize.width) {
+            x = this._mapSize.width - 1;
+        }
+
+        if (y < 0) {
+            y = 0;
+        }
+        if (y >= this._mapSize.height) {
+            y = this._mapSize.height - 1;
+        }
+
+        return {x, y};
+    }
 }
 
 export {
