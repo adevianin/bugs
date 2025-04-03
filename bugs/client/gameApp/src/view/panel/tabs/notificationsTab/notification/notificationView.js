@@ -8,14 +8,24 @@ import nestAlarmCanceledNotificationTmpl from './nestAlarmCanceledNotificationTm
 import nestAlarmRaisedNotificationTmpl from './nestAlarmRaisedNotificationTmpl.html';
 import diedColonyNotificationTmpl from './diedColonyNotificationTmpl.html';
 import { convertStepsToYear } from "@utils/convertStepsToYear";
+import { PositionView } from '@view/panel/base/position/positionView';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class NotificationView extends BaseGameHTMLView {
 
     constructor(el, notification) {
         super(el);
         this._notification = notification;
+        this._positionViews = [];
 
         this._render();
+    }
+
+    remove() {
+        super.remove();
+        for (let positionView of this._positionViews) {
+            positionView.remove();
+        }
     }
 
     _render() {
@@ -44,7 +54,8 @@ class NotificationView extends BaseGameHTMLView {
         this._el.innerHTML = diedAntNotificationTmpl;
         this._el.querySelector('[data-ant-name]').innerHTML = this._notification.antName;
         this._el.querySelector('[data-death-describe]').innerHTML = this._generateAntDeathDescribeText();
-        this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.deathRecord.deathPosition);
+        let deathPositionText = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_PLACE);
+        this._renderPosition(this._notification.deathRecord.deathPosition, this._el.querySelector('[data-death-position]'), deathPositionText);
         this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step) ;
     }
 
@@ -52,21 +63,20 @@ class NotificationView extends BaseGameHTMLView {
         this._el.innerHTML = diedNestNotificationTmpl;
         this._el.querySelector('[data-death-describe]').innerHTML = this._generateNestDeathDescribeText();
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
-        this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.deathRecord.deathPosition);
+        let deathPositionText = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_NEST_DEATH_PLACE);
+        this._renderPosition(this._notification.deathRecord.deathPosition, this._el.querySelector('[data-death-position]'), deathPositionText);
         this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step) ;
     }
 
     _renderNestAlarmRaisedNotification() {
         this._el.innerHTML = nestAlarmRaisedNotificationTmpl;
-        this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
-        this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.nestPosition);
+        this._renderPosition(this._notification.nestPosition, this._el.querySelector('[data-nest-name]'), this._notification.nestName);
         this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step);
     }
 
     _renderNestAlarmCanceledNotification() {
         this._el.innerHTML = nestAlarmCanceledNotificationTmpl;
-        this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
-        this._el.querySelector('[data-death-position]').innerHTML = this._renderPosition(this._notification.nestPosition);
+        this._renderPosition(this._notification.nestPosition, this._el.querySelector('[data-nest-name]'), this._notification.nestName);
         this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step) ;
     }
 
@@ -116,8 +126,9 @@ class NotificationView extends BaseGameHTMLView {
         }
     }
 
-    _renderPosition(position) {
-        return `(${position.x}:${position.y})`;
+    _renderPosition(position, el, linkText) {
+        let view = new PositionView(el, position, linkText);
+        this._positionViews.push(view);
     }
 
 }

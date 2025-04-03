@@ -54,7 +54,10 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.TEXT_INPUT_MAX_STR_LENGTH]: 'Максимальна довжина {0}.!!',
     [GAME_MESSAGE_IDS.TEXT_INPUT_INVALID_CHAR]: 'Тільки букви та цифри.!!',
 
+    [GAME_MESSAGE_IDS.POSITION_NOT_SPECIFIED]: 'не задано',
 
+    [GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_PLACE]: 'Місце смерті.',
+    [GAME_MESSAGE_IDS.NOTIFICATION_NEST_DEATH_PLACE]: 'Місце руйнування.',
 
     // [GAME_MESSAGE_IDS.CANT_BUILD_MORE_SUB_NEST]: 'Досягнуто максимальну кількість гнізд сателітів.',
     // [GAME_MESSAGE_IDS.CANT_BUILD_SUB_NEST_FAR_AWAY]: 'Не можна будувати гніздо сателіт так далеко центрального.',
