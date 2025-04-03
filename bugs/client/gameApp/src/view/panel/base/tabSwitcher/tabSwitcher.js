@@ -23,6 +23,10 @@ class TabSwitcher extends BaseGameHTMLView {
         }
     }
 
+    getActivatorForTab(tabName) {
+        return this._el.querySelector(`[data-tab-activator="${tabName}"]`);
+    }
+
     _render() {
         this._tabsData.forEach(tabData => {
             let btn = document.createElement('button');
@@ -46,6 +50,7 @@ class TabSwitcher extends BaseGameHTMLView {
             btn.classList.toggle('tab-switcher__activator--active', activatorTabName == activatingTabName);
         });
         this._currentActiveTabName = activatingTabName;
+        this.$eventBus.emit(`tabSwitched:${this._switcherName}`, activatingTabName);
         this.$eventBus.emit('tabSwitched', this._switcherName, activatingTabName);
     }
 

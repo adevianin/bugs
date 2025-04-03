@@ -10,6 +10,7 @@ import { SpecieBuilderTabView } from './tabs/specieBuilderTab';
 import { NotificationsTabView } from './tabs/notificationsTab';
 import { RatingTabView } from './tabs/ratingTab';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
+import { NotificationIndicatorView } from './tabs/notificationsTab/indicator/notificationIndicatorView';
 
 class PanelView extends BaseGameHTMLView {
 
@@ -36,6 +37,9 @@ class PanelView extends BaseGameHTMLView {
         this._el.classList.add('panel');
         this._height = 320;
         this._renderTabViews();
+
+        let notificationTabActivatorEl = this._tabSwitcher.getActivatorForTab('notifications');
+        this._notificationIndicatorView = new NotificationIndicatorView(notificationTabActivatorEl);
     }
 
     _renderTabViews() {

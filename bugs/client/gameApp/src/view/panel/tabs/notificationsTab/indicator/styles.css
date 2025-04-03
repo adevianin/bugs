@@ -1,0 +1,12 @@
+.notification-indicator-container {
+    position: relative;
+}
+
+.notification-indicator {
+    position: absolute;
+    color: red;
+    font-size: 50px;
+    top: 2px;
+    transform: translateY(-50%);
+    right: -8px;
+}

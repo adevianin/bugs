@@ -32,6 +32,7 @@ class NotificationClientSerializer():
             
     def _serialize_common(self, notification: Notification):
         return {
+            'id': notification.id,
             'step': notification.step,
             'type': notification.type
         }
