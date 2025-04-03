@@ -4,6 +4,7 @@ import specieBuilderTabTmpl from './specieBuilderTabTmpl.html';
 import { ChromosomeEditorTab } from "./chromosomeEditorTabView";
 import { TabSwitcher } from '../../base/tabSwitcher';
 import { ChromosomesTypes } from "@domain/enum/chromosomeTypes";
+import { HelpCallerView } from '@view/panel/helpCaller/helpCallerView';
 
 class SpecieBuilderTabView extends BaseGameHTMLView {
 
@@ -29,6 +30,7 @@ class SpecieBuilderTabView extends BaseGameHTMLView {
             { name: 'adaptation_editor', label: 'Адаптація', tab: this._adaptationChromosomeEditorTab },
             { name: 'specialization_editor', label: 'Спеціалізація', tab: this._specializationChromosomeEditorTab }
         ]);
+        this._helpCallerBreeding = new HelpCallerView(this._el.querySelector('[data-help-sign]'), 'specie');
     }
 
 }

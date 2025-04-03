@@ -1,0 +1,44 @@
+.help {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    background-color: rgba(128, 128, 128, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.scroll {
+    background-color: blanchedalmond;
+    width: 60%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+.scroll__head {
+    display: flex;
+    justify-content: right;
+}
+
+.scroll__close-btn {
+    margin: 10px;
+}
+
+.scroll__content {
+    overflow-y: auto;
+}
+
+.scroll__section {
+    padding: 20px;
+}
+
+.scroll__section {
+    transition: background-color 1s ease;
+}
+
+.scroll__section--highlighted {
+    background-color: yellow;
+}
+
