@@ -10,7 +10,7 @@ class NotificationsListView extends BaseGameHTMLView {
         this._notifications = this._notificationsContainer.notifications.slice().reverse();
         this._notificationViews = [];
         this._currentPortionIndex = 0;
-        this._portionSize = 5;
+        this._portionSize = 20;
 
         this._render();
 
