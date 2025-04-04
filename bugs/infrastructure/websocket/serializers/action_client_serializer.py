@@ -22,6 +22,7 @@ from core.world.entities.action.item_bringing_state_changed_action import ItemBr
 from core.world.entities.action.colony_born_action import ColonyBornAction
 from core.world.entities.action.colony_died_action import ColonyDiedAction
 from core.world.entities.action.ant_flew_nuptial_flight_back_action import AntFlewNuptialFlightBackAction
+from core.world.entities.action.ant_flew_nuptial_flight_action import AntFlewNuptialFlightAction
 from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
 from core.world.entities.action.nest_egg_became_larva import NestEggBecameLarvaAction
 from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsReadyAction
@@ -88,7 +89,7 @@ class ActionClientSerializer():
             case ActionTypes.ANT_DROPPED_PICKED_ITEM:
                 return self._default_action_serialize(action)
             case ActionTypes.ANT_FLEW_NUPTIAL_FLIGHT:
-                return self._default_action_serialize(action)
+                return self._serialize_ant_flew_nuptial_flight(action)
             case ActionTypes.ANT_FLEW_NUPTIAL_FLIGHT_BACK:
                 return self._serialize_ant_flew_nuptial_flight_back(action)
             case ActionTypes.ANT_GOT_FERTILIZED:
@@ -230,6 +231,15 @@ class ActionClientSerializer():
 
         json.update({
             'actionData': { 'item_id': action.item_id }
+        })
+
+        return json
+    
+    def _serialize_ant_flew_nuptial_flight(self, action: AntFlewNuptialFlightAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'isBornInNuptialFlight': action.is_born_in_nuptial_flight
         })
 
         return json

@@ -220,7 +220,12 @@ class AntView extends LiveEntityView {
         }
     }
 
-    async _playFlewNuptialAnimation({startPosition}) {
+    async _playFlewNuptialAnimation({startPosition, isBornInNuptialFlight}) {
+        if (this._isFastAnimationMode || isBornInNuptialFlight) {
+            this._toggleEntityVisibility(false);
+            return;
+        }
+
         let wholeAnimationTime = 5000;
         let flyStartTime = performance.now();
         let startX = startPosition.x;

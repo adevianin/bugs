@@ -24,6 +24,7 @@ class QueenAnt(Ant):
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, name: str, ownership: OwnershipConfig, body: AntBody, mind: AntMind):
         super().__init__(event_bus, events, id, name, ownership, body, AntTypes.QUEEN, mind)
+        self._is_born_in_nuptial_flight = False
 
         self._body.events.add_listener('flew_nuptial_flight', self._on_flew_nuptial_flight)
         self._body.events.add_listener('flew_nuptial_flight_back', self._on_flew_nuptial_flight_back)
@@ -56,6 +57,10 @@ class QueenAnt(Ant):
     def breeding_male_genome(self) -> Genome:
         return Genome.build(self._body.male_chromosomes_set, None) if self._body.is_fertilized else None
     
+    def fly_nuptial_flight(self, is_born_in_nuptial_flight: bool = False):
+        self._is_born_in_nuptial_flight = is_born_in_nuptial_flight
+        super().fly_nuptial_flight()
+    
     def fly_nuptial_flight_back(self, landing_position: Point):
         self._mind.toggle_auto_thought_generation(True)
         self._body.fly_nuptial_flight_back(landing_position)
@@ -72,7 +77,7 @@ class QueenAnt(Ant):
             super().do_step(step_number)
     
     def _on_flew_nuptial_flight(self):
-        self._emit_action(AntFlewNuptialFlightAction.build(self.id))
+        self._emit_action(AntFlewNuptialFlightAction.build(self.id, self._is_born_in_nuptial_flight))
 
     def _on_flew_nuptial_flight_back(self, landing_position: Point):
         self._emit_action(AntFlewNuptialFlightBackAction.build(self.id, landing_position))

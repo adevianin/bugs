@@ -65,9 +65,10 @@ class QueenAnt extends BaseAnt {
         }
     }
 
-    _playFlyNuptialFlight() {
+    _playFlyNuptialFlight(action) {
         this._requestActionAnimation(ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT, {
-            startPosition: this.position
+            startPosition: this.position,
+            isBornInNuptialFlight: action.isBornInNuptialFlight
         });
         this.isInNuptialFlight = true;
         this._emitToEventBus('queenFlewNuptialFlight');

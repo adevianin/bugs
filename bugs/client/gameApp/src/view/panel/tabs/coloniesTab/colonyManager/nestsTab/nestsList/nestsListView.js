@@ -15,9 +15,14 @@ class NestsListView extends BaseGameHTMLView {
     manageColony(colony, nestToSelect) {
         this._colony = colony;
         this._nests = this.$domain.getNestsFromColony(colony.id);
-        this._selectNest(nestToSelect || this._nests[0]);
-        this._renderNests();
-        this._renderSelectedNest();
+
+        if (this._nests.length > 0) {
+            this._renderNests();
+            this._selectNest(nestToSelect || this._nests[0]);
+        } else {
+            this._selectedNest = null;
+        }
+        
     }
 
     get selectedNest() {
@@ -26,6 +31,7 @@ class NestsListView extends BaseGameHTMLView {
 
     _selectNest(nest) {
         this._selectedNest = nest;
+        this._renderSelectedNest();
         this.events.emit('selectedNestChanged');
     }
 
@@ -71,7 +77,6 @@ class NestsListView extends BaseGameHTMLView {
 
     _onNestClick(nest) {
         this._selectNest(nest);
-        this._renderSelectedNest();
         this.$eventBus.emit('showPointRequest', nest.position);
     }
 
@@ -83,7 +88,6 @@ class NestsListView extends BaseGameHTMLView {
                 this._selectedNest = null;
                 if (this._nests.length > 0) {
                     this._selectNest(this._nests[0]);
-                    this._renderSelectedNest();
                 }
             }
         }
@@ -92,6 +96,9 @@ class NestsListView extends BaseGameHTMLView {
     _onNestBorn(entity) {
         if (this._checkIsMyNest(entity)) { 
             this._renderNest(entity);
+            if (!this._selectedNest) {
+                this._selectNest(entity);
+            }
         }
     }
 

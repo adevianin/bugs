@@ -51,7 +51,7 @@ class NuptialService(BaseService):
             raise GameRuleError('cant born antara with another ants')
         
         def on_antara_born(queen: QueenAnt):
-            queen.fly_nuptial_flight()
+            queen.fly_nuptial_flight(True)
 
         nuptial_env = self._find_nuptial_environment_for_owner(player_id)
         position = self._world.map.generate_random_point()

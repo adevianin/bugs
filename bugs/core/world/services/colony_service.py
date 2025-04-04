@@ -53,13 +53,12 @@ class ColonyService(BaseService):
         queen.fertilize(male)
 
         new_colony = self._colony_factory.build_new_ant_colony(user_id, self._world.map, self._world.colony_relations_table, colony_name)
+        new_colony.add_new_member(queen) # to render new member of new colony without tracking it on client
         self._emit_action(ColonyBornAction.build(new_colony))
-        new_colony.add_new_member(queen)
 
         def on_nest_found(nest: Nest):
             queen.relocate_to_nest(nest)
             queen.fly_nuptial_flight_back(nest.position)
-            # queen.build_nest(nest, True)
             nest.take_calories(FOOD_IN_NEW_COLONY_MAIN_NEST)
             self._world.add_new_colony(new_colony)
             self._event_bus.emit('colony_born', new_colony)
