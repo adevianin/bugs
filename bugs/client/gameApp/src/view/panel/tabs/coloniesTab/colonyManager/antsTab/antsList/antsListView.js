@@ -10,8 +10,8 @@ class AntsListView extends BaseGameHTMLView {
         super(el);
         this._antViews = {};
 
-        this.$domain.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this.$domain.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this.$domain.events.on('antDied', this._onAntDied.bind(this));
+        this.$domain.events.on('antBorn', this._onAntBorn.bind(this));
         this.$domain.events.on('queenFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
 
         this._render();
@@ -68,7 +68,7 @@ class AntsListView extends BaseGameHTMLView {
         this._ants = this._ants.filter(ant => ant.id != antId);
     }
 
-    _onSomeoneDied(entity) {
+    _onAntDied(entity) {
         if (!this._isActive()) {
             return;
         }
@@ -78,7 +78,7 @@ class AntsListView extends BaseGameHTMLView {
         this._renderNoAntsMode();
     }
 
-    _onSomeoneBorn(entity) {
+    _onAntBorn(entity) {
         if (!this._isActive()) {
             return;
         }

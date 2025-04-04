@@ -8,8 +8,8 @@ class NestsListView extends BaseGameHTMLView {
         super(el);
         this._nestViews = {};
 
-        this.$domain.events.on('entityDied', this._onSomeoneDied.bind(this));
-        this.$domain.events.on('entityBorn', this._onSomeoneBorn.bind(this));
+        this.$domain.events.on('nestDied', this._onNestDied.bind(this));
+        this.$domain.events.on('nestBorn', this._onNestBorn.bind(this));
     }
 
     manageColony(colony, nestToSelect) {
@@ -75,7 +75,7 @@ class NestsListView extends BaseGameHTMLView {
         this.$eventBus.emit('showPointRequest', nest.position);
     }
 
-    _onSomeoneDied(entity) {
+    _onNestDied(entity) {
         if (this._checkIsMyNest(entity)) {
             this._deleteNestView(entity);
             this._deleteNestEntity(entity);
@@ -89,7 +89,7 @@ class NestsListView extends BaseGameHTMLView {
         }
     }
 
-    _onSomeoneBorn(entity) {
+    _onNestBorn(entity) {
         if (this._checkIsMyNest(entity)) { 
             this._renderNest(entity);
         }
