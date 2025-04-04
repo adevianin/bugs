@@ -311,11 +311,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _messages_messageIds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../messages/messageIds */ "./accountApp/src/messages/messageIds.js");
 /* harmony import */ var _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @common/view/dotsLoader/dotsLoaderView */ "./common/view/dotsLoader/dotsLoaderView.js");
 /* harmony import */ var _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @common/domain/errors/conflictRequestError */ "./common/domain/errors/conflictRequestError.js");
-/* harmony import */ var _common_utils_throttle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/utils/throttle */ "./common/utils/throttle.js");
-/* harmony import */ var _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/view/errors/accountPasswordErrorView */ "./common/view/errors/accountPasswordErrorView.js");
-/* harmony import */ var _common_view_errors_accountUsernameErrorView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/view/errors/accountUsernameErrorView */ "./common/view/errors/accountUsernameErrorView.js");
-/* harmony import */ var _common_view_ui_consts__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @common/view/ui_consts */ "./common/view/ui_consts.js");
-
+/* harmony import */ var _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @common/view/errors/accountPasswordErrorView */ "./common/view/errors/accountPasswordErrorView.js");
+/* harmony import */ var _common_view_errors_accountUsernameErrorView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @common/view/errors/accountUsernameErrorView */ "./common/view/errors/accountUsernameErrorView.js");
+/* harmony import */ var _common_utils_doubleClickProtection__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @common/utils/doubleClickProtection */ "./common/utils/doubleClickProtection.js");
 
 
 
@@ -341,7 +339,7 @@ class RegistrationTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORT
         this._emailEl.addEventListener('input', this._onEmailInput.bind(this));
         this._passwordEl.addEventListener('change', this._onPasswordChanged.bind(this));
         this._passwordConfirmEl.addEventListener('change', this._onPasswordConfirmChanged.bind(this));
-        this._registrationBtn.addEventListener('click', (0,_common_utils_throttle__WEBPACK_IMPORTED_MODULE_4__.throttle)(this._onRegistrationBtnClick.bind(this), _common_view_ui_consts__WEBPACK_IMPORTED_MODULE_7__.UI_CONSTS.DOUBLE_CLICK_THROTTLE_MS));
+        this._registrationBtn.addEventListener('click', (0,_common_utils_doubleClickProtection__WEBPACK_IMPORTED_MODULE_6__.doubleClickProtection)(this._onRegistrationBtnClick.bind(this)));
     }
 
     get _username() {
@@ -367,13 +365,13 @@ class RegistrationTabView extends _common_view_base_baseHTMLView__WEBPACK_IMPORT
     _render() {
         this._registrationBtn = this._el.querySelector('[data-registration-btn]');
         this._usernameEl = this._el.querySelector('[data-username]');
-        this._usernameErrView = new _common_view_errors_accountUsernameErrorView__WEBPACK_IMPORTED_MODULE_6__.AccountUsernameErrorView(this._el.querySelector('[data-username-err]'));
+        this._usernameErrView = new _common_view_errors_accountUsernameErrorView__WEBPACK_IMPORTED_MODULE_5__.AccountUsernameErrorView(this._el.querySelector('[data-username-err]'));
         this._usernameLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__.DotsLoaderView(this._el.querySelector('[data-username-loader]'));
         this._emailEl = this._el.querySelector('[data-email]');
         this._emailLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__.DotsLoaderView(this._el.querySelector('[data-email-loader]'));
         this._emailErrContainer = this._el.querySelector('[data-email-err]');
         this._passwordEl = this._el.querySelector('[data-password]');
-        this._passwordErrView = new _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_5__.AccountPasswordErrorView(this._el.querySelector('[data-password-err]'));
+        this._passwordErrView = new _common_view_errors_accountPasswordErrorView__WEBPACK_IMPORTED_MODULE_4__.AccountPasswordErrorView(this._el.querySelector('[data-password-err]'));
         this._passwordConfirmEl = this._el.querySelector('[data-password-confirm]');
         this._passwordConfirmErrContainer = this._el.querySelector('[data-password-confirm-err]');
         this._reuqestLoader = new _common_view_dotsLoader_dotsLoaderView__WEBPACK_IMPORTED_MODULE_2__.DotsLoaderView(this._el.querySelector('[data-registration-request-loader]'));
@@ -1140,6 +1138,34 @@ class AccountApi {
 
 /***/ }),
 
+/***/ "./common/utils/doubleClickProtection.js":
+/*!***********************************************!*\
+  !*** ./common/utils/doubleClickProtection.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   doubleClickProtection: () => (/* binding */ doubleClickProtection)
+/* harmony export */ });
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _common_view_ui_consts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @common/view/ui_consts */ "./common/view/ui_consts.js");
+
+
+
+function doubleClickProtection(func) {
+    return (0,lodash__WEBPACK_IMPORTED_MODULE_0__.debounce)(func, _common_view_ui_consts__WEBPACK_IMPORTED_MODULE_1__.UI_CONSTS.DOUBLE_CLICK_PROTECT_MS, {
+        leading: true,
+        trailing: false
+    });
+}
+
+
+
+/***/ }),
+
 /***/ "./common/utils/eventEmitter.js":
 /*!**************************************!*\
   !*** ./common/utils/eventEmitter.js ***!
@@ -1271,29 +1297,6 @@ class Requester {
             data: axiosError.response ? axiosError.response.data : null
         }
     }
-}
-
-
-
-/***/ }),
-
-/***/ "./common/utils/throttle.js":
-/*!**********************************!*\
-  !*** ./common/utils/throttle.js ***!
-  \**********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   throttle: () => (/* binding */ throttle)
-/* harmony export */ });
-/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
-/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
-
-
-function throttle(func, wait, options = {}) {
-    return (0,lodash__WEBPACK_IMPORTED_MODULE_0__.throttle)(func, wait, options);
 }
 
 
@@ -1435,7 +1438,7 @@ class DotsLoaderView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Bas
 
     _render() {
         this._el.innerHTML = _dotsLoaderTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        this._el.classList.add('dots-loader');
+        this._el.classList.add('dots-loader', 'g-hidden');
     }
     
 }
@@ -1563,7 +1566,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   UI_CONSTS: () => (/* binding */ UI_CONSTS)
 /* harmony export */ });
 const UI_CONSTS = {
-    DOUBLE_CLICK_THROTTLE_MS: 2000,
+    DOUBLE_CLICK_PROTECT_MS: 2000,
     WORLD_VIEW_FONT_NAME: 'Arial',
     WORLD_VIEW_FONT_SIZE: 14,
     WORLD_VIEW_FONT_COLOR: 0x000000,

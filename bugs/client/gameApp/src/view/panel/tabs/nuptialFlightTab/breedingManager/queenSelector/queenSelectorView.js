@@ -1,6 +1,8 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import queenSelectorTmpl from './queenSelectorTmpl.html';
 import { QueenProfileView } from "./queenProfileView";
+import { doubleClickProtection } from '@common/utils/doubleClickProtection';
+import { StepWaiterView } from '@view/panel/base/stepWaiter/stepWaiterView';
 
 class QueenSelectorView extends BaseGameHTMLView {
 
@@ -19,7 +21,7 @@ class QueenSelectorView extends BaseGameHTMLView {
 
         this._prevBtn.addEventListener('click', this._onPrevBtnClick.bind(this));
         this._nextBtn.addEventListener('click', this._onNextBtnClick.bind(this));
-        this._bornAntaraBtn.addEventListener('click', this._onBornNewAntaraBtnClick.bind(this));
+        this._bornAntaraBtn.addEventListener('click', doubleClickProtection(this._onBornNewAntaraBtnClick.bind(this)));
 
     }
 
@@ -45,6 +47,7 @@ class QueenSelectorView extends BaseGameHTMLView {
         this._bornAntaraBtn = this._el.querySelector('[data-born-new-antara-btn]');
 
         this._queenProfileView = new QueenProfileView(this._el.querySelector('[data-queen-profile]'));
+        this._stepWaiterBornAntara = new StepWaiterView(this._el.querySelector('[data-step-waiter]'));
 
         this._renderIsEmptyState();
         this._renderChoosingBtnsState();
@@ -166,6 +169,7 @@ class QueenSelectorView extends BaseGameHTMLView {
     }
 
     _onBornNewAntaraBtnClick() {
+        this._stepWaiterBornAntara.waitNextStep();
         this.$domain.bornNewAntara();
     }
 

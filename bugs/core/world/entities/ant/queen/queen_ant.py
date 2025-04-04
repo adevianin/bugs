@@ -33,6 +33,10 @@ class QueenAnt(Ant):
         return super().is_detectable and not self._body.is_in_nuptial_flight
 
     @property
+    def is_fertilized(self):
+        return self._body.is_fertilized
+
+    @property
     def can_fly_nuptial_flight(self):
         return not self._body.is_fertilized
     

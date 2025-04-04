@@ -2,10 +2,9 @@ import { BaseHTMLView } from "@common/view/base/baseHTMLView";
 import { ACCOUNT_MESSAGE_IDS } from '../messages/messageIds';
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 import { ConflictRequestError } from '@common/domain/errors/conflictRequestError';
-import { throttle } from '@common/utils/throttle';
 import { AccountPasswordErrorView } from '@common/view/errors/accountPasswordErrorView';
 import { AccountUsernameErrorView } from "@common/view/errors/accountUsernameErrorView";
-import { UI_CONSTS } from "@common/view/ui_consts";
+import { doubleClickProtection } from "@common/utils/doubleClickProtection";
 
 class RegistrationTabView extends BaseHTMLView {
 
@@ -24,7 +23,7 @@ class RegistrationTabView extends BaseHTMLView {
         this._emailEl.addEventListener('input', this._onEmailInput.bind(this));
         this._passwordEl.addEventListener('change', this._onPasswordChanged.bind(this));
         this._passwordConfirmEl.addEventListener('change', this._onPasswordConfirmChanged.bind(this));
-        this._registrationBtn.addEventListener('click', throttle(this._onRegistrationBtnClick.bind(this), UI_CONSTS.DOUBLE_CLICK_THROTTLE_MS));
+        this._registrationBtn.addEventListener('click', doubleClickProtection(this._onRegistrationBtnClick.bind(this)));
     }
 
     get _username() {

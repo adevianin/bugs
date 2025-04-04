@@ -37,6 +37,9 @@ class ColonyService(BaseService):
             self._raise_state_conflict_error()
         queen: QueenAnt = ant
 
+        if queen.is_fertilized or not queen.is_in_nuptial_flight:
+            raise GameError('not correct queen state')
+
         if self._check_nest_building_position_is_blocked_by_item_source(nest_building_site):
             self._raise_state_conflict_error('some item sources blocking building nest')
         

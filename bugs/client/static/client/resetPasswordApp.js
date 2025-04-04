@@ -899,7 +899,7 @@ class DotsLoaderView extends _base_baseHTMLView__WEBPACK_IMPORTED_MODULE_2__.Bas
 
     _render() {
         this._el.innerHTML = _dotsLoaderTmpl_html__WEBPACK_IMPORTED_MODULE_1__["default"];
-        this._el.classList.add('dots-loader');
+        this._el.classList.add('dots-loader', 'g-hidden');
     }
     
 }

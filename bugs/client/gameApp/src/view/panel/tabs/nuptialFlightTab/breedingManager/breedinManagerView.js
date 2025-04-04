@@ -9,6 +9,7 @@ import { ConflictRequestError } from "@common/domain/errors/conflictRequestError
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import { CONSTS } from '@domain/consts';
+import { doubleClickProtection } from '@common/utils/doubleClickProtection';
 
 class BreedingManagerView extends BaseGameHTMLView {
 
@@ -18,7 +19,7 @@ class BreedingManagerView extends BaseGameHTMLView {
         this._render();
 
         this._chooseNestPositionBtn.addEventListener('click', this._onChooseNestPositionBtnClick.bind(this));
-        this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._startBtn.addEventListener('click', doubleClickProtection(this._onStartBtnClick.bind(this)));
         this.$eventBus.on('tabSwitched', this._onSomeTabSwitched.bind(this));
         this._queenSelectorView.events.on('change', this._onSelectedQueenChanged.bind(this));
     }

@@ -2,10 +2,9 @@ import './styles.css';
 import nameEditorTmpl from './nameEditorTmpl.html';
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
-import { throttle } from "@common/utils/throttle";
-import { UI_CONSTS } from '@common/view/ui_consts';
 import { TextInputView } from '../textInput/textInputView';
 import { CONSTS } from '@domain/consts';
+import { doubleClickProtection } from '@common/utils/doubleClickProtection';
 
 class NameEditorView extends BaseGameHTMLView {
 
@@ -23,7 +22,7 @@ class NameEditorView extends BaseGameHTMLView {
 
         this._editBtn.addEventListener('click', this._onEditBtnClick.bind(this));
         this._cancelBtn.addEventListener('click', this._onCancelBtnClick.bind(this));
-        this._okBtn.addEventListener('click', throttle(this._onOkBtnClick.bind(this), UI_CONSTS.DOUBLE_CLICK_THROTTLE_MS));
+        this._okBtn.addEventListener('click', doubleClickProtection(this._onOkBtnClick.bind(this)));
     }
 
     get name() {
