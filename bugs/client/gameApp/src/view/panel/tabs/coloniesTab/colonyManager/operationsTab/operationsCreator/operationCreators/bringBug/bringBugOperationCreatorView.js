@@ -14,7 +14,7 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
 
         this._render();
 
-        this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._startBtn.addEventListener('click', doubleClickProtection(this._onStartBtnClick.bind(this)));
         this._nestSelector.events.on('changed', this._onNestChanged.bind(this));
     }
 

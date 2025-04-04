@@ -7,6 +7,7 @@ import { NestInlineView } from "@view/panel/base/nest/nestInlineView";
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
+import { doubleClickProtection } from "@common/utils/doubleClickProtection";
 
 class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
 
@@ -20,7 +21,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         this._checkOperationConditions();
 
         this._chooseNestBtn.addEventListener('click', this._onChooseNestBtnClick.bind(this));
-        this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._startBtn.addEventListener('click', doubleClickProtection(this._onStartBtnClick.bind(this)));
         this._workersCount.events.on('change', this._onAntsCountChange.bind(this));
         this._warriorsCount.events.on('change', this._onAntsCountChange.bind(this));
     }

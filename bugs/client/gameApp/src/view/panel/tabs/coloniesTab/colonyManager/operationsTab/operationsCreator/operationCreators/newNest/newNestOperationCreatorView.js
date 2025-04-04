@@ -8,6 +8,7 @@ import { ConflictRequestError } from "@common/domain/errors/conflictRequestError
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { TextInputView } from "@view/panel/base/textInput/textInputView";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
+import { doubleClickProtection } from "@common/utils/doubleClickProtection";
 
 class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
@@ -20,7 +21,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         this._checkOperationConditions();
 
         this._chooseBuildingSiteBtn.addEventListener('click', this._onChooseBuildingSiteBtnClick.bind(this));
-        this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._startBtn.addEventListener('click', doubleClickProtection(this._onStartBtnClick.bind(this)));
     }
 
     remove() {

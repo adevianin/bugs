@@ -7,6 +7,7 @@ import { CONSTS } from "@domain/consts";
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
+import { doubleClickProtection } from "@common/utils/doubleClickProtection";
 
 class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
 
@@ -15,7 +16,7 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
 
         this._render();
 
-        this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._startBtn.addEventListener('click', doubleClickProtection(this._onStartBtnClick.bind(this)));
         this._nestFromSelector.events.on('changed', this._onNestFromChanged.bind(this));
         this._nestToSelector.events.on('changed', this._onNestToChanged.bind(this));
     }

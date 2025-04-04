@@ -5,6 +5,7 @@ import { CONSTS } from "@domain/consts";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
 import { convertStepsToYear } from "@utils/convertStepsToYear";
 import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
+import { doubleClickProtection } from '@common/utils/doubleClickProtection';
 
 class AntView extends BaseGameHTMLView {
 
@@ -16,7 +17,7 @@ class AntView extends BaseGameHTMLView {
 
         this._render();
 
-        this._nuptialFlightActionBtn.addEventListener('click', this._onNuptialFlightBtnClick.bind(this));
+        this._nuptialFlightActionBtn.addEventListener('click', doubleClickProtection(this._onNuptialFlightBtnClick.bind(this)));
         this._guardianTypeSelector.addEventListener('change', this._onGuardianBehaviorSelectorChange.bind(this));
         this._cooperativeBehaviorTogglerEl.addEventListener('change', this._onCooperativeBehaviorTogglerChange.bind(this));
         this._nestSelector.events.on('changed', this._onNestChanged.bind(this));

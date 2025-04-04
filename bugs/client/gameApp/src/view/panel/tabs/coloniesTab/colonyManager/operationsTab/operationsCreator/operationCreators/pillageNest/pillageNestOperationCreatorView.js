@@ -8,6 +8,7 @@ import { NestInlineView } from "@view/panel/base/nest/nestInlineView";
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
+import { doubleClickProtection } from "@common/utils/doubleClickProtection";
 
 class PillageNestOperationCreatorView extends BaseOperationCreatorView {
 
@@ -21,7 +22,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         this._checkOperationConditions();
 
         this._chooseNestToPillageBtn.addEventListener('click', this._onChooseNestToPillageBtnClick.bind(this));
-        this._startBtn.addEventListener('click', this._onStartBtnClick.bind(this));
+        this._startBtn.addEventListener('click', doubleClickProtection(this._onStartBtnClick.bind(this)));
         this._nestForLootSelector.events.on('changed', this._onNestForLootChanged.bind(this));
     }
 
