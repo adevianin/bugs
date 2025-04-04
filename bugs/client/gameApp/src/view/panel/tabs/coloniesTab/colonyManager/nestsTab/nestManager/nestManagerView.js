@@ -23,7 +23,9 @@ class NestManagerView extends BaseGameHTMLView {
 
         this._emitHideNestAreaRequest();
         this._nest = nest;
-        this._emitShowNestAreaRequest();
+        if (this.isVisible()) {
+            this._emitShowNestAreaRequest();
+        }
         
         this._eggTab.manageNest(nest);
         this._larvaTab.manageNest(nest);
