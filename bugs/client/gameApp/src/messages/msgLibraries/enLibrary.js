@@ -59,6 +59,9 @@ const EN_LIBRARY = {
     [GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_PLACE]: 'Death place.',
     [GAME_MESSAGE_IDS.NOTIFICATION_NEST_DEATH_PLACE]: 'Place of Destruction.',
 
+    [GAME_MESSAGE_IDS.NUPTIAL_TAB_TIME_FULL]: '{0} hr. {1} min. {2} sec.',
+    [GAME_MESSAGE_IDS.NUPTIAL_TAB_TIME_SHORT]: '{1} min. {2} sec.',
+
     // [GAME_MESSAGE_IDS.CANT_BUILD_MORE_SUB_NEST]: 'The maximum number of satellite nests has been reached.',
     // [GAME_MESSAGE_IDS.CANT_BUILD_SUB_NEST_FAR_AWAY]: 'A satellite nest cannot be built so far from the central nest.',
     // [GAME_MESSAGE_IDS.CANT_LAY_EGG_WITHOUT_QUEEN_IN_NEST]: 'The queen is not in the nest to lay eggs.',

@@ -56,7 +56,14 @@ class NuptialEnvironment():
         larva = Larva.build_new('Antara', AntTypes.QUEEN, genome)
         self._event_bus.emit('ant_birth_request', AntBirthFromSystemRequest(larva, self._owner_id, position, callback=on_antara_born))
 
-    def generate_males(self, count = 3):
+    def start_nuptial_season(self):
+        self._generate_males()
+
+    def stop_nuptial_season(self):
+        self._clear_males()
+        self._clear_not_activated_specie_genes()
+
+    def _generate_males(self, count = 3):
         self._males = []
         for i in range(count):
             genome = self._specie.generate_nuptial_male_genome(MUTATITON_PERCENT, SUPER_MUTATION_CHANCE_PERCENT, SUPER_MUTATION_PERCENT)
@@ -64,11 +71,11 @@ class NuptialEnvironment():
             self._males.append(male)
         self._emit_males_changed_action()
 
-    def clear_males(self):
+    def _clear_males(self):
         self._males = []
         self._emit_males_changed_action() 
 
-    def clear_not_activated_specie_genes(self):
+    def _clear_not_activated_specie_genes(self):
         self._specie.clear_not_activated_specie_genes()
         self._emit_specie_genes_changed_action()
 

@@ -2,6 +2,7 @@ import { EntityTypes } from "../enum/entityTypes";
 import { CONSTS } from "@domain/consts";
 import { Chunk } from "./chunk";
 import { distance_point } from "@utils/distance";
+import { SEASON_TYPES } from "@domain/enum/season_types";
 
 class World {
     constructor(mainEventBus, climate) {
@@ -19,6 +20,10 @@ class World {
 
     get currentStep() {
         return this._currentStep;
+    }
+
+    get currentYearStep() {
+        return this._currentStep % CONSTS.STEPS_IN_YEAR;
     }
 
     set currentStep(stepNumber) {
@@ -72,6 +77,15 @@ class World {
 
         this._splitOnChunks();
         this._addAllEntitiesToChunks();
+    }
+
+    getStepsCountToNuptialSeasonStart() {
+        let nuptSeasonStartYearStep = this._getYearStepForSeason(CONSTS.NUPTIAL_FLIGHT_SEASONS[0]);
+        if (this.currentYearStep <= nuptSeasonStartYearStep) {
+            return nuptSeasonStartYearStep - this.currentYearStep;
+        } else {
+            return CONSTS.STEPS_IN_YEAR - this.currentYearStep + nuptSeasonStartYearStep;
+        }
     }
 
     getAnts() {
@@ -250,6 +264,21 @@ class World {
         let first = Math.floor(x / CONSTS.VIEW_CHUNK_SIZE[0]);
         let second = Math.floor(y / CONSTS.VIEW_CHUNK_SIZE[1]);
         return `${first}_${second}`;
+    }
+
+    _getYearStepForSeason(season) {
+        switch (season) {
+            case SEASON_TYPES.SPRING:
+                return CONSTS.SPRING_START_YEAR_STEP;
+            case SEASON_TYPES.SUMMER:
+                return CONSTS.SUMMER_START_YEAR_STEP;
+            case SEASON_TYPES.AUTUMN:
+                return CONSTS.AUTUMN_START_YEAR_STEP;
+            case SEASON_TYPES.WINTER:
+                return CONSTS.WINTER_START_YEAR_STEP;
+            default:
+                throw 'unknown season';
+        }
     }
 
 }

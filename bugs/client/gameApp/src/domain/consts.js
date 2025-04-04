@@ -22,7 +22,8 @@ const CONSTS = {
     VIEW_CHUNK_SIZE: null,
     MAX_NAME_LENGTH: null,
     MIN_NAME_LENGTH: null,
-    NEST_AREA: null
+    NEST_AREA: null,
+    STEP_TIME: null
 }
 
 function initConts(constsValues) {

@@ -3,6 +3,8 @@ import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import nuptialFlightTabTmpl from './nuptialFlightTab.html';
 import { BreedingManagerView } from './breedingManager/breedinManagerView';
 import { HelpCallerView } from '@view/panel/helpCaller/helpCallerView';
+import { CONSTS } from '@domain/consts';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class NuptialFlightTabView extends BaseGameHTMLView {
 
@@ -12,17 +14,20 @@ class NuptialFlightTabView extends BaseGameHTMLView {
         this._render();
 
         this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
+        this.$domain.events.on('currentStepChanged', this._onStepChanged.bind(this));
     }
 
     _render() {
         this._el.innerHTML = nuptialFlightTabTmpl;
 
+        this._timeToNuptialSeasonEl = this._el.querySelector('[data-time-to-nuptial-season]');
         this._nuptialFlightModeEl = this._el.querySelector('[data-nuptial-flight-mode]');
         this._waitingNuptialFlightModeEl = this._el.querySelector('[data-waiting-nuptial-flight-mode]');
         this._bornNewAntaraBtn = this._el.querySelector('[data-born-new-antara-btn]');
         this._breedingManagerView = new BreedingManagerView(this._el.querySelector('[data-breeding-manager]'));
         this._helpCallerBreeding = new HelpCallerView(this._el.querySelector('[data-help-sign]'), 'breeding');
         this._renderIsNuptialSeasonState();
+        this._renderTimeToNuptialSeason();
     }
 
     _renderIsNuptialSeasonState() {
@@ -33,6 +38,27 @@ class NuptialFlightTabView extends BaseGameHTMLView {
 
     _onSeasonChanged() {
         this._renderIsNuptialSeasonState();
+        this._renderTimeToNuptialSeason();
+    }
+
+    _onStepChanged() {
+        if (!this.$domain.world.isNuptialSeasonNow) {
+            this._renderTimeToNuptialSeason();
+        }
+    }
+
+    _renderTimeToNuptialSeason() {
+        let stepsCount = this.$domain.world.getStepsCountToNuptialSeasonStart();
+        let secondsCount = stepsCount * CONSTS.STEP_TIME;
+        let hours = Math.floor(secondsCount / 3600);
+        let minutes = Math.floor((secondsCount % 3600) / 60);
+        let seconds = secondsCount % 60;
+        if (hours) {
+            this._timeToNuptialSeasonEl.innerHTML = this.$mm.format(GAME_MESSAGE_IDS.NUPTIAL_TAB_TIME_FULL, hours, minutes, seconds);
+        } else {
+            this._timeToNuptialSeasonEl.innerHTML = this.$mm.format(GAME_MESSAGE_IDS.NUPTIAL_TAB_TIME_SHORT, minutes, seconds);
+        }
+        
     }
 
 }

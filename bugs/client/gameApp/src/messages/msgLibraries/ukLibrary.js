@@ -59,6 +59,9 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_PLACE]: 'Місце смерті.',
     [GAME_MESSAGE_IDS.NOTIFICATION_NEST_DEATH_PLACE]: 'Місце руйнування.',
 
+    [GAME_MESSAGE_IDS.NUPTIAL_TAB_TIME_FULL]: '{0} год. {1} хв. {2} сек.',
+    [GAME_MESSAGE_IDS.NUPTIAL_TAB_TIME_SHORT]: '{0} хв. {1} сек.',
+
     // [GAME_MESSAGE_IDS.CANT_BUILD_MORE_SUB_NEST]: 'Досягнуто максимальну кількість гнізд сателітів.',
     // [GAME_MESSAGE_IDS.CANT_BUILD_SUB_NEST_FAR_AWAY]: 'Не можна будувати гніздо сателіт так далеко центрального.',
     // [GAME_MESSAGE_IDS.CANT_LAY_EGG_WITHOUT_QUEEN_IN_NEST]: 'Королеви немає в гнізді для відкладення яєць.',
