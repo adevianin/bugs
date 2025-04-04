@@ -9,18 +9,24 @@ class StepWaiterView extends BaseGameHTMLView {
         this._render();
     }
 
-    waitNextStep() {
-        this.waitStep(this.$domain.currentStep + 1);
+    waitNextStep(callback = null) {
+        this.waitStep(this.$domain.currentStep + 1, callback);
     }
 
-    waitStep(stepNumber) {
+    waitStep(stepNumber, callback = null) {
         this._clearWaiting();
+        this._callback = callback;
         this._loader.toggle(true);
         if (this.$domain.currentStep >= stepNumber) {
             this._onWaited();
         } else {
             this._stopWaitStep = this.$domain.events.on(`stepSyncDone:${stepNumber}`, this._onWaited.bind(this));
         }
+    }
+
+    reset() {
+        this._clearWaiting();
+        this._loader.toggle(false);
     }
 
     remove() {
@@ -36,6 +42,9 @@ class StepWaiterView extends BaseGameHTMLView {
     }
 
     _onWaited() {
+        if (this._callback) {
+            this._callback();
+        }
         this._clearWaiting();
         this._loader.toggle(false);
     }
@@ -44,6 +53,9 @@ class StepWaiterView extends BaseGameHTMLView {
         if (this._stopWaitStep) {
             this._stopWaitStep();
             this._stopWaitStep = null;
+        }
+        if (this._callback) {
+            this._callback = null;
         }
     }
 }

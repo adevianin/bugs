@@ -3,6 +3,7 @@ import eggTabTmpl from './eggTabTmpl.html';
 import { EggView } from "./eggView";
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
+import { StepWaiterView } from '@view/panel/base/stepWaiter/stepWaiterView';
 
 class EggTabView extends BaseGameHTMLView {
 
@@ -21,6 +22,7 @@ class EggTabView extends BaseGameHTMLView {
         this._addEggBtn = this._el.querySelector('[data-add-egg]');
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
         this._errorContainerEl = this._el.querySelector('[data-error-container]');
+        this._addEggLoader = new StepWaiterView(this._el.querySelector('[data-lay-egg-loader]'));
     }
 
     manageNest(nest) {
@@ -30,6 +32,8 @@ class EggTabView extends BaseGameHTMLView {
 
         this._renderEggsList();
         this._renderError('');
+        this._addEggLoader.reset();
+        this._toggleAddEggBtn(true);
     }
 
     _listenNest() {
@@ -81,6 +85,10 @@ class EggTabView extends BaseGameHTMLView {
         return !errorId;
     }
 
+    _toggleAddEggBtn(isEnabled) {
+        this._addEggBtn.disabled = !isEnabled;
+    }
+
     _onEggBecameLarva(egg) {
         this._removeEggView(egg);
     }
@@ -101,6 +109,10 @@ class EggTabView extends BaseGameHTMLView {
         let name = this._generateAntName();
         let isFertilized = this._isFertilizeCheckbox.checked;
         try {
+            this._toggleAddEggBtn(false);
+            this._addEggLoader.waitNextStep(() => {
+                this._toggleAddEggBtn(true);
+            });
             await this.$domain.layEggInNest(this._nest.id, name, isFertilized);
         } catch (e) {
             if (e instanceof ConflictRequestError) {
