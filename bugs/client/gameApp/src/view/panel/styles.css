@@ -1,9 +1,11 @@
 .panel {
     background-color: beige;
     z-index: 3;
-    display: grid;
-    grid-template-rows: 10px 1fr;
-    grid-template-columns: 140px 1fr;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 
 .panel__tab-container {
@@ -11,12 +13,31 @@
     overflow-y: auto;
 }
 
-.panel__tab-switcher {
-    width: 130px;
-}
-
 .panel__handler {
     cursor: row-resize;
-    background-color: lightgray;
-    grid-column: span 2;
+    background-color: darkgray;
+    flex-grow: 0;
+    flex-shrink: 0;
+    height: 10px;
+}
+
+.panel__tab-switcher {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    position: absolute;
+    width: 320px;
+    left: 50%;
+    transform: translateY(-100%) translateX(-50%);
+}
+
+.panel__tab-switcher button {
+    margin: 0;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    border: none;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    word-break: break-all;
 }

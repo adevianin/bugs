@@ -16,5 +16,5 @@
 }
 
 .tab-switcher__activator--active {
-    border: solid 4px;
+    outline: solid 3px blue;
 }
