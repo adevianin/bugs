@@ -4,6 +4,8 @@ import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
 import { eggStatesLabels } from "@view/labels/eggStatesLabels";
 import { NameEditorView } from '@view/panel/base/nameEditor/nameEditorView';
+import { doubleClickProtection } from '@common/utils/doubleClickProtection';
+import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 
 class EggView extends BaseGameHTMLView {
     constructor(el, egg, nest) {
@@ -16,8 +18,16 @@ class EggView extends BaseGameHTMLView {
         this._render();
 
         this._antTypeSelector.addEventListener('change', this._onEggAntTypeChanged.bind(this));
-        this._toLarvaChamberBtn.addEventListener('click', this._onEggtoLarvaChamberClick.bind(this));
-        this._deleteBtn.addEventListener('click', this._onEggDeleteClick.bind(this));
+        this._toLarvaChamberBtn.addEventListener('click', doubleClickProtection(this._onEggtoLarvaChamberClick.bind(this)));
+        this._deleteBtn.addEventListener('click', doubleClickProtection(this._onEggDeleteClick.bind(this)));
+    }
+
+    remove() {
+        super.remove();
+        this._genomeView.remove();
+        this._nameEditor.remove();
+        this._toLarvaLoaderView.remove();
+        this._stopListenProgressChange();
     }
 
     _render() {
@@ -39,6 +49,8 @@ class EggView extends BaseGameHTMLView {
         this._antTypeSelector.value = this._egg.antType;
 
         this._nameEditor = new NameEditorView(this._el.querySelector('[data-name-editor]'), this._applyEggName.bind(this), this._egg.name);
+
+        this._toLarvaLoaderView = new DotsLoaderView(this._el.querySelector('[data-to-larva-loader]'));
     }
 
     async _applyEggName(newName) {
@@ -68,6 +80,11 @@ class EggView extends BaseGameHTMLView {
         this._renderProgress();
     }
 
+    _turnOffBtns() {
+        this._toLarvaChamberBtn.disabled = true;
+        this._deleteBtn.disabled = true;
+    }
+
     async _onEggAntTypeChanged() {
         let antType = this._antTypeSelector.value;
         try {
@@ -79,6 +96,8 @@ class EggView extends BaseGameHTMLView {
 
     async _onEggtoLarvaChamberClick() {
         try {
+            this._toLarvaLoaderView.toggle(true);
+            this._turnOffBtns();
             await this.$domain.moveEggToLarvaInNest(this._nest.id, this._egg.id);
         } catch (e) {
             console.error(e);
@@ -93,12 +112,6 @@ class EggView extends BaseGameHTMLView {
         }
     }
 
-    remove() {
-        super.remove();
-        this._genomeView.remove();
-        this._nameEditor.remove();
-        this._stopListenProgressChange();
-    }
 }
 
 export {

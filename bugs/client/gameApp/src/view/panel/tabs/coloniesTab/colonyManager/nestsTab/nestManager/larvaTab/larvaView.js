@@ -2,6 +2,7 @@ import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import larvaTmpl from './larvaTmpl.html';
 import { antTypesLabels } from '@view/labels/antTypesLabels';
 import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
+import { doubleClickProtection } from '@common/utils/doubleClickProtection';
 
 class LarvaView extends BaseGameHTMLView {
 
@@ -13,7 +14,7 @@ class LarvaView extends BaseGameHTMLView {
         this._render();
 
         this._stopListenProgressChange = larva.on('progressChanged', this._onProgressChanged.bind(this));
-        this._deleteLarvaBtn.addEventListener('click', this._onDeleteBtnClick.bind(this));
+        this._deleteLarvaBtn.addEventListener('click', doubleClickProtection(this._onDeleteBtnClick.bind(this)));
     }
 
     _render() {
