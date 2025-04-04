@@ -53,8 +53,6 @@ class NestView extends EntityView {
         this._nestHudLayer.attach(this._hudContainer);
 
         this._builtNestSprite = new PIXI.Sprite(this.$textureManager.getTexture('nest.png'));
-        this._builtNestSprite.eventMode = 'static';
-        this._builtNestSprite.cursor = 'pointer';
         this._bodyContainer.addChild(this._builtNestSprite);
 
         this._buildingNestSprite = new PIXI.Sprite(this.$textureManager.getTexture('nest_building.png'));
@@ -79,6 +77,8 @@ class NestView extends EntityView {
         this._bodyContainer.pivot.set(nestHalfWidth, nestHalfHeight);
 
         if (this.$domain.isEntityMy(this._entity)) {
+            this._builtNestSprite.eventMode = 'static';
+            this._builtNestSprite.cursor = 'pointer';
             this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
         }
 
