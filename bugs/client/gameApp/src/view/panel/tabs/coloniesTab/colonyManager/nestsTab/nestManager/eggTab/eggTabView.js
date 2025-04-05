@@ -104,14 +104,13 @@ class EggTabView extends BaseGameHTMLView {
             return;
         }
 
+        this._toggleAddEggBtn(false);
+        this._addEggLoader.toggle(true);
+        
         let name = this._generateAntName();
         let isFertilized = this._isFertilizeCheckbox.checked;
         try {
-            this._toggleAddEggBtn(false);
-            this._addEggLoader.toggle(true);
             await this.$domain.layEggInNest(this._nest.id, name, isFertilized);
-            this._toggleAddEggBtn(true);
-            this._addEggLoader.toggle(false);
         } catch (e) {
             if (e instanceof ConflictRequestError) {
                 this._validate();
@@ -119,7 +118,8 @@ class EggTabView extends BaseGameHTMLView {
                 this._renderError(this.$messages['SOMETHING_WENT_WRONG']);
             }
         }
-        
+        this._toggleAddEggBtn(true);
+        this._addEggLoader.toggle(false);
     }
 
     _generateAntName() {
