@@ -109,8 +109,9 @@ class NestBody(Body):
 
     def develop_eggs(self):
         for egg in self._eggs:
-            egg.develop()
-            self.events.emit('egg_develop', egg)
+            is_changed = egg.develop()
+            if is_changed:
+                self.events.emit('egg_develop', egg)
     
     def take_edible_item(self, item: Item):
         self.stored_calories += item.use()

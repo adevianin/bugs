@@ -73,6 +73,7 @@ class Egg():
 
     def develop(self):
         if self.state == EggStates.SPOILED:
-            return
+            return False
         
         self._progress += 10
+        return True
