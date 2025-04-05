@@ -160,9 +160,11 @@ class Nest extends Entity {
 
     _playLarvaIsReady(action) {
         let larva = this._larvae.find(larva => larva.id == action.larvaId);
-        let index = this._larvae.indexOf(larva);
-        this._larvae.splice(index, 1);
-        this.emit('larvaIsReady', larva);
+        if (larva) {
+            let index = this._larvae.indexOf(larva);
+            this._larvae.splice(index, 1);
+            this.emit('larvaIsReady', larva);
+        }
     }
     
     _playEggDevelop(action) {
