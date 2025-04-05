@@ -27,7 +27,6 @@ const ACTION_TYPES = {
     NEST_LARVA_ADDED: 'nest_larva_added',
     NEST_EGG_DEVELOP: 'nest_egg_develop',
     NEST_EGG_BECAME_LARVA: 'nest_egg_became_larva',
-    NEST_EGG_ADDED: 'nest_egg_added',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
     NEST_FORTIFICATION_CHANGED: 'nest_fortification_changed',
     NUPTIAL_ENVIRONMENT_MALES_CHANGED: 'nuptial_environment_males_changed',

@@ -16,6 +16,7 @@ from core.world.entities.ant.base.ant import Ant
 from core.world.entities.action.colony_born_action import ColonyBornAction
 from core.world.entities.colony.base.colony import Colony
 from core.world.utils.check_is_point_on_map import check_is_point_on_map
+from core.world.entities.ant.base.egg import Egg
 
 from typing import Callable
 
@@ -65,7 +66,7 @@ class ColonyService(BaseService):
 
         queen.found_nest(colony_name, True, nest_building_site, on_nest_found)
 
-    def add_egg(self, user_id: int, nest_id: int, name: str, is_fertilized: bool):
+    def add_egg(self, user_id: int, nest_id: int, name: str, is_fertilized: bool) -> Egg:
         nest = self._find_nest_for_owner(nest_id, user_id)
         queen = self._find_queen_of_colony(nest.from_colony_id)
         
@@ -81,6 +82,8 @@ class ColonyService(BaseService):
         egg = queen.produce_egg(name, is_fertilized)
         nest.give_calories(NEW_EGG_FOOD_COST)
         nest.add_egg(egg)
+
+        return egg
 
     def change_egg_caste(self, user_id: int, nest_id: int, egg_id: int, ant_type: AntTypes):
         nest = self._find_nest_for_owner(nest_id, user_id)

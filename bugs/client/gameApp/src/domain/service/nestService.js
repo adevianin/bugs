@@ -1,6 +1,7 @@
 import { BaseGameService } from "./base/baseGameService";
 import { CONSTS } from "@domain/consts";
 import { distance } from '@utils/distance';
+import { Egg } from "@domain/entity/egg";
 
 class NestService extends BaseGameService {
 
@@ -9,8 +10,12 @@ class NestService extends BaseGameService {
         this._nestApi = nestApi;
     }
 
-    layEggInNest(nestId, name, isFertilized) {
-        return this._requestHandler(() => this._nestApi.layEggInNest(nestId, name, isFertilized));
+    async layEggInNest(nestId, name, isFertilized) {
+        let result = await this._requestHandler(() => this._nestApi.layEggInNest(nestId, name, isFertilized));
+        let eggJson = result.egg;
+        let egg = Egg.buildFromJson(eggJson);
+        let nest = this._world.findEntityById(nestId);
+        nest.addNewEgg(egg);
     }
 
     async changeEggCasteInNest(nestId, eggId, antType) {

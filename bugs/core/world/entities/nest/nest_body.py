@@ -76,7 +76,6 @@ class NestBody(Body):
 
     def add_egg(self, egg: Egg):
         self.eggs.append(egg)
-        self.events.emit('egg_added', egg)
 
     def change_egg_caste(self, egg_id: str, ant_type: AntTypes):
         egg = self._get_egg_by_id(egg_id)

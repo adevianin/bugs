@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpRequest, JsonResponse
 from core.world.world_facade import WorldFacade
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.utils.clean_name import clean_name
+from infrastructure.http.http_serializer_facade import HttpSerializersFacade
 
 import json
 
@@ -32,9 +33,12 @@ def lay_egg(request: HttpRequest, nest_id: int):
         return HttpResponse(status=400)
 
     wf = WorldFacade.get_instance()
-    wf.add_egg_command(request.user.id, nest_id, name, is_fertilized)
-
-    return HttpResponse(status=204)
+    egg = wf.add_egg_command(request.user.id, nest_id, name, is_fertilized)
+    egg_serializer = HttpSerializersFacade.get_egg_serializer()
+    
+    return JsonResponse({
+        'egg': egg_serializer.serialize_egg(egg)
+    } ,status=201)
 
 @require_POST
 @login_required     

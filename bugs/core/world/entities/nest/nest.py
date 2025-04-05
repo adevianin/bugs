@@ -16,7 +16,6 @@ from core.world.entities.action.nest_egg_became_larva import NestEggBecameLarvaA
 from core.world.entities.action.nest_larva_fed_action import NestLarvaFedAction
 from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsReadyAction
 from core.world.entities.action.nest_larva_added_action import NestLarvaAddedAction
-from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
 from core.world.entities.ant.base.ant_types import AntTypes
 from .nest_stats import NestStats
 from core.world.entities.action.nest_fortification_changed_action import NestFortificationChangedAction
@@ -49,7 +48,6 @@ class Nest(Entity):
         self._body.events.add_listener('larva_added', self._on_larva_added)
         self._body.events.add_listener('egg_develop', self._on_egg_develop)
         self._body.events.add_listener('egg_became_larva', self._on_egg_became_larva)
-        self._body.events.add_listener('egg_added', self._on_egg_added)
         self._body.events.add_listener('fortification_changed', self._on_fortification_changed)
 
         self._not_building_steps_counter = 0
@@ -190,9 +188,6 @@ class Nest(Entity):
 
     def _on_egg_became_larva(self, egg: Egg):
         self._emit_action(NestEggBecameLarvaAction.build(self.id, egg, self._owner_id))
-
-    def _on_egg_added(self, egg: Egg):
-        self._emit_action(NestEggAddedAction.build(self.id, egg, self._owner_id))
 
     def _on_fortification_changed(self):
         self._emit_action(NestFortificationChangedAction.build(self.id, self._body.fortification))

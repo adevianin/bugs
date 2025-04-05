@@ -27,7 +27,6 @@ from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
 from core.world.entities.action.nest_egg_became_larva import NestEggBecameLarvaAction
 from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsReadyAction
 from core.world.entities.action.nest_larva_added_action import NestLarvaAddedAction
-from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
 from core.world.entities.action.climate_temperature_change_action import ClimateTemperatureChangeAction
 from core.world.entities.action.nest_fortification_changed_action import NestFortificationChangedAction
 from core.world.entities.action.user_notification_action import UserNotificationAction
@@ -110,8 +109,6 @@ class ActionClientSerializer():
                 return self._serialize_nest_egg_develop(action)
             case ActionTypes.NEST_EGG_BECAME_LARVA:
                 return self._serialize_nest_egg_became_larva(action)
-            case ActionTypes.NEST_EGG_ADDED:
-                return self._serialize_nest_egg_added(action)
             case ActionTypes.NEST_FORTIFICATION_CHANGED:
                 return self._serialize_fortification_changed(action)
             case ActionTypes.NEST_BUILD_STATUS_CHANGED:
@@ -335,15 +332,6 @@ class ActionClientSerializer():
 
         json.update({
             'eggId': action.egg.id
-        })
-
-        return json
-    
-    def _serialize_nest_egg_added(self, action: NestEggAddedAction):
-        json = self._serialize_common(action)
-
-        json.update({
-            'egg': self._egg_serializer.serialize_egg(action.egg)
         })
 
         return json

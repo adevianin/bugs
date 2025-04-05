@@ -86,6 +86,11 @@ class Nest extends Entity {
         this.emit('larvaDeleted', larva);
     }
 
+    addNewEgg(egg) {
+        this._eggs.push(egg);
+        this.emit('eggAdded', egg);
+    }
+
     _removeEggFromArray(egg) {
         let index = this._eggs.indexOf(egg);
         this._eggs.splice(index, 1);
@@ -131,9 +136,6 @@ class Nest extends Entity {
             case ACTION_TYPES.NEST_EGG_BECAME_LARVA:
                 this._playEggBecameLarva(action);
                 return true;
-            case ACTION_TYPES.NEST_EGG_ADDED:
-                this._playEggAdded(action);
-                return true;
             case ACTION_TYPES.NEST_FORTIFICATION_CHANGED:
                 this._playFortificationChanged(action);
                 return true;
@@ -174,12 +176,6 @@ class Nest extends Entity {
         let egg = this._findEggById(action.eggId);
         this._removeEggFromArray(egg);
         this.emit('eggBecameLarva', egg);
-    }
-
-    _playEggAdded(action) {
-        let egg = Egg.buildFromJson(action.egg);
-        this._eggs.push(egg);
-        this.emit('eggAdded', egg);
     }
 
     _playBuildStatusChanged(action) {

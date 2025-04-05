@@ -110,6 +110,7 @@ from infrastructure.serializers.death_record_client_serializer import DeathRecor
 from infrastructure.serializers.tree_client_serializer import TreeClientSerializer
 from infrastructure.serializers.ladybug_client_serializer import LadybugClientSerializer
 from infrastructure.websocket.step_data_manager import StepDataManager
+from infrastructure.http.http_serializer_facade import HttpSerializersFacade
 
 import logging
 
@@ -236,5 +237,6 @@ def init():
     action_client_serializer = ActionClientSerializer(common_entity_client_serializer, util_client_serializer, larva_client_serializer, egg_client_serializer, colony_client_serializer, 
                                                       operation_client_serializer, notification_client_serializer, nuptial_environment_client_serializer, genome_client_serializer)
     constants_client_serializer = ConstantsClientSerializer()
+    HttpSerializersFacade.init(larva_client_serializer, egg_client_serializer)
     step_data_manager = StepDataManager(world_facade, world_client_serializer, nuptial_environment_client_serializer, constants_client_serializer, notification_client_serializer, action_client_serializer)
     

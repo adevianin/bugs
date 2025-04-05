@@ -11,7 +11,7 @@ class BaseGameService extends BaseService {
 
     async _requestHandler(apiCallFunc) {
         try {
-            await super._requestHandler(apiCallFunc);
+            return await super._requestHandler(apiCallFunc);
         } catch (e) {
             if (e instanceof ConflictRequestError) {
                 await this._waitStepSync(e.data.step);
