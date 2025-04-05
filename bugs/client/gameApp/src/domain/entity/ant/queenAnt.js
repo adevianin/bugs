@@ -86,6 +86,7 @@ class QueenAnt extends BaseAnt {
     _playGotFertilized(action) {
         this.isFertilized = true;
         this._breedingMaleGenome = Genome.buildFromJson(action.breedingMaleGenome);
+        this.emit('gotFertilized');
     }
 }
 
