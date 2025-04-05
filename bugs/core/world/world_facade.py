@@ -153,7 +153,7 @@ class WorldFacade:
 
     @player_command
     def move_egg_to_larva_chamber_command(self, user_id: int, nest_id: int, egg_id: str):
-        self._colony_service.move_egg_to_larva_chamber(user_id, nest_id, egg_id)
+        return self._colony_service.move_egg_to_larva_chamber(user_id, nest_id, egg_id)
 
     @player_command
     def delete_egg_command(self, user_id: int, nest_id: int, egg_id: str):

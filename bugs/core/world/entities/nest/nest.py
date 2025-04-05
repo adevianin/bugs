@@ -12,10 +12,8 @@ from core.world.entities.ant.base.larva import Larva
 from .nest_body import NestBody
 from core.world.entities.ant.base.egg import Egg
 from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
-from core.world.entities.action.nest_egg_became_larva import NestEggBecameLarvaAction
 from core.world.entities.action.nest_larva_fed_action import NestLarvaFedAction
 from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsReadyAction
-from core.world.entities.action.nest_larva_added_action import NestLarvaAddedAction
 from core.world.entities.ant.base.ant_types import AntTypes
 from .nest_stats import NestStats
 from core.world.entities.action.nest_fortification_changed_action import NestFortificationChangedAction
@@ -45,9 +43,7 @@ class Nest(Entity):
         self._body.events.add_listener('build_status_changed', self._on_build_status_changed)
         self._body.events.add_listener('larva_is_ready', self._on_larva_is_ready)
         self._body.events.add_listener('larva_fed', self._on_larva_fed)
-        self._body.events.add_listener('larva_added', self._on_larva_added)
         self._body.events.add_listener('egg_develop', self._on_egg_develop)
-        self._body.events.add_listener('egg_became_larva', self._on_egg_became_larva)
         self._body.events.add_listener('fortification_changed', self._on_fortification_changed)
 
         self._not_building_steps_counter = 0
@@ -131,7 +127,7 @@ class Nest(Entity):
         self._body.change_egg_name(egg_id, name)
 
     def move_egg_to_larva_chamber(self, egg_id: str):
-        self._body.move_egg_to_larva_chamber(egg_id)
+        return self._body.move_egg_to_larva_chamber(egg_id)
 
     def delete_egg(self, egg_id: str):
         self._body.delete_egg(egg_id)
@@ -180,14 +176,8 @@ class Nest(Entity):
     def _on_larva_fed(self, larva: Larva):
         self._emit_action(NestLarvaFedAction.build(self.id, larva, self._owner_id))
 
-    def _on_larva_added(self, larva: Larva):
-        self._emit_action(NestLarvaAddedAction.build(self.id, larva, self._owner_id))
-
     def _on_egg_develop(self, egg: Egg):
         self._emit_action(NestEggDevelopAction.build(self.id, egg, self._owner_id))
-
-    def _on_egg_became_larva(self, egg: Egg):
-        self._emit_action(NestEggBecameLarvaAction.build(self.id, egg, self._owner_id))
 
     def _on_fortification_changed(self):
         self._emit_action(NestFortificationChangedAction.build(self.id, self._body.fortification))

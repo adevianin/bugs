@@ -2,6 +2,7 @@ import { BaseGameService } from "./base/baseGameService";
 import { CONSTS } from "@domain/consts";
 import { distance } from '@utils/distance';
 import { Egg } from "@domain/entity/egg";
+import { Larva } from "@domain/entity/larva";
 
 class NestService extends BaseGameService {
 
@@ -31,7 +32,10 @@ class NestService extends BaseGameService {
     }
 
     async moveEggToLarvaInNest(nestId, eggId) {
-        await this._requestHandler(() => this._nestApi.eggToLarvaChamber(nestId, eggId));
+        let result = await this._requestHandler(() => this._nestApi.eggToLarvaChamber(nestId, eggId));
+        let larva = Larva.buildFromJson(result.larva);
+        let nest = this._world.findEntityById(nestId);
+        nest.moveEggToLarvaChamber(eggId, larva);
     }
 
     async deleteEggInNest(nestId, eggId) {

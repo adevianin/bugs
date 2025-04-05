@@ -91,6 +91,14 @@ class Nest extends Entity {
         this.emit('eggAdded', egg);
     }
 
+    moveEggToLarvaChamber(eggId, larva) {
+        let egg = this._findEggById(eggId);
+        this._removeEggFromArray(egg);
+        this.emit('eggBecameLarva', egg);
+        this._larvae.push(larva);
+        this.emit('larvaAdded', larva);
+    }
+
     _removeEggFromArray(egg) {
         let index = this._eggs.indexOf(egg);
         this._eggs.splice(index, 1);
@@ -124,17 +132,11 @@ class Nest extends Entity {
             case ACTION_TYPES.NEST_LARVA_IS_READY:
                 this._playLarvaIsReady(action);
                 return true;
-            case ACTION_TYPES.NEST_LARVA_ADDED:
-                this._playLarvaAdded(action);
-                return true;
             case ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
                 this._playBuildStatusChanged(action);
                 return true;
             case ACTION_TYPES.NEST_EGG_DEVELOP:
                 this._playEggDevelop(action);
-                return true;
-            case ACTION_TYPES.NEST_EGG_BECAME_LARVA:
-                this._playEggBecameLarva(action);
                 return true;
             case ACTION_TYPES.NEST_FORTIFICATION_CHANGED:
                 this._playFortificationChanged(action);
@@ -151,7 +153,9 @@ class Nest extends Entity {
 
     _playLarvaFed(action) {
         let larva = this._larvae.find(larva => larva.id == action.larvaId);
-        larva.ateFood = action.ateFood;
+        if (larva) { // for case when larva is not yet created after http request
+            larva.ateFood = action.ateFood;
+        }
     }
 
     _playLarvaIsReady(action) {
@@ -161,21 +165,11 @@ class Nest extends Entity {
         this.emit('larvaIsReady', larva);
     }
     
-    _playLarvaAdded(action) {
-        let larva = Larva.buildFromJson(action.larva);
-        this._larvae.push(larva);
-        this.emit('larvaAdded', larva);
-    }
-
     _playEggDevelop(action) {
         let egg = this._findEggById(action.eggId);
-        egg.updateProgress(action.progress, action.state);
-    }
-
-    _playEggBecameLarva(action) {
-        let egg = this._findEggById(action.eggId);
-        this._removeEggFromArray(egg);
-        this.emit('eggBecameLarva', egg);
+        if (egg) { // for case when egg is not yet created after http request
+            egg.updateProgress(action.progress, action.state);
+        }
     }
 
     _playBuildStatusChanged(action) {

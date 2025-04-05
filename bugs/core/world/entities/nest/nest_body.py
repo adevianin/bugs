@@ -87,19 +87,20 @@ class NestBody(Body):
         if egg:
             egg.name = name
 
-    def move_egg_to_larva_chamber(self, egg_id: str):
+    def move_egg_to_larva_chamber(self, egg_id: str) -> Larva:
         egg = self._get_egg_by_id(egg_id)
 
         if not egg:
-            return
-
-        if egg.is_ready:
-            self._eggs.remove(egg)
-            larva = Larva.build_new(egg.name, egg.ant_type, egg.genome)
-            self._add_larva(larva)
-            self.events.emit('egg_became_larva', egg)
-        else:
-            self._eggs.remove(egg)
+            return None
+        
+        if not egg.is_ready:
+            return None
+        
+        self._eggs.remove(egg)
+        larva = Larva.build_new(egg.name, egg.ant_type, egg.genome)
+        self._add_larva(larva)
+        
+        return larva
 
     def delete_egg(self, egg_id: str):
         egg = self._get_egg_by_id(egg_id)
@@ -169,7 +170,6 @@ class NestBody(Body):
 
     def _add_larva(self, larva: Larva):
         self._larvae.append(larva)
-        self.events.emit('larva_added', larva)
 
     def delete_larva(self, larva_id: str):
         larva = self._get_larva_by_id(larva_id)

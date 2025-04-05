@@ -12,6 +12,7 @@ class EggView extends BaseGameHTMLView {
         super(el);
         this._nest = nest;
         this._egg = egg;
+        this._isToLarvaChamberBtnBlocked = false;
 
         this._stopListenProgressChange = this._egg.on('progressChanged', this._onEggProgressChanged.bind(this));
         
@@ -62,8 +63,16 @@ class EggView extends BaseGameHTMLView {
         let progressValue = this._egg.isDevelopment ? this._egg.progress : 100;
         this._progressEl.innerHTML = progressValue;
         this._stateEl.innerHTML = eggStatesLabels[this._egg.state];
-        this._toLarvaChamberBtn.disabled = !this._egg.isReady;
-        // this._deleteBtn.disabled = !this._egg.isSpoiled;
+        this._renderToLarvaChamberBtnState();
+    }
+
+    _renderToLarvaChamberBtnState() {
+        this._toLarvaChamberBtn.disabled = !this._egg.isReady || this._isToLarvaChamberBtnBlocked;
+    }
+
+    _toggleToLarvaChamberBtnBlock(isBlocked) {
+        this._isToLarvaChamberBtnBlocked = isBlocked;
+        this._renderToLarvaChamberBtnState();
     }
 
     _renderAntTypeSelectorOptions() {
@@ -80,11 +89,6 @@ class EggView extends BaseGameHTMLView {
         this._renderProgress();
     }
 
-    _turnOffBtns() {
-        this._toLarvaChamberBtn.disabled = true;
-        this._deleteBtn.disabled = true;
-    }
-
     async _onEggAntTypeChanged() {
         let antType = this._antTypeSelector.value;
         try {
@@ -95,13 +99,15 @@ class EggView extends BaseGameHTMLView {
     }
 
     async _onEggtoLarvaChamberClick() {
+        this._toLarvaLoaderView.toggle(true);
+        this._toggleToLarvaChamberBtnBlock(true);
         try {
-            this._toLarvaLoaderView.toggle(true);
-            this._turnOffBtns();
             await this.$domain.moveEggToLarvaInNest(this._nest.id, this._egg.id);
         } catch (e) {
             console.error(e);
         }
+        this._toLarvaLoaderView.toggle(false);
+        this._toggleToLarvaChamberBtnBlock(false);
     }
 
     async _onEggDeleteClick() {

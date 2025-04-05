@@ -95,7 +95,7 @@ class ColonyService(BaseService):
 
     def move_egg_to_larva_chamber(self, user_id: int, nest_id: int, egg_id: int):
         nest = self._find_nest_for_owner(nest_id, user_id)
-        nest.move_egg_to_larva_chamber(egg_id)
+        return nest.move_egg_to_larva_chamber(egg_id)
 
     def delete_egg(self, user_id: int, nest_id: int, egg_id: int):
         nest = self._find_nest_for_owner(nest_id, user_id)

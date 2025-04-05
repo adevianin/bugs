@@ -24,9 +24,7 @@ from core.world.entities.action.colony_died_action import ColonyDiedAction
 from core.world.entities.action.ant_flew_nuptial_flight_back_action import AntFlewNuptialFlightBackAction
 from core.world.entities.action.ant_flew_nuptial_flight_action import AntFlewNuptialFlightAction
 from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
-from core.world.entities.action.nest_egg_became_larva import NestEggBecameLarvaAction
 from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsReadyAction
-from core.world.entities.action.nest_larva_added_action import NestLarvaAddedAction
 from core.world.entities.action.climate_temperature_change_action import ClimateTemperatureChangeAction
 from core.world.entities.action.nest_fortification_changed_action import NestFortificationChangedAction
 from core.world.entities.action.user_notification_action import UserNotificationAction
@@ -103,12 +101,8 @@ class ActionClientSerializer():
                 return self._serialize_nest_larva_fed(action)
             case ActionTypes.NEST_LARVA_IS_READY:
                 return self._serialize_nest_larva_is_ready(action)
-            case ActionTypes.NEST_LARVA_ADDED:
-                return self._serialize_nest_larva_added(action)
             case ActionTypes.NEST_EGG_DEVELOP:
                 return self._serialize_nest_egg_develop(action)
-            case ActionTypes.NEST_EGG_BECAME_LARVA:
-                return self._serialize_nest_egg_became_larva(action)
             case ActionTypes.NEST_FORTIFICATION_CHANGED:
                 return self._serialize_fortification_changed(action)
             case ActionTypes.NEST_BUILD_STATUS_CHANGED:
@@ -307,15 +301,6 @@ class ActionClientSerializer():
 
         return json
     
-    def _serialize_nest_larva_added(self, action: NestLarvaAddedAction):
-        json = self._serialize_common(action)
-
-        json.update({
-            'larva': self._larva_serializer.serialize(action.larva)
-        })
-
-        return json
-    
     def _serialize_nest_egg_develop(self, action: NestEggDevelopAction):
         json = self._serialize_common(action)
 
@@ -323,15 +308,6 @@ class ActionClientSerializer():
             'eggId': action.egg.id,
             'progress': action.egg.progress,
             'state': action.egg.state
-        })
-
-        return json
-    
-    def _serialize_nest_egg_became_larva(self, action: NestEggBecameLarvaAction):
-        json = self._serialize_common(action)
-
-        json.update({
-            'eggId': action.egg.id
         })
 
         return json

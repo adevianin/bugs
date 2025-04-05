@@ -72,9 +72,15 @@ def change_egg_name(request: HttpRequest, nest_id: int, egg_id: int):
 @login_required     
 def move_egg_to_larva_chamber(request: HttpRequest, nest_id: int, egg_id: int):
     wf = WorldFacade.get_instance()
-    wf.move_egg_to_larva_chamber_command(request.user.id, nest_id, egg_id)
+    larva = wf.move_egg_to_larva_chamber_command(request.user.id, nest_id, egg_id)
+
+    if not larva:
+        return HttpResponse(status=400)
     
-    return HttpResponse(status=204)
+    larva_serializer = HttpSerializersFacade.get_larva_serializer()
+    return JsonResponse({
+        'larva': larva_serializer.serialize(larva)
+    }, status=201)
 
 @require_POST
 @login_required     
