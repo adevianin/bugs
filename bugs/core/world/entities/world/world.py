@@ -5,7 +5,6 @@ from core.world.entities.colony.base.colony import Colony
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 from core.world.entities.climate.climate import Climate
-from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
 from .notification.notifications.notification import Notification
 from .player_stats import PlayerStats
 from .season_types import SeasonTypes
@@ -23,7 +22,7 @@ import time
 class World():
 
     def __init__(self, map: Map, event_bus: EventEmitter, colonies: List[Colony], nuptial_environments: List[NuptialEnvironment], 
-                 notifications: List[Notification], player_stats_list: List[PlayerStats], climate: Climate, sensor_handlers, current_step: int, 
+                 notifications: List[Notification], player_stats_list: List[PlayerStats], climate: Climate, current_step: int, 
                  relations_table: ColonyRelationsTable, id_generator: IdGenerator, logger: Logger):
         self.lock = threading.Lock()
         self._map = map
@@ -38,7 +37,6 @@ class World():
         self._notifications = notifications
         self._player_stats_list = player_stats_list
         self._climate = climate
-        self._temperature_sensor_handler: TemperatureSensorHandler = sensor_handlers['temperature_sensor_handler']
         self._id_generator = id_generator
         self._logger = logger
 
@@ -175,7 +173,6 @@ class World():
         for entity in entities:
             try:
                 if not entity.is_died: #in case if first entity in list killed next entity
-                    self._temperature_sensor_handler.handle_sensor(entity)
                     entity.do_step(self._current_step)
             except Exception as e:
                 self._logger.exception(f'live entity(id={ entity.id }) step error', exc_info=e)

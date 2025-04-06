@@ -1,22 +1,15 @@
+from .thermal_stream_interface import iThermalStream
+
 class TemperatureSensor():
 
-    def register_temperature(self, temperature: int, direction_of_change: int):
-        self._temperature = temperature
-        self._direction_of_change = direction_of_change
+    def set_thermal_stream(self, thermal_stream: iThermalStream):
+        self._thermal_stream = thermal_stream
 
     @property
     def temperature(self):
-        return self._temperature
+        return self._thermal_stream.daily_temperature
     
     @property
     def is_warming(self):
-        return self._direction_of_change > 0
-    
-    @property
-    def is_cooling(self):
-        return self._direction_of_change < 0
-    
-    # @property
-    # def direction_of_change(self):
-    #     return self._direction_of_change
+        return self._thermal_stream.direction_of_change > 0
     

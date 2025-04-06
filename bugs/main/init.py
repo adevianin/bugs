@@ -86,6 +86,7 @@ from core.world.services.birthers.ladybug_birther_service import LadybugBirtherS
 from core.world.services.spawners.ladybug_spawner_service import LadybugSpawnerService
 from core.world.services.spawners.bug_corpse_spawner_service import BugCorpseSpawnerService
 from core.world.services.vision_service import VisionService
+from core.world.services.thermal_service import ThermalService
 
 from infrastructure.serializers.world_client_serializer import WorldClientSerializer
 from infrastructure.serializers.colony_client_serializer import ColonyClientSerializer
@@ -209,11 +210,12 @@ def init():
     ladybug_spawner_service = LadybugSpawnerService(event_bus)
     bug_corpse_spawner_service = BugCorpseSpawnerService(event_bus)
     vision_serivce = VisionService(event_bus)
+    thermal_service = ThermalService(event_bus)
     world_service = WorldService(event_bus, world_factory, map_factory, colony_factory, climate_factory, tree_factory, item_area_factory, item_source_factory)
 
     world_facade = WorldFacade(event_bus, world_repository, colony_service, nuptial_environment_service, ant_service, rating_service, 
                                 notification_service, colony_relations_service, ant_birther_service, item_birther_service, nest_birther_service, ladybug_birther_service,
-                                ladybug_spawner_service, bug_corpse_spawner_service, vision_serivce, world_service)
+                                ladybug_spawner_service, bug_corpse_spawner_service, vision_serivce, thermal_service, world_service)
 
     stats_client_serializer = StatsClientSerializer()
     genes_client_serializer = GenesClientSerializer()

@@ -23,6 +23,7 @@ from core.world.services.birthers.ladybug_birther_service import LadybugBirtherS
 from core.world.services.spawners.ladybug_spawner_service import LadybugSpawnerService
 from core.world.services.spawners.bug_corpse_spawner_service import BugCorpseSpawnerService
 from core.world.services.vision_service import VisionService
+from core.world.services.thermal_service import ThermalService
 from core.world.exceptions import GameError
 from typing import Callable, List, Dict
 from functools import wraps
@@ -47,7 +48,7 @@ class WorldFacade:
                  ant_service: AntService, rating_service: RatingService, notification_service: NotificationService,
                  colony_relations_service: ColonyRelationsService, ant_birther_service: AntBirtherService, item_birther_service: ItemBirtherService,  
                  nest_birther_service: NestBirtherService, ladybug_birther_service: LadybugBirtherService, ladybug_spawner_service: LadybugSpawnerService,
-                 bug_corpse_spawner_service: BugCorpseSpawnerService, vision_serivce: VisionService, world_service: WorldService):
+                 bug_corpse_spawner_service: BugCorpseSpawnerService, vision_serivce: VisionService, thermal_service: ThermalService, world_service: WorldService):
         if WorldFacade._instance != None:
             raise GameError('WorldFacade is singleton')
         else:
@@ -70,6 +71,7 @@ class WorldFacade:
         self._ladybug_spawner_service = ladybug_spawner_service
         self._bug_corpse_spawner_service = bug_corpse_spawner_service
         self._vision_serivce = vision_serivce
+        self._thermal_service = thermal_service
         self._world_service = world_service
 
         self._world = None
@@ -239,6 +241,7 @@ class WorldFacade:
         self._ladybug_spawner_service.set_world(self._world)
         self._bug_corpse_spawner_service.set_world(self._world)
         self._vision_serivce.set_world(self._world)
+        self._thermal_service.set_world(self._world)
         self._world_service.set_world(self._world)
     
     def _on_step_done(self, step_number: int, season: SeasonTypes):

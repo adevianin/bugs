@@ -2,9 +2,10 @@ from core.world.utils.event_emiter import EventEmitter
 from core.world.entities.action.climate_temperature_change_action import ClimateTemperatureChangeAction
 from core.world.settings import SUMMER_START_YEAR_STEP, AUTUMN_START_YEAR_STEP, WINTER_START_YEAR_STEP, STEPS_IN_YEAR
 from core.world.entities.world.season_types import SeasonTypes
+from core.world.entities.base.live_entity.thermal_stream_interface import iThermalStream
 import math
 
-class Climate():
+class Climate(iThermalStream):
 
     MIN_TEMP = -15
     MAX_TEMP = 30
