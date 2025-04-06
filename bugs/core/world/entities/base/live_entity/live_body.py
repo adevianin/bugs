@@ -161,7 +161,7 @@ class LiveBody(Body):
         return entities
     
     def look_around(self, types_list: List[EntityTypes] = None, filter: Callable = None, nearest_first = False):
-        entities = self._visual_sensor.get_nearby_entities(types_list, filter)
+        entities = self._visual_sensor.get_nearby_entities(self.position, types_list, filter)
         if nearest_first:
             key: Callable[[Entity], int] = lambda entity: self.position.dist(entity.position)
             entities.sort(key = key)
@@ -210,7 +210,7 @@ class LiveBody(Body):
         dist_to_circle = dist_to_enemy / 2 if dist_to_enemy < self.stats.distance_per_step else self.stats.distance_per_step / 2
         circle_pos, is_walk_done = Point.do_step_on_line(self.position, enemy_pos, dist_to_circle)
         circle_radius = dist_to_circle
-        live_entities_nearby = self.visual_sensor.get_nearby_entities(EntityTypesPack.LIVE_ENTITIES)
+        live_entities_nearby = self.look_around(EntityTypesPack.LIVE_ENTITIES)
         generated_points = []
         for i in range(3):
             point = Point.generate_random_point_within_circle(circle_pos, circle_radius)

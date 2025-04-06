@@ -11,8 +11,9 @@ from typing import List, Callable
 from core.world.exceptions import GameError
 from core.world.utils.rectangle import Rectangle
 import random, math
+from core.world.entities.base.live_entity.vision_stream_interface import iVisionStream
 
-class Map:
+class Map(iVisionStream):
 
     def __init__(self, event_bus: EventEmitter, size: Size, entities_collection: EntityCollection):
         self._event_bus = event_bus

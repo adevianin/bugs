@@ -5,7 +5,6 @@ from core.world.entities.colony.base.colony import Colony
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 from core.world.entities.climate.climate import Climate
-from .sensor_handlers.visual_sensor_handler import VisualSensorHandler
 from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
 from .notification.notifications.notification import Notification
 from .player_stats import PlayerStats
@@ -39,7 +38,6 @@ class World():
         self._notifications = notifications
         self._player_stats_list = player_stats_list
         self._climate = climate
-        self._visual_sensor_handler: VisualSensorHandler = sensor_handlers['visual_sensor_handler']
         self._temperature_sensor_handler: TemperatureSensorHandler = sensor_handlers['temperature_sensor_handler']
         self._id_generator = id_generator
         self._logger = logger
@@ -178,7 +176,6 @@ class World():
             try:
                 if not entity.is_died: #in case if first entity in list killed next entity
                     self._temperature_sensor_handler.handle_sensor(entity)
-                    self._visual_sensor_handler.handle_sensor(entity)
                     entity.do_step(self._current_step)
             except Exception as e:
                 self._logger.exception(f'live entity(id={ entity.id }) step error', exc_info=e)

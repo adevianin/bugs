@@ -8,7 +8,6 @@ from core.world.entities.item.items.item_factory import ItemFactory
 from core.world.entities.nest.nest_factory import NestFactory
 from core.world.entities.ant.base.nuptial_environment.nuptial_environment import NuptialEnvironment
 from core.world.entities.climate.climate import Climate
-from .sensor_handlers.visual_sensor_handler import VisualSensorHandler
 from .sensor_handlers.temperature_sensor_handler import TemperatureSensorHandler
 from .notification.notifications.notification import Notification
 from .player_stats import PlayerStats
@@ -32,7 +31,6 @@ class WorldFactory():
                     notifications: List[Notification], last_used_id: int) -> World:
         id_generator = IdGenerator(last_used_id)
         sensor_handlers = {
-            'visual_sensor_handler': VisualSensorHandler(self._event_bus, map),
             'temperature_sensor_handler': TemperatureSensorHandler(climate)
         }
 
