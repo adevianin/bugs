@@ -64,6 +64,7 @@ class Map(iVisionStream):
     
     def add_entity(self, entity: Entity):
         self._entities_collection.add_entity(entity)
+        self._add_entity_to_chunks(entity)
     
     def get_entity_by_id(self, id: int) -> Entity:
         return self._entities_collection.get_entity_by_id(id)
