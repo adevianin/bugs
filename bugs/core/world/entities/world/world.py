@@ -129,9 +129,9 @@ class World():
         if (self._is_world_running):
             return
         world_thread = threading.Thread(target=self._run_world_loop, daemon=True)
-        world_thread.start()
         self._world_loop_stop_flag = False
         self._is_world_running = True
+        world_thread.start()
 
     def _run_world_loop(self):
         while not self._world_loop_stop_flag:

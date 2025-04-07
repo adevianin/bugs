@@ -69,8 +69,8 @@ class ItemArea(Entity):
                 self._accumulated = 0
     
     def _generate_spawn_point(self):
-        half_width = self._size.width / 2
-        half_height = self._size.height / 2
+        half_width = int(self._size.width / 2)
+        half_height = int(self._size.height / 2)
         minX = self._body.position.x - half_width
         maxX = self._body.position.x + half_width
         x = random.randint(minX, maxX)
