@@ -1,5 +1,6 @@
 bugs/client/node_modules
 venv
+.venv
 __pycache__/
 bugs/db.sqlite3
 game_errors.log
