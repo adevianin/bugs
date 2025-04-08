@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from core.world.exceptions import GameError, StateConflictError, EntityNotFoundError
 from infrastructure.exceptions import DailyEmailLimitExceededException
 from infrastructure.utils.log_request_exception import log_request_exception
+from bugs.settings import DEBUG
 
 class HttpRequestErrorsHandlerMiddleware:
     def __init__(self, get_response):
@@ -14,6 +15,9 @@ class HttpRequestErrorsHandlerMiddleware:
 
     def process_exception(self, request, exception: Exception):
         log_request_exception(request, exception)
+
+        if DEBUG:
+            raise exception
 
         if isinstance(exception, GameError):
             match exception:
