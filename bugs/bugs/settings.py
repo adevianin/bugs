@@ -1,15 +1,10 @@
 from pathlib import Path
 from django.utils.translation import gettext_lazy as _
-import os
-import json
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRETS_FILE = os.path.join(BASE_DIR, 'secrets.json')
-with open(SECRETS_FILE, 'r') as secrets_file:
-    secrets = json.load(secrets_file)
-
-SECRET_KEY = secrets["SECRET_KEY"]
+SECRET_KEY = config("SECRET_KEY")
 
 DEBUG = True
 
@@ -178,15 +173,15 @@ LOGGING = {
     },
 }
 
-GOOGLE_CLIENT_ID=secrets["GOOGLE_CLIENT_ID"]
-GOOGLE_OAUTH_REDIRECT_URI = secrets["GOOGLE_OAUTH_REDIRECT_URI"]
+GOOGLE_CLIENT_ID=config("GOOGLE_CLIENT_ID")
+GOOGLE_OAUTH_REDIRECT_URI = config("GOOGLE_OAUTH_REDIRECT_URI")
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = secrets["EMAIL_HOST_USER"]
-EMAIL_HOST_PASSWORD = secrets["EMAIL_HOST_PASSWORD"]
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = "Evolution Of Ants <your-email@gmail.com>"
 USER_MAILS_DAY_LIMIT = 30
 

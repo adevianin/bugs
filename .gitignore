@@ -3,6 +3,6 @@ venv
 .venv
 __pycache__/
 bugs/db.sqlite3
-secrets.json
+.env
 game_errors.log
 request_errors.log

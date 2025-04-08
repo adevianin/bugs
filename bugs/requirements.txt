@@ -20,9 +20,12 @@ pyasn1_modules==0.4.1
 pycparser==2.22
 pyee==12.1.1
 pyOpenSSL==25.0.0
+python-decouple==3.8
+redis==5.2.1
 requests==2.32.3
 rsa==4.9
 service-identity==24.2.0
+setuptools==78.1.0
 sqlparse==0.5.3
 Twisted==24.11.0
 txaio==23.1.1
