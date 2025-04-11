@@ -270,7 +270,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.admin-panel {
     border: 0;
     margin: 0;
     padding: 0;
-}`, "",{"version":3,"sources":["webpack://./adminApp/src/styles.css"],"names":[],"mappings":"AAGA;IACI,yBAAyB;IACzB,aAAa;IACb,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,gBAAgB;IAChB,mBAAmB;AACvB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,gBAAgB;AACpB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,aAAa;IACb,sBAAsB;IACtB,gBAAgB;AACpB;AACA;IACI,WAAW;AACf;AACA;IACI,WAAW;IACX,eAAe;AACnB;AACA;IACI,SAAS;IACT,SAAS;IACT,UAAU;AACd","sourcesContent":["@import '@common/view/basic.css';\r\n@import '@common/view/global.css';\r\n\r\n.admin-panel {\r\n    background-color: #f1f1f1;\r\n    padding: 20px;\r\n    border-radius: 5px;\r\n    margin-bottom: 20px;\r\n}\r\n\r\n.status-section {\r\n    margin-top: 10px;\r\n    margin-bottom: 10px;\r\n}\r\n\r\n.status-label {\r\n    font-weight: bold;\r\n}\r\n\r\n.button-section {\r\n    margin-top: 10px;\r\n}\r\n\r\n.button-section button {\r\n    margin-right: 10px;\r\n}\r\n\r\n.expanding-map-section {\r\n    display: flex;\r\n    flex-direction: column;\r\n    margin-top: 10px;\r\n}\r\n.expanding-map-section input {\r\n    width: 40px;\r\n}\r\n.expanding-map-section_button {\r\n    width: 65px;\r\n    margin-top: 5px;\r\n}\r\n.world-controls-fieldset {\r\n    border: 0;\r\n    margin: 0;\r\n    padding: 0;\r\n}"],"sourceRoot":""}]);
+}`, "",{"version":3,"sources":["webpack://./adminApp/src/styles.css"],"names":[],"mappings":"AAGA;IACI,yBAAyB;IACzB,aAAa;IACb,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,gBAAgB;IAChB,mBAAmB;AACvB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,gBAAgB;AACpB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,aAAa;IACb,sBAAsB;IACtB,gBAAgB;AACpB;AACA;IACI,WAAW;AACf;AACA;IACI,WAAW;IACX,eAAe;AACnB;AACA;IACI,SAAS;IACT,SAAS;IACT,UAAU;AACd","sourcesContent":["@import '@common/view/basic.css';\n@import '@common/view/global.css';\n\n.admin-panel {\n    background-color: #f1f1f1;\n    padding: 20px;\n    border-radius: 5px;\n    margin-bottom: 20px;\n}\n\n.status-section {\n    margin-top: 10px;\n    margin-bottom: 10px;\n}\n\n.status-label {\n    font-weight: bold;\n}\n\n.button-section {\n    margin-top: 10px;\n}\n\n.button-section button {\n    margin-right: 10px;\n}\n\n.expanding-map-section {\n    display: flex;\n    flex-direction: column;\n    margin-top: 10px;\n}\n.expanding-map-section input {\n    width: 40px;\n}\n.expanding-map-section_button {\n    width: 65px;\n    margin-top: 5px;\n}\n.world-controls-fieldset {\n    border: 0;\n    margin: 0;\n    padding: 0;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -306,7 +306,7 @@ html, body {
     height: 100%;
     overflow: hidden;
 }
-`, "",{"version":3,"sources":["webpack://./common/view/basic.css"],"names":[],"mappings":"AAAA;IACI,SAAS;IACT,UAAU;IACV,sBAAsB;AAC1B;;AAEA;IACI,YAAY;IACZ,gBAAgB;AACpB","sourcesContent":["* {\r\n    margin: 0;\r\n    padding: 0;\r\n    box-sizing: border-box;\r\n}\r\n\r\nhtml, body {\r\n    height: 100%;\r\n    overflow: hidden;\r\n}\r\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./common/view/basic.css"],"names":[],"mappings":"AAAA;IACI,SAAS;IACT,UAAU;IACV,sBAAsB;AAC1B;;AAEA;IACI,YAAY;IACZ,gBAAgB;AACpB","sourcesContent":["* {\n    margin: 0;\n    padding: 0;\n    box-sizing: border-box;\n}\n\nhtml, body {\n    height: 100%;\n    overflow: hidden;\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -348,7 +348,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.g-hidden {
 
 .g-error-container {
     color: red;
-}`, "",{"version":3,"sources":["webpack://./common/view/global.css"],"names":[],"mappings":"AAAA;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,UAAU;AACd","sourcesContent":[".g-hidden {\r\n    display: none !important\r\n}\r\n\r\n.g-table {\r\n    border-collapse: collapse;\r\n    border-spacing: 0px;\r\n    border: solid 1px;\r\n}\r\n\r\n.g-table td {\r\n    border: solid 1px;\r\n}\r\n\r\n.g-error-container {\r\n    color: red;\r\n}"],"sourceRoot":""}]);
+}`, "",{"version":3,"sources":["webpack://./common/view/global.css"],"names":[],"mappings":"AAAA;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,mBAAmB;IACnB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,UAAU;AACd","sourcesContent":[".g-hidden {\n    display: none !important\n}\n\n.g-table {\n    border-collapse: collapse;\n    border-spacing: 0px;\n    border: solid 1px;\n}\n\n.g-table td {\n    border: solid 1px;\n}\n\n.g-error-container {\n    color: red;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

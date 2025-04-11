@@ -36,6 +36,8 @@ class Map(iVisionStream):
     @size.setter
     def size(self, size: Size):
         self._size = size
+        self._split_on_chunks()
+        self._add_all_entities_to_chunks()
     
     def generate_random_point(self, padding: int = 10):
         x = random.randint(padding, self._size.width - padding)
@@ -136,9 +138,9 @@ class Map(iVisionStream):
     def get_live_entities(self) -> List[LiveEntity]:
         return self.get_entities(entity_types=EntityTypesPack.LIVE_ENTITIES)
     
-    def get_not_live_entities(self) -> List[Entity]:
-        not_live_filter: Callable[[Entity], bool] = lambda entity: entity.type not in EntityTypesPack.LIVE_ENTITIES
-        return self.get_entities(filter=not_live_filter)
+    # def get_not_live_entities(self) -> List[Entity]:
+    #     not_live_filter: Callable[[Entity], bool] = lambda entity: entity.type not in EntityTypesPack.LIVE_ENTITIES
+    #     return self.get_entities(filter=not_live_filter)
     
     def _get_chunks_in_area(self, point: Point, radius: int) -> List[Chunk]:
         area_rect = Rectangle.build(point.x - radius, point.y - radius, 2*radius, 2*radius)

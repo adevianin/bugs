@@ -1,46 +1,62 @@
 from channels.generic.websocket import WebsocketConsumer
-from core.world.world_facade import WorldFacade
-from .step_data_manager import StepDataManager
-from django.dispatch import receiver
+from infrastructure.engine.engine_facade import EngineFacade
 from infrastructure.event_bus import event_bus
 from infrastructure.models import User
 import json
+from typing import Dict
 
 class MainSocketConsumer(WebsocketConsumer):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._world_facade = WorldFacade.get_instance()
-        self._step_data_manager = StepDataManager.get_instance()
-        self._inited = False
+        self._engine_facade = EngineFacade.get_instance()
 
     def connect(self):
         self._user: User = self.scope["user"]
 
-        if self._user.is_authenticated and self._world_facade.is_world_running:
-            self._world_facade.ensure_starter_pack_built_for_player(self._user.id)
+        event_bus.add_listener('email_verified', self._on_email_verified)
+        event_bus.add_listener(f'init_step_data_pack_ready:{self._user.id}', self._on_init_step_data_pack_ready)
+        event_bus.add_listener('step_data_pack_ready', self._on_step_data_pack_ready)
+
+        if self._user.is_authenticated and self._engine_facade.is_world_running:
             self.accept()
+            self._engine_facade.connect_player(self._user.id)
         else:
             self.close()
         
-        event_bus.add_listener('email_verified', self._on_email_verified)
-        self._step_data_manager.events.add_listener('step_data_ready', self._on_step_data_ready)
-
     def disconnect(self, code):
+        self._engine_facade.disconnect_player(self._user.id)
         event_bus.remove_listener('email_verified', self._on_email_verified)
-        self._step_data_manager.events.remove_listener('step_data_ready', self._on_step_data_ready)
+        event_bus.remove_listener(f'init_step_data_pack_ready:{self._user.id}', self._on_init_step_data_pack_ready)
+        event_bus.remove_listener('step_data_pack_ready', self._on_step_data_pack_ready)
         return super().disconnect(code)
-    
-    def receive(self, text_data=None, bytes_data=None):
-        msg = json.loads(text_data)
 
-    def _on_step_data_ready(self):
-        if self._inited:
-            data = self._step_data_manager.get_current_step_data(self._user.id)
-            self.send(json.dumps(data))
-        else:
-            data = self._step_data_manager.get_init_step_data(self._user.id)
-            self.send(json.dumps(data))
-            self._inited = True
+    def _on_init_step_data_pack_ready(self, data: Dict):
+        player_id = self._user.id
+        msg = {
+            'type': 'init_step',
+            'step': data['step'],
+            'season': data['season'],
+            'world': data['world'],
+            'specie': data['players_data'][player_id]['specie'],
+            'nuptialMales': data['players_data'][player_id]['nuptial_males'],
+            'consts': data['consts'],
+            'notifications': data['players_data'][player_id]['notifications'],
+            'rating': data['rating']
+        }
+        self.send(json.dumps(msg))
+
+    def _on_step_data_pack_ready(self, data: Dict):
+        player_id = self._user.id
+        personal_actions = data['personal_actions'].get(player_id, [])
+        common_actions = data['common_actions']
+        msg = {
+            'type': 'step',
+            'step': data['step'],
+            'season': data['season'],
+            'actions': common_actions + personal_actions
+        }
+        self.send(json.dumps(msg))
 
     def _on_email_verified(self, user: User):
         if self._user.id == user.id:

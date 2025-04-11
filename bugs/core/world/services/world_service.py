@@ -46,6 +46,8 @@ class WorldService(BaseService):
         after_expand_chunk_rows_count = before_expand_chunk_rows_count + expand_chunk_rows
         after_expand_chunk_cols_count = before_expand_chunk_cols_count + expand_chunk_cols
 
+        self._world.map.size = self._calc_map_size(after_expand_chunk_cols_count, after_expand_chunk_rows_count)
+
         for chunk_position, indexes, edge_info in self._chunks_positions(before_expand_chunk_rows_count, before_expand_chunk_cols_count):
             if edge_info['is_right_edge'] or edge_info['is_bottom_edge']:
                 self._clear_flower_item_area_in_chunk(chunk_position, self._world)
@@ -54,8 +56,6 @@ class WorldService(BaseService):
         for chunk_position, indexes, edge_info in self._chunks_positions(after_expand_chunk_rows_count, after_expand_chunk_cols_count):
             if indexes['row_index'] > before_expand_last_row_index or indexes['col_index'] > before_expand_last_col_index:
                 self._generate_chunk(chunk_position, self._world, edge_info)
-
-        self._world.map.size = self._calc_map_size(after_expand_chunk_cols_count, after_expand_chunk_rows_count)
 
         return None
     

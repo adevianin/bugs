@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'client.apps.ClientConfig',
-    'core.apps.CoreConfig',
     'infrastructure.apps.InfrastructureConfig',
     'main.apps.MainConfig'
 ]
@@ -46,7 +45,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'infrastructure.middlewares.convertJsonMiddleware.ConvertJSONMiddleware',
     'infrastructure.middlewares.httpRequestErrorsHandlerMiddleware.HttpRequestErrorsHandlerMiddleware'
 ]
 
@@ -137,21 +135,14 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'game_file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': 'game_errors.log',
-            'formatter': 'detailed',
-        },
-        'game_console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
-        },
         'request_file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
             'filename': 'request_errors.log',
             'formatter': 'detailed',
+        },
+        "console": {
+            "class": "logging.StreamHandler",
         },
     },
     'formatters': {
@@ -160,10 +151,10 @@ LOGGING = {
         },
     },
     'loggers': {
-        'game_logger': {
-            'handlers': ['game_file', 'game_console'],
-            'level': 'DEBUG',
-            'propagate': False,
+        "django.request": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
         },
         'request_logger': {
             'handlers': ['request_file'],
@@ -189,3 +180,9 @@ AUTH_USER_MODEL = 'infrastructure.User'
 AUTHENTICATION_BACKENDS = [
     'infrastructure.email_authentication_backend.EmailBackend'
 ]
+
+REDIS_HOST=config('REDIS_HOST')
+REDIS_PORT=config('REDIS_PORT')
+REDIS_PASSWORD=config('REDIS_PASSWORD')
+
+WORLD_ID = 2

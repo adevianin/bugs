@@ -100,7 +100,7 @@ class Nest(Entity):
     def is_main(self) -> bool:
         return self._is_main
     
-    def do_step(self):
+    def do_step(self, step_number: int):
         self._body.feed_larvae()
         self._body.develop_eggs()
         self._body.handle_not_building_steps()

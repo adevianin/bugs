@@ -61,7 +61,7 @@ class ItemArea(Entity):
     def accumulated(self):
         return self._accumulated
     
-    def do_step(self):
+    def do_step(self, step_number: int):
         if self._is_active:
             self._accumulated += self._fertility
             if self._should_spawn():

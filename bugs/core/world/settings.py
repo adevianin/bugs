@@ -1,7 +1,6 @@
 from core.world.entities.world.season_types import SeasonTypes
 from core.world.utils.size import Size
 
-WORLD_ID = 2
 STEP_TIME = 1
 LADYBUG_COLONY_ID = 1
 COLD_DAMAGE = 10

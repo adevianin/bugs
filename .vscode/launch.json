@@ -4,21 +4,15 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
         {
-            "name": "Python: Django",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}\\bugs\\manage.py",
-            "args": [
-                "runserver",
-                "--noreload"
-            ],
-            "django": true,
-            "justMyCode": false
+            "name":"Engine Debug",
+            "type":"debugpy",
+            "request":"launch",
+            "program":"${workspaceFolder}/bugs/engine_start.py",
+            "console":"integratedTerminal"
         },
         {
-            "name": "Python: Django ubuntu",
+            "name": "Django Debug",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/bugs/manage.py",
@@ -28,6 +22,12 @@
             ],
             "django": true,
             "justMyCode": false
+        },
+    ],
+    "compounds": [
+        {
+        "name": "Debug Django and Game Process",
+        "configurations": ["Engine Debug", "Django Debug"]
         }
     ]
 }

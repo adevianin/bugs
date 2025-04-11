@@ -5,6 +5,7 @@ import { MarkerTypes } from "@domain/enum/markerTypes";
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
+import { doubleClickProtection } from "@common/utils/doubleClickProtection";
 
 class BringBugOperationCreatorView extends BaseOperationCreatorView {
 

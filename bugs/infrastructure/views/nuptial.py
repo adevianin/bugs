@@ -1,58 +1,49 @@
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, JsonResponse, HttpResponse
-from core.world.world_facade import WorldFacade
-from core.world.utils.point import Point
-from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
-from core.world.utils.clean_name import clean_name
+from django.http import HttpRequest, HttpResponse
+from infrastructure.engine.engine_facade import EngineFacade
+from infrastructure.utils.clean_str_param import clean_str_param
 
 import json
 
 @require_POST
 @login_required     
 def found_colony(request: HttpRequest):
-    wf = WorldFacade.get_instance()
+    ef = EngineFacade.get_instance()
 
     try:
         data = json.loads(request.body)
         queen_id = int(data['queen_id'])
         nuptial_male_id = int(data['nuptial_male_id'])
-        nest_building_site = Point.from_json(data['nest_building_site'])
-        colony_name = clean_name(data['colony_name'])
+        nest_building_site = data['nest_building_site']
+        colony_name = clean_str_param(data['colony_name'])
     except Exception as e:
         return HttpResponse(status=400)
 
-    wf.found_colony_command(request.user.id, queen_id, nuptial_male_id, nest_building_site, colony_name)
+    ef.found_colony_command(request.user.id, queen_id, nuptial_male_id, nest_building_site, colony_name)
 
     return HttpResponse(status=204)
 
 @require_POST
 @login_required     
 def save_specie_schema(request: HttpRequest):
-    wf = WorldFacade.get_instance()
+    ef = EngineFacade.get_instance()
 
     try:
         data = json.loads(request.body)
-        specie_schema = {}
-        for chromosome_type in data['specie_schema']:
-            type = ChromosomeTypes(chromosome_type)
-            ids = data['specie_schema'][chromosome_type]
-            specie_schema[type] = ids
+        specie_schema = data['specie_schema']
     except Exception as e:
         return HttpResponse(status=400)
     
-    error = wf.change_specie_schema_command(request.user.id, specie_schema)
+    ef.change_specie_schema_command(request.user.id, specie_schema)
 
-    if not error:
-        return HttpResponse(status=200)
-    else:
-        return HttpResponse(error, status=400)
+    return HttpResponse(status=200)
     
 @require_POST
 @login_required     
 def born_new_antara(request: HttpRequest):
-    wf = WorldFacade.get_instance()
+    ef = EngineFacade.get_instance()
 
-    wf.born_new_antara_command(request.user.id)
+    ef.born_new_antara_command(request.user.id)
 
     return HttpResponse(status=200)

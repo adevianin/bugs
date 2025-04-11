@@ -55,7 +55,7 @@ class Item(Entity):
     def is_detectable(self):
         return super().is_detectable and not self.is_picked and not self.is_bringing
     
-    def do_step(self):
+    def do_step(self, step_number: int):
         if not self._is_picked and not self.is_bringing:
             self._life_span -= 1
             if self._life_span == 0:

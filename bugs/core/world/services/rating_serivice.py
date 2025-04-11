@@ -1,35 +1,25 @@
 from .base_service import BaseService
-from core.world.usernames_repository_interface import iUsernamesRepository
-from core.world.entities.world.world import World
 from core.world.entities.world.player_stats import PlayerStats
-from core.world.settings import STEPS_IN_YEAR
 from core.world.entities.action.rating_updated_action import RatingUpdatedAction
 from core.world.entities.world.player_stats_factory import PlayerStatsFactory
+from typing import List
 
 class RatingService(BaseService):
 
-    def __init__(self, event_bus, usernames_repository: iUsernamesRepository, player_stats_factory: PlayerStatsFactory):
+    def __init__(self, event_bus, player_stats_factory: PlayerStatsFactory):
         super().__init__(event_bus)
-        self._usernames_repository = usernames_repository
         self._player_stats_factory = player_stats_factory
         self._rating = []
-        self._event_bus.add_listener('step_done', self._on_step_done)
 
     @property
     def rating(self):
         return self._rating
-    
-    def set_world(self, world: World):
-        super().set_world(world)
-        self._generate_rating()
 
-    def _on_step_done(self, step_number: int, season):
-        if step_number % STEPS_IN_YEAR == 0:
-            self._generate_rating()
-            self._event_bus.emit('action', RatingUpdatedAction(self.rating))
+    def generate_rating(self, user_datas):
+        self._generate_rating(user_datas)
+        self._event_bus.emit('action', RatingUpdatedAction(self.rating))
 
-    def _generate_rating(self):
-        user_datas = self._usernames_repository.get_usernames()
+    def _generate_rating(self, user_datas):
         stats = []
         for user_data in user_datas:
             id = user_data['id']

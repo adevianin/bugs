@@ -16,15 +16,12 @@ from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 
 from logging import Logger
 from typing import List, Callable
-import threading
-import time
 
 class World():
 
     def __init__(self, map: Map, event_bus: EventEmitter, colonies: List[Colony], nuptial_environments: List[NuptialEnvironment], 
                  notifications: List[Notification], player_stats_list: List[PlayerStats], climate: Climate, current_step: int, 
                  relations_table: ColonyRelationsTable, id_generator: IdGenerator, logger: Logger):
-        self.lock = threading.Lock()
         self._map = map
         self._event_bus = event_bus
         self._colonies: List[Colony] = colonies
@@ -119,69 +116,22 @@ class World():
             
         return None
 
-    def stop(self):
-        if (not self._is_world_running): 
-            return
-        self._world_loop_stop_flag = True
-        self._is_world_running = False
-
-    def run(self):
-        if (self._is_world_running):
-            return
-        world_thread = threading.Thread(target=self._run_world_loop, daemon=True)
-        self._world_loop_stop_flag = False
-        self._is_world_running = True
-        world_thread.start()
-
-    def _run_world_loop(self):
-        while not self._world_loop_stop_flag:
-            iteration_start = time.time()
-            step_number = self._current_step
-            self._logger.info(f'step start: { step_number }')
-            try:
-                with self.lock:
-                    self._do_step()
-            except Exception as e:
-                self._logger.exception(f'step({step_number}) error', exc_info=e)
-                if DEBUG:
-                    raise e
-
-            iteration_end = time.time()
-            iteration_time = iteration_end - iteration_start
-
-            self._logger.info(f'step time: { iteration_time }')
-            self._logger.info(f'step done: { step_number }')
-
-            if (STEP_TIME - iteration_time > 0):
-                time.sleep(STEP_TIME - iteration_time)
-
-    def _do_step(self):
+    def do_step(self):
         self._set_current_season(self._calc_current_season()) 
 
         self._event_bus.emit('step_start', self._current_step, self._current_season)
 
-        not_live_entities = self._map.get_not_live_entities()
-        for entity in not_live_entities:
-            try:
-                entity.do_step()
-            except Exception as e:
-                self._logger.exception(f'not live entity(id={ entity.id }) step error', exc_info=e)
-                if DEBUG:
-                    raise e
-        
-        entities = self._map.get_live_entities()
+        entities = self._map.get_all_entities()
         for entity in entities:
             try:
                 if not entity.is_died: #in case if first entity in list killed next entity
                     entity.do_step(self._current_step)
             except Exception as e:
-                self._logger.exception(f'live entity(id={ entity.id }) step error', exc_info=e)
+                self._logger.exception(f'entity(id={ entity.id }) step({self._current_step}) error', exc_info=e)
                 if DEBUG:
                     raise e
 
         self._event_bus.emit('step_done', self._current_step, self._current_season)
-
-        # self._my_test_code()
 
         self._current_step += 1
 
