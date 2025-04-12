@@ -293,7 +293,14 @@ class AntView extends LiveEntityView {
         this._renderPickedItemView(item);
     }
 
-    _playDroppedItemAnimation() {
+    _playDroppedItemAnimation({ droppingItemId }) {
+        let item = this.$domain.findEntityById(droppingItemId);
+        if (item) {
+            item.playItemDrop({
+                x: this._entityContainer.x,
+                y: this._entityContainer.y,
+            });
+        }
         this._removePickedItemView();
     }
 
@@ -320,7 +327,7 @@ class AntView extends LiveEntityView {
     }
 
     _onAntDroppedItemAnimationRequest(params) {
-        this._addAnimation(AntView.ANIMATION_TYPES.DROPPED_ITEM);
+        this._addAnimation(AntView.ANIMATION_TYPES.DROPPED_ITEM, params);
     }
 
     _onBodyClick() {

@@ -157,8 +157,10 @@ class BaseAnt extends LiveEntity {
     }
 
     _playItemDroped(action) {
+        this._requestActionAnimation(ACTION_TYPES.ANT_DROPPED_PICKED_ITEM, {
+            droppingItemId: this.pickedItemId
+        });
         this.pickedItemId = null;
-        this._requestActionAnimation(ACTION_TYPES.ANT_DROPPED_PICKED_ITEM);
     }
 
     _playGotInNest(action) {

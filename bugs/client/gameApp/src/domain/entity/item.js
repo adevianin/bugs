@@ -58,13 +58,15 @@ class Item extends Entity {
         this._requestActionAnimation(ACTION_TYPES.ITEM_WAS_PICKED_UP);
     }
     
-    async _playItemDrop(action) {
+    playItemDrop(pos) {
         this.isPicked = false;
-        let pos = action.actionData.position;
         this.setPosition(pos.x, pos.y);
         this._requestActionAnimation(ACTION_TYPES.ITEM_WAS_DROPPED, {
             dropPosition: pos
         });
+    }
+
+    async _playItemDrop(action) {
     }
 
     async _playItemBeingBringed(action) {
