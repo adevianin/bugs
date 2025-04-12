@@ -86,6 +86,9 @@ class Map(iVisionStream):
         return self._entities_collection.get_entities()
     
     def get_entities(self, entity_types: List[EntityTypes], from_colony_id: int = None, filter: Callable[[Entity], bool] = None) -> List[Entity]:
+        if not isinstance(entity_types, list):
+            raise GameError('entity_types must be a list')
+        
         entities_for_search: List[Entity] = []
 
         for entity_type in entity_types:
@@ -107,14 +110,14 @@ class Map(iVisionStream):
             found_entities.append(entity)
         return found_entities
     
-    def find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes] = None, filter: Callable[[Entity], bool] = None, is_detectable_only: bool = True) -> List[Entity]:
-        if entity_types is not None and not isinstance(entity_types, list):
+    def find_entities_near(self, point: Point, max_distance: int, entity_types: List[EntityTypes], filter: Callable[[Entity], bool] = None, is_detectable_only: bool = True) -> List[Entity]:
+        if not isinstance(entity_types, list):
             raise GameError('entity_types must be a list')
         
         chunks = self._get_chunks_in_area(point, max_distance)
         entities: List[Entity] = []
         for chunk in chunks:
-            entities += chunk.entities
+            entities += chunk.get_entities_by_types(entity_types)
 
         found_entities = []
         for entity in entities:
@@ -122,10 +125,6 @@ class Map(iVisionStream):
                 continue
 
             if is_detectable_only and not entity.is_detectable:
-                continue
-            
-            is_type_suitable = not entity_types or entity.type in entity_types
-            if not is_type_suitable:
                 continue
             
             dist = math.dist([entity.body.position.x, entity.body.position.y], [point.x, point.y])
