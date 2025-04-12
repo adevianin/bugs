@@ -267,9 +267,11 @@ class Engine():
                 raise GameError('unknown command sender')
             
     def _on_client_msg(self, msg: Dict):
-        # if not self._is_world_stepping and msg['type'] != 'start_world_stepping':
-        #     self._logger.warning('message not accepted world is not stepping')
-        #     return
+        is_game_running = self._is_world_stepping and self._is_world_inited
+        is_admin_command = msg['type'] == 'command' and msg['data']['from'] == 'admin'
+        if not is_game_running and not is_admin_command:
+            self._logger.warning('message not accepted world is not stepping')
+            return
         
         data = msg['data']
         match (msg['type']):
