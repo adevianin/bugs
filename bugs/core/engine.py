@@ -76,7 +76,6 @@ class Engine():
         self._logger.info('engine start')
         self._init_world()
         self._listen_engine_in()
-        self._setup_services()
         self._run_game_loop()
 
     def _init_services(self, services):
@@ -114,7 +113,8 @@ class Engine():
         pubsub.unsubscribe(Engine.CHANNEL_INIT_WORLD)
         pubsub.close()
         
-        world_json = json.loads(msg['data'])
+        data_json = json.loads(msg['data'])
+        world_json = data_json['world_data']
         if world_json:
             self._world = self._world_deserializer.deserialize(world_json)
             IdGenerator.set_global_generator(self._world.id_generator)
@@ -123,17 +123,10 @@ class Engine():
             IdGenerator.set_global_generator(self._world.id_generator)
             self._world_service.populate_empty_world(self._world)
 
-    def _listen_engine_in(self):
-        self._logger.info('listening main connection')
-        def listen():
-            pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
-            pubsub.subscribe(Engine.CHANNEL_ENGINE_IN)
-            for msg in pubsub.listen():
-                msg_data_json = json.loads(msg['data'])
-                self._on_client_msg(msg_data_json)
+        self._setup_services()
 
-        world_thread = threading.Thread(target=listen, daemon=True)
-        world_thread.start()
+        users_data = data_json['users_data']
+        self._rating_service.generate_rating(users_data)
 
     def _setup_services(self):
         self._logger.info('setting up services')
@@ -152,6 +145,18 @@ class Engine():
         self._vision_service.set_world(self._world)
         self._thermal_service.set_world(self._world)
         self._world_service.set_world(self._world)
+
+    def _listen_engine_in(self):
+        self._logger.info('listening main connection')
+        def listen():
+            pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
+            pubsub.subscribe(Engine.CHANNEL_ENGINE_IN)
+            for msg in pubsub.listen():
+                msg_data_json = json.loads(msg['data'])
+                self._on_client_msg(msg_data_json)
+
+        world_thread = threading.Thread(target=listen, daemon=True)
+        world_thread.start()
 
     def _run_game_loop(self):
         self._logger.info('running game loop')
@@ -337,7 +342,6 @@ class Engine():
                         self._send_command_result(command_id, True)
                     case 'generate_rating':
                         self._rating_service.generate_rating(command['data']['user_datas'])
-                        self._send_command_result(command_id, True)
                     case _:
                         raise GameError('unknown admin command type')
             except Exception as e:

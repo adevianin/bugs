@@ -1,6 +1,6 @@
-from bugs.settings import WORLD_ID
+from bugs.settings import WORLD_ID, RATING_GENERATION_PERIOD
 from typing import List, Dict
-import threading, redis, json
+import threading, redis, json, time
 from concurrent.futures import Future, TimeoutError
 from infrastructure.event_bus import event_bus
 from infrastructure.db.repositories.world_data_repository import WorldDataRepository
@@ -51,9 +51,13 @@ class EngineFacade:
         if self._is_world_inited:
             return
         world_data = self._world_data_repository.get(WORLD_ID)
-        self._redis.publish(EngineFacade.CHANNEL_INIT_WORLD, json.dumps(world_data))
+        self._redis.publish(EngineFacade.CHANNEL_INIT_WORLD, json.dumps({
+            'world_data': world_data,
+            'users_data': self._usernames_repository.get_usernames()
+        }))
         self._is_world_inited = True
         self._listen_engine_out()
+        self._start_rating_generation_command_sender()
 
     def save_world_admin_command(self):
         world_data = self._is_world_running = self._send_command_to_engine('get_world_state', None, True, True)
@@ -313,7 +317,6 @@ class EngineFacade:
     def _on_step_data_pack_msg(self, data: Dict):
         data['personal_actions'] = {int(player_id): actions for player_id, actions in data['personal_actions'].items()}
         event_bus.emit(f'step_data_pack_ready', data)
-        self._on_step_changed(data['step'])
     
     def _on_command_result(self, data: Dict):
         command_id = data['command_id']
@@ -331,8 +334,12 @@ class EngineFacade:
                 case _:
                     future.set_exception(EngineError())
 
-    def _on_step_changed(self, current_step: int):
-        if self._last_step_rating_generated is None or (current_step % 10000) == 0:
-            self._generate_rating_command()
-            self._last_step_rating_generated = current_step
-                
+    def _start_rating_generation_command_sender(self):
+        def sender():
+            while True:
+                print('generating rating')
+                self._generate_rating_command()
+                time.sleep(RATING_GENERATION_PERIOD)
+
+        rating_gen_thread = threading.Thread(target=sender, daemon=True)
+        rating_gen_thread.start()
