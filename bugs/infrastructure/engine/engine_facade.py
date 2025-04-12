@@ -337,9 +337,8 @@ class EngineFacade:
     def _start_rating_generation_command_sender(self):
         def sender():
             while True:
-                print('generating rating')
-                self._generate_rating_command()
                 time.sleep(RATING_GENERATION_PERIOD)
+                self._generate_rating_command()
 
         rating_gen_thread = threading.Thread(target=sender, daemon=True)
         rating_gen_thread.start()
