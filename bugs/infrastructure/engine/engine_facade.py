@@ -294,9 +294,9 @@ class EngineFacade:
                 data = msg['data']
                 match (msg['type']):
                     case 'init_step_data_pack':
-                        self._handle_init_step_data_pack_msg(data)
+                        self._on_init_step_data_pack_msg(data)
                     case 'step_data_pack':
-                        self._handle_step_data_pack_msg(data)
+                        self._on_step_data_pack_msg(data)
                     case 'command_result':
                         self._on_command_result(data)
                     case 'command_error':
@@ -305,12 +305,12 @@ class EngineFacade:
         world_thread = threading.Thread(target=listen, daemon=True)
         world_thread.start()
 
-    def _handle_init_step_data_pack_msg(self, data: Dict):
+    def _on_init_step_data_pack_msg(self, data: Dict):
         data['players_data'] = {int(player_id): player_data for player_id, player_data in data['players_data'].items()}
         for player_id in data['players_data']:
             event_bus.emit(f'init_step_data_pack_ready:{player_id}', data)
 
-    def _handle_step_data_pack_msg(self, data: Dict):
+    def _on_step_data_pack_msg(self, data: Dict):
         data['personal_actions'] = {int(player_id): actions for player_id, actions in data['personal_actions'].items()}
         event_bus.emit(f'step_data_pack_ready', data)
         self._on_step_changed(data['step'])
