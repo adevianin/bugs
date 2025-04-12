@@ -10,6 +10,7 @@ class MainSocketConsumer(WebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._engine_facade = EngineFacade.get_instance()
+        self._init_pack_sent = False
 
     def connect(self):
         self._user: User = self.scope["user"]
@@ -45,18 +46,20 @@ class MainSocketConsumer(WebsocketConsumer):
             'rating': data['rating']
         }
         self.send(json.dumps(msg))
+        self._init_pack_sent = True
 
     def _on_step_data_pack_ready(self, data: Dict):
-        player_id = self._user.id
-        personal_actions = data['personal_actions'].get(player_id, [])
-        common_actions = data['common_actions']
-        msg = {
-            'type': 'step',
-            'step': data['step'],
-            'season': data['season'],
-            'actions': common_actions + personal_actions
-        }
-        self.send(json.dumps(msg))
+        if self._init_pack_sent:
+            player_id = self._user.id
+            personal_actions = data['personal_actions'].get(player_id, [])
+            common_actions = data['common_actions']
+            msg = {
+                'type': 'step',
+                'step': data['step'],
+                'season': data['season'],
+                'actions': common_actions + personal_actions
+            }
+            self.send(json.dumps(msg))
 
     def _on_email_verified(self, user: User):
         if self._user.id == user.id:
