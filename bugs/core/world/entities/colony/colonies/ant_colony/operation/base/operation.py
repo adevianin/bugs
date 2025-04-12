@@ -145,7 +145,6 @@ class Operation(ABC):
     
     @_stage.setter
     def _stage(self, name: str):
-        print('stage', name)
         self._flags[self.Flags.STAGE] = name
 
     def _is_aggressive_now(self):
@@ -300,7 +299,6 @@ class Operation(ABC):
         self.events.emit(f'formation:{formation.name}:no_units')
 
     def _init_fight(self, ants: List[Ant]):
-        print('init fight on stage =', self._stage)
         if self._fight:
             raise GameError('fight already inited')
         if self._formation:
@@ -466,7 +464,6 @@ class Operation(ABC):
         
         if self._formation: 
             if self._formation.name == formation_name:
-                print('already created formation')
                 return
             else:
                 self._destroy_formation()
