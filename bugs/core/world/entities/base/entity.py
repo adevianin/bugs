@@ -52,7 +52,9 @@ class Entity(ABC):
     
     @from_colony_id.setter
     def from_colony_id(self, colony_id: int):
+        prev_colony_id = self._from_colony_id
         self._from_colony_id = colony_id
+        self._event_bus.emit('entity_changed_colony', self, prev_colony_id)
         self._emit_action(EntityColonyChangedAction.build(self.id, colony_id))
 
     @property

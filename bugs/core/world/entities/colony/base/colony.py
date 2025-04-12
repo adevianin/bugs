@@ -22,8 +22,10 @@ class Colony(ABC):
         for member in self.get_my_members():
             self._handle_my_member(member)
 
-        self._event_bus.add_listener('entity_died', self._on_entity_died)
-        self._event_bus.add_listener('entity_born', self._on_entity_born)
+        self._event_bus.add_listener(f'colony_entity_died:{id}', self._on_colony_entity_died)
+        self._event_bus.add_listener(f'colony_entity_born:{id}', self._on_colony_entity_born)
+        self._event_bus.add_listener(f'entity_left_colony:{id}', self._on_entity_left_colony)
+        self._event_bus.add_listener(f'entity_joined_colony:{id}', self._on_entity_joined_colony)
 
     @property
     def id(self):
@@ -33,38 +35,32 @@ class Colony(ABC):
     def member_type(self):
         return self._member_type
     
-    def add_new_member(self, entity: LiveEntity):
-        entity.from_colony_id = self.id
-        self._handle_my_member(entity)
-        self._clear_cached_members()
-    
     def get_my_members(self) -> List[LiveEntity]:
         if not self._cached_members:
             self._cached_members = self._map.get_entities(from_colony_id=self.id, entity_types=[self._member_type])
 
         return self._cached_members
     
-    def _on_my_entity_born(self, entity: Entity):
-        if entity.type == self.member_type:
-            self._handle_my_member(entity)
+    def _on_entity_left_colony(self, entity: Entity):
+        if entity.type == self._member_type:
+            self._clear_cached_members()
 
-    def _on_my_entity_died(self, entity: Entity):
-        pass
+    def _on_entity_joined_colony(self, entity: Entity):
+        if entity.type == self._member_type:
+            self._handle_my_member(entity)
+            self._clear_cached_members()
     
     def _handle_my_member(self, member: LiveEntity):
         member.body.set_relation_tester(self._relation_tester)
     
-    def _on_entity_died(self, entity: Entity):
-        is_mine = entity.from_colony_id == self._id
-        if is_mine:
+    def _on_colony_entity_died(self, entity: Entity):
+        if entity.type == self.member_type:
             self._clear_cached_members()
-            self._on_my_entity_died(entity)
 
-    def _on_entity_born(self, entity: Entity):
-        is_mine = entity.from_colony_id == self._id
-        if is_mine:
+    def _on_colony_entity_born(self, entity: Entity):
+        if entity.type == self.member_type:
+            self._handle_my_member(entity)
             self._clear_cached_members()
-            self._on_my_entity_born(entity)
 
     def _emit_action(self, action: Action):
         self._event_bus.emit('action', action)

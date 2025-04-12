@@ -74,11 +74,8 @@ class AntColony(Colony):
         self._emit_notification(DiedColonyNotification(self.owner_id, f'colony {self.id}'))
         self._event_bus.emit('colony_died', self)
 
-    def _on_my_entity_born(self, entity: Entity):
-        super()._on_my_entity_born(entity)
-    
-    def _on_my_entity_died(self, entity: Entity):
-        super()._on_my_entity_died(entity)
+    def _on_colony_entity_died(self, entity: Entity):
+        super()._on_colony_entity_died(entity)
         if entity.type == EntityTypes.NEST:
             self._on_colony_nest_destroyed(entity)
     

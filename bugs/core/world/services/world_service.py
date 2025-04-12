@@ -18,6 +18,7 @@ from core.world.entities.tree.tree_body import TreeBody
 from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.item.item_areas.base.item_area import ItemArea
 from core.world.exceptions import GameError
+from core.world.entities.base.entity import Entity
 
 import random
 from typing import Dict, Callable, Iterator, Tuple
@@ -34,6 +35,35 @@ class WorldService(BaseService):
         self._tree_factory = tree_factory
         self._item_area_factory = item_area_factory
         self._item_source_factory = item_source_factory
+
+        self._event_bus.add_listener('entity_died', self._on_entity_died)
+        self._event_bus.add_listener('entity_born', self._on_entity_born)
+        self._event_bus.add_listener('entity_changed_colony', self._on_entity_changed_colony)
+
+    def _on_entity_died(self, entity: Entity):
+        if entity.from_colony_id:
+            self._event_bus.emit(f'colony_entity_died:{entity.from_colony_id}', entity)
+        
+        if entity.type == EntityTypes.ANT:
+            self._event_bus.emit('ant_died', entity)
+        elif entity.type == EntityTypes.NEST:
+            self._event_bus.emit('nest_died', entity)
+
+    def _on_entity_born(self, entity: Entity):
+        if entity.from_colony_id:
+            self._event_bus.emit(f'colony_entity_born:{entity.from_colony_id}', entity)
+        
+        if entity.type == EntityTypes.ANT:
+            self._event_bus.emit('ant_born', entity)
+        elif entity.type == EntityTypes.NEST:
+            self._event_bus.emit('nest_born', entity)
+
+    def _on_entity_changed_colony(self, entity: Entity, prev_colony_id):
+        if prev_colony_id:
+            self._event_bus.emit(f'entity_left_colony:{prev_colony_id}', entity)
+
+        if entity.from_colony_id:
+            self._event_bus.emit(f'entity_joined_colony:{entity.from_colony_id}', entity)
 
     def expand_current_map(self, expand_chunk_rows: int, expand_chunk_cols: int):
         if self._world.is_world_running:
