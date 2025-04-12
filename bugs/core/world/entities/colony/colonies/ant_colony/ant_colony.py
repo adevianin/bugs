@@ -28,6 +28,7 @@ class AntColony(Colony):
         self._owner_id = owner_id
         self._name = name 
         self._enemies = []
+        self._cached_nests = None
 
         for operation in self._operations:
             self._listen_operation(operation)
@@ -56,7 +57,12 @@ class AntColony(Colony):
             self._emit_action(ColonyEnemiesChangedAction(self.id, enemies, self.owner_id))
     
     def get_my_nests(self) -> List[Nest]:
-        return self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.NEST])
+        if not self._cached_nests:
+            self._cached_nests = self._map.get_entities(from_colony_id=self.id, entity_types=[EntityTypes.NEST])
+        return self._cached_nests
+    
+    def _clear_cached_nests(self):
+        self._cached_nests = None
     
     def add_operation(self, operation: Operation):
         self._operations.append(operation)
@@ -78,6 +84,12 @@ class AntColony(Colony):
         super()._on_colony_entity_died(entity)
         if entity.type == EntityTypes.NEST:
             self._on_colony_nest_destroyed(entity)
+            self._clear_cached_nests()
+
+    def _on_colony_entity_born(self, entity):
+        super()._on_colony_entity_born(entity)
+        if entity.type == EntityTypes.NEST:
+            self._clear_cached_nests()
     
     def _on_step_done(self, step_number: int, season):
         self._check_enemies_in_colony_area()
