@@ -100,10 +100,6 @@ class Map(iVisionStream):
             if not is_colony_suitable:
                 continue
 
-            is_type_suitable = not entity_types or entity.type in entity_types
-            if not is_type_suitable:
-                continue
-
             is_filter_passed = not filter or filter(entity)
             if not is_filter_passed:
                 continue
