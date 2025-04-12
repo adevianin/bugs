@@ -67,6 +67,10 @@ class Map(iVisionStream):
     def add_entity(self, entity: Entity):
         self._entities_collection.add_entity(entity)
         self._add_entity_to_chunks(entity)
+
+    def _delete_entity(self, entity: Entity):
+        self._entities_collection.delete_entity(entity.id)
+        self._remove_entity_from_chunks(entity)
     
     def get_entity_by_id(self, id: int) -> Entity:
         return self._entities_collection.get_entity_by_id(id)
@@ -138,10 +142,6 @@ class Map(iVisionStream):
     def get_live_entities(self) -> List[LiveEntity]:
         return self.get_entities(entity_types=EntityTypesPack.LIVE_ENTITIES)
     
-    # def get_not_live_entities(self) -> List[Entity]:
-    #     not_live_filter: Callable[[Entity], bool] = lambda entity: entity.type not in EntityTypesPack.LIVE_ENTITIES
-    #     return self.get_entities(filter=not_live_filter)
-    
     def _get_chunks_in_area(self, point: Point, radius: int) -> List[Chunk]:
         area_rect = Rectangle.build(point.x - radius, point.y - radius, 2*radius, 2*radius)
         res = []
@@ -181,17 +181,14 @@ class Map(iVisionStream):
     
     def _on_entity_died(self, entity: Entity):
         if not entity.is_removal_blocked:
-            self._entities_collection.delete_entity(entity.id)
-            self._remove_entity_from_chunks(entity)
+            self._delete_entity(entity)
 
     def _on_entity_removal_unblocked(self, entity: Entity):
         if entity.is_pending_removal:
-            self._entities_collection.delete_entity(entity.id)
-            self._remove_entity_from_chunks(entity)
+            self._delete_entity(entity)
 
     def _on_entity_born(self, entity: Entity):
-        self._entities_collection.add_entity(entity)
-        self._add_entity_to_chunks(entity)
+        self.add_entity(entity)
 
     def _on_entity_moved(self, entity: Entity):
         for chunk in self._chunks:
