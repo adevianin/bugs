@@ -11,9 +11,10 @@ def is_superuser(user):
 
 def _build_world_status():
     ef = EngineFacade.get_instance()
+    world_status = ef.get_world_status()
     return {
-        'isInited': ef.is_world_inited,
-        'isRunning': ef.is_world_running
+        'isInited': world_status['is_world_inited'],
+        'isRunning': world_status['is_world_stepping']
     }
 
 @user_passes_test(is_superuser)
@@ -24,8 +25,6 @@ def admin_index(request):
 @user_passes_test(is_superuser)
 @require_GET
 def world_status_check(request):
-    ef = EngineFacade.get_instance()
-    ef.update_world_state()
     return JsonResponse(
         {
             'status': _build_world_status()

@@ -48,7 +48,6 @@ class Engine():
     NEW_WORLD_CHUNKS_HORIZONTAL = 4
     NEW_WORLD_CHUNKS_VERTICAL = 4
 
-    CHANNEL_INIT_WORLD = 'init_world'
     CHANNEL_ENGINE_IN = 'engine_in'
     CHANNEL_ENGINE_OUT = 'engine_out'
 
@@ -65,6 +64,7 @@ class Engine():
         self._world_deserializer = world_deserializer
         self._world_serializer = world_serializer
         self._world = None
+        self._is_world_inited = False
         self._is_world_stepping = False
         self._connected_player_ids = []
         self._common_actions = []
@@ -74,7 +74,6 @@ class Engine():
 
     def start(self):
         self._logger.info('engine start')
-        self._init_world()
         self._listen_engine_in()
         self._run_game_loop()
 
@@ -103,30 +102,6 @@ class Engine():
         self._action_client_serializer: ActionClientSerializer = serializers['action_client_serializer']
         self._egg_client_serializer: EggClientSerializer = serializers['egg_client_serializer']
         self._larva_client_serializer: LarvaClientSerializer = serializers['larva_client_serializer']
-
-    def _init_world(self) -> World:
-        self._logger.info('initing world')
-        pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
-        pubsub.subscribe(Engine.CHANNEL_INIT_WORLD)
-        self._logger.info('waiting init world message...')
-        msg = next(pubsub.listen())
-        pubsub.unsubscribe(Engine.CHANNEL_INIT_WORLD)
-        pubsub.close()
-        
-        data_json = json.loads(msg['data'])
-        world_json = data_json['world_data']
-        if world_json:
-            self._world = self._world_deserializer.deserialize(world_json)
-            IdGenerator.set_global_generator(self._world.id_generator)
-        else:
-            self._world = self._world_service.build_new_empty_world(Engine.NEW_WORLD_CHUNKS_HORIZONTAL, Engine.NEW_WORLD_CHUNKS_VERTICAL)
-            IdGenerator.set_global_generator(self._world.id_generator)
-            self._world_service.populate_empty_world(self._world)
-
-        self._setup_services()
-
-        users_data = data_json['users_data']
-        self._rating_service.generate_rating(users_data)
 
     def _setup_services(self):
         self._logger.info('setting up services')
@@ -162,41 +137,48 @@ class Engine():
         self._logger.info('running game loop')
 
         while True:
-            iteration_start = time.time()
-            step_number = self._world.current_step
+            self._handle_admin_commands()
 
-            self._logger.info(f'step start: { step_number }')
+            if self._is_world_inited:
+                iteration_start = time.time()
+                step_number = self._world.current_step
 
-            try:
-                self._handle_admin_commands()
-                self._handle_player_disconnections()
-                if self._is_world_stepping:
-                    self._world.do_step()
-                    self._send_step_data_pack()
-                    self._handle_player_connections()
-                    self._handle_player_commands()
-            except Exception as e:
-                self._logger.exception(f'game loop iteration error. step={step_number}', exc_info=e)
-                if DEBUG:
-                    raise e
-            
-            iteration_end = time.time()
-            iteration_time = iteration_end - iteration_start
+                self._logger.info(f'step start: { step_number }')
 
-            if iteration_time > STEP_TIME:
-                self._logger.warning(f'step took too long: {iteration_time}')
+                try:
+                    self._handle_player_disconnections()
+                    if self._is_world_stepping:
+                        self._world.do_step()
+                        self._send_step_data_pack()
+                        self._handle_player_connections()
+                        self._handle_player_commands()
+                except Exception as e:
+                    self._logger.exception(f'game loop iteration error. step={step_number}', exc_info=e)
+                    if DEBUG:
+                        raise e
+                
+                iteration_end = time.time()
+                iteration_time = iteration_end - iteration_start
 
-            self._logger.info(f'step time: { iteration_time }')
-            self._logger.info(f'step done: { step_number }')
+                if iteration_time > STEP_TIME:
+                    self._logger.warning(f'step took too long: {iteration_time}')
 
-            if (STEP_TIME - iteration_time > 0):
-                time.sleep(STEP_TIME - iteration_time)
+                self._update_engine_status()
 
-    def _stop_world_stepping(self):
-        self._is_world_stepping = False
+                self._logger.info(f'step time: { iteration_time }')
+                self._logger.info(f'step done: { step_number }')
 
-    def _start_world_stepping(self):
-        self._is_world_stepping = True
+                if (STEP_TIME - iteration_time > 0):
+                    time.sleep(STEP_TIME - iteration_time)
+            else:
+                self._logger.info('waiting init command...')
+                time.sleep(1)
+
+    def _update_engine_status(self):
+        self._redis.set('engine_status', json.dumps({
+            'is_world_inited': self._is_world_inited,
+            'is_world_stepping': self._is_world_stepping
+        }), STEP_TIME + 3)
 
     def _handle_player_disconnections(self):
         while not self._player_disconnect_q.empty():
@@ -325,28 +307,55 @@ class Engine():
             command_id = command['id']
             try:
                 match (command['type']):
+                    case 'init_world':
+                        self._handle_init_world_admin_command(command)
                     case 'start_world_stepping':
                         self._is_world_stepping = True
+                        self._update_engine_status()
                         self._send_command_result(command_id, True)
                     case 'stop_world_stepping':
                         self._is_world_stepping = False
+                        self._update_engine_status()
                         self._send_command_result(command_id, False)
                     case 'get_world_state':
                         world_state = self._world_serializer.serialize(self._world)
                         self._send_command_result(command_id, world_state)
-                    case 'get_is_world_running':
-                        self._send_command_result(command_id, self._is_world_stepping)
                     case 'expand_map':
                         data = command['data']
                         self._world_service.expand_current_map(data['chunk_rows'], data['chunk_cols'])
                         self._send_command_result(command_id, True)
                     case 'generate_rating':
-                        self._rating_service.generate_rating(command['data']['user_datas'])
+                        if self._is_world_inited:
+                            self._rating_service.generate_rating(command['data'])
                     case _:
                         raise GameError('unknown admin command type')
             except Exception as e:
                 self._logger.exception('admin command error', exc_info=e)
                 self._send_command_error(command_id, 'admin_command_error')
+    
+    def _handle_init_world_admin_command(self, command: Dict):
+        if self._is_world_inited:
+            self._logger.warning('world is already inited')
+            return
+        
+        data = command['data']
+        world_json = data['world_data']
+        if world_json:
+            self._world = self._world_deserializer.deserialize(world_json)
+            IdGenerator.set_global_generator(self._world.id_generator)
+        else:
+            self._world = self._world_service.build_new_empty_world(Engine.NEW_WORLD_CHUNKS_HORIZONTAL, Engine.NEW_WORLD_CHUNKS_VERTICAL)
+            IdGenerator.set_global_generator(self._world.id_generator)
+            self._world_service.populate_empty_world(self._world)
+
+        self._setup_services()
+
+        users_data = data['users_data']
+        self._rating_service.generate_rating(users_data)
+
+        self._is_world_inited = True
+        self._update_engine_status()
+        self._send_command_result(command['id'], True)
 
     def _handle_player_commands(self):
         while not self._player_commands_q.empty():
@@ -525,7 +534,3 @@ class Engine():
         data = command['data']
         self._colony_service.bring_bug_operation(data['user_id'], data['performing_colony_id'], data['nest_id'])
         self._send_command_result(command['id'], True)
-
-    # def _handle_relocate_ant_command(self, command: Dict):
-    #     data = command['data']
-    #     self._send_command_result(command['id'], True)

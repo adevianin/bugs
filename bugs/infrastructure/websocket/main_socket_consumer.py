@@ -18,7 +18,7 @@ class MainSocketConsumer(WebsocketConsumer):
         event_bus.add_listener(f'init_step_data_pack_ready:{self._user.id}', self._on_init_step_data_pack_ready)
         event_bus.add_listener('step_data_pack_ready', self._on_step_data_pack_ready)
 
-        if self._user.is_authenticated and self._engine_facade.is_world_running:
+        if self._user.is_authenticated and self._engine_facade.is_game_working:
             self.accept()
             self._engine_facade.connect_player(self._user.id)
         else:

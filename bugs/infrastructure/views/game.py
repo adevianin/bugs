@@ -9,7 +9,7 @@ from infrastructure.engine.engine_facade import EngineFacade
 @login_required
 def index(request: HttpRequest):
     ef = EngineFacade.get_instance()
-    if not ef.is_world_running:
+    if not ef.is_game_working:
         return render(request, 'client/maintenance.html')
 
     initial_data = {

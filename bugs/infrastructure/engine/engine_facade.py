@@ -11,7 +11,6 @@ class EngineFacade:
     _instance = None
 
     WAIT_COMMAND_RESULT_TIMEOUT = 4
-    CHANNEL_INIT_WORLD = 'init_world'
     CHANNEL_ENGINE_IN = 'engine_in'
     CHANNEL_ENGINE_OUT = 'engine_out'
 
@@ -30,44 +29,34 @@ class EngineFacade:
         self._world_data_repository = world_data_repository
         self._usernames_repository = usernames_repository
 
-        self._is_world_inited = False
-        self._is_world_running = False
-
         self._last_used_command_id = 0
         self._command_futures = {}
 
-        self._last_step_rating_generated = None
-
-    @property
-    def is_world_inited(self):
-        return self._is_world_inited
-    
-    @property
-    def is_world_running(self):
-        return self.is_world_inited and self._is_world_running
-    
-    # <ADMIN_COMMANDS>
-    def init_world_admin_command(self):
-        if self._is_world_inited:
-            return
-        world_data = self._world_data_repository.get(WORLD_ID)
-        self._redis.publish(EngineFacade.CHANNEL_INIT_WORLD, json.dumps({
-            'world_data': world_data,
-            'users_data': self._usernames_repository.get_usernames()
-        }))
-        self._is_world_inited = True
         self._listen_engine_out()
         self._start_rating_generation_command_sender()
 
+    @property
+    def is_game_working(self):
+        status = self.get_world_status()
+        return status['is_world_inited'] and status['is_world_stepping']
+    
+    # <ADMIN_COMMANDS>
+    def init_world_admin_command(self):
+        world_data = self._world_data_repository.get(WORLD_ID)
+        self._send_command_to_engine('init_world', {
+            'world_data': world_data,
+            'users_data': self._usernames_repository.get_usernames()
+        }, True, True)
+
     def save_world_admin_command(self):
-        world_data = self._is_world_running = self._send_command_to_engine('get_world_state', None, True, True)
+        world_data = self._send_command_to_engine('get_world_state', None, True, True)
         self._world_data_repository.push(WORLD_ID, world_data)
     
     def run_world_admin_command(self):
-        self._is_world_running = self._send_command_to_engine('start_world_stepping', None, True, True)
+        self._send_command_to_engine('start_world_stepping', None, True, True)
 
     def stop_world_admin_command(self):
-        self._is_world_running = self._send_command_to_engine('stop_world_stepping', None, True, True)
+        self._send_command_to_engine('stop_world_stepping', None, True, True)
 
     def expand_map_admin_command(self, chunk_rows: int, chunk_cols: int):
         self._send_command_to_engine('expand_map', {
@@ -75,14 +64,8 @@ class EngineFacade:
             'chunk_cols': chunk_cols
         }, True, True)
 
-    def update_world_state(self):
-        if self._is_world_inited:
-            self._is_world_running = self._send_command_to_engine('get_is_world_running', None, True, True)
-
     def _generate_rating_command(self):
-        self._send_command_to_engine('generate_rating', {
-            'user_datas': self._usernames_repository.get_usernames()
-        }, False, True)
+        self._send_command_to_engine('generate_rating', self._usernames_repository.get_usernames(), False, True)
 
     # </ADMIN_COMMANDS>
 
@@ -258,6 +241,20 @@ class EngineFacade:
         }, True)
 
     # </PLAYER_COMMANDS>
+
+    def get_world_status(self):
+        status = self._redis.get('engine_status')
+        is_world_inited = False
+        is_world_stepping = False
+        if status:
+            status = json.loads(status)
+            is_world_inited = status['is_world_inited']
+            is_world_stepping = status['is_world_stepping']
+
+        return {
+            'is_world_inited': is_world_inited,
+            'is_world_stepping': is_world_stepping
+        }
 
     def _send_msg_to_engine(self, type: str, data: Dict = None):
         self._redis.publish(EngineFacade.CHANNEL_ENGINE_IN, json.dumps({
