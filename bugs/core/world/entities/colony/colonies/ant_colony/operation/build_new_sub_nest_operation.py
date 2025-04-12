@@ -23,6 +23,7 @@ class BuildNewSubNestOperation(Operation):
 
     class Flags(Operation.Flags):
         ANT_FLAG_APPROACHED_BUILDING_SITE = 'approached_to_building_site'
+        ANT_FLAG_WAITED_ON_BUILDING_SITE = 'waited_on_building_site'
         ANT_FLAG_FINISHED_BUILDING_NEST = 'finished_building_nest'
     
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, formation_factory: FormationFactory, fight_factory: FightFactory, id: int, hired_ants: List[Ant], flags: dict, 
@@ -62,6 +63,7 @@ class BuildNewSubNestOperation(Operation):
 
         for worker in self._workers:
             worker.sayer.add_listener('approached_building_site', partial(self._on_worker_approached_building_site, worker))
+            worker.sayer.add_listener('waited_step_on_building_site', partial(self._on_worker_waited_step_on_building_site, worker))
             worker.sayer.add_listener('nest_is_built', partial(self._on_nest_built, worker))
             
     def _start_operation(self):
@@ -91,6 +93,16 @@ class BuildNewSubNestOperation(Operation):
     def _on_worker_approached_building_site(self, worker: WorkerAnt):
         self._write_ant_flag(worker, self.Flags.ANT_FLAG_APPROACHED_BUILDING_SITE, True)
         if self._check_ant_flag_for_ants(self._workers, self.Flags.ANT_FLAG_APPROACHED_BUILDING_SITE):
+            self._wait_on_building_site_step()
+
+    def _wait_on_building_site_step(self):
+        for worker in self._workers:
+            self._write_ant_flag(worker, self.Flags.ANT_FLAG_WAITED_ON_BUILDING_SITE, False)
+            worker.wait_step(1, 'waited_step_on_building_site')
+
+    def _on_worker_waited_step_on_building_site(self, worker: WorkerAnt):
+        self._write_ant_flag(worker, self.Flags.ANT_FLAG_WAITED_ON_BUILDING_SITE, True)
+        if self._check_ant_flag_for_ants(self._workers, self.Flags.ANT_FLAG_WAITED_ON_BUILDING_SITE):
             self._found_nest_step()
     
     def _found_nest_step(self):
