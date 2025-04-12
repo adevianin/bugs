@@ -12,8 +12,8 @@ class PlayerStats():
         self._ants_count = ants_count
         self._colonies_count = colonies_count
 
-        self._event_bus.add_listener('entity_died', self._on_entity_died)
-        self._event_bus.add_listener('entity_born', self._on_entity_born)
+        self._event_bus.add_listener('ant_died', self._on_ant_died)
+        self._event_bus.add_listener('ant_born', self._on_ant_born)
         self._event_bus.add_listener('colony_died', self._on_colony_died)
         self._event_bus.add_listener('colony_born', self._on_colony_born)
 
@@ -29,12 +29,12 @@ class PlayerStats():
     def colonies_count(self):
         return self._colonies_count
     
-    def _on_entity_born(self, entity: Entity):
-        if entity.type == EntityTypes.ANT and entity.owner_id == self.owner_id:
+    def _on_ant_born(self, entity: Entity):
+        if entity.owner_id == self.owner_id:
             self._ants_count += 1
     
-    def _on_entity_died(self, entity: Entity):
-        if entity.type == EntityTypes.ANT and entity.owner_id == self.owner_id:
+    def _on_ant_died(self, entity: Entity):
+        if entity.owner_id == self.owner_id:
             self._ants_count -= 1
 
     def _on_colony_died(self, colony: Colony):
