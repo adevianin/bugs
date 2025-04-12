@@ -20,9 +20,9 @@ class Map(iVisionStream):
         self._size = size
         self._entities_collection = entities_collection
         self._chunks: List[Chunk] = []
+        self._entities_by_type = {}
 
-        self._split_on_chunks()
-        self._add_all_entities_to_chunks()
+        self._optimize_entities()
 
         self._event_bus.add_listener('entity_died', self._on_entity_died)
         self._event_bus.add_listener('entity_removal_unblocked', self._on_entity_removal_unblocked)
@@ -36,8 +36,7 @@ class Map(iVisionStream):
     @size.setter
     def size(self, size: Size):
         self._size = size
-        self._split_on_chunks()
-        self._add_all_entities_to_chunks()
+        self._optimize_entities()
     
     def generate_random_point(self, padding: int = 10):
         x = random.randint(padding, self._size.width - padding)
@@ -67,10 +66,12 @@ class Map(iVisionStream):
     def add_entity(self, entity: Entity):
         self._entities_collection.add_entity(entity)
         self._add_entity_to_chunks(entity)
+        self._add_entity_to_types(entity)
 
     def _delete_entity(self, entity: Entity):
         self._entities_collection.delete_entity(entity.id)
         self._remove_entity_from_chunks(entity)
+        self._remove_entity_from_types(entity)
     
     def get_entity_by_id(self, id: int) -> Entity:
         return self._entities_collection.get_entity_by_id(id)
@@ -84,9 +85,14 @@ class Map(iVisionStream):
     def get_all_entities(self) -> List[Entity]:
         return self._entities_collection.get_entities()
     
-    def get_entities(self, from_colony_id: int = None, entity_types: List[EntityTypes] = None, filter: Callable[[Entity], bool] = None) -> List[Entity]:
+    def get_entities(self, entity_types: List[EntityTypes], from_colony_id: int = None, filter: Callable[[Entity], bool] = None) -> List[Entity]:
+        entities_for_search: List[Entity] = []
+
+        for entity_type in entity_types:
+            entities_for_search += self._entities_by_type.get(entity_type, [])
+
         found_entities = []
-        for entity in self._entities_collection.get_entities():
+        for entity in entities_for_search:
             if entity.is_pending_removal:
                 continue
 
@@ -151,6 +157,24 @@ class Map(iVisionStream):
                 res.append(chunk)
 
         return res
+    
+    def _optimize_entities(self):
+        self._split_on_chunks()
+        self._add_all_entities_to_chunks()
+        self._add_all_entities_to_types()
+
+    def _add_all_entities_to_types(self):
+        for entity in self._entities_collection.get_entities():
+            self._add_entity_to_types(entity)
+
+    def _add_entity_to_types(self, entity: Entity):
+        type_pack: List = self._entities_by_type.get(entity.type, [])
+        type_pack.append(entity)
+        self._entities_by_type[entity.type] = type_pack
+
+    def _remove_entity_from_types(self, entity: Entity):
+        type_pack: List = self._entities_by_type[entity.type]
+        type_pack.remove(entity)
     
     def _split_on_chunks(self):
         rows_count = math.ceil(self._size.height / MAP_CHUNK_SIZE.height)

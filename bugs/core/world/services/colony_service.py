@@ -131,7 +131,7 @@ class ColonyService(BaseService):
             raise GameRuleError('cant build subnest far away')
         
         sub_nest_filter: Callable[[Nest], bool] = lambda nest: not nest.is_main
-        sub_nests = self._world.map.get_entities(colony.id, [EntityTypes.NEST], sub_nest_filter)
+        sub_nests = self._world.map.get_entities(from_colony_id=colony.id, entity_types=[EntityTypes.NEST], filter=sub_nest_filter)
 
         if len(sub_nests) >= MAX_SUB_NEST_COUNT:
             self._raise_state_conflict_error(f'cant build more subnests for colony(id={performing_colony_id})')

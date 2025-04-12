@@ -73,7 +73,7 @@ class BaseService(ABC):
     
     def _find_queen_of_colony(self, colony_id: int) -> QueenAnt:
         colony_queen_filter: Callable[[QueenAnt], bool] = lambda ant: ant.is_queen_of_colony
-        queens = self._world.map.get_entities(colony_id, [EntityTypes.ANT], colony_queen_filter)
+        queens = self._world.map.get_entities(from_colony_id=colony_id, entity_types=[EntityTypes.ANT], filter=colony_queen_filter)
 
         if len(queens) > 0:
             return queens[0]
@@ -82,7 +82,7 @@ class BaseService(ABC):
         
     def _find_main_nest_of_colony(self, colony_id: int) -> Nest:
         colony_nest_filter: Callable[[Nest], bool] = lambda nest: nest.is_main
-        nests = self._world.map.get_entities(colony_id, [EntityTypes.NEST], colony_nest_filter)
+        nests = self._world.map.get_entities(from_colony_id=colony_id, entity_types=[EntityTypes.NEST], filter=colony_nest_filter)
 
         if len(nests) > 0:
             return nests[0]
