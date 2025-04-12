@@ -165,3 +165,8 @@ class World():
         ant1: Ant = self._map.get_entity_by_id(271)
         ant1.walk_to(Point(3146,3400))
 
+    def _test_spawn_ladybug(self, x, y):
+        from core.world.entities.world.birth_requests.ladybug_birth_request import LadybugBirthRequest
+        from core.world.utils.point import Point
+        self._event_bus.emit('ladybug_birth_request', LadybugBirthRequest(Point(x,y)))
+
