@@ -41,9 +41,10 @@ class ColonyService extends BaseGameService {
         this._colonyApi.stopOperation(colonyId, operationId);
     }
 
-    buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
-        return this._requestHandler(() => this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName));
-    }
+    async buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
+        let result = await this._requestHandler(() => this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName));
+        return result.operationId;
+}   
 
     destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
         return this._requestHandler(() => this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest));

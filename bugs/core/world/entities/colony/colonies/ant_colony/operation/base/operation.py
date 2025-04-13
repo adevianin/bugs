@@ -6,7 +6,7 @@ from .operation_statuses import OperationStatuses
 from core.world.utils.point import Point
 from .marker_types import MarkerTypes
 from .operation_types import OperationTypes
-from typing import List, Callable
+from typing import List, Callable, Dict
 from functools import partial
 from collections import Counter
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.base.base_formation import BaseFormation
@@ -395,10 +395,11 @@ class Operation(ABC):
             'point': point
         })
 
-    def _add_marker(self, type: MarkerTypes, point: Point):
+    def _add_marker(self, type: MarkerTypes, point: Point, params: Dict = None):
         self._markers.append({
             'type': type,
-            'point': point
+            'point': point,
+            'params': params if params else {}
         })
 
     def _on_hired_ant_died(self, ant: Ant):

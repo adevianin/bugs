@@ -17,6 +17,7 @@ from core.world.entities.action.colony_born_action import ColonyBornAction
 from core.world.entities.colony.base.colony import Colony
 from core.world.utils.check_is_point_on_map import check_is_point_on_map
 from core.world.entities.ant.base.egg import Egg
+from core.world.entities.colony.colonies.ant_colony.operation.base.operation import Operation
 
 from typing import Callable
 
@@ -113,7 +114,7 @@ class ColonyService(BaseService):
         colony = self._find_ant_colony_for_owner(colony_id, user_id)
         colony.cancel_operation(operation_id)
 
-    def build_new_sub_nest(self, user_id: int, performing_colony_id: int, position: Point, workers_count: int, warriors_count: int, nest_name: str):
+    def build_new_sub_nest(self, user_id: int, performing_colony_id: int, position: Point, workers_count: int, warriors_count: int, nest_name: str) -> Operation:
         if not self._validate_point(position):
             raise GameError('point is not on map')
         
@@ -150,6 +151,8 @@ class ColonyService(BaseService):
             raise GameRuleError('operation build_new_sub_nest is not valid')
         
         colony.add_operation(operation)
+
+        return operation
         
     def destroy_nest_operation(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int, warriors_count: int):
         performing_colony = self._find_ant_colony_for_owner(performing_colony_id, user_id)

@@ -509,8 +509,8 @@ class Engine():
         data = command['data']
         building_site = Point.from_json(data['building_site'])
         nest_name = clean_name(data['nest_name'])
-        self._colony_service.build_new_sub_nest(data['user_id'], data['performing_colony_id'], building_site, data['workers_count'], data['warriors_count'], nest_name)
-        self._send_command_result(command['id'], True)
+        operation = self._colony_service.build_new_sub_nest(data['user_id'], data['performing_colony_id'], building_site, data['workers_count'], data['warriors_count'], nest_name)
+        self._send_command_result(command['id'], operation.id)
 
     def _handle_destroy_nest_operation_command(self, command: Dict):
         data = command['data']

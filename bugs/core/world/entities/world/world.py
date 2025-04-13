@@ -152,14 +152,12 @@ class World():
         if is_season_changed:
             self._event_bus.emit('season_changed', season)
 
-    def _my_test_code(self):
-        from core.world.utils.point import Point
-        from core.world.entities.nest.nest import Nest
-        ants = self._map.get_entities(entity_types=[EntityTypes.ANT], filter=lambda ant: ant.owner_id == 2)
-        for ant in ants:
-            ant.simple_die()
+    def _test_kill(self, id):
+        entity = self._map.find_entity_by_id(id)
+        if entity:
+            entity.simple_die()
 
-    def _my_test_code2(self):
+    def _test_walk_to(self):
         from core.world.utils.point import Point
         from core.world.entities.nest.nest import Nest
         ant1: Ant = self._map.get_entity_by_id(271)

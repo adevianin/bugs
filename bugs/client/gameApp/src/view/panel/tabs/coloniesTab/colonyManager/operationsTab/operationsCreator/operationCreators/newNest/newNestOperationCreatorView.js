@@ -9,6 +9,7 @@ import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { TextInputView } from "@view/panel/base/textInput/textInputView";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { doubleClickProtection } from "@common/utils/doubleClickProtection";
+import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
 
 class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
@@ -29,6 +30,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         this._buildingPosition.remove();
         this._workersCount.remove();
         this._warriorsCount.remove();
+        this._loader.remove();
     }
 
     _render() {
@@ -55,6 +57,8 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         this._buildingPositionErrEl = this._el.querySelector('[data-building-position-err]');
 
         this._errorContainerEl = this._el.querySelector('[data-error-container]');
+
+        this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
     }
 
     _validate() {
@@ -144,9 +148,14 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         let warriorsCount = this._warriorsCount.value;
         let nestName = this._nestNameView.value;
         try {
-            await this.$domain.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName);
-            this._onDone();
+            this._loader.toggle(true);
+            let operationId = await this.$domain.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName);
+            this._performingColony.waitCreatingOperation(operationId, () => {
+                this._onDone();
+                this._loader.toggle(false);
+            });
         } catch (e) {
+            this._loader.toggle(false);
             if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {

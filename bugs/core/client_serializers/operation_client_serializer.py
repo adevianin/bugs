@@ -21,5 +21,6 @@ class OperationClientSerializer():
     def _serialize_marker(self, marker):
         return {
             'type': marker['type'],
-            'point': self._util_client_serializer.serialize_point(marker['point'])
+            'point': self._util_client_serializer.serialize_point(marker['point']),
+            'params': marker['params']
         }

@@ -12,7 +12,7 @@ from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTyp
 from core.world.entities.colony.colonies.ant_colony.operation.base.formation.base.base_formation import BaseFormation
 from .base.fight.fight_factory import FightFactory
 from .base.fight.fight import Fight
-from core.world.settings import NEST_BLOCKING_RADIUS
+from core.world.settings import NEST_BLOCKING_RADIUS, NEST_AREA
 
 from typing import List
 from functools import partial
@@ -36,7 +36,9 @@ class BuildNewSubNestOperation(Operation):
         # self._open_vacancies(AntTypes.WORKER, self._worker_vacancies_count)
         self._open_vacancies(AntTypes.WORKER, self._worker_vacancies_count, [GenesTypes.SPECIALIZATION_BUILDING_SUBNEST])
         self._open_vacancies(AntTypes.WARRIOR, self._warrior_vacancies_count)
-        self._add_marker(MarkerTypes.POINTER, self._building_site)
+        self._add_marker(MarkerTypes.POINTER, self._building_site, {
+            'area': NEST_AREA
+        })
 
     @property
     def nest_name(self):

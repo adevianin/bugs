@@ -1,4 +1,4 @@
-from bugs.settings import WORLD_ID, RATING_GENERATION_PERIOD
+from bugs.settings import WORLD_ID, RATING_GENERATION_PERIOD, DEBUG
 from typing import List, Dict
 import threading, redis, json, time
 from concurrent.futures import Future, TimeoutError
@@ -10,7 +10,7 @@ from .exceptions import EngineError, EngineStateConflictError, EngineResponseTim
 class EngineFacade:
     _instance = None
 
-    WAIT_COMMAND_RESULT_TIMEOUT = 4
+    WAIT_COMMAND_RESULT_TIMEOUT = 4 if not DEBUG else 180
     CHANNEL_ENGINE_IN = 'engine_in'
     CHANNEL_ENGINE_OUT = 'engine_out'
 

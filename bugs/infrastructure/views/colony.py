@@ -1,6 +1,6 @@
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, JsonResponse
 from infrastructure.utils.clean_str_param import clean_str_param
 from infrastructure.engine.engine_facade import EngineFacade
 
@@ -27,9 +27,11 @@ def build_new_sub_nest(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    ef.build_new_sub_nest_operation_command(request.user.id, colony_id, building_site, workers_count, warriors_count, nest_name)
-    
-    return HttpResponse(status=204)
+    operation_id = ef.build_new_sub_nest_operation_command(request.user.id, colony_id, building_site, workers_count, warriors_count, nest_name)
+
+    return JsonResponse({
+        'operationId': operation_id
+    }, status=201)
 
 @require_POST
 @login_required     

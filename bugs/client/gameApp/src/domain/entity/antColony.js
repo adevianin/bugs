@@ -55,9 +55,21 @@ class AntColony extends EventEmitter {
         }
     }
 
+    waitCreatingOperation(operationId, callback) {
+        for (let operation of this._operations) {
+            if (operation.id == operationId) {
+                callback();
+                return;
+            }
+        }
+
+        this.once(`addedOperation:${operationId}`, callback);
+    }
+
     _playColonyOperationCreated(action) {
         this._operations.push(action.operation);
         this.emit('addedOperation', action.operation);
+        this.emit(`addedOperation:${action.operation.id}`);
     }
 
     _playColonyOperationChanged(action) {
