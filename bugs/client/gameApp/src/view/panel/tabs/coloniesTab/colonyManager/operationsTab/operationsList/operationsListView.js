@@ -102,6 +102,7 @@ class OperationsListView extends BaseGameHTMLView {
         this._selectedOperation = operation;
         this._renderSelectedOperation();
         this.$eventBus.emit('showMarkersRequest', this._selectedOperation.markers);
+        this.$eventBus.emit('showPointRequest', this._selectedOperation.markers[0].point);
     }
 
     _clearOperationSelect() {
