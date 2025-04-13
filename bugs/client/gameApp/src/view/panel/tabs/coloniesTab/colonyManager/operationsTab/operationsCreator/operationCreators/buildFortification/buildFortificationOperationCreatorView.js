@@ -8,6 +8,7 @@ import { ConflictRequestError } from "@common/domain/errors/conflictRequestError
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { doubleClickProtection } from "@common/utils/doubleClickProtection";
+import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
 
 class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
 
@@ -24,6 +25,7 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
     remove() {
         this._nestSelector.remove();
         this._workersCountView.remove();
+        this._loader.remove();
         super.remove();
     }
 
@@ -40,6 +42,9 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
         this._workersCountView = new IntInputView(workersCountInput, minWorkersCount, maxWorkersCount, workersCountErrContainer);
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
+
+        this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
+
         this._showMarkers();
     }
 
@@ -79,9 +84,14 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
         let nestId = this._nestSelector.nestId;
         let workersCount = this._workersCountView.value;
         try {
-            await this.$domain.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount);
-            this._onDone();
+            this._loader.toggle(true);
+            let operationId = await this.$domain.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount);
+            this._performingColony.waitCreatingOperation(operationId, () => {
+                this._onDone();
+                this._loader.toggle(false);
+            });
         } catch (e) {
+            this._loader.toggle(false);
             if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {

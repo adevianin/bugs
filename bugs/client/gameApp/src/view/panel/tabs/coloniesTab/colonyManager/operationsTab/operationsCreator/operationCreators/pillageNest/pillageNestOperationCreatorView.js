@@ -9,6 +9,7 @@ import { ConflictRequestError } from "@common/domain/errors/conflictRequestError
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { doubleClickProtection } from "@common/utils/doubleClickProtection";
+import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
 
 class PillageNestOperationCreatorView extends BaseOperationCreatorView {
 
@@ -31,6 +32,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         this._nestForLootSelector.remove();
         this._warriorsCountView.remove();
         this._workersCountView.remove();
+        this._loader.remove();
         super.remove();
     }
 
@@ -58,6 +60,8 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
         this._errorContainerEl = this._el.querySelector('[data-error-container]');
+
+        this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
 
         this._showMarkers();
     }
@@ -167,9 +171,14 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         let nestForLootId = this._nestForLootSelector.nestId;
         let nestToPillageId = this._nestToPillage.id;
         try {
-            await this.$domain.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount);
-            this._onDone();
+            this._loader.toggle(true);
+            let operationId = await this.$domain.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount);
+            this._performingColony.waitCreatingOperation(operationId, () => {
+                this._onDone();
+                this._loader.toggle(false);
+            });
         } catch (e) {
+            this._loader.toggle(false);
             if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {

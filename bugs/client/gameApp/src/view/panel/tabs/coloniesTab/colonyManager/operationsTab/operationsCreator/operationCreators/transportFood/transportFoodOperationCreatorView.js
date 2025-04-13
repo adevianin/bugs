@@ -8,6 +8,7 @@ import { ConflictRequestError } from "@common/domain/errors/conflictRequestError
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { doubleClickProtection } from "@common/utils/doubleClickProtection";
+import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
 
 class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
 
@@ -26,6 +27,7 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         this._nestToSelector.remove();
         this._workersCountView.remove();
         this._warriorsCountView.remove();
+        this._loader.remove();
         super.remove();
     }
 
@@ -53,6 +55,8 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         this._warriorsCountView = new IntInputView(warriorsCountInput, minWarriorsCount, maxWarriorsCount, warriorsCountErrContainer);
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
+
+        this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
 
         this._showMarkers();
     }
@@ -136,9 +140,14 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         let workersCount = this._workersCountView.value;
         let warriorsCount = this._warriorsCountView.value;
         try {
-            await this.$domain.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
-            this._onDone();
+            this._loader.toggle(true);
+            let operationId = await this.$domain.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
+            this._performingColony.waitCreatingOperation(operationId, () => {
+                this._onDone();
+                this._loader.toggle(false);
+            });
         } catch (e) {
+            this._loader.toggle(false);
             if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {

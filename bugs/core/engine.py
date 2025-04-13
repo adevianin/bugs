@@ -514,25 +514,25 @@ class Engine():
 
     def _handle_destroy_nest_operation_command(self, command: Dict):
         data = command['data']
-        self._colony_service.destroy_nest_operation(data['user_id'], data['performing_colony_id'], data['nest_id'], data['workers_count'], data['warriors_count'])
-        self._send_command_result(command['id'], True)
+        operation = self._colony_service.destroy_nest_operation(data['user_id'], data['performing_colony_id'], data['nest_id'], data['workers_count'], data['warriors_count'])
+        self._send_command_result(command['id'], operation.id)
 
     def _handle_pillage_nest_operation_command(self, command: Dict):
         data = command['data']
-        self._colony_service.pillage_nest_operation(data['user_id'], data['performing_colony_id'], data['nest_to_pillage_id'], data['nest_for_loot_id'], data['workers_count'], data['warriors_count'])
-        self._send_command_result(command['id'], True)
+        operation = self._colony_service.pillage_nest_operation(data['user_id'], data['performing_colony_id'], data['nest_to_pillage_id'], data['nest_for_loot_id'], data['workers_count'], data['warriors_count'])
+        self._send_command_result(command['id'], operation.id)
 
     def _handle_transport_food_operation_command(self, command: Dict):
         data = command['data']
-        self._colony_service.transport_food_operation(data['user_id'], data['performing_colony_id'], data['from_nest_id'], data['to_nest_id'], data['workers_count'], data['warriors_count'])
-        self._send_command_result(command['id'], True)
+        operation = self._colony_service.transport_food_operation(data['user_id'], data['performing_colony_id'], data['from_nest_id'], data['to_nest_id'], data['workers_count'], data['warriors_count'])
+        self._send_command_result(command['id'], operation.id)
 
     def _handle_build_fortification_operation_command(self, command: Dict):
         data = command['data']
-        self._colony_service.build_fortification_operation(data['user_id'], data['performing_colony_id'], data['nest_id'], data['workers_count'])
-        self._send_command_result(command['id'], True)
+        operation = self._colony_service.build_fortification_operation(data['user_id'], data['performing_colony_id'], data['nest_id'], data['workers_count'])
+        self._send_command_result(command['id'], operation.id)
 
     def _handle_bring_bug_operation_command(self, command: Dict):
         data = command['data']
-        self._colony_service.bring_bug_operation(data['user_id'], data['performing_colony_id'], data['nest_id'])
-        self._send_command_result(command['id'], True)
+        operation = self._colony_service.bring_bug_operation(data['user_id'], data['performing_colony_id'], data['nest_id'])
+        self._send_command_result(command['id'], operation.id)

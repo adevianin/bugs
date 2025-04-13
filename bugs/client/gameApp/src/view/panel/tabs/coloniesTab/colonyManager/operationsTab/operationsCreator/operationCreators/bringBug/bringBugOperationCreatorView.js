@@ -6,6 +6,7 @@ import { ConflictRequestError } from "@common/domain/errors/conflictRequestError
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { doubleClickProtection } from "@common/utils/doubleClickProtection";
+import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
 
 class BringBugOperationCreatorView extends BaseOperationCreatorView {
 
@@ -21,6 +22,7 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
 
     remove() {
         this._nestSelector.remove();
+        this._loader.remove();
         super.remove();
     }
 
@@ -33,6 +35,8 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
         this._bugCorpseErrContainer = this._el.querySelector('[data-bug-corpse-err]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
+
+        this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
 
         this._showMarkers();
     }
@@ -85,9 +89,14 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
         }
 
         try {
-            await this.$domain.bringBugOpearation(this._performingColony.id, this._nestSelector.nestId);
-            this._onDone();
+            this._loader.toggle(true);
+            let operationId = await this.$domain.bringBugOpearation(this._performingColony.id, this._nestSelector.nestId);
+            this._performingColony.waitCreatingOperation(operationId, () => {
+                this._onDone();
+                this._loader.toggle(false);
+            });
         } catch(e) {
+            this._loader.toggle(false);
             if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {

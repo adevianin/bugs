@@ -154,7 +154,7 @@ class ColonyService(BaseService):
 
         return operation
         
-    def destroy_nest_operation(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int, warriors_count: int):
+    def destroy_nest_operation(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int, warriors_count: int) -> Operation:
         performing_colony = self._find_ant_colony_for_owner(performing_colony_id, user_id)
 
         nest: Nest = self._world.map.find_entity_by_id(nest_id)
@@ -178,7 +178,9 @@ class ColonyService(BaseService):
 
         performing_colony.add_operation(operation)
 
-    def pillage_nest_operation(self, user_id: int, performing_colony_id: int, nest_to_pillage_id: int, nest_for_loot_id: int, workers_count: int, warriors_count: int):
+        return operation
+
+    def pillage_nest_operation(self, user_id: int, performing_colony_id: int, nest_to_pillage_id: int, nest_for_loot_id: int, workers_count: int, warriors_count: int) -> Operation:
         performing_colony = self._find_ant_colony_for_owner(performing_colony_id, user_id)
 
         nest_to_pillage = self._world.map.find_entity_by_id(nest_to_pillage_id)
@@ -209,7 +211,9 @@ class ColonyService(BaseService):
         
         performing_colony.add_operation(operation)
 
-    def transport_food_operation(self, user_id: int, performing_colony_id: int, from_nest_id: int, to_nest_id: int, workers_count: int, warriors_count: int):
+        return operation
+
+    def transport_food_operation(self, user_id: int, performing_colony_id: int, from_nest_id: int, to_nest_id: int, workers_count: int, warriors_count: int) -> Operation:
         performing_colony = self._find_ant_colony_for_owner(performing_colony_id, user_id)
         
         from_nest = self._find_nest_for_owner(from_nest_id, user_id)
@@ -230,7 +234,9 @@ class ColonyService(BaseService):
 
         performing_colony.add_operation(operation)
 
-    def build_fortification_operation(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int):
+        return operation
+
+    def build_fortification_operation(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int) -> Operation:
         performing_colony = self._find_ant_colony_for_owner(performing_colony_id, user_id)
         nest = self._find_nest_for_owner(nest_id, user_id)
         
@@ -241,7 +247,9 @@ class ColonyService(BaseService):
         
         performing_colony.add_operation(operation)
 
-    def bring_bug_operation(self, user_id: int, performing_colony_id: int, nest_id: int):
+        return operation
+
+    def bring_bug_operation(self, user_id: int, performing_colony_id: int, nest_id: int) -> Operation:
         performing_colony = self._find_ant_colony_for_owner(performing_colony_id, user_id)
         nest = self._find_nest_for_owner(nest_id, user_id)
         
@@ -259,6 +267,8 @@ class ColonyService(BaseService):
             raise GameRuleError('operation bring_bug_operation is not valid')
 
         performing_colony.add_operation(operation)
+
+        return operation
 
     def _check_nest_building_position_is_blocked_by_item_source(self, position: Point):
         blocking_item_sources = self._world.map.find_entities_near(position, ITEM_SOURCE_BLOCKING_RADIUS, [EntityTypes.ITEM_SOURCE])

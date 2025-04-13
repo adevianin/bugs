@@ -46,24 +46,29 @@ class ColonyService extends BaseGameService {
         return result.operationId;
 }   
 
-    destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
-        return this._requestHandler(() => this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest));
+    async destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
+        let result = await this._requestHandler(() => this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest));
+        return result.operationId;
     }
 
-    pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-        return this._requestHandler(() => this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount));
+    async pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
+        let result = await this._requestHandler(() => this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount));
+        return result.operationId;
     }
 
-    transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
-        return this._requestHandler(() => this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount));
+    async transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
+        let result = await this._requestHandler(() => this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount));
+        return result.operationId;
     }
 
-    buildFortificationsOpearation(performingColonyId, nestId, workersCount) {
-        return this._requestHandler(() => this._colonyApi.buildFortificationsOpearation(performingColonyId, nestId, workersCount));
+    async buildFortificationsOpearation(performingColonyId, nestId, workersCount) {
+        let result = await this._requestHandler(() => this._colonyApi.buildFortificationsOpearation(performingColonyId, nestId, workersCount));
+        return result.operationId;
     }
 
-    bringBugOpearation(performingColonyId, nestId) {
-        return this._requestHandler(() => this._colonyApi.bringBugOpearation(performingColonyId, nestId));
+    async bringBugOpearation(performingColonyId, nestId) {
+        let result = await this._requestHandler(() => this._colonyApi.bringBugOpearation(performingColonyId, nestId));
+        return result.operationId;
     }
 
     buildMarker(type, point, params = {}) {

@@ -8,6 +8,7 @@ import { ConflictRequestError } from "@common/domain/errors/conflictRequestError
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { doubleClickProtection } from "@common/utils/doubleClickProtection";
+import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
 
 class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
 
@@ -31,6 +32,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         this._workersCount.remove();
         this._warriorsCount.remove();
         this._choosedNestView.remove();
+        this._loader.remove();
     }
 
     _render() {
@@ -55,6 +57,8 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         let minWarriorsCount = CONSTS.DESTROY_NEST_OPERATION_REQUIREMENTS.MIN_WARRIORS_COUNT;
         let maxWarriorsCount = CONSTS.DESTROY_NEST_OPERATION_REQUIREMENTS.MAX_WARRIORS_COUNT;
         this._warriorsCount = new IntInputView(warriorsCountInput, minWarriorsCount, maxWarriorsCount, warriorsCountErrEl);
+
+        this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
     }
 
     _validate() {
@@ -153,9 +157,14 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
             return
         }
         try {
-            await this.$domain.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._nestToDestroy);
-            this._onDone();
+            this._loader.toggle(true);
+            let operationId = await this.$domain.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._nestToDestroy);
+            this._performingColony.waitCreatingOperation(operationId, () => {
+                this._onDone();
+                this._loader.toggle(false);
+            });
         } catch (e) {
+            this._loader.toggle(false);
             if (e instanceof ConflictRequestError) {
                 this._validate();
             } else if (e instanceof GenericRequestError) {

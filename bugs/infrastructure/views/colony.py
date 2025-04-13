@@ -46,9 +46,11 @@ def destroy_nest(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    ef.destroy_nest_operation_command(request.user.id, colony_id, nest_id, workers_count, warriors_count)
+    operation_id = ef.destroy_nest_operation_command(request.user.id, colony_id, nest_id, workers_count, warriors_count)
 
-    return HttpResponse(status=204)
+    return JsonResponse({
+        'operationId': operation_id
+    }, status=201)
 
 @require_POST
 @login_required     
@@ -64,9 +66,11 @@ def pillage_nest(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    ef.pillage_nest_operation_command(request.user.id, colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
+    operation_id = ef.pillage_nest_operation_command(request.user.id, colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
 
-    return HttpResponse(status=204)
+    return JsonResponse({
+        'operationId': operation_id
+    }, status=201)
 
 @require_POST
 @login_required     
@@ -82,9 +86,11 @@ def transport_food(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    ef.transport_food_operation_command(request.user.id, colony_id, from_nest_id, to_nest_id, workers_count, warriors_count)
+    operation_id = ef.transport_food_operation_command(request.user.id, colony_id, from_nest_id, to_nest_id, workers_count, warriors_count)
 
-    return HttpResponse(status=204)
+    return JsonResponse({
+        'operationId': operation_id
+    }, status=201)
 
 @require_POST
 @login_required     
@@ -98,9 +104,11 @@ def build_fortification(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    ef.build_fortification_operation_command(request.user.id, colony_id, nest_id, workers_count)
+    operation_id = ef.build_fortification_operation_command(request.user.id, colony_id, nest_id, workers_count)
 
-    return HttpResponse(status=204)
+    return JsonResponse({
+        'operationId': operation_id
+    }, status=201)
 
 @require_POST
 @login_required     
@@ -113,6 +121,8 @@ def bring_bug(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    ef.bring_bug_operation_command(request.user.id, colony_id, nest_id)
+    operation_id = ef.bring_bug_operation_command(request.user.id, colony_id, nest_id)
     
-    return HttpResponse(status=204)
+    return JsonResponse({
+        'operationId': operation_id
+    }, status=201)
