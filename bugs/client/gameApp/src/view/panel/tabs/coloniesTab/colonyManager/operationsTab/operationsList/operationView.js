@@ -44,6 +44,7 @@ class OperationView extends BaseGameHTMLView {
     _onStopBtnClick(e) {
         e.stopPropagation();
         this.$domain.stopOperation(this._colonyId, this._operation.id);
+        this.toggle(false);
     }
 
     _onClick() {
