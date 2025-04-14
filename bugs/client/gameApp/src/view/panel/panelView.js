@@ -23,6 +23,7 @@ class PanelView extends BaseGameHTMLView {
 
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
         this._handler.addEventListener('mousedown', this._onHandlerMousedown.bind(this));
+        this._handler.addEventListener('touchstart', this._onHandlerMousedown.bind(this));
     }
 
     get _height() {
@@ -73,13 +74,20 @@ class PanelView extends BaseGameHTMLView {
     _onHandlerMousedown() {
         document.addEventListener('mousemove', this._onMouseMoveBound);
         document.addEventListener('mouseup', this._onMouseUpBound);
+        document.addEventListener('touchmove', this._onMouseMoveBound);
+        document.addEventListener('touchend', this._onMouseUpBound);
     }
 
     _onMouseMove(e) {
         let minHeight = this._handlerHeight;
-        let clientRect = this._el.getBoundingClientRect();
-        let cursorY = e.clientY;
-        let panelTop = clientRect.top;
+        let panelClientRect = this._el.getBoundingClientRect();
+        let cursorY;
+        if (e.touches) {
+            cursorY = e.touches[0].clientY;
+        } else {
+            cursorY = e.clientY;
+        }
+        let panelTop = panelClientRect.top;
         let diff = panelTop - cursorY;
         let newHeight = parseInt(this._el.style.height) + diff;
         window.getSelection().removeAllRanges();
@@ -92,6 +100,8 @@ class PanelView extends BaseGameHTMLView {
     _onMouseUp(e) {
         document.removeEventListener('mousemove', this._onMouseMoveBound);
         document.removeEventListener('mouseup', this._onMouseUpBound);
+        document.removeEventListener('touchmove', this._onMouseMoveBound);
+        document.removeEventListener('touchend', this._onMouseUpBound);
     }
 
 }
