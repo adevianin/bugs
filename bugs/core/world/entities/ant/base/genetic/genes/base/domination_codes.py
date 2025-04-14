@@ -16,10 +16,10 @@ class DominationCodes(StrEnum):
         
         domination_rules = {
             DominationCodes.S: [DominationCodes.A, DominationCodes.B, DominationCodes.C, DominationCodes.D, DominationCodes.E], 
-            DominationCodes.A: [DominationCodes.B, DominationCodes.C, DominationCodes.E],
-            DominationCodes.B: [DominationCodes.D, DominationCodes.E],
-            DominationCodes.C: [DominationCodes.B],
-            DominationCodes.D: [DominationCodes.A],
+            DominationCodes.A: [DominationCodes.B, DominationCodes.C, DominationCodes.D, DominationCodes.E],
+            DominationCodes.B: [DominationCodes.C, DominationCodes.D, DominationCodes.E],
+            DominationCodes.C: [DominationCodes.D, DominationCodes.E],
+            DominationCodes.D: [DominationCodes.E],
             DominationCodes.E: []
         }
         
