@@ -34,7 +34,7 @@ class AntStatsView extends BaseGameHTMLView {
         this._el.querySelector('[data-defense]').innerHTML = this._stats.defence;
         this._el.querySelector('[data-appetite]').innerHTML = this._stats.appetite;
         this._el.querySelector('[data-min-temperature]').innerHTML = this._stats.minTemperature;
-        this._el.querySelector('[data-life-span]').innerHTML = convertStepsToYear(this._stats.lifeSpan);
+        this._el.querySelector('[data-life-span]').innerHTML = convertStepsToYear(this._stats.lifeSpan, true);
     }
 
 }

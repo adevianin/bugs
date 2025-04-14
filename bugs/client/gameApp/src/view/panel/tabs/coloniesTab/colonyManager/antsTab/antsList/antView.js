@@ -135,7 +135,7 @@ class AntView extends BaseGameHTMLView {
         statsEl.querySelector('[data-defense]').innerHTML = this._ant.stats.defence;
         statsEl.querySelector('[data-appetite]').innerHTML = this._ant.stats.appetite;
         statsEl.querySelector('[data-min-temperature]').innerHTML = this._ant.stats.minTemperature;
-        statsEl.querySelector('[data-life-span]').innerHTML = convertStepsToYear(this._ant.stats.lifeSpan);
+        statsEl.querySelector('[data-life-span]').innerHTML = convertStepsToYear(this._ant.stats.lifeSpan, true);
     }
 
     _renderBreedingMaleGenome() {
