@@ -149,6 +149,9 @@ class BaseAnt extends LiveEntity {
             case ACTION_TYPES.ANT_CURRENT_ACTIVITY_CHANGED:
                 this._playCurrentActivityChanged(action);
                 return true;
+            case ACTION_TYPES.ANT_HUNGRY_STATE_CHANGED:
+                this._playHungryStateChanged(action);
+                return true;
             default:
                 return false;
         }
@@ -190,6 +193,11 @@ class BaseAnt extends LiveEntity {
     _playCurrentActivityChanged(action) {
         this._currentActivity = action.activity;
         this.emit('currentActivityChanged');
+    }
+
+    _playHungryStateChanged(action) {
+        this._isHungry = action.isHungry;
+        this.emit('isHungryChanged');
     }
 
 }

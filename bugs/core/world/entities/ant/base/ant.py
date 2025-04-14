@@ -22,6 +22,7 @@ from core.world.entities.action.ant_home_nest_changed import AntHomeNestChangedA
 from core.world.entities.item.items.bug_corpse.bug_corpse_item import BugCorpseItem
 from core.world.entities.base.death_record.buried_in_destructed_nest_death_record import BuriedInDestructedNestDeathRecord
 from core.world.entities.action.ant_current_activity_changed_action import AntCurrentActivityChangedAction
+from core.world.entities.action.ant_hungry_state_changed_action import AntHungryStateChangedAction
 from core.world.entities.ant.base.ant_activity_types import AntActivityTypes
 from typing import List
 from core.world.exceptions import GameRuleError
@@ -47,6 +48,7 @@ class Ant(LiveEntity):
         self._body.events.add_listener('gave_fortification_item', self._on_gave_fortification_item)
         self._body.events.add_listener('built_nest', self._on_built_nest)
         self._body.events.add_listener('current_activity_changed', self._on_current_activity_changed)
+        self._body.events.add_listener('hungry_state_changed', self._on_hungry_state_changed)
 
     @property
     def name(self):
@@ -243,4 +245,6 @@ class Ant(LiveEntity):
     def _on_current_activity_changed(self):
         self._emit_action(AntCurrentActivityChangedAction(self.id, self._body.current_activity, self.owner_id))
 
+    def _on_hungry_state_changed(self, is_hungry: bool):
+        self._emit_action(AntHungryStateChangedAction(self.id, is_hungry, self._owner_id))
         

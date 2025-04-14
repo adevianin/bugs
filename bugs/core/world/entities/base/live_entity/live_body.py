@@ -41,6 +41,14 @@ class LiveBody(Body):
     @property
     def calories(self):
         return self._calories
+    
+    @calories.setter
+    def calories(self, cal: int):
+        is_hungry_before = self.check_am_i_hungry()
+        self._calories = cal
+        is_hungry_after =  self.check_am_i_hungry()
+        if is_hungry_before != is_hungry_after:
+            self._emit_hungry_state_change(is_hungry_after)
 
     @property
     def birth_step(self):
@@ -130,7 +138,7 @@ class LiveBody(Body):
         return self._max_calories - self._calories
     
     def eat_calories(self, count: int) -> bool:
-        self._calories += count
+        self.calories += count
         return self._calories >= self._max_calories
     
     def damage_another_body(self, body: Body):
@@ -192,8 +200,8 @@ class LiveBody(Body):
             self.receive_damage(COLD_DAMAGE, DamageTypes.COLD)
 
     def handle_calories(self):
-        self._calories -= self.stats.appetite
-        if self._calories <= 0:
+        self.calories -= self.stats.appetite
+        if self.calories <= 0:
             self.die(HungerDeathRecord(self.position))
 
     def handle_exit_hibernation(self):
@@ -245,7 +253,5 @@ class LiveBody(Body):
     def check_am_i_freezing(self) -> bool:
         return self._temperature_sensor.temperature < self.stats.min_temperature
     
-    
-    
-
-
+    def _emit_hungry_state_change(self, is_hungry: bool):
+        self.events.emit('hungry_state_changed', is_hungry)

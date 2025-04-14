@@ -45,6 +45,7 @@ from core.world.entities.action.ant_got_fertilized_action import AntGotFertilize
 from .genome_client_serializer import GenomeClientSerializer
 from core.world.entities.action.item_source_is_damaged_changed_action import ItemSourceIsDamagedChangedAction
 from core.world.entities.action.item_source_accumulated_changed_action import ItemSourceAccumulatedChangedAction
+from core.world.entities.action.ant_hungry_state_changed_action import AntHungryStateChangedAction
 
 class ActionClientSerializer():
 
@@ -95,6 +96,8 @@ class ActionClientSerializer():
                 return self._serialize_ant_home_nest_changed(action)
             case ActionTypes.ANT_CURRENT_ACTIVITY_CHANGED:
                 return self._serialize_ant_current_activity_changed(action)
+            case ActionTypes.ANT_HUNGRY_STATE_CHANGED:
+                return self._serialize_ant_hungry_state_changed(action)
             case ActionTypes.NEST_STORED_CALORIES_CHANGED:
                 return self._serialize_nest_stored_calories_changed(action)
             case ActionTypes.NEST_LARVA_FED:
@@ -269,6 +272,15 @@ class ActionClientSerializer():
 
         json.update({
             'activity': action.activity
+        })
+
+        return json
+    
+    def _serialize_ant_hungry_state_changed(self, action: AntHungryStateChangedAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'isHungry': action.is_hungry
         })
 
         return json

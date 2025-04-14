@@ -28,6 +28,7 @@ class AntView extends BaseGameHTMLView {
         this._stopListenCurrentActivityChanged = this._ant.on('currentActivityChanged', this._renderCurrentActivity.bind(this));
         this._stopListenHomeNestChanged = this._ant.on('homeNestChanged', this._onHomeNestChanged.bind(this));
         this._stopListenGotFertilized = this._ant.on('gotFertilized', this._onGotFertilized.bind(this));
+        this._stopListenIsHungryChanged = this._ant.on('isHungryChanged', this._renderIsHungry.bind(this));
 
         this._stopListenCurrentStepChanged = this.$domain.events.on('currentStepChanged', this._renderAge.bind(this));
     }
@@ -38,6 +39,7 @@ class AntView extends BaseGameHTMLView {
         this._stopListenCurrentActivityChanged();
         this._stopListenHomeNestChanged();
         this._stopListenGotFertilized();
+        this._stopListenIsHungryChanged();
         this._nestSelector.remove();
         this._genomeView.remove();
         if (this._breedingMaleGenomeView) {
@@ -94,6 +96,9 @@ class AntView extends BaseGameHTMLView {
         this._renderActionBtns();
 
         this._showAntBtn = this._el.querySelector('[data-show-ant]');
+
+        this._isHungryEl = this._el.querySelector('[data-is-hungry]');
+        this._renderIsHungry();
     }
 
     _onNuptialFlightBtnClick() {
@@ -139,6 +144,10 @@ class AntView extends BaseGameHTMLView {
         } else {
             this._el.querySelector('[data-breeding-male-genome-container]').remove();
         }
+    }
+
+    _renderIsHungry() {
+        this._isHungryEl.innerHTML = this._ant.isHungry ? 'голодний' : 'ситий';
     }
 
     _onNestChanged() {
