@@ -24,7 +24,7 @@ class AdaptationDevelopmentAppetiteGene(BaseGene):
         return self._multiplier
 
     def affect(self, phenotype: Phenotype):
-        phenotype.required_food = (phenotype.strength + phenotype.max_hp + phenotype.defense/2) * self._multiplier
+        phenotype.required_food = (phenotype.strength + phenotype.defense + phenotype.max_hp/2) * self._multiplier
 
     def merge(self, another_gene: 'AdaptationDevelopmentAppetiteGene') -> BaseGene:
         dominating_gene = super().merge(another_gene)

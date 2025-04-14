@@ -2,8 +2,9 @@ from .base.genes_types import GenesTypes
 from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
-from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER, BASE_BODY_LIFE_SPAN
+from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER, BASE_BODY_LIFE_SPAN, QUEEN_LIFE_SPAN_MULTIPLIER
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
+from core.world.entities.ant.base.ant_types import AntTypes
 
 class BodyLifeSpanGene(BaseGene):
 
@@ -20,7 +21,10 @@ class BodyLifeSpanGene(BaseGene):
         self.life_span = life_span
 
     def affect(self, phenotype: Phenotype):
-        phenotype.life_span = self.life_span
+        if phenotype.ant_type == AntTypes.QUEEN:
+            phenotype.life_span = QUEEN_LIFE_SPAN_MULTIPLIER * self.life_span
+        else:
+            phenotype.life_span = self.life_span
 
     def merge(self, another_gene: 'BodyLifeSpanGene') -> BaseGene:
         dominating_gene = super().merge(another_gene)
