@@ -21,7 +21,10 @@ async function initViewLayer(domainFacade) {
 
     await spritesheetManager.prepareTextures();
     let pixiApp = new PIXI.Application();
-    await pixiApp.init();
+    await pixiApp.init({
+        resolution: window.devicePixelRatio,
+        autoDensity: true
+    });
 
     let mm = MessageMaster.init(gameMsgLibrariesPack);
 
