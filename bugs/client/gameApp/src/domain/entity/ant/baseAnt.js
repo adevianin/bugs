@@ -5,7 +5,7 @@ import { ACTION_TYPES } from '../action/actionTypes';
 class BaseAnt extends LiveEntity {
 
     constructor(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, antType, pickedItemId, locatedInNestId, homeNestId, stats, behavior, 
-            genome, birthStep, currentActivity) {
+            genome, birthStep, currentActivity, isHungry) {
         super(eventBus, id, position, angle, EntityTypes.ANT, fromColony, ownerId, hp, maxHp, isInHibernation);
         this._name = name;
         this._pickedItemId = pickedItemId;
@@ -17,6 +17,7 @@ class BaseAnt extends LiveEntity {
         this._genome = genome
         this._birthStep = birthStep;
         this._currentActivity = currentActivity;
+        this._isHungry = isHungry;
     }
 
     get isVisible() {
@@ -113,6 +114,10 @@ class BaseAnt extends LiveEntity {
 
     get currentActivity() {
         return this._currentActivity;
+    }
+
+    get isHungry() {
+        return this._isHungry;
     }
 
     hasPickedItem() {

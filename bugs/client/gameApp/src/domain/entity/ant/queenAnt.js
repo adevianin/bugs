@@ -5,8 +5,10 @@ import { Genome } from "../genetic/genome";
 
 class QueenAnt extends BaseAnt {
 
-    constructor(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, breedingMaleGenome) {
-        super(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
+    constructor(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, 
+        birthStep, currentActivity, isFertilized, isInNuptialFlight, breedingMaleGenome, isHungry) {
+        super(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, 
+            behavior, genome, birthStep, currentActivity, isHungry);
         this._isFertilized = isFertilized;
         this._isInNuptialFlight = isInNuptialFlight;
         this._breedingMaleGenome = breedingMaleGenome;

@@ -34,10 +34,10 @@ class AntClientSerializer(LiveEntityClientSerializer):
     def _serializer_common(self, json: dict, ant: Ant):
         json.update({
             'name': ant.name,
-            'picked_item_id': ant.body.picked_item_id,
-            'ant_type': ant.ant_type,
-            'located_in_nest_id': ant.body.located_in_nest_id,
-            'home_nest_id': ant.home_nest_id,
+            'pickedItemId': ant.body.picked_item_id,
+            'antType': ant.ant_type,
+            'locatedInNestId': ant.body.located_in_nest_id,
+            'homeNestId': ant.home_nest_id,
             'stats': self._stats_serializer.serialize(ant._body.stats),
             'genome': self._genome_client_serializer.serialize_genome(ant.body.genome),
             'behavior': {
@@ -45,7 +45,8 @@ class AntClientSerializer(LiveEntityClientSerializer):
                 'isCooperative': ant.is_cooperative
             },
             'birthStep': ant.birth_step,
-            'currentActivity': ant.current_activity
+            'currentActivity': ant.current_activity,
+            'isHungry': ant.is_hungry
         })
 
         return json

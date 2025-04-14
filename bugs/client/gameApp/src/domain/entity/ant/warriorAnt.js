@@ -3,8 +3,10 @@ import { AntTypes } from "@domain/enum/antTypes";
 
 class WarriorAnt extends BaseAnt {
 
-    constructor(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity) {
-        super(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, birthStep, currentActivity);
+    constructor(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, 
+        birthStep, currentActivity, isHungry) {
+        super(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, AntTypes.WARRIOR, pickedItemId, locatedInNestId, homeNestId, stats, 
+            behavior, genome, birthStep, currentActivity, isHungry);
     }
 
     playAction(action) {
