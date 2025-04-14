@@ -4,8 +4,8 @@ from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeType
 from core.world.entities.ant.base.genetic.chromosomes_set import ChromosomesSet
 from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
 from .activity_weights_pack import ActivityWeightsPack
-from core.world.settings import (PROBABILITY_OF_SUPER_GENE, SUPER_GENE_THRESHOLD_BODY_STRENGTH, SUPER_GENE_THRESHOLD_BODY_DEFENSE, SUPER_GENE_THRESHOLD_SPECIALIZATION_BUILDING_SUBNEST, 
-                                 SUPER_GENE_THRESHOLD_ADAPTATION_COLD)
+from core.world.settings import (NUPT_MALE_PROBABILITY_OF_SUPER_GENE, NUPT_MALE_SUPER_GENE_THRESHOLD_BODY_STRENGTH, NUPT_MALE_SUPER_GENE_THRESHOLD_BODY_DEFENSE, NUPT_MALE_SUPER_GENE_THRESHOLD_SPECIALIZATION_BUILDING_SUBNEST, 
+                                 NUPT_MALE_SUPER_GENE_THRESHOLD_ADAPTATION_COLD)
 from core.world.utils.probability_check import probability_check
 from core.world.entities.ant.base.genetic.genes.development_warrior_caste_gene import DevelopmentWarriorCasteGene
 from core.world.entities.ant.base.genetic.genes.specialization_building_subnest_gene import SpecializationBuildingSubnestGene
@@ -52,7 +52,7 @@ class Specie():
     
     def generate_nuptial_male_genome(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> Genome:
         maternal_chromosome = self._chromosome_set.generate_chorosome_set(percent, super_mutate_chance, super_mutate_percent)
-        if probability_check(PROBABILITY_OF_SUPER_GENE):
+        if probability_check(NUPT_MALE_PROBABILITY_OF_SUPER_GENE):
             super_gene = self._build_super_gene_by_specie_activity()
             maternal_chromosome.inject_gene(super_gene)
 
@@ -107,19 +107,19 @@ class Specie():
     def _build_super_gene_by_specie_activity(self) -> BaseGene:
         genes = []
 
-        if self._activity_weights.attack_weight >= SUPER_GENE_THRESHOLD_BODY_STRENGTH:
+        if self._activity_weights.attack_weight >= NUPT_MALE_SUPER_GENE_THRESHOLD_BODY_STRENGTH:
             genes.append(GenesTypes.BODY_STRENGTH)
 
-        if self._activity_weights.attack_weight >= SUPER_GENE_THRESHOLD_BODY_STRENGTH and not self.check_gene_presence(GenesTypes.DEVELOPMENT_WARRIOR_CASTE):
+        if self._activity_weights.attack_weight >= NUPT_MALE_SUPER_GENE_THRESHOLD_BODY_STRENGTH and not self.check_gene_presence(GenesTypes.DEVELOPMENT_WARRIOR_CASTE):
             genes.append(GenesTypes.DEVELOPMENT_WARRIOR_CASTE)
 
-        if self._activity_weights.defense_weight >= SUPER_GENE_THRESHOLD_BODY_DEFENSE:
+        if self._activity_weights.defense_weight >= NUPT_MALE_SUPER_GENE_THRESHOLD_BODY_DEFENSE:
             genes.append(GenesTypes.BODY_DEFENSE)
 
-        if self._activity_weights.building_weight >= SUPER_GENE_THRESHOLD_SPECIALIZATION_BUILDING_SUBNEST and not self.check_gene_presence(GenesTypes.SPECIALIZATION_BUILDING_SUBNEST):
+        if self._activity_weights.building_weight >= NUPT_MALE_SUPER_GENE_THRESHOLD_SPECIALIZATION_BUILDING_SUBNEST and not self.check_gene_presence(GenesTypes.SPECIALIZATION_BUILDING_SUBNEST):
             genes.append(GenesTypes.SPECIALIZATION_BUILDING_SUBNEST)
 
-        if self._activity_weights.cold_resistance_weight >= SUPER_GENE_THRESHOLD_ADAPTATION_COLD:
+        if self._activity_weights.cold_resistance_weight >= NUPT_MALE_SUPER_GENE_THRESHOLD_ADAPTATION_COLD:
             genes.append(GenesTypes.ADAPTATION_COLD)
 
         if len(genes) == 0:

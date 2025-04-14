@@ -3,7 +3,7 @@ from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
 from abc import abstractclassmethod
-from core.world.settings import SUPER_GENE_UPGRADE_MULTIPLIER
+from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class DevelopmentCasteGene(BaseGene):
@@ -68,11 +68,11 @@ class DevelopmentCasteGene(BaseGene):
         return self.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed)
     
     def upgrade(self) -> 'DevelopmentCasteGene':
-        strength = self.strength * SUPER_GENE_UPGRADE_MULTIPLIER
-        defense = self.defense * SUPER_GENE_UPGRADE_MULTIPLIER
-        max_hp = self.max_hp * SUPER_GENE_UPGRADE_MULTIPLIER
-        hp_regen_rate = self.hp_regen_rate * SUPER_GENE_UPGRADE_MULTIPLIER
-        speed = self.speed * SUPER_GENE_UPGRADE_MULTIPLIER
+        strength = self.strength * NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
+        defense = self.defense * NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
+        max_hp = self.max_hp * NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
+        hp_regen_rate = self.hp_regen_rate * NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
+        speed = self.speed * NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
         return self.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed)
 
         

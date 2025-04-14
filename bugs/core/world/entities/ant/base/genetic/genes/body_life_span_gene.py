@@ -2,7 +2,7 @@ from .base.genes_types import GenesTypes
 from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
-from core.world.settings import SUPER_GENE_UPGRADE_MULTIPLIER
+from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class BodyLifeSpanGene(BaseGene):
@@ -36,5 +36,5 @@ class BodyLifeSpanGene(BaseGene):
         return BodyLifeSpanGene.build(DominationCodes.random(), life_span)
     
     def upgrade(self) -> 'BodyLifeSpanGene':
-        return BodyLifeSpanGene.build(DominationCodes.random(), self.life_span * SUPER_GENE_UPGRADE_MULTIPLIER)
+        return BodyLifeSpanGene.build(DominationCodes.random(), self.life_span * NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER)
         

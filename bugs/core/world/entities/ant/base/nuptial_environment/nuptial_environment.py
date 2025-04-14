@@ -6,7 +6,7 @@ from core.world.entities.base.damage_types import DamageTypes
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.action.nuptial_environment_males_changed_action import NuptialEnvironmentMalesChangedAction
 from core.world.entities.action.nuptial_environment_specie_genes_changed_action import NuptialEnvironmentSpecieGenesChangedAction
-from core.world.settings import MUTATITON_PERCENT, SUPER_MUTATION_CHANCE_PERCENT, SUPER_MUTATION_PERCENT, NUPTIAL_MALES_GENRERATE_COUNT
+from core.world.settings import NUPT_MALE_MUTATITON_PERCENT, NUPT_MALE_SUPER_MUTATION_CHANCE_PERCENT, NUPT_MALE_SUPER_MUTATION_PERCENT, NUPTIAL_MALES_GENRERATE_COUNT
 from core.world.entities.ant.base.larva import Larva
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.world.birth_requests.ant_requests.ant_birth_from_system_request import AntBirthFromSystemRequest
@@ -66,7 +66,7 @@ class NuptialEnvironment():
     def _generate_males(self):
         self._males = []
         for i in range(NUPTIAL_MALES_GENRERATE_COUNT):
-            genome = self._specie.generate_nuptial_male_genome(MUTATITON_PERCENT, SUPER_MUTATION_CHANCE_PERCENT, SUPER_MUTATION_PERCENT)
+            genome = self._specie.generate_nuptial_male_genome(NUPT_MALE_MUTATITON_PERCENT, NUPT_MALE_SUPER_MUTATION_CHANCE_PERCENT, NUPT_MALE_SUPER_MUTATION_PERCENT)
             male = NuptialMale.build_new(genome)
             self._males.append(male)
         self._emit_males_changed_action()

@@ -2,7 +2,7 @@ from .base.genes_types import GenesTypes
 from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
-from core.world.settings import SUPER_GENE_UPGRADE_MULTIPLIER
+from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class AdaptationColdGene(BaseGene):
@@ -42,5 +42,5 @@ class AdaptationColdGene(BaseGene):
         return AdaptationColdGene.build(DominationCodes.random(), self._deviate_value(self.resistance_points, percent, super_mutate_chance, super_mutate_percent))
     
     def upgrade(self) -> 'AdaptationColdGene':
-        return AdaptationColdGene.build(DominationCodes.random(), self._resistance_points * SUPER_GENE_UPGRADE_MULTIPLIER)
+        return AdaptationColdGene.build(DominationCodes.random(), self._resistance_points * NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER)
         

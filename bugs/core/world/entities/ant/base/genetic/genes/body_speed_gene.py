@@ -3,7 +3,7 @@ from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
 import math 
-from core.world.settings import SUPER_GENE_UPGRADE_MULTIPLIER
+from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class BodySpeedGene(BaseGene):
@@ -39,5 +39,5 @@ class BodySpeedGene(BaseGene):
         return BodySpeedGene.build(DominationCodes.random(), self._deviate_value(self.speed, percent, super_mutate_chance, super_mutate_percent))
     
     def upgrade(self) -> 'BodySpeedGene':
-        return BodySpeedGene.build(DominationCodes.random(), self._speed * SUPER_GENE_UPGRADE_MULTIPLIER)
+        return BodySpeedGene.build(DominationCodes.random(), self._speed * NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER)
         
