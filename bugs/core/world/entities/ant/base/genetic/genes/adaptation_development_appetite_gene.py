@@ -3,7 +3,8 @@ from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
-from core.world.settings import BASE_ADAPTATION_DEVELOPMENT_APPETITE_MULTIPLIER
+from core.world.settings import BASE_ADAPTATION_DEVELOPMENT_APPETITE_MULTIPLIER, LARVA_REQUIRED_FOOD_QUEEN_MULTIPLIER, LARVA_REQUIRED_FOOD_COMMON_MULTIPLIER
+from core.world.entities.ant.base.ant_types import AntTypes
 
 class AdaptationDevelopmentAppetiteGene(BaseGene):
 
@@ -24,7 +25,9 @@ class AdaptationDevelopmentAppetiteGene(BaseGene):
         return self._multiplier
 
     def affect(self, phenotype: Phenotype):
-        phenotype.required_food = (phenotype.strength + phenotype.defense + phenotype.max_hp/2) * self._multiplier
+        ant_type_multiplier = LARVA_REQUIRED_FOOD_QUEEN_MULTIPLIER if phenotype.ant_type == AntTypes.QUEEN else 1
+        common_mult = LARVA_REQUIRED_FOOD_COMMON_MULTIPLIER
+        phenotype.required_food = common_mult * ant_type_multiplier * (phenotype.strength + phenotype.defense + phenotype.max_hp) * self._multiplier
 
     def merge(self, another_gene: 'AdaptationDevelopmentAppetiteGene') -> BaseGene:
         dominating_gene = super().merge(another_gene)

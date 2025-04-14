@@ -7,8 +7,7 @@ from core.world.entities.item.items.base.item import Item
 from core.world.entities.ant.base.egg import Egg
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.base.damage_types import DamageTypes
-from core.world.entities.base.death_record.simple_death_record import SimpleDeathRecord
-
+from core.world.settings import LARVA_FEED_PORTION_SIZE
 from typing import List
 
 class NestBody(Body):
@@ -151,8 +150,7 @@ class NestBody(Body):
         larvae_count = len(self._larvae)
         if larvae_count == 0:
             return 
-        portion_size = 10
-        needed_calories = larvae_count * portion_size
+        needed_calories = larvae_count * LARVA_FEED_PORTION_SIZE
         calories_for_feeding = self.give_calories(needed_calories)
         actual_portion_size = calories_for_feeding / larvae_count
         larvae_ready_to_born = []

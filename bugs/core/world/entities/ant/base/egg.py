@@ -2,6 +2,7 @@ from .genetic.genome import Genome
 from .ant_types import AntTypes
 from .egg_states import EggStates
 from core.world.entities.world.id_generator import IdGenerator
+from core.world.settings import EGG_PROGRESS_PER_STEP
 
 class Egg():
 
@@ -75,5 +76,5 @@ class Egg():
         if self.state == EggStates.SPOILED:
             return False
         
-        self._progress += 10
+        self._progress += EGG_PROGRESS_PER_STEP
         return True
