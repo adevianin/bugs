@@ -232,7 +232,7 @@ class LiveBody(Body):
 
     def _look_at(self, point: Point):
         new_angle = (math.atan2(point.y - self.position.y, point.x - self.position.x) * 180 / math.pi) + 90
-        if abs(new_angle - self.angle) > 1:
+        if abs(new_angle - self.angle) > 3:
             self.angle = new_angle
 
     def _stun_effect(self):

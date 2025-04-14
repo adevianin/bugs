@@ -47,6 +47,7 @@ class MessageHandlerService {
 
     _handleStepMsg(msg) {
         this._worldService.setCurrentStep(msg.step, msg.season);
+        this._mainEventBus.emit('stepStart', msg.step);
         for (let action of msg.actions) {
             switch(action.actorType) {
                 case 'entity':
@@ -70,6 +71,7 @@ class MessageHandlerService {
             }
         }
         this._mainEventBus.emit(`stepSyncDone:${msg.step}`);
+        this._mainEventBus.emit('stepDone', msg.step);
     }
 
     _handleEmailVerifiedMsg() {

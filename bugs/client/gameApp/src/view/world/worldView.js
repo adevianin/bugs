@@ -23,6 +23,7 @@ class WorldView extends BaseGraphicView {
         
         this._render();
 
+        this.$domain.events.on('stepStart', this._onStepStart.bind(this));
         this.$domain.events.on('entityBorn', this._onEntityBorn.bind(this));
         this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
         if (VIEW_SETTINGS.showPlayerViewRect) {
@@ -184,6 +185,10 @@ class WorldView extends BaseGraphicView {
             .rect(viewRect.x, viewRect.y, viewRect.width, viewRect.height)
             .stroke({width: 1, color: 0x0000FF});
         this._viewRectContainer.addChild(this._viewRectGraphics);
+    }
+
+    _onStepStart(stepNumber) {
+        this.$eventBus.emit('stepStart', stepNumber);
     }
 
 }

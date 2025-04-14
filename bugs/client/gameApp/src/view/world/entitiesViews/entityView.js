@@ -23,10 +23,11 @@ class EntityView extends BaseGraphicView {
         this._entityContainer = new PIXI.Container();
         this._parentContainer.addChild(this._entityContainer);
 
-        // this._boundOnGameActivityChange = this._onGameActivityChange.bind(this);
-        // document.addEventListener('visibilitychange', this._boundOnGameActivityChange);
+        this._animationsData = {};
+
         this._stopListenChunkIdChanged = this._entity.on('chunkIdChanged', this._onEntityChunkIdChanged.bind(this));
         this._stopListenDiedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_DIED}`, this._onDiedAnimationRequest.bind(this));
+        this._stopListenStetStart = this.$eventBus.on('stepStart', this._onStepStart.bind(this));
     }
 
     get entity() {
@@ -41,17 +42,13 @@ class EntityView extends BaseGraphicView {
         return !this._isCurrentChunkVisible || VIEW_SETTINGS.isFastAnimations;
     }
 
-    get _isGameActive() {
-        return !document.hidden;
-    }
-
     remove() {
         this._entityContainer.removeFromParent();
         this._entityContainer.destroy({children: true});
         this._stopListenChunkVisibilityChange();
         this._stopListenChunkIdChanged();
         this._stopListenDiedAnimationRequest();
-        // document.removeEventListener('visibilitychange', this._boundOnGameActivityChange);
+        this._stopListenStetStart();
     }
 
     _toggleEntityVisibility(isVisible) {
@@ -162,6 +159,46 @@ class EntityView extends BaseGraphicView {
         this.remove();
     }
 
+    _runAnimation(type, animation) {
+        if (this._animationsData[type]){
+            this._stopRunningAnimationByType(type);
+            delete this._animationsData[type];
+        }
+
+        let animationData = {frameRequestId: null, makeAnimDone: null};
+        this._animationsData[type] = animationData;
+        return new Promise((res, rej) => {
+            animationData.makeAnimDone = res;
+            let doAnimation = () => {
+                animationData.frameRequestId = requestAnimationFrame((t) => {
+                    let isDone = animation(t);
+                    if (isDone) {
+                        delete this._animationsData[type];
+                        res();
+                    } else {
+                        doAnimation();
+                    }
+                });
+            };
+
+            doAnimation();
+            
+        });
+    }
+
+    _stopAllRunningAnimations() {
+        for (let animType in this._animationsData) {
+            this._stopRunningAnimationByType(animType);
+        }
+        this._animationsData = {};
+    }
+
+    _stopRunningAnimationByType(type) {
+        let animData = this._animationsData[type];
+        cancelAnimationFrame(animData.frameRequestId);
+        animData.makeAnimDone();
+    }
+
     _onCurrentChunkVisibilityStateChanged() {
         this._renderViewVisibility();
     }
@@ -178,13 +215,21 @@ class EntityView extends BaseGraphicView {
         this._addAnimation(EntityView.ANIMATION_TYPES.DIED, params);
     }
 
-    // _onGameActivityChange() {
-    //     if (!this._isGameActive) {
-    //         this._animQueue = [];
-    //     } else {
-    //         this._renderEntityState();
-    //     }
-    // }
+    _onStepStart() {
+        if (this._animQueue.length >= 1) {
+            this._refreshAnimations();
+        }
+    }
+
+    _refreshAnimations() {
+        this._animQueue = [];
+        this._stopAllRunningAnimations();
+        this._renderEntityState();
+        if (this._entity.isDied) {
+            this._playDiedAnimation();
+        }
+        console.warn('refreshed animations')
+    }
     
 }
 

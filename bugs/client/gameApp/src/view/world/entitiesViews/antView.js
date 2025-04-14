@@ -239,41 +239,37 @@ class AntView extends LiveEntityView {
         const amplitude = 100;
         const frequency = 0.00025;
 
-        return new Promise((res, rej) => {
-            let prevPosition = null;
+        let prevPosition = null;
+        return this._runAnimation(AntView.ANIMATION_TYPES.FLEW_NUPTIAL, (currentTime) => {
+            let animTime = currentTime - flyStartTime;
+            let progress = animTime / wholeAnimationTime;
 
-            let animate = (currentTime) => {
-                let animTime = currentTime - flyStartTime;
-                let progress = animTime / wholeAnimationTime;
+            if (progress < 1) {
+                let displacementX = directionX * flightSpeed * animTime;
+                let displacementY = directionY * flightSpeed * animTime;
 
-                if (progress < 1) {
-                    let displacementX = directionX * flightSpeed * animTime;
-                    let displacementY = directionY * flightSpeed * animTime;
-    
-                    let oscillation = Math.sin(animTime * frequency * Math.PI * 2) * amplitude;
-                    let oscillationX = -directionY * oscillation;
-                    let oscillationY = directionX * oscillation;
-    
-                    let newPositionX = startX + displacementX + oscillationX;
-                    let newPositionY = startY + displacementY + oscillationY;
-                    let position = { x: newPositionX, y: newPositionY };
+                let oscillation = Math.sin(animTime * frequency * Math.PI * 2) * amplitude;
+                let oscillationX = -directionY * oscillation;
+                let oscillationY = directionX * oscillation;
 
-                    if (prevPosition) {
-                        this._renderEntityAngle(calculateRotationAngle(prevPosition, position));
-                    }
-                    this._renderEntityPosition(position);
+                let newPositionX = startX + displacementX + oscillationX;
+                let newPositionY = startY + displacementY + oscillationY;
+                let position = { x: newPositionX, y: newPositionY };
 
-                    prevPosition = position;
-    
-                    requestAnimationFrame(animate);
-                } else {
-                    res();
-                    this._toggleEntityVisibility(false);
+                if (prevPosition) {
+                    this._renderEntityAngle(calculateRotationAngle(prevPosition, position));
                 }
-            };
-    
-            requestAnimationFrame(animate);
+                this._renderEntityPosition(position);
+
+                prevPosition = position;
+
+                return false;
+            } else {
+                this._toggleEntityVisibility(false);
+                return true;
+            }
         });
+
     }
 
     _playFlewNuptialBackAnimation({ landingPosition }) {

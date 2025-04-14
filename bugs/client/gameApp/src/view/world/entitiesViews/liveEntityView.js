@@ -161,28 +161,25 @@ class LiveEntityView extends EntityView {
         let walkStartAt = null;
 
         this._renderVisualState(LiveEntityView.VISUAL_STATES.WALKING);
-        return new Promise((res, rej) => {
-            let animate = (currentTime) => {
-                if (!walkStartAt) {
-                    walkStartAt = currentTime;
-                }
-
-                let timeInWalk = currentTime - walkStartAt;
-                let progress = timeInWalk / wholeWalkTime;
-
-                if (progress < 1) {
-                    let currentPosition = interpolatePoint(pointFrom, pointTo, progress);
-                    this._renderEntityPosition(currentPosition);
-
-                    requestAnimationFrame(animate);
-                } else {
-                    this._renderEntityPosition(pointTo);
-                    this._renderVisualState(LiveEntityView.VISUAL_STATES.STANDING);
-                    res();
-                }
+        return this._runAnimation(LiveEntityView.ANIMATION_TYPES.WALK, (currentTime) => {
+            if (!walkStartAt) {
+                walkStartAt = currentTime;
             }
 
-            requestAnimationFrame(animate);
+            let timeInWalk = currentTime - walkStartAt;
+            let progress = timeInWalk / wholeWalkTime;
+
+            if (progress < 1) {
+                let currentPosition = interpolatePoint(pointFrom, pointTo, progress);
+                this._renderEntityPosition(currentPosition);
+
+                return false;
+            } else {
+                this._renderEntityPosition(pointTo);
+                this._renderVisualState(LiveEntityView.VISUAL_STATES.STANDING);
+                
+                return true;
+            }
         });
     }
 
@@ -202,24 +199,20 @@ class LiveEntityView extends EntityView {
             angleDistance += 360;
         }
 
-        return new Promise((res, rej) => {
-            let updateAngle = (currentTime) => {
-                if (!rotationStartAt) {
-                    rotationStartAt = currentTime;
-                }
-
-                let rotatingTime = currentTime - rotationStartAt;
-                let rotatedPercent = rotatingTime / wholeRotationTime;
-                if (rotatedPercent < 1) {
-                    this._renderEntityAngle(startAngle + (angleDistance * rotatedPercent));
-                    requestAnimationFrame(updateAngle);
-                } else {
-                    this._renderEntityAngle(newAngle);
-                    res();
-                }
+        return this._runAnimation(LiveEntityView.ANIMATION_TYPES.ROTATE, (currentTime) => {
+            if (!rotationStartAt) {
+                rotationStartAt = currentTime;
             }
-    
-            requestAnimationFrame(updateAngle);
+
+            let rotatingTime = currentTime - rotationStartAt;
+            let rotatedPercent = rotatingTime / wholeRotationTime;
+            if (rotatedPercent < 1) {
+                this._renderEntityAngle(startAngle + (angleDistance * rotatedPercent));
+                return false;
+            } else {
+                this._renderEntityAngle(newAngle);
+                return true;
+            }
         });
     }
 
