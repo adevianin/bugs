@@ -2,17 +2,18 @@ from .base.genes_types import GenesTypes
 from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
-from abc import abstractclassmethod
+from abc import abstractmethod
 from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class DevelopmentCasteGene(BaseGene):
 
-    @abstractclassmethod
-    def build(cls, domination_code: DominationCodes, strength: int, defense: int, max_hp: int, hp_regen_rate: int, speed: int):
+    @classmethod
+    @abstractmethod
+    def build(cls, domination_code: DominationCodes, strength: float, defense: float, max_hp: float, hp_regen_rate: float, speed: float):
         pass
 
-    def __init__(self, type: GenesTypes, domination_code: DominationCodes, strength: int, defense: int, max_hp: int, hp_regen_rate: int, speed: int):
+    def __init__(self, type: GenesTypes, domination_code: DominationCodes, strength: float, defense: float, max_hp: float, hp_regen_rate: float, speed: float):
         super().__init__(type, ChromosomeTypes.DEVELOPMENT, domination_code)
         self._strength = strength
         self._defense = defense
@@ -60,6 +61,8 @@ class DevelopmentCasteGene(BaseGene):
         return self.build(self.domination_code, strength, defense, max_hp, hp_regen_rate, speed)
     
     def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
+        percent = percent / 3
+        super_mutate_percent = super_mutate_percent / 3
         strength = self._deviate_value(self.strength, percent, super_mutate_chance, super_mutate_percent)
         defense = self._deviate_value(self.defense, percent, super_mutate_chance, super_mutate_percent)
         max_hp = self._deviate_value(self.max_hp, percent, super_mutate_chance, super_mutate_percent)
@@ -68,11 +71,11 @@ class DevelopmentCasteGene(BaseGene):
         return self.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed)
     
     def upgrade(self) -> 'DevelopmentCasteGene':
-        strength = self.strength * NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
-        defense = self.defense * NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
-        max_hp = self.max_hp * NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
-        hp_regen_rate = self.hp_regen_rate * NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
-        speed = self.speed * NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
+        strength = self.strength
+        defense = self.defense
+        max_hp = self.max_hp
+        hp_regen_rate = self.hp_regen_rate
+        speed = self.speed
         return self.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed)
 
         

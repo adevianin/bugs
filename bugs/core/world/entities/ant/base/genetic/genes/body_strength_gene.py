@@ -3,20 +3,20 @@ from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
 import math 
-from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
+from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER, BASE_BODY_STRENGTH
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class BodyStrengthGene(BaseGene):
 
     @classmethod
-    def build(cls, domination_code: DominationCodes, strength: int):
+    def build(cls, domination_code: DominationCodes, strength: float):
         return BodyStrengthGene(domination_code, strength)
     
     @staticmethod
     def build_new_for_specie_gene():
-        return BodyStrengthGene.build(DominationCodes.random(), 10)
+        return BodyStrengthGene.build(DominationCodes.random(), BASE_BODY_STRENGTH)
 
-    def __init__(self, domination_code: DominationCodes, strength: int):
+    def __init__(self, domination_code: DominationCodes, strength: float):
         super().__init__(GenesTypes.BODY_STRENGTH, ChromosomeTypes.BODY, domination_code)
         self._strength = strength
 
@@ -32,7 +32,7 @@ class BodyStrengthGene(BaseGene):
         if dominating_gene is not None:
             return dominating_gene
         
-        strength = math.ceil((self.strength + another_gene.strength) / 2)
+        strength = (self.strength + another_gene.strength) / 2
         return BodyStrengthGene.build(self.domination_code, strength)
     
     def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:

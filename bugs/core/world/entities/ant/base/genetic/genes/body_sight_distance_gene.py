@@ -3,21 +3,27 @@ from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
 import math 
-from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
+from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER, BASE_BODY_SIGHT_DISTANCE, MAX_BODY_SIGHT_DISTANCE, MIN_BODY_SIGHT_DISTANCE
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class BodySightDistanceGene(BaseGene):
 
     @classmethod
-    def build(cls, domination_code: DominationCodes, sight_distance: int):
+    def build(cls, domination_code: DominationCodes, sight_distance: float):
         return BodySightDistanceGene(domination_code, sight_distance)
     
     @staticmethod
     def build_new_for_specie_gene():
-        return BodySightDistanceGene.build(DominationCodes.random(), 200)
+        return BodySightDistanceGene.build(DominationCodes.random(), BASE_BODY_SIGHT_DISTANCE)
 
-    def __init__(self, domination_code: DominationCodes, sight_distance: int):
+    def __init__(self, domination_code: DominationCodes, sight_distance: float):
         super().__init__(GenesTypes.BODY_SIGHT_DISTANCE, ChromosomeTypes.BODY, domination_code)
+        if sight_distance > MAX_BODY_SIGHT_DISTANCE:
+            sight_distance = MAX_BODY_SIGHT_DISTANCE
+
+        if sight_distance < MIN_BODY_SIGHT_DISTANCE:
+            sight_distance = MIN_BODY_SIGHT_DISTANCE
+
         self._sight_distance = sight_distance
 
     @property
@@ -32,7 +38,7 @@ class BodySightDistanceGene(BaseGene):
         if dominating_gene is not None:
             return dominating_gene
         
-        sight_distance = math.ceil((self.sight_distance + another_gene.sight_distance) / 2)
+        sight_distance = (self.sight_distance + another_gene.sight_distance) / 2
         return BodySightDistanceGene.build(self.domination_code, sight_distance)
     
     def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:

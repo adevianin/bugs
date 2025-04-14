@@ -4,8 +4,10 @@ from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeType
 from core.world.entities.ant.base.genetic.chromosomes_set import ChromosomesSet
 from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTypes
 from .activity_weights_pack import ActivityWeightsPack
-from core.world.settings import (NUPT_MALE_PROBABILITY_OF_SUPER_GENE, NUPT_MALE_SUPER_GENE_THRESHOLD_BODY_STRENGTH, NUPT_MALE_SUPER_GENE_THRESHOLD_BODY_DEFENSE, NUPT_MALE_SUPER_GENE_THRESHOLD_SPECIALIZATION_BUILDING_SUBNEST, 
-                                 NUPT_MALE_SUPER_GENE_THRESHOLD_ADAPTATION_COLD)
+from core.world.settings import (NUPT_MALE_PROBABILITY_OF_SUPER_GENE, NUPT_MALE_SUPER_GENE_THRESHOLD_BODY_STRENGTH, NUPT_MALE_SUPER_GENE_THRESHOLD_BODY_DEFENSE, 
+                                 NUPT_MALE_SUPER_GENE_THRESHOLD_SPECIALIZATION_BUILDING_SUBNEST, NUPT_MALE_SUPER_GENE_THRESHOLD_ADAPTATION_COLD, 
+                                 NEW_SPECIE_MUTATION_PERCENT, NEW_SPECIE_SUPER_MUTATE_CHANCE, NEW_SPECIE_SUPER_MUTATE_PERCENT, ANTARA_MUTATITON_PERCENT, ANTARA_SUPER_MUTATION_CHANCE_PERCENT,
+                                 ANTARA_SUPER_MUTATION_PERCENT)
 from core.world.utils.probability_check import probability_check
 from core.world.entities.ant.base.genetic.genes.development_warrior_caste_gene import DevelopmentWarriorCasteGene
 from core.world.entities.ant.base.genetic.genes.specialization_building_subnest_gene import SpecializationBuildingSubnestGene
@@ -21,7 +23,7 @@ class Specie():
         return Specie(chromosome_set, activity_weights)
     
     def build_new() -> 'Specie':
-        chromosome_set = ChromosomesSet.build_new_for_specie().mutate(10, 10, 15)
+        chromosome_set = ChromosomesSet.build_new_for_specie().mutate(NEW_SPECIE_MUTATION_PERCENT, NEW_SPECIE_SUPER_MUTATE_CHANCE, NEW_SPECIE_SUPER_MUTATE_PERCENT)
         specie_chromosome_set = SpecieChromosomeSet.build_new(chromosome_set)
         activity_weights = ActivityWeightsPack.build_empty()
         return Specie(specie_chromosome_set, activity_weights)
@@ -54,14 +56,15 @@ class Specie():
         maternal_chromosome = self._chromosome_set.generate_chorosome_set(percent, super_mutate_chance, super_mutate_percent)
         if probability_check(NUPT_MALE_PROBABILITY_OF_SUPER_GENE):
             super_gene = self._build_super_gene_by_specie_activity()
-            maternal_chromosome.inject_gene(super_gene)
+            if super_gene:
+                maternal_chromosome.inject_gene(super_gene)
 
         return Genome.build(maternal_chromosome, None)
     
     def generate_antara_genome(self) -> Genome:
-        percent = 5
-        super_mutate_chance = 0
-        super_mutate_percent = 0
+        percent = ANTARA_MUTATITON_PERCENT
+        super_mutate_chance = ANTARA_SUPER_MUTATION_CHANCE_PERCENT
+        super_mutate_percent = ANTARA_SUPER_MUTATION_PERCENT
         maternal_chromosome = self._chromosome_set.generate_chorosome_set(percent, super_mutate_chance, super_mutate_percent)
         paternal_chromosome = self._chromosome_set.generate_chorosome_set(percent, super_mutate_chance, super_mutate_percent)
         return Genome.build(maternal_chromosome, paternal_chromosome)

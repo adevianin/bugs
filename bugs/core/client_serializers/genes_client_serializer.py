@@ -137,14 +137,14 @@ class GenesClientSerializer():
     def _serialize_adaptation_appetite_gene(self, gene: AdaptationAppetiteGene):
         json = self._serialize_base_gene(gene)
         json.update({
-            'multiplier': gene.multiplier
+            'multiplier': round(gene.multiplier, self.NDIGITS)
         })
         return json
     
     def _serialize_adaptation_development_appetite_gene(self, gene: AdaptationDevelopmentAppetiteGene):
         json = self._serialize_base_gene(gene)
         json.update({
-            'multiplier': gene.multiplier
+            'multiplier': round(gene.multiplier, self.NDIGITS)
         })
         return json
     

@@ -2,7 +2,7 @@ from .base.genes_types import GenesTypes
 from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
-from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
+from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER, BASE_BODY_LIFE_SPAN
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class BodyLifeSpanGene(BaseGene):
@@ -13,7 +13,7 @@ class BodyLifeSpanGene(BaseGene):
     
     @staticmethod
     def build_new_for_specie_gene():
-        return BodyLifeSpanGene.build(DominationCodes.random(), 10000)
+        return BodyLifeSpanGene.build(DominationCodes.random(), BASE_BODY_LIFE_SPAN)
 
     def __init__(self, domination_code: DominationCodes, life_span: int):
         super().__init__(GenesTypes.BODY_LIFE_SPAN, ChromosomeTypes.BODY, domination_code)

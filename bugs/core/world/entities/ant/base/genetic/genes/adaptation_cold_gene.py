@@ -2,7 +2,7 @@ from .base.genes_types import GenesTypes
 from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
-from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
+from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER, BASE_ADAPTATION_COLD_RESISTANCE_POINTS
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class AdaptationColdGene(BaseGene):
@@ -16,7 +16,7 @@ class AdaptationColdGene(BaseGene):
     
     @staticmethod
     def build_new_for_specie_gene():
-        return AdaptationColdGene.build(DominationCodes.random(), 80)
+        return AdaptationColdGene.build(DominationCodes.random(), BASE_ADAPTATION_COLD_RESISTANCE_POINTS)
 
     def __init__(self, domination_code: DominationCodes, resistance_points: int):
         super().__init__(GenesTypes.ADAPTATION_COLD, ChromosomeTypes.ADAPTATION, domination_code)
@@ -27,7 +27,7 @@ class AdaptationColdGene(BaseGene):
         return self._resistance_points
 
     def affect(self, phenotype: Phenotype):
-        resistance_temperature = int(self._resistance_points / self.POINTS_PER_TEMP_UNIT)
+        resistance_temperature = self._resistance_points / self.POINTS_PER_TEMP_UNIT
         phenotype.min_temperature = self.RAW_MIN_TEMPERATURE - resistance_temperature
 
     def merge(self, another_gene: 'AdaptationColdGene') -> BaseGene:
@@ -35,7 +35,7 @@ class AdaptationColdGene(BaseGene):
         if dominating_gene is not None:
             return dominating_gene
         
-        min_temp = round((self.resistance_points + another_gene.resistance_points) / 2, 0)
+        min_temp = (self.resistance_points + another_gene.resistance_points) / 2
         return AdaptationColdGene.build(self.domination_code, min_temp)
     
     def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:

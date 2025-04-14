@@ -2,21 +2,20 @@ from .base.genes_types import GenesTypes
 from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
-import math 
-from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
+from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER, BASE_BODY_MAX_HP
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class BodyMaxHpGene(BaseGene):
 
     @classmethod
-    def build(cls, domination_code: DominationCodes, max_hp: int):
+    def build(cls, domination_code: DominationCodes, max_hp: float):
         return BodyMaxHpGene(domination_code, max_hp)
     
     @staticmethod
     def build_new_for_specie_gene():
-        return BodyMaxHpGene.build(DominationCodes.random(), 100)
+        return BodyMaxHpGene.build(DominationCodes.random(), BASE_BODY_MAX_HP)
 
-    def __init__(self, domination_code: DominationCodes, max_hp: int):
+    def __init__(self, domination_code: DominationCodes, max_hp: float):
         super().__init__(GenesTypes.BODY_MAX_HP, ChromosomeTypes.BODY, domination_code)
         self._max_hp = max_hp
 
@@ -32,7 +31,7 @@ class BodyMaxHpGene(BaseGene):
         if dominating_gene is not None:
             return dominating_gene
         
-        max_hp = math.ceil((self.max_hp + another_gene.max_hp) / 2)
+        max_hp = (self.max_hp + another_gene.max_hp) / 2
         return BodyMaxHpGene.build(self.domination_code, max_hp)
     
     def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:

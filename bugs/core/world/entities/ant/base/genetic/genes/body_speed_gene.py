@@ -2,8 +2,7 @@ from .base.genes_types import GenesTypes
 from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
-import math 
-from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
+from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER, BASE_BODY_SPEED, MAX_BODY_SPEED, MIN_BODY_SPEED
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class BodySpeedGene(BaseGene):
@@ -14,10 +13,16 @@ class BodySpeedGene(BaseGene):
     
     @staticmethod
     def build_new_for_specie_gene():
-        return BodySpeedGene.build(DominationCodes.random(), 32)
+        return BodySpeedGene.build(DominationCodes.random(), BASE_BODY_SPEED)
 
     def __init__(self, domination_code: DominationCodes, speed: int):
         super().__init__(GenesTypes.BODY_SPEED, ChromosomeTypes.BODY, domination_code)
+        if speed > MAX_BODY_SPEED:
+            speed = MAX_BODY_SPEED
+
+        if speed < MIN_BODY_SPEED:
+            speed = MIN_BODY_SPEED
+            
         self._speed = speed
 
     @property
@@ -32,7 +37,7 @@ class BodySpeedGene(BaseGene):
         if dominating_gene is not None:
             return dominating_gene
         
-        speed = math.ceil((self.speed + another_gene.speed) / 2)
+        speed = (self.speed + another_gene.speed) / 2
         return BodySpeedGene.build(self.domination_code, speed)
     
     def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
