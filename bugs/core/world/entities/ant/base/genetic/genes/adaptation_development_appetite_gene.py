@@ -3,7 +3,8 @@ from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
-from core.world.settings import BASE_ADAPTATION_DEVELOPMENT_APPETITE_MULTIPLIER, LARVA_REQUIRED_FOOD_QUEEN_MULTIPLIER, LARVA_REQUIRED_FOOD_COMMON_MULTIPLIER, LARVA_REQUIRED_FOOD_WARRIOR_MULTIPLIER
+from core.world.settings import (BASE_ADAPTATION_DEVELOPMENT_APPETITE_MULTIPLIER, LARVA_REQUIRED_FOOD_QUEEN_MULTIPLIER, LARVA_REQUIRED_FOOD_COMMON_MULTIPLIER, 
+                                 LARVA_REQUIRED_FOOD_WARRIOR_MULTIPLIER, LARVA_REQUIRED_FOOD_WORKER_MULTIPLIER, LARVA_REQUIRED_FOOD_MALE_MULTIPLIER)
 from core.world.entities.ant.base.ant_types import AntTypes
 
 class AdaptationDevelopmentAppetiteGene(BaseGene):
@@ -50,6 +51,8 @@ class AdaptationDevelopmentAppetiteGene(BaseGene):
                 return LARVA_REQUIRED_FOOD_QUEEN_MULTIPLIER
             case AntTypes.WARRIOR:
                 return LARVA_REQUIRED_FOOD_WARRIOR_MULTIPLIER
-            case _:
-                return 1
+            case AntTypes.WORKER:
+                return LARVA_REQUIRED_FOOD_WORKER_MULTIPLIER
+            case AntTypes.MALE:
+                return LARVA_REQUIRED_FOOD_MALE_MULTIPLIER
         
