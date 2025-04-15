@@ -6,7 +6,8 @@ from core.world.entities.map.map_factory import MapFactory
 from core.world.utils.size import Size
 from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
-from core.world.settings import LADYBUG_COLONY_ID, GENERATING_CHUNK_SIZE
+from core.world.settings import (LADYBUG_COLONY_ID, GENERATING_CHUNK_SIZE, HONEYDEW_ITEM_SOURCE_MAX_FERTILITY, HONEYDEW_ITEM_SOURCE_MIN_FERTILITY, NECTAR_ITEM_SOURCE_MAX_FERTILITY, 
+                                 NECTAR_ITEM_SOURCE_MIN_FERTILITY, HONEYDEW_ITEM_SOURCE_MAX_ITEM_STRENGTH, NECTAR_ITEM_SOURCE_MAX_ITEM_STRENGTH)
 from core.world.entities.climate.climate_factory import ClimateFactory
 from core.world.entities.tree.tree_factory import TreeFactory
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory
@@ -229,13 +230,15 @@ class WorldService(BaseService):
         world.map.add_entity(flower_area)
 
     def _build_honeydew_item_source(self, world: World, position: Point):
-        fertility = random.randint(1, 14)
-        item_source = self._item_source_factory.build_new_item_source(position, ItemTypes.HONEYDEW, fertility, 40, world.current_season)
+        fertility = random.randint(HONEYDEW_ITEM_SOURCE_MIN_FERTILITY, HONEYDEW_ITEM_SOURCE_MAX_FERTILITY)
+        max_item_strength = HONEYDEW_ITEM_SOURCE_MAX_ITEM_STRENGTH
+        item_source = self._item_source_factory.build_new_item_source(position, ItemTypes.HONEYDEW, fertility, max_item_strength, world.current_season)
         world.map.add_entity(item_source)
 
     def _build_nectar_item_source(self, world: World, position: Point):
-        fertility = random.randint(1, 7)
-        item_source = self._item_source_factory.build_new_item_source(position, ItemTypes.NECTAR, fertility, 30, world.current_season)
+        fertility = random.randint(NECTAR_ITEM_SOURCE_MIN_FERTILITY, NECTAR_ITEM_SOURCE_MAX_FERTILITY)
+        max_item_strength = NECTAR_ITEM_SOURCE_MAX_ITEM_STRENGTH
+        item_source = self._item_source_factory.build_new_item_source(position, ItemTypes.NECTAR, fertility, max_item_strength, world.current_season)
         world.map.add_entity(item_source)
 
     def _build_random_food_source(self, world: World, position: Point):

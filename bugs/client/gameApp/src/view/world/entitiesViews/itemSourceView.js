@@ -101,11 +101,6 @@ class ItemSourceView extends EntityView {
     }
 
     _renderFertility() {
-        const fertilityBgSize = 15;
-
-        let fertilityBg = new PIXI.Graphics();
-        fertilityBg.rect(0,0, fertilityBgSize, fertilityBgSize).fill({ color: 0xff0000 });
-
         let fertilityText = new PIXI.Text({
             text: this._entity.fertility,
             style: {
@@ -114,13 +109,19 @@ class ItemSourceView extends EntityView {
                 fill: UI_CONSTS.WORLD_VIEW_FONT_COLOR,
             },
         });
+
+        let fertilityBgWidth = fertilityText.width + 2;
+        let fertilityBgHeight = 15;
+        let fertilityBg = new PIXI.Graphics();
+        fertilityBg.rect(0,0, fertilityBgWidth, fertilityBgHeight).fill({ color: 0xff0000 });
+
         fertilityText.anchor.set(0.5);
-        fertilityText.position.x = fertilityBgSize / 2;
-        fertilityText.position.y = fertilityBgSize / 2;
+        fertilityText.position.x = fertilityBgWidth / 2;
+        fertilityText.position.y = fertilityBgHeight / 2;
 
         let fertilityContainer = new PIXI.Container();
-        fertilityContainer.position.y = -fertilityBgSize;
-        fertilityContainer.position.x = -fertilityBgSize - 1;
+        fertilityContainer.position.y = -fertilityBgHeight;
+        fertilityContainer.position.x = -fertilityBgWidth - 1;
 
         fertilityContainer.addChild(fertilityBg, fertilityText);
         this._uiContainer.addChild(fertilityContainer);

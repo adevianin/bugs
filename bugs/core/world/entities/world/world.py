@@ -168,3 +168,7 @@ class World():
         from core.world.utils.point import Point
         self._event_bus.emit('ladybug_birth_request', LadybugBirthRequest(Point(x,y)))
 
+    def _test_start_summer(self):
+        self._current_step = SUMMER_START_YEAR_STEP - 2
+        self._climate._current_temp = 4
+

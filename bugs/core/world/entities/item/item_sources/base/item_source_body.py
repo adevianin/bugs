@@ -60,8 +60,8 @@ class ItemSourceBody(Body):
         return self._accumulated >= ItemSourceBody.MIN_ITEM_STRENGTH
 
     def pull_item_strength(self) -> int:
-        max_strength = min(self._max_item_strength, self._accumulated)
-        strength = random.randint(ItemSourceBody.MIN_ITEM_STRENGTH, int(max_strength))
+        strength = min(self._max_item_strength, self._accumulated)
+        # strength = random.randint(ItemSourceBody.MIN_ITEM_STRENGTH, int(max_strength))
         if strength > self._accumulated:
             raise GameError('cant pull item with such strength')
         self._accumulated -= strength

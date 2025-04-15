@@ -14,7 +14,7 @@ class AntStats(LiveStats):
         sight_distance = round(phenotype.sight_distance)
         strength = round(phenotype.strength)
         defense = round(phenotype.defense)
-        appetite = round(phenotype.appetite)
+        appetite = round(phenotype.appetite, 1)
         min_temperature = round(phenotype.min_temperature)
         life_span = round(phenotype.life_span)
         return AntStats(StatsTypes.ANT, max_hp, hp_regen_rate, speed, sight_distance, strength, defense, appetite, min_temperature, life_span)
