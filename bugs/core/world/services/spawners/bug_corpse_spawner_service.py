@@ -6,14 +6,13 @@ from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.nest.nest import Nest
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.item.items.base.item import Item
-from core.world.settings import SPAWN_BUG_CORPSES
+from core.world.settings import SPAWN_BUG_CORPSES, BUG_CORPSE_MIN_STRENGTH, BUG_CORPSE_MAX_STRENGTH, BUG_CORPSE_SPAWN_STEP_FREQUENCY, BUG_CORPSE_SPAWN_SEASONS
 from typing import List, Callable
 import random
 
 class BugCorpseSpawnerService(BaseService):
 
     MIN_DISTANCE_TO_NEST = 100
-    ACTIVE_SEASONS = [SeasonTypes.SUMMER, SeasonTypes.AUTUMN]
 
     def __init__(self, event_bus: EventEmitter):
         super().__init__(event_bus)
@@ -21,7 +20,7 @@ class BugCorpseSpawnerService(BaseService):
         self._event_bus.add_listener('step_start', self._on_step_start)
 
     def _on_step_start(self, step_number: int, current_season: SeasonTypes):
-        if SPAWN_BUG_CORPSES and step_number % 300 == 0 and current_season in self.ACTIVE_SEASONS:
+        if SPAWN_BUG_CORPSES and step_number % BUG_CORPSE_SPAWN_STEP_FREQUENCY == 0 and current_season in BUG_CORPSE_SPAWN_SEASONS:
             bug_corpse_filter: Callable[[Item], bool] = lambda item: item.item_type == ItemTypes.BUG_CORPSE
             bug_corpses = self._world.map.get_entities(entity_types=[EntityTypes.ITEM], filter=bug_corpse_filter)
             nests: List[Nest] = self._world.map.get_entities(entity_types=[EntityTypes.NEST])
@@ -31,5 +30,5 @@ class BugCorpseSpawnerService(BaseService):
                 nest = random.choice(nests)
                 # nest = self._world.map.get_entity_by_id(622)
                 spawn_point = self._world.map.generate_random_point_within_circle(nest.position, nest.area, self.MIN_DISTANCE_TO_NEST)
-                strength = random.randint(80, 200)
+                strength = random.randint(BUG_CORPSE_MIN_STRENGTH, BUG_CORPSE_MAX_STRENGTH)
                 self._event_bus.emit('item_birth_request', ItemBirthRequest(spawn_point, strength, ItemTypes.BUG_CORPSE, random.randint(0, 360)))
