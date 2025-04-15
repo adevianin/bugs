@@ -148,39 +148,10 @@ class LiveEntityView extends EntityView {
         }
     }
 
-    _playWalkAnimation({ pointFrom, pointTo, userSpeed, speedUpModifier }) {
-        if (this._isFastAnimationMode) {
-            this._renderEntityPosition(pointTo);
-            this._renderVisualState(LiveEntityView.VISUAL_STATES.STANDING);
-            return
-        }
-
-        let dist = distance_point(pointFrom, pointTo);
-        let wholeWalkTime = (dist / userSpeed) * 1000;
-        wholeWalkTime = wholeWalkTime / speedUpModifier; 
-        let walkStartAt = null;
-
+    async _playWalkAnimation(params) {
         this._renderVisualState(LiveEntityView.VISUAL_STATES.WALKING);
-        return this._runAnimation(LiveEntityView.ANIMATION_TYPES.WALK, (currentTime) => {
-            if (!walkStartAt) {
-                walkStartAt = currentTime;
-            }
-
-            let timeInWalk = currentTime - walkStartAt;
-            let progress = timeInWalk / wholeWalkTime;
-
-            if (progress < 1) {
-                let currentPosition = interpolatePoint(pointFrom, pointTo, progress);
-                this._renderEntityPosition(currentPosition);
-
-                return false;
-            } else {
-                this._renderEntityPosition(pointTo);
-                this._renderVisualState(LiveEntityView.VISUAL_STATES.STANDING);
-                
-                return true;
-            }
-        });
+        await this._playEntityWalkAnimation(params, LiveEntityView.ANIMATION_TYPES.WALK);
+        this._renderVisualState(LiveEntityView.VISUAL_STATES.STANDING);
     }
 
     _playRotateAnimation({ startAngle, newAngle }) {

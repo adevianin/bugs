@@ -1,8 +1,6 @@
 import { EntityView } from './entityView';
 import * as PIXI from 'pixi.js';
 import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
-import { distance_point } from '@utils/distance';
-import { interpolatePoint } from '@utils/interpolatePoint';
 
 class ItemView extends EntityView {
 
@@ -72,35 +70,8 @@ class ItemView extends EntityView {
         this._toggleEntityVisibility(true);
     }
 
-    _playBeBringedAnimation({ pointFrom, pointTo, userSpeed, speedUpModifier }) {
-        if (this._isFastAnimationMode) {
-            this._renderEntityPosition(pointTo);
-            return;
-        }
-        
-        let dist = distance_point(pointFrom, pointTo);
-        let wholeWalkTime = (dist / userSpeed) * 1000;
-        wholeWalkTime = wholeWalkTime / speedUpModifier;
-        let walkStartAt = null;
-
-        return this._runAnimation(ItemView.ANIMATION_TYPES.BE_BRINGED, (currentTime) => {
-            if (!walkStartAt) {
-                walkStartAt = currentTime;
-            }
-
-            let timeInWalk = currentTime - walkStartAt;
-            let progress = timeInWalk / wholeWalkTime;
-
-            if (progress < 1) {
-                let currentPosition = interpolatePoint(pointFrom, pointTo, progress);
-                this._renderEntityPosition(currentPosition);
-
-                return false;
-            } else {
-                this._renderEntityPosition(pointTo);
-                return true;
-            }
-        });
+    async _playBeBringedAnimation(params) {
+        await this._playEntityWalkAnimation(params, ItemView.ANIMATION_TYPES.BE_BRINGED);
     }
 
     _onPickedAnimationRequest() {

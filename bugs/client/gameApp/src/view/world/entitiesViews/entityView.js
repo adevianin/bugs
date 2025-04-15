@@ -3,6 +3,8 @@ import * as PIXI from 'pixi.js';
 import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
 import { ChunksVisibilityManager } from "../chunksVisibilityManager";
 import { VIEW_SETTINGS } from "@view/viewSettings";
+import { distance_point } from '@utils/distance';
+import { interpolatePoint } from '@utils/interpolatePoint';
 
 class EntityView extends BaseGraphicView {
 
@@ -69,34 +71,10 @@ class EntityView extends BaseGraphicView {
         let animation = this._animQueue[0];
         this._animQueue.shift();
 
-        animation.params.speedUpModifier = this._calcSpeedUpMultiplier(animation);
-
         this._isAnimPlaying = true;
         await this._playAnimation(animation);
         this._isAnimPlaying = false;
         this._tryPlayNextAnim();
-    }
-
-    _calcSpeedUpMultiplier(checkingAnimation) {
-        let count = 0;
-        for (let animation of this._animQueue) {
-            if (animation.type == checkingAnimation.type) {
-                count++;
-            }
-        }
-
-        switch (count) {
-            case 0:
-                return 1;
-            case 1:
-                return 1.3;
-            case 2:
-                return 2;
-            case 3:
-                return 4;
-            default:
-                return 50;
-        }
     }
 
     async _playAnimation(animation) {
@@ -233,6 +211,41 @@ class EntityView extends BaseGraphicView {
 
     _hasBlockingAnimationInQueue() {
         return this._animQueue.some(anim => anim.isBlocking);
+    }
+
+    _playEntityWalkAnimation({ pointFrom, pointTo, userSpeed }, animationType) {
+        if (this._isFastAnimationMode) {
+            this._renderEntityPosition(pointTo);
+            return
+        }
+
+        let animationStep = this.$domain.currentStep;
+        let dist = distance_point(pointFrom, pointTo);
+        let wholeWalkTime = (dist / userSpeed) * 1000;
+        let leftTimeForStep = this.$stepProgress.getLeftTimeForStep(animationStep);
+        let walkTime = wholeWalkTime <= leftTimeForStep ? wholeWalkTime : leftTimeForStep;
+        
+        let walkStartAt = null;
+        return this._runAnimation(animationType, (currentTime) => {
+            if (!walkStartAt) {
+                walkStartAt = currentTime;
+            }
+
+            let isAnimationStepDone = this.$domain.currentStep > animationStep;
+            let timeInWalk = currentTime - walkStartAt;
+            let progress = timeInWalk / walkTime;
+
+            if (progress >= 1 || isAnimationStepDone) {
+                this._renderEntityPosition(pointTo);
+                
+                return true;
+            } else {
+                let currentPosition = interpolatePoint(pointFrom, pointTo, progress);
+                this._renderEntityPosition(currentPosition);
+
+                return false;
+            }
+        });
     }
     
 }

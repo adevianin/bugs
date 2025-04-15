@@ -1,3 +1,4 @@
+import * as PIXI from 'pixi.js';
 import { AppView } from './appView';
 import { Requester } from '@common/utils/requester';
 import { WorldSpritesheetManager } from './world/worldSpritesheetManager';
@@ -11,7 +12,8 @@ import { BaseView } from '@common/view/base/baseView';
 import { MessageMaster } from '@common/messages/messageMaster';
 import { gameMsgLibrariesPack } from '@messages/msgLibraries';
 import { ChunksVisibilityManager } from './world/chunksVisibilityManager';
-import * as PIXI from 'pixi.js';
+import { StepProgressCheker } from './world/stepProgressChecker';
+
 
 async function initViewLayer(domainFacade) {
     let requester = new Requester();
@@ -28,11 +30,14 @@ async function initViewLayer(domainFacade) {
 
     let mm = MessageMaster.init(gameMsgLibrariesPack);
 
+    let stepProgressChecker = new StepProgressCheker(domainFacade);
+
     BaseView.useDomain(domainFacade);
     BaseView.useEventBus(eventBus);
     BaseView.useMessageMaster(mm);
     BaseView.useMessages(uaMessages);
     BaseGameHTMLView.usePixiApp(pixiApp);
+    BaseGraphicView.useStepProgressChecker(stepProgressChecker);
     BaseGraphicView.useTextureManager(spritesheetManager);
 
     ChunksVisibilityManager.init(eventBus, domainFacade.world.chunks);
