@@ -1,7 +1,6 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import antTmpl from './antTmpl.html';
 import { NestSelectorView } from "@view/panel/base/nestSelector";
-import { CONSTS } from "@domain/consts";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
 import { convertStepsToYear } from "@utils/convertStepsToYear";
 import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
@@ -111,8 +110,7 @@ class AntView extends BaseGameHTMLView {
 
     _renderAge() {
         let livedSteps = this.$domain.currentStep - this._ant.birthStep;
-        let age = Math.floor(livedSteps / CONSTS.STEPS_IN_YEAR);
-        this._ageEl.innerHTML = age;
+        this._ageEl.innerHTML = convertStepsToYear(livedSteps, true);
     }
 
     _renderProfileState() {
