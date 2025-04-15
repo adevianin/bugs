@@ -232,7 +232,7 @@ class LiveEntityView extends EntityView {
     }
 
     _onWalkAnimationRequest(params) {
-        this._addAnimation(LiveEntityView.ANIMATION_TYPES.WALK, params);
+        this._addAnimation(LiveEntityView.ANIMATION_TYPES.WALK, params, true);
     }
 
     _onRotateAnimationRequest(params) {

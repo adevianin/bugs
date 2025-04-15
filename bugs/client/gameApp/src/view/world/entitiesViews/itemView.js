@@ -112,7 +112,7 @@ class ItemView extends EntityView {
     }
 
     async _onBeingBringedAnimationRequest(params) {
-        this._addAnimation(ItemView.ANIMATION_TYPES.BE_BRINGED, params);
+        this._addAnimation(ItemView.ANIMATION_TYPES.BE_BRINGED, params, true);
     }
     
 }

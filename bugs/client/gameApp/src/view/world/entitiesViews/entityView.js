@@ -56,8 +56,8 @@ class EntityView extends BaseGraphicView {
         this._renderViewVisibility();
     }
 
-    _addAnimation(type, params = {}) {
-        this._animQueue.push({type, params});
+    _addAnimation(type, params = {}, isBlocking = false) {
+        this._animQueue.push({type, params, isBlocking});
         this._tryPlayNextAnim();
     }
 
@@ -212,11 +212,11 @@ class EntityView extends BaseGraphicView {
     }
 
     _onDiedAnimationRequest(params) {
-        this._addAnimation(EntityView.ANIMATION_TYPES.DIED, params);
+        this._addAnimation(EntityView.ANIMATION_TYPES.DIED, params, false);
     }
 
     _onStepStart() {
-        if (this._animQueue.length >= 1) {
+        if (this._hasBlockingAnimationInQueue()) {
             this._refreshAnimations();
         }
     }
@@ -229,6 +229,10 @@ class EntityView extends BaseGraphicView {
             this._playDiedAnimation();
         }
         console.warn('refreshed animations')
+    }
+
+    _hasBlockingAnimationInQueue() {
+        return this._animQueue.some(anim => anim.isBlocking);
     }
     
 }

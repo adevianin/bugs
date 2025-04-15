@@ -301,7 +301,7 @@ class AntView extends LiveEntityView {
     }
 
     _onFlewNuptialAnimationRequest(params) {
-        this._addAnimation(AntView.ANIMATION_TYPES.FLEW_NUPTIAL, params);
+        this._addAnimation(AntView.ANIMATION_TYPES.FLEW_NUPTIAL, params, true);
     }
 
     _onFlewNuptialBackAnimationRequest(params) {
