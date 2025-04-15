@@ -98,7 +98,7 @@ class LiveEntity(Entity, iEnemy):
     def sort_by_distance(self, entities: List[Entity]) -> List[Entity]:
         return self._body.sort_by_distance(entities)
     
-    def do_step(self, step_number: int):
+    def do_step(self, step_number: int, season):
         self._body.handle_aging(step_number)
         self._body.handle_regeneration()
         self._body.handle_exit_hibernation()

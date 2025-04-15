@@ -125,7 +125,7 @@ class World():
         for entity in entities:
             try:
                 if not entity.is_died: #in case if first entity in list killed next entity
-                    entity.do_step(self._current_step)
+                    entity.do_step(self._current_step, self._current_season)
             except Exception as e:
                 self._logger.exception(f'entity(id={ entity.id }) step({self._current_step}) error', exc_info=e)
                 if DEBUG:

@@ -97,7 +97,7 @@ class Entity(ABC):
         self._body.die(SimpleDeathRecord(self.body.position))
 
     @abstractmethod
-    def do_step(self, step_number: int):
+    def do_step(self, step_number: int, season):
         pass
 
     def block_removal(self):

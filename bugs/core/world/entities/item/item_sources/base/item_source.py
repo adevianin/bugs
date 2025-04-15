@@ -70,7 +70,7 @@ class ItemSource(Entity):
         self._event_bus.emit('item_birth_request', ItemBirthRequest(self._body.position, strength, self._item_type, 0, None, on_item_ready))
         return True
 
-    def do_step(self, step_number: int):
+    def do_step(self, step_number: int, season):
         self._body.produce()
         self._body.restore_hp_step()
 

@@ -72,9 +72,9 @@ class QueenAnt(Ant):
         self._body.fertilize(male.genome.maternal_chromosomes_set)
         self._emit_action(AntGotFertilizedAction(self.id, self.breeding_male_genome, self.owner_id))
 
-    def do_step(self, step_number: int):
+    def do_step(self, step_number: int, season):
         if not self._body.is_in_nuptial_flight:
-            super().do_step(step_number)
+            super().do_step(step_number, season)
     
     def _on_flew_nuptial_flight(self):
         self._emit_action(AntFlewNuptialFlightAction.build(self.id, self._is_born_in_nuptial_flight))

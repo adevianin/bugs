@@ -23,6 +23,7 @@ from core.world.entities.world.notification.notifications.nest_alarm_raised_noti
 from core.world.entities.world.notification.notifications.nest_alarm_canceled_notification import NestAlarmCanceledNotification
 from .food_sources_data_manager import FoodSourcesDataManager
 from core.world.utils.point import Point
+from core.world.entities.world.season_types import SeasonTypes
 
 from typing import List
 
@@ -100,9 +101,10 @@ class Nest(Entity):
     def is_main(self) -> bool:
         return self._is_main
     
-    def do_step(self, step_number: int):
-        self._body.feed_larvae()
-        self._body.develop_eggs()
+    def do_step(self, step_number: int, season: SeasonTypes):
+        if season != SeasonTypes.WINTER:
+            self._body.feed_larvae()
+            self._body.develop_eggs()
         self._body.handle_not_building_steps()
 
     def gradual_decay(self):
