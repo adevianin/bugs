@@ -14,6 +14,7 @@ import adaptationAppetiteTmpl from './adaptationAppetiteTmpl.html';
 import adaptationDevelopmentAppetiteTmpl from './adaptationDevelopmentAppetiteTmpl.html';
 import { AntTypes } from "@domain/enum/antTypes";
 import { antTypesLabels } from "@view/labels/antTypesLabels";
+import { convertStepsToYear } from '@utils/convertStepsToYear';
 
 class GeneView extends BaseGameHTMLView {
 
@@ -110,7 +111,7 @@ class GeneView extends BaseGameHTMLView {
 
     _renderBodyLifeSpanGene() {
         this._geneEl.innerHTML = bodyLifeSpanTmpl;
-        this._geneEl.querySelector('[data-life-span]').innerHTML = this._gene.lifeSpan;
+        this._geneEl.querySelector('[data-life-span]').innerHTML = convertStepsToYear(this._gene.lifeSpan, true);
     }
 
     _renderCasteDevelopmentGene() {
