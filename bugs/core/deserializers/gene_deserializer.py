@@ -96,7 +96,8 @@ class GeneDeserializer():
         max_hp = gene_json['max_hp']
         hp_regen_rate = gene_json['hp_regen_rate']
         speed = gene_json['speed']
-        return DevelopmentQueenCasteGene.build(domination_code, strength, defense, max_hp, hp_regen_rate, speed)
+        life_span = gene_json['life_span']
+        return DevelopmentQueenCasteGene.build(domination_code, strength, defense, max_hp, hp_regen_rate, speed, life_span)
     
     def _build_development_worker_caste_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])
@@ -105,7 +106,8 @@ class GeneDeserializer():
         max_hp = gene_json['max_hp']
         hp_regen_rate = gene_json['hp_regen_rate']
         speed = gene_json['speed']
-        return DevelopmentWorkerCasteGene.build(domination_code, strength, defense, max_hp, hp_regen_rate, speed)
+        life_span = gene_json['life_span']
+        return DevelopmentWorkerCasteGene.build(domination_code, strength, defense, max_hp, hp_regen_rate, speed, life_span)
     
     def _build_development_warrior_caste_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])
@@ -114,7 +116,8 @@ class GeneDeserializer():
         max_hp = gene_json['max_hp']
         hp_regen_rate = gene_json['hp_regen_rate']
         speed = gene_json['speed']
-        return DevelopmentWarriorCasteGene.build(domination_code, strength, defense, max_hp, hp_regen_rate, speed)
+        life_span = gene_json['life_span']
+        return DevelopmentWarriorCasteGene.build(domination_code, strength, defense, max_hp, hp_regen_rate, speed, life_span)
     
     def _build_development_male_caste_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])
@@ -123,7 +126,8 @@ class GeneDeserializer():
         max_hp = gene_json['max_hp']
         hp_regen_rate = gene_json['hp_regen_rate']
         speed = gene_json['speed']
-        return DevelopmentMaleCasteGene.build(domination_code, strength, defense, max_hp, hp_regen_rate, speed)
+        life_span = gene_json['life_span']
+        return DevelopmentMaleCasteGene.build(domination_code, strength, defense, max_hp, hp_regen_rate, speed, life_span)
     
     def _build_adaptation_appetite_gene(self, gene_json: dict):
         domination_code = DominationCodes(gene_json['domination_code'])

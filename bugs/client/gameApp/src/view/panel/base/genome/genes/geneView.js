@@ -123,6 +123,7 @@ class GeneView extends BaseGameHTMLView {
         this._geneEl.querySelector('[data-dev-max-hp]').innerHTML = this._gene.maxHp;
         this._geneEl.querySelector('[data-dev-hp-regen-rate]').innerHTML = this._gene.hpRegenRate;
         this._geneEl.querySelector('[data-dev-speed]').innerHTML = this._gene.speed;
+        this._geneEl.querySelector('[data-dev-life-span]').innerHTML = this._gene.lifeSpan;
     }
 
     _figureOutAntTypeOfDevelopmentGene() {

@@ -118,7 +118,8 @@ class GenesClientSerializer():
             'defense': round(gene.defense, self.NDIGITS),
             'maxHp': round(gene.max_hp, self.NDIGITS),
             'hpRegenRate': round(gene.hp_regen_rate, self.NDIGITS),
-            'speed': round(gene.speed, self.NDIGITS)
+            'speed': round(gene.speed, self.NDIGITS),
+            'lifeSpan': round(gene.life_span, self.NDIGITS),
         })
         return json
     

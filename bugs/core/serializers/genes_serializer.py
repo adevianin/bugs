@@ -116,7 +116,8 @@ class GenesSerializer():
             'defense': gene.defense,
             'max_hp': gene.max_hp,
             'hp_regen_rate': gene.hp_regen_rate,
-            'speed': gene.speed
+            'speed': gene.speed,
+            'life_span': gene.life_span
         })
         return json
     

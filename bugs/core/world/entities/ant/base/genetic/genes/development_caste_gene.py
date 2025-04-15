@@ -3,23 +3,23 @@ from .base.base_gene import BaseGene
 from core.world.entities.ant.base.genetic.phenotype import Phenotype
 from .base.domination_codes import DominationCodes
 from abc import abstractmethod
-from core.world.settings import NUPT_MALE_SUPER_GENE_UPGRADE_MULTIPLIER
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 
 class DevelopmentCasteGene(BaseGene):
 
     @classmethod
     @abstractmethod
-    def build(cls, domination_code: DominationCodes, strength: float, defense: float, max_hp: float, hp_regen_rate: float, speed: float):
+    def build(cls, domination_code: DominationCodes, strength: float, defense: float, max_hp: float, hp_regen_rate: float, speed: float, life_span: float):
         pass
 
-    def __init__(self, type: GenesTypes, domination_code: DominationCodes, strength: float, defense: float, max_hp: float, hp_regen_rate: float, speed: float):
+    def __init__(self, type: GenesTypes, domination_code: DominationCodes, strength: float, defense: float, max_hp: float, hp_regen_rate: float, speed: float, life_span: float):
         super().__init__(type, ChromosomeTypes.DEVELOPMENT, domination_code)
         self._strength = strength
         self._defense = defense
         self._max_hp = max_hp
         self._hp_regen_rate = hp_regen_rate
         self._speed = speed
+        self._life_span = life_span
 
     @property
     def strength(self):
@@ -41,12 +41,17 @@ class DevelopmentCasteGene(BaseGene):
     def speed(self):
         return self._speed
 
+    @property
+    def life_span(self):
+        return self._life_span
+
     def affect(self, phenotype: Phenotype):
         phenotype.strength *= self._strength
         phenotype.defense *= self._defense
         phenotype.max_hp *= self._max_hp
         phenotype.hp_regen_rate *= self._hp_regen_rate
         phenotype.speed *= self._speed
+        phenotype.life_span *= self._life_span
     
     def merge(self, another_gene: 'DevelopmentCasteGene') -> BaseGene:
         dominating_gene = super().merge(another_gene)
@@ -58,7 +63,8 @@ class DevelopmentCasteGene(BaseGene):
         max_hp = (self.max_hp + another_gene.max_hp) / 2
         hp_regen_rate = (self.hp_regen_rate + another_gene.hp_regen_rate) / 2
         speed = (self.speed + another_gene.speed) / 2
-        return self.build(self.domination_code, strength, defense, max_hp, hp_regen_rate, speed)
+        life_span = (self.life_span + another_gene.life_span) / 2
+        return self.build(self.domination_code, strength, defense, max_hp, hp_regen_rate, speed, life_span)
     
     def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
         percent = percent / 3
@@ -68,7 +74,8 @@ class DevelopmentCasteGene(BaseGene):
         max_hp = self._deviate_value(self.max_hp, percent, super_mutate_chance, super_mutate_percent)
         hp_regen_rate = self._deviate_value(self.hp_regen_rate, percent, super_mutate_chance, super_mutate_percent)
         speed = self._deviate_value(self.speed, percent, super_mutate_chance, super_mutate_percent)
-        return self.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed)
+        life_span = self._deviate_value(self.life_span, percent, super_mutate_chance, super_mutate_percent)
+        return self.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed, life_span)
     
     def upgrade(self) -> 'DevelopmentCasteGene':
         strength = self.strength
@@ -76,6 +83,7 @@ class DevelopmentCasteGene(BaseGene):
         max_hp = self.max_hp
         hp_regen_rate = self.hp_regen_rate
         speed = self.speed
-        return self.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed)
+        life_span = self.life_span
+        return self.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed, life_span)
 
         
