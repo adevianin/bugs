@@ -65,10 +65,12 @@ class ItemSourceView extends EntityView {
         this._entityContainer.pivot.x = this._entityWidth / 2;
         this._entityContainer.pivot.y = this._entityHeight;
 
-        this._hpLineView = new HpLineView({ x: 0, y: -10 }, this._entityWidth, this._entity.maxHp, this._uiContainer);
-
-        this._accumulatedLine = new PIXI.Graphics({position: { x: 0, y: -5 }});
+        this._accumulatedLineTop = -ItemSourceView.ACCUMULATED_LINE_HEIGHT;
+        this._accumulatedLine = new PIXI.Graphics({position: { x: 0, y: this._accumulatedLineTop }});
         this._uiContainer.addChild(this._accumulatedLine);
+        
+        this._hpLineTop = this._accumulatedLineTop - 1 - HpLineView.HP_LINE_HEIGHT;
+        this._hpLineView = new HpLineView({ x: 0, y: this._hpLineTop }, this._entityWidth, this._entity.maxHp, this._uiContainer);
 
         this._renderFertility();
         this._renderEntityState();
@@ -93,11 +95,17 @@ class ItemSourceView extends EntityView {
         let maxLineWidth = this._entityWidth;
         let maxAccumulatedValue = this._entity.maxAccumulated;
         let lineWidth = (accumulated / maxAccumulatedValue) * maxLineWidth;
-        this._accumulatedLine.clear();
-        this._accumulatedLine.rect(0, 0, lineWidth, 5);
-        this._accumulatedLine.fill({
-            color: ItemSourceView.ACCUMULATED_LINE_COLOR
-        });
+        let lineHeight = ItemSourceView.ACCUMULATED_LINE_HEIGHT;
+        let color = ItemSourceView.ACCUMULATED_LINE_COLOR;
+        this._accumulatedLine
+            .clear()
+            .rect(0, 0, lineWidth, lineHeight)
+            .fill({color})
+            .rect(0, 0, maxLineWidth, lineHeight)
+            .stroke({
+                color,
+                alignment: 1
+            })
     }
 
     _renderFertility() {
@@ -111,9 +119,11 @@ class ItemSourceView extends EntityView {
         });
 
         let fertilityBgWidth = fertilityText.width + 2;
-        let fertilityBgHeight = 15;
+        let fertilityBgHeight = fertilityText.height;
         let fertilityBg = new PIXI.Graphics();
-        fertilityBg.rect(0,0, fertilityBgWidth, fertilityBgHeight).fill({ color: 0xff0000 });
+        fertilityBg
+            .rect(0,0, fertilityBgWidth, fertilityBgHeight)
+            .fill({ color: ItemSourceView.ACCUMULATED_LINE_COLOR });
 
         fertilityText.anchor.set(0.5);
         fertilityText.position.x = fertilityBgWidth / 2;

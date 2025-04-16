@@ -2,6 +2,12 @@ import { BaseGraphicView } from "@view/base/baseGraphicView";
 import * as PIXI from 'pixi.js';
 
 class HpLineView extends BaseGraphicView {
+
+    static HP_LINE_HEIGHT = 5;
+    static HP_LINE_COLOR_SAFE = 0x00ff00;
+    static HP_LINE_COLOR_WARNING = 0xffff00;
+    static HP_LINE_COLOR_DANGER = 0xff0000;
+
     constructor(position, width, maxHp, container) {
         super();
         this._container = container;
@@ -32,16 +38,22 @@ class HpLineView extends BaseGraphicView {
         let hpLineMaxWidth = this._width;
         let hpInPercent = (value * 100) / this._maxHp;
         let lineWidth = (hpLineMaxWidth / 100) * hpInPercent;
-        let color = 0x00ff00;
-        if (hpInPercent < 60) {
-            color = 0xffff00;
+        let color = HpLineView.HP_LINE_COLOR_SAFE;
+        if (hpInPercent < 70) {
+            color = HpLineView.HP_LINE_COLOR_WARNING;
         }
         if (hpInPercent < 30) {
-            color = 0xff0000;
+            color = HpLineView.HP_LINE_COLOR_DANGER;
         }
-        this._hpLine.clear();
-        this._hpLine.rect(0, 0, lineWidth, 5);
-        this._hpLine.fill({color});
+        this._hpLine
+            .clear()
+            .rect(0, 0, lineWidth, HpLineView.HP_LINE_HEIGHT)
+            .fill({color})
+            .rect(0, 0, hpLineMaxWidth, HpLineView.HP_LINE_HEIGHT)
+            .stroke({
+                color: HpLineView.HP_LINE_COLOR_SAFE,
+                alignment: 1
+            })
     }
 
 }

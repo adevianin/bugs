@@ -7,6 +7,9 @@ import { UI_CONSTS } from '@common/view/ui_consts';
 
 class NestView extends EntityView { 
 
+    static FORT_LINE_COLOR = 0x800080;
+    static FORT_LINE_HEIGHT = 5;
+
     static VISUAL_STATES = class {
         static DEAD = 'dead';
         static BUILT = 'built';
@@ -82,12 +85,12 @@ class NestView extends EntityView {
             this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
         }
 
-        this._fortificationTopY = -nestHalfHeight-8;
+        this._fortificationTopY = -nestHalfHeight - NestView.FORT_LINE_HEIGHT - 3;
         this._fortificationLine = new PIXI.Graphics();
         this._fortificationLine.position.set(-nestHalfWidth, this._fortificationTopY);
         this._hudContainer.addChild(this._fortificationLine);
 
-        this._hpTopY = this._fortificationTopY - 5;
+        this._hpTopY = this._fortificationTopY - HpLineView.HP_LINE_HEIGHT - 1;
         this._hpLineView = new HpLineView({ x: -nestHalfWidth, y: this._hpTopY }, this._nestWidth, this._entity.maxHp, this._hudContainer);
 
         this._nameText = new PIXI.Text({
@@ -143,12 +146,19 @@ class NestView extends EntityView {
         let fortInPercent = (fortificationValue * 100) / this._entity.maxFortification;
         let lineWidth = (fortLineMaxWidth / 100) * fortInPercent;
 
-        let color = 0x800080;
-        this._fortificationLine.clear();
-        this._fortificationLine.rect(0, 0, lineWidth, 5);
-        this._fortificationLine.fill({
-            color
-        });
+        let color = NestView.FORT_LINE_COLOR;
+        let height = NestView.FORT_LINE_HEIGHT;
+        this._fortificationLine
+            .clear()
+            .rect(0, 0, lineWidth, height)
+            .fill({
+                color
+            })
+            .rect(0, 0, fortLineMaxWidth, height)
+            .stroke({
+                color,
+                alignment: 1
+            });
     }
 
     _renderName(name) {
