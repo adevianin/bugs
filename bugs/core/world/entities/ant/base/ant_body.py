@@ -17,6 +17,7 @@ from core.world.entities.base.entity import Entity
 from core.world.entities.base.death_record.base_death_record import BaseDeathRecord
 from core.world.entities.item.items.bug_corpse.bug_corpse_item import BugCorpseItem
 from .ant_activity_types import AntActivityTypes
+from core.world.settings import ANT_TRANSPORT_NEST_FOOD_CAPACITY
 
 
 from typing import List, Callable
@@ -175,7 +176,7 @@ class AntBody(LiveBody):
         def on_food_ready(ant_food: Item):
             self.pick_up_item(ant_food)
 
-        return nest.get_some_food(on_food_ready, self.stats.strength)
+        return nest.get_some_food(on_food_ready, ANT_TRANSPORT_NEST_FOOD_CAPACITY)
     
     def remember_entity(self, name: str, entity: Entity):
         key = self._build_entity_key(name)
