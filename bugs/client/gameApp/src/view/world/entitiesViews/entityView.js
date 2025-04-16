@@ -207,7 +207,7 @@ class EntityView extends BaseGraphicView {
     }
 
     _onStepStart() {
-        if (this._hasBlockingAnimationInQueue()) {
+        if (this._isCurrentChunkVisible && this._hasBlockingAnimationInQueue()) {
             this._refreshAnimations();
         }
     }
