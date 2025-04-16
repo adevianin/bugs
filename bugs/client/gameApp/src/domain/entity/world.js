@@ -70,6 +70,7 @@ class World {
     initWorld(size, entities, colonies, climate, stepNumber, season) {
         this._size = size;
         this._entities = entities;
+        this._entitiesByIds = {};
         this._colonies = colonies;
         this._climate.setTemperatureChange(climate.dailyTemperature, climate.directionOfChange);
         this._currentStep = stepNumber;
@@ -77,6 +78,7 @@ class World {
 
         this._splitOnChunks();
         this._addAllEntitiesToChunks();
+        this._addAllEntitiesToIds();
     }
 
     getStepsCountToNuptialSeasonStart() {
@@ -99,6 +101,7 @@ class World {
     addEntity(entity) {
         this._entities.push(entity);
         this._addEntityToChunks(entity);
+        this._addEntityToIds(entity);
     }
 
     deleteEntity(entity) {
@@ -107,6 +110,7 @@ class World {
             this._entities.splice(index, 1);
         }
         this._removeEntityFromChunks(entity);
+        this._removeEntityFromIds(entity);
     }
 
     addColony(colony) {
@@ -125,6 +129,7 @@ class World {
     }
 
     findEntityById(id) {
+        return this._entitiesByIds[id];
         return this._entities.find( entity => entity.id == id);
     }
 
@@ -247,6 +252,20 @@ class World {
         let chunk = this._chunks[entity.chunkId];
         chunk.removeEntity(entity);
         entity.chunkId = null;
+    }
+
+    _addAllEntitiesToIds() {
+        for (let entity of this._entities) {
+            this._addEntityToIds(entity);
+        }
+    }
+
+    _addEntityToIds(entity) {
+        this._entitiesByIds[entity.id] = entity;
+    }
+
+    _removeEntityFromIds(entity) {
+        delete this._entitiesByIds[entity.id];
     }
 
     _onEntityMoved(entity) {
