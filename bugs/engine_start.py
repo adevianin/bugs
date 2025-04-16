@@ -290,6 +290,7 @@ def main():
     except KeyboardInterrupt:
         logger.info('stopping engine')
     finally:
+        engine.stop()
         r.close()
 
 if __name__ == '__main__':

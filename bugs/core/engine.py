@@ -65,6 +65,7 @@ class Engine():
         self._connected_player_ids = []
         self._common_actions = []
         self._personal_actions = {}
+        self._connection_thread: threading.Thread = None
 
         self._event_bus.add_listener('action', self._on_action)
 
@@ -72,6 +73,11 @@ class Engine():
         self._logger.info('engine start')
         self._listen_engine_in()
         self._run_game_loop()
+
+    def stop(self):
+        self._redis.publish(Engine.CHANNEL_ENGINE_IN, '__exit__')
+        self._connection_thread.join()
+        self._logger.info('engine stopped')
 
     def _init_services(self, services):
         self._colony_service: ColonyService = services['colony_service']
@@ -123,11 +129,18 @@ class Engine():
             pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
             pubsub.subscribe(Engine.CHANNEL_ENGINE_IN)
             for msg in pubsub.listen():
+
+                if msg['data'] == '__exit__':
+                    pubsub.unsubscribe()
+                    pubsub.close()
+                    self._logger.info('closed income channel')
+                    break
+
                 msg_data_json = json.loads(msg['data'])
                 self._on_client_msg(msg_data_json)
 
-        world_thread = threading.Thread(target=listen, daemon=True)
-        world_thread.start()
+        self._connection_thread = threading.Thread(target=listen, daemon=True)
+        self._connection_thread.start()
 
     def _run_game_loop(self):
         self._logger.info('running game loop')
