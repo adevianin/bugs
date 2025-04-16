@@ -162,7 +162,7 @@ class ThoughtDeserializer():
         flags = thought_json['flags']
         sayback = thought_json['sayback']
         fight_near_enemies_thought = self.deserialize_thougth(thought_json['fight_near_enemies_thought'], entities_collection)
-        point_to_check = Point.from_json(thought_json['point_to_check'])
+        point_to_check = Point.from_json(thought_json['point_to_check']) if thought_json['point_to_check'] else None
         return self._thought_factory.build_defend_colony(fight_near_enemies_thought, point_to_check, flags, sayback)
     
     def _build_defend_myself(self, thought_json, entities_collection: EntityCollection):
