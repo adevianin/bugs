@@ -66,7 +66,7 @@ class CollectFoodThought(Thought):
                 if not self._check_has_target_food_source():
                     food_source = self._random_search_food_source()
                     if food_source:
-                        self._nearby_food_sources_data_manager.push_honeydew_item_source_data(food_source)
+                        self._nearby_food_sources_data_manager.push_item_source_data(food_source)
                         self._target_from_nearby_food_sources_data_manager()
                     return
 
@@ -116,10 +116,11 @@ class CollectFoodThought(Thought):
     def _random_search_food_source(self):
         self.random_walk_thought.do_step()
         food_sources = self._body.look_around_for_food_sources()
-        if len(food_sources) > 0:
-            return food_sources[0]
-        else:
-            return None
+        for food_source in food_sources:
+            if food_source.position.dist(self._nest.position) <= self._nest.area:
+                return food_source
+            
+        return None
             
     def _get_food_source_data(self):
         for id, position in self._nearby_food_sources_data_manager.data.items():
