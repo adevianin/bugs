@@ -59,8 +59,10 @@ class EntityView extends BaseGraphicView {
     }
 
     _addAnimation(type, params = {}, isBlocking = false) {
-        this._animQueue.push({type, params, isBlocking});
-        this._tryPlayNextAnim();
+        if (this._isCurrentChunkVisible || type == EntityView.ANIMATION_TYPES.CHUNK_CHANGED) {
+            this._animQueue.push({type, params, isBlocking});
+            this._tryPlayNextAnim();
+        }
     }
 
     async _tryPlayNextAnim() {
@@ -129,8 +131,15 @@ class EntityView extends BaseGraphicView {
     }
 
     _playChunkChangedAnimation({ newChunkId }) {
+        let isChunkVisibleBefore = this._isCurrentChunkVisible;
         this._setCurrentChunkId(newChunkId);
-        this._renderViewVisibility();
+        let isChunkVisibleAfter = this._isCurrentChunkVisible;
+
+        if (isChunkVisibleBefore == true && isChunkVisibleAfter == false) {
+            this._renderViewVisibility();
+        }else if (isChunkVisibleBefore == false && isChunkVisibleAfter == true) {
+            this._renderEntityState();
+        }
     }
 
     async _playDiedAnimation() {
@@ -178,7 +187,11 @@ class EntityView extends BaseGraphicView {
     }
 
     _onCurrentChunkVisibilityStateChanged() {
-        this._renderViewVisibility();
+        if (this._isCurrentChunkVisible) {
+            this._renderEntityState();
+        } else {
+            this._renderViewVisibility();
+        }
     }
 
     _onEntityChunkIdChanged(newChunkId) {
