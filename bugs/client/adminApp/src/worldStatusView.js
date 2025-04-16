@@ -8,6 +8,7 @@ class WorldStatusView {
         this._stopWorldBtnEl = this._el.querySelector('[data-stop-world]');
         this._runWorldBtnEl = this._el.querySelector('[data-run-world]');
         this._saveWorldBtnEl = this._el.querySelector('[data-save-world]');
+        this._populatePerformanceTestBtnEl = this._el.querySelector('[data-populate-for-performance-test]');
         this._expandMapBtnEl = this._el.querySelector('[data-expand-map-btn]');
         this._expandMapChunkRowsEl = this._el.querySelector('[data-chunk-rows]');
         this._expandMapChunkColsEl = this._el.querySelector('[data-chunk-cols]');
@@ -17,6 +18,7 @@ class WorldStatusView {
         this._stopWorldBtnEl.addEventListener('click', this._stopWorld.bind(this));
         this._runWorldBtnEl.addEventListener('click', this._runWorld.bind(this));
         this._saveWorldBtnEl.addEventListener('click', this._saveWorld.bind(this));
+        this._populatePerformanceTestBtnEl.addEventListener('click', this._onPopulateForPerformanceTest.bind(this));
         this._expandMapBtnEl.addEventListener('click', this._expandMap.bind(this));
 
         this._checkWorldStatus();
@@ -67,6 +69,14 @@ class WorldStatusView {
         });
     }
 
+    _onPopulateForPerformanceTest() {
+        this._requester.post('api/admin/world/populate_for_performance_test').then(res => {
+            alert('populated')
+        }).catch(() => {
+            alert('something went wrong');
+        });
+    }
+
     _expandMap() {
         this._requester.post('api/admin/world/expand_map', {
             chunk_rows: this._expandMapChunkRowsEl.value,
@@ -90,6 +100,7 @@ class WorldStatusView {
         this._worldControlsEl.disabled = !status.isInited;
         this._initWorldBtnEl.disabled = status.isInited;
         this._saveWorldBtnEl.disabled = status.isRunning;
+        this._populatePerformanceTestBtnEl.disabled = status.isRunning;
         this._expandMapBtnEl.disabled = status.isRunning;
         this._runWorldBtnEl.disabled = status.isRunning;
         this._stopWorldBtnEl.disabled = !status.isRunning;

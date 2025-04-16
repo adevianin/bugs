@@ -28,9 +28,8 @@ from core.client_serializers.egg_client_serializer import EggClientSerializer
 from core.client_serializers.larva_client_serializer import LarvaClientSerializer
 
 from logging import Logger
-from core.world.entities.world.world import World
 from core.world.entities.world.id_generator import IdGenerator
-from core.world.settings import STEP_TIME
+from core.world.settings import STEP_TIME, NEW_WORLD_GENERATING_CHUNKS_HORIZONTAL, NEW_WORLD_GENERATING_CHUNKS_VERTICAL
 import time, threading, redis, json
 from multiprocessing import SimpleQueue
 from core.world.exceptions import GameError, StateConflictError
@@ -44,9 +43,6 @@ from core.world.entities.ant.base.guardian_behaviors import GuardianBehaviors
 from core.world.entities.ant.base.ant_types import AntTypes
 
 class Engine():
-
-    NEW_WORLD_CHUNKS_HORIZONTAL = 4
-    NEW_WORLD_CHUNKS_VERTICAL = 4
 
     CHANNEL_ENGINE_IN = 'engine_in'
     CHANNEL_ENGINE_OUT = 'engine_out'
@@ -329,6 +325,11 @@ class Engine():
                     case 'generate_rating':
                         if self._is_world_inited:
                             self._rating_service.generate_rating(command['data'])
+                    case 'populate_for_performance_test':
+                        player_id = command['data']
+                        self._nuptial_environment_service.ensure_nuptial_env_built_for_player(player_id)
+                        self._world_service.populate_world_for_performance_testing(player_id)
+                        self._send_command_result(command_id, True)
                     case _:
                         raise GameError('unknown admin command type')
             except Exception as e:
@@ -346,7 +347,7 @@ class Engine():
             self._world = self._world_deserializer.deserialize(world_json)
             IdGenerator.set_global_generator(self._world.id_generator)
         else:
-            self._world = self._world_service.build_new_empty_world(Engine.NEW_WORLD_CHUNKS_HORIZONTAL, Engine.NEW_WORLD_CHUNKS_VERTICAL)
+            self._world = self._world_service.build_new_empty_world(NEW_WORLD_GENERATING_CHUNKS_HORIZONTAL, NEW_WORLD_GENERATING_CHUNKS_VERTICAL)
             IdGenerator.set_global_generator(self._world.id_generator)
             self._world_service.populate_empty_world(self._world)
 

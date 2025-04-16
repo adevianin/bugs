@@ -51,6 +51,9 @@ class EngineFacade:
     def save_world_admin_command(self):
         world_data = self._send_command_to_engine('get_world_state', None, True, True)
         self._world_data_repository.push(WORLD_ID, world_data)
+
+    def populate_for_performance_test_command(self, player_id: int):
+        self._send_command_to_engine('populate_for_performance_test', player_id, True, True)
     
     def run_world_admin_command(self):
         self._send_command_to_engine('start_world_stepping', None, True, True)

@@ -7,7 +7,7 @@ from core.world.utils.size import Size
 from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
 from core.world.settings import (LADYBUG_COLONY_ID, GENERATING_CHUNK_SIZE, HONEYDEW_ITEM_SOURCE_MAX_FERTILITY, HONEYDEW_ITEM_SOURCE_MIN_FERTILITY, NECTAR_ITEM_SOURCE_MAX_FERTILITY, 
-                                 NECTAR_ITEM_SOURCE_MIN_FERTILITY, HONEYDEW_ITEM_SOURCE_MAX_ITEM_STRENGTH, NECTAR_ITEM_SOURCE_MAX_ITEM_STRENGTH)
+                                 NECTAR_ITEM_SOURCE_MIN_FERTILITY, HONEYDEW_ITEM_SOURCE_MAX_ITEM_STRENGTH, NECTAR_ITEM_SOURCE_MAX_ITEM_STRENGTH, PERFORMANCE_TEST_COLONY_POPULATION)
 from core.world.entities.climate.climate_factory import ClimateFactory
 from core.world.entities.tree.tree_factory import TreeFactory
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory
@@ -116,6 +116,58 @@ class WorldService(BaseService):
 
         return world
     
+    def populate_world_for_performance_testing(self, owner_id: int):
+        from core.world.entities.ant.queen.queen_ant import QueenAnt
+        from core.world.entities.nest.nest import Nest
+        from core.world.entities.ant.base.ant_types import AntTypes
+        from core.world.entities.ant.base.genetic.genes.development_warrior_caste_gene import DevelopmentWarriorCasteGene
+        from core.world.settings import SUMMER_START_YEAR_STEP
+        item_sources = self._world.map.get_entities(entity_types=[EntityTypes.ITEM_SOURCE])
+        nupt_env = self._find_nuptial_environment_for_owner(owner_id)
+        colony_positions = []
+        for item_source in item_sources:
+            colony_positions.append(Point(item_source.position.x, item_source.position.y + 150))
+            colony_positions.append(Point(item_source.position.x - 150, item_source.position.y))
+            colony_positions.append(Point(item_source.position.x + 150, item_source.position.y))
+
+        colony_index = 0
+        for colony_position in colony_positions:
+            colony_index += 1
+            def on_antara_born(antara: QueenAnt):
+                if len(nupt_env.males) == 0:
+                    nupt_env.start_nuptial_season()
+                male_id = nupt_env.males[0].id
+                male = nupt_env.pull_male(male_id)
+                male.genome.maternal_chromosomes_set.inject_gene(DevelopmentWarriorCasteGene.build_new_for_specie_gene())
+                antara.fertilize(male)
+
+                new_colony = self._colony_factory.build_new_ant_colony(owner_id, self._world.map, self._world.colony_relations_table, f'colony_{colony_index}')
+                self._world.add_new_colony(new_colony)
+
+                antara.from_colony_id = new_colony.id
+
+                def on_nest_found(nest: Nest):
+                    antara.relocate_to_nest(nest)
+                    antara.fly_nuptial_flight_back(nest.position)
+                    # for i in range():
+                    #     nest.build()
+                    nest.take_calories(99999999999)
+                    for i in range(PERFORMANCE_TEST_COLONY_POPULATION):
+                        egg = antara.produce_egg(f'ant_{i}', True)
+                        egg.ant_type = random.choice([AntTypes.WORKER, AntTypes.WARRIOR])
+                        egg._progress = 100
+                        nest.add_egg(egg)
+                        nest.move_egg_to_larva_chamber(egg.id)
+                    for larva in nest.larvae:
+                        larva.feed(larva.required_food - 1)
+
+                antara.found_nest(f'nest_{colony_index}', True, colony_position, on_nest_found)
+            
+            nupt_env.born_antara(Point(100, 100), on_antara_born)
+
+            self._world._current_step = SUMMER_START_YEAR_STEP - 2
+            self._world.climate._current_temp = 5
+
     def _chunks_positions(self, chunk_rows_count: int, chunk_cols_count: int) -> Iterator[Tuple[Point, Dict, Dict]]:
         for chunk_col_index in range(chunk_cols_count):
             for chunk_row_index in range(chunk_rows_count):

@@ -72,6 +72,13 @@ def save_world(request):
 
 @user_passes_test(is_superuser)
 @require_POST
+def populate_for_performance_test(request):
+    ef = EngineFacade.get_instance()
+    ef.populate_for_performance_test_command(request.user.id)
+    return HttpResponse(status=201) 
+
+@user_passes_test(is_superuser)
+@require_POST
 def expand_map(request: HttpRequest):
     ef = EngineFacade.get_instance()
     try:
