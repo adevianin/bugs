@@ -335,6 +335,8 @@ class Engine():
             except Exception as e:
                 self._logger.exception('admin command error', exc_info=e)
                 self._send_command_error(command_id, 'admin_command_error')
+                if DEBUG:
+                    raise e
     
     def _handle_init_world_admin_command(self, command: Dict):
         if self._is_world_inited:
