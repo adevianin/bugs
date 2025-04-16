@@ -59,7 +59,7 @@ class WorldView extends BaseGraphicView {
         this._chunksGridContainer = new PIXI.Container();
         this._viewRectContainer = new PIXI.Container();
 
-        this._antHudLayer = new PIXI.RenderLayer();
+        this._liveEntityHudLayer = new PIXI.RenderLayer();
         this._nestHudLayer = new PIXI.RenderLayer();
 
         this._container.addChild(this._bgSummer);
@@ -76,8 +76,8 @@ class WorldView extends BaseGraphicView {
         this._container.addChild(this._chunksGridContainer);
         this._container.addChild(this._viewRectContainer);
 
-        this._container.addChild(this._antHudLayer);
         this._container.addChild(this._nestHudLayer);
+        this._container.addChild(this._liveEntityHudLayer);
 
         this._markerDemonstrator = new MarkersDemonstratorView(this._markerDemonstratorContainer);
 
@@ -118,10 +118,10 @@ class WorldView extends BaseGraphicView {
         let view = null;
         switch (entity.type) {
             case EntityTypes.ANT:
-                view = new AntView(entity, this._antContainer, this._antHudLayer);
+                view = new AntView(entity, this._antContainer, this._liveEntityHudLayer);
                 break;
             case EntityTypes.LADYBUG:
-                view = new LadybugView(entity, this._ladybugContainer);
+                view = new LadybugView(entity, this._ladybugContainer, this._liveEntityHudLayer);
                 break;
             case EntityTypes.NEST:
                 view = new NestView(entity, this._nestContainer, this._nestHudLayer);

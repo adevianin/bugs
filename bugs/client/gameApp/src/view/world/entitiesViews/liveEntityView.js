@@ -20,8 +20,9 @@ class LiveEntityView extends EntityView {
         static HP_CHANGED = 'hp_changed';
     };
 
-    constructor(entity, entitiesContainer) {
+    constructor(entity, entitiesContainer, liveEntityHudLayer) {
         super(entity, entitiesContainer);
+        this._liveEntityHudLayer = liveEntityHudLayer;
 
         this._stopListenHibernationStatusChangedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HIBERNATION_STATUS_CHANGED}`, this._onHibernationStatusChangedAnimationRequest.bind(this));
         this._stopListenWalkAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_WALK}`, this._onWalkAnimationRequest.bind(this));
@@ -45,6 +46,8 @@ class LiveEntityView extends EntityView {
         this._entityContainer.addChild(this._bodyContainer);
         this._entityContainer.addChild(this._pickedItemContainer);
         this._entityContainer.addChild(this._hudContainer);
+
+        this._liveEntityHudLayer.attach(this._hudContainer);
 
         this._standSprite = this._buildStandSprite();
         this._walkSprite = this._buildWalkSprite();
@@ -76,6 +79,7 @@ class LiveEntityView extends EntityView {
         this._stopListenRotateAnimationRequest();
         this._stopListenHibernationStatusChangedAnimationRequest();
         this._stopListenHpChangeAnimationRequest();
+        this._liveEntityHudLayer.detach(this._hudContainer);
     }
 
     _renderEntityState() {

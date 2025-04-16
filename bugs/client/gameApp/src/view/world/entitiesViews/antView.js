@@ -17,9 +17,8 @@ class AntView extends LiveEntityView {
         static DROPPED_ITEM = 'dropped_item';
     }
 
-    constructor(entity, entityContainer, antHudLayer) {
-        super(entity, entityContainer);
-        this._antHudLayer = antHudLayer;
+    constructor(entity, entityContainer, hudLayer) {
+        super(entity, entityContainer, hudLayer);
 
         this._render();
 
@@ -45,7 +44,6 @@ class AntView extends LiveEntityView {
         this._stopListenAntPickedUpItemAnimationRequest();
         this._stopListenAntDroppedItemAnimationRequest();
         clearTimeout(this._hideStatsTimer);
-        this._antHudLayer.detach(this._hudContainer);
     }
 
     _render() {
@@ -60,8 +58,6 @@ class AntView extends LiveEntityView {
         this._highlighterContainer.position.set(0, this._highlighterY);
         this._hudContainer.addChild(this._highlighterContainer);
         this._entityHighlighter = new EntityHightlighterView(this._highlighterContainer, this._entity);
-
-        this._antHudLayer.attach(this._hudContainer);
     }
 
     _renderEntityState() {
