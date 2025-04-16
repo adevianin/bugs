@@ -63,7 +63,6 @@ class ColonyService(BaseService):
             queen.fly_nuptial_flight_back(nest.position)
             nest.take_calories(FOOD_IN_NEW_COLONY_MAIN_NEST)
             self._world.add_new_colony(new_colony)
-            self._event_bus.emit('colony_born', new_colony)
 
         queen.found_nest(colony_name, True, nest_building_site, on_nest_found)
 

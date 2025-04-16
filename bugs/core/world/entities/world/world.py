@@ -105,6 +105,7 @@ class World():
     
     def add_new_colony(self, colony: Colony):
         self._colonies.append(colony)
+        self._event_bus.emit('colony_born', colony)
 
     def remove_colony(self, colony: Colony):
         self._colonies.remove(colony)
