@@ -7,7 +7,9 @@ from core.world.utils.size import Size
 from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
 from core.world.settings import (LADYBUG_COLONY_ID, GENERATING_CHUNK_SIZE, HONEYDEW_ITEM_SOURCE_MAX_FERTILITY, HONEYDEW_ITEM_SOURCE_MIN_FERTILITY, NECTAR_ITEM_SOURCE_MAX_FERTILITY, 
-                                 NECTAR_ITEM_SOURCE_MIN_FERTILITY, HONEYDEW_ITEM_SOURCE_MAX_ITEM_STRENGTH, NECTAR_ITEM_SOURCE_MAX_ITEM_STRENGTH, PERFORMANCE_TEST_COLONY_POPULATION)
+                                 NECTAR_ITEM_SOURCE_MIN_FERTILITY, HONEYDEW_ITEM_SOURCE_MAX_ITEM_STRENGTH, NECTAR_ITEM_SOURCE_MAX_ITEM_STRENGTH, PERFORMANCE_TEST_COLONY_POPULATION,
+                                 MIN_LEAF_ITEM_AREA_FERTILITY, MAX_LEAF_ITEM_AREA_FERTILITY, MIN_STICK_ITEM_AREA_FERTILITY, MAX_STICK_ITEM_AREA_FERTILITY, 
+                                 MIN_FLOWER_ITEM_AREA_FERTILITY, MAX_FLOWER_ITEM_AREA_FERTILITY)
 from core.world.entities.climate.climate_factory import ClimateFactory
 from core.world.entities.tree.tree_factory import TreeFactory
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory
@@ -20,7 +22,6 @@ from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.item.item_areas.base.item_area import ItemArea
 from core.world.exceptions import GameError
 from core.world.entities.base.entity import Entity
-
 import random
 from typing import Dict, Callable, Iterator, Tuple
 
@@ -279,7 +280,7 @@ class WorldService(BaseService):
         return Point(random.randint(min_x, max_x), random.randint(min_y, max_y))
     
     def _build_flower_item_area(self, world: World, position: Point, size: Size):
-        fertility = random.randint(1, 4)
+        fertility = random.randint(MIN_FLOWER_ITEM_AREA_FERTILITY, MAX_FLOWER_ITEM_AREA_FERTILITY)
         flower_area = self._item_area_factory.build_new_item_area(position, size, ItemTypes.FLOWER, fertility, world.current_season)
         world.map.add_entity(flower_area)
 
@@ -303,11 +304,11 @@ class WorldService(BaseService):
         tree = self._tree_factory.build_new_tree(tree_pos)
         world.map.add_entity(tree)
 
-        fertility = random.randint(1, 4)
+        fertility = random.randint(MIN_STICK_ITEM_AREA_FERTILITY, MAX_STICK_ITEM_AREA_FERTILITY)
         stick_area = self._item_area_factory.build_new_item_area(tree_pos, TreeBody.SIZE, ItemTypes.STICK, fertility, world.current_season)
         world.map.add_entity(stick_area)
 
-        fertility = random.randint(1, 5)
+        fertility = random.randint(MIN_LEAF_ITEM_AREA_FERTILITY, MAX_LEAF_ITEM_AREA_FERTILITY)
         leaf_area = self._item_area_factory.build_new_item_area(tree_pos, TreeBody.SIZE, ItemTypes.LEAF, fertility, world.current_season)
         world.map.add_entity(leaf_area)
 

@@ -122,7 +122,10 @@ class World():
 
         self._event_bus.emit('step_start', self._current_step, self._current_season)
 
-        entities = self._map.get_all_entities()
+        entities = self._map.get_entities(entity_types=[
+            EntityTypes.ANT, EntityTypes.LADYBUG, EntityTypes.NEST, EntityTypes.ITEM_AREA, EntityTypes.ITEM_SOURCE
+            ])
+        self._event_bus.emit('items_step_pulse')
         for entity in entities:
             try:
                 if not entity.is_died: #in case if first entity in list killed next entity

@@ -10,20 +10,18 @@ from core.world.entities.action.item_bringing_state_changed_action import ItemBr
 from .item_body import ItemBody
 from core.world.entities.base.ownership_config import OwnershipConfig
 
-import random
-
 class Item(Entity):
 
     _body: ItemBody
 
     def __init__(self, event_bus: EventEmitter, events: EventEmitter, id: int, body: ItemBody, item_type: ItemTypes, ownership: OwnershipConfig,
-                 strength: int, variety: int, life_span: int, is_picked: bool):
+                 strength: int, variety: int, die_step: int, is_picked: bool):
         super().__init__(event_bus, events, id, EntityTypes.ITEM, ownership, body)
         self._item_type = item_type
         self._is_picked = is_picked
         self._variety = variety
         self._strength = strength
-        self._life_span = life_span
+        self._die_step = die_step
         self._bringing_position = None
         self._bringing_dist_per_step = None
 
@@ -48,21 +46,19 @@ class Item(Entity):
         return self._strength
     
     @property
-    def life_span(self):
-        return self._life_span
+    def die_step(self):
+        return self._die_step
+    
+    @die_step.setter
+    def die_step(self, val: int ):
+        self._die_step = val
     
     @property
     def is_detectable(self):
         return super().is_detectable and not self.is_picked and not self.is_bringing
     
     def do_step(self, step_number: int, season):
-        if not self._is_picked and not self.is_bringing:
-            self._life_span -= 1
-            if self._life_span == 0:
-                self.simple_die()
-
-        if self.is_bringing:
-            self._be_bringed()
+        pass
 
     def use(self, using_strength: int = None) -> int:
         if (using_strength is None):
@@ -79,7 +75,6 @@ class Item(Entity):
         self._emit_action(ItemWasPickedUpAction.build(self.id))
 
     def drop(self, position: Point):
-        self._almost_die()
         self._is_picked = False
         self._body.position = position
         self._emit_action(ItemWasDroppedAction.build(self.id, self.position))
@@ -95,9 +90,9 @@ class Item(Entity):
         self._bringing_dist_per_step = None
         self._emit_action(ItemBringingStateChangedAction(self.id, False))
 
-    def _be_bringed(self):
+    def be_bringed(self):
+        if self._body.position.is_equal(self._bringing_position):
+            return
+        
         self._body.position = self._bringing_position
         self._emit_action(ItemBeingBringedAction(self.id, self._body.position, self._bringing_dist_per_step))
-
-    def _almost_die(self):
-        self._life_span = random.randint(3, 6)

@@ -11,4 +11,4 @@ class ItemBirtherService(EntityBirtherService):
         self._item_factory = item_factory
 
     def _build_entity(self, request: ItemBirthRequest) -> Item:
-        return self._item_factory.build_new_item(request.item_type, request.position, request.strength, request.angle)
+        return self._item_factory.build_new_item(request.item_type, request.position, request.strength, request.angle, self._world.current_step)

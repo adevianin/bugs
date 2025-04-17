@@ -17,7 +17,7 @@ class ItemDeserializer(EntityDeserializer):
             'item_type': ItemTypes(item_json['item_type']),
             'is_picked': item_json['is_picked'],
             'strength': item_json['strength'],
-            'life_span': item_json['life_span'],
+            'die_step': item_json['die_step'],
             'variety': item_json['variety']
         })
         return props

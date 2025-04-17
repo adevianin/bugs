@@ -122,7 +122,8 @@ class Entity(ABC):
         self._emit_action(EntityRotatedAction.build(self.id, self._body.angle))
 
     def _on_hp_changed(self):
-        self._emit_action(EntityHpChangedAction.build(self.id, self._body.hp))
+        if self.type != EntityTypes.ITEM:
+            self._emit_action(EntityHpChangedAction.build(self.id, self._body.hp))
 
     def _emit_action(self, action: Action):
         self._event_bus.emit('action', action)
