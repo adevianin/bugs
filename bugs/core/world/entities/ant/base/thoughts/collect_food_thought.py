@@ -6,6 +6,7 @@ from core.world.entities.ant.base.ant_body import AntBody
 from core.world.entities.base.live_entity.thoughts.random_walk_thought import RandomWalkThought
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.ant.base.ant_activity_types import AntActivityTypes
+import random
 
 class CollectFoodThought(Thought):
 
@@ -93,12 +94,32 @@ class CollectFoodThought(Thought):
                         self._write_flag(self.Flags.AM_I_NEAR_TARGET_FOOD_SOURCE_POSITION, True)
         else:
             if self.go_home_thought.is_done:
+
+                #trick to unsynchronize ants with the same speed
+                wait = self._check_should_i_wait()
+                if wait:
+                    return
+                
                 self._body.give_food(self._nest)
+                self._register_me_as_collecter()
+
                 self.done()
             elif self.go_home_thought.is_canceled:
                 self.cancel()
             else:
                 self.go_home_thought.do_step()
+
+    def _check_should_i_wait(self):
+        another_colelcters_count = self._nest.collect_food_ant_speed_register.count(self._body.stats.distance_per_step)
+        if another_colelcters_count == 0:
+            return False
+        elif another_colelcters_count <= 3:
+            return random.choice([True, False])
+        else:
+            return False
+        
+    def _register_me_as_collecter(self):
+        self._nest.collect_food_ant_speed_register.append(self._body.stats.distance_per_step)
 
     def _build_empty_food_source_memory_flag(self, id: int):
         return f'collect_food_thought:empty_food_source_{id}'

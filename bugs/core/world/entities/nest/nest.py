@@ -39,6 +39,7 @@ class Nest(Entity):
         self._nearby_enemy_positions = nearby_enemy_positions
         self._name = name
         self._is_main = is_main
+        self.collect_food_ant_speed_register = []
 
         self._body.events.add_listener('stored_calories_changed', self._on_stored_calories_changed)
         self._body.events.add_listener('build_status_changed', self._on_build_status_changed)
@@ -106,6 +107,7 @@ class Nest(Entity):
             self._body.feed_larvae()
             self._body.develop_eggs()
         self._body.handle_not_building_steps()
+        self.collect_food_ant_speed_register.clear()
 
     def gradual_decay(self):
         self._body.gradual_decay()
