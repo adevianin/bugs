@@ -119,7 +119,7 @@ class Point(namedtuple('Point', ['x', 'y'])):
     def is_same(self, another_point: 'Point'):
         return self.x == another_point.x and self.y == another_point.y
     
-    def is_equal(self, another_point: 'Point', accurancy: int = 2):
+    def is_equal(self, another_point: 'Point', accurancy: int = 3):
         dist = self.dist(another_point)
         return dist <= accurancy
     
