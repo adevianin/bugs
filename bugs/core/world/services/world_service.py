@@ -58,6 +58,8 @@ class WorldService(BaseService):
             self._event_bus.emit('ant_born', entity)
         elif entity.type == EntityTypes.NEST:
             self._event_bus.emit('nest_born', entity)
+        elif entity.type == EntityTypes.ITEM:
+            self._event_bus.emit('item_born', entity)
 
     def _on_entity_changed_colony(self, entity: Entity, prev_colony_id):
         if prev_colony_id:

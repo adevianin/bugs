@@ -33,6 +33,7 @@ from core.world.services.spawners.ladybug_spawner_service import LadybugSpawnerS
 from core.world.services.spawners.bug_corpse_spawner_service import BugCorpseSpawnerService
 from core.world.services.vision_service import VisionService
 from core.world.services.thermal_service import ThermalService
+from core.world.services.item_service import ItemService
 
 from core.deserializers.nest_deserializer import NestDeserializer
 from core.deserializers.ant_deserializer import AntDeserializer
@@ -158,6 +159,7 @@ def main():
     bug_corpse_spawner_service = BugCorpseSpawnerService(event_bus)
     vision_serivce = VisionService(event_bus)
     thermal_service = ThermalService(event_bus)
+    item_service = ItemService(event_bus)
     world_service = WorldService(event_bus, world_factory, map_factory, colony_factory, climate_factory, tree_factory, item_area_factory, item_source_factory)
 
     gene_deserializer = GeneDeserializer()
@@ -257,6 +259,7 @@ def main():
         'bug_corpse_spawner_service': bug_corpse_spawner_service, 
         'vision_serivce': vision_serivce, 
         'thermal_service': thermal_service, 
+        'item_service': item_service,
         'world_service': world_service
     }
     client_serializers = {

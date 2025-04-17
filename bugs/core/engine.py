@@ -15,6 +15,7 @@ from core.world.services.world_service import WorldService
 from core.world.services.ant_service import AntService
 from core.world.services.colony_service import ColonyService
 from core.world.services.nuptial_service import NuptialService
+from core.world.services.item_service import ItemService
 
 from core.deserializers.world_deserializer import WorldDeserializer
 from core.serializers.world_serializer import WorldSerializer
@@ -94,6 +95,7 @@ class Engine():
         self._bug_corpse_spawner_service: BugCorpseSpawnerService = services['bug_corpse_spawner_service']
         self._vision_service: VisionService = services['vision_serivce']
         self._thermal_service: ThermalService = services['thermal_service']
+        self._item_service: ItemService = services['item_service']
         self._world_service: WorldService = services['world_service']
 
     def _init_client_serializers(self, serializers):
@@ -121,6 +123,7 @@ class Engine():
         self._bug_corpse_spawner_service.set_world(self._world)
         self._vision_service.set_world(self._world)
         self._thermal_service.set_world(self._world)
+        self._item_service.set_world(self._world)
         self._world_service.set_world(self._world)
 
     def _listen_engine_in(self):
