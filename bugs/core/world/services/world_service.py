@@ -39,10 +39,13 @@ class WorldService(BaseService):
         self._item_source_factory = item_source_factory
 
         self._event_bus.add_listener('entity_died', self._on_entity_died)
+        self._event_bus.add_listener('entity_removal_unblocked', self._on_entity_removal_unblocked)
         self._event_bus.add_listener('entity_born', self._on_entity_born)
         self._event_bus.add_listener('entity_changed_colony', self._on_entity_changed_colony)
 
     def _on_entity_died(self, entity: Entity):
+        self._world.map.delete_entity(entity)
+
         if entity.from_colony_id:
             self._event_bus.emit(f'colony_entity_died:{entity.from_colony_id}', entity)
         
@@ -51,7 +54,13 @@ class WorldService(BaseService):
         elif entity.type == EntityTypes.NEST:
             self._event_bus.emit('nest_died', entity)
 
+    def _on_entity_removal_unblocked(self, entity: Entity):
+        if entity.is_pending_removal:
+            self._world.map.delete_entity(entity)
+
     def _on_entity_born(self, entity: Entity):
+        self._world.map.add_entity(entity)
+
         if entity.from_colony_id:
             self._event_bus.emit(f'colony_entity_born:{entity.from_colony_id}', entity)
         

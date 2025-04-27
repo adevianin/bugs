@@ -24,9 +24,6 @@ class Map(iVisionStream):
 
         self._optimize_entities()
 
-        self._event_bus.add_listener('entity_died', self._on_entity_died)
-        self._event_bus.add_listener('entity_removal_unblocked', self._on_entity_removal_unblocked)
-        self._event_bus.add_listener('entity_born', self._on_entity_born)
         self._event_bus.add_listener('entity_moved', self._on_entity_moved)
 
     @property
@@ -68,10 +65,11 @@ class Map(iVisionStream):
         self._add_entity_to_chunks(entity)
         self._add_entity_to_types(entity)
 
-    def _delete_entity(self, entity: Entity):
-        self._entities_collection.delete_entity(entity.id)
-        self._remove_entity_from_chunks(entity)
-        self._remove_entity_from_types(entity)
+    def delete_entity(self, entity: Entity):
+        if not entity.is_removal_blocked:
+            self._entities_collection.delete_entity(entity.id)
+            self._remove_entity_from_chunks(entity)
+            self._remove_entity_from_types(entity)
     
     def get_entity_by_id(self, id: int) -> Entity:
         return self._entities_collection.get_entity_by_id(id)
@@ -198,17 +196,6 @@ class Map(iVisionStream):
                 chunk.remove_entity(entity)
                 return
     
-    def _on_entity_died(self, entity: Entity):
-        if not entity.is_removal_blocked:
-            self._delete_entity(entity)
-
-    def _on_entity_removal_unblocked(self, entity: Entity):
-        if entity.is_pending_removal:
-            self._delete_entity(entity)
-
-    def _on_entity_born(self, entity: Entity):
-        self.add_entity(entity)
-
     def _on_entity_moved(self, entity: Entity):
         for chunk in self._chunks:
             if chunk.contains_entity(entity):
