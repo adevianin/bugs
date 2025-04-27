@@ -164,8 +164,26 @@ class World():
     def _test_walk_to(self):
         from core.world.utils.point import Point
         from core.world.entities.nest.nest import Nest
-        ant1: Ant = self._map.get_entity_by_id(271)
-        ant1.walk_to(Point(3146,3400))
+        ant1: Ant = self._map.get_entity_by_id(1575)
+        ant1.free_mind()
+        ant1.walk_to(Point(7816,5687))
+        ant1.walk_to(Point(8304,5682))
+        ant1.walk_to(Point(7816,5687))
+        ant1.walk_to(Point(8304,5682))
+        ant1.walk_to(Point(7816,5687))
+        ant1.walk_to(Point(8304,5682))
+        ant1.walk_to(Point(7816,5687))
+        ant1.walk_to(Point(8304,5682))
+        ant1.walk_to(Point(7816,5687))
+        ant1.walk_to(Point(8304,5682))
+        ant1.walk_to(Point(7816,5687))
+        ant1.walk_to(Point(8304,5682))
+        ant1.walk_to(Point(7816,5687))
+        ant1.walk_to(Point(8304,5682))
+        ant1.walk_to(Point(7816,5687))
+        ant1.walk_to(Point(8304,5682))
+        ant1.walk_to(Point(7816,5687))
+        ant1.walk_to(Point(8304,5682))
 
     def _test_spawn_ladybug(self, x, y):
         from core.world.entities.world.birth_requests.ladybug_birth_request import LadybugBirthRequest
@@ -175,4 +193,10 @@ class World():
     def _test_start_summer(self):
         self._current_step = SUMMER_START_YEAR_STEP - 2
         self._climate._current_temp = 4
+
+    def inject_subnest_gene_to_queen(self, id):
+        from core.world.entities.ant.base.genetic.genes.specialization_building_subnest_gene import SpecializationBuildingSubnestGene
+        from core.world.entities.ant.queen.queen_ant import QueenAnt
+        queen: QueenAnt = self._map.get_entity_by_id(id)
+        queen.body.male_chromosomes_set.inject_gene(SpecializationBuildingSubnestGene.build_new_for_specie_gene())
 

@@ -9,15 +9,15 @@ class QueenSelectorView extends BaseGameHTMLView {
     constructor(el) {
         super(el);
 
-        this._queens = this.$domain.getMyQueensInNuptialFlight();
+        this._queens = this.$domain.myState.getAntsByIds(this.$domain.myState.nuptialEnvironment.queenIds);
         this._selectedQueenIndex = null;
 
         this._render();
 
-        this.$domain.events.on('queenFlewNuptialFlight', this._onQueenFlewNuptialFlight.bind(this));
-        this.$domain.events.on('queenFlewNuptialFlightBack', this._onQueenFlewNuptialFlightBack.bind(this));
-        this.$domain.events.on('antDied', this._onAntDied.bind(this));
-        this.$domain.events.on('antBorn', this._onAntBorn.bind(this));
+        this.$domain.myState.nuptialEnvironment.on('queenFlewIn', this._onQueenFlewIn.bind(this));
+        this.$domain.myState.nuptialEnvironment.on('queenFlewOut', this._onQueenFlewOut.bind(this));
+        this.$domain.myState.on('antBorn', this._onAntBorn.bind(this));
+        this.$domain.myState.on('antDied', this._onAntDied.bind(this));
 
         this._prevBtn.addEventListener('click', this._onPrevBtnClick.bind(this));
         this._nextBtn.addEventListener('click', this._onNextBtnClick.bind(this));
@@ -66,7 +66,7 @@ class QueenSelectorView extends BaseGameHTMLView {
     }
 
     _renderBornAntaraBtnState() {
-        let isAnyAnt = this.$domain.isAnyMyAnt();
+        let isAnyAnt = this.$domain.myState.ants.length > 0;
         this._bornAntaraBtn.classList.toggle('g-hidden', isAnyAnt);
     }
 
@@ -140,36 +140,26 @@ class QueenSelectorView extends BaseGameHTMLView {
         return queensIds.includes(id);
     }
 
-    _onQueenFlewNuptialFlight(queen) {
-        let isMyQueen = this.$domain.isEntityMy(queen);
-        if (isMyQueen) {
-            this._addQueen(queen);
-        }
+    _onQueenFlewIn(queenId) {
+        let queen = this.$domain.myState.getAntById(queenId);
+        this._addQueen(queen);
     }
 
-    _onAntDied(ant) {
-        if (this.$domain.isMyAnt(ant)) {
-            this._renderBornAntaraBtnState();
-            if (this._checkIdInQueensList(ant.id)) {
-                this._removeQueen(ant);
-            }
-        }
+    _onQueenFlewOut(queenId) {
+        let queen = this._queens.find(q => q.id == queenId);
+        this._removeQueen(queen);
     }
 
-    _onAntBorn(ant) {
-        if (this.$domain.isMyAnt(ant)) {
-            this._renderBornAntaraBtnState();
-        }
+    _onAntBorn() {
+        this._renderBornAntaraBtnState();
     }
-
-    _onQueenFlewNuptialFlightBack(queen) {
-        if (this.$domain.isMyAnt(queen)) {
-            this._removeQueen(queen);
-        }
+    
+    _onAntDied() {
+        this._renderBornAntaraBtnState();
     }
 
     _onBornNewAntaraBtnClick() {
-        this._stepWaiterBornAntara.waitNextStep();
+        // this._stepWaiterBornAntara.waitNextStep();
         this.$domain.bornNewAntara();
     }
 

@@ -1,7 +1,6 @@
 import { BaseGraphicView } from "@view/base/baseGraphicView";
 import * as PIXI from 'pixi.js';
 import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
-import { ChunksVisibilityManager } from "../chunksVisibilityManager";
 import { VIEW_SETTINGS } from "@view/viewSettings";
 import { distance_point } from '@utils/distance';
 import { interpolatePoint } from '@utils/interpolatePoint';
@@ -17,7 +16,6 @@ class EntityView extends BaseGraphicView {
         super();
         this._animQueue = [];
         this._isAnimPlaying = false;
-        this._currentChunkId = null;
         this._isEntityVisible = false;
 
         this._entity = entity;
@@ -25,32 +23,37 @@ class EntityView extends BaseGraphicView {
         this._entityContainer = new PIXI.Container();
         this._parentContainer.addChild(this._entityContainer);
 
+        this._timeoutIds = [];
+
         this._animationsData = {};
 
-        this._stopListenChunkIdChanged = this._entity.on('chunkIdChanged', this._onEntityChunkIdChanged.bind(this));
-        this._stopListenDiedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_DIED}`, this._onDiedAnimationRequest.bind(this));
-        this._stopListenStetStart = this.$eventBus.on('stepStart', this._onStepStart.bind(this));
+        this._isRemoved = false;
+
+        let eId = this._entity.id;
+        this._stopListenEntityDiedAR = this.$eventBus.on(`entityActionAnimationRequest:${eId}:${ACTION_TYPES.ENTITY_DIED}`, this._onDiedAnimationRequest.bind(this));
+        // this._stopListenStetStart = this.$eventBus.on('stepStart', this._onStepStart.bind(this));
     }
 
     get entity() {
         return this._entity;
     }
 
-    get _isCurrentChunkVisible() {
-        return ChunksVisibilityManager.isChunkVisible(this._currentChunkId);
-    }
-
     get _isFastAnimationMode() {
-        return !this._isCurrentChunkVisible || VIEW_SETTINGS.isFastAnimations;
+        return VIEW_SETTINGS.isFastAnimations;
     }
 
     remove() {
+        this._isRemoved = true;
+        this._clearAllTimeouts();
+        this._stopAnyAnimations();
         this._entityContainer.removeFromParent();
         this._entityContainer.destroy({children: true});
-        this._stopListenChunkVisibilityChange();
-        this._stopListenChunkIdChanged();
-        this._stopListenDiedAnimationRequest();
-        this._stopListenStetStart();
+        this._removedDuringAnimation = this._currentAnimation
+        this._stopListenEntityDiedAR();
+    }
+
+    checkIsRefreshAnimationsNeeded() {
+        return this._hasBlockingAnimationInQueue();
     }
 
     _toggleEntityVisibility(isVisible) {
@@ -59,14 +62,12 @@ class EntityView extends BaseGraphicView {
     }
 
     _addAnimation(type, params = {}, isBlocking = false) {
-        if (this._isCurrentChunkVisible || type == EntityView.ANIMATION_TYPES.CHUNK_CHANGED) {
-            this._animQueue.push({type, params, isBlocking});
-            this._tryPlayNextAnim();
-        }
+        this._animQueue.push({type, params, isBlocking});
+        this._tryPlayNextAnim();
     }
 
     async _tryPlayNextAnim() {
-        if (this._animQueue.length == 0 || this._isAnimPlaying) {
+        if (this._animQueue.length == 0 || this._isAnimPlaying || this._isRemoved) {
             return;
         }
 
@@ -74,26 +75,35 @@ class EntityView extends BaseGraphicView {
         this._animQueue.shift();
 
         this._isAnimPlaying = true;
-        await this._playAnimation(animation);
+        this._lastPlayedanim = animation
+        let resp = this._playAnimation(animation);
+        if (!resp.isPlayed) {
+            console.warn(`not played animation type "${animation.type}"`);
+        }
+        await resp.animationPromise;
         this._isAnimPlaying = false;
         this._tryPlayNextAnim();
     }
 
-    async _playAnimation(animation) {
+    _playAnimation(animation) {
         switch (animation.type) {
-            case EntityView.ANIMATION_TYPES.CHUNK_CHANGED: 
-                this._playChunkChangedAnimation(animation.params);
-                return true;
             case EntityView.ANIMATION_TYPES.DIED: 
-                await this._playDiedAnimation(animation.params);
-                return true;
+                this._playDiedAnimation(animation.params);
+                return this._makePlayAnimationResponse(true);
             default:
-                return false;
+                return this._makePlayAnimationResponse(false);
         }
+    }
+
+    _makePlayAnimationResponse(isPlayed, animationPromise) {
+        animationPromise = animationPromise || Promise.resolve();
+        return {
+            isPlayed,
+            animationPromise
+        };
     }
     
     _renderEntityState() {
-        this._setCurrentChunkId(this._entity.chunkId);
         this._setIsEntityVisible(this._entity.isVisible);
         this._renderViewVisibility();
         this._renderEntityPosition(this._entity.position);
@@ -113,37 +123,12 @@ class EntityView extends BaseGraphicView {
         this._isEntityVisible = isVisible;
     }
 
-    _setCurrentChunkId(chunkId) {
-        this._currentChunkId = chunkId;
-        this._listenCurrentChunkVisibilityChanges();
-    }
-
-    _listenCurrentChunkVisibilityChanges() {
-        if (this._stopListenChunkVisibilityChange) {
-            this._stopListenChunkVisibilityChange();
-        }
-        let eventName = `chunkVisibilityStateChanged:${this._currentChunkId}`;
-        this._stopListenChunkVisibilityChange = this.$eventBus.on(eventName, this._onCurrentChunkVisibilityStateChanged.bind(this));
-    }
-
     _renderViewVisibility() {
-        this._entityContainer.renderable = this._isEntityVisible && this._isCurrentChunkVisible;
+        this._entityContainer.renderable = this._isEntityVisible;
     }
 
-    _playChunkChangedAnimation({ newChunkId }) {
-        let isChunkVisibleBefore = this._isCurrentChunkVisible;
-        this._setCurrentChunkId(newChunkId);
-        let isChunkVisibleAfter = this._isCurrentChunkVisible;
-
-        if (isChunkVisibleBefore == true && isChunkVisibleAfter == false) {
-            this._renderViewVisibility();
-        }else if (isChunkVisibleBefore == false && isChunkVisibleAfter == true) {
-            this._renderEntityState();
-        }
-    }
-
-    async _playDiedAnimation() {
-        this.remove();
+    _playDiedAnimation() {
+        this.events.emit('playedDiedAnimation', 10);
     }
 
     _runAnimation(type, animation) {
@@ -152,6 +137,9 @@ class EntityView extends BaseGraphicView {
             delete this._animationsData[type];
         }
 
+        if (this._isRemoved) {
+            this._isRunningAnimationAfterRemoved = true;
+        }
         let animationData = {frameRequestId: null, makeAnimDone: null};
         this._animationsData[type] = animationData;
         return new Promise((res, rej) => {
@@ -173,6 +161,11 @@ class EntityView extends BaseGraphicView {
         });
     }
 
+    _stopAnyAnimations() {
+        this._animQueue = [];
+        this._stopAllRunningAnimations();
+    }
+
     _stopAllRunningAnimations() {
         for (let animType in this._animationsData) {
             this._stopRunningAnimationByType(animType);
@@ -186,41 +179,25 @@ class EntityView extends BaseGraphicView {
         animData.makeAnimDone();
     }
 
-    _onCurrentChunkVisibilityStateChanged() {
-        if (this._isCurrentChunkVisible) {
-            this._renderEntityState();
-        } else {
-            this._renderViewVisibility();
-        }
-    }
-
-    _onEntityChunkIdChanged(newChunkId) {
-        if (!this._entity.isDied) {
-            this._addAnimation(EntityView.ANIMATION_TYPES.CHUNK_CHANGED, {
-                newChunkId
-            });
-        }
-    }
-
     _onDiedAnimationRequest(params) {
         this._addAnimation(EntityView.ANIMATION_TYPES.DIED, params, false);
     }
 
-    _onStepStart() {
-        if (this._isCurrentChunkVisible && this._hasBlockingAnimationInQueue()) {
-            this._refreshAnimations();
-        }
-    }
+    // _onStepStart() {
+    //     if (this._isCurrentChunkVisible && this._hasBlockingAnimationInQueue()) {
+    //         this._refreshAnimations();
+    //     }
+    // }
 
-    _refreshAnimations() {
-        this._animQueue = [];
-        this._stopAllRunningAnimations();
-        this._renderEntityState();
-        if (this._entity.isDied) {
-            this._playDiedAnimation();
-        }
-        console.warn('refreshed animations')
-    }
+    // _refreshAnimations() {
+    //     this._animQueue = [];
+    //     this._stopAllRunningAnimations();
+    //     this._renderEntityState();
+    //     if (this._entity.isDied) {
+    //         this._playDiedAnimation();
+    //     }
+    //     console.warn('refreshed animations')
+    // }
 
     _hasBlockingAnimationInQueue() {
         return this._animQueue.some(anim => anim.isBlocking);
@@ -236,7 +213,7 @@ class EntityView extends BaseGraphicView {
         let dist = distance_point(pointFrom, pointTo);
         let wholeWalkTime = (dist / userSpeed) * 1000;
         let leftTimeForStep = this.$stepProgress.getLeftTimeForStep(animationStep);
-        let walkTime = wholeWalkTime <= leftTimeForStep ? wholeWalkTime : leftTimeForStep;
+        let walkTime = Math.min(wholeWalkTime, leftTimeForStep);
         
         let walkStartAt = null;
         return this._runAnimation(animationType, (currentTime) => {
@@ -259,6 +236,16 @@ class EntityView extends BaseGraphicView {
                 return false;
             }
         });
+    }
+
+    _setTimeout(func, time) {
+        let id = setTimeout(func, time);
+        this._timeoutIds.push(id);
+    }
+
+    _clearAllTimeouts() {
+        this._timeoutIds.forEach(id => clearTimeout(id));
+        this._timeoutIds.length = 0;
     }
     
 }

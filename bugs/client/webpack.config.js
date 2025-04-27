@@ -1,11 +1,15 @@
 const path = require('path');
+const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
+
+const staticClientPath = path.resolve(__dirname, 'static/client');
 
 module.exports = {
     mode: 'development',
     devtool: "source-map",
     entry: {
+        domainWorker: './gameApp/src/domainWorkerStart.js',
         gameApp: './gameApp/src/index.js',
         adminApp: './adminApp/src/index.js',
         accountApp: './accountApp/src/index.js',
@@ -17,7 +21,7 @@ module.exports = {
     },
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'static/client'),
+        path: staticClientPath,
         assetModuleFilename: '[hash][ext]',
         chunkFilename: 'chunk-[contenthash].js',
         clean: true
@@ -60,6 +64,9 @@ module.exports = {
     },
     plugins: [
         new RemoveEmptyScriptsPlugin(),
-        new MiniCssExtractPlugin()
+        new MiniCssExtractPlugin(),
+        new webpack.DefinePlugin({
+            STATIC_CLIENT_PATH: '"static/client"'
+        })
     ],
 };

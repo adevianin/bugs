@@ -20,14 +20,72 @@ class WorldView extends BaseGraphicView {
     constructor(container) {
         super();
         this._container = container;
+        this._currentEntities = [];
+        this._currentEntityViews = {};
         
         this._render();
 
-        this.$domain.events.on('stepStart', this._onStepStart.bind(this));
-        this.$domain.events.on('entityBorn', this._onEntityBorn.bind(this));
-        this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
-        if (VIEW_SETTINGS.showPlayerViewRect) {
-            this.$eventBus.on('viewPointChanged', this._onViewPointChanged.bind(this));
+        // this.$domain.events.on('stepStart', this._onStepStart.bind(this));
+        // this.$domain.events.on('entityBorn', this._onEntityBorn.bind(this));
+        // this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
+        // this.$eventBus.on('viewPointChanged', this._onViewPointChanged.bind(this));
+        // this.$domain.events.on('stepPack', this._onStepPack.bind(this));
+    }
+
+    entityGotIntoView(entity) {
+        this._currentEntities.push(entity);
+        this._addEntityView(entity);
+    }
+
+    entityGotOutOfView(entityId) {
+        this._removeEntityView(entityId);
+        this._removeEntityFromArray(entityId);
+    }
+
+    checkIsRefreshAnimationsNeeded() {
+        for (let entityId in this._currentEntityViews) {
+            let entityView = this._currentEntityViews[entityId];
+            if (entityView.checkIsRefreshAnimationsNeeded()) {
+                console.warn(`refresh animations in world view is needed. entity id=${entityId}`);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    async refresh() {
+        for (let entityId in this._currentEntityViews) {
+            let entityView = this._currentEntityViews[entityId];
+            entityView.remove();
+        }
+
+        this._currentEntityViews = {};
+        this._currentEntities = [];
+        
+        let entities = await this.$domain.getEntitiesInCurrentViewRect();
+        this._currentEntities = entities;
+        for (let entity of entities) {
+            this._addEntityView(entity);
+        }
+        console.warn('world view animations refreshed');
+    }
+
+    updateCurrentEntities(entities) {
+        this._currentEntities = entities;
+
+        let currentEntitiesIds = this._currentEntities.map(e => e.id);
+        for (let entityId in this._currentEntityViews) {
+            entityId = parseInt(entityId);
+            if (!currentEntitiesIds.includes(entityId)) {
+                this._removeEntityView(entityId);
+            }
+        }
+
+        for (let entity of this._currentEntities) {
+            if (!this._currentEntityViews[entity.id]) {
+                this._addEntityView(entity);
+            }
         }
     }
 
@@ -57,7 +115,6 @@ class WorldView extends BaseGraphicView {
         this._treesContainer = new PIXI.Container();
         this._markerDemonstratorContainer = new PIXI.Container();
         this._chunksGridContainer = new PIXI.Container();
-        this._viewRectContainer = new PIXI.Container();
 
         this._liveEntityHudLayer = new PIXI.RenderLayer();
         this._nestHudLayer = new PIXI.RenderLayer();
@@ -74,7 +131,6 @@ class WorldView extends BaseGraphicView {
         this._container.addChild(this._itemAreaContainer);
         this._container.addChild(this._markerDemonstratorContainer);
         this._container.addChild(this._chunksGridContainer);
-        this._container.addChild(this._viewRectContainer);
 
         this._container.addChild(this._nestHudLayer);
         this._container.addChild(this._liveEntityHudLayer);
@@ -83,7 +139,6 @@ class WorldView extends BaseGraphicView {
 
         this._renderCurrentSeason();
 
-        this._buildEntityViews();
         if (VIEW_SETTINGS.showMapChunkGrid) {
             this._renderMapChunksGrid();
         }
@@ -103,16 +158,16 @@ class WorldView extends BaseGraphicView {
         this._renderCurrentSeason();
     }
 
-    _onEntityBorn(entity) {
-        this._buildEntityView(entity);
-    }
+    // _onEntityBorn(entity) {
+    //     this._buildEntityView(entity);
+    // }
 
-    _buildEntityViews() {
-        let entities = this.$domain.getEntities();
-        entities.forEach(entity => {
-            this._buildEntityView(entity);
-        });
-    }
+    // _buildEntityViews() {
+    //     let entities = this.$domain.getEntities();
+    //     entities.forEach(entity => {
+    //         this._buildEntityView(entity);
+    //     });
+    // }
 
     _buildEntityView(entity) {
         let view = null;
@@ -145,6 +200,7 @@ class WorldView extends BaseGraphicView {
             default:
                 throw 'unknown type of entity';
         }
+        return view;
     }
 
     _renderMapChunksGrid() {
@@ -166,30 +222,78 @@ class WorldView extends BaseGraphicView {
         }
     }
 
-    _renderViewChunksGrid() {
-        for (let chunk of Object.values(this.$domain.world.chunks)) {
+    async _renderViewChunksGrid() {
+        let chunkShapes = await this.$domain.getChunkShapesDebug();
+        for (let shape of chunkShapes) {
             let graphics = new PIXI.Graphics();
             graphics
-                .rect(chunk.shape.x, chunk.shape.y, chunk.shape.width - 1, chunk.shape.height - 1)
+                .rect(shape.x, shape.y, shape.width - 1, shape.height - 1)
                 .stroke({width: 1, color: 0xFFFF00});
             this._chunksGridContainer.addChild(graphics);
         }
     }
 
-    _onViewPointChanged(viewPoint, viewRect) {
-        if (this._viewRectGraphics) {
-            this._viewRectContainer.removeChild(this._viewRectGraphics);
+    // async _onViewPointChanged(viewPoint, viewRect) {
+    //     if (VIEW_SETTINGS.showPlayerViewRect) {
+    //         this._renderViewPoint(viewPoint, viewRect);
+    //     }
+    //     let result = await this.$domain.changePlayerViewPoint(viewPoint, viewRect);
+    //     if (result.isSomeChunkVisibilityChanged) {
+    //         this._currentEntities = result.entities;
+    //         this._updateCurrentEntities();
+    //     }
+    // }
+
+    // _renderViewPoint(viewPoint, viewRect) {
+    //     if (this._viewRectGraphics) {
+    //         this._viewRectContainer.removeChild(this._viewRectGraphics);
+    //     }
+    //     this._viewRectGraphics = new PIXI.Graphics();
+    //     this._viewRectGraphics
+    //         .rect(viewRect.x, viewRect.y, viewRect.width, viewRect.height)
+    //         .stroke({width: 1, color: 0x0000FF});
+    //     this._viewRectContainer.addChild(this._viewRectGraphics);
+    // }
+
+    _removeEntityView(entityId, removeDelay) {
+        let view = this._currentEntityViews[entityId];
+        delete this._currentEntityViews[entityId];
+        if (removeDelay) {
+            setTimeout(() => {
+                view.remove();
+            }, removeDelay);
+        } else {
+            view.remove();
         }
-        this._viewRectGraphics = new PIXI.Graphics();
-        this._viewRectGraphics
-            .rect(viewRect.x, viewRect.y, viewRect.width, viewRect.height)
-            .stroke({width: 1, color: 0x0000FF});
-        this._viewRectContainer.addChild(this._viewRectGraphics);
     }
 
-    _onStepStart(stepNumber) {
-        this.$eventBus.emit('stepStart', stepNumber);
+    _addEntityView(entity) {
+        let view = this._buildEntityView(entity);
+        view.events.on('playedDiedAnimation', removeDelay => {
+            this._removeEntityView(entity.id, removeDelay);
+            this._removeEntityFromArray(entity.id);
+        });
+        this._currentEntityViews[entity.id] = view;
     }
+
+    _removeEntityFromArray(entityId) {
+        let index = this._currentEntities.findIndex(e => e.id == entityId);
+        if (index != -1) {
+            this._currentEntities.splice(index, 1);
+        }
+    }
+
+    // _onStepPack(stepPack) {
+    //     for (let viewRectMigration of stepPack.viewRectMigrations) {
+    //         if (viewRectMigration.isMigrationIntoViewRect) {
+    //             this._currentEntities.push(viewRectMigration.entity);
+    //             this._addEntityView(viewRectMigration.entity);
+    //         } else {
+    //             this._removeEntityView(viewRectMigration.entityId);
+    //             this._removeEntityFromArray(viewRectMigration.entityId);
+    //         }
+    //     }
+    // }
 
 }
 

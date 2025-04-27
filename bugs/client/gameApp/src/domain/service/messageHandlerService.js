@@ -1,4 +1,5 @@
-import { initConts } from "@domain/consts";
+import { initConsts } from "@domain/consts";
+import { CONSTS } from "@domain/consts";
 
 class MessageHandlerService {
 
@@ -12,8 +13,8 @@ class MessageHandlerService {
         this._serverConnection.events.on('message', this._onMessage.bind(this));
     }
 
-    connect() {
-        return this._serverConnection.connect();
+    connect(socketURL) {
+        return this._serverConnection.connect(socketURL);
     }
 
     disconnect() {
@@ -37,7 +38,7 @@ class MessageHandlerService {
     }
 
     _handleInitStepMsg(msg) {
-        initConts(msg.consts);
+        initConsts(msg.consts);
         this._userService.initNotifications(msg.notifications)
         this._worldService.initWorld(msg.world, msg.step, msg.season);
         this._worldService.setRating(msg.rating);

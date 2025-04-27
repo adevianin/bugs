@@ -1,10 +1,10 @@
 import { EventEmitter } from "@common/utils/eventEmitter";
 import { ACTION_TYPES } from './action/actionTypes';
 
-class Entity extends EventEmitter {
+class Entity {
 
     constructor(eventBus, id, position, angle, type, fromColony, ownerId, hp, maxHp) {
-        super();
+        this.events = new EventEmitter();
         this._eventBus = eventBus;
         this.id = id;
         this._position = position;
@@ -28,7 +28,7 @@ class Entity extends EventEmitter {
 
     setPosition(x, y) {
         this._position = {x, y};
-        this.emit('positionChanged');
+        this.events.emit('positionChanged');
         this._eventBus.emit('entityMoved', this);
     }
 
@@ -42,11 +42,16 @@ class Entity extends EventEmitter {
 
     set angle(value) {
         this._angle = value;
-        this.emit('angleChanged');
+        this.events.emit('angleChanged');
     }
 
     get fromColony() {
         return this._fromColony;
+    }
+
+    set fromColony(val) {
+        this._fromColony = val;
+        this.events.emit('fromColonyChanged');
     }
 
     get ownerId() {
@@ -59,7 +64,7 @@ class Entity extends EventEmitter {
 
     set hp(value) {
         this._hp = value;
-        this.emit('hpChanged');
+        this.events.emit('hpChanged');
     }
 
     get maxHp() {
@@ -74,9 +79,16 @@ class Entity extends EventEmitter {
         return this._chunkId;
     }
 
-    set chunkId(chunkId) {
-        this._chunkId = chunkId;
-        this.emit('chunkIdChanged', chunkId);
+    set chunkId(newChunkId) {
+        let prevChunkId = this._chunkId;
+        this._chunkId = newChunkId;
+        if (newChunkId && prevChunkId) {
+            this._eventBus.emit('entityChunkMigration', this, prevChunkId);
+        } else if (newChunkId && !prevChunkId) {
+            this._eventBus.emit('entityAddedToChunks', this, null);
+        } else if (!newChunkId && prevChunkId) {
+            this._eventBus.emit('entityRemovedFromChunks', this);
+        } 
     }
 
     playAction(action) {
@@ -108,17 +120,17 @@ class Entity extends EventEmitter {
 
     _playEntityDied(action) {
         this._isDied = true;
+        this._requestActionAnimation(ACTION_TYPES.ENTITY_DIED);
         this._emitToEventBus('entityDied');//to delete entity from world
-        this.emit('died');//to delete from ants table view
-        this._requestActionAnimation(ACTION_TYPES.ENTITY_DIED)
+        this.events.removeAllListeners();
     }
 
     _playEntityColonyChanged(action) {
-        this._fromColony = action.colonyId;
+        this.fromColony = action.colonyId;
     }
 
-    _requestActionAnimation(actionType, animationParams = {}) {
-        this.emit(`actionAnimationReqest:${actionType}`, animationParams);
+    _requestActionAnimation(animationType, animationParams = {}) {
+        this._eventBus.emit('entityActionAnimationRequest', this._chunkId, this.id, animationType, animationParams);
     }
 
 }

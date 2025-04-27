@@ -30,7 +30,7 @@ class NuptialFlightTabView extends BaseGameHTMLView {
     }
 
     _renderIsNuptialSeasonState() {
-        let isNuptialSeason = this.$domain.world.isNuptialSeasonNow;
+        let isNuptialSeason = this._checkIsNuptialSeasonNow();
         this._nuptialFlightModeEl.classList.toggle('g-hidden', !isNuptialSeason);
         this._waitingNuptialFlightModeEl.classList.toggle('g-hidden', isNuptialSeason);
     }
@@ -41,13 +41,17 @@ class NuptialFlightTabView extends BaseGameHTMLView {
     }
 
     _onStepChanged() {
-        if (!this.$domain.world.isNuptialSeasonNow) {
+        if (!this._checkIsNuptialSeasonNow()) {
             this._renderTimeToNuptialSeason();
         }
     }
 
+    _checkIsNuptialSeasonNow() {
+        return CONSTS.NUPTIAL_FLIGHT_SEASONS.indexOf(this.$domain.currentSeason) != -1;
+    }
+
     _renderTimeToNuptialSeason() {
-        let stepsCount = this.$domain.world.getStepsCountToNuptialSeasonStart();
+        let stepsCount = this._getStepsCountToNuptialSeasonStart();
         let secondsCount = stepsCount * CONSTS.STEP_TIME;
         let hours = Math.floor(secondsCount / 3600);
         let minutes = Math.floor((secondsCount % 3600) / 60);
@@ -58,6 +62,17 @@ class NuptialFlightTabView extends BaseGameHTMLView {
             this._timeToNuptialSeasonEl.innerHTML = this.$mm.format(GAME_MESSAGE_IDS.NUPTIAL_TAB_TIME_SHORT, minutes, seconds);
         }
         
+    }
+
+    _getStepsCountToNuptialSeasonStart() {
+        let nuptSeasonStartYearStep = CONSTS.SPRING_START_YEAR_STEP;
+        let currentStep = this.$domain.currentStep;
+        let currentYearStep = currentStep % CONSTS.STEPS_IN_YEAR;
+        if (currentYearStep <= nuptSeasonStartYearStep) {
+            return nuptSeasonStartYearStep - currentYearStep;
+        } else {
+            return CONSTS.STEPS_IN_YEAR - currentYearStep + nuptSeasonStartYearStep;
+        }
     }
 
 }

@@ -27,12 +27,12 @@ class NestView extends EntityView {
         this._nestHudLayer = nestHudLayer;
 
         this._render();
-        this._stopListenBuildStatusChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.NEST_BUILD_STATUS_CHANGED}`, this._onBuildStatusChangeAnimationRequest.bind(this));
-        this._stopListenFortificationChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.NEST_FORTIFICATION_CHANGED}`, this._onFortificationChangeAnimationRequest.bind(this));
-        this._stopListenHpChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
-        this._stopListenNameChange = this._entity.on('nameChanged', this._onNameChanged.bind(this));
-        this._stopListenShowNestAreaRequest = this._entity.on('showNestAreaRequest', this._onShowNestAreaRequest.bind(this));
-        this._stopListenHideNestAreaRequest = this._entity.on('hideNestAreaRequest', this._onHideNestAreaRequest.bind(this));
+        // this._stopListenBuildStatusChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.NEST_BUILD_STATUS_CHANGED}`, this._onBuildStatusChangeAnimationRequest.bind(this));
+        // this._stopListenFortificationChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.NEST_FORTIFICATION_CHANGED}`, this._onFortificationChangeAnimationRequest.bind(this));
+        // this._stopListenHpChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
+        // this._stopListenNameChange = this._entity.on('nameChanged', this._onNameChanged.bind(this));
+        // this._stopListenShowNestAreaRequest = this._entity.on('showNestAreaRequest', this._onShowNestAreaRequest.bind(this));
+        // this._stopListenHideNestAreaRequest = this._entity.on('hideNestAreaRequest', this._onHideNestAreaRequest.bind(this));
     }
 
     get _nestWidth() {
@@ -79,7 +79,7 @@ class NestView extends EntityView {
 
         this._bodyContainer.pivot.set(nestHalfWidth, nestHalfHeight);
 
-        if (this.$domain.isEntityMy(this._entity)) {
+        if (this._entity.isMine) {
             this._builtNestSprite.eventMode = 'static';
             this._builtNestSprite.cursor = 'pointer';
             this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
@@ -117,13 +117,13 @@ class NestView extends EntityView {
         super.remove();
         this._hpLineView.remove();
         this._entityHighlighter.remove();
-        this._stopListenBuildStatusChange();
-        this._stopListenFortificationChange();
-        this._stopListenHpChange();
-        this._stopListenNameChange();
+        // this._stopListenBuildStatusChange();
+        // this._stopListenFortificationChange();
+        // this._stopListenHpChange();
+        // this._stopListenNameChange();
         this._nestHudLayer.detach(this._hudContainer);
-        this._stopListenShowNestAreaRequest();
-        this._stopListenHideNestAreaRequest();
+        // this._stopListenShowNestAreaRequest();
+        // this._stopListenHideNestAreaRequest();
     }
 
     _renderEntityState() {
@@ -175,32 +175,31 @@ class NestView extends EntityView {
         }
     }
 
-    async _playAnimation(animation) {
-        let isPlayed = await super._playAnimation(animation);
-        if (isPlayed) {
-            return true;
+    _playAnimation(animation) {
+        let resp = super._playAnimation(animation);
+        if (resp.isPlayed) {
+            return resp;
         }
 
         switch (animation.type) {
             case NestView.ANIMATION_TYPES.BUILD_STATUS_CHANGE: 
                 this._playBuildStatusChange(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             case NestView.ANIMATION_TYPES.FORTIFICATION_CHANGE: 
                 this._playFortificationChange(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             case NestView.ANIMATION_TYPES.HP_CHANGE: 
                 this._playHpChange(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             default:
-                return false;
+                return this._makePlayAnimationResponse(false);
         }
     }
 
     _playDiedAnimation() {
         this._renderVisualState(NestView.VISUAL_STATES.DEAD);
-        setTimeout(() => {
-            this.remove();
-        }, 5000);
+        this._hudContainer.renderable = false;
+        this.events.emit('playedDiedAnimation', 5000);
     }
 
     _playBuildStatusChange({ isBuilt }) {

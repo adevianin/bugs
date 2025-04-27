@@ -23,10 +23,8 @@ class AntView extends BaseGameHTMLView {
         this._profileBtn.addEventListener('click', this._onProfileBtnClick.bind(this));
         this._showAntBtn.addEventListener('click', this._onShowAntBtnClick.bind(this));
 
-        this._stopListenAntDied = this._ant.on('died', this.remove.bind(this));
         this._stopListenCurrentActivityChanged = this._ant.on('currentActivityChanged', this._renderCurrentActivity.bind(this));
-        this._stopListenHomeNestChanged = this._ant.on('homeNestChanged', this._onHomeNestChanged.bind(this));
-        this._stopListenGotFertilized = this._ant.on('gotFertilized', this._onGotFertilized.bind(this));
+        this._stopListenHomeNestChanged = this._ant.on('homeNestIdChanged', this._onHomeNestChanged.bind(this));
         this._stopListenIsHungryChanged = this._ant.on('isHungryChanged', this._renderIsHungry.bind(this));
 
         this._stopListenCurrentStepChanged = this.$domain.events.on('currentStepChanged', this._renderAge.bind(this));
@@ -34,10 +32,8 @@ class AntView extends BaseGameHTMLView {
 
     remove() {
         this._stopListenCurrentStepChanged();
-        this._stopListenAntDied();
         this._stopListenCurrentActivityChanged();
         this._stopListenHomeNestChanged();
-        this._stopListenGotFertilized();
         this._stopListenIsHungryChanged();
         this._nestSelector.remove();
         this._genomeView.remove();
@@ -167,10 +163,6 @@ class AntView extends BaseGameHTMLView {
 
     _onHomeNestChanged() {
         this._nestSelector.nestId = this._ant.homeNestId;
-    }
-
-    _onGotFertilized() {
-        this._renderActionBtns();
     }
 
 }

@@ -3,6 +3,8 @@ import { CONSTS } from "@domain/consts";
 import { distance } from '@utils/distance';
 import { Egg } from "@domain/entity/egg";
 import { Larva } from "@domain/entity/larva";
+import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
+import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 
 class NestService extends BaseGameService {
 
@@ -12,11 +14,20 @@ class NestService extends BaseGameService {
     }
 
     async layEggInNest(nestId, name, isFertilized) {
-        let result = await this._requestHandler(() => this._nestApi.layEggInNest(nestId, name, isFertilized));
-        let eggJson = result.egg;
-        let egg = Egg.buildFromJson(eggJson);
-        let nest = this._world.findEntityById(nestId);
-        nest.addNewEgg(egg);
+        try {
+            let result = await this._requestHandler(() => this._nestApi.layEggInNest(nestId, name, isFertilized));
+            let eggJson = result.egg;
+            let egg = Egg.buildFromJson(eggJson);
+            let nest = this._world.findEntityById(nestId);
+            nest.addNewEgg(egg);
+            return this._makeSuccessResult({ eggId: egg.id });
+        } catch (e) {
+            if (e instanceof ConflictRequestError) {
+                return this._makeErrorResultConflict();
+            } else if (e instanceof GenericRequestError) {
+                return this._makeErrorResultUnknownErr();
+            }
+        }
     }
 
     async changeEggCasteInNest(nestId, eggId, antType) {
@@ -75,20 +86,20 @@ class NestService extends BaseGameService {
         return null;
     }
 
-    findMyFirstNest(userId) {
-        let myNests = this._world.findNestsByOwner(userId);
-        for (let nest of myNests) {
-            if (nest.isMain) {
-                return nest;
-            }
-        }
+    // findMyFirstNest(userId) {
+    //     let myNests = this._world.findNestsByOwner(userId);
+    //     for (let nest of myNests) {
+    //         if (nest.isMain) {
+    //             return nest;
+    //         }
+    //     }
 
-        if (myNests.length > 0) {
-            return myNests[0];
-        } else {
-            return null;
-        }
-    }
+    //     if (myNests.length > 0) {
+    //         return myNests[0];
+    //     } else {
+    //         return null;
+    //     }
+    // }
 
     findNearestNest(point, excludeColonyId) {
         let nests = this._world.getNests();

@@ -10,8 +10,8 @@ class TreeView extends EntityView {
 
         this._render();
 
-        this.$eventBus.on('viewPointChanged', this._onViewPointChange.bind(this));
-        this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
+        // this.$eventBus.on('viewPointChanged', this._onViewPointChange.bind(this));
+        // this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
     }
 
     get _entityWidth() {
@@ -20,6 +20,11 @@ class TreeView extends EntityView {
 
     get _entityHeight() {
         return this._spriteSpring.height;
+    }
+
+    remove() {
+        super.remove();
+        
     }
 
     _render() {
@@ -75,7 +80,7 @@ class TreeView extends EntityView {
     }
 
     _onSeasonChanged() {
-        setTimeout(() => {
+        this._setTimeout(() => {
             this._renderCurrentSeasonSprite();
         }, Math.random() * 10000);
     }

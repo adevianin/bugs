@@ -21,8 +21,8 @@ class LarvaTabView extends BaseGameHTMLView {
     }
 
     _listenNest() {
-        this._stopListenLarvaIsReady = this._nest.on('larvaIsReady', this._onLarvaIsReady.bind(this));
-        this._stopListenLarvaDeleted = this._nest.on('larvaDeleted', this._onLarvaDeleted.bind(this));
+        // this._stopListenLarvaIsReady = this._nest.on('larvaIsReady', this._onLarvaIsReady.bind(this));
+        this._stopListenLarvaDeleted = this._nest.on('larvaRemoved', this._onLarvaDeleted.bind(this));
         this._stopListenLarvaAdded = this._nest.on('larvaAdded', this._onLarvaAdded.bind(this));
     }
 
@@ -30,7 +30,7 @@ class LarvaTabView extends BaseGameHTMLView {
         if (!this._nest) {
             return
         }
-        this._stopListenLarvaIsReady();
+        // this._stopListenLarvaIsReady();
         this._stopListenLarvaDeleted();
         this._stopListenLarvaAdded();
     }
@@ -62,9 +62,9 @@ class LarvaTabView extends BaseGameHTMLView {
         this._larvaeViews = {};
     }
 
-    _onLarvaIsReady(larva) {
-        this._removeLarvaView(larva);
-    }
+    // _onLarvaIsReady(larva) {
+    //     this._removeLarvaView(larva);
+    // }
 
     _onLarvaDeleted(larva) {
         this._removeLarvaView(larva);

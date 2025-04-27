@@ -10,6 +10,7 @@ import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import { CONSTS } from '@domain/consts';
 import { doubleClickProtection } from '@common/utils/doubleClickProtection';
+import { ErrorCodes } from "@domain/enum/errorCodes";
 
 class BreedingManagerView extends BaseGameHTMLView {
 
@@ -40,20 +41,20 @@ class BreedingManagerView extends BaseGameHTMLView {
         this._nestPositionErrorContainerEl = this._el.querySelector('[data-nest-position-error-container]');
     }
 
-    _validate() {
+    async _validate() {
         let isError = false;
 
         if (!this._colonyNameView.validate()) {
             isError = true;
         }
 
-        let nestPositionErrId = this._validateNestPosition();
+        let nestPositionErrId = await this._validateNestPosition();
         this._renderNestPositionError(nestPositionErrId);
         if (nestPositionErrId) {
             isError = true;
         }
 
-        let queenErrorId = this._validateQueen();
+        let queenErrorId = await this._validateQueen();
         this._renderQueenError(queenErrorId);
         if (queenErrorId) {
             isError = true;
@@ -68,8 +69,8 @@ class BreedingManagerView extends BaseGameHTMLView {
         return !isError;
     }
 
-    _validateQueen() {
-        return this.$domain.validateBreedingQueen(this._queenSelectorView.queen);
+    async _validateQueen() {
+        return await this.$domain.validateBreedingQueen(this._queenSelectorView.queen.id);
     }
 
     _renderQueenError(queenErrorId) {
@@ -88,7 +89,7 @@ class BreedingManagerView extends BaseGameHTMLView {
         this._maleErrorContainerEl.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
-    _validateNestPosition() {
+    async _validateNestPosition() {
         return this.$domain.validateBuildingNewNestPosition(this._nestPositionView.value);
     }
 
@@ -97,23 +98,25 @@ class BreedingManagerView extends BaseGameHTMLView {
     }
 
     async _onStartBtnClick() {
-        if (!this._validate()) {
+        let isValid = await this._validate();
+        if (!isValid) {
             return;
         }
 
-        try {
-            await this.$domain.foundColony(
-                this._queenSelectorView.queen.id,
-                this._malesSelectorView.selectedMale.id,
-                this._nestPositionView.value,
-                this._colonyNameView.value
-            );
+        let result = await this.$domain.foundColony(
+            this._queenSelectorView.queen.id,
+            this._malesSelectorView.selectedMale.id,
+            this._nestPositionView.value,
+            this._colonyNameView.value
+        );
+        
+        if (result.success) {
             this.$eventBus.emit('showPointRequest', this._nestPositionView.value);
             this._resetFields();
-        } catch (e) {
-            if (e instanceof ConflictRequestError) {
-                this._validate();
-            } else if (e instanceof GenericRequestError) {
+        } else {
+            if (result.errCode == ErrorCodes.CONFLICT) {
+                await this._validate();
+            } else {
                 this._renderRequestError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         }
@@ -129,16 +132,17 @@ class BreedingManagerView extends BaseGameHTMLView {
     }
 
     _onChooseNestPositionBtnClick() {
-        this.$eventBus.emit('newNestPositionPickRequest', null, (point) => { 
+        this.$eventBus.emit('newNestPositionPickRequest', null, async (point) => { 
             this._nestPositionView.value = point;
-            this._showMarker();
-            let nestPositionErrId = this._validateNestPosition();
+            await this._showMarker();
+            let nestPositionErrId = await this._validateNestPosition();
             this._renderNestPositionError(nestPositionErrId);
         });
     }
 
-    _showMarker() {
-        let markers = [this.$domain.buildMarker(MarkerTypes.POINTER, this._nestPositionView.value, { area: CONSTS.NEST_AREA })];
+    async _showMarker() {
+        let marker = await this.$domain.buildMarker(MarkerTypes.POINTER, this._nestPositionView.value, { area: CONSTS.NEST_AREA })
+        let markers = [marker];
         this.$eventBus.emit('showMarkersRequest', markers);
     }
 
@@ -150,8 +154,8 @@ class BreedingManagerView extends BaseGameHTMLView {
         this._resetFields();
     }
 
-    _onSelectedQueenChanged() {
-        let queenErrorId = this._validateQueen();
+    async _onSelectedQueenChanged() {
+        let queenErrorId = await this._validateQueen();
         this._renderQueenError(queenErrorId);
     }
 

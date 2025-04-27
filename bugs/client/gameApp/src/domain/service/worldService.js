@@ -82,11 +82,9 @@ class WorldService {
         switch (entity.type) {
             case EntityTypes.ANT:
                 this._mainEventBus.emit('antBorn', entity);
-                this._mainEventBus.emit(`antBorn:${entity.fromColony}`, entity);
                 break;
             case EntityTypes.NEST:
                 this._mainEventBus.emit('nestBorn', entity);
-                this._mainEventBus.emit(`nestBorn:${entity.fromColony}`, entity);
                 break;
         }
     }
@@ -96,11 +94,9 @@ class WorldService {
         switch (entity.type) {
             case EntityTypes.ANT:
                 this._mainEventBus.emit('antDied', entity);
-                this._mainEventBus.emit(`antDied:${entity.fromColony}`, entity);
                 break;
             case EntityTypes.NEST:
                 this._mainEventBus.emit('nestDied', entity);
-                this._mainEventBus.emit(`nestDied:${entity.fromColony}`, entity);
                 break;
         }
     }

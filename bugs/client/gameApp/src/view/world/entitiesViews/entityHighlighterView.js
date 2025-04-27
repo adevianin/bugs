@@ -7,7 +7,6 @@ class EntityHightlighterView extends BaseGraphicView {
         super();
         this._container = container;
         this._entity = entity;
-        this._timerId = null;
 
         this._render();
 
@@ -16,7 +15,6 @@ class EntityHightlighterView extends BaseGraphicView {
 
     remove() {
         this._stopListenHightlightEntityRequest();
-        clearTimeout(this._timerId);
     }
 
     _render() {
@@ -48,15 +46,13 @@ class EntityHightlighterView extends BaseGraphicView {
                 throw 'unknown type of hightlight';
         }
 
-        this._timerId = setTimeout(() => {
-            this._timerId = null;
+        this._setTimeout(() => {
             this._stopHightlight();
         }, 10000);
     }
 
     _stopHightlight() {
         if (this._isHighlighting) {
-            clearTimeout(this._timerId);
             this._isHighlighting = false;
             this._enemyIcon.renderable = false;
             this._pointerIcon.renderable = false;

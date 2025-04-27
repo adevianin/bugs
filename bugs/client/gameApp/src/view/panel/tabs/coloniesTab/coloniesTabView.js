@@ -13,8 +13,8 @@ class ColoniesTabView extends BaseGameHTMLView {
         this._render();
 
         this._coloniesList.events.on('selectedColonyChanged', this._manageSelectedColony.bind(this));
-        this.$domain.events.on('colonyBorn', this._renderMode.bind(this));
-        this.$domain.events.on('colonyDied', this._renderMode.bind(this));
+        this.$domain.myState.on('colonyBorn', this._renderMode.bind(this));
+        this.$domain.myState.on('colonyDied', this._renderMode.bind(this));
     }
 
     showNestManagerFor(nest){
@@ -39,7 +39,7 @@ class ColoniesTabView extends BaseGameHTMLView {
     }
 
     _renderMode() {
-        let isEmpty = !this.$domain.isAnyMyColony();
+        let isEmpty = this.$domain.myState.colonies.length == 0;
         if (isEmpty) {
             this._coloniesList.toggle(false);
             this._colonyManager.toggle(false);

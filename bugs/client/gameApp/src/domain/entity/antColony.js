@@ -1,10 +1,10 @@
 import { ACTION_TYPES } from "./action/actionTypes";
 import { EventEmitter } from "@common/utils/eventEmitter";
 
-class AntColony extends EventEmitter {
+class AntColony {
 
     constructor(eventBus, id, onwerId, name, operations, enemies) {
-        super();
+        this.events = new EventEmitter();
         this._eventBus = eventBus;
         this._id = id;
         this._onwerId = onwerId;
@@ -55,48 +55,49 @@ class AntColony extends EventEmitter {
         }
     }
 
-    waitCreatingOperation(operationId, callback) {
-        for (let operation of this._operations) {
-            if (operation.id == operationId) {
-                callback();
-                return;
-            }
-        }
+    // waitCreatingOperation(operationId, callback) {
+    //     for (let operation of this._operations) {
+    //         if (operation.id == operationId) {
+    //             callback();
+    //             return;
+    //         }
+    //     }
 
-        this.once(`addedOperation:${operationId}`, callback);
-    }
+    //     this.once(`addedOperation:${operationId}`, callback);
+    // }
 
     _playColonyOperationCreated(action) {
         this._operations.push(action.operation);
-        this.emit('addedOperation', action.operation);
-        this.emit(`addedOperation:${action.operation.id}`);
+        this.events.emit('addedOperation', action.operation);
+        // this.events.emit(`addedOperation:${action.operation.id}`);
     }
 
     _playColonyOperationChanged(action) {
         let operation = this._findOperationById(action.operation.id);
         Object.assign(operation, action.operation);
-        this.emit('operationChanged', operation);
+        this.events.emit('operationChanged', operation);
     }
 
     _playColonyOperationDeleted(action) {
         let deletedOperationId = action.operationId;
         this._operations = this._operations.filter(operation => operation.id != deletedOperationId);
-        this.emit('operationDeleted', deletedOperationId);
+        this.events.emit('operationDeleted', deletedOperationId);
     }
 
     _playColonyEnemiesChanged(action) {
         this._enemies = action.enemies;
-        this.emit('enemiesChanged');
+        this.events.emit('enemiesChanged');
     }
 
     // _playOperationsChangedAction(action) {
     //     this._operations = action.actionData.operations;
-    //     this.emit('operationsChanged');
+    //     this.events.emit('operationsChanged');
     // }
 
     _playColonyDiedAction(action) {
         this._emitToEventBus('colonyDied'); //to delete colony from world
-        // this.emit('died');//to delete view
+        this.events.removeAllListeners();
+        // this.events.emit('died');//to delete view
     }
 
     _findOperationById(id) {

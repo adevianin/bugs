@@ -91,31 +91,19 @@ class EggView extends BaseGameHTMLView {
 
     async _onEggAntTypeChanged() {
         let antType = this._antTypeSelector.value;
-        try {
-            await this.$domain.changeEggCasteInNest(this._nest.id, this._egg.id, antType)
-        } catch (e) {
-            console.error(e);
-        }
+        await this.$domain.changeEggCasteInNest(this._nest.id, this._egg.id, antType)
     }
 
     async _onEggtoLarvaChamberClick() {
         this._toLarvaLoaderView.toggle(true);
         this._toggleToLarvaChamberBtnBlock(true);
-        try {
-            await this.$domain.moveEggToLarvaInNest(this._nest.id, this._egg.id);
-        } catch (e) {
-            console.error(e);
-        }
+        await this.$domain.moveEggToLarvaInNest(this._nest.id, this._egg.id);
         this._toLarvaLoaderView.toggle(false);
         this._toggleToLarvaChamberBtnBlock(false);
     }
 
     async _onEggDeleteClick() {
-        try {
-            await this.$domain.deleteEggInNest(this._nest.id, this._egg.id);
-        } catch (e) {
-            console.error(e);
-        }
+        await this.$domain.deleteEggInNest(this._nest.id, this._egg.id);
     }
 
 }

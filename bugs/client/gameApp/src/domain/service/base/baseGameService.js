@@ -1,5 +1,6 @@
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { BaseService } from "@common/domain/service/base/baseService";
+import { ErrorCodes } from "@domain/enum/errorCodes";
 
 class BaseGameService extends BaseService {
 
@@ -34,6 +35,23 @@ class BaseGameService extends BaseService {
                 });
             }
         });
+    }
+
+    _makeSuccessResult(mergIn = {}) {
+        let result = { success: true };
+        return Object.assign(result, mergIn);
+    }
+
+    _makeErrorResult(errCode) {
+        return { success: false, errCode };
+    }
+
+    _makeErrorResultConflict() {
+        return this._makeErrorResult(ErrorCodes.CONFLICT);
+    }
+
+    _makeErrorResultUnknownErr() {
+        return this._makeErrorResult(ErrorCodes.UNKNOWN_ERR);
     }
 
 }

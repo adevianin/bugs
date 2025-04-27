@@ -39,8 +39,8 @@ class PanelView extends BaseGameHTMLView {
         this._height = 320;
         this._renderTabViews();
 
-        let notificationTabActivatorEl = this._tabSwitcher.getActivatorForTab('notifications');
-        this._notificationIndicatorView = new NotificationIndicatorView(notificationTabActivatorEl);
+        // let notificationTabActivatorEl = this._tabSwitcher.getActivatorForTab('notifications');
+        // this._notificationIndicatorView = new NotificationIndicatorView(notificationTabActivatorEl);
     }
 
     _renderTabViews() {
@@ -49,20 +49,20 @@ class PanelView extends BaseGameHTMLView {
         this._handler = this._el.querySelector('[data-handler]');
         this._handlerHeight = this._handler.getBoundingClientRect().height;
 
-        this._userTab = new UserTab(this._el.querySelector('[data-user-tab]'));
+        // this._userTab = new UserTab(this._el.querySelector('[data-user-tab]'));
         this._coloniesTab = new ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));
         this._nuptialFlightTab = new NuptialFlightTabView(this._el.querySelector('[data-nuptial-flight-tab]'));
-        this._specieBuildertTab = new SpecieBuilderTabView(this._el.querySelector('[data-specie-builder-tab]'));
-        this._notificationsTab = new NotificationsTabView(this._el.querySelector('[data-notifications-tab]'));
-        this._ratingTab = new RatingTabView(this._el.querySelector('[data-rating-tab]'));
+        // this._specieBuildertTab = new SpecieBuilderTabView(this._el.querySelector('[data-specie-builder-tab]'));
+        // this._notificationsTab = new NotificationsTabView(this._el.querySelector('[data-notifications-tab]'));
+        // this._ratingTab = new RatingTabView(this._el.querySelector('[data-rating-tab]'));
 
         this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'panel', [
             { name: 'breeding', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_BREEDING), tab: this._nuptialFlightTab },
             { name: 'colonies', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_COLONIES), tab: this._coloniesTab },
-            { name: 'specie_builder', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_SPECIE), tab: this._specieBuildertTab },
-            { name: 'notifications', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_NOTIFICATIONS), tab: this._notificationsTab },
-            { name: 'rating', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_RATING), tab: this._ratingTab },
-            { name: 'user', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_ACCOUNT), tab: this._userTab }
+            // { name: 'specie_builder', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_SPECIE), tab: this._specieBuildertTab },
+            // { name: 'notifications', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_NOTIFICATIONS), tab: this._notificationsTab },
+            // { name: 'rating', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_RATING), tab: this._ratingTab },
+            // { name: 'user', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_ACCOUNT), tab: this._userTab }
         ]);
     }
 

@@ -1,5 +1,4 @@
 import { BasePickerView } from './basePickerView';
-import { ChunksVisibilityManager } from "@view/world/chunksVisibilityManager";
 import * as PIXI from 'pixi.js';
 
 class RaidNestPickerView extends BasePickerView {
@@ -15,8 +14,8 @@ class RaidNestPickerView extends BasePickerView {
         this._updateArea();
     }
 
-    _prepareAreaData() {
-        let { area, exclusions, nestPickers } = this.$domain.getRaidableArea(this._raidingColonyId, this._raidAreaCenter, ChunksVisibilityManager.getVisibleChunkIds());
+    async _prepareAreaData() {
+        let { area, exclusions, nestPickers } = await this.$domain.getRaidableArea(this._raidingColonyId, this._raidAreaCenter);
         this._updateAreaData(area, exclusions, nestPickers);
     }
 

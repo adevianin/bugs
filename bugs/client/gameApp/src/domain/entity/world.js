@@ -22,10 +22,6 @@ class World {
         return this._currentStep;
     }
 
-    get currentYearStep() {
-        return this._currentStep % CONSTS.STEPS_IN_YEAR;
-    }
-
     set currentStep(stepNumber) {
         this._currentStep = stepNumber;
         this._mainEventBus.emit('currentStepChanged', stepNumber);
@@ -59,10 +55,6 @@ class World {
         return this._climate;
     }
 
-    get isNuptialSeasonNow() {
-        return CONSTS.NUPTIAL_FLIGHT_SEASONS.indexOf(this.currentSeason) != -1;
-    }
-
     get chunks() {
         return this._chunks;
     }
@@ -79,15 +71,6 @@ class World {
         this._splitOnChunks();
         this._addAllEntitiesToChunks();
         this._addAllEntitiesToIds();
-    }
-
-    getStepsCountToNuptialSeasonStart() {
-        let nuptSeasonStartYearStep = this._getYearStepForSeason(CONSTS.NUPTIAL_FLIGHT_SEASONS[0]);
-        if (this.currentYearStep <= nuptSeasonStartYearStep) {
-            return nuptSeasonStartYearStep - this.currentYearStep;
-        } else {
-            return CONSTS.STEPS_IN_YEAR - this.currentYearStep + nuptSeasonStartYearStep;
-        }
     }
 
     getAnts() {
@@ -143,6 +126,10 @@ class World {
 
     isAnyAntByOwnerId(ownerId) {
         return this._entities.some(entity => entity.type == EntityTypes.ANT && entity.ownerId == ownerId);
+    }
+
+    findAntsByOwnerId(ownerId) {
+        return this._entities.filter(entity => entity.type == EntityTypes.ANT && entity.ownerId == ownerId);
     }
 
     findAntsFromColony(colonyId) {
@@ -284,22 +271,6 @@ class World {
         let second = Math.floor(y / CONSTS.VIEW_CHUNK_SIZE[1]);
         return `${first}_${second}`;
     }
-
-    _getYearStepForSeason(season) {
-        switch (season) {
-            case SEASON_TYPES.SPRING:
-                return CONSTS.SPRING_START_YEAR_STEP;
-            case SEASON_TYPES.SUMMER:
-                return CONSTS.SUMMER_START_YEAR_STEP;
-            case SEASON_TYPES.AUTUMN:
-                return CONSTS.AUTUMN_START_YEAR_STEP;
-            case SEASON_TYPES.WINTER:
-                return CONSTS.WINTER_START_YEAR_STEP;
-            default:
-                throw 'unknown season';
-        }
-    }
-
 }
 
 export { World }

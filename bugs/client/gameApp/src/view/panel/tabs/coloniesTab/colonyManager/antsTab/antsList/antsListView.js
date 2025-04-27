@@ -2,7 +2,6 @@ import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import antsListTmpl from './antsListTmpl.html';
 import { AntView } from "./antView";
 import { EntityTypes } from "@domain/enum/entityTypes";
-import { AntTypes } from "@domain/enum/antTypes";  
 
 class AntsListView extends BaseGameHTMLView {
 
@@ -10,16 +9,16 @@ class AntsListView extends BaseGameHTMLView {
         super(el);
         this._antViews = {};
 
-        this.$domain.events.on('antDied', this._onAntDied.bind(this));
-        this.$domain.events.on('antBorn', this._onAntBorn.bind(this));
-        this.$domain.events.on('queenFlewNuptialFlight', this._onSomeoneFlewNuptialFlight.bind(this));
+        this.$domain.myState.on('antDied', this._onAntDied.bind(this));
+        this.$domain.myState.on('antBorn', this._onAntBorn.bind(this));
+        this.$domain.myState.nuptialEnvironment.on('queenFlewIn', this._onSomeoneFlewNuptialFlight.bind(this))
 
         this._render();
     }
 
     manageColony(colony) {
         this._colony = colony;
-        this._ants = this.$domain.getAntsFromColony(this._colony.id);
+        this._ants = this.$domain.myState.getAntsFromColony(this._colony.id);
 
         this._renderAnts();
         this._renderNoAntsMode();
@@ -89,12 +88,12 @@ class AntsListView extends BaseGameHTMLView {
         this._renderNoAntsMode();
     }
 
-    _onSomeoneFlewNuptialFlight(ant) {
+    _onSomeoneFlewNuptialFlight(antId) {
         if (!this._isActive()) {
             return;
         }
-        if (this._isAntInList(ant)) {
-            this._removeAntFromList(ant.id);
+        if (this._isAntInList(antId)) {
+            this._removeAntFromList(antId);
         }
     }
 
@@ -102,9 +101,9 @@ class AntsListView extends BaseGameHTMLView {
         return entity.type == EntityTypes.ANT && entity.fromColony == this._colony.id;
     }
 
-    _isAntInList(checkingAnt) {
+    _isAntInList(checkingAntId) {
         for (let ant of this._ants) {
-            if (ant.id == checkingAnt.id) {
+            if (ant.id == checkingAntId) {
                 return true;
             }
         }

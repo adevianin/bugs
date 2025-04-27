@@ -68,12 +68,11 @@ class QueenAnt extends BaseAnt {
     }
 
     _playFlyNuptialFlight(action) {
+        this.isInNuptialFlight = true;
         this._requestActionAnimation(ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT, {
             startPosition: this.position,
             isBornInNuptialFlight: action.isBornInNuptialFlight
         });
-        this.isInNuptialFlight = true;
-        this._emitToEventBus('queenFlewNuptialFlight');
     }
 
     _playFlyNuptialFlightBack(action) {
@@ -88,7 +87,7 @@ class QueenAnt extends BaseAnt {
     _playGotFertilized(action) {
         this.isFertilized = true;
         this._breedingMaleGenome = Genome.buildFromJson(action.breedingMaleGenome);
-        this.emit('gotFertilized');
+        this.events.emit('gotFertilized');
     }
 }
 

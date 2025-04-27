@@ -13,17 +13,21 @@ class ItemView extends EntityView {
     constructor(entity, entitiesContainer) {
         super(entity, entitiesContainer);
 
-        this._stopListenPickedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_WAS_PICKED_UP}`, this._onPickedAnimationRequest.bind(this));
-        this._stopListenDroppedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_WAS_DROPPED}`, this._onDroppedAnimationRequest.bind(this));
-        this._stopListenBeingBringedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_BEING_BRINGED}`, this._onBeingBringedAnimationRequest.bind(this));
+        
+        this._stopListenItemDroppedAR = this.$eventBus.on(`interEntityAnimationRequest:${entity.id}:itemWasDropped`, this._onDroppedAnimationRequest.bind(this));
+
+        // this._stopListenPickedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_WAS_PICKED_UP}`, this._onPickedAnimationRequest.bind(this));
+        // this._stopListenDroppedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_WAS_DROPPED}`, this._onDroppedAnimationRequest.bind(this));
+        // this._stopListenBeingBringedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_BEING_BRINGED}`, this._onBeingBringedAnimationRequest.bind(this));
 
         this._render();
     }
 
     remove() {
-        this._stopListenPickedAnimationRequest();
-        this._stopListenDroppedAnimationRequest();
-        this._stopListenBeingBringedAnimationRequest();
+        this._stopListenItemDroppedAR();
+        // this._stopListenPickedAnimationRequest();
+        // this._stopListenDroppedAnimationRequest();
+        // this._stopListenBeingBringedAnimationRequest();
         super.remove();
     }
 
@@ -40,24 +44,24 @@ class ItemView extends EntityView {
         this._renderEntityState();
     }
 
-    async _playAnimation(animation) {
-        let isPlayed = await super._playAnimation(animation);
-        if (isPlayed) {
-            return true;
+    _playAnimation(animation) {
+        let resp = super._playAnimation(animation);
+        if (resp.isPlayed) {
+            return resp;
         }
 
         switch (animation.type) {
             case ItemView.ANIMATION_TYPES.PICKED: 
                 this._playPickedAnimation(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             case ItemView.ANIMATION_TYPES.DROPPED: 
                 this._playDroppedAnimation(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             case ItemView.ANIMATION_TYPES.BE_BRINGED: 
-                await this._playBeBringedAnimation(animation.params);
-                return true;
+                let animationPromise = this._playBeBringedAnimation(animation.params);
+                return this._makePlayAnimationResponse(true, animationPromise);
             default:
-                throw 'unknown type of animation';
+                return this._makePlayAnimationResponse(false);
         }
     }
 

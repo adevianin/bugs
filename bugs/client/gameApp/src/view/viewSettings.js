@@ -1,9 +1,9 @@
 const VIEW_SETTINGS = {
     showAntSightDistanceView: false,
     showAntEntitySearchingRect: false,
-    showMapChunkGrid: false,
-    showViewChunkGrid: false,
-    showPlayerViewRect: false,
+    showMapChunkGrid: false, //server
+    showViewChunkGrid: true,
+    showPlayerViewRect: true,
     showItemAreaDot: false,
     isFastAnimations: false,
     renderNestId: true

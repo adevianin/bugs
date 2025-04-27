@@ -24,9 +24,9 @@ class ItemSourceView extends EntityView {
     constructor(entity, entitiesContainer) {
         super(entity, entitiesContainer);
 
-        this._stopListenHpChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
-        this._stopListenAccumulatedChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_SOURCE_ACCUMULATED_CHANGED}`, this._onAccumulatedChangeAnimationRequest.bind(this));
-        this._stopListenSeasonChange = this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
+        // this._stopListenHpChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
+        // this._stopListenAccumulatedChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_SOURCE_ACCUMULATED_CHANGED}`, this._onAccumulatedChangeAnimationRequest.bind(this));
+        // this._stopListenSeasonChange = this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
 
         this._render();
     }
@@ -42,9 +42,9 @@ class ItemSourceView extends EntityView {
     remove() {
         super.remove();
         this._hpLineView.remove();
-        this._stopListenHpChange();
-        this._stopListenAccumulatedChange();
-        this._stopListenSeasonChange();
+        // this._stopListenHpChange();
+        // this._stopListenAccumulatedChange();
+        // this._stopListenSeasonChange();
     }
 
     _render() {
@@ -137,21 +137,21 @@ class ItemSourceView extends EntityView {
         this._uiContainer.addChild(fertilityContainer);
     }
 
-    async _playAnimation(animation) {
-        let isPlayed = await super._playAnimation(animation);
-        if (isPlayed) {
-            return true;
+    _playAnimation(animation) {
+        let resp = super._playAnimation(animation);
+        if (resp.isPlayed) {
+            return resp;
         }
 
         switch (animation.type) {
             case ItemSourceView.ANIMATION_TYPES.HP_CHANGE: 
                 this._playHpChange(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             case ItemSourceView.ANIMATION_TYPES.ACCUMULATED_CHANGE: 
                 this._playAccumulatedChange(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             default:
-                return false;
+                return this._makePlayAnimationResponse(false);
         }
     }
 

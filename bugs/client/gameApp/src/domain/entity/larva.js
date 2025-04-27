@@ -1,7 +1,7 @@
 import { EventEmitter } from "@common/utils/eventEmitter";
 import { Genome } from "./genetic/genome";
 
-class Larva extends EventEmitter {
+class Larva {
 
     static buildFromJson(json) {
         let genome = Genome.buildFromJson(json.genome);
@@ -9,7 +9,7 @@ class Larva extends EventEmitter {
     }
 
     constructor(id, name, antType, ateFood, requiredFood, genome) {
-        super();
+        this.events = new EventEmitter();
         this.id = id;
         this.name = name;
         this.antType = antType;
@@ -18,17 +18,13 @@ class Larva extends EventEmitter {
         this.genome = genome;
     }
 
-    get isDied() {
-        return this._ateFood < 0;
-    }
-
     get ateFood() {
         return this._ateFood;
     }
 
     set ateFood(value) {
         this._ateFood = value;
-        this.emit('progressChanged');
+        this.events.emit('progressChanged');
     }
 
 }

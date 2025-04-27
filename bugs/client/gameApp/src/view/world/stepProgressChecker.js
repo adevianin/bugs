@@ -4,7 +4,7 @@ class StepProgressCheker {
 
     constructor(domainFacade) {
         this._domainFacade = domainFacade;
-        this._domainFacade.events.on('stepStart', this._onStepStart.bind(this));
+        this._domainFacade.events.on('stepPack', this._onStepPackReceived.bind(this));
         this._stepStartTime = 0;
         this._estimatedNewStepStartTime = 0;
     }
@@ -28,9 +28,9 @@ class StepProgressCheker {
         }
     }
 
-    _onStepStart() {
+    _onStepPackReceived() {
         this._stepStartTime = performance.now();
-        this._estimatedNewStepStartTime = this._stepStartTime + CONSTS.STEP_TIME * 1000;
+        this._estimatedNewStepStartTime = this._stepStartTime + CONSTS.STEP_TIME * 1000 * 0.99;
     }
 
 

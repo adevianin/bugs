@@ -2,8 +2,13 @@ import { Specie } from "./specie";
 import { SpecieChromosome } from "./specieChromosome";
 import { Genome } from "../genetic/genome";
 import { NuptialMale } from "./nuptialMale";
+import { NuptialEnvironment } from "./nuptialEnvironment";
 
 class NuptialEnvironmentFactory {
+
+    buildNuptialEnvironment() {
+        return new NuptialEnvironment();
+    }
 
     buildSpecie(specieJson) {
         let chromosomes = []

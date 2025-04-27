@@ -7,12 +7,12 @@ class LeafItemView extends ItemView {
     constructor(entity, entitiesContainer) {
         super(entity, entitiesContainer);
 
-        this._stopListenSeasonChange = this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
+        // this._stopListenSeasonChange = this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
     }
 
     remove() {
         super.remove();
-        this._stopListenSeasonChange();
+        // this._stopListenSeasonChange();
     }
 
     _render() {
@@ -34,7 +34,7 @@ class LeafItemView extends ItemView {
     }
 
     _onSeasonChanged() {
-        setTimeout(() => {
+        this._setTimeout(() => {
             this._renderCurrentSeasonSprite();
         }, Math.random() * 10000);
         

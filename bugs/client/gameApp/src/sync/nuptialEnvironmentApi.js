@@ -5,13 +5,13 @@ class NuptialEnvironmentApi {
     }
 
     saveSpecieSchema(specie) {
-        this._requester.post('api/world/nuptial_environment/specie/specie_schema', {
+        this._requester.post('/api/world/nuptial_environment/specie/specie_schema', {
             specie_schema: specie.schema
         });
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
-        return this._requester.post('api/world/nuptial_environment/found_colony', {
+        return this._requester.post('/api/world/nuptial_environment/found_colony', {
             queen_id: queenId,
             nuptial_male_id: nuptialMaleId,
             nest_building_site: [nestBuildingSite.x, nestBuildingSite.y],
@@ -20,7 +20,7 @@ class NuptialEnvironmentApi {
     }
 
     bornNewAntara() {
-        return this._requester.post(`api/world/nuptial_environment/born_new_antara`);
+        return this._requester.post(`/api/world/nuptial_environment/born_new_antara`);
     }
     
 }

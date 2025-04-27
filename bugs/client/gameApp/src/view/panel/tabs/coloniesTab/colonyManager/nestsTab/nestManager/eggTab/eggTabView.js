@@ -1,8 +1,6 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import eggTabTmpl from './eggTabTmpl.html';
 import { EggView } from "./eggView";
-import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
-import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 
 class EggTabView extends BaseGameHTMLView {
@@ -35,8 +33,7 @@ class EggTabView extends BaseGameHTMLView {
     }
 
     _listenNest() {
-        this._stopListenEggBecameLarva = this._nest.on('eggBecameLarva', this._onEggBecameLarva.bind(this));
-        this._stopListenEggDeleted = this._nest.on('eggDeleted', this._onEggDeleted.bind(this));
+        this._stopListenEggDeleted = this._nest.on('eggRemoved', this._onEggDeleted.bind(this));
         this._stopListenEggAdded = this._nest.on('eggAdded', this._onEggAdded.bind(this));
     }
 
@@ -45,7 +42,6 @@ class EggTabView extends BaseGameHTMLView {
             return
         }
 
-        this._stopListenEggBecameLarva();
         this._stopListenEggDeleted();
         this._stopListenEggAdded();
     }
@@ -76,8 +72,8 @@ class EggTabView extends BaseGameHTMLView {
         delete this._eggsViews[egg.id];
     }
 
-    _validate() {
-        let errorId = this.$domain.validateLayingEggInNest(this._nest.id);
+    async _validate() {
+        let errorId = await this.$domain.validateLayingEggInNest(this._nest.id);
         this._renderError(this.$messages[errorId]);
 
         return !errorId;
@@ -100,7 +96,8 @@ class EggTabView extends BaseGameHTMLView {
     }
 
     async _onAddEggBtnClick() {
-        if (!this._validate()) {
+        let isValid = await this._validate();
+        if (!isValid) {
             return;
         }
 
@@ -109,15 +106,16 @@ class EggTabView extends BaseGameHTMLView {
         
         let name = this._generateAntName();
         let isFertilized = this._isFertilizeCheckbox.checked;
-        try {
-            await this.$domain.layEggInNest(this._nest.id, name, isFertilized);
-        } catch (e) {
-            if (e instanceof ConflictRequestError) {
-                this._validate();
-            } else if (e instanceof GenericRequestError) {
+
+        let result = await this.$domain.layEggInNest(this._nest.id, name, isFertilized);
+        if (!result.success) {
+            if (result.errCode == ErrorCodes.CONFLICT) {
+                await this._validate();
+            } else {
                 this._renderError(this.$messages['SOMETHING_WENT_WRONG']);
             }
         }
+        
         this._toggleAddEggBtn(true);
         this._addEggLoader.toggle(false);
     }

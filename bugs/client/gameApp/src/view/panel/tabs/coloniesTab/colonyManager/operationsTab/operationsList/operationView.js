@@ -12,10 +12,7 @@ class OperationView extends BaseGameHTMLView {
 
         this._stopBtn.addEventListener('click', this._onStopBtnClick.bind(this));
         this._el.addEventListener('click', this._onClick.bind(this));
-    }
-
-    update() {
-        this._renderOperation();
+        this._operation.on('changed', this._renderOperation.bind(this));
     }
 
     toggleSelect(isSelected) {
@@ -41,7 +38,7 @@ class OperationView extends BaseGameHTMLView {
         this._hiringProgressEl.innerHTML = `${workersText} ${warriorsText}`;
     }
 
-    _onStopBtnClick(e) {
+    async _onStopBtnClick(e) {
         e.stopPropagation();
         this.$domain.stopOperation(this._colonyId, this._operation.id);
         this.toggle(false);

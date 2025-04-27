@@ -2,14 +2,17 @@ import { BaseGameService } from "./base/baseGameService";
 
 class UserService extends BaseGameService {
 
-    constructor(mainEventBus, world, userData, notificationsContainer) {
+    constructor(mainEventBus, world, notificationsContainer) {
         super(mainEventBus, world);
-        this._userData = userData;
         this._notificationsContainer = notificationsContainer
     }
 
     get notificationsContainer() {
         return this._notificationsContainer;
+    }
+
+    setUserData(userData) {
+        this._userData = userData;
     }
 
     initNotifications(notifications) {

@@ -24,10 +24,11 @@ class LiveEntityView extends EntityView {
         super(entity, entitiesContainer);
         this._liveEntityHudLayer = liveEntityHudLayer;
 
-        this._stopListenHibernationStatusChangedAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HIBERNATION_STATUS_CHANGED}`, this._onHibernationStatusChangedAnimationRequest.bind(this));
-        this._stopListenWalkAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_WALK}`, this._onWalkAnimationRequest.bind(this));
-        this._stopListenRotateAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_ROTATED}`, this._onRotateAnimationRequest.bind(this));
-        this._stopListenHpChangeAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
+        let eId = this._entity.id;
+        this._stopListenWalkAR = this.$eventBus.on(`entityActionAnimationRequest:${eId}:${ACTION_TYPES.ENTITY_WALK}`, this._onWalkAnimationRequest.bind(this));
+        this._stopListenRotateAR = this.$eventBus.on(`entityActionAnimationRequest:${eId}:${ACTION_TYPES.ENTITY_ROTATED}`, this._onRotateAnimationRequest.bind(this));
+        this._stopListenHpChangeAR = this.$eventBus.on(`entityActionAnimationRequest:${eId}:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
+        this._stopListenHibernationStatusChangedAR = this.$eventBus.on(`entityActionAnimationRequest:${eId}:${ACTION_TYPES.ENTITY_HIBERNATION_STATUS_CHANGED}`, this._onHibernationStatusChangedAnimationRequest.bind(this));
     }
 
     get _entityWidth() {
@@ -75,10 +76,10 @@ class LiveEntityView extends EntityView {
     remove() {
         super.remove();
         this._hpLineView.remove();
-        this._stopListenWalkAnimationRequest();
-        this._stopListenRotateAnimationRequest();
-        this._stopListenHibernationStatusChangedAnimationRequest();
-        this._stopListenHpChangeAnimationRequest();
+        this._stopListenWalkAR();
+        this._stopListenRotateAR();
+        this._stopListenHpChangeAR();
+        this._stopListenHibernationStatusChangedAR();
         this._liveEntityHudLayer.detach(this._hudContainer);
     }
 
@@ -128,27 +129,27 @@ class LiveEntityView extends EntityView {
         this._deadSprite.renderable = isEnabling;
     }
 
-    async _playAnimation(animation) {
-        let isPlayed = await super._playAnimation(animation);
-        if (isPlayed) {
-            return true;
+    _playAnimation(animation) {
+        let resp = super._playAnimation(animation);
+        if (resp.isPlayed) {
+            return resp;
         }
 
         switch (animation.type) {
             case LiveEntityView.ANIMATION_TYPES.WALK: 
-                await this._playWalkAnimation(animation.params);
-                return true;
+                let animPromise = this._playWalkAnimation(animation.params);
+                return this._makePlayAnimationResponse(true, animPromise);
             case LiveEntityView.ANIMATION_TYPES.ROTATE: 
                 this._playRotateAnimation(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             case LiveEntityView.ANIMATION_TYPES.HIBERNATION_STATUS_CHANGED: 
                 this._playHibernationStatusChangedAnimation(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             case LiveEntityView.ANIMATION_TYPES.HP_CHANGED: 
                 this._playHpChangedAnimation(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             default:
-                return false;
+                return this._makePlayAnimationResponse(false);
         }
     }
 
@@ -201,9 +202,8 @@ class LiveEntityView extends EntityView {
 
     _playDiedAnimation() {
         this._renderVisualState(LiveEntityView.VISUAL_STATES.DEAD);
-        setTimeout(() => {
-            this.remove();
-        }, 5000);
+        this._hudContainer.renderable = false;
+        this.events.emit('playedDiedAnimation', 5000);
     }
 
     _onWalkAnimationRequest(params) {

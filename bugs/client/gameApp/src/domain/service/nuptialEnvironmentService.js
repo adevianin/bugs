@@ -1,34 +1,31 @@
 import { BaseGameService } from "./base/baseGameService";
 import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
-import { AntTypes } from '@domain/enum/antTypes';
 
 class NuptialEnvironmentService extends BaseGameService {
 
-    constructor(mainEventBus, world, nuptialEnvironmentFactory, nuptialEnvironmentApi) {
+    constructor(mainEventBus, world, nuptialEnv, nuptialEnvironmentFactory, nuptialEnvironmentApi) {
         super(mainEventBus, world);
+        this._nuptialEnv = nuptialEnv;
         this._nuptialEnvironmentFactory = nuptialEnvironmentFactory;
         this._nuptialEnvironmentApi = nuptialEnvironmentApi;
-        this._nuptialMales = [];
-        this._specie = null;
-
-        this._mainEventBus.on('userLogout', this._onUserLogout.bind(this));
-    }
-
-    get nuptialMales() {
-        return this._nuptialMales;
-    }
-
-    get specie() {
-        return this._specie;
     }
 
     init(specieJson, nuptialMalesJson) {
         this._initSpecie(specieJson);
-        this._setMales(nuptialMalesJson);
+        this._updateMales(nuptialMalesJson);
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
-        return this._requestHandler(() => this._nuptialEnvironmentApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName));
+        try {
+            this._requestHandler(() => this._nuptialEnvironmentApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName));
+            return this._makeSuccessResult();
+        } catch (e) {
+            if (e instanceof ConflictRequestError) {
+                return this._makeErrorResultConflict();
+            } else if (e instanceof GenericRequestError) {
+                return this._makeErrorResultUnknownErr();
+            }
+        }
     }
 
     playAction(action) {
@@ -44,62 +41,35 @@ class NuptialEnvironmentService extends BaseGameService {
         }
     }
 
-    getQueensInNuptialFlightFromUser(userId) {
-        let allAnts = this._world.getAnts();
-        return allAnts.filter(ant => ant.ownerId == userId && ant.antType == AntTypes.QUEEN && ant.isInNuptialFlight);
-    }
-
     bornNewAntara() {
         this._nuptialEnvironmentApi.bornNewAntara();
     }
 
     _initSpecie(specieJson) {
-        this._specie = this._nuptialEnvironmentFactory.buildSpecie(specieJson);
-        this._stopListenSpecieChange = this._specie.on('specieSchemaChanged', this._onSpecieSchemaChanged.bind(this));
+        let specie = this._nuptialEnvironmentFactory.buildSpecie(specieJson);
+        this._nuptialEnv.setSpecie(specie);
+        specie.on('specieSchemaChanged', this._onSpecieSchemaChanged.bind(this));
     }
 
-    _setMales(nuptialMalesJson) {
-        this._nuptialMales = [];
+    _updateMales(nuptialMalesJson) {
+        let nuptialMales = [];
         for (let maleJson of nuptialMalesJson) {
             let male = this._nuptialEnvironmentFactory.buildNuptialMale(maleJson);
-            this._nuptialMales.push(male);
+            nuptialMales.push(male);
         }
-    }
-
-    _removeMale(maleId) {
-        let index = this._nuptialMales.findIndex(male => male.id == maleId);
-        if (index !== -1) {
-            this._nuptialMales.splice(index, 1);
-        }
-        this._emitMalesChanged();
+        this._nuptialEnv.setNuptialMales(nuptialMales);
     }
 
     _playChangedMalesAction(action) {
-        this._setMales(action.males);
-        this._emitMalesChanged();
+        this._updateMales(action.males);
     }
 
     _playSpecieGenesChanged(action) {
-        let chromosomeSpecieGenesJson = action.chromosomeSpecieGenes;
-        for (let chromosomeType in chromosomeSpecieGenesJson) {
-            let specieChromosome = this._specie.getChromosomeByType(chromosomeType);
-            specieChromosome.updateGenes(chromosomeSpecieGenesJson[chromosomeType]);
-        }
-
-    }
-
-    _emitMalesChanged() {
-        this._mainEventBus.emit('nuptialMalesChanged', this._nuptialMales);
-    }
-
-    _onUserLogout() {
-        this._stopListenSpecieChange();
-        this._specie = null;
-        this._nuptialMales = [];
+        this._nuptialEnv.updateSpecieGenes(action.chromosomeSpecieGenes);
     }
 
     _onSpecieSchemaChanged() {
-        this._nuptialEnvironmentApi.saveSpecieSchema(this._specie);
+        this._nuptialEnvironmentApi.saveSpecieSchema(this._nuptialEnv.specie);
     }
 
 }

@@ -1,4 +1,3 @@
-import { EventEmitter } from "@common/utils/eventEmitter";
 import { BaseView } from "./baseView";
 
 class BaseHTMLView extends BaseView {
@@ -6,7 +5,6 @@ class BaseHTMLView extends BaseView {
     constructor(el) {
         super();
         this._el = el;
-        this.events = new EventEmitter();
     }
 
     get el() {
@@ -23,7 +21,7 @@ class BaseHTMLView extends BaseView {
 
     remove() {
         this._el.remove();
-        this.events.removeAllListeners();
+        super.remove();
     }
 
 }

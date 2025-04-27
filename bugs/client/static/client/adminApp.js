@@ -171,6 +171,10 @@ __webpack_require__.r(__webpack_exports__);
 
 class Requester {
 
+    setCsrfToken(token) {
+        this._csrftoken = token;
+    }
+
     post(url, params) {
         return new Promise((res, rej) => {
             axios__WEBPACK_IMPORTED_MODULE_1__["default"].post(url, params, { headers: {
@@ -194,7 +198,7 @@ class Requester {
     }
 
     _readCsrfToken() {
-        return (0,_common_utils_getCookie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('csrftoken');
+        return this._csrftoken || (0,_common_utils_getCookie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('csrftoken');
     }
 
     _buildResultFromAxiosResponse(axiosResponse) {

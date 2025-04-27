@@ -1,3 +1,5 @@
+import { EventEmitter } from "@common/utils/eventEmitter";
+
 class BaseView {
 
     static domain;
@@ -37,8 +39,12 @@ class BaseView {
         BaseView.messages = messages;
     }
 
+    constructor() {
+        this.events = new EventEmitter();
+    }
+
     remove(){
-        throw 'remove method is abstract';
+        this.events.removeAllListeners();
     }
 
 }

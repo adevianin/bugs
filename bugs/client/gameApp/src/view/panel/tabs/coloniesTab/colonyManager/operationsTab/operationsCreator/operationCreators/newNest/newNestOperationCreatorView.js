@@ -4,18 +4,17 @@ import { MarkerTypes } from "@domain/enum/markerTypes";
 import { CONSTS } from "@domain/consts";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
 import { PositionView } from "@view/panel/base/position/positionView";
-import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
-import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { TextInputView } from "@view/panel/base/textInput/textInputView";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { doubleClickProtection } from "@common/utils/doubleClickProtection";
 import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
+import { ErrorCodes } from "@domain/enum/errorCodes";
 
 class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._mainNest = this.$domain.getMainNestOfColony(this._performingColony.id);
+        this._mainNest = this.$domain.getMainNestOfMyColony(this._performingColony.id);
 
         this._render();
 
@@ -61,7 +60,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
     }
 
-    _validate() {
+    async _validate() {
         let isError = false;
 
         if (!this._workersCount.validate()) {
@@ -72,7 +71,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
             isError = true;
         }
 
-        let buildingPosErr = this._validateBuildingPosition();
+        let buildingPosErr = await this._validateBuildingPosition();
         this._renderBuildingPositionError(buildingPosErr);
         if (buildingPosErr) {
             isError = true;
@@ -82,7 +81,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
             isError = true;
         }
 
-        let condErr = this._validateOperationConditions();
+        let condErr = await this._validateOperationConditions();
         this._renderOperationConditionsErr(condErr);
         if (condErr) {
             isError = true;
@@ -91,16 +90,16 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         return !isError;
     }
 
-    _validateBuildingPosition() {
-        return this.$domain.validateBuildingSubNestPosition(this._buildingPosition.value);
+    async _validateBuildingPosition() {
+        return await this.$domain.validateBuildingSubNestPosition(this._buildingPosition.value);
     }
 
     _renderBuildingPositionError(errId) {
         this._buildingPositionErrEl.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
-    _validateOperationConditions() {
-        return this.$domain.validateNewNestOperationConditions(this._performingColony.id);
+    async _validateOperationConditions() {
+        return await this.$domain.validateNewNestOperationConditions(this._performingColony.id);
     }
 
     _renderOperationConditionsErr(condErr) {
@@ -113,13 +112,14 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         this._errorContainerEl.innerHTML = messageId ? this.$mm.get(messageId) : '';
     }
 
-    _checkOperationConditions() {
-        let condErr = this._validateOperationConditions();
+    async _checkOperationConditions() {
+        let condErr = await this._validateOperationConditions();
         this._renderOperationConditionsErr(condErr);
     }
 
-    _showMarkers() {
-        let markers = [this.$domain.buildMarker(MarkerTypes.POINTER, this._buildingPosition.value, { area: CONSTS.NEST_AREA })];
+    async _showMarkers() {
+        let marker = await this.$domain.buildMarker(MarkerTypes.POINTER, this._buildingPosition.value, { area: CONSTS.NEST_AREA });
+        let markers = [marker];
         this._demonstrateMarkersRequest(markers);
     }
 
@@ -131,36 +131,36 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
     _onChooseBuildingSiteBtnClick() {
         this._showMainNest();
-        this.$eventBus.emit('newNestPositionPickRequest', this._mainNest.position, (point) => { 
+        this.$eventBus.emit('newNestPositionPickRequest', this._mainNest.position, async (point) => { 
             this._buildingPosition.value = point;
-            let err = this._validateBuildingPosition();
+            let err = await this._validateBuildingPosition();
             this._renderBuildingPositionError(err);
             this._showMarkers();
         });
     }
 
     async _onStartBtnClick() {
-        let isValid = this._validate();
+        let isValid = await this._validate();
         if (!isValid) {
             return;
         }
         let workersCount = this._workersCount.value;
         let warriorsCount = this._warriorsCount.value;
         let nestName = this._nestNameView.value;
-        try {
-            this._loader.toggle(true);
-            let operationId = await this.$domain.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName);
-            this._performingColony.waitCreatingOperation(operationId, () => {
-                this._onDone();
-                this._loader.toggle(false);
-            });
-        } catch (e) {
-            this._loader.toggle(false);
-            if (e instanceof ConflictRequestError) {
-                this._validate();
-            } else if (e instanceof GenericRequestError) {
+
+        this._loader.toggle(true);
+        
+        let result = await this.$domain.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName);
+        
+        if (result.success) {
+            this._onDone();
+        } else {
+            if (result.errCode == ErrorCodes.CONFLICT) {
+                await this._validate();
+            } else {
                 this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
+            this._loader.toggle(false);
         }
     }
 

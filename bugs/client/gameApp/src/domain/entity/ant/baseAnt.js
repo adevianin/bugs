@@ -58,6 +58,7 @@ class BaseAnt extends LiveEntity {
 
     set homeNestId(homeNestId) {
         this._homeNestId = homeNestId;
+        this.events.emit('homeNestChanged');
     }
 
     get stats() {
@@ -69,7 +70,8 @@ class BaseAnt extends LiveEntity {
     }
 
     set guardianBehavior(behaviorValue) {
-        return this._behavior.guardianBehavior = behaviorValue;
+        this._behavior.guardianBehavior = behaviorValue;
+        this.events.emit('guardianBehaviorChanged');
     }
 
     get isCooperativeBehavior() {
@@ -77,7 +79,8 @@ class BaseAnt extends LiveEntity {
     }
 
     set isCooperativeBehavior(isCooperative) {
-        return this._behavior.isCooperative = isCooperative;
+        this._behavior.isCooperative = isCooperative;
+        this.events.emit('isCooperativeBehaviorChanged');
     }
 
     get genome() {
@@ -96,8 +99,9 @@ class BaseAnt extends LiveEntity {
         return false;
     }
 
-    set isInNuptialFlight(isInNuptialFlight) {
-        this._isInNuptialFlight = isInNuptialFlight;
+    set isInNuptialFlight(val) {
+        this._isInNuptialFlight = val;
+        this.events.emit('isInNuptialFlightChanged');
     }
 
     get isInNuptialFlight() {
@@ -116,8 +120,18 @@ class BaseAnt extends LiveEntity {
         return this._currentActivity;
     }
 
+    set currentActivity(val) {
+        this._currentActivity = val;
+        this.events.emit('currentActivityChanged');
+    }
+
     get isHungry() {
         return this._isHungry;
+    }
+
+    set isHungry(val) {
+        this._isHungry = val;
+        this.events.emit('isHungryChanged');
     }
 
     hasPickedItem() {
@@ -186,18 +200,15 @@ class BaseAnt extends LiveEntity {
     }
 
     _playHomeNestChanged(action) {
-        this._homeNestId = action.nestId;
-        this.emit('homeNestChanged');
+        this.homeNestId = action.nestId;
     }
 
     _playCurrentActivityChanged(action) {
-        this._currentActivity = action.activity;
-        this.emit('currentActivityChanged');
+        this.currentActivity = action.activity;
     }
 
     _playHungryStateChanged(action) {
-        this._isHungry = action.isHungry;
-        this.emit('isHungryChanged');
+        this.isHungry = action.isHungry;
     }
 
 }

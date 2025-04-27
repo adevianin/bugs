@@ -3,6 +3,10 @@ import { getCookie } from '@common/utils/getCookie';
 
 class Requester {
 
+    setCsrfToken(token) {
+        this._csrftoken = token;
+    }
+
     post(url, params) {
         return new Promise((res, rej) => {
             axios.post(url, params, { headers: {
@@ -26,7 +30,7 @@ class Requester {
     }
 
     _readCsrfToken() {
-        return getCookie('csrftoken');
+        return this._csrftoken || getCookie('csrftoken');
     }
 
     _buildResultFromAxiosResponse(axiosResponse) {

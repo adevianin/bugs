@@ -722,6 +722,10 @@ __webpack_require__.r(__webpack_exports__);
 
 class Requester {
 
+    setCsrfToken(token) {
+        this._csrftoken = token;
+    }
+
     post(url, params) {
         return new Promise((res, rej) => {
             axios__WEBPACK_IMPORTED_MODULE_1__["default"].post(url, params, { headers: {
@@ -745,7 +749,7 @@ class Requester {
     }
 
     _readCsrfToken() {
-        return (0,_common_utils_getCookie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('csrftoken');
+        return this._csrftoken || (0,_common_utils_getCookie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('csrftoken');
     }
 
     _buildResultFromAxiosResponse(axiosResponse) {
@@ -777,17 +781,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BaseHTMLView: () => (/* binding */ BaseHTMLView)
 /* harmony export */ });
-/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
-/* harmony import */ var _baseView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./baseView */ "./common/view/base/baseView.js");
+/* harmony import */ var _baseView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseView */ "./common/view/base/baseView.js");
 
 
-
-class BaseHTMLView extends _baseView__WEBPACK_IMPORTED_MODULE_1__.BaseView {
+class BaseHTMLView extends _baseView__WEBPACK_IMPORTED_MODULE_0__.BaseView {
 
     constructor(el) {
         super();
         this._el = el;
-        this.events = new _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
     }
 
     get el() {
@@ -804,7 +805,7 @@ class BaseHTMLView extends _baseView__WEBPACK_IMPORTED_MODULE_1__.BaseView {
 
     remove() {
         this._el.remove();
-        this.events.removeAllListeners();
+        super.remove();
     }
 
 }
@@ -823,6 +824,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BaseView: () => (/* binding */ BaseView)
 /* harmony export */ });
+/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
+
+
 class BaseView {
 
     static domain;
@@ -862,8 +866,12 @@ class BaseView {
         BaseView.messages = messages;
     }
 
+    constructor() {
+        this.events = new _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
+    }
+
     remove(){
-        throw 'remove method is abstract';
+        this.events.removeAllListeners();
     }
 
 }

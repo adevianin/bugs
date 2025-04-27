@@ -14,7 +14,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._mainNest = this.$domain.getMainNestOfColony(this._performingColony.id);
+        this._mainNest = this.$domain.getMainNestOfMyColony(this._performingColony.id);
         this._nestToDestroy = null;
 
         this._render();
@@ -61,7 +61,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
     }
 
-    _validate() {
+    async _validate() {
         let isError = false;
 
         if (!this._workersCount.validate()) {
@@ -84,7 +84,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
             isError = true;
         }
 
-        let condErr = this._validateOperationConditions();
+        let condErr = await this._validateOperationConditions();
         this._renderOperationConditionsErr(condErr);
         if (condErr) {
             isError = true;
@@ -122,8 +122,8 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         this._minAntsCountErrorContainerEl.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
-    _validateOperationConditions() {
-        return this.$domain.validateDestroyNestOperationConditions(this._performingColony.id);
+    async _validateOperationConditions() {
+        return await this.$domain.validateDestroyNestOperationConditions(this._performingColony.id);
     }
 
     _renderOperationConditionsErr(condErr) {
@@ -132,8 +132,8 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         this._startBtn.disabled = !!condErr;
     }
 
-    _checkOperationConditions() {
-        let condErr = this._validateOperationConditions();
+    async _checkOperationConditions() {
+        let condErr = await this._validateOperationConditions();
         this._renderOperationConditionsErr(condErr);
     }
 
@@ -153,7 +153,8 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     async _onStartBtnClick() {
-        if (!this._validate()) {
+        let isValid = await this._validate();
+        if (!isValid) {
             return
         }
         try {
@@ -166,7 +167,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         } catch (e) {
             this._loader.toggle(false);
             if (e instanceof ConflictRequestError) {
-                this._validate();
+                await this._validate();
             } else if (e instanceof GenericRequestError) {
                 this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }

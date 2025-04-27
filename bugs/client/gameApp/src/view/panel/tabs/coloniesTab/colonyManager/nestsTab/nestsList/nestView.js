@@ -11,7 +11,7 @@ class NestView extends BaseGameHTMLView {
         this._render();
 
         this._el.addEventListener('click', this._onClick.bind(this));
-        this._stopListenNameChange = this._nest.on('nameChanged', this._onNameChanged.bind(this));
+        // this._stopListenNameChange = this._nest.on('nameChanged', this._onNameChanged.bind(this));
     } 
 
     toggleSelected(isSelected) {
@@ -20,7 +20,7 @@ class NestView extends BaseGameHTMLView {
 
     remove() {
         super.remove();
-        this._stopListenNameChange();
+        // this._stopListenNameChange();
     }
 
     _render() {

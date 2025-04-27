@@ -26,11 +26,11 @@ const CONSTS = {
     STEP_TIME: null
 }
 
-function initConts(constsValues) {
+function initConsts(constsValues) {
     Object.assign(CONSTS, constsValues)
 }
 
 export {
     CONSTS,
-    initConts
+    initConsts
 }

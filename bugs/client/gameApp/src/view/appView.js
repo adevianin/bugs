@@ -9,19 +9,22 @@ import { WorldView } from './world';
 import { MapPickerMasterView } from './mapPickers/mapPickerMasterView';
 import { randomInt } from '@utils/randomInt';
 import { HelpView } from './help/helpView'; 
+import { VIEW_SETTINGS } from '@view/viewSettings';
 
 class AppView extends BaseGameHTMLView {
     constructor(el) {
         super(el);
 
-        this.$domain.events.on('initStepDone', this._onInitStepDone.bind(this));
+        this.$domain.events.on('worldInited', this._onWorldInited.bind(this));
+        this.$domain.events.on('stepPack', this._onStepPack.bind(this));
+        this.$eventBus.on('viewPointChanged', this._onViewPointChanged.bind(this));
     }
 
     _render() {
         this._el.innerHTML = appTmpl;
         this._el.classList.add('app');
 
-        new ClimateView(this._el.querySelector('[data-climate]'));
+        // new ClimateView(this._el.querySelector('[data-climate]'));
         new PanelView(this._el.querySelector('[data-panel]'));
         
         let canvasContainerEl = this._el.querySelector('[data-canvas-container]');
@@ -34,18 +37,21 @@ class AppView extends BaseGameHTMLView {
 
         let worldContainer = new PIXI.Container();
         globalContainer.addChild(worldContainer);
-        new WorldView(worldContainer);
+        this._worldView = new WorldView(worldContainer);
 
         let mapPickerContainer = new PIXI.Container();
         worldContainer.addChild(mapPickerContainer);
         new MapPickerMasterView(mapPickerContainer, this._el.querySelector('[data-map-picker-border]'));
 
         new HelpView(this._el.querySelector('[data-help]'));
+
+        this._viewRectContainer = new PIXI.Container();
+        globalContainer.addChild(this._viewRectContainer);
         
         this.$pixiApp.resize();
     }
 
-    _onInitStepDone() {
+    _onWorldInited() {
         this._render();
         this._showStartPosition();
         this.events.emit('ready');
@@ -63,6 +69,47 @@ class AppView extends BaseGameHTMLView {
                 y: randomInt(0, worldSize[1])
             });
         }
+    }
+
+    async _onStepPack(stepPack) {
+        if (this._worldView.checkIsRefreshAnimationsNeeded()) {
+            await this._worldView.refresh();
+            return;
+        }
+
+        for (let viewRectMigration of stepPack.viewRectMigrations) {
+            if (viewRectMigration.isMigrationIntoViewRect) {
+                this._worldView.entityGotIntoView(viewRectMigration.entity);
+            } else {
+                this._worldView.entityGotOutOfView(viewRectMigration.entityId);
+            }
+        }
+
+        for (let entityAnim of stepPack.entityAnimations) {
+            this.$eventBus.emit(`entityActionAnimationRequest:${entityAnim.entityId}:${entityAnim.actionType}`, entityAnim.animationParams)
+        }
+    }
+
+    async _onViewPointChanged(viewPoint, viewRect) {
+        if (VIEW_SETTINGS.showPlayerViewRect) {
+            this._renderViewRect(viewRect);
+        }
+        let result = await this.$domain.changePlayerViewPoint(viewPoint, viewRect);
+        if (result.isSomeChunkVisibilityChanged) {
+            this._worldView.updateCurrentEntities(result.entities);
+            this.$eventBus.emit('chunkVisibilityChanged');
+        }
+    }
+
+    _renderViewRect(viewRect) {
+        if (this._viewRectGraphics) {
+            this._viewRectContainer.removeChild(this._viewRectGraphics);
+        }
+        this._viewRectGraphics = new PIXI.Graphics();
+        this._viewRectGraphics
+            .rect(viewRect.x, viewRect.y, viewRect.width, viewRect.height)
+            .stroke({width: 1, color: 0x0000FF});
+        this._viewRectContainer.addChild(this._viewRectGraphics);
     }
 }
 

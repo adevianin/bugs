@@ -2,14 +2,13 @@ import { EventEmitter } from "@common/utils/eventEmitter";
 
 class ServerConnection {
 
-    constructor(socketURL) {
+    constructor() {
         this.events = new EventEmitter();
-        this._socketURL = socketURL;
     }
 
-    connect() {
+    connect(socketURL) {
         return new Promise((res) => {
-            this._socket = new WebSocket(this._socketURL);
+            this._socket = new WebSocket(socketURL);
             this._socket.onmessage = this._emitMessage.bind(this);
             this._socket.onopen = () => {
                 res();

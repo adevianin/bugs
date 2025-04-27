@@ -26,9 +26,9 @@ class BasePickerView extends BaseGraphicView {
             throw 'already activated';
         }
         this._isActivated = true;
-        this._stopListenSomeChunkVisibilityStateChanged = this.$eventBus.on('someChunkVisibilityStateChanged', this._onSomeChunkVisibilityStateChanged.bind(this));
-        this._stopListenNestBorn = this.$domain.events.on('nestBorn', this._onNestBorn.bind(this));
-        this._stopListenNestDied = this.$domain.events.on('nestDied', this._onNestDied.bind(this));
+        this._stopListenChunkVisibilityChanged = this.$eventBus.on('chunkVisibilityChanged', this._onChunkVisibilityChanged.bind(this));
+        this._stopListenNestBorn = this.$domain.myState.on('nestBorn', this._onNestBorn.bind(this));
+        this._stopListenNestDied = this.$domain.myState.on('nestDied', this._onNestDied.bind(this));
     }
 
     deactivate() {
@@ -36,18 +36,18 @@ class BasePickerView extends BaseGraphicView {
             throw 'already deactivated';
         }
         this._isActivated = false;
-        this._stopListenSomeChunkVisibilityStateChanged();
+        this._stopListenChunkVisibilityChanged();
         this._stopListenNestBorn();
         this._stopListenNestDied();
         this._clearArea();
     }
 
-    _updateArea() {
-        this._prepareAreaData();
+    async _updateArea() {
+        await this._prepareAreaData();
         this._renderAreaData();
     }
 
-    _prepareAreaData() {
+    async _prepareAreaData() {
         throw 'not realized';
     }
 
@@ -166,7 +166,7 @@ class BasePickerView extends BaseGraphicView {
         this._removeExclusions();
     }
 
-    _onSomeChunkVisibilityStateChanged() {
+    _onChunkVisibilityChanged() {
         this._updateArea();
     }
 

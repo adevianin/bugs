@@ -5,6 +5,8 @@ import { ItemTypes } from "@domain/enum/itemTypes";
 import { distance, distance_point } from "@utils/distance";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { CONSTS } from "@domain/consts";
+import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
+import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 
 class ColonyService extends BaseGameService {
 
@@ -42,8 +44,16 @@ class ColonyService extends BaseGameService {
     }
 
     async buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
-        let result = await this._requestHandler(() => this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName));
-        return result.operationId;
+        try {
+            let result = await this._requestHandler(() => this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName));
+            return this._makeSuccessResult({ operationId: result.operationId });
+        } catch (e) {
+            if (e instanceof ConflictRequestError) {
+                return this._makeErrorResultConflict();
+            } else if (e instanceof GenericRequestError) {
+                return this._makeErrorResultUnknownErr();
+            }
+        }
 }   
 
     async destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
@@ -190,7 +200,9 @@ class ColonyService extends BaseGameService {
         return null;
     }
 
-    validateBreedingQueen(queen) {
+    validateBreedingQueen(queenId) {
+        let queen = this._world.findEntityById(queenId);
+
         if (!queen) {
             return GAME_MESSAGE_IDS.BREEDING_QUEEN_NEEDED;
         }

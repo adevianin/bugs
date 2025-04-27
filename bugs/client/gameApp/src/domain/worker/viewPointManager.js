@@ -1,29 +1,19 @@
-class ChunksVisibilityManager {
+class ViewPointManager {
 
-    static _instance = null;
-
-    static init(eventBus, chunks) {
-        ChunksVisibilityManager._instance = new ChunksVisibilityManager(eventBus, chunks);
+    constructor() {
+        this._chunksVisibilityState = {};
     }
 
-    static isChunkVisible(chunkId) {
-        return ChunksVisibilityManager._instance.isChunkVisible(chunkId);
+    get chunks() {
+        return this._chunks;
     }
 
-    static getVisibleChunkIds() {
-        return ChunksVisibilityManager._instance.getVisibleChunkIds();
-    }
-
-    constructor(eventBus, chunks) {
-        this._eventBus = eventBus;
+    setChunks(chunks) {
         this._chunks = chunks;
 
-        this._chunksVisibilityState = {};
         for (let chunkId in chunks) {
             this._chunksVisibilityState[chunkId] = false;
         }
-
-        this._eventBus.on('viewPointChanged', this._onViewPointChanged.bind(this));
     }
 
     isChunkVisible(chunkId) {
@@ -41,11 +31,7 @@ class ChunksVisibilityManager {
         return visibleChunkIds;
     }
 
-    _onViewPointChanged(viewPoint, viewRect) {
-        this._updateChunksVisibleStateForViewRect(viewRect);
-    }
-
-    _updateChunksVisibleStateForViewRect(viewRect) {
+    updateChunksVisibleStateForViewRect(viewRect) {
         let isSomeChunkVisibilityChanged = false;
         for (let chunkId in this._chunks) {
             let chunk = this._chunks[chunkId];
@@ -54,16 +40,25 @@ class ChunksVisibilityManager {
             this._chunksVisibilityState[chunkId] = isVisibleChunk;
             if (isStateChanged) {
                 isSomeChunkVisibilityChanged = true;
-                this._eventBus.emit(`chunkVisibilityStateChanged:${chunkId}`, isVisibleChunk);
             }
         }
 
-        if (isSomeChunkVisibilityChanged) {
-            this._eventBus.emit('someChunkVisibilityStateChanged');
+        return isSomeChunkVisibilityChanged;
+    }
+
+    getEntitiesFromVisibleChunks() {
+        let entities = [];
+        for (let chunkId in this._chunks) {
+            if (this.isChunkVisible(chunkId)) {
+                let chunk = this._chunks[chunkId];
+                entities = entities.concat(chunk.entities);
+            }
         }
+
+        return entities;
     }
 }
 
 export {
-    ChunksVisibilityManager
+    ViewPointManager
 }

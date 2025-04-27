@@ -48,10 +48,14 @@ class GenomeView extends BaseGameHTMLView {
 
         el.querySelector('[data-chromosome-set-title]').innerHTML = title;
 
-        this._renderChromosome(el.querySelector('[data-body-chromosome]'), chromosomesSet.getChromosomeByType(ChromosomesTypes.BODY));
-        this._renderChromosome(el.querySelector('[data-development-chromosome]'), chromosomesSet.getChromosomeByType(ChromosomesTypes.DEVELOPMENT));
-        this._renderChromosome(el.querySelector('[data-adaptation-chromosome]'), chromosomesSet.getChromosomeByType(ChromosomesTypes.ADAPTATION));
-        this._renderChromosome(el.querySelector('[data-specialization-chromosome]'), chromosomesSet.getChromosomeByType(ChromosomesTypes.SPECIALIZATION));
+        this._renderChromosome(el.querySelector('[data-body-chromosome]'), this._getChromosomeByType(chromosomesSet, ChromosomesTypes.BODY));
+        this._renderChromosome(el.querySelector('[data-development-chromosome]'), this._getChromosomeByType(chromosomesSet, ChromosomesTypes.DEVELOPMENT));
+        this._renderChromosome(el.querySelector('[data-adaptation-chromosome]'), this._getChromosomeByType(chromosomesSet, ChromosomesTypes.ADAPTATION));
+        this._renderChromosome(el.querySelector('[data-specialization-chromosome]'), this._getChromosomeByType(chromosomesSet, ChromosomesTypes.SPECIALIZATION));
+    }
+
+    _getChromosomeByType(chromosomesSet, chromosomeType) {
+        return chromosomesSet.find(ch => ch.type == chromosomeType);
     }
 
     _renderChromosome(el, chromosome) {

@@ -10,6 +10,10 @@ class ItemAreaView extends EntityView {
         this._render();
     }
 
+    remove() {
+        super.remove();
+    }
+
     _render() {
         if (VIEW_SETTINGS.showItemAreaDot) {
             this._renderDot();

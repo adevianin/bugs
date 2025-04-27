@@ -26,24 +26,30 @@ class AntView extends LiveEntityView {
             this._renderDebugSightDistance();
         }
 
-        this._stopListenFlewNuptialAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT}`, this._onFlewNuptialAnimationRequest.bind(this));
-        this._stopListenFlewNuptialBackAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT_BACK}`, this._onFlewNuptialBackAnimationRequest.bind(this));
-        this._stopListenAntGotInNestAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_GOT_IN_NEST}`, this._onAntGotInNestAnimationRequest.bind(this));
-        this._stopListenAntGotOutOfNestAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST}`, this._onAntGotOutOfNestAnimationRequest.bind(this));
-        this._stopListenAntPickedUpItemAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ANT_PICKED_UP_ITEM}`, this._onAntPickedUpItemAnimationRequest.bind(this));
-        this._stopListenAntDroppedItemAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ANT_DROPPED_PICKED_ITEM}`, this._onAntDroppedItemAnimationRequest.bind(this));
+        let antId = this._entity.id;
+        this._stopListenAntGotInNestAR = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ENTITY_GOT_IN_NEST}`, this._onAntGotInNestAnimationRequest.bind(this));
+        this._stopListenAntGotOutOfNestAR = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST}`, this._onAntGotOutOfNestAnimationRequest.bind(this));
+        this._stopListenAntPickedUpItemAR = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ANT_PICKED_UP_ITEM}`, this._onAntPickedUpItemAnimationRequest.bind(this));
+        this._stopListenAntDroppedItemAR = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ANT_DROPPED_PICKED_ITEM}`, this._onAntDroppedItemAnimationRequest.bind(this));
+        this._stopListenFlewNuptialAR = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT}`, this._onFlewNuptialAnimationRequest.bind(this));
+        // this._stopListenFlewNuptialBackAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT_BACK}`, this._onFlewNuptialBackAnimationRequest.bind(this));
+        
     }
 
     remove() {
         super.remove();
         this._entityHighlighter.remove();
-        this._stopListenFlewNuptialAnimationRequest();
-        this._stopListenFlewNuptialBackAnimationRequest();
-        this._stopListenAntGotInNestAnimationRequest();
-        this._stopListenAntGotOutOfNestAnimationRequest();
-        this._stopListenAntPickedUpItemAnimationRequest();
-        this._stopListenAntDroppedItemAnimationRequest();
-        clearTimeout(this._hideStatsTimer);
+        this._stopListenAntGotInNestAR();
+        this._stopListenAntGotOutOfNestAR();
+        this._stopListenAntPickedUpItemAR();
+        this._stopListenAntDroppedItemAR();
+        this._stopListenFlewNuptialAR();
+        // this._stopListenFlewNuptialAnimationRequest();
+        // this._stopListenFlewNuptialBackAnimationRequest();
+        // this._stopListenAntGotInNestAnimationRequest();
+        // this._stopListenAntGotOutOfNestAnimationRequest();
+        // this._stopListenAntPickedUpItemAnimationRequest();
+        // this._stopListenAntDroppedItemAnimationRequest();
     }
 
     _render() {
@@ -62,12 +68,13 @@ class AntView extends LiveEntityView {
 
     _renderEntityState() {
         super._renderEntityState();
+        this._renderPickedItemState();
+    }
 
-        if (this._entity.hasPickedItem()) { 
-            let item = this.$domain.findEntityById(this._entity.pickedItemId);
+    async _renderPickedItemState() {
+        if (this._entity.pickedItemId) {
+            let item = await this.$domain.findEntityById(this._entity.pickedItemId);
             this._renderPickedItemView(item);
-        } else {
-            this._removePickedItemView();
         }
     }
 
@@ -172,47 +179,46 @@ class AntView extends LiveEntityView {
         defenseIcon.position.set(defenseColCenterX, 0);
         defenseText.position.set(defenseColCenterX, maxHpIcon.height);
 
-        this._hideStatsTimer = setTimeout(() => {
+        this._setTimeout(() => {
             this._removeStats();
         }, UI_CONSTS.WORLD_VIEW_ANT_STATS_SHOW_TIEM);
     }
 
     _removeStats() {
         if (this._statsContainer) {
-            this._hideStatsTimer = null;
             this._hudContainer.removeChild(this._statsContainer);
             this._statsContainer.destroy();
             this._statsContainer = null;
         }
     }
 
-    async _playAnimation(animation) {
-        let isPlayed = await super._playAnimation(animation);
-        if (isPlayed) {
-            return true;
+    _playAnimation(animation) {
+        let resp = super._playAnimation(animation);
+        if (resp.isPlayed) {
+            return resp;
         }
 
         switch (animation.type) {
             case AntView.ANIMATION_TYPES.FLEW_NUPTIAL: 
-                await this._playFlewNuptialAnimation(animation.params);
-                return true;
+                let animPromise = this._playFlewNuptialAnimation(animation.params);
+                return this._makePlayAnimationResponse(true, animPromise);
             case AntView.ANIMATION_TYPES.FLEW_NUPTIAL_BACK: 
                 this._playFlewNuptialBackAnimation(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             case AntView.ANIMATION_TYPES.GOT_IN_NEST: 
                 this._playGotInNestAnimation(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             case AntView.ANIMATION_TYPES.GOT_OUT_OF_NEST: 
                 this._playGotOutOfNestAnimation(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             case AntView.ANIMATION_TYPES.PICKED_UP_ITEM: 
                 this._playPickedUpItemAnimation(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             case AntView.ANIMATION_TYPES.DROPPED_ITEM: 
                 this._playDroppedItemAnimation(animation.params);
-                return true;
+                return this._makePlayAnimationResponse(true);
             default:
-                throw 'unknown type of animation';
+                return this._makePlayAnimationResponse(false);
         }
     }
 
@@ -286,13 +292,13 @@ class AntView extends LiveEntityView {
     }
 
     _playDroppedItemAnimation({ droppingItemId }) {
-        let item = this.$domain.findEntityById(droppingItemId);
-        if (item) {
-            item.playItemDrop({
-                x: this._entityContainer.x,
-                y: this._entityContainer.y,
-            });
+        let dropPosition = {
+            x: this._entityContainer.x,
+            y: this._entityContainer.y
         }
+        this.$eventBus.emit(`interEntityAnimationRequest:${droppingItemId}:itemWasDropped`, {
+            dropPosition
+        });
         this._removePickedItemView();
     }
 
@@ -312,9 +318,9 @@ class AntView extends LiveEntityView {
         this._addAnimation(AntView.ANIMATION_TYPES.GOT_OUT_OF_NEST, params);
     }
 
-    _onAntPickedUpItemAnimationRequest(params) {
+    async _onAntPickedUpItemAnimationRequest(params) {
         this._addAnimation(AntView.ANIMATION_TYPES.PICKED_UP_ITEM, {
-            item: this.$domain.findEntityById(params.itemId)
+            item: await this.$domain.findEntityById(params.itemId)
         });
     }
 

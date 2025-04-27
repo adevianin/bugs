@@ -61,42 +61,48 @@ class Nest extends Entity {
 
     rename(newName) {
         this._name = newName;
-        this.emit('nameChanged');
+        this.events.emit('nameChanged');
     }
     
     eggDelete(eggId) {
         let egg = this._findEggById(eggId);
         this._removeEggFromArray(egg);
-        this.emit('eggDeleted', egg);
+        this.events.emit('eggRemoved', egg.id);
     }
 
     changeCasteForEgg(eggId, antType) {
         let egg = this._findEggById(eggId);
         egg.antType = antType;
+        this.events.emit('eggUpdated', egg.id, {
+            antType: egg.antType,
+        });
     }
 
     changeNameForEgg(eggId, name) {
         let egg = this._findEggById(eggId);
         egg.name = name;
+        this.events.emit('eggUpdated', egg.id, {
+            name: egg.name,
+        });
     }
 
     larvaDelete(larvaId) {
         let larva = this._findLarvaById(larvaId);
         this._removeLarvaFromArray(larva);
-        this.emit('larvaDeleted', larva);
+        this.events.emit('larvaRemoved', larva.id);
     }
 
     addNewEgg(egg) {
         this._eggs.push(egg);
-        this.emit('eggAdded', egg);
+        this.events.emit('eggAdded', egg);
     }
 
     moveEggToLarvaChamber(eggId, larva) {
         let egg = this._findEggById(eggId);
         this._removeEggFromArray(egg);
-        this.emit('eggBecameLarva', egg);
+        this.events.emit('eggRemoved', egg.id);
         this._larvae.push(larva);
-        this.emit('larvaAdded', larva);
+        this.events.emit('larvaAdded', larva);
     }
 
     _removeEggFromArray(egg) {
@@ -148,13 +154,16 @@ class Nest extends Entity {
 
     _playStoredCaloriesChanged(action) {
         this._storedCalories = action.storedCalories;
-        this.emit('storedCaloriesChanged');
+        this.events.emit('storedCaloriesChanged');
     }
 
     _playLarvaFed(action) {
         let larva = this._larvae.find(larva => larva.id == action.larvaId);
         if (larva) { // for case when larva is not yet created after http request
             larva.ateFood = action.ateFood;
+            this.events.emit('larvaUpdated', larva.id, {
+                ateFood: larva.ateFood
+            });
         }
     }
 
@@ -163,7 +172,7 @@ class Nest extends Entity {
         if (larva) {
             let index = this._larvae.indexOf(larva);
             this._larvae.splice(index, 1);
-            this.emit('larvaIsReady', larva);
+            this.events.emit('larvaRemoved', larva.id);
         }
     }
     
@@ -171,6 +180,10 @@ class Nest extends Entity {
         let egg = this._findEggById(action.eggId);
         if (egg) { // for case when egg is not yet created after http request
             egg.updateProgress(action.progress, action.state);
+            this.events.emit('eggUpdated', egg.id, {
+                state: egg.state,
+                progress: egg.progress
+            });
         }
     }
 

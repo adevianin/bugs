@@ -20,7 +20,7 @@ class MapController extends BaseGraphicView {
             height: worldSize[1]
         };
         this._pixiApp = pixiApp;
-        this._throttledOnViewPointChange = throttle(this._onViewPointChange.bind(this), 200);
+        this._throttledOnViewPointChange = throttle(this._onViewPointChange.bind(this), 500);
 
         this._renderHandler();
 
@@ -155,8 +155,10 @@ class MapController extends BaseGraphicView {
     }
 
     _buildViewRectForViewPoint(viewPoint) {
-        let viewRectWidth = window.screen.width * 1.5;
-        let viewRectHeight = window.screen.height * 1.5;
+        // let viewRectWidth = window.screen.width * 1.5;
+        // let viewRectHeight = window.screen.height * 1.5;
+        let viewRectWidth = 300;
+        let viewRectHeight = 300;
         return {
             x: viewPoint.x - viewRectWidth / 2,
             y: viewPoint.y - viewRectHeight / 2,

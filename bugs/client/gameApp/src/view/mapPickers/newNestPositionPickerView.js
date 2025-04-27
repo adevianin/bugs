@@ -1,6 +1,5 @@
 import { BasePickerView } from "./basePickerView";
 import { distance_point } from "@utils/distance";
-import { ChunksVisibilityManager } from "@view/world/chunksVisibilityManager";
 
 class NewNestPositionPickerView extends BasePickerView {
 
@@ -18,8 +17,8 @@ class NewNestPositionPickerView extends BasePickerView {
         this._stopListenBgClick();
     }
 
-    _prepareAreaData() {
-        let { area, exclusions } = this.$domain.getNestBuildableArea(this._mainNestPosition, ChunksVisibilityManager.getVisibleChunkIds());
+    async _prepareAreaData() {
+        let { area, exclusions } = await this.$domain.getNestBuildableArea(this._mainNestPosition);
         this._updateAreaData(area, exclusions);
     }
 

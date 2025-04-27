@@ -1,16 +1,18 @@
-import { initSyncLayer } from './sync';
-import { initDomainLayer } from './domain';
 import { initViewLayer } from './view';
+import { DomainFacade } from '@view/domainFacade';
 import { readInitialData } from '@common/utils/readInitialData';
+import { getCookie } from '@common/utils/getCookie';
+import { EventEmitter } from '@common/utils/eventEmitter';
 
 async function initApp() {
     let initialData = readInitialData();
 
-    let syncLayer = initSyncLayer(initialData);
-    let domainFacade = initDomainLayer(syncLayer.apis, syncLayer.serverConnection, initialData);
+    let domainWorker = new Worker(`${STATIC_CLIENT_PATH}/domainWorker.js`);
+    let eventBus = new EventEmitter();
+    let domainFacade = new DomainFacade(eventBus, domainWorker);
     await initViewLayer(domainFacade);
 
-    domainFacade.start();
+    domainFacade.init(initialData.user, initialData.mainSocketURL, getCookie('csrftoken'));
 }
 
 initApp();
