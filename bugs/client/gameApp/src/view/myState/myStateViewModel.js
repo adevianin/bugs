@@ -3,6 +3,7 @@ import { ColonyViewModel } from "./colonyViewModel";
 import { AntViewModel } from "./antViewModel";
 import { NestViewModel } from "./nestViewModel";
 import { NuptialEnvironmentViewModel } from "./nuptialEnvironmentViewModel";
+import { NotificationsContainerViewModel } from "./notificationsContainerViewModel";
 
 class MyStateViewModel extends BaseViewModel {
 
@@ -24,16 +25,18 @@ class MyStateViewModel extends BaseViewModel {
         }
 
         let nuptialEnvironment = NuptialEnvironmentViewModel.buildFromJson(json.nuptialEnvironment);
+        let notificationsContainer = NotificationsContainerViewModel.buildFromJson(json.notificationsContainer);
 
-        return new MyStateViewModel(colonies, ants, nests, nuptialEnvironment);
+        return new MyStateViewModel(colonies, ants, nests, nuptialEnvironment, notificationsContainer);
     }
 
-    constructor(colonies, ants, nests, nuptialEnvironment) {
+    constructor(colonies, ants, nests, nuptialEnvironment, notificationsContainer) {
         super({});
         this._colonies = colonies;
         this._ants = ants;
         this._nests = nests;
         this._nuptialEnvironment = nuptialEnvironment;
+        this._notificationsContainer = notificationsContainer;
     }
 
     get colonies() {
@@ -50,6 +53,10 @@ class MyStateViewModel extends BaseViewModel {
 
     get nuptialEnvironment() {
         return this._nuptialEnvironment;
+    }
+
+    get notificationsContainer() {
+        return this._notificationsContainer;
     }
 
     getNestsFromColony(colonyId) {
@@ -140,6 +147,7 @@ class MyStateViewModel extends BaseViewModel {
         this._applyColoniesPatch(patch.colonies);
         this._applyAntsPatch(patch.ants);
         this.nuptialEnvironment.applyPatch(patch.nuptialEnvironment);
+        this.notificationsContainer.applyPatch(patch.notificationsContainer);
     }
 
     _applyNestsPatch(nestsPatch) {

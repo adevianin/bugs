@@ -35,6 +35,7 @@ class DomainFacade {
     }
 
     async init(userData, mainSocketURL, csrftoken) {
+        this._userData = userData;
         let initPack = await this._sendCommand('init', {
             userData, mainSocketURL, csrftoken
         }, true);
@@ -355,9 +356,13 @@ class DomainFacade {
     //     return this._accountService.logout();
     // }
 
-    // getUserData() {
-    //     return this._userService.getUserData();
-    // }
+    getUserData() {
+        return this._userData;
+    }
+
+    refreshUserData() {
+
+    }
 
     // verifyEmailRequest() {
     //     return this._accountService.verifyEmailRequest();

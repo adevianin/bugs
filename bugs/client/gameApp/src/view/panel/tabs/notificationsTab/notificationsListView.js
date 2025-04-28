@@ -6,7 +6,7 @@ class NotificationsListView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);
-        this._notificationsContainer = this.$domain.notificationsContainer;
+        this._notificationsContainer = this.$domain.myState.notificationsContainer;
         this._notifications = this._notificationsContainer.notifications.slice().reverse();
         this._notificationViews = [];
         this._currentPortionIndex = 0;

@@ -169,7 +169,7 @@ class DomainWorker {
         let mainSocketURL = data.mainSocketURL;
         let csrftoken = data.csrftoken;
 
-        this._userService.setUserData(userData)
+        this._userService.setUserData(userData);
         this._entitySerializer.setUserData(userData);
         this._requester.setCsrfToken(csrftoken);
         this._myStateCollector.setUserData(userData);

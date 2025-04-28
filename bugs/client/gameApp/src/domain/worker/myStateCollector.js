@@ -1,9 +1,10 @@
 class MyStateCollector {
 
-    constructor(eventBus, world, nuptialEnv, entitySerializer, colonySerializer) {
+    constructor(eventBus, world, nuptialEnv, userService, entitySerializer, colonySerializer) {
         this._eventBus = eventBus;
         this._world = world;
         this._nuptialEnv = nuptialEnv;
+        this._userService = userService;
         this._entitySerializer = entitySerializer;
         this._colonySerializer = colonySerializer;
 
@@ -18,6 +19,7 @@ class MyStateCollector {
         this._eventBus.on('colonyDied', this._onColonyDied.bind(this));
         this._eventBus.on('specieChromosomesGenesChanged', this._onSpecieChromosomesSpecieGenesChanged.bind(this));
         this._eventBus.on('nuptialMalesChanged', this._onNuptialMalesChanged.bind(this));
+        this._eventBus.on('newNotification', this._onNewNotification.bind(this));
     }
 
     setUserData(userData) {
@@ -38,6 +40,9 @@ class MyStateCollector {
                 queens: queenInNuptialFlightIds,
                 males: this._nuptialEnv.nuptialMales,
                 specie: this._nuptialEnv.specieData
+            },
+            notificationsContainer: {
+                notifications: this._userService.getNotifications()
             }
         }
     }
@@ -76,6 +81,9 @@ class MyStateCollector {
                         update: []
                     }
                 }
+            },
+            notificationsContainer: {
+                add: []
             }
         };
     }
@@ -442,6 +450,10 @@ class MyStateCollector {
             };
             specieUpdatePatch.specieChromosomes.update.push(specieChromosomeUpdatePatch);
         }
+    }
+
+    _onNewNotification(notification) {
+        this._myStatePatch.notificationsContainer.add.push(notification);
     }
 
 }

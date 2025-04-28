@@ -15,7 +15,6 @@ import { ColonyService } from "@domain/service/colonyService";
 import { UserService } from "@domain/service/userService";
 import { NuptialEnvironmentService } from "@domain/service/nuptialEnvironmentService";
 import { NestService } from "@domain/service/nestService";
-import { NotificationsContainer } from "@domain/entity/notificationsContainer";
 import { RatingContainer } from "@domain/entity/ratingContainer";
 import { AntService } from "@domain/service/antService";
 
@@ -38,14 +37,13 @@ let nuptialEnvironmentApi = new NuptialEnvironmentApi(requester)
 
 let eventBus = new EventEmitter();
 let worldFactory = new WorldFactory(eventBus);
-let notificationsContainer = new NotificationsContainer();
 let ratingContainer = new RatingContainer();
 let world = worldFactory.buildWorld();
 let nuptialEnv = NuptialEnvironment.build();
 let worldService = new WorldService(world, worldFactory, eventBus, ratingContainer);
 let accountService = new AccountService(accountApi);
 let colonyService = new ColonyService(eventBus, world, colonyApi, worldFactory);
-let userService = new UserService(eventBus, world, notificationsContainer);
+let userService = new UserService(eventBus, world);
 let nuptialEnvironmentService = new NuptialEnvironmentService(eventBus, world, nuptialEnv, nuptialEnvironmentApi);
 let nestService = new NestService(eventBus, world, nestApi);
 let antService = new AntService(eventBus, world, antApi);
@@ -55,7 +53,7 @@ let entitySerializer = new EntitySerializer();
 let colonySerializer = new ColonySerializer();
 
 let viewPointManager = new ViewPointManager();
-let myStateCollector = new MyStateCollector(eventBus, world, nuptialEnv, entitySerializer, colonySerializer);
+let myStateCollector = new MyStateCollector(eventBus, world, nuptialEnv, userService, entitySerializer, colonySerializer);
 new DomainWorker(eventBus, entitySerializer, viewPointManager, requester, myStateCollector, {
     worldService,
     accountService,

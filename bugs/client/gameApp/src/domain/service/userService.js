@@ -2,25 +2,13 @@ import { BaseGameService } from "./base/baseGameService";
 
 class UserService extends BaseGameService {
 
-    constructor(mainEventBus, world, notificationsContainer) {
+    constructor(mainEventBus, world) {
         super(mainEventBus, world);
-        this._notificationsContainer = notificationsContainer
-    }
-
-    get notificationsContainer() {
-        return this._notificationsContainer;
+        this._notifications = [];
     }
 
     setUserData(userData) {
         this._userData = userData;
-    }
-
-    initNotifications(notifications) {
-        this._notificationsContainer.setNotifications(notifications);
-    }
-
-    playUserAction(action) {
-        this._notificationsContainer.pushNewNotification(action.notification);
     }
 
     getUserData() {
@@ -34,6 +22,19 @@ class UserService extends BaseGameService {
     verifyEmailForUser() {
         this._userData.isEmailVerified = true;
         this._mainEventBus.emit('emailVerified');
+    }
+
+    initNotifications(notifications) {
+        this._notifications = notifications;
+    }
+
+    getNotifications() {
+        return this._notifications;
+    }
+
+    playUserAction(action) {
+        this._notifications.push(action.notification);
+        this._mainEventBus.emit('newNotification', action.notification);
     }
 
 }

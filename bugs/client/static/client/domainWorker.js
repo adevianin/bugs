@@ -2365,49 +2365,6 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
 /***/ }),
 
-/***/ "./gameApp/src/domain/entity/notificationsContainer.js":
-/*!*************************************************************!*\
-  !*** ./gameApp/src/domain/entity/notificationsContainer.js ***!
-  \*************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   NotificationsContainer: () => (/* binding */ NotificationsContainer)
-/* harmony export */ });
-/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
-
-
-class NotificationsContainer extends _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
-
-    constructor() {
-        super();
-        this._notifications = [];
-    }
-
-    get notifications() {
-        return this._notifications;
-    }
-
-    setNotifications(notifications) {
-        this._notifications = this._notifications.concat(notifications);
-        // this._sortByStep();
-    }
-
-    pushNewNotification(notification) {
-        this._notifications.push(notification);
-        this.emit('newNotification', notification);
-    }
-
-    // _sortByStep() {
-    //     this._notifications.sort((n1, n2) => n1.step - n2.step);
-    // }
-}
-
-
-
-/***/ }),
-
 /***/ "./gameApp/src/domain/entity/nuptialEnvironment.js":
 /*!*********************************************************!*\
   !*** ./gameApp/src/domain/entity/nuptialEnvironment.js ***!
@@ -3658,25 +3615,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class UserService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__.BaseGameService {
 
-    constructor(mainEventBus, world, notificationsContainer) {
+    constructor(mainEventBus, world) {
         super(mainEventBus, world);
-        this._notificationsContainer = notificationsContainer
-    }
-
-    get notificationsContainer() {
-        return this._notificationsContainer;
+        this._notifications = [];
     }
 
     setUserData(userData) {
         this._userData = userData;
-    }
-
-    initNotifications(notifications) {
-        this._notificationsContainer.setNotifications(notifications);
-    }
-
-    playUserAction(action) {
-        this._notificationsContainer.pushNewNotification(action.notification);
     }
 
     getUserData() {
@@ -3690,6 +3635,19 @@ class UserService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__.Bas
     verifyEmailForUser() {
         this._userData.isEmailVerified = true;
         this._mainEventBus.emit('emailVerified');
+    }
+
+    initNotifications(notifications) {
+        this._notifications = notifications;
+    }
+
+    getNotifications() {
+        return this._notifications;
+    }
+
+    playUserAction(action) {
+        this._notifications.push(action.notification);
+        this._mainEventBus.emit('newNotification', action.notification);
     }
 
 }
@@ -4000,7 +3958,7 @@ class DomainWorker {
         let mainSocketURL = data.mainSocketURL;
         let csrftoken = data.csrftoken;
 
-        this._userService.setUserData(userData)
+        this._userService.setUserData(userData);
         this._entitySerializer.setUserData(userData);
         this._requester.setCsrfToken(csrftoken);
         this._myStateCollector.setUserData(userData);
@@ -4340,10 +4298,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 class MyStateCollector {
 
-    constructor(eventBus, world, nuptialEnv, entitySerializer, colonySerializer) {
+    constructor(eventBus, world, nuptialEnv, userService, entitySerializer, colonySerializer) {
         this._eventBus = eventBus;
         this._world = world;
         this._nuptialEnv = nuptialEnv;
+        this._userService = userService;
         this._entitySerializer = entitySerializer;
         this._colonySerializer = colonySerializer;
 
@@ -4358,6 +4317,7 @@ class MyStateCollector {
         this._eventBus.on('colonyDied', this._onColonyDied.bind(this));
         this._eventBus.on('specieChromosomesGenesChanged', this._onSpecieChromosomesSpecieGenesChanged.bind(this));
         this._eventBus.on('nuptialMalesChanged', this._onNuptialMalesChanged.bind(this));
+        this._eventBus.on('newNotification', this._onNewNotification.bind(this));
     }
 
     setUserData(userData) {
@@ -4378,6 +4338,9 @@ class MyStateCollector {
                 queens: queenInNuptialFlightIds,
                 males: this._nuptialEnv.nuptialMales,
                 specie: this._nuptialEnv.specieData
+            },
+            notificationsContainer: {
+                notifications: this._userService.getNotifications()
             }
         }
     }
@@ -4416,6 +4379,9 @@ class MyStateCollector {
                         update: []
                     }
                 }
+            },
+            notificationsContainer: {
+                add: []
             }
         };
     }
@@ -4782,6 +4748,10 @@ class MyStateCollector {
             };
             specieUpdatePatch.specieChromosomes.update.push(specieChromosomeUpdatePatch);
         }
+    }
+
+    _onNewNotification(notification) {
+        this._myStatePatch.notificationsContainer.add.push(notification);
     }
 
 }
@@ -10577,16 +10547,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_service_userService__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @domain/service/userService */ "./gameApp/src/domain/service/userService.js");
 /* harmony import */ var _domain_service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @domain/service/nuptialEnvironmentService */ "./gameApp/src/domain/service/nuptialEnvironmentService.js");
 /* harmony import */ var _domain_service_nestService__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @domain/service/nestService */ "./gameApp/src/domain/service/nestService.js");
-/* harmony import */ var _domain_entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @domain/entity/notificationsContainer */ "./gameApp/src/domain/entity/notificationsContainer.js");
-/* harmony import */ var _domain_entity_ratingContainer__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @domain/entity/ratingContainer */ "./gameApp/src/domain/entity/ratingContainer.js");
-/* harmony import */ var _domain_service_antService__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @domain/service/antService */ "./gameApp/src/domain/service/antService.js");
-/* harmony import */ var _domain_entity_nuptialEnvironment__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @domain/entity/nuptialEnvironment */ "./gameApp/src/domain/entity/nuptialEnvironment.js");
-/* harmony import */ var _domain_worker_serializers_entitySerializer__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./domain/worker/serializers/entitySerializer */ "./gameApp/src/domain/worker/serializers/entitySerializer.js");
-/* harmony import */ var _domain_worker_serializers_colonySerializer__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @domain/worker/serializers/colonySerializer */ "./gameApp/src/domain/worker/serializers/colonySerializer.js");
-/* harmony import */ var _domain_worker_myStateCollector__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! @domain/worker/myStateCollector */ "./gameApp/src/domain/worker/myStateCollector.js");
-/* harmony import */ var _domain_worker_viewPointManager__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! @domain/worker/viewPointManager */ "./gameApp/src/domain/worker/viewPointManager.js");
-/* harmony import */ var _domain_worker_domainWorker__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./domain/worker/domainWorker */ "./gameApp/src/domain/worker/domainWorker.js");
-
+/* harmony import */ var _domain_entity_ratingContainer__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @domain/entity/ratingContainer */ "./gameApp/src/domain/entity/ratingContainer.js");
+/* harmony import */ var _domain_service_antService__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @domain/service/antService */ "./gameApp/src/domain/service/antService.js");
+/* harmony import */ var _domain_entity_nuptialEnvironment__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @domain/entity/nuptialEnvironment */ "./gameApp/src/domain/entity/nuptialEnvironment.js");
+/* harmony import */ var _domain_worker_serializers_entitySerializer__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./domain/worker/serializers/entitySerializer */ "./gameApp/src/domain/worker/serializers/entitySerializer.js");
+/* harmony import */ var _domain_worker_serializers_colonySerializer__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @domain/worker/serializers/colonySerializer */ "./gameApp/src/domain/worker/serializers/colonySerializer.js");
+/* harmony import */ var _domain_worker_myStateCollector__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @domain/worker/myStateCollector */ "./gameApp/src/domain/worker/myStateCollector.js");
+/* harmony import */ var _domain_worker_viewPointManager__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! @domain/worker/viewPointManager */ "./gameApp/src/domain/worker/viewPointManager.js");
+/* harmony import */ var _domain_worker_domainWorker__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./domain/worker/domainWorker */ "./gameApp/src/domain/worker/domainWorker.js");
 
 
 
@@ -10626,25 +10594,24 @@ let nuptialEnvironmentApi = new _sync_nuptialEnvironmentApi__WEBPACK_IMPORTED_MO
 
 let eventBus = new _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_9__.EventEmitter();
 let worldFactory = new _domain_worldFactory__WEBPACK_IMPORTED_MODULE_10__.WorldFactory(eventBus);
-let notificationsContainer = new _domain_entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_16__.NotificationsContainer();
-let ratingContainer = new _domain_entity_ratingContainer__WEBPACK_IMPORTED_MODULE_17__.RatingContainer();
+let ratingContainer = new _domain_entity_ratingContainer__WEBPACK_IMPORTED_MODULE_16__.RatingContainer();
 let world = worldFactory.buildWorld();
-let nuptialEnv = _domain_entity_nuptialEnvironment__WEBPACK_IMPORTED_MODULE_19__.NuptialEnvironment.build();
+let nuptialEnv = _domain_entity_nuptialEnvironment__WEBPACK_IMPORTED_MODULE_18__.NuptialEnvironment.build();
 let worldService = new _domain_service_worldService__WEBPACK_IMPORTED_MODULE_11__.WorldService(world, worldFactory, eventBus, ratingContainer);
 let accountService = new _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_7__.AccountService(accountApi);
 let colonyService = new _domain_service_colonyService__WEBPACK_IMPORTED_MODULE_12__.ColonyService(eventBus, world, colonyApi, worldFactory);
-let userService = new _domain_service_userService__WEBPACK_IMPORTED_MODULE_13__.UserService(eventBus, world, notificationsContainer);
+let userService = new _domain_service_userService__WEBPACK_IMPORTED_MODULE_13__.UserService(eventBus, world);
 let nuptialEnvironmentService = new _domain_service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_14__.NuptialEnvironmentService(eventBus, world, nuptialEnv, nuptialEnvironmentApi);
 let nestService = new _domain_service_nestService__WEBPACK_IMPORTED_MODULE_15__.NestService(eventBus, world, nestApi);
-let antService = new _domain_service_antService__WEBPACK_IMPORTED_MODULE_18__.AntService(eventBus, world, antApi);
+let antService = new _domain_service_antService__WEBPACK_IMPORTED_MODULE_17__.AntService(eventBus, world, antApi);
 let messageHandlerService = new _domain_service_messageHandlerService__WEBPACK_IMPORTED_MODULE_8__.MessageHandlerService(eventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService, accountService);
 
-let entitySerializer = new _domain_worker_serializers_entitySerializer__WEBPACK_IMPORTED_MODULE_20__.EntitySerializer();
-let colonySerializer = new _domain_worker_serializers_colonySerializer__WEBPACK_IMPORTED_MODULE_21__.ColonySerializer();
+let entitySerializer = new _domain_worker_serializers_entitySerializer__WEBPACK_IMPORTED_MODULE_19__.EntitySerializer();
+let colonySerializer = new _domain_worker_serializers_colonySerializer__WEBPACK_IMPORTED_MODULE_20__.ColonySerializer();
 
-let viewPointManager = new _domain_worker_viewPointManager__WEBPACK_IMPORTED_MODULE_23__.ViewPointManager();
-let myStateCollector = new _domain_worker_myStateCollector__WEBPACK_IMPORTED_MODULE_22__.MyStateCollector(eventBus, world, nuptialEnv, entitySerializer, colonySerializer);
-new _domain_worker_domainWorker__WEBPACK_IMPORTED_MODULE_24__.DomainWorker(eventBus, entitySerializer, viewPointManager, requester, myStateCollector, {
+let viewPointManager = new _domain_worker_viewPointManager__WEBPACK_IMPORTED_MODULE_22__.ViewPointManager();
+let myStateCollector = new _domain_worker_myStateCollector__WEBPACK_IMPORTED_MODULE_21__.MyStateCollector(eventBus, world, nuptialEnv, userService, entitySerializer, colonySerializer);
+new _domain_worker_domainWorker__WEBPACK_IMPORTED_MODULE_23__.DomainWorker(eventBus, entitySerializer, viewPointManager, requester, myStateCollector, {
     worldService,
     accountService,
     colonyService,

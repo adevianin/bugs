@@ -5,7 +5,7 @@ class NotificationIndicatorView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);
-        this._notificationsContainer = this.$domain.notificationsContainer;
+        this._notificationsContainer = this.$domain.myState.notificationsContainer;
         this._isReadingNotifications = false;
 
         this._render();
