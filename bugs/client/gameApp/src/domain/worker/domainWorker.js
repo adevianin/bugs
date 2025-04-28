@@ -86,6 +86,9 @@ class DomainWorker {
             case 'buildMarker':
                 this._handleBuildMarkerCommand(command)
                 break;
+            case 'saveSpecieSchema':
+                this._handleSaveSpecieSchemaCommand(command)
+                break;
             case 'bornNewAntara':
                 this._handleBornNewAntaraCommand(command)
                 break;
@@ -247,6 +250,13 @@ class DomainWorker {
         let params = data.params;
         let marker = this._colonyService.buildMarker(type, point, params);
         this._sendCommandResult(command.id, marker);
+    }
+
+    _handleSaveSpecieSchemaCommand(command) {
+        let data = command.data;
+        let specieSchema = data.specieSchema;
+        this._nuptialEnvironmentService.saveSpecieSchema(specieSchema);
+        this._sendCommandResult(command.id, true);
     }
 
     async _handleBornNewAntaraCommand(command) {

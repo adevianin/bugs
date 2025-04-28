@@ -10,8 +10,9 @@ class SpecieBuilderTabView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);
+        this._specie = this.$domain.myState.nuptialEnvironment.specie;
 
-        this._specie = this.$domain.getMySpecie();
+        this._specie.on('specieSchemaChanged', this._onSpecieSchemaChanged.bind(this));
 
         this._render();
     }
@@ -31,6 +32,10 @@ class SpecieBuilderTabView extends BaseGameHTMLView {
             { name: 'specialization_editor', label: 'Спеціалізація', tab: this._specializationChromosomeEditorTab }
         ]);
         this._helpCallerBreeding = new HelpCallerView(this._el.querySelector('[data-help-sign]'), 'specie');
+    }
+
+    _onSpecieSchemaChanged() {
+        this.$domain.saveSpecieSchema();
     }
 
 }

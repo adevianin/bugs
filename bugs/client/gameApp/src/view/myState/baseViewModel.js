@@ -8,7 +8,7 @@ class BaseViewModel extends EventEmitter {
 
     constructor (props) {
         super();
-        this._props = props;
+        this._props = props || {};
     }
 
     _applyProps(props) {

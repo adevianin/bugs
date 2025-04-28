@@ -10,8 +10,8 @@ class NuptialEnvironmentService extends BaseGameService {
         this._nuptialEnvironmentApi = nuptialEnvironmentApi;
     }
 
-    init(specieJson, nuptialMalesJson) {
-        this._initSpecie(specieJson);
+    init(specieData, nuptialMalesJson) {
+        this._nuptialEnv.setSpecieData(specieData);
         this._updateMales(nuptialMalesJson);
     }
 
@@ -45,10 +45,8 @@ class NuptialEnvironmentService extends BaseGameService {
         this._nuptialEnvironmentApi.bornNewAntara();
     }
 
-    _initSpecie(specieJson) {
-        let specie = this._nuptialEnvironmentFactory.buildSpecie(specieJson);
-        this._nuptialEnv.setSpecie(specie);
-        specie.on('specieSchemaChanged', this._onSpecieSchemaChanged.bind(this));
+    saveSpecieSchema(schema) {
+        this._nuptialEnvironmentApi.saveSpecieSchema(schema);
     }
 
     _updateMales(nuptialMalesJson) {
@@ -65,11 +63,7 @@ class NuptialEnvironmentService extends BaseGameService {
     }
 
     _playSpecieGenesChanged(action) {
-        this._nuptialEnv.updateSpecieGenes(action.chromosomeSpecieGenes);
-    }
-
-    _onSpecieSchemaChanged() {
-        this._nuptialEnvironmentApi.saveSpecieSchema(this._nuptialEnv.specie);
+        this._mainEventBus.emit('specieChromosomesGenesChanged', action.chromosomeSpecieGenes);
     }
 
 }

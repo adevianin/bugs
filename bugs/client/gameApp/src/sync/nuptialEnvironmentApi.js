@@ -4,9 +4,9 @@ class NuptialEnvironmentApi {
         this._requester = requester;
     }
 
-    saveSpecieSchema(specie) {
+    saveSpecieSchema(specieSchema) {
         this._requester.post('/api/world/nuptial_environment/specie/specie_schema', {
-            specie_schema: specie.schema
+            specie_schema: specieSchema
         });
     }
 

@@ -16,6 +16,7 @@ class MyStateCollector {
         this._eventBus.on('antDied', this._onAntDied.bind(this));
         this._eventBus.on('colonyBorn', this._onColonyBorn.bind(this));
         this._eventBus.on('colonyDied', this._onColonyDied.bind(this));
+        this._eventBus.on('specieChromosomesGenesChanged', this._onSpecieChromosomesSpecieGenesChanged.bind(this));
         this._nuptialEnv.events.on('nuptialMalesChanged', this._onNuptialMalesChanged.bind(this));
     }
 
@@ -35,7 +36,8 @@ class MyStateCollector {
             ants: this._entitySerializer.serializeAnts(ants),
             nuptialEnvironment: {
                 queens: queenInNuptialFlightIds,
-                males: this._entitySerializer.serializeNuptialMales(this._nuptialEnv.nuptialMales)
+                males: this._entitySerializer.serializeNuptialMales(this._nuptialEnv.nuptialMales),
+                specie: this._nuptialEnv.specieData
             }
         }
     }
@@ -69,6 +71,11 @@ class MyStateCollector {
                     add: [],
                     remove: []
                 },
+                specie: {
+                    specieChromosomes: {
+                        update: []
+                    }
+                }
             }
         };
     }
@@ -422,6 +429,20 @@ class MyStateCollector {
     _onNuptialMalesChanged() {
         let serializedNuptialMales = this._entitySerializer.serializeNuptialMales(this._nuptialEnv.nuptialMales);
         this._myStatePatch.nuptialEnvironment.props.males = serializedNuptialMales;
+    }
+
+    _onSpecieChromosomesSpecieGenesChanged(specieChromosomeSpecieGenesChange) {
+        let specieUpdatePatch = this._myStatePatch.nuptialEnvironment.specie;
+        for (let specieChromosomeType in specieChromosomeSpecieGenesChange) {
+            let specieGenes = specieChromosomeSpecieGenesChange[specieChromosomeType]
+            let specieChromosomeUpdatePatch = {
+                type: specieChromosomeType,
+                props: {
+                    specieGenes 
+                }
+            };
+            specieUpdatePatch.specieChromosomes.update.push(specieChromosomeUpdatePatch);
+        }
     }
 
 }

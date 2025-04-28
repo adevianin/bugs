@@ -265,6 +265,12 @@ class DomainFacade {
     //     return this._nuptialEnvironmentService.specie;
     // }
 
+    saveSpecieSchema() {
+        this._sendCommand('saveSpecieSchema', {
+            specieSchema: this._myState.nuptialEnvironment.specie.schema
+        }, true);
+    }
+
     bornNewAntara() {
         return this._sendCommand('bornNewAntara', null, true);
     }

@@ -5,7 +5,7 @@ class NuptialEnvironment {
     constructor() {
         this.events = new EventEmitter();
         this._nuptialMales = [];
-        this._specie = null;
+        this._specieData = null;
     }
 
     get nuptialMales() {
@@ -17,22 +17,14 @@ class NuptialEnvironment {
         this.events.emit('nuptialMalesChanged');
     }
 
-    get specie() {
-        return this._specie;
+    get specieData() {
+        return this._specieData;
     }
 
-    setSpecie(specie) {
-        this._specie = specie;
-        this._specie.on('specieSchemaChanged')
+    setSpecieData(specieData) {
+        this._specieData = specieData;
     }
 
-    updateSpecieGenes(chromosomeSpecieGenes) {
-        for (let chromosomeType in chromosomeSpecieGenes) {
-            let specieChromosome = this._specie.getChromosomeByType(chromosomeType);
-            specieChromosome.updateGenes(chromosomeSpecieGenes[chromosomeType]);
-        }
-        this.events.emit('specieGenesChanged');
-    }
 }
 
 export {

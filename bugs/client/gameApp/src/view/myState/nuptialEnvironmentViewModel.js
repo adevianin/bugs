@@ -1,16 +1,22 @@
 import { BaseViewModel } from "./baseViewModel";
+import { SpecieViewModel } from "./specieViewModel";
 
 class NuptialEnvironmentViewModel extends BaseViewModel {
 
     static buildFromJson(json) {
         let queens = json.queens;
         delete json.queens;
-        return new NuptialEnvironmentViewModel(json, queens);
+
+        let specie = SpecieViewModel.buildFromJson(json.specie);
+        delete json.specie;
+
+        return new NuptialEnvironmentViewModel(json, queens, specie);
     }
 
-    constructor(json, queens) {
+    constructor(json, queens, specie) {
         super(json);
         this._queens = queens;
+        this._specie = specie;
     }
 
     get queenIds() {
@@ -24,6 +30,10 @@ class NuptialEnvironmentViewModel extends BaseViewModel {
     set males(val) {
         this._props.males = val;
         this.emit('nuptialMalesChanged', this._props.males);
+    }
+
+    get specie() {
+        return this._specie;
     }
 
     addQueen(queenId) {
@@ -48,6 +58,8 @@ class NuptialEnvironmentViewModel extends BaseViewModel {
         for (let queenId of patch.queens.remove) {
             this.removeQueen(queenId);
         }
+
+        this._specie.applyPatch(patch.specie);
     }
 
 }

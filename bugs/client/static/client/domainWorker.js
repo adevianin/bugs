@@ -1024,7 +1024,6 @@ class MaleAnt extends _baseAnt__WEBPACK_IMPORTED_MODULE_0__.BaseAnt {
         this._requestActionAnimation(_action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT, {
             startPosition: this.position
         });
-        this.isInNuptialFlight = true;
     }
 
 }
@@ -2427,7 +2426,7 @@ class NuptialEnvironment {
     constructor() {
         this.events = new _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
         this._nuptialMales = [];
-        this._specie = null;
+        this._specieData = null;
     }
 
     get nuptialMales() {
@@ -2439,22 +2438,14 @@ class NuptialEnvironment {
         this.events.emit('nuptialMalesChanged');
     }
 
-    get specie() {
-        return this._specie;
+    get specieData() {
+        return this._specieData;
     }
 
-    setSpecie(specie) {
-        this._specie = specie;
-        this._specie.on('specieSchemaChanged')
+    setSpecieData(specieData) {
+        this._specieData = specieData;
     }
 
-    updateSpecieGenes(chromosomeSpecieGenes) {
-        for (let chromosomeType in chromosomeSpecieGenes) {
-            let specieChromosome = this._specie.getChromosomeByType(chromosomeType);
-            specieChromosome.updateGenes(chromosomeSpecieGenes[chromosomeType]);
-        }
-        this.events.emit('specieGenesChanged');
-    }
 }
 
 
@@ -2471,13 +2462,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NuptialEnvironmentFactory: () => (/* binding */ NuptialEnvironmentFactory)
 /* harmony export */ });
-/* harmony import */ var _specie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./specie */ "./gameApp/src/domain/entity/nuptialEnvironment/specie.js");
-/* harmony import */ var _specieChromosome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./specieChromosome */ "./gameApp/src/domain/entity/nuptialEnvironment/specieChromosome.js");
-/* harmony import */ var _genetic_genome__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../genetic/genome */ "./gameApp/src/domain/entity/genetic/genome.js");
-/* harmony import */ var _nuptialMale__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./nuptialMale */ "./gameApp/src/domain/entity/nuptialEnvironment/nuptialMale.js");
-/* harmony import */ var _nuptialEnvironment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./nuptialEnvironment */ "./gameApp/src/domain/entity/nuptialEnvironment/nuptialEnvironment.js");
-
-
+/* harmony import */ var _genetic_genome__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../genetic/genome */ "./gameApp/src/domain/entity/genetic/genome.js");
+/* harmony import */ var _nuptialMale__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nuptialMale */ "./gameApp/src/domain/entity/nuptialEnvironment/nuptialMale.js");
+/* harmony import */ var _nuptialEnvironment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./nuptialEnvironment */ "./gameApp/src/domain/entity/nuptialEnvironment/nuptialEnvironment.js");
 
 
 
@@ -2485,27 +2472,14 @@ __webpack_require__.r(__webpack_exports__);
 class NuptialEnvironmentFactory {
 
     buildNuptialEnvironment() {
-        return new _nuptialEnvironment__WEBPACK_IMPORTED_MODULE_4__.NuptialEnvironment();
-    }
-
-    buildSpecie(specieJson) {
-        let chromosomes = []
-
-        for (let specieChromosomeJson of specieJson['specieChromosomesSet']) {
-            chromosomes.push(this._buildChromosome(specieChromosomeJson));
-        }
-
-        return new _specie__WEBPACK_IMPORTED_MODULE_0__.Specie(chromosomes);
+        return new _nuptialEnvironment__WEBPACK_IMPORTED_MODULE_2__.NuptialEnvironment();
     }
 
     buildNuptialMale(nuptialMaleJson) {
-        let genome = _genetic_genome__WEBPACK_IMPORTED_MODULE_2__.Genome.buildFromJson(nuptialMaleJson.genome);
-        return new _nuptialMale__WEBPACK_IMPORTED_MODULE_3__.NuptialMale(nuptialMaleJson.id, genome, nuptialMaleJson.stats, nuptialMaleJson.isLocal);
+        let genome = _genetic_genome__WEBPACK_IMPORTED_MODULE_0__.Genome.buildFromJson(nuptialMaleJson.genome);
+        return new _nuptialMale__WEBPACK_IMPORTED_MODULE_1__.NuptialMale(nuptialMaleJson.id, genome, nuptialMaleJson.stats, nuptialMaleJson.isLocal);
     }
 
-    _buildChromosome(chromosomeJson) {
-        return new _specieChromosome__WEBPACK_IMPORTED_MODULE_1__.SpecieChromosome(chromosomeJson.type, chromosomeJson.activatedGenesIds, chromosomeJson.genes);
-    }
 }
 
 
@@ -2529,140 +2503,6 @@ class NuptialMale {
         this.genome = genome;
         this.stats = stats;
         this.isLocal = isLocal;
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/domain/entity/nuptialEnvironment/specie.js":
-/*!****************************************************************!*\
-  !*** ./gameApp/src/domain/entity/nuptialEnvironment/specie.js ***!
-  \****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Specie: () => (/* binding */ Specie)
-/* harmony export */ });
-/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
-
-
-class Specie extends _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
-
-    constructor(specieChromosomes) {
-        super();
-        this._specieChromosomes = specieChromosomes;
-
-        this._listenSpecieChromosomes();
-    }
-
-    get schema() {
-        let schema = {};
-        for (let chromosome of this._specieChromosomes) {
-            schema[chromosome.type] = chromosome.activatedSpecieGenesIds;
-        }
-
-        return schema;
-    }
-
-    getChromosomeByType(type) {
-        for (let chromosome of this._specieChromosomes) {
-            if (chromosome.type == type) {
-                return chromosome;
-            }
-        }
-    }
-
-    _listenSpecieChromosomes() {
-        for (let chromosome of this._specieChromosomes) {
-            chromosome.on('change', this._onChromosomeChange.bind(this));
-        }
-    }
-
-    _onChromosomeChange() {
-        this.emit('specieSchemaChanged');
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/domain/entity/nuptialEnvironment/specieChromosome.js":
-/*!**************************************************************************!*\
-  !*** ./gameApp/src/domain/entity/nuptialEnvironment/specieChromosome.js ***!
-  \**************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   SpecieChromosome: () => (/* binding */ SpecieChromosome)
-/* harmony export */ });
-/* harmony import */ var _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @common/utils/eventEmitter */ "./common/utils/eventEmitter.js");
-
-
-class SpecieChromosome extends _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
-
-    constructor(type, activatedSpecieGenesIds, specieGenes) {
-        super();
-        this.type = type;
-        this.activatedSpecieGenesIds = activatedSpecieGenesIds;
-        this.specieGenes = specieGenes;
-    }
-
-    updateGenes(specieGenes) {
-        this.specieGenes = specieGenes;
-        this.emit('specieGenesUpdated');
-    }
-
-    checkIsGeneActivated(specieGeneId) {
-        let index = this.activatedSpecieGenesIds.indexOf(specieGeneId);
-        return index >= 0;
-    }
-
-    activateSpecieGene(activatingSpecieGene) {
-        let specieGeneToDeactivating = this._getActivatedSpecieGeneByType(activatingSpecieGene.gene.type);
-        this.activatedSpecieGenesIds.push(activatingSpecieGene.id);
-        this.emit('specieGeneActiveStatusChanged', activatingSpecieGene);
-        if (specieGeneToDeactivating) {
-            this._executeSpecieGeneDeactivation(specieGeneToDeactivating);
-            this.emit('specieGeneActiveStatusChanged', specieGeneToDeactivating);
-        }
-        this.emit('change');
-    }
-
-    deactivateSpecieGene(specieGene) {
-        this._executeSpecieGeneDeactivation(specieGene)
-        this.emit('specieGeneActiveStatusChanged', specieGene);
-        this.emit('change');
-    }
-
-    _executeSpecieGeneDeactivation(specieGene) {
-        let index = this.activatedSpecieGenesIds.indexOf(specieGene.id);
-        this.activatedSpecieGenesIds.splice(index, 1);
-    }
-
-    getSpecieGeneById(id) {
-        for (let specieGene of this.specieGenes) {
-            if (specieGene.id == id) {
-                return specieGene;
-            }
-        }
-
-        return null;
-    }
-
-    _getActivatedSpecieGeneByType(type) {
-        for (let specieGene of this.specieGenes) {
-            if (this.checkIsGeneActivated(specieGene.id) && specieGene.gene.type == type) {
-                return specieGene;
-            }
-        }
-
-        return null;
     }
 }
 
@@ -3805,8 +3645,8 @@ class NuptialEnvironmentService extends _base_baseGameService__WEBPACK_IMPORTED_
         this._nuptialEnvironmentApi = nuptialEnvironmentApi;
     }
 
-    init(specieJson, nuptialMalesJson) {
-        this._initSpecie(specieJson);
+    init(specieData, nuptialMalesJson) {
+        this._nuptialEnv.setSpecieData(specieData);
         this._updateMales(nuptialMalesJson);
     }
 
@@ -3840,10 +3680,8 @@ class NuptialEnvironmentService extends _base_baseGameService__WEBPACK_IMPORTED_
         this._nuptialEnvironmentApi.bornNewAntara();
     }
 
-    _initSpecie(specieJson) {
-        let specie = this._nuptialEnvironmentFactory.buildSpecie(specieJson);
-        this._nuptialEnv.setSpecie(specie);
-        specie.on('specieSchemaChanged', this._onSpecieSchemaChanged.bind(this));
+    saveSpecieSchema(schema) {
+        this._nuptialEnvironmentApi.saveSpecieSchema(schema);
     }
 
     _updateMales(nuptialMalesJson) {
@@ -3860,11 +3698,7 @@ class NuptialEnvironmentService extends _base_baseGameService__WEBPACK_IMPORTED_
     }
 
     _playSpecieGenesChanged(action) {
-        this._nuptialEnv.updateSpecieGenes(action.chromosomeSpecieGenes);
-    }
-
-    _onSpecieSchemaChanged() {
-        this._nuptialEnvironmentApi.saveSpecieSchema(this._nuptialEnv.specie);
+        this._mainEventBus.emit('specieChromosomesGenesChanged', action.chromosomeSpecieGenes);
     }
 
 }
@@ -4147,6 +3981,9 @@ class DomainWorker {
             case 'buildMarker':
                 this._handleBuildMarkerCommand(command)
                 break;
+            case 'saveSpecieSchema':
+                this._handleSaveSpecieSchemaCommand(command)
+                break;
             case 'bornNewAntara':
                 this._handleBornNewAntaraCommand(command)
                 break;
@@ -4308,6 +4145,13 @@ class DomainWorker {
         let params = data.params;
         let marker = this._colonyService.buildMarker(type, point, params);
         this._sendCommandResult(command.id, marker);
+    }
+
+    _handleSaveSpecieSchemaCommand(command) {
+        let data = command.data;
+        let specieSchema = data.specieSchema;
+        this._nuptialEnvironmentService.saveSpecieSchema(specieSchema);
+        this._sendCommandResult(command.id, true);
     }
 
     async _handleBornNewAntaraCommand(command) {
@@ -4576,6 +4420,7 @@ class MyStateCollector {
         this._eventBus.on('antDied', this._onAntDied.bind(this));
         this._eventBus.on('colonyBorn', this._onColonyBorn.bind(this));
         this._eventBus.on('colonyDied', this._onColonyDied.bind(this));
+        this._eventBus.on('specieChromosomesGenesChanged', this._onSpecieChromosomesSpecieGenesChanged.bind(this));
         this._nuptialEnv.events.on('nuptialMalesChanged', this._onNuptialMalesChanged.bind(this));
     }
 
@@ -4595,7 +4440,8 @@ class MyStateCollector {
             ants: this._entitySerializer.serializeAnts(ants),
             nuptialEnvironment: {
                 queens: queenInNuptialFlightIds,
-                males: this._entitySerializer.serializeNuptialMales(this._nuptialEnv.nuptialMales)
+                males: this._entitySerializer.serializeNuptialMales(this._nuptialEnv.nuptialMales),
+                specie: this._nuptialEnv.specieData
             }
         }
     }
@@ -4629,6 +4475,11 @@ class MyStateCollector {
                     add: [],
                     remove: []
                 },
+                specie: {
+                    specieChromosomes: {
+                        update: []
+                    }
+                }
             }
         };
     }
@@ -4982,6 +4833,20 @@ class MyStateCollector {
     _onNuptialMalesChanged() {
         let serializedNuptialMales = this._entitySerializer.serializeNuptialMales(this._nuptialEnv.nuptialMales);
         this._myStatePatch.nuptialEnvironment.props.males = serializedNuptialMales;
+    }
+
+    _onSpecieChromosomesSpecieGenesChanged(specieChromosomeSpecieGenesChange) {
+        let specieUpdatePatch = this._myStatePatch.nuptialEnvironment.specie;
+        for (let specieChromosomeType in specieChromosomeSpecieGenesChange) {
+            let specieGenes = specieChromosomeSpecieGenesChange[specieChromosomeType]
+            let specieChromosomeUpdatePatch = {
+                type: specieChromosomeType,
+                props: {
+                    specieGenes 
+                }
+            };
+            specieUpdatePatch.specieChromosomes.update.push(specieChromosomeUpdatePatch);
+        }
     }
 
 }
@@ -5893,9 +5758,9 @@ class NuptialEnvironmentApi {
         this._requester = requester;
     }
 
-    saveSpecieSchema(specie) {
+    saveSpecieSchema(specieSchema) {
         this._requester.post('/api/world/nuptial_environment/specie/specie_schema', {
-            specie_schema: specie.schema
+            specie_schema: specieSchema
         });
     }
 
