@@ -15,7 +15,6 @@ import { ColonyService } from "@domain/service/colonyService";
 import { UserService } from "@domain/service/userService";
 import { NuptialEnvironmentService } from "@domain/service/nuptialEnvironmentService";
 import { NestService } from "@domain/service/nestService";
-import { RatingContainer } from "@domain/entity/ratingContainer";
 import { AntService } from "@domain/service/antService";
 
 import { NuptialEnvironment } from "@domain/entity/nuptialEnvironment";
@@ -37,10 +36,9 @@ let nuptialEnvironmentApi = new NuptialEnvironmentApi(requester)
 
 let eventBus = new EventEmitter();
 let worldFactory = new WorldFactory(eventBus);
-let ratingContainer = new RatingContainer();
 let world = worldFactory.buildWorld();
 let nuptialEnv = NuptialEnvironment.build();
-let worldService = new WorldService(world, worldFactory, eventBus, ratingContainer);
+let worldService = new WorldService(world, worldFactory, eventBus);
 let accountService = new AccountService(accountApi);
 let colonyService = new ColonyService(eventBus, world, colonyApi, worldFactory);
 let userService = new UserService(eventBus, world);

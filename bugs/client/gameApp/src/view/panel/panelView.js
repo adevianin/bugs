@@ -54,14 +54,14 @@ class PanelView extends BaseGameHTMLView {
         this._nuptialFlightTab = new NuptialFlightTabView(this._el.querySelector('[data-nuptial-flight-tab]'));
         this._specieBuildertTab = new SpecieBuilderTabView(this._el.querySelector('[data-specie-builder-tab]'));
         this._notificationsTab = new NotificationsTabView(this._el.querySelector('[data-notifications-tab]'));
-        // this._ratingTab = new RatingTabView(this._el.querySelector('[data-rating-tab]'));
+        this._ratingTab = new RatingTabView(this._el.querySelector('[data-rating-tab]'));
 
         this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'panel', [
             { name: 'breeding', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_BREEDING), tab: this._nuptialFlightTab },
             { name: 'colonies', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_COLONIES), tab: this._coloniesTab },
             { name: 'specie_builder', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_SPECIE), tab: this._specieBuildertTab },
             { name: 'notifications', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_NOTIFICATIONS), tab: this._notificationsTab },
-            // { name: 'rating', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_RATING), tab: this._ratingTab },
+            { name: 'rating', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_RATING), tab: this._ratingTab },
             { name: 'user', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_ACCOUNT), tab: this._userTab }
         ]);
     }

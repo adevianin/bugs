@@ -1,5 +1,6 @@
 import { initConsts } from "@domain/consts";
 import { MyStateViewModel } from "./myState/myStateViewModel";
+import { RatingContainerViewModel } from "./myState/ratingContainerViewModel";
 
 class DomainFacade {
 
@@ -16,8 +17,6 @@ class DomainFacade {
         this._myState = null;
 
         this._domainWorker.onmessage = this._onMessage.bind(this);
-
-        window.$domain = this;
     }
 
     get events() {
@@ -36,6 +35,10 @@ class DomainFacade {
         return this._currentSeason;
     }
 
+    get ratingContainer() {
+        return this._ratingContainer;
+    }
+
     async init(userData, mainSocketURL, csrftoken) {
         this._userData = userData;
         let initPack = await this._sendCommand('init', {
@@ -46,9 +49,8 @@ class DomainFacade {
         this._currentSeason = initPack.currentSeason;
         this._worldSize = initPack.worldSize;
         this._myState = MyStateViewModel.buildFromJson(initPack.myState);
+        this._ratingContainer = RatingContainerViewModel.buildFromJson({rating: initPack.rating});
         this._eventBus.emit('worldInited');
-
-        window.myState = this._myState;
     }
 
     changePlayerViewPoint(viewPoint, viewRect) {
@@ -133,6 +135,9 @@ class DomainFacade {
             case 'emailVerified':
                 this._onEmailVerifiedEvent();
                 break;
+            case 'ratingUpdated':
+                this._onRatingUpdatedEvent(data);
+                break;
             default:
                 throw 'unknown type of event';
         }
@@ -141,6 +146,10 @@ class DomainFacade {
     _onEmailVerifiedEvent() {
         this._userData.isEmailVerified = true;
         this._eventBus.emit('emailVerified');
+    }
+
+    _onRatingUpdatedEvent({ rating }) {
+        this._ratingContainer.ratingPlaces = rating;
     }
 
     // get notificationsContainer() {

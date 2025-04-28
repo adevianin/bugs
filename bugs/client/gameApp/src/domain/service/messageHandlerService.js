@@ -41,7 +41,7 @@ class MessageHandlerService {
         initConsts(msg.consts);
         this._userService.initNotifications(msg.notifications)
         this._worldService.initWorld(msg.world, msg.step, msg.season);
-        this._worldService.setRating(msg.rating);
+        this._worldService.initRating(msg.rating);
         this._nuptialEnvironmentService.init(msg.specie, msg.nuptialMales);
         this._mainEventBus.emit('initStepDone');
     }

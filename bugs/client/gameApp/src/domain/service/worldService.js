@@ -2,12 +2,12 @@ import { EntityTypes } from '@domain/enum/entityTypes';
 
 class WorldService {
 
-    constructor(world, worldFactory, mainEventBus, ratingContainer) {
+    constructor(world, worldFactory, mainEventBus) {
         this._world = world;
         this._worldFactory = worldFactory;
         this._mainEventBus = mainEventBus;
         this._worldSize = null;
-        this._ratingContainer = ratingContainer;
+        this._rating = null;
 
         this._mainEventBus.on('entityDied', this._onEntityDied.bind(this));
     }
@@ -16,21 +16,22 @@ class WorldService {
         return this._world;
     }
 
-    get ratingContainer() {
-        return this._ratingContainer;
-    }
-
     setCurrentStep(currentStep, currentSeason) {
         this._world.currentStep = currentStep;
         this._world.currentSeason = currentSeason;
     }
 
-    setRating(ratingData) {
-        this._ratingContainer.setRatingPlaces(ratingData);
+    initRating(rating) {
+        this._rating = rating;
+    }
+
+    getRating() {
+        return this._rating;
     }
 
     playRatingAction(ratingAction) {
-        this.setRating(ratingAction.ratingPlaces);
+        this._rating = ratingAction.ratingPlaces;
+        this._mainEventBus.emit('ratingUpdated');
     }
 
     playEntityAction(action) {

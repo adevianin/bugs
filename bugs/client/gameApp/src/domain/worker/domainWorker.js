@@ -201,7 +201,8 @@ class DomainWorker {
                 currentSeason: this._worldService.world.currentSeason,
                 worldSize: this._worldService.world.size,
                 consts: CONSTS,
-                myState: this._myStateCollector.getMyState()
+                myState: this._myStateCollector.getMyState(),
+                rating: this._worldService.getRating()
             };
             this._sendCommandResult(command.id, initPack);
         });
@@ -216,6 +217,7 @@ class DomainWorker {
         this._eventBus.on('stepDone', this._onStepDone.bind(this));
 
         this._eventBus.on('emailVerified', this._onEmailVerified.bind(this));
+        this._eventBus.on('ratingUpdated', this._onRatingUpdated.bind(this));
     }
 
     _handleChangePlayerViewPointCommand(command) {
@@ -553,6 +555,12 @@ class DomainWorker {
 
     _onEmailVerified() {
         this._sendEvent('emailVerified');
+    }
+
+    _onRatingUpdated() {
+        this._sendEvent('ratingUpdated', { 
+            rating: this._worldService.getRating() 
+        });
     }
 
 }
