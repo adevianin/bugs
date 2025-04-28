@@ -60,6 +60,7 @@ class QueenAnt(Ant):
     def fly_nuptial_flight(self, is_born_in_nuptial_flight: bool = False):
         self._is_born_in_nuptial_flight = is_born_in_nuptial_flight
         super().fly_nuptial_flight()
+        self.from_colony_id = None
     
     def fly_nuptial_flight_back(self, landing_position: Point):
         self._mind.toggle_auto_thought_generation(True)

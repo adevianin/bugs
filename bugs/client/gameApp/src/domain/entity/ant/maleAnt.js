@@ -45,7 +45,6 @@ class MaleAnt extends BaseAnt {
         this._requestActionAnimation(ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT, {
             startPosition: this.position
         });
-        this.isInNuptialFlight = true;
     }
 
 }
