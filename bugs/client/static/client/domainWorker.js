@@ -2408,10 +2408,10 @@ class NotificationsContainer extends _common_utils_eventEmitter__WEBPACK_IMPORTE
 
 /***/ }),
 
-/***/ "./gameApp/src/domain/entity/nuptialEnvironment/nuptialEnvironment.js":
-/*!****************************************************************************!*\
-  !*** ./gameApp/src/domain/entity/nuptialEnvironment/nuptialEnvironment.js ***!
-  \****************************************************************************/
+/***/ "./gameApp/src/domain/entity/nuptialEnvironment.js":
+/*!*********************************************************!*\
+  !*** ./gameApp/src/domain/entity/nuptialEnvironment.js ***!
+  \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -2422,6 +2422,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class NuptialEnvironment {
+
+    static build() {
+        return new NuptialEnvironment();
+    }
 
     constructor() {
         this.events = new _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
@@ -2435,7 +2439,6 @@ class NuptialEnvironment {
 
     setNuptialMales(males) {
         this._nuptialMales = males;
-        this.events.emit('nuptialMalesChanged');
     }
 
     get specieData() {
@@ -2446,64 +2449,6 @@ class NuptialEnvironment {
         this._specieData = specieData;
     }
 
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/domain/entity/nuptialEnvironment/nuptialEnvironmentFactory.js":
-/*!***********************************************************************************!*\
-  !*** ./gameApp/src/domain/entity/nuptialEnvironment/nuptialEnvironmentFactory.js ***!
-  \***********************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   NuptialEnvironmentFactory: () => (/* binding */ NuptialEnvironmentFactory)
-/* harmony export */ });
-/* harmony import */ var _genetic_genome__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../genetic/genome */ "./gameApp/src/domain/entity/genetic/genome.js");
-/* harmony import */ var _nuptialMale__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nuptialMale */ "./gameApp/src/domain/entity/nuptialEnvironment/nuptialMale.js");
-/* harmony import */ var _nuptialEnvironment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./nuptialEnvironment */ "./gameApp/src/domain/entity/nuptialEnvironment/nuptialEnvironment.js");
-
-
-
-
-class NuptialEnvironmentFactory {
-
-    buildNuptialEnvironment() {
-        return new _nuptialEnvironment__WEBPACK_IMPORTED_MODULE_2__.NuptialEnvironment();
-    }
-
-    buildNuptialMale(nuptialMaleJson) {
-        let genome = _genetic_genome__WEBPACK_IMPORTED_MODULE_0__.Genome.buildFromJson(nuptialMaleJson.genome);
-        return new _nuptialMale__WEBPACK_IMPORTED_MODULE_1__.NuptialMale(nuptialMaleJson.id, genome, nuptialMaleJson.stats, nuptialMaleJson.isLocal);
-    }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./gameApp/src/domain/entity/nuptialEnvironment/nuptialMale.js":
-/*!*********************************************************************!*\
-  !*** ./gameApp/src/domain/entity/nuptialEnvironment/nuptialMale.js ***!
-  \*********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   NuptialMale: () => (/* binding */ NuptialMale)
-/* harmony export */ });
-class NuptialMale {
-
-    constructor(id, genome, stats, isLocal) {
-        this.id = id;
-        this.genome = genome;
-        this.stats = stats;
-        this.isLocal = isLocal;
-    }
 }
 
 
@@ -3638,16 +3583,15 @@ __webpack_require__.r(__webpack_exports__);
 
 class NuptialEnvironmentService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__.BaseGameService {
 
-    constructor(mainEventBus, world, nuptialEnv, nuptialEnvironmentFactory, nuptialEnvironmentApi) {
+    constructor(mainEventBus, world, nuptialEnv, nuptialEnvironmentApi) {
         super(mainEventBus, world);
         this._nuptialEnv = nuptialEnv;
-        this._nuptialEnvironmentFactory = nuptialEnvironmentFactory;
         this._nuptialEnvironmentApi = nuptialEnvironmentApi;
     }
 
-    init(specieData, nuptialMalesJson) {
+    init(specieData, nuptialMales) {
         this._nuptialEnv.setSpecieData(specieData);
-        this._updateMales(nuptialMalesJson);
+        this._nuptialEnv.setNuptialMales(nuptialMales);
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
@@ -3663,6 +3607,14 @@ class NuptialEnvironmentService extends _base_baseGameService__WEBPACK_IMPORTED_
         }
     }
 
+    bornNewAntara() {
+        this._nuptialEnvironmentApi.bornNewAntara();
+    }
+
+    saveSpecieSchema(schema) {
+        this._nuptialEnvironmentApi.saveSpecieSchema(schema);
+    }
+
     playAction(action) {
         switch(action.type) {
             case _domain_entity_action_actionTypes__WEBPACK_IMPORTED_MODULE_1__.ACTION_TYPES.NUPTIAL_ENVIRONMENT_MALES_CHANGED:
@@ -3676,25 +3628,9 @@ class NuptialEnvironmentService extends _base_baseGameService__WEBPACK_IMPORTED_
         }
     }
 
-    bornNewAntara() {
-        this._nuptialEnvironmentApi.bornNewAntara();
-    }
-
-    saveSpecieSchema(schema) {
-        this._nuptialEnvironmentApi.saveSpecieSchema(schema);
-    }
-
-    _updateMales(nuptialMalesJson) {
-        let nuptialMales = [];
-        for (let maleJson of nuptialMalesJson) {
-            let male = this._nuptialEnvironmentFactory.buildNuptialMale(maleJson);
-            nuptialMales.push(male);
-        }
-        this._nuptialEnv.setNuptialMales(nuptialMales);
-    }
-
     _playChangedMalesAction(action) {
-        this._updateMales(action.males);
+        this._nuptialEnv.setNuptialMales(action.males);
+        this._mainEventBus.emit('nuptialMalesChanged');
     }
 
     _playSpecieGenesChanged(action) {
@@ -4421,7 +4357,7 @@ class MyStateCollector {
         this._eventBus.on('colonyBorn', this._onColonyBorn.bind(this));
         this._eventBus.on('colonyDied', this._onColonyDied.bind(this));
         this._eventBus.on('specieChromosomesGenesChanged', this._onSpecieChromosomesSpecieGenesChanged.bind(this));
-        this._nuptialEnv.events.on('nuptialMalesChanged', this._onNuptialMalesChanged.bind(this));
+        this._eventBus.on('nuptialMalesChanged', this._onNuptialMalesChanged.bind(this));
     }
 
     setUserData(userData) {
@@ -4440,7 +4376,7 @@ class MyStateCollector {
             ants: this._entitySerializer.serializeAnts(ants),
             nuptialEnvironment: {
                 queens: queenInNuptialFlightIds,
-                males: this._entitySerializer.serializeNuptialMales(this._nuptialEnv.nuptialMales),
+                males: this._nuptialEnv.nuptialMales,
                 specie: this._nuptialEnv.specieData
             }
         }
@@ -4831,8 +4767,7 @@ class MyStateCollector {
     }
 
     _onNuptialMalesChanged() {
-        let serializedNuptialMales = this._entitySerializer.serializeNuptialMales(this._nuptialEnv.nuptialMales);
-        this._myStatePatch.nuptialEnvironment.props.males = serializedNuptialMales;
+        this._myStatePatch.nuptialEnvironment.props.males = this._nuptialEnv.nuptialMales;
     }
 
     _onSpecieChromosomesSpecieGenesChanged(specieChromosomeSpecieGenesChange) {
@@ -5037,22 +4972,6 @@ class EntitySerializer {
             serializedAnts.push(this.serializeAnt(ant));
         }
         return serializedAnts;
-    }
-
-    serializeNuptialMale(nuptialMale) {
-        return {
-            id: nuptialMale.id,
-            genome: this.serializeGenome(nuptialMale.genome),
-            stats: nuptialMale.stats
-        }
-    }
-
-    serializeNuptialMales(nuptialMales) {
-        let serializedMales = [];
-        for (let male of nuptialMales) {
-            serializedMales.push(this.serializeNuptialMale(male));
-        }
-        return serializedMales;
     }
 
     _serializeMaleAnt(ant) {
@@ -10660,13 +10579,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_service_nestService__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @domain/service/nestService */ "./gameApp/src/domain/service/nestService.js");
 /* harmony import */ var _domain_entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @domain/entity/notificationsContainer */ "./gameApp/src/domain/entity/notificationsContainer.js");
 /* harmony import */ var _domain_entity_ratingContainer__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @domain/entity/ratingContainer */ "./gameApp/src/domain/entity/ratingContainer.js");
-/* harmony import */ var _domain_entity_nuptialEnvironment_nuptialEnvironmentFactory__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @domain/entity/nuptialEnvironment/nuptialEnvironmentFactory */ "./gameApp/src/domain/entity/nuptialEnvironment/nuptialEnvironmentFactory.js");
-/* harmony import */ var _domain_service_antService__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @domain/service/antService */ "./gameApp/src/domain/service/antService.js");
+/* harmony import */ var _domain_service_antService__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @domain/service/antService */ "./gameApp/src/domain/service/antService.js");
+/* harmony import */ var _domain_entity_nuptialEnvironment__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @domain/entity/nuptialEnvironment */ "./gameApp/src/domain/entity/nuptialEnvironment.js");
 /* harmony import */ var _domain_worker_serializers_entitySerializer__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./domain/worker/serializers/entitySerializer */ "./gameApp/src/domain/worker/serializers/entitySerializer.js");
 /* harmony import */ var _domain_worker_serializers_colonySerializer__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @domain/worker/serializers/colonySerializer */ "./gameApp/src/domain/worker/serializers/colonySerializer.js");
 /* harmony import */ var _domain_worker_myStateCollector__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! @domain/worker/myStateCollector */ "./gameApp/src/domain/worker/myStateCollector.js");
 /* harmony import */ var _domain_worker_viewPointManager__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! @domain/worker/viewPointManager */ "./gameApp/src/domain/worker/viewPointManager.js");
 /* harmony import */ var _domain_worker_domainWorker__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./domain/worker/domainWorker */ "./gameApp/src/domain/worker/domainWorker.js");
+
 
 
 
@@ -10706,18 +10626,17 @@ let nuptialEnvironmentApi = new _sync_nuptialEnvironmentApi__WEBPACK_IMPORTED_MO
 
 let eventBus = new _common_utils_eventEmitter__WEBPACK_IMPORTED_MODULE_9__.EventEmitter();
 let worldFactory = new _domain_worldFactory__WEBPACK_IMPORTED_MODULE_10__.WorldFactory(eventBus);
-let nuptialEnvironmentFactory = new _domain_entity_nuptialEnvironment_nuptialEnvironmentFactory__WEBPACK_IMPORTED_MODULE_18__.NuptialEnvironmentFactory();
 let notificationsContainer = new _domain_entity_notificationsContainer__WEBPACK_IMPORTED_MODULE_16__.NotificationsContainer();
 let ratingContainer = new _domain_entity_ratingContainer__WEBPACK_IMPORTED_MODULE_17__.RatingContainer();
 let world = worldFactory.buildWorld();
-let nuptialEnv = nuptialEnvironmentFactory.buildNuptialEnvironment();
+let nuptialEnv = _domain_entity_nuptialEnvironment__WEBPACK_IMPORTED_MODULE_19__.NuptialEnvironment.build();
 let worldService = new _domain_service_worldService__WEBPACK_IMPORTED_MODULE_11__.WorldService(world, worldFactory, eventBus, ratingContainer);
 let accountService = new _common_domain_service_accountService__WEBPACK_IMPORTED_MODULE_7__.AccountService(accountApi);
 let colonyService = new _domain_service_colonyService__WEBPACK_IMPORTED_MODULE_12__.ColonyService(eventBus, world, colonyApi, worldFactory);
 let userService = new _domain_service_userService__WEBPACK_IMPORTED_MODULE_13__.UserService(eventBus, world, notificationsContainer);
-let nuptialEnvironmentService = new _domain_service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_14__.NuptialEnvironmentService(eventBus, world, nuptialEnv, nuptialEnvironmentFactory, nuptialEnvironmentApi);
+let nuptialEnvironmentService = new _domain_service_nuptialEnvironmentService__WEBPACK_IMPORTED_MODULE_14__.NuptialEnvironmentService(eventBus, world, nuptialEnv, nuptialEnvironmentApi);
 let nestService = new _domain_service_nestService__WEBPACK_IMPORTED_MODULE_15__.NestService(eventBus, world, nestApi);
-let antService = new _domain_service_antService__WEBPACK_IMPORTED_MODULE_19__.AntService(eventBus, world, antApi);
+let antService = new _domain_service_antService__WEBPACK_IMPORTED_MODULE_18__.AntService(eventBus, world, antApi);
 let messageHandlerService = new _domain_service_messageHandlerService__WEBPACK_IMPORTED_MODULE_8__.MessageHandlerService(eventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService, accountService);
 
 let entitySerializer = new _domain_worker_serializers_entitySerializer__WEBPACK_IMPORTED_MODULE_20__.EntitySerializer();

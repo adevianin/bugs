@@ -2,6 +2,10 @@ import { EventEmitter } from "@common/utils/eventEmitter"
 
 class NuptialEnvironment {
 
+    static build() {
+        return new NuptialEnvironment();
+    }
+
     constructor() {
         this.events = new EventEmitter();
         this._nuptialMales = [];
@@ -14,7 +18,6 @@ class NuptialEnvironment {
 
     setNuptialMales(males) {
         this._nuptialMales = males;
-        this.events.emit('nuptialMalesChanged');
     }
 
     get specieData() {

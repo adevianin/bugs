@@ -17,8 +17,9 @@ import { NuptialEnvironmentService } from "@domain/service/nuptialEnvironmentSer
 import { NestService } from "@domain/service/nestService";
 import { NotificationsContainer } from "@domain/entity/notificationsContainer";
 import { RatingContainer } from "@domain/entity/ratingContainer";
-import { NuptialEnvironmentFactory } from "@domain/entity/nuptialEnvironment/nuptialEnvironmentFactory";
 import { AntService } from "@domain/service/antService";
+
+import { NuptialEnvironment } from "@domain/entity/nuptialEnvironment";
 
 import { EntitySerializer } from "./domain/worker/serializers/entitySerializer";
 import { ColonySerializer } from "@domain/worker/serializers/colonySerializer";
@@ -37,16 +38,15 @@ let nuptialEnvironmentApi = new NuptialEnvironmentApi(requester)
 
 let eventBus = new EventEmitter();
 let worldFactory = new WorldFactory(eventBus);
-let nuptialEnvironmentFactory = new NuptialEnvironmentFactory();
 let notificationsContainer = new NotificationsContainer();
 let ratingContainer = new RatingContainer();
 let world = worldFactory.buildWorld();
-let nuptialEnv = nuptialEnvironmentFactory.buildNuptialEnvironment();
+let nuptialEnv = NuptialEnvironment.build();
 let worldService = new WorldService(world, worldFactory, eventBus, ratingContainer);
 let accountService = new AccountService(accountApi);
 let colonyService = new ColonyService(eventBus, world, colonyApi, worldFactory);
 let userService = new UserService(eventBus, world, notificationsContainer);
-let nuptialEnvironmentService = new NuptialEnvironmentService(eventBus, world, nuptialEnv, nuptialEnvironmentFactory, nuptialEnvironmentApi);
+let nuptialEnvironmentService = new NuptialEnvironmentService(eventBus, world, nuptialEnv, nuptialEnvironmentApi);
 let nestService = new NestService(eventBus, world, nestApi);
 let antService = new AntService(eventBus, world, antApi);
 let messageHandlerService = new MessageHandlerService(eventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService, accountService);

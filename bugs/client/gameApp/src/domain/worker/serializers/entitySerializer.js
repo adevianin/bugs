@@ -97,22 +97,6 @@ class EntitySerializer {
         return serializedAnts;
     }
 
-    serializeNuptialMale(nuptialMale) {
-        return {
-            id: nuptialMale.id,
-            genome: this.serializeGenome(nuptialMale.genome),
-            stats: nuptialMale.stats
-        }
-    }
-
-    serializeNuptialMales(nuptialMales) {
-        let serializedMales = [];
-        for (let male of nuptialMales) {
-            serializedMales.push(this.serializeNuptialMale(male));
-        }
-        return serializedMales;
-    }
-
     _serializeMaleAnt(ant) {
         let json = this._serializeBaseAnt(ant);
         return json;

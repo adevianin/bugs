@@ -17,7 +17,7 @@ class MyStateCollector {
         this._eventBus.on('colonyBorn', this._onColonyBorn.bind(this));
         this._eventBus.on('colonyDied', this._onColonyDied.bind(this));
         this._eventBus.on('specieChromosomesGenesChanged', this._onSpecieChromosomesSpecieGenesChanged.bind(this));
-        this._nuptialEnv.events.on('nuptialMalesChanged', this._onNuptialMalesChanged.bind(this));
+        this._eventBus.on('nuptialMalesChanged', this._onNuptialMalesChanged.bind(this));
     }
 
     setUserData(userData) {
@@ -36,7 +36,7 @@ class MyStateCollector {
             ants: this._entitySerializer.serializeAnts(ants),
             nuptialEnvironment: {
                 queens: queenInNuptialFlightIds,
-                males: this._entitySerializer.serializeNuptialMales(this._nuptialEnv.nuptialMales),
+                males: this._nuptialEnv.nuptialMales,
                 specie: this._nuptialEnv.specieData
             }
         }
@@ -427,8 +427,7 @@ class MyStateCollector {
     }
 
     _onNuptialMalesChanged() {
-        let serializedNuptialMales = this._entitySerializer.serializeNuptialMales(this._nuptialEnv.nuptialMales);
-        this._myStatePatch.nuptialEnvironment.props.males = serializedNuptialMales;
+        this._myStatePatch.nuptialEnvironment.props.males = this._nuptialEnv.nuptialMales;
     }
 
     _onSpecieChromosomesSpecieGenesChanged(specieChromosomeSpecieGenesChange) {

@@ -3,16 +3,15 @@ import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
 
 class NuptialEnvironmentService extends BaseGameService {
 
-    constructor(mainEventBus, world, nuptialEnv, nuptialEnvironmentFactory, nuptialEnvironmentApi) {
+    constructor(mainEventBus, world, nuptialEnv, nuptialEnvironmentApi) {
         super(mainEventBus, world);
         this._nuptialEnv = nuptialEnv;
-        this._nuptialEnvironmentFactory = nuptialEnvironmentFactory;
         this._nuptialEnvironmentApi = nuptialEnvironmentApi;
     }
 
-    init(specieData, nuptialMalesJson) {
+    init(specieData, nuptialMales) {
         this._nuptialEnv.setSpecieData(specieData);
-        this._updateMales(nuptialMalesJson);
+        this._nuptialEnv.setNuptialMales(nuptialMales);
     }
 
     foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
@@ -28,6 +27,14 @@ class NuptialEnvironmentService extends BaseGameService {
         }
     }
 
+    bornNewAntara() {
+        this._nuptialEnvironmentApi.bornNewAntara();
+    }
+
+    saveSpecieSchema(schema) {
+        this._nuptialEnvironmentApi.saveSpecieSchema(schema);
+    }
+
     playAction(action) {
         switch(action.type) {
             case ACTION_TYPES.NUPTIAL_ENVIRONMENT_MALES_CHANGED:
@@ -41,25 +48,9 @@ class NuptialEnvironmentService extends BaseGameService {
         }
     }
 
-    bornNewAntara() {
-        this._nuptialEnvironmentApi.bornNewAntara();
-    }
-
-    saveSpecieSchema(schema) {
-        this._nuptialEnvironmentApi.saveSpecieSchema(schema);
-    }
-
-    _updateMales(nuptialMalesJson) {
-        let nuptialMales = [];
-        for (let maleJson of nuptialMalesJson) {
-            let male = this._nuptialEnvironmentFactory.buildNuptialMale(maleJson);
-            nuptialMales.push(male);
-        }
-        this._nuptialEnv.setNuptialMales(nuptialMales);
-    }
-
     _playChangedMalesAction(action) {
-        this._updateMales(action.males);
+        this._nuptialEnv.setNuptialMales(action.males);
+        this._mainEventBus.emit('nuptialMalesChanged');
     }
 
     _playSpecieGenesChanged(action) {
