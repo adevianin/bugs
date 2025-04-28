@@ -11,16 +11,7 @@ class UserService extends BaseGameService {
         this._userData = userData;
     }
 
-    getUserData() {
-        return this._userData;
-    }
-
-    updateUserData(newUserData) {
-        this._userData = newUserData;
-    }
-
     verifyEmailForUser() {
-        this._userData.isEmailVerified = true;
         this._mainEventBus.emit('emailVerified');
     }
 

@@ -16,6 +16,8 @@ class DomainFacade {
         this._myState = null;
 
         this._domainWorker.onmessage = this._onMessage.bind(this);
+
+        window.$domain = this;
     }
 
     get events() {
@@ -100,6 +102,9 @@ class DomainFacade {
             case 'stepPack':
                 this._handleStepPackMessage(msg.data);
                 break;
+            case 'event':
+                this._handleEventMessage(msg.data);
+                break;
             default:
                 throw 'unknown type of message';
         }
@@ -121,6 +126,21 @@ class DomainFacade {
         if (isSeasonChanged) {
             this._eventBus.emit('currentSeasonChanged', this._currentSeason);
         }
+    }
+
+    _handleEventMessage({ type, data }) {
+        switch(type) {
+            case 'emailVerified':
+                this._onEmailVerifiedEvent();
+                break;
+            default:
+                throw 'unknown type of event';
+        }
+    }
+
+    _onEmailVerifiedEvent() {
+        this._userData.isEmailVerified = true;
+        this._eventBus.emit('emailVerified');
     }
 
     // get notificationsContainer() {
@@ -352,49 +372,45 @@ class DomainFacade {
 
     // /*==========account===========*/
 
-    // logout() {
-    //     return this._accountService.logout();
-    // }
+    logout() {
+        return this._sendCommand('logout', null, true);
+    }
 
     getUserData() {
         return this._userData;
     }
 
-    refreshUserData() {
-
+    verifyEmailRequest() {
+        this._sendCommand('verifyEmailRequest',null, false);
     }
 
-    // verifyEmailRequest() {
-    //     return this._accountService.verifyEmailRequest();
-    // }
+    async changeUsername(newUsername) {
+        let result = await this._sendCommand('changeUsername', {newUsername}, true);
+        if (result.success) {
+            this._userData = result.userData;
+            return null;
+        } else {
+            return result.err;
+        }
+    }
 
-    // async changeUsername(newUsername) {
-    //     let result = await this._accountService.changeUsername(newUsername);
-    //     if (result.success) {
-    //         this._userService.updateUserData(result.userData);
-    //         return null;
-    //     } else {
-    //         return result.err;
-    //     }
-    // }
+    async changeEmail(newEmail, password) {
+        let result = await this._sendCommand('changeEmail', {newEmail, password}, true);
+        if (result.success) {
+            this._userData = result.userData;
+            return null;
+        } else {
+            return result.err;
+        }
+    }
 
-    // async changeEmail(newEmail, password) {
-    //     let result = await this._accountService.changeEmail(newEmail, password);
-    //     if (result.success) {
-    //         this._userService.updateUserData(result.userData);
-    //         return null;
-    //     } else {
-    //         return result.err;
-    //     }
-    // }
+    changePassword(newPassword, oldPassword) {
+        return this._sendCommand('changePassword', {newPassword, oldPassword}, true);
+    }
 
-    // changePassword(newPassword, oldPassword) {
-    //     return this._accountService.changePassword(newPassword, oldPassword);
-    // }
-
-    // validatePassword(password) {
-    //     return this._accountService.validatePassword(password);
-    // }
+    validatePassword(password) {
+        return this._sendCommand('validatePassword', {password}, true);
+    }
 
     // /*==============================*/
 

@@ -52,10 +52,10 @@ class PasswordFieldEditorView extends BaseFieldEditor {
         this._onDone(null);
     }
 
-    _validate() {
+    async _validate() {
         let isError = false;
 
-        let newPasswordErr = this._validateNewPassword();
+        let newPasswordErr = await this._validateNewPassword();
         this._renderNewPasswordErr(newPasswordErr);
         if (newPasswordErr) {
             isError = true;
@@ -76,9 +76,9 @@ class PasswordFieldEditorView extends BaseFieldEditor {
         return !isError;
     }
 
-    _validateNewPassword() {
+    async _validateNewPassword() {
         let newPassword = this._newPasswordEl.value;
-        return this.$domain.validatePassword(newPassword);
+        return await this.$domain.validatePassword(newPassword);
     }
 
     _renderNewPasswordErr(err) {
@@ -112,8 +112,8 @@ class PasswordFieldEditorView extends BaseFieldEditor {
         this._requestErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
-     _onNewPasswordChange() {
-        let newPasswordErr = this._validateNewPassword();
+    async _onNewPasswordChange() {
+        let newPasswordErr = await this._validateNewPassword();
         this._renderNewPasswordErr(newPasswordErr);
     }
 
@@ -128,7 +128,8 @@ class PasswordFieldEditorView extends BaseFieldEditor {
     }
 
     async _onOkBtnClick() {
-        if (!this._validate()) {
+        let isValid = await this._validate();
+        if (!isValid) {
             return;
         }
 

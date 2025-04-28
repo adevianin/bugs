@@ -536,7 +536,7 @@ class AccountApi {
     }
 
     logout() {
-        return this._requester.post('api/accounts/logout').then(res => {
+        return this._requester.post('/api/accounts/logout').then(res => {
             return res.data.redirectUrl;
         });
     }
@@ -560,25 +560,25 @@ class AccountApi {
     }
 
     changeUsername(newUsername) {
-        return this._requester.post('api/accounts/change_username', {
+        return this._requester.post('/api/accounts/change_username', {
             newUsername
         });
     }
 
     changeEmail(newEmail, password) {
-        return this._requester.post('api/accounts/change_email', {
+        return this._requester.post('/api/accounts/change_email', {
             newEmail, password
         });
     }
 
     changePassword(newPassword, oldPassword) {
-        return this._requester.post('api/accounts/change_password', {
+        return this._requester.post('/api/accounts/change_password', {
             newPassword, oldPassword
         });
     }
 
     verifyEmailRequest() {
-        return this._requester.post('api/accounts/verify_email_request');
+        return this._requester.post('/api/accounts/verify_email_request');
     }
 
     checkUsernameUniqueness(username) {

@@ -95,10 +95,9 @@ class UserTab extends BaseGameHTMLView {
         this._passwordFieldEl.classList.toggle('g-hidden', user.isSocialAccount);
     }
 
-    _onUserLogoutBtnClick() {
-        this.$domain.logout().then(redirectUrl => {
-            location.href = redirectUrl;
-        });
+    async _onUserLogoutBtnClick() {
+        let redirectUrl = await this.$domain.logout();
+        location.href = redirectUrl;
     }
 
     _onEmailEditBtnClick() {

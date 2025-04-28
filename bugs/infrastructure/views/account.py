@@ -19,6 +19,7 @@ from infrastructure.utils.build_base_url import build_base_url
 from infrastructure.utils.generate_username import generate_username
 from infrastructure.event_bus import event_bus
 from infrastructure.utils.log_request_exception import log_request_exception
+from django.contrib.auth import update_session_auth_hash
 import json
 
 @ensure_csrf_cookie
@@ -337,6 +338,8 @@ def change_password(request: HttpRequest):
         user.set_password(new_password)
         user.full_clean()
         user.save()
+
+        update_session_auth_hash(request, user)
     except ValidationError as e:
         return HttpResponse(status=400)
                 

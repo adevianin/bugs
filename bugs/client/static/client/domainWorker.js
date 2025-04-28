@@ -400,7 +400,7 @@ class AccountApi {
     }
 
     logout() {
-        return this._requester.post('api/accounts/logout').then(res => {
+        return this._requester.post('/api/accounts/logout').then(res => {
             return res.data.redirectUrl;
         });
     }
@@ -424,25 +424,25 @@ class AccountApi {
     }
 
     changeUsername(newUsername) {
-        return this._requester.post('api/accounts/change_username', {
+        return this._requester.post('/api/accounts/change_username', {
             newUsername
         });
     }
 
     changeEmail(newEmail, password) {
-        return this._requester.post('api/accounts/change_email', {
+        return this._requester.post('/api/accounts/change_email', {
             newEmail, password
         });
     }
 
     changePassword(newPassword, oldPassword) {
-        return this._requester.post('api/accounts/change_password', {
+        return this._requester.post('/api/accounts/change_password', {
             newPassword, oldPassword
         });
     }
 
     verifyEmailRequest() {
-        return this._requester.post('api/accounts/verify_email_request');
+        return this._requester.post('/api/accounts/verify_email_request');
     }
 
     checkUsernameUniqueness(username) {
@@ -3624,16 +3624,7 @@ class UserService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__.Bas
         this._userData = userData;
     }
 
-    getUserData() {
-        return this._userData;
-    }
-
-    updateUserData(newUserData) {
-        this._userData = newUserData;
-    }
-
     verifyEmailForUser() {
-        this._userData.isEmailVerified = true;
         this._mainEventBus.emit('emailVerified');
     }
 
@@ -3947,6 +3938,24 @@ class DomainWorker {
             case 'buildNewSubNestOperation':
                 this._handleBuildNewSubNestOperationCommand(command)
                 break;
+            case 'logout':
+                this._handleLogoutCommand(command)
+                break;
+            case 'changeUsername':
+                this._handleChangeUsernameCommand(command)
+                break;
+            case 'changeEmail':
+                this._handleChangeEmailCommand(command)
+                break;
+            case 'verifyEmailRequest':
+                this._handleVerifyEmailRequestCommand(command)
+                break;
+            case 'validatePassword':
+                this._handleValidatePasswordCommand(command)
+                break;
+            case 'changePassword':
+                this._handleChangePasswordCommand(command)
+                break;
             default:
                 throw 'unknown type of command';
         }
@@ -3985,14 +3994,9 @@ class DomainWorker {
         this._eventBus.on('entityChunkMigration', this._onEntityChunkMigration.bind(this));
         this._eventBus.on('entityAddedToChunks', this._onEntityAddedToChunks.bind(this));
         this._eventBus.on('stepDone', this._onStepDone.bind(this));
-    }
 
-    // _handleFindMyFirstNestCommand(command) {
-    //     let userData = this._userService.getUserData();
-    //     let nest = this._nestService.findMyFirstNest(userData.id);
-    //     let serializedNest = this._entitySerializer.serializeNest(nest);
-    //     this._sendCommandResult(command.id, serializedNest);
-    // }
+        this._eventBus.on('emailVerified', this._onEmailVerified.bind(this));
+    }
 
     _handleChangePlayerViewPointCommand(command) {
         let data = command.data;
@@ -4230,10 +4234,57 @@ class DomainWorker {
         this._sendCommandResult(command.id, result);
     }
 
+    async _handleLogoutCommand(command) {
+        let data = command.data;
+        let redirectUrl = await this._accountService.logout();
+        this._sendCommandResult(command.id, redirectUrl);
+    }
+
+    async _handleChangeUsernameCommand(command) {
+        let data = command.data;
+        let newUsername = data.newUsername;
+        let result = await this._accountService.changeUsername(newUsername);
+        this._sendCommandResult(command.id, result);
+    }
+
+    async _handleChangeEmailCommand(command) {
+        let data = command.data;
+        let newEmail = data.newEmail;
+        let password = data.password;
+        let result = await this._accountService.changeEmail(newEmail, password);
+        this._sendCommandResult(command.id, result);
+    }
+
+    async _handleVerifyEmailRequestCommand(command) {
+        this._accountService.verifyEmailRequest();
+    }
+
+    async _handleValidatePasswordCommand(command) {
+        let data = command.data;
+        let password = data.password;
+        let result = this._accountService.validatePassword(password);
+        this._sendCommandResult(command.id, result);
+    }
+
+    async _handleChangePasswordCommand(command) {
+        let data = command.data;
+        let newPassword = data.newPassword;
+        let oldPassword = data.oldPassword;
+        let result = await this._accountService.changePassword(newPassword, oldPassword);
+        this._sendCommandResult(command.id, result);
+    }
+
     _sendCommandResult(id, result) {
         this._sendMessage('commandResult', {
             id,
             result
+        });
+    }
+
+    _sendEvent(type, data) {
+        this._sendMessage('event', {
+            type,
+            data
         });
     }
 
@@ -4278,6 +4329,10 @@ class DomainWorker {
             entity, 
             prevChunkId: null
         });
+    }
+
+    _onEmailVerified() {
+        this._sendEvent('emailVerified');
     }
 
 }

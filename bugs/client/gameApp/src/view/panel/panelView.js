@@ -49,7 +49,7 @@ class PanelView extends BaseGameHTMLView {
         this._handler = this._el.querySelector('[data-handler]');
         this._handlerHeight = this._handler.getBoundingClientRect().height;
 
-        // this._userTab = new UserTab(this._el.querySelector('[data-user-tab]'));
+        this._userTab = new UserTab(this._el.querySelector('[data-user-tab]'));
         this._coloniesTab = new ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));
         this._nuptialFlightTab = new NuptialFlightTabView(this._el.querySelector('[data-nuptial-flight-tab]'));
         this._specieBuildertTab = new SpecieBuilderTabView(this._el.querySelector('[data-specie-builder-tab]'));
@@ -62,7 +62,7 @@ class PanelView extends BaseGameHTMLView {
             { name: 'specie_builder', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_SPECIE), tab: this._specieBuildertTab },
             { name: 'notifications', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_NOTIFICATIONS), tab: this._notificationsTab },
             // { name: 'rating', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_RATING), tab: this._ratingTab },
-            // { name: 'user', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_ACCOUNT), tab: this._userTab }
+            { name: 'user', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_ACCOUNT), tab: this._userTab }
         ]);
     }
 
