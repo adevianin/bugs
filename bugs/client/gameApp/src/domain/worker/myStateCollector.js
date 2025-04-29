@@ -140,7 +140,7 @@ class MyStateCollector {
 
     _getColonyUpdatePatch(colonyId) {
         for (let colonyUpdatePatch of this._myStatePatch.colonies.update) {
-            if (colonyUpdatePatch.id = colonyId) {
+            if (colonyUpdatePatch.id == colonyId) {
                 return colonyUpdatePatch;
             }
         }
@@ -326,7 +326,7 @@ class MyStateCollector {
 
     _getNestUpdatePatch(nestId) {
         for (let nestPatch of this._myStatePatch.nests.update) {
-            if (nestPatch.id = nestId) {
+            if (nestPatch.id == nestId) {
                 return nestPatch;
             }
         }
