@@ -275,9 +275,11 @@ class DomainFacade {
         }, true);
     }
 
-    // pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-    //     return this._colonyService.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
-    // }
+    pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
+        return this._sendCommand('pillageNestOperation', {
+            performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount
+        }, true);
+    }
 
     // transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
     //     return this._colonyService.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
@@ -461,9 +463,13 @@ class DomainFacade {
         return this._sendCommand('validateNestToDestroy', {nestId}, true);
     }
 
-    // validatePillageNestOperationConditions(colonyId) {
-    //     return this._colonyService.validatePillageNestOperationConditions(colonyId);
-    // }
+    validatePillageNestOperationConditions(colonyId) {
+        return this._sendCommand('validatePillageNestOperationConditions', {colonyId}, true);
+    }
+
+    validateNestToPillage(nestId) {
+        return this._sendCommand('validateNestToPillage', {nestId}, true);
+    }
 
     validateLayingEggInNest(nestId) {
         return this._sendCommand('validateLayingEggInNest', {nestId}, true);

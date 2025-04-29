@@ -3075,8 +3075,16 @@ class ColonyService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_1__.B
     }
 
     async pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-        let result = await this._requestHandler(() => this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount));
-        return result.operationId;
+        try {
+            let result = await this._requestHandler(() => this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount));
+            return this._makeSuccessResult({ operationId: result.operationId });
+        } catch (e) {
+            if (e instanceof _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_7__.ConflictRequestError) {
+                return this._makeErrorResultConflict();
+            } else if (e instanceof _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__.GenericRequestError) {
+                return this._makeErrorResultUnknownErr();
+            }
+        }
     }
 
     async transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
@@ -3254,6 +3262,20 @@ class ColonyService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_1__.B
         let queen = this._world.getQueenOfColony(colonyId);
         if (!queen) {
             return _messages_messageIds__WEBPACK_IMPORTED_MODULE_5__.GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_CANT_PILLAGE_WITHOUT_QUEEN;
+        }
+
+        return null;
+    }
+
+    validateNestToPillage(nestId) {
+        let nest = this._world.findEntityById(nestId);
+
+        if (!nestId) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_5__.GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NEST_TO_PILLAGE_NEEDED;
+        }
+
+        if (!nest || nest.isDied) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_5__.GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NOT_DESTROYED_NEST_TO_PILLAGE_NEEDED;
         }
 
         return null;
@@ -3926,6 +3948,12 @@ class DomainWorker {
             case 'validateNestToDestroy':
                 this._handleValidateNestToDestroyCommand(command)
                 break;
+            case 'validatePillageNestOperationConditions':
+                this._handleValidatePillageNestOperationConditionsCommand(command)
+                break;
+            case 'validateNestToPillage':
+                this._handleValidateNestToPillageCommand(command)
+                break;
             case 'validateLayingEggInNest':
                 this._handleValidateLayingEggInNestCommand(command)
                 break;
@@ -3940,6 +3968,9 @@ class DomainWorker {
                 break;
             case 'destroyNestOperation':
                 this._handleDestroyNestOperationCommand(command)
+                break;
+            case 'pillageNestOperation':
+                this._handlePillageNestOperationCommand(command)
                 break;
             case 'logout':
                 this._handleLogoutCommand(command)
@@ -4212,6 +4243,20 @@ class DomainWorker {
         this._sendCommandResult(command.id, err);
     }
 
+    _handleValidatePillageNestOperationConditionsCommand(command) {
+        let data = command.data;
+        let colonyId = data.colonyId;
+        let err = this._colonyService.validatePillageNestOperationConditions(colonyId);
+        this._sendCommandResult(command.id, err);
+    }
+
+    _handleValidateNestToPillageCommand(command) {
+        let data = command.data;
+        let nestId = data.nestId;
+        let err = this._colonyService.validateNestToPillage(nestId);
+        this._sendCommandResult(command.id, err);
+    }
+
     _handleValidateLayingEggInNestCommand(command) {
         let data = command.data;
         let nestId = data.nestId;
@@ -4255,6 +4300,17 @@ class DomainWorker {
         let workersCount = data.workersCount;
         let warriorsCount = data.warriorsCount;
         let result = await this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nestId);
+        this._sendCommandResult(command.id, result);
+    }
+
+    async _handlePillageNestOperationCommand(command) {
+        let data = command.data;
+        let performingColonyId = data.performingColonyId;
+        let pillagingNestId = data.pillagingNestId;
+        let nestForLootId = data.nestForLootId;
+        let workersCount = data.workersCount;
+        let warriorsCount = data.warriorsCount;
+        let result = await this._colonyService.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
         this._sendCommandResult(command.id, result);
     }
 

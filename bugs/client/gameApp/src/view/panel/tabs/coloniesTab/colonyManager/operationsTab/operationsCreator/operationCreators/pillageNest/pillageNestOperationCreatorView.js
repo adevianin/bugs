@@ -5,18 +5,17 @@ import { MarkerTypes } from "@domain/enum/markerTypes";
 import { CONSTS } from "@domain/consts";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
 import { NestInlineView } from "@view/panel/base/nest/nestInlineView";
-import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
-import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { doubleClickProtection } from "@common/utils/doubleClickProtection";
 import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
+import { ErrorCodes } from "@domain/enum/errorCodes";
 
 class PillageNestOperationCreatorView extends BaseOperationCreatorView {
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
-        this._mainNest = this.$domain.getMainNestOfColony(this._performingColony.id);
-        this._nestToPillage = null;
+        this._mainNest = this.$domain.getMainNestOfMyColony(this._performingColony.id);
+        this._nestToPillageData = null;
 
         this._render();
 
@@ -80,8 +79,8 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         this._errorContainerEl.innerHTML = messageId ? this.$mm.get(messageId) : '';
     }
 
-    _checkOperationConditions() {
-        let condErr = this._validateOperationConditions();
+    async _checkOperationConditions() {
+        let condErr = await this._validateOperationConditions();
         this._renderOperationConditionsErr(condErr);
     }
 
@@ -92,19 +91,20 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _onChooseNestToPillageBtnClick() {
-        this.$eventBus.emit('raidNestPickRequest', this._performingColony.id, this._mainNest.position, (nest) => {
-            this._nestToPillageView.value = nest;
-            this._nestToPillage = nest;
+        this.$eventBus.emit('raidNestPickRequest', this._performingColony.id, this._mainNest.position, async (nestId) => {
+            let nestData = await this.$domain.getEntityDataById(nestId);
+            this._nestToPillageView.setNestData(nestData);
+            this._nestToPillageData = nestData;
             this._showMarkers();
-            let nestToPillageError = this._validateChoosedNestToPillage();
+            let nestToPillageError = await this._validateChoosedNestToPillage();
             this._renderNestToPillageError(nestToPillageError);
         });
     }
 
-    _validate() {
+    async _validate() {
         let isError = false;
 
-        let nestToPillageError = this._validateChoosedNestToPillage();
+        let nestToPillageError = await this._validateChoosedNestToPillage();
         this._renderNestToPillageError(nestToPillageError);
         if (nestToPillageError) {
             isError = true;
@@ -124,7 +124,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
             isError = true;
         }
 
-        let condErr = this._validateOperationConditions();
+        let condErr = await this._validateOperationConditions();
         this._renderOperationConditionsErr(condErr);
         if (condErr) {
             isError = true;
@@ -134,15 +134,8 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _validateChoosedNestToPillage() {
-        if (!this._nestToPillage) {
-            return GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NEST_TO_PILLAGE_NEEDED;
-        }
-
-        if (this._nestToPillage.isDied) {
-            return GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NOT_DESTROYED_NEST_TO_PILLAGE_NEEDED;
-        }
-
-        return null;
+        let nestToPillageId = this._nestToPillageData ? this._nestToPillageData.id : null;
+        return this.$domain.validateNestToPillage(nestToPillageId);
     }
 
     _renderNestToPillageError(errId) {
@@ -162,41 +155,44 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     async _onStartBtnClick() {
-        if (!this._validate()) {
+        let isValid = await this._validate();
+        if (!isValid) {
             return
         }
 
         let warriorsCount = this._warriorsCountView.value;
         let workersCount = this._workersCountView.value;
         let nestForLootId = this._nestForLootSelector.nestId;
-        let nestToPillageId = this._nestToPillage.id;
-        try {
-            this._loader.toggle(true);
-            let operationId = await this.$domain.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount);
-            this._performingColony.waitCreatingOperation(operationId, () => {
-                this._onDone();
-                this._loader.toggle(false);
-            });
-        } catch (e) {
-            this._loader.toggle(false);
-            if (e instanceof ConflictRequestError) {
-                this._validate();
-            } else if (e instanceof GenericRequestError) {
+        let nestToPillageId = this._nestToPillageData.id;
+
+        this._loader.toggle(true);
+        let result = await this.$domain.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount);
+
+        if (result.success) {
+            this._onDone();
+        } else {
+            if (result.errCode == ErrorCodes.CONFLICT) {
+                console.log('revalidating');
+                await this._validate();
+            } else {
                 this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         }
+        this._loader.toggle(false);
     }
 
-    _showMarkers() {
+    async _showMarkers() {
         let markers = [];
 
-        if (this._nestToPillage) {
-            markers.push(this.$domain.buildMarker(MarkerTypes.PILLAGE, this._nestToPillage.position));
+        if (this._nestToPillageData) {
+            let nestToPillageMarker = await this.$domain.buildMarker(MarkerTypes.PILLAGE, this._nestToPillageData.position)
+            markers.push(nestToPillageMarker);
         }
 
         if (this._nestForLootSelector.nestId) {
-            let nestForLoot = this.$domain.findEntityById(this._nestForLootSelector.nestId);
-            markers.push(this.$domain.buildMarker(MarkerTypes.LOAD, nestForLoot.position));
+            let nestForLoot = this.$domain.myState.getNestById(this._nestForLootSelector.nestId);
+            let nestForLootMarker = await this.$domain.buildMarker(MarkerTypes.LOAD, nestForLoot.position);
+            markers.push(nestForLootMarker);
         }
 
         this._demonstrateMarkersRequest(markers);

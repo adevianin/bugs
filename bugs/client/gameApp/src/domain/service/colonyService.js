@@ -70,8 +70,16 @@ class ColonyService extends BaseGameService {
     }
 
     async pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
-        let result = await this._requestHandler(() => this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount));
-        return result.operationId;
+        try {
+            let result = await this._requestHandler(() => this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount));
+            return this._makeSuccessResult({ operationId: result.operationId });
+        } catch (e) {
+            if (e instanceof ConflictRequestError) {
+                return this._makeErrorResultConflict();
+            } else if (e instanceof GenericRequestError) {
+                return this._makeErrorResultUnknownErr();
+            }
+        }
     }
 
     async transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
@@ -249,6 +257,20 @@ class ColonyService extends BaseGameService {
         let queen = this._world.getQueenOfColony(colonyId);
         if (!queen) {
             return GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_CANT_PILLAGE_WITHOUT_QUEEN;
+        }
+
+        return null;
+    }
+
+    validateNestToPillage(nestId) {
+        let nest = this._world.findEntityById(nestId);
+
+        if (!nestId) {
+            return GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NEST_TO_PILLAGE_NEEDED;
+        }
+
+        if (!nest || nest.isDied) {
+            return GAME_MESSAGE_IDS.PILLAGE_NEST_OPER_NOT_DESTROYED_NEST_TO_PILLAGE_NEEDED;
         }
 
         return null;

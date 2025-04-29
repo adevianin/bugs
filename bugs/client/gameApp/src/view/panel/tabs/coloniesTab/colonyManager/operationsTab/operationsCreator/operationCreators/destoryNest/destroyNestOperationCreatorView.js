@@ -4,8 +4,6 @@ import { MarkerTypes } from "@domain/enum/markerTypes";
 import { CONSTS } from "@domain/consts";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
 import { NestInlineView } from "@view/panel/base/nest/nestInlineView";
-import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
-import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { doubleClickProtection } from "@common/utils/doubleClickProtection";
 import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
@@ -161,13 +159,12 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
             this._onDone();
         } else {
             if (result.errCode == ErrorCodes.CONFLICT) {
-                console.log('revalidating');
                 await this._validate();
             } else {
                 this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
-            this._loader.toggle(false);
         }
+        this._loader.toggle(false);
 
     }
 
