@@ -129,8 +129,16 @@ class ColonyService extends BaseGameService {
     }
 
     async bringBugOpearation(performingColonyId, nestId) {
-        let result = await this._requestHandler(() => this._colonyApi.bringBugOpearation(performingColonyId, nestId));
-        return result.operationId;
+        try{
+            let result = await this._requestHandler(() => this._colonyApi.bringBugOpearation(performingColonyId, nestId));
+            return this._makeSuccessResult({ operationId: result.operationId });
+        } catch (e) {
+            if (e instanceof ConflictRequestError) {
+                return this._makeErrorResultConflict();
+            } else if (e instanceof GenericRequestError) {
+                return this._makeErrorResultUnknownErr();
+            }
+        }
     }
 
     buildMarker(type, point, params = {}) {

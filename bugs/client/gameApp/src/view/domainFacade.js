@@ -297,9 +297,11 @@ class DomainFacade {
         }, true);
     }
 
-    // bringBugOpearation(performingColonyId, nestId) {
-    //     return this._colonyService.bringBugOpearation(performingColonyId, nestId);
-    // }
+    bringBugOpearation(performingColonyId, nestId) {
+        return this._sendCommand('bringBugOpearation', {
+            performingColonyId, nestId
+        }, true);
+    }
 
     // /*========================*/
 
@@ -369,9 +371,9 @@ class DomainFacade {
         }, true);
     }
 
-    // findClosestBugCorpseNearNest(nestId) {
-    //     return this._colonyService.findClosestBugCorpseNearNest(nestId);
-    // }
+    findClosestBugCorpseNearNest(nestId) {
+        return this._sendCommand('findClosestBugCorpseNearNest', {nestId}, true);
+    }
 
     // /*==========ant===========*/
 

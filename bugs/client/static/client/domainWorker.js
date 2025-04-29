@@ -3130,8 +3130,16 @@ class ColonyService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_1__.B
     }
 
     async bringBugOpearation(performingColonyId, nestId) {
-        let result = await this._requestHandler(() => this._colonyApi.bringBugOpearation(performingColonyId, nestId));
-        return result.operationId;
+        try{
+            let result = await this._requestHandler(() => this._colonyApi.bringBugOpearation(performingColonyId, nestId));
+            return this._makeSuccessResult({ operationId: result.operationId });
+        } catch (e) {
+            if (e instanceof _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_7__.ConflictRequestError) {
+                return this._makeErrorResultConflict();
+            } else if (e instanceof _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__.GenericRequestError) {
+                return this._makeErrorResultUnknownErr();
+            }
+        }
     }
 
     buildMarker(type, point, params = {}) {
@@ -3947,6 +3955,9 @@ class DomainWorker {
             case 'renameNest':
                 this._handleRenameNestCommand(command)
                 break;
+            case 'findClosestBugCorpseNearNest':
+                this._handleFindClosestBugCorpseNearNestCommand(command)
+                break;
             case 'antRelocate':
                 this._handleAntRelocateCommand(command)
                 break;
@@ -4012,6 +4023,9 @@ class DomainWorker {
                 break;
             case 'buildFortificationsOpearation':
                 this._handleBuildFortificationsOpearationCommand(command)
+                break;
+            case 'bringBugOpearation':
+                this._handleBringBugOpearationCommand(command)
                 break;
             case 'logout':
                 this._handleLogoutCommand(command)
@@ -4203,6 +4217,14 @@ class DomainWorker {
         this._sendCommandResult(command.id, true);
     }
 
+    async _handleFindClosestBugCorpseNearNestCommand(command) {
+        let data = command.data;
+        let nestId = data.nestId;
+        let bugcorpseData = await this._colonyService.findClosestBugCorpseNearNest(nestId);
+        let serializedBugCorpse = bugcorpseData ? this._entitySerializer.serializeAnyEntity(bugcorpseData) : null;
+        this._sendCommandResult(command.id, serializedBugCorpse);
+    }
+
     async _handleAntRelocateCommand(command) {
         let data = command.data;
         let antId = data.antId;
@@ -4379,6 +4401,14 @@ class DomainWorker {
         let nestId = data.nestId;
         let workersCount = data.workersCount;
         let result = await this._colonyService.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
+        this._sendCommandResult(command.id, result);
+    }
+
+    async _handleBringBugOpearationCommand(command) {
+        let data = command.data;
+        let performingColonyId = data.performingColonyId;
+        let nestId = data.nestId;
+        let result = await this._colonyService.bringBugOpearation(performingColonyId, nestId);
         this._sendCommandResult(command.id, result);
     }
 

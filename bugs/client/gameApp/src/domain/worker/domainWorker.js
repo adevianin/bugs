@@ -119,6 +119,9 @@ class DomainWorker {
             case 'renameNest':
                 this._handleRenameNestCommand(command)
                 break;
+            case 'findClosestBugCorpseNearNest':
+                this._handleFindClosestBugCorpseNearNestCommand(command)
+                break;
             case 'antRelocate':
                 this._handleAntRelocateCommand(command)
                 break;
@@ -184,6 +187,9 @@ class DomainWorker {
                 break;
             case 'buildFortificationsOpearation':
                 this._handleBuildFortificationsOpearationCommand(command)
+                break;
+            case 'bringBugOpearation':
+                this._handleBringBugOpearationCommand(command)
                 break;
             case 'logout':
                 this._handleLogoutCommand(command)
@@ -375,6 +381,14 @@ class DomainWorker {
         this._sendCommandResult(command.id, true);
     }
 
+    async _handleFindClosestBugCorpseNearNestCommand(command) {
+        let data = command.data;
+        let nestId = data.nestId;
+        let bugcorpseData = await this._colonyService.findClosestBugCorpseNearNest(nestId);
+        let serializedBugCorpse = bugcorpseData ? this._entitySerializer.serializeAnyEntity(bugcorpseData) : null;
+        this._sendCommandResult(command.id, serializedBugCorpse);
+    }
+
     async _handleAntRelocateCommand(command) {
         let data = command.data;
         let antId = data.antId;
@@ -551,6 +565,14 @@ class DomainWorker {
         let nestId = data.nestId;
         let workersCount = data.workersCount;
         let result = await this._colonyService.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
+        this._sendCommandResult(command.id, result);
+    }
+
+    async _handleBringBugOpearationCommand(command) {
+        let data = command.data;
+        let performingColonyId = data.performingColonyId;
+        let nestId = data.nestId;
+        let result = await this._colonyService.bringBugOpearation(performingColonyId, nestId);
         this._sendCommandResult(command.id, result);
     }
 
