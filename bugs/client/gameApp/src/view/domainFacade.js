@@ -285,9 +285,11 @@ class DomainFacade {
         }, true);
     }
 
-    // transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
-    //     return this._colonyService.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
-    // }
+    transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
+        return this._sendCommand('transportFoodOperation', {
+            performingColonyId, fromNestId, toNestId, workersCount, warriorsCount
+        }, true);
+    }
 
     // buildFortificationsOpearation(performingColonyId, nestId, workersCount) {
     //     return this._colonyService.buildFortificationsOpearation(performingColonyId, nestId, workersCount);

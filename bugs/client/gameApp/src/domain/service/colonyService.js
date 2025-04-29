@@ -103,8 +103,16 @@ class ColonyService extends BaseGameService {
     }
 
     async transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
-        let result = await this._requestHandler(() => this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount));
-        return result.operationId;
+        try {
+            let result = await this._requestHandler(() => this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount));
+            return this._makeSuccessResult({ operationId: result.operationId });
+        } catch (e) {
+            if (e instanceof ConflictRequestError) {
+                return this._makeErrorResultConflict();
+            } else if (e instanceof GenericRequestError) {
+                return this._makeErrorResultUnknownErr();
+            }
+        }
     }
 
     async buildFortificationsOpearation(performingColonyId, nestId, workersCount) {

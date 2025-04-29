@@ -4,11 +4,10 @@ import { NestSelectorView } from "@view/panel/base/nestSelector";
 import { MarkerTypes } from "@domain/enum/markerTypes";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
 import { CONSTS } from "@domain/consts";
-import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
-import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { doubleClickProtection } from "@common/utils/doubleClickProtection";
 import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
+import { ErrorCodes } from "@domain/enum/errorCodes";
 
 class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
 
@@ -139,21 +138,21 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         let toNestId = this._nestToSelector.nestId;
         let workersCount = this._workersCountView.value;
         let warriorsCount = this._warriorsCountView.value;
-        try {
-            this._loader.toggle(true);
-            let operationId = await this.$domain.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
-            this._performingColony.waitCreatingOperation(operationId, () => {
-                this._onDone();
-                this._loader.toggle(false);
-            });
-        } catch (e) {
-            this._loader.toggle(false);
-            if (e instanceof ConflictRequestError) {
+
+        this._loader.toggle(true);
+
+        let result = await this.$domain.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
+
+        if (result.success) {
+            this._onDone();
+        } else {
+            if (result.errCode == ErrorCodes.CONFLICT) {
                 this._validate();
-            } else if (e instanceof GenericRequestError) {
+            } else {
                 this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         }
+        this._loader.toggle(false);
     }
 
     _onNestFromChanged() {
@@ -172,17 +171,19 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         this._renderSelectedNestsError(selectedNestsError);
     }
 
-    _showMarkers() {
+    async _showMarkers() {
         let markers = [];
 
         if (this._nestFromSelector.nestId) {
-            let nestFrom = this.$domain.findEntityById(this._nestFromSelector.nestId);
-            markers.push(this.$domain.buildMarker(MarkerTypes.UNLOAD, nestFrom.position));
+            let nestFromData = await this.$domain.getEntityDataById(this._nestFromSelector.nestId);
+            let nestFromMarker = await this.$domain.buildMarker(MarkerTypes.UNLOAD, nestFromData.position);
+            markers.push(nestFromMarker);
         }
 
         if (this._nestToSelector.nestId && this._nestToSelector.nestId != this._nestFromSelector.nestId) {
-            let nestFrom = this.$domain.findEntityById(this._nestToSelector.nestId);
-            markers.push(this.$domain.buildMarker(MarkerTypes.LOAD, nestFrom.position));
+            let nestToData = await this.$domain.getEntityDataById(this._nestToSelector.nestId);
+            let nestToMarker = await this.$domain.buildMarker(MarkerTypes.LOAD, nestToData.position);
+            markers.push(nestToMarker);
         }
 
         this._demonstrateMarkersRequest(markers);
