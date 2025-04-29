@@ -172,7 +172,6 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
             this._onDone();
         } else {
             if (result.errCode == ErrorCodes.CONFLICT) {
-                console.log('revalidating');
                 await this._validate();
             } else {
                 this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
