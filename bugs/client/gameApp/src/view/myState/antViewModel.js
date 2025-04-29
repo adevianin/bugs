@@ -82,7 +82,11 @@ class AntViewModel extends EntityViewModel {
     }
 
     get canFlyNuptialFlight() {
-        return !this.isQueenOfColony;
+        return this._props.canFlyNuptialFlight;
+    }
+
+    set canFlyNuptialFlight(val) {
+        this._props.canFlyNuptialFlight = val;
     }
 
     get breedingMaleGenome() {

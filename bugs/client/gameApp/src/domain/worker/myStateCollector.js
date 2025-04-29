@@ -224,6 +224,7 @@ class MyStateCollector {
         });
         ant.events.on('gotFertilized', () => {
             this._pushAntPropsToAntUpdatePatch(ant.id, {
+                canFlyNuptialFlight: ant.canFlyNuptialFlight,
                 isQueenOfColony: ant.isQueenOfColony,
                 breedingMaleGenome: this._entitySerializer.serializeGenome(ant.breedingMaleGenome),
             });
