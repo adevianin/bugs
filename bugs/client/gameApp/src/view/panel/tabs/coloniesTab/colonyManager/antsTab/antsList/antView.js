@@ -153,8 +153,9 @@ class AntView extends BaseGameHTMLView {
         this._renderProfileState();
     }
 
-    _onShowAntBtnClick() {
-        this.$eventBus.emit('showPointRequest', this._ant.position);
+    async _onShowAntBtnClick() {
+        let antData = await this.$domain.getEntityDataById(this._ant.id);
+        this.$eventBus.emit('showPointRequest', antData.position);
         this.$eventBus.emit('highlightEntity', {
             entityId: this._ant.id,
             type: 'pointer'

@@ -49,9 +49,8 @@ class EnemiesListView extends BaseGameHTMLView {
     _renderAllEnemies() {
         this._renderEnemiesEmptyState();
         this._clearAllEnemies();
-        let enemyColonies = this.$domain.getColoniesByIds(this._colony.enemies);
-        for (let enemyColony of enemyColonies) {
-            this._renderEnemy(enemyColony);
+        for (let enemyColonyId of this._colony.enemies) {
+            this._renderEnemy(enemyColonyId);
         }
     }
 
@@ -64,11 +63,11 @@ class EnemiesListView extends BaseGameHTMLView {
         this._enemyViews = {};
     }
 
-    _renderEnemy(enemyColony) {
+    _renderEnemy(enemyColonyId) {
         let el = document.createElement('li');
-        let view = new EnemyView(el, enemyColony);
+        let view = new EnemyView(el, enemyColonyId);
         this._enemiesListEl.append(el);
-        this._enemyViews[enemyColony.id] = view;
+        this._enemyViews[enemyColonyId] = view;
     }
 
     _updateEnemiesList() {
@@ -81,17 +80,10 @@ class EnemiesListView extends BaseGameHTMLView {
             }
         }
 
-        let newEnemyIds = [];
-        for (let enemyId of this._colony.enemies) {
-            if (!this._enemyViews[enemyId]) {
-                newEnemyIds.push(enemyId);
+        for (let enemyColonyId of this._colony.enemies) {
+            if (!this._enemyViews[enemyColonyId]) {
+                this._renderEnemy(enemyColonyId);
             }
-        }
-
-        let newEnemyColonies = this.$domain.getColoniesByIds(newEnemyIds);
-
-        for (let enemyColony of newEnemyColonies) {
-            this._renderEnemy(enemyColony);
         }
     }
 

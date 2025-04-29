@@ -73,6 +73,9 @@ class MapController extends BaseGraphicView {
         let viewPointLocal = this._getLocalViewPoint();
         let dx = x - viewPointLocal.x;
         let dy = y - viewPointLocal.y;
+        if (dx == 0 && dy == 0) {
+            return;
+        }
         let startTime = performance.now();
         let startCameraPosition = this._getCameraPosition();
         let destCameraX = startCameraPosition.x + dx;

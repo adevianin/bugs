@@ -14,6 +14,7 @@ import { CONSTS } from '@domain/consts';
 import { VIEW_SETTINGS } from '@view/viewSettings';
 import { ItemTypes } from '@domain/enum/itemTypes';
 import { SEASON_TYPES } from '@domain/enum/season_types';
+import { EntityHightlighterView } from './entitiesViews/entityHighlighterView';
 
 class WorldView extends BaseGraphicView {
 
@@ -24,6 +25,8 @@ class WorldView extends BaseGraphicView {
         this._currentEntityViews = {};
         
         this._render();
+
+        this.$eventBus.on('highlightEntity', this._onHighlightEntity.bind(this));
 
         // this.$domain.events.on('stepStart', this._onStepStart.bind(this));
         // this.$domain.events.on('entityBorn', this._onEntityBorn.bind(this));
@@ -294,6 +297,10 @@ class WorldView extends BaseGraphicView {
     //         }
     //     }
     // }
+
+    _onHighlightEntity(params) {
+        EntityHightlighterView.registerHighlightEntityRequest(params);
+    }
 
 }
 

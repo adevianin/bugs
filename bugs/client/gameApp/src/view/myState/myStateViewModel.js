@@ -166,7 +166,6 @@ class MyStateViewModel extends BaseViewModel {
 
     _applyColoniesPatch(coloniesPatch) {
         for (let addedColonyJson of coloniesPatch.add) {
-            console.log('colony added patch');
             let colonyVM = ColonyViewModel.buildFromJson(addedColonyJson);
             this.addColony(colonyVM);
         }

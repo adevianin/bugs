@@ -200,6 +200,10 @@ class DomainFacade {
         return this._myState.getMainNestOfColony(colonyId);
     }
 
+    getEnemyColonyData(colonyId) {
+        return this._sendCommand('getEnemyColonyData', {colonyId}, true);
+    }
+
     // getColoniesByIds(ids) {
     //     return this._worldService.getColoniesByIds(ids);
     // }

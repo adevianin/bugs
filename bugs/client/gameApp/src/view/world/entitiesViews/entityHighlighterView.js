@@ -3,6 +3,24 @@ import * as PIXI from 'pixi.js';
 
 class EntityHightlighterView extends BaseGraphicView {
 
+    static HIGHLIGHT_TIME = 10000;
+
+    static registerHighlightEntityRequest(params) {
+        this._lastRequest = {
+            params,
+            time: performance.now()
+        }
+    }
+
+    static calcLeftTimeForLastHighlightRequest() {
+        if (!this._lastRequest) {
+            return 0;
+        }
+        let elapsedTime = performance.now() - this._lastRequest.time;
+        let leftTime = EntityHightlighterView.HIGHLIGHT_TIME - elapsedTime;
+        return leftTime;
+    }
+
     constructor(container, entity) {
         super();
         this._container = container;
@@ -11,9 +29,15 @@ class EntityHightlighterView extends BaseGraphicView {
         this._render();
 
         this._stopListenHightlightEntityRequest = this.$eventBus.on('highlightEntity', this._onHightlightRequest.bind(this));
+
+        let leftTimeForLastRequest = EntityHightlighterView.calcLeftTimeForLastHighlightRequest();
+        if (leftTimeForLastRequest > 0) {
+            this._handleHightlightRequest(EntityHightlighterView._lastRequest.params, leftTimeForLastRequest);
+        }
     }
 
     remove() {
+        clearTimeout(this._timer);
         this._stopListenHightlightEntityRequest();
     }
 
@@ -31,7 +55,7 @@ class EntityHightlighterView extends BaseGraphicView {
         this._container.addChild(this._pointerIcon);
     }
 
-    _highlight(type) {
+    _highlight(type, time) {
         this._stopHightlight();
         this._isHighlighting = true;
 
@@ -46,9 +70,9 @@ class EntityHightlighterView extends BaseGraphicView {
                 throw 'unknown type of hightlight';
         }
 
-        this._setTimeout(() => {
+        this._timer = setTimeout(() => {
             this._stopHightlight();
-        }, 10000);
+        }, time);
     }
 
     _stopHightlight() {
@@ -60,15 +84,23 @@ class EntityHightlighterView extends BaseGraphicView {
     }
 
     _onHightlightRequest(params) {
+        this._handleHightlightRequest(params);
+    }
+
+    _handleHightlightRequest(params, time) {
+        if (!time) {
+            time = EntityHightlighterView.HIGHLIGHT_TIME;
+        }
+
         if (params.colonyId) {
             if (this._entity.fromColony == params.colonyId) {
-                this._highlight(params.type);
+                this._highlight(params.type, time);
             } else {
                 this._stopHightlight();
             }
         } else if (params.entityId) {
             if (this._entity.id == params.entityId) {
-                this._highlight(params.type);
+                this._highlight(params.type, time);
             } else {
                 this._stopHightlight();
             }
@@ -76,7 +108,6 @@ class EntityHightlighterView extends BaseGraphicView {
             throw 'invalid hightlight request';
         }
     }
-
 
 }
 

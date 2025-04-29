@@ -29,6 +29,11 @@ class ColonyViewModel extends BaseViewModel {
         return this._props.enemies;
     }
 
+    set enemies(val) {
+        this._props.enemies = val;
+        this.emit('enemiesChanged');
+    }
+
     constructor(json, operations) {
         super(json);
         this._operations = operations;

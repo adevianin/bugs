@@ -25,10 +25,10 @@ class ColonyManager extends BaseGameHTMLView {
         this._operationsTab.manageColony(colony);
         this._antsTab.manageColony(colony);
         this._nestsTab.manageColony(colony, nestToSelect);
-        // this._enemiesTab.manageColony(colony);
-        // if (nestToSelect) {
-        //     this._tabSwitcher.activateTab('nests');
-        // }
+        this._enemiesTab.manageColony(colony);
+        if (nestToSelect) {
+            this._tabSwitcher.activateTab('nests');
+        }
     }
 
     _render() {

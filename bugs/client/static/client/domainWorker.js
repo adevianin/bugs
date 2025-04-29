@@ -3038,10 +3038,30 @@ class ColonyService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_1__.B
         }
     
     }
+
     giveBirthToColony(colonyJson) {
         let colony = this._worldFactory.buildAntColony(colonyJson);
         this._world.addColony(colony);
         this._mainEventBus.emit('colonyBorn', colony);
+    }
+
+    getEnemyColonyData(colonyId) {
+        let colony = this._world.findColonyById(colonyId);
+        let colonyNests = this._world.findNestsFromColony(colonyId);
+        let xSum = 0;
+        let ySum = 0;
+        for (let nest of colonyNests) {
+            xSum += nest.position.x;
+            ySum += nest.position.y;
+        }
+        let averageX = Math.round(xSum / colonyNests.length);
+        let averageY = Math.round(ySum / colonyNests.length);
+
+        return {
+            id: colonyId,
+            name: colony.name,
+            position: { x: averageX, y: averageY }
+        }
     }
 
     stopOperation(colonyId, operationId) {
@@ -3882,6 +3902,9 @@ class DomainWorker {
             case 'getEntityDataById':
                 this._handleGetEntityDataByIdCommand(command)
                 break;
+            case 'getEnemyColonyData':
+                this._handleGetEnemyColonyDataCommand(command)
+                break;
             case 'buildMarker':
                 this._handleBuildMarkerCommand(command)
                 break;
@@ -4072,6 +4095,13 @@ class DomainWorker {
         let entity = this._worldService.world.findEntityById(entityId);
         let entityData = entity ? this._entitySerializer.serializeAnyEntity(entity) : null;
         this._sendCommandResult(command.id, entityData);
+    }
+
+    _handleGetEnemyColonyDataCommand(command) {
+        let data = command.data;
+        let colonyId = data.colonyId;
+        let result = this._colonyService.getEnemyColonyData(colonyId);
+        this._sendCommandResult(command.id, result);
     }
 
     _handleBuildMarkerCommand(command) {
@@ -4555,10 +4585,13 @@ class MyStateCollector {
             this._pushOperationRemoveToColonyUpdatePatch(colony.id, operation.id);
         });
         colony.events.on('enemiesChanged', () => {
-            // this._pushOperationPropsToOperationUpdatePatch(colony.id, operation.id, {
-            //     enemies: operation.enemies
-            // });
+            this._pushEnemiesToColonyUpdatePatch(colony.id, colony.enemies);
         });
+    }
+
+    _pushEnemiesToColonyUpdatePatch(colonyId, enemies) {
+        let patch = this._getColonyUpdatePatch(colonyId);
+        patch.props.enemies = enemies;
     }
 
     _pushOperationAddToColonyUpdatePatch(colonyId, newOperation) {
@@ -4579,7 +4612,7 @@ class MyStateCollector {
 
     _getColonyUpdatePatch(colonyId) {
         for (let colonyUpdatePatch of this._myStatePatch.colonies.update) {
-            if (colonyUpdatePatch.id = colonyId) {
+            if (colonyUpdatePatch.id == colonyId) {
                 return colonyUpdatePatch;
             }
         }
@@ -4765,7 +4798,7 @@ class MyStateCollector {
 
     _getNestUpdatePatch(nestId) {
         for (let nestPatch of this._myStatePatch.nests.update) {
-            if (nestPatch.id = nestId) {
+            if (nestPatch.id == nestId) {
                 return nestPatch;
             }
         }

@@ -86,6 +86,9 @@ class DomainWorker {
             case 'getEntityDataById':
                 this._handleGetEntityDataByIdCommand(command)
                 break;
+            case 'getEnemyColonyData':
+                this._handleGetEnemyColonyDataCommand(command)
+                break;
             case 'buildMarker':
                 this._handleBuildMarkerCommand(command)
                 break;
@@ -276,6 +279,13 @@ class DomainWorker {
         let entity = this._worldService.world.findEntityById(entityId);
         let entityData = entity ? this._entitySerializer.serializeAnyEntity(entity) : null;
         this._sendCommandResult(command.id, entityData);
+    }
+
+    _handleGetEnemyColonyDataCommand(command) {
+        let data = command.data;
+        let colonyId = data.colonyId;
+        let result = this._colonyService.getEnemyColonyData(colonyId);
+        this._sendCommandResult(command.id, result);
     }
 
     _handleBuildMarkerCommand(command) {

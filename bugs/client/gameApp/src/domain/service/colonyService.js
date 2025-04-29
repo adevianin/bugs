@@ -33,10 +33,30 @@ class ColonyService extends BaseGameService {
         }
     
     }
+
     giveBirthToColony(colonyJson) {
         let colony = this._worldFactory.buildAntColony(colonyJson);
         this._world.addColony(colony);
         this._mainEventBus.emit('colonyBorn', colony);
+    }
+
+    getEnemyColonyData(colonyId) {
+        let colony = this._world.findColonyById(colonyId);
+        let colonyNests = this._world.findNestsFromColony(colonyId);
+        let xSum = 0;
+        let ySum = 0;
+        for (let nest of colonyNests) {
+            xSum += nest.position.x;
+            ySum += nest.position.y;
+        }
+        let averageX = Math.round(xSum / colonyNests.length);
+        let averageY = Math.round(ySum / colonyNests.length);
+
+        return {
+            id: colonyId,
+            name: colony.name,
+            position: { x: averageX, y: averageY }
+        }
     }
 
     stopOperation(colonyId, operationId) {

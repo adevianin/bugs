@@ -3,9 +3,9 @@ import enemyTmpl from './enemyTmpl.html';
 
 class EnemyView extends BaseGameHTMLView {
 
-    constructor(el, colony) {
+    constructor(el, enemyColonyId) {
         super(el);
-        this._colony = colony;
+        this._enemyColonyId = enemyColonyId;
 
         this._render();
 
@@ -15,33 +15,25 @@ class EnemyView extends BaseGameHTMLView {
     _render() {
         this._el.innerHTML = enemyTmpl;
 
-        this._el.querySelector('[data-colony-name]').innerHTML = this._colony.name;
+        this._renderName();
         this._showBtn = this._el.querySelector('[data-show-btn]');
     }
 
-    _onShowBtnClick() {
-        let nests = this.$domain.getNestsFromColony(this._colony.id);
-        this.$eventBus.emit('showPointRequest', this._calcAveragePosition(nests));
+    async _renderName() {
+        let enemyColonyData = await this.$domain.getEnemyColonyData(this._enemyColonyId);
+        this._el.querySelector('[data-colony-name]').innerHTML = enemyColonyData.name;
+    }
+
+    async _onShowBtnClick() {
+        let enemyColonyData = await this.$domain.getEnemyColonyData(this._enemyColonyId);
+        this.$eventBus.emit('showPointRequest', enemyColonyData.position);
         this.$eventBus.emit('highlightEntity', {
-            colonyId: this._colony.id,
+            colonyId: this._enemyColonyId,
             type: 'enemy'
         });
+        
     }
 
-    _calcAveragePosition(nests) {
-        let xSum = 0;
-        let ySum = 0;
-        for (let nest of nests) {
-            xSum += nest.position.x;
-            ySum += nest.position.y;
-        }
-
-        let averageX = Math.round(xSum / nests.length);
-        let averageY = Math.round(ySum / nests.length);
-
-        return { x: averageX, y: averageY };
-    }
-    
 }
 
 export {
