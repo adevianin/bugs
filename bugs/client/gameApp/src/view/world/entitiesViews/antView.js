@@ -32,7 +32,7 @@ class AntView extends LiveEntityView {
         this._stopListenAntPickedUpItemAR = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ANT_PICKED_UP_ITEM}`, this._onAntPickedUpItemAnimationRequest.bind(this));
         this._stopListenAntDroppedItemAR = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ANT_DROPPED_PICKED_ITEM}`, this._onAntDroppedItemAnimationRequest.bind(this));
         this._stopListenFlewNuptialAR = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT}`, this._onFlewNuptialAnimationRequest.bind(this));
-        // this._stopListenFlewNuptialBackAnimationRequest = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT_BACK}`, this._onFlewNuptialBackAnimationRequest.bind(this));
+        this._stopListenFlewNuptialBackAnimationRequest = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT_BACK}`, this._onFlewNuptialBackAnimationRequest.bind(this));
         
     }
 

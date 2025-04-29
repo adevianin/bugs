@@ -27,9 +27,10 @@ class NestView extends EntityView {
         this._nestHudLayer = nestHudLayer;
 
         this._render();
-        // this._stopListenBuildStatusChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.NEST_BUILD_STATUS_CHANGED}`, this._onBuildStatusChangeAnimationRequest.bind(this));
-        // this._stopListenFortificationChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.NEST_FORTIFICATION_CHANGED}`, this._onFortificationChangeAnimationRequest.bind(this));
-        // this._stopListenHpChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
+        let nestId = this._entity.id;
+        this._stopListenBuildStatusChange = this.$eventBus.on(`entityActionAnimationRequest:${nestId}:${ACTION_TYPES.NEST_BUILD_STATUS_CHANGED}`, this._onBuildStatusChangeAnimationRequest.bind(this));
+        this._stopListenFortificationChange = this.$eventBus.on(`entityActionAnimationRequest:${nestId}:${ACTION_TYPES.NEST_FORTIFICATION_CHANGED}`, this._onFortificationChangeAnimationRequest.bind(this));
+        this._stopListenHpChange = this.$eventBus.on(`entityActionAnimationRequest:${nestId}:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
         // this._stopListenNameChange = this._entity.on('nameChanged', this._onNameChanged.bind(this));
         // this._stopListenShowNestAreaRequest = this._entity.on('showNestAreaRequest', this._onShowNestAreaRequest.bind(this));
         // this._stopListenHideNestAreaRequest = this._entity.on('hideNestAreaRequest', this._onHideNestAreaRequest.bind(this));
@@ -117,9 +118,9 @@ class NestView extends EntityView {
         super.remove();
         this._hpLineView.remove();
         this._entityHighlighter.remove();
-        // this._stopListenBuildStatusChange();
-        // this._stopListenFortificationChange();
-        // this._stopListenHpChange();
+        this._stopListenBuildStatusChange();
+        this._stopListenFortificationChange();
+        this._stopListenHpChange();
         // this._stopListenNameChange();
         this._nestHudLayer.detach(this._hudContainer);
         // this._stopListenShowNestAreaRequest();
