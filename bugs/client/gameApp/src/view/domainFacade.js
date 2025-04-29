@@ -13,6 +13,7 @@ class DomainFacade {
 
         this._currentStep = null;
         this._currentSeason = null;
+        this._dailyTemperature = null;
         this._worldSize = null;
         this._myState = null;
 
@@ -35,6 +36,10 @@ class DomainFacade {
         return this._currentSeason;
     }
 
+    get dailyTemperature() {
+        return this._dailyTemperature;
+    }
+
     get ratingContainer() {
         return this._ratingContainer;
     }
@@ -47,6 +52,7 @@ class DomainFacade {
         initConsts(initPack.consts);
         this._currentStep = initPack.currentStep;
         this._currentSeason = initPack.currentSeason;
+        this._dailyTemperature = initPack.dailyTemperature;
         this._worldSize = initPack.worldSize;
         this._myState = MyStateViewModel.buildFromJson(initPack.myState);
         this._ratingContainer = RatingContainerViewModel.buildFromJson({rating: initPack.rating});
@@ -122,6 +128,7 @@ class DomainFacade {
         this._currentStep = stepPack.step;
         let isSeasonChanged = this._currentSeason != stepPack.season;
         this._currentSeason = stepPack.season;
+        this._dailyTemperature = stepPack.dailyTemperature;
         this._myState.applyPatch(stepPack.myStatePatch);
         this._eventBus.emit('stepPack', stepPack);
         this._eventBus.emit('currentStepChanged', this._currentStep);

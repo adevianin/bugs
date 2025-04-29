@@ -24,7 +24,7 @@ class AppView extends BaseGameHTMLView {
         this._el.innerHTML = appTmpl;
         this._el.classList.add('app');
 
-        // new ClimateView(this._el.querySelector('[data-climate]'));
+        new ClimateView(this._el.querySelector('[data-climate]'));
         new PanelView(this._el.querySelector('[data-panel]'));
         
         let canvasContainerEl = this._el.querySelector('[data-canvas-container]');

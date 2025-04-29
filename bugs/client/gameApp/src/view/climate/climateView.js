@@ -8,12 +8,10 @@ class ClimateView extends BaseGameHTMLView {
 
     constructor(el) {
         super(el);
-        this._climate = this.$domain.getClimate();
 
         this._render();
 
-        this._climate.on('change', this._renderTemperatureChange.bind(this));
-        this.$domain.events.on('currentStepChanged', this._renderYear.bind(this));
+        this.$domain.events.on('currentStepChanged', this._onStep.bind(this));
     }
 
     _render() {
@@ -26,16 +24,21 @@ class ClimateView extends BaseGameHTMLView {
 
         this._yearEl = this._el.querySelector('[data-year]');
 
-        this._renderTemperatureChange();
+        this._renderTemperature();
         this._renderYear();
     }
 
-    _renderTemperatureChange() {
-        this._temperatureEl.innerHTML = this._climate.dailyTemperature;
+    _renderTemperature() {
+        this._temperatureEl.innerHTML = this.$domain.dailyTemperature;
     }
 
     _renderYear() {
         this._yearEl.innerHTML = convertStepsToYear(this.$domain.currentStep);
+    }
+
+    _onStep() {
+        this._renderTemperature();
+        this._renderYear();
     }
 
 }

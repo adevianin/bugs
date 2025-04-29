@@ -55,6 +55,7 @@ class DomainWorker {
         let stepPack = {
             step: this._worldService.world.currentStep,
             season: this._worldService.world.currentSeason,
+            dailyTemperature: this._worldService.world.climate.dailyTemperature,
             entityAnimations,
             viewRectMigrations,
             myStatePatch
@@ -199,6 +200,7 @@ class DomainWorker {
             let initPack = {
                 currentStep: this._worldService.world.currentStep,
                 currentSeason: this._worldService.world.currentSeason,
+                dailyTemperature: this._worldService.world.climate.dailyTemperature,
                 worldSize: this._worldService.world.size,
                 consts: CONSTS,
                 myState: this._myStateCollector.getMyState(),
