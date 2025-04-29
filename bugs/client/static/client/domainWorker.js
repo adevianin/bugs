@@ -3117,8 +3117,16 @@ class ColonyService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_1__.B
     }
 
     async buildFortificationsOpearation(performingColonyId, nestId, workersCount) {
-        let result = await this._requestHandler(() => this._colonyApi.buildFortificationsOpearation(performingColonyId, nestId, workersCount));
-        return result.operationId;
+        try {
+            let result = await this._requestHandler(() => this._colonyApi.buildFortificationsOpearation(performingColonyId, nestId, workersCount));
+            return this._makeSuccessResult({ operationId: result.operationId });
+        } catch (e) {
+            if (e instanceof _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_7__.ConflictRequestError) {
+                return this._makeErrorResultConflict();
+            } else if (e instanceof _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__.GenericRequestError) {
+                return this._makeErrorResultUnknownErr();
+            }
+        }
     }
 
     async bringBugOpearation(performingColonyId, nestId) {
@@ -4002,6 +4010,9 @@ class DomainWorker {
             case 'transportFoodOperation':
                 this._handleTransportFoodOperationCommand(command)
                 break;
+            case 'buildFortificationsOpearation':
+                this._handleBuildFortificationsOpearationCommand(command)
+                break;
             case 'logout':
                 this._handleLogoutCommand(command)
                 break;
@@ -4359,6 +4370,15 @@ class DomainWorker {
         let workersCount = data.workersCount;
         let warriorsCount = data.warriorsCount;
         let result = await this._colonyService.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
+        this._sendCommandResult(command.id, result);
+    }
+
+    async _handleBuildFortificationsOpearationCommand(command) {
+        let data = command.data;
+        let performingColonyId = data.performingColonyId;
+        let nestId = data.nestId;
+        let workersCount = data.workersCount;
+        let result = await this._colonyService.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
         this._sendCommandResult(command.id, result);
     }
 

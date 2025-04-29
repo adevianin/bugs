@@ -4,11 +4,10 @@ import { NestSelectorView } from "@view/panel/base/nestSelector";
 import { MarkerTypes } from "@domain/enum/markerTypes";
 import { CONSTS } from "@domain/consts";
 import { IntInputView } from "@view/panel/base/intInput/intInputView";
-import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
-import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { doubleClickProtection } from "@common/utils/doubleClickProtection";
 import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
+import { ErrorCodes } from "@domain/enum/errorCodes";
 
 class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
 
@@ -83,21 +82,20 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
 
         let nestId = this._nestSelector.nestId;
         let workersCount = this._workersCountView.value;
-        try {
-            this._loader.toggle(true);
-            let operationId = await this.$domain.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount);
-            this._performingColony.waitCreatingOperation(operationId, () => {
-                this._onDone();
-                this._loader.toggle(false);
-            });
-        } catch (e) {
-            this._loader.toggle(false);
-            if (e instanceof ConflictRequestError) {
+
+        this._loader.toggle(true);
+        let result = await this.$domain.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount);
+
+        if (result.success) {
+            this._onDone();
+        } else {
+            if (result.errCode == ErrorCodes.CONFLICT) {
                 this._validate();
-            } else if (e instanceof GenericRequestError) {
+            } else {
                 this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         }
+        this._loader.toggle(false);
     }
 
     _onNestChanged() {
@@ -105,12 +103,13 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
         this._showMarkers();
     }
 
-    _showMarkers() {
+    async _showMarkers() {
         let markers = [];
 
         if (this._nestSelector.nestId) {
-            let nest = this.$domain.findEntityById(this._nestSelector.nestId);
-            markers.push(this.$domain.buildMarker(MarkerTypes.SHIELD, nest.position));
+            let nestData = await this.$domain.getEntityDataById(this._nestSelector.nestId);
+            let marker = await this.$domain.buildMarker(MarkerTypes.SHIELD, nestData.position);
+            markers.push(marker);
         }
 
         this._demonstrateMarkersRequest(markers);

@@ -291,9 +291,11 @@ class DomainFacade {
         }, true);
     }
 
-    // buildFortificationsOpearation(performingColonyId, nestId, workersCount) {
-    //     return this._colonyService.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
-    // }
+    buildFortificationsOpearation(performingColonyId, nestId, workersCount) {
+        return this._sendCommand('buildFortificationsOpearation', {
+            performingColonyId, nestId, workersCount
+        }, true);
+    }
 
     // bringBugOpearation(performingColonyId, nestId) {
     //     return this._colonyService.bringBugOpearation(performingColonyId, nestId);

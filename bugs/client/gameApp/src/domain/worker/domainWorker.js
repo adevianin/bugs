@@ -182,6 +182,9 @@ class DomainWorker {
             case 'transportFoodOperation':
                 this._handleTransportFoodOperationCommand(command)
                 break;
+            case 'buildFortificationsOpearation':
+                this._handleBuildFortificationsOpearationCommand(command)
+                break;
             case 'logout':
                 this._handleLogoutCommand(command)
                 break;
@@ -539,6 +542,15 @@ class DomainWorker {
         let workersCount = data.workersCount;
         let warriorsCount = data.warriorsCount;
         let result = await this._colonyService.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
+        this._sendCommandResult(command.id, result);
+    }
+
+    async _handleBuildFortificationsOpearationCommand(command) {
+        let data = command.data;
+        let performingColonyId = data.performingColonyId;
+        let nestId = data.nestId;
+        let workersCount = data.workersCount;
+        let result = await this._colonyService.buildFortificationsOpearation(performingColonyId, nestId, workersCount);
         this._sendCommandResult(command.id, result);
     }
 
